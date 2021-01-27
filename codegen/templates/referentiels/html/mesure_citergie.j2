@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ mesure.nom }}</title>
+</head>
+<body>
+<main class="mesure" id="mesure-{{ mesure.id }}">
+    <h1>{{ mesure.nom }}</h1>
+
+    {% if mesure.description %}
+        <section class="description">
+            <h2>Description</h2>
+            <div class="description">
+                {{ mesure.description }}
+            </div>
+        </section>
+    {% endif %}
+
+
+    {% for action in mesure.actions %}
+        <section class="action" id="action-{{ action.id }}">
+            <h3>{{ action.nom }}</h3>
+            <status-picker id="{{ action.id }}">Chargement du status...</status-picker>
+            {{ action.description }}
+        </section>
+    {% endfor %}
+</main>
+</body>
+</html>

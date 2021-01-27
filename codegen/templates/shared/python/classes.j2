@@ -1,0 +1,12 @@
+from datetime import date
+from dataclasses import dataclass
+from typing import List
+
+{% for class, fields in classes.items() %}
+@dataclass
+class {{ class }}:
+    {%- for field, type in fields.items() %}
+        {{ field }}: {{ type }}
+    {%- endfor %}
+
+{% endfor %}
