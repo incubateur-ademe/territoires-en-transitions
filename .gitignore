@@ -1,3 +1,10 @@
 # IDE settings
 .vscode/
 .idea/
+
+# Client dependencies
+client/node_modules
+
+# Client generated files
+client/dist/styles.css
+client/dist/main.js

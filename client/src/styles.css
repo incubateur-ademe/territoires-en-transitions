@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Action component */
+  .action h3 {
+    @apply text-lg font-semibold mb-4;
+  }
+
+  .action p {
+    @apply mb-2;
+  }
+
+  .action ul {
+    @apply list-disc list-inside;
+  }
+
+  .action li {
+    @apply mb-2;
+  }
+
+  .action li > p {
+    @apply inline;
+  }
+
+  .action details > summary {
+    list-style: none;
+  }
+
+  .action details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .action details[open] > summary {
+    @apply bg-gray-200;
+    @apply shadow-inner;
+  }
+
+  .action .status input:focus + label,
+  .action .status label:hover {
+    @apply bg-blue-100;
+  }
+
+  .action .status input:checked + label {
+    @apply bg-blue-300;
+  }
+}
