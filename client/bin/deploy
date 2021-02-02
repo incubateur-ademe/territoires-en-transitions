@@ -2,5 +2,6 @@
 
 npm run build:prod
 aws s3api put-object --bucket staging.territoiresentransitions.fr --key mesure_1.1.1.html --body dist/mesure_1.1.1.html --content-type text/html --acl public-read
+aws s3api put-object --bucket staging.territoiresentransitions.fr --key indicateurs.html --body dist/indicateurs.html --content-type text/html --acl public-read
 aws s3api put-object --bucket staging.territoiresentransitions.fr --key styles.css --body dist/styles.css --content-type text/css --acl public-read
 aws s3api put-object --bucket staging.territoiresentransitions.fr --key main.js --body dist/main.js --content-type text/css --acl public-read
