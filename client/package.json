@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack --mode development",
-    "build:prod": "webpack --mode production",
+    "build:prod": "NODE_ENV=production webpack --mode production",
     "deploy": "bin/deploy"
   },
   "devDependencies": {
