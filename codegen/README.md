@@ -16,22 +16,45 @@ poetry update
 #### Les deux outils CLI
 
 ##### Le parser citergie
-Permet d'extraire le fichier Word citergie `referentiels/source/citergie.docx`  pour créer des fichiers markdown.
+Permet d'extraire le fichier Word citergie `referentiels/sources/citergie.docx`  pour créer des fichiers markdown.
 Plus tard on pourra faire la même chose avec le référentiel ECi.
 
+###### Mesures
 ```shell
 poetry run extract citergie --help
 ```
-```
+```shell
 Usage: extract citergie [OPTIONS]
 
   Convert source docx file to 'mesures' markdown files.
 
 Options:
-  -d, --docx TEXT    [default: referentiels/source/citergie.docx]
+  -d, --docx TEXT    [default: referentiels/sources/citergie.docx]
   -o, --output TEXT  [default: referentiels/extracted/citergie]
   --help             Show this message and exit.
 
+```
+
+###### Indicateurs
+```shell
+poetry run extract indicateurs --help
+```
+```shell
+Usage: extract indicateurs [OPTIONS]
+
+  Convert source xlsx files to 'indicateurs' markdown files.
+
+Options:
+  -i, --indicateurs TEXT     [default:
+                             referentiels/sources/indicateurs_citergie.xlsx]
+
+  -c, --correspondance TEXT  [default: referentiels/sources/correspondance_cit
+                             ergie_climat_pratique.xlsx]
+
+  -o, --output TEXT          [default:
+                             referentiels/extracted/indicateurs_citergie]
+
+  --help                     Show this message and exit.
 ```
 
 ##### Le générateur de code
@@ -40,7 +63,7 @@ Permet de générer des 'vues' à partir des fichiers générés par le parser.
 ```shell
 poetry run generate mesures --help
 ```
-```
+```shell
 Usage: generate mesures [OPTIONS]
 
   Convert 'mesures' markdown files to code.
@@ -58,7 +81,7 @@ Permet de générer du code partagé à partir des fichiers markdown `definition
 ```shell
 poetry run generate shared --help
 ```
-```
+```shell
 Usage: generate shared [OPTIONS]
 
 Generate shared definitions.

@@ -4,7 +4,7 @@ from codegen.utils import load_md
 
 def test_build_mesure():
     """Test that a specific mesure is parsed correctly"""
-    md = load_md('../referentiels/extracted/citergie/1.1.1.md')
+    md = load_md('referentiels/extracted/citergie/1.1.1.md')
     mesure = build_mesure(md)
     assert mesure
     assert mesure['id'] == '1.1.1'

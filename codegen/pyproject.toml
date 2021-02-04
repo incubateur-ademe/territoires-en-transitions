@@ -5,8 +5,8 @@ version = "0.0.1"
 description = "Top-level package for codegen."
 authors = ["Florian d'Erfurth <florian@derfurth.com>", "Fanny Cheung <fanny.cheung@beta.gouv.fr>"]
 readme = "README.md"
-license =  "todo"
-classifiers=[
+license = "todo"
+classifiers = [
     'Development Status :: 2 - Pre-Alpha',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: MIT License',
@@ -33,10 +33,11 @@ beautifulsoup4 = "^4.9.3"
 mistletoe = "^0.7.2"
 PyYAML = "^5.3.1"
 python-docx = "^0.8.10"
+pandas = "^1.2.1"
+openpyxl = "^3.0.6"
 
 # Command line
 typer = "^0.3.2"
-
 
 [tool.poetry.dev-dependencies]
 bumpversion = "*"

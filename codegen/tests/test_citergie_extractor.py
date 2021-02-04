@@ -5,7 +5,7 @@ from codegen.citergie.extractor import load_docx, parse_docx
 
 @pytest.fixture
 def mesures() -> list:
-    document = load_docx('../referentiels/sources/citergie.docx')
+    document = load_docx('referentiels/sources/citergie.docx')
     return parse_docx(document)
 
 
