@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        Liste des indicateurs
+    </title>
+</head>
+<body class="pb-30 bg-gray-100">
+<main class="container mx-auto lg:px-20 px-4">
+    <h1 class="text-2xl font-semibold my-6">
+        Liste des indicateurs
+    </h1>
+    <ul>
+        <li class="bg-white p-4 rounded m-4 grid grid-cols-1 lg:grid-cols-12 lg:gap-1">
+        {% for theme in indicateurs.keys() %}
+            <h2>{{ theme }}</h2>
+            {% for indicateur in indicateurs[theme] %}
+                <section class="relative lg:col-span-8">
+                    <h3 class="text-xl font-semibold mb-6 pr-28">{{ indicateur.nom }}</h3>
+                    <details class="expandable">
+                        <summary
+                                class="absolute top-0 right-0 border border-gray-400 rounded px-2 py-1 cursor-pointer">
+                            Plus</summary>
+                        {{ indicateur.description }}
+                    </details>
+                </section>
+            {% endfor %}
+        {% endfor %}
+        </li>
+    </ul>
+</main>
+</body>
+</html>

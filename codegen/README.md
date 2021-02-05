@@ -77,6 +77,21 @@ Options:
   --help                Show this message and exit.
 ```
 
+```shell
+poetry run generate indicateurs --help
+```
+```shell
+Usage: generate indicateurs [OPTIONS]
+
+  Convert 'indicateurs' markdown files to code.
+
+Options:
+  -md, --markdown TEXT  [default: referentiels/extracted/indicateurs_citergie]
+  -o, --output TEXT     [default: generated/indicateurs_citergie]
+  --html / --no-html    [default: True]
+  --help                Show this message and exit.
+```
+
 Permet de générer du code partagé à partir des fichiers markdown `definitions/shared`.
 ```shell
 poetry run generate shared --help

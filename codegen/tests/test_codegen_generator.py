@@ -2,7 +2,7 @@ import glob
 import os
 
 from codegen.codegen.generator import parse_definitions
-from codegen.utils import load_md
+from codegen.utils.files import load_md
 
 
 def test_parse_definitions():

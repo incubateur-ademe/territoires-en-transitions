@@ -2,7 +2,8 @@
 
 from black import format_str, FileMode
 
-from codegen.utils import camel_to_snake, build_jinja_environment
+from codegen.utils.strings import camel_to_snake
+from codegen.utils.templates import build_jinja_environment
 
 template_file = 'shared/python/classes.j2'
 

@@ -3,7 +3,8 @@ import json
 
 import jsbeautifier
 
-from codegen.utils import camel_to_snake, build_jinja_environment
+from codegen.utils.strings import camel_to_snake
+from codegen.utils.templates import build_jinja_environment
 
 class_template = 'shared/js/classes.j2'
 object_template = 'shared/js/objects.j2'

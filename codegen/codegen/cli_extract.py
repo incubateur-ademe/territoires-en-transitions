@@ -4,7 +4,7 @@ import typer
 
 from codegen.citergie.extractor import load_docx, parse_docx, write_mesure_md
 from codegen.citergie.indicator_extractor import parse_indicators_xlsx, indicators_to_markdowns
-from codegen.utils import write
+from codegen.utils.files import write
 
 app = typer.Typer()
 

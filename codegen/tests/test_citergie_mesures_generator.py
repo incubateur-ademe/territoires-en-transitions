@@ -1,5 +1,5 @@
-from codegen.citergie.generator import build_mesure
-from codegen.utils import load_md
+from codegen.citergie.mesures_generator import build_mesure
+from codegen.utils.files import load_md
 
 
 def test_build_mesure():

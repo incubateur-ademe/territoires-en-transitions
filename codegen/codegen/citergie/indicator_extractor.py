@@ -62,9 +62,28 @@ def parse_indicators_xlsx(indicateurs: str, correspondance: str) -> List[dict]:
     indicateurs.drop(columns=["valeur audit", "autres", "commentaires"], inplace=True)
 
     # Forward fill seems reasonable for missing data
+    indicateurs['climat_pratic'] = indicateurs['climat_pratic'].apply(lambda x: x if x else None)
+    indicateurs['mesures'] = indicateurs['mesures'].apply(lambda x: x if x else None)
     indicateurs.ffill(inplace=True)
 
     return indicateurs.to_dict('records')
+
+
+def clean_unite(unite: str) -> str:
+    """Make unite valid yaml"""
+    unite = cleanup(unite)
+    if unite.startswith('%'):
+        return f"'{unite}'"
+    return unite
+
+
+def cleanup(nom: str) -> str:
+    """General cleanup function"""
+    nom = nom.strip()
+    nom = nom.replace('\n', ' ')
+    if not nom:
+        return 'Non trouvé'
+    return nom
 
 
 def indicators_to_markdowns(indicators: List[dict]) -> Dict[str, str]:
@@ -92,10 +111,10 @@ def indicators_to_markdowns(indicators: List[dict]) -> Dict[str, str]:
         def wl(s: str) -> None:
             lines.append(f'{s}\n')
 
-        wl(f"# {indicator['nom']}")
+        wl(f"# {cleanup(indicator['nom'])}")
         wl("```yaml")
         wl(f"id: {uid}")
-        wl(f"unite: {indicator['unit']}")
+        wl(f"unite: {clean_unite(indicator['unit'])}")
         wl(f"mesures:")
         for mesure_name in indicator['mesures']:
             wl(f"  - {mesure_name}")

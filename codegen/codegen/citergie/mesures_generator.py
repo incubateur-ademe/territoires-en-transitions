@@ -9,32 +9,13 @@ from bs4 import BeautifulSoup
 from mistletoe import Document, HTMLRenderer
 from mistletoe.block_token import Heading, BlockToken, CodeFence
 
-from codegen.utils import write, build_jinja_environment
+from codegen.utils.files import write
+from codegen.utils.markdown_utils import void, is_heading, is_yaml, is_keyword
+from codegen.utils.templates import build_jinja_environment
 
 env = build_jinja_environment()
 template_js = 'referentiels/js/mesure_citergie.j2'
 template_html = 'referentiels/html/mesure_citergie.j2'
-
-
-def is_keyword(token: BlockToken, keyword: str) -> bool:
-    """Returns True if token is a reserved keyword."""
-    return isinstance(token, Heading) and str(token.children[0].content).lower().startswith(keyword.lower())
-
-
-def is_yaml(token: BlockToken) -> bool:
-    """Returns True if token is a yaml blockquote"""
-    return isinstance(token, CodeFence) and token.language == 'yaml'
-
-
-def is_heading(token: BlockToken, level: int) -> bool:
-    """Returns True if token is a reserved keyword."""
-    return isinstance(token, Heading) and token.level == level
-
-
-# writers functions
-def void(token: BlockToken, mesure: dict) -> None:
-    """Does nothing"""
-    pass
 
 
 def meta(token: BlockToken, data: dict) -> None:

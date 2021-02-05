@@ -3,9 +3,10 @@ import os
 
 import typer
 
-from codegen.citergie.generator import write_citergie_outputs
+from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html
+from codegen.citergie.mesures_generator import write_citergie_outputs
 from codegen.codegen.generator import write_outputs
-from codegen.utils import load_md
+from codegen.utils.files import load_md, write
 
 app = typer.Typer()
 
@@ -27,6 +28,30 @@ def mesures(
             md = load_md(filename)
             write_citergie_outputs(md, output_dir, json=json, js=js, html=html)
     typer.echo(f"Processed {len(files)} 'mesures'.")
+
+
+@app.command()
+def indicateurs(
+    markdown_dir: str = typer.Option('referentiels/extracted/indicateurs_citergie', "--markdown", "-md"),
+    output_dir: str = typer.Option('generated/indicateurs_citergie', "--output", "-o"),
+    html: bool = True,
+) -> None:
+    """
+    Convert 'indicateurs' markdown files to code.
+    """
+    files = glob.glob(os.path.join(markdown_dir, '*.md'))
+    indicators = []
+    for filename in files:
+        typer.echo(f'Processing {filename}...')
+        md = load_md(filename)
+        indicators.extend(build_indicators(md))
+
+    if html:
+        rendered = render_indicators_as_html(indicators)
+        filename = os.path.join(output_dir, 'all.html')
+        write(filename, rendered)
+
+    typer.echo(f"Rendered {len(files)} 'indicateurs' in {output_dir}.")
 
 
 @app.command()
