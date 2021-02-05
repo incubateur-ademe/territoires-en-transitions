@@ -3,6 +3,20 @@
 @tailwind utilities;
 
 @layer components {
+  /* Expandable component */
+  details.expandable > summary {
+    list-style: none;
+  }
+
+  details.expandable > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  details.expandable[open] > summary {
+    @apply bg-gray-200;
+    @apply shadow-inner;
+  }
+
   /* Action component */
   .action h3 {
     @apply text-lg font-semibold mb-4;
@@ -24,18 +38,6 @@
     @apply inline;
   }
 
-  .action details > summary {
-    list-style: none;
-  }
-
-  .action details > summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .action details[open] > summary {
-    @apply bg-gray-200;
-    @apply shadow-inner;
-  }
 
   .action .status input:focus + label,
   .action .status label:hover {
