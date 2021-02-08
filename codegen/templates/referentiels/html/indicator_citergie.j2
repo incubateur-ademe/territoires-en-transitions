@@ -1,34 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="font-sans" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>
         Liste des indicateurs
     </title>
+    <link href="styles.css" rel="stylesheet">
 </head>
 <body class="pb-30 bg-gray-100">
 <main class="container mx-auto lg:px-20 px-4">
-    <h1 class="text-2xl font-semibold my-6">
+    <h1 class="text-3xl font-semibold my-10">
         Liste des indicateurs
     </h1>
-    <ul>
-        <li class="bg-white p-4 rounded m-4 grid grid-cols-1 lg:grid-cols-12 lg:gap-1">
-        {% for theme in indicateurs.keys() %}
-            <h2>{{ theme }}</h2>
+    {% for theme in indicateurs.keys() %}
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold my-6">{{ theme }}</h2>
+            <ul>
             {% for indicateur in indicateurs[theme] %}
-                <section class="relative lg:col-span-8">
-                    <h3 class="text-xl font-semibold mb-6 pr-28">{{ indicateur.nom }}</h3>
-                    <details class="expandable">
-                        <summary
-                                class="absolute top-0 right-0 border border-gray-400 rounded px-2 py-1 cursor-pointer">
-                            Plus</summary>
-                        {{ indicateur.description }}
-                    </details>
-                </section>
-            {% endfor %}
-        {% endfor %}
-        </li>
-    </ul>
+                <li class="bg-white p-4 rounded my-4 grid grid-cols-1 lg:grid-cols-12
+                lg:gap-1">
+                        <div class="relative lg:col-span-8">
+                            <h3 class="text-xl font-semibold mb-6 pr-28">{{ indicateur.nom }}</h3>
+                            <details class="expandable">
+                                <summary
+                                        class="absolute top-0 right-0 border border-gray-400 rounded px-2 py-1
+                                        cursor-pointer outline-none focus:ring-1 focus:ring-indigo-500">
+                                    Plus</summary>
+                                {{ indicateur.description }}
+                            </details>
+                        </div>
+                        <form class="lg:col-span-2 lg:col-end-13">
+                            <input type="text"
+                                   class="border border-gray-400 rounded px-2 py-1 shadow-sm
+                                   outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full" />
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endfor %}
 </main>
 </body>
 </html>
