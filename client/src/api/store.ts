@@ -1,17 +1,22 @@
+import { Indicator } from '../api/indicator'
+
 // Temporary interfaces for API
 export interface ActionStatus {
-  avancement?: string,
-  action_id?: string,
-  actionId?: string,
+  avancement?: string
+  action_id?: string
+  actionId?: string
 }
 
 export interface Action {
-  statut: ActionStatus,
+  statut: ActionStatus
 }
 
 export interface Store {
   actions?: {
-    [key: string]: Action,
+    [key: string]: Action
+  }
+  indicators?: {
+    [key: string]: Indicator
   }
 }
 

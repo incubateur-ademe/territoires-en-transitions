@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="font-sans" xmlns="http://www.w3.org/1999/html">
+<html class="font-sans" lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8"/>
     <title>
         Liste des indicateurs
     </title>
-    <link href="styles.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet"/>
 </head>
 <body class="pb-30 bg-gray-100">
 <main class="container mx-auto lg:px-20 px-4">
@@ -29,10 +29,15 @@
                                 {{ indicateur.description }}
                             </details>
                         </div>
-                        <form class="lg:col-span-2 lg:col-end-13">
+                        <form
+                            class="lg:col-span-2 lg:col-end-13"
+                            data-component="indicatorForm"
+                        >
                             <input type="text"
                                    class="border border-gray-400 rounded px-2 py-1 shadow-sm
-                                   outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full" />
+                                   outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full"
+                                   data-user-indicator-id="{{ indicateur.yaml.id }}"
+                            />
                         </form>
                     </li>
                 {% endfor %}
@@ -40,5 +45,6 @@
         </section>
     {% endfor %}
 </main>
+<script src="main.js"></script>
 </body>
 </html>
