@@ -1,7 +1,7 @@
 # Indicateurs
 
 ## Indicateur citergie
-Représente un indicateur extrait de `codegen/referentiels/sources/indicateurs_citergie.xlsx`.
+Représente un indicateur extrait de `referentiels/sources/indicateurs_citergie.xlsx`.
 
 ```yaml
 IndicateurCitergie:

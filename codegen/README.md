@@ -16,7 +16,7 @@ poetry update
 #### Les deux outils CLI
 
 ##### Le parser citergie
-Permet d'extraire le fichier Word citergie `referentiels/sources/citergie.docx`  pour créer des fichiers markdown.
+Permet d'extraire le fichier Word citergie `../referentiels/sources/citergie.docx`  pour créer des fichiers markdown.
 Plus tard on pourra faire la même chose avec le référentiel ECi.
 
 ###### Mesures
@@ -29,8 +29,8 @@ Usage: extract citergie [OPTIONS]
   Convert source docx file to 'mesures' markdown files.
 
 Options:
-  -d, --docx TEXT    [default: referentiels/sources/citergie.docx]
-  -o, --output TEXT  [default: referentiels/extracted/citergie]
+  -d, --docx TEXT    [default: ../referentiels/sources/citergie.docx]
+  -o, --output TEXT  [default: ../referentiels/markdown/mesures_citergie]
   --help             Show this message and exit.
 
 ```
@@ -46,13 +46,13 @@ Usage: extract indicateurs [OPTIONS]
 
 Options:
   -i, --indicateurs TEXT     [default:
-                             referentiels/sources/indicateurs_citergie.xlsx]
+                             ../referentiels/sources/indicateurs_citergie.xlsx]
 
-  -c, --correspondance TEXT  [default: referentiels/sources/correspondance_cit
+  -c, --correspondance TEXT  [default: ../referentiels/sources/correspondance_cit
                              ergie_climat_pratique.xlsx]
 
   -o, --output TEXT          [default:
-                             referentiels/extracted/indicateurs_citergie]
+                             ../referentiels/markdown/indicateurs_citergie]
 
   --help                     Show this message and exit.
 ```
@@ -69,7 +69,7 @@ Usage: generate mesures [OPTIONS]
   Convert 'mesures' markdown files to code.
 
 Options:
-  -md, --markdown TEXT  [default: referentiels/extracted/citergie]
+  -md, --markdown TEXT  [default: ../referentiels/markdown/mesures_citergie]
   -o, --output TEXT     [default: generated/citergie]
   --html / --no-html    [default: True]
   --json / --no-json    [default: True]
@@ -86,7 +86,7 @@ Usage: generate indicateurs [OPTIONS]
   Convert 'indicateurs' markdown files to code.
 
 Options:
-  -md, --markdown TEXT  [default: referentiels/extracted/indicateurs_citergie]
+  -md, --markdown TEXT  [default: ../referentiels/markdown/indicateurs_citergie]
   -o, --output TEXT     [default: generated/indicateurs_citergie]
   --html / --no-html    [default: True]
   --help                Show this message and exit.

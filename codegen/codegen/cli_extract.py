@@ -11,8 +11,8 @@ app = typer.Typer()
 
 @app.command()
 def citergie(
-    doc_file: str = typer.Option('referentiels/sources/citergie.docx', "--docx", "-d"),
-    output_dir: str = typer.Option('referentiels/extracted/citergie', "--output", "-o")
+    doc_file: str = typer.Option('../referentiels/sources/citergie.docx', "--docx", "-d"),
+    output_dir: str = typer.Option('../referentiels/markdown/mesures_citergie', "--output", "-o")
 ) -> None:
     """
     Convert source docx file to 'mesures' markdown files.
@@ -32,10 +32,10 @@ def citergie(
 
 @app.command()
 def indicateurs(
-    indicateurs_xlsx: str = typer.Option('referentiels/sources/indicateurs_citergie.xlsx', "--indicateurs", "-i"),
-    correspondance_xlsx: str = typer.Option('referentiels/sources/correspondance_citergie_climat_pratique.xlsx',
+    indicateurs_xlsx: str = typer.Option('../referentiels/sources/indicateurs_citergie.xlsx', "--indicateurs", "-i"),
+    correspondance_xlsx: str = typer.Option('../referentiels/sources/correspondance_citergie_climat_pratique.xlsx',
                                             "--correspondance", "-c"),
-    output_dir: str = typer.Option('referentiels/extracted/indicateurs_citergie', "--output", "-o")
+    output_dir: str = typer.Option('../referentiels/markdown/indicateurs_citergie', "--output", "-o")
 ) -> None:
     """
     Convert source xlsx files to 'indicateurs' markdown files.

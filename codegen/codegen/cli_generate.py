@@ -13,7 +13,7 @@ app = typer.Typer()
 
 @app.command()
 def mesures(
-    markdown_dir: str = typer.Option('referentiels/extracted/citergie', "--markdown", "-md"),
+    markdown_dir: str = typer.Option('../referentiels/markdown/mesures_citergie', "--markdown", "-md"),
     output_dir: str = typer.Option('generated/citergie', "--output", "-o"),
     html: bool = True,
     json: bool = True,
@@ -32,7 +32,7 @@ def mesures(
 
 @app.command()
 def indicateurs(
-    markdown_dir: str = typer.Option('referentiels/extracted/indicateurs_citergie', "--markdown", "-md"),
+    markdown_dir: str = typer.Option('../referentiels/markdown/indicateurs_citergie', "--markdown", "-md"),
     output_dir: str = typer.Option('generated/indicateurs_citergie', "--output", "-o"),
     html: bool = True,
 ) -> None:
