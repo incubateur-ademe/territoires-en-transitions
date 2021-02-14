@@ -37,6 +37,12 @@ modification :
 npm run build
 ```
 
+### Tests
+
+```
+npm run test
+```
+
 ### Bundle CSS
 
 Pour générer les styles, on utilise [postcss-cli](https://github.com/postcss/postcss-cli)
