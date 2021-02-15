@@ -1,7 +1,6 @@
 """Générateur pour les mesures, génère les exemples dans /generated/citergie."""
 import json
-import os
-from typing import Callable
+from typing import Callable, List
 
 import jsbeautifier
 import yaml
@@ -9,13 +8,8 @@ from bs4 import BeautifulSoup
 from mistletoe import Document, HTMLRenderer
 from mistletoe.block_token import Heading, BlockToken, CodeFence
 
-from codegen.utils.files import write
 from codegen.utils.markdown_utils import void, is_heading, is_yaml, is_keyword
 from codegen.utils.templates import build_jinja_environment
-
-env = build_jinja_environment()
-template_js = 'referentiels/js/mesure_citergie.j2'
-template_html = 'referentiels/html/mesure_citergie.j2'
 
 
 def meta(token: BlockToken, data: dict) -> None:
@@ -116,38 +110,49 @@ def build_mesure(doc: Document) -> dict:
     return mesure
 
 
-def render_js(template_file: str, mesure: dict) -> str:
+def render_mesure_as_js(mesure: dict,
+                        template_file='referentiels/js/mesure_citergie.j2') -> str:
+    env = build_jinja_environment()
     template = env.get_template(template_file)
     rendered = template.render(mesure=mesure)
     return jsbeautifier.beautify(rendered)
 
 
-def render_html(template_file: str, mesure: dict) -> str:
+def render_mesure_as_html(mesure: dict,
+                          template_file='referentiels/html/mesure_citergie.j2') -> str:
+    env = build_jinja_environment()
     template = env.get_template(template_file)
-    rendered = template.render(mesure=mesure)
+
+    # todo since those names are shared, use code generation.
+    avancement_noms = {
+        'faite': 'Faite',
+        'programmee': 'Programmée',
+        'pas_faite': 'Pas faite',
+        'non_concerne': 'Non concerné',
+    }
+    rendered = template.render(mesure=mesure, avancement_noms=avancement_noms)
     soup = BeautifulSoup(rendered, 'html.parser')
     return soup.prettify()
 
 
-def render_json(mesure: dict) -> str:
+def render_mesures_summary_as_html(mesures: List[dict],
+                                   template_file='referentiels/html/mesures_summary_citergie.j2') -> str:
+    """Renders mesures summmary into a single html string"""
+    env = build_jinja_environment()
+    template = env.get_template(template_file)
+    by_theme = {}
+
+    for mesure in mesures:
+        theme = mesure['climat_pratic'].strip() if 'climat_pratic' in mesure.keys() else ''
+        theme = theme if theme else 'Pas de thème'
+        if theme not in by_theme.keys():
+            by_theme[theme] = []
+        by_theme[theme].append(mesure)
+
+    rendered = template.render(mesures=by_theme)
+    soup = BeautifulSoup(rendered, 'html.parser')
+    return soup.prettify()
+
+
+def render_mesure_as_json(mesure: dict) -> str:
     return json.dumps(mesure, indent=4)
-
-
-def write_citergie_outputs(data: Document, output_dir: str, json: bool, js: bool, html: bool) -> None:
-    mesure = build_mesure(data)
-    filename_base = f"mesure_{mesure['id']}"
-
-    if json:
-        json_data = render_json(mesure)
-        filename = os.path.join(output_dir, 'json', f'{filename_base}.json')
-        write(filename, json_data)
-
-    if js:
-        javascript = render_js(template_js, mesure)
-        filename = os.path.join(output_dir, 'js', f'{filename_base}.mjs')
-        write(filename, javascript)
-
-    if html:
-        html_doc = render_html(template_html, mesure)
-        filename = os.path.join(output_dir, 'html', f'{filename_base}.html')
-        write(filename, html_doc)

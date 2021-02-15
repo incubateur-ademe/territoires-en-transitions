@@ -1,13 +1,13 @@
 """Main module."""
-import os
 import re
-from typing import Callable
+from typing import Callable, List
 
 import docx.document
 import docx.oxml.table
 import docx.oxml.text.paragraph
 import docx.table
 import docx.text.paragraph
+import pandas as pd
 from docx.text.paragraph import Paragraph
 
 
@@ -138,7 +138,7 @@ def categorized_action(cat: str) -> Callable:
     return parser
 
 
-def parse_docx(doc: docx.Document) -> list:
+def docx_to_mesures(doc: docx.Document) -> list:
     """Returns mesures from document"""
     parser: Callable = void
     mesures = []
@@ -165,43 +165,54 @@ def parse_docx(doc: docx.Document) -> list:
     return mesures
 
 
-def write_mesure_md(mesure: dict, directory: str) -> None:
-    """Write mesure as an .md file in directory"""
-    filename = os.path.join(directory, f"{mesure['id']}.md")
+def add_climat_pratic(mesures: List[dict], correspondance: str) -> List[dict]:
+    """Add climat pratic theme in mesure"""
+    correspondance = pd.read_excel(correspondance, dtype=str, sheet_name=0, header=1)
+    correspondance = correspondance.iloc[:, [4, 5]]
+    correspondance.columns = ['n', 'climat_pratic']
+
+    for mesure in mesures:
+        def find_cc(n: str) -> str:
+            try:
+                return str(correspondance[correspondance['n'] == n].iat[0, 1]).strip()
+            except:
+                return ''
+
+        mesure['climat_pratic'] = find_cc(mesure['id'])
+
+    return mesures
+
+
+def mesure_to_markdown(mesure: dict) -> str:
     lines = []
 
-    def wl(s: str) -> None:
-        lines.append(f'{s}\n')
+    def add_line(s: str) -> None:
+        lines.append(s)
 
-    wl(f"# {mesure['nom']}")
-    wl("```yaml")
-    wl(f"id: {mesure['id']}")
-    wl("```")
+    def clean_climat_pratic(cc: str) -> str:
+        cc = cc.strip()
+        return cc if cc else "''"
+
+    add_line(f"# {mesure['nom']}")
+    add_line("```yaml")
+    add_line(f"id: {mesure['id']}")
+    add_line(f"climat_pratic: {clean_climat_pratic(mesure['climat_pratic'])}")
+    add_line("```")
     if mesure['description']:
-        wl('## Description')
-        wl(mesure['description'])
-    wl('')
-    wl('## Actions')
+        add_line('## Description')
+        add_line(mesure['description'])
+    add_line('')
+    add_line('## Actions')
     for action in mesure['actions']:
-        wl(f"### {action['nom']}")
-        wl("```yaml")
-        wl(f"id: {action['id']}")
-        wl(f"points: {action['points']}")
-        wl(f"categorie: {action['categorie']}")
-        wl("```")
+        add_line(f"### {action['nom']}")
+        add_line("```yaml")
+        add_line(f"id: {action['id']}")
+        add_line(f"points: {action['points']}")
+        add_line(f"categorie: {action['categorie']}")
+        add_line("```")
         if action['description']:
-            wl(action['description'])
-        wl('')
-        wl('')
+            add_line(action['description'])
+        add_line('')
+        add_line('')
 
-    try:
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-    except OSError:
-        pass
-    with open(filename, 'w', encoding='utf8') as file:
-        file.writelines(lines)
-
-
-def load_docx(doc_file: str) -> docx.Document:
-    """Returns a Document from doc_file"""
-    return docx.Document(doc_file)
+    return '\n'.join(lines)

@@ -2,16 +2,18 @@ import os
 
 import typer
 
-from codegen.citergie.extractor import load_docx, parse_docx, write_mesure_md
 from codegen.citergie.indicator_extractor import parse_indicators_xlsx, indicators_to_markdowns
-from codegen.utils.files import write
+from codegen.citergie.mesures_extractor import docx_to_mesures, add_climat_pratic, mesure_to_markdown
+from codegen.utils.files import write, load_docx
 
 app = typer.Typer()
 
 
 @app.command()
-def citergie(
+def mesures(
     doc_file: str = typer.Option('../referentiels/sources/citergie.docx', "--docx", "-d"),
+    correspondance_xlsx: str = typer.Option('../referentiels/sources/correspondance_citergie_climat_pratique.xlsx',
+                                            "--correspondance", "-c"),
     output_dir: str = typer.Option('../referentiels/markdown/mesures_citergie', "--output", "-o")
 ) -> None:
     """
@@ -19,13 +21,17 @@ def citergie(
     """
     typer.echo(f"Loading docx file: '{doc_file}'...")
     document = load_docx(doc_file)
-    typer.echo(f"Reading document...")
-    mesures = parse_docx(document)
+    typer.echo(f"Reading citergie document...")
+    mesures = docx_to_mesures(document)
     typer.echo(f"Found {len(mesures)} 'mesures'!")
+    typer.echo(f"Reading correspondance table...")
+    add_climat_pratic(mesures, correspondance_xlsx)
 
     with typer.progressbar(mesures) as progress:
         for mesure in progress:
-            write_mesure_md(mesure, output_dir)
+            filename = os.path.join(output_dir, f"{mesure['id']}.md")
+            md = mesure_to_markdown(mesure)
+            write(filename, md)
 
     typer.echo(f"All {len(mesures)} 'mesures' were exported in '{output_dir}' as markdown files.")
 
@@ -50,11 +56,3 @@ def indicateurs(
             write(filename, md)
 
     typer.echo(f"All {len(mds)} 'indicateurs' were exported in '{output_dir}' as markdown files.")
-
-
-@app.command()
-def eci() -> None:
-    """
-    Convert source ECi files to markdown
-    """
-    typer.echo("Le référentiel économie circulaire n'est pas implémenté")

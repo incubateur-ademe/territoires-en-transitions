@@ -1,5 +1,6 @@
 import os
 
+import docx.document
 import yaml
 from mistletoe import Document
 
@@ -14,6 +15,11 @@ def load_yaml(filename: str) -> dict:
     """Load a yaml file"""
     with open(filename, 'r') as file:
         return yaml.full_load(file)
+
+
+def load_docx(doc_file: str) -> docx.Document:
+    """Returns a Document from doc_file"""
+    return docx.Document(doc_file)
 
 
 def write(filename: str, contents: str) -> None:

@@ -21,18 +21,22 @@ Plus tard on pourra faire la même chose avec le référentiel ECi.
 
 ###### Mesures
 ```shell
-poetry run extract citergie --help
+poetry run extract mesures --help
 ```
 ```shell
-Usage: extract citergie [OPTIONS]
+Usage: extract mesures [OPTIONS]
 
   Convert source docx file to 'mesures' markdown files.
 
 Options:
-  -d, --docx TEXT    [default: ../referentiels/sources/citergie.docx]
-  -o, --output TEXT  [default: ../referentiels/markdown/mesures_citergie]
-  --help             Show this message and exit.
+  -d, --docx TEXT            [default: ../referentiels/sources/citergie.docx]
+  -c, --correspondance TEXT  [default: ../referentiels/sources/correspondance_
+                             citergie_climat_pratique.xlsx]
 
+  -o, --output TEXT          [default:
+                             ../referentiels/markdown/mesures_citergie]
+
+  --help                     Show this message and exit.
 ```
 
 ###### Indicateurs
