@@ -67,7 +67,7 @@ def indicateurs(
 
     if html:
         rendered = render_indicators_as_html(indicators)
-        filename = os.path.join(output_dir, 'all.html')
+        filename = os.path.join(output_dir, 'indicateurs.html')
         write(filename, rendered)
 
     typer.echo(f"Rendered {len(files)} 'indicateurs' in {output_dir}.")
