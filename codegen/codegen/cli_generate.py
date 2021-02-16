@@ -79,7 +79,7 @@ def shared(
     output_dir: str = typer.Option('generated/definition/shared', "--output", "-o"),
     python: bool = True,
     js: bool = True,
-) -> None:
+) -> None:  # pragma: no cover
     """
     Generate shared definitions.
     """

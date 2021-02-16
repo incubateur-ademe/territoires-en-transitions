@@ -79,5 +79,5 @@ def render_indicators_as_html(indicateurs: List[dict],
     return soup.prettify()
 
 
-def render_indicators_as_json(indicators: List[dict]) -> str:
+def render_indicators_as_json(indicators: List[dict]) -> str:  # pragma: no cover
     return json.dumps(indicators, indent=4)

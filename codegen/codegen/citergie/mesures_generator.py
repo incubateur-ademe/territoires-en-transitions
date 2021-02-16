@@ -111,7 +111,7 @@ def build_mesure(doc: Document) -> dict:
 
 
 def render_mesure_as_js(mesure: dict,
-                        template_file='referentiels/js/mesure_citergie.j2') -> str:
+                        template_file='referentiels/js/mesure_citergie.j2') -> str:  # pragma: no cover
     env = build_jinja_environment()
     template = env.get_template(template_file)
     rendered = template.render(mesure=mesure)
@@ -154,5 +154,5 @@ def render_mesures_summary_as_html(mesures: List[dict],
     return soup.prettify()
 
 
-def render_mesure_as_json(mesure: dict) -> str:
+def render_mesure_as_json(mesure: dict) -> str:  # pragma: no cover
     return json.dumps(mesure, indent=4)

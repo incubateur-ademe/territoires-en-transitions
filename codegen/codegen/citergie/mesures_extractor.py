@@ -10,6 +10,8 @@ import docx.text.paragraph
 import pandas as pd
 from docx.text.paragraph import Paragraph
 
+from codegen.utils.markdown_utils import void
+
 
 def iter_paragraphs(parent, recursive=True):
     """
@@ -24,7 +26,7 @@ def iter_paragraphs(parent, recursive=True):
         parent_elm = parent.element.body
     elif isinstance(parent, docx.table._Cell):
         parent_elm = parent._tc
-    else:
+    else:  # pragma: no cover
         raise TypeError(repr(type(parent)))
 
     for child in parent_elm.iterchildren():
@@ -92,11 +94,6 @@ def is_reduction(p: Paragraph) -> bool:
 def is_perimeter(p: Paragraph) -> bool:
     """Returns if paragraph is 'Périmètre de l’évaluation'"""
     return p_low(p) == 'périmètre de l’évaluation'
-
-
-def void(p: Paragraph, mesures: list) -> None:
-    """Does nothing"""
-    pass
 
 
 def mesure(p: Paragraph, mesures: list) -> None:
