@@ -30,4 +30,4 @@ def test_indicateurs(mock_write: MagicMock):
         markdown_dir='../referentiels/markdown/indicateurs_citergie',
         html=True,
     )
-    mock_write.assert_any_call(os.path.join(output_dir, 'all.html'), ANY)
+    mock_write.assert_any_call(os.path.join(output_dir, 'indicateurs.html'), ANY)
