@@ -55,7 +55,7 @@
 
                     {# Avancement input #}
                     <form class="lg:col-span-3 lg:col-end-12">
-                        <fieldset class="flex status" data-action-id="1.1.1.1">
+                        <fieldset class="flex status" data-action-id="{{ action.id }}">
                             {% for key, display in avancement_noms.items() %}
                                 <div>
                                     <input value="{{ key }}"
