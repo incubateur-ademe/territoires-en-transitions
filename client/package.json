@@ -6,7 +6,7 @@
     "build": "webpack --mode development",
     "build:prod": "cross-env NODE_ENV=production webpack --mode production",
     "deploy": "bin/deploy",
-    "test": "cross-env TS_NODE_COMPILER_OPTIONS={\\\"module\\\":\\\"commonjs\\\"}  mocha --require mock-local-storage"
+    "test": "cross-env TS_NODE_COMPILER_OPTIONS={\\\"module\\\":\\\"commonjs\\\"} mocha"
   },
   "devDependencies": {
     "@types/chai": "^4.2.14",
