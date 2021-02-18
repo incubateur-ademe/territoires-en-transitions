@@ -31,6 +31,7 @@ job("codegen pytest") {
 
             branchFilter {
                 // Run tests an all branches except `main`
+                +"refs/heads/*"
                 -"refs/heads/main"
             }
         }
@@ -53,7 +54,8 @@ job("client tests") {
 
             branchFilter {
                 // Run tests an all branches except `main`
-                "refs/heads/main"
+                +"refs/heads/*"
+                -"refs/heads/main"
             }
         }
     }
@@ -84,7 +86,6 @@ job("Staging pipeline: build/test/deploy") {
         gitPush {
             // run on changes in `main` branch
             branchFilter {
-                // TODO: change to `main` branch
                 +"refs/heads/main"
             }
         }
@@ -97,6 +98,7 @@ job("Staging pipeline: build/test/deploy") {
         workDir = "$mountDir/work/territoiresentransitions.fr/codegen/"
         shellScript {
             content = """
+                set -e
                 $pytest
                 poetry run generate indicateurs -o $mountDir/share/generated
             """
@@ -111,6 +113,7 @@ job("Staging pipeline: build/test/deploy") {
         workDir = "$mountDir/work/territoiresentransitions.fr/client/"
         shellScript {
             content = """
+                set -e
                 npm i
                 $npmTest
                 npm run build:prod
@@ -128,6 +131,7 @@ job("Staging pipeline: build/test/deploy") {
 
         shellScript {
             content = """
+                set -e
                 cp -R $mountDir/share/generated/* dist
                 pip3 install awscli
                 pip3 install awscli-plugin-endpoint
