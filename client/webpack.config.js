@@ -1,6 +1,8 @@
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
+const mode = process.env.NODE_ENV || 'development'
+
 module.exports = {
   entry: path.resolve(__dirname, 'src/app.js'),
   output: {
@@ -8,7 +10,7 @@ module.exports = {
     filename: 'main.js',
   },
   resolve: {
-    // Add '.ts' and '.tsx' as resolvable extensions in this order.
+    // Add '.ts' as resolvable extensions in this order.
     extensions: ['.ts', '.js'],
   },
   plugins: [
@@ -42,9 +44,11 @@ module.exports = {
       { test: /\.js$/, loader: 'source-map-loader' },
     ],
   },
+  mode,
   // Enable sourcemaps for debugging webpack's output.
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './dist',
+    hot: true,
   },
 }

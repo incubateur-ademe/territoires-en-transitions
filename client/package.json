@@ -2,7 +2,7 @@
   "name": "territoiresentransitions.fr",
   "version": "1.0.0",
   "scripts": {
-    "start": "webpack serve",
+    "start": "webpack serve --hot",
     "build": "webpack --mode development",
     "build:prod": "cross-env NODE_ENV=production webpack --mode production",
     "deploy": "bin/deploy",
