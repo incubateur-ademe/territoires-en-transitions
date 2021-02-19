@@ -7,7 +7,7 @@ module.exports = {
   variants: {
     extend: {
       boxShadow: ['active'],
-      backgroundColor: ['active'],
+      backgroundColor: ['active', 'hover'],
       textColor: ['active'],
     }
   },

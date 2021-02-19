@@ -9,21 +9,25 @@
 </head>
 <body class="pb-30 bg-gray-100">
 <nav class="bg-gray-800">
-  <ul class="container mx-auto lg:px-20 px-4 text-white p-4 flex font-semibold
+    <ul class="container mx-auto lg:px-20 px-4 text-white p-4 flex font-semibold
     text-xl">
-    <li class="mr-4"><a class="p-1 rounded hover:bg-gray-100
+        <li class="mr-4"><a class="p-1 rounded hover:bg-gray-100
         hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700
         active:text-gray-900 active:shadow-inner active:bg-white" href="mesures.html">Mesures</a></li>
-    <li class="mr-4"><a class="p-1 rounded hover:bg-gray-100
+        <li class="mr-4"><a class="p-1 rounded hover:bg-gray-100
         hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700
         active:text-gray-900 active:shadow-inner active:bg-white"
-        href="indicateurs.html">Indicateurs</a></li>
-  </ul>
+                            href="indicateurs.html">Indicateurs</a></li>
+    </ul>
 </nav>
 <main class="container mx-auto lg:px-20 px-4">
-    <h1 class="text-3xl font-semibold my-10">
-        Liste des mesures
-    </h1>
+    <header class="flex my-10">
+        <h1 class="text-3xl font-semibold flex-grow">
+            Liste des mesures
+        </h1>
+        <a href="mesure_ajouter.html"
+           class="p-2 text-xl rounded border border-gray-500 hover:bg-blue-500">Ajouter une mesure</a>
+    </header>
     {% for theme in mesures.keys() %}
         <section class="mb-16">
             <h2 class="text-2xl font-semibold my-6">{{ theme }}</h2>
