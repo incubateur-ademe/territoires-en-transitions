@@ -1,11 +1,11 @@
-import { updateActionStatus, getActionStatus } from '../api/actionStatus'
+import { setActionStatus, getActionStatus } from '../api/actionStatus'
 
 const addListeners = (actionId: string, inputs: NodeListOf<HTMLInputElement>): void => {
   let onChange = (event: Event): void => {
     let target = event.target as HTMLInputElement
     let avancement = target.value
 
-    updateActionStatus({ avancement, actionId })
+    setActionStatus(actionId, avancement)
   }
 
   inputs.forEach((input): void => {
@@ -13,8 +13,12 @@ const addListeners = (actionId: string, inputs: NodeListOf<HTMLInputElement>): v
   })
 }
 
-const fillDefaultValues = (actionId: string, inputs: NodeListOf<HTMLInputElement>): void => {
-  let actionStatus = getActionStatus({ actionId })
+/**
+ * Check the default value of the status picker of an action with data stored in
+ * localStorage
+ */
+const checkDefaultValue = (actionId: string, inputs: NodeListOf<HTMLInputElement>): void => {
+  let actionStatus = getActionStatus(actionId)
   let selectedInputId = `action-${actionId}_pas_faite`
 
   if (actionStatus) {
@@ -26,10 +30,13 @@ const fillDefaultValues = (actionId: string, inputs: NodeListOf<HTMLInputElement
   })
 }
 
+/**
+ * Initialize the status picker of an action with all its event listeners
+ */
 export const init = (element: HTMLFieldSetElement): void => {
   let actionId = element.dataset.actionId || ''
   let inputs = element.querySelectorAll<HTMLInputElement>('input[type="radio"]')
 
   addListeners(actionId, inputs)
-  fillDefaultValues(actionId, inputs)
+  checkDefaultValue(actionId, inputs)
 }

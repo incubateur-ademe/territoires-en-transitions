@@ -1,65 +1,63 @@
 import {
-  ActionStatus,
   Store,
   getStore,
   setStore,
 } from './store'
 
-interface SetActionStatusInStorePayload {
+/**
+ * Structure of the status of an action in localStorage
+ */
+export interface ActionStatus {
+  avancement: string
+  action_id: string
+}
+
+/**
+ * Set the status of an action in localStorage
+ */
+let setActionStatusInStore = (
   store: Store,
   action_id: string,
   avancement: string,
-}
-
-interface GetActionStatusInStorePayload {
-  store: Store,
-  action_id: string,
-}
-
-let setActionStatusInStore = ({ store, action_id, avancement }: SetActionStatusInStorePayload): Store => {
+  ): Store => {
   let newStore: Store = Object.assign({}, store)
 
-  if (!newStore.actions) {
-    newStore.actions = {
-      [action_id]: {
-        statut: {
-          action_id,
-          avancement,
-        }
-      }
-    }
-
-    return newStore
+  if (!newStore.action_statuses) {
+    newStore['action_statuses'] = {}
   }
 
-  if (!newStore.actions[action_id]) {
-    newStore.actions[action_id] = {
-      statut: {
-        action_id,
-        avancement,
-      }
-    }
-
-    return newStore
+  newStore.action_statuses[action_id] = {
+    action_id,
+    avancement,
   }
-
-  newStore.actions[action_id].statut = { action_id, avancement }
 
   return newStore
 }
 
-const getActionStatusInStore = ({ store, action_id }: GetActionStatusInStorePayload): ActionStatus|null => {
-  if (!store.actions) return null
-  if (!store.actions[action_id]) return null
+/**
+ * Get the status of an action from localStorage
+ */
+const getActionStatusInStore = (
+  store: Store,
+  action_id: string,
+): ActionStatus|null => {
+  if (!store.action_statuses) return null
+  if (!store.action_statuses[action_id]) return null
 
-  return store.actions[action_id].statut
+  return store.action_statuses[action_id]
 }
 
-export const updateActionStatus = ({ avancement, actionId }: ActionStatus): ActionStatus => {
+/**
+ * Set the status of an action
+ */
+export const setActionStatus = (
+  actionId: string,
+  avancement: string,
+): { actionId: string; avancement: string; } => {
   // API call to update the status of an action
   // On the success of the call, we can update the local store.
   const store = getStore()
-  const newStore = setActionStatusInStore({ store, action_id: actionId!, avancement: avancement! })
+  const newStore = setActionStatusInStore(store, actionId!, avancement!)
 
   setStore(newStore)
 
@@ -67,12 +65,17 @@ export const updateActionStatus = ({ avancement, actionId }: ActionStatus): Acti
   return { actionId, avancement }
 }
 
-export const getActionStatus = ({ actionId }: ActionStatus): ActionStatus|null => {
+/**
+ * Get the status of an action
+ */
+export const getActionStatus = (
+  actionId: string
+): { actionId: string; avancement: string; }|null => {
   const store = getStore()
 
   if (!store) return null
 
-  const status = getActionStatusInStore({ store, action_id: actionId! })
+  const status = getActionStatusInStore(store, actionId!)
 
   if (!status) return null
 

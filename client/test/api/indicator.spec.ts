@@ -17,7 +17,7 @@ describe('getIndicator', function () {
     })
 
     it('returns the stored value', function() {
-      const indicator = getIndicator({ indicatorId: '1a'})
+      const indicator = getIndicator('1a')
 
       expect(indicator!.indicator_id).to.eql('1a')
       expect(indicator!.value).to.eql('42')
@@ -25,7 +25,7 @@ describe('getIndicator', function () {
   })
   describe('when store is empty', function() {
     it('returns true', function () {
-      const indicator = getIndicator({ indicatorId: '1' })
+      const indicator = getIndicator('1')
 
       expect(indicator).to.be.null
     })
@@ -40,7 +40,7 @@ describe('getIndicator', function () {
     })
 
     it('returns null', function() {
-      const indicator = getIndicator({ indicatorId: '1' })
+      const indicator = getIndicator('1')
 
       expect(indicator).to.be.null
     })
@@ -62,12 +62,10 @@ describe('setIndicator', function() {
     })
 
     it('sets the passed indicator in localStorage under the key territoiresentransitions', function() {
-      const indicator = {
-        indicatorId: '2b',
-        value: '666',
-      }
+        const indicatorId = '2b'
+        const value = '666'
 
-      setIndicator(indicator)
+      setIndicator(indicatorId, value)
 
       const savedStore = localStorage.getItem(storeKey)!
       const savedIndicator = JSON.parse(savedStore).indicators['2b']
@@ -79,12 +77,10 @@ describe('setIndicator', function() {
     })
 
     it('returns the passed indicator', function() {
-      const indicator = {
-        indicatorId: '2b',
-        value: '666',
-      }
+      const indicatorId = '2b'
+      const value = '666'
 
-      expect(setIndicator(indicator)).to.eql({
+      expect(setIndicator(indicatorId, value)).to.eql({
         indicator_id: '2b',
         value: '666',
       })
@@ -93,12 +89,10 @@ describe('setIndicator', function() {
 
   describe("when indicators entry doesn't exist", function() {
     it('sets the passed indicator in localStorage under the key territoiresentransitions', function() {
-      const indicator = {
-        indicatorId: '2b',
-        value: '666',
-      }
+      const indicatorId = '2b'
+      const value = '666'
 
-      setIndicator(indicator)
+      setIndicator(indicatorId, value)
 
       const savedStore = localStorage.getItem(storeKey)!
       const savedIndicator = JSON.parse(savedStore).indicators['2b']
@@ -110,12 +104,10 @@ describe('setIndicator', function() {
     })
 
     it('returns the passed indicator', function() {
-      const indicator = {
-        indicatorId: '2b',
-        value: '666',
-      }
+        const indicatorId = '2b'
+        const value = '666'
 
-      expect(setIndicator(indicator)).to.eql({
+      expect(setIndicator(indicatorId, value)).to.eql({
         indicator_id: '2b',
         value: '666',
       })

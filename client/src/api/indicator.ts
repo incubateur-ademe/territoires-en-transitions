@@ -1,14 +1,8 @@
 import { getStore, setStore } from './store'
 
-interface SetIndicatorPayload {
-  indicatorId: string
-  value: string
-}
-
-interface GetIndicatorPayload {
-  indicatorId: string
-}
-
+/**
+ * Structure of an indicator in localStorage
+ */
 export interface Indicator {
   indicator_id: string
   value: string
@@ -17,7 +11,7 @@ export interface Indicator {
 /**
  * Set the value of an indicator in localStorage
  */
-export const setIndicator = ({ indicatorId, value }: SetIndicatorPayload): Indicator => {
+export const setIndicator = (indicatorId: string, value: string): Indicator => {
   const store = getStore()
   let newStore = Object.assign({}, store)
 
@@ -37,9 +31,9 @@ export const setIndicator = ({ indicatorId, value }: SetIndicatorPayload): Indic
 }
 
 /**
- * Get the value from localStorage of an indicator
+ * Get the value of an indicator from localStorage
  */
-export const getIndicator = ({ indicatorId }: GetIndicatorPayload): Indicator|null => {
+export const getIndicator = (indicatorId: string): Indicator|null => {
   const store = getStore()
 
   if (!store) return null

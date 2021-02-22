@@ -8,7 +8,7 @@ const onBlur = (event: FocusEvent): void => {
   const { dataset, value } = event.target as HTMLInputElement
   const indicatorId = dataset.userIndicatorId!
 
-  setIndicator({ indicatorId, value})
+  setIndicator(indicatorId, value)
 }
 
 const onKeyPress = (event: KeyboardEvent): void => {
@@ -18,10 +18,13 @@ const onKeyPress = (event: KeyboardEvent): void => {
   }
 }
 
+/**
+ * Initialize the input linked to an indicator with all its event listeners
+ */
 export const init = (form: HTMLFormElement): void => {
   const input = form.querySelector('input')
   const indicatorId = input!.dataset.userIndicatorId!
-  const indicator = getIndicator({ indicatorId })
+  const indicator = getIndicator(indicatorId)
 
   if (indicator) {
     input!.value = indicator.value
