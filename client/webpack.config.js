@@ -10,8 +10,14 @@ module.exports = {
     filename: 'main.js',
   },
   resolve: {
-    // Add '.ts' as resolvable extensions in this order.
-    extensions: ['.ts', '.js'],
+    // Add '.ts', '.svelte' and '.js' as resolvable extensions in this order.
+    extensions: ['.ts', '.svelte', '.js'],
+    // Enable correct import of Svelte modules
+    alias: {
+      svelte: path.dirname(require.resolve('svelte/package.json'))
+    },
+    // Check these fields in the package.json of the imported modules
+    mainFields: ['svelte', 'browser', 'module', 'main']
   },
   plugins: [
     new MiniCssExtractPlugin({
@@ -39,12 +45,32 @@ module.exports = {
         exclude: /node_modules/,
       },
 
+      // All Svelte files are handled by svelte-loader
+      {
+        test: /\.svelte$/,
+        use: {
+          loader: 'svelte-loader',
+        }
+      },
+
       // All JS output files will have any sourcemaps re-processed by
       // source-map-loader.
       { test: /\.js$/, loader: 'source-map-loader' },
+
+      // This patch is required to prevent errors from Svelte on Webpack 5+
+      // cf. https://github.com/sveltejs/template-webpack/blob/master/webpack.config.js
+      {
+        test: /node_modules\/svelte\/.*\.mjs$/,
+        resolve: {
+          fullySpecified: false
+        }
+      }
     ],
   },
+
+  // Define the current mode (development/production) for Webpack
   mode,
+
   // Enable sourcemaps for debugging webpack's output.
   devtool: 'inline-source-map',
   devServer: {

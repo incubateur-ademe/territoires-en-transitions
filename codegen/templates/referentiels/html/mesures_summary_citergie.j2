@@ -32,13 +32,18 @@
         <section class="mb-16">
             <h2 class="text-2xl font-semibold my-6">{{ theme }}</h2>
             <ul>
+                <li data-custom-mesure></li>
                 {% for mesure in mesures[theme] %}
-                    <li class="bg-white p-4 rounded my-4 grid grid-cols-1 lg:grid-cols-12 lg:gap-1">
-                        <div class="relative lg:col-span-8">
-                            <a href="mesure_{{ mesure.id }}.html">
-                                <h3 class="text-xl font-semibold mb-6 pr-28">{{ mesure.nom }}</h3>
-                            </a>
-                        </div>
+                    <li>
+                        <a
+                            class="bg-white p-4 rounded my-4 grid grid-cols-1
+                            lg:grid-cols-12 lg:gap-1"
+                            href="{{ mesure.id }}.html"
+                        >
+                            <h3 class="lg:col-span-8 text-xl font-semibold mb-6 pr-28">
+                                {{ mesure.nom }}
+                            </h3>
+                        </a>
                     </li>
                 {% endfor %}
             </ul>
