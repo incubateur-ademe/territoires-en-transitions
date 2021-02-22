@@ -93,22 +93,22 @@ job("Staging pipeline: build/test/deploy") {
 
     // 1- Install codegen dependencies
     // 2- Run tests
-    // 3- Generate html files in client directory
+    // 3- Generate html files in shared client directory
     container("python:3.9.1") {
         workDir = "$mountDir/work/territoiresentransitions.fr/codegen/"
         shellScript {
             content = """
                 set -e
                 $pytest
-                poetry run generate indicateurs -o $mountDir/share/generated
+                poetry run generate indicateurs -o $mountDir/share/client
+                poetry run generate mesures -o $mountDir/share/client
             """
         }
     }
 
     // 4- Install client dependencies
     // 5- Run client tests
-    // 6- Download generated files from shared directory to client/dist
-    // 7- Build client
+    // 6- Build client in shared client directory
     container("node:15.6") {
         workDir = "$mountDir/work/territoiresentransitions.fr/client/"
         shellScript {
@@ -117,14 +117,14 @@ job("Staging pipeline: build/test/deploy") {
                 npm i
                 $npmTest
                 npm run build:prod
-                cp dist/* $mountDir/share/generated
+                cp dist/* $mountDir/share/client
             """
         }
     }
 
     // 8- Deploy client on Scaleway bucket named staging.territoiresentransitions.fr
     container("python:3.9.1") {
-        workDir = "$mountDir/work/territoiresentransitions.fr/client"
+        workDir = "$mountDir/work/territoiresentransitions.fr/tools/"
         env["AWS_ACCESS_KEY_ID"] = Secrets("aws_access_key_id")
         env["AWS_SECRET_ACCESS_KEY"] = Secrets("aws_secret_access_key")
         env["AWS_CONFIG_FILE"] = "$mountDir/work/territoiresentransitions.fr/awscli_config"
@@ -132,14 +132,8 @@ job("Staging pipeline: build/test/deploy") {
         shellScript {
             content = """
                 set -e
-                cp -R $mountDir/share/generated/* dist
-                pip3 install awscli
-                pip3 install awscli-plugin-endpoint
-
-                aws configure list
-                aws s3api put-object --bucket staging.territoiresentransitions.fr --key indicateurs.html --body dist/indicateurs.html --content-type text/html --acl public-read
-                aws s3api put-object --bucket staging.territoiresentransitions.fr --key styles.css --body dist/styles.css --content-type text/css --acl public-read
-                aws s3api put-object --bucket staging.territoiresentransitions.fr --key main.js --body dist/main.js --content-type application/javascript --acl public-read
+                $pytest
+                poetry run deploy --subdomain staging --client $mountDir/share/client
             """
         }
     }
