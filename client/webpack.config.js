@@ -4,13 +4,14 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const mode = process.env.NODE_ENV || 'development'
 
 module.exports = {
-    entry: [
-        path.resolve(__dirname, 'src/app.ts'),
-        path.resolve(__dirname, 'src/mesure_personnalisee.ts'),
-    ],
+    entry: {
+        app: path.resolve(__dirname, 'src/app.ts'),
+        mesure_personnalisee: path.resolve(__dirname, 'src/mesure_personnalisee.ts'),
+        mesure_ajout: path.resolve(__dirname, 'src/mesure_ajout.ts'),
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'main.js',
+        filename: '[name].js',
     },
     resolve: {
         // Add '.ts', '.svelte' and '.js' as resolvable extensions in this order.

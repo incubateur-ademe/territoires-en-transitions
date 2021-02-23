@@ -1,15 +1,11 @@
 import './styles.css'
 import './pages/mesure'
 import './pages/indicatorsList'
-import MesureLink from './components/MesureLink.svelte'
+import MesureLinks from './components/MesureLinks.svelte'
 
-const mesureLink = new MesureLink({
+const mesureLinks = new MesureLinks({
   // @ts-ignore
   target: document.body.querySelector('[data-custom-mesure]'),
-  props: {
-    mesureId: '123',
-    mesureName: 'Ma mesure personnalisée',
-  },
 })
 
-export default mesureLink
+export default mesureLinks

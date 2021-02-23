@@ -1,5 +1,5 @@
 <script lang="typescript">
-    export let text = ''
+    export let name = ''
 </script>
 
-<h1 class="text-2xl font-semibold my-6">{ text }</h1>
+<h1 class="text-2xl font-semibold my-6">{ name }</h1>
