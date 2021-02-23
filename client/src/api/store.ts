@@ -1,5 +1,5 @@
-import { ActionStatus } from './actionStatus'
-import { Indicator } from './indicator'
+import type { ActionStatus } from './actionStatus'
+import type { Indicator } from './indicator'
 
 /**
  * Structure of all data of the current user in localStorage

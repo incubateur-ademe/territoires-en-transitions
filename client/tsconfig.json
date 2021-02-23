@@ -2,11 +2,11 @@
   "compilerOptions": {
     "outDir": "./dist",
     "allowJs": true,
-    "target": "es5",
-    "module": "es6",
     "sourceMap": true,
-    "strict": true
+    "strict": true,
+    "typeRoots": ["./node_modules/@types"]
   },
   "include": ["./src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "extends": "@tsconfig/svelte/tsconfig.json"
 }

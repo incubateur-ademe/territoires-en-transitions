@@ -9,6 +9,7 @@
     "test": "cross-env TS_NODE_COMPILER_OPTIONS={\\\"module\\\":\\\"commonjs\\\"} mocha"
   },
   "devDependencies": {
+    "@tsconfig/svelte": "^1.0.10",
     "@types/chai": "4.2.15",
     "@types/mocha": "8.2.1",
     "autoprefixer": "10.2.4",
@@ -25,7 +26,8 @@
     "source-map-loader": "2.0.1",
     "style-loader": "2.0.0",
     "svelte": "3.32.3",
-    "svelte-loader": "3.0.0",
+    "svelte-loader": "^3.0.0",
+    "svelte-preprocess": "^4.6.9",
     "tailwindcss": "2.0.3",
     "ts-loader": "8.0.17",
     "ts-node": "9.1.1",
