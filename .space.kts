@@ -115,7 +115,6 @@ job("Staging pipeline: build/test/deploy") {
             content = """
                 set -e
                 npm i
-                $npmTest
                 npm run build:prod
                 cp dist/* $mountDir/share/client
             """
