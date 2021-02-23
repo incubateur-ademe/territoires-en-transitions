@@ -3,6 +3,7 @@ module.exports = {
     content: [
       './dist/**/*.html',
       './../codegen/templates/**/*.j2',
+      './src/**/*.svelte',
     ],
   },
   variants: {
