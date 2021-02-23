@@ -2,6 +2,7 @@ module.exports = {
   purge: {
     content: [
       './dist/**/*.html',
+      './../codegen/templates/**/*.j2',
     ],
   },
   variants: {

@@ -132,7 +132,7 @@ job("Staging pipeline: build/test/deploy") {
         shellScript {
             content = """
                 set -e
-                $pytest
+                $install_poetry
                 poetry run deploy --subdomain staging --client $mountDir/share/client
             """
         }
