@@ -65,3 +65,23 @@ export const getAllCustomMesures = (thematic?: string): Record<string, CustomMes
 
     return Object.values(store.customMesures).reduce(filterByThematic, {})
 }
+
+/**
+ * Delete a custom mesure saved in localStorage
+ */
+export const deleteCustomMesure = (id: string): CustomMesure|boolean => {
+    const store = getStore()
+
+    if (!store) return false
+    if (!store.customMesures) return false
+    if (!store.customMesures[id]) return false
+
+    let newStore = Object.assign({}, store)
+    const mesure = newStore.customMesures![id]
+
+    delete newStore.customMesures![id]
+
+    setStore(newStore)
+
+    return mesure
+}

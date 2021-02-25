@@ -1,12 +1,19 @@
 <script lang="typescript">
 	import Button from './Button'
+  import { deleteCustomMesure } from '../../api/customMesure'
 
   export let id
   export let name
 
   const handleDelete = (event: Event): void => {
  		event.preventDefault()
- 		console.log('Mesure delete confirm')
+
+    const confirmDelete =
+      confirm('Êtes-vous sûr•e de vouloir supprimer une de vos mesures personnalisées ?')
+
+    if (confirmDelete) {
+      deleteCustomMesure(id)
+    }
   }
 </script>
 
