@@ -2,26 +2,20 @@
     import {setCustomMesure} from '../../api/customMesure'
     import { v4 as uuid } from 'uuid'
     import Button from '../shared/Button'
-
-    interface Thematic {
-        id: number,
-        name: string,
-    }
-
-    const thematics: Thematic[] = [
-        {id: 1, name: 'Stratégie'},
-        {id: 2, name: 'Autre'},
-        {id: 3, name: 'Gestion, production et distribution de l\'énergie'},
-    ]
+    import {
+      Thematique,
+      thematiques as list,
+    } from '../../../vendors/thematiques'
 
     let name = ''
-    let climatPraticThematic: Thematic
+    let climatPraticThematique: Thematique
+    export let thematiques
 
     function handleSave() {
-      if (climatPraticThematic) {
+      if (climatPraticThematique) {
         setCustomMesure({
           'id': uuid(),
-          'climat_pratic_thematic': climatPraticThematic.name,
+          'climat_pratic_thematic': climatPraticThematique,
           'name': name
         })
       }
@@ -38,11 +32,11 @@
         <div class="pb-5"></div>
         <label for="mesure_create_climat_pratic">Thématique</label>
         <select id="mesure_create_climat_pratic"
-                bind:value={climatPraticThematic}
+                bind:value={climatPraticThematique}
                 class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
-            {#each thematics as thematic}
-                <option value={thematic}>
-                    {thematic.name}
+            {#each thematiques as thematique}
+                <option value={thematique.name}>
+                    {thematique.name}
                 </option>
             {/each}
         </select>
