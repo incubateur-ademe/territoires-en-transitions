@@ -2,7 +2,9 @@
 	import MesureLink from './shared/MesureLink.svelte'
   import {getAllCustomMesures} from '../api/customMesure'
 
-  const mesures = getAllCustomMesures()
+  export let climat_pratic_thematique
+
+  const mesures = getAllCustomMesures(climat_pratic_thematique)
 </script>
 
 <ul>

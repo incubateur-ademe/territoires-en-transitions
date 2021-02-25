@@ -43,13 +43,25 @@ export const getCustomMesure = (id: string): CustomMesure|null => {
 }
 
 /**
- * Get all custom mesures saved in localStorage
+ * Get custom mesures saved in localStorage
  */
-export const getAllCustomMesures = (): Record<string, CustomMesure>|null => {
+export const getAllCustomMesures = (thematic?: string): Record<string, CustomMesure>|null => {
     const store = getStore()
 
     if (!store) return null
     if (!store.customMesures) return null
+    if (!thematic) return store.customMesures
 
-    return store.customMesures
+    const filterByThematic = (
+      memo: Record<string, CustomMesure>,
+      currentMesure: CustomMesure,
+    ): Record<string, CustomMesure> => {
+        if (currentMesure.climat_pratic_thematic == thematic) {
+            memo[currentMesure.id] = currentMesure
+        }
+
+        return memo
+    }
+
+    return Object.values(store.customMesures).reduce(filterByThematic, {})
 }

@@ -3,9 +3,18 @@ import './pages/mesure'
 import './pages/indicatorsList'
 import MesureLinks from './components/MesureLinks.svelte'
 
-const mesureLinks = new MesureLinks({
+new MesureLinks({
   // @ts-ignore
-  target: document.body.querySelector('[data-custom-mesure]'),
+  target: document.body.querySelector('[data-custom-mesure-thematique="Stratégie"]'),
+  props: {
+    climat_pratic_thematique: 'Stratégie',
+  }
 })
 
-export default mesureLinks
+new MesureLinks({
+  // @ts-ignore
+  target: document.body.querySelector('[data-custom-mesure-thematique="Gestion, production et distribution de l\'énergie"]'),
+  props: {
+    climat_pratic_thematique: 'Gestion, production et distribution de l\'énergie',
+  }
+})

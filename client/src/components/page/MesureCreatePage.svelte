@@ -11,13 +11,13 @@
     const thematics: Thematic[] = [
         {id: 1, name: 'Stratégie'},
         {id: 2, name: 'Autre'},
+        {id: 3, name: 'Gestion, production et distribution de l\'énergie'},
     ]
 
     let name = ''
     let climatPraticThematic: Thematic
 
     function handleSave() {
-      console.log('Handle Save')
       if (climatPraticThematic) {
         setCustomMesure({
           'id': uuid(),
