@@ -33,7 +33,7 @@
    * Size variants
    */
 	if (size == 'normal') {
-  	buttonClassNames += 'px-6 py-3'
+  	buttonClassNames += ' px-6 py-3'
 	}
 
   if (size == 'small') {
