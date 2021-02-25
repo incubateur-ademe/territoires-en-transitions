@@ -1,0 +1,16 @@
+class Thematique {
+    id: string;
+    name: string;
+    constructor(id: string, name: string) {
+        this.id = id;
+        this.name = name;
+    }
+}
+
+const thematiques = {
+{% for id, name in thematiques.items() %}
+    "{{ id }}": new Thematique("{{ id }}", "{{ name }}"),
+{% endfor %}
+}
+
+export default thematiques

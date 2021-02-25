@@ -1,4 +1,5 @@
 import glob
+import json
 import os
 
 import typer
@@ -6,10 +7,38 @@ import typer
 from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html
 from codegen.citergie.mesures_generator import render_mesure_as_json, render_mesure_as_html, build_mesure, \
     render_mesures_summary_as_html
+from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
 from codegen.codegen.generator import write_outputs
 from codegen.utils.files import load_md, write
 
 app = typer.Typer()
+
+
+@app.command()
+def thematiques(
+    markdown_file: str = typer.Option('../referentiels/markdown/thematiques_climat_pratic/thematiques.md', '--markdown',
+                                      '-md'),
+    output_dir: str = typer.Option('generated/climat_pratic', '--output', '-o'),
+    output_typescript=typer.Option(True, '--typescript', '-ts'),
+    output_json: bool = typer.Option(False, '--json'),
+) -> None:
+    """
+    Convert 'thematiques' markdown to code.
+    """
+    markdown = load_md(markdown_file)
+    thematiques = build_thematiques(markdown)
+
+    if output_json:
+        data = json.dumps(thematiques, indent=4)
+        filename = os.path.join(output_dir, 'thematiques.json')
+        write(filename, data)
+
+    if output_typescript:
+        typescript = render_thematiques_as_typescript(thematiques)
+        filename = os.path.join(output_dir, 'thematiques.ts')
+        write(filename, typescript)
+
+    typer.echo(f"Rendered {len(thematiques)} 'thematiques' in {output_dir}.")
 
 
 @app.command()
@@ -33,7 +62,7 @@ def mesures(
 
             if json:
                 json_data = render_mesure_as_json(mesure)
-                filename = os.path.join(output_dir, f'{filename_base}.json')
+                os.path.join(output_dir, f'{filename_base}.json')
                 write(filename, json_data)
 
             if html:
