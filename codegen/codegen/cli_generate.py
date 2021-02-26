@@ -62,7 +62,7 @@ def mesures(
 
             if json:
                 json_data = render_mesure_as_json(mesure)
-                os.path.join(output_dir, f'{filename_base}.json')
+                filename = os.path.join(output_dir, f'{filename_base}.json')
                 write(filename, json_data)
 
             if html:
