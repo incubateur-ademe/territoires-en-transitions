@@ -1,11 +1,17 @@
-import { setActionStatus, getActionStatus } from '../api/actionStatus'
+import { getActionStatus } from '../api/actionStatus'
+import {store} from '../api/store'
+import {v4 as uuid} from 'uuid'
 
 const addListeners = (actionId: string, inputs: NodeListOf<HTMLInputElement>): void => {
   let onChange = (event: Event): void => {
     let target = event.target as HTMLInputElement
-    let avancement = target.value
+    let avancement = {
+      id: uuid(),
+      action_id: actionId,
+      avancement: target.value,
+    }
 
-    setActionStatus(actionId, avancement)
+    store('action_statuses', avancement)
   }
 
   inputs.forEach((input): void => {

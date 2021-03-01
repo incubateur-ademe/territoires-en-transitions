@@ -1,10 +1,12 @@
 <script lang="typescript">
 	import Button from './Button'
   import { deleteCustomMesure } from '../../api/customMesure'
+  import {createEventDispatcher} from 'svelte'
 
   export let id
   export let name
 
+  const dispatch = createEventDispatcher()
   const handleDelete = (event: Event): void => {
  		event.preventDefault()
 
@@ -13,6 +15,12 @@
 
     if (confirmDelete) {
       deleteCustomMesure(id)
+
+      /**
+       * TODO: remove this dispatcher when we have a global application state and use
+       *       <MesuresLinks> props to hydrate mesures list.
+       */
+      dispatch('delete', id)
     }
   }
 </script>

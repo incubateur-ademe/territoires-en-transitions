@@ -2,13 +2,9 @@
     import {setCustomMesure} from '../../api/customMesure'
     import { v4 as uuid } from 'uuid'
     import Button from '../shared/Button'
-    import {
-      Thematique,
-      thematiques as list,
-    } from '../../../vendors/thematiques'
 
     let name = ''
-    let climatPraticThematique: Thematique
+    let climatPraticThematique: string
     export let thematiques
 
     function handleSave() {
@@ -19,6 +15,8 @@
           'name': name
         })
       }
+
+      window.location.href = '/mesures.html'
     }
 </script>
 

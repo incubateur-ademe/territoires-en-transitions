@@ -4,11 +4,22 @@
 
   export let climat_pratic_thematique
 
-  const mesures = getAllCustomMesures(climat_pratic_thematique)
+  let customMesures
+
+  const updateMesures = () => {
+	  customMesures = getAllCustomMesures(climat_pratic_thematique)
+  }
+
+  updateMesures()
 </script>
 
 <ul>
-{#each Object.values(mesures) as mesure}
-	<MesureLink id={mesure.id} name={mesure.name} />
+{#each Object.values(customMesures) as mesure}
+	<MesureLink
+    on:delete={updateMesures}
+    value={mesure.id}
+    id={mesure.id}
+    name={mesure.name}
+  />
 {/each}
 </ul>

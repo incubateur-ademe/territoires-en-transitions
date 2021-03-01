@@ -9,6 +9,7 @@ module.exports = {
         mesure_personnalisee: path.resolve(__dirname, 'src/mesure_personnalisee.ts'),
         mesure_ajout: path.resolve(__dirname, 'src/mesure_ajout.ts'),
         mesures: path.resolve(__dirname, 'src/mesures.ts'),
+        action_ajout: path.resolve(__dirname, 'src/action_ajout.ts'),
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
