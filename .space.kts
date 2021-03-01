@@ -102,7 +102,7 @@ job("Staging pipeline: build/test/deploy") {
                 $pytest
                 poetry run generate indicateurs -o $mountDir/share/client/dist
                 poetry run generate mesures -o $mountDir/share/client/dist
-                poetry run generate thematiques -o $mountDir/client/vendors
+                poetry run generate thematiques -o $mountDir/share/client/vendors
             """
         }
     }
