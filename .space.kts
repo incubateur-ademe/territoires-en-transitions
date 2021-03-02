@@ -115,6 +115,7 @@ job("Staging pipeline: build/test/deploy") {
         shellScript {
             content = """
                 set -e
+                cp -a $mountDir/share/client/* .
                 $npmTest
                 npm run build:prod
                 cp dist/* $mountDir/share/client
