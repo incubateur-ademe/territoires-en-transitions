@@ -68,13 +68,14 @@ def render_indicators_as_html(indicateurs: List[dict],
     """Renders all indicators into a single html string"""
     env = build_jinja_environment()
     template = env.get_template(template_file)
+    years = range(2016, 2023)
     by_theme = {}
     for indicateur in indicateurs:
         theme = indicateur['yaml']['climat_pratic'][0]
         if theme not in by_theme.keys():
             by_theme[theme] = []
         by_theme[theme].append(indicateur)
-    rendered = template.render(indicateurs=by_theme)
+    rendered = template.render(indicateurs=by_theme, years=years)
     soup = BeautifulSoup(rendered, 'html.parser')
     return soup.prettify()
 

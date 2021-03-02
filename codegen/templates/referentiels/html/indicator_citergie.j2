@@ -38,28 +38,32 @@
         <section class="mb-16">
             <h2 class="text-2xl font-semibold my-6">{{ theme }}</h2>
             <ul>
-            {% for indicateur in indicateurs[theme] %}
-                <li class="bg-white p-4 rounded my-4 grid grid-cols-1 lg:grid-cols-12
-                lg:gap-1">
-                        <div class="relative lg:col-span-8">
+                {% for indicateur in indicateurs[theme] %}
+                    <li class="bg-white p-4 rounded my-4 grid gap-8 grid-cols-1 lg:grid-cols-12">
+                        <div class="relative lg:col-span-6">
                             <h3 class="text-xl font-semibold mb-6 pr-28">{{ indicateur.nom }}</h3>
                             <details class="expandable">
                                 <summary
                                         class="absolute top-0 right-0 border border-gray-400 rounded px-2 py-1
                                         cursor-pointer outline-none focus:ring-1 focus:ring-indigo-500">
-                                    Plus</summary>
+                                    Plus
+                                </summary>
                                 {{ indicateur.description }}
                             </details>
                         </div>
                         <form
-                            class="lg:col-span-2 lg:col-end-13"
-                            data-component="indicatorForm"
-                        >
-                            <input type="text"
-                                   class="border border-gray-400 rounded px-2 py-1 shadow-sm
-                                   outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full"
-                                   data-user-indicator-id="{{ indicateur.yaml.id }}"
-                            />
+                                class="lg:col-span-6 lg:col-end-13 grid gap-4 grid-cols-{{ years|length }}"
+                                data-component="indicatorForm">
+                            {% for year in years %}
+                                <label class="container">
+                                    {{ year }}
+                                    <input type="text"
+                                           class="border border-gray-400 rounded px-2 py-1 shadow-sm
+                                       outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full"
+                                           data-user-indicator-id="{{ indicateur.yaml.id }}"
+                                    />
+                                </label>
+                            {% endfor %}
                         </form>
                     </li>
                 {% endfor %}
