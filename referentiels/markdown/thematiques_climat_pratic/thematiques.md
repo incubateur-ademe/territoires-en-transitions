@@ -13,13 +13,13 @@ thematiques:
   conso_resp: Consommation écoresponsable
   forma_sensib: Formation, sensibilisation, communication
   parten_coop: Partenariat et coopération
-  dechets: Déchêts
+  dechets: Déchets
   tourisme: Tourisme
   orga_interne: Organisation interne
-  dev_eco: Développement économique
-  foret_biodiv: Forêts, Biodiversité et Espaces verts
-  eau: Eau
-  agri_alim: Agriculture et Alimentation
+  dev_eco: Activités économiques
+  foret_biodiv: Forêts, espaces verts et biodiversité
+  eau: Eau et assainissement
+  agri_alim: Agriculture et alimentation
   urbanisme: Urbanisme et aménagement
   preca_energie: Précarité énergétique
 ```
