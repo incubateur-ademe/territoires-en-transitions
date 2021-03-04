@@ -100,9 +100,7 @@ job("Staging pipeline: build/test/deploy") {
             content = """
                 set -e
                 $pytest
-                poetry run generate indicateurs -o $mountDir/share/client/dist
-                poetry run generate mesures -o $mountDir/share/client/dist
-                poetry run generate thematiques -o $mountDir/share/client/vendors
+                poetry run generate all --client-root $mountDir/share/client
             """
         }
     }

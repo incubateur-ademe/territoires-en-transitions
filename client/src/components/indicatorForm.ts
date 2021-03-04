@@ -1,36 +1,56 @@
-import { setIndicator, getIndicator } from '../api/indicator'
+import {getIndicator} from '../api/indicator'
+import {retrieve, store} from "../api/localStore";
+import {IndicateurValueStorable} from '../storables/indicateurValueStorable'
+import {IndicateurValue} from "../../vendors/indicateur_value";
 
 const preventDefault = (event: Event): void => {
-  event.preventDefault()
+    event.preventDefault()
 }
 
 const onBlur = (event: FocusEvent): void => {
-  const { dataset, value } = event.target as HTMLInputElement
-  const indicatorId = dataset.userIndicatorId!
-
-  setIndicator(indicatorId, value)
+    const input = event.target as HTMLInputElement;
+    const {id, year} = inputProperties(input)
+    const value = new IndicateurValueStorable({epci_id: '', indicateur_id: id, year: year, value: input.value})
+    store(value)
 }
 
 const onKeyPress = (event: KeyboardEvent): void => {
-  if (event.key === 'Enter') {
-    const input = event.target as HTMLInputElement
-    input!.blur()
-  }
+    if (event.key === 'Enter') {
+        const input = event.target as HTMLInputElement
+        input.blur()
+    }
+}
+
+const initYearlyInput = (input: HTMLInputElement): void => {
+    const {id, year} = inputProperties(input)
+    let value: string
+    try {
+        let stored = retrieve<IndicateurValue>(IndicateurValue.pathname, `/${id}/${year}`)
+        value = stored.value
+    } catch (_) {
+        value = ''
+    }
+    input.value = value
+    input.addEventListener('blur', onBlur)
+    input.addEventListener('keypress', onKeyPress)
+}
+
+const inputProperties = (input: HTMLInputElement): { id: string, year: number } => {
+    return {
+        id: input.dataset.indicatorId!,
+        year: +input.dataset.indicatorYear!,
+    }
 }
 
 /**
  * Initialize the input linked to an indicator with all its event listeners
  */
 export const init = (form: HTMLFormElement): void => {
-  const input = form.querySelector('input')
-  const indicatorId = input!.dataset.userIndicatorId!
-  const indicator = getIndicator(indicatorId)
-
-  if (indicator) {
-    input!.value = indicator.value
-  }
-
-  form.addEventListener('submit', preventDefault)
-  input!.addEventListener('blur', onBlur)
-  input!.addEventListener('keypress', onKeyPress)
+    form.addEventListener('submit', preventDefault)
+    const inputs = form.querySelectorAll('input')
+    for (let input of inputs) {
+        initYearlyInput(input)
+    }
 }
+
+

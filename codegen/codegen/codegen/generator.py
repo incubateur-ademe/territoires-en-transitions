@@ -1,21 +1,17 @@
 """Générateur pour les classes et les objets"""
-import os
 
 from mistletoe import Document
 from mistletoe.block_token import Heading, BlockToken
 
-from codegen.codegen.javascript import yaml_to_js
-from codegen.codegen.python import yaml_to_python
-from codegen.utils.files import write
 from codegen.utils.markdown_utils import void, is_heading, is_yaml, save_yaml_data
 
 
 def comment(token: BlockToken, definition: dict) -> None:
     """Saves comments into definition"""
     line = ''
-    if token is Heading:
-        line = token.children[0].content
-    definition['comments'] += f'{line}\n'
+    if is_heading(token, 2):
+        line = f'## ${token.children[0].content}'
+    definition['comments'].append(line)
 
 
 def parse_definitions(doc: Document) -> list[dict]:
@@ -26,7 +22,7 @@ def parse_definitions(doc: Document) -> list[dict]:
     for token in doc.children:
         if is_heading(token, 2):
             definitions.append({
-                'comments': '',
+                'comments': [],
                 'yaml': {},
             })
             writer = comment
@@ -39,20 +35,3 @@ def parse_definitions(doc: Document) -> list[dict]:
             writer(token, definition)
 
     return definitions
-
-
-def write_outputs(data: Document, directory: str, python=True, js=True) -> None:
-    definitions = parse_definitions(data)
-
-    for definition in definitions:
-        if python:
-            contents, filename = yaml_to_python(definition['yaml'])
-            if filename:
-                filename = os.path.join(directory, 'python', f'{filename}.py')
-                write(filename, contents)
-
-        if js:
-            contents, filename = yaml_to_js(definition['yaml'])
-            if filename:
-                filename = os.path.join(directory, 'js', f'{filename}.js')
-                write(filename, contents)
