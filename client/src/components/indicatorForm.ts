@@ -2,6 +2,7 @@ import {getIndicator} from '../api/indicator'
 import {retrieve, store} from "../api/localStore";
 import {IndicateurValueStorable} from '../storables/indicateurValueStorable'
 import {IndicateurValue} from "../../vendors/indicateur_value";
+import {getCurrentEpciId} from "../api/currentEpci";
 
 const preventDefault = (event: Event): void => {
     event.preventDefault()
@@ -10,7 +11,8 @@ const preventDefault = (event: Event): void => {
 const onBlur = (event: FocusEvent): void => {
     const input = event.target as HTMLInputElement;
     const {id, year} = inputProperties(input)
-    const value = new IndicateurValueStorable({epci_id: '', indicateur_id: id, year: year, value: input.value})
+    const currentEpciId = getCurrentEpciId()
+    const value = new IndicateurValueStorable({epci_id: currentEpciId, indicateur_id: id, year: year, value: input.value})
     store(value)
 }
 
@@ -25,7 +27,8 @@ const initYearlyInput = (input: HTMLInputElement): void => {
     const {id, year} = inputProperties(input)
     let value: string
     try {
-        let stored = retrieve<IndicateurValue>(IndicateurValue.pathname, `/${id}/${year}`)
+        const currentEpciId = getCurrentEpciId()
+        let stored = retrieve<IndicateurValue>(IndicateurValue.pathname, `${currentEpciId}/${id}/${year}`)
         value = stored.value
     } catch (_) {
         value = ''
