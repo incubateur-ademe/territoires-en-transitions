@@ -10,6 +10,9 @@ module.exports = {
         mesure_ajout: path.resolve(__dirname, 'src/mesure_ajout.ts'),
         mesures: path.resolve(__dirname, 'src/mesures.ts'),
         action_ajout: path.resolve(__dirname, 'src/action_ajout.ts'),
+        navigation: path.resolve(__dirname, 'src/navigation.ts'),
+        ecpi_button_list: path.resolve(__dirname, 'src/ecpi_button_list.ts'),
+        ecpi_nav_display: path.resolve(__dirname, 'src/ecpi_nav_display.ts'),
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

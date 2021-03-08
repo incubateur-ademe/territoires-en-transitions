@@ -20,10 +20,11 @@
             })
 
             mesureCustomStore.store(mesure)
+            window.location.href = `mesures.html?epci_id=${epciId}`
         }
 
-        window.location.href = '/mesures.html'
     }
+
 </script>
 
 <section class="flex flex-col">
