@@ -1,23 +1,26 @@
 <script lang="typescript">
     import Button from '../shared/Button'
     import {getUrlParameter} from "../../utils/url";
-    import {store} from "../../api/store"
     import {v4 as uuid} from 'uuid'
-    import {CustomAction} from "../../api/customAction";
+    import {getCurrentEpciId} from "../../api/currentEpci";
+    import {ActionCustomStorable} from "../../storables/ActionCustomStorable";
+    import {actionCustomStore} from "../../api/localStore";
 
+    const ecpiId = getCurrentEpciId();
+    const mesureUid = getUrlParameter('mesure_uid')
     let name = ''
     let description = ''
-    let mesureId = getUrlParameter('mesure_id');
 
     function handleSave() {
-        let action: CustomAction = {
-            id: uuid(),
-            mesureId: mesureId,
-            description: description,
+        const action = new ActionCustomStorable({
+            epci_id: ecpiId,
+            mesure_id: mesureUid,
+            uid: uuid(),
             name: name,
-        };
-        store('custom_action', action);
-        window.location.href = `/mesure_personnalisee.html?id=${mesureId}`
+            description: description,
+        })
+        actionCustomStore.store(action)
+        window.location.href = `/mesure_personnalisee.html?epci_id=${ecpiId}&mesure_uid=${mesureUid}`
     }
 </script>
 

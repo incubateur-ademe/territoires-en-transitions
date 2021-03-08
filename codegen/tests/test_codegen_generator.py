@@ -7,7 +7,7 @@ from codegen.utils.files import load_md
 
 def test_parse_definitions():
     """Test that one example is parsed correctly"""
-    md = load_md('definitions/shared/status_action.md')
+    md = load_md('definitions/shared/action_status.md')
     definitions = parse_definitions(md)
     assert definitions
     assert len(definitions) == 2

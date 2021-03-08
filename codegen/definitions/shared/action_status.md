@@ -12,21 +12,21 @@ Un statuts a:
 - un avancement
 - une date de creation
 
+Il est stocké en local à l'adresse `epci_id/action_id`
+
 ```yaml
-StatutAction:
+ActionStatus:
   action_id:
       type: String
   epci_id:
       type: String
   avancement:
       type: String
-      possibles:
+      possibles: # pas implémenté
           - faite
           - programmee
           - pas_faite
           - non_concerne
-  date_de_creation:
-      type: Date
 ```
 
 ## Avancement

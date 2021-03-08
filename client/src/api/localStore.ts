@@ -1,3 +1,12 @@
+import {MesureCustom, MesureCustomInterface} from "../../vendors/mesure_custom";
+import {ActionCustom, ActionCustomInterface} from "../../vendors/action_custom";
+import {IndicateurValue, IndicateurValueInterface} from "../../vendors/indicateur_value";
+import {IndicateurValueStorable} from "../storables/IndicateurValueStorable";
+import {ActionCustomStorable} from "../storables/ActionCustomStorable";
+import {MesureCustomStorable} from "../storables/MesureCustomStorable";
+import {ActionStatusStorable} from "../storables/ActionStatusStorable";
+import {ActionStatus, ActionStatusInterface} from "../../vendors/action_status";
+
 export const storeKey = 'territoiresentransitions'
 
 /**
@@ -21,95 +30,161 @@ const isStorable = (storable: any): storable is Storable => {
  *
  * Returns an empty store if none found.
  */
-export const getStore = (): Record<string, any> => {
+const getStore = (): Record<string, any> => {
     const storeJson = localStorage.getItem(storeKey) || '{}'
-    const store = JSON.parse(storeJson)
-    // necessary ?
-    return Object.assign({}, store)
+    return JSON.parse(storeJson)
 }
 
 /**
  * Set all data of the current user in localStorage.
  */
-export const setStore = (newStore: Record<string, any>): Record<string, any> => {
+const setStore = (newStore: Record<string, any>): Record<string, any> => {
     localStorage.setItem(storeKey, JSON.stringify(newStore))
     return Object.assign({}, newStore)
 }
 
-
 /**
- * Store a storable in user's store.
- *
- * @param storable the object to save
+ * A Store for Storable object using local storage.
  */
-export const store = <T>(storable: T): T => {
-    if (!isStorable(storable)) {
-        throw new Error(`${typeof storable} is not storable.`)
-    }
-    const store = getStore()
-
-    const path = storable.pathname
-    if (!store[path]) {
-        store[path] = {}
-    }
-
-    store[path][storable.id] = storable
-    setStore(store)
-    return storable
-}
-
-
-/**
- * Return a storable with matching path and path.
- * Throw if no storable is found or path does not exist.
- *
- * @param path Storable pathname
- * @param id Storable id
- */
-export const retrieve = <T>(path: string, id: string): T => {
-    const store = getStore()
-
-    if (!store[path]) {
-        throw new Error(`Path '${path}' does not exist in is store.`)
+class LocalStore<T> {
+    constructor(
+        {
+            pathname,
+            serializer,
+            deserializer,
+        }: {
+            pathname: string,
+            serializer: (storable: T) => object,
+            deserializer: (serialized: object) => T,
+        }) {
+        this.pathname = pathname;
+        this.serializer = serializer;
+        this.deserializer = deserializer;
     }
 
-    const storable = store[path][id]
+    pathname: string;
+    serializer: (storable: T) => object;
+    deserializer: (serialized: object) => T;
 
-    if (!storable) {
-        throw new Error(`Storable '${path}.${id}' does not exist.`)
+
+    /**
+     * Store a Storable at pathname/id.
+     *
+     * @param storable the object to save
+     */
+    store(storable: T): T {
+        if (!isStorable(storable)) {
+            throw new Error(`${typeof storable} is not storable.`)
+        }
+        const store = getStore()
+
+        if (!store[storable.pathname]) {
+            store[storable.pathname] = {}
+        }
+
+        store[storable.pathname][storable.id] = storable
+        setStore(store)
+        return storable
     }
 
-    return storable as T
+    /**
+     * Return all storable of type T existing at pathname.
+     * If nothing is found returns an empty record.
+     */
+    retrieveAll(): Array<T> {
+        const store = getStore()
+
+        if (!store) return []
+        if (!store[this.pathname]) return []
+        const serialized = store[this.pathname] as Record<string, object>
+
+        return this.deserializeRecord(serialized);
+    }
+
+    /**
+     * Return a storable with matching path and path.
+     * Throw if no storable is found or path does not exist.
+     *
+     * @param id Storable id
+     */
+    retrieveById(id: string): T {
+        const store = getStore()
+        if (!store[this.pathname]) {
+            throw new Error(`Path '${this.pathname}' does not exist in is store.`)
+        }
+
+        const serialized = store[this.pathname][id]
+        if (!serialized) {
+            throw new Error(`Storable '${this.pathname}.${id}' does not exist.`)
+        }
+
+        return this.deserializer(serialized)
+    }
+
+    /**
+     * Delete a Storable stored at pathname/id.
+     * Return true if something was deleted, false if nothing exists at pathname/id.
+     *
+     * @param id Storable id
+     */
+    deleteById(id: string): boolean {
+        const store = getStore()
+        if (!store[this.pathname]) return false
+        if (!store[this.pathname][id]) return false
+        delete store[this.pathname][id]
+        setStore(store)
+        return true
+    }
+
+    /**
+     * Return an Array of storable that matches a predicate.
+     * Iterate on *all* storables.
+     *
+     * @param predicate A function that returns true on match
+     */
+    where(predicate: (storable: T) => boolean): Array<T> {
+        const matches: T[] = []
+        const all = this.retrieveAll()
+        for (let storable of all) {
+            if (predicate(storable)) matches.push(storable)
+        }
+        return matches;
+    }
+
+
+    /**
+     * Deserialize a record retrieved from local storage.
+     */
+    private deserializeRecord(record: Record<string, object>): Array<T> {
+        const reducer = (accumulator: Array<T>, serialized: object) => {
+            accumulator.push(this.deserializer(serialized))
+            return accumulator
+        }
+        return Object.values(record).reduce(reducer, [])
+    }
 }
 
+export const mesureCustomStore = new LocalStore<MesureCustomStorable>({
+    pathname: MesureCustom.pathname,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new MesureCustomStorable(serialized as MesureCustomInterface),
+});
 
-/**
- * Return all storable of type T existing at path.
- * If nothing is found returns an empty record.
- *
- * @param path Storable pathname
- */
-export const retrieveAll = <T>(path: string): Record<string, T> => {
-    const store = getStore()
+export const actionCustomStore = new LocalStore<ActionCustomStorable>({
+    pathname: ActionCustom.pathname,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new ActionCustomStorable(serialized as ActionCustomInterface),
+});
 
-    if (!store) return {} as Record<string, T>
-    if (!store[path]) return {} as Record<string, T>
-    return store[path] as Record<string, T>
-}
+export const indicateurValueStore = new LocalStore<IndicateurValueStorable>({
+    pathname: IndicateurValue.pathname,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new IndicateurValueStorable(serialized as IndicateurValueInterface),
+});
 
-/**
- * Delete a Storable stored at path/id.
- * Return true if something was deleted, false if nothing exists at path/id.
- *
- * @param path Storable pathname
- * @param id Storable id
- */
-export const deleteById = (path: string, id: string): boolean => {
-    const store = getStore()
 
-    if (!store[path]) return false
-    if (!store[path][id]) return false
-    delete store[path][id]
-    setStore(store)
-    return true
-}
+export const actionStatusStore = new LocalStore<ActionStatusStorable>({
+    pathname: ActionStatus.pathname,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new ActionStatusStorable(serialized as ActionStatusInterface),
+});

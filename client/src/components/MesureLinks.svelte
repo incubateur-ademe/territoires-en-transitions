@@ -1,25 +1,28 @@
 <script lang="typescript">
-	import MesureLink from './shared/MesureLink.svelte'
-  import {getAllCustomMesures} from '../api/customMesure'
+    import MesureLink from './shared/MesureLink.svelte';
+    import {mesureCustomStore} from "../api/localStore";
+    import {getCurrentEpciId} from "../api/currentEpci";
+    import {MesureCustomStorable} from "../storables/MesureCustomStorable";
 
-  export let climat_pratic_thematique
+    export let climat_pratic_thematique
+    const epciId = getCurrentEpciId()
+    let customMesures: Array<MesureCustomStorable>
 
-  let customMesures
+    const updateMesures = () => {
+        customMesures = mesureCustomStore.where(
+            (mesure) => mesure.climat_pratic_thematic == climat_pratic_thematique &&
+                mesure.epci_id == epciId
+        )
+    }
 
-  const updateMesures = () => {
-	  customMesures = getAllCustomMesures(climat_pratic_thematique)
-  }
-
-  updateMesures()
+    updateMesures()
 </script>
 
 <ul>
-{#each Object.values(customMesures) as mesure}
-	<MesureLink
-    on:delete={updateMesures}
-    value={mesure.id}
-    id={mesure.id}
-    name={mesure.name}
-  />
-{/each}
+    {#each customMesures as mesure}
+        <MesureLink
+                on:delete={updateMesures}
+                mesure={mesure}
+        />
+    {/each}
 </ul>

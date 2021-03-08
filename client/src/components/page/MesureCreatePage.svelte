@@ -1,22 +1,28 @@
 <script lang="typescript">
-    import {setCustomMesure} from '../../api/customMesure'
-    import { v4 as uuid } from 'uuid'
+    import {v4 as uuid} from 'uuid'
     import Button from '../shared/Button'
+    import {mesureCustomStore} from "../../api/localStore";
+    import {getCurrentEpciId} from "../../api/currentEpci";
+    import {MesureCustomStorable} from "../../storables/MesureCustomStorable";
 
     let name = ''
     let climatPraticThematique: string
     export let thematiques
 
     function handleSave() {
-      if (climatPraticThematique) {
-        setCustomMesure({
-          'id': uuid(),
-          'climat_pratic_thematic': climatPraticThematique,
-          'name': name
-        })
-      }
+        if (climatPraticThematique) {
+            const epciId = getCurrentEpciId()
+            const mesure = new MesureCustomStorable({
+                uid: uuid(),
+                epci_id: epciId,
+                climat_pratic_thematic: climatPraticThematique,
+                name: name,
+            })
 
-      window.location.href = '/mesures.html'
+            mesureCustomStore.store(mesure)
+        }
+
+        window.location.href = '/mesures.html'
     }
 </script>
 
@@ -41,9 +47,9 @@
     </div>
 
     <Button
-    	full
-    	label="Valider"
-    	on:click={handleSave}
-    	classNames="md:w-1/3 self-end"
+            full
+            label="Valider"
+            on:click={handleSave}
+            classNames="md:w-1/3 self-end"
     />
 </section>

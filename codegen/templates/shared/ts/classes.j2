@@ -1,4 +1,10 @@
 {% for class, fields in classes.items() %}
+    export interface {{ class }}Interface {
+    {%- for field, type in fields.items() %}
+        {{ field }}: {{ type }},
+    {%- endfor %}
+    }
+
     export class {{ class }} {
     public static pathname: string = '{{ pathname }}';
     get pathname(): string {

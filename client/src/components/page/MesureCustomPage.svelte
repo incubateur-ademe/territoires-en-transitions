@@ -2,29 +2,34 @@
     import Title from '../shared/Title'
     import Nav from '../shared/Nav'
     import {getUrlParameter} from '../../utils/url'
-    import {getCustomMesure} from '../../api/customMesure'
     import Button from "../shared/Button.svelte";
-    import {retrieveAll} from "../../api/store";
     import Action from "../shared/Action.svelte";
-    import {CustomAction} from "../../api/customAction";
+    import {actionCustomStore, mesureCustomStore} from "../../api/localStore";
+    import {ActionCustomStorable} from "../../storables/ActionCustomStorable";
+    import {getCurrentEpciId} from "../../api/currentEpci";
+    import {MesureCustomStorable} from "../../storables/MesureCustomStorable";
 
-    const id = getUrlParameter('id')
-    const mesure = getCustomMesure(id)
+    const ecpiId = getCurrentEpciId();
+    const mesureUid = getUrlParameter('mesure_uid')
+    const mesureId = MesureCustomStorable.buildId(ecpiId, mesureUid)
+    const mesure = mesureCustomStore.retrieveById(mesureId)
+
+
     const filterByMesureId = (
-        accumulator: Record<string, CustomAction>,
-        action: CustomAction): Record<string, CustomAction> => {
-        if (action.mesureId == id) {
-            accumulator[action.id] = action
+        accumulator: Array<ActionCustomStorable>,
+        action: ActionCustomStorable): Array<ActionCustomStorable> => {
+        if (action.mesure_id == mesureUid) {
+            accumulator.push(action)
         }
         return accumulator
     }
     const updateActions = () => {
-        const customActions =retrieveAll<CustomAction>('custom_action')
-        actions = Object.values(customActions).reduce(filterByMesureId, {})
+        const CustomActionStorables = actionCustomStore.retrieveAll()
+        actions = CustomActionStorables.reduce(filterByMesureId, [])
     }
 
 
-    let actions: Record<string, CustomAction>
+    let actions: Array<ActionCustomStorable>
     updateActions()
 </script>
 
@@ -38,14 +43,12 @@
         <Button
                 asLink
                 label="Ajouter une action"
-                href="action_ajout.html?mesure_id={mesure.id}"
+                href="action_ajout.html?epci_id={ecpiId}&mesure_uid={mesure.uid}"
         />
     </header>
-    {#each Object.values(actions) as action}
+    {#each actions as action}
         <Action
-                id={action.id}
-                name={action.name}
                 on:delete={updateActions}
-                description={action.description}/>
+                action={action}/>
     {/each}
 </main>

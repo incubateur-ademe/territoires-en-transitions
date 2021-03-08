@@ -4,7 +4,9 @@
     "allowJs": true,
     "sourceMap": true,
     "strict": true,
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["./node_modules/@types"],
+    "lib": ["ESNext", "DOM", "DOM.iterable"],
+    "types": ["svelte", "mocha", "chai"]
   },
   "include": ["./src/**/*"],
   "exclude": ["node_modules"],
