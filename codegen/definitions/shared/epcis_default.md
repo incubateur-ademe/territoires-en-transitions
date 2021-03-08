@@ -12,6 +12,7 @@ epcis_default:
   test: 'Ville de test'
   clunisois: "CC du Clunisois"
   haut_poitou: "CC Haut Poitou"
-  pays_rethelois: "CC Pays rethélois"
+  pays_rethelois: "CC Pays Rethélois"
   pyrenees_gaves: "CC Pyrénées Vallées des Gaves"
+  touraine_est: "CC Touraine-Est Vallées"
 ```
