@@ -9,6 +9,9 @@ Il ne faut pas changer `test` non plus car c'est la clé par default.
 
 ```yaml
 epcis_default:
-  hennebont: "Ville d'Hennebont"
   test: 'Ville de test'
+  clunisois: "CC du Clunisois"
+  haut_poitou: "CC Haut Poitou"
+  pays_rethelois: "CC Pays rethélois"
+  pyrenees_gaves: "CC Pyrénées Vallées des Gaves"
 ```
