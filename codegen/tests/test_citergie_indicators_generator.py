@@ -11,7 +11,7 @@ def test_build_indicators():
     """Test that a specific collection of indicators is parsed correctly"""
     md = load_md('../referentiels/markdown/indicateurs_citergie/1.md')
     indicators = build_indicators(md)
-    assert len(indicators) == 9
+    assert len(indicators) == 10
 
 
 def test_render_indicators_as_html():
