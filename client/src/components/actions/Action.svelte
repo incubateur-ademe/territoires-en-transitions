@@ -1,6 +1,6 @@
 <script lang="ts">
     import ActionStatus from './ActionStatus.svelte'
-    import Button from "./Button.svelte";
+    import Button from "../shared/Button.svelte";
     import {createEventDispatcher} from "svelte";
     import {ActionCustomStorable} from "../../storables/ActionCustomStorable";
     import {actionCustomStore} from "../../api/localStore";

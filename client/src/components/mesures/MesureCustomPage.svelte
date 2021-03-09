@@ -3,7 +3,7 @@
     import Nav from '../shared/Nav'
     import {getUrlParameter} from '../../utils/url'
     import Button from "../shared/Button.svelte";
-    import Action from "../shared/Action.svelte";
+    import Action from "../actions/Action.svelte";
     import {actionCustomStore, mesureCustomStore} from "../../api/localStore";
     import {ActionCustomStorable} from "../../storables/ActionCustomStorable";
     import {getCurrentEpciId} from "../../api/currentEpci";

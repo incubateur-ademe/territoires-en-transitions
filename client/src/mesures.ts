@@ -1,7 +1,7 @@
 import './styles.css'
-import './pages/mesure'
-import './pages/indicatorsList'
-import MesureLinks from './components/MesureLinks.svelte'
+import './components/legacy/mesure'
+import './components/legacy/indicatorsList'
+import MesureLinks from './components/mesures/MesureLinks.svelte'
 import { Thematique, thematiques } from './../vendors/thematiques'
 
 const initCustomMesuresForThematiques = (thematique: Thematique): void => {

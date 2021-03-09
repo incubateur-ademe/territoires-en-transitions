@@ -1,7 +1,7 @@
 import './styles.css'
-import './pages/mesure'
-import './pages/indicatorsList'
-import MesureCreatePage from './components/page/MesureCreatePage.svelte'
+import './components/legacy/mesure'
+import './components/legacy/indicatorsList'
+import MesureCreatePage from './components/mesures/MesureCreatePage.svelte'
 import { thematiques } from '../vendors/thematiques'
 
 const page = new MesureCreatePage({

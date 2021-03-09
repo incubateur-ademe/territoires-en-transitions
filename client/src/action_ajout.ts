@@ -1,7 +1,7 @@
 import './styles.css'
-import './pages/mesure'
-import './pages/indicatorsList'
-import ActionCreatePage from './components/page/ActionCreatePage.svelte'
+import './components/legacy/mesure'
+import './components/legacy/indicatorsList'
+import ActionCreatePage from './components/actions/ActionCreatePage.svelte'
 import {thematiques} from "../vendors/thematiques";
 
 new ActionCreatePage({

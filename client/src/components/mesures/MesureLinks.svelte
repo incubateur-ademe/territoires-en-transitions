@@ -1,8 +1,8 @@
 <script lang="typescript">
-    import MesureLink from './shared/MesureLink.svelte';
-    import {mesureCustomStore} from "../api/localStore";
-    import {getCurrentEpciId} from "../api/currentEpci";
-    import {MesureCustomStorable} from "../storables/MesureCustomStorable";
+    import MesureLink from './MesureLink.svelte';
+    import {mesureCustomStore} from "../../api/localStore";
+    import {getCurrentEpciId} from "../../api/currentEpci";
+    import {MesureCustomStorable} from "../../storables/MesureCustomStorable";
 
     export let climat_pratic_thematique
     const epciId = getCurrentEpciId()

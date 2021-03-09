@@ -1,6 +1,6 @@
 <script lang="ts">
-    import {epcis_default} from "../../vendors/epcis_default";
-    import Button from "./shared/Button.svelte";
+    import {epcis_default} from "../../../vendors/epcis_default";
+    import Button from "../shared/Button.svelte";
 </script>
 <section class="">
     <ul class="flex flex-wrap gap-4 ">

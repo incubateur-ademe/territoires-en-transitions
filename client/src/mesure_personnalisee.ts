@@ -1,7 +1,7 @@
 import './styles.css'
-import './pages/mesure'
-import './pages/indicatorsList'
-import MesureCustomPage from './components/page/MesureCustomPage.svelte'
+import './components/legacy/mesure'
+import './components/legacy/indicatorsList'
+import MesureCustomPage from './components/mesures/MesureCustomPage.svelte'
 
 const mesureCustom = new MesureCustomPage({
   // @ts-ignore

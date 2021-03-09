@@ -1,3 +1,3 @@
 import './styles.css'
-import './pages/mesure'
-import './pages/indicatorsList'
+import './components/legacy/mesure'
+import './components/legacy/indicatorsList'
