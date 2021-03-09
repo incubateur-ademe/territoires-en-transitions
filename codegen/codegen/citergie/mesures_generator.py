@@ -118,10 +118,20 @@ def render_mesure_as_js(mesure: dict,
     return jsbeautifier.beautify(rendered)
 
 
+def filter_indicateurs_by_mesure_id(indicateurs: List[dict], mesure_id: str) -> List[dict]:
+    return [indicateur for indicateur in indicateurs if mesure_id in indicateur['yaml']['mesures']]
+
+
 def render_mesure_as_html(mesure: dict,
+                          indicateurs: List[dict] = None,
                           template_file='referentiels/html/mesure_citergie.j2') -> str:
     env = build_jinja_environment()
     template = env.get_template(template_file)
+
+    years = range(2016, 2023)
+
+    if indicateurs is None:
+        indicateurs = []
 
     # todo since those names are shared, use code generation.
     avancement_noms = {
@@ -130,7 +140,7 @@ def render_mesure_as_html(mesure: dict,
         'pas_faite': 'Pas faite',
         'non_concerne': 'Non concerné',
     }
-    rendered = template.render(mesure=mesure, avancement_noms=avancement_noms)
+    rendered = template.render(mesure=mesure, avancement_noms=avancement_noms, indicateurs=indicateurs, years=years)
     soup = BeautifulSoup(rendered, 'html.parser')
     return soup.prettify()
 

@@ -64,7 +64,7 @@ def build_indicators(doc: Document) -> List[dict]:
 
 
 def render_indicators_as_html(indicateurs: List[dict],
-                              template_file='referentiels/html/indicator_citergie.j2') -> str:
+                              template_file='referentiels/html/indicateurs_citergie.j2') -> str:
     """Renders all indicators into a single html string"""
     env = build_jinja_environment()
     template = env.get_template(template_file)

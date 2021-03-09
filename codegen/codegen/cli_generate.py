@@ -6,7 +6,7 @@ import typer
 
 from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html
 from codegen.citergie.mesures_generator import render_mesure_as_json, render_mesure_as_html, build_mesure, \
-    render_mesures_summary_as_html
+    render_mesures_summary_as_html, filter_indicateurs_by_mesure_id
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
 from codegen.codegen.typescript import render_markdown_as_typescript
 from codegen.utils.files import load_md, write
@@ -41,7 +41,8 @@ def all(
         output_json=thematique_json,
     )
     mesures(
-        markdown_dir=mesures_markdown_dir,
+        mesures_dir=mesures_markdown_dir,
+        indicateurs_dir=indicateurs_markdown_dir,
         output_dir=os.path.join(client_dir, mesures_output_dir),
         html=mesures_html,
         json=mesures_json,
@@ -85,7 +86,9 @@ def indicateurs(
 
 @app.command()
 def mesures(
-    markdown_dir: str = typer.Option('../referentiels/markdown/mesures_citergie', "--markdown", "-md"),
+    mesures_dir: str = typer.Option('../referentiels/markdown/mesures_citergie', "--mesures-markdown", "-m"),
+    indicateurs_dir: str = typer.Option('../referentiels/markdown/indicateurs_citergie', "--indicateurs-markdown",
+                                        "-i"),
     output_dir: str = typer.Option('../client/dist', "--output", "-o"),
     html: bool = True,
     json: bool = False,
@@ -93,9 +96,15 @@ def mesures(
     """
     Convert 'mesures' markdown files to code.
     """
-    files = glob.glob(os.path.join(markdown_dir, '*.md'))
+    indicateur_files = glob.glob(os.path.join(indicateurs_dir, '*.md'))
+    indicateurs = []
+    for filename in indicateur_files:
+        md = load_md(filename)
+        indicateurs.extend(build_indicators(md))
+
+    mesure_files = glob.glob(os.path.join(mesures_dir, '*.md'))
     mesures = []
-    with typer.progressbar(files) as progress:
+    with typer.progressbar(mesure_files) as progress:
         for filename in progress:
             md = load_md(filename)
             mesure = build_mesure(md)
@@ -108,7 +117,8 @@ def mesures(
                 write(filename, json_data)
 
             if html:
-                html_doc = render_mesure_as_html(mesure)
+                mesure_indicateurs = filter_indicateurs_by_mesure_id(indicateurs, mesure['id'])
+                html_doc = render_mesure_as_html(mesure, indicateurs=mesure_indicateurs)
                 filename = os.path.join(output_dir, f'{filename_base}.html')
                 write(filename, html_doc)
 
@@ -117,7 +127,7 @@ def mesures(
         filename = os.path.join(output_dir, f'mesures.html')
         write(filename, summary)
 
-    typer.echo(f"Processed {len(files)} 'mesures'.")
+    typer.echo(f"Processed {len(mesure_files)} 'mesures'.")
 
 
 @app.command()

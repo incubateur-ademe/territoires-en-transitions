@@ -35,7 +35,7 @@ def test_mesures(mock_write: MagicMock):
     """Test that command `poetry run generate mesures` write files"""
     mesures(
         output_dir=output_dir,
-        markdown_dir='../referentiels/markdown/mesures_citergie',
+        mesures_dir='../referentiels/markdown/mesures_citergie',
         html=True,
         json=True,
     )

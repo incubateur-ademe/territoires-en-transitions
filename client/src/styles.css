@@ -47,4 +47,21 @@
   .action .status input:checked + label {
     @apply bg-blue-300;
   }
+
+  /* Indicateur component */
+  .indicateur p {
+    @apply mb-2;
+  }
+
+  .indicateur ul {
+    @apply list-disc list-inside;
+  }
+
+  .indicateur li {
+    @apply mb-2;
+  }
+
+  .indicateur li > p {
+    @apply inline;
+  }
 }

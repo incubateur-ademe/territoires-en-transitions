@@ -1,7 +1,9 @@
 import glob
 import os
 
-from codegen.citergie.mesures_generator import build_mesure, render_mesure_as_html, render_mesures_summary_as_html
+from codegen.citergie.indicators_generator import build_indicators
+from codegen.citergie.mesures_generator import build_mesure, render_mesure_as_html, render_mesures_summary_as_html, \
+    filter_indicateurs_by_mesure_id
 from codegen.utils.files import load_md
 from codegen.utils.templates import escape_to_html
 
@@ -23,28 +25,44 @@ def test_build_mesure():
 
 def test_render_mesure_as_html():
     """Test that a specific mesure is rendered"""
-    md = load_md('../referentiels/markdown/mesures_citergie/1.1.1.md')
-    mesure = build_mesure(md)
-    html = render_mesure_as_html(mesure)
+    indicateur_md = load_md('../referentiels/markdown/indicateurs_citergie/1.md')
+    indicateurs = build_indicators(indicateur_md)
+
+    mesure_md = load_md('../referentiels/markdown/mesures_citergie/1.1.1.md')
+    mesure = build_mesure(mesure_md)
+
+    mesure_indicateurs = filter_indicateurs_by_mesure_id(indicateurs, mesure['id'])
+    html = render_mesure_as_html(mesure, indicateurs=mesure_indicateurs)
 
     assert html
 
 
 def test_render_mesure_as_html_all():
     """Test that all mesures are rendered correctly"""
-    files = glob.glob(os.path.join('../referentiels/markdown/mesures_citergie', '*.md'))
-    assert files
+    indicateur_files = glob.glob(os.path.join('../referentiels/markdown/indicateurs_citergie', '*.md'))
+    indicateurs = []
+    for indicateur_file in indicateur_files:
+        md = load_md(indicateur_file)
+        indicateurs.extend(build_indicators(md))
 
-    for file in files:
+    mesure_files = glob.glob(os.path.join('../referentiels/markdown/mesures_citergie', '*.md'))
+    assert mesure_files
+
+    for file in mesure_files:
         md = load_md(file)
         mesure = build_mesure(md)
-        html = render_mesure_as_html(mesure)
+        mesure_indicateurs = filter_indicateurs_by_mesure_id(indicateurs, mesure['id'])
+        html = render_mesure_as_html(mesure, indicateurs=mesure_indicateurs)
 
         assert escape_to_html(mesure['nom']) in html
 
         if 'actions' in mesure.keys():
             for action in mesure['actions']:
                 assert escape_to_html(action['nom']) in html
+
+        if mesure_indicateurs:
+            for indicateur in mesure_indicateurs:
+                assert escape_to_html(indicateur['nom']) in html
 
 
 def test_render_mesures_summary_as_html():
