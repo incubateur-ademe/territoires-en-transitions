@@ -103,6 +103,7 @@ def mesures(
         indicateurs.extend(build_indicators(md))
 
     mesure_files = glob.glob(os.path.join(mesures_dir, '*.md'))
+    mesure_files.sort()
     mesures = []
     with typer.progressbar(mesure_files) as progress:
         for filename in progress:
