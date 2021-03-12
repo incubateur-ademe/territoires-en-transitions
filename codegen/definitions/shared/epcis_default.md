@@ -11,9 +11,11 @@ Il ne faut pas changer `test` non plus car c'est la clé par default.
 epcis_default:
   test: 'Ville de test'
   clunisois: "CC du Clunisois"
+  coeur_savoie: "CC Coeur de Savoie"
+  doubs_baumois: "CC Doubs Baumois"
   haut_poitou: "CC Haut Poitou"
   pays_rethelois: "CC Pays Rethélois"
   pyrenees_gaves: "CC Pyrénées Vallées des Gaves"
   touraine_est: "CC Touraine-Est Vallées"
-  doubs_baumois: "CC Doubs Baumois"
+
 ```
