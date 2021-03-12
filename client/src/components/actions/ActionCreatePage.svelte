@@ -33,9 +33,9 @@
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
         <div class="p-5"></div>
         <label for="mesure_create_description">Description</label>
-        <input id="mesure_create_description"
+        <textarea id="mesure_create_description"
                bind:value={description}
-               class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
+               class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100" />
     </div>
 
     <Button

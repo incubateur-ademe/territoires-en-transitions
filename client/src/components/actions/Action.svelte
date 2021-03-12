@@ -34,7 +34,7 @@
             <summary class="border border-gray-400 rounded px-2 py-1 absolute top-0
          right-0 cursor-pointer hover:bg-gray-200">Plus
             </summary>
-            <div class="details-content">
+            <div class="details-content whitespace-pre">
                 {action.description}
             </div>
             <Button
