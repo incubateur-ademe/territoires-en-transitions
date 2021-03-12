@@ -54,5 +54,29 @@ aws s3api put-bucket-acl --bucket staging.territoiresentransitions.fr --acl publ
   La valeur de TTL peut être discutée avec toute l'équipe si cela peut impacter
   les utilisateurs.
 
+## Activer la fonctionalité website sur le bucket de stockage
+
+Afin que le nom de domaine pointe automatiquement sur la page `index.html`, on
+peut activer la [fonctionnalité website](https://www.scaleway.com/en/docs/s3-bucket-website/)
+du bucket.
+
+Pour cela, on crée un fichier de configuration nommé `bucket-website.json` :
+```json
+{
+    "IndexDocument" : {
+        "Suffix": "index.html"
+    },
+    "ErrorDocument": {
+        "Key": "error.html"
+    }
+}
+```
+
+Et on l'envoie sur le bucket avec la commande suivante :
+```sh
+aws s3api put-bucket-website --bucket staging.territoiresentransitions.fr --website-configuration file://bucket-website.json
+```
+
 ## Ressources
 - S3 Object Storage - Customizing URLs with CNAME : https://www.scaleway.com/en/docs/s3-customize-bucket-domain/
+- S3 Object Storage - How to create static website : https://www.scaleway.com/en/docs/s3-bucket-website/
