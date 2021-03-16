@@ -180,7 +180,12 @@ def add_climat_pratic(mesures: List[dict], correspondance: str) -> List[dict]:
     return mesures
 
 
-def mesure_to_markdown(mesure: dict) -> str:
+def mesure_to_markdown_legacy(mesure: dict) -> str:
+    """
+    Legacy function used by the extractor cli with the results of `docx_to_mesures`
+    todo: docx_to_mesures should be updated to output a dict
+          similar to the output of `mesures_generator.build_mesure`
+    """
     lines = []
 
     def add_line(s: str) -> None:
@@ -208,6 +213,43 @@ def mesure_to_markdown(mesure: dict) -> str:
         add_line(f"categorie: {action['categorie']}")
         add_line("```")
         if action['description']:
+            add_line(action['description'])
+        add_line('')
+        add_line('')
+
+    return '\n'.join(lines)
+
+
+def mesure_to_markdown(mesure: dict) -> str:
+    """
+    Transform a mesure dict into markdown.
+
+    :parameter mesure is a dict similar to the output of `mesures_generator.build_mesure`
+    :returns a markdown string compatible with `mesures_generator.build_mesure` input once parsed as a Document
+    """
+    lines = []
+
+    def add_line(s: str) -> None:
+        lines.append(s)
+
+    add_line(f"# {mesure['nom']}")
+    add_line("```yaml")
+    add_line(f"id: {mesure['id']}")
+    add_line(f"climat_pratic_id: {mesure['climat_pratic_id']}")
+    add_line("```")
+    if 'description' in mesure.keys() and mesure['description']:
+        add_line('## Description')
+        add_line(mesure['description'])
+    add_line('')
+    add_line('## Actions')
+    for action in mesure['actions']:
+        add_line(f"### {action['nom']}")
+        add_line("```yaml")
+        add_line(f"id: {action['id']}")
+        add_line(f"points: {action['points']}")
+        add_line(f"categorie: {action['categorie']}")
+        add_line("```")
+        if 'description' in action.keys() and action['description']:
             add_line(action['description'])
         add_line('')
         add_line('')

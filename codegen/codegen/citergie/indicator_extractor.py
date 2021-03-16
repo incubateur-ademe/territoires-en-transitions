@@ -86,8 +86,13 @@ def cleanup(nom: str) -> str:
     return nom
 
 
-def indicators_to_markdowns(indicators: List[dict]) -> Dict[str, str]:
+def indicators_to_markdowns_legacy(indicators: List[dict]) -> Dict[str, str]:
     """
+    Legacy function used by the extractor cli with the results of `parse_indicators_xlsx`
+    todo: parse_indicators_xlsx should be updated to output a dictionary of indicators grouped by `number`.
+          The indicators should be compatible with the new function and similar to the output of
+          `indicators_generator.build_indicators`
+
     Transform a list of indicators into markdown.
     One markdown per indicator.
     If an indicator is composite (ex 4), then its sub indicators (4a, 4b) will be written in the same markdown.
@@ -134,3 +139,42 @@ def indicators_to_markdowns(indicators: List[dict]) -> Dict[str, str]:
         mds[number] += ''.join(lines)
 
     return mds
+
+
+def indicators_to_markdown(indicators: List[dict]) -> str:
+    """
+    Transform a list of indicators into a single markdown string.
+
+    :parameter indicators is a list similar to the output of `indicators_generator.build_indicators`
+    :returns a markdown string compatible with `indicators_generator.build_indicators` input once parsed as a Document
+    """
+    markdown = ''
+
+    for indicator in indicators:
+        lines = []
+
+        def add_line(s: str) -> None:
+            lines.append(f'{s}\n')
+
+        add_line(f"# {cleanup(indicator['nom'])}")
+        add_line("```yaml")
+        add_line(f"id: {indicator['id']}")
+        add_line(f"unite: {clean_unite(indicator['unite'])}")
+        add_line(f"mesures:")
+        for mesure_name in indicator['mesures']:
+            add_line(f"  - {mesure_name}")
+        add_line(f"climat_pratic_ids:")
+        for theme in indicator['climat_pratic_ids']:
+            add_line(f"  - {theme}")
+        add_line(f"pcaet: {str(indicator['pcaet']).lower()}")
+        add_line(f"obligation_citergie: {str(indicator['obligation_citergie']).lower()}")
+        if 'dom' in indicator.keys() and indicator['dom']:
+            add_line(f"dom: {indicator['dom']}")
+
+        add_line("```")
+        if 'description' in indicator.keys() and indicator['description']:
+            add_line('## Description')
+            add_line(indicator['description'])
+        markdown += ''.join(lines)
+
+    return markdown

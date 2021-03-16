@@ -4,13 +4,13 @@
     import {getCurrentEpciId} from "../../api/currentEpci";
     import {MesureCustomStorable} from "../../storables/MesureCustomStorable";
 
-    export let climat_pratic_thematique
+    export let climat_pratic_thematique_id
     const epciId = getCurrentEpciId()
     let customMesures: Array<MesureCustomStorable>
 
     const updateMesures = () => {
         customMesures = mesureCustomStore.where(
-            (mesure) => mesure.climat_pratic_thematic == climat_pratic_thematique &&
+            (mesure) => mesure.climat_pratic_thematic_id == climat_pratic_thematique_id &&
                 mesure.epci_id == epciId
         )
     }

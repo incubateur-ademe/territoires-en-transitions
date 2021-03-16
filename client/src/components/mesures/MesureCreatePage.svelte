@@ -6,16 +6,16 @@
     import {MesureCustomStorable} from "../../storables/MesureCustomStorable";
 
     let name = ''
-    let climatPraticThematique: string
+    let climatPraticThematiqueId: string
     export let thematiques
 
     function handleSave() {
-        if (climatPraticThematique) {
+        if (climatPraticThematiqueId) {
             const epciId = getCurrentEpciId()
             const mesure = new MesureCustomStorable({
                 uid: uuid(),
                 epci_id: epciId,
-                climat_pratic_thematic: climatPraticThematique,
+                climat_pratic_thematic_id: climatPraticThematiqueId,
                 name: name,
             })
 
@@ -37,10 +37,10 @@
         <div class="pb-5"></div>
         <label for="mesure_create_climat_pratic">Thématique</label>
         <select id="mesure_create_climat_pratic"
-                bind:value={climatPraticThematique}
+                bind:value={climatPraticThematiqueId}
                 class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
             {#each thematiques as thematique}
-                <option value={thematique.name}>
+                <option value={thematique.id}>
                     {thematique.name}
                 </option>
             {/each}

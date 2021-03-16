@@ -7,7 +7,7 @@ MesureCustom:
         type: String
     epci_id:
         type: String
-    climat_pratic_thematic:
+    climat_pratic_thematic_id:
         type: String
     name:
         type: String

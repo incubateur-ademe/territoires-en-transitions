@@ -2,8 +2,8 @@ import os
 
 import typer
 
-from codegen.citergie.indicator_extractor import parse_indicators_xlsx, indicators_to_markdowns
-from codegen.citergie.mesures_extractor import docx_to_mesures, add_climat_pratic, mesure_to_markdown
+from codegen.citergie.indicator_extractor import parse_indicators_xlsx, indicators_to_markdowns_legacy
+from codegen.citergie.mesures_extractor import docx_to_mesures, add_climat_pratic, mesure_to_markdown_legacy
 from codegen.utils.files import write, load_docx
 
 app = typer.Typer()
@@ -30,7 +30,7 @@ def mesures(
     with typer.progressbar(mesures) as progress:
         for mesure in progress:
             filename = os.path.join(output_dir, f"{mesure['id']}.md")
-            md = mesure_to_markdown(mesure)
+            md = mesure_to_markdown_legacy(mesure)
             write(filename, md)
 
     typer.echo(f"All {len(mesures)} 'mesures' were exported in '{output_dir}' as markdown files.")
@@ -48,7 +48,7 @@ def indicateurs(
     """
     typer.echo(f"Parsing files...")
     indicators = parse_indicators_xlsx(indicateurs=indicateurs_xlsx, correspondance=correspondance_xlsx)
-    mds = indicators_to_markdowns(indicators)
+    mds = indicators_to_markdowns_legacy(indicators)
 
     with typer.progressbar(mds.items()) as progress:
         for number, md in progress:

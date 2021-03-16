@@ -53,6 +53,7 @@ pytest-cov = "^2.11.1"
 [tool.poetry.scripts]
 extract = 'codegen.cli_extract:app'
 generate = 'codegen.cli_generate:app'
+regenerate = 'codegen.cli_regenerate:app'
 
 [build-system]
 requires = ["poetry>=0.12"]

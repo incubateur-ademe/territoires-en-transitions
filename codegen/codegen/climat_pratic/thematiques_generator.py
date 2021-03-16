@@ -4,12 +4,21 @@ import jsbeautifier
 from mistletoe import Document
 from mistletoe.block_token import BlockToken
 
+from codegen.utils.files import load_md
 from codegen.utils.markdown_utils import void, is_yaml, save_yaml_data
 from codegen.utils.templates import build_jinja_environment
 
 
 def thematiques(token: BlockToken, thematiques: dict):
     save_yaml_data(token, thematiques)
+
+
+def get_thematiques(
+    markdown_file='../referentiels/markdown/thematiques_climat_pratic/thematiques.md'
+) -> Dict[str, str]:
+    """Returns thématiques built from markdown file"""
+    markdown = load_md(markdown_file)
+    return build_thematiques(markdown)
 
 
 def build_thematiques(markdown: Document) -> Dict[str, str]:

@@ -3,16 +3,16 @@ import json
 from typing import Callable, List
 
 from bs4 import BeautifulSoup
-from mistletoe import Document, HTMLRenderer
+from mistletoe import Document
 from mistletoe.block_token import BlockToken
 
-from codegen.utils.markdown_utils import void, is_yaml, is_keyword, save_yaml_data, is_heading
+from codegen.utils.markdown_utils import void, is_yaml, is_keyword, is_heading, token_to_string, update_with_yaml
 from codegen.utils.templates import build_jinja_environment
 
 
 def meta(token: BlockToken, data: dict) -> None:
     """save ```yaml block"""
-    return save_yaml_data(token, data)
+    return update_with_yaml(token, data)
 
 
 def indicator_writer() -> Callable:
@@ -29,8 +29,7 @@ def indicator_writer() -> Callable:
             return
         if 'description' not in indicator.keys():
             indicator['description'] = ''
-        with HTMLRenderer() as renderer:
-            indicator['description'] += renderer.render(token)
+        indicator['description'] += token_to_string(token)
 
     current: Callable = head
 
@@ -71,7 +70,7 @@ def render_indicators_as_html(indicateurs: List[dict],
     years = range(2016, 2023)
     by_theme = {}
     for indicateur in indicateurs:
-        theme = indicateur['yaml']['climat_pratic'][0]
+        theme = indicateur['climat_pratic_ids'][0]
         if theme not in by_theme.keys():
             by_theme[theme] = []
         by_theme[theme].append(indicateur)

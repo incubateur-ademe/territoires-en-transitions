@@ -3,20 +3,18 @@ import json
 from typing import Callable, List
 
 import jsbeautifier
-import yaml
 from bs4 import BeautifulSoup
-from mistletoe import Document, HTMLRenderer
+from mistletoe import Document
 from mistletoe.block_token import Heading, BlockToken, CodeFence
 
-from codegen.utils.markdown_utils import void, is_heading, is_yaml, is_keyword
+from codegen.climat_pratic.thematiques_generator import get_thematiques
+from codegen.utils.markdown_utils import void, is_heading, is_yaml, is_keyword, token_to_string, update_with_yaml
 from codegen.utils.templates import build_jinja_environment
 
 
 def meta(token: BlockToken, data: dict) -> None:
     """save ```yaml block"""
-    if is_yaml(token):
-        parsed = yaml.safe_load(token.children[0].content)
-        data.update(parsed)
+    return update_with_yaml(token, data)
 
 
 def actions_writer() -> Callable:
@@ -33,8 +31,7 @@ def actions_writer() -> Callable:
             return
         if 'description' not in action.keys():
             action['description'] = ''
-        with HTMLRenderer() as renderer:
-            action['description'] += renderer.render(token)
+        action['description'] += token_to_string(token)
 
     current: Callable = head
 
@@ -77,8 +74,7 @@ def mesure_writer() -> Callable:
             return
         if 'description' not in mesure.keys():
             mesure['description'] = ''
-        with HTMLRenderer() as renderer:
-            mesure['description'] += renderer.render(token)
+        mesure['description'] += token_to_string(token)
 
     actions = actions_writer()
 
@@ -119,7 +115,7 @@ def render_mesure_as_js(mesure: dict,
 
 
 def filter_indicateurs_by_mesure_id(indicateurs: List[dict], mesure_id: str) -> List[dict]:
-    return [indicateur for indicateur in indicateurs if mesure_id in indicateur['yaml']['mesures']]
+    return [indicateur for indicateur in indicateurs if mesure_id in indicateur['mesures']]
 
 
 def render_mesure_as_html(mesure: dict,
@@ -150,16 +146,17 @@ def render_mesures_summary_as_html(mesures: List[dict],
     """Renders mesures summmary into a single html string"""
     env = build_jinja_environment()
     template = env.get_template(template_file)
+    thematiques = get_thematiques()
     by_theme = {}
 
     for mesure in mesures:
-        theme = mesure['climat_pratic'].strip() if 'climat_pratic' in mesure.keys() else ''
+        theme = mesure['climat_pratic_id'].strip() if 'climat_pratic_id' in mesure.keys() else ''
         theme = theme if theme else 'Pas de thème'
         if theme not in by_theme.keys():
             by_theme[theme] = []
         by_theme[theme].append(mesure)
 
-    rendered = template.render(mesures=by_theme)
+    rendered = template.render(mesures=by_theme, thematiques=thematiques)
     soup = BeautifulSoup(rendered, 'html.parser')
     return soup.prettify()
 

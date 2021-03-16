@@ -41,12 +41,12 @@
            class="border-green-700 border-2 hover:bg-green-100 active:bg-green-600 px-6
            py-3">Ajouter une mesure</a>
     </header>
-    {% for theme in mesures.keys() %}
+    {% for thematique_id in mesures.keys() %}
         <section class="mb-16">
-            <h2 class="text-2xl font-semibold my-6">{{ theme }}</h2>
-            <div data-custom-mesure-thematique="{{ theme }}"></div>
+            <h2 class="text-2xl font-semibold my-6">{{ thematiques[thematique_id] }}</h2>
+            <div data-custom-mesure-thematique="{{ thematique_id }}"></div>
             <ul>
-                {% for mesure in mesures[theme] %}
+                {% for mesure in mesures[thematique_id] %}
                     <li>
                         <a
                             class="bg-white p-4 rounded my-4 grid grid-cols-1
