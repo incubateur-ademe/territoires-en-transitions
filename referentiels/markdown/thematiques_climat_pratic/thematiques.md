@@ -6,20 +6,19 @@ Permet de rattacher une mesure et/ou un indicateur à une thématique.
 ```yaml
 thematiques:
   strategie: Stratégie
+  urbanisme: Urbanisme et aménagement
   batiments: Bâtiments et patrimoine
-  energie: 
-    Gestion, production et distribution de l'énergie
+  energie: Gestion, production et distribution de l'énergie
   mobilites: Mobilités
+  agri_alim: Agriculture et alimentation
+  foret_biodiv: Forêts, espaces verts et biodiversité
   conso_resp: Consommation écoresponsable
-  forma_sensib: Formation, sensibilisation, communication
-  parten_coop: Partenariat et coopération
   dechets: Déchets
+  eau: Eau et assainissement
+  preca_energie: Précarité énergétique
+  dev_eco: Activités économiques
   tourisme: Tourisme
   orga_interne: Organisation interne
-  dev_eco: Activités économiques
-  foret_biodiv: Forêts, espaces verts et biodiversité
-  eau: Eau et assainissement
-  agri_alim: Agriculture et alimentation
-  urbanisme: Urbanisme et aménagement
-  preca_energie: Précarité énergétique
+  forma_sensib: Formation, sensibilisation, communication
+  parten_coop: Partenariat et coopération
 ```
