@@ -1,6 +1,6 @@
 from codegen.citergie.mesures_generator import render_mesure_as_html
 from codegen.economie_circulaire.orientations_generator import build_orientation, orientation_as_mesure
-from codegen.utils.files import load_md
+from codegen.utils.files import load_md, sorted_files
 
 
 def test_build_orientation():
@@ -20,3 +20,15 @@ def test_orientation_as_mesure():
     html = render_mesure_as_html(mesure, indicateurs=[])
 
     assert html
+
+
+def test_orientation_as_mesure_all():
+    """Test that all specific orientations can be rendered as mesure"""
+    files = sorted_files('../referentiels/markdown/orientations_economie_circulaire', 'md')
+
+    for file in files:
+        md = load_md(file)
+        orientation = build_orientation(md)
+        mesure = orientation_as_mesure(orientation)
+        html = render_mesure_as_html(mesure, indicateurs=[])
+        assert html

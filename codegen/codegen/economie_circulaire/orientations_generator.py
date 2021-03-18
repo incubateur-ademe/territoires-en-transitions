@@ -158,6 +158,7 @@ def orientation_as_mesure(orientation: dict) -> dict:
     """Converts a orientation to a mesure in order to use it with mesures_generator functions"""
     return {
         'nom': orientation['nom'],
+        'climat_pratic_id': 'eci',
         'id': f'eci_{orientation["id"]}',
         'description': orientation['description'],
         'actions': orientation['niveaux'],

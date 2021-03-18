@@ -9,7 +9,8 @@ from codegen.citergie.mesures_generator import render_mesure_as_json, render_mes
     render_mesures_summary_as_html, filter_indicateurs_by_mesure_id
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
 from codegen.codegen.typescript import render_markdown_as_typescript
-from codegen.utils.files import load_md, write
+from codegen.economie_circulaire.orientations_generator import orientation_as_mesure, build_orientation
+from codegen.utils.files import load_md, write, sorted_files
 
 app = typer.Typer()
 
@@ -22,6 +23,7 @@ def all(
     thematique_typescript=True,
     thematique_json=False,
     mesures_markdown_dir='../referentiels/markdown/mesures_citergie',
+    mesures_orientations_dir='../referentiels/markdown/orientations_economie_circulaire',
     mesures_output_dir='dist',
     mesures_html=True,
     mesures_json=False,
@@ -43,6 +45,7 @@ def all(
     mesures(
         mesures_dir=mesures_markdown_dir,
         indicateurs_dir=indicateurs_markdown_dir,
+        orientations_dir=mesures_orientations_dir,
         output_dir=os.path.join(client_dir, mesures_output_dir),
         html=mesures_html,
         json=mesures_json,
@@ -87,6 +90,8 @@ def indicateurs(
 @app.command()
 def mesures(
     mesures_dir: str = typer.Option('../referentiels/markdown/mesures_citergie', "--mesures-markdown", "-m"),
+    orientations_dir: str = typer.Option('../referentiels/markdown/orientations_economie_circulaire',
+                                         "--orientations-markdown", "-om"),
     indicateurs_dir: str = typer.Option('../referentiels/markdown/indicateurs_citergie', "--indicateurs-markdown",
                                         "-i"),
     output_dir: str = typer.Option('../client/dist', "--output", "-o"),
@@ -96,20 +101,38 @@ def mesures(
     """
     Convert 'mesures' markdown files to code.
     """
-    indicateur_files = glob.glob(os.path.join(indicateurs_dir, '*.md'))
+    # Load indicateurs
+    indicateur_files = sorted_files(indicateurs_dir, 'md')
     indicateurs = []
-    for filename in indicateur_files:
-        md = load_md(filename)
-        indicateurs.extend(build_indicators(md))
+    with typer.progressbar(indicateur_files) as progress:
+        for filename in progress:
+            md = load_md(filename)
+            indicateurs.extend(build_indicators(md))
 
-    mesure_files = glob.glob(os.path.join(mesures_dir, '*.md'))
+    # Load mesures
+    mesure_files = sorted_files(mesures_dir, 'md')
     mesure_files.sort()
     mesures = []
+
     with typer.progressbar(mesure_files) as progress:
         for filename in progress:
             md = load_md(filename)
             mesure = build_mesure(md)
             mesures.append(mesure)
+
+    # Load orientations as mesures
+    orientation_files = sorted_files(orientations_dir, 'md')
+
+    with typer.progressbar(orientation_files) as progress:
+        for filename in progress:
+            md = load_md(filename)
+            orientation = build_orientation(md)
+            mesure = orientation_as_mesure(orientation)
+            mesures.append(mesure)
+
+    # Output mesures
+    with typer.progressbar(mesures) as progress:
+        for mesure in progress:
             filename_base = f"mesure_{mesure['id']}"
 
             if json:

@@ -1,4 +1,6 @@
+import glob
 import os
+from typing import List
 
 import docx.document
 from mistletoe import Document
@@ -23,3 +25,14 @@ def write(filename: str, contents: str) -> None:  # pragma: no cover
         pass
     with open(filename, 'w', encoding='utf8') as file:
         file.write(contents)
+
+
+def sorted_files(directory: str, extension: str) -> List[str]:
+    """
+    :param directory The directory containing the files.
+    :param extension The file extension without the separator. Use 'md' for markdown files.
+    :returns A list of sorted files.
+    """
+    files = glob.glob(os.path.join(directory, f'*.{extension}'))
+    files.sort()
+    return files

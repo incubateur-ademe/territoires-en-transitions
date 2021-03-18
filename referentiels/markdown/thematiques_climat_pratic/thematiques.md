@@ -21,4 +21,5 @@ thematiques:
   orga_interne: Organisation interne
   forma_sensib: Formation, sensibilisation, communication
   parten_coop: Partenariat et coopération
+  eci: Économie circulaire
 ```
