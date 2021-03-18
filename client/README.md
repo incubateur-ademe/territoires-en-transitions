@@ -32,8 +32,12 @@ npm start
 ```
 
 Cette commande lance [webpack-dev-server](https://webpack.js.org/configuration/dev-server/)
-et permet de servir l'application sur le port `8080`. Les assets sont compilés et 
-servis par la mémoire.
+et permet de servir l'application en local sur le port `8080`. Ouvrir l'url 
+http://localhost:8080 dans un navigateur pour afficher l'application.
+
+Note: les assets sont compilés et servis par la mémoire avec webpack-dev-server. On ne 
+trouvera donc pas les fichiers générés dans le dossier `./dist`. Pour écrire les 
+fichiers dans le dossier `dist`, on peut utiliser la commande `npm run build`.
 
 _Source : https://webpack.js.org/guides/development/#using-webpack-dev-server_ :
 > webpack-dev-server doesn't write any output files after compiling. Instead, it keeps 
@@ -55,9 +59,32 @@ npm run build
 
 ## Lancer les tests
 
+Pour lancer la suite de tests : 
 ```sh
 npm run test
 ```
+
+Pour lancer un test spécifique : 
+```sh
+npm run test -- [chemin/vers/un/fichier/ou/dossier]
+```
+
+Pour lancer des tests qui correspondent à une string ou une RegExp :
+```sh
+npm run test -- --grep [maRegExp]
+```
+
+## Mettre à jour les dépendances
+
+De temps en temps, on peut vérifier les dépendances et les mettre à jour. Pour cela :
+
+
+1. On lance la commande `npm outdated` pour voir ce qui n'est plus à jour. Si certains 
+   modules nécessitent d'être mis à jour, on peut suivre les points 2 et 3.
+2. On installe [npm-check-updates]( https://www.npmjs.com/package/npm-check-updates) en
+   global et on lance `ncu -u` pour mettre à jour le `package.json`.
+3. Enfin, on lance `npm i` pour avoir un nouveau `package-lock.json` à commit.
+4. On crée une PR avec le `package.json` et le `package-lock.json` modifiés.
 
 ## Déployer sur le staging
  
