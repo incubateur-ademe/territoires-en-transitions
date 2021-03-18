@@ -17,5 +17,6 @@ epcis_default:
   pays_rethelois: "CC Pays Rethélois"
   pyrenees_gaves: "CC Pyrénées Vallées des Gaves"
   touraine_est: "CC Touraine-Est Vallées"
+  cyclad: "Cyclad"
 
 ```
