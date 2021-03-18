@@ -37,11 +37,11 @@
     <h1 class="text-3xl font-semibold my-10">
         Liste des indicateurs
     </h1>
-    {% for theme in indicateurs.keys() %}
+    {% for thematique_id in indicateurs.keys() %}
         <section class="mb-16">
-            <h2 class="text-2xl font-semibold my-6">{{ theme }}</h2>
+            <h2 class="text-2xl font-semibold my-6">{{ thematiques[thematique_id] }}</h2>
             <ul>
-                {% for indicateur in indicateurs[theme] %}
+                {% for indicateur in indicateurs[thematique_id] %}
                     {% include "referentiels/html/indicateur_citergie.j2" %}
                 {% endfor %}
             </ul>

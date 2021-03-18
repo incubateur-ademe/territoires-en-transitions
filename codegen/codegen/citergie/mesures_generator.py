@@ -4,7 +4,7 @@ from typing import Callable, List
 
 import jsbeautifier
 from bs4 import BeautifulSoup
-from mistletoe import Document
+from mistletoe import Document, HTMLRenderer
 from mistletoe.block_token import Heading, BlockToken, CodeFence
 
 from codegen.climat_pratic.thematiques_generator import get_thematiques
@@ -136,6 +136,9 @@ def render_mesure_as_html(mesure: dict,
         'pas_faite': 'Pas faite',
         'non_concerne': 'Non concerné',
     }
+    renderer = HTMLRenderer()
+    description = Document(mesure['description'])
+    mesure['description'] = renderer.render(description)
     rendered = template.render(mesure=mesure, avancement_noms=avancement_noms, indicateurs=indicateurs, years=years)
     soup = BeautifulSoup(rendered, 'html.parser')
     return soup.prettify()
