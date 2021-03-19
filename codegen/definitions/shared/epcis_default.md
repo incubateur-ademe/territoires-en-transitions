@@ -14,6 +14,7 @@ epcis_default:
   coeur_savoie: "CC Coeur de Savoie"
   doubs_baumois: "CC Doubs Baumois"
   haut_poitou: "CC Haut Poitou"
+  hennebont: "Hennebont"
   pays_rethelois: "CC Pays Rethélois"
   pyrenees_gaves: "CC Pyrénées Vallées des Gaves"
   touraine_est: "CC Touraine-Est Vallées"
