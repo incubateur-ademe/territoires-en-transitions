@@ -36,6 +36,7 @@ def test_mesures(mock_write: MagicMock):
     mesures(
         output_dir=output_dir,
         mesures_dir='../referentiels/markdown/mesures_citergie',
+        orientations_dir='../referentiels/markdown/orientations_economie_circulaire',
         indicateurs_dir='../referentiels/markdown/indicateurs_citergie',
         html=True,
         json=True,

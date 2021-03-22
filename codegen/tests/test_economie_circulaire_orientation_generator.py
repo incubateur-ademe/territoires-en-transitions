@@ -8,7 +8,7 @@ def test_build_orientation():
     md = load_md('../referentiels/markdown/orientations_economie_circulaire/1.1.md')
     orientation = build_orientation(md)
     assert orientation
-    assert orientation['id'] == '1.1'
+    assert orientation['id'] == 1.1
 
 
 def test_orientation_as_mesure():
