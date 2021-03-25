@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from tortoise.contrib.fastapi import register_tortoise
 
 from config import openapi_config, tortoise_config
-from routers import hello, env, action_custom, action_status, mesure_custom, indicateur_value
+from routers import hello, action_custom, action_status, mesure_custom, indicateur_value
 
 app = FastAPI(
     title=openapi_config.name,
@@ -10,7 +10,6 @@ app = FastAPI(
     description=openapi_config.description,
 )
 app.include_router(hello.router)
-app.include_router(env.router)
 app.include_router(action_custom.router)
 app.include_router(action_status.router)
 app.include_router(mesure_custom.router)
