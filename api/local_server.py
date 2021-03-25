@@ -10,7 +10,7 @@ def run_locally():
     logger.success("Successfully initialized!")
     logger.info(f"Running uvicorn on {FASTAPI_PORT}")
 
-    uvicorn.run("api.app:app", host="0.0.0.0", port=FASTAPI_PORT, reload=True, workers=1)
+    uvicorn.run("app:app", host="0.0.0.0", port=FASTAPI_PORT, reload=True, workers=1)
 
 
 if __name__ == '__main__':

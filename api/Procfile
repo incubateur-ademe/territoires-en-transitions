@@ -1,0 +1,1 @@
+web: python local_server.py

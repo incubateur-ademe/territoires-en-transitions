@@ -1,0 +1,25 @@
+[requires]
+python_version = '3.9'
+
+[packages]
+fastapi = "^0.63.0"
+tortoise-orm = "^0.16.21"
+pydantic = "^1.8.1"
+asyncpg = "^0.22.0"
+loguru = "^0.5.3"
+mangum = "^0.11.0"
+requests = "^2.25.1"
+asynctest = "^0.13.0"
+uvicorn = "^0.13.4"
+
+
+[dev-packages]
+bumpversion = "*"
+coverage = {extras = ["toml"], version = "^5.4"}
+flake8 = "*"
+invoke = "*"
+isort = "*"
+pylint = "*"
+pytest = "*"
+yapf = "*"
+pytest-cov = "^2.11.1"

@@ -4,8 +4,8 @@ from pydantic import Field
 from config.base import BaseSettings
 from config.configuration import IS_PROD
 
-DB_MODELS = ["api.models.tortoise.action_custom", "api.models.tortoise.action_status",
-             "api.models.tortoise.indicateur_value", "api.models.tortoise.mesure_custom", ]
+DB_MODELS = ["models.tortoise.action_custom", "models.tortoise.action_status",
+             "models.tortoise.indicateur_value", "models.tortoise.mesure_custom", ]
 POSTGRES_DB_URL = "postgres://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}"
 SQLITE_DB_URL = "sqlite://:memory:"
 
