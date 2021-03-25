@@ -2,4 +2,4 @@
 from os import environ
 
 IS_PROD = environ.get("PRODUCTION", '') == 'yes'
-FASTAPI_PORT = int(environ.get("FASTAPI_PORT", '8080'))
+PORT = int(environ.get("PORT", '8080'))
