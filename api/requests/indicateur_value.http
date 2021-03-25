@@ -1,0 +1,29 @@
+
+### Add a value indicateur
+POST {{host}}/indicateur_value/v1/
+Content-Type: application/json
+
+{
+  "epci_id": "test",
+  "indicateur_id": "29",
+  "year": 2016,
+  "value": "1500"
+}
+
+### Add a value indicateur
+POST {{host}}/indicateur_value/v1/
+Content-Type: application/json
+
+{
+  "epci_id": "test",
+  "indicateur_id": "21a",
+  "year": 2022,
+  "value": "88"
+}
+
+### Get all value indicateurs
+GET {{host}}/indicateur_value/v1/test/all
+
+### Get an indicateur by its path
+GET {{host}}/indicateur_value/v1/test/21a/2022
+

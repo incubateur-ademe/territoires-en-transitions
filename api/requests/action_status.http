@@ -1,0 +1,31 @@
+
+### Add an action status
+POST {{host}}/action_status/v1/
+Content-Type: application/json
+
+
+{
+  "action_id": "1.1.1.1",
+  "epci_id": "test",
+  "avancement": "faite"
+}
+
+### Add an action status
+POST {{host}}/action_status/v1/
+Content-Type: application/json
+
+
+{
+  "action_id": "1.1.1.2",
+  "epci_id": "test",
+  "avancement": "programmee"
+}
+
+
+### Get all custom actions
+GET {{host}}/action_status/v1/test/all
+
+
+### Get an action by its path
+GET {{host}}/action_status/v1/test/1.1.1.2
+

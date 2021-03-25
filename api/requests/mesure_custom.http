@@ -1,0 +1,29 @@
+
+### Add a custom mesure
+POST {{host}}/mesure_custom/v1/
+Content-Type: application/json
+
+{
+  "uid": "4a1bc73d-aa72-4d28-8424-889643fa29c2",
+  "epci_id": "test",
+  "climat_pratic_thematic_id": "strategie",
+  "name": "faire des trucs"
+}
+
+### Add a custom mesure
+POST {{host}}/mesure_custom/v1/
+Content-Type: application/json
+
+{
+  "uid": "f7866b86-a1d1-4d51-9b6a-322c3de26c51",
+  "epci_id": "test",
+  "climat_pratic_thematic_id": "urbanisme",
+  "name": "Construction d'un skatepark en carton"
+}
+
+### Get all custom mesures
+GET {{host}}/mesure_custom/v1/test/all
+
+### Get an mesure by its path
+GET {{host}}/mesure_custom/v1/test/f7866b86-a1d1-4d51-9b6a-322c3de26c51
+

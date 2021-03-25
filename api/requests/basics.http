@@ -1,0 +1,13 @@
+### Test hello method
+GET {{host}}/hello/
+
+
+### Get environment variables
+GET {{host}}/env/variables
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
