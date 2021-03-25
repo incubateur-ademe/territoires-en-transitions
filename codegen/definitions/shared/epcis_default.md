@@ -16,6 +16,7 @@ epcis_default:
   haut_poitou: "CC Haut Poitou"
   pays_rethelois: "CC Pays Rethélois"
   pyrenees_gaves: "CC Pyrénées Vallées des Gaves"
+  terres_haut_berry: "CC Terres du Haut Berry"
   touraine_est: "CC Touraine-Est Vallées"
   cyclad: "Cyclad"
   hennebont: "Hennebont"
