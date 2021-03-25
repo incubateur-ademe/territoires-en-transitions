@@ -21,6 +21,12 @@ async def get_epci_indicateurs_value(epci_id: str):
     return await IndicateurValue_Pydantic.from_queryset(query)
 
 
+@router.get("/{epci_id}/{indicateur_id}", response_model=List[IndicateurValue_Pydantic])
+async def get_indicateur_yearly_values(epci_id: str, indicateur_id: str):
+    filter_query = IndicateurValue.filter(epci_id=epci_id, indicateur_id=indicateur_id)
+    return await IndicateurValue_Pydantic.from_queryset(filter_query)
+
+
 @router.get(
     "/{epci_id}/{indicateur_id}/{year}", response_model=IndicateurValue_Pydantic,
     responses={404: {"model": HTTPNotFoundError}}
@@ -34,7 +40,8 @@ async def get_single_indicateur_value(epci_id: str, indicateur_id: str, year: in
     "/{epci_id}/{indicateur_id}/{year}", response_model=IndicateurValue_Pydantic,
     responses={404: {"model": HTTPNotFoundError}}
 )
-async def update_indicateur_value(epci_id: str, indicateur_id: str, year: int, indicateur_value: IndicateurValueIn_Pydantic):
+async def update_indicateur_value(epci_id: str, indicateur_id: str, year: int,
+                                  indicateur_value: IndicateurValueIn_Pydantic):
     filter_query = IndicateurValue.filter(epci_id=epci_id, indicateur_id=indicateur_id, year=year)
     await filter_query.update(**indicateur_value.dict(exclude_unset=True))
     get_query = IndicateurValue.get(epci_id=epci_id, indicateur_id=indicateur_id, year=year)

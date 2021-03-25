@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
 
 from config import openapi_config, tortoise_config
@@ -14,6 +15,17 @@ app.include_router(action_custom.router)
 app.include_router(action_status.router)
 app.include_router(mesure_custom.router)
 app.include_router(indicateur_value.router)
+
+# FIXME not safe
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 register_tortoise(
     app,
