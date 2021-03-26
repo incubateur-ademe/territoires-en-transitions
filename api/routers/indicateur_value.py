@@ -15,6 +15,13 @@ async def create_indicateur_value(indicateur_value: IndicateurValueIn_Pydantic):
     return await IndicateurValue_Pydantic.from_tortoise_orm(indicateur_value_obj)
 
 
+@router.post("/{epci_id}", response_model=IndicateurValue_Pydantic)
+async def create_indicateur_value(epci_id: str, indicateur_value: IndicateurValueIn_Pydantic):
+    indicateur_value_obj = await IndicateurValue.create(**indicateur_value.dict(exclude_unset=True))
+    assert (epci_id == indicateur_value.epci_id)
+    return await IndicateurValue_Pydantic.from_tortoise_orm(indicateur_value_obj)
+
+
 @router.get("/{epci_id}/all", response_model=List[IndicateurValue_Pydantic])
 async def get_epci_indicateurs_value(epci_id: str):
     query = IndicateurValue.filter(epci_id=epci_id)
