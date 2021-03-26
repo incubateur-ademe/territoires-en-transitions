@@ -18,7 +18,7 @@ async def write_indicateur_value(indicateur_value: IndicateurValueIn_Pydantic):
 @router.post("/{epci_id}", response_model=IndicateurValue_Pydantic)
 async def write_epci_indicateur_value(epci_id: str, indicateur_value: IndicateurValueIn_Pydantic):
     indicateur_value_obj = await IndicateurValue.create(**indicateur_value.dict(exclude_unset=True))
-    assert (epci_id == indicateur_value.epci_id)
+    assert epci_id == indicateur_value.epci_id
     return await IndicateurValue_Pydantic.from_tortoise_orm(indicateur_value_obj)
 
 

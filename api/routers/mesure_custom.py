@@ -18,7 +18,7 @@ async def write_mesure_custom(mesure_custom: MesureCustomIn_Pydantic):
 @router.post("/{epci_id}", response_model=MesureCustom_Pydantic)
 async def write_epci_mesure_custom(epci_id: str, mesure_custom: MesureCustomIn_Pydantic):
     mesure_custom_obj = await MesureCustom.create(**mesure_custom.dict(exclude_unset=True))
-    assert (epci_id == mesure_custom_obj.epci_id)
+    assert epci_id == mesure_custom_obj.epci_id
     return await MesureCustom_Pydantic.from_tortoise_orm(mesure_custom_obj)
 
 

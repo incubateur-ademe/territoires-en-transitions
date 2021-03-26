@@ -18,7 +18,7 @@ async def write_action_custom(action_custom: ActionCustomIn_Pydantic):
 @router.post("/{epci_id}", response_model=ActionCustom_Pydantic)
 async def write_epci_action_custom(epci_id: str, action_custom: ActionCustomIn_Pydantic):
     action_custom_obj = await ActionCustom.create(**action_custom.dict(exclude_unset=True))
-    assert (epci_id == action_custom_obj.epci_id)
+    assert epci_id == action_custom_obj.epci_id
     return await ActionCustom_Pydantic.from_tortoise_orm(action_custom_obj)
 
 
