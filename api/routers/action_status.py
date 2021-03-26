@@ -15,6 +15,13 @@ async def create_action_status(action_status: ActionStatusIn_Pydantic):
     return await ActionStatus_Pydantic.from_tortoise_orm(action_status_obj)
 
 
+@router.post("/{epci_id}", response_model=ActionStatus_Pydantic)
+async def create_action_status(epci_id: str, action_status: ActionStatusIn_Pydantic):
+    action_status_obj = await ActionStatus.create(**action_status.dict(exclude_unset=True))
+    assert (epci_id == action_status_obj.epci_id)
+    return await ActionStatus_Pydantic.from_tortoise_orm(action_status_obj)
+
+
 @router.get("/{epci_id}/all", response_model=List[ActionStatus_Pydantic])
 async def get_epci_actions_status(epci_id: str):
     query = ActionStatus.filter(epci_id=epci_id)

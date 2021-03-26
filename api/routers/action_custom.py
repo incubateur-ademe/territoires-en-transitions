@@ -15,6 +15,13 @@ async def create_action_custom(action_custom: ActionCustomIn_Pydantic):
     return await ActionCustom_Pydantic.from_tortoise_orm(action_custom_obj)
 
 
+@router.post("/{epci_id}", response_model=ActionCustom_Pydantic)
+async def create_action_custom(epci_id: str, action_custom: ActionCustomIn_Pydantic):
+    action_custom_obj = await ActionCustom.create(**action_custom.dict(exclude_unset=True))
+    assert (epci_id == action_custom_obj.epci_id)
+    return await ActionCustom_Pydantic.from_tortoise_orm(action_custom_obj)
+
+
 @router.get("/{epci_id}/all", response_model=List[ActionCustom_Pydantic])
 async def get_epci_actions_custom(epci_id: str):
     query = ActionCustom.filter(epci_id=epci_id)
