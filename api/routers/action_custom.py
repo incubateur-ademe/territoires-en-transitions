@@ -10,20 +10,20 @@ router = APIRouter(prefix='/action_custom/v1')
 
 
 @router.post("/", response_model=ActionCustom_Pydantic)
-async def create_action_custom(action_custom: ActionCustomIn_Pydantic):
+async def write_action_custom(action_custom: ActionCustomIn_Pydantic):
     action_custom_obj = await ActionCustom.create(**action_custom.dict(exclude_unset=True))
     return await ActionCustom_Pydantic.from_tortoise_orm(action_custom_obj)
 
 
 @router.post("/{epci_id}", response_model=ActionCustom_Pydantic)
-async def create_action_custom(epci_id: str, action_custom: ActionCustomIn_Pydantic):
+async def write_epci_action_custom(epci_id: str, action_custom: ActionCustomIn_Pydantic):
     action_custom_obj = await ActionCustom.create(**action_custom.dict(exclude_unset=True))
     assert (epci_id == action_custom_obj.epci_id)
     return await ActionCustom_Pydantic.from_tortoise_orm(action_custom_obj)
 
 
 @router.get("/{epci_id}/all", response_model=List[ActionCustom_Pydantic])
-async def get_epci_actions_custom(epci_id: str):
+async def get_all_epci_actions_custom(epci_id: str):
     query = ActionCustom.filter(epci_id=epci_id)
     return await ActionCustom_Pydantic.from_queryset(query)
 
@@ -32,7 +32,7 @@ async def get_epci_actions_custom(epci_id: str):
     "/{epci_id}/{mesure_id}/{uid}", response_model=ActionCustom_Pydantic,
     responses={404: {"model": HTTPNotFoundError}}
 )
-async def get_single_action_custom(epci_id: str, mesure_id: str, uid: str):
+async def get_action_custom(epci_id: str, mesure_id: str, uid: str):
     query = ActionCustom.get(epci_id=epci_id, mesure_id=mesure_id, uid=uid)
     return await ActionCustom_Pydantic.from_queryset_single(query)
 

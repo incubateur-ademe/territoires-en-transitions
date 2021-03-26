@@ -10,20 +10,20 @@ router = APIRouter(prefix='/indicateur_value/v1')
 
 
 @router.post("/", response_model=IndicateurValue_Pydantic)
-async def create_indicateur_value(indicateur_value: IndicateurValueIn_Pydantic):
+async def write_indicateur_value(indicateur_value: IndicateurValueIn_Pydantic):
     indicateur_value_obj = await IndicateurValue.create(**indicateur_value.dict(exclude_unset=True))
     return await IndicateurValue_Pydantic.from_tortoise_orm(indicateur_value_obj)
 
 
 @router.post("/{epci_id}", response_model=IndicateurValue_Pydantic)
-async def create_indicateur_value(epci_id: str, indicateur_value: IndicateurValueIn_Pydantic):
+async def write_epci_indicateur_value(epci_id: str, indicateur_value: IndicateurValueIn_Pydantic):
     indicateur_value_obj = await IndicateurValue.create(**indicateur_value.dict(exclude_unset=True))
     assert (epci_id == indicateur_value.epci_id)
     return await IndicateurValue_Pydantic.from_tortoise_orm(indicateur_value_obj)
 
 
 @router.get("/{epci_id}/all", response_model=List[IndicateurValue_Pydantic])
-async def get_epci_indicateurs_value(epci_id: str):
+async def get_all_epci_indicateurs_values(epci_id: str):
     query = IndicateurValue.filter(epci_id=epci_id)
     return await IndicateurValue_Pydantic.from_queryset(query)
 
@@ -38,7 +38,7 @@ async def get_indicateur_yearly_values(epci_id: str, indicateur_id: str):
     "/{epci_id}/{indicateur_id}/{year}", response_model=IndicateurValue_Pydantic,
     responses={404: {"model": HTTPNotFoundError}}
 )
-async def get_single_indicateur_value(epci_id: str, indicateur_id: str, year: int):
+async def get_indicateur_value(epci_id: str, indicateur_id: str, year: int):
     query = IndicateurValue.get(epci_id=epci_id, indicateur_id=indicateur_id, year=year)
     return await IndicateurValue_Pydantic.from_queryset_single(query)
 
