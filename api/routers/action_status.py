@@ -6,7 +6,7 @@ from tortoise.contrib.fastapi import HTTPNotFoundError
 from models.pydantic.status import Status
 from models.tortoise.action_status import ActionStatus_Pydantic, ActionStatus, ActionStatusIn_Pydantic
 
-router = APIRouter(prefix='/action_status/v1')
+router = APIRouter(prefix='/v1/action_status')
 
 
 @router.post("/", response_model=ActionStatus_Pydantic)

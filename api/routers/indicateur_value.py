@@ -6,7 +6,7 @@ from tortoise.contrib.fastapi import HTTPNotFoundError
 from models.pydantic.status import Status
 from models.tortoise.indicateur_value import IndicateurValue_Pydantic, IndicateurValue, IndicateurValueIn_Pydantic
 
-router = APIRouter(prefix='/indicateur_value/v1')
+router = APIRouter(prefix='/v1/indicateur_value')
 
 
 @router.post("/", response_model=IndicateurValue_Pydantic)

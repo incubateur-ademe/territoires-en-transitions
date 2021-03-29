@@ -6,7 +6,7 @@ from tortoise.contrib.fastapi import HTTPNotFoundError
 from models.pydantic.status import Status
 from models.tortoise.mesure_custom import MesureCustom_Pydantic, MesureCustom, MesureCustomIn_Pydantic
 
-router = APIRouter(prefix='/mesure_custom/v1')
+router = APIRouter(prefix='/v1/mesure_custom')
 
 
 @router.post("/", response_model=MesureCustom_Pydantic)

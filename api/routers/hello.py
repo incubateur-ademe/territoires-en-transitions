@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from starlette.responses import HTMLResponse
+from starlette.responses import PlainTextResponse
 
 router = APIRouter(
     prefix="/hello",
@@ -8,4 +8,4 @@ router = APIRouter(
 
 @router.get("/", description="Get 'Hello!'", response_description="Some text")
 async def get():
-    return HTMLResponse("Hello!")
+    return PlainTextResponse("Hello!")
