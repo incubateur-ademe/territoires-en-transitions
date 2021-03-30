@@ -2,16 +2,19 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 from tortoise.contrib.fastapi import HTTPNotFoundError
+from tortoise.exceptions import DoesNotExist
 
-from models.pydantic.status import Status
-from models.tortoise.action_custom import ActionCustom_Pydantic, ActionCustom, ActionCustomIn_Pydantic
+from api.models.pydantic.status import Status
+from api.models.tortoise.action_custom import ActionCustom_Pydantic, ActionCustom, ActionCustomIn_Pydantic
 
 router = APIRouter(prefix='/v1/action_custom')
 
 
 @router.post("/{epci_id}", response_model=ActionCustom_Pydantic)
 async def write_epci_action_custom(epci_id: str, action_custom: ActionCustomIn_Pydantic):
-    assert epci_id == action_custom.epci_id
+    if epci_id != action_custom.epci_id:
+        raise HTTPException(status_code=400, detail="epci_id mismatch")
+
     query = ActionCustom.filter(epci_id=epci_id, mesure_id=action_custom.mesure_id, uid=action_custom.uid)
 
     if query.exists():
@@ -33,7 +36,10 @@ async def get_all_epci_actions_custom(epci_id: str):
 )
 async def get_action_custom(epci_id: str, mesure_id: str, uid: str):
     query = ActionCustom.get(epci_id=epci_id, mesure_id=mesure_id, uid=uid)
-    return await ActionCustom_Pydantic.from_queryset_single(query)
+    try:
+        return await ActionCustom_Pydantic.from_queryset_single(query)
+    except DoesNotExist as error:
+        raise HTTPException(status_code=404, detail=f"Action_custom {epci_id}/{mesure_id}/{uid} not found")
 
 
 @router.delete("/{epci_id}/{mesure_id}/{uid}", response_model=Status,

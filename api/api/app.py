@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
 
-from config import openapi_config, tortoise_config
-from routers import hello, action_custom, action_status, mesure_custom, indicateur_value
+from api.config import openapi_config, tortoise_config
+from api.routers import hello, action_custom, action_status, mesure_custom, indicateur_value
 
 app = FastAPI(
     title=openapi_config.name,

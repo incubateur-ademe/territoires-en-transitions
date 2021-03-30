@@ -2,16 +2,19 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 from tortoise.contrib.fastapi import HTTPNotFoundError
+from tortoise.exceptions import DoesNotExist
 
-from models.pydantic.status import Status
-from models.tortoise.indicateur_value import IndicateurValue_Pydantic, IndicateurValue, IndicateurValueIn_Pydantic
+from api.models.pydantic.status import Status
+from api.models.tortoise.indicateur_value import IndicateurValue_Pydantic, IndicateurValue, IndicateurValueIn_Pydantic
 
 router = APIRouter(prefix='/v1/indicateur_value')
 
 
 @router.post("/{epci_id}", response_model=IndicateurValue_Pydantic)
 async def write_epci_indicateur_value(epci_id: str, indicateur_value: IndicateurValueIn_Pydantic):
-    assert epci_id == indicateur_value.epci_id
+    if epci_id != indicateur_value.epci_id:
+        raise HTTPException(status_code=400, detail="epci_id mismatch")
+
     query = IndicateurValue.filter(epci_id=epci_id, indicateur_id=indicateur_value.indicateur_id,
                                    year=indicateur_value.year)
     if query.exists():
@@ -39,7 +42,10 @@ async def get_indicateur_yearly_values(epci_id: str, indicateur_id: str):
 )
 async def get_indicateur_value(epci_id: str, indicateur_id: str, year: int):
     query = IndicateurValue.get(epci_id=epci_id, indicateur_id=indicateur_id, year=year)
-    return await IndicateurValue_Pydantic.from_queryset_single(query)
+    try:
+        return await IndicateurValue_Pydantic.from_queryset_single(query)
+    except DoesNotExist as error:
+        raise HTTPException(status_code=404, detail=f"Indicateur_value {epci_id}/{indicateur_id}/{year} not found")
 
 
 @router.delete("/{epci_id}/{indicateur_id}/{year}", response_model=Status,

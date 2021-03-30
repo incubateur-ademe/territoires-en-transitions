@@ -1,10 +1,10 @@
 """Config of DB"""
 from os import environ
 
-from config.base import BaseSettings
+from api.config.base import BaseSettings
 
-DB_MODELS = ["models.tortoise.action_custom", "models.tortoise.action_status",
-             "models.tortoise.indicateur_value", "models.tortoise.mesure_custom", ]
+DB_MODELS = ["api.models.tortoise.action_custom", "api.models.tortoise.action_status",
+             "api.models.tortoise.indicateur_value", "api.models.tortoise.mesure_custom", ]
 SQLITE_DB_URL = "sqlite://:memory:"
 DATABASE_URL = environ.get("DATABASE_URL", SQLITE_DB_URL)
 

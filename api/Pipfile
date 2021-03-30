@@ -23,3 +23,8 @@ yapf = "*"
 
 [requires]
 python_version = "3.9"
+
+[scripts]
+test="pytest"
+serve="python server.py"
+deploy="git push scalingo master"
