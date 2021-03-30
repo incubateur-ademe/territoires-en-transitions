@@ -9,16 +9,15 @@ from models.tortoise.action_custom import ActionCustom_Pydantic, ActionCustom, A
 router = APIRouter(prefix='/v1/action_custom')
 
 
-@router.post("/", response_model=ActionCustom_Pydantic)
-async def write_action_custom(action_custom: ActionCustomIn_Pydantic):
-    action_custom_obj = await ActionCustom.create(**action_custom.dict(exclude_unset=True))
-    return await ActionCustom_Pydantic.from_tortoise_orm(action_custom_obj)
-
-
 @router.post("/{epci_id}", response_model=ActionCustom_Pydantic)
 async def write_epci_action_custom(epci_id: str, action_custom: ActionCustomIn_Pydantic):
+    assert epci_id == action_custom.epci_id
+    query = ActionCustom.filter(epci_id=epci_id, mesure_id=action_custom.mesure_id, uid=action_custom.uid)
+
+    if query.exists():
+        await query.delete()
+
     action_custom_obj = await ActionCustom.create(**action_custom.dict(exclude_unset=True))
-    assert epci_id == action_custom_obj.epci_id
     return await ActionCustom_Pydantic.from_tortoise_orm(action_custom_obj)
 
 
@@ -35,17 +34,6 @@ async def get_all_epci_actions_custom(epci_id: str):
 async def get_action_custom(epci_id: str, mesure_id: str, uid: str):
     query = ActionCustom.get(epci_id=epci_id, mesure_id=mesure_id, uid=uid)
     return await ActionCustom_Pydantic.from_queryset_single(query)
-
-
-@router.put(
-    "/{epci_id}/{mesure_id}/{uid}", response_model=ActionCustom_Pydantic,
-    responses={404: {"model": HTTPNotFoundError}}
-)
-async def update_action_custom(epci_id: str, mesure_id: str, uid: str, action_custom: ActionCustomIn_Pydantic):
-    filter_query = ActionCustom.filter(epci_id=epci_id, mesure_id=mesure_id, uid=uid)
-    await filter_query.update(**action_custom.dict(exclude_unset=True))
-    get_query = ActionCustom.get(epci_id=epci_id, mesure_id=mesure_id, uid=uid)
-    return await ActionCustom_Pydantic.from_queryset_single(get_query)
 
 
 @router.delete("/{epci_id}/{mesure_id}/{uid}", response_model=Status,

@@ -9,16 +9,15 @@ from models.tortoise.action_status import ActionStatus_Pydantic, ActionStatus, A
 router = APIRouter(prefix='/v1/action_status')
 
 
-@router.post("/", response_model=ActionStatus_Pydantic)
-async def write_action_status(action_status: ActionStatusIn_Pydantic):
-    action_status_obj = await ActionStatus.create(**action_status.dict(exclude_unset=True))
-    return await ActionStatus_Pydantic.from_tortoise_orm(action_status_obj)
-
-
 @router.post("/{epci_id}", response_model=ActionStatus_Pydantic)
 async def write_epci_action_status(epci_id: str, action_status: ActionStatusIn_Pydantic):
+    assert epci_id == action_status.epci_id
+    query = ActionStatus.filter(epci_id=epci_id, action_id=action_status.action_id)
+
+    if query.exists():
+        await query.delete()
+    
     action_status_obj = await ActionStatus.create(**action_status.dict(exclude_unset=True))
-    assert epci_id == action_status_obj.epci_id
     return await ActionStatus_Pydantic.from_tortoise_orm(action_status_obj)
 
 
@@ -35,17 +34,6 @@ async def get_all_epci_actions_status(epci_id: str):
 async def get_action_status(epci_id: str, action_id: str):
     query = ActionStatus.get(epci_id=epci_id, action_id=action_id)
     return await ActionStatus_Pydantic.from_queryset_single(query)
-
-
-@router.put(
-    "/{epci_id}/{action_id}", response_model=ActionStatus_Pydantic,
-    responses={404: {"model": HTTPNotFoundError}}
-)
-async def update_action_status(epci_id: str, action_id: str, action_status: ActionStatusIn_Pydantic):
-    filter_query = ActionStatus.filter(epci_id=epci_id, action_id=action_id)
-    await filter_query.update(**action_status.dict(exclude_unset=True))
-    get_query = ActionStatus.get(epci_id=epci_id, action_id=action_id)
-    return await ActionStatus_Pydantic.from_queryset_single(get_query)
 
 
 @router.delete("/{epci_id}/{action_id}", response_model=Status,

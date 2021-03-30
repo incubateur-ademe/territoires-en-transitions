@@ -1,6 +1,6 @@
 
 ### Add a custom action
-POST {{host}}/action_custom/v1/
+POST {{host}}/v1/action_custom/test_epci
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 
 ### Add a custom action
-POST {{host}}/action_custom/v1/
+POST {{host}}/v1/action_custom/test_epci
 Content-Type: application/json
 
 {
@@ -24,8 +24,8 @@ Content-Type: application/json
 }
 
 ### Get all custom actions
-GET {{host}}/action_custom/v1/test_epci/all
+GET {{host}}/v1/action_custom/test_epci/all
 
 ### Get an action by its path
-GET {{host}}/action_custom/v1/test_epci/5d4e1246-47ff-410a-9b5b-baa65d2822e9/b836d2b4-49c3-4c07-ae5c-5374fae78e0c
+GET {{host}}/v1/action_custom/test_epci/5d4e1246-47ff-410a-9b5b-baa65d2822e9/b836d2b4-49c3-4c07-ae5c-5374fae78e0c
 

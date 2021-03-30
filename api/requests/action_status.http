@@ -1,6 +1,6 @@
 
 ### Add an action status
-POST {{host}}/action_status/v1/
+POST {{host}}/v1/action_status/test
 Content-Type: application/json
 
 
@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ### Add an action status
-POST {{host}}/action_status/v1/
+POST {{host}}/v1/action_status/test
 Content-Type: application/json
 
 
@@ -23,9 +23,9 @@ Content-Type: application/json
 
 
 ### Get all custom actions
-GET {{host}}/action_status/v1/test/all
+GET {{host}}/v1/action_status/test/all
 
 
 ### Get an action by its path
-GET {{host}}/action_status/v1/test/1.1.1.2
+GET {{host}}/v1/action_status/test/1.1.1.2
 
