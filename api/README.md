@@ -1,15 +1,20 @@
 # API
-## Serve locally
+## Pour développer
 ```shell
-poetry run serve
+pipenv install
+```
+
+### Servir en local 
+```shell
+pipenv shell
+python ./api/dev_server.py
 ```
 
 ## Variables d'environnement
-- `PORT` 8080 par défaut
-- `DATABASE_URL` sqlite://:memory: par défaut, `postgres://<user>:<password>@territoires-4734.postgresql.dbs.scalingo.com:34582/territoires_4734` en prod
+- `PORT` 8000 par défaut, c'est le port utilisé par le client sur localhost. En prod, Scalingo se charge de passer le bon port.
+- `DATABASE_URL` sqlite://:memory: par défaut, `postgres://<user>:<password>@territoires-4734.postgresql.dbs.scalingo.com:34582/territoires_4734` en production, voir l'admin de Scalingo.
 
 ## Déploiement 
 ```shell
-poetry export -f requirements.txt > requirements.txt --without-hashes
 git push scalingo master
 ```
