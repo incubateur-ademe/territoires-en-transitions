@@ -27,4 +27,5 @@ python_version = "3.9"
 [scripts]
 test="pytest"
 serve="python server.py"
+dev="python dev_server.py"
 deploy="git push scalingo master"
