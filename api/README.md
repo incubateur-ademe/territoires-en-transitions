@@ -35,10 +35,22 @@ Le dossier `requests` comporte les fichiers pour utiliser l'API [depuis l'édite
 - `DATABASE_URL` sqlite://:memory: par défaut, `postgres://<user>:<password>@<projet>.postgresql.dbs.scalingo.com:34582/<projet>` en production, voir l'admin de Scalingo.
 
 ## Déploiement
+
+On [utilise git pour déployer](https://doc.scalingo.com/platform/deployment/deploy-with-git), il faut donc avoir saisi sa clé SSH au préalable chez Scalingo.
+
+Pour déployer sur [sandbox](https://sandboxterritoires.osc-fr1.scalingo.io/):
 ```shell
-pipenv run deploy
+git remote add sandbox git@ssh.osc-fr1.scalingo.com:sandboxterritoires.git
+git push sandbox sandbox:master
 ```
-[Utilise git pour déployer](https://doc.scalingo.com/platform/deployment/deploy-with-git), il faut donc avoir saisi sa clé SSH au préalable chez Scalingo.
+
+Pour déployer sur [staging](https://territoiresentransitions.osc-fr1.scalingo.io.):
+```shell
+git remote add staging git@ssh.osc-fr1.scalingo.com:territoiresentransitions.git
+git push staging staging:master
+```
+
+
 
 ## Documentation OpenAPI
 Elle est servie par fastAPI sur `/docs` pour les humains et `/openapi.json` pour les machines.
