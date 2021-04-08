@@ -85,8 +85,9 @@ job("Staging pipeline: build/test/deploy") {
     startOn {
         gitPush {
             // run on changes in `main` branch
+            // TODO: Deployement is on stand-by. We have to update client deployment.
             branchFilter {
-                +"refs/heads/main"
+                +"refs/heads/main-standby"
             }
         }
     }
