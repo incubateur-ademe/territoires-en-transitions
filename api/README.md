@@ -1,6 +1,11 @@
 # API
 Permet au projet territoire en transition de CRUD des données.
 
+## Pré-requis
+
+- Python >= 3.9.1
+- [Pipenv](https://pypi.org/project/pipenv/)
+
 ## Pour développer
 Ce projet utilise pipenv comme package manager, [Scalingo prenant en charge pipenv](https://doc.scalingo.com/languages/python/start).
 
@@ -9,9 +14,10 @@ Il y a aussi un fichier d'installation poetry, une autre approche envisageable s
 Installer les dépendances :
 ```shell
 pipenv install
+pipenv install --dev
 ```
 
-### Servir en local 
+### Servir en local
 Avec le reload du code :
 ```shell
 pipenv run dev
