@@ -19,13 +19,13 @@
     });
 </script>
 <svelte:head>
-    <title>Mes fiches actions</title>
+    <title>Plan d'actions</title>
 </svelte:head>
 
 <header class="flex my-10">
-    <h1 class="text-3xl font-semibold  flex-grow">Mes fiches actions</h1>
+    <h1 class="text-3xl font-semibold  flex-grow">Plan d'actions de ma collectivité</h1>
     <Button asLink
-            label="Créer une nouvelle fiche"
+            label="Créer une fiche action"
             href="fiches/creation/?epci_id={epciId}"/>
 </header>
 <div class="p-5"></div>

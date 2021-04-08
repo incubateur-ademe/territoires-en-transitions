@@ -96,17 +96,27 @@ def build_action(doc: Document) -> dict:
     return mesure
 
 
+def add_paths(actions: List[dict], referentiel_slug: str) -> None:
+    """Add path to actions in place"""
+    for action in actions:
+        if 'id' in action.keys():
+            action['path'] = f'{referentiel_slug}/{action["id"]}'
+        if 'actions' in action.keys():
+            add_paths(action['actions'], referentiel_slug)
+
+
 def build_mesure(doc: Document) -> dict:
     """Extract mesures from markdown AST"""
     warnings.warn('use build_action instead', category=DeprecationWarning)
     return build_action(doc)
 
 
-def render_mesure_as_js(mesure: dict,
-                        template_file='referentiels/js/mesure_citergie.j2') -> str:  # pragma: no cover
+def render_actions_as_typescript(actions: List[dict],
+                                 template_file='shared/ts/actions_referentiel.j2') -> str:
+    """Render all actions into a single typescript file."""
     env = build_jinja_environment()
     template = env.get_template(template_file)
-    rendered = template.render(mesure=mesure)
+    rendered = template.render(actions=actions)
     return jsbeautifier.beautify(rendered)
 
 

@@ -21,8 +21,8 @@
         </li>
         <li class="mr-4">
             <a class="p-1 rounded hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 active:text-gray-900 active:shadow-inner active:bg-white"
-               href="mesures.html?epci_id={epciId}">
-                Mesures
+               href="fiches/?epci_id={epciId}">
+                Plan d'actions
             </a>
         </li>
         <li class="mr-4">
@@ -33,8 +33,8 @@
         </li>
         <li class="mr-4">
             <a class="p-1 rounded hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 active:text-gray-900 active:shadow-inner active:bg-white"
-               href="fiches/?epci_id={epciId}">
-                Fiches
+               href="actions_referentiels/?epci_id={epciId}">
+                Référentiels
             </a>
         </li>
     </ul>

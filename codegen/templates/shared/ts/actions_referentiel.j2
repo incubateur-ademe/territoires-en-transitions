@@ -1,0 +1,17 @@
+import {ActionReferentiel} from "../models/action_referentiel";
+
+export const actions: ActionReferentiel[] = [
+{% for action in actions recursive %}
+    new ActionReferentiel({
+    id: "{{ action.id }}",
+    path: "{{ action.path }}",
+    nom: {{ action.nom | tojson }},
+    description: {{ action.description | tojson }},
+    actions:[
+    {% if action.actions %}
+        {{ loop(action.actions) }}
+    {% endif %}
+    ],
+    }),
+{% endfor %}
+]

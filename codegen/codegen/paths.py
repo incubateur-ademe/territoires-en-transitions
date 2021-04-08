@@ -14,5 +14,6 @@ indicateurs_markdown_dir = '../referentiels/markdown/indicateurs_citergie'
 indicateurs_client_output_dir = os.path.join(client_dir, 'dist')
 
 shared_markdown_dir = 'definitions/shared'
-shared_output_client_dir = os.path.join(client_dir, 'generated/models')
-shared_output_api_dir = os.path.join(api_dir, 'models/generated')
+shared_client_models_dir = os.path.join(client_dir, 'generated/models')
+shared_client_data_dir = os.path.join(client_dir, 'generated/data')
+shared_api_models_dir = os.path.join(api_dir, 'models/generated')
