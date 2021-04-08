@@ -4,14 +4,14 @@
     import {v4 as uuid} from 'uuid'
     import {getCurrentEpciId} from "../../api/currentEpci";
     import {ActionCustomStorable} from "../../storables/ActionCustomStorable";
-    import {actionCustomStore} from "../../api/localStore";
+    import {actionCustomStore} from "../../api/hybridStore";
 
     const ecpiId = getCurrentEpciId();
     const mesureUid = getUrlParameter('mesure_uid')
     let name = ''
     let description = ''
 
-    function handleSave() {
+    const handleSave = async () => {
         const action = new ActionCustomStorable({
             epci_id: ecpiId,
             mesure_id: mesureUid,
@@ -19,7 +19,7 @@
             name: name,
             description: description,
         })
-        actionCustomStore.store(action)
+        await actionCustomStore.store(action)
         window.location.href = `/mesure_personnalisee.html?epci_id=${ecpiId}&mesure_uid=${mesureUid}`
     }
 </script>

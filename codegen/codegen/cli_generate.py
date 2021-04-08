@@ -4,6 +4,7 @@ import os
 
 import typer
 
+import codegen.paths as paths
 from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html
 from codegen.citergie.mesures_generator import render_mesure_as_json, render_mesure_as_html, build_mesure, \
     render_mesures_summary_as_html, filter_indicateurs_by_mesure_id
@@ -17,28 +18,27 @@ app = typer.Typer()
 
 @app.command()
 def all(
-    client_dir: str = typer.Option('../client', "--client-root", "-c"),
-    thematique_markdown_file='../referentiels/markdown/thematiques_climat_pratic/thematiques.md',
-    thematique_output_dir='vendors',
+    thematique_markdown_file=paths.thematique_markdown_file,
+    thematique_client_output_dir=paths.thematique_client_output_dir,
     thematique_typescript=True,
     thematique_json=False,
-    mesures_markdown_dir='../referentiels/markdown/mesures_citergie',
-    mesures_orientations_dir='../referentiels/markdown/orientations_economie_circulaire',
-    mesures_output_dir='dist',
-    mesures_html=True,
+    mesures_markdown_dir=paths.mesures_markdown_dir,
+    mesures_orientations_dir=paths.mesures_orientations_dir,
+    mesures_output_client_dir=paths.mesures_client_output_dir,
+    mesures_html=False,
     mesures_json=False,
-    indicateurs_markdown_dir='../referentiels/markdown/indicateurs_citergie',
-    indicateurs_output_dir='dist',
-    indicateurs_html=True,
-    shared_markdown_dir='definitions/shared',
-    shared_output_dir='vendors',
+    indicateurs_markdown_dir=paths.indicateurs_markdown_dir,
+    indicateurs_output_client_dir=paths.indicateurs_client_output_dir,
+    indicateurs_html=False,
+    shared_markdown_dir=paths.shared_markdown_dir,
+    shared_client_output_dir=paths.shared_output_client_dir,
     shared_python=False,
     shared_typescript=True,
 ) -> None:
     """Run all `generate x` commands with default production values"""
     thematiques(
         markdown_file=thematique_markdown_file,
-        output_dir=os.path.join(client_dir, thematique_output_dir),
+        output_dir=thematique_client_output_dir,
         output_typescript=thematique_typescript,
         output_json=thematique_json,
     )
@@ -46,18 +46,18 @@ def all(
         mesures_dir=mesures_markdown_dir,
         indicateurs_dir=indicateurs_markdown_dir,
         orientations_dir=mesures_orientations_dir,
-        output_dir=os.path.join(client_dir, mesures_output_dir),
+        output_dir=mesures_output_client_dir,
         html=mesures_html,
         json=mesures_json,
     )
     indicateurs(
         markdown_dir=indicateurs_markdown_dir,
-        output_dir=os.path.join(client_dir, indicateurs_output_dir),
+        output_dir=indicateurs_output_client_dir,
         html=indicateurs_html
     )
     shared(
         markdown_dir=shared_markdown_dir,
-        output_dir=os.path.join(client_dir, shared_output_dir),
+        output_dir=shared_client_output_dir,
         python=shared_python,
         typescript=shared_typescript,
     )
@@ -65,9 +65,9 @@ def all(
 
 @app.command()
 def indicateurs(
-    markdown_dir: str = typer.Option('../referentiels/markdown/indicateurs_citergie', "--markdown", "-md"),
-    output_dir: str = typer.Option('../client/dist', "--output", "-o"),
-    html: bool = True,
+    markdown_dir: str = typer.Option(paths.indicateurs_markdown_dir, "--markdown", "-md"),
+    output_dir: str = typer.Option(paths.indicateurs_client_output_dir, "--output", "-o"),
+    html: bool = False,
 ) -> None:
     """
     Convert 'indicateurs' markdown files to code.
@@ -89,13 +89,11 @@ def indicateurs(
 
 @app.command()
 def mesures(
-    mesures_dir: str = typer.Option('../referentiels/markdown/mesures_citergie', "--mesures-markdown", "-m"),
-    orientations_dir: str = typer.Option('../referentiels/markdown/orientations_economie_circulaire',
-                                         "--orientations-markdown", "-om"),
-    indicateurs_dir: str = typer.Option('../referentiels/markdown/indicateurs_citergie', "--indicateurs-markdown",
-                                        "-i"),
-    output_dir: str = typer.Option('../client/dist', "--output", "-o"),
-    html: bool = True,
+    mesures_dir: str = typer.Option(paths.mesures_markdown_dir, "--mesures-markdown", "-m"),
+    orientations_dir: str = typer.Option(paths.mesures_orientations_dir, "--orientations-markdown", "-om"),
+    indicateurs_dir: str = typer.Option(paths.indicateurs_markdown_dir, "--indicateurs-markdown", "-i"),
+    output_dir: str = typer.Option(paths.mesures_client_output_dir, "--output", "-o"),
+    html: bool = False,
     json: bool = False,
 ) -> None:
     """
@@ -156,8 +154,8 @@ def mesures(
 
 @app.command()
 def shared(
-    markdown_dir: str = typer.Option('definitions/shared', "--markdown", "-md"),
-    output_dir: str = typer.Option('../client/vendors', "--output", "-o"),
+    markdown_dir: str = typer.Option(paths.shared_markdown_dir, "--markdown", "-md"),
+    output_dir: str = typer.Option(paths.shared_output_client_dir, "--output", "-o"),
     python: bool = typer.Option(False, '--python', '-py'),
     typescript: bool = typer.Option(True, '--typescript', '-ts'),
 ) -> None:  # pragma: no cover
@@ -182,9 +180,8 @@ def shared(
 
 @app.command()
 def thematiques(
-    markdown_file: str = typer.Option('../referentiels/markdown/thematiques_climat_pratic/thematiques.md', '--markdown',
-                                      '-md'),
-    output_dir: str = typer.Option('../client/vendors', '--output', '-o'),
+    markdown_file: str = typer.Option(paths.thematique_markdown_file, '--markdown', '-md'),
+    output_dir: str = typer.Option(paths.thematique_client_output_dir, '--output', '-o'),
     output_typescript: bool = typer.Option(True, '--typescript', '-ts'),
     output_json: bool = typer.Option(False, '--json'),
 ) -> None:

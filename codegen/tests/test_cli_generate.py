@@ -3,6 +3,8 @@ from unittest.mock import ANY
 from unittest.mock import patch, MagicMock
 
 from codegen.cli_generate import mesures, indicateurs, all, shared, thematiques
+from codegen.paths import mesures_client_output_dir, indicateurs_client_output_dir, shared_output_client_dir, \
+    thematique_client_output_dir
 
 output_dir = './tests/outputs'
 
@@ -10,12 +12,20 @@ output_dir = './tests/outputs'
 @patch("codegen.cli_generate.write")
 def test_all(mock_write: MagicMock):
     """Test that command `poetry run extract mesures` write files"""
-    all(client_dir=output_dir)
+    all(
+        thematique_typescript=True,
+        thematique_json=False,
+        mesures_html=True,
+        mesures_json=False,
+        indicateurs_html=True,
+        shared_python=False,
+        shared_typescript=True,
+    )
 
-    mock_write.assert_any_call(os.path.join(output_dir, 'dist', 'mesures.html'), ANY)
-    mock_write.assert_any_call(os.path.join(output_dir, 'dist', 'indicateurs.html'), ANY)
-    mock_write.assert_any_call(os.path.join(output_dir, 'vendors', 'thematiques.ts'), ANY)
-    mock_write.assert_any_call(os.path.join(output_dir, 'vendors', 'indicateur_value.ts'), ANY)
+    mock_write.assert_any_call(os.path.join(mesures_client_output_dir, 'mesures.html'), ANY)
+    mock_write.assert_any_call(os.path.join(indicateurs_client_output_dir, 'indicateurs.html'), ANY)
+    mock_write.assert_any_call(os.path.join(thematique_client_output_dir, 'thematiques.ts'), ANY)
+    mock_write.assert_any_call(os.path.join(shared_output_client_dir, 'indicateur_value.ts'), ANY)
 
 
 @patch("codegen.cli_generate.write")

@@ -1,28 +1,12 @@
 import {MesureCustom, MesureCustomInterface} from "../../vendors/mesure_custom";
 import {ActionCustom, ActionCustomInterface} from "../../vendors/action_custom";
-import {IndicateurValue, IndicateurValueInterface} from "../../vendors/indicateur_value";
-import {IndicateurValueStorable} from "../storables/IndicateurValueStorable";
 import {ActionCustomStorable} from "../storables/ActionCustomStorable";
 import {MesureCustomStorable} from "../storables/MesureCustomStorable";
 import {ActionStatusStorable} from "../storables/ActionStatusStorable";
 import {ActionStatus, ActionStatusInterface} from "../../vendors/action_status";
+import {isStorable} from "./storable";
 
 export const storeKey = 'territoiresentransitions'
-
-/**
- * Data that can be stored at path/id.
- */
-interface Storable {
-    id: string,
-    pathname: string,
-}
-
-/**
- * Storable type guard.
- */
-const isStorable = (storable: any): storable is Storable => {
-    return (storable as Storable).id != undefined && (storable as Storable).pathname != undefined
-}
 
 
 /**
@@ -46,7 +30,7 @@ const setStore = (newStore: Record<string, any>): Record<string, any> => {
 /**
  * A Store for Storable object using local storage.
  */
-class LocalStore<T> {
+export class LocalStore<T> {
     constructor(
         {
             pathname,
@@ -175,13 +159,6 @@ export const actionCustomStore = new LocalStore<ActionCustomStorable>({
     serializer: (storable) => storable,
     deserializer: (serialized) => new ActionCustomStorable(serialized as ActionCustomInterface),
 });
-
-export const indicateurValueStore = new LocalStore<IndicateurValueStorable>({
-    pathname: IndicateurValue.pathname,
-    serializer: (storable) => storable,
-    deserializer: (serialized) => new IndicateurValueStorable(serialized as IndicateurValueInterface),
-});
-
 
 export const actionStatusStore = new LocalStore<ActionStatusStorable>({
     pathname: ActionStatus.pathname,

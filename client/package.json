@@ -5,8 +5,7 @@
     "start": "webpack serve --hot",
     "build": "webpack --mode development",
     "build:prod": "cross-env NODE_ENV=production webpack --mode production",
-    "deploy": "bin/deploy",
-    "test": "cross-env TS_NODE_COMPILER_OPTIONS={\\\"module\\\":\\\"commonjs\\\",\\\"types\\\":[\\\"svelte\\\",\\\"mocha\\\"]} mocha"
+    "test": "cross-env TS_NODE_PROJECT=\"tsconfig.json\" mocha"
   },
   "devDependencies": {
     "@tsconfig/svelte": "^1.0.10",

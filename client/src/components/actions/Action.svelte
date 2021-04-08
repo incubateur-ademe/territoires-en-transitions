@@ -3,19 +3,19 @@
     import Button from "../shared/Button.svelte";
     import {createEventDispatcher} from "svelte";
     import {ActionCustomStorable} from "../../storables/ActionCustomStorable";
-    import {actionCustomStore} from "../../api/localStore";
+    import {actionCustomStore} from "../../api/hybridStore";
 
     export let action: ActionCustomStorable
 
     const dispatch = createEventDispatcher()
-    const handleDelete = (event: Event): void => {
+    const handleDelete = async (event: Event): Promise<void> => {
         event.preventDefault()
 
         const confirmDelete =
             confirm('Êtes-vous sûr•e de vouloir supprimer une de vos actions personnalisées ?')
 
         if (confirmDelete) {
-            actionCustomStore.deleteById(action.id)
+            await actionCustomStore.deleteById(action.id)
             /**
              * TODO: remove this dispatcher when we have a global application state
              */
@@ -26,7 +26,7 @@
 
 <section
         class="p-4 rounded my-4 action grid grid-cols-1 lg:grid-cols-12 lg:gap-1 bg-white "
-        id="action-{action.id}">
+        id="action-{action.uid}">
 
     <div class="relative lg:col-span-7">
         <h3 class="pr-28">{action.name}</h3>
@@ -46,5 +46,5 @@
             />
         </details>
     </div>
-    <ActionStatus actionId={action.id}/>
+    <ActionStatus actionId={action.uid}/>
 </section>

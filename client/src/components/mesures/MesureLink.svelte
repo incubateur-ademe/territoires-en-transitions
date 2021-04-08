@@ -2,7 +2,7 @@
     import Button from '../shared/Button'
     import {createEventDispatcher} from 'svelte'
     import {MesureCustomStorable} from "../../storables/MesureCustomStorable";
-    import {mesureCustomStore} from "../../api/localStore";
+    import {mesureCustomStore} from "../../api/hybridStore";
 
     export let mesure: MesureCustomStorable
 

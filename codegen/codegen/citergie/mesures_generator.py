@@ -1,5 +1,8 @@
 """Générateur pour les mesures, génère les exemples dans /generated/citergie."""
+from __future__ import annotations
+
 import json
+import warnings
 from typing import Callable, List
 
 import jsbeautifier
@@ -8,7 +11,7 @@ from mistletoe import Document, HTMLRenderer
 from mistletoe.block_token import Heading, BlockToken, CodeFence
 
 from codegen.climat_pratic.thematiques_generator import get_thematiques
-from codegen.utils.markdown_utils import void, is_heading, is_yaml, is_keyword, token_to_string, update_with_yaml
+from codegen.utils.markdown_utils import is_heading, is_keyword, token_to_string, update_with_yaml
 from codegen.utils.templates import build_jinja_environment
 
 
@@ -17,93 +20,86 @@ def meta(token: BlockToken, data: dict) -> None:
     return update_with_yaml(token, data)
 
 
-def actions_writer() -> Callable:
+def empty_action() -> dict:
+    """Returns an action dictionary with default fields"""
+    return {
+        'nom': '',
+        'actions': [],
+        'description': '',
+    }
+
+
+def actions_writer(name_level: int) -> Callable:
     """Returns a closure to keep track of current writer function. Also scope actions related functions."""
 
     def head(token: BlockToken, action: dict) -> None:
-        """Save action h3"""
-        if isinstance(token, Heading) and token.level == 3:
+        """Save action header"""
+        if isinstance(token, Heading) and token.level == name_level:
             action['nom'] = token.children[0].content
 
     def description(token: BlockToken, action: dict) -> None:
         """Save action description as an HTML string"""
         if is_keyword(token, 'description'):
             return
-        if 'description' not in action.keys():
-            action['description'] = ''
         action['description'] += token_to_string(token)
 
     current: Callable = head
 
     def writer(token: BlockToken, mesure: dict) -> None:
         """Save actions"""
-        if is_keyword(token, 'actions'):
+        if is_keyword(token, 'actions'):  # Actions keyword is handled in the top parser
             return
-        if 'actions' not in mesure.keys():
-            mesure['actions'] = [{}]
-        actions: list = mesure['actions']
-        action: dict = actions[-1]
+
+        nest_level = name_level // 2
+        action = parent = mesure
+
+        for level in range(nest_level):
+            # Build the tree.
+            if not action['actions']:
+                action['actions'].append(empty_action())
+            parent = action
+            # Select the last leaf of the last branch.
+            action = action['actions'][-1]
 
         nonlocal current
-        if action:
-            if is_heading(token, 3):
-                action = {}
-                actions.append(action)
-                current = head
-            elif isinstance(token, CodeFence):
-                current = meta
-            elif current == meta:
-                current = description
+        if is_heading(token, name_level):  # Got a title
+            if action['nom']:  # action is already named
+                action = empty_action()
+                parent['actions'].append(action)
+            current = head
+        elif isinstance(token, CodeFence):
+            current = meta
+        elif current == meta:
+            current = description
 
         current(token, action)
 
     return writer
 
 
-def mesure_writer() -> Callable:
-    """Returns a closure to keep track of current writer function. Also scope mesure related functions."""
+def build_action(doc: Document) -> dict:
+    """Extract an action from a mesure markdown AST"""
+    mesure = empty_action()
+    name_level = 1
+    writer = actions_writer(name_level=name_level)
 
-    def head(token: BlockToken, mesure: dict) -> None:
-        """save h1 into mesure"""
-        if isinstance(token, Heading) and token.level == 1:
-            mesure['nom'] = token.children[0].content
-
-    def description(token: BlockToken, mesure: dict) -> None:
-        """Save description as an HTML string"""
-        if is_keyword(token, 'description'):
-            return
-        if 'description' not in mesure.keys():
-            mesure['description'] = ''
-        mesure['description'] += token_to_string(token)
-
-    actions = actions_writer()
-
-    current: Callable = head
-
-    def writer(token: BlockToken, mesure: dict) -> None:
-        nonlocal current
-        if current is head and is_yaml(token):
-            current = meta
-        elif current is meta:
-            current = void
-        if is_keyword(token, 'description'):
-            current = description
+    for token in doc.children:
         if is_keyword(token, 'actions'):
-            current = actions
-        current(token, mesure)
+            name_level = token.level + 1
+            writer = actions_writer(name_level=name_level)
+        if is_heading(token, level=name_level - 2):
+            name_level -= 2
+            writer = actions_writer(name_level=name_level)
 
-    return writer
+        writer(token, mesure)
+
+    return mesure
 
 
 def build_mesure(doc: Document) -> dict:
     """Extract mesures from markdown AST"""
-    mesure = {}
-    writer = mesure_writer()
-
-    for token in doc.children:
-        writer(token, mesure)
-
-    return mesure
+    warnings.warn('use build_action instead', category=DeprecationWarning)
+    return build_action(doc)
 
 
 def render_mesure_as_js(mesure: dict,

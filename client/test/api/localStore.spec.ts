@@ -1,7 +1,14 @@
 import {expect} from 'chai'
-import {indicateurValueStore} from "../../src/api/localStore";
+import { LocalStore} from "../../src/api/localStore";
 import {it} from "mocha";
 import {IndicateurValueStorable} from "../../src/storables/IndicateurValueStorable";
+import {IndicateurValue, IndicateurValueInterface} from "../../vendors/indicateur_value";
+
+export const indicateurValueStore = new LocalStore<IndicateurValueStorable>({
+    pathname: IndicateurValue.pathname,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new IndicateurValueStorable(serialized as IndicateurValueInterface),
+});
 
 
 const storables = [

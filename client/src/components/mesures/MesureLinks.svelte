@@ -1,17 +1,15 @@
 <script lang="typescript">
     import MesureLink from './MesureLink.svelte';
-    import {mesureCustomStore} from "../../api/localStore";
-    import {getCurrentEpciId} from "../../api/currentEpci";
+    import {mesureCustomStore} from "../../api/hybridStore";
     import {MesureCustomStorable} from "../../storables/MesureCustomStorable";
 
     export let climat_pratic_thematique_id
-    const epciId = getCurrentEpciId()
-    let customMesures: Array<MesureCustomStorable>
+    let customMesures: Array<MesureCustomStorable> = []
 
-    const updateMesures = () => {
-        customMesures = mesureCustomStore.where(
-            (mesure) => mesure.climat_pratic_thematic_id == climat_pratic_thematique_id &&
-                mesure.epci_id == epciId
+    const updateMesures = async () => {
+        const all = await mesureCustomStore.retrieveAll()
+        customMesures = all.filter(
+            (mesure) => mesure.climat_pratic_thematic_id == climat_pratic_thematique_id
         )
     }
 

@@ -3,6 +3,7 @@ import os
 
 import typer
 
+import codegen.paths as paths
 from codegen.citergie.indicator_extractor import indicators_to_markdown
 from codegen.citergie.indicators_generator import build_indicators
 from codegen.citergie.mesures_extractor import mesure_to_markdown
@@ -14,11 +15,56 @@ app = typer.Typer()
 
 
 @app.command()
+def mesures_nested_actions(
+    mesures_dir=paths.mesures_markdown_dir,
+) -> None:
+    """
+    Regenerate (overwrite) markdown files using nested actions
+    """
+    mesures_files = glob.glob(os.path.join(mesures_dir, '*.md'))
+    count = 0
+
+    with typer.progressbar(mesures_files) as progress:
+        for filename in progress:
+            md = load_md(filename)
+
+            # todo make this recursive.
+            mesure = build_mesure(md)
+
+            for action in mesure['actions']:
+                if 'description' not in action.keys():
+                    continue
+                action['actions'] = []
+                description = str(action['description'])
+                stripped_description = ''
+                lines = description.splitlines()
+                for line in lines:
+                    if line.startswith('- '):
+                        index = len(action['actions']) + 1
+                        action['actions'].append({
+                            'id': f"{action['id']}.{index}",
+                            "nom": line.lstrip('- '),
+                        })
+                    elif action['actions']:  # the line does is not an item, add it to the current action description
+                        line = line.strip()
+                        if line:
+                            stripped_description += f'{line}\n'
+                if action['actions']:  # we have consumed the description lines to create sub actions
+                    count += len(action['actions'])
+                    action['description'] = stripped_description
+
+            md = mesure_to_markdown(mesure)
+
+            # temp_name = os.path.join("../referentiels/markdown/mesures_temp", os.path.basename(filename))
+            write(filename, md)
+
+    typer.echo(f"All {len(mesures_files)} 'mesures' were regenerated extracting {count} 'tasks'.")
+
+
+@app.command()
 def mesures_thematiques(
-    mesures_dir: str = typer.Option('../referentiels/markdown/mesures_citergie', "--mesures", "-m"),
-    thematiques_file: str = typer.Option('../referentiels/markdown/thematiques_climat_pratic/thematiques.md',
-                                         '--thematiques',
-                                         '-t')
+    mesures_dir=paths.mesures_markdown_dir,
+    thematiques_file=paths.thematique_markdown_file,
 ) -> None:
     """
     Regenerate (overwrite) markdown files using thematiques
@@ -45,12 +91,8 @@ def mesures_thematiques(
 
 @app.command()
 def indicateurs_thematiques(
-    indicateurs_dir: str = typer.Option('../referentiels/markdown/indicateurs_citergie',
-                                        '--indicateurs',
-                                        '-i'),
-    thematiques_file: str = typer.Option('../referentiels/markdown/thematiques_climat_pratic/thematiques.md',
-                                         '--thematiques',
-                                         '-t'),
+    indicateurs_dir=paths.indicateurs_markdown_dir,
+    thematiques_file=paths.thematique_markdown_file,
 ) -> None:
     """
     Regenerate (overwrite) markdown files using thematiques

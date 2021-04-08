@@ -1,7 +1,7 @@
 <script lang="typescript">
     import {v4 as uuid} from 'uuid'
     import Button from '../shared/Button'
-    import {mesureCustomStore} from "../../api/localStore";
+    import {mesureCustomStore} from "../../api/hybridStore";
     import {getCurrentEpciId} from "../../api/currentEpci";
     import {MesureCustomStorable} from "../../storables/MesureCustomStorable";
 
@@ -9,7 +9,7 @@
     let climatPraticThematiqueId: string
     export let thematiques
 
-    function handleSave() {
+    const handleSave = async () => {
         if (climatPraticThematiqueId) {
             const epciId = getCurrentEpciId()
             const mesure = new MesureCustomStorable({
@@ -19,7 +19,7 @@
                 name: name,
             })
 
-            mesureCustomStore.store(mesure)
+            await mesureCustomStore.store(mesure)
             window.location.href = `mesures.html?epci_id=${epciId}`
         }
 

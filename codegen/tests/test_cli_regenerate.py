@@ -2,7 +2,12 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from codegen.cli_regenerate import mesures_thematiques, indicateurs_thematiques
+from codegen.cli_regenerate import mesures_thematiques, indicateurs_thematiques, mesures_nested_actions
+
+
+@patch("codegen.cli_regenerate.write")
+def test_mesures_nested_actions(mock_write: MagicMock):
+    mesures_nested_actions()
 
 
 @pytest.mark.skip(reason="for now regen fail on already regenerated files")

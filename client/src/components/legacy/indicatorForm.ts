@@ -1,4 +1,4 @@
-import {indicateurValueStore} from "../../api/localStore";
+import {indicateurValueStore} from "../../api/hybridStore";
 import {IndicateurValueStorable} from '../../storables/IndicateurValueStorable'
 import {getCurrentEpciId} from "../../api/currentEpci";
 
@@ -39,17 +39,9 @@ const onKeyPress = (event: KeyboardEvent): void => {
 /**
  * Initialize a single yearly input with a retrieved value or an empty value if none found.
  */
-const initYearlyInput = (input: HTMLInputElement): void => {
-    const {id, year} = inputProperties(input)
-    const epciId = getCurrentEpciId()
-    const indicateurValues = indicateurValueStore.where(
-        (value) =>
-            value.indicateur_id == id &&
-            value.year == year &&
-            value.epci_id == epciId
-    )
+const initYearlyInput = async (input: HTMLInputElement): Promise<void> => {
 
-    input.value = indicateurValues.length ? indicateurValues[0].value : ''
+    input.value =  ''
     input.addEventListener('blur', onBlur)
     input.addEventListener('keypress', onKeyPress)
 }
@@ -67,11 +59,29 @@ const inputProperties = (input: HTMLInputElement): { id: string, year: number } 
 /**
  * Initialize each yearly input linked to an indicator with all its event listeners.
  */
-export const init = (form: HTMLFormElement): void => {
+export const init = async  (form: HTMLFormElement): Promise<void> => {
     form.addEventListener('submit', preventDefault)
     const inputs = form.querySelectorAll('input')
     for (let input of inputs) {
         initYearlyInput(input)
+    }
+
+    const {id, year} = inputProperties(inputs[0])
+    const epciId = getCurrentEpciId()
+
+    const indicateurValues = await indicateurValueStore.retrieveAtPath(
+        `${epciId}/${id}`
+    )
+
+    for (let input of inputs) {
+        const {id, year} = inputProperties(input)
+        let value = ''
+        for (let indicateurValue of indicateurValues) {
+            if (indicateurValue.year == year && indicateurValue.indicateur_id == id)
+                value = indicateurValue.value
+        }
+
+        input.value = value
     }
 }
 

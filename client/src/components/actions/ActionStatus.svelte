@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {actionStatusStore} from "../../api/localStore";
+    import {actionStatusStore} from "../../api/hybridStore";
     import {getCurrentEpciId} from "../../api/currentEpci";
     import {ActionStatusStorable} from "../../storables/ActionStatusStorable";
 
@@ -32,10 +32,8 @@
     ]
 
     const ecpiId = getCurrentEpciId()
+    let actionAvancementKey = 'pas_faite';
 
-    // retrieve current avancement key
-    const statuses = actionStatusStore.where((status) => status.epci_id == ecpiId && status.action_id == actionId)
-    let actionAvancementKey = statuses.length ? statuses[0].avancement : 'pas_faite'
 
     /**
      * On input change store/overwrite action status.
@@ -49,6 +47,16 @@
 
         actionStatusStore.store(avancement)
     }
+
+    /**
+     * Get data from store.
+     */
+    const fetch = async () => {
+        const status = await actionStatusStore.retrieveById(`${ecpiId}/${actionId}`)
+        if (status) actionAvancementKey = status.avancement;
+    }
+
+    fetch();
 </script>
 
 <form class="lg:col-span-3 lg:col-end-12">
