@@ -9,6 +9,8 @@ import {getCurrentAPI} from "./currentAPI";
 import {MesureCustomStorable} from "../storables/MesureCustomStorable";
 import {MesureCustom, MesureCustomInterface} from "../../generated/models/mesure_custom";
 import {HybridStore} from "./hybridStore";
+import {FicheActionStorable} from "../storables/FicheActionStorable";
+import {FicheAction, FicheActionInterface} from "../../generated/models/fiche_action";
 
 
 export const indicateurValueStore = new HybridStore<IndicateurValueStorable>({
@@ -38,3 +40,11 @@ export const mesureCustomStore = new HybridStore<MesureCustomStorable>({
     serializer: (storable) => storable,
     deserializer: (serialized) => new MesureCustomStorable(serialized as MesureCustomInterface),
 });
+
+export const ficheActionStore = new HybridStore<FicheActionStorable>({
+    host: getCurrentAPI(),
+    endpoint: `v1/${FicheAction.pathname}/${getCurrentEpciId()}`,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new FicheActionStorable(serialized as FicheActionInterface),
+});
+

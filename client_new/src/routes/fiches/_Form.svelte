@@ -1,6 +1,5 @@
 <script lang="ts">
     import {FicheActionStorable} from "../../storables/FicheActionStorable";
-    import {ficheActionStore} from "../../api/localStore";
     import Button from "../../components/shared/Button.svelte";
     import MultiSelect from './_MultiSelect.svelte';
     import Status from './_Status.svelte'
@@ -9,9 +8,11 @@
     import {FicheActionInterface} from "../../../generated/models/fiche_action";
     import {onMount} from "svelte";
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
+    import {HybridStore} from "../../api/hybridStore";
 
 
     export let data: FicheActionInterface
+    let ficheActionStore: HybridStore<FicheActionStorable>
 
     const handleSave = async () => {
         if (!data.custom_id) return;
@@ -22,6 +23,9 @@
 
     let flatActions: ActionReferentiel[]
     onMount(async () => {
+        const hybridStores = await import ("../../api/hybridStores");
+        ficheActionStore = hybridStores.ficheActionStore;
+
         const referentiel = await import("../../../generated/data/actions_referentiels")
         const flattened = [];
         const flatten = (actions: ActionReferentiel[]) => {
@@ -73,6 +77,7 @@
 
         <label for="fiche_create_budget" class="text-xl">Budget global</label>
         <input id="fiche_create_budget"
+               type="number"
                bind:value={data.budget}
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
         <div class="p-5"></div>

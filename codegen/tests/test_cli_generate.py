@@ -70,7 +70,7 @@ def test_mesures(mock_write: MagicMock):
 def test_shared(mock_write: MagicMock):
     """Test that command `poetry run generate shared` write typescript"""
     shared(
-        output_dir=output_dir,
+        client_output_dir=output_dir,
         markdown_dir='definitions/shared',
         typescript=True,
         python=False,

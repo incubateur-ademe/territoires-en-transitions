@@ -2,12 +2,13 @@
     import Button from "../../components/shared/Button.svelte";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
-    import Title from "../../components/shared/Title.svelte";
     import {FicheActionStorable} from "../../storables/FicheActionStorable";
-    import {ficheActionStore} from "../../api/localStore";
+    import {HybridStore} from "../../api/hybridStore";
+
 
     let epciId = ''
     let fiches: Array<FicheActionStorable> = []
+    let ficheActionStore: HybridStore<FicheActionStorable>
 
     const updateActions = async () => {
         fiches = await ficheActionStore.retrieveAll()
@@ -15,6 +16,9 @@
 
     onMount(async () => {
         epciId = getCurrentEpciId()
+        const hybridStores = await import ("../../api/hybridStores");
+        ficheActionStore = hybridStores.ficheActionStore;
+
         await updateActions()
     });
 </script>

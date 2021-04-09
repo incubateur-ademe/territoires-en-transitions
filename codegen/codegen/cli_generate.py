@@ -1,8 +1,6 @@
 import glob
 import json
 import os
-import warnings
-
 import typer
 
 import codegen.paths as paths
@@ -11,6 +9,7 @@ from codegen.citergie.mesures_generator import render_mesure_as_json, render_mes
     render_mesures_summary_as_html, filter_indicateurs_by_mesure_id, build_action, render_actions_as_typescript, \
     relativize_ids
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
+from codegen.codegen.python import render_markdown_as_python
 from codegen.codegen.typescript import render_markdown_as_typescript
 from codegen.economie_circulaire.orientations_generator import legacy_orientation_as_mesure, build_orientation
 from codegen.utils.files import load_md, write, sorted_files
@@ -62,7 +61,7 @@ def all(
     )
     shared(
         markdown_dir=shared_markdown_dir,
-        output_dir=shared_client_output_dir,
+        client_output_dir=shared_client_output_dir,
         python=shared_python,
         typescript=shared_typescript,
     )
@@ -200,10 +199,11 @@ def mesures(
 
 @app.command()
 def shared(
-    markdown_dir: str = typer.Option(paths.shared_markdown_dir, "--markdown", "-md"),
-    output_dir: str = typer.Option(paths.shared_client_models_dir, "--output", "-o"),
-    python: bool = typer.Option(False, '--python', '-py'),
-    typescript: bool = typer.Option(True, '--typescript', '-ts'),
+    markdown_dir: str = paths.shared_markdown_dir,
+    typescript: bool = True,
+    client_output_dir: str = paths.shared_client_models_dir,
+    python: bool = False,
+    api_output_dir: str = paths.shared_api_models_dir,
 ) -> None:  # pragma: no cover
     """
     Generate shared definitions.
@@ -216,10 +216,16 @@ def shared(
 
             typer.echo(f'Processing {filename}...')
             md = load_md(filename)
-            outputs = render_markdown_as_typescript(md)
 
-            for name, content in outputs:
-                write(os.path.join(output_dir, name), content)
+            if typescript:
+                outputs = render_markdown_as_typescript(md)
+                for name, content in outputs:
+                    write(os.path.join(client_output_dir, name), content)
+
+            if python:
+                outputs = render_markdown_as_python(md)
+                for name, content in outputs:
+                    write(os.path.join(api_output_dir, name), content)
 
     typer.echo(f"Processed {len(files)} shared definitions.")
 

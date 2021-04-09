@@ -2,11 +2,6 @@
     import {v4 as uuid} from 'uuid'
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../../api/currentEpci";
-    import {FicheActionStorable} from "../../../storables/FicheActionStorable";
-    import {ficheActionStore} from "../../../api/localStore";
-    import Button from "../../../components/shared/Button.svelte";
-    import {requiredValidator} from "../../../validation/validators"
-    import {createFieldValidator} from "../../../validation/validation"
     import {FicheActionInterface} from "../../../../generated/models/fiche_action";
     import Form from "../_Form"
 
