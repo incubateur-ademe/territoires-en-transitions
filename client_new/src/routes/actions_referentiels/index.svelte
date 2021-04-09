@@ -28,7 +28,7 @@
         let limit = searchLimit() + 1;
         for (let i = 0; i < actions.length && results.length < limit; i++) {
             let action = actions[i]
-            if (asId && action.id.startsWith(needle)) {
+            if (asId && action.id_nomenclature.startsWith(needle)) {
                 results.push(action)
             } else if (action.nom.toLowerCase().includes(needle)) {
                 results.push(action)

@@ -3,6 +3,7 @@
     import {ficheActionStore} from "../../api/localStore";
     import Button from "../../components/shared/Button.svelte";
     import MultiSelect from './_MultiSelect.svelte';
+    import Status from './_Status.svelte'
     import {requiredValidator} from "../../validation/validators"
     import {createFieldValidator} from "../../validation/validation"
     import {FicheActionInterface} from "../../../generated/models/fiche_action";
@@ -60,6 +61,10 @@
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
         <div class="p-5"></div>
 
+        <Status bind:avancementKey={data.avancement}
+                id="{data.uid}"/>
+        <div class="p-5"></div>
+
         <label for="fiche_create_description" class="text-xl">Description</label>
         <textarea id="fiche_create_description"
                   bind:value={data.description}
@@ -109,9 +114,9 @@
 
         <label for="fiche_create_commentaire" class="text-xl">Actions du référentiel</label>
         {#if flatActions}
-            <MultiSelect id='lang' bind:value={data.referentiel_action_paths}>
+            <MultiSelect id='lang' bind:value={data.referentiel_action_ids}>
                 {#each flatActions as action}
-                    <option value="{action.path}">({action.id}) {action.nom}</option>
+                    <option value="{action.id}">({action.id_nomenclature}) {action.nom}</option>
                 {/each}
             </MultiSelect>
         {/if}

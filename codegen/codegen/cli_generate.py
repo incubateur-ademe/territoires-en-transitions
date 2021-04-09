@@ -1,6 +1,7 @@
 import glob
 import json
 import os
+import warnings
 
 import typer
 
@@ -8,10 +9,10 @@ import codegen.paths as paths
 from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html
 from codegen.citergie.mesures_generator import render_mesure_as_json, render_mesure_as_html, build_mesure, \
     render_mesures_summary_as_html, filter_indicateurs_by_mesure_id, build_action, render_actions_as_typescript, \
-    add_paths
+    relativize_ids
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
 from codegen.codegen.typescript import render_markdown_as_typescript
-from codegen.economie_circulaire.orientations_generator import orientation_as_mesure, build_orientation
+from codegen.economie_circulaire.orientations_generator import legacy_orientation_as_mesure, build_orientation
 from codegen.utils.files import load_md, write, sorted_files
 
 app = typer.Typer()
@@ -26,7 +27,7 @@ def all(
     indicateurs_output_client_dir=paths.indicateurs_client_output_dir,
     indicateurs_html=False,
     mesures_markdown_dir=paths.mesures_markdown_dir,
-    mesures_orientations_dir=paths.mesures_orientations_dir,
+    mesures_orientations_dir=paths.orientations_markdown_dir,
     mesures_output_client_dir=paths.mesures_client_output_dir,
     mesures_html=False,
     mesures_json=False,
@@ -76,21 +77,34 @@ def all(
 @app.command()
 def actions(
     mesures_markdown_dir=paths.mesures_markdown_dir,
+    orientations_markdown_dir=paths.orientations_markdown_temp_dir,
     client_output_dir=paths.shared_client_data_dir,
     output_typescript=True,
 ) -> None:
+    # citergie
     files = glob.glob(os.path.join(mesures_markdown_dir, '*.md'))
-    actions = []
+    actions_citergie = []
 
     for file in files:
         md = load_md(file)
         action = build_action(md)
-        actions.append(action)
+        actions_citergie.append(action)
 
-    add_paths(actions, 'citergie')
+    relativize_ids(actions_citergie, 'citergie')
+
+    # economie circulaire
+    files = sorted_files(orientations_markdown_dir, 'md')
+    actions_economie_circulaire = []
+
+    for file in files:
+        md = load_md(file)
+        action = build_action(md)
+        actions_economie_circulaire.append(action)
+
+    relativize_ids(actions_economie_circulaire, 'economie_circulaire')
 
     if output_typescript:
-        typescript = render_actions_as_typescript(actions)
+        typescript = render_actions_as_typescript(actions_citergie + actions_economie_circulaire)
         filename = os.path.join(client_output_dir, 'actions_referentiels.ts')
         write(filename, typescript)
 
@@ -122,7 +136,7 @@ def indicateurs(
 @app.command()
 def mesures(
     mesures_dir: str = typer.Option(paths.mesures_markdown_dir, "--mesures-markdown", "-m"),
-    orientations_dir: str = typer.Option(paths.mesures_orientations_dir, "--orientations-markdown", "-om"),
+    orientations_dir: str = typer.Option(paths.orientations_markdown_dir, "--orientations-markdown", "-om"),
     indicateurs_dir: str = typer.Option(paths.indicateurs_markdown_dir, "--indicateurs-markdown", "-i"),
     output_dir: str = typer.Option(paths.mesures_client_output_dir, "--output", "-o"),
     html: bool = False,
@@ -157,7 +171,7 @@ def mesures(
         for filename in progress:
             md = load_md(filename)
             orientation = build_orientation(md)
-            mesure = orientation_as_mesure(orientation)
+            mesure = legacy_orientation_as_mesure(orientation)
             mesures.append(mesure)
 
     # Output mesures

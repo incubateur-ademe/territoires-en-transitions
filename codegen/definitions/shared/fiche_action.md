@@ -10,7 +10,9 @@ FicheAction:
         type: String
     custom_id:
         type: String
-    referentiel_action_paths:
+    avancement:
+        type: String
+    referentiel_action_ids:
         type: List[String]
     titre:
         type: String

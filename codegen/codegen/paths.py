@@ -7,7 +7,8 @@ thematique_markdown_file = '../referentiels/markdown/thematiques_climat_pratic/t
 thematique_client_output_dir = os.path.join(client_dir, 'generated/data')
 
 mesures_markdown_dir = '../referentiels/markdown/mesures_citergie'
-mesures_orientations_dir = '../referentiels/markdown/orientations_economie_circulaire'
+orientations_markdown_dir = '../referentiels/markdown/orientations_economie_circulaire'
+orientations_markdown_temp_dir = '../referentiels/markdown/actions_eci_temp'
 mesures_client_output_dir = os.path.join(client_dir, 'dist')
 
 indicateurs_markdown_dir = '../referentiels/markdown/indicateurs_citergie'

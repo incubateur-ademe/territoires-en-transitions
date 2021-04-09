@@ -76,10 +76,12 @@
         if (e.target.closest('.token-remove')) {
             e.stopPropagation();
             remove(e.target.closest('.token').dataset.id);
-        } else if (e.target.closest('.remove-all')) {
-            selected = [];
-            inputValue = '';
-        } else {
+        }
+        // else if (e.target.closest('.remove-all')) {
+        //     selected = [];
+        //     inputValue = '';
+        // }
+        else {
             optionsVisibility(true);
         }
     }
@@ -237,7 +239,7 @@
     <div class="tokens" class:showOptions on:click={handleTokenClick}>
         {#each Object.values(selected) as s}
             <div class="token" data-id="{s.value}">
-                <span>{s.name.slice(0, 50)}</span>
+                <span>{s.name.slice(0, 80)}</span>
                 {#if !readonly}
                     <div class="token-remove" title="Remove {s.name}">
                         <svg class="icon-clear" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
@@ -250,11 +252,6 @@
         <div class="actions">
             {#if !readonly}
                 <input id={id} autocomplete="off" bind:value={inputValue} bind:this={input} on:keyup={handleKeyup} on:blur={handleBlur} placeholder={placeholder}/>
-                <div class="remove-all" title="Remove All" class:hidden={!Object.keys(selected).length}>
-                    <svg class="icon-clear" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-                        <path d="{iconClearPath}"/>
-                    </svg>
-                </div>
                 <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M5 8l4 4 4-4z"></path></svg>
             {/if}
         </div>

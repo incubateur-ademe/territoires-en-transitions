@@ -96,13 +96,14 @@ def build_action(doc: Document) -> dict:
     return mesure
 
 
-def add_paths(actions: List[dict], referentiel_slug: str) -> None:
+def relativize_ids(actions: List[dict], referentiel_slug: str) -> None:
     """Add path to actions in place"""
     for action in actions:
         if 'id' in action.keys():
-            action['path'] = f'{referentiel_slug}/{action["id"]}'
+            action['id_nomenclature'] = action['id']
+            action['id'] = f'{referentiel_slug}/{action["id"]}'
         if 'actions' in action.keys():
-            add_paths(action['actions'], referentiel_slug)
+            relativize_ids(action['actions'], referentiel_slug)
 
 
 def build_mesure(doc: Document) -> dict:

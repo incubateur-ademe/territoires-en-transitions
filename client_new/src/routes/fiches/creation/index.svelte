@@ -14,11 +14,15 @@
         epci_id: '',
         uid: uuid(),
         custom_id: '',
+        avancement: 'pas_faite',
         titre: '',
+        referentiel_action_ids: [],
         description: '',
         budget: 0,
         porteur: '',
         commentaire: '',
+        date_debut: '',
+        date_fin: '',
     }
 
     onMount(async () => {
@@ -34,4 +38,4 @@
 </svelte:head>
 
 <h1 class="text-4xl font-semibold pb-20">Ajouter une fiche action</h1>
-<Form data="{data}"/>
+<Form bind:data="{data}"/>
