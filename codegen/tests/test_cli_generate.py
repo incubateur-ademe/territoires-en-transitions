@@ -2,8 +2,8 @@ import os
 from unittest.mock import ANY
 from unittest.mock import patch, MagicMock
 
-from codegen.cli_generate import mesures, indicateurs, all, shared, thematiques
-from codegen.paths import mesures_client_output_dir, indicateurs_client_output_dir, shared_output_client_dir, \
+from codegen.cli_generate import mesures, indicateurs, all, shared, thematiques, actions
+from codegen.paths import mesures_client_output_dir, indicateurs_client_output_dir, shared_client_models_dir, \
     thematique_client_output_dir
 
 output_dir = './tests/outputs'
@@ -25,7 +25,16 @@ def test_all(mock_write: MagicMock):
     mock_write.assert_any_call(os.path.join(mesures_client_output_dir, 'mesures.html'), ANY)
     mock_write.assert_any_call(os.path.join(indicateurs_client_output_dir, 'indicateurs.html'), ANY)
     mock_write.assert_any_call(os.path.join(thematique_client_output_dir, 'thematiques.ts'), ANY)
-    mock_write.assert_any_call(os.path.join(shared_output_client_dir, 'indicateur_value.ts'), ANY)
+    mock_write.assert_any_call(os.path.join(shared_client_models_dir, 'indicateur_value.ts'), ANY)
+
+
+
+@patch("codegen.cli_generate.write")
+def test_actions(mock_write: MagicMock):
+    """Test that command `poetry run generate indicateurs` write the indicateurs page"""
+    actions(client_output_dir=output_dir)
+
+    mock_write.assert_any_call(os.path.join(output_dir, 'actions_referentiels.ts'), ANY)
 
 
 @patch("codegen.cli_generate.write")
@@ -61,7 +70,7 @@ def test_mesures(mock_write: MagicMock):
 def test_shared(mock_write: MagicMock):
     """Test that command `poetry run generate shared` write typescript"""
     shared(
-        output_dir=output_dir,
+        client_output_dir=output_dir,
         markdown_dir='definitions/shared',
         typescript=True,
         python=False,

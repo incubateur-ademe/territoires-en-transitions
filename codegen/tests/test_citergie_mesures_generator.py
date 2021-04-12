@@ -1,9 +1,11 @@
 import glob
+import json
 import os
 
 from codegen.citergie.indicators_generator import build_indicators
 from codegen.citergie.mesures_generator import build_mesure, render_mesure_as_html, render_mesures_summary_as_html, \
-    filter_indicateurs_by_mesure_id
+    filter_indicateurs_by_mesure_id, build_action, render_actions_as_typescript
+from codegen.codegen.python import env
 from codegen.utils.files import load_md
 from codegen.utils.templates import escape_to_html
 
@@ -79,3 +81,22 @@ def test_render_mesures_summary_as_html():
 
     for mesure in mesures:
         assert escape_to_html(mesure['nom']) in html
+
+
+def test_render_actions_as_typescript():
+    """Test that all mesures are rendered correctly into typescript"""
+    files = glob.glob(os.path.join('../referentiels/markdown/mesures_citergie', '*.md'))
+    assert files
+    actions = []
+
+    for file in files:
+        md = load_md(file)
+        action = build_action(md)
+        actions.append(action)
+
+    typescript = render_actions_as_typescript(actions)
+
+    to_json = env.get_template('tests/single_value_to_json.j2')
+    for action in actions:
+        nom_json = to_json.render(value=action['nom'])
+        assert escape_to_html(nom_json) in typescript

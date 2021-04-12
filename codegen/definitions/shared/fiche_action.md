@@ -10,6 +10,10 @@ FicheAction:
         type: String
     custom_id:
         type: String
+    avancement:
+        type: String
+    referentiel_action_ids:
+        type: List[String]
     titre:
         type: String
     description:
@@ -19,5 +23,9 @@ FicheAction:
     porteur:
         type: String
     commentaire:
+        type: String
+    date_debut:
+        type: String
+    date_fin:
         type: String
 ```

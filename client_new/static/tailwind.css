@@ -46,12 +46,12 @@
   }
 
 
-  .action .status input:focus + label,
-  .action .status label:hover {
+  fieldset.status input:focus + label,
+  fieldset.status label:hover {
     @apply bg-blue-100;
   }
 
-  .action .status input:checked + label {
+  fieldset.status input:checked + label {
     @apply bg-blue-300;
   }
 

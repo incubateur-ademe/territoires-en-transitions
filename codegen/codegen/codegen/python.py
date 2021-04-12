@@ -1,7 +1,10 @@
 """Fonctions pour générer les classes et les objets python"""
+from typing import List
 
 from black import format_str, FileMode
+from mistletoe import Document
 
+from codegen.codegen.generator import parse_definitions
 from codegen.utils.strings import camel_to_snake
 from codegen.utils.templates import build_jinja_environment
 
@@ -39,9 +42,11 @@ def render_template(template_file: str, data: dict) -> str:
     return format_str(rendered, mode=FileMode())
 
 
-def yaml_to_python(data: dict) -> tuple[str, str]:
+def yaml_to_python(definition: dict) -> tuple[str, str]:
     rendered = ''
     filename = ''
+
+    data = definition['yaml']
 
     if data:
         name = list(data.keys())[0]
@@ -50,4 +55,9 @@ def yaml_to_python(data: dict) -> tuple[str, str]:
             filename = camel_to_snake(name)
             rendered = render_template(template_file, data)
 
-    return rendered, filename
+    return f'{filename}.py', rendered
+
+
+def render_markdown_as_python(markdown: Document) -> List[tuple[str, str]]:
+    parsed = parse_definitions(markdown)
+    return [yaml_to_python(definition) for definition in parsed]

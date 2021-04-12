@@ -1,16 +1,17 @@
 import glob
 import json
 import os
-
 import typer
 
 import codegen.paths as paths
 from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html
 from codegen.citergie.mesures_generator import render_mesure_as_json, render_mesure_as_html, build_mesure, \
-    render_mesures_summary_as_html, filter_indicateurs_by_mesure_id
+    render_mesures_summary_as_html, filter_indicateurs_by_mesure_id, build_action, render_actions_as_typescript, \
+    relativize_ids
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
+from codegen.codegen.python import render_markdown_as_python
 from codegen.codegen.typescript import render_markdown_as_typescript
-from codegen.economie_circulaire.orientations_generator import orientation_as_mesure, build_orientation
+from codegen.economie_circulaire.orientations_generator import legacy_orientation_as_mesure, build_orientation
 from codegen.utils.files import load_md, write, sorted_files
 
 app = typer.Typer()
@@ -18,29 +19,37 @@ app = typer.Typer()
 
 @app.command()
 def all(
+    actions_mesures_markdown_dir=paths.mesures_markdown_dir,
+    actions_client_output_dir=paths.shared_client_data_dir,
+    actions_output_typescript=True,
+    indicateurs_markdown_dir=paths.indicateurs_markdown_dir,
+    indicateurs_output_client_dir=paths.indicateurs_client_output_dir,
+    indicateurs_html=False,
+    mesures_markdown_dir=paths.mesures_markdown_dir,
+    mesures_orientations_dir=paths.orientations_markdown_dir,
+    mesures_output_client_dir=paths.mesures_client_output_dir,
+    mesures_html=False,
+    mesures_json=False,
+    shared_markdown_dir=paths.shared_markdown_dir,
+    shared_client_output_dir=paths.shared_client_models_dir,
+    shared_python=False,
+    shared_typescript=True,
     thematique_markdown_file=paths.thematique_markdown_file,
     thematique_client_output_dir=paths.thematique_client_output_dir,
     thematique_typescript=True,
     thematique_json=False,
-    mesures_markdown_dir=paths.mesures_markdown_dir,
-    mesures_orientations_dir=paths.mesures_orientations_dir,
-    mesures_output_client_dir=paths.mesures_client_output_dir,
-    mesures_html=False,
-    mesures_json=False,
-    indicateurs_markdown_dir=paths.indicateurs_markdown_dir,
-    indicateurs_output_client_dir=paths.indicateurs_client_output_dir,
-    indicateurs_html=False,
-    shared_markdown_dir=paths.shared_markdown_dir,
-    shared_client_output_dir=paths.shared_output_client_dir,
-    shared_python=False,
-    shared_typescript=True,
 ) -> None:
     """Run all `generate x` commands with default production values"""
-    thematiques(
-        markdown_file=thematique_markdown_file,
-        output_dir=thematique_client_output_dir,
-        output_typescript=thematique_typescript,
-        output_json=thematique_json,
+
+    actions(
+        mesures_markdown_dir=actions_mesures_markdown_dir,
+        client_output_dir=actions_client_output_dir,
+        output_typescript=actions_output_typescript,
+    )
+    indicateurs(
+        markdown_dir=indicateurs_markdown_dir,
+        output_dir=indicateurs_output_client_dir,
+        html=indicateurs_html
     )
     mesures(
         mesures_dir=mesures_markdown_dir,
@@ -50,17 +59,53 @@ def all(
         html=mesures_html,
         json=mesures_json,
     )
-    indicateurs(
-        markdown_dir=indicateurs_markdown_dir,
-        output_dir=indicateurs_output_client_dir,
-        html=indicateurs_html
-    )
     shared(
         markdown_dir=shared_markdown_dir,
-        output_dir=shared_client_output_dir,
+        client_output_dir=shared_client_output_dir,
         python=shared_python,
         typescript=shared_typescript,
     )
+    thematiques(
+        markdown_file=thematique_markdown_file,
+        output_dir=thematique_client_output_dir,
+        output_typescript=thematique_typescript,
+        output_json=thematique_json,
+    )
+
+
+@app.command()
+def actions(
+    mesures_markdown_dir=paths.mesures_markdown_dir,
+    orientations_markdown_dir=paths.orientations_markdown_temp_dir,
+    client_output_dir=paths.shared_client_data_dir,
+    output_typescript=True,
+) -> None:
+    # citergie
+    files = glob.glob(os.path.join(mesures_markdown_dir, '*.md'))
+    actions_citergie = []
+
+    for file in files:
+        md = load_md(file)
+        action = build_action(md)
+        actions_citergie.append(action)
+
+    relativize_ids(actions_citergie, 'citergie')
+
+    # economie circulaire
+    files = sorted_files(orientations_markdown_dir, 'md')
+    actions_economie_circulaire = []
+
+    for file in files:
+        md = load_md(file)
+        action = build_action(md)
+        actions_economie_circulaire.append(action)
+
+    relativize_ids(actions_economie_circulaire, 'economie_circulaire')
+
+    if output_typescript:
+        typescript = render_actions_as_typescript(actions_citergie + actions_economie_circulaire)
+        filename = os.path.join(client_output_dir, 'actions_referentiels.ts')
+        write(filename, typescript)
 
 
 @app.command()
@@ -90,7 +135,7 @@ def indicateurs(
 @app.command()
 def mesures(
     mesures_dir: str = typer.Option(paths.mesures_markdown_dir, "--mesures-markdown", "-m"),
-    orientations_dir: str = typer.Option(paths.mesures_orientations_dir, "--orientations-markdown", "-om"),
+    orientations_dir: str = typer.Option(paths.orientations_markdown_dir, "--orientations-markdown", "-om"),
     indicateurs_dir: str = typer.Option(paths.indicateurs_markdown_dir, "--indicateurs-markdown", "-i"),
     output_dir: str = typer.Option(paths.mesures_client_output_dir, "--output", "-o"),
     html: bool = False,
@@ -125,7 +170,7 @@ def mesures(
         for filename in progress:
             md = load_md(filename)
             orientation = build_orientation(md)
-            mesure = orientation_as_mesure(orientation)
+            mesure = legacy_orientation_as_mesure(orientation)
             mesures.append(mesure)
 
     # Output mesures
@@ -154,10 +199,11 @@ def mesures(
 
 @app.command()
 def shared(
-    markdown_dir: str = typer.Option(paths.shared_markdown_dir, "--markdown", "-md"),
-    output_dir: str = typer.Option(paths.shared_output_client_dir, "--output", "-o"),
-    python: bool = typer.Option(False, '--python', '-py'),
-    typescript: bool = typer.Option(True, '--typescript', '-ts'),
+    markdown_dir: str = paths.shared_markdown_dir,
+    typescript: bool = True,
+    client_output_dir: str = paths.shared_client_models_dir,
+    python: bool = False,
+    api_output_dir: str = paths.shared_api_models_dir,
 ) -> None:  # pragma: no cover
     """
     Generate shared definitions.
@@ -170,10 +216,16 @@ def shared(
 
             typer.echo(f'Processing {filename}...')
             md = load_md(filename)
-            outputs = render_markdown_as_typescript(md)
 
-            for name, content in outputs:
-                write(os.path.join(output_dir, name), content)
+            if typescript:
+                outputs = render_markdown_as_typescript(md)
+                for name, content in outputs:
+                    write(os.path.join(client_output_dir, name), content)
+
+            if python:
+                outputs = render_markdown_as_python(md)
+                for name, content in outputs:
+                    write(os.path.join(api_output_dir, name), content)
 
     typer.echo(f"Processed {len(files)} shared definitions.")
 

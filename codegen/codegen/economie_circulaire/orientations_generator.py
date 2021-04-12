@@ -154,7 +154,7 @@ def build_orientation(doc: Document) -> dict:
     return orientation
 
 
-def orientation_as_mesure(orientation: dict) -> dict:
+def legacy_orientation_as_mesure(orientation: dict) -> dict:
     """Converts a orientation to a mesure in order to use it with mesures_generator functions"""
     return {
         'nom': orientation['nom'],

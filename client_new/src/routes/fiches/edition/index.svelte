@@ -4,14 +4,18 @@
     import {FicheActionInterface} from "../../../../generated/models/fiche_action";
     import Form from "../_Form"
     import {FicheActionStorable} from "../../../storables/FicheActionStorable";
-    import {ficheActionStore} from "../../../api/localStore";
     import Button from "../../../components/shared/Button.svelte";
+    import {HybridStore} from "../../../api/hybridStore";
 
     let data: FicheActionInterface
     let id: string
+    let ficheActionStore: HybridStore<FicheActionStorable>
 
     onMount(async () => {
         const epci_id = getCurrentEpciId()
+
+        const hybridStores = await import ("../../../api/hybridStores");
+        ficheActionStore = hybridStores.ficheActionStore;
 
         const urlParams = new URLSearchParams(window.location.search)
         const uid = urlParams.get('uid')

@@ -21,6 +21,12 @@
         </li>
         <li class="mr-4">
             <a class="p-1 rounded hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 active:text-gray-900 active:shadow-inner active:bg-white"
+               href="fiches/">
+                Plan d'actions
+            </a>
+        </li>
+        <li class="mr-4">
+            <a class="p-1 rounded hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 active:text-gray-900 active:shadow-inner active:bg-white"
                href="mesures.html">
                 Mesures
             </a>
@@ -50,9 +56,9 @@
                 {% for mesure in mesures[thematique_id] %}
                     <li>
                         <a
-                            class="bg-white p-4 rounded my-4 grid grid-cols-1
+                                class="bg-white p-4 rounded my-4 grid grid-cols-1
                             lg:grid-cols-12 lg:gap-1"
-                            href="mesure_{{ mesure.id }}.html"
+                                href="mesure_{{ mesure.id }}.html"
                         >
                             <h3 class="lg:col-span-8 text-xl font-semibold mb-6 pr-28">
                                 {{ mesure.nom }}
