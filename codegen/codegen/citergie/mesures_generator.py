@@ -105,6 +105,13 @@ def relativize_ids(actions: List[dict], referentiel_slug: str) -> None:
         if 'actions' in action.keys():
             relativize_ids(action['actions'], referentiel_slug)
 
+def clean_thematiques(actions: List[dict]) -> List:
+    cleaned_actions = actions.copy()
+    for action in cleaned_actions:
+        theme = action['climat_pratic_id'].strip() if 'climat_pratic_id' in action.keys() else ''
+        action['thematique_id'] = theme if theme else 'pas_de_theme'
+    return cleaned_actions
+
 
 def build_mesure(doc: Document) -> dict:
     """Extract mesures from markdown AST"""

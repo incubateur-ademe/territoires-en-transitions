@@ -7,7 +7,7 @@ import codegen.paths as paths
 from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html
 from codegen.citergie.mesures_generator import render_mesure_as_json, render_mesure_as_html, build_mesure, \
     render_mesures_summary_as_html, filter_indicateurs_by_mesure_id, build_action, render_actions_as_typescript, \
-    relativize_ids
+    relativize_ids, clean_thematiques
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
 from codegen.codegen.python import render_markdown_as_python
 from codegen.codegen.typescript import render_markdown_as_typescript
@@ -101,6 +101,9 @@ def actions(
         actions_economie_circulaire.append(action)
 
     relativize_ids(actions_economie_circulaire, 'economie_circulaire')
+
+    actions_citergie = clean_thematiques(actions_citergie)
+    actions_economie_circulaire = clean_thematiques(actions_economie_circulaire)
 
     if output_typescript:
         typescript = render_actions_as_typescript(actions_citergie + actions_economie_circulaire)
