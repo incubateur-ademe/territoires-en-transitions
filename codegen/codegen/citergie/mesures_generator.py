@@ -141,7 +141,7 @@ def render_mesure_as_html(mesure: dict,
         'faite': 'Faite',
         'programmee': 'Programmée',
         'pas_faite': 'Pas faite',
-        'non_concerne': 'Non concerné',
+        'non_concernee': 'Non concernée',
     }
     renderer = HTMLRenderer()
     description = Document(mesure['description'])

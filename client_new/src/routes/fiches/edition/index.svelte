@@ -25,14 +25,14 @@
     });
 
 
-    const handleDelete = (event) => {
+    const handleDelete = async (event) => {
         event.preventDefault()
 
         const confirmDelete =
             confirm('Êtes-vous sûr•e de vouloir supprimer une de vos actions personnalisées ?')
 
         if (confirmDelete) {
-            ficheActionStore.deleteById(id)
+            await ficheActionStore.deleteById(id)
             window.location.href = `/fiches/?epci_id=${data.epci_id}`
         }
     }

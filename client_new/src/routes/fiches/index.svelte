@@ -11,14 +11,14 @@
     let ficheActionStore: HybridStore<FicheActionStorable>
 
     const updateActions = async () => {
-        fiches = await ficheActionStore.retrieveAll()
+        let retrieved = await ficheActionStore.retrieveAll()
+        fiches = retrieved.sort((a, b) => a.custom_id.localeCompare(b.custom_id))
     }
 
     onMount(async () => {
         epciId = getCurrentEpciId()
         const hybridStores = await import ("../../api/hybridStores");
         ficheActionStore = hybridStores.ficheActionStore;
-
         await updateActions()
     });
 </script>
