@@ -43,7 +43,7 @@ module.exports = {
 							// Use overrides from npm or resolutions from yarn to set minimal
 							// acorn version to v7+
 							// https://github.com/sveltejs/sapper-template/pull/308
-							hotReload: false
+							hotReload: false,
 						}
 					}
 				},

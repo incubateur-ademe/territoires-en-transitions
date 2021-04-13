@@ -40,7 +40,7 @@
     }
 
     if (size == 'small') {
-        buttonClassNames += ' text-base px-3 py-3'
+        buttonClassNames += ' text-base px-3 py-2'
     }
 </script>
 
@@ -56,6 +56,7 @@
     </a>
 {:else }
     <button
+            type="button"
             on:click
             class:w-full={full}
             class="
@@ -63,6 +64,7 @@
   	{classNames ? ` ${classNames}` : ''}"
     >
         {label}
+        <slot></slot>
     </button>
 
 {/if}

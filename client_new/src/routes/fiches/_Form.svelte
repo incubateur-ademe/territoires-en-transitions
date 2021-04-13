@@ -1,15 +1,15 @@
 <script lang="ts">
-    import {FicheActionStorable} from "../../storables/FicheActionStorable";
-    import Button from "../../components/shared/Button.svelte";
-    import MultiSelect from './_MultiSelect.svelte';
+    import {FicheActionStorable} from "../../storables/FicheActionStorable"
+    import Button from "../../components/shared/Button.svelte"
+    import MultiSelect from './_MultiSelect.svelte'
     import Status from './_Status.svelte'
+    import LinkActionModal from './_LinkActionDialog.svelte'
     import {requiredValidator} from "../../validation/validators"
     import {createFieldValidator} from "../../validation/validation"
-    import {FicheActionInterface} from "../../../generated/models/fiche_action";
-    import {onMount} from "svelte";
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-    import {HybridStore} from "../../api/hybridStore";
-
+    import {FicheActionInterface} from "../../../generated/models/fiche_action"
+    import {onMount} from "svelte"
+    import {ActionReferentiel} from "../../../generated/models/action_referentiel"
+    import {HybridStore} from "../../api/hybridStore"
 
     export let data: FicheActionInterface
     let ficheActionStore: HybridStore<FicheActionStorable>
@@ -39,12 +39,14 @@
     });
 
     const [validity, validate] = createFieldValidator(requiredValidator())
+
+    let showLinkActionDialog = false
 </script>
 
 
 <section class="flex flex-col">
 
-    <div class="flex flex-col w-full md:w-3/4 pb-10">
+    <form class="flex flex-col w-full md:w-3/4 pb-10">
 
         <label for="fiche_create_custom_id" class="text-xl">Identifiant de l'action</label>
         <input id="fiche_create_custom_id"
@@ -126,10 +128,24 @@
             </MultiSelect>
         {/if}
 
+        <div>
+            <Button
+                    size="small"
+                    on:click={() => showLinkActionDialog = true }
+            >
+                + Lier une action
+            </Button>
+        </div>
+
         <div class="p-10"></div>
         <Button full
-                label="Valider"
                 on:click={handleSave}
-                classNames="md:w-1/3 self-end"/>
-    </div>
+                classNames="md:w-1/3 self-end">
+            Valider
+        </Button>
+    </form>
+
+    {#if showLinkActionDialog}
+        <LinkActionModal on:close={() => showLinkActionDialog = false }/>
+    {/if}
 </section>
