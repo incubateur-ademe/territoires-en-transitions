@@ -12,7 +12,7 @@
     }
 </script>
 
-<svelte:window on:keydown={handleKeydown()} />
+<svelte:window on:keydown={handleKeydown} />
 
 <div class="bg-black bg-opacity-25 fixed top-0 left-0 h-full w-full" on:click={handleClose}></div>
 
@@ -20,7 +20,7 @@
      aria-modal="true"
      aria-labelledby={ariaLabelledBy}
      aria-describedby={ariaDescribedBy}
-     class="absolute top-1/2 left-1/2 h-5/6 w-5/6 transform -translate-x-1/2 -translate-y-1/2"
+     class="overflow-auto absolute top-1/2 left-1/2 h-screen-90 w-screen-90 transform -translate-x-1/2 -translate-y-1/2"
 >
     <slot></slot>
 </div>

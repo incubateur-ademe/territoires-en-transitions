@@ -69,4 +69,13 @@
   .indicateur li > p {
     @apply inline;
   }
+
+  /* Size utility */
+  .h-screen-90 {
+    height: 90vh;
+  }
+
+  .w-screen-90 {
+    width: 90vw;
+  }
 }
