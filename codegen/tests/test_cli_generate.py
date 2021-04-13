@@ -62,8 +62,8 @@ def test_mesures(mock_write: MagicMock):
     )
 
     mock_write.assert_any_call(os.path.join(output_dir, 'mesures.html'), ANY)
-    mock_write.assert_any_call(os.path.join(output_dir, 'mesure_1.1.1.html'), ANY)
-    mock_write.assert_any_call(os.path.join(output_dir, 'mesure_1.1.1.json'), ANY)
+    mock_write.assert_any_call(os.path.join(output_dir, 'mesure_citergie__1.1.1.html'), ANY)
+    mock_write.assert_any_call(os.path.join(output_dir, 'mesure_citergie__1.1.1.json'), ANY)
 
 
 @patch("codegen.cli_generate.write")

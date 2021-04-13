@@ -159,7 +159,7 @@ def legacy_orientation_as_mesure(orientation: dict) -> dict:
     return {
         'nom': orientation['nom'],
         'climat_pratic_id': 'eci',
-        'id': f'eci_{orientation["id"]}',
+        'id': orientation["id"],
         'description': orientation['description'],
         'actions': orientation['niveaux'],
     }

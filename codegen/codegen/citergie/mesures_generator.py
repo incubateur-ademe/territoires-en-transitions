@@ -101,7 +101,7 @@ def relativize_ids(actions: List[dict], referentiel_slug: str) -> None:
     for action in actions:
         if 'id' in action.keys():
             action['id_nomenclature'] = action['id']
-            action['id'] = f'{referentiel_slug}/{action["id"]}'
+            action['id'] = f'{referentiel_slug}__{action["id"]}'
         if 'actions' in action.keys():
             relativize_ids(action['actions'], referentiel_slug)
 

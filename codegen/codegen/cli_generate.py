@@ -143,6 +143,8 @@ def mesures(
 ) -> None:
     """
     Convert 'mesures' markdown files to code.
+
+    Deprecated, mesure are replaced by actions
     """
     # Load indicateurs
     indicateur_files = sorted_files(indicateurs_dir, 'md')
@@ -155,27 +157,34 @@ def mesures(
     # Load mesures
     mesure_files = sorted_files(mesures_dir, 'md')
     mesure_files.sort()
-    mesures = []
+    mesures_citergie = []
 
     with typer.progressbar(mesure_files) as progress:
         for filename in progress:
             md = load_md(filename)
             mesure = build_mesure(md)
-            mesures.append(mesure)
+            mesures_citergie.append(mesure)
+    relativize_ids(mesures_citergie, 'citergie')
+
 
     # Load orientations as mesures
     orientation_files = sorted_files(orientations_dir, 'md')
+    mesures_economie_circulaire = []
 
     with typer.progressbar(orientation_files) as progress:
         for filename in progress:
             md = load_md(filename)
             orientation = build_orientation(md)
             mesure = legacy_orientation_as_mesure(orientation)
-            mesures.append(mesure)
+            mesures_economie_circulaire.append(mesure)
+    relativize_ids(mesures_economie_circulaire, 'economie_circulaire')
 
     # Output mesures
+    mesures = mesures_citergie + mesures_economie_circulaire
+
     with typer.progressbar(mesures) as progress:
         for mesure in progress:
+
             filename_base = f"mesure_{mesure['id']}"
 
             if json:
@@ -184,7 +193,7 @@ def mesures(
                 write(filename, json_data)
 
             if html:
-                mesure_indicateurs = filter_indicateurs_by_mesure_id(indicateurs, mesure['id'])
+                mesure_indicateurs = filter_indicateurs_by_mesure_id(indicateurs, mesure['id_nomenclature'])
                 html_doc = render_mesure_as_html(mesure, indicateurs=mesure_indicateurs)
                 filename = os.path.join(output_dir, f'{filename_base}.html')
                 write(filename, html_doc)
