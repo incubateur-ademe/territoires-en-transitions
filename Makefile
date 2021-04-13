@@ -10,7 +10,7 @@ generate:
 
 build:
 	cd client && npm run build:prod
-	cd client_new && npm run build:tailwindcss && npm run export
+	cd client_new && npm run export
 
 deploy_on_sandbox:
 	cd tools && poetry run deploy
