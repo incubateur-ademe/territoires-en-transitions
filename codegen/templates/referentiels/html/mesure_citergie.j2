@@ -73,7 +73,7 @@
         <ul>
             {% for action in mesure.actions %}
                 <li class="bg-white p-4 rounded py-6 my-4">
-                    <section class="action grid grid-cols-1 lg:grid-cols-12 lg:gap-1"
+                    <section class="action grid grid-cols-1 lg:grid-cols-12 lg:gap-4"
                              id="action-{{ action.id }}">
 
                         {# Name and description #}
@@ -90,7 +90,7 @@
                         </div>
 
                         {# Avancement input #}
-                        <form class="lg:col-span-3 lg:col-end-12">
+                        <form class="lg:col-span-5 lg:col-end-13 grid justify-items-end">
                             <fieldset class="flex status" data-action-id="{{ action.id }}">
                                 {% for key, display in avancement_noms.items() %}
                                     <div>

@@ -25,7 +25,7 @@
 </script>
 
 <section
-        class="p-4 rounded my-4 action grid grid-cols-1 lg:grid-cols-12 lg:gap-1 bg-white "
+        class="p-4 rounded my-4 action grid grid-cols-1 lg:grid-cols-12 lg:gap-4 bg-white "
         id="action-{action.uid}">
 
     <div class="relative lg:col-span-7">
