@@ -2,6 +2,7 @@
     import {FicheActionStorable} from "../../storables/FicheActionStorable";
     import Button from "../../components/shared/Button.svelte";
     import MultiSelect from './_MultiSelect.svelte';
+    import CategoriePicker from './_CategoriePicker.svelte'
     import Status from './_Status.svelte'
     import {requiredValidator} from "../../validation/validators"
     import {createFieldValidator} from "../../validation/validation"
@@ -46,7 +47,7 @@
 
     <div class="flex flex-col w-full md:w-3/4 pb-10">
 
-        <label for="fiche_create_custom_id" class="text-xl">Identifiant de l'action</label>
+        <label for="fiche_create_custom_id" class="text-xl">Identifiant</label>
         <input id="fiche_create_custom_id"
                bind:value={data.custom_id}
                use:validate={data.custom_id}
@@ -65,14 +66,26 @@
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
         <div class="p-5"></div>
 
-        <Status bind:avancementKey={data.avancement}
-                id="{data.uid}"/>
-        <div class="p-5"></div>
+        <CategoriePicker ficheActionUid={data.uid} />
 
         <label for="fiche_create_description" class="text-xl">Description</label>
         <textarea id="fiche_create_description"
                   bind:value={data.description}
                   class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"></textarea>
+        <div class="p-5"></div>
+
+
+        <div class="p-5"></div>
+
+        <Status bind:avancementKey={data.avancement}
+                id="{data.uid}"/>
+        <div class="p-5"></div>
+
+
+        <label for="fiche_create_porteur" class="text-xl">Porteur</label>
+        <input id="fiche_create_porteur"
+               bind:value={data.porteur}
+               class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
         <div class="p-5"></div>
 
         <label for="fiche_create_budget" class="text-xl">Budget global</label>
@@ -82,8 +95,13 @@
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
         <div class="p-5"></div>
 
-        <span class="text-xl">Calendrier</span>
+        <label for="fiche_create_commentaire" class="text-xl">Commentaire</label>
+        <textarea id="fiche_create_commentaire"
+                  bind:value={data.commentaire}
+                  class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"></textarea>
+        <div class="p-5"></div>
 
+        <span class="text-xl">Calendrier</span>
         <div class="flex">
             <div class="flex-1 flex flex-col pr-1">
                 <label for="fiche_create_debut">date de début</label>
@@ -103,19 +121,6 @@
                 <div class="p-5"></div>
             </div>
         </div>
-
-        <label for="fiche_create_porteur" class="text-xl">Porteur</label>
-        <input id="fiche_create_porteur"
-               bind:value={data.porteur}
-               class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
-        <div class="p-5"></div>
-
-
-        <label for="fiche_create_commentaire" class="text-xl">Commentaire</label>
-        <textarea id="fiche_create_commentaire"
-                  bind:value={data.commentaire}
-                  class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"></textarea>
-        <div class="p-5"></div>
 
         <label for="fiche_create_commentaire" class="text-xl">Actions du référentiel</label>
         {#if flatActions}

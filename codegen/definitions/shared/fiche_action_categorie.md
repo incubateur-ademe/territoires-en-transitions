@@ -9,8 +9,8 @@ FicheActionCategorie:
     uid:
         type: String
     parent_uid:
-        type: List[String]
-    titre:
+        type: String
+    nom:
         type: String
     fiche_actions_uids:
         type: List[String]

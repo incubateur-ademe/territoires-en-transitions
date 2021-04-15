@@ -1,28 +1,83 @@
 <script lang="ts">
     // Note this is a kind of reverse picker as the `fiche action id` is added to the catégorie.
-
+    import {ficheActionCategorieStore, LocalStore} from "../../api/localStore";
+    import CategorieCreation from './_CategorieCreation.svelte'
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
+    import {onMount} from "svelte";
+    import Button from "../../components/shared/Button.svelte";
 
     export let ficheActionUid: string
     let categories: FicheActionCategorieStorable[] = []
     let selected: FicheActionCategorieStorable
+    let categorieStore: LocalStore<FicheActionCategorieStorable>
 
-    const onSelect = (_) => {
-        let changed: FicheActionCategorieStorable[] = []
-        // todo
-        // cleanup
-        // - search for categories with this fiche uid
-        //   - remove id & add cat to changed
-        // add this fiche uid to selected categorie
-        //  - add selected to changed
-        // save all changed
+    const onSelect = async (_) => {
+        await updateCategories()
     }
+
+    const updateCategories = async () => {
+        let changed: FicheActionCategorieStorable[] = []
+        // Cleanup
+        for (let categorie of categories) {
+            // search for categories with this fiche uid excluding selected.
+            if (selected && selected.uid === categorie.uid) continue
+            if (categorie.fiche_actions_uids.includes(ficheActionUid)) {
+                // remove id & add categorie to changed
+                categorie.fiche_actions_uids = categorie.fiche_actions_uids.filter((uid) => uid != ficheActionUid)
+                changed.push(categorie)
+            }
+        }
+
+        // Update
+        if (selected) {
+            // add this fiche uid to selected categorie
+            selected.fiche_actions_uids.push(ficheActionUid)
+            // add selected to changed
+            changed.push(selected)
+        }
+
+        // Save all changed
+        for (let categorie of changed) {
+            await categorieStore.store(categorie)
+        }
+        refreshSelection()
+    }
+
+    let visibleCategorieCreation = false
+    const handleNewCategorie = (_) => {
+        visibleCategorieCreation = true
+    }
+
+    const onCategorieSave = async (_) => {
+        visibleCategorieCreation = false
+        selected = null
+        await updateCategories()
+        categories = await categorieStore.retrieveAll()
+        refreshSelection()
+    }
+
+    const refreshSelection = () => {
+        for (let categorie of categories) {
+            if (categorie.fiche_actions_uids.includes(ficheActionUid)) {
+                selected = categorie
+                return;
+            }
+        }
+        selected = null
+    }
+
+    onMount(async () => {
+        // todo replace with hybrid store
+        categorieStore = ficheActionCategorieStore
+        categories = await categorieStore.retrieveAll()
+        refreshSelection()
+    })
 </script>
 
+<label for="categorie_picker" class="text-xl">Catégorie</label>
 <select bind:value={selected}
         class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-        id="mesure_create_climat_pratic"
-
+        id="categorie_picker"
         on:blur={onSelect}>
     {#each categories as categorie}
         <option value={categorie}>
@@ -30,3 +85,13 @@
         </option>
     {/each}
 </select>
+<Button classNames="md:w-1/3 self-end"
+        full
+        label="Nouvelle catégorie"
+        on:click={handleNewCategorie}/>
+
+{#if visibleCategorieCreation}
+    <CategorieCreation
+            ficheActionUid={ficheActionUid}
+            on:save={onCategorieSave}/>
+{/if}

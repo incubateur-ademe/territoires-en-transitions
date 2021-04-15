@@ -2,11 +2,12 @@
     import {FicheActionCategorieInterface} from "../../../generated/models/fiche_action_categorie";
     import {ficheActionCategorieStore, LocalStore} from "../../api/localStore";
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
-    import {onMount} from "svelte";
+    import {createEventDispatcher, onMount} from "svelte";
     import Button from "../../components/shared/Button.svelte";
 
     export let data: FicheActionCategorieInterface
     let categorieStore: LocalStore<FicheActionCategorieStorable>
+    const dispatch = createEventDispatcher()
 
     onMount(async () => {
         // todo replace with hybrid store
@@ -14,17 +15,23 @@
     })
 
     const handleSave = async () => {
+        if (!data.nom) return;
         const categorie = new FicheActionCategorieStorable(data)
-        await categorieStore.store(categorie)
+        const saved = await categorieStore.store(categorie)
+        console.log('saved', saved)
+        dispatch('save', {'cat': saved})
     }
 </script>
 
-<label for="fiche_create_titre" class="text-xl">Titre</label>
-<input id="fiche_create_titre"
-       bind:value={data.titre}
-       class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
-<div class="p-10"></div>
-<Button full
-        label="Valider"
-        on:click={handleSave}
-        classNames="md:w-1/3 self-end"/>
+<section class="flex flex-col">
+    <label class="text-sm" for="fiche_create_nom">Nom</label>
+    <input bind:value={data.nom}
+           class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
+           id="fiche_create_nom"
+           maxlength="100">
+    <div class="p-2"></div>
+    <Button classNames="md:w-1/3 self-end bg-white"
+            full
+            label="Valider"
+            on:click={handleSave}/>
+</section>
