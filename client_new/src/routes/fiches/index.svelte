@@ -15,7 +15,7 @@
     let categories: FicheActionCategorieStorable[] = []
     let categorieStore: LocalStore<FicheActionCategorieStorable>
 
-    let categorized: Map<string, FicheActionStorable[]> = new Map()
+    let categorized = new Map<string, FicheActionStorable[]>()
 
 
     const categorize = (fiche: FicheActionStorable) => {
@@ -31,13 +31,14 @@
             }
         }
         addAt(defaultCategorieNom)
-        console.log('cat', categorized)
     }
 
     const categorizeAll = () => {
+        categorized = new Map<string, FicheActionStorable[]>()
         for (let fiche of fiches) {
             categorize(fiche)
         }
+        console.log(categorized)
     }
 
     const updateActions = async () => {
@@ -55,11 +56,13 @@
     onMount(async () => {
         epciId = getCurrentEpciId()
         const hybridStores = await import ("../../api/hybridStores");
-        ficheActionStore = hybridStores.ficheActionStore;
+        ficheActionStore = hybridStores.ficheActionStore
         await updateActions()
 
         // todo replace with hybrid store
+        // after fiches to check asynchronicity
         categorieStore = ficheActionCategorieStore
+        await updateCategories()
     });
 </script>
 <svelte:head>
@@ -74,9 +77,9 @@
 </header>
 <div class="p-5"></div>
 
-<ul>
-    {#each [...categorized] as [nom, fiches]}
-        <h3>{nom}</h3>
+{#each [...categorized] as [nom, fiches]}
+    <h3>{nom}</h3>
+    <ul>
         {#each fiches as fiche}
             <li>
                 <a class="bg-white p-4 rounded my-4 grid grid-cols-1 lg:grid-cols-12 lg:gap-1"
@@ -87,8 +90,9 @@
                 </a>
             </li>
         {/each}
-    {/each}
+    </ul>
+    <div class="p-5"></div>
+{/each}
 
-</ul>
 <div class="p-5"></div>
 
