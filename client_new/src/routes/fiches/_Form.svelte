@@ -50,6 +50,7 @@
         <input id="fiche_create_custom_id"
                bind:value={data.custom_id}
                use:validate={data.custom_id}
+               maxlength="36"
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
         {#if $validity.dirty && !$validity.valid}
             <span class="validation-hint">
@@ -62,6 +63,7 @@
         <label for="fiche_create_titre" class="text-xl">Titre</label>
         <input id="fiche_create_titre"
                bind:value={data.titre}
+               maxlength="100"
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
         <div class="p-5"></div>
 
@@ -107,6 +109,7 @@
         <label for="fiche_create_porteur" class="text-xl">Porteur</label>
         <input id="fiche_create_porteur"
                bind:value={data.porteur}
+               maxlength="100"
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
         <div class="p-5"></div>
 
