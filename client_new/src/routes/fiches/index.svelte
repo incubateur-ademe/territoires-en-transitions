@@ -50,9 +50,29 @@
      */
     const categorizeAll = () => {
         let byCategorie = new Map<FicheActionCategorieStorable, FicheActionStorable[]>()
-        for (let fiche of fiches) {
-            categorize(fiche, byCategorie)
+        const addAt = (fiche: FicheActionStorable, categorie: FicheActionCategorieStorable) => {
+            if (!byCategorie.has(categorie)) byCategorie.set(categorie, [])
+            byCategorie.get(categorie).push(fiche)
         }
+
+        let uncategorized = [...fiches]
+        console.log(uncategorized.length)
+
+        for (let categorie of categories) {
+            for (let fiche of fiches) {
+                if (categorie.fiche_actions_uids.includes(fiche.uid)) {
+                    addAt(fiche, categorie)
+                    uncategorized = uncategorized.filter((f) => f.uid != fiche.uid)
+                    console.log(uncategorized.length)
+                }
+            }
+        }
+
+        for (let fiche of uncategorized) {
+            addAt(fiche, defaultCategorie)
+
+        }
+
         fichesByCategorie = byCategorie
     }
 
