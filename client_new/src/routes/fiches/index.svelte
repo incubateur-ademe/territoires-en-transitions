@@ -15,13 +15,13 @@
     let categories: FicheActionCategorieStorable[] = []
     let categorieStore: LocalStore<FicheActionCategorieStorable>
 
-    let categorized = new Map<string, FicheActionStorable[]>()
+    let fichesByName = new Map<string, FicheActionStorable[]>()
 
 
-    const categorize = (fiche: FicheActionStorable) => {
+    const categorize = (fiche: FicheActionStorable, fichesByName:  Map<string, FicheActionStorable[]>) => {
         const addAt = (nom) => {
-            if (!categorized.has(nom)) categorized.set(nom, [])
-            categorized.get(nom).push(fiche)
+            if (!fichesByName.has(nom)) fichesByName.set(nom, [])
+            fichesByName.get(nom).push(fiche)
         }
 
         for (let categorie of categories) {
@@ -34,11 +34,11 @@
     }
 
     const categorizeAll = () => {
-        categorized = new Map<string, FicheActionStorable[]>()
+        let byName = new Map<string, FicheActionStorable[]>()
         for (let fiche of fiches) {
-            categorize(fiche)
+            categorize(fiche, byName)
         }
-        console.log(categorized)
+        fichesByName = byName
     }
 
     const updateActions = async () => {
@@ -77,7 +77,7 @@
 </header>
 <div class="p-5"></div>
 
-{#each [...categorized] as [nom, fiches]}
+{#each [...fichesByName] as [nom, fiches]}
     <h3>{nom}</h3>
     <ul>
         {#each fiches as fiche}

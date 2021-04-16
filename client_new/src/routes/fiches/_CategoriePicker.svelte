@@ -7,6 +7,13 @@
     import Button from "../../components/shared/Button.svelte";
 
     export let ficheActionUid: string
+    const defaultCategorie = new FicheActionCategorieStorable({
+        uid: '',
+        epci_id: '',
+        nom: '-',
+        parent_uid: '',
+        fiche_actions_uids: [ficheActionUid]
+    })
     let categories: FicheActionCategorieStorable[] = []
     let selected: FicheActionCategorieStorable
     let categorieStore: LocalStore<FicheActionCategorieStorable>
@@ -38,7 +45,7 @@
 
         // Save all changed
         for (let categorie of changed) {
-            await categorieStore.store(categorie)
+            if (categorie.uid) await categorieStore.store(categorie)
         }
         refreshSelection()
     }
@@ -70,11 +77,12 @@
         // todo replace with hybrid store
         categorieStore = ficheActionCategorieStore
         categories = await categorieStore.retrieveAll()
+        categories.push(defaultCategorie)
         refreshSelection()
     })
 </script>
 
-<label for="categorie_picker" class="text-xl">Catégorie</label>
+<label class="text-xl" for="categorie_picker">Catégorie</label>
 <select bind:value={selected}
         class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
         id="categorie_picker"
