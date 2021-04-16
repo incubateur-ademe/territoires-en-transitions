@@ -15,8 +15,12 @@
     export let data: FicheActionInterface
     let ficheActionStore: HybridStore<FicheActionStorable>
 
+    // hack fix https://lte.jetbrains.space/p/territoires-en-transitions/issues/302
+    let budget: number | string = data.budget
+
     const handleSave = async () => {
         if (!data.custom_id) return;
+        data.budget = Number.parseFloat(budget.toString()) || 0
         const fiche = new FicheActionStorable(data)
         await ficheActionStore.store(fiche)
         window.location.href = `/fiches/?epci_id=${data.epci_id}`
@@ -94,7 +98,7 @@
         <label for="fiche_create_budget" class="text-xl">Budget global</label>
         <input id="fiche_create_budget"
                type="number"
-               bind:value={data.budget}
+               bind:value={budget}
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100">
         <div class="p-5"></div>
 

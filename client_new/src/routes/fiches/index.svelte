@@ -56,14 +56,12 @@
         }
 
         let uncategorized = [...fiches]
-        console.log(uncategorized.length)
 
         for (let categorie of categories) {
             for (let fiche of fiches) {
                 if (categorie.fiche_actions_uids.includes(fiche.uid)) {
                     addAt(fiche, categorie)
                     uncategorized = uncategorized.filter((f) => f.uid != fiche.uid)
-                    console.log(uncategorized.length)
                 }
             }
         }
