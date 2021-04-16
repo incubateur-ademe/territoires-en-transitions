@@ -19,7 +19,7 @@
         const categorie = new FicheActionCategorieStorable(data)
         const saved = await categorieStore.store(categorie)
         console.log('saved', saved)
-        dispatch('save', {'cat': saved})
+        dispatch('save', {'categorie': saved})
     }
 </script>
 

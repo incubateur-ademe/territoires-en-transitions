@@ -1,5 +1,8 @@
 <script lang="ts">
-    // Note this is a kind of reverse picker as the `fiche action id` is added to the catégorie.
+    /**
+     * Note this is a kind of reverse picker as the `fiche action id` is added to the catégorie.
+     */
+
     import {ficheActionCategorieStore, LocalStore} from "../../api/localStore";
     import CategorieCreation from './_CategorieCreation.svelte'
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
@@ -18,10 +21,16 @@
     let selected: FicheActionCategorieStorable
     let categorieStore: LocalStore<FicheActionCategorieStorable>
 
+    /**
+     * On user interaction with the select element.
+     */
     const onSelect = async (_) => {
         await updateCategories()
     }
 
+    /**
+     * Update and save categories that needs to be updated.
+     */
     const updateCategories = async () => {
         let changed: FicheActionCategorieStorable[] = []
         // Cleanup
