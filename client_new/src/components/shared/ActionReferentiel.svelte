@@ -3,6 +3,7 @@
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
+    import AddFiche from "../icons/AddFiche.svelte";
 
     export let action: ActionReferentiel
 
@@ -22,7 +23,9 @@
         id="action-{action.id}">
 
     <div class="relative lg:col-span-7">
-        <a href="fiches/creation/?epci_id={epciId}&action_id={action.id}">[nouvelle fiche action]+</a>
+        <a href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
+            <AddFiche/>
+        </a>
         <h3 class="pr-28">({action.id}) {action.nom}</h3>
         <details class="expandable">
             <summary
