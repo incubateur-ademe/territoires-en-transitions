@@ -18,7 +18,9 @@ permettre aux utilisateurs :
 Ce dépôt Git contient :
 - un outil pour extraire les données métiers venant de fichiers divers (`.xls`,
   `.docx`, etc.) sous un format unifié,
-- l'application client de l'interface.
+- l'application client de l'interface,
+- les données des référentiels (fichiers sources et markdown),
+- des outils pour le déploiement.
 
 Chaque dossier à la racine contient son propre `README.md` et peut fonctionner
 de manière autonome.
