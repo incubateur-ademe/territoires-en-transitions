@@ -9,25 +9,30 @@
 
     const avancements = [
         {
-            key: 'faite',
-            label: 'Faite',
-        },
-        {
-            key: 'programme',
-            label: 'Programmée',
+            key: 'non_concernee',
+            label: 'Non concernée',
         },
         {
             key: 'pas_faite',
             label: 'Pas faite',
         },
         {
-            key: 'non_concernee',
-            label: 'Non concernée',
-        }
+            key: 'programmee',
+            label: 'Prévue',
+        },
+        {
+            key: 'en_cours',
+            label: 'En cours',
+        },
+        {
+            key: 'faite',
+            label: 'Faite',
+        },
     ]
 
     const classes = [
         'border rounded-l flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
+        'border-t border-r border-b flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
         'border-t border-r border-b flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
         'border-t border-r border-b flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
         'border-t border-r border-b rounded-r flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',

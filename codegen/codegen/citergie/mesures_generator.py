@@ -146,7 +146,8 @@ def render_mesure_as_html(mesure: dict,
     # todo since those names are shared, use code generation.
     avancement_noms = {
         'faite': 'Faite',
-        'programmee': 'Programmée',
+        'programmee': 'Prévue',
+        'en_cours': 'En cours',
         'pas_faite': 'Pas faite',
         'non_concernee': 'Non concernée',
     }

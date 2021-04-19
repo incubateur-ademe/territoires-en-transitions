@@ -7,21 +7,25 @@
 
     const avancements = [
         {
-            key: 'faite',
-            label: 'Faite',
-        },
-        {
-            key: 'programme',
-            label: 'Programmée',
+            key: 'non_concernee',
+            label: 'Non concernée',
         },
         {
             key: 'pas_faite',
             label: 'Pas faite',
         },
         {
-            key: 'non_concernee',
-            label: 'Non concernée',
-        }
+            key: 'programmee',
+            label: 'Prévue',
+        },
+        {
+            key: 'en_cours',
+            label: 'En cours',
+        },
+        {
+            key: 'faite',
+            label: 'Faite',
+        },
     ]
 
     const classes = [
@@ -59,7 +63,7 @@
     fetch();
 </script>
 
-<form class="lg:col-span-3 lg:col-end-12">
+<form class="lg:col-span-5 lg:col-end-13 grid justify-items-end">
     <fieldset class="flex status" data-action-id="{actionId}">
         {#each avancements as avancement, index}
             <div>

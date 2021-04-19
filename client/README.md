@@ -1,3 +1,5 @@
+> **Cette application client est dépréciée. La nouvelle application client se trouve maintenant dans le dossier `/client_new`.**
+
 # Application client pour Labels Transition Écologique
 
 - [Pré-requis](#pré-requis)
