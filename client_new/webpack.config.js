@@ -34,7 +34,14 @@ module.exports = {
 					use: {
 						loader: 'svelte-loader',
 						options: {
-							preprocess: sveltePreprocess({ sourceMap: dev }),
+							preprocess: sveltePreprocess(
+								{
+									sourceMap: dev,
+									postcss: {
+										plugins: [require('tailwindcss'), require('autoprefixer')],
+									},
+								},
+							),
 							compilerOptions: {
 								dev,
 								hydratable: true
@@ -79,7 +86,14 @@ module.exports = {
 					use: {
 						loader: 'svelte-loader',
 						options: {
-							preprocess: sveltePreprocess({ sourceMap: dev }),
+							preprocess: sveltePreprocess(
+								{
+									sourceMap: dev,
+									postcss: {
+										plugins: [require('tailwindcss'), require('autoprefixer')],
+									},
+								},
+							),
 							compilerOptions: {
 								css: false,
 								generate: 'ssr',

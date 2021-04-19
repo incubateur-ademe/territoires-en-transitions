@@ -27,7 +27,7 @@
 </svelte:head>
 
 <header class="flex my-10">
-    <h1 class="text-3xl font-semibold  flex-grow">Plan d'actions de ma collectivité</h1>
+    <h1 class="text-3xl font-semibold  flex-grow">Plan d'actions de ma collectivité oqiwpdiqwopi</h1>
     <Button asLink
             label="Créer une fiche action"
             href="fiches/creation/?epci_id={epciId}"/>
