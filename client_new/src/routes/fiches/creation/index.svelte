@@ -22,6 +22,13 @@
 
     onMount(async () => {
         data.epci_id = getCurrentEpciId()
+
+        const urlParams = new URLSearchParams(window.location.search)
+        const actionId = urlParams.get('action_id')
+
+        if (actionId) {
+            data.referentiel_action_ids.push(actionId)
+        }
     });
 
 
