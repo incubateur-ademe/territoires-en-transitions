@@ -3,12 +3,10 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
-    "build": "npm run build:tailwindcss && sapper build",
-    "export": "npm run build:tailwindcss && sapper export",
+    "build": "sapper build",
+    "export": "sapper export",
     "start": "node __sapper__/build",
-    "validate": "svelte-check --ignore src/node_modules/@sapper",
-    "watch:tailwindcss": "postcss static/tailwind.css -o static/main.css -w",
-    "build:tailwindcss": "cross-env NODE_ENV=production postcss static/tailwind.css -o static/main.css"
+    "validate": "svelte-check --ignore src/node_modules/@sapper"
   },
   "dependencies": {
     "compression": "^1.7.1",
