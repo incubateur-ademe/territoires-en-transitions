@@ -2,7 +2,7 @@
     import ActionReferentielComponent from "../../components/shared/ActionReferentiel.svelte";
     import {onMount} from "svelte";
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-    import Button from "../../components/shared/Button.svelte";
+    import Button from "../../components/shared/Button/Button.svelte";
 
     const defaultSearchLimit = 10;
     const possiblyId = new RegExp('^\\d+');

@@ -1,9 +1,9 @@
 <script lang="ts">
     import {FicheActionStorable} from "../../storables/FicheActionStorable"
-    import Button from "../../components/shared/Button.svelte"
+    import Button from "../../components/shared/Button/Button.svelte"
     import MultiSelect from './_MultiSelect.svelte'
     import Status from './_Status.svelte'
-    import LinkActionModal from './_LinkActionDialog.svelte'
+    import LinkActionDialog from './_LinkActionDialog.svelte'
     import {requiredValidator} from "../../validation/validators"
     import {createFieldValidator} from "../../validation/validation"
     import {FicheActionInterface} from "../../../generated/models/fiche_action"
@@ -12,7 +12,13 @@
     import {HybridStore} from "../../api/hybridStore"
 
     export let data: FicheActionInterface
+
     let ficheActionStore: HybridStore<FicheActionStorable>
+    let referentiels
+    let thematiques
+
+    $: showLinkActionDialog = false
+    $: dialogContentLoaded = referentiels && thematiques
 
     const handleSave = async () => {
         if (!data.custom_id) return;
@@ -21,28 +27,36 @@
         window.location.href = `/fiches/?epci_id=${data.epci_id}`
     }
 
-    let flatActions: ActionReferentiel[]
+    // let flatActions: ActionReferentiel[]
     onMount(async () => {
-        const hybridStores = await import ("../../api/hybridStores");
-        ficheActionStore = hybridStores.ficheActionStore;
+    //     const hybridStores = await import ("../../api/hybridStores");
+    //     ficheActionStore = hybridStores.ficheActionStore;
 
-        const referentiel = await import("../../../generated/data/actions_referentiels")
-        const flattened = [];
-        const flatten = (actions: ActionReferentiel[]) => {
-            for (let action of actions) {
-                flattened.push(action)
-                flatten(action.actions)
-            }
-        }
-        flatten(referentiel.actions)
-        flatActions = flattened
+        referentiels = await import("../../../generated/data/actions_referentiels")
+        thematiques = await import("../../../generated/data/thematiques")
+    //     const flattened = [];
+    //     const flatten = (actions: ActionReferentiel[]) => {
+    //         for (let action of actions) {
+    //             flattened.push(action)
+    //             flatten(action.actions)
+    //         }
+    //     }
+    //     flatten(referentiel.actions)
+    //     flatActions = flattened
     });
 
     const [validity, validate] = createFieldValidator(requiredValidator())
-
-    let showLinkActionDialog = false
 </script>
 
+<svelte:head>
+    {#if showLinkActionDialog }
+        <style>
+            body {
+                overflow: hidden;
+            }
+        </style>
+    {/if}
+</svelte:head>
 
 <section class="flex flex-col">
 
@@ -123,22 +137,24 @@
         <div class="p-5"></div>
 
         <label for="fiche_create_commentaire" class="text-xl">Actions du référentiel</label>
-        {#if flatActions}
+        <!-- {#if flatActions}
             <MultiSelect id='lang' bind:value={data.referentiel_action_ids}>
                 {#each flatActions as action}
                     <option value="{action.id}">({action.id_nomenclature}) {action.nom}</option>
                 {/each}
             </MultiSelect>
-        {/if}
+        {/if} -->
 
-        <div>
-            <Button
-                    size="small"
-                    on:click={() => showLinkActionDialog = true }
-            >
-                + Lier une action
-            </Button>
-        </div>
+        {#if dialogContentLoaded }
+            <div>
+                <Button
+                        size="small"
+                        on:click={() => showLinkActionDialog = true }
+                >
+                    + Lier une action
+                </Button>
+            </div>
+        {/if}
 
         <div class="p-10"></div>
         <Button full
@@ -148,7 +164,13 @@
         </Button>
     </form>
 
-    {#if showLinkActionDialog}
-        <LinkActionModal on:close={() => showLinkActionDialog = false }/>
+    {#if dialogContentLoaded }
+        {#if showLinkActionDialog}
+            <LinkActionDialog
+                    actions={referentiels.actions}
+                    thematiques={thematiques.thematiques}
+                    on:LinkActionDialogClose={() => showLinkActionDialog = false }
+            />
+        {/if}
     {/if}
 </section>

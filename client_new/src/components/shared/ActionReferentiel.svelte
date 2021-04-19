@@ -10,13 +10,20 @@
     }
 </script>
 
+<style>
+    details.expandable__with-button[open] > summary {
+        @apply bg-gray-200;
+        @apply shadow-inner;
+    }
+</style>
+
 <section
         class="p-4 rounded my-4 action grid grid-cols-1 lg:grid-cols-12 lg:gap-1 bg-white "
         id="action-{action.id}">
 
     <div class="relative lg:col-span-7">
         <h3 class="pr-28">({action.id}) {action.nom}</h3>
-        <details class="expandable">
+        <details class="expandable expandable__with-button">
             <summary
                     on:click={handleMore}
                     class="border border-gray-400 rounded

@@ -4,9 +4,12 @@
     @tailwind utilities;
 
     @layer components {
-
         body {
             background-color: #f3f4f6;
+        }
+
+        :focus {
+            @apply outline-black;
         }
 
         /* Expandable component */
@@ -16,11 +19,6 @@
 
         details.expandable > summary::-webkit-details-marker {
             display: none;
-        }
-
-        details.expandable[open] > summary {
-            @apply bg-gray-200;
-            @apply shadow-inner;
         }
 
         /* Action component */
@@ -69,15 +67,6 @@
 
         .indicateur li > p {
             @apply inline;
-        }
-
-        /* Size utility */
-        .h-screen-90 {
-            height: 90vh;
-        }
-
-        .w-screen-90 {
-            width: 90vw;
         }
     }
 </style>
