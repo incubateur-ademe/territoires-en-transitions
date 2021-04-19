@@ -3,11 +3,11 @@
      * Note this is a kind of reverse picker as the `fiche action id` is added to the catégorie.
      */
 
-    import {ficheActionCategorieStore, LocalStore} from "../../api/localStore";
     import CategorieCreation from './_CategorieCreation.svelte'
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
     import {onMount} from "svelte";
     import Button from "../../components/shared/Button.svelte";
+    import {HybridStore} from "../../api/hybridStore";
 
     export let ficheActionUid: string
     const defaultCategorie = new FicheActionCategorieStorable({
@@ -19,7 +19,7 @@
     })
     let categories: FicheActionCategorieStorable[] = []
     let selected: FicheActionCategorieStorable
-    let categorieStore: LocalStore<FicheActionCategorieStorable>
+    let categorieStore: HybridStore<FicheActionCategorieStorable>
 
     /**
      * On user interaction with the select element.
@@ -83,8 +83,8 @@
     }
 
     onMount(async () => {
-        // todo replace with hybrid store
-        categorieStore = ficheActionCategorieStore
+        const hybridStores = await import ("../../api/hybridStores");
+        categorieStore = hybridStores.ficheActionCategorieStore;
         categories = await categorieStore.retrieveAll()
         categories.push(defaultCategorie)
         refreshSelection()

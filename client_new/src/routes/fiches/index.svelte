@@ -6,7 +6,6 @@
     import {FicheActionStorable} from "../../storables/FicheActionStorable";
     import {HybridStore} from "../../api/hybridStore";
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
-    import {ficheActionCategorieStore, LocalStore} from "../../api/localStore";
 
     const defaultCategorie = new FicheActionCategorieStorable({
         uid: '',
@@ -22,7 +21,7 @@
     let ficheActionStore: HybridStore<FicheActionStorable>
 
     let categories: FicheActionCategorieStorable[] = []
-    let categorieStore: LocalStore<FicheActionCategorieStorable>
+    let categorieStore: HybridStore<FicheActionCategorieStorable>
 
     let fichesByCategorie = new Map<FicheActionCategorieStorable, FicheActionStorable[]>()
 
@@ -100,13 +99,11 @@
     onMount(async () => {
         epciId = getCurrentEpciId()
         const hybridStores = await import ("../../api/hybridStores");
+        categorieStore = hybridStores.ficheActionCategorieStore;
         ficheActionStore = hybridStores.ficheActionStore
-        await updateFiches()
 
-        // todo replace with hybrid store
-        // after fiches to check asynchronicity
-        categorieStore = ficheActionCategorieStore
         await updateCategories()
+        await updateFiches()
     });
 </script>
 <svelte:head>

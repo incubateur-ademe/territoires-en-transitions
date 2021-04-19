@@ -1,17 +1,17 @@
 <script lang="ts">
     import {FicheActionCategorieInterface} from "../../../generated/models/fiche_action_categorie";
-    import {ficheActionCategorieStore, LocalStore} from "../../api/localStore";
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
     import {createEventDispatcher, onMount} from "svelte";
     import Button from "../../components/shared/Button.svelte";
+    import {HybridStore} from "../../api/hybridStore";
 
     export let data: FicheActionCategorieInterface
-    let categorieStore: LocalStore<FicheActionCategorieStorable>
+    let categorieStore: HybridStore<FicheActionCategorieStorable>
     const dispatch = createEventDispatcher()
 
     onMount(async () => {
-        // todo replace with hybrid store
-        categorieStore = ficheActionCategorieStore
+        const hybridStores = await import ("../../api/hybridStores");
+        categorieStore = hybridStores.ficheActionCategorieStore;
     })
 
     const handleSave = async () => {
