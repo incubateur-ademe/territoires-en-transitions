@@ -1,0 +1,77 @@
+<script lang="ts">
+    import ActionBar from '../../components/shared/Action/ActionBar.svelte'
+    import ButtonIcon from '../../components/shared/Button/ButtonIcon.svelte'
+
+    export let thematiquesWithActions
+    export let thematiques
+    export let onTopLevelActionClicked
+    export let close
+
+</script>
+
+<style>
+    details.expandable__with-arrow > summary::after {
+        @apply text-6xl;
+        transform: translateY(-1rem);
+        content: '›';
+    }
+
+    details.expandable__with-arrow[open] > summary::after {
+        @apply text-6xl;
+        @apply relative;
+        @apply -top-4;
+        @apply font-normal;
+        content: '›';
+        transform: rotate(90deg) translate(10%, -10%);
+    }
+
+    .custom-oveflow {
+        @apply overflow-auto;
+        /**
+         * The height of the dialog have to be set in order to apply the overflow-auto.
+         * The constants applied here:
+         *  - 90vh: the height of the Dialog component.
+         *  - 6rem: approximatively the height of our dialog header.
+         */
+        height: calc(90vh - 6rem);
+    }
+</style>
+
+<div class="bg-gray-100">
+    <header class="bg-white px-14 py-4 grid grid-cols-4 justify-center">
+        <a class="cursor-pointer underline col-span-1 text-left self-center"
+           on:click|preventDefault={() => close() }
+           href="#"
+        >
+            ‹ Retourner à la fiche
+        </a>
+        <h2 id="dialog-title" class="text-3xl font-bold col-span-2 text-center self-center py-4">Lier une action</h2>
+    </header>
+
+    <div class="p-14 focus:bg-gray-100 custom-overflow">
+        {#each Object.entries(thematiquesWithActions) as [thematiqueId, actions] }
+            <details class="expandable expandable__with-arrow cursor-pointer">
+                <summary class="flex content-center">
+                    <h3 class="text-3xl font-bold mb-10 mr-4">{thematiques[thematiqueId].name}</h3>
+                </summary>
+                <ul class="mb-16">
+                    {#each actions as action (action.id) }
+                        <li>
+                            <ActionBar withArrow
+                                       withShadow
+                                       classNames="mb-4"
+                            >
+                                <ButtonIcon slot="aside">+</ButtonIcon>
+                                <h4 class="underline:hover self-center mr-4">
+                                    <a href="#" on:click|preventDefault={onTopLevelActionClicked(action.id)}>
+                                        {action.nom}
+                                    </a>
+                                </h4>
+                            </ActionBar>
+                        </li>
+                    {/each}
+                </ul>
+            </details>
+        {/each}
+    </div>
+</div>
