@@ -25,7 +25,7 @@
         transform: rotate(90deg) translate(10%, -10%);
     }
 
-    .custom-oveflow {
+    .custom-overflow {
         @apply overflow-auto;
         /**
          * The height of the dialog have to be set in order to apply the overflow-auto.

@@ -11,7 +11,7 @@
 </script>
 
 <style>
-    .custom-oveflow {
+    .custom-overflow {
         @apply overflow-auto;
         /**
          * The height of the dialog have to be set in order to apply the overflow-auto.
@@ -35,7 +35,7 @@
         <input type="search" class="col-span-1 border border-gray-400 self-center p-2" placeholder="Rechercher" />
     </header>
 
-    <div class="p-14 focus:bg-gray-100 custom-oveflow">
+    <div class="p-14 focus:bg-gray-100 custom-overflow">
         <div class="block flex p-4 bg-white mb-20 shadow-lg text-lg relative">
             <ButtonIcon classNames="flex-none mr-4 self-center">+</ButtonIcon>
             <div>
