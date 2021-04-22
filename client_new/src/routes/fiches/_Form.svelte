@@ -1,19 +1,28 @@
 <script lang="ts">
+    import {FicheActionStorable} from "../../storables/FicheActionStorable"
+    import Button from "../../components/shared/Button/Button.svelte"
+    import MultiSelect from './_MultiSelect.svelte'
     import {FicheActionStorable} from "../../storables/FicheActionStorable";
     import Button from "../../components/shared/Button.svelte";
     import MultiSelect from './_MultiSelect.svelte';
     import CategoriePicker from './_CategoriePicker.svelte'
     import Status from './_Status.svelte'
+    import LinkActionDialog from './_LinkActionDialog.svelte'
     import {requiredValidator} from "../../validation/validators"
     import {createFieldValidator} from "../../validation/validation"
-    import {FicheActionInterface} from "../../../generated/models/fiche_action";
-    import {onMount} from "svelte";
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-    import {HybridStore} from "../../api/hybridStore";
-
+    import {FicheActionInterface} from "../../../generated/models/fiche_action"
+    import {onMount} from "svelte"
+    import {ActionReferentiel} from "../../../generated/models/action_referentiel"
+    import {HybridStore} from "../../api/hybridStore"
 
     export let data: FicheActionInterface
+
     let ficheActionStore: HybridStore<FicheActionStorable>
+    let referentiels
+    let thematiques
+
+    $: showLinkActionDialog = false
+    $: dialogContentLoaded = referentiels && thematiques
 
     // hack fix https://lte.jetbrains.space/p/territoires-en-transitions/issues/302
     let budget: number | string = data.budget
@@ -48,10 +57,19 @@
     const [validity, validate] = createFieldValidator(requiredValidator())
 </script>
 
+<svelte:head>
+    {#if showLinkActionDialog }
+        <style>
+            body {
+                overflow: hidden;
+            }
+        </style>
+    {/if}
+</svelte:head>
 
 <section class="flex flex-col">
 
-    <div class="flex flex-col w-full md:w-3/4 pb-10">
+    <form class="flex flex-col w-full md:w-3/4 pb-10">
 
         <label class="text-xl" for="fiche_create_custom_id">Identifiant</label>
         <input bind:value={data.custom_id}
@@ -138,6 +156,17 @@
                     <option value="{action.id}">({action.id_nomenclature}) {action.nom}</option>
                 {/each}
             </MultiSelect>
+        {/if} -->
+
+        {#if dialogContentLoaded }
+            <div>
+                <Button
+                        size="small"
+                        on:click={() => showLinkActionDialog = true }
+                >
+                    + Lier une action
+                </Button>
+            </div>
         {/if}
 
         <div class="p-10"></div>
@@ -146,4 +175,20 @@
                 label="Valider"
                 on:click={handleSave}/>
     </div>
+        <Button full
+                on:click={handleSave}
+                classNames="md:w-1/3 self-end">
+            Valider
+        </Button>
+    </form>
+
+    {#if dialogContentLoaded }
+        {#if showLinkActionDialog}
+            <LinkActionDialog
+                    actions={referentiels.actions}
+                    thematiques={thematiques.thematiques}
+                    on:LinkActionDialogClose={() => showLinkActionDialog = false }
+            />
+        {/if}
+    {/if}
 </section>
