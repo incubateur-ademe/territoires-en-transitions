@@ -15,11 +15,8 @@
     export let data: FicheActionInterface
 
     let ficheActionStore: HybridStore<FicheActionStorable>
-    let referentiels
-    let thematiques
 
-    $: showLinkActionDialog = false
-    $: dialogContentLoaded = referentiels && thematiques
+    let showLinkActionDialog = false
 
     // hack fix https://lte.jetbrains.space/p/territoires-en-transitions/issues/302
     let budget: number | string = data.budget
@@ -155,17 +152,12 @@
             </MultiSelect>
         {/if}
 
-        {#if dialogContentLoaded }
-            <div>
-                <Button
-                        size="small"
-                        on:click={() => showLinkActionDialog = true }
-                >
-                    + Lier une action
-                </Button>
-            </div>
-        {/if}
-
+        <div>
+            <Button on:click={() => showLinkActionDialog = true }
+                    size="small">
+                + Lier une action
+            </Button>
+        </div>
         <div class="p-10"></div>
         <Button classNames="md:w-1/3 self-end"
                 full
@@ -174,13 +166,7 @@
         </Button>
     </form>
 
-    {#if dialogContentLoaded }
-        {#if showLinkActionDialog}
-            <LinkActionDialog
-                    actions={referentiels.actions}
-                    thematiques={thematiques.thematiques}
-                    on:LinkActionDialogClose={() => showLinkActionDialog = false }
-            />
-        {/if}
+    {#if showLinkActionDialog}
+        <LinkActionDialog on:LinkActionDialogClose={() => showLinkActionDialog = false } />
     {/if}
 </section>
