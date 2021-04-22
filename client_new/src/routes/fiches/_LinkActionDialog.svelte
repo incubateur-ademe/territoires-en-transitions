@@ -14,7 +14,7 @@
 
     const close = () => dispatch('LinkActionDialogClose')
 
-    const onTopLevelActionClicked = (actionId) => () => {
+    const onTopLevelActionClicked = (actionId: string) => {
         const list = topLevelAction ? topLevelAction.actions : actions
         topLevelAction = list.find((action) => action.id == actionId)
     }

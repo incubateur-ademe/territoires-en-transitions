@@ -5,8 +5,8 @@
     import {actions} from "../../../generated/data/actions_referentiels";
     import {thematiques} from "../../../generated/data/thematiques";
 
-    export let onTopLevelActionClicked
-    export let close
+    export let onTopLevelActionClicked: (actionId: string) => void
+    export let close: (event: MouseEvent) => void
 </script>
 
 <style>
@@ -63,7 +63,7 @@
                             >
                                 <ButtonIcon slot="aside">+</ButtonIcon>
                                 <h4 class="underline:hover self-center mr-4">
-                                    <a href="#" on:click|preventDefault={onTopLevelActionClicked(action.id)}>
+                                    <a href="#" on:click|preventDefault={() => onTopLevelActionClicked(action.id)}>
                                         {action.nom}
                                     </a>
                                 </h4>
