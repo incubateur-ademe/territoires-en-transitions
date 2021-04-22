@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Button from "../../components/shared/Button.svelte";
+    import Button from "../../components/shared/Button/Button.svelte";
     import CategorieInlineEdition from './_CategorieInlineEdition.svelte'
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";

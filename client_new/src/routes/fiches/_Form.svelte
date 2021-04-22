@@ -2,9 +2,6 @@
     import {FicheActionStorable} from "../../storables/FicheActionStorable"
     import Button from "../../components/shared/Button/Button.svelte"
     import MultiSelect from './_MultiSelect.svelte'
-    import {FicheActionStorable} from "../../storables/FicheActionStorable";
-    import Button from "../../components/shared/Button.svelte";
-    import MultiSelect from './_MultiSelect.svelte';
     import CategoriePicker from './_CategoriePicker.svelte'
     import Status from './_Status.svelte'
     import LinkActionDialog from './_LinkActionDialog.svelte'
@@ -156,7 +153,7 @@
                     <option value="{action.id}">({action.id_nomenclature}) {action.nom}</option>
                 {/each}
             </MultiSelect>
-        {/if} -->
+        {/if}
 
         {#if dialogContentLoaded }
             <div>
@@ -172,12 +169,7 @@
         <div class="p-10"></div>
         <Button classNames="md:w-1/3 self-end"
                 full
-                label="Valider"
-                on:click={handleSave}/>
-    </div>
-        <Button full
-                on:click={handleSave}
-                classNames="md:w-1/3 self-end">
+                on:click={handleSave}>
             Valider
         </Button>
     </form>

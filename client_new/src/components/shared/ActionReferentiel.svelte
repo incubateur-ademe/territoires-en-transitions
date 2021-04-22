@@ -1,21 +1,13 @@
 <script lang="ts">
     import ActionStatus from "./ActionStatus.svelte";
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-    import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
-    import AddFiche from "../icons/AddFiche.svelte";
 
     export let action: ActionReferentiel
 
-    let renderNested = false
+    let renderNested = false;
     const handleMore = () => {
         renderNested = true
     }
-
-    let epciId = ''
-    onMount(async () => {
-        epciId = getCurrentEpciId()
-    })
 </script>
 
 <style>
@@ -30,17 +22,15 @@
         id="action-{action.id}">
 
     <div class="relative lg:col-span-7">
-        <a href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
-            <AddFiche/>
-        </a>
         <h3 class="pr-28">({action.id}) {action.nom}</h3>
         <details class="expandable expandable__with-button">
             <summary
+                    on:click={handleMore}
                     class="border border-gray-400 rounded
              px-2 py-1 absolute top-0 right-0
-             cursor-pointer hover:bg-gray-200"
-                    on:click={handleMore}>
+             cursor-pointer hover:bg-gray-200">
                 Plus
+
             </summary>
             <div class="details-content whitespace-pre">
                 {action.description}

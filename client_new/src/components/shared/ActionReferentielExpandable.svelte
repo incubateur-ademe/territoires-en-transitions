@@ -4,7 +4,7 @@
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
     import AddFiche from "../icons/AddFiche.svelte";
-    import Button from "./Button.svelte";
+    import Button from "./Button/Button.svelte";
 
     export let action: ActionReferentiel
     $: depth = action.id.split('.').length
