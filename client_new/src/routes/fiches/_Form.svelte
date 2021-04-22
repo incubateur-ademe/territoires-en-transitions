@@ -4,7 +4,6 @@
     import MultiSelect from './_MultiSelect.svelte'
     import CategoriePicker from './_CategoriePicker.svelte'
     import Status from './_Status.svelte'
-    import LinkActionDialog from './_LinkActionDialog.svelte'
     import {requiredValidator} from "../../validation/validators"
     import {createFieldValidator} from "../../validation/validation"
     import {FicheActionInterface} from "../../../generated/models/fiche_action"
@@ -167,6 +166,8 @@
     </form>
 
     {#if showLinkActionDialog}
-        <LinkActionDialog on:LinkActionDialogClose={() => showLinkActionDialog = false } />
+        {#await import('./_LinkActionDialog.svelte') then c}
+            <svelte:component this={c.default} on:LinkActionDialogClose={() => showLinkActionDialog = false }/>
+        {/await}
     {/if}
 </section>
