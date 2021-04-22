@@ -2,14 +2,9 @@
     export let handleClick
     export let withArrow = false
     export let withShadow = false
-    export let classNames
+    export let classNames = ''
 
-    let actionBarClassNames = 'block flex p-4 bg-white border border-gray-200 shadow-lg text-lg'
-
-    if (classNames) {
-        actionBarClassNames += ` ${classNames}`
-    }
-
+    const baseClassNames = 'block flex p-4 bg-white border border-gray-200 shadow-lg text-lg'
 </script>
 
 <style>
@@ -22,7 +17,7 @@
     }
 </style>
 
-<div class="{actionBarClassNames}"
+<div class="{`${baseClassNames} ${classNames}`}"
      class:arrow-end="{withArrow}"
      class:shadow-lg="{withShadow}"
 >

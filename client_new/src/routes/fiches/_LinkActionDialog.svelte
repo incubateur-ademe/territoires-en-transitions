@@ -7,11 +7,10 @@
     import {actions} from "../../../generated/data/actions_referentiels";
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
 
+    export let selected: ActionReferentiel[] = []
     let topLevelAction: ActionReferentiel | null
 
     const dispatch = createEventDispatcher()
-
-
     const close = () => dispatch('LinkActionDialogClose')
 
     const onTopLevelActionClicked = (actionId: string) => {
@@ -23,8 +22,6 @@
         event.preventDefault()
         topLevelAction = actions.find((action) => action.actions.find((child) => child.id == topLevelAction.id))
     }
-
-
 </script>
 
 <Dialog ariaLabelledBy="dialog-title"
@@ -32,6 +29,7 @@
         size="large">
     {#if topLevelAction}
         <LinkActionDialogSubpage
+                bind:selected={selected}
                 topLevelAction={topLevelAction}
                 togglePopupContent={togglePopupContent}/>
     {:else }
