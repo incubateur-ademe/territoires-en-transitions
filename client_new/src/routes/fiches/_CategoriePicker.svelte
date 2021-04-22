@@ -45,7 +45,7 @@
         }
 
         // Update
-        if (selected) {
+        if (selected && !selected.fiche_actions_uids.includes(ficheActionUid)) {
             // add this fiche uid to selected categorie
             selected.fiche_actions_uids.push(ficheActionUid)
             // add selected to changed
@@ -95,6 +95,7 @@
 <select bind:value={selected}
         class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
         id="categorie_picker"
+        on:change={onSelect}
         on:blur={onSelect}>
     {#each categories as categorie}
         <option value={categorie}>
