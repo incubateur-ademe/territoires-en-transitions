@@ -2,11 +2,11 @@
     import ActionBar from '../../components/shared/Action/ActionBar.svelte'
     import ButtonIcon from '../../components/shared/Button/ButtonIcon.svelte'
 
-    export let thematiquesWithActions
-    export let thematiques
+    import {actions} from "../../../generated/data/actions_referentiels";
+    import {thematiques} from "../../../generated/data/thematiques";
+
     export let onTopLevelActionClicked
     export let close
-
 </script>
 
 <style>
@@ -49,13 +49,13 @@
     </header>
 
     <div class="p-14 focus:bg-gray-100 custom-overflow">
-        {#each Object.entries(thematiquesWithActions) as [thematiqueId, actions] }
+        {#each thematiques as thematique }
             <details class="expandable expandable__with-arrow cursor-pointer">
                 <summary class="flex content-center">
-                    <h3 class="text-3xl font-bold mb-10 mr-4">{thematiques[thematiqueId].name}</h3>
+                    <h3 class="text-3xl font-bold mb-10 mr-4">{thematique.name}</h3>
                 </summary>
                 <ul class="mb-16">
-                    {#each actions as action (action.id) }
+                    {#each actions.filter((action) => action.thematique_id === thematique.id) as action (action.id) }
                         <li>
                             <ActionBar withArrow
                                        withShadow

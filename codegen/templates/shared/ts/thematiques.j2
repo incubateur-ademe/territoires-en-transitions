@@ -7,8 +7,8 @@ export class Thematique {
     }
 }
 
-export const thematiques = {
+export const thematiques: Thematique[] = [
 {% for id, name in thematiques.items() %}
-    "{{ id }}": new Thematique("{{ id }}", "{{ name }}"),
+    new Thematique("{{ id }}", "{{ name }}"),
 {% endfor %}
-}
+]

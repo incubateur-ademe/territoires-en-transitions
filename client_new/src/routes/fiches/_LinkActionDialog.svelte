@@ -4,58 +4,39 @@
     import LinkActionDialogIndex from './_LinkActionDialogIndex.svelte'
     import LinkActionDialogSubpage from './_LinkActionDialogSubpage.svelte'
 
-    export let actions
-    export let thematiques
+    import {actions} from "../../../generated/data/actions_referentiels";
+    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
 
-    let showSubpage = false
-    let topLevelAction
+    let topLevelAction: ActionReferentiel | null
+
     const dispatch = createEventDispatcher()
-    const actionsById = actions.reduce((acc, action) => {
-        acc[action.id] = action
-        return acc
-    }, {})
-    const thematiquesWithActions = Object.values(actionsById).reduce((acc, action) => {
-        const thematiqueId = action['thematique_id']
-        let actions = []
 
-        if (acc[thematiqueId]) actions = acc[thematiqueId]
-
-        actions.push(action)
-        acc[thematiqueId] = actions
-
-        return acc
-    }, {})
 
     const close = () => dispatch('LinkActionDialogClose')
 
     const onTopLevelActionClicked = (actionId) => () => {
-        topLevelAction = actionsById[actionId]
-        showSubpage = !showSubpage
+        const list = topLevelAction ? topLevelAction.actions : actions
+        topLevelAction = list.find((action) => action.id == actionId)
     }
 
     const togglePopupContent = (event: MouseEvent) => {
         event.preventDefault()
-        showSubpage = !showSubpage
+        topLevelAction = actions.find((action) => action.actions.find((child) => child.id == topLevelAction.id))
     }
+
+
 </script>
 
-<Dialog size="large"
-        ariaLabelledBy="dialog-title"
+<Dialog ariaLabelledBy="dialog-title"
         handleClose={close}
->
-    {#if !showSubpage}
-        <LinkActionDialogIndex
-                thematiquesWithActions={thematiquesWithActions}
-                thematiques={thematiques}
-                onTopLevelActionClicked={onTopLevelActionClicked}
-                close={close}
-        />
-    {/if}
-
-    {#if showSubpage}
+        size="large">
+    {#if topLevelAction}
         <LinkActionDialogSubpage
-            topLevelAction={topLevelAction}
-            togglePopupContent={togglePopupContent}
-        />
+                topLevelAction={topLevelAction}
+                togglePopupContent={togglePopupContent}/>
+    {:else }
+        <LinkActionDialogIndex
+                onTopLevelActionClicked={onTopLevelActionClicked}
+                close={close}/>
     {/if}
 </Dialog>
