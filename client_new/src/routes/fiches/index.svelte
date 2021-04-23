@@ -127,9 +127,10 @@
     <ul>
         {#each fiches as fiche}
             <li>
-                <a class="bg-white rounded my-4 grid grid-cols-1 lg:grid-cols-12 lg:gap-1"
+                <a class="block bg-white rounded
+                            my-4 p-4"
                    href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
-                    <h3 class="lg:col-span-8 text-lg mb-6 pr-28">
+                    <h3 class=" text-lg">
                         ({fiche.custom_id}) {fiche.titre}
                     </h3>
                 </a>

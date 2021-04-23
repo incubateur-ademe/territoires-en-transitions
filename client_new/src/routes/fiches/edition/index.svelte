@@ -44,18 +44,20 @@
     <title>Ma fiche action</title>
 </svelte:head>
 
-<header class="flex my-10">
-    <h1 class="text-3xl font-semibold  flex-grow">Ma fiche action</h1>
-    <Button label="Supprimer"
-            colorVariant="bramble"
-            size="small"
-            on:click={handleDelete}
-            classNames=""
-    />
-</header>
-<div class="p-5"></div>
+<div class="bg-white p-4">
+    <header class="flex py-10">
+        <h1 class="text-3xl font-semibold  flex-grow">Ma fiche action</h1>
+        <Button classNames=""
+                colorVariant="bramble"
+                label="Supprimer"
+                on:click={handleDelete}
+                size="small"
+        />
+    </header>
+    <div class="p-5"></div>
 
 
-{#if data}
-    <Form data="{data}"/>
-{/if}
+    {#if data}
+        <Form data="{data}"/>
+    {/if}
+</div>

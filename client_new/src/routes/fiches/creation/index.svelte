@@ -39,5 +39,7 @@
     <title>Nouvelle fiche</title>
 </svelte:head>
 
-<h1 class="text-4xl font-semibold pb-20">Ajouter une fiche action</h1>
-<Form bind:data="{data}"/>
+<div class="bg-white p-4">
+    <h1 class="text-4xl font-semibold pb-20">Ajouter une fiche action</h1>
+    <Form bind:data="{data}"/>
+</div>
