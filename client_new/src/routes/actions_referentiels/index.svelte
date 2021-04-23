@@ -1,25 +1,48 @@
 <script lang="ts">
-    import {onMount} from "svelte";
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-    import ActionReferentielLink from "../../components/shared/ActionReferentielLink.svelte";
     import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
+    import ActionReferentielCard from "../../components/shared/ActionReferentielCard.svelte";
 
-    const possiblyId = new RegExp('^\\d+');
+    import {actions} from "../../../generated/data/actions_referentiels";
+    import {Thematique, thematiques} from "../../../generated/data/thematiques";
 
-    let timer: number;
-    let needle: string;
-    let allActions: ActionReferentiel[] = [];
-    let displayed: ActionReferentiel[] = [];
+    let allActions: ActionReferentiel[] = actions;
+    let displayed: ActionReferentiel[] = actions;
+    let displayedByThematique = new Map<Thematique, ActionReferentiel[]>()
 
-    onMount(async () => {
-        let referentiel = await import("../../../generated/data/actions_referentiels")
-        allActions = displayed = referentiel.actions
-    });
+    $: searching = allActions.length != displayed.length
+    $: displayed, refresh()
+
+
+    const refresh = () => {
+        const map = new Map<Thematique, ActionReferentiel[]>()
+        for (let thematique of thematiques) {
+            const actions = displayed.filter((action) => action.thematique_id === thematique.id)
+            if (actions.length) map.set(thematique, actions)
+        }
+        displayedByThematique = map;
+    }
+    refresh()
 </script>
 
-<ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
+<div class="bg-white px-5 py-5 mb-5 flex items-center">
+    <div class="flex flex-1">
+        Référentiels
 
-{#each displayed as action}
+    </div>
+    <div class="flex flex-1">
+        <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
+    </div>
+</div>
 
-    <ActionReferentielLink action={action}/>
+{#each [...displayedByThematique] as [thematique, actions]}
+    <h2 class="text-2xl mt-10 mb-2">{thematique.name}</h2>
+    {#each actions as action}
+        {#if searching}
+            <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>
+        {:else }
+            <ActionReferentielCard action={action} emoji link/>
+        {/if}
+    {/each}
 {/each}
+

@@ -1,12 +1,12 @@
 <script lang="ts">
-    import ActionStatus from "./ActionStatus.svelte";
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
-    import AddFiche from "../icons/AddFiche.svelte";
-    import ActionReferentielExpandable from "./ActionReferentielExpandable.svelte";
+    import ActionReferentielCard from "./ActionReferentielCard.svelte";
+    import ReferentielSearchBar from "./ReferentielSearchBar.svelte";
 
     export let action: ActionReferentiel
+    let displayed = action.actions
 
     let renderNested = false
     const handleMore = () => {
@@ -19,25 +19,19 @@
     })
 </script>
 
-<section id="action-{action.id}">
-
-    <a href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
-        <AddFiche/>
-    </a>
-    <h3 class="pr-28">({action.id}) {action.nom}</h3>
-    <ActionStatus actionId={action.id}/>
-
-    <div>
-        {action.description}
+<div class="flex flex-row-reverse bg-white px-5 py-5 mb-5">
+    <div class="max-w-lg">
+        <ReferentielSearchBar actions={action.actions} bind:matches={displayed}/>
     </div>
+</div>
 
-    <h2 class="text-2xl">Les actions</h2>
-    <ul>
-        {#each action.actions as action}
-            <li>
-                <ActionReferentielExpandable action={action}/>
-            </li>
+<ActionReferentielCard action={action} emoji ficheButton statusBar/>
+<div class="m-4">
+    {action.description}
+</div>
 
-        {/each}
-    </ul>
-</section>
+<h2 class="text-2xl font-semibold mt-8 mb-4 ">Les actions</h2>
+{#each displayed as action}
+    <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
+{/each}
+

@@ -44,8 +44,14 @@
     }
 </script>
 
-<label>
-    Recherche
-    <input class="border border-gray-400 rounded px-2 py-1 shadow-sm outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full"
+<label class="flex flex-row items-center">
+    Rechercher
+    <input class="
+    ml-4
+    block w-full
+    shadow-sm outline-none
+    border border-gray-400 rounded
+    px-2 py-1
+    focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 "
            on:keyup={({ target: { value } }) => debounce(value)}/>
 </label>
