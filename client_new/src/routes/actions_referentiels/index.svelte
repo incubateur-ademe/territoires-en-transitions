@@ -25,12 +25,12 @@
     refresh()
 </script>
 
-<div class="bg-white px-5 py-5 mb-5 flex items-center">
-    <div class="flex flex-1">
+<div class="flex flex-row items-center
+            bg-white px-5 py-5 mb-5 ">
+    <div class="flex-grow">
         Référentiels
-
     </div>
-    <div class="flex flex-1">
+    <div>
         <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
     </div>
 </div>

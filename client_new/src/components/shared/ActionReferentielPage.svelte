@@ -19,8 +19,12 @@
     })
 </script>
 
-<div class="flex flex-row-reverse bg-white px-5 py-5 mb-5">
-    <div class="max-w-lg">
+<div class="flex flex-row items-center
+            bg-white px-5 py-5 mb-5 ">
+    <div class="flex-grow">
+        Mesure {action.id_nomenclature}
+    </div>
+    <div>
         <ReferentielSearchBar actions={action.actions} bind:matches={displayed}/>
     </div>
 </div>
@@ -35,3 +39,4 @@
     <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
 {/each}
 
+<h2 class="text-2xl font-semibold mt-8 mb-4 ">Les indicateurs</h2>
