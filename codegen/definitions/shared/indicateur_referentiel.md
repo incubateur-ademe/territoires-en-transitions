@@ -11,8 +11,6 @@ Certaines actions disposent d'une thématique. Cette information est optionnelle
 IndicateurReferentiel:
     id:
         type: String
-    id_nomenclature:
-        type: String
     nom:
         type: String
     description:

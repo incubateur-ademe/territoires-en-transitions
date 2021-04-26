@@ -92,8 +92,6 @@ def render_indicators_as_typescript(indicateurs: List[dict],
     renderer = HTMLRenderer()
 
     for indicateur in indicateurs:
-        indicateur['id_nomenclature'] = indicateur["id"]
-        indicateur['id'] = f'citergie__{indicateur["id"]}'
         indicateur['thematique_id'] = indicateur['climat_pratic_ids'][0]
         description = Document(indicateur['description'])
         indicateur['description'] = renderer.render(description)
