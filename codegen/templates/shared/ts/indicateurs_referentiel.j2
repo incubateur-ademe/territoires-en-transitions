@@ -4,7 +4,7 @@ export const indicateurs: IndicateurReferentiel[] = [
 {% for indicateur in indicateurs recursive %}
     new IndicateurReferentiel({
     id: "{{ indicateur.id }}",
-    id_nomenclature: "{{ indicateur.id_nomenclature }}",
+    action_ids: {{ indicateur.action_ids }},
     nom: {{ indicateur.nom | tojson }},
     description: {{ indicateur.description | tojson }},
     thematique_id: "{{ indicateur.thematique_id }}",

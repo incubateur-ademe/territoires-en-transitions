@@ -11,6 +11,8 @@ Certaines actions disposent d'une thématique. Cette information est optionnelle
 IndicateurReferentiel:
     id:
         type: String
+    action_ids:
+        type: List[String]
     nom:
         type: String
     description:

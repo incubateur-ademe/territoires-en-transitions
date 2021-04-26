@@ -4,6 +4,8 @@
     import {getCurrentEpciId} from "../../api/currentEpci";
     import ActionReferentielCard from "./ActionReferentielCard.svelte";
     import ReferentielSearchBar from "./ReferentielSearchBar.svelte";
+    import {indicateurs} from "../../../generated/data/indicateurs_referentiels";
+    import IndicateurReferentielCard from "./IndicateurReferentielCard.svelte";
 
     export let action: ActionReferentiel
     let displayed = action.actions
@@ -40,3 +42,8 @@
 {/each}
 
 <h2 class="text-2xl font-semibold mt-8 mb-4 ">Les indicateurs</h2>
+
+
+{#each indicateurs.filter((indicateur) => indicateur.action_ids.includes(action.id)) as indicateur (indicateur.id)}
+    <IndicateurReferentielCard indicateur={indicateur}/>
+{/each}

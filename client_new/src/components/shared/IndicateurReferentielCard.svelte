@@ -1,4 +1,7 @@
 <script lang="ts">
+    /**
+     * Displays an indicateur an its yearly values.
+     */
     import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
     import IndicateurReferentielValueInput from "./IndicateurReferentielValueInput.svelte";
 
@@ -12,7 +15,7 @@
         id="indicateur-{indicateur.id}">
 
     <div class="relative lg:col-span-6">
-        <h3 class="text-xl font-semibold mb-6 pr-28">({indicateur.id}) { indicateur.nom }</h3>
+        <h3 class="text-xl mb-6 pr-28">({indicateur.id}) { indicateur.nom }</h3>
         <details class="expandable">
             <summary
                     class="absolute top-0 right-0 border border-gray-400 rounded px-2 py-1

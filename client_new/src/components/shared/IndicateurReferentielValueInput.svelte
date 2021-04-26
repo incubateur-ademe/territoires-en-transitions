@@ -1,6 +1,7 @@
 <script lang="ts">
     /**
-     * An input for an indicateur yearly value
+     * The input for an indicateur yearly value.
+     * Retrieve and store values.
      */
     import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
 
@@ -23,7 +24,7 @@
         const indicateurValues = await indicateurValueStore.retrieveAtPath(
             `${epciId}/${indicateur.id}/${year}`
         )
-        if (indicateurValues.length) {
+        if (indicateurValues.length) { // we should have one value per year, although the API returns a list.
             value = indicateurValues[0].value
         }
     })
@@ -32,14 +33,12 @@
      * Save value for a single yearly input on blur.
      */
     const onBlur = (event: FocusEvent): void => {
-        console.log('value is ', value)
         const indicateurValue = new IndicateurValueStorable({
             epci_id: epciId,
             indicateur_id: indicateur.id,
             year: year,
             value: value
         })
-
         indicateurValueStore.store(indicateurValue)
     }
 

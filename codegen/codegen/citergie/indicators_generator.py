@@ -93,6 +93,7 @@ def render_indicators_as_typescript(indicateurs: List[dict],
 
     for indicateur in indicateurs:
         indicateur['thematique_id'] = indicateur['climat_pratic_ids'][0]
+        indicateur['action_ids'] = [f'citergie__{id}' for id in indicateur['mesures']]
         description = Document(indicateur['description'])
         indicateur['description'] = renderer.render(description)
 
