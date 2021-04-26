@@ -6,13 +6,19 @@
     import {indicateurs} from "../../../generated/data/indicateurs_referentiels";
     import IndicateurReferentielCard from "../../components/shared/IndicateurReferentielCard.svelte";
     import {Thematique, thematiques} from "../../../generated/data/thematiques";
+    import {onMount} from "svelte";
 
     let byThematique = new Map<Thematique, IndicateurReferentiel[]>()
 
-    for (let thematique of thematiques) {
-        const filtered = indicateurs.filter((action) => action.thematique_id === thematique.id)
-        if (filtered.length) byThematique.set(thematique, filtered)
-    }
+    onMount(async () => {
+        // Build components in browser, to avoid serving an heavy html file
+        let map = new Map<Thematique, IndicateurReferentiel[]>()
+        for (let thematique of thematiques) {
+            const filtered = indicateurs.filter((action) => action.thematique_id === thematique.id)
+            if (filtered.length) map.set(thematique, filtered)
+        }
+        byThematique = map
+    })
 </script>
 
 {#each [...byThematique] as [thematique, indicateurs]}
