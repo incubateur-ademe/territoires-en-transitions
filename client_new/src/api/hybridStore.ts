@@ -70,8 +70,9 @@ export class HybridStore<T extends Storable> {
      * Return all storable of type T existing at pathname.
      * If nothing is found returns an empty record.
      */
-    retrieveAll(): Promise<Array<T>> {
-        return this.getCache();
+    async retrieveAll(): Promise<Array<T>> {
+        let all = await this.getCache();
+        return [...all]
     }
 
 
@@ -111,7 +112,7 @@ export class HybridStore<T extends Storable> {
             if (storable.id.startsWith(path)) results.push(storable);
         }
 
-        return results;
+        return [...results];
     }
 
     /**
