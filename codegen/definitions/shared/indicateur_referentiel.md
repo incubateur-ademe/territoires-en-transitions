@@ -1,6 +1,6 @@
-## Action d'un référentiel
+## Indicateur d'un référentiel
 
-Représente une action provenant d'un référentiel. Cette action est incluse avec l'application.
+Représente un indicateur provenant d'un référentiel. Cet indicateur est inclus avec l'application.
 
 L'id est un identifiant unique au format `referentiel__action_id` par exemple `citergie__1.1.1` est différent
 de `economie_circulaire__1.1.1`.
@@ -8,7 +8,7 @@ L'id de nomenclature correspond à la clef `id` dans les referentiels par exempl
 
 Certaines actions disposent d'une thématique. Cette information est optionnelle.
 ```yaml
-ActionReferentiel:
+IndicateurReferentiel:
     id:
         type: String
     id_nomenclature:
@@ -19,6 +19,6 @@ ActionReferentiel:
         type: String
     thematique_id:
         type: String
-    actions:
-        type: List[ActionReferentiel]
+    unite:
+        type: String
 ```

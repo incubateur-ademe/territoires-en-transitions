@@ -42,7 +42,7 @@ def test_indicateurs(mock_write: MagicMock):
     """Test that command `poetry run generate indicateurs` write the indicateurs page"""
     indicateurs(
         output_dir=output_dir,
-        markdown_dir='../referentiels/markdown/indicateurs_citergie',
+        indicateurs_markdown_dir='../referentiels/markdown/indicateurs_citergie',
         html=True,
     )
 
