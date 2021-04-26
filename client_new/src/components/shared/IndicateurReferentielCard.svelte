@@ -23,7 +23,7 @@
                 Plus
             </summary>
             <div>
-                { indicateur.description }
+                {@html indicateur.description }
             </div>
         </details>
     </div>
