@@ -1,6 +1,6 @@
 import {IndicateurReferentiel} from "../models/indicateur_referentiel";
 
-export const actions: IndicateurReferentiel[] = [
+export const indicateurs: IndicateurReferentiel[] = [
 {% for indicateur in indicateurs recursive %}
     new IndicateurReferentiel({
     id: "{{ indicateur.id }}",
