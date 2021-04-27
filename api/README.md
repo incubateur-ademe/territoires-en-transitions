@@ -40,8 +40,26 @@ Le dossier `requests` comporte les fichiers pour utiliser l'API [depuis l'édite
 - `PORT` 8000 par défaut, c'est le port utilisé par le client sur localhost. En prod, Scalingo se charge de passer le bon port.
 - `DATABASE_URL` sqlite://:memory: par défaut, `postgres://<user>:<password>@<projet>.postgresql.dbs.scalingo.com:34582/<projet>` en production, voir l'admin de Scalingo.
 
-## Déploiement
 
+## Migrations
+Pour utiliser l'outil de migration [aerich](https://tortoise-orm.readthedocs.io/en/latest/migration.html) il faudra penser à utiliser une connexion postgres, aerich ne fonctionnant pas avec sqlite (la connexion par défaut).
+
+Exemple pour créer un fichier de migration:
+```shell
+pipenv shell
+$env:DATABASE_URL='postgres://postgres:pgroot@localhost:5432/fastapi'
+aerich migrate --name my_feature
+```
+
+Pour migrer un environnement, il faut le faire depuis sa machine de dev, la migration ne faisant pas encore partie du déploiement.
+```shell
+pipenv shell
+$env:DATABASE_URL='environnement_url'
+aerich upgrade
+```
+
+
+## Déploiement
 On [utilise git pour déployer](https://doc.scalingo.com/platform/deployment/deploy-with-git), il faut donc avoir saisi sa clé SSH au préalable chez Scalingo.
 
 Pour déployer sur [sandbox](https://sandboxterritoires.osc-fr1.scalingo.io/):

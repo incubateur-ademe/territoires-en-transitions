@@ -6,9 +6,9 @@ from typing import List
 
 
 @dataclass
-class ActionCustom:
-    uid: str
-    epci_id: str
-    mesure_id: str
-    name: str
+class ActionReferentiel:
+    id: str
+    id_nomenclature: str
+    nom: str
     description: str
+    actions: List[ActionReferentiel]
