@@ -6,7 +6,7 @@
     <ul class="flex flex-wrap gap-4 ">
         {#each Object.entries(epcis_default) as [id, name]}
             <Button asLink
-                    href="mesures.html?epci_id={id}"
+                    href="fiches/?epci_id={id}"
                     label="{name}"
                     classNames="text-center border-green-700 border-2 hover:bg-green-100 active:bg-green-600"
             />
