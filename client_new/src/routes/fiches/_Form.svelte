@@ -12,6 +12,7 @@
     import {HybridStore} from "../../api/hybridStore"
     import {testUIVisibility} from "../../api/currentEnvironment";
     import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
+    import IndicateurReferentielCard from "../../components/shared/IndicateurReferentielCard.svelte";
 
     export let data: FicheActionInterface
 
@@ -19,6 +20,7 @@
 
     let showLinkActionDialog = false
     let useDialogPicker = false
+    let useIndicateurs = false
 
     // hack fix https://lte.jetbrains.space/p/territoires-en-transitions/issues/302
     let budget: number | string = data.budget
@@ -57,7 +59,7 @@
         indicateursReferentiel = indicateurs.indicateurs
 
         // show test ui
-        useDialogPicker = testUIVisibility()
+        useDialogPicker = useIndicateurs = testUIVisibility()
     });
 
     const [validity, validate] = createFieldValidator(requiredValidator())
@@ -165,18 +167,30 @@
         {/if}
         <div class="p-5"></div>
 
-        <label class="text-xl" for="fiche_create_indicateurs">Indicateurs du référentiel</label>
-        {#if indicateursReferentiel}
-            <MultiSelect id='fiche_create_indicateurs' bind:value={data.referentiel_indicateur_ids}>
-                {#each indicateursReferentiel as indicateur}
-                    <option value="{indicateur.id}">({indicateur.id}) {indicateur.nom}</option>
-                {/each}
-            </MultiSelect>
+        {#if useIndicateurs}
+            <div class="my-2 p-2 border-l-8 border-pink-600">
+                <label class="text-xl" for="fiche_create_indicateurs">Indicateurs du référentiel</label>
+                {#if indicateursReferentiel}
+                    <MultiSelect id='fiche_create_indicateurs' bind:value={data.referentiel_indicateur_ids}>
+                        {#each indicateursReferentiel as indicateur}
+                            <option value="{indicateur.id}">({indicateur.id}) {indicateur.nom}</option>
+                        {/each}
+                    </MultiSelect>
+
+                    {#each data.referentiel_indicateur_ids as indicateurId}
+                        <div class="shadow">
+                            <IndicateurReferentielCard
+                                    indicateur={indicateursReferentiel.filter((i) => i.id === indicateurId)[0]}/>
+                        </div>
+                    {/each}
+                {/if}
+            </div>
         {/if}
+
         <div class="p-5"></div>
 
         {#if useDialogPicker}
-            <div class="w-full bg-pink-600 my-2 p-2">
+            <div class="my-2 p-2 border-l-8 border-pink-600">
                 <Button on:click={() => showLinkActionDialog = true }
                         size="small">
                     + Lier une action
