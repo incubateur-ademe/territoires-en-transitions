@@ -2,14 +2,13 @@
     import EpciNavDisplay from "./EpciNavDisplay.svelte";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
-    import {getCurrentEnvironment} from "../../api/currentEnvironment";
+    import {getCurrentEnvironment, testUIVisibility} from "../../api/currentEnvironment";
 
     let epciId = ''
-    let showSpike = false
+    let showTestNavigation = false
     onMount(async () => {
         epciId = getCurrentEpciId()
-        let environment = getCurrentEnvironment()
-        showSpike = environment === 'local' || environment === 'sandbox'
+        showTestNavigation = testUIVisibility()
     });
 </script>
 <nav class="bg-green-600">
@@ -43,7 +42,7 @@
         </li>
     </ul>
 </nav>
-{#if showSpike}
+{#if showTestNavigation}
     {#await import('./NavDev.svelte') then c}
         <svelte:component this={c.default}/>
     {/await}

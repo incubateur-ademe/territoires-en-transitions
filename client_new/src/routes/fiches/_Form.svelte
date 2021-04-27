@@ -10,12 +10,14 @@
     import {onMount} from "svelte"
     import {ActionReferentiel} from "../../../generated/models/action_referentiel"
     import {HybridStore} from "../../api/hybridStore"
+    import {testUIVisibility} from "../../api/currentEnvironment";
 
     export let data: FicheActionInterface
 
     let ficheActionStore: HybridStore<FicheActionStorable>
 
     let showLinkActionDialog = false
+    let useDialogPicker = false
 
     // hack fix https://lte.jetbrains.space/p/territoires-en-transitions/issues/302
     let budget: number | string = data.budget
@@ -45,6 +47,7 @@
         }
         flatten(referentiel.actions)
         flatActions = flattened
+        useDialogPicker = testUIVisibility()
     });
 
     const [validity, validate] = createFieldValidator(requiredValidator())
@@ -151,12 +154,14 @@
             </MultiSelect>
         {/if}
 
-        <div>
-            <Button on:click={() => showLinkActionDialog = true }
-                    size="small">
-                + Lier une action
-            </Button>
-        </div>
+        {#if useDialogPicker}
+            <div>
+                <Button on:click={() => showLinkActionDialog = true }
+                        size="small">
+                    + Lier une action
+                </Button>
+            </div>
+        {/if}
         <div class="p-10"></div>
         <Button classNames="md:w-1/3 self-end"
                 full
