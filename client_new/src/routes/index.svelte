@@ -1,6 +1,4 @@
-<script>
-    import NavDev from "../components/shared/NavDev.svelte";
-</script>
+<script></script>
 <style>
     h1 {
         font-size: 2.8em;
@@ -22,5 +20,10 @@
 
 <h1>Déploiement en cours</h1>
 <div class="hidden">
-    <NavDev/>
+    <!-- Forces sapper to generate html pages -->
+    <a href="fiches/">Plan d'actions</a>
+    <a href="fiches/creation/">Nouvelle fiche action</a>
+    <a href="fiches/edition/">Fiche action</a>
+    <a href="actions_referentiels/">Référentiels</a>
+    <a href="indicateurs/">Indicateurs</a>
 </div>

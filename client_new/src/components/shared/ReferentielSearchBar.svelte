@@ -1,5 +1,7 @@
 <script lang="ts">
-    /// Provides matches for a *given* list of actions
+    /**
+     * Provides matches for a *given* list of actions.
+     */
 
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
 
@@ -10,7 +12,7 @@
 
 
     let timer: number;
-    export let needle: string;
+    export let needle: string = '';
 
     const search = () => {
         if (needle) matches = lookup(actions, needle.toLowerCase(), possiblyId.test(needle))

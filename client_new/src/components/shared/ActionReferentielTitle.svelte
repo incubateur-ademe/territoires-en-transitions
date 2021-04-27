@@ -1,4 +1,7 @@
 <script lang="ts">
+    /**
+     * Display the title of an action with an optional `emoji` prop.
+     */
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
 
     export let action: ActionReferentiel

@@ -1,4 +1,10 @@
 <script lang="ts">
+    /**
+     * Show the status input for a given action.
+     *
+     * This component is responsible for retrieving and storing status data.
+     */
+
     import {onMount} from "svelte";
 
     import {getCurrentEpciId} from "../../api/currentEpci";

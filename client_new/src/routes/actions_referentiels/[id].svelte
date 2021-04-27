@@ -23,7 +23,7 @@
 </script>
 
 <script lang="ts">
-    import ActionReferentielPage from "../../components/shared/ActionReferentielPage.svelte";
+    import ActionReferentielPage from "./_ActionReferentielPage.svelte";
 
     export let action: ActionReferentiel
 </script>

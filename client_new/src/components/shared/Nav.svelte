@@ -1,8 +1,11 @@
 <script>
+    /**
+     * Top navigation bar
+     */
     import EpciNavDisplay from "./EpciNavDisplay.svelte";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
-    import {getCurrentEnvironment, testUIVisibility} from "../../api/currentEnvironment";
+    import {testUIVisibility} from "../../api/currentEnvironment";
 
     let epciId = ''
     let showTestNavigation = false

@@ -2,10 +2,10 @@
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
-    import ActionReferentielCard from "./ActionReferentielCard.svelte";
-    import ReferentielSearchBar from "./ReferentielSearchBar.svelte";
+    import ActionReferentielCard from "../../components/shared/ActionReferentielCard.svelte";
+    import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
     import {indicateurs} from "../../../generated/data/indicateurs_referentiels";
-    import IndicateurReferentielCard from "./IndicateurReferentielCard.svelte";
+    import IndicateurReferentielCard from "../../components/shared/IndicateurReferentielCard.svelte";
 
     export let action: ActionReferentiel
     let displayed = action.actions

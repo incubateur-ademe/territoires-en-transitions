@@ -1,4 +1,7 @@
 <script>
+    /**
+     * A navigation bar shown only for testing features.
+     */
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
     import EpciNavDisplay from "./EpciNavDisplay.svelte";

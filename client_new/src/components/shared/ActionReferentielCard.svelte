@@ -1,4 +1,9 @@
 <script lang="ts">
+    /**
+     * Display an ActionReferentiel as a card.
+     *
+     * Display is customizable using props such as: ficheButton, link, emoji...
+     */
     import ActionStatus from "./ActionStatus.svelte";
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
@@ -61,7 +66,9 @@
         <div class="flex items-center flex-grow"
              class:statusBar={"max-w-lg"}>
             {#if link}
-                <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}" rel="prefetch">
+                <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
+                   rel="prefetch"
+                   class="flex flex-grow">
                     <ActionReferentielTitle action={action} emoji={emoji}/>
                 </a>
             {:else if expandButton && (action.actions.length || action.description.trim().length) }
