@@ -12,6 +12,7 @@
         avancement: 'pas_faite',
         titre: '',
         referentiel_action_ids: [],
+        referentiel_indicateur_ids: [],
         description: '',
         budget: 0,
         porteur: '',

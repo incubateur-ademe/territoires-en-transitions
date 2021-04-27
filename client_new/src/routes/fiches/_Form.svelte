@@ -11,6 +11,7 @@
     import {ActionReferentiel} from "../../../generated/models/action_referentiel"
     import {HybridStore} from "../../api/hybridStore"
     import {testUIVisibility} from "../../api/currentEnvironment";
+    import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
 
     export let data: FicheActionInterface
 
@@ -33,10 +34,13 @@
     }
 
     let flatActions: ActionReferentiel[]
+    let indicateursReferentiel: IndicateurReferentiel[]
     onMount(async () => {
+        // initialize store
         const hybridStores = await import ("../../api/hybridStores");
         ficheActionStore = hybridStores.ficheActionStore;
 
+        // load référentiel actions
         const referentiel = await import("../../../generated/data/actions_referentiels")
         const flattened = [];
         const flatten = (actions: ActionReferentiel[]) => {
@@ -47,6 +51,12 @@
         }
         flatten(referentiel.actions)
         flatActions = flattened
+
+        // load référentiel indicateurs
+        const indicateurs = await import("../../../generated/data/indicateurs_referentiels")
+        indicateursReferentiel = indicateurs.indicateurs
+
+        // show test ui
         useDialogPicker = testUIVisibility()
     });
 
@@ -145,14 +155,25 @@
             </div>
         </div>
 
-        <label class="text-xl" for="fiche_create_commentaire">Actions du référentiel</label>
+        <label class="text-xl" for="fiche_create_actions">Actions du référentiel</label>
         {#if flatActions}
-            <MultiSelect id='lang' bind:value={data.referentiel_action_ids}>
+            <MultiSelect id='fiche_create_actions' bind:value={data.referentiel_action_ids}>
                 {#each flatActions as action}
                     <option value="{action.id}">({action.id_nomenclature}) {action.nom}</option>
                 {/each}
             </MultiSelect>
         {/if}
+        <div class="p-5"></div>
+
+        <label class="text-xl" for="fiche_create_indicateurs">Indicateurs du référentiel</label>
+        {#if indicateursReferentiel}
+            <MultiSelect id='fiche_create_indicateurs' bind:value={data.referentiel_indicateur_ids}>
+                {#each indicateursReferentiel as indicateur}
+                    <option value="{indicateur.id}">({indicateur.id}) {indicateur.nom}</option>
+                {/each}
+            </MultiSelect>
+        {/if}
+        <div class="p-5"></div>
 
         {#if useDialogPicker}
             <div class="w-full bg-pink-600 my-2 p-2">
@@ -162,7 +183,7 @@
                 </Button>
             </div>
         {/if}
-        <div class="p-10"></div>
+        <div class="p-5"></div>
         <Button classNames="md:w-1/3 self-end"
                 full
                 on:click={handleSave}>

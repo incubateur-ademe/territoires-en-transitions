@@ -14,6 +14,8 @@ FicheAction:
         type: String
     referentiel_action_ids:
         type: List[String]
+    referentiel_indicateur_ids:
+        type: List[String]
     titre:
         type: String
     description:
