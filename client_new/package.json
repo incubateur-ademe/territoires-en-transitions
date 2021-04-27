@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build",
-    "export": "sapper export",
+    "export": "cross-env NODE_ENV=production sapper export",
     "start": "node __sapper__/build",
     "validate": "svelte-check --ignore src/node_modules/@sapper"
   },

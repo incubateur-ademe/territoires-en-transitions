@@ -155,7 +155,7 @@
         {/if}
 
         {#if useDialogPicker}
-            <div>
+            <div class="w-full bg-pink-600 my-2 p-2">
                 <Button on:click={() => showLinkActionDialog = true }
                         size="small">
                     + Lier une action
