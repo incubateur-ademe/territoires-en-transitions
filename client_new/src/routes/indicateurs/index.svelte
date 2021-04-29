@@ -7,19 +7,36 @@
     import IndicateurReferentielCard from "../../components/shared/IndicateurReferentielCard.svelte";
     import {Thematique, thematiques} from "../../../generated/data/thematiques";
     import {onMount} from "svelte";
+    import IndicateursSearchBar from "../../components/shared/IndicateursSearchBar.svelte";
 
     let byThematique = new Map<Thematique, IndicateurReferentiel[]>()
+    let displayed: IndicateurReferentiel[] = indicateurs
 
     onMount(async () => {
+        update();
+    })
+
+    const update = () => {
+        console.log('yo')
         // Build components in browser, to avoid serving an heavy html file
         let map = new Map<Thematique, IndicateurReferentiel[]>()
         for (let thematique of thematiques) {
-            const filtered = indicateurs.filter((action) => action.thematique_id === thematique.id)
+            const filtered = displayed.filter((action) => action.thematique_id === thematique.id)
             if (filtered.length) map.set(thematique, filtered)
         }
         byThematique = map
-    })
+    }
 </script>
+
+<div class="flex flex-row items-center
+            bg-white px-5 py-5 mb-5 ">
+    <div class="flex-grow">
+        Indicateurs
+    </div>
+    <div>
+        <IndicateursSearchBar bind:matches={displayed} indicateurs={indicateurs} searchCallBack={update}/>
+    </div>
+</div>
 
 {#each [...byThematique] as [thematique, indicateurs]}
     <h2 class="text-2xl mt-10 mb-2">{thematique.name}</h2>
