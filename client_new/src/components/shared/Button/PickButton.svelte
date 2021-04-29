@@ -5,14 +5,14 @@
     import ButtonIcon from './ButtonIcon.svelte'
     import Button from './Button.svelte'
 
-    export let isAdded: boolean = false
+    export let picked: boolean = false
     export let handlePick
     export let handleUnpick
     export let pickLabel
     export let unpickLabel
 </script>
 
-{#if isAdded}
+{#if picked}
     <Button size="small" on:click={handleUnpick} classNames="mr-4 flex-none" colorVariant="pine">
         {unpickLabel}
     </Button>

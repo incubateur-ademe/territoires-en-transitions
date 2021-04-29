@@ -46,7 +46,7 @@
     {#each actionIdsHistory as actionId }
         <li>
             <div class="mb-4 flex">
-                <PickButton isAdded={actionIds.includes(actionId)}
+                <PickButton picked={actionIds.includes(actionId)}
                             handlePick={() => { handlePickButton(actionId) }}
                             handleUnpick={() => { handlePickButton(actionId) }}
                             pickLabel="+"

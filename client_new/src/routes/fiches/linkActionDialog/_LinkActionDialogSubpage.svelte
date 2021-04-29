@@ -73,7 +73,7 @@
     <div class="p-14 focus:bg-gray-100 custom-overflow">
         {#if !isSearching }
             <div class="block flex p-4 bg-white mb-20 shadow-lg text-lg relative">
-                <PickButton isAdded={isAdded}
+                <PickButton picked={isAdded}
                             handlePick={handleToggleButtonClick}
                             handleUnpick={handleToggleButtonClick}
                             pickLabel="+"

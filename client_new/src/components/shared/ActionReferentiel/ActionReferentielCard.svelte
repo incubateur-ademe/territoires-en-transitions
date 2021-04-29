@@ -99,7 +99,7 @@
         {/if}
 
         {#if addButton}
-            <PickButton isAdded={isAdded}
+            <PickButton picked={isAdded}
                         handlePick={handleToggleButtonClick}
                         handleUnpick={handleToggleButtonClick}
                         pickLabel="+"
