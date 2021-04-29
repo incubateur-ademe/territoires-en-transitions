@@ -11,8 +11,7 @@
     import Angle from "../Angle.svelte";
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
     import AddFiche from "../../icons/AddFiche.svelte";
-    import ButtonIcon from '../Button/ButtonIcon.svelte'
-    import Button from '../Button/Button.svelte'
+    import PickButton from '../Button/PickButton.svelte'
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -100,13 +99,12 @@
         {/if}
 
         {#if addButton}
-            {#if isAdded}
-                <Button small on:click={handleToggleButtonClick} classNames="mr-4" colorVariant="pine">
-                    ✓ Ajouté
-                </Button>
-            {:else }
-                <ButtonIcon on:click={handleToggleButtonClick} classNames="mr-4">+</ButtonIcon>
-            {/if}
+            <PickButton isAdded={isAdded}
+                        handlePick={handleToggleButtonClick}
+                        handleUnpick={handleToggleButtonClick}
+                        pickLabel="+"
+                        unpickLabel="✓ Ajouté"
+            />
         {/if}
 
         <div class="flex items-center flex-grow"

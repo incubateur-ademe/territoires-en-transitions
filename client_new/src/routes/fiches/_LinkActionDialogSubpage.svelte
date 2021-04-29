@@ -4,6 +4,7 @@
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
     import ActionReferentielCard from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
     import ReferentielSearchBar from '../../components/shared/ReferentielSearchBar.svelte'
+    import PickButton from '../../components/shared/Button/PickButton.svelte'
 
     export let topLevelAction: ActionReferentiel
 
@@ -72,13 +73,12 @@
     <div class="p-14 focus:bg-gray-100 custom-overflow">
         {#if !isSearching }
             <div class="block flex p-4 bg-white mb-20 shadow-lg text-lg relative">
-                {#if isAdded}
-                    <Button small on:click={handleToggleButtonClick} classNames="mr-4" colorVariant="pine">
-                        ✓ Ajouté
-                    </Button>
-                {:else }
-                    <ButtonIcon on:click={handleToggleButtonClick} classNames="mr-4 flex-none self-center">+</ButtonIcon>
-                {/if}
+                <PickButton isAdded={isAdded}
+                            handlePick={handleToggleButtonClick}
+                            handleUnpick={handleToggleButtonClick}
+                            pickLabel="+"
+                            unpickLabel="✓ Ajouté"
+                />
                 <div>
                     <div class="flex">
                         <h3 class="text-xl font-bold flex-initial self-center mr-4">{topLevelAction.nom}</h3>
