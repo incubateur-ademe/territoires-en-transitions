@@ -13,11 +13,11 @@
 </script>
 
 {#if picked}
-    <Button size="small" on:click={handleUnpick} classNames="mr-4 flex-none" colorVariant="pine">
+    <Button size="small" on:click={() => handleUnpick()} classNames="mr-4 flex-none" colorVariant="pine">
         {unpickLabel}
     </Button>
 {:else }
-    <ButtonIcon on:click={handlePick} classNames="mr-4 flex-none">
+    <ButtonIcon on:click={() => handlePick()} classNames="mr-4 flex-none">
         {pickLabel}
     </ButtonIcon>
 {/if}

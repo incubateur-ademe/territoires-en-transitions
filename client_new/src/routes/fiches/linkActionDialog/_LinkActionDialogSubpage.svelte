@@ -5,13 +5,21 @@
     import ActionReferentielCard from '../../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
     import ReferentielSearchBar from '../../../components/shared/ReferentielSearchBar.svelte'
     import PickButton from '../../../components/shared/Button/PickButton.svelte'
+    import ActionReferentielTitle from '../../../components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
+    import ActionReferentielTree from './_ActionReferentielTree.svelte'
 
     export let topLevelAction: ActionReferentiel
 
     export let togglePopupContent: () => void
 
+    // List of linked actions of the current fiche
+    export let linkedActionIds: string[]
+
     // Handle add/remove button callback of each action
     export let handleActionButton
+
+    // Handle add/remove button callback of each action
+    export let handlePickButton
 
     // Helper handler to check if an action is linked to the current fiche
     export let isActionLinkedToFiche: (string) => boolean
@@ -22,15 +30,13 @@
 
     const handleAddButtonClick = (action) => (_event) => handleActionButton(action.id)
 
-    // The label of the add button
-    let isAdded: boolean = isActionLinkedToFiche(topLevelAction.id)
-
     // Handle add/remove button click
     const handleToggleButtonClick = (event) => {
         handleAddButtonClick(topLevelAction)(event)
         updateAddButton()
     }
 
+    let isAdded = false
     // Update the add button depending on if it is linked to the current fiche or not
     const updateAddButton = () => {
         if (isActionLinkedToFiche(topLevelAction.id)) {
@@ -100,12 +106,9 @@
         <ul>
             <li>
                 {#each displayedActions as action (action.id) }
-                    <ActionReferentielCard action={action}
-                                           emoji
-                                           expandButton
-                                           addButton
-                                           isActionLinkedToFiche={isActionLinkedToFiche}
-                                           onAddButtonClick={handleAddButtonClick}
+                    <ActionReferentielTree action={action}
+                                           linkedActionIds={linkedActionIds}
+                                           handlePickButton={handlePickButton}
                     />
                 {/each}
             </li>
