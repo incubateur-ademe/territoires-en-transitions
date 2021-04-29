@@ -4,6 +4,7 @@
     import ActionExpandable from '../../components/shared/Action/ActionExpandable.svelte'
     import ActionBar from '../../components/shared/Action/ActionBar.svelte'
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
+    import ActionReferentielCard from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
 
     export let selected: ActionReferentiel[]
     export let topLevelAction: ActionReferentiel
@@ -69,22 +70,17 @@
         <ul>
             <li>
                 {#each topLevelAction.actions as action (action.id) }
-                    {#if action.actions.length > 0 }
-                        <ActionExpandable action={action}/>
-                    {:else }
-                        <ActionBar handleClick={() => {}}>
-                            {#if selected.includes(action)}
-                                <ButtonIcon slot="aside" on:click={() => handleRemove(action)}>-</ButtonIcon>
-                            {:else }
-                                <ButtonIcon slot="aside" on:click={() => handleAdd(action)}>++</ButtonIcon>
-                            {/if}
-                            <h4 class="underline:hover self-center mr-4">
-                                {action.nom}
-                            </h4>
-                        </ActionBar>
-                    {/if}
+                    <ActionReferentielCard action={action}
+                                           emoji
+                                           expandButton
+                                           addButton
+                                           handleAddButtonClick={(action) => (_) => {
+                                               console.log(action.nom)
+                                           }}
+                    />
                 {/each}
             </li>
         </ul>
     </div>
 </div>
+

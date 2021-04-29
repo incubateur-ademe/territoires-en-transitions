@@ -2,19 +2,18 @@
     /**
      * Display the title of an action with an optional `emoji` prop.
      */
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
 
     export let action: ActionReferentiel
 
     // Show referentiel emoji
     export let emoji: boolean = false
 
-
     $: depth = action.id.split('.').length
 
 </script>
 
-<h3 class="flex flex-grow">
+<h3 class="flex flex-grow" on:click|preventDefault>
     {#if emoji}
         <span class="mr-1">{action.id.startsWith('citergie') ? '🌍' : '♻'} </span>
     {/if}

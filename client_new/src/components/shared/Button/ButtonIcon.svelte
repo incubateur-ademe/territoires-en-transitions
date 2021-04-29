@@ -11,6 +11,7 @@
             classNames="
             {buttonClassNames}
             {classNames ? ` ${classNames}` : ''}"
+            on:click
 >
     <slot></slot>
 </ButtonBase>

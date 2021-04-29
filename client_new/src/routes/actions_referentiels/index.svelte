@@ -1,7 +1,7 @@
 <script lang="ts">
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
     import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
-    import ActionReferentielCard from "../../components/shared/ActionReferentielCard.svelte";
+    import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
 
     import {actions} from "../../../generated/data/actions_referentiels";
     import {Thematique, thematiques} from "../../../generated/data/thematiques";

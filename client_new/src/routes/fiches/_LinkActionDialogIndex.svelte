@@ -1,9 +1,12 @@
 <script lang="ts">
-    import ActionBar from '../../components/shared/Action/ActionBar.svelte'
+    /**
+     * Display a list of action filtered by thematics
+     */
     import ButtonIcon from '../../components/shared/Button/ButtonIcon.svelte'
 
     import {actions} from "../../../generated/data/actions_referentiels";
     import {thematiques} from "../../../generated/data/thematiques";
+    import ActionReferentielCard from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
 
     export let onTopLevelActionClicked: (actionId: string) => void
     export let close: (event: MouseEvent) => void
@@ -57,17 +60,16 @@
                 <ul class="mb-16">
                     {#each actions.filter((action) => action.thematique_id === thematique.id) as action (action.id) }
                         <li>
-                            <ActionBar withArrow
-                                       withShadow
-                                       classNames="mb-4"
-                            >
-                                <ButtonIcon slot="aside">+</ButtonIcon>
-                                <h4 class="underline:hover self-center mr-4">
-                                    <a href="#" on:click|preventDefault={() => onTopLevelActionClicked(action.id)}>
-                                        {action.nom}
-                                    </a>
-                                </h4>
-                            </ActionBar>
+                            <ActionReferentielCard emoji
+                                                   action={action}
+                                                   addButton
+                                                   handleAddButtonClick={(action) => (event) => {
+                                                       console.log(action.nom)
+                                                   }}
+                                                   handleTitleClick={(action) => (event) => {
+                                                       onTopLevelActionClicked(action.id)
+                                                   }}
+                            />
                         </li>
                     {/each}
                 </ul>

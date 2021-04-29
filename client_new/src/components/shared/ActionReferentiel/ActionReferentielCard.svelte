@@ -4,13 +4,16 @@
      *
      * Display is customizable using props such as: ficheButton, link, emoji...
      */
-    import ActionStatus from "./ActionStatus.svelte";
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
+    import ActionStatus from "../ActionStatus.svelte";
+    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
-    import Angle from "./Angle.svelte";
+    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import Angle from "../Angle.svelte";
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
-    import AddFiche from "../icons/AddFiche.svelte";
+    import AddFiche from "../../icons/AddFiche.svelte";
+    import ButtonIcon from '../Button/ButtonIcon.svelte'
+
+    type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
     export let action: ActionReferentiel
 
@@ -29,6 +32,16 @@
     // Show the action status picker bar
     export let statusBar: boolean = false
 
+    // Show an add button
+    export let addButton: boolean = false
+
+    // Handle add button callback
+    export let handleAddButtonClick: ActionClick = (action) => (event) => {
+    }
+
+    // Handle title click
+    export let handleTitleClick: ActionClick = (action) => (event) => {
+    }
 
     $: depth = action.id.split('.').length
     $: isCitergie = action.id.startsWith('citergie')
@@ -63,8 +76,14 @@
             </a>
         {/if}
 
+        {#if addButton}
+            <ButtonIcon on:click={handleAddButtonClick(action)} className="mr-4">+</ButtonIcon>
+        {/if}
+
         <div class="flex items-center flex-grow"
              class:statusBar={"max-w-lg"}>
+            <slot name="aside"></slot>
+
             {#if link}
                 <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
                    rel="prefetch"
@@ -74,11 +93,11 @@
             {:else if expandButton && (action.actions.length || action.description.trim().length) }
                 <div class="flex flex-row cursor-pointer items-stretch"
                      on:click={handleExpand}>
-                    <ActionReferentielTitle on:click={handleExpand} action={action} emoji={emoji}/>
+                    <ActionReferentielTitle action={action} emoji={emoji}/>
                     <Angle direction="{expanded ? 'down' : 'right' }"/>
                 </div>
             {:else }
-                <ActionReferentielTitle action={action} emoji={emoji}/>
+                <ActionReferentielTitle on:click={handleTitleClick(action)} action={action} emoji={emoji}/>
             {/if}
         </div>
         {#if statusBar}
@@ -102,7 +121,11 @@
                          ficheButton={ficheButton}
                          link={link}
                          expandButton={expandButton}
-                         statusBar={statusBar}/>
+                         statusBar={statusBar}
+                         addButton={addButton}
+                         handleAddButtonClick={handleAddButtonClick}
+            >
+            </svelte:self>
         {/each}
     </div>
 {/if}
