@@ -4,34 +4,42 @@
      */
     import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
     import IndicateurReferentielValueInput from "./IndicateurReferentielValueInput.svelte";
+    import Angle from "./Angle.svelte";
 
     export let indicateur: IndicateurReferentiel
+    let expanded = false
+    const handleExpand = () => {
+        expanded = !expanded
+    }
 
     let years = [...Array(7).keys()].map(i => i + 2016) // 2016 to 2022
 </script>
 
-<section
-        class="p-4 rounded my-4 action grid grid-cols-1 lg:grid-cols-12 lg:gap-1 bg-white "
-        id="indicateur-{indicateur.id}">
+<section class="p-4 my-4 bg-white flex flex-col indicateur"
+         id="indicateur-{indicateur.id}">
 
-    <div class="relative lg:col-span-6">
-        <h3 class="text-xl mb-6 pr-28">({indicateur.id}) { indicateur.nom }</h3>
-        <details class="expandable">
-            <summary
-                    class="absolute top-0 right-0 border border-gray-400 rounded px-2 py-1
-                                        cursor-pointer outline-none focus:ring-1 focus:ring-indigo-500">
-                Plus
-            </summary>
-            <div>
-                {@html indicateur.description }
-            </div>
-        </details>
+    <div class="flex flex-col lg:flex-row items-start">
+        <div class="flex-1 flex flex-row cursor-pointer items-stretch mr-4"
+             on:click={handleExpand}>
+            <h3 class="flex text-xl mr-4">({indicateur.id}) { indicateur.nom }</h3>
+            <Angle direction="{expanded ? 'down' : 'right' }"/>
+        </div>
+
+
+        <form class="flex-1 flex flex-row"
+              data-component="indicatorForm">
+            {#each years as year}
+                <div class="flex-grow ml-2">
+                    <IndicateurReferentielValueInput indicateur={indicateur} year={year}/>
+                </div>
+            {/each}
+        </form>
     </div>
-    <form
-            class="lg:col-span-6 lg:col-end-13 grid gap-4 grid-cols-{ years.length }"
-            data-component="indicatorForm">
-        {#each years as year}
-            <IndicateurReferentielValueInput indicateur={indicateur} year={year}/>
-        {/each}
-    </form>
+
+
+    <div class="description lg:w-1/2 mt-4"
+         class:hidden="{!expanded}">
+        {@html indicateur.description }
+    </div>
+
 </section>
