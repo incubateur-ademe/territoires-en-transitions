@@ -12,6 +12,7 @@
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
     import AddFiche from "../../icons/AddFiche.svelte";
     import ButtonIcon from '../Button/ButtonIcon.svelte'
+    import Button from '../Button/Button.svelte'
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -36,10 +37,12 @@
     export let addButton: boolean = false
 
     // Handle add/remove button callback
-    export let onAddButtonClick: ActionClick = (action) => (event) => {}
+    export let onAddButtonClick: ActionClick = (action) => (event) => {
+    }
 
     // Handle title click
-    export let onTitleClick: ActionClick = (action) => (event) => {}
+    export let onTitleClick: ActionClick = (action) => (event) => {
+    }
 
     // Helper handler to check if an action is linked to the current fiche
     export let isActionLinkedToFiche: (string) => boolean
@@ -97,13 +100,13 @@
         {/if}
 
         {#if addButton}
-            <ButtonIcon on:click={handleToggleButtonClick} classNames="mr-4 selected:bg-green-600">
-                {#if isAdded}
+            {#if isAdded}
+                <Button on:click={handleToggleButtonClick} classNames="mr-4" colorVariant="pine">
                     ✔ Ajouté
-                {:else }
-                    +
-                {/if}
-            </ButtonIcon>
+                </Button>
+            {:else }
+                <ButtonIcon on:click={handleToggleButtonClick} classNames="mr-4">+</ButtonIcon>
+            {/if}
         {/if}
 
         <div class="flex items-center flex-grow"

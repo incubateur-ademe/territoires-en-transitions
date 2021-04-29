@@ -2,6 +2,7 @@
     enum colorVariants {
         nettle,
         bramble,
+        pine,
     }
 
     export let classNames = ''
@@ -19,9 +20,9 @@
             ' border-green-700 border-2 hover:bg-green-100 active:bg-green-600'
     }
 
-    if (colorVariant == 'nettle') {
+    if (colorVariant == 'pine') {
         buttonClassNames +=
-            ' border-green-700 border-2 hover:bg-green-100 active:bg-green-600'
+            ' border-green-700 bg-green-600 text-white border-2 hover:bg-green-700 active:bg-green-600'
     }
 
     if (colorVariant == 'bramble') {
