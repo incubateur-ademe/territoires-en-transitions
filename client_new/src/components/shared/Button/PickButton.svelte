@@ -17,7 +17,7 @@
         {unpickLabel}
     </Button>
 {:else }
-    <ButtonIcon on:click={handlePick} classNames="mr-4">
+    <ButtonIcon on:click={handlePick} classNames="mr-4 flex-none">
         {pickLabel}
     </ButtonIcon>
 {/if}

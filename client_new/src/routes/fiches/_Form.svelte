@@ -38,6 +38,7 @@
 
     let flatActions: ActionReferentiel[]
     let indicateursReferentiel: IndicateurReferentiel[]
+
     // Helper to check reactively if an action is linked to the current fiche
     const isActionLinkedToFiche = (actionId) => data.referentiel_action_ids.includes(actionId)
 
@@ -59,8 +60,9 @@
         const hybridStores = await import ("../../api/hybridStores");
         ficheActionStore = hybridStores.ficheActionStore;
 
-        // load référentiel actions
+        // TODO: remove
         const referentiel = await import("../../../generated/data/actions_referentiels")
+
         const flattened = [];
         const flatten = (actions: ActionReferentiel[]) => {
             for (let action of actions) {
@@ -70,6 +72,7 @@
         }
         flatten(referentiel.actions)
         flatActions = flattened
+        // END TODO: remove
 
         // load référentiel indicateurs
         const indicateurs = await import("../../../generated/data/indicateurs_referentiels")
@@ -208,6 +211,12 @@
 
         {#if useDialogPicker}
             <div class="my-2 p-2 border-l-8 border-pink-600">
+                {#await import('./_LinkedActions.svelte') then c}
+                    <svelte:component this={c.default}
+                                      actionIds={data.referentiel_action_ids}
+                                      handlePickButton={toggleActionIdInData}
+                    />
+                {/await}
                 <Button on:click={() => showLinkActionDialog = true }
                         size="small">
                     + Lier une action
