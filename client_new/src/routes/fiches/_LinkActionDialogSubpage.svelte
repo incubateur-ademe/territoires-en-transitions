@@ -6,20 +6,19 @@
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
     import ActionReferentielCard from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
 
-    export let selected: ActionReferentiel[]
     export let topLevelAction: ActionReferentiel
+
     export let togglePopupContent: () => void
+
+    // Handle add/remove button callback of each action
+    export let handleActionButton
+
+    // Helper handler to check if an action is linked to the current fiche
+    export let isActionLinkedToFiche: (string) => boolean
 
     let actionDescriptionDisplayed = false
 
-    const handleAdd = (action: ActionReferentiel) => {
-        selected.push(action);
-        console.log('selected', selected)
-    }
-    const handleRemove = (action: ActionReferentiel) => {
-        selected = selected.filter((a) => a.id != action.id);
-        console.log('selected', selected)
-    }
+    const handleAddButtonClick = (action) => (_event) => handleActionButton(action.id)
 </script>
 
 <style>
@@ -74,13 +73,11 @@
                                            emoji
                                            expandButton
                                            addButton
-                                           handleAddButtonClick={(action) => (_) => {
-                                               console.log(action.nom)
-                                           }}
+                                           isActionLinkedToFiche={isActionLinkedToFiche}
+                                           onAddButtonClick={handleAddButtonClick}
                     />
                 {/each}
             </li>
         </ul>
     </div>
 </div>
-

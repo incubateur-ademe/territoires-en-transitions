@@ -1,28 +1,27 @@
 <script lang="ts">
     import {FicheActionStorable} from "../../storables/FicheActionStorable"
     import Button from "../../components/shared/Button/Button.svelte"
-    import MultiSelect from './_MultiSelect.svelte'
     import CategoriePicker from './_CategoriePicker.svelte'
     import Status from './_Status.svelte'
     import {requiredValidator} from "../../validation/validators"
     import {createFieldValidator} from "../../validation/validation"
     import {FicheActionInterface} from "../../../generated/models/fiche_action"
     import {onMount} from "svelte"
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel"
     import {HybridStore} from "../../api/hybridStore"
     import {testUIVisibility} from "../../api/currentEnvironment";
 
     export let data: FicheActionInterface
 
     let ficheActionStore: HybridStore<FicheActionStorable>
-
-    let showLinkActionDialog = false
-    let useDialogPicker = false
+    let showLinkActionDialog: boolean = false
+    let useDialogPicker: boolean = false
 
     // hack fix https://lte.jetbrains.space/p/territoires-en-transitions/issues/302
     let budget: number | string = data.budget
 
+    // Save the form data
     const handleSave = async () => {
+        console.log(data)
         if (!data.custom_id) return;
         data.budget = Number.parseFloat(budget.toString()) || 0
         const fiche = new FicheActionStorable(data)
@@ -32,23 +31,25 @@
         else window.alert('Une erreur est survenue lors de la sauvegarde de la fiche action.')
     }
 
-    let flatActions: ActionReferentiel[]
-    onMount(async () => {
-        const hybridStores = await import ("../../api/hybridStores");
-        ficheActionStore = hybridStores.ficheActionStore;
+    // Helper to check reactively if an action is linked to the current fiche
+    const isActionLinkedToFiche = (actionId) => data.referentiel_action_ids.includes(actionId)
 
-        const referentiel = await import("../../../generated/data/actions_referentiels")
-        const flattened = [];
-        const flatten = (actions: ActionReferentiel[]) => {
-            for (let action of actions) {
-                flattened.push(action)
-                flatten(action.actions)
-            }
+    // Update the array of action ids linked to the current fiche
+    const toggleActionIdInData = (actionId) => {
+        const actionIds = data.referentiel_action_ids
+
+        if (isActionLinkedToFiche(actionId)) {
+            const newActionIds = actionIds.filter((id) => id != actionId)
+            data.referentiel_action_ids = newActionIds
+            return
         }
-        flatten(referentiel.actions)
-        flatActions = flattened
+
+        data.referentiel_action_ids = [...actionIds, actionId]
+    }
+
+    onMount(async () => {
         useDialogPicker = testUIVisibility()
-    });
+    })
 
     const [validity, validate] = createFieldValidator(requiredValidator())
 </script>
@@ -146,14 +147,6 @@
         </div>
 
         <label class="text-xl" for="fiche_create_commentaire">Actions du référentiel</label>
-        {#if flatActions}
-            <MultiSelect id='lang' bind:value={data.referentiel_action_ids}>
-                {#each flatActions as action}
-                    <option value="{action.id}">({action.id_nomenclature}) {action.nom}</option>
-                {/each}
-            </MultiSelect>
-        {/if}
-
         {#if useDialogPicker}
             <div class="w-full bg-pink-600 my-2 p-2">
                 <Button on:click={() => showLinkActionDialog = true }
@@ -172,7 +165,11 @@
 
     {#if showLinkActionDialog}
         {#await import('./_LinkActionDialog.svelte') then c}
-            <svelte:component this={c.default} on:LinkActionDialogClose={() => showLinkActionDialog = false }/>
+            <svelte:component this={c.default}
+                              on:LinkActionDialogClose={() => showLinkActionDialog = false }
+                              handleActionButton={toggleActionIdInData}
+                              isActionLinkedToFiche={isActionLinkedToFiche}
+            />
         {/await}
     {/if}
 </section>

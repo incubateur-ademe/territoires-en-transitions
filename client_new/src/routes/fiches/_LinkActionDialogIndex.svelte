@@ -2,14 +2,21 @@
     /**
      * Display a list of action filtered by thematics
      */
-    import ButtonIcon from '../../components/shared/Button/ButtonIcon.svelte'
-
     import {actions} from "../../../generated/data/actions_referentiels";
     import {thematiques} from "../../../generated/data/thematiques";
     import ActionReferentielCard from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
 
     export let onTopLevelActionClicked: (actionId: string) => void
     export let close: (event: MouseEvent) => void
+
+    // Handle add/remove button callback of each action
+    export let handleActionButton
+
+    // Helper handler to check if an action is linked to the current fiche
+    export let isActionLinkedToFiche: (string) => boolean
+
+    const handleAddButtonClick = (action) => (_event) => handleActionButton(action.id)
+    const handleTitleClick = (action) => (_event) => onTopLevelActionClicked(action.id)
 </script>
 
 <style>
@@ -63,12 +70,9 @@
                             <ActionReferentielCard emoji
                                                    action={action}
                                                    addButton
-                                                   handleAddButtonClick={(action) => (event) => {
-                                                       console.log(action.nom)
-                                                   }}
-                                                   handleTitleClick={(action) => (event) => {
-                                                       onTopLevelActionClicked(action.id)
-                                                   }}
+                                                   isActionLinkedToFiche={isActionLinkedToFiche}
+                                                   onAddButtonClick={handleAddButtonClick}
+                                                   onTitleClick={handleTitleClick}
                             />
                         </li>
                     {/each}
