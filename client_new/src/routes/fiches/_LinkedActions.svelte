@@ -1,4 +1,9 @@
 <script lang="ts">
+    /**
+     * List of actions with an add/remove button on each action.
+     * The list is reactive and only keeps added actions.
+     * Removed actions are not discarded.
+     */
     import {ActionReferentiel} from '../../../generated/models/action_referentiel'
     import {actions} from '../../../generated/data/actions_referentiels'
     import ActionReferentielTitle from '../../components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
