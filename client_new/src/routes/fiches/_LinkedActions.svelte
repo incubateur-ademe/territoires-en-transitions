@@ -11,11 +11,9 @@
 
     $: {
         let actionIdsDelta = actionIdsHistory.filter(id => !actionIds.includes(id))
-        console.log(actionIdsDelta)
         actionIdsHistory = actionIds
             .concat(actionIdsDelta)
             .sort()
-        console.log(actionIdsHistory)
     }
 
     // Flatten referentiel actions and set them by id

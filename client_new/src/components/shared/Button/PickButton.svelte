@@ -13,7 +13,7 @@
 </script>
 
 {#if isAdded}
-    <Button small on:click={handleUnpick} classNames="mr-4" colorVariant="pine">
+    <Button size="small" on:click={handleUnpick} classNames="mr-4 flex-none" colorVariant="pine">
         {unpickLabel}
     </Button>
 {:else }

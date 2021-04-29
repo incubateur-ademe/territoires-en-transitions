@@ -2,7 +2,7 @@
     export let ariaLabelledBy
     export let handleClose
     export let ariaDescribedBy = undefined
-    export let classNames
+    export let classNames = ''
     export let size = 'small'
 
     let dialogClassNames = 'dialog fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
