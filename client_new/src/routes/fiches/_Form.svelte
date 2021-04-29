@@ -35,6 +35,7 @@
         else window.alert('Une erreur est survenue lors de la sauvegarde de la fiche action.')
     }
 
+    let flatActions: ActionReferentiel[]
     let indicateursReferentiel: IndicateurReferentiel[]
     // Helper to check reactively if an action is linked to the current fiche
     const isActionLinkedToFiche = (actionId) => data.referentiel_action_ids.includes(actionId)
@@ -56,6 +57,18 @@
         // initialize store
         const hybridStores = await import ("../../api/hybridStores");
         ficheActionStore = hybridStores.ficheActionStore;
+
+        // load référentiel actions
+        const referentiel = await import("../../../generated/data/actions_referentiels")
+        const flattened = [];
+        const flatten = (actions: ActionReferentiel[]) => {
+            for (let action of actions) {
+                flattened.push(action)
+                flatten(action.actions)
+            }
+        }
+        flatten(referentiel.actions)
+        flatActions = flattened
 
         // load référentiel indicateurs
         const indicateurs = await import("../../../generated/data/indicateurs_referentiels")
@@ -159,6 +172,16 @@
                 <div class="p-5"></div>
             </div>
         </div>
+
+        <label class="text-xl" for="fiche_create_actions">Actions du référentiel</label>
+        {#if flatActions}
+            <MultiSelect id='fiche_create_actions' bind:value={data.referentiel_action_ids}>
+                {#each flatActions as action}
+                    <option value="{action.id}">({action.id_nomenclature}) {action.nom}</option>
+                {/each}
+            </MultiSelect>
+        {/if}
+        <div class="p-5"></div>
 
         {#if useIndicateurs}
             <div class="my-2 p-2 border-l-8 border-pink-600">

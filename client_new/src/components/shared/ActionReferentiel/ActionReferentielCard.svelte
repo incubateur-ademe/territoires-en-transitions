@@ -45,7 +45,7 @@
     }
 
     // Helper handler to check if an action is linked to the current fiche
-    export let isActionLinkedToFiche: (string) => boolean
+    export let isActionLinkedToFiche: (string) => boolean = (_) => false;
 
     $: depth = action.id.split('.').length
     $: isCitergie = action.id.startsWith('citergie')
@@ -117,7 +117,9 @@
                 <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
                    rel="prefetch"
                    class="flex flex-grow">
-                    <ActionReferentielTitle action={action} emoji={emoji}/>
+                    <ActionReferentielTitle
+                            on:click={() => window.location.href = `/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`}
+                            action={action} emoji={emoji}/>
                 </a>
             {:else if expandButton && (action.actions.length || action.description.trim().length) }
                 <div class="flex flex-row cursor-pointer items-stretch"
