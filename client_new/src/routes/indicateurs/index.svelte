@@ -17,7 +17,6 @@
     })
 
     const update = () => {
-        console.log('yo')
         // Build components in browser, to avoid serving an heavy html file
         let map = new Map<Thematique, IndicateurReferentiel[]>()
         for (let thematique of thematiques) {
