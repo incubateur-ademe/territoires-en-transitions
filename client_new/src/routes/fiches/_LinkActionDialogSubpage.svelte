@@ -1,10 +1,9 @@
 <script lang="ts">
     import ButtonIcon from '../../components/shared/Button/ButtonIcon.svelte'
     import Button from '../../components/shared/Button/Button.svelte'
-    import ActionExpandable from '../../components/shared/Action/ActionExpandable.svelte'
-    import ActionBar from '../../components/shared/Action/ActionBar.svelte'
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-    import ActionReferentielCard, {onAddButtonClick} from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
+    import ActionReferentielCard from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
+    import ReferentielSearchBar from '../../components/shared/ReferentielSearchBar.svelte'
 
     export let topLevelAction: ActionReferentiel
 
@@ -17,6 +16,8 @@
     export let isActionLinkedToFiche: (string) => boolean
 
     let actionDescriptionDisplayed = false
+    let displayedActions: ActionReferentiel[] = topLevelAction.actions
+    let isSearching: string
 
     const handleAddButtonClick = (action) => (_event) => handleActionButton(action.id)
 
@@ -63,38 +64,43 @@
             ‹ Retour
         </a>
         <h2 class="text-3xl font-bold col-span-2 text-center self-center py-4" id="dialog-title">Lier une action</h2>
-        <input class="col-span-1 border border-gray-400 self-center p-2" placeholder="Rechercher" type="search"/>
+        <ReferentielSearchBar actions={topLevelAction.actions}
+                              bind:matches={displayedActions}
+                              bind:needle={isSearching}
+        />
     </header>
 
     <div class="p-14 focus:bg-gray-100 custom-overflow">
-        <div class="block flex p-4 bg-white mb-20 shadow-lg text-lg relative">
-            {#if isAdded}
-                <Button small on:click={handleToggleButtonClick} classNames="mr-4" colorVariant="pine">
-                    ✓ Ajouté
-                </Button>
-            {:else }
-                <ButtonIcon on:click={handleToggleButtonClick} classNames="mr-4 flex-none self-center">+</ButtonIcon>
-            {/if}
-            <div>
-                <div class="flex">
-                    <h3 class="text-xl font-bold flex-initial self-center mr-4">{topLevelAction.nom}</h3>
-                    <Button classNames="cursor-pointer self-center flex-none"
-                            colorVariant="bramble"
-                            on:click={() => actionDescriptionDisplayed = !actionDescriptionDisplayed }
-                            size="small"
-                    >
-                        Détails
+        {#if !isSearching }
+            <div class="block flex p-4 bg-white mb-20 shadow-lg text-lg relative">
+                {#if isAdded}
+                    <Button small on:click={handleToggleButtonClick} classNames="mr-4" colorVariant="pine">
+                        ✓ Ajouté
                     </Button>
-                </div>
-                <div class="text-base pt-4" class:hidden={!actionDescriptionDisplayed}>
-                    {topLevelAction.description}
+                {:else }
+                    <ButtonIcon on:click={handleToggleButtonClick} classNames="mr-4 flex-none self-center">+</ButtonIcon>
+                {/if}
+                <div>
+                    <div class="flex">
+                        <h3 class="text-xl font-bold flex-initial self-center mr-4">{topLevelAction.nom}</h3>
+                        <Button classNames="cursor-pointer self-center flex-none"
+                                colorVariant="bramble"
+                                on:click={() => actionDescriptionDisplayed = !actionDescriptionDisplayed }
+                                size="small"
+                        >
+                            Détails
+                        </Button>
+                    </div>
+                    <div class="text-base pt-4" class:hidden={!actionDescriptionDisplayed}>
+                        {topLevelAction.description}
+                    </div>
                 </div>
             </div>
-        </div>
+        {/if}
 
         <ul>
             <li>
-                {#each topLevelAction.actions as action (action.id) }
+                {#each displayedActions as action (action.id) }
                     <ActionReferentielCard action={action}
                                            emoji
                                            expandButton
