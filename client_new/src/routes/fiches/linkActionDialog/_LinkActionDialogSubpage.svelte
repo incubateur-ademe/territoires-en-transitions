@@ -1,10 +1,10 @@
 <script lang="ts">
-    import ButtonIcon from '../../components/shared/Button/ButtonIcon.svelte'
-    import Button from '../../components/shared/Button/Button.svelte'
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-    import ActionReferentielCard from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
-    import ReferentielSearchBar from '../../components/shared/ReferentielSearchBar.svelte'
-    import PickButton from '../../components/shared/Button/PickButton.svelte'
+    import ButtonIcon from '../../../components/shared/Button/ButtonIcon.svelte'
+    import Button from '../../../components/shared/Button/Button.svelte'
+    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import ActionReferentielCard from '../../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
+    import ReferentielSearchBar from '../../../components/shared/ReferentielSearchBar.svelte'
+    import PickButton from '../../../components/shared/Button/PickButton.svelte'
 
     export let topLevelAction: ActionReferentiel
 

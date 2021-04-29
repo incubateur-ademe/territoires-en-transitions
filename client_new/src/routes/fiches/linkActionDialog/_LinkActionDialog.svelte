@@ -1,11 +1,11 @@
 <script lang="ts">
     import {createEventDispatcher} from 'svelte'
-    import Dialog from '../../components/shared/Dialog.svelte'
+    import Dialog from '../../../components/shared/Dialog.svelte'
     import LinkActionDialogIndex from './_LinkActionDialogIndex.svelte'
     import LinkActionDialogSubpage from './_LinkActionDialogSubpage.svelte'
 
-    import {actions} from "../../../generated/data/actions_referentiels";
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
+    import {actions} from "../../../../generated/data/actions_referentiels";
+    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
 
     // Handle action button callback
     export let handleActionButton

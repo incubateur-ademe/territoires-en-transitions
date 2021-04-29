@@ -2,9 +2,9 @@
     /**
      * Display a list of action filtered by thematics
      */
-    import {actions} from "../../../generated/data/actions_referentiels";
-    import {thematiques} from "../../../generated/data/thematiques";
-    import ActionReferentielCard from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
+    import {actions} from "../../../../generated/data/actions_referentiels";
+    import {thematiques} from "../../../../generated/data/thematiques";
+    import ActionReferentielCard from '../../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
 
     export let onTopLevelActionClicked: (actionId: string) => void
     export let close: (event: MouseEvent) => void

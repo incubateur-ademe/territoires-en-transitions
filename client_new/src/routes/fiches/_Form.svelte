@@ -232,7 +232,7 @@
     </form>
 
     {#if showLinkActionDialog}
-        {#await import('./_LinkActionDialog.svelte') then c}
+        {#await import('./linkActionDialog/_LinkActionDialog.svelte') then c}
             <svelte:component this={c.default}
                               on:LinkActionDialogClose={() => showLinkActionDialog = false }
                               handleActionButton={toggleActionIdInData}
