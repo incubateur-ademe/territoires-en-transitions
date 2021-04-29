@@ -57,12 +57,11 @@
 
 <div class="bg-gray-100 absolute top-0 right-0 left-0">
     <header class="bg-white px-14 py-4 grid grid-cols-4 justify-center">
-        <a class="cursor-pointer underline col-span-1 text-left self-center"
-           href="#"
+        <button class="cursor-pointer underline col-span-1 text-left self-center"
            on:click|preventDefault={togglePopupContent}
         >
             ‹ Retour
-        </a>
+        </button>
         <h2 class="text-3xl font-bold col-span-2 text-center self-center py-4" id="dialog-title">Lier une action</h2>
         <ReferentielSearchBar actions={topLevelAction.actions}
                               bind:matches={displayedActions}

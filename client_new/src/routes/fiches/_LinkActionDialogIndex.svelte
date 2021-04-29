@@ -49,20 +49,19 @@
 
 <div class="bg-gray-100">
     <header class="bg-white px-14 py-4 grid grid-cols-4 justify-center">
-        <a class="cursor-pointer underline col-span-1 text-left self-center"
+        <button class="cursor-pointer underline col-span-1 text-left self-center"
            on:click|preventDefault={() => close() }
-           href="#"
         >
             ‹ Retourner à la fiche
-        </a>
+        </button>
         <h2 id="dialog-title" class="text-3xl font-bold col-span-2 text-center self-center py-4">Lier une action</h2>
     </header>
 
     <div class="p-14 focus:bg-gray-100 custom-overflow">
         {#each thematiques as thematique }
-            <details class="expandable expandable__with-arrow cursor-pointer">
-                <summary class="flex content-center">
-                    <h3 class="text-3xl font-bold mb-10 mr-4">{thematique.name}</h3>
+            <details class="expandable__with-arrow cursor-pointer">
+                <summary class="flex content-center mb-5">
+                    <h3 class="text-3xl font-bold mr-4">{thematique.name}</h3>
                 </summary>
                 <ul class="mb-16">
                     {#each actions.filter((action) => action.thematique_id === thematique.id) as action (action.id) }
