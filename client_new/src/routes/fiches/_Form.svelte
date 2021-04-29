@@ -8,7 +8,6 @@
     import {createFieldValidator} from "../../validation/validation"
     import {FicheActionInterface} from "../../../generated/models/fiche_action"
     import {onMount} from "svelte"
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel"
     import {HybridStore} from "../../api/hybridStore"
     import {testUIVisibility} from "../../api/currentEnvironment";
     import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
@@ -25,6 +24,7 @@
     // hack fix https://lte.jetbrains.space/p/territoires-en-transitions/issues/302
     let budget: number | string = data.budget
 
+    // Save the form data
     const handleSave = async () => {
         if (!data.custom_id) return;
         data.budget = Number.parseFloat(budget.toString()) || 0
@@ -35,24 +35,27 @@
         else window.alert('Une erreur est survenue lors de la sauvegarde de la fiche action.')
     }
 
-    let flatActions: ActionReferentiel[]
     let indicateursReferentiel: IndicateurReferentiel[]
+    // Helper to check reactively if an action is linked to the current fiche
+    const isActionLinkedToFiche = (actionId) => data.referentiel_action_ids.includes(actionId)
+
+    // Update the array of action ids linked to the current fiche
+    const toggleActionIdInData = (actionId) => {
+        const actionIds = data.referentiel_action_ids
+
+        if (isActionLinkedToFiche(actionId)) {
+            const newActionIds = actionIds.filter((id) => id != actionId)
+            data.referentiel_action_ids = newActionIds
+            return
+        }
+
+        data.referentiel_action_ids = [...actionIds, actionId]
+    }
+
     onMount(async () => {
         // initialize store
         const hybridStores = await import ("../../api/hybridStores");
         ficheActionStore = hybridStores.ficheActionStore;
-
-        // load référentiel actions
-        const referentiel = await import("../../../generated/data/actions_referentiels")
-        const flattened = [];
-        const flatten = (actions: ActionReferentiel[]) => {
-            for (let action of actions) {
-                flattened.push(action)
-                flatten(action.actions)
-            }
-        }
-        flatten(referentiel.actions)
-        flatActions = flattened
 
         // load référentiel indicateurs
         const indicateurs = await import("../../../generated/data/indicateurs_referentiels")
@@ -157,16 +160,6 @@
             </div>
         </div>
 
-        <label class="text-xl" for="fiche_create_actions">Actions du référentiel</label>
-        {#if flatActions}
-            <MultiSelect id='fiche_create_actions' bind:value={data.referentiel_action_ids}>
-                {#each flatActions as action}
-                    <option value="{action.id}">({action.id_nomenclature}) {action.nom}</option>
-                {/each}
-            </MultiSelect>
-        {/if}
-        <div class="p-5"></div>
-
         {#if useIndicateurs}
             <div class="my-2 p-2 border-l-8 border-pink-600">
                 <label class="text-xl" for="fiche_create_indicateurs">Indicateurs du référentiel</label>
@@ -207,7 +200,11 @@
 
     {#if showLinkActionDialog}
         {#await import('./_LinkActionDialog.svelte') then c}
-            <svelte:component this={c.default} on:LinkActionDialogClose={() => showLinkActionDialog = false }/>
+            <svelte:component this={c.default}
+                              on:LinkActionDialogClose={() => showLinkActionDialog = false }
+                              handleActionButton={toggleActionIdInData}
+                              isActionLinkedToFiche={isActionLinkedToFiche}
+            />
         {/await}
     {/if}
 </section>

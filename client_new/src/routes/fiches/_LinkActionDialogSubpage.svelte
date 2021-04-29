@@ -1,24 +1,45 @@
 <script lang="ts">
     import ButtonIcon from '../../components/shared/Button/ButtonIcon.svelte'
     import Button from '../../components/shared/Button/Button.svelte'
-    import ActionExpandable from '../../components/shared/Action/ActionExpandable.svelte'
-    import ActionBar from '../../components/shared/Action/ActionBar.svelte'
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
+    import ActionReferentielCard from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
+    import ReferentielSearchBar from '../../components/shared/ReferentielSearchBar.svelte'
 
-    export let selected: ActionReferentiel[]
     export let topLevelAction: ActionReferentiel
+
     export let togglePopupContent: () => void
 
-    let actionDescriptionDisplayed = false
+    // Handle add/remove button callback of each action
+    export let handleActionButton
 
-    const handleAdd = (action: ActionReferentiel) => {
-        selected.push(action);
-        console.log('selected', selected)
+    // Helper handler to check if an action is linked to the current fiche
+    export let isActionLinkedToFiche: (string) => boolean
+
+    let actionDescriptionDisplayed = false
+    let displayedActions: ActionReferentiel[] = topLevelAction.actions
+    let isSearching: string
+
+    const handleAddButtonClick = (action) => (_event) => handleActionButton(action.id)
+
+    // The label of the add button
+    let isAdded: boolean = isActionLinkedToFiche(topLevelAction.id)
+
+    // Handle add/remove button click
+    const handleToggleButtonClick = (event) => {
+        handleAddButtonClick(topLevelAction)(event)
+        updateAddButton()
     }
-    const handleRemove = (action: ActionReferentiel) => {
-        selected = selected.filter((a) => a.id != action.id);
-        console.log('selected', selected)
+
+    // Update the add button depending on if it is linked to the current fiche or not
+    const updateAddButton = () => {
+        if (isActionLinkedToFiche(topLevelAction.id)) {
+            isAdded = true
+            return
+        }
+
+        isAdded = false
     }
+
 </script>
 
 <style>
@@ -36,53 +57,56 @@
 
 <div class="bg-gray-100 absolute top-0 right-0 left-0">
     <header class="bg-white px-14 py-4 grid grid-cols-4 justify-center">
-        <a class="cursor-pointer underline col-span-1 text-left self-center"
-           href="#"
+        <button class="cursor-pointer underline col-span-1 text-left self-center"
            on:click|preventDefault={togglePopupContent}
         >
             ‹ Retour
-        </a>
+        </button>
         <h2 class="text-3xl font-bold col-span-2 text-center self-center py-4" id="dialog-title">Lier une action</h2>
-        <input class="col-span-1 border border-gray-400 self-center p-2" placeholder="Rechercher" type="search"/>
+        <ReferentielSearchBar actions={topLevelAction.actions}
+                              bind:matches={displayedActions}
+                              bind:needle={isSearching}
+        />
     </header>
 
     <div class="p-14 focus:bg-gray-100 custom-overflow">
-        <div class="block flex p-4 bg-white mb-20 shadow-lg text-lg relative">
-            <ButtonIcon classNames="flex-none mr-4 self-center">+</ButtonIcon>
-            <div>
-                <div class="flex">
-                    <h3 class="text-xl font-bold flex-initial self-center mr-4">{topLevelAction.nom}</h3>
-                    <Button classNames="cursor-pointer self-center flex-none"
-                            colorVariant="bramble"
-                            on:click={() => actionDescriptionDisplayed = !actionDescriptionDisplayed }
-                            size="small"
-                    >
-                        Détails
+        {#if !isSearching }
+            <div class="block flex p-4 bg-white mb-20 shadow-lg text-lg relative">
+                {#if isAdded}
+                    <Button small on:click={handleToggleButtonClick} classNames="mr-4" colorVariant="pine">
+                        ✓ Ajouté
                     </Button>
-                </div>
-                <div class="text-base pt-4" class:hidden={!actionDescriptionDisplayed}>
-                    {topLevelAction.description}
+                {:else }
+                    <ButtonIcon on:click={handleToggleButtonClick} classNames="mr-4 flex-none self-center">+</ButtonIcon>
+                {/if}
+                <div>
+                    <div class="flex">
+                        <h3 class="text-xl font-bold flex-initial self-center mr-4">{topLevelAction.nom}</h3>
+                        <Button classNames="cursor-pointer self-center flex-none"
+                                colorVariant="bramble"
+                                on:click={() => actionDescriptionDisplayed = !actionDescriptionDisplayed }
+                                size="small"
+                        >
+                            Détails
+                        </Button>
+                    </div>
+                    <div class="text-base pt-4" class:hidden={!actionDescriptionDisplayed}>
+                        {topLevelAction.description}
+                    </div>
                 </div>
             </div>
-        </div>
+        {/if}
 
         <ul>
             <li>
-                {#each topLevelAction.actions as action (action.id) }
-                    {#if action.actions.length > 0 }
-                        <ActionExpandable action={action}/>
-                    {:else }
-                        <ActionBar handleClick={() => {}}>
-                            {#if selected.includes(action)}
-                                <ButtonIcon slot="aside" on:click={() => handleRemove(action)}>-</ButtonIcon>
-                            {:else }
-                                <ButtonIcon slot="aside" on:click={() => handleAdd(action)}>++</ButtonIcon>
-                            {/if}
-                            <h4 class="underline:hover self-center mr-4">
-                                {action.nom}
-                            </h4>
-                        </ActionBar>
-                    {/if}
+                {#each displayedActions as action (action.id) }
+                    <ActionReferentielCard action={action}
+                                           emoji
+                                           expandButton
+                                           addButton
+                                           isActionLinkedToFiche={isActionLinkedToFiche}
+                                           onAddButtonClick={handleAddButtonClick}
+                    />
                 {/each}
             </li>
         </ul>

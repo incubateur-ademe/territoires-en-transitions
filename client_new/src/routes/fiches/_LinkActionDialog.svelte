@@ -7,7 +7,12 @@
     import {actions} from "../../../generated/data/actions_referentiels";
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
 
-    export let selected: ActionReferentiel[] = []
+    // Handle action button callback
+    export let handleActionButton
+
+    // Helper handler to check if an action is linked to the current fiche
+    export let isActionLinkedToFiche: (string) => boolean
+
     let topLevelAction: ActionReferentiel | null
 
     const dispatch = createEventDispatcher()
@@ -29,11 +34,14 @@
         size="large">
     {#if topLevelAction}
         <LinkActionDialogSubpage
-                bind:selected={selected}
+                handleActionButton={handleActionButton}
+                isActionLinkedToFiche={isActionLinkedToFiche}
                 topLevelAction={topLevelAction}
                 togglePopupContent={togglePopupContent}/>
     {:else }
         <LinkActionDialogIndex
+                handleActionButton={handleActionButton}
+                isActionLinkedToFiche={isActionLinkedToFiche}
                 onTopLevelActionClicked={onTopLevelActionClicked}
                 close={close}/>
     {/if}

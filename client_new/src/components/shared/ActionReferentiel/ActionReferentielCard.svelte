@@ -4,13 +4,17 @@
      *
      * Display is customizable using props such as: ficheButton, link, emoji...
      */
-    import ActionStatus from "./ActionStatus.svelte";
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
+    import ActionStatus from "../ActionStatus.svelte";
+    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
-    import Angle from "./Angle.svelte";
+    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import Angle from "../Angle.svelte";
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
-    import AddFiche from "../icons/AddFiche.svelte";
+    import AddFiche from "../../icons/AddFiche.svelte";
+    import ButtonIcon from '../Button/ButtonIcon.svelte'
+    import Button from '../Button/Button.svelte'
+
+    type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
     export let action: ActionReferentiel
 
@@ -29,6 +33,19 @@
     // Show the action status picker bar
     export let statusBar: boolean = false
 
+    // Show an add button
+    export let addButton: boolean = false
+
+    // Handle add/remove button callback
+    export let onAddButtonClick: ActionClick = (action) => (event) => {
+    }
+
+    // Handle title click
+    export let onTitleClick: ActionClick = (action) => (event) => {
+    }
+
+    // Helper handler to check if an action is linked to the current fiche
+    export let isActionLinkedToFiche: (string) => boolean
 
     $: depth = action.id.split('.').length
     $: isCitergie = action.id.startsWith('citergie')
@@ -40,11 +57,30 @@
         expanded = !expanded
     }
 
+    let epciId = ''
+
     // The action the link points to
     let href: string = ''
 
+    // The label of the add button
+    let isAdded: boolean = isActionLinkedToFiche(action.id)
 
-    let epciId = ''
+    // Handle add/remove button click
+    const handleToggleButtonClick = (event) => {
+        onAddButtonClick(action)(event)
+        updateAddButton()
+    }
+
+    // Update the add button depending on if it is linked to the current fiche or not
+    const updateAddButton = () => {
+        if (isActionLinkedToFiche(action.id)) {
+            isAdded = true
+            return
+        }
+
+        isAdded = false
+    }
+
     onMount(async () => {
         epciId = getCurrentEpciId()
     })
@@ -63,8 +99,20 @@
             </a>
         {/if}
 
+        {#if addButton}
+            {#if isAdded}
+                <Button small on:click={handleToggleButtonClick} classNames="mr-4" colorVariant="pine">
+                    ✓ Ajouté
+                </Button>
+            {:else }
+                <ButtonIcon on:click={handleToggleButtonClick} classNames="mr-4">+</ButtonIcon>
+            {/if}
+        {/if}
+
         <div class="flex items-center flex-grow"
              class:statusBar={"max-w-lg"}>
+            <slot name="aside"></slot>
+
             {#if link}
                 <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
                    rel="prefetch"
@@ -74,11 +122,11 @@
             {:else if expandButton && (action.actions.length || action.description.trim().length) }
                 <div class="flex flex-row cursor-pointer items-stretch"
                      on:click={handleExpand}>
-                    <ActionReferentielTitle on:click={handleExpand} action={action} emoji={emoji}/>
+                    <ActionReferentielTitle action={action} emoji={emoji}/>
                     <Angle direction="{expanded ? 'down' : 'right' }"/>
                 </div>
             {:else }
-                <ActionReferentielTitle action={action} emoji={emoji}/>
+                <ActionReferentielTitle on:click={onTitleClick(action)} action={action} emoji={emoji}/>
             {/if}
         </div>
         {#if statusBar}
@@ -102,7 +150,12 @@
                          ficheButton={ficheButton}
                          link={link}
                          expandButton={expandButton}
-                         statusBar={statusBar}/>
+                         statusBar={statusBar}
+                         addButton={addButton}
+                         onAddButtonClick={onAddButtonClick}
+                         isActionLinkedToFiche={isActionLinkedToFiche}
+            >
+            </svelte:self>
         {/each}
     </div>
 {/if}
