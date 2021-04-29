@@ -12,6 +12,7 @@
     import {testUIVisibility} from "../../api/currentEnvironment";
     import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
     import IndicateurReferentielCard from "../../components/shared/IndicateurReferentielCard.svelte";
+    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
 
     export let data: FicheActionInterface
 
