@@ -4,7 +4,7 @@
     import ActionExpandable from '../../components/shared/Action/ActionExpandable.svelte'
     import ActionBar from '../../components/shared/Action/ActionBar.svelte'
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-    import ActionReferentielCard from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
+    import ActionReferentielCard, {onAddButtonClick} from '../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
 
     export let topLevelAction: ActionReferentiel
 
@@ -19,6 +19,26 @@
     let actionDescriptionDisplayed = false
 
     const handleAddButtonClick = (action) => (_event) => handleActionButton(action.id)
+
+    // The label of the add button
+    let isAdded: boolean = isActionLinkedToFiche(topLevelAction.id)
+
+    // Handle add/remove button click
+    const handleToggleButtonClick = (event) => {
+        handleAddButtonClick(topLevelAction)(event)
+        updateAddButton()
+    }
+
+    // Update the add button depending on if it is linked to the current fiche or not
+    const updateAddButton = () => {
+        if (isActionLinkedToFiche(topLevelAction.id)) {
+            isAdded = true
+            return
+        }
+
+        isAdded = false
+    }
+
 </script>
 
 <style>
@@ -48,7 +68,13 @@
 
     <div class="p-14 focus:bg-gray-100 custom-overflow">
         <div class="block flex p-4 bg-white mb-20 shadow-lg text-lg relative">
-            <ButtonIcon classNames="flex-none mr-4 self-center">+</ButtonIcon>
+            {#if isAdded}
+                <Button small on:click={handleToggleButtonClick} classNames="mr-4" colorVariant="pine">
+                    ✓ Ajouté
+                </Button>
+            {:else }
+                <ButtonIcon on:click={handleToggleButtonClick} classNames="mr-4 flex-none self-center">+</ButtonIcon>
+            {/if}
             <div>
                 <div class="flex">
                     <h3 class="text-xl font-bold flex-initial self-center mr-4">{topLevelAction.nom}</h3>

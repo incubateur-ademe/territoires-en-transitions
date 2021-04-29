@@ -101,8 +101,8 @@
 
         {#if addButton}
             {#if isAdded}
-                <Button on:click={handleToggleButtonClick} classNames="mr-4" colorVariant="pine">
-                    ✔ Ajouté
+                <Button small on:click={handleToggleButtonClick} classNames="mr-4" colorVariant="pine">
+                    ✓ Ajouté
                 </Button>
             {:else }
                 <ButtonIcon on:click={handleToggleButtonClick} classNames="mr-4">+</ButtonIcon>
