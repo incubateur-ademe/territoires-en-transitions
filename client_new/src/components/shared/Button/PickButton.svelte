@@ -5,11 +5,20 @@
     import ButtonIcon from './ButtonIcon.svelte'
     import Button from './Button.svelte'
 
+    // Show Button or ButtonIcon depending on the state of this value
     export let picked: boolean = false
-    export let handlePick
-    export let handleUnpick
-    export let pickLabel
-    export let unpickLabel
+
+    // Handle pick callback
+    export let handlePick: () => void = () => {}
+
+    // Handle unpick callbakc
+    export let handleUnpick: () => void = () => {}
+
+    // Define label for unpicked state
+    export let pickLabel: string = '+'
+
+    // Define label for picked state
+    export let unpickLabel: string = 'Ajouté'
 </script>
 
 {#if picked}
