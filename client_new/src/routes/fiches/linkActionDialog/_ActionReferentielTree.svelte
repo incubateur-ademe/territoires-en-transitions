@@ -7,6 +7,7 @@
     export let handlePickButton
 
     // Helper handler to check if an action is linked to the current fiche
+    type isActionLinkedToFicheType = (actionId: string) => boolean
     $: isActionLinkedToFiche = (actionId) => linkedActionIds.includes(actionId)
 </script>
 
@@ -14,6 +15,7 @@
                       isAdded={isActionLinkedToFiche(action.id)}
                       handleAdd={handlePickButton}
                       handleRemove={handlePickButton}
+                      isExpandable={action.actions.length > 0}
 >
     <div slot="children">
         {#each action.actions as nestedAction}

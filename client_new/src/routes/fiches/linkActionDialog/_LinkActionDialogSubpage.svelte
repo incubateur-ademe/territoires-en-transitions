@@ -1,52 +1,33 @@
 <script lang="ts">
-    import ButtonIcon from '../../../components/shared/Button/ButtonIcon.svelte'
     import Button from '../../../components/shared/Button/Button.svelte'
     import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
-    import ActionReferentielCard from '../../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
     import ReferentielSearchBar from '../../../components/shared/ReferentielSearchBar.svelte'
     import PickButton from '../../../components/shared/Button/PickButton.svelte'
-    import ActionReferentielTitle from '../../../components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
     import ActionReferentielTree from './_ActionReferentielTree.svelte'
+    import SimpleBar from './SimpleBar.svelte'
 
+    // Main action of the subpage
     export let topLevelAction: ActionReferentiel
 
+    // Handle the popup content
     export let togglePopupContent: () => void
 
     // List of linked actions of the current fiche
     export let linkedActionIds: string[]
 
     // Handle add/remove button callback of each action
-    export let handleActionButton
-
-    // Handle add/remove button callback of each action
-    export let handlePickButton
+    export let handlePickButton: () => void
 
     // Helper handler to check if an action is linked to the current fiche
-    export let isActionLinkedToFiche: (string) => boolean
+    type isActionLinkedToFicheType = (actionId: string) => boolean
+    $: isActionLinkedToFiche: isActionLinkedToFicheType = (actionId) => linkedActionIds.includes(actionId)
 
+    // Show main action description
     let actionDescriptionDisplayed = false
+
+    // Handle search display
     let displayedActions: ActionReferentiel[] = topLevelAction.actions
     let isSearching: string
-
-    const handleAddButtonClick = (action) => (_event) => handleActionButton(action.id)
-
-    // Handle add/remove button click
-    const handleToggleButtonClick = (event) => {
-        handleAddButtonClick(topLevelAction)(event)
-        updateAddButton()
-    }
-
-    let isAdded = false
-    // Update the add button depending on if it is linked to the current fiche or not
-    const updateAddButton = () => {
-        if (isActionLinkedToFiche(topLevelAction.id)) {
-            isAdded = true
-            return
-        }
-
-        isAdded = false
-    }
-
 </script>
 
 <style>
@@ -78,28 +59,30 @@
 
     <div class="p-14 focus:bg-gray-100 custom-overflow">
         {#if !isSearching }
-            <div class="block flex p-4 bg-white mb-20 shadow-lg text-lg relative">
-                <PickButton picked={isAdded}
-                            handlePick={handleToggleButtonClick}
-                            handleUnpick={handleToggleButtonClick}
-                            pickLabel="+"
-                            unpickLabel="✓ Ajouté"
-                />
-                <div>
-                    <div class="flex">
-                        <h3 class="text-xl font-bold flex-initial self-center mr-4">{topLevelAction.nom}</h3>
-                        <Button classNames="cursor-pointer self-center flex-none"
-                                colorVariant="bramble"
-                                on:click={() => actionDescriptionDisplayed = !actionDescriptionDisplayed }
-                                size="small"
-                        >
-                            Détails
-                        </Button>
+            <div class="mb-10">
+                <SimpleBar id={topLevelAction.id} shadowSize="lg">
+                    <PickButton picked={isActionLinkedToFiche(topLevelAction.id)}
+                                handlePick={() => handlePickButton(topLevelAction.id)}
+                                handleUnpick={() => handlePickButton(topLevelAction.id)}
+                                pickLabel="+"
+                                unpickLabel="✓ Ajouté"
+                    />
+                    <div>
+                        <div class="flex">
+                            <h3 class="text-xl font-bold flex-initial self-center mr-4">{topLevelAction.nom}</h3>
+                            <Button classNames="cursor-pointer self-center flex-none"
+                                    colorVariant="bramble"
+                                    on:click={() => actionDescriptionDisplayed = !actionDescriptionDisplayed }
+                                    size="small"
+                            >
+                                Détails
+                            </Button>
+                        </div>
+                        <div class="text-base pt-4" class:hidden={!actionDescriptionDisplayed}>
+                            {topLevelAction.description}
+                        </div>
                     </div>
-                    <div class="text-base pt-4" class:hidden={!actionDescriptionDisplayed}>
-                        {topLevelAction.description}
-                    </div>
-                </div>
+                </SimpleBar>
             </div>
         {/if}
 

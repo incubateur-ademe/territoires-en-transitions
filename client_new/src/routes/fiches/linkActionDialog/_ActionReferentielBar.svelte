@@ -4,13 +4,13 @@
     import PickButton from '../../../components/shared/Button/PickButton.svelte'
     import ActionReferentielTitle from '../../../components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
     import Angle from '../../../components/shared/Angle.svelte'
-    import has = Reflect.has;
 
     export let action: ActionReferentiel
     export let isAdded: boolean
     export let onTitleClick: (event: MouseEvent) => void = () => {}
     export let handleAdd
     export let handleRemove
+    export let isExpandable
 
     // Handle bar shadow
     let sizes = ['2xl', 'xl', 'l', 'md', '', 'sm']
@@ -20,31 +20,26 @@
 
     // Handle expand
     let expanded:boolean = false
-    let hasExpandableContent = $$slots.children || action.description.trim().length
     const handleExpand = () => {
-        expanded != expanded
+        expanded = !expanded
     }
 </script>
 
-<segment>
-
-</segment>
 <SimpleBar id={action.id} shadowSize={shadowSize}>
-    <segment slot="aside">
-        <PickButton picked={isAdded}
-                    handlePick={() => handleAdd(action.id)}
-                    handleUnpick={() => handleRemove(action.id)}
-                    pickLabel="+"
-                    unpickLabel="✓ Ajouté"
-        />
-    </segment>
+    <PickButton picked={isAdded}
+                handlePick={() => handleAdd(action.id)}
+                handleUnpick={() => handleRemove(action.id)}
+                pickLabel="+"
+                unpickLabel="✓ Ajouté"
+                slot="aside"
+    />
 
-
-    <div on:click={hasExpandableContent ? handleExpand : null}
+    <div on:click={isExpandable ? handleExpand : null}
          class="flex flex-row cursor-pointer items-stretch"
     >
-        <ActionReferentielTitle action={action} emoji />
-        {#if hasExpandableContent }
+        <ActionReferentielTitle on:click={onTitleClick} action={action} emoji />
+
+        {#if isExpandable }
             <Angle direction="{expanded ? 'down' : 'right' }"/>
         {/if}
     </div>
