@@ -3,11 +3,14 @@
     import DialogBar from '../../../routes/fiches/linkActionDialog/_ActionReferentielBar.svelte'
     import {ActionReferentiel} from '../../../../generated/models/action_referentiel'
 
+    // The type of bar
+    type Bar = 'PageBar' | 'DialogBar'
+
     // Main action of the tree
     export let action: ActionReferentiel
 
     // Determine the bar component to render for the tree
-    export let bar: string = 'PageBar'
+    export let bar: Bar = 'PageBar'
 
     // Only for DialogBar: store the array of actions that are linked to the current fiche
     export let linkedActionIds: string[] = []
@@ -36,7 +39,7 @@
 
     // DialogBar component prop
     let dialogBarProps = {}
-    const isDialogBar = bar == 'DialogBar'
+    const isDialogBar = bar == ' '
     if (isDialogBar) {
         dialogBarProps = {
             handleAdd: handlePickButton,
@@ -45,9 +48,9 @@
     }
 
     // Handle bar expansion
-    type predicateType = (action: ActionReferentiel) => boolean
-    const hasNestedActions: predicateType = (action) => action.actions && action.actions.length > 0
-    const isExpandable: predicateType = (action) => hasNestedActions(action) || action.description.trim().length > 0
+    type actionPredicate = (action: ActionReferentiel) => boolean
+    const hasNestedActions: actionPredicate = (action) => action.actions && action.actions.length > 0
+    const isExpandable: actionPredicate = (action) => hasNestedActions(action) || action.description.trim().length > 0
 </script>
 
 <svelte:component this={barComponents[bar]}

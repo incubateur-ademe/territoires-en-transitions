@@ -51,38 +51,42 @@
 </script>
 
 <SimpleBar id={action.id} shadowSize={shadowSize}>
-    {#if ficheButton}
-        <a class="opacity-50 hover:opacity-80 mr-2"
-           href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
-            <AddFicheIcon />
-        </a>
-    {/if}
+    <div class="flex flex-row flex-grow items-center">
 
-    {#if asLink}
-        <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
-           rel="prefetch"
-           class="flex flex-grow">
-            <ActionReferentielTitle
-                    on:click={() => window.location.href = `/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`}
-                    action={action} emoji={emoji}/>
-        </a>
-    {:else }
-        <div on:click={isExpandable ? handleExpand : null}
-             class="flex flex-row cursor-pointer items-stretch"
-        >
-            <ActionReferentielTitle on:click={onTitleClick} action={action} emoji={emoji} />
+        {#if ficheButton}
+            <a class="opacity-50 hover:opacity-80 mr-2"
+               href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
+                <AddFicheIcon/>
+            </a>
+        {/if}
 
-            {#if isExpandable }
-                <Angle direction="{expanded ? 'down' : 'right' }"/>
+        <div class="flex flex-row flex-grow">
+            {#if asLink}
+                <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
+                   rel="prefetch"
+                   class="flex flex-grow">
+                    <ActionReferentielTitle
+                            on:click={() => window.location.href = `/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`}
+                            action={action} emoji={emoji}/>
+                </a>
+            {:else }
+                <div on:click={isExpandable ? handleExpand : null}
+                     class="flex flex-row cursor-pointer items-center">
+                    <ActionReferentielTitle on:click={onTitleClick} action={action} emoji={emoji}/>
+
+                    {#if isExpandable }
+                        <Angle direction="{expanded ? 'down' : 'right' }"/>
+                    {/if}
+                </div>
             {/if}
         </div>
-    {/if}
 
-    {#if statusBar}
-        <div class="ml-4">
-            <ActionStatus actionId={action.id}/>
-        </div>
-    {/if}
+        {#if statusBar}
+            <div class="ml-4">
+                <ActionStatus actionId={action.id}/>
+            </div>
+        {/if}
+    </div>
 </SimpleBar>
 
 {#if expanded }
