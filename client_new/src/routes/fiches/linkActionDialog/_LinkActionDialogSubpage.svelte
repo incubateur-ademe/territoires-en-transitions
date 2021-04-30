@@ -4,7 +4,7 @@
     import ReferentielSearchBar from '../../../components/shared/ReferentielSearchBar.svelte'
     import PickButton from '../../../components/shared/Button/PickButton.svelte'
     import ActionReferentielTree from './_ActionReferentielTree.svelte'
-    import SimpleBar from './SimpleBar.svelte'
+    import SimpleBar from '../../../components/shared/SimpleBar.svelte'
 
     // Main action of the subpage
     export let topLevelAction: ActionReferentiel

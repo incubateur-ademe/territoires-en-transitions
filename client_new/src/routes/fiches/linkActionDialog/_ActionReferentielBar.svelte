@@ -1,6 +1,6 @@
 <script lang="ts">
     import {ActionReferentiel} from '../../../../generated/models/action_referentiel'
-    import SimpleBar from './SimpleBar.svelte'
+    import SimpleBar from '../../../components/shared/SimpleBar.svelte'
     import PickButton from '../../../components/shared/Button/PickButton.svelte'
     import ActionReferentielTitle from '../../../components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
     import Angle from '../../../components/shared/Angle.svelte'
