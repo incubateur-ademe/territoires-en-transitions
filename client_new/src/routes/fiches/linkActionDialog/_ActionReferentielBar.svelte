@@ -5,11 +5,22 @@
     import ActionReferentielTitle from '../../../components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
     import Angle from '../../../components/shared/Angle.svelte'
 
+    // Main action of the bar
     export let action: ActionReferentiel
-    export let isAdded: boolean
+
+    // Handle click on main content
     export let onTitleClick: (event: MouseEvent) => void = () => {}
+
+    // Display correct label on PickButton depending on if the action is linked to the current fiche,
+    export let isAdded: boolean
+
+    // Handle pick button add callback
     export let handleAdd
+
+    // Handle pick button remove callback
     export let handleRemove
+
+    // Enable expansion on the bar
     export let isExpandable
 
     // Handle bar shadow
