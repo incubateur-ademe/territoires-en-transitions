@@ -209,8 +209,8 @@
         {#await import('./linkActionDialog/_LinkActionDialog.svelte') then c}
             <svelte:component this={c.default}
                               on:LinkActionDialogClose={() => showLinkActionDialog = false }
-                              handleActionButton={toggleActionIdInData}
-                              isActionLinkedToFiche={isActionLinkedToFiche}
+                              linkedActionIds={data.referentiel_action_ids}
+                              handlePickButton={toggleActionIdInData}
             />
         {/await}
     {/if}

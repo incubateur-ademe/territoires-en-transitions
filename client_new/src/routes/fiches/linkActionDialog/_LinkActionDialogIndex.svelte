@@ -4,19 +4,19 @@
      */
     import {actions} from "../../../../generated/data/actions_referentiels";
     import {thematiques} from "../../../../generated/data/thematiques";
-    import ActionReferentielCard from '../../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
+    import ActionReferentielBar from './_ActionReferentielBar'
 
     export let onTopLevelActionClicked: (actionId: string) => void
     export let close: (event: MouseEvent) => void
 
+    // List of linked actions of the current fiche
+    export let linkedActionIds: string[]
+
     // Handle add/remove button callback of each action
-    export let handleActionButton
+    export let handlePickButton: () => void
 
     // Helper handler to check if an action is linked to the current fiche
-    export let isActionLinkedToFiche: (string) => boolean
-
-    const handleAddButtonClick = (action) => (_event) => handleActionButton(action.id)
-    const handleTitleClick = (action) => (_event) => onTopLevelActionClicked(action.id)
+    $: isActionLinkedToFiche = (actionId) => linkedActionIds.includes(actionId)
 </script>
 
 <style>
@@ -66,12 +66,11 @@
                 <ul class="mb-16">
                     {#each actions.filter((action) => action.thematique_id === thematique.id) as action (action.id) }
                         <li>
-                            <ActionReferentielCard emoji
-                                                   action={action}
-                                                   addButton
-                                                   isActionLinkedToFiche={isActionLinkedToFiche}
-                                                   onAddButtonClick={handleAddButtonClick}
-                                                   onTitleClick={handleTitleClick}
+                            <ActionReferentielBar action={action}
+                                                  isAdded={isActionLinkedToFiche(action.id)}
+                                                  handleAdd={handlePickButton}
+                                                  handleRemove={handlePickButton}
+                                                  onTitleClick={() => onTopLevelActionClicked(action.id)}
                             />
                         </li>
                     {/each}

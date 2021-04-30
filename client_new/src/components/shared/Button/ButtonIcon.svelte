@@ -2,7 +2,7 @@
     import ButtonBase from './ButtonBase.svelte'
 
     export let classNames
-    export let colorVariant
+    export let colorVariant = 'nettle'
 
     const buttonClassNames = 'h-10 w-10 p-0'
 </script>

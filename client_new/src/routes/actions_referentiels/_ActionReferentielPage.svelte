@@ -2,10 +2,11 @@
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
-    import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
     import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
     import {indicateurs} from "../../../generated/data/indicateurs_referentiels";
     import IndicateurReferentielCard from "../../components/shared/IndicateurReferentielCard.svelte";
+    import ActionReferentielTree from '../../components/shared/ActionReferentiel/_ActionReferentielTree.svelte'
+    import ActionReferentielBar from './_ActionReferentielBar.svelte'
 
     export let action: ActionReferentiel
     let displayed = action.actions
@@ -31,14 +32,14 @@
     </div>
 </div>
 
-<ActionReferentielCard action={action} emoji ficheButton statusBar/>
+<ActionReferentielBar action={action} emoji ficheButton statusBar/>
 <div class="m-4">
     {action.description}
 </div>
 
 <h2 class="text-2xl font-semibold mt-8 mb-4 ">Les actions</h2>
 {#each displayed as action}
-    <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
+    <ActionReferentielTree action={action} bar="PageBar" />
 {/each}
 
 <h2 class="text-2xl font-semibold mt-8 mb-4 ">Les indicateurs</h2>
