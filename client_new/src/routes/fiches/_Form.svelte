@@ -12,7 +12,6 @@
     import {testUIVisibility} from "../../api/currentEnvironment";
     import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
     import IndicateurReferentielCard from "../../components/shared/IndicateurReferentielCard.svelte";
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
 
     export let data: FicheActionInterface
 
@@ -36,7 +35,6 @@
         else window.alert('Une erreur est survenue lors de la sauvegarde de la fiche action.')
     }
 
-    let flatActions: ActionReferentiel[]
     let indicateursReferentiel: IndicateurReferentiel[]
 
     // Helper to check reactively if an action is linked to the current fiche
@@ -59,20 +57,6 @@
         // initialize store
         const hybridStores = await import ("../../api/hybridStores");
         ficheActionStore = hybridStores.ficheActionStore;
-
-        // TODO: remove
-        const referentiel = await import("../../../generated/data/actions_referentiels")
-
-        const flattened = [];
-        const flatten = (actions: ActionReferentiel[]) => {
-            for (let action of actions) {
-                flattened.push(action)
-                flatten(action.actions)
-            }
-        }
-        flatten(referentiel.actions)
-        flatActions = flattened
-        // END TODO: remove
 
         // load référentiel indicateurs
         const indicateurs = await import("../../../generated/data/indicateurs_referentiels")
@@ -177,52 +161,42 @@
             </div>
         </div>
 
-        <label class="text-xl" for="fiche_create_actions">Actions du référentiel</label>
-        {#if flatActions}
-            <MultiSelect id='fiche_create_actions' bind:value={data.referentiel_action_ids}>
-                {#each flatActions as action}
-                    <option value="{action.id}">({action.id_nomenclature}) {action.nom}</option>
-                {/each}
-            </MultiSelect>
-        {/if}
+
         <div class="p-5"></div>
+        <div class="text-xl">Référentiels</div>
+        <div class="my-2 p-2">
+            {#await import('./_LinkedActions.svelte') then c}
+                <svelte:component this={c.default}
+                                  actionIds={data.referentiel_action_ids}
+                                  handlePickButton={toggleActionIdInData}
+                />
+            {/await}
+            <Button on:click={() => showLinkActionDialog = true }
+                    size="small">
+                + Lier une action
+            </Button>
+        </div>
 
-        {#if useIndicateurs}
-            <div class="my-2 p-2 border-l-8 border-pink-600">
-                <label class="text-xl" for="fiche_create_indicateurs">Indicateurs du référentiel</label>
-                {#if indicateursReferentiel}
-                    <MultiSelect id='fiche_create_indicateurs' bind:value={data.referentiel_indicateur_ids}>
-                        {#each indicateursReferentiel as indicateur}
-                            <option value="{indicateur.id}">({indicateur.id}) {indicateur.nom}</option>
-                        {/each}
-                    </MultiSelect>
-
-                    {#each data.referentiel_indicateur_ids as indicateurId}
-                        <div class="shadow">
-                            <IndicateurReferentielCard
-                                    indicateur={indicateursReferentiel.filter((i) => i.id === indicateurId)[0]}/>
-                        </div>
+        <div class="p-5"></div>
+        <div class="my-2 p-2">
+            <div class="text-xl mb-4">Indicateurs</div>
+            {#if indicateursReferentiel}
+                <MultiSelect id='fiche_create_indicateurs' bind:value={data.referentiel_indicateur_ids}>
+                    {#each indicateursReferentiel as indicateur}
+                        <option value="{indicateur.id}">({indicateur.id}) {indicateur.nom}</option>
                     {/each}
-                {/if}
-            </div>
-        {/if}
+                </MultiSelect>
 
-        <div class="p-5"></div>
+                {#each data.referentiel_indicateur_ids as indicateurId}
+                    <div class="shadow">
+                        <IndicateurReferentielCard
+                                indicateur={indicateursReferentiel.filter((i) => i.id === indicateurId)[0]}/>
+                    </div>
+                {/each}
+            {/if}
+        </div>
 
-        {#if useDialogPicker}
-            <div class="my-2 p-2 border-l-8 border-pink-600">
-                {#await import('./_LinkedActions.svelte') then c}
-                    <svelte:component this={c.default}
-                                      actionIds={data.referentiel_action_ids}
-                                      handlePickButton={toggleActionIdInData}
-                    />
-                {/await}
-                <Button on:click={() => showLinkActionDialog = true }
-                        size="small">
-                    + Lier une action
-                </Button>
-            </div>
-        {/if}
+
         <div class="p-5"></div>
         <Button classNames="md:w-1/3 self-end"
                 full
