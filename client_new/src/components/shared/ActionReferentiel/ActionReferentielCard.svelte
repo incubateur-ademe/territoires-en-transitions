@@ -109,7 +109,6 @@
 
         <div class="flex items-center flex-grow"
              class:statusBar={"max-w-lg"}>
-            <slot name="aside"></slot>
 
             {#if link}
                 <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
