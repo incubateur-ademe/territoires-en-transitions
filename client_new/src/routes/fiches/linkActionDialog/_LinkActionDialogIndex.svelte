@@ -4,7 +4,6 @@
      */
     import {actions} from "../../../../generated/data/actions_referentiels";
     import {thematiques} from "../../../../generated/data/thematiques";
-    import ActionReferentielCard from '../../../components/shared/ActionReferentiel/ActionReferentielCard.svelte'
     import ActionReferentielBar from './_ActionReferentielBar'
 
     export let onTopLevelActionClicked: (actionId: string) => void
