@@ -3,7 +3,7 @@
     import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
     import ReferentielSearchBar from '../../../components/shared/ReferentielSearchBar.svelte'
     import PickButton from '../../../components/shared/Button/PickButton.svelte'
-    import ActionReferentielTree from './_ActionReferentielTree.svelte'
+    import ActionReferentielTree from './../../../components/shared/ActionReferentiel/_ActionReferentielTree.svelte'
     import SimpleBar from '../../../components/shared/SimpleBar.svelte'
 
     // Main action of the subpage
@@ -13,10 +13,10 @@
     export let togglePopupContent: () => void
 
     // List of linked actions of the current fiche
-    export let linkedActionIds: string[]
+    export let linkedActionIds: string[] = []
 
     // Handle add/remove button callback of each action
-    export let handlePickButton: () => void
+    export let handlePickButton: () => void = () => {}
 
     // Helper handler to check if an action is linked to the current fiche
     $: isActionLinkedToFiche = (actionId) => linkedActionIds.includes(actionId)
@@ -88,7 +88,8 @@
         <ul>
             <li>
                 {#each displayedActions as action (action.id) }
-                    <ActionReferentielTree action={action}
+                    <ActionReferentielTree bar="DialogBar"
+                                           action={action}
                                            linkedActionIds={linkedActionIds}
                                            handlePickButton={handlePickButton}
                     />
