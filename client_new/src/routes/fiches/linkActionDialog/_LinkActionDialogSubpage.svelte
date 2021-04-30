@@ -19,8 +19,7 @@
     export let handlePickButton: () => void
 
     // Helper handler to check if an action is linked to the current fiche
-    type isActionLinkedToFicheType = (actionId: string) => boolean
-    $: isActionLinkedToFiche: isActionLinkedToFicheType = (actionId) => linkedActionIds.includes(actionId)
+    $: isActionLinkedToFiche = (actionId) => linkedActionIds.includes(actionId)
 
     // Show main action description
     let actionDescriptionDisplayed = false

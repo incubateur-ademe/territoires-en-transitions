@@ -46,8 +46,8 @@
                 togglePopupContent={togglePopupContent}/>
     {:else }
         <LinkActionDialogIndex
-                handleActionButton={handleActionButton}
-                isActionLinkedToFiche={isActionLinkedToFiche}
+                linkedActionIds={linkedActionIds}
+                handlePickButton={handlePickButton}
                 onTopLevelActionClicked={onTopLevelActionClicked}
                 close={close}/>
     {/if}
