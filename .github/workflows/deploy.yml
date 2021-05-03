@@ -13,6 +13,18 @@ jobs:
       working-directory: ./codegen
 
     steps:
+      - name: Setup Python cached dependencies
+        uses: actions/cache@v2
+        env:
+          cache-name: poetry-cache
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - uses: actions/checkout@v2
       - name: Set up Python 3.x
         uses: actions/setup-python@v2
@@ -39,6 +51,17 @@ jobs:
       working-directory: ./codegen
 
     steps:
+      - name: Setup Python cached dependencies
+        uses: actions/cache@v2
+        env:
+          cache-name: poetry-cache
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
       - name: Run tests
         run: poetry run pytest
         working-directory: ${{env.working-directory}}
@@ -52,6 +75,18 @@ jobs:
       working-directory: ./codegen
 
     steps:
+      - name: Setup Python cached dependencies
+        uses: actions/cache@v2
+        env:
+          cache-name: poetry-cache
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Generate shared models and data in JavaScript
         run: echo 'toto'
 
