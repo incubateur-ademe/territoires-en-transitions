@@ -21,7 +21,7 @@ jobs:
           pip-cache-name: pip-cache
         with:
           path: /opt/hostedtoolcache/Python
-          key: ${{ runner.os }}-${{ env.pip-cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          key: ${{ runner.os }}-${{ env.pip-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.pip-cache-name }}
             ${{ runner.os }}-
@@ -32,7 +32,7 @@ jobs:
           poetry-cache-name: poetry-cache
         with:
           path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.poetry-cache-name }}-
             ${{ runner.os }}-
@@ -48,7 +48,7 @@ jobs:
       - name: Install Poetry
         run: |
           pip install --upgrade pip
-          pip --no-cache-dir install poetry
+          pip install poetry
 
       - name: Install dependencies
         run: |
@@ -70,7 +70,7 @@ jobs:
           pip-cache-name: pip-cache
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-${{ env.pip-cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          key: ${{ runner.os }}-${{ env.pip-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.pip-cache-name }}
             ${{ runner.os }}-
@@ -81,10 +81,13 @@ jobs:
           poetry-cache-name: poetry-cache
         with:
           path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.poetry-cache-name }}-
             ${{ runner.os }}-
+
+      - name: Install Poetry
+        run: pip install poetry
 
       - name: Run tests
         run: poetry run pytest
