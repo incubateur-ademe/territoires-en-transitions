@@ -57,12 +57,6 @@ jobs:
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
 
-      - name: Check if Poetry is installed
-        run: |
-          ls -la $HOME
-          echo "$HOME/poetry/bin" >> $GITHUB_PATH
-          # which poetry
-
       - name: Install Poetry
         run: |
           curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=~/poetry python -
@@ -82,12 +76,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Setup Python cache
+        uses: actions/cache@v2
+        env:
+          python-tools-cache-name: python-tools-cache
+        with:
+          path: /opt/hostedtoolcache/Python
+          key: ${{ runner.os }}-${{ env.python-tools-cache-name }}-${{ env.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.python-tools-cache-name }}
+            ${{ runner.os }}-
+
       - name: Setup poetry binary cache
         uses: actions/cache@v2
         env:
           poetry-bin-cache-name: poetry-bin
         with:
-          path: ~/bin/poetry
+          path: ~/poetry
           key: ${{ runner.os }}-${{ env.poetry-bin-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.poetry-bin-cache-name }}
@@ -104,11 +109,11 @@ jobs:
             ${{ runner.os }}-${{ env.poetry-cache-name }}-
             ${{ runner.os }}-
 
-
       - name: Setup Poetry
         run: |
-          which poetry
-          echo "$HOME/bin/poetry/bin" >> $GITHUB_PATH
+          ls -la $HOME
+          ls -la $HOME/poetry
+          echo "$HOME/poetry/bin" >> $GITHUB_PATH
 
       - name: Run tests
         run: poetry run pytest
