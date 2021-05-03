@@ -117,6 +117,7 @@ jobs:
   deploy-on-scaleway:
     runs-on: ubuntu-latest
     needs: client-build
+    environment: production
     env:
       working-directory: ./tools
 
@@ -182,4 +183,8 @@ jobs:
       - name: Deploy on Scaleway
         run: poetry run deploy -s entretiens
         working-directory: ${{env.working-directory}}
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_CONFIG_FILE: ${{secrets.AWS_CONFIG_FILE}}
 
