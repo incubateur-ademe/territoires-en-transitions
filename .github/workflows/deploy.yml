@@ -10,10 +10,22 @@ jobs:
   codegen-setup:
     runs-on: ubuntu-latest
     env:
+      python-version: 3.9.1
       working-directory: ./codegen
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Setup Python cache
+        uses: actions/cache@v2
+        env:
+          python-tools-cache-name: python-tools-cache
+        with:
+          path: /opt/hostedtoolcache/Python
+          key: ${{ runner.os }}-${{ env.python-tools-cache-name }}-${{ env.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.python-tools-cache-name }}
+            ${{ runner.os }}-
 
       - name: Setup poetry binary cache
         uses: actions/cache@v2
