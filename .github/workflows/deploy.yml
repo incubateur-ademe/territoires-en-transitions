@@ -93,14 +93,19 @@ jobs:
       working-directory: ./client_new
 
     steps:
+      - uses: actions/checkout@v2
+
       - name: Download generated files
         uses: actions/download-artifact@v2
         with:
           name: generated-client-files
-          path: client_new/generated
+          path: client_new
 
       - name: Build client
         run: |
+          ls -la generated
+          ls -la generated/models
+          ls -la generated/data
           npm install
           npm run export
         working-directory: ${{env.working-directory}}
@@ -119,6 +124,8 @@ jobs:
       working-directory: ./tools
 
     steps:
+      - uses: actions/checkout@v2
+
       - name: Set up Python cache
         uses: actions/cache@v2
         env:
