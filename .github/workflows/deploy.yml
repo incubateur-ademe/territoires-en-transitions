@@ -104,7 +104,6 @@ jobs:
       - name: Build client
         run: |
           npm install
-          npm run build
           npm run export
         working-directory: ${{env.working-directory}}
 
