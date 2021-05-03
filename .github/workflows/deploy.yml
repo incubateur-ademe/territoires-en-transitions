@@ -13,19 +13,30 @@ jobs:
       working-directory: ./codegen
 
     steps:
-      - name: Setup Python cached dependencies
+      - uses: actions/checkout@v2
+
+      - name: Setup pip cache
         uses: actions/cache@v2
         env:
-          cache-name: poetry-cache
+          pip-cache-name: pip-cache
         with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          path: /opt/hostedtoolcache/Python
+          key: ${{ runner.os }}-${{ env.pip-cache-name }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
+            ${{ runner.os }}-${{ env.pip-cache-name }}
             ${{ runner.os }}-
 
-      - uses: actions/checkout@v2
+      - name: Setup poetry cache
+        uses: actions/cache@v2
+        env:
+          poetry-cache-name: poetry-cache
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.poetry-cache-name }}-
+            ${{ runner.os }}-
+
       - name: Set up Python 3.x
         uses: actions/setup-python@v2
         with:
@@ -40,7 +51,9 @@ jobs:
           pip --no-cache-dir install poetry
 
       - name: Install dependencies
-        run: poetry install
+        run: |
+          which poetry
+          poetry install
         working-directory: ${{env.working-directory}}
 
   # This job runs Python tests in codegen directory
@@ -51,17 +64,28 @@ jobs:
       working-directory: ./codegen
 
     steps:
-      - name: Setup Python cached dependencies
+      - name: Setup pip cache
         uses: actions/cache@v2
         env:
-          cache-name: poetry-cache
+          pip-cache-name: pip-cache
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-${{ env.pip-cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.pip-cache-name }}
+            ${{ runner.os }}-
+
+      - name: Setup poetry cache
+        uses: actions/cache@v2
+        env:
+          poetry-cache-name: poetry-cache
         with:
           path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
+            ${{ runner.os }}-${{ env.poetry-cache-name }}-
             ${{ runner.os }}-
+
       - name: Run tests
         run: poetry run pytest
         working-directory: ${{env.working-directory}}
