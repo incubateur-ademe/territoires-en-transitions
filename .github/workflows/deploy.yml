@@ -97,19 +97,19 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: generated-client-files
-          path: generated
+          path: client_new/generated
 
       - name: Build client
         run: |
-          ls -la
-          ls -la generated
+          npm install
           npm run export
+        working-directory: ${{env.working-directory}}
 
       - name: Upload exported client app
         uses: actions/upload-artifact@v2
         with:
           name: client-app
-          path: ./__sapper__/export
+          path: client_new/__sapper__/export
 
   # This job retrieves the exported client app and upload it to Scaleway.
   deploy-on-scaleway:
@@ -177,4 +177,5 @@ jobs:
 
       - name: Deploy on Scaleway
         run: poetry run deploy -s entretiens
+        working-directory: ${{env.working-directory}}
 
