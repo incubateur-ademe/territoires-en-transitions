@@ -21,5 +21,6 @@ epcis_default:
   cyclad: "Cyclad"
   hennebont: "Hennebont"
   ploemeur: "Plœmeur"
+  saint_pierre_elbeuf: "Saint-Pierre-Lès-Elbeuf"
 
 ```
