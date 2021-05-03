@@ -1,11 +1,19 @@
 # Tools
 
-### Pour quoi faire ?
+- [Pré-requis](#pré-requis)
+- [Pour quoi faire ?](#pour-quoi-faire-)
+- [Comment on s'en sert ?](#comment-on-sen-sert-)
+
+## Pré-requis
+- Python >= 3.9.1
+- [Poetry](https://python-poetry.org/docs/#installation)
+
+## Pour quoi faire ?
 Pour le moment cette partie du projet sert à avoir un outil de déploiement en ligne de commande.
 
 On imagine ajouter ici d'autres outils.
 
-### Comment on s'en sert ?
+## Comment on s'en sert ?
 Pour se servir des scripts et de l'outil CLI il faut [installer poetry](https://python-poetry.org/docs/#installation)
 
 Ensuite pour installer les dépendances:
@@ -13,10 +21,11 @@ Ensuite pour installer les dépendances:
 poetry install
 ```
 
-### L'outil de déploiement
+## L'outil de déploiement
 Permet de déployer l'application de façon programmatique afin de permettre de deployer sur différents sous domaines avec une simple commande : `poetry run deploy --bucket staging`
 
 `poetry run deploy --help`
+
 ```shell
 Usage: deploy [OPTIONS]
 
