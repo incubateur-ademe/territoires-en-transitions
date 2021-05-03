@@ -8,6 +8,8 @@ on:
 jobs:
   test-codegen:
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./codegen
 
     steps:
       - uses: actions/checkout@v2
@@ -26,8 +28,8 @@ jobs:
 
       - name: Install dependencies
         run: poetry install
-        working-directory: ./codegen
+        working-directory: ${{env.working-directory}}
 
       - name: Run tests
         run: poetry run pytest
-        working-directory: ./codegen
+        working-directory: ${{env.working-directory}}
