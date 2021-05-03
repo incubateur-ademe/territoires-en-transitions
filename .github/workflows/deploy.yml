@@ -1,13 +1,13 @@
-name: Test
+name: Deploy LTE client
 
 on:
   push:
-    branches-ignore:
-      - main
-      - add_deploy_workflow
+    # TODO: change to main when automated deployment can be used
+    branches: [add_deploy_workflow]
 
 jobs:
-  test-codegen:
+  # This job install codegen dependencies
+  codegen-setup:
     runs-on: ubuntu-latest
     env:
       working-directory: ./codegen
@@ -31,6 +31,31 @@ jobs:
         run: poetry install
         working-directory: ${{env.working-directory}}
 
+  # This job runs Python tests in codegen directory
+  codegen-test:
+    runs-on: ubuntu-latest
+    needs: codegen-setup
+    env:
+      working-directory: ./codegen
+
+    steps:
       - name: Run tests
         run: poetry run pytest
         working-directory: ${{env.working-directory}}
+
+  # This job generated files with codegen, files that are mandatory for the
+  # client application.
+  codegen-generate:
+    runs-on: ubuntu-latest
+    needs: codegen-test
+    env:
+      working-directory: ./codegen
+
+    steps:
+      - name: Generate shared models and data in JavaScript
+        run: echo 'toto'
+
+
+
+
+
