@@ -103,10 +103,8 @@ jobs:
 
       - name: Build client
         run: |
-          ls -la generated
-          ls -la generated/models
-          ls -la generated/data
           npm install
+          npm run build
           npm run export
         working-directory: ${{env.working-directory}}
 
