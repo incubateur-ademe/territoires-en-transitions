@@ -5,8 +5,9 @@ démarches de transition écologique, l'[ADEME (l'Agence de la transition
 écologique)](https://www.ademe.fr/) s'est associée à
 [beta.gouv.fr](https://beta.gouv.fr/) pour lancer une plateforme numérique
 pour faciliter et accélérer la mise en oeuvre des actions de transition
-écologique dans les collectivités territoriales. L'interface a pour objectifs de
-permettre aux utilisateurs :
+écologique dans les collectivités territoriales.
+
+L'interface a pour objectifs de permettre aux utilisateurs :
 - d'accéder aux référentiels d'actions de transition écologique
   (Climat-Air-Énergie et Économie Circulaire) et de personnaliser leur
   utilisation,
@@ -24,9 +25,3 @@ Ce dépôt Git contient :
 
 Chaque dossier à la racine contient son propre `README.md` et peut fonctionner
 de manière autonome.
-
-## Pour commencer à développer
-
-SSH clone URL: ssh://git@git.jetbrains.space/lte/territoires-en-transitions/territoiresentransitions.fr.git
-
-HTTPS clone URL: https://git.jetbrains.space/lte/territoires-en-transitions/territoiresentransitions.fr.git
