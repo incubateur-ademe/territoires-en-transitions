@@ -22,5 +22,6 @@ epcis_default:
   hennebont: "Hennebont"
   ploemeur: "Plœmeur"
   saint_pierre_elbeuf: "Saint-Pierre-Lès-Elbeuf"
+  malaunay: "Malaunay"
 
 ```
