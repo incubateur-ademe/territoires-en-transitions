@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Tailwind from '../components/Tailwind.svelte'
-	import Nav from '../components/shared/Nav.svelte'
+	import Nav from '../components/shared/Nav/Nav.svelte'
 
 	export let segment: string;
 </script>

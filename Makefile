@@ -9,7 +9,6 @@ generate:
 	cd codegen && poetry run generate all
 
 build:
-	cd client && npm run build:prod
 	cd client_new && npm run export
 
 deploy_on_sandbox:

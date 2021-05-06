@@ -17,9 +17,7 @@ def upload_client(
     """Upload files into a sub domain bucket"""
     s3 = make_s3_client()
     bucket = f'{subdomain}.territoiresentransitions.fr'
-    count = 0
-    count += upload_folder(bucket, client_new, s3)
-    count += upload_folder(bucket, client_old, s3)
+    count = upload_folder(bucket, client_new, s3)
     typer.echo(f"Uploaded {count} files to '{bucket}'.")
 
 

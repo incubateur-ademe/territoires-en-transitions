@@ -3,8 +3,8 @@
      * The part of the navigation bar that show the current epci name.
      */
     import {onMount} from 'svelte';
-    import {getCurrentEpciId} from "../../api/currentEpci";
-    import {epcis_default} from "../../../generated/models/epcis_default";
+    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import {epcis_default} from "../../../../generated/models/epcis_default";
 
     let epciId = ''
     let epciName = ''
@@ -14,4 +14,4 @@
     });
 </script>
 
-{epciName} <a href="index.html?epci_id={epciId}" class="underline">(modifier)</a>
+{epciName} <a href="connexion/?epci_id={epciId}" class="underline">(modifier)</a>
