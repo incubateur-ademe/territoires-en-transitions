@@ -9,6 +9,8 @@ import {FicheActionStorable} from "../storables/FicheActionStorable";
 import type {FicheActionInterface} from "../../generated/models/fiche_action";
 import {FicheActionCategorieStorable} from "../storables/FicheActionCategorieStorable";
 import type {FicheActionCategorieInterface} from "../../generated/models/fiche_action_categorie";
+import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnalise";
+import type {IndicateurPersonnaliseInterface} from "../../generated/models/indicateur_personnalise";
 
 export const storeKey = 'territoiresentransitions'
 
@@ -182,3 +184,9 @@ export const ficheActionCategorieStore = new LocalStore<FicheActionCategorieStor
     deserializer: (serialized) => new FicheActionCategorieStorable(serialized as FicheActionCategorieInterface),
 });
 
+
+export const indicateurPersonnaliseStore = new LocalStore<IndicateurPersonnaliseStorable>({
+    pathname: FicheActionStorable.pathname,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new IndicateurPersonnaliseStorable(serialized as IndicateurPersonnaliseInterface),
+});
