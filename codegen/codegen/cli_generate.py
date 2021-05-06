@@ -1,13 +1,15 @@
 import glob
 import json
 import os
+
 import typer
 
 import codegen.paths as paths
-from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html
+from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html, \
+    render_indicators_as_typescript
 from codegen.citergie.mesures_generator import render_mesure_as_json, render_mesure_as_html, build_mesure, \
     render_mesures_summary_as_html, filter_indicateurs_by_mesure_id, build_action, render_actions_as_typescript, \
-    relativize_ids
+    relativize_ids, clean_thematiques, propagate_thematiques
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
 from codegen.codegen.python import render_markdown_as_python
 from codegen.codegen.typescript import render_markdown_as_typescript
@@ -23,8 +25,9 @@ def all(
     actions_client_output_dir=paths.shared_client_data_dir,
     actions_output_typescript=True,
     indicateurs_markdown_dir=paths.indicateurs_markdown_dir,
-    indicateurs_output_client_dir=paths.indicateurs_client_output_dir,
+    indicateurs_output_client_dir=paths.shared_client_data_dir,
     indicateurs_html=False,
+    indicateurs_typescript=True,
     mesures_markdown_dir=paths.mesures_markdown_dir,
     mesures_orientations_dir=paths.orientations_markdown_dir,
     mesures_output_client_dir=paths.mesures_client_output_dir,
@@ -47,9 +50,10 @@ def all(
         output_typescript=actions_output_typescript,
     )
     indicateurs(
-        markdown_dir=indicateurs_markdown_dir,
-        output_dir=indicateurs_output_client_dir,
-        html=indicateurs_html
+        indicateurs_markdown_dir=indicateurs_markdown_dir,
+        client_output_dir=indicateurs_output_client_dir,
+        html=indicateurs_html,
+        typescript=indicateurs_typescript,
     )
     mesures(
         mesures_dir=mesures_markdown_dir,
@@ -102,22 +106,27 @@ def actions(
 
     relativize_ids(actions_economie_circulaire, 'economie_circulaire')
 
+    all_actions = actions_citergie + actions_economie_circulaire
+    all_actions = clean_thematiques(all_actions)
+    all_actions = propagate_thematiques(all_actions)
+
     if output_typescript:
-        typescript = render_actions_as_typescript(actions_citergie + actions_economie_circulaire)
+        typescript = render_actions_as_typescript(all_actions)
         filename = os.path.join(client_output_dir, 'actions_referentiels.ts')
         write(filename, typescript)
 
 
 @app.command()
 def indicateurs(
-    markdown_dir: str = typer.Option(paths.indicateurs_markdown_dir, "--markdown", "-md"),
-    output_dir: str = typer.Option(paths.indicateurs_client_output_dir, "--output", "-o"),
+    indicateurs_markdown_dir: str = typer.Option(paths.indicateurs_markdown_dir, "--markdown", "-md"),
+    client_output_dir: str = paths.shared_client_data_dir,
     html: bool = False,
+    typescript: bool = True,
 ) -> None:
     """
     Convert 'indicateurs' markdown files to code.
     """
-    files = glob.glob(os.path.join(markdown_dir, '*.md'))
+    files = glob.glob(os.path.join(indicateurs_markdown_dir, '*.md'))
     indicators = []
     for filename in files:
         typer.echo(f'Processing {filename}...')
@@ -126,10 +135,15 @@ def indicateurs(
 
     if html:
         rendered = render_indicators_as_html(indicators)
-        filename = os.path.join(output_dir, 'indicateurs.html')
+        filename = os.path.join(client_output_dir, 'indicateurs.html')
         write(filename, rendered)
 
-    typer.echo(f"Rendered {len(files)} 'indicateurs' in {output_dir}.")
+    if typescript:
+        rendered = render_indicators_as_typescript(indicators)
+        filename = os.path.join(client_output_dir, 'indicateurs_referentiels.ts')
+        write(filename, rendered)
+
+    typer.echo(f"Rendered {len(files)} 'indicateurs' in {client_output_dir}.")
 
 
 @app.command()
@@ -165,7 +179,6 @@ def mesures(
             mesure = build_mesure(md)
             mesures_citergie.append(mesure)
     relativize_ids(mesures_citergie, 'citergie')
-
 
     # Load orientations as mesures
     orientation_files = sorted_files(orientations_dir, 'md')

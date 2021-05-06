@@ -1,5 +1,5 @@
-## Action personnalisée
-Représente une fiche action crée pour une epci.
+## Fiche action
+Représente une fiche action crée par une epci.
 `epci_id/uid`
 
 ```yaml
@@ -13,6 +13,8 @@ FicheAction:
     avancement:
         type: String
     referentiel_action_ids:
+        type: List[String]
+    referentiel_indicateur_ids:
         type: List[String]
     titre:
         type: String

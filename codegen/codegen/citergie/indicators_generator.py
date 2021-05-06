@@ -2,6 +2,7 @@
 import json
 from typing import Callable, List
 
+import jsbeautifier
 from bs4 import BeautifulSoup
 from mistletoe import Document, HTMLRenderer
 from mistletoe.block_token import BlockToken
@@ -82,6 +83,22 @@ def render_indicators_as_html(indicateurs: List[dict],
     rendered = template.render(indicateurs=by_thematique, years=years, thematiques=thematiques)
     soup = BeautifulSoup(rendered, 'html.parser')
     return soup.prettify()
+
+
+def render_indicators_as_typescript(indicateurs: List[dict],
+                                    template_file='shared/ts/indicateurs_referentiel.j2') -> str:
+    env = build_jinja_environment()
+    template = env.get_template(template_file)
+    renderer = HTMLRenderer()
+
+    for indicateur in indicateurs:
+        indicateur['thematique_id'] = indicateur['climat_pratic_ids'][0]
+        indicateur['action_ids'] = [f'citergie__{id}' for id in indicateur['mesures']]
+        description = Document(indicateur['description'])
+        indicateur['description'] = renderer.render(description)
+
+    rendered = template.render(indicateurs=indicateurs)
+    return jsbeautifier.beautify(rendered)
 
 
 def render_indicators_as_json(indicators: List[dict]) -> str:  # pragma: no cover

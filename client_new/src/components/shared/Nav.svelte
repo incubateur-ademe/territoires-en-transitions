@@ -1,15 +1,17 @@
 <script>
+    /**
+     * Top navigation bar
+     */
     import EpciNavDisplay from "./EpciNavDisplay.svelte";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
-    import {getCurrentEnvironment} from "../../api/currentEnvironment";
+    import {testUIVisibility} from "../../api/currentEnvironment";
 
     let epciId = ''
-    let showSpike = false
+    let showTestNavigation = false
     onMount(async () => {
         epciId = getCurrentEpciId()
-        let environment = getCurrentEnvironment()
-        showSpike = environment === 'local' || environment === 'sandbox'
+        showTestNavigation = testUIVisibility()
     });
 </script>
 <nav class="bg-green-600">
@@ -31,19 +33,19 @@
         </li>
         <li class="mr-4">
             <a class="p-1 rounded hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 active:text-gray-900 active:shadow-inner active:bg-white"
-               href="mesures.html?epci_id={epciId}">
+               href="actions_referentiels/?epci_id={epciId}">
                 Référentiels
             </a>
         </li>
         <li class="mr-4">
             <a class="p-1 rounded hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 active:text-gray-900 active:shadow-inner active:bg-white"
-               href="indicateurs.html?epci_id={epciId}">
+               href="indicateurs/?epci_id={epciId}">
                 Indicateurs
             </a>
         </li>
     </ul>
 </nav>
-{#if showSpike}
+{#if showTestNavigation}
     {#await import('./NavDev.svelte') then c}
         <svelte:component this={c.default}/>
     {/await}

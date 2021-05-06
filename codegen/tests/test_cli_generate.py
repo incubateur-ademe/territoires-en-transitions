@@ -4,7 +4,7 @@ from unittest.mock import patch, MagicMock
 
 from codegen.cli_generate import mesures, indicateurs, all, shared, thematiques, actions
 from codegen.paths import mesures_client_output_dir, indicateurs_client_output_dir, shared_client_models_dir, \
-    thematique_client_output_dir
+    thematique_client_output_dir, shared_client_data_dir
 
 output_dir = './tests/outputs'
 
@@ -17,13 +17,13 @@ def test_all(mock_write: MagicMock):
         thematique_json=False,
         mesures_html=True,
         mesures_json=False,
-        indicateurs_html=True,
+        indicateurs_typescript=True,
         shared_python=False,
         shared_typescript=True,
     )
 
     mock_write.assert_any_call(os.path.join(mesures_client_output_dir, 'mesures.html'), ANY)
-    mock_write.assert_any_call(os.path.join(indicateurs_client_output_dir, 'indicateurs.html'), ANY)
+    mock_write.assert_any_call(os.path.join(shared_client_data_dir, 'indicateurs_referentiels.ts'), ANY)
     mock_write.assert_any_call(os.path.join(thematique_client_output_dir, 'thematiques.ts'), ANY)
     mock_write.assert_any_call(os.path.join(shared_client_models_dir, 'indicateur_value.ts'), ANY)
 
@@ -41,12 +41,12 @@ def test_actions(mock_write: MagicMock):
 def test_indicateurs(mock_write: MagicMock):
     """Test that command `poetry run generate indicateurs` write the indicateurs page"""
     indicateurs(
-        output_dir=output_dir,
-        markdown_dir='../referentiels/markdown/indicateurs_citergie',
-        html=True,
+        client_output_dir=output_dir,
+        indicateurs_markdown_dir='../referentiels/markdown/indicateurs_citergie',
+        typescript=True,
     )
 
-    mock_write.assert_any_call(os.path.join(output_dir, 'indicateurs.html'), ANY)
+    mock_write.assert_any_call(os.path.join(output_dir, 'indicateurs_referentiels.ts'), ANY)
 
 
 @patch("codegen.cli_generate.write")

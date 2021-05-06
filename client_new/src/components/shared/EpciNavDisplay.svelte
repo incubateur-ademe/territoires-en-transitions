@@ -1,4 +1,7 @@
 <script lang="ts">
+    /**
+     * The part of the navigation bar that show the current epci name.
+     */
     import {onMount} from 'svelte';
     import {getCurrentEpciId} from "../../api/currentEpci";
     import {epcis_default} from "../../../generated/models/epcis_default";

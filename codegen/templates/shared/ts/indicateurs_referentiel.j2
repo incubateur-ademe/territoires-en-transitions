@@ -1,0 +1,14 @@
+import {IndicateurReferentiel} from "../models/indicateur_referentiel";
+
+export const indicateurs: IndicateurReferentiel[] = [
+{% for indicateur in indicateurs recursive %}
+    new IndicateurReferentiel({
+    id: "{{ indicateur.id }}",
+    action_ids: {{ indicateur.action_ids }},
+    nom: {{ indicateur.nom | tojson }},
+    description: {{ indicateur.description | tojson }},
+    thematique_id: "{{ indicateur.thematique_id }}",
+    unite: {{ indicateur.unite | tojson }}
+    }),
+{% endfor %}
+]

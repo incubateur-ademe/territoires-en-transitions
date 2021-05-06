@@ -23,10 +23,11 @@
 </script>
 
 <script lang="ts">
-    import ActionReferentielComponent from "../../components/shared/ActionReferentiel.svelte";
+    import ActionReferentielPage from "./_ActionReferentielPage.svelte";
+
     export let action: ActionReferentiel
 </script>
 
-<ActionReferentielComponent action={action}/>
+<ActionReferentielPage action={action}/>
 
 
