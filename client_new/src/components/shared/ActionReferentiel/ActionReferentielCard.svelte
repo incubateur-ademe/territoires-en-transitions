@@ -12,6 +12,7 @@
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
     import AddFiche from "../../icons/AddFiche.svelte";
     import PickButton from '../Button/PickButton.svelte'
+    import RowCard from "../RowCard.svelte";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -51,6 +52,10 @@
     $: isMesure = isCitergie ? depth === 3 : depth === 2
     $: mesureId = isCitergie ? action.id.split('.').slice(0, 3).join('.') : action.id.split('.').slice(0, 2).join('.')
 
+    // card shadow
+    let sizes = ['2xl', 'xl', 'l', 'md', '', 'sm']
+    $: shadowSize = sizes[depth - (isCitergie ? 0 : 1)]
+
     let expanded = false
     const handleExpand = () => {
         expanded = !expanded
@@ -86,11 +91,7 @@
 </script>
 
 
-<div class="flex flex-col mb-5 relative" id="{action.id}">
-    <div class="flex flex-row items-center px-4 pt-5 pb-4 bg-white
-                transform translate-y-0.5 hover:translate-y-0
-                { ['hover:hovershadow-2xl', 'hover:shadow-2xl', 'hover:shadow-xl', 'hover:shadow-lg', 'hover:shadow-md', 'hover:shadow', 'hover:shadow-sm'][depth - (isCitergie ? 0 : 1)] }
-                { ['shadow-2xl', 'shadow-2xl', 'shadow-xl', 'shadow-lg', 'shadow-md', 'shadow', 'shadow-sm'][depth + (isCitergie ? 0 : 1)] }">
+<RowCard id={action.id} shadowSize={shadowSize}>
         {#if ficheButton}
             <a class="opacity-50 hover:opacity-80 mr-2"
                href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
@@ -133,14 +134,14 @@
                 <ActionStatus actionId={action.id}/>
             </div>
         {/if}
-    </div>
+</RowCard>
 
-    {#if expanded && action.description.trim().length }
-        <div class="flex m-4">
-            {action.description}
-        </div>
-    {/if}
-</div>
+{#if expanded && action.description.trim().length }
+    <div class="flex m-4">
+        {action.description}
+    </div>
+{/if}
+
 
 {#if expanded}
     <div class="ml-6">

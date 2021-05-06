@@ -1,10 +1,12 @@
 <script lang="ts">
     /**
-     * Display a list of action filtered by thematics
+     * Displays an action list sorted by thématiques
+     *
+     * Passes linkedActionIds and toggleActionId props along to its children.
      */
     import {actions} from "../../../../generated/data/actions_referentiels";
     import {thematiques} from "../../../../generated/data/thematiques";
-    import ActionReferentielBar from './_ActionReferentielBar'
+    import LinkActionCard from './_LinkActionCard'
 
     export let onTopLevelActionClicked: (actionId: string) => void
     export let close: (event: MouseEvent) => void
@@ -13,7 +15,7 @@
     export let linkedActionIds: string[]
 
     // Handle add/remove button callback of each action
-    export let handlePickButton: () => void
+    export let toggleActionId: (actionId: string) => void
 
     // Helper handler to check if an action is linked to the current fiche
     $: isActionLinkedToFiche = (actionId) => linkedActionIds.includes(actionId)
@@ -50,11 +52,10 @@
 <div class="bg-gray-100">
     <header class="bg-white px-14 py-4 grid grid-cols-4 justify-center">
         <button class="cursor-pointer underline col-span-1 text-left self-center"
-           on:click|preventDefault={() => close() }
-        >
+                on:click|preventDefault={close}>
             ‹ Retourner à la fiche
         </button>
-        <h2 id="dialog-title" class="text-3xl font-bold col-span-2 text-center self-center py-4">Lier une action</h2>
+        <h2 class="text-3xl font-bold col-span-2 text-center self-center py-4" id="dialog-title">Lier une action</h2>
     </header>
 
     <div class="p-14 focus:bg-gray-100 custom-overflow">
@@ -66,12 +67,10 @@
                 <ul class="mb-16">
                     {#each actions.filter((action) => action.thematique_id === thematique.id) as action (action.id) }
                         <li>
-                            <ActionReferentielBar action={action}
-                                                  isAdded={isActionLinkedToFiche(action.id)}
-                                                  handleAdd={handlePickButton}
-                                                  handleRemove={handlePickButton}
-                                                  onTitleClick={() => onTopLevelActionClicked(action.id)}
-                            />
+                            <LinkActionCard action={action}
+                                            linkedActionIds={linkedActionIds}
+                                            toggleActionId={toggleActionId}
+                                            onTitleClick={() => onTopLevelActionClicked(action.id)}/>
                         </li>
                     {/each}
                 </ul>

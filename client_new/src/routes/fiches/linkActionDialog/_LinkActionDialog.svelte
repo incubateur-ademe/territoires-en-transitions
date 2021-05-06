@@ -1,4 +1,12 @@
 <script lang="ts">
+    /**
+     * The main dialog component to link actions to a fiche.
+     *
+     * Essentially switch between LinkActionDialogIndex and LinkActionDialogSubpage
+     * given the selected topLevelAction.
+     *
+     * Passes linkedActionIds and toggleActionId props along to its children.
+     */
     import {createEventDispatcher} from 'svelte'
     import Dialog from '../../../components/shared/Dialog.svelte'
     import LinkActionDialogIndex from './_LinkActionDialogIndex.svelte'
@@ -10,28 +18,24 @@
     // List of linked actions of the current fiche
     export let linkedActionIds: string[]
 
-    // Handle action button callback
-    export let handleActionButton
+    // Handle pick button callback.
+    export let toggleActionId: () => void
 
-    // Helper handler to check if an action is linked to the current fiche
-    export let isActionLinkedToFiche: (string) => boolean
-
-    // Handle pick button callback
-    export let handlePickButton: () => void
-
+    // The action selected by the user.
     let topLevelAction: ActionReferentiel | null
 
     const dispatch = createEventDispatcher()
     const close = () => dispatch('LinkActionDialogClose')
 
-    const onTopLevelActionClicked = (actionId: string) => {
+    /// Used by LinkActionDialogIndex
+    const selectTopAction = (actionId: string) => {
         const list = topLevelAction ? topLevelAction.actions : actions
         topLevelAction = list.find((action) => action.id == actionId)
     }
 
-    const togglePopupContent = (event: MouseEvent) => {
-        event.preventDefault()
-        topLevelAction = actions.find((action) => action.actions.find((child) => child.id == topLevelAction.id))
+    // Called by the back button.
+    const showIndex = (event: MouseEvent) => {
+        topLevelAction = null
     }
 </script>
 
@@ -41,14 +45,14 @@
     {#if topLevelAction}
         <LinkActionDialogSubpage
                 linkedActionIds={linkedActionIds}
-                handlePickButton={handlePickButton}
+                toggleActionId={toggleActionId}
                 topLevelAction={topLevelAction}
-                togglePopupContent={togglePopupContent}/>
+                handleBack={showIndex}/>
     {:else }
         <LinkActionDialogIndex
                 linkedActionIds={linkedActionIds}
-                handlePickButton={handlePickButton}
-                onTopLevelActionClicked={onTopLevelActionClicked}
+                toggleActionId={toggleActionId}
+                onTopLevelActionClicked={selectTopAction}
                 close={close}/>
     {/if}
 </Dialog>

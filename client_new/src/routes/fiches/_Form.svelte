@@ -41,16 +41,14 @@
     const isActionLinkedToFiche = (actionId) => data.referentiel_action_ids.includes(actionId)
 
     // Update the array of action ids linked to the current fiche
-    const toggleActionIdInData = (actionId) => {
+    const toggleActionId = (actionId) => {
         const actionIds = data.referentiel_action_ids
 
         if (isActionLinkedToFiche(actionId)) {
-            const newActionIds = actionIds.filter((id) => id != actionId)
-            data.referentiel_action_ids = newActionIds
-            return
+            data.referentiel_action_ids = actionIds.filter((id) => id != actionId)
+        } else {
+            data.referentiel_action_ids = [...actionIds, actionId]
         }
-
-        data.referentiel_action_ids = [...actionIds, actionId]
     }
 
     onMount(async () => {
@@ -82,7 +80,6 @@
 <section class="flex flex-col">
 
     <form class="flex flex-col w-full md:w-3/4 pb-10">
-
         <label class="text-xl" for="fiche_create_custom_id">Identifiant</label>
         <input bind:value={data.custom_id}
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
@@ -168,7 +165,7 @@
             {#await import('./_LinkedActions.svelte') then c}
                 <svelte:component this={c.default}
                                   actionIds={data.referentiel_action_ids}
-                                  handlePickButton={toggleActionIdInData}
+                                  handlePickButton={toggleActionId}
                 />
             {/await}
             <Button on:click={() => showLinkActionDialog = true }
@@ -210,7 +207,7 @@
             <svelte:component this={c.default}
                               on:LinkActionDialogClose={() => showLinkActionDialog = false }
                               linkedActionIds={data.referentiel_action_ids}
-                              handlePickButton={toggleActionIdInData}
+                              toggleActionId={toggleActionId}
             />
         {/await}
     {/if}

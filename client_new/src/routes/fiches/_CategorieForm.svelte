@@ -18,7 +18,6 @@
         if (!data.nom) return;
         const categorie = new FicheActionCategorieStorable(data)
         const saved = await categorieStore.store(categorie)
-        console.log('saved', saved)
         dispatch('save', {'categorie': saved})
     }
 </script>

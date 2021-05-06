@@ -7,7 +7,7 @@
     import Angle from "./Angle.svelte";
     import {onMount} from "svelte";
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-    import ActionReferentielBar from '../../routes/actions_referentiels/_ActionReferentielBar.svelte'
+    import ActionReferentielCard from "./ActionReferentiel/ActionReferentielCard.svelte";
 
     export let indicateur: IndicateurReferentiel
     let relatedActions: ActionReferentiel[] = []
@@ -69,7 +69,7 @@
 
         <h4 class="text-lg mt-4 mb-2">Actions liées</h4>
         {#each relatedActions as action}
-            <ActionReferentielBar action={action} asLink emoji/>
+            <ActionReferentielCard action={action} link emoji/>
         {/each}
     </div>
 

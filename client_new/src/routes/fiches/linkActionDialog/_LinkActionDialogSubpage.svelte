@@ -1,22 +1,28 @@
 <script lang="ts">
-    import Button from '../../../components/shared/Button/Button.svelte'
+    /**
+     * Displays the sub action of its topLevelAction.
+     * Allows searching in the list.
+     *
+     * Passes linkedActionIds and toggleActionId props along to its children.
+     */
     import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
     import ReferentielSearchBar from '../../../components/shared/ReferentielSearchBar.svelte'
-    import PickButton from '../../../components/shared/Button/PickButton.svelte'
-    import ActionReferentielTree from './../../../components/shared/ActionReferentiel/_ActionReferentielTree.svelte'
-    import SimpleBar from '../../../components/shared/SimpleBar.svelte'
+    import LinkActionCard from './_LinkActionCard'
+    import PickButton from "../../../components/shared/Button/PickButton.svelte";
+    import Button from "../../../components/shared/Button/Button.svelte";
+    import RowCard from "../../../components/shared/RowCard.svelte";
 
     // Main action of the subpage
     export let topLevelAction: ActionReferentiel
 
     // Handle the popup content
-    export let togglePopupContent: () => void
+    export let handleBack: () => void
 
     // List of linked actions of the current fiche
-    export let linkedActionIds: string[] = []
+    export let linkedActionIds: string[]
 
     // Handle add/remove button callback of each action
-    export let handlePickButton: () => void = () => {}
+    export let toggleActionId: (actionId: string) => void
 
     // Helper handler to check if an action is linked to the current fiche
     $: isActionLinkedToFiche = (actionId) => linkedActionIds.includes(actionId)
@@ -24,9 +30,15 @@
     // Show main action description
     let actionDescriptionDisplayed = false
 
-    // Handle search display
+    // Called on pick and unpick regardless.
+    const handleTopLevelPick = () => {
+        toggleActionId(topLevelAction.id)
+    }
+
+    // Search state
     let displayedActions: ActionReferentiel[] = topLevelAction.actions
-    let isSearching: string
+    let needle: string
+    $: notSearching = !needle
 </script>
 
 <style>
@@ -45,24 +57,23 @@
 <div class="bg-gray-100 absolute top-0 right-0 left-0">
     <header class="bg-white px-14 py-4 grid grid-cols-4 justify-center">
         <button class="cursor-pointer underline col-span-1 text-left self-center"
-           on:click|preventDefault={togglePopupContent}
-        >
+                on:click|preventDefault={handleBack}>
             ‹ Retour
         </button>
         <h2 class="text-3xl font-bold col-span-2 text-center self-center py-4" id="dialog-title">Lier une action</h2>
         <ReferentielSearchBar actions={topLevelAction.actions}
                               bind:matches={displayedActions}
-                              bind:needle={isSearching}
-        />
+                              bind:needle={needle}/>
     </header>
 
     <div class="p-14 focus:bg-gray-100 custom-overflow">
-        {#if !isSearching }
+
+        {#if notSearching}
             <div class="mb-10">
-                <SimpleBar id={topLevelAction.id} shadowSize="lg">
+                <RowCard id={topLevelAction.id} shadowSize="lg">
                     <PickButton picked={isActionLinkedToFiche(topLevelAction.id)}
-                                handlePick={() => handlePickButton(topLevelAction.id)}
-                                handleUnpick={() => handlePickButton(topLevelAction.id)}
+                                handlePick={handleTopLevelPick}
+                                handleUnpick={handleTopLevelPick}
                                 pickLabel="+"
                                 unpickLabel="✓ Ajouté"
                     />
@@ -72,8 +83,7 @@
                             <Button classNames="cursor-pointer self-center flex-none"
                                     colorVariant="bramble"
                                     on:click={() => actionDescriptionDisplayed = !actionDescriptionDisplayed }
-                                    size="small"
-                            >
+                                    size="small">
                                 Détails
                             </Button>
                         </div>
@@ -81,18 +91,17 @@
                             {topLevelAction.description}
                         </div>
                     </div>
-                </SimpleBar>
+                </RowCard>
             </div>
         {/if}
 
         <ul>
             <li>
                 {#each displayedActions as action (action.id) }
-                    <ActionReferentielTree bar="DialogBar"
-                                           action={action}
-                                           linkedActionIds={linkedActionIds}
-                                           handlePickButton={handlePickButton}
-                    />
+                    <LinkActionCard action={action}
+                                    expandable
+                                    linkedActionIds={linkedActionIds}
+                                    toggleActionId={toggleActionId}/>
                 {/each}
             </li>
         </ul>

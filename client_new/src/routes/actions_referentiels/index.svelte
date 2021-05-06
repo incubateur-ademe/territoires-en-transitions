@@ -1,10 +1,10 @@
 <script lang="ts">
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
     import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
-    import ActionReferentielBar from './_ActionReferentielBar.svelte'
 
     import {actions} from "../../../generated/data/actions_referentiels";
     import {Thematique, thematiques} from "../../../generated/data/thematiques";
+    import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
 
     let allActions: ActionReferentiel[] = actions;
     let displayed: ActionReferentiel[] = actions;
@@ -39,9 +39,9 @@
     <h2 class="text-2xl mt-10 mb-2">{thematique.name}</h2>
     {#each actions as action}
         {#if searching}
-            <ActionReferentielBar action={action} ficheButton emoji expandButton statusBar />
+            <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>
         {:else }
-            <ActionReferentielBar action={action} emoji asLink />
+            <ActionReferentielCard action={action} emoji link/>
         {/if}
     {/each}
 {/each}
