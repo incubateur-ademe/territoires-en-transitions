@@ -3,13 +3,13 @@
 Les choix présentés ici, comme tout nos choix sont susceptibles d'évoluer conformément à
 la [philosophie de l'équipe de développement](https://github.com/labels-transition/documentation/blob/main/tech/fonctionnement-de-l-equipe.md#philosophie).
 
-- (Langages et frameworks)[#langages-et-frameworks]
-  - (JavaScript)[#javascript]
-  - (TypeScript)[#typescript]
-- (Gérer les ressources avec Webpack)[#gérer-les-ressources-avec-webpack]
-  - (postcss-loader)[#postcss-loader]
-  - (ts-loader)[#ts-loader]
-- (Description de la stack de test)[#description-de-la-stack-de-test]
+- [Langages et framewor](#langages-et-frameworks)
+  - [JavaScript](#javascript)
+  - [TypeScript](#typescript)
+- [Gérer les ressources avec Webpack](#gérer-les-ressources-avec-webpack)
+  - [postcss-loader](#postcss-loader)
+  - [ts-loader](#ts-loader)
+- [Description de la stack de test](#description-de-la-stack-de-test)
 
 ## Languages et frameworks
 Les languages et les frameworks ont été choisis pour remplir les exigences en terme :
