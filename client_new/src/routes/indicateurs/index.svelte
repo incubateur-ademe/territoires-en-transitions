@@ -8,6 +8,7 @@
     import {Thematique, thematiques} from "../../../generated/data/thematiques";
     import {onMount} from "svelte";
     import IndicateursSearchBar from "../../components/shared/IndicateursSearchBar.svelte";
+    import IndicateurPersonnaliseList from "./_IndicateurPersonnaliseList.svelte"
 
     let byThematique = new Map<Thematique, IndicateurReferentiel[]>()
     let displayed: IndicateurReferentiel[] = indicateurs
@@ -36,6 +37,8 @@
         <IndicateursSearchBar bind:matches={displayed} indicateurs={indicateurs} searchCallBack={update}/>
     </div>
 </div>
+
+<IndicateurPersonnaliseList/>
 
 {#each [...byThematique] as [thematique, indicateurs]}
     <h2 class="text-2xl mt-10 mb-2">{thematique.name}</h2>

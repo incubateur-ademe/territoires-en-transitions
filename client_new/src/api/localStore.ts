@@ -83,6 +83,7 @@ export class LocalStore<T> {
      */
     retrieveAll(): Array<T> {
         const store = getStore()
+        console.log(store)
 
         if (!store) return []
         if (!store[this.pathname]) return []
@@ -186,7 +187,7 @@ export const ficheActionCategorieStore = new LocalStore<FicheActionCategorieStor
 
 
 export const indicateurPersonnaliseStore = new LocalStore<IndicateurPersonnaliseStorable>({
-    pathname: FicheActionStorable.pathname,
+    pathname: IndicateurPersonnaliseStorable.pathname,
     serializer: (storable) => storable,
     deserializer: (serialized) => new IndicateurPersonnaliseStorable(serialized as IndicateurPersonnaliseInterface),
 });
