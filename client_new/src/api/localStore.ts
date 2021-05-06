@@ -7,8 +7,6 @@ import {ActionStatus, ActionStatusInterface} from "../../generated/models/action
 import {isStorable} from "./storable";
 import {FicheActionStorable} from "../storables/FicheActionStorable";
 import type {FicheActionInterface} from "../../generated/models/fiche_action";
-import {FicheActionCategorieStorable} from "../storables/FicheActionCategorieStorable";
-import type {FicheActionCategorieInterface} from "../../generated/models/fiche_action_categorie";
 
 export const storeKey = 'territoiresentransitions'
 
@@ -174,11 +172,5 @@ export const ficheActionStore = new LocalStore<FicheActionStorable>({
     pathname: FicheActionStorable.pathname,
     serializer: (storable) => storable,
     deserializer: (serialized) => new FicheActionStorable(serialized as FicheActionInterface),
-});
-
-export const ficheActionCategorieStore = new LocalStore<FicheActionCategorieStorable>({
-    pathname: FicheActionCategorieStorable.pathname,
-    serializer: (storable) => storable,
-    deserializer: (serialized) => new FicheActionCategorieStorable(serialized as FicheActionCategorieInterface),
 });
 

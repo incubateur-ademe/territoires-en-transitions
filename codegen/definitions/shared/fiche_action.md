@@ -1,5 +1,5 @@
-## Fiche action
-Représente une fiche action crée par une epci.
+## Action personnalisée
+Représente une fiche action crée pour une epci.
 `epci_id/uid`
 
 ```yaml
