@@ -45,7 +45,7 @@
         <div class="flex-1 flex flex-row cursor-pointer items-stretch mr-4"
              on:click={handleExpand}>
             <h3 class="flex flex-row items-stretch">
-                <span class="mr-4 flex">{indicateur.id}</span>
+                <span class="mr-4 flex">{ indicateur.id }</span>
                 <span class="mr-4 flex">{ indicateur.nom }</span>
             </h3>
             <Angle direction="{expanded ? 'down' : 'right' }"/>

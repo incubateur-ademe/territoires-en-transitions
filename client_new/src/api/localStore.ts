@@ -9,8 +9,12 @@ import {FicheActionStorable} from "../storables/FicheActionStorable";
 import type {FicheActionInterface} from "../../generated/models/fiche_action";
 import {FicheActionCategorieStorable} from "../storables/FicheActionCategorieStorable";
 import type {FicheActionCategorieInterface} from "../../generated/models/fiche_action_categorie";
-import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnalise";
+import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnaliseStorable";
 import type {IndicateurPersonnaliseInterface} from "../../generated/models/indicateur_personnalise";
+import {IndicateurPersonnaliseValueStorable} from "../storables/IndicateurPersonnaliseValueStorable";
+import type {IndicateurPersonnaliseValueInterface} from "../../generated/models/indicateur_personnalise_value";
+import {IndicateurCommentaireStorable} from "../storables/IndicateurCommentaireStorable";
+import type {IndicateurCommentaireInterface} from "../../generated/models/indicateur_commentaire";
 
 export const storeKey = 'territoiresentransitions'
 
@@ -190,4 +194,16 @@ export const indicateurPersonnaliseStore = new LocalStore<IndicateurPersonnalise
     pathname: IndicateurPersonnaliseStorable.pathname,
     serializer: (storable) => storable,
     deserializer: (serialized) => new IndicateurPersonnaliseStorable(serialized as IndicateurPersonnaliseInterface),
+});
+
+export const indicateurPersonnaliseValueStore = new LocalStore<IndicateurPersonnaliseValueStorable>({
+    pathname: IndicateurPersonnaliseValueStorable.pathname,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new IndicateurPersonnaliseValueStorable(serialized as IndicateurPersonnaliseValueInterface),
+});
+
+export const indicateurCommentaireStore = new LocalStore<IndicateurCommentaireStorable>({
+    pathname: IndicateurCommentaireStorable.pathname,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new IndicateurCommentaireStorable(serialized as IndicateurCommentaireInterface),
 });
