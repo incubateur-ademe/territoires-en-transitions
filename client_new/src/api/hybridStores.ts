@@ -13,6 +13,13 @@ import {FicheActionStorable} from "../storables/FicheActionStorable";
 import {FicheAction, FicheActionInterface} from "../../generated/models/fiche_action";
 import {FicheActionCategorieStorable} from "../storables/FicheActionCategorieStorable";
 import {FicheActionCategorie, FicheActionCategorieInterface} from "../../generated/models/fiche_action_categorie";
+import {IndicateurPersonnaliseValueStorable} from "../storables/IndicateurPersonnaliseValueStorable";
+import {
+    IndicateurPersonnaliseValue,
+    IndicateurPersonnaliseValueInterface
+} from "../../generated/models/indicateur_personnalise_value";
+import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnaliseStorable";
+import {IndicateurPersonnalise, IndicateurPersonnaliseInterface} from "../../generated/models/indicateur_personnalise";
 
 
 export const indicateurValueStore = new HybridStore<IndicateurValueStorable>({
@@ -56,3 +63,18 @@ export const ficheActionCategorieStore = new HybridStore<FicheActionCategorieSto
     serializer: (storable) => storable,
     deserializer: (serialized) => new FicheActionCategorieStorable(serialized as FicheActionCategorieInterface),
 });
+
+export const indicateurPersonnaliseStore = new HybridStore<IndicateurPersonnaliseStorable>({
+    host: getCurrentAPI(),
+    endpoint: `v1/${IndicateurPersonnalise.pathname}/${getCurrentEpciId()}`,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new IndicateurPersonnaliseStorable(serialized as IndicateurPersonnaliseInterface),
+});
+
+export const indicateurPersonnaliseValueStore = new HybridStore<IndicateurPersonnaliseValueStorable>({
+    host: getCurrentAPI(),
+    endpoint: `v1/${IndicateurPersonnaliseValue.pathname}/${getCurrentEpciId()}`,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new IndicateurPersonnaliseValueStorable(serialized as IndicateurPersonnaliseValueInterface),
+});
+

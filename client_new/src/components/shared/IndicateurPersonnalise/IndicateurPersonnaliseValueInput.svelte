@@ -3,27 +3,32 @@
      * The input for an indicateur yearly value.
      * Retrieve and store values.
      */
-    import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
+    import {IndicateurReferentiel} from "../../../../generated/models/indicateur_referentiel";
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
-    import {indicateurPersonnaliseValueStore, LocalStore} from "../../api/localStore";
-    import {IndicateurPersonnaliseValueStorable} from "../../storables/IndicateurPersonnaliseValueStorable";
+    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import {IndicateurPersonnaliseValueStorable} from "../../../storables/IndicateurPersonnaliseValueStorable";
+    import {HybridStore} from "../../../api/hybridStore";
 
     export let indicateur: IndicateurReferentiel
     export let year: number
 
-    let indicateurValueStore: LocalStore<IndicateurPersonnaliseValueStorable>
+    let indicateurValueStore: HybridStore<IndicateurPersonnaliseValueStorable>
     let value = ''
     let epciId = ''
 
     onMount(async () => {
-        indicateurValueStore = indicateurPersonnaliseValueStore;
+        const hybridStores = await import ("../../../api/hybridStores");
+        indicateurValueStore = hybridStores.indicateurPersonnaliseValueStore;
         epciId = getCurrentEpciId()
 
-        const indicateurValue: IndicateurPersonnaliseValueStorable = indicateurValueStore.retrieveById(
-            `${epciId}/${indicateur.id}/${year}`
-        )
-        value = indicateurValue.value
+        try {
+            const indicateurValue: IndicateurPersonnaliseValueStorable = await indicateurValueStore.retrieveById(
+                `${epciId}/${indicateur.id}/${year}`
+            )
+            value = indicateurValue.value
+        } catch (e) {
+            // no value found it's ok
+        }
     })
 
     /**

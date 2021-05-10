@@ -189,7 +189,6 @@ export const ficheActionCategorieStore = new LocalStore<FicheActionCategorieStor
     deserializer: (serialized) => new FicheActionCategorieStorable(serialized as FicheActionCategorieInterface),
 });
 
-
 export const indicateurPersonnaliseStore = new LocalStore<IndicateurPersonnaliseStorable>({
     pathname: IndicateurPersonnaliseStorable.pathname,
     serializer: (storable) => storable,

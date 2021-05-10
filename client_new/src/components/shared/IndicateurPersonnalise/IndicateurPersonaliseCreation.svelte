@@ -1,9 +1,9 @@
 <script lang="ts">
-    import IndicateurForm from './_IndicateurPersonnaliseForm.svelte'
+    import IndicateurForm from './IndicateurPersonnaliseForm.svelte'
     import {createEventDispatcher, onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
+    import {getCurrentEpciId} from "../../../api/currentEpci";
     import {v4 as uuid} from 'uuid'
-    import {IndicateurPersonnaliseInterface} from "../../../generated/models/indicateur_personnalise";
+    import {IndicateurPersonnaliseInterface} from "../../../../generated/models/indicateur_personnalise";
 
     let data: IndicateurPersonnaliseInterface
     const dispatch = createEventDispatcher()
@@ -18,8 +18,8 @@
         }
     }
 
-    const handleSave = async (details: any) => {
-        dispatch('save', details)
+    const handleSave = async (event: any) => {
+        dispatch('save', event.detail)
         initialize()
     }
 

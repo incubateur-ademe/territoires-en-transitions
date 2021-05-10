@@ -1,10 +1,9 @@
 <script lang="ts">
-    import {indicateurPersonnaliseStore} from "../../api/localStore";
-    import {IndicateurPersonnaliseStorable} from "../../storables/IndicateurPersonnaliseStorable";
+    import {IndicateurPersonnaliseStorable} from "../../../storables/IndicateurPersonnaliseStorable";
     import {onMount} from "svelte";
-    import IndicateurPersonnaliseElement from "./_IndicateurPersonnaliseElement.svelte"
-    import IndicateurPersonaliseCreation from "./_IndicateurPersonaliseCreation.svelte"
-    import Button from "../../components/shared/Button/Button.svelte";
+    import IndicateurPersonnaliseElement from "./IndicateurPersonnaliseCard.svelte"
+    import IndicateurPersonaliseCreation from "./IndicateurPersonaliseCreation.svelte"
+    import Button from "../Button/Button.svelte";
 
     let indicateurs: IndicateurPersonnaliseStorable[] = []
     let showCreation: boolean = false
@@ -14,13 +13,13 @@
     }
 
     const refresh = async () => {
-        // todo use API
-        indicateurs = await indicateurPersonnaliseStore.retrieveAll()
-        console.log('indicateurs', indicateurs)
+        const hybridStores = await import ("../../../api/hybridStores");
+        showCreation = false
+        indicateurs = await hybridStores.indicateurPersonnaliseStore.retrieveAll()
     }
 
     onMount(async () => {
-        refresh()
+        await refresh()
     })
 
 </script>
@@ -28,7 +27,7 @@
 <div class="flex flex-row w-full items-center">
 
     <h3 class="text-2xl">Indicateurs personalisés</h3>
-      <div class="flex flex-grow"></div>
+    <div class="flex flex-grow"></div>
     <Button colorVariant={showCreation ? 'ash' : 'nettle'}
             on:click={handleNewIndicateur}>
         Nouvel indicateur

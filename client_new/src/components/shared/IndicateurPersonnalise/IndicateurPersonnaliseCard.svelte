@@ -2,11 +2,11 @@
     /**
      * Display an Indicateur Personnalisé and allow edition.
      */
-    import {IndicateurPersonnalise} from "../../../generated/models/indicateur_personnalise";
-    import IndicateurForm from "./_IndicateurPersonnaliseForm.svelte"
-    import Angle from "../../components/shared/Angle.svelte";
-    import Button from "../../components/shared/Button/Button.svelte";
-    import IndicateurPersonnaliseValueInput from "./_IndicateurPersonnaliseValueInput.svelte";
+    import {IndicateurPersonnalise} from "../../../../generated/models/indicateur_personnalise";
+    import IndicateurForm from "./IndicateurPersonnaliseForm.svelte"
+    import Angle from "../Angle.svelte";
+    import Button from "../Button/Button.svelte";
+    import IndicateurPersonnaliseValueInput from "./IndicateurPersonnaliseValueInput.svelte";
 
     export let indicateur: IndicateurPersonnalise
 
@@ -45,7 +45,6 @@
                     <div class="flex-1 flex flex-row cursor-pointer items-stretch mr-4"
                          on:click={handleExpand}>
                         <h3 class="flex flex-row items-stretch">
-                            <span class="mr-4 flex">{indicateur.custom_id}</span>
                             <span class="mr-2 flex">{ indicateur.nom }</span>
                             {#if indicateur.unite }
                                 <span class="mr-2 flex">({ indicateur.unite })</span>

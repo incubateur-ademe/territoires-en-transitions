@@ -11,15 +11,20 @@
     import {HybridStore} from "../../api/hybridStore"
     import {testUIVisibility} from "../../api/currentEnvironment";
     import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
-    import IndicateurReferentielCard from "../../components/shared/IndicateurReferentielCard.svelte";
+    import IndicateurReferentielCard
+        from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
+    import {IndicateurPersonnalise} from "../../../generated/models/indicateur_personnalise";
+    import IndicateurPersonnaliseCard
+        from "../../components/shared/IndicateurPersonnalise/IndicateurPersonnaliseCard.svelte";
+    import IndicateurPersonaliseCreation
+        from "../../components/shared/IndicateurPersonnalise/IndicateurPersonaliseCreation.svelte";
 
     export let data: FicheActionInterface
 
     let ficheActionStore: HybridStore<FicheActionStorable>
 
     let showLinkActionDialog = false
-    let useDialogPicker = false
-    let useIndicateurs = false
+    let useIndicateursPersonnalises = false
 
     // hack fix https://lte.jetbrains.space/p/territoires-en-transitions/issues/302
     let budget: number | string = data.budget
@@ -35,7 +40,25 @@
         else window.alert('Une erreur est survenue lors de la sauvegarde de la fiche action.')
     }
 
+    // Indicateur référentiel list to pick from.
     let indicateursReferentiel: IndicateurReferentiel[]
+
+    // Indicateur personnalise list to pick from.
+    let indicateursPersonnalises: IndicateurPersonnalise[]
+
+    // Show the indicateur personnalisé creation form.
+    let showIndicateurCreation = false
+
+    // Called when the indicateur personnalisé form.
+    const indicateurSaved = async (event) => {
+        showIndicateurCreation = false
+        console.log('event', event)
+        console.log('id', event.detail.indicateur.id)
+
+        const hybridStores = await import ("../../api/hybridStores")
+        indicateursPersonnalises = await hybridStores.indicateurPersonnaliseStore.retrieveAll()
+        data.indicateur_personnalise_ids.push(event.detail.indicateur.id)
+    }
 
     // Helper to check reactively if an action is linked to the current fiche
     const isActionLinkedToFiche = (actionId) => data.referentiel_action_ids.includes(actionId)
@@ -53,15 +76,18 @@
 
     onMount(async () => {
         // initialize store
-        const hybridStores = await import ("../../api/hybridStores");
-        ficheActionStore = hybridStores.ficheActionStore;
+        const hybridStores = await import ("../../api/hybridStores")
+        ficheActionStore = hybridStores.ficheActionStore
 
         // load référentiel indicateurs
         const indicateurs = await import("../../../generated/data/indicateurs_referentiels")
         indicateursReferentiel = indicateurs.indicateurs
 
+        // load indicateurs personnalisés
+        indicateursPersonnalises = await hybridStores.indicateurPersonnaliseStore.retrieveAll()
+
         // show test ui
-        useDialogPicker = useIndicateurs = testUIVisibility()
+        useIndicateursPersonnalises = testUIVisibility()
     });
 
     const [validity, validate] = createFieldValidator(requiredValidator())
@@ -176,7 +202,7 @@
 
         <div class="p-5"></div>
         <div class="my-2 p-2">
-            <div class="text-xl mb-4">Indicateurs</div>
+            <div class="text-xl mb-4">Indicateurs référentiel</div>
             {#if indicateursReferentiel}
                 <MultiSelect id='fiche_create_indicateurs' bind:value={data.referentiel_indicateur_ids}>
                     {#each indicateursReferentiel as indicateur}
@@ -193,6 +219,38 @@
             {/if}
         </div>
 
+
+        <div class="p-5"></div>
+        <div class="my-2 p-2">
+            <div class="flex flex-row w-full items-center">
+                <h3 class="text-2xl">Indicateurs personalisés</h3>
+                <div class="flex flex-grow"></div>
+                <Button colorVariant={showIndicateurCreation ? 'ash' : 'nettle'}
+                        on:click={() => showIndicateurCreation = true }
+                        size="small">
+                    Créer un nouvel indicateur
+                </Button>
+            </div>
+            {#if showIndicateurCreation}
+                <IndicateurPersonaliseCreation on:save={indicateurSaved}/>
+            {/if}
+
+            <div class="p-5"></div>
+            {#if indicateursPersonnalises}
+                <MultiSelect id='fiche_create_indicateurs' bind:value={data.indicateur_personnalise_ids}>
+                    {#each indicateursPersonnalises as indicateur}
+                        <option value="{indicateur.id}">{indicateur.nom}</option>
+                    {/each}
+                </MultiSelect>
+
+                {#each data.indicateur_personnalise_ids as indicateurId}
+                    <div class="shadow">
+                        <IndicateurPersonnaliseCard
+                                indicateur={indicateursPersonnalises.filter((i) => i.id === indicateurId)[0]}/>
+                    </div>
+                {/each}
+            {/if}
+        </div>
 
         <div class="p-5"></div>
         <Button classNames="md:w-1/3 self-end"
