@@ -46,9 +46,14 @@
                          on:click={handleExpand}>
                         <h3 class="flex flex-row items-stretch">
                             <span class="mr-4 flex">{indicateur.custom_id}</span>
-                            <span class="mr-4 flex">{ indicateur.nom }</span>
+                            <span class="mr-2 flex">{ indicateur.nom }</span>
+                            {#if indicateur.unite }
+                                <span class="mr-2 flex">({ indicateur.unite })</span>
+                            {/if}
                         </h3>
-                        <Angle direction="{expanded ? 'down' : 'right' }"/>
+                        <div class="ml-2 flex">
+                            <Angle direction="{expanded ? 'down' : 'right' }"/>
+                        </div>
                     </div>
                 </div>
                 <div class="flex flex-row flex-1">
