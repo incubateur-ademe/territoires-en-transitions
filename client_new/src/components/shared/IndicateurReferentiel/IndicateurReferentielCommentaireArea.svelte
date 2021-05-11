@@ -9,7 +9,6 @@
     import {getCurrentEpciId} from "../../../api/currentEpci";
     import {IndicateurReferentielCommentaireStorable} from "../../../storables/IndicateurReferentielCommentaireStorable";
     import LabeledTextArea from "../Forms/LabeledTextArea.svelte";
-    import Button from "../Button/Button.svelte";
     import {IndicateurReferentielCommentaireInterface} from "../../../../generated/models/indicateur_referentiel_commentaire";
 
     // Mandatory indicateur prop to attach the commentaire.
@@ -36,17 +35,14 @@
         }
     })
 
-    const onSave = (_): void => {
+    const onSave = (): void => {
         const indicateurValue = new IndicateurReferentielCommentaireStorable(data)
         commentaireStore.store(indicateurValue)
     }
 </script>
 
 <div class="flex flex-col">
-    <LabeledTextArea bind:value={data.value}>
+    <LabeledTextArea bind:value={data.value} on:save={onSave}>
         <div class="text-xl">Commentaire</div>
     </LabeledTextArea>
-    <div class="flex flex-row-reverse">
-        <Button on:click={onSave}>Enregistrer</Button>
-    </div>
 </div>
