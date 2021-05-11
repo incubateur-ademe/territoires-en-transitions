@@ -8,6 +8,7 @@
     import {onMount} from "svelte";
     import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
     import ActionReferentielCard from "../ActionReferentiel/ActionReferentielCard.svelte";
+    import IndicateurReferentielCommentaireArea from "./IndicateurReferentielCommentaireArea.svelte";
 
     export let indicateur: IndicateurReferentiel
     let relatedActions: ActionReferentiel[] = []
@@ -63,14 +64,21 @@
     </div>
 
 
-    <div class="description lg:w-1/2 mt-4"
+    <div class="description lg:w-2/3 mt-4"
          class:hidden="{!expanded}">
+
+        <div class="pb-2"></div>
+        <h4 class="text-lg mt-4 mb-2">Description</h4>
         {@html indicateur.description }
 
+        <div class="pb-2"></div>
         <h4 class="text-lg mt-4 mb-2">Actions liées</h4>
         {#each relatedActions as action}
             <ActionReferentielCard action={action} link emoji/>
         {/each}
+        
+        <div class="pb-5"></div>
+        <IndicateurReferentielCommentaireArea indicateur={indicateur} />
     </div>
 
 </section>
