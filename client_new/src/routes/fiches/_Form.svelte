@@ -18,6 +18,7 @@
         from "../../components/shared/IndicateurPersonnalise/IndicateurPersonnaliseCard.svelte";
     import IndicateurPersonaliseCreation
         from "../../components/shared/IndicateurPersonnalise/IndicateurPersonaliseCreation.svelte";
+    import LabeledTextArea from "../../components/shared/Forms/LabeledTextArea.svelte";
 
     export let data: FicheActionInterface
 
@@ -129,19 +130,14 @@
 
         <CategoriePicker ficheActionUid={data.uid}/>
 
-        <label class="text-xl" for="fiche_create_description">Description</label>
-        <textarea bind:value={data.description}
-                  class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                  id="fiche_create_description"></textarea>
-        <div class="p-5"></div>
-
-
+        <LabeledTextArea bind:value={data.description}>
+            <div class="text-xl">Description</div>
+        </LabeledTextArea>
         <div class="p-5"></div>
 
         <Status bind:avancementKey={data.avancement}
                 id="{data.uid}"/>
         <div class="p-5"></div>
-
 
         <label class="text-xl" for="fiche_create_porteur">Porteur</label>
         <input bind:value={data.porteur}
@@ -157,10 +153,9 @@
                type="number">
         <div class="p-5"></div>
 
-        <label class="text-xl" for="fiche_create_commentaire">Commentaire</label>
-        <textarea bind:value={data.commentaire}
-                  class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                  id="fiche_create_commentaire"></textarea>
+        <LabeledTextArea bind:value={data.commentaire}>
+            <div class="text-xl">Commentaire</div>
+        </LabeledTextArea>
         <div class="p-5"></div>
 
         <span class="text-xl">Calendrier</span>
