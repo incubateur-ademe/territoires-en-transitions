@@ -22,7 +22,7 @@ FicheAction:
         type: String
     budget:
         type: num
-    porteur:
+    personne_referente:
         type: String
     commentaire:
         type: String
@@ -32,4 +32,10 @@ FicheAction:
         type: String
     indicateur_personnalise_ids:
         type: List[String]
+    structure_pilote:
+        type: String
+    partenaires:
+        type: String
+    elu_referent:
+        type: String
 ```

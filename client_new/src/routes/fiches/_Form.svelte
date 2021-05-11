@@ -107,7 +107,7 @@
 <section class="flex flex-col">
 
     <form class="flex flex-col w-full md:w-3/4 pb-10">
-        <label class="text-xl" for="fiche_create_custom_id">Identifiant</label>
+        <label class="text-xl" for="fiche_create_custom_id">Numérotation de l'action (ex: 1.2.3, A.1.a, 1.1)</label>
         <input bind:value={data.custom_id}
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
                id="fiche_create_custom_id"
@@ -140,7 +140,7 @@
         <div class="p-5"></div>
 
         <label class="text-xl" for="fiche_create_porteur">Porteur</label>
-        <input bind:value={data.porteur}
+        <input bind:value={data.personne_referente}
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
                id="fiche_create_porteur"
                maxlength="100">
