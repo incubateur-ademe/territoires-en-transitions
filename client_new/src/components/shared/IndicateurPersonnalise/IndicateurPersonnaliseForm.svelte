@@ -21,13 +21,13 @@
 
 <section class="flex flex-col md:w-3/4">
     <LabeledTextInput bind:value={data.nom}
-                      label="Nom"/>
+                      label="Titre"/>
 
     <LabeledTextArea bind:value={data.description}
                      label="Description"/>
 
     <LabeledTextInput bind:value={data.unite}
-                      label="Unite"/>
+                      label="Unité"/>
 
     <Button classNames="md:w-1/3 self-end bg-white"
             full

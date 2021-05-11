@@ -26,7 +26,7 @@
 
 <div class="flex flex-row w-full items-center">
 
-    <h3 class="text-2xl">Indicateurs personalisés</h3>
+    <h3 class="text-2xl">Indicateurs personnalisés</h3>
     <div class="flex flex-grow"></div>
     <Button colorVariant={showCreation ? 'ash' : 'nettle'}
             on:click={handleNewIndicateur}>
