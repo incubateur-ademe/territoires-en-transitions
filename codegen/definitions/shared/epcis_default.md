@@ -12,6 +12,7 @@ epcis_default:
   test: 'Ville de test'
   clunisois: "CC du Clunisois"
   coeur_savoie: "CC Coeur de Savoie"
+  coeur_var: "CC Coeur du Var"
   doubs_baumois: "CC Doubs Baumois"
   haut_poitou: "CC Haut Poitou"
   pays_rethelois: "CC Pays Rethélois"
