@@ -223,7 +223,7 @@
         <div class="p-5"></div>
         <div class="my-2 p-2">
             <div class="flex flex-row w-full items-center">
-                <h3 class="text-2xl">Indicateurs personalisés</h3>
+                <h3 class="text-xl">Indicateurs personalisés</h3>
                 <div class="flex flex-grow"></div>
                 <Button colorVariant={showIndicateurCreation ? 'ash' : 'nettle'}
                         on:click={() => showIndicateurCreation = true }
