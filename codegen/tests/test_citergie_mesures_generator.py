@@ -3,8 +3,9 @@ import json
 import os
 
 from codegen.citergie.indicators_generator import build_indicators
-from codegen.citergie.mesures_generator import build_mesure, render_mesure_as_html, render_mesures_summary_as_html, \
-    filter_indicateurs_by_mesure_id, build_action, render_actions_as_typescript
+from codegen.citergie.mesures_generator import build_mesure, filter_indicateurs_by_mesure_id
+from codegen.action.render import render_actions_as_typescript, render_mesure_as_html, render_mesures_summary_as_html
+from codegen.action.read import build_action
 from codegen.codegen.python import env
 from codegen.utils.files import load_md
 from codegen.utils.templates import escape_to_html

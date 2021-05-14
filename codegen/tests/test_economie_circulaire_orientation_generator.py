@@ -1,4 +1,4 @@
-from codegen.citergie.mesures_generator import render_mesure_as_html
+from codegen.action.render import render_mesure_as_html
 from codegen.economie_circulaire.orientations_generator import build_orientation, legacy_orientation_as_mesure
 from codegen.utils.files import load_md, sorted_files
 
