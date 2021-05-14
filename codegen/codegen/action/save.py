@@ -10,7 +10,7 @@ def action_to_markdown(action: dict, heading: int) -> str:
     add_line(f"{'#' * heading} {action['nom']}")
     add_line("```yaml")
     for key in yaml_keys:
-        if key in action.keys():
+        if key in action.keys() and action[key]:
             add_line(f"{key}: {action[key]}")
     add_line("```")
 
