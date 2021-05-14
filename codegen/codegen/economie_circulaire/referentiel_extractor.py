@@ -48,7 +48,7 @@ def parse_referentiel_eci_xlsx(referentiel: str) -> List[dict]:
                     'id': f'{orientation["id"]}.{numero}',
                     'nom': nom.strip(),
                     'description': description.strip(),
-                    'typologie': stripped(row['typologie']),
+                    # 'typologie': stripped(row['typologie']),
                     'exemples': stripped(row['exemples']),
                     'ponderation': row['ponderation'],
                     'critère': stripped(row['critere']),

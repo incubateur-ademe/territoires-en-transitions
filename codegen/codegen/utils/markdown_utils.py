@@ -20,7 +20,7 @@ def token_to_string(token: BlockToken, level=0) -> str:
 
 def is_keyword(token: BlockToken, keyword: str) -> bool:
     """Returns True if token is a reserved keyword."""
-    return isinstance(token, Heading) and str(token.children[0].content).lower().startswith(keyword.lower())
+    return isinstance(token, Heading) and str(token.children[0].content).lower().strip() == keyword.lower()
 
 
 def is_yaml(token: BlockToken) -> bool:

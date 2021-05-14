@@ -1,20 +1,17 @@
 import glob
-import json
 import os
 
-from codegen.citergie.indicators_generator import build_indicators
-from codegen.citergie.mesures_generator import build_mesure, filter_indicateurs_by_mesure_id
-from codegen.action.render import render_actions_as_typescript, render_mesure_as_html, render_mesures_summary_as_html
 from codegen.action.read import build_action
+from codegen.action.render import render_actions_as_typescript
 from codegen.codegen.python import env
 from codegen.utils.files import load_md
 from codegen.utils.templates import escape_to_html
 
 
-def test_build_mesure():
+def test_build_action_with_mesure():
     """Test that a specific mesure is parsed correctly"""
     md = load_md('../referentiels/markdown/mesures_citergie/1.1.1.md')
-    mesure = build_mesure(md)
+    mesure = build_action(md)
     assert mesure
     assert mesure['id'] == '1.1.1'
     assert mesure['nom'] == 'Définir la vision, les objectifs et la stratégie Climat-Air-Energie'
@@ -26,62 +23,20 @@ def test_build_mesure():
         assert len(action['nom']) > 10
 
 
-def test_render_mesure_as_html():
-    """Test that a specific mesure is rendered"""
-    indicateur_md = load_md('../referentiels/markdown/indicateurs_citergie/1.md')
-    indicateurs = build_indicators(indicateur_md)
+def test_build_action_with_orientation():
+    """Test that a specific orientation is parsed correctly"""
+    md = load_md('../referentiels/markdown/orientations_economie_circulaire/1.1.md')
+    orientation = build_action(md)
+    assert orientation
+    assert orientation['id'] == '1.1'
+    assert orientation['nom'] == \
+           'Définir une stratégie globale de la politique économie circulaire et assurer un portage politique fort'
+    assert len(orientation['description']) > 10
+    assert len(orientation['actions']) == 5
 
-    mesure_md = load_md('../referentiels/markdown/mesures_citergie/1.1.1.md')
-    mesure = build_mesure(mesure_md)
-
-    mesure_indicateurs = filter_indicateurs_by_mesure_id(indicateurs, mesure['id'])
-    html = render_mesure_as_html(mesure, indicateurs=mesure_indicateurs)
-
-    assert html
-
-
-def test_render_mesure_as_html_all():
-    """Test that all mesures are rendered correctly"""
-    indicateur_files = glob.glob(os.path.join('../referentiels/markdown/indicateurs_citergie', '*.md'))
-    indicateurs = []
-    for indicateur_file in indicateur_files:
-        md = load_md(indicateur_file)
-        indicateurs.extend(build_indicators(md))
-
-    mesure_files = glob.glob(os.path.join('../referentiels/markdown/mesures_citergie', '*.md'))
-    assert mesure_files
-
-    for file in mesure_files:
-        md = load_md(file)
-        mesure = build_mesure(md)
-        mesure_indicateurs = filter_indicateurs_by_mesure_id(indicateurs, mesure['id'])
-        html = render_mesure_as_html(mesure, indicateurs=mesure_indicateurs)
-
-        assert escape_to_html(mesure['nom']) in html
-
-        if 'actions' in mesure.keys():
-            for action in mesure['actions']:
-                assert escape_to_html(action['nom']) in html
-
-        if mesure_indicateurs:
-            for indicateur in mesure_indicateurs:
-                assert escape_to_html(indicateur['nom']) in html
-
-
-def test_render_mesures_summary_as_html():
-    """Test that all mesures are rendered correctly into the summary"""
-    files = glob.glob(os.path.join('../referentiels/markdown/mesures_citergie', '*.md'))
-    assert files
-    mesures = []
-
-    for file in files:
-        md = load_md(file)
-        mesure = build_mesure(md)
-        mesures.append(mesure)
-    html = render_mesures_summary_as_html(mesures)
-
-    for mesure in mesures:
-        assert escape_to_html(mesure['nom']) in html
+    for action in orientation['actions']:
+        assert str(action['id']).startswith(orientation['id'])
+        assert len(action['nom']) >= 10
 
 
 def test_render_actions_as_typescript():

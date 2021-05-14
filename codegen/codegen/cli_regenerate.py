@@ -9,43 +9,9 @@ from codegen.citergie.indicators_generator import build_indicators
 from codegen.citergie.mesures_extractor import mesure_to_markdown
 from codegen.citergie.mesures_generator import build_mesure
 from codegen.climat_pratic.thematiques_generator import build_thematiques
-from codegen.economie_circulaire.orientations_generator import build_orientation
 from codegen.utils.files import load_md, write
 
 app = typer.Typer()
-
-
-@app.command()
-def orientations_to_temp_actions(
-    orientations_dir=paths.orientations_markdown_dir,
-    output_dir=paths.orientations_markdown_temp_dir,
-) -> None:
-    """
-    Generate parsable actions markdown files from orientations.
-    This is a temporary hack until orientations meta-data is correctly converted to sub actions.
-    """
-    orientation_files = glob.glob(os.path.join(orientations_dir, '*.md'))
-    count = 0
-
-    def orientation_as_mesure(orientation: dict) -> dict:
-        return {
-            'nom': orientation['nom'],
-            'climat_pratic_id': 'eci',
-            'id': orientation['id'],
-            'description': orientation['description'],
-            'actions': orientation['niveaux'],
-        }
-
-    with typer.progressbar(orientation_files) as progress:
-        for filename in progress:
-            md = load_md(filename)
-            orientation = build_orientation(md)
-            mesure = orientation_as_mesure(orientation)
-            md = mesure_to_markdown(mesure)
-            output_filename = os.path.join(output_dir, os.path.basename(filename))
-            write(output_filename, md)
-
-    typer.echo(f"All {len(orientation_files)} 'orientations' were converted to 'actions'.")
 
 
 @app.command()

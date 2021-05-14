@@ -8,7 +8,8 @@ from codegen.utils.markdown_utils import update_with_yaml, is_keyword, token_to_
 
 def meta(token: BlockToken, data: dict) -> None:
     """save ```yaml block"""
-    return update_with_yaml(token, data)
+    update_with_yaml(token, data)
+    data['id'] = str(data['id'])  # so ids are not interpreted as floats.
 
 
 def empty_action() -> dict:

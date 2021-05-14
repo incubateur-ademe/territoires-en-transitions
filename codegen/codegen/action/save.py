@@ -4,6 +4,10 @@ def action_to_markdown(action: dict, heading: int) -> str:
     yaml_keys = ['id', 'points', 'ponderation', 'climat_pratic_id', 'categorie', 'typologie']
     body_keys = ['description', 'exemples', 'critère', 'principe']
 
+    def simplify(value: str) -> str:
+        """Make a yaml value from a string"""
+        return value.replace('\n', ' ')
+
     def add_line(s: str) -> None:
         lines.append(s)
 
@@ -11,7 +15,7 @@ def action_to_markdown(action: dict, heading: int) -> str:
     add_line("```yaml")
     for key in yaml_keys:
         if key in action.keys() and action[key]:
-            add_line(f"{key}: {action[key]}")
+            add_line(f"{key}: {simplify(action[key])}")
     add_line("```")
 
     for key in body_keys:

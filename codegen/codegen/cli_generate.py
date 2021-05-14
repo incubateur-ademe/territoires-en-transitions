@@ -5,18 +5,14 @@ import os
 import typer
 
 import codegen.paths as paths
-from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html, \
-    render_indicators_as_typescript
-from codegen.citergie.mesures_generator import build_mesure, \
-    filter_indicateurs_by_mesure_id
-from codegen.action.render import render_actions_as_typescript, render_mesure_as_html, render_mesures_summary_as_html, \
-    render_mesure_as_json
 from codegen.action.process import relativize_ids, clean_thematiques, propagate_thematiques
 from codegen.action.read import build_action
+from codegen.action.render import render_actions_as_typescript
+from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html, \
+    render_indicators_as_typescript
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
 from codegen.codegen.python import render_markdown_as_python
 from codegen.codegen.typescript import render_markdown_as_typescript
-from codegen.economie_circulaire.orientations_generator import legacy_orientation_as_mesure, build_orientation
 from codegen.utils.files import load_md, write, sorted_files
 
 app = typer.Typer()
@@ -83,7 +79,7 @@ def all(
 @app.command()
 def actions(
     mesures_markdown_dir=paths.mesures_markdown_dir,
-    orientations_markdown_dir=paths.orientations_markdown_temp_dir,
+    orientations_markdown_dir=paths.orientations_markdown_dir,
     client_output_dir=paths.shared_client_data_dir,
     output_typescript=True,
 ) -> None:
@@ -147,79 +143,6 @@ def indicateurs(
         write(filename, rendered)
 
     typer.echo(f"Rendered {len(files)} 'indicateurs' in {client_output_dir}.")
-
-
-@app.command()
-def mesures(
-    mesures_dir: str = typer.Option(paths.mesures_markdown_dir, "--mesures-markdown", "-m"),
-    orientations_dir: str = typer.Option(paths.orientations_markdown_dir, "--orientations-markdown", "-om"),
-    indicateurs_dir: str = typer.Option(paths.indicateurs_markdown_dir, "--indicateurs-markdown", "-i"),
-    output_dir: str = typer.Option(paths.mesures_client_output_dir, "--output", "-o"),
-    html: bool = False,
-    json: bool = False,
-) -> None:
-    """
-    Convert 'mesures' markdown files to code.
-
-    Deprecated, mesure are replaced by actions
-    """
-    # Load indicateurs
-    indicateur_files = sorted_files(indicateurs_dir, 'md')
-    indicateurs = []
-    with typer.progressbar(indicateur_files) as progress:
-        for filename in progress:
-            md = load_md(filename)
-            indicateurs.extend(build_indicators(md))
-
-    # Load mesures
-    mesure_files = sorted_files(mesures_dir, 'md')
-    mesure_files.sort()
-    mesures_citergie = []
-
-    with typer.progressbar(mesure_files) as progress:
-        for filename in progress:
-            md = load_md(filename)
-            mesure = build_mesure(md)
-            mesures_citergie.append(mesure)
-    relativize_ids(mesures_citergie, 'citergie')
-
-    # Load orientations as mesures
-    orientation_files = sorted_files(orientations_dir, 'md')
-    mesures_economie_circulaire = []
-
-    with typer.progressbar(orientation_files) as progress:
-        for filename in progress:
-            md = load_md(filename)
-            orientation = build_orientation(md)
-            mesure = legacy_orientation_as_mesure(orientation)
-            mesures_economie_circulaire.append(mesure)
-    relativize_ids(mesures_economie_circulaire, 'economie_circulaire')
-
-    # Output mesures
-    mesures = mesures_citergie + mesures_economie_circulaire
-
-    with typer.progressbar(mesures) as progress:
-        for mesure in progress:
-
-            filename_base = f"mesure_{mesure['id']}"
-
-            if json:
-                json_data = render_mesure_as_json(mesure)
-                filename = os.path.join(output_dir, f'{filename_base}.json')
-                write(filename, json_data)
-
-            if html:
-                mesure_indicateurs = filter_indicateurs_by_mesure_id(indicateurs, mesure['id_nomenclature'])
-                html_doc = render_mesure_as_html(mesure, indicateurs=mesure_indicateurs)
-                filename = os.path.join(output_dir, f'{filename_base}.html')
-                write(filename, html_doc)
-
-    if html:
-        summary = render_mesures_summary_as_html(mesures)
-        filename = os.path.join(output_dir, f'mesures.html')
-        write(filename, summary)
-
-    typer.echo(f"Processed {len(mesure_files)} 'mesures'.")
 
 
 @app.command()
