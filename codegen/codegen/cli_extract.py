@@ -2,11 +2,36 @@ import os
 
 import typer
 
+from codegen.action.save import action_to_markdown
 from codegen.citergie.indicator_extractor import parse_indicators_xlsx, indicators_to_markdowns_legacy
 from codegen.citergie.mesures_extractor import docx_to_mesures, add_climat_pratic, mesure_to_markdown_legacy
+from codegen.economie_circulaire.referentiel_extractor import parse_referentiel_eci_xlsx
+from codegen.paths import orientations_markdown_dir
 from codegen.utils.files import write, load_docx
 
 app = typer.Typer()
+
+
+@app.command()
+def indicateurs(
+    indicateurs_xlsx: str = typer.Option('../referentiels/sources/indicateurs_citergie.xlsx', "--indicateurs", "-i"),
+    correspondance_xlsx: str = typer.Option('../referentiels/sources/correspondance_citergie_climat_pratique.xlsx',
+                                            "--correspondance", "-c"),
+    output_dir: str = typer.Option('../referentiels/markdown/indicateurs_citergie', "--output", "-o")
+) -> None:
+    """
+    Convert source xlsx files to 'indicateurs' markdown files.
+    """
+    typer.echo(f"Parsing files...")
+    indicators = parse_indicators_xlsx(indicateurs=indicateurs_xlsx, correspondance=correspondance_xlsx)
+    mds = indicators_to_markdowns_legacy(indicators)
+
+    with typer.progressbar(mds.items()) as progress:
+        for number, md in progress:
+            filename = os.path.join(output_dir, f"{number}.md")
+            write(filename, md)
+
+    typer.echo(f"All {len(mds)} 'indicateurs' were exported in '{output_dir}' as markdown files.")
 
 
 @app.command()
@@ -37,22 +62,16 @@ def mesures(
 
 
 @app.command()
-def indicateurs(
-    indicateurs_xlsx: str = typer.Option('../referentiels/sources/indicateurs_citergie.xlsx', "--indicateurs", "-i"),
-    correspondance_xlsx: str = typer.Option('../referentiels/sources/correspondance_citergie_climat_pratique.xlsx',
-                                            "--correspondance", "-c"),
-    output_dir: str = typer.Option('../referentiels/markdown/indicateurs_citergie', "--output", "-o")
+def orientations(
+    referentiel_file: str = "../referentiels/sources/referentiel_eci_v3_v4_sobr.xlsx",
+    output_dir: str = orientations_markdown_dir,
 ) -> None:
-    """
-    Convert source xlsx files to 'indicateurs' markdown files.
-    """
-    typer.echo(f"Parsing files...")
-    indicators = parse_indicators_xlsx(indicateurs=indicateurs_xlsx, correspondance=correspondance_xlsx)
-    mds = indicators_to_markdowns_legacy(indicators)
+    orientations = parse_referentiel_eci_xlsx(referentiel_file)
 
-    with typer.progressbar(mds.items()) as progress:
-        for number, md in progress:
-            filename = os.path.join(output_dir, f"{number}.md")
-            write(filename, md)
+    with typer.progressbar(orientations) as progress:
+        for orientation in progress:
+            markdown = action_to_markdown(orientation, 1)
+            filename = os.path.join(output_dir, f"{orientation['id']}.md")
+            write(filename, markdown)
 
-    typer.echo(f"All {len(mds)} 'indicateurs' were exported in '{output_dir}' as markdown files.")
+    typer.echo(f"All {len(orientations)} 'orientations' were exported in '{output_dir}' as markdown files.")

@@ -1,22 +1,25 @@
 def action_to_markdown(action: dict, heading: int) -> str:
+    """Convert an action to markdown. This markdown is usable by read.py build_action"""
     lines = []
+    yaml_keys = ['id', 'points', 'ponderation', 'climat_pratic_id', 'categorie', 'typologie']
+    body_keys = ['description', 'exemples', 'critère', 'principe']
 
     def add_line(s: str) -> None:
         lines.append(s)
 
     add_line(f"{'#' * heading} {action['nom']}")
     add_line("```yaml")
-    add_line(f"id: {action['id']}")
-    if 'points' in action.keys():
-        add_line(f"points: {action['points']}")
-    if 'climat_pratic_id' in action.keys():
-        add_line(f"climat_pratic_id: {action['climat_pratic_id']}")
-    if 'categorie' in action.keys():
-        add_line(f"categorie: {action['categorie']}")
+    for key in yaml_keys:
+        if key in action.keys():
+            add_line(f"{key}: {action[key]}")
     add_line("```")
-    if 'description' in action.keys() and action['description']:
-        add_line(f"{'#' * heading}# Description")
-        add_line(action['description'])
+
+    for key in body_keys:
+        if key in action.keys() and action[key]:
+            add_line(f"{'#' * heading}# {key.capitalize()}")
+            add_line(action[key])
+            add_line('')
+
     if 'actions' in action.keys() and action['actions']:
         add_line(f"{'#' * heading}# Actions")
         for child in action['actions']:

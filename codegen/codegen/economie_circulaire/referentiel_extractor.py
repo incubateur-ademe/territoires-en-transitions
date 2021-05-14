@@ -22,12 +22,12 @@ def parse_referentiel_eci_xlsx(referentiel: str) -> List[dict]:
 
     for sheet in sheets:
         axe = pd.read_excel(referentiel, dtype=str, sheet_name=sheet, header=1)
-        axe = axe.iloc[3:, : len(header)]
+        axe = axe.iloc[3:, : len(header)]  # crop the table
         axe.columns = header
 
         # the actual parsing loop
         for index, row in axe.iterrows():
-            print(f'parsing {sheet} row {index}')
+            # print(f'parsing {sheet} row {index}')
             if stripped(row['orientation_n']):
                 orientation = {
                     'id': row['orientation_n'].strip(),
@@ -51,7 +51,7 @@ def parse_referentiel_eci_xlsx(referentiel: str) -> List[dict]:
                     'typologie': stripped(row['typologie']),
                     'exemples': stripped(row['exemples']),
                     'ponderation': row['ponderation'],
-                    'critere': stripped(row['critere']),
+                    'critère': stripped(row['critere']),
                     'principe': stripped(row['principe']),
                     'poids': stripped(row['poids']),
                     'actions': [],
