@@ -1,5 +1,13 @@
-# API
-Permet au projet territoire en transition de CRUD des données.
+# API pour territoiresentransitions.fr
+
+Ce projet est lié au projet au projet [label-transition-ecologique](https://github.com/betagouv/label-transition-ecologique).
+Il est la partie API du projet et permet la gestion des données des EPCIs
+concernant la transition écologique.
+
+- [Pré-requis](#pré-requis)
+- [Pour développer](#pour-développer)
+- [Migrations](#migrations)
+- [Déploiement](#déploiement)
 
 ## Pré-requis
 
@@ -58,7 +66,6 @@ $env:DATABASE_URL='environnement_url'
 aerich upgrade
 ```
 
-
 ## Déploiement
 On [utilise git pour déployer](https://doc.scalingo.com/platform/deployment/deploy-with-git), il faut donc avoir saisi sa clé SSH au préalable chez Scalingo.
 
@@ -74,10 +81,5 @@ git remote add staging git@ssh.osc-fr1.scalingo.com:territoiresentransitions.git
 git push staging staging:master
 ```
 
-
-
 ## Documentation OpenAPI
 Elle est servie par fastAPI sur `/docs` pour les humains et `/openapi.json` pour les machines.
-
-
-
