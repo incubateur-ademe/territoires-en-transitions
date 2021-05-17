@@ -3,7 +3,7 @@ from typing import Callable
 from mistletoe import Document
 from mistletoe.block_token import BlockToken, Heading, CodeFence
 
-from codegen.utils.markdown_utils import update_with_yaml, is_keyword, token_to_string, is_heading
+from codegen.utils.markdown_utils import update_with_yaml, is_keyword, token_to_string, is_heading, void
 
 
 def meta(token: BlockToken, data: dict) -> None:
@@ -63,6 +63,9 @@ def actions_writer(name_level: int) -> Callable:
             current = meta
         elif current == meta:
             current = description
+        elif current == description and is_heading(token, name_level + 1):
+            # got an heading of the same level as "Description" after description
+            current = void
 
         current(token, action)
 
