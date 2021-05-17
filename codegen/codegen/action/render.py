@@ -13,6 +13,18 @@ def render_actions_as_typescript(actions: List[dict],
                                  template_file='shared/ts/actions_referentiel.j2') -> str:
     """Render all actions into a single typescript file."""
     env = build_jinja_environment()
+    renderer = HTMLRenderer()
+
+    def render_descriptions(actions: List[dict]) -> None:
+        for action in actions:
+            if action['description']:
+                description = Document(action['description'])
+                action['description'] = renderer.render(description)
+            for sub in action['actions']:
+                render_descriptions(sub['actions'])
+
+    render_descriptions(actions)
+
     template = env.get_template(template_file)
     rendered = template.render(actions=actions)
     return jsbeautifier.beautify(rendered)
