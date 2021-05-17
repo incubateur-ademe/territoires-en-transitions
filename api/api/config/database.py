@@ -6,7 +6,8 @@ from api.config.base import BaseSettings
 DB_MODELS = ["aerich.models",
              "api.models.tortoise.action_custom", "api.models.tortoise.action_status",
              "api.models.tortoise.indicateur_value", "api.models.tortoise.mesure_custom",
-             "api.models.tortoise.fiche_action", "api.models.tortoise.fiche_action_categorie"]
+             "api.models.tortoise.fiche_action", "api.models.tortoise.fiche_action_categorie",
+             "api.models.tortoise.indicateur_personnalise", "api.models.tortoise.indicateur_personnalise_value"]
 SQLITE_DB_URL = "sqlite://:memory:"
 DATABASE_URL = environ.get("DATABASE_URL", SQLITE_DB_URL)
 

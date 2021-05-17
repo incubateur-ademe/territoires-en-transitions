@@ -9,6 +9,7 @@ class FicheAction(models.Model):
     custom_id = fields.CharField(max_length=36)
     avancement = fields.CharField(max_length=36)
     referentiel_action_ids = fields.JSONField()
+    referentiel_indicateur_ids = fields.JSONField()
     titre = fields.CharField(max_length=300)
     description = fields.TextField()
     budget = fields.FloatField()
@@ -18,6 +19,7 @@ class FicheAction(models.Model):
     date_fin = fields.CharField(max_length=36)
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
+    indicateur_personnalise_ids = fields.JSONField()
 
 
 FicheAction_Pydantic = pydantic_model_creator(FicheAction, name="FicheAction")

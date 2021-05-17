@@ -12,6 +12,7 @@ class FicheAction:
     custom_id: str
     avancement: str
     referentiel_action_ids: List[str]
+    referentiel_indicateur_ids: List[str]
     titre: str
     description: str
     budget: float
@@ -19,3 +20,4 @@ class FicheAction:
     commentaire: str
     date_debut: str
     date_fin: str
+    indicateur_personnalise_ids: List[str]

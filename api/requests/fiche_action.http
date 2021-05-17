@@ -1,5 +1,5 @@
 
-### Add an action status
+### Add a fiche action
 POST {{host}}/v1/fiche_action/test
 Content-Type: application/json
 
@@ -15,14 +15,15 @@ Content-Type: application/json
   "epci_id": "test",
   "porteur": "",
   "referentiel_action_ids": ["citergie/1.1.1"],
+  "referentiel_indicateur_ids": ["1a"],
   "titre": "hello",
   "uid": "59fcc45b-ff19-4723-9c18-9a972f4440f3"
 }
 
-### Get all custom actions
+### Get all fiches
 GET {{host}}/v1/fiche_action/test/all
 
 
-### Get an action by its path
+### Get a fiche by its path
 GET {{host}}/v1/fiche_action/test/4a1bc73d-aa72-4d28-8424-889643fa29c2
 

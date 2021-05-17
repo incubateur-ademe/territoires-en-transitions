@@ -6,10 +6,10 @@ from typing import List
 
 
 @dataclass
-class ActionReferentiel:
+class IndicateurReferentiel:
     id: str
-    id_nomenclature: str
+    action_ids: List[str]
     nom: str
     description: str
     thematique_id: str
-    actions: List[ActionReferentiel]
+    unite: str
