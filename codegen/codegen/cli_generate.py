@@ -54,14 +54,6 @@ def all(
         html=indicateurs_html,
         typescript=indicateurs_typescript,
     )
-    mesures(
-        mesures_dir=mesures_markdown_dir,
-        indicateurs_dir=indicateurs_markdown_dir,
-        orientations_dir=mesures_orientations_dir,
-        output_dir=mesures_output_client_dir,
-        html=mesures_html,
-        json=mesures_json,
-    )
     shared(
         markdown_dir=shared_markdown_dir,
         client_output_dir=shared_client_output_dir,
