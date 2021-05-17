@@ -137,7 +137,7 @@
 </RowCard>
 
 {#if expanded && action.description.trim().length }
-    <div class="flex m-4">
+    <div class="flex flex-col m-4">
         {@html action.description}
     </div>
 {/if}
