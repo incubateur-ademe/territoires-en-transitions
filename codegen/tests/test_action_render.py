@@ -46,7 +46,7 @@ def test_render_actions_as_typescript_with_mesures():
     _render_actions_as_typescript(files)
 
 
-def test_render_actions_as_typescript_with_orientation():
+def test_render_actions_as_typescript_with_orientations():
     """Test that all orientations are rendered correctly into typescript"""
     files = glob.glob(os.path.join('../referentiels/markdown/orientations_economie_circulaire', '*.md'))
     _render_actions_as_typescript(files)
