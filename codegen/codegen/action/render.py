@@ -20,8 +20,7 @@ def render_actions_as_typescript(actions: List[dict],
             if action['description']:
                 description = Document(action['description'])
                 action['description'] = renderer.render(description)
-            for sub in action['actions']:
-                render_descriptions(sub['actions'])
+            render_descriptions(action['actions'])
 
     render_descriptions(actions)
 

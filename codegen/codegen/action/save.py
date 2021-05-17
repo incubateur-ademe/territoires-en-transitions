@@ -6,7 +6,7 @@ def action_to_markdown(action: dict, heading: int) -> str:
 
     def simplify(value: str) -> str:
         """Make a yaml value from a string"""
-        return value.replace('\n', ' ')
+        return value.replace('\n', ' ') if isinstance(value, str) else value
 
     def add_line(s: str) -> None:
         lines.append(s)

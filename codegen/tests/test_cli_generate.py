@@ -15,14 +15,11 @@ def test_all(mock_write: MagicMock):
     all(
         thematique_typescript=True,
         thematique_json=False,
-        mesures_html=True,
-        mesures_json=False,
         indicateurs_typescript=True,
         shared_python=False,
         shared_typescript=True,
     )
 
-    mock_write.assert_any_call(os.path.join(mesures_client_output_dir, 'mesures.html'), ANY)
     mock_write.assert_any_call(os.path.join(shared_client_data_dir, 'indicateurs_referentiels.ts'), ANY)
     mock_write.assert_any_call(os.path.join(thematique_client_output_dir, 'thematiques.ts'), ANY)
     mock_write.assert_any_call(os.path.join(shared_client_models_dir, 'indicateur_value.ts'), ANY)

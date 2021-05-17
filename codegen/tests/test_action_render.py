@@ -1,5 +1,6 @@
 import glob
 import os
+from typing import List
 
 from codegen.action.read import build_action
 from codegen.action.render import render_actions_as_typescript
@@ -39,9 +40,19 @@ def test_build_action_with_orientation():
         assert len(action['nom']) >= 10
 
 
-def test_render_actions_as_typescript():
+def test_render_actions_as_typescript_with_mesures():
     """Test that all mesures are rendered correctly into typescript"""
     files = glob.glob(os.path.join('../referentiels/markdown/mesures_citergie', '*.md'))
+    _render_actions_as_typescript(files)
+
+
+def test_render_actions_as_typescript_with_orientation():
+    """Test that all orientations are rendered correctly into typescript"""
+    files = glob.glob(os.path.join('../referentiels/markdown/orientations_economie_circulaire', '*.md'))
+    _render_actions_as_typescript(files)
+
+
+def _render_actions_as_typescript(files: List[str]) -> None:
     assert files
     actions = []
 
