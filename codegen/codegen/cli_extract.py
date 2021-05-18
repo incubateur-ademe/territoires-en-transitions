@@ -5,7 +5,9 @@ import typer
 from codegen.action.save import action_to_markdown
 from codegen.citergie.indicator_extractor import parse_indicators_xlsx, indicators_to_markdowns_legacy
 from codegen.citergie.mesures_extractor import docx_to_mesures, add_climat_pratic, mesure_to_markdown_legacy
+from codegen.economie_circulaire.indicateurs_extractor import parse_indicateurs_eci_xlsx
 from codegen.economie_circulaire.referentiel_extractor import parse_referentiel_eci_xlsx
+from codegen.indicateur.save import indicateur_to_markdown
 from codegen.paths import orientations_markdown_dir
 from codegen.utils.files import write, load_docx
 
@@ -13,7 +15,7 @@ app = typer.Typer()
 
 
 @app.command()
-def indicateurs(
+def indicateurs_citergie(
     indicateurs_xlsx: str = typer.Option('../referentiels/sources/indicateurs_citergie.xlsx', "--indicateurs", "-i"),
     correspondance_xlsx: str = typer.Option('../referentiels/sources/correspondance_citergie_climat_pratique.xlsx',
                                             "--correspondance", "-c"),
@@ -32,6 +34,26 @@ def indicateurs(
             write(filename, md)
 
     typer.echo(f"All {len(mds)} 'indicateurs' were exported in '{output_dir}' as markdown files.")
+
+
+@app.command()
+def indicateurs_eci(
+    indicateurs_xlsx: str = '../referentiels/sources/indicateurs_eci_proposition_4.xlsx',
+    output_dir: str = typer.Option('../referentiels/markdown/indicateurs', "--output", "-o")
+) -> None:
+    """
+    Convert source xlsx files to 'indicateurs' markdown files.
+    """
+    typer.echo(f"Parsing files...")
+    indicateurs = parse_indicateurs_eci_xlsx(indicateurs_xlsx=indicateurs_xlsx)
+
+    with typer.progressbar(indicateurs) as progress:
+        for indicateur in progress:
+            md = indicateur_to_markdown(indicateur)
+            filename = os.path.join(output_dir, f"{indicateur['id'].replace('/', '_')}.md")
+            write(filename, md)
+
+    typer.echo(f"All {len(indicateurs)} 'indicateurs' were exported in '{output_dir}' as markdown files.")
 
 
 @app.command()

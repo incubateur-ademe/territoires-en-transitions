@@ -1,0 +1,17 @@
+# Part de bâtiments publics ayant fait l'objet d'un diagnostic énergétique
+```yaml
+id: cae/12
+unite: Non trouvé
+actions:
+  - climat_air_energie/2.1.1
+programmes:
+  - climat_air_energie
+climat_pratic_ids:
+  - batiments
+```
+## Description
+L'indicateur mesure la part de bâtiments publics (de préférence en surface, et par défaut en nombre) ayant fait l'objet d'un diagnostic énergétique (à minima de type DPE, et de préférence un audit énergétique plus poussé). Le périmètre des bâtiments pris en compte est le plus large possible : celui dont elle est propriétaire ou celui dont elle est locataire ; les diagnostics pouvant être portés et financés par le propriétaire ou l'utilisateur. Si le suivi est effectué conjointement au niveau communal et intercommunal, l'indicateur peut-être décomposé en deux volets : part de bâtiments communaux ayant fait l'objet d'un diagnostic énergétique et part de bâtiments intercommunaux ayant fait l'objet d'un diagnostic énergétique.
+
+
+
+
