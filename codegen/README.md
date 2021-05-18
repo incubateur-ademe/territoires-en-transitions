@@ -2,8 +2,9 @@
 Génération de code pour Labels Transition Écologique
 
 ### Pour quoi faire ?
+- Générer les données à partir de fichiers markdown, afin de séparer la partie métier de la couche de présentation, notamment pour donner de l'autonomie sur le contenu au personnes ayant une expertise métier mais ne développant pas.
 - Générer des classes et des objets en js et en python pour la communication entre le back et le front (et peut être des formulaires) à partir de yaml contenu dans des fichiers markdown.
-- Générer des vues (plus tard peut-être une API) à partir de fichiers markdown, afin de séparer la partie métier de la couche de présentation.
+
 
 ### Comment on s'en sert ?
 Pour se servir des scripts et de l'outil CLI il faut [installer poetry](https://python-poetry.org/docs/#installation)
@@ -14,110 +15,48 @@ poetry update
 ```
 
 #### Les deux outils CLI
+Les outils CLI utilisent [Typer](https://typer.tiangolo.com/typer-cli/) pour obtenir des informations sur les paramètres on utilise `--help`
 
-##### Le parser citergie
-Permet d'extraire le fichier Word citergie `../referentiels/sources/citergie.docx`  pour créer des fichiers markdown.
-Plus tard on pourra faire la même chose avec le référentiel ECi.
+##### Le parser
+Permet d'extraire les documents office source des référentiels Cit'ergie et Économie Circulaire
 
-###### Mesures
+Pour extraire le fichier Word citergie et la table de correspondance climat pratic pour créer des fichiers markdown.
+
 ```shell
-poetry run extract mesures --help
-```
-```shell
-Usage: extract mesures [OPTIONS]
-
-  Convert source docx file to 'mesures' markdown files.
-
-Options:
-  -d, --docx TEXT            [default: ../referentiels/sources/citergie.docx]
-  -c, --correspondance TEXT  [default: ../referentiels/sources/correspondance_
-                             citergie_climat_pratique.xlsx]
-
-  -o, --output TEXT          [default:
-                             ../referentiels/markdown/mesures_citergie]
-
-  --help                     Show this message and exit.
+poetry run extract mesures
 ```
 
-###### Indicateurs
+On peut faire la même chose pour le référentiel ECi :
+
 ```shell
-poetry run extract indicateurs --help
+poetry run extract orientations
 ```
+
+Pour l'instant les indicateurs extraits sont ceux de Cit'ergie :
 ```shell
-Usage: extract indicateurs [OPTIONS]
-
-  Convert source xlsx files to 'indicateurs' markdown files.
-
-Options:
-  -i, --indicateurs TEXT     [default:
-                             ../referentiels/sources/indicateurs_citergie.xlsx]
-
-  -c, --correspondance TEXT  [default: ../referentiels/sources/correspondance_cit
-                             ergie_climat_pratique.xlsx]
-
-  -o, --output TEXT          [default:
-                             ../referentiels/markdown/indicateurs_citergie]
-
-  --help                     Show this message and exit.
+poetry run extract indicateurs
 ```
+
 
 ##### Le générateur de code
-Permet de générer des 'vues' à partir des fichiers générés par le parser.
+Permet de générer du code à partir des fichiers markdown des référentiels situés dans `/referentiels` et des 'définitions' situés dans `codegen/definitions/shared`
 
+Pour générer tous les fichiers on utilise :
 ```shell
-poetry run generate mesures --help
-```
-```shell
-Usage: generate mesures [OPTIONS]
-
-  Convert 'mesures' markdown files to code.
-
-Options:
-  -md, --markdown TEXT  [default: ../referentiels/markdown/mesures_citergie]
-  -o, --output TEXT     [default: generated/citergie]
-  --html / --no-html    [default: True]
-  --json / --no-json    [default: True]
-  --js / --no-js        [default: True]
-  --help                Show this message and exit.
+poetry run generate all
 ```
 
+Pour plus d'information :
 ```shell
-poetry run generate indicateurs --help
-```
-```shell
-Usage: generate indicateurs [OPTIONS]
-
-  Convert 'indicateurs' markdown files to code.
-
-Options:
-  -md, --markdown TEXT  [default: ../referentiels/markdown/indicateurs_citergie]
-  -o, --output TEXT     [default: generated/indicateurs_citergie]
-  --html / --no-html    [default: True]
-  --help                Show this message and exit.
-```
-
-Permet de générer du code partagé à partir des fichiers markdown `definitions/shared`.
-```shell
-poetry run generate shared --help
-```
-```shell
-Usage: generate shared [OPTIONS]
-
-Generate shared definitions.
-
-Options:
--md, --markdown TEXT    [default: definitions/shared]
--o, --output TEXT       [default: generated/definition/shared]
---python / --no-python  [default: True]
---js / --no-js          [default: True]
---help                  Show this message and exit.
+poetry run generate --help
 ```
 
 ### On en est où ?
--[ ] Raccorder au front
--[x] Écriture de tests de base
--[x] Faire un outil en ligne de commande
--[x] Parser le md/yaml et générer des sorties de démo en JS et python.
--[x] Parser ces fichiers md et générer des exemples de module et de pages html en sortie.
--[X] Parser le docx citergie pour générer des fichiers markdown
+- [ ] Utiliser les définitions pour l'API
+- [x] Utiliser les définitions pour le front
+- [x] Écriture de tests de base
+- [x] Faire un outil en ligne de commande
+- [x] Parser le md/yaml et générer des sorties de démo en JS et python.
+- [x] Parser ces fichiers md et générer des exemples de module et de pages html en sortie.
+- [X] Parser le docx citergie pour générer des fichiers markdown
 
