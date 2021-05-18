@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 fastapi = "0.63.0"
 tortoise-orm = "0.16.21"
-pydantic = "1.8.1"
+pydantic = "1.8.2"
 asyncpg = "0.22.0"
 loguru = "0.5.3"
 requests = "2.25.1"
