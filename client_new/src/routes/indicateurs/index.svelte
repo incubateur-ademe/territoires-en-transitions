@@ -4,10 +4,11 @@
      */
     import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
     import {indicateurs} from "../../../generated/data/indicateurs_referentiels";
-    import IndicateurReferentielCard from "../../components/shared/IndicateurReferentielCard.svelte";
+    import IndicateurReferentielCard from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
     import {Thematique, thematiques} from "../../../generated/data/thematiques";
     import {onMount} from "svelte";
     import IndicateursSearchBar from "../../components/shared/IndicateursSearchBar.svelte";
+    import IndicateurPersonnaliseList from "../../components/shared/IndicateurPersonnalise/IndicateurPersonnaliseList.svelte"
 
     let byThematique = new Map<Thematique, IndicateurReferentiel[]>()
     let displayed: IndicateurReferentiel[] = indicateurs
@@ -36,6 +37,8 @@
         <IndicateursSearchBar bind:matches={displayed} indicateurs={indicateurs} searchCallBack={update}/>
     </div>
 </div>
+
+<IndicateurPersonnaliseList/>
 
 {#each [...byThematique] as [thematique, indicateurs]}
     <h2 class="text-2xl mt-10 mb-2">{thematique.name}</h2>

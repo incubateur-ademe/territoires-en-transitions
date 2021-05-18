@@ -4,7 +4,7 @@
     import {getCurrentEpciId} from "../../api/currentEpci";
     import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
     import {indicateurs} from "../../../generated/data/indicateurs_referentiels";
-    import IndicateurReferentielCard from "../../components/shared/IndicateurReferentielCard.svelte";
+    import IndicateurReferentielCard from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
 
     export let action: ActionReferentiel
