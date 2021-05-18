@@ -2,7 +2,7 @@ def action_to_markdown(action: dict, heading: int) -> str:
     """Convert an action to markdown. This markdown is usable by read.py build_action"""
     lines = []
     yaml_keys = ['id', 'points', 'ponderation', 'climat_pratic_id', 'categorie', 'typologie']
-    body_keys = ['description', 'exemples', 'critère', 'principe']
+    body_keys = ['description', 'exemples', 'critère', 'principe', 'preuve']
 
     def simplify(value: str) -> str:
         """Make a yaml value from a string"""

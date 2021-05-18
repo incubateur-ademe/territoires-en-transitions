@@ -53,6 +53,7 @@ def parse_referentiel_eci_xlsx(referentiel: str) -> List[dict]:
                     'ponderation': row['ponderation'],
                     'critère': stripped(row['critere']),
                     'principe': stripped(row['principe']),
+                    'preuve': stripped(row['preuve']),
                     'poids': stripped(row['poids']),
                     'actions': [],
                 }
