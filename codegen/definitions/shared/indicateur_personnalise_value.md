@@ -1,11 +1,11 @@
-# Valeur annuelle d'un indicateur
+# Valeur annuelle d'un indicateur personnalisé
 
 ## Valeur texte
-Représente la valeur annuelle d'un indicateur provenant d'un référentiel stockée à l'adresse:
+Représente la valeur annuelle d'un indicateur personnalisé stockée à l'adresse:
 `epci_id/indicateur_id/year`
 
 ```yaml
-IndicateurValue:
+IndicateurPersonnaliseValue:
   epci_id:
     type: String
   indicateur_id:

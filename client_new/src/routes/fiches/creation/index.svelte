@@ -20,6 +20,7 @@
         commentaire: '',
         date_debut: '',
         date_fin: '',
+        indicateur_personnalise_ids: [],
     }
 
 

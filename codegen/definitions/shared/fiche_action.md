@@ -30,4 +30,6 @@ FicheAction:
         type: String
     date_fin:
         type: String
+    indicateur_personnalise_ids:
+        type: List[String]
 ```

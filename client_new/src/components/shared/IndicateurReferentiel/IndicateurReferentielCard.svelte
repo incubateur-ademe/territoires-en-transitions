@@ -2,12 +2,12 @@
     /**
      * Displays an indicateur an its yearly values.
      */
-    import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
+    import {IndicateurReferentiel} from "../../../../generated/models/indicateur_referentiel";
     import IndicateurReferentielValueInput from "./IndicateurReferentielValueInput.svelte";
-    import Angle from "./Angle.svelte";
+    import Angle from "../Angle.svelte";
     import {onMount} from "svelte";
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-    import ActionReferentielCard from "./ActionReferentiel/ActionReferentielCard.svelte";
+    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import ActionReferentielCard from "../ActionReferentiel/ActionReferentielCard.svelte";
 
     export let indicateur: IndicateurReferentiel
     let relatedActions: ActionReferentiel[] = []
@@ -19,7 +19,7 @@
     let years = [...Array(7).keys()].map(i => i + 2016) // 2016 to 2022
 
     onMount(async () => {
-        const referentiel = await import('../../../generated/data/actions_referentiels')
+        const referentiel = await import('../../../../generated/data/actions_referentiels')
 
         const found: ActionReferentiel[] = []
         for (let actionId of indicateur.action_ids) {
@@ -45,7 +45,7 @@
         <div class="flex-1 flex flex-row cursor-pointer items-stretch mr-4"
              on:click={handleExpand}>
             <h3 class="flex flex-row items-stretch">
-                <span class="mr-4 flex">{indicateur.id}</span>
+                <span class="mr-4 flex">{ indicateur.id }</span>
                 <span class="mr-4 flex">{ indicateur.nom }</span>
             </h3>
             <Angle direction="{expanded ? 'down' : 'right' }"/>
