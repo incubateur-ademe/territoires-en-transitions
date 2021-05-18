@@ -118,61 +118,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: client-build
     environment: production
-    env:
-      working-directory: ./tools
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Set up Python cache
-        uses: actions/cache@v2
-        env:
-          python-tools-cache-name: python-tools-cache
-        with:
-          path: /opt/hostedtoolcache/Python
-          key: ${{ runner.os }}-${{ env.python-tools-cache-name }}-${{ env.python-version }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.python-tools-cache-name }}
-            ${{ runner.os }}-
-
-      - name: Set up poetry binary cache
-        uses: actions/cache@v2
-        env:
-          poetry-bin-cache-name: poetry-bin
-        with:
-          path: ~/poetry
-          key: ${{ runner.os }}-${{ env.poetry-bin-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.poetry-bin-cache-name }}
-            ${{ runner.os }}-
-
-      - name: Set up dependencies cache
-        uses: actions/cache@v2
-        env:
-          poetry-cache-name: poetry-dependencies-cache
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.poetry-cache-name }}-
-            ${{ runner.os }}-
-
-      - name: Set up Python 3.9.1
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9.1'
-
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-
-      - name: Install Poetry
-        run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=~/poetry python -
-          echo "$HOME/poetry/bin" >> $GITHUB_PATH
-
-      - name: Install dependencies
-        run: poetry install
-        working-directory: ${{env.working-directory}}
 
       - name: Download exported client app
         uses: actions/download-artifact@v2
@@ -181,8 +129,8 @@ jobs:
           path: ~/tmp/client
 
       - name: Deploy on Scaleway
-        run: poetry run deploy -s entretiens
-        working-directory: ${{env.working-directory}}
+        run: |
+          aws s3 cp ~/tmp/client s3://entretiens.territoiresentransitions.fr --recursive
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
