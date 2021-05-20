@@ -10,7 +10,7 @@ def test_parse_referentiel_eci_xlsx():
     Test that some orientations are extracted from the xlsx
     and that the resulting markdown can be parsed back
     """
-    orientations = parse_referentiel_eci_xlsx("../referentiels/sources/referentiel_eci_v3_v4_sobr.xlsx")
+    orientations = parse_referentiel_eci_xlsx("../referentiels/sources/referentiel_eci_v3_v4_sobr_principes_nettoyes.xlsx")
     assert orientations
 
     for orientation in orientations:

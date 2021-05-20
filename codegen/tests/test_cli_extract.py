@@ -23,8 +23,8 @@ def test_indicateurs_citergie(mock_write: MagicMock):
 def test_indicateurs_eci(mock_write: MagicMock):
     """Test that command `poetry run extract indicateurs_eci` write files"""
     indicateurs_eci(output_dir=output_dir)
-    mock_write.assert_any_call(os.path.join(output_dir, 'eci_1.md'), ANY)
-    mock_write.assert_any_call(os.path.join(output_dir, 'eci_2.md'), ANY)
+    mock_write.assert_any_call(os.path.join(output_dir, 'eci_001.md'), ANY)
+    mock_write.assert_any_call(os.path.join(output_dir, 'eci_002.md'), ANY)
 
 
 @patch("codegen.cli_extract.write")

@@ -50,7 +50,7 @@ def indicateurs_eci(
     with typer.progressbar(indicateurs) as progress:
         for indicateur in progress:
             md = indicateur_to_markdown(indicateur)
-            filename = os.path.join(output_dir, f"{indicateur['id'].replace('/', '_')}.md")
+            filename = os.path.join(output_dir, f"{indicateur['id'].replace('-', '_')}.md")
             write(filename, md)
 
     typer.echo(f"All {len(indicateurs)} 'indicateurs' were exported in '{output_dir}' as markdown files.")
@@ -85,7 +85,7 @@ def mesures(
 
 @app.command()
 def orientations(
-    referentiel_file: str = "../referentiels/sources/referentiel_eci_v3_v4_sobr.xlsx",
+    referentiel_file: str = "../referentiels/sources/referentiel_eci_v3_v4_sobr_principes_nettoyes.xlsx",
     output_dir: str = orientations_markdown_dir,
 ) -> None:
     orientations = parse_referentiel_eci_xlsx(referentiel_file)
