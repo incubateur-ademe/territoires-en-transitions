@@ -1,0 +1,13 @@
+# Ratio de Déchets Ménagers et Assimilés (DMA) par habitant
+```yaml
+id: eci-5
+obligation_eci: true
+actions:
+  - economie_circulaire/2.1
+```
+## Description
+Poids de DMA produits sur le territoire / Population du territoire
+
+## Source
+SINOE
+

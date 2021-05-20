@@ -1,0 +1,12 @@
+# Emissions GES de la collecte des DMA sur le territoire
+```yaml
+id: eci-11
+actions:
+  - economie_circulaire/2.4
+```
+## Description
+Nombre de kilomètres parcourues * Facteur d'émission des véhicules utilisés (eqtCO2/km)
+
+## Source
+Suivi interne du kilométrage parcouru par les véhicule de collecte. Fiches techniques des véhicules pour les émissions.
+

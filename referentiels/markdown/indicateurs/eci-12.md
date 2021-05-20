@@ -1,0 +1,12 @@
+# Nombre de filières animés par la collectivité ou ses partenaires pour la prise en charge des déchets (BTP, DAE…)
+```yaml
+id: eci-12
+actions:
+  - economie_circulaire/2.5
+```
+## Description
+La collectivité définit le périmètre des filières pertinent pour le territoire. L'animation sous-entend des actions allant de soutien de dialogue à l'accompagnement d'action pour améliorer la dynamique déchets des acteurs économiques (prévention, amélioration de tri, de collecte et de valorisation, etc.)
+
+## Source
+Suivi interne en lien avec les services ou partenaires concernés
+

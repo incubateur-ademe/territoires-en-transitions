@@ -1,0 +1,12 @@
+# Part de déchets bénéficiant d'un mode de transport à faible impact
+```yaml
+id: eci-9
+actions:
+  - economie_circulaire/2.4
+```
+## Description
+Evolution des équipements de transport de déchet vers des véhicules GNV ou biogaz, par voie fluviale, par voie ferroviaire, par véhicules électriques, mobilité douce ou active, …
+
+## Source
+Rapport annuel déchets
+

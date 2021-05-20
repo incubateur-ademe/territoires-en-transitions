@@ -1,0 +1,11 @@
+# Proportion de l'activité de réparation dans l'activité économique
+```yaml
+id: eci-29
+```
+## Description
+Nombre d'entreprises ayant un code NAF associé à la réparation/nombre total d'entreprises sur le territoire.
+Quid de la réparation des véhicules ?
+
+## Source
+INSEE
+

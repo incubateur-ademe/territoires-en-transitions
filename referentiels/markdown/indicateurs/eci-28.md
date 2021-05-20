@@ -1,0 +1,10 @@
+# Emploi en économie circulaire
+```yaml
+id: eci-28
+```
+## Description
+D'après la liste des professions et catégorie socioprofessionnelles établie par l'observatoire national des emploi et métiers de l'économie verte (ONEMEV).
+
+## Source
+INSEE
+

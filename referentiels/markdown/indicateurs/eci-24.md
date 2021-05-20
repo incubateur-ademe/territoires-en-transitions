@@ -1,0 +1,10 @@
+# Proportion d'énergie utile fossile par rapport aux énergies renouvelables  consommées
+```yaml
+id: eci-24
+```
+## Description
+MWh d'énergie fossile consommée sur le territoire/MWh d'énergie renouvelable  consommée sur le territoire
+
+## Source
+Traduit la consommation de ressources
+

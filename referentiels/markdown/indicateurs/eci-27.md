@@ -1,0 +1,11 @@
+# Quantité d'eau potable économisée
+```yaml
+id: eci-27
+```
+## Description
+Mesure de consommation d'eau sur le territoire de l'Année N / Mesure de consommation d'eau sur le territoire de l'Année N-X (périodicité définie par la collectivité).
+Cet indicateur est pertinent si la collectivité choisit l'eau comme un enjeu fort pour le territoire et y associe des actions. Le choix de la périodicité permet de suivre l'impact d'une action ou d'une série d'actions.
+
+## Source
+Gestionnaire du réseau d'eau portable
+

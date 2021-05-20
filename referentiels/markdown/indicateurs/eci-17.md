@@ -1,0 +1,12 @@
+# Part d'entreprises et d'établissements ayant été formées à l'écoconception durant les 4 dernières années
+```yaml
+id: eci-17
+actions:
+  - economie_circulaire/3.4
+```
+## Description
+Nombre d'entreprises et d'établissements ayant été formées à l'écoconception / Nombre d'entreprises et d'établissements sur le territoire
+
+## Source
+Liste des stagiaires des formations fournis par les organismes d'enseignement
+

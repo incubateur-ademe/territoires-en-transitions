@@ -1,0 +1,11 @@
+# Ratio d'évolution de terres artificialisés vs. terres agricoles et/ou naturelles et/ou forestières
+```yaml
+id: eci-23
+```
+## Description
+Nombre d'hectares artificialisés total / Nombre d'hectares des terres agricoles, naturelles et forestières.
+Dans la logique du Zéro Artificialisation Net.
+
+## Source
+Suivi Urbanisme
+

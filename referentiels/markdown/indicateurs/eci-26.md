@@ -1,0 +1,10 @@
+# Perte en eau du réseau
+```yaml
+id: eci-26
+```
+## Description
+Volume d'eau consommée sur le territoire/ volume d'eau dirigée vers le territoire
+
+## Source
+Gestionnaire du réseau d'eau portable
+

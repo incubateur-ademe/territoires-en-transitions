@@ -1,0 +1,12 @@
+# Emissions GES des Installations de Stockage de Déchets Non-Dangereux (ISDND)
+```yaml
+id: eci-10
+actions:
+  - economie_circulaire/2.4
+```
+## Description
+Equivalent en tonnes de CO2 par an / tonne de déchets entrant
+
+## Source
+Gestionnaire des installations
+
