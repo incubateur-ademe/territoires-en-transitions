@@ -44,7 +44,7 @@ def node_to_markdown(
 
     for key in body_keys:
         if key in node.keys() and node[key]:
-            add_line(f"## {key.capitalize()}")
+            add_line(f"{'#' * heading}# {key.capitalize()}")
             add_line(node[key])
             add_line('')
 

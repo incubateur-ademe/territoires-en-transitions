@@ -14,7 +14,7 @@ def test_parse_referentiel_eci_xlsx():
     assert orientations
 
     for orientation in orientations:
-        markdown = action_to_markdown(orientation, 1)
+        markdown = action_to_markdown(orientation)
         document = Document(markdown)
         action = build_action(document)
         assert action['nom'] == orientation['nom']

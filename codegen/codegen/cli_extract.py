@@ -92,7 +92,7 @@ def orientations(
 
     with typer.progressbar(orientations) as progress:
         for orientation in progress:
-            markdown = action_to_markdown(orientation, 1)
+            markdown = action_to_markdown(orientation)
             filename = os.path.join(output_dir, f"{orientation['id']}.md")
             write(filename, markdown)
 

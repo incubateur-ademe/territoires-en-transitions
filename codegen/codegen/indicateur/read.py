@@ -4,4 +4,11 @@ from codegen.markdown.read import flat_builder
 
 
 def indicateurs_builder(doc: Document) -> list:
-    return flat_builder(doc, 'indicateurs')
+    def builder():
+        return {
+            'nom': '',
+            'indicateurs': [],
+            'description': '',
+        }
+
+    return flat_builder(doc, node_builder=builder, children_key='indicateurs')
