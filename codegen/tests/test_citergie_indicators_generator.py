@@ -7,13 +7,6 @@ from codegen.citergie.indicators_generator import build_indicators, render_indic
 from codegen.utils.files import load_md
 
 
-def test_build_indicators():
-    """Test that a specific collection of indicators is parsed correctly"""
-    md = load_md('../referentiels/markdown/indicateurs_citergie/1.md')
-    indicators = build_indicators(md)
-    assert len(indicators) == 10
-
-
 def test_render_indicators_as_html():
     """Test html rendering"""
     md = load_md('../referentiels/markdown/indicateurs_citergie/1.md')

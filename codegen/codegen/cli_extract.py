@@ -2,12 +2,12 @@ import os
 
 import typer
 
-from codegen.action.save import action_to_markdown
+from codegen.action.write import action_to_markdown
 from codegen.citergie.indicator_extractor import parse_indicators_xlsx, indicators_to_markdowns_legacy
 from codegen.citergie.mesures_extractor import docx_to_mesures, add_climat_pratic, mesure_to_markdown_legacy
 from codegen.economie_circulaire.indicateurs_extractor import parse_indicateurs_eci_xlsx
 from codegen.economie_circulaire.referentiel_extractor import parse_referentiel_eci_xlsx
-from codegen.indicateur.save import indicateur_to_markdown
+from codegen.indicateur.write import indicateur_to_markdown
 from codegen.paths import orientations_markdown_dir
 from codegen.utils.files import write, load_docx
 

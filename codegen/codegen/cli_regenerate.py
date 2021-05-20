@@ -10,7 +10,7 @@ from codegen.citergie.indicators_generator import build_indicators
 from codegen.citergie.mesures_extractor import mesure_to_markdown
 from codegen.citergie.mesures_generator import build_mesure
 from codegen.climat_pratic.thematiques_generator import build_thematiques
-from codegen.indicateur.save import indicateur_to_markdown
+from codegen.indicateur.write import indicateur_to_markdown
 from codegen.utils.files import load_md, write
 
 app = typer.Typer()
