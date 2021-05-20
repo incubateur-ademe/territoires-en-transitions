@@ -44,18 +44,43 @@ def parse_referentiel_eci_xlsx(referentiel: str) -> List[dict]:
                 nom, description = row['description'].split('\n', 1)
                 numero, nom = nom.split(':', 1)
                 numero = re.search(r'\d+', numero).group(0)
+                ponderation = re.search(r"[-+]?\d*\.\d+|\d+", row['ponderation']).group(0)
+                points = int(float(ponderation) * 100)
                 niveau = {
                     'id': f'{orientation["id"]}.{numero}',
                     'nom': nom.strip(),
                     'description': description.strip(),
                     # 'typologie': stripped(row['typologie']),
                     'exemples': stripped(row['exemples']),
-                    'ponderation': row['ponderation'],
+                    'points': points,
+                    # 'ponderation': row['ponderation'],
                     'critère': stripped(row['critere']),
-                    'principe': stripped(row['principe']),
                     'preuve': stripped(row['preuve']),
                     'poids': stripped(row['poids']),
                     'actions': [],
                 }
                 orientation['actions'].append(niveau)
+
+                principe = stripped(row['principe']).replace('•', '')
+                tache_index = 0
+                if principe:
+                    principe_lines = principe.split('\n')
+                    for line in principe_lines:
+                        line = stripped(line)
+
+                        if '→' in line:
+                            nom, pourcentage = line.split('→')
+                            pourcentage = int(re.search(r'\d+', pourcentage).group(0))
+
+                            if pourcentage:
+                                tache_index += 1
+                                tache = {
+                                    'id': f'{niveau["id"]}.{tache_index}',
+                                    'nom': nom.strip(),
+                                    'points': int(points * pourcentage / 100),
+                                    'poids': stripped(row['poids']),
+                                    'actions': [],
+                                }
+                                niveau['actions'].append(tache)
+
     return orientations
