@@ -1,6 +1,6 @@
 # Nombre de places de stationnement vélo, hors pince-roues (nb / 100 habitants)
 ```yaml
-id: cae/45
+id: cae-45
 unite: nb / 100 habitants
 actions:
   - climat_air_energie/4.3.2

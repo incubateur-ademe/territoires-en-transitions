@@ -1,6 +1,6 @@
 # Nombre de manifestations/actions par an sur le climat l'air et l'énergie
 ```yaml
-id: cae/54
+id: cae-54
 unite: Non trouvé
 actions:
   - climat_air_energie/6.1.3

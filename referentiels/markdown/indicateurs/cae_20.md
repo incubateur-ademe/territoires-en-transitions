@@ -1,6 +1,6 @@
 # Consommation de l’éclairage public  (kWh/hab.an)
 ```yaml
-id: cae/20
+id: cae-20
 unite: kWh/hab.an
 actions:
   - climat_air_energie/2.3.1

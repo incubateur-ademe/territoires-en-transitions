@@ -1,6 +1,6 @@
 # Part du budget consacré à des projets de coopération décentralisée en lien avec le climat, l’air ou l’énergie (%)
 ```yaml
-id: cae/52
+id: cae-52
 unite: '%'
 actions:
   - climat_air_energie/6.1.1

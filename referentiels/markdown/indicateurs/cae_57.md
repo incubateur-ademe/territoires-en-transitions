@@ -1,6 +1,6 @@
 # Taux d’hébergements labellisés Ecolabel européen (ou équivalent)
 ```yaml
-id: cae/57
+id: cae-57
 unite: ou équivalent
 actions:
   - climat_air_energie/6.3.2

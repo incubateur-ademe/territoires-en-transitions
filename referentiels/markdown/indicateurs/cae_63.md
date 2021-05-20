@@ -1,6 +1,6 @@
 # Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)
 ```yaml
-id: cae/63a
+id: cae-63a
 unite: teq CO2
 actions:
   - climat_air_energie/6.4.2
@@ -20,7 +20,7 @@ L'indicateur suit une estimation de la séquestration nette de dioxyde de carbon
 
 # Séquestration de la forêt  (teq CO2)
 ```yaml
-id: cae/63b
+id: cae-63b
 unite: teq CO2
 actions:
   - climat_air_energie/6.4.2
@@ -40,7 +40,7 @@ Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)
 
 # Séquestration dans les terres agricoles et les prairies (teq CO2)
 ```yaml
-id: cae/63c
+id: cae-63c
 unite: teq CO2
 actions:
   - climat_air_energie/6.4.1
@@ -60,7 +60,7 @@ Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)
 
 # Séquestration dans les autres sols (teq CO2)
 ```yaml
-id: cae/63d
+id: cae-63d
 unite: teq CO2
 actions:
   - climat_air_energie/6.4.1

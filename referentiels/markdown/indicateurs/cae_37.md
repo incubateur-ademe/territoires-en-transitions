@@ -1,6 +1,6 @@
 # Part modale TC
 ```yaml
-id: cae/37
+id: cae-37
 unite: Non trouvé
 actions:
   - climat_air_energie/4.1.1

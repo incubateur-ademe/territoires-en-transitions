@@ -1,6 +1,6 @@
 # Part des achats d’électricité renouvelable de la collectivité (%)
 ```yaml
-id: cae/18
+id: cae-18
 unite: '%'
 actions:
   - climat_air_energie/2.2.4

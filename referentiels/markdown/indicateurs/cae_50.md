@@ -1,6 +1,6 @@
 # Valorisation des CEE (kWhcumac  valorisé/an)
 ```yaml
-id: cae/50
+id: cae-50
 unite: kWhcumac  valorisé/an
 actions:
   - climat_air_energie/5.2.1

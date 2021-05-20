@@ -1,6 +1,6 @@
 # Consommation énergétique globale annuelle du territoire (GWh)
 ```yaml
-id: cae/2a
+id: cae-2a
 unite: GWh
 obligation_cae: true
 actions:
@@ -19,7 +19,7 @@ Cet indicateur estime la consommation énergétique finale annuelle du territoir
 
 # Consommation énergétique annuelle du territoire par habitant (MWh/hab.an)
 ```yaml
-id: cae/2b
+id: cae-2b
 unite: MWh/hab.an
 actions:
   - climat_air_energie/1.1.1
@@ -36,7 +36,7 @@ Pour faciliter les comparaisons, l’indicateur est ramené au nombre d’habita
 
 # Consommation énergétique annuelle du territoire pour la chaleur et le rafraîchissement (GWh)
 ```yaml
-id: cae/2c
+id: cae-2c
 unite: GWh
 actions:
   - climat_air_energie/3.2.2
@@ -57,7 +57,7 @@ Consommation énergétique globale annuelle du territoire (GWh)
 
 # Consommation énergétique annuelle du territoire pour l'électricité (GWh)
 ```yaml
-id: cae/2d
+id: cae-2d
 unite: GWh
 actions:
   - climat_air_energie/3.2.3
@@ -78,7 +78,7 @@ Consommation énergétique globale annuelle du territoire (GWh)
 
 # Consommation énergétique du résidentiel  (GWh)
 ```yaml
-id: cae/2e
+id: cae-2e
 unite: GWh
 actions:
   - climat_air_energie/1.2.4
@@ -98,7 +98,7 @@ Consommation énergétique globale annuelle du territoire (GWh).
 
 # Consommation énergétique du tertiaire (GWh)
 ```yaml
-id: cae/2f
+id: cae-2f
 unite: GWh
 actions:
   - climat_air_energie/6.3.1
@@ -118,7 +118,7 @@ Consommation énergétique globale annuelle du territoire (GWh).
 
 # Consommation énergétique  du transport routier(GWh)
 ```yaml
-id: cae/2g
+id: cae-2g
 unite: GWh
 actions:
   - climat_air_energie/1.2.2
@@ -138,7 +138,7 @@ Consommation énergétique globale annuelle du territoire (GWh).
 
 # Consommation énergétique du secteur "autres transports" (teq CO2)
 ```yaml
-id: cae/2h
+id: cae-2h
 unite: teq CO2
 actions:
   - climat_air_energie/1.2.2
@@ -158,7 +158,7 @@ Consommation énergétique globale annuelle du territoire (GWh).
 
 # Consommation énergétique de l'agriculture (GWh)
 ```yaml
-id: cae/2i
+id: cae-2i
 unite: GWh
 actions:
   - climat_air_energie/6.4.1
@@ -178,7 +178,7 @@ Consommation énergétique globale annuelle du territoire (GWh).
 
 # Consommation énergétique des déchets (GWh)
 ```yaml
-id: cae/2j
+id: cae-2j
 unite: GWh
 actions:
   - climat_air_energie/1.2.3
@@ -198,7 +198,7 @@ Consommation énergétique globale annuelle du territoire (GWh).
 
 # Consommation énergétique de l'industrie hors branche énergie (GWh)
 ```yaml
-id: cae/2k
+id: cae-2k
 unite: GWh
 actions:
   - climat_air_energie/6.3.1

@@ -1,6 +1,6 @@
 # Part des marchés intégrant des clauses environnementales (%)
 ```yaml
-id: cae/51
+id: cae-51
 unite: '%'
 actions:
   - climat_air_energie/5.2.2

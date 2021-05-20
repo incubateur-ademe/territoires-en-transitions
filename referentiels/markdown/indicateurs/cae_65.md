@@ -1,6 +1,6 @@
 # Nombre d'heures de consultations et de conseils sur la thématique climat air énergie pour 100 hab / an
 ```yaml
-id: cae/65
+id: cae-65
 unite: Non trouvé
 actions:
   - climat_air_energie/6.5.4

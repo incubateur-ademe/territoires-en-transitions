@@ -1,6 +1,6 @@
 # Puissance photovoltaïque installée sur le territoire (Wc/hab)
 ```yaml
-id: cae/26
+id: cae-26
 unite: Wc/hab
 actions:
   - climat_air_energie/3.2.3

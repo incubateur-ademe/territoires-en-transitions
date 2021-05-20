@@ -1,6 +1,6 @@
 # Nombre de ménages demandeurs et bénéficiaires du FSL pour l’aide au paiement des factures d’énergie sur le territoire
 ```yaml
-id: cae/55
+id: cae-55
 unite: Non trouvé
 actions:
   - climat_air_energie/6.2.1

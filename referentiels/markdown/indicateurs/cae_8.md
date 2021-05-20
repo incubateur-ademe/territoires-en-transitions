@@ -1,6 +1,6 @@
 # Nombre de logements rénovés énergétiquement (nb logements rénovés/100 logements existants)
 ```yaml
-id: cae/8
+id: cae-8
 unite: nb logements rénovés/100 logements existants
 actions:
   - climat_air_energie/1.2.4

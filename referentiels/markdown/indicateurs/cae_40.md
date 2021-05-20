@@ -1,6 +1,6 @@
 # Consommation annuelle d'énergie des véhicules (VP) de la collectivité (kWh/an.employé)
 ```yaml
-id: cae/40a
+id: cae-40a
 unite: VP
 actions:
   - climat_air_energie/4.1.2
@@ -17,7 +17,7 @@ L'indicateur mesure la consommation d'énergie en kWh (gazole, essence, GPL, GNV
 
 # Consommation annuelle d'énergie des véhicules (VP) de la collectivité (kWh/an.km)
 ```yaml
-id: cae/40b
+id: cae-40b
 unite: VP
 actions:
   - climat_air_energie/4.1.2

@@ -1,6 +1,6 @@
 # Part de la population active couverte par un PDE/PDA (%)
 ```yaml
-id: cae/39
+id: cae-39
 unite: '%'
 actions:
   - climat_air_energie/4.1.1

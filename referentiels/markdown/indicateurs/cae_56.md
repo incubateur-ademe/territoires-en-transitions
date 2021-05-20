@@ -1,6 +1,6 @@
 # Nombre de dossiers « Habiter mieux » déposés à l’Anah sur le territoire
 ```yaml
-id: cae/56
+id: cae-56
 unite: Non trouvé
 actions:
   - climat_air_energie/6.2.1

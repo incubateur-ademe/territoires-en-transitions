@@ -1,6 +1,6 @@
 # Part de bâtiments publics de classe F ou G selon le DPE pour l'énergie (ou équivalent)
 ```yaml
-id: cae/15a
+id: cae-15a
 unite: ou équivalent
 actions:
   - climat_air_energie/2.2.1
@@ -19,7 +19,7 @@ En France métropolitaine, l'indicateur mesure la part (en surface -à défaut e
 
 # Part de bâtiments >=701 kWhep/m².an (calcul DPE ou équivalent) (DOM)
 ```yaml
-id: cae/15a_dom
+id: cae-15a_dom
 unite: calcul DPE ou équivalent
 actions:
   - climat_air_energie/2.2.1
@@ -38,7 +38,7 @@ Dans les DOM, l'indicateur mesure la part (en surface -à défaut en nombre) de 
 
 # Part de bâtiments publics de classe A ou B selon le DPE pour l'énergie (ou équivalent)
 ```yaml
-id: cae/15b
+id: cae-15b
 unite: ou équivalent
 actions:
   - climat_air_energie/2.2.1
@@ -57,7 +57,7 @@ En France métropolitaire, l'indicateur mesure la part (en surface -à défaut e
 
 # Part de bâtiments =<100 kWhep/m².an (calcul DPE ou équivalent) (DOM)
 ```yaml
-id: cae/15b_dom
+id: cae-15b_dom
 unite: calcul DPE ou équivalent
 actions:
   - climat_air_energie/2.2.1

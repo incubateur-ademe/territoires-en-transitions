@@ -1,6 +1,6 @@
 # Part modale piéton
 ```yaml
-id: cae/35
+id: cae-35
 unite: Non trouvé
 actions:
   - climat_air_energie/4.1.1

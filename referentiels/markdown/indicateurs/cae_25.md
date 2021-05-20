@@ -1,6 +1,6 @@
 # Production d'électricité renouvelable  (MWh)
 ```yaml
-id: cae/25a
+id: cae-25a
 unite: MWh
 actions:
   - climat_air_energie/3.2.3
@@ -18,7 +18,7 @@ Cet indicateur mesure la production d'électricité renouvelable sur le territoi
 
 # Taux de production d'électricité renouvelable sur le territoire (%)
 ```yaml
-id: cae/25b
+id: cae-25b
 unite: '%'
 obligation_cae: true
 actions:

@@ -1,6 +1,6 @@
 # Part d'établissements scolaires couverts par un PDES ou un pédibus/vélobus
 ```yaml
-id: cae/64
+id: cae-64
 unite: Non trouvé
 actions:
   - climat_air_energie/6.5.3

@@ -1,6 +1,6 @@
 # Budget associé à la politique climat-air-énergie (euros/hab.an)
 ```yaml
-id: cae/49a
+id: cae-49a
 unite: euros/hab.an
 actions:
   - climat_air_energie/5.2.1
@@ -33,7 +33,7 @@ A noter : Dans une approche véritablement transversale et intégrée, l'ensembl
 
 # Budget études/expertises MDE/ENR/qualité de l'air/adaptation au changement climatique (euros)
 ```yaml
-id: cae/49b
+id: cae-49b
 unite: euros
 actions:
   - climat_air_energie/5.2.1
@@ -52,7 +52,7 @@ Budget associé à la politique climat-air-énergie (euros/hab.an)
 
 # Budget actions communication/sensibilisation climat-air-énergie  (euros)
 ```yaml
-id: cae/49c
+id: cae-49c
 unite: euros
 actions:
   - climat_air_energie/5.2.1
@@ -71,7 +71,7 @@ Budget associé à la politique climat-air-énergie (euros/hab.an)
 
 # Montant des aides financières accordées aux particuliers et acteurs privés (euros)
 ```yaml
-id: cae/49d
+id: cae-49d
 unite: euros
 actions:
   - climat_air_energie/6.5.5
@@ -92,7 +92,7 @@ Budget associé à la politique climat-air-énergie (euros/hab.an)
 
 # Montant des aides financières accordées aux particuliers et acteurs privés (euros/hab.an)
 ```yaml
-id: cae/49d
+id: cae-49d
 unite: euros/hab.an
 actions:
   - climat_air_energie/6.5.5
@@ -109,7 +109,7 @@ Déclinaison par habitant.
 
 # Budget projets de coopération  (euros)
 ```yaml
-id: cae/49e
+id: cae-49e
 unite: euros
 actions:
   - climat_air_energie/6.5.5
@@ -128,7 +128,7 @@ Budget associé à la politique climat-air-énergie (euros/hab.an)
 
 # Budget politique cyclable  (euros)
 ```yaml
-id: cae/49f
+id: cae-49f
 unite: euros
 actions:
   - climat_air_energie/4.3.2
@@ -149,7 +149,7 @@ Budget associé à la politique climat-air-énergie (euros/hab.an)
 
 # Budget politique cyclable  (euros/hab.an)
 ```yaml
-id: cae/49f
+id: cae-49f
 unite: euros/hab.an
 actions:
   - climat_air_energie/4.3.2
@@ -166,7 +166,7 @@ Déclinaison par habitant.  Pour les collectivités compétentes en la matière,
 
 # Budget travaux rénovation énergétique patrimoine public  (euros)
 ```yaml
-id: cae/49g
+id: cae-49g
 unite: euros
 actions:
   - climat_air_energie/4.3.2
@@ -185,7 +185,7 @@ Budget associé à la politique climat-air-énergie (euros/hab.an)
 
 # Budget installations ENR publiques  (euros)
 ```yaml
-id: cae/49h
+id: cae-49h
 unite: euros
 actions:
   - climat_air_energie/4.3.2

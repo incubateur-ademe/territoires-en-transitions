@@ -1,6 +1,6 @@
 # Nombre de places de stationnement public pour les voitures par habitant (nb/hab)
 ```yaml
-id: cae/42
+id: cae-42
 unite: nb/hab
 actions:
   - climat_air_energie/4.2.1

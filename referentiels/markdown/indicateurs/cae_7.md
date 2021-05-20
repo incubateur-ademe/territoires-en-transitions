@@ -1,6 +1,6 @@
 # Recyclage matière et organique des déchets ménagers et assimilés (%)
 ```yaml
-id: cae/7
+id: cae-7
 unite: '%'
 actions:
   - climat_air_energie/1.2.3

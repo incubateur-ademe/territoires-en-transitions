@@ -1,6 +1,6 @@
 # Rendement énergétique UIOM en % (valorisation énergétique électricité et chaleur)
 ```yaml
-id: cae/32
+id: cae-32
 unite: valorisation énergétique électricité et chaleur
 actions:
   - climat_air_energie/3.3.5

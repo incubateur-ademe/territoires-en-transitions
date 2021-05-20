@@ -1,6 +1,6 @@
 # Production d'électricité renouvelable - patrimoine collectivité (MWh)
 ```yaml
-id: cae/17a
+id: cae-17a
 unite: MWh
 actions:
   - climat_air_energie/2.2.4
@@ -17,7 +17,7 @@ L'indicateur mesure la production d'électricité d'origine renouvelable (instal
 
 # Taux de production d'électricité renouvelable  - patrimoine collectivité (%)
 ```yaml
-id: cae/17b
+id: cae-17b
 unite: '%'
 actions:
   - climat_air_energie/2.2.4

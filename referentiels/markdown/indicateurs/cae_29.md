@@ -1,6 +1,6 @@
 # Consommation énergétique des STEP kWh/kgDBO5 éliminé
 ```yaml
-id: cae/29
+id: cae-29
 unite: Non trouvé
 actions:
   - climat_air_energie/3.3.2

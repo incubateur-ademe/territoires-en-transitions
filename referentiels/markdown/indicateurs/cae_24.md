@@ -1,6 +1,6 @@
 # Production de chaleur/froid renouvelable  (MWh)
 ```yaml
-id: cae/24a
+id: cae-24a
 unite: MWh
 actions:
   - climat_air_energie/3.2.2
@@ -22,7 +22,7 @@ Par convention, 50% de la chaleur produite par l’incinération des déchets es
 
 # Taux de production d'énergie renouvelable pour la chaleur et le rafraîchissement sur le territoire (en %)
 ```yaml
-id: cae/24b
+id: cae-24b
 unite: en %
 obligation_cae: true
 actions:

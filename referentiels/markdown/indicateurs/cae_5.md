@@ -1,6 +1,6 @@
 # Part modale de la voiture (en nombre de déplacements)
 ```yaml
-id: cae/5
+id: cae-5
 unite: en nombre de déplacements
 obligation_cae: true
 actions:

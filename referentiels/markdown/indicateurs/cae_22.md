@@ -1,6 +1,6 @@
 # Taux d'énergie renouvelable et de récupération (ENR&R) des réseaux de chaleur sur le territoire (en %)
 ```yaml
-id: cae/22
+id: cae-22
 unite: ENR&R
 actions:
   - climat_air_energie/3.2.2

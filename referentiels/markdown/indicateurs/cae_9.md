@@ -1,6 +1,6 @@
 # Compacité des formes urbaines
 ```yaml
-id: cae/9
+id: cae-9
 unite: Non trouvé
 actions:
   - climat_air_energie/1.3.1

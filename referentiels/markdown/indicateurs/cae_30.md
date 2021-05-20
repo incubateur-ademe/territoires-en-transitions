@@ -1,6 +1,6 @@
 # Quantité annuelle d'engrais/m2 d'espaces verts
 ```yaml
-id: cae/30
+id: cae-30
 unite: Non trouvé
 actions:
   - climat_air_energie/3.3.4

@@ -1,6 +1,6 @@
 # Indicateur alternatif à la part modale TC (à définir par la collectivité et son conseiller le cas échéant)
 ```yaml
-id: cae/38
+id: cae-38
 unite: à définir par la collectivité et son conseiller le cas échéant
 actions:
   - climat_air_energie/4.1.1

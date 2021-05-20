@@ -1,6 +1,6 @@
 # Taux de couverture des besoins de chaleur du territoire (résidentiel et tertiaire) par les réseaux de chaleur ENR&R (en %)
 ```yaml
-id: cae/23
+id: cae-23
 unite: résidentiel et tertiaire
 actions:
   - climat_air_energie/3.2.2

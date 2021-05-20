@@ -1,6 +1,6 @@
 # Surface annuelle artificialisée (ha/an)
 ```yaml
-id: cae/11
+id: cae-11
 unite: ha/an
 actions:
   - climat_air_energie/1.3.1

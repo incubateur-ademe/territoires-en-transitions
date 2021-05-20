@@ -1,6 +1,6 @@
 # Energie produite par la valorisation des biodéchets en kWh/an (à défaut kg/hab.an de biodéchets collectés de manière séparative -méthanisation et/ou compostage)
 ```yaml
-id: cae/33
+id: cae-33
 unite: à défaut kg/hab.an de biodéchets collectés de manière séparative -méthanisation et/ou compostage-
 actions:
   - climat_air_energie/3.3.5

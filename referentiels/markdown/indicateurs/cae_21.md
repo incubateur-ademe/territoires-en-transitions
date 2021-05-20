@@ -1,6 +1,6 @@
 # Consommation moyenne d'eau dans les bâtiments de la collectivité (l/m².an)
 ```yaml
-id: cae/21a
+id: cae-21a
 unite: l/m².an
 actions:
   - climat_air_energie/2.3.2
@@ -19,7 +19,7 @@ Des valeurs moyennes comparatives pour 3 catégories de bâtiments (dans la cat�
 
 # Consommation moyenne d'eau dans les bâtiments "enseignement/crèche" (l/m².an)
 ```yaml
-id: cae/21b
+id: cae-21b
 unite: l/m².an
 actions:
   - climat_air_energie/2.3.2
@@ -38,7 +38,7 @@ Consommation moyenne d'eau dans les bâtiments de la collectivité (l/m².an).
 
 # Consommation moyenne d'eau dans les bâtiments "administration" (l/m².an)
 ```yaml
-id: cae/21c
+id: cae-21c
 unite: l/m².an
 actions:
   - climat_air_energie/2.3.2
@@ -57,7 +57,7 @@ Consommation moyenne d'eau dans les bâtiments de la collectivité (l/m².an).
 
 # Consommation moyenne d'eau dans les bâtiments"culture/sport" (l/m².an)
 ```yaml
-id: cae/21d
+id: cae-21d
 unite: l/m².an
 actions:
   - climat_air_energie/2.3.2

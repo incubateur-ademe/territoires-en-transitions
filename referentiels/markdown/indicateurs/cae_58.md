@@ -1,6 +1,6 @@
 # Emissions directes de polluants atmosphériques du secteur agriculture par ha (tonne/ha)
 ```yaml
-id: cae/58
+id: cae-58
 unite: tonne/ha
 actions:
   - climat_air_energie/6.4.1

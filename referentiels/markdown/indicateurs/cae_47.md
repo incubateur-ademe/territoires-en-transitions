@@ -1,6 +1,6 @@
 # Maillage du territoire par le réseau TC
 ```yaml
-id: cae/47
+id: cae-47
 unite: Non trouvé
 actions:
   - climat_air_energie/4.3.3

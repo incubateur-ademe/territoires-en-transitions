@@ -1,6 +1,6 @@
 # Consommation énergétique du système d'alimentation en eau potable (captage/traitement/distribution) en kWh/hab
 ```yaml
-id: cae/28a
+id: cae-28a
 unite: captage/traitement/distribution
 actions:
   - climat_air_energie/3.3.1
@@ -17,7 +17,7 @@ Le système d'alimentation en eau potable est très dépendant de l'état de la 
 
 # Rendement du système d'alimentation en eau potable (captage/traitement/distribution) en m3 brut/m3 vendu
 ```yaml
-id: cae/28b
+id: cae-28b
 unite: captage/traitement/distribution
 actions:
   - climat_air_energie/3.3.1

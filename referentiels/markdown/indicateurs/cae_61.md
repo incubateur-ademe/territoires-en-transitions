@@ -1,6 +1,6 @@
 # Quantité moyenne de viande par repas dans la restauration collective publique (g/repas)
 ```yaml
-id: cae/61
+id: cae-61
 unite: g/repas
 actions:
   - climat_air_energie/6.4.1

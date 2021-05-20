@@ -1,6 +1,6 @@
 # Part des surfaces agricoles et naturelles (%)
 ```yaml
-id: cae/10
+id: cae-10
 unite: '%'
 actions:
   - climat_air_energie/1.3.1

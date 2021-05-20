@@ -1,6 +1,6 @@
 # Part d'ETP de la collectivité  dédié à la mise en œuvre de la politique climat air énergie ( %)
 ```yaml
-id: cae/48
+id: cae-48
 unite: '%'
 actions:
   - climat_air_energie/5.1.1

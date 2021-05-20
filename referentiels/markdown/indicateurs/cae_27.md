@@ -1,6 +1,6 @@
 # Mix énergétique proposé par les régies et SEM fournisseur d'électricité (%)
 ```yaml
-id: cae/27
+id: cae-27
 unite: '%'
 actions:
   - climat_air_energie/3.2.3

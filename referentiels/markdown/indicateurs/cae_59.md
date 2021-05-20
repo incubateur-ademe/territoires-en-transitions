@@ -1,6 +1,6 @@
 # Part de surface agricole certifiée agriculture biologique ou en conversion et haute valeur environnementale (%)
 ```yaml
-id: cae/59
+id: cae-59
 unite: '%'
 actions:
   - climat_air_energie/6.4.1

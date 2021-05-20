@@ -1,6 +1,6 @@
 # Part de bâtiments de classe F ou G selon le DPE pour les GES (ou équivalent) (hors DOM)
 ```yaml
-id: cae/19a_hors_dom
+id: cae-19a_hors_dom
 unite: ou équivalent
 actions:
   - climat_air_energie/2.2.5
@@ -17,7 +17,7 @@ En France métropolitaine, l'indicateur mesure la part (en surface -à défaut e
 
 # Part de bâtiments de classe A ou B selon le DPE pour les GES (ou équivalent)  (hors DOM)
 ```yaml
-id: cae/19b_hors_dom
+id: cae-19b_hors_dom
 unite: ou équivalent
 actions:
   - climat_air_energie/2.2.5

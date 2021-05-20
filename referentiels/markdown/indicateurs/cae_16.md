@@ -1,6 +1,6 @@
 # Consommation de chaleur/rafraichissement renouvelable et de récupération - patrimoine collectivité   (MWh)
 ```yaml
-id: cae/16a
+id: cae-16a
 unite: MWh
 actions:
   - climat_air_energie/2.2.3
@@ -21,7 +21,7 @@ Pour les bâtiments publics desservis par des réseaux de chaleur, le taux d’E
 
 # Taux de couverture par les énergies renouvelables et de récupération des besoins en chaleur et rafraichissement - patrimoine collectivité (%)
 ```yaml
-id: cae/16b
+id: cae-16b
 unite: '%'
 actions:
   - climat_air_energie/2.2.3

@@ -1,6 +1,6 @@
 # Part du budget consacré aux projets de coopération significatifs et multi-acteurs par an sur le climat, l’air et l’énergie (%)
 ```yaml
-id: cae/53
+id: cae-53
 unite: '%'
 actions:
   - climat_air_energie/6.1.1

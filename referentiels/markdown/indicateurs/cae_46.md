@@ -1,6 +1,6 @@
 # Fréquentation des TC (voyages/hab)
 ```yaml
-id: cae/46
+id: cae-46
 unite: voyages/hab
 actions:
   - climat_air_energie/4.3.3

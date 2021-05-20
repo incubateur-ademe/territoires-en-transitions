@@ -1,6 +1,6 @@
 # Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)
 ```yaml
-id: cae/1a
+id: cae-1a
 unite: teq CO2
 obligation_cae: true
 actions:
@@ -25,7 +25,7 @@ Il ne s'agit pas du bilan GES "Patrimoine et compétences".
 
 # Emissions de gaz à effet de serre annuelles du territoire par habitant (teq CO2/hab)
 ```yaml
-id: cae/1b
+id: cae-1b
 unite: teq CO2/hab
 actions:
   - climat_air_energie/1.1.1
@@ -48,7 +48,7 @@ L'évaluation est basée sur l'évolution de l'indicateur.
 
 # Emissions de gaz à effet de serre du résidentiel (teq CO2)
 ```yaml
-id: cae/1c
+id: cae-1c
 unite: teq CO2
 actions:
   - climat_air_energie/1.2.4
@@ -70,7 +70,7 @@ Décomposition par secteur réglementaire de l'indicateur global
 
 # Emissions de gaz à effet de serre du tertiaire (teq CO2)
 ```yaml
-id: cae/1d
+id: cae-1d
 unite: teq CO2
 actions:
   - climat_air_energie/6.3.1
@@ -92,7 +92,7 @@ Décomposition par secteur réglementaire de l'indicateur global
 
 # Emissions de gaz à effet de serre du transport routier (teq CO2)
 ```yaml
-id: cae/1e
+id: cae-1e
 unite: teq CO2
 actions:
   - climat_air_energie/1.2.2
@@ -114,7 +114,7 @@ Décomposition par secteur réglementaire de l'indicateur global
 
 # Emissions de gaz à effet de serre de secteurs "autres transports" (teq CO2)
 ```yaml
-id: cae/1f
+id: cae-1f
 unite: teq CO2
 actions:
   - climat_air_energie/1.2.2
@@ -136,7 +136,7 @@ Décomposition par secteur réglementaire de l'indicateur global
 
 # Emissions de gaz à effet de serre de l'agriculture (teq CO2)
 ```yaml
-id: cae/1g
+id: cae-1g
 unite: teq CO2
 actions:
   - climat_air_energie/6.4.1
@@ -158,7 +158,7 @@ Décomposition par secteur réglementaire de l'indicateur global
 
 # Emissions de gaz à effet de serre des déchets (teq CO2)
 ```yaml
-id: cae/1h
+id: cae-1h
 unite: teq CO2
 actions:
   - climat_air_energie/1.2.3
@@ -180,7 +180,7 @@ Décomposition par secteur réglementaire de l'indicateur global
 
 # Emissions de gaz à effet de serre de l'industrie hors branche énergie (teq CO2)
 ```yaml
-id: cae/1i
+id: cae-1i
 unite: teq CO2
 actions:
   - climat_air_energie/6.3.1
@@ -202,7 +202,7 @@ Décomposition par secteur réglementaire de l'indicateur global
 
 # Emissions de gaz à effet de serre de l'industrie branche énergie (teq CO2)
 ```yaml
-id: cae/1j
+id: cae-1j
 unite: teq CO2
 actions:
   - climat_air_energie/6.3.1

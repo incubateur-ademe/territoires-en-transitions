@@ -1,6 +1,6 @@
 # Part de bâtiments publics ayant fait l'objet d'un diagnostic énergétique
 ```yaml
-id: cae/12
+id: cae-12
 unite: Non trouvé
 actions:
   - climat_air_energie/2.1.1

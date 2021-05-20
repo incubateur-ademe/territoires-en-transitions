@@ -1,6 +1,6 @@
 # Part de surface forestière certifiée (%)
 ```yaml
-id: cae/62
+id: cae-62
 unite: '%'
 actions:
   - climat_air_energie/6.4.2

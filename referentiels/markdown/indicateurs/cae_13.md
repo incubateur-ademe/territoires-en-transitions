@@ -1,6 +1,6 @@
 # Dépenses énergétiques de la collectivité (euros)
 ```yaml
-id: cae/13a
+id: cae-13a
 unite: euros
 actions:
   - climat_air_energie/2.1.1
@@ -21,7 +21,7 @@ Rapportées au nombre d'habitants, pour les communes, les valeurs peuvent-être 
 
 # Dépenses  énergétiques - bâtiments (euros)
 ```yaml
-id: cae/13b
+id: cae-13b
 unite: euros
 actions:
   - climat_air_energie/2.1.1
@@ -40,7 +40,7 @@ L'indicateur mesure les dépenses d’énergie payées directement par la collec
 
 # Dépenses énergétiques - véhicules (euros)
 ```yaml
-id: cae/13c
+id: cae-13c
 unite: euros
 actions:
   - climat_air_energie/4.1.2
@@ -59,7 +59,7 @@ L'indicateur mesure les dépenses d’énergie payées directement par la collec
 
 # Dépenses énergétiques - éclairage public  (euros)
 ```yaml
-id: cae/13d
+id: cae-13d
 unite: euros
 actions:
   - climat_air_energie/2.3.5

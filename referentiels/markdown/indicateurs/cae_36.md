@@ -1,6 +1,6 @@
 # Part modale vélo
 ```yaml
-id: cae/36
+id: cae-36
 unite: Non trouvé
 actions:
   - climat_air_energie/4.1.1

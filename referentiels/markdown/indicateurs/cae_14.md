@@ -1,6 +1,6 @@
 # Consommation d'énergie finale des bâtiments publics (MWh)
 ```yaml
-id: cae/14a
+id: cae-14a
 unite: MWh
 actions:
   - climat_air_energie/2.2.1
@@ -19,7 +19,7 @@ L'indicateur mesure la consommation énergétique totale (toute énergie, tout u
 
 # Consommation d'énergie finale des bâtiments publics (rapporté au nb d'habitant, en kWh/hab)
 ```yaml
-id: cae/14b
+id: cae-14b
 unite: rapporté au nb d'habitant, en kWh/hab
 actions:
   - climat_air_energie/2.2.1
@@ -38,7 +38,7 @@ L'indicateur mesure la consommation énergétique totale (toute énergie, tout u
 
 # Consommation d'énergie finale des bâtiments publics (rapporté à la surface du patrimoine, en kWh/m²)
 ```yaml
-id: cae/14c
+id: cae-14c
 unite: rapporté à la surface du patrimoine, en kWh/m²
 obligation_cae: true
 actions:

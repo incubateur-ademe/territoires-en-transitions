@@ -1,6 +1,6 @@
 # Part de produits biologiques dans la restauration collective publique (%)
 ```yaml
-id: cae/60
+id: cae-60
 unite: '%'
 actions:
   - climat_air_energie/6.4.1

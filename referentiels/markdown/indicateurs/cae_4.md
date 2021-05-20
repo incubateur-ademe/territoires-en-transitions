@@ -1,6 +1,6 @@
 # Emissions annuelles de Nox (tonnes)
 ```yaml
-id: cae/4a
+id: cae-4a
 unite: tonnes
 actions:
   - climat_air_energie/1.1.1
@@ -18,7 +18,7 @@ Ces indicateurs estiment les émissions annuelles des six polluants atmosphériq
 
 # Emissions annuelles de PM10 (tonnes)
 ```yaml
-id: cae/4b
+id: cae-4b
 unite: tonnes
 actions:
   - climat_air_energie/1.1.1
@@ -36,7 +36,7 @@ Ces indicateurs estiment les émissions annuelles des six polluants atmosphériq
 
 # Emissions annuelles de PM2,5 (tonnes)
 ```yaml
-id: cae/4c
+id: cae-4c
 unite: tonnes
 actions:
   - climat_air_energie/1.1.1
@@ -54,7 +54,7 @@ Ces indicateurs estiment les émissions annuelles des six polluants atmosphériq
 
 # Emissions annuelles de COV (tonnes)
 ```yaml
-id: cae/4d
+id: cae-4d
 unite: tonnes
 actions:
   - climat_air_energie/1.1.1
@@ -72,7 +72,7 @@ Ces indicateurs estiment les émissions annuelles des six polluants atmosphériq
 
 # Emissions annuelles de SO2  (tonnes)
 ```yaml
-id: cae/4e
+id: cae-4e
 unite: tonnes
 actions:
   - climat_air_energie/1.1.1
@@ -90,7 +90,7 @@ Ces indicateurs estiment les émissions annuelles des six polluants atmosphériq
 
 # Emissions annuelles de NH3 (tonnes)
 ```yaml
-id: cae/4f
+id: cae-4f
 unite: tonnes
 actions:
   - climat_air_energie/1.1.1

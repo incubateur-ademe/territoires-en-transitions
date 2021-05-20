@@ -1,6 +1,6 @@
 # Taux de valorisation énergétique du biogaz des centres de stockage des déchets (en %)
 ```yaml
-id: cae/34
+id: cae-34
 unite: en %
 actions:
   - climat_air_energie/3.3.5

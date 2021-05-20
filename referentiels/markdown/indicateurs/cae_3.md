@@ -1,6 +1,6 @@
 # Production d’énergie renouvelable globale du territoire (MWh)
 ```yaml
-id: cae/3a
+id: cae-3a
 unite: MWh
 obligation_cae: true
 actions:
@@ -27,7 +27,7 @@ Préciser l'année de référence en commentaire.
 
 # Production d’énergie renouvelable globale du territoire (% de la consommation)
 ```yaml
-id: cae/3b
+id: cae-3b
 unite: '% de la consommation'
 actions:
   - climat_air_energie/1.1.1

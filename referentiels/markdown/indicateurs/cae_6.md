@@ -1,6 +1,6 @@
 # Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)
 ```yaml
-id: cae/6a
+id: cae-6a
 unite: avec déblais et gravats
 obligation_cae: true
 actions:
@@ -24,7 +24,7 @@ La valeur limite est issue des chiffres-clés déchets de l’ADEME, édition 20
 
 # Production Ordures ménagères résiduelles (kg/hab)
 ```yaml
-id: cae/6b
+id: cae-6b
 unite: kg/hab
 actions:
   - climat_air_energie/1.2.3
@@ -49,7 +49,7 @@ Production de déchets ménagers et assimilés (avec déblais et gravats) par ha
 
 # Production de déchets collectés sélectivement, soit en porte-à-porte, soit en apport volontaire (kg/hab)
 ```yaml
-id: cae/6c
+id: cae-6c
 unite: kg/hab
 actions:
   - climat_air_energie/1.2.3
@@ -70,7 +70,7 @@ Production de déchets ménagers et assimilés (avec déblais et gravats) par ha
 
 # Production de déchets occasionnels (kg/hab)
 ```yaml
-id: cae/6d
+id: cae-6d
 unite: kg/hab
 actions:
   - climat_air_energie/1.2.3
