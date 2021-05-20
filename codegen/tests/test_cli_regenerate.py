@@ -32,6 +32,6 @@ def test_indicateurs_thematiques(mock_write: MagicMock):
 
 @pytest.mark.skip(reason="regen functions are one shot tasks")
 @patch("codegen.cli_regenerate.write")
-def test_indicateurs_universal():
+def test_indicateurs_universal(mock_write: MagicMock):
     indicateurs_universal()
 

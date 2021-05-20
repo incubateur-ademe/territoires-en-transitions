@@ -38,7 +38,7 @@ def parse_indicateurs_eci_xlsx(indicateurs_xlsx: str) -> List[dict]:
         if stripped(row['intitulé']):
             indicateur_count += 1
             indicateur = {
-                'id': f'eci-{indicateur_count}',
+                'id': f'eci-{indicateur_count:03d}',
                 'nom': stripped(row['indicateur']),
                 'description': stripped(row['description']),
                 'obligation_eci': stripped(row['obligatoire_optionnel']).lower() == 'obligatoire',

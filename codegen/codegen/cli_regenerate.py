@@ -1,5 +1,6 @@
 import glob
 import os
+import re
 
 import typer
 
@@ -145,8 +146,9 @@ def indicateurs_universal(
             if indicateur['pcaet']:
                 indicateur['programmes'].append('pcaet')
 
-
             new_md += indicateur_to_markdown(indicateur) + '\n'
             # ---
-        new_filename = 'cae_' + os.path.basename(filename)
+        base_name = os.path.basename(filename)
+        number = re.findall(r'\d+', base_name)[0]
+        new_filename = f'cae_{int(number):03d}.md'
         write(os.path.join(indicateurs_dir, new_filename), new_md)
