@@ -70,13 +70,13 @@ def parse_referentiel_eci_xlsx(referentiel: str) -> List[dict]:
 
                         if '→' in line:
                             nom, pourcentage = line.split('→')
+                            nom = nom.replace('- ', '')
                             pourcentage = int(re.search(r'\d+', pourcentage).group(0))
-
                             if pourcentage:
                                 tache_index += 1
                                 tache = {
                                     'id': f'{niveau["id"]}.{tache_index}',
-                                    'nom': nom.strip(),
+                                    'nom': stripped(nom).capitalize(),
                                     'points': int(points * pourcentage / 100),
                                     'poids': stripped(row['poids']),
                                     'actions': [],
