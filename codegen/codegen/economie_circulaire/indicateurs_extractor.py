@@ -43,6 +43,7 @@ def parse_indicateurs_eci_xlsx(indicateurs_xlsx: str) -> List[dict]:
                 'description': stripped(row['description']),
                 'obligation_eci': stripped(row['obligatoire_optionnel']).lower() == 'obligatoire',
                 'source': stripped(row['source']),
+                'unite': stripped(row['unité']),
                 'actions': [],
             }
             if stripped(row['orientation']):
