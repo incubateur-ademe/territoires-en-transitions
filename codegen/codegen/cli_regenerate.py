@@ -133,7 +133,7 @@ def indicateurs_universal(
         new_md = ''
         for indicateur in indicateurs:
             # -- extract this for future regen function on indicator --
-            indicateur['id'] = 'cae/' + str(indicateur['id'])
+            indicateur['id'] = 'cae-' + str(indicateur['id'])
 
             indicateur['actions'] = []
             for mesure_id in indicateur['mesures']:
