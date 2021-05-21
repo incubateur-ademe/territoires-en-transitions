@@ -3,7 +3,7 @@ from typing import Callable
 from mistletoe import Document
 from mistletoe.block_token import BlockToken, Heading, CodeFence
 
-from codegen.utils.markdown_utils import update_with_yaml, is_keyword, token_to_string, is_heading, void
+from codegen.utils.markdown_utils import update_with_yaml, is_keyword, token_to_string, is_heading
 
 
 def meta(token: BlockToken, data: dict) -> None:
