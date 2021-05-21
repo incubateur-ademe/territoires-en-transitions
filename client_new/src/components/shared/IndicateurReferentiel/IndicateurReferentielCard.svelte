@@ -19,6 +19,10 @@
 
     let years = [...Array(7).keys()].map(i => i + 2016) // 2016 to 2022
 
+    const prettifyId = (id: string) => {
+        return id.replace('cae-', '🌍 ').replace('eci-', '♻ ').replace(' 0', '')
+    }
+
     onMount(async () => {
         const referentiel = await import('../../../../generated/data/actions_referentiels')
 
@@ -46,7 +50,7 @@
         <div class="flex-1 flex flex-row cursor-pointer items-stretch mr-4"
              on:click={handleExpand}>
             <h3 class="flex flex-row items-stretch">
-                <span class="mr-4 flex">{ indicateur.id }</span>
+                <span class="mr-4 flex whitespace-nowrap">{ prettifyId(indicateur.id) }</span>
                 <span class="mr-4 flex">{ indicateur.nom }</span>
             </h3>
             <Angle direction="{expanded ? 'down' : 'right' }"/>
