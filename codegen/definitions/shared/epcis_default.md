@@ -12,16 +12,19 @@ epcis_default:
   test: 'Ville de test'
   clunisois: "CC du Clunisois"
   coeur_savoie: "CC Coeur de Savoie"
+  coeur_var: "CC Coeur du Var"
   doubs_baumois: "CC Doubs Baumois"
   haut_poitou: "CC Haut Poitou"
   pays_rethelois: "CC Pays Rethélois"
   pyrenees_gaves: "CC Pyrénées Vallées des Gaves"
+  sundgau: "CC Sundgau"
   terres_haut_berry: "CC Terres du Haut Berry"
   touraine_est: "CC Touraine-Est Vallées"
   cyclad: "Cyclad"
   hennebont: "Hennebont"
+  malaunay: "Malaunay"
   ploemeur: "Plœmeur"
   saint_pierre_elbeuf: "Saint-Pierre-Lès-Elbeuf"
-  malaunay: "Malaunay"
+  
 
 ```
