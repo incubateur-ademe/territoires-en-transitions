@@ -11,6 +11,7 @@ Il ne faut pas changer `test` non plus car c'est la clé par default.
 epcis_default:
   test: 'Ville de test'
   saint_louis_agglo: "CA Saint Louis Agglomération"
+  bourges_plus: "CA Bourges Plus"
   canteleu: "Canteleu"
   clunisois: "CC du Clunisois"
   coeur_savoie: "CC Coeur de Savoie"
@@ -20,6 +21,7 @@ epcis_default:
   haut_poitou: "CC Haut Poitou"
   pays_rethelois: "CC Pays Rethélois"
   pays_voironnais: "CC Pays Voironnais"
+  piemont_cevenol: "CC Piémont Cévenol"
   pyrenees_gaves: "CC Pyrénées Vallées des Gaves"
   terres_haut_berry: "CC Terres du Haut Berry"
   touraine_est: "CC Touraine-Est Vallées"
