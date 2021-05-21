@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, List
 
 from mistletoe import Document
 from mistletoe.block_token import BlockToken, Heading, CodeFence
@@ -67,10 +67,10 @@ def writer(name_level: int, node_builder: Callable, children_key: str = '', ) ->
     return node_writer
 
 
-def tree_builder(doc: Document, node_builder: Callable, children_key: str = '') -> dict:
-    """Extract a tree from a markdown AST"""
-    root = node_builder()
-    name_level = 1
+def markdown_parser(doc: Document, node_builder: Callable, children_key: str = '') -> List[dict]:
+    """Extract a elements from a markdown AST"""
+    elements = [node_builder()]
+    name_level = 1  # the current level element names.
     current = writer(name_level=name_level, node_builder=node_builder, children_key=children_key)
 
     for token in doc.children:
@@ -78,32 +78,15 @@ def tree_builder(doc: Document, node_builder: Callable, children_key: str = '') 
             name_level = token.level + 1
             current = writer(name_level=name_level, node_builder=node_builder, children_key=children_key)
 
-        if is_heading(token, level=name_level - 2):
+        elif is_heading(token, level=name_level - 2):
             name_level -= 2
             current = writer(name_level=name_level, node_builder=node_builder, children_key=children_key)
 
-        if is_heading(token, level=name_level):
-            name_level = name_level
+        elif is_heading(token, level=1):
+            if elements[-1]['nom']:
+                elements.append(node_builder())
             current = writer(name_level=name_level, node_builder=node_builder, children_key=children_key)
 
-        current(token, root)
+        current(token, elements[-1])
 
-    return root
-
-
-def flat_builder(doc: Document, node_builder: Callable, children_key: str = '') -> list:
-    """Use the tree builder then flatten the results"""
-    tree = tree_builder(doc, node_builder=node_builder, children_key=children_key)
-    children = []
-
-    def flatten(node: dict) -> None:
-        children.append(node)
-        for child in node[children_key]:
-            flatten(child)
-
-    flatten(tree)
-
-    for child in children:
-        del child[children_key]
-
-    return children
+    return elements

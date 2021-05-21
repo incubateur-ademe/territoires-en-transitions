@@ -1,6 +1,6 @@
 from mistletoe import Document
 
-from codegen.markdown.read import tree_builder
+from codegen.markdown.read import markdown_parser
 
 
 def build_action(doc: Document) -> dict:
@@ -12,4 +12,4 @@ def build_action(doc: Document) -> dict:
             'description': '',
         }
 
-    return tree_builder(doc, node_builder=builder, children_key='actions')
+    return markdown_parser(doc, node_builder=builder, children_key='actions')[-1]

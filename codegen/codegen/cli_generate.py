@@ -8,8 +8,9 @@ import codegen.paths as paths
 from codegen.action.process import relativize_ids, clean_thematiques, propagate_thematiques
 from codegen.action.read import build_action
 from codegen.action.render import render_actions_as_typescript
-from codegen.citergie.indicators_generator import build_indicators, render_indicators_as_html, \
-    render_indicators_as_typescript
+from codegen.citergie.indicators_generator import build_indicators
+from codegen.indicateur.read import indicateurs_builder
+from codegen.indicateur.render import render_indicators_as_typescript
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
 from codegen.codegen.python import render_markdown_as_python
 from codegen.codegen.typescript import render_markdown_as_typescript
@@ -25,7 +26,6 @@ def all(
     actions_output_typescript=True,
     indicateurs_markdown_dir=paths.indicateurs_markdown_dir,
     indicateurs_output_client_dir=paths.shared_client_data_dir,
-    indicateurs_html=False,
     indicateurs_typescript=True,
     shared_markdown_dir=paths.shared_markdown_dir,
     shared_client_output_dir=paths.shared_client_models_dir,
@@ -46,7 +46,6 @@ def all(
     indicateurs(
         indicateurs_markdown_dir=indicateurs_markdown_dir,
         client_output_dir=indicateurs_output_client_dir,
-        html=indicateurs_html,
         typescript=indicateurs_typescript,
     )
     shared(
@@ -107,23 +106,17 @@ def actions(
 def indicateurs(
     indicateurs_markdown_dir: str = typer.Option(paths.indicateurs_markdown_dir, "--markdown", "-md"),
     client_output_dir: str = paths.shared_client_data_dir,
-    html: bool = False,
     typescript: bool = True,
 ) -> None:
     """
     Convert 'indicateurs' markdown files to code.
     """
-    files = glob.glob(os.path.join(indicateurs_markdown_dir, '*.md'))
+    files = sorted_files(indicateurs_markdown_dir, 'md')
     indicators = []
     for filename in files:
         typer.echo(f'Processing {filename}...')
         md = load_md(filename)
-        indicators.extend(build_indicators(md))
-
-    if html:
-        rendered = render_indicators_as_html(indicators)
-        filename = os.path.join(client_output_dir, 'indicateurs.html')
-        write(filename, rendered)
+        indicators.extend(indicateurs_builder(md))
 
     if typescript:
         rendered = render_indicators_as_typescript(indicators)

@@ -10,7 +10,7 @@ mesures_markdown_dir = '../referentiels/markdown/mesures_citergie'
 orientations_markdown_dir = '../referentiels/markdown/orientations_economie_circulaire'
 mesures_client_output_dir = os.path.join(client_dir, 'dist')
 
-indicateurs_markdown_dir = '../referentiels/markdown/indicateurs_citergie'
+indicateurs_markdown_dir = '../referentiels/markdown/indicateurs'
 indicateurs_client_output_dir = os.path.join(client_dir, 'dist')
 
 shared_markdown_dir = 'definitions/shared'
