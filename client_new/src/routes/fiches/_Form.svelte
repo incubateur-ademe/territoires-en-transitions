@@ -4,8 +4,6 @@
     import MultiSelect from './_MultiSelect.svelte'
     import CategoriePicker from './_CategoriePicker.svelte'
     import Status from './_Status.svelte'
-    import {requiredValidator} from "../../validation/validators"
-    import {createFieldValidator} from "../../validation/validation"
     import {FicheActionInterface} from "../../../generated/models/fiche_action"
     import {onMount} from "svelte"
     import {HybridStore} from "../../api/hybridStore"
@@ -20,6 +18,8 @@
         from "../../components/shared/IndicateurPersonnalise/IndicateurPersonaliseCreation.svelte";
     import LabeledTextArea from "../../components/shared/Forms/LabeledTextArea.svelte";
     import LabeledTextInput from "../../components/shared/Forms/LabeledTextInput.svelte";
+    import {alwaysValid, joinValidators, validate} from "../../api/validator";
+    import {maximumLengthValidatorBuilder, numbersOnlyValidator, requiredValidator} from "../../api/validators";
 
     export let data: FicheActionInterface
 
@@ -31,15 +31,39 @@
     // hack fix https://lte.jetbrains.space/p/territoires-en-transitions/issues/302
     let budget: number | string = data.budget
 
+    const validators = {
+        epci_id: maximumLengthValidatorBuilder(36),
+        uid: maximumLengthValidatorBuilder(36),
+        custom_id: maximumLengthValidatorBuilder(36),
+        avancement: maximumLengthValidatorBuilder(36),
+        referentiel_action_ids: alwaysValid,
+        referentiel_indicateur_ids: alwaysValid,
+        titre: joinValidators([requiredValidator, maximumLengthValidatorBuilder(300)]),
+        description: alwaysValid,
+        budget: numbersOnlyValidator,
+        personne_referente: maximumLengthValidatorBuilder(100),
+        structure_pilote: maximumLengthValidatorBuilder(300),
+        partenaires: maximumLengthValidatorBuilder(300),
+        elu_referent: maximumLengthValidatorBuilder(300),
+        commentaire: alwaysValid,
+        date_debut: maximumLengthValidatorBuilder(36),
+        date_fin: maximumLengthValidatorBuilder(36),
+        indicateur_personnalise_ids: alwaysValid,
+    }
+
     // Save the form data
     const handleSave = async () => {
-        if (!data.titre) return;
-        data.budget = Number.parseFloat(budget.toString()) || 0
+        for (let key of Object.keys(validators)) {
+            let valid = validate(data[key], validators[key])
+            if (!valid) return window.alert(`Le champ ${key} du formulaire n'est pas valide : ${validators[key](data[key])}`);
+        }
+
         const fiche = new FicheActionStorable(data)
         const saved = await ficheActionStore.store(fiche)
 
         if (saved.uid) window.location.href = `/fiches/?epci_id=${data.epci_id}`
         else window.alert('Une erreur est survenue lors de la sauvegarde de la fiche action.')
+
     }
 
     // Indicateur référentiel list to pick from.
@@ -54,7 +78,7 @@
     // Called when the indicateur personnalisé form.
     const indicateurSaved = async (event) => {
         showIndicateurCreation = false
-        
+
         const hybridStores = await import ("../../api/hybridStores")
         indicateursPersonnalises = await hybridStores.indicateurPersonnaliseStore.retrieveAll()
         data.indicateur_personnalise_ids.push(event.detail.indicateur.id)
@@ -89,8 +113,6 @@
         // show test ui
         useIndicateursPersonnalises = testUIVisibility()
     });
-
-    const [validity, validate] = createFieldValidator(requiredValidator())
 </script>
 
 <svelte:head>
@@ -106,31 +128,25 @@
 <section class="flex flex-col">
 
     <form class="flex flex-col w-full md:w-3/4 pb-10">
-        <label class="text-xl" for="fiche_create_custom_id">Numérotation de l'action (ex: 1.2.3, A.1.a, 1.1 permet le classement) </label>
-        <input bind:value={data.custom_id}
-               class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-               id="fiche_create_custom_id"
-               maxlength="36">
-
+        <LabeledTextInput bind:value={data.custom_id}
+                          maxlength="36"
+                          validator={validators.custom_id}>
+            <div class="text-xl">Numérotation de l'action</div>
+        </LabeledTextInput>
         <div class="p-5"></div>
 
 
-        <label class="text-xl" for="fiche_create_titre">Titre</label>
-        <input bind:value={data.titre}
-               class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-               id="fiche_create_titre"
-               maxlength="300"
-               use:validate={data.titre}>
-        {#if $validity.dirty && !$validity.valid}
-            <span class="validation-hint">
-               {$validity.message}
-            </span>
-        {/if}
+        <LabeledTextInput bind:value={data.titre}
+                          maxlength="36"
+                          validator={validators.titre}>
+            <div class="text-xl">Titre</div>
+        </LabeledTextInput>
         <div class="p-5"></div>
 
         <CategoriePicker ficheActionUid={data.uid}/>
 
-        <LabeledTextArea bind:value={data.description}>
+        <LabeledTextArea bind:value={data.description}
+                         validator={validators.description}>
             <div class="text-xl">Description</div>
         </LabeledTextArea>
         <div class="p-5"></div>
@@ -140,32 +156,40 @@
         <div class="p-5"></div>
 
 
-        <LabeledTextInput bind:value={data.structure_pilote} maxlength="300">
+        <LabeledTextInput bind:value={data.structure_pilote}
+                          maxlength="300"
+                          validator={validators.structure_pilote}>
             <div class="text-xl">Structure pilote</div>
         </LabeledTextInput>
         <div class="p-5"></div>
 
-        <LabeledTextInput bind:value={data.personne_referente} maxlength="300">
+        <LabeledTextInput bind:value={data.personne_referente}
+                          maxlength="300"
+                          validator={validators.personne_referente}>
             <div class="text-xl">Personne référente</div>
         </LabeledTextInput>
         <div class="p-5"></div>
 
-        <LabeledTextInput bind:value={data.elu_referent} maxlength="300">
+        <LabeledTextInput bind:value={data.elu_referent}
+                          maxlength="300"
+                          validator={validators.elu_referent}>
             <div class="text-xl">Élu référent</div>
         </LabeledTextInput>
         <div class="p-5"></div>
 
-        <LabeledTextInput bind:value={data.partenaires} maxlength="300">
+        <LabeledTextInput bind:value={data.partenaires}
+                          maxlength="300"
+                          validator={validators.partenaires}>
             <div class="text-xl">Partenaires</div>
         </LabeledTextInput>
         <div class="p-5"></div>
 
-        <label class="text-xl" for="fiche_create_budget">Budget global</label>
-        <input bind:value={budget}
-               class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-               id="fiche_create_budget"
-               type="number">
+        <LabeledTextInput bind:value={data.budget}
+                          validator={validators.budget}>
+            <div class="text-xl">Budget global</div>
+        </LabeledTextInput>
         <div class="p-5"></div>
+
 
         <LabeledTextArea bind:value={data.commentaire}>
             <div class="text-xl">Commentaire</div>
