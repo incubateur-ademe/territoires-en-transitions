@@ -10,7 +10,9 @@ Il ne faut pas changer `test` non plus car c'est la clé par default.
 ```yaml
 epcis_default:
   test: 'Ville de test'
+  bac_bal_aere: "BAC-BAL-AERE"
   saint_louis_agglo: "CA Saint Louis Agglomération"
+  bourges_plus: "CA Bourges Plus"
   canteleu: "Canteleu"
   clunisois: "CC du Clunisois"
   coeur_savoie: "CC Coeur de Savoie"
@@ -20,7 +22,9 @@ epcis_default:
   haut_poitou: "CC Haut Poitou"
   pays_rethelois: "CC Pays Rethélois"
   pays_voironnais: "CC Pays Voironnais"
+  piemont_cevenol: "CC Piémont Cévenol"
   pyrenees_gaves: "CC Pyrénées Vallées des Gaves"
+  sundgau: "CC Sundgau"
   terres_haut_berry: "CC Terres du Haut Berry"
   touraine_est: "CC Touraine-Est Vallées"
   touraine_indre: "CC Touraine Vallée de l'Indre"
@@ -30,7 +34,7 @@ epcis_default:
   ploemeur: "Plœmeur"
   saint_pierre_elbeuf: "Saint-Pierre-Lès-Elbeuf"
   smdo: "SMDO"
-  sundgau: "CC Sundgau"
+  
   
   
 
