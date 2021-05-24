@@ -126,10 +126,10 @@
 </svelte:head>
 
 <section class="flex flex-col">
-
     <form class="flex flex-col w-full md:w-3/4 pb-10">
         <LabeledTextInput bind:value={data.custom_id}
                           maxlength="36"
+                          hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
                           validator={validators.custom_id}>
             <div class="text-xl">Numérotation de l'action</div>
         </LabeledTextInput>
