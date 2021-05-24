@@ -6,6 +6,8 @@
     import {FicheActionStorable} from "../../storables/FicheActionStorable";
     import {HybridStore} from "../../api/hybridStore";
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
+    import {avancement_noms} from "../../../generated/models/avancement_noms";
+    import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
 
     const defaultCategorie = new FicheActionCategorieStorable({
         uid: '',
@@ -24,25 +26,8 @@
     let categorieStore: HybridStore<FicheActionCategorieStorable>
 
     let fichesByCategorie = new Map<FicheActionCategorieStorable, FicheActionStorable[]>()
+    let filteredFichesByCategorie = new Map<FicheActionCategorieStorable, FicheActionStorable[]>()
 
-
-    /**
-     * Adds a fiche under its category name.
-     */
-    const categorize = (fiche: FicheActionStorable, fichesByName: Map<FicheActionCategorieStorable, FicheActionStorable[]>) => {
-        const addAt = (categorie: FicheActionCategorieStorable) => {
-            if (!fichesByName.has(categorie)) fichesByName.set(categorie, [])
-            fichesByName.get(categorie).push(fiche)
-        }
-
-        for (let categorie of categories) {
-            if (categorie.fiche_actions_uids.includes(fiche.uid)) {
-                addAt(categorie)
-                return
-            }
-        }
-        addAt(defaultCategorie)
-    }
 
     /**
      * Updates fichesByName by sorting all fiches by category name.
@@ -70,8 +55,68 @@
 
         }
 
-        fichesByCategorie = byCategorie
+        filteredFichesByCategorie = fichesByCategorie = byCategorie
     }
+
+    // Les avancements pour filtrer les fiches.
+    const avancementsChoices = avancement_noms
+    // l'avancement selectionné
+    let selectedAvancementKey = ''
+
+    // Les personnes référents issues des fiches pour les filtres.
+    let personnesReferentesChoices: Set<string> = new Set<string>()
+    // La personne référente selectionnée
+    let selectedPersonneReferente = ''
+
+    // Les structures pilote issues des fiches pour les filtres.
+    let structuresPiloteChoices: Set<string> = new Set<string>()
+    // La structure pilote selectionnée
+    let selectedStructuresPilote = ''
+
+    /**
+     * Populate filter values from fiches.
+     */
+    const populateFilters = () => {
+        personnesReferentesChoices.clear()
+        structuresPiloteChoices.clear()
+
+        for (let fiche of fiches) {
+            if (fiche.personne_referente)
+                personnesReferentesChoices.add(fiche.personne_referente)
+            if (fiche.structure_pilote)
+                structuresPiloteChoices.add(fiche.structure_pilote)
+        }
+
+        personnesReferentesChoices = personnesReferentesChoices
+        structuresPiloteChoices = structuresPiloteChoices
+    }
+
+    /**
+     * Apply filters
+     */
+    const applyFilters = () => {
+        let filtered = new Map<FicheActionCategorieStorable, FicheActionStorable[]>()
+        fichesByCategorie.forEach(
+            (fiches: FicheActionStorable[], category: FicheActionCategorieStorable, _) => {
+                let matches = []
+                for (let fiche of fiches) {
+                    if (filterPredicate(fiche)) matches.push(fiche)
+                }
+                filtered.set(category, matches)
+            });
+
+        filteredFichesByCategorie = filtered
+    }
+
+    /**
+     * The main filter function
+     */
+    const filterPredicate = (fiche: FicheActionStorable): boolean => {
+        return (!selectedPersonneReferente || fiche.personne_referente === selectedPersonneReferente)
+            && (!selectedAvancementKey || fiche.avancement === selectedAvancementKey)
+            && (!selectedStructuresPilote || fiche.structure_pilote === selectedStructuresPilote)
+    }
+
 
     /**
      * Update fiches using store.
@@ -79,6 +124,7 @@
     const updateFiches = async () => {
         let retrieved = await ficheActionStore.retrieveAll()
         fiches = retrieved.sort((a, b) => a.custom_id.localeCompare(b.custom_id))
+        populateFilters()
         categorizeAll()
     }
 
@@ -91,10 +137,6 @@
         categorizeAll()
     }
 
-    /**
-     * Handle categorie edition
-     */
-    const onCategorieSave = updateCategories
 
     onMount(async () => {
         epciId = getCurrentEpciId()
@@ -110,15 +152,68 @@
     <title>Plan d'actions</title>
 </svelte:head>
 
-<header class="flex my-10">
-    <h1 class="text-3xl font-semibold  flex-grow">Plan d'actions de ma collectivité</h1>
-    <Button asLink
-            href="fiches/creation/?epci_id={epciId}"
-            label="Créer une fiche action"/>
+<header class="flex flex-col bg-white">
+    <div class="flex flex-row my-10 mx-5">
+        <h1 class="text-3xl font-semibold  flex-grow">Plan d'actions de ma collectivité</h1>
+        <Button asLink
+                href="fiches/creation/?epci_id={epciId}"
+                label="Créer une fiche action"/>
+    </div>
+    <div class="grid gap-4 grid-cols-4 mx-5">
+
+        <!-- status -->
+        <SelectInput bind:value={selectedAvancementKey}
+                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
+                     id="categorie_picker"
+                     label="Status d'avancement"
+                     onChange={applyFilters}>
+            <option value=''>
+                Toutes
+            </option>
+            {#each Object.entries(avancementsChoices) as [key, nom]}
+                <option value={key}>
+                    {nom}
+                </option>
+            {/each}
+        </SelectInput>
+
+        <!-- personne -->
+        <SelectInput bind:value={selectedPersonneReferente}
+                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
+                     id="categorie_picker"
+                     label="Personne référente"
+                     onChange={applyFilters}>
+            <option value=''>
+                Toutes
+            </option>
+            {#each [...personnesReferentesChoices] as personne}
+                <option value={personne}>
+                    {personne}
+                </option>
+            {/each}
+        </SelectInput>
+
+        <!-- structure -->
+        <SelectInput bind:value={selectedStructuresPilote}
+                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
+                     id="categorie_picker"
+                     label="Structure pilote"
+                     onChange={applyFilters}>
+            <option value=''>
+                Toutes
+            </option>
+            {#each [...structuresPiloteChoices] as structure}
+                <option value={structure}>
+                    {structure}
+                </option>
+            {/each}
+        </SelectInput>
+    </div>
+    <div class="pb-2"></div>
 </header>
 <div class="p-5"></div>
 
-{#each [...fichesByCategorie] as [categorie, fiches]}
+{#each [...filteredFichesByCategorie] as [categorie, fiches]}
     {#if categorie.uid === defaultCategorie.uid}
         <h3 class="text-2xl">{categorie.nom}</h3>
     {:else}
@@ -141,4 +236,3 @@
 {/each}
 
 <div class="p-5"></div>
-
