@@ -2,7 +2,7 @@ import os
 from unittest.mock import ANY
 from unittest.mock import patch, MagicMock
 
-from codegen.cli_extract import mesures, indicateurs_citergie, orientations, indicateurs_eci
+from codegen.cli_extract import mesures, indicateurs_citergie, orientations, indicateurs_eci, domaines
 
 output_dir = './tests/outputs'
 
@@ -46,3 +46,11 @@ def test_mesures(mock_write: MagicMock):
 
     mock_write.assert_any_call(os.path.join(output_dir, '1.1.1.md'), ANY)
     mock_write.assert_any_call(os.path.join(output_dir, '1.1.2.md'), ANY)
+
+
+@patch("codegen.cli_extract.write")
+def test_domaines(mock_write: MagicMock):
+    """Test that command `poetry run extract mesures` write files"""
+    domaines(output_dir=output_dir)
+    mock_write.assert_any_call(os.path.join(output_dir, '1.md'), ANY)
+    mock_write.assert_any_call(os.path.join(output_dir, '2.md'), ANY)
