@@ -75,9 +75,9 @@ jobs:
         working-directory: ${{env.working-directory}}
 
       # Run all the tests for codegen.
-      # - name: Run tests
-        # run: poetry run pytest
-        # working-directory: ${{env.working-directory}}
+      - name: Run tests
+        run: poetry run pytest
+        working-directory: ${{env.working-directory}}
 
       # Generate all JavaScript shared models and data with codegen. These files
       # are mandatory for the client build.
