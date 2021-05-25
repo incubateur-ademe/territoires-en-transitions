@@ -28,8 +28,6 @@
     let showLinkActionDialog = false
     let useIndicateursPersonnalises = false
 
-    // hack fix https://lte.jetbrains.space/p/territoires-en-transitions/issues/302
-    let budget: number | string = data.budget
 
     const validators = {
         epci_id: maximumLengthValidatorBuilder(36),
@@ -128,8 +126,8 @@
 <section class="flex flex-col">
     <form class="flex flex-col w-full md:w-3/4 pb-10">
         <LabeledTextInput bind:value={data.custom_id}
-                          maxlength="36"
                           hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
+                          maxlength="36"
                           validator={validators.custom_id}>
             <div class="text-xl">Numérotation de l'action</div>
         </LabeledTextInput>
