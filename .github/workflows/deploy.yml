@@ -101,7 +101,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: generated-client-files
-          path: client_new
+          path: generated
 
       - name: Build client
         run: |
