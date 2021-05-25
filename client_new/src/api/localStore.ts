@@ -14,7 +14,7 @@ import type {IndicateurPersonnaliseInterface} from "../../generated/models/indic
 import {IndicateurPersonnaliseValueStorable} from "../storables/IndicateurPersonnaliseValueStorable";
 import type {IndicateurPersonnaliseValueInterface} from "../../generated/models/indicateur_personnalise_value";
 import {IndicateurCommentaireStorable} from "../storables/IndicateurCommentaireStorable";
-import type {IndicateurCommentaireInterface} from "../../generated/models/indicateur_commentaire";
+import type {IndicateurCommentaireInterface} from "../../generated/models/indicateur_referentiel_commentaire";
 
 export const storeKey = 'territoiresentransitions'
 
