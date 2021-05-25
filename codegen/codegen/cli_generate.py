@@ -5,15 +5,14 @@ import os
 import typer
 
 import codegen.paths as paths
-from codegen.action.process import relativize_ids, clean_thematiques, propagate_thematiques
+from codegen.action.process import relativize_ids, clean_thematiques, propagate_thematiques, referentiel_from_actions
 from codegen.action.read import build_action
 from codegen.action.render import render_actions_as_typescript
-from codegen.citergie.indicators_generator import build_indicators
-from codegen.indicateur.read import indicateurs_builder
-from codegen.indicateur.render import render_indicators_as_typescript
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
 from codegen.codegen.python import render_markdown_as_python
 from codegen.codegen.typescript import render_markdown_as_typescript
+from codegen.indicateur.read import indicateurs_builder
+from codegen.indicateur.render import render_indicators_as_typescript
 from codegen.utils.files import load_md, write, sorted_files
 
 app = typer.Typer()
@@ -79,6 +78,11 @@ def actions(
         actions_citergie.append(action)
 
     relativize_ids(actions_citergie, 'citergie')
+    citergie = referentiel_from_actions(
+        actions_citergie,
+        id='citergie',
+        name="Cit'ergie"
+    )
 
     # economie circulaire
     files = sorted_files(orientations_markdown_dir, 'md')
@@ -91,14 +95,25 @@ def actions(
         actions_economie_circulaire.append(action)
 
     relativize_ids(actions_economie_circulaire, 'economie_circulaire')
+    economie_circulaire = referentiel_from_actions(
+        actions_economie_circulaire,
+        id='economie_circulaire',
+        name="Economie circulaire"
+    )
 
     all_actions = actions_citergie + actions_economie_circulaire
     all_actions = clean_thematiques(all_actions)
     all_actions = propagate_thematiques(all_actions)
 
     if output_typescript:
+        # actions list (soon to be deprecated)
         typescript = render_actions_as_typescript(all_actions)
         filename = os.path.join(client_output_dir, 'actions_referentiels.ts')
+        write(filename, typescript)
+
+        # two referentiels
+        typescript = render_actions_as_typescript([citergie, economie_circulaire])
+        filename = os.path.join(client_output_dir, 'referentiels.ts')
         write(filename, typescript)
 
 
