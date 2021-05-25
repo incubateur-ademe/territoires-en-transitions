@@ -74,6 +74,10 @@ jobs:
       - name: Generate shared models and data in JavaScript
         run: |
           poetry run generate all
+          ls -la $GITHUB_WORKSPACE/
+          ls -la $GITHUB_WORKSPACE/client_new/generated
+          ls -la $GITHUB_WORKSPACE/client_new/generated/data
+          ls -la $GITHUB_WORKSPACE/client_new/generated/models
         working-directory: ${{env.working-directory}}
 
       - name: Upload generated files
