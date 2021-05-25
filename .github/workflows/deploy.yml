@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: generated-client-files
-          path: ${{env.GITHUB_WORKSPACE}}/client_new/generated
+          path: client_new/generated
 
   # This job retrieves previously generated files and builds the client
   # application.
