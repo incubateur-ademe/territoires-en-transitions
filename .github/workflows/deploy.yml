@@ -148,7 +148,7 @@ jobs:
       # Use AWS cli to upload the client app on Scaleway.
       - name: Deploy on Scaleway
         run: |
-          aws s3 cp ~/tmp/client s3://entretiens.territoiresentransitions.fr --recursive
+          aws s3 cp ~/tmp/client s3://entretiens.territoiresentransitions.fr --recursive --region fr-par
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
