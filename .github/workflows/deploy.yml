@@ -18,7 +18,8 @@ jobs:
       # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2
 
-      # Cache all dependencies install for Python.
+      # Restore cache or create a new one for all dependencies installed with
+      # Python.
       - name: Set up Python cache
         uses: actions/cache@v2
         env:
@@ -30,8 +31,8 @@ jobs:
             ${{ runner.os }}-${{ env.python-tools-cache-name }}
             ${{ runner.os }}-
 
-      # Cache the binary for Poetry, as Poetry will check if it is
-      # already installed before installing itself.
+      # Restore cache or create a new one for the binary for Poetry, as Poetry
+      # will check if it is already installed before installing itself.
       - name: Set up poetry binary cache
         uses: actions/cache@v2
         env:
@@ -43,7 +44,8 @@ jobs:
             ${{ runner.os }}-${{ env.poetry-bin-cache-name }}
             ${{ runner.os }}-
 
-      # Cache all dependecies installed by Poetry.
+      # Restore cache or create a new one for all dependecies installed by
+      # Poetry.
       - name: Set up dependencies cache
         uses: actions/cache@v2
         env:
@@ -145,11 +147,27 @@ jobs:
           name: client-app
           path: ~/tmp/client
 
-      # Use AWS cli to upload the client app on Scaleway.
+      # Restore cache or create a new one for awscli-plugin-endpoint
+      - name: Set up Python cache
+        uses: actions/cache@v2
+        env:
+          python-deploy-cache-name: python-deploy-cache
+        with:
+          path: /opt/hostedtoolcache/Python
+          key: ${{ runner.os }}-${{ env.python-deploy-cache-name }}-${{ env.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.python-deploy-cache-name }}
+            ${{ runner.os }}-
+
+      # Install awscli-plugin-endpoint to enable custom endpoints on Scaleway
+      # with AWS CLI
+      - name: Install awscli-plugin-endpoint
+        run: |
+          pip3 install awscli-plugin-endpoint
+
+      # Use AWS CLI to upload the client app on Scaleway.
       - name: Deploy on Scaleway
         run: |
-          ls -la ${{github.workspace}}
-          cat ${{github.workspace}}/awscli_config
           aws s3 cp ~/tmp/client s3://entretiens.territoiresentransitions.fr --recursive
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
