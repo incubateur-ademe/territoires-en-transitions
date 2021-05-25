@@ -102,6 +102,7 @@ jobs:
         with:
           name: generated-client-files
           path: generated
+        working-directory: ${{env.working-directory}}
 
       - name: Build client
         run: |
