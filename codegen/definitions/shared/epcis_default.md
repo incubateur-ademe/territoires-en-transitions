@@ -34,6 +34,7 @@ epcis_default:
   ploemeur: "Plœmeur"
   saint_pierre_elbeuf: "Saint-Pierre-Lès-Elbeuf"
   smdo: "SMDO"
+  tours_metropole: "Tours Métropole Val de Loire"
   
   
   
