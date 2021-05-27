@@ -6,8 +6,8 @@
     import {FicheActionStorable} from "../../storables/FicheActionStorable";
     import {HybridStore} from "../../api/hybridStore";
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
-    import {avancement_noms} from "../../../generated/models/avancement_noms";
     import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
+    import {fiche_action_avancement_noms} from "../../../generated/models/fiche_action_avancement_noms";
 
     const defaultCategorie = new FicheActionCategorieStorable({
         uid: '',
@@ -59,7 +59,7 @@
     }
 
     // Les avancements pour filtrer les fiches.
-    const avancementsChoices = avancement_noms
+    const avancementsChoices = fiche_action_avancement_noms
     // l'avancement selectionné
     let selectedAvancementKey = ''
 
