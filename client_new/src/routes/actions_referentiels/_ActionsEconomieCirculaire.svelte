@@ -8,36 +8,36 @@
 
     $: displayed, refresh()
 
-    let displayedByParent: Map<ActionReferentiel, ActionReferentiel[]>
+    let displayedByAxe: Map<ActionReferentiel, ActionReferentiel[]>
 
     const refresh = () => {
         const map = new Map<ActionReferentiel, ActionReferentiel[]>()
-        const children: ActionReferentiel[] = []
-        const parents: ActionReferentiel[] = []
+        const orientations: ActionReferentiel[] = []
+        const axes: ActionReferentiel[] = []
 
         for (let action of displayed) {
             for (let level1 of action.actions) {
-                parents.push(level1)
+                axes.push(level1)
                 for (let level2 of level1.actions) {
-                    children.push(level2)
+                    orientations.push(level2)
                 }
             }
         }
 
-        for (let parent of parents) {
-            const actions = children.filter(
+        for (let parent of axes) {
+            const actions = orientations.filter(
                 (action) => action.id.startsWith(parent.id) && action.id.startsWith('economie_circulaire')
             )
             if (actions.length) map.set(parent, actions)
         }
-        displayedByParent = map;
+        displayedByAxe = map;
     }
 
     refresh()
 </script>
 
 
-{#each [...displayedByParent] as [parent, actions]}
+{#each [...displayedByAxe] as [parent, actions]}
     <h2 class="text-2xl mt-10 mb-2">{parent.nom}</h2>
     {#each actions as action}
         {#if searching}

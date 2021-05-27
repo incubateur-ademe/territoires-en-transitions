@@ -1,8 +1,5 @@
 <script lang="ts">
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-
-    import {actions} from "../../../generated/data/actions_referentiels";
-    import {Thematique, thematiques} from "../../../generated/data/thematiques";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
 
     export let searching: boolean
@@ -11,28 +8,55 @@
 
     $: displayed, refresh()
 
-    let displayedByThematique: Map<Thematique, ActionReferentiel[]>
+    let displayedByDomaine: Map<ActionReferentiel, Map<ActionReferentiel, ActionReferentiel[]>>
 
     const refresh = () => {
-        const map = new Map<Thematique, ActionReferentiel[]>()
-        for (let thematique of thematiques) {
-            const actions = displayed.filter((action) => action.thematique_id === thematique.id)
-            if (actions.length) map.set(thematique, actions)
+        const map = new Map<ActionReferentiel, Map<ActionReferentiel, ActionReferentiel[]>>()
+        const mesures: ActionReferentiel[] = []
+        const sousDomaines: ActionReferentiel[] = []
+        const domaines: ActionReferentiel[] = []
+
+        for (let action of displayed) {
+            for (let domaine of action.actions) {
+                domaines.push(domaine)
+                for (let sous_domaine of domaine.actions) {
+                    sousDomaines.push(sous_domaine)
+                    for (let mesure of sous_domaine.actions) {
+                        mesures.push(mesure)
+                    }
+                }
+            }
         }
-        displayedByThematique = map;
+
+        for (let domaine of domaines) {
+            const domaineMap = new Map<ActionReferentiel, ActionReferentiel[]>()
+
+            for (let sousDomaine of sousDomaines) {
+                const actions = mesures.filter(
+                    (mesure) => mesure.id.startsWith(domaine.id)
+                        && mesure.id.startsWith(sousDomaine.id)
+                )
+                if (actions.length) domaineMap.set(sousDomaine, actions)
+            }
+            if (domaineMap.size) map.set(domaine, domaineMap)
+        }
+        displayedByDomaine = map;
     }
 
     refresh()
 </script>
 
-{#each [...displayedByThematique] as [thematique, actions]}
-    <h2 class="text-2xl mt-10 mb-2">{thematique.name}</h2>
-    {#each actions as action}
-        {#if searching}
-            <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>
-        {:else }
-            <ActionReferentielCard action={action} emoji link/>
-        {/if}
+
+{#each [...displayedByDomaine] as [domaine, sous_domaines]}
+    <h2 class="text-2xl mt-10 mb-2">{domaine.nom}</h2>
+    {#each [...sous_domaines] as [sous_domaine, actions]}
+        <h2 class="text-2xl mt-10 mb-2">{sous_domaine.nom}</h2>
+        {#each actions as action}
+            {#if searching}
+                <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>
+            {:else }
+                <ActionReferentielCard action={action} emoji link/>
+            {/if}
+        {/each}
     {/each}
 {/each}
-
