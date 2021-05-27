@@ -2,7 +2,7 @@ name: Deploy LTE client
 
 on:
   push:
-    branches: [add_deploy_workflow]
+    branches: [production]
 
 jobs:
   # This job runs tests in codegen and generated files that are needed by the
