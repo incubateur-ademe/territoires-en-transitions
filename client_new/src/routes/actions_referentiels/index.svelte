@@ -3,26 +3,16 @@
     import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
 
     import {actions} from "../../../generated/data/actions_referentiels";
-    import {Thematique, thematiques} from "../../../generated/data/thematiques";
-    import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
+    import ActionsByThematiques from "./_ActionsByThematiques.svelte"
+    import ActionsClimatAirEnergie from "./_ActionsClimatAirEnergie.svelte"
+    import ActionsEconomieCirculaire from "./_ActionsEconomieCirculaire.svelte"
+
+    let view: 'thematique' | 'eci' | 'cae' = 'thematique'
 
     let allActions: ActionReferentiel[] = actions;
     let displayed: ActionReferentiel[] = actions;
-    let displayedByThematique = new Map<Thematique, ActionReferentiel[]>()
 
     $: searching = allActions.length != displayed.length
-    $: displayed, refresh()
-
-
-    const refresh = () => {
-        const map = new Map<Thematique, ActionReferentiel[]>()
-        for (let thematique of thematiques) {
-            const actions = displayed.filter((action) => action.thematique_id === thematique.id)
-            if (actions.length) map.set(thematique, actions)
-        }
-        displayedByThematique = map;
-    }
-    refresh()
 </script>
 
 <div class="flex flex-row items-center
@@ -33,16 +23,14 @@
     <div>
         <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
     </div>
+
 </div>
 
-{#each [...displayedByThematique] as [thematique, actions]}
-    <h2 class="text-2xl mt-10 mb-2">{thematique.name}</h2>
-    {#each actions as action}
-        {#if searching}
-            <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>
-        {:else }
-            <ActionReferentielCard action={action} emoji link/>
-        {/if}
-    {/each}
-{/each}
+{#if view === 'thematique'}
+    <ActionsByThematiques displayed={displayed} searching={searching}/>
+{:else if view === 'cae'}
+    <ActionsClimatAirEnergie displayed={displayed} searching={searching}/>
+{:else if view === 'eci'}
+    <ActionsEconomieCirculaire displayed={displayed} searching={searching}/>
+{/if}
 
