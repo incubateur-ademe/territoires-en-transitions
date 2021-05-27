@@ -5,7 +5,8 @@ import os
 import typer
 
 import codegen.paths as paths
-from codegen.action.process import relativize_ids, clean_thematiques, propagate_thematiques, referentiel_from_actions
+from codegen.action.process import relativize_ids, clean_thematiques, propagate_thematiques, referentiel_from_actions, \
+    remove_top_nodes
 from codegen.action.read import build_action
 from codegen.action.render import render_actions_as_typescript
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
@@ -104,6 +105,7 @@ def actions(
     all_actions = actions_citergie + actions_economie_circulaire
     all_actions = clean_thematiques(all_actions)
     all_actions = propagate_thematiques(all_actions)
+    all_actions = remove_top_nodes(all_actions)
 
     if output_typescript:
         # actions list (soon to be deprecated)

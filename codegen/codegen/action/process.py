@@ -45,8 +45,16 @@ def clean_thematiques(actions: List[dict]) -> List:
     return cleaned_actions
 
 
+def remove_top_nodes(actions: List[dict]) -> List:
+    """
+    Remove top nodes (axes and domaines) from the list
+    as a temporary fix for having axes in thematiques client view
+    """
+    return [action for action in actions if '.' in action['id_nomenclature']]
+
+
 def propagate_thematiques(actions: List[dict], thematique_id: str = '') -> List:
-    """Propagatee thematiques ids to children"""
+    """Propagate thematiques ids to children"""
     cleaned_actions = actions.copy()
 
     for action in cleaned_actions:
