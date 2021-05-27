@@ -11,6 +11,7 @@ Il ne faut pas changer `test` non plus car c'est la clé par default.
 epcis_default:
   test: 'Ville de test'
   bac_bal_aere: "BAC-BAL-AERE"
+  seine_normandie: "CA Seine Normandie Agglomération"
   saint_louis_agglo: "CA Saint Louis Agglomération"
   bourges_plus: "CA Bourges Plus"
   canteleu: "Canteleu"
