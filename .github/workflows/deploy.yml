@@ -137,7 +137,12 @@ jobs:
 
     steps:
       # cf. https://github.com/actions/checkout
+      # This step uses a GitHub Personal Access Token. If the CI is broken
+      # because of that, you can login into your own GitHub account, generate
+      # a new Personal Access Token and set it in the project secrets.
       - uses: actions/checkout@v2
+        with:
+          token: {{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       # Download the previously built client app.
       - name: Download exported client app
@@ -167,6 +172,8 @@ jobs:
       # Use AWS CLI to upload the client app on Scaleway.
       - name: Deploy on Scaleway
         run: |
+          git config --global user.name 'Territoires en transition'
+          git config --global user.email 'territoires-en-transitions-deploy@users.noreply.github.com'
           git tag -a `date +%Y-%m-%d` -m "Déploiement du `date '+%d %B %Y'`"
           git push origin `date +%Y-%m-%d`
           aws s3 cp ~/tmp/client s3://app.territoiresentransitions.fr --recursive --acl public-read
