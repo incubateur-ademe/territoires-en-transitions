@@ -1,7 +1,6 @@
 <script lang="ts">
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
 
-    import {actions} from "../../../generated/data/actions_referentiels";
     import {Thematique, thematiques} from "../../../generated/data/thematiques";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
 
@@ -15,8 +14,18 @@
 
     const refresh = () => {
         const map = new Map<Thematique, ActionReferentiel[]>()
+        const shallow: ActionReferentiel[] = []
+
+        for (let action of displayed) {
+            for (let level1 of action.actions) {
+                for (let level2 of level1.actions) {
+                    shallow.push(level2)
+                }
+            }
+        }
+
         for (let thematique of thematiques) {
-            const actions = displayed.filter((action) => action.thematique_id === thematique.id)
+            const actions = shallow.filter((action) => action.thematique_id === thematique.id)
             if (actions.length) map.set(thematique, actions)
         }
         displayedByThematique = map;
