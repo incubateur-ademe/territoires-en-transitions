@@ -14,8 +14,8 @@
     import {IndicateurPersonnalise} from "../../../generated/models/indicateur_personnalise";
     import IndicateurPersonnaliseCard
         from "../../components/shared/IndicateurPersonnalise/IndicateurPersonnaliseCard.svelte";
-    import IndicateurPersonaliseCreation
-        from "../../components/shared/IndicateurPersonnalise/IndicateurPersonaliseCreation.svelte";
+    import IndicateurPersonnaliseCreation
+        from "../../components/shared/IndicateurPersonnalise/IndicateurPersonnaliseCreation.svelte";
     import LabeledTextArea from "../../components/shared/Forms/LabeledTextArea.svelte";
     import LabeledTextInput from "../../components/shared/Forms/LabeledTextInput.svelte";
     import {alwaysValid, joinValidators, validate} from "../../api/validator";
@@ -183,6 +183,7 @@
         <div class="p-5"></div>
 
         <LabeledTextInput bind:value={data.budget}
+                          hint="Ce champ ne doit comporter que des chiffres sans espaces"
                           validator={validators.budget}>
             <div class="text-xl">Budget global</div>
         </LabeledTextInput>
@@ -263,7 +264,7 @@
                 </Button>
             </div>
             {#if showIndicateurCreation}
-                <IndicateurPersonaliseCreation on:save={indicateurSaved}/>
+                <IndicateurPersonnaliseCreation on:save={indicateurSaved}/>
             {/if}
 
             <div class="p-5"></div>

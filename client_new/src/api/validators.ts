@@ -18,5 +18,5 @@ export const maximumLengthValidatorBuilder = (len: number): Validator => joinVal
 const numbersOnlyRegex = new RegExp('^\\d+$');
 export const numbersOnlyValidator: Validator = joinValidators([
     prequisite,
-    (value: any) => (numbersOnlyRegex.test(value)) ? null : 'Ce champ ne doit comporter que des chiffres sans espaces',
+    (value: any) => (numbersOnlyRegex.test(value)) ? null : 'Ce champ comporte autre chose que des chiffres sans espaces',
 ]);
