@@ -142,7 +142,7 @@ jobs:
       # a new Personal Access Token and set it in the project secrets.
       - uses: actions/checkout@v2
         with:
-          token: {{ secrets.PERSONAL_ACCESS_TOKEN }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       # Download the previously built client app.
       - name: Download exported client app
