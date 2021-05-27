@@ -4,7 +4,6 @@ on:
   push:
     branches-ignore:
       - main
-      - add_deploy_workflow
 
 jobs:
   test-codegen:
