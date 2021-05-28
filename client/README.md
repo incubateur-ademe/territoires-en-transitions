@@ -1,3 +1,5 @@
+![Deprecated](https://img.shields.io/badge/-Deprecated-orange)
+
 > **Cette application client est dépréciée. La nouvelle application client se trouve maintenant dans le dossier `/client_new`.**
 
 # Application client pour Labels Transition Écologique

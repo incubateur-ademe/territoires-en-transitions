@@ -1,0 +1,184 @@
+name: Deploy LTE client
+
+on:
+  push:
+    branches: [production]
+
+jobs:
+  # This job runs tests in codegen and generated files that are needed by the
+  # client application.
+  codegen-test-and-generate:
+    runs-on: ubuntu-latest
+    env:
+      python-version: 3.9.1
+      working-directory: ./codegen
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # Restore cache or create a new one for all dependencies installed with
+      # Python.
+      - name: Set up Python cache
+        uses: actions/cache@v2
+        env:
+          python-tools-cache-name: python-tools-cache
+        with:
+          path: /opt/hostedtoolcache/Python
+          key: ${{ runner.os }}-${{ env.python-tools-cache-name }}-${{ env.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.python-tools-cache-name }}
+            ${{ runner.os }}-
+
+      # Restore cache or create a new one for the binary for Poetry, as Poetry
+      # will check if it is already installed before installing itself.
+      - name: Set up poetry binary cache
+        uses: actions/cache@v2
+        env:
+          poetry-bin-cache-name: poetry-bin
+        with:
+          path: ~/poetry
+          key: ${{ runner.os }}-${{ env.poetry-bin-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.poetry-bin-cache-name }}
+            ${{ runner.os }}-
+
+      # Restore cache or create a new one for all dependecies installed by
+      # Poetry.
+      - name: Set up dependencies cache
+        uses: actions/cache@v2
+        env:
+          poetry-cache-name: poetry-dependencies-cache
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.poetry-cache-name }}-
+            ${{ runner.os }}-
+
+      # cf. https://github.com/actions/setup-python
+      - name: Set up Python 3.9.1
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.1'
+
+      # Install the dependencies manager for codegen.
+      - name: Install Poetry
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=~/poetry python -
+          echo "$HOME/poetry/bin" >> $GITHUB_PATH
+
+      # Install the dependencies of codegen.
+      - name: Install dependencies
+        run: poetry install
+        working-directory: ${{env.working-directory}}
+
+      # Run all the tests for codegen.
+      - name: Run tests
+        run: poetry run pytest
+        working-directory: ${{env.working-directory}}
+
+      # Generate all JavaScript shared models and data with codegen. These files
+      # are mandatory for the client build.
+      - name: Generate shared models and data in JavaScript
+        run: |
+          poetry run generate all
+        working-directory: ${{env.working-directory}}
+
+      # Upload the generated files as an artefact so they can be download in the
+      # client build job.
+      - name: Upload generated files
+        uses: actions/upload-artifact@v2
+        with:
+          name: generated-client-files
+          path: ${{ github.workspace }}/client_new/generated
+
+  # This job retrieves previously generated files and builds the client
+  # application.
+  client-build:
+    runs-on: ubuntu-latest
+    needs: codegen-test-and-generate
+    env:
+      working-directory: ./client_new
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # Download JavaScript models and data generated previously by codegen.
+      - name: Download generated files
+        uses: actions/download-artifact@v2
+        with:
+          name: generated-client-files
+          path: client_new/generated
+
+      # Build client with Sapper
+      - name: Build client
+        run: |
+          ls -la generated
+          ls -la generated/data
+          ls -la generated/models
+          npm install
+          npm run export
+        working-directory: ${{env.working-directory}}
+
+      # Upload built client app as an artefact.
+      - name: Upload exported client app
+        uses: actions/upload-artifact@v2
+        with:
+          name: client-app
+          path: client_new/__sapper__/export
+
+  # This job retrieves the exported client app and upload it to Scaleway.
+  deploy-on-scaleway:
+    runs-on: ubuntu-latest
+    needs: client-build
+    environment: production
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      # This step uses a GitHub Personal Access Token. If the CI is broken
+      # because of that, you can login into your own GitHub account, generate
+      # a new Personal Access Token and set it in the project secrets.
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      # Download the previously built client app.
+      - name: Download exported client app
+        uses: actions/download-artifact@v2
+        with:
+          name: client-app
+          path: ~/tmp/client
+
+      # Restore cache or create a new one for awscli-plugin-endpoint
+      - name: Set up Python cache
+        uses: actions/cache@v2
+        env:
+          python-deploy-cache-name: python-deploy-cache
+        with:
+          path: /opt/hostedtoolcache/Python
+          key: ${{ runner.os }}-${{ env.python-deploy-cache-name }}-${{ env.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.python-deploy-cache-name }}
+            ${{ runner.os }}-
+
+      # Install awscli-plugin-endpoint to enable custom endpoints on Scaleway
+      # with AWS CLI
+      - name: Install awscli-plugin-endpoint
+        run: |
+          pip3 install awscli-plugin-endpoint
+
+      # Use AWS CLI to upload the client app on Scaleway.
+      - name: Deploy on Scaleway
+        run: |
+          git config --global user.name 'Territoires en transition'
+          git config --global user.email 'territoires-en-transitions-deploy@users.noreply.github.com'
+          git tag -a `date +%Y-%m-%d` -m "Déploiement du `date '+%d %B %Y'`"
+          git push origin `date +%Y-%m-%d`
+          aws s3 cp ~/tmp/client s3://app.territoiresentransitions.fr --recursive --acl public-read
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_CONFIG_FILE: ${{github.workspace}}/awscli_config
+
