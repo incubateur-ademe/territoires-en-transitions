@@ -1,51 +1,19 @@
 import glob
 import os
+import re
 
 import typer
 
 import codegen.paths as paths
-from codegen.citergie.indicator_extractor import indicators_to_markdown
+from codegen.citergie.indicator_extractor import indicators_to_markdown_legacy_2
 from codegen.citergie.indicators_generator import build_indicators
 from codegen.citergie.mesures_extractor import mesure_to_markdown
 from codegen.citergie.mesures_generator import build_mesure
 from codegen.climat_pratic.thematiques_generator import build_thematiques
-from codegen.economie_circulaire.orientations_generator import build_orientation
+from codegen.indicateur.write import indicateur_to_markdown
 from codegen.utils.files import load_md, write
 
 app = typer.Typer()
-
-
-@app.command()
-def orientations_to_temp_actions(
-    orientations_dir=paths.orientations_markdown_dir,
-    output_dir=paths.orientations_markdown_temp_dir,
-) -> None:
-    """
-    Generate parsable actions markdown files from orientations.
-    This is a temporary hack until orientations meta-data is correctly converted to sub actions.
-    """
-    orientation_files = glob.glob(os.path.join(orientations_dir, '*.md'))
-    count = 0
-
-    def orientation_as_mesure(orientation: dict) -> dict:
-        return {
-            'nom': orientation['nom'],
-            'climat_pratic_id': 'eci',
-            'id': orientation['id'],
-            'description': orientation['description'],
-            'actions': orientation['niveaux'],
-        }
-
-    with typer.progressbar(orientation_files) as progress:
-        for filename in progress:
-            md = load_md(filename)
-            orientation = build_orientation(md)
-            mesure = orientation_as_mesure(orientation)
-            md = mesure_to_markdown(mesure)
-            output_filename = os.path.join(output_dir, os.path.basename(filename))
-            write(output_filename, md)
-
-    typer.echo(f"All {len(orientation_files)} 'orientations' were converted to 'actions'.")
 
 
 @app.command()
@@ -145,5 +113,42 @@ def indicateurs_thematiques(
             climat_pratic = indicator['climat_pratic']
             indicator['climat_pratic_ids'] = [thematiques_lookup[name] for name in climat_pratic]
             # ---
-        md = indicators_to_markdown(indicators)
+        md = indicators_to_markdown_legacy_2(indicators)
         write(filename, md)
+
+
+@app.command()
+def indicateurs_universal(
+    indicateurs_old_dir='../referentiels/markdown/indicateurs_citergie',
+    indicateurs_dir='../referentiels/markdown/indicateurs',
+) -> None:
+    """
+    Regenerate (overwrite) markdown files in a new format
+    """
+    old_files = glob.glob(os.path.join(indicateurs_old_dir, '*.md'))
+
+    for filename in old_files:
+        typer.echo(f'Processing {filename}...')
+        md = load_md(filename)
+        indicateurs = build_indicators(md)
+        new_md = ''
+        for indicateur in indicateurs:
+            # -- extract this for future regen function on indicator --
+            indicateur['id'] = 'cae-' + str(indicateur['id'])
+
+            indicateur['actions'] = []
+            for mesure_id in indicateur['mesures']:
+                indicateur['actions'].append('climat_air_energie/' + mesure_id)
+
+            indicateur['obligation_cae'] = indicateur['obligation_citergie']
+            indicateur['programmes'] = ['climat_air_energie']
+
+            if indicateur['pcaet']:
+                indicateur['programmes'].append('pcaet')
+
+            new_md += indicateur_to_markdown(indicateur) + '\n'
+            # ---
+        base_name = os.path.basename(filename)
+        number = re.findall(r'\d+', base_name)[0]
+        new_filename = f'cae_{int(number):03d}.md'
+        write(os.path.join(indicateurs_dir, new_filename), new_md)

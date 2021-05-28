@@ -19,6 +19,7 @@
     import IndicateurPersonaliseCreation
         from "../../components/shared/IndicateurPersonnalise/IndicateurPersonaliseCreation.svelte";
     import LabeledTextArea from "../../components/shared/Forms/LabeledTextArea.svelte";
+    import LabeledTextInput from "../../components/shared/Forms/LabeledTextInput.svelte";
 
     export let data: FicheActionInterface
 
@@ -32,7 +33,7 @@
 
     // Save the form data
     const handleSave = async () => {
-        if (!data.custom_id) return;
+        if (!data.titre) return;
         data.budget = Number.parseFloat(budget.toString()) || 0
         const fiche = new FicheActionStorable(data)
         const saved = await ficheActionStore.store(fiche)
@@ -53,9 +54,7 @@
     // Called when the indicateur personnalisé form.
     const indicateurSaved = async (event) => {
         showIndicateurCreation = false
-        console.log('event', event)
-        console.log('id', event.detail.indicateur.id)
-
+        
         const hybridStores = await import ("../../api/hybridStores")
         indicateursPersonnalises = await hybridStores.indicateurPersonnaliseStore.retrieveAll()
         data.indicateur_personnalise_ids.push(event.detail.indicateur.id)
@@ -107,17 +106,12 @@
 <section class="flex flex-col">
 
     <form class="flex flex-col w-full md:w-3/4 pb-10">
-        <label class="text-xl" for="fiche_create_custom_id">Identifiant</label>
+        <label class="text-xl" for="fiche_create_custom_id">Numérotation de l'action (ex: 1.2.3, A.1.a, 1.1 permet le classement) </label>
         <input bind:value={data.custom_id}
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
                id="fiche_create_custom_id"
-               maxlength="36"
-               use:validate={data.custom_id}>
-        {#if $validity.dirty && !$validity.valid}
-            <span class="validation-hint">
-               {$validity.message}
-            </span>
-        {/if}
+               maxlength="36">
+
         <div class="p-5"></div>
 
 
@@ -125,7 +119,13 @@
         <input bind:value={data.titre}
                class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
                id="fiche_create_titre"
-               maxlength="100">
+               maxlength="300"
+               use:validate={data.titre}>
+        {#if $validity.dirty && !$validity.valid}
+            <span class="validation-hint">
+               {$validity.message}
+            </span>
+        {/if}
         <div class="p-5"></div>
 
         <CategoriePicker ficheActionUid={data.uid}/>
@@ -139,11 +139,25 @@
                 id="{data.uid}"/>
         <div class="p-5"></div>
 
-        <label class="text-xl" for="fiche_create_porteur">Porteur</label>
-        <input bind:value={data.porteur}
-               class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-               id="fiche_create_porteur"
-               maxlength="100">
+
+        <LabeledTextInput bind:value={data.structure_pilote} maxlength="300">
+            <div class="text-xl">Structure pilote</div>
+        </LabeledTextInput>
+        <div class="p-5"></div>
+
+        <LabeledTextInput bind:value={data.personne_referente} maxlength="300">
+            <div class="text-xl">Personne référente</div>
+        </LabeledTextInput>
+        <div class="p-5"></div>
+
+        <LabeledTextInput bind:value={data.elu_referent} maxlength="300">
+            <div class="text-xl">Élu référent</div>
+        </LabeledTextInput>
+        <div class="p-5"></div>
+
+        <LabeledTextInput bind:value={data.partenaires} maxlength="300">
+            <div class="text-xl">Partenaires</div>
+        </LabeledTextInput>
         <div class="p-5"></div>
 
         <label class="text-xl" for="fiche_create_budget">Budget global</label>
@@ -218,7 +232,7 @@
         <div class="p-5"></div>
         <div class="my-2 p-2">
             <div class="flex flex-row w-full items-center">
-                <h3 class="text-xl">Indicateurs personalisés</h3>
+                <h3 class="text-xl">Indicateurs personnalisés</h3>
                 <div class="flex flex-grow"></div>
                 <Button colorVariant={showIndicateurCreation ? 'ash' : 'nettle'}
                         on:click={() => showIndicateurCreation = true }
