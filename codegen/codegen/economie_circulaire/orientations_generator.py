@@ -2,7 +2,6 @@
 from typing import Callable
 
 import yaml
-from mistletoe import Document
 from mistletoe.block_token import Heading, BlockToken, CodeFence, Paragraph
 
 from codegen.utils.markdown_utils import void, is_heading, is_yaml, is_keyword
@@ -36,6 +35,7 @@ def member_writer(keyword: str) -> Callable:
     """
     Render content to data at keyword.
     """
+
     def writer(token: BlockToken, data: dict) -> None:
         if is_keyword(token, keyword):
             return
@@ -141,27 +141,3 @@ def orientation_writer() -> Callable:
         current(token, orientation)
 
     return writer
-
-
-def build_orientation(doc: Document) -> dict:
-    """Extract orientations from markdown AST"""
-    orientation = {}
-    writer = orientation_writer()
-
-    for token in doc.children:
-        writer(token, orientation)
-
-    return orientation
-
-
-def legacy_orientation_as_mesure(orientation: dict) -> dict:
-    """Converts a orientation to a mesure in order to use it with mesures_generator functions"""
-    return {
-        'nom': orientation['nom'],
-        'climat_pratic_id': 'eci',
-        'id': orientation["id"],
-        'description': orientation['description'],
-        'actions': orientation['niveaux'],
-    }
-
-

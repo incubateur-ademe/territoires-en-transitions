@@ -3,11 +3,7 @@ import {IndicateurValue, IndicateurValueInterface} from "../../generated/models/
 import {getCurrentEpciId} from "./currentEpci";
 import {ActionStatus, ActionStatusInterface} from "../../generated/models/action_status";
 import {ActionStatusStorable} from "../storables/ActionStatusStorable";
-import {ActionCustomStorable} from "../storables/ActionCustomStorable";
-import {ActionCustom, ActionCustomInterface} from "../../generated/models/action_custom";
 import {getCurrentAPI} from "./currentAPI";
-import {MesureCustomStorable} from "../storables/MesureCustomStorable";
-import {MesureCustom, MesureCustomInterface} from "../../generated/models/mesure_custom";
 import {HybridStore} from "./hybridStore";
 import {FicheActionStorable} from "../storables/FicheActionStorable";
 import {FicheAction, FicheActionInterface} from "../../generated/models/fiche_action";
@@ -20,6 +16,11 @@ import {
 } from "../../generated/models/indicateur_personnalise_value";
 import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnaliseStorable";
 import {IndicateurPersonnalise, IndicateurPersonnaliseInterface} from "../../generated/models/indicateur_personnalise";
+import {
+    IndicateurReferentielCommentaire,
+    IndicateurReferentielCommentaireInterface
+} from "../../generated/models/indicateur_referentiel_commentaire";
+import {IndicateurReferentielCommentaireStorable} from "../storables/IndicateurReferentielCommentaireStorable";
 
 
 export const indicateurValueStore = new HybridStore<IndicateurValueStorable>({
@@ -34,20 +35,6 @@ export const actionStatusStore = new HybridStore<ActionStatusStorable>({
     endpoint: `v1/${ActionStatus.pathname}/${getCurrentEpciId()}`,
     serializer: (storable) => storable,
     deserializer: (serialized) => new ActionStatusStorable(serialized as ActionStatusInterface),
-});
-
-export const actionCustomStore = new HybridStore<ActionCustomStorable>({
-    host: getCurrentAPI(),
-    endpoint: `v1/${ActionCustom.pathname}/${getCurrentEpciId()}`,
-    serializer: (storable) => storable,
-    deserializer: (serialized) => new ActionCustomStorable(serialized as ActionCustomInterface),
-});
-
-export const mesureCustomStore = new HybridStore<MesureCustomStorable>({
-    host: getCurrentAPI(),
-    endpoint: `v1/${MesureCustom.pathname}/${getCurrentEpciId()}`,
-    serializer: (storable) => storable,
-    deserializer: (serialized) => new MesureCustomStorable(serialized as MesureCustomInterface),
 });
 
 export const ficheActionStore = new HybridStore<FicheActionStorable>({
@@ -78,3 +65,9 @@ export const indicateurPersonnaliseValueStore = new HybridStore<IndicateurPerson
     deserializer: (serialized) => new IndicateurPersonnaliseValueStorable(serialized as IndicateurPersonnaliseValueInterface),
 });
 
+export const indicateurReferentielCommentaireStore = new HybridStore<IndicateurReferentielCommentaireStorable>({
+    host: getCurrentAPI(),
+    endpoint: `v1/${IndicateurReferentielCommentaire.pathname}/${getCurrentEpciId()}`,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new IndicateurReferentielCommentaireStorable(serialized as IndicateurReferentielCommentaireInterface),
+});

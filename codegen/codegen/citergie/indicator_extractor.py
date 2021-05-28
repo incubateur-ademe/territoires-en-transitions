@@ -141,7 +141,7 @@ def indicators_to_markdowns_legacy(indicators: List[dict]) -> Dict[str, str]:
     return mds
 
 
-def indicators_to_markdown(indicators: List[dict]) -> str:
+def indicators_to_markdown_legacy_2(indicators: List[dict]) -> str:
     """
     Transform a list of indicators into a single markdown string.
 
