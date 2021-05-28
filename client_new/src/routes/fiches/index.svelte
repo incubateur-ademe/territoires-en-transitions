@@ -161,11 +161,11 @@
     </div>
     <div class="grid gap-4 grid-cols-4 mx-5">
 
-        <!-- statut -->
+        <!-- status -->
         <SelectInput bind:value={selectedAvancementKey}
                      class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
                      id="categorie_picker"
-                     label="Statut d'avancement"
+                     label="Status d'avancement"
                      onChange={applyFilters}>
             <option value=''>
                 Toutes
@@ -180,6 +180,7 @@
         <!-- personne -->
         <SelectInput bind:value={selectedPersonneReferente}
                      class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
+                     id="categorie_picker"
                      label="Personne référente"
                      onChange={applyFilters}>
             <option value=''>
@@ -195,6 +196,7 @@
         <!-- structure -->
         <SelectInput bind:value={selectedStructuresPilote}
                      class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
+                     id="categorie_picker"
                      label="Structure pilote"
                      onChange={applyFilters}>
             <option value=''>
