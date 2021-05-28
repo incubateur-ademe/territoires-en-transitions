@@ -15,7 +15,7 @@ def referentiel_from_actions(actions: List[dict], name: str, id: str) -> dict:
     """
     Nest actions into a root referentiel action.
 
-    This function is tightly coupled with the way markdowns are organized in referentiels directories
+    This function is tightly coupled with the way markdowns are organized in each referentiels directories
     """
     referentiel = {
         'nom': name,
@@ -24,15 +24,23 @@ def referentiel_from_actions(actions: List[dict], name: str, id: str) -> dict:
         'description': ''
     }
 
+    def attach_children(parent: dict) -> None:
+        for action in actions:
+            if action['id'].startswith(parent['id']) and action['id'] != parent['id']:
+                parent['actions'].append(action)
+
     for action in actions:
         if '.' not in action['id']:
             level_1 = action
-            level_1['actions'] = []
-            referentiel['actions'].append(level_1)
 
-            for action in actions:
-                if action['id'].startswith(level_1['id']) and action['id'] != level_1['id']:
-                    level_1['actions'].append(action)
+            if level_1['actions']:
+                for level_2 in level_1['actions']:
+                    attach_children(level_2)
+
+            else:
+                attach_children(level_1)
+
+            referentiel['actions'].append(level_1)
 
     return referentiel
 
