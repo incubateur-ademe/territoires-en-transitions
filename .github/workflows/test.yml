@@ -1,0 +1,35 @@
+name: Test
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  test-codegen:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./codegen
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.1'
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install Poetry
+        run: |
+          pip install --upgrade pip
+          pip --no-cache-dir install poetry
+
+      - name: Install dependencies
+        run: poetry install
+        working-directory: ${{env.working-directory}}
+
+      - name: Run tests
+        run: poetry run pytest
+        working-directory: ${{env.working-directory}}
