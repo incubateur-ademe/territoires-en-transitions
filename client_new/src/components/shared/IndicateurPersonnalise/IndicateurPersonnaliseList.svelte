@@ -2,7 +2,7 @@
     import {IndicateurPersonnaliseStorable} from "../../../storables/IndicateurPersonnaliseStorable";
     import {onMount} from "svelte";
     import IndicateurPersonnaliseElement from "./IndicateurPersonnaliseCard.svelte"
-    import IndicateurPersonaliseCreation from "./IndicateurPersonaliseCreation.svelte"
+    import IndicateurPersonaliseCreation from "./IndicateurPersonnaliseCreation.svelte"
     import Button from "../Button/Button.svelte";
 
     let indicateurs: IndicateurPersonnaliseStorable[] = []

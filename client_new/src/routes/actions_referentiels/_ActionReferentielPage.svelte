@@ -29,7 +29,7 @@
 
 <ActionReferentielCard action={action} emoji ficheButton statusBar/>
 <div class="m-4">
-    {action.description}
+    {@html action.description}
 </div>
 
 <h2 class="text-2xl font-semibold mt-8 mb-4 ">Les actions</h2>

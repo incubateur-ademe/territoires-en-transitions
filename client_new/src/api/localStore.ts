@@ -13,7 +13,7 @@ import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnalis
 import type {IndicateurPersonnaliseInterface} from "../../generated/models/indicateur_personnalise";
 import {IndicateurPersonnaliseValueStorable} from "../storables/IndicateurPersonnaliseValueStorable";
 import type {IndicateurPersonnaliseValueInterface} from "../../generated/models/indicateur_personnalise_value";
-import {IndicateurCommentaireStorable} from "../storables/IndicateurCommentaireStorable";
+import {IndicateurReferentielCommentaireStorable} from "../storables/IndicateurReferentielCommentaireStorable";
 import type {IndicateurReferentielCommentaireInterface} from "../../generated/models/indicateur_referentiel_commentaire";
 
 export const storeKey = 'territoiresentransitions'
