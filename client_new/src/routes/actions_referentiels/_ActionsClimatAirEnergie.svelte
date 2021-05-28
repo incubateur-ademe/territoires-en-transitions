@@ -17,6 +17,7 @@
         const domaines: ActionReferentiel[] = []
 
         for (let action of displayed) {
+            if (action.id.startsWith('economie_circulaire')) continue
             for (let domaine of action.actions) {
                 domaines.push(domaine)
                 for (let sous_domaine of domaine.actions) {
