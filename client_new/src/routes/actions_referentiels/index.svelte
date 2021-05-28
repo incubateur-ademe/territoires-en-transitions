@@ -2,27 +2,25 @@
     import {ActionReferentiel} from "../../../generated/models/action_referentiel";
     import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
 
-    import {actions} from "../../../generated/data/actions_referentiels";
-    import {Thematique, thematiques} from "../../../generated/data/thematiques";
-    import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
+    import {actions} from "../../../generated/data/referentiels.ts";
+    import ActionsByThematiques from "./_ActionsByThematiques.svelte"
+    import ActionsClimatAirEnergie from "./_ActionsClimatAirEnergie.svelte"
+    import ActionsEconomieCirculaire from "./_ActionsEconomieCirculaire.svelte"
+    import {onMount} from "svelte";
+    import {testUIVisibility} from "../../api/currentEnvironment";
+    import Button from "../../components/shared/Button/Button.svelte";
+
+    let view: 'thematique' | 'eci' | 'cae' = 'thematique'
 
     let allActions: ActionReferentiel[] = actions;
     let displayed: ActionReferentiel[] = actions;
-    let displayedByThematique = new Map<Thematique, ActionReferentiel[]>()
+    let referentielsVisibility: boolean = false
 
     $: searching = allActions.length != displayed.length
-    $: displayed, refresh()
 
-
-    const refresh = () => {
-        const map = new Map<Thematique, ActionReferentiel[]>()
-        for (let thematique of thematiques) {
-            const actions = displayed.filter((action) => action.thematique_id === thematique.id)
-            if (actions.length) map.set(thematique, actions)
-        }
-        displayedByThematique = map;
-    }
-    refresh()
+    onMount(() => {
+        referentielsVisibility = testUIVisibility()
+    })
 </script>
 
 <div class="flex flex-row items-center
@@ -33,16 +31,36 @@
     <div>
         <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
     </div>
+
+
 </div>
 
-{#each [...displayedByThematique] as [thematique, actions]}
-    <h2 class="text-2xl mt-10 mb-2">{thematique.name}</h2>
-    {#each actions as action}
-        {#if searching}
-            <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>
-        {:else }
-            <ActionReferentielCard action={action} emoji link/>
-        {/if}
-    {/each}
-{/each}
+    {#if referentielsVisibility}
+<div class="flex flex-row items-center
+            bg-white px-5 py-5 mb-5
+            border-l-8 border-pink-600">
+
+            <Button on:click={() => view = 'thematique'}
+                    colorVariant="{view === 'thematique' ? 'ash' : 'nettle'}">
+                Thématiques
+            </Button>
+
+            <Button on:click={() => view = 'eci'}
+                    colorVariant="{view === 'eci' ? 'ash' : 'nettle'}">
+                Economie circulaire
+            </Button>
+
+            <Button on:click={() => view = 'cae'}
+                    colorVariant="{view === 'cae' ? 'ash' : 'nettle'}">
+                Climat air energie
+            </Button>
+</div>
+    {/if}
+{#if view === 'thematique'}
+    <ActionsByThematiques displayed={displayed} searching={searching}/>
+{:else if view === 'cae'}
+    <ActionsClimatAirEnergie displayed={displayed} searching={searching}/>
+{:else if view === 'eci'}
+    <ActionsEconomieCirculaire displayed={displayed} searching={searching}/>
+{/if}
 

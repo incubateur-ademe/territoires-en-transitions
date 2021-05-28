@@ -4,7 +4,8 @@ import typer
 
 from codegen.action.write import action_to_markdown
 from codegen.citergie.indicator_extractor import parse_indicators_xlsx, indicators_to_markdowns_legacy
-from codegen.citergie.mesures_extractor import docx_to_mesures, add_climat_pratic, mesure_to_markdown_legacy
+from codegen.citergie.mesures_extractor import docx_to_mesures, add_climat_pratic, mesure_to_markdown_legacy, \
+    docx_to_parent_actions
 from codegen.economie_circulaire.indicateurs_extractor import parse_indicateurs_eci_xlsx
 from codegen.economie_circulaire.referentiel_extractor import parse_referentiel_eci_xlsx
 from codegen.indicateur.write import indicateur_to_markdown
@@ -97,3 +98,26 @@ def orientations(
             write(filename, markdown)
 
     typer.echo(f"All {len(orientations)} 'orientations' were exported in '{output_dir}' as markdown files.")
+
+
+@app.command()
+def domaines(
+    doc_file: str = '../referentiels/sources/citergie.docx',
+    output_dir: str = '../referentiels/markdown/mesures_citergie',
+) -> None:
+    """
+    Convert source docx file to 'actions' markdown files.
+    """
+    typer.echo(f"Loading docx file: '{doc_file}'...")
+    document = load_docx(doc_file)
+    typer.echo(f"Reading citergie document...")
+    actions = docx_to_parent_actions(document)
+    typer.echo(f"Found {len(actions)} 'domaines'!")
+
+    with typer.progressbar(actions) as progress:
+        for action in progress:
+            filename = os.path.join(output_dir, f"{action['id']}.md")
+            md = action_to_markdown(action)
+            write(filename, md)
+
+    typer.echo(f"All {len(actions)} 'domaines' were exported in '{output_dir}' as markdown files.")
