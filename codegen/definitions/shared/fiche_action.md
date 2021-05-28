@@ -1,4 +1,5 @@
 ## Fiche action
+
 Représente une fiche action crée par une epci.
 `epci_id/uid`
 
@@ -38,4 +39,17 @@ FicheAction:
         type: String
     indicateur_personnalise_ids:
         type: List[String]
+```
+
+## Avancement
+
+L'avancement des fiches actions est représenté par les valeurs suivantes
+
+```yaml
+fiche_action_avancement_noms:
+    non_concerne: 'Non concerné'
+    programmee: 'Prévue'
+    pas_faite: 'Pas faite'
+    en_cours: 'En cours'
+    faite: 'Faite'
 ```

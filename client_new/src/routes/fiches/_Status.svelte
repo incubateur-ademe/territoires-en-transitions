@@ -1,30 +1,13 @@
 <script lang="ts">
+    import {fiche_action_avancement_noms} from "../../../generated/models/fiche_action_avancement_noms";
+
     export let avancementKey: string
     export let id: string
 
-    const avancements = [
-        {
-            key: 'non_concernee',
-            label: 'Non concernée',
-        },
-        {
-            key: 'pas_faite',
-            label: 'Pas faite',
-        },
-        {
-            key: 'programmee',
-            label: 'Prévue',
-        },
-        {
-            key: 'en_cours',
-            label: 'En cours',
-        },
-        {
-            key: 'faite',
-            label: 'Faite',
-        },
-    ]
 
+    const avancements = Object.entries(fiche_action_avancement_noms).map(([key, label]) => {return {'key': key, 'label': label}})
+
+    console.log(avancements)
     const classes = [
         'border rounded-l flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
         'border-t border-r border-b flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
