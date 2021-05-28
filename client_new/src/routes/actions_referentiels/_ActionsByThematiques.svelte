@@ -19,7 +19,15 @@
         for (let action of displayed) {
             for (let level1 of action.actions) {
                 for (let level2 of level1.actions) {
-                    shallow.push(level2)
+                    if (level2.id.startsWith('economie_circulaire')) {
+                        // mesure
+                        shallow.push(level2)
+                    } else {
+                        for (let level3 of level2.actions) {
+                            // actions
+                            shallow.push(level3)
+                        }
+                    }
                 }
             }
         }
