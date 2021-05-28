@@ -1,9 +1,14 @@
 # Les nouveautés
 
-## Déploiement du
+## Déploiement du 28 mai 2021
 
 Fonctionnalités :
-  - [Label de la PR](lien-vers-la-PR)
+  - Intégration de la v3 du référentiel économie circulaire et possibilité d'ajouter des commentaires sur les indicateurs
+  - Possibilité de filtrer les fiches actions
+  - Amélioration du formulaire des fiches et des composants des formulaires
 
 Réparation de bugs :
-  - [Label de la PR](lien-vers-la-PR)
+  - Correction des imports JavaScript erronés (#116)
+
+Tech :
+  - 🛠️ Ajout du déploiement automatisé (#6)
