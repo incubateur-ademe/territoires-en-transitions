@@ -31,8 +31,7 @@ def upload_folder(bucket: str, path: str, s3: BaseClient) -> int:
     typer.echo(f"Uploading {len(filenames)} files from {path} to '{bucket}'.")
     with typer.progressbar(filenames) as progress:
         for filename in progress:
-            name = filename.lstrip(path).lstrip(os.sep).replace("\\", "/")
-            # print(f'{name} <- {filename}')
+            name = filename.lstrip(path)
             s3.upload_file(filename, bucket, name, ExtraArgs={'ACL': 'public-read'})
             count += 1
     return count
