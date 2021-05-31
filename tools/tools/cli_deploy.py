@@ -11,13 +11,12 @@ app = typer.Typer()
 @app.command()
 def upload_client(
         subdomain: str = typer.Option('sandbox', "--subdomain", "-s"),
-        client_old: str = typer.Option('../client/dist', "--client-old", "-co"),
-        client_new: str = typer.Option('../client_new/__sapper__/export', "--client-new", "-cn"),
+        app_dir: str = typer.Option('../app.territoiresentransitions.fr/__sapper__/export', "--client-new", "-cn"),
 ) -> None:
     """Upload files into a sub domain bucket"""
     s3 = make_s3_client()
     bucket = f'{subdomain}.territoiresentransitions.fr'
-    count = upload_folder(bucket, client_new, s3)
+    count = upload_folder(bucket, app_dir, s3)
     typer.echo(f"Uploaded {count} files to '{bucket}'.")
 
 

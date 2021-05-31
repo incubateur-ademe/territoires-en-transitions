@@ -79,42 +79,10 @@ Circulaire pour créer des fichiers markdown. Par défaut :
 ```shell
 poetry run extract mesures --help
 ```
-```shell
-Usage: extract mesures [OPTIONS]
-
-  Convert source docx file to 'mesures' markdown files.
-
-Options:
-  -d, --docx TEXT            [default: ../referentiels/sources/citergie.docx]
-  -c, --correspondance TEXT  [default: ../referentiels/sources/correspondance_
-                             citergie_climat_pratique.xlsx]
-
-  -o, --output TEXT          [default:
-                             ../referentiels/markdown/mesures_citergie]
-
-  --help                     Show this message and exit.
-```
 
 ##### Indicateurs
 ```shell
 poetry run extract indicateurs --help
-```
-```shell
-Usage: extract indicateurs [OPTIONS]
-
-  Convert source xlsx files to 'indicateurs' markdown files.
-
-Options:
-  -i, --indicateurs TEXT     [default:
-                             ../referentiels/sources/indicateurs_citergie.xlsx]
-
-  -c, --correspondance TEXT  [default: ../referentiels/sources/correspondance_cit
-                             ergie_climat_pratique.xlsx]
-
-  -o, --output TEXT          [default:
-                             ../referentiels/markdown/indicateurs_citergie]
-
-  --help                     Show this message and exit.
 ```
 
 #### Le générateur de code
@@ -126,40 +94,16 @@ partir des markdowns générés par le parser. Par défaut :
 - les fichiers sources pour la génération sont dans
 [referentiels/markdown](referentiels/markdown),
 - les objets JavaScript sont générés dans
-  [client_new/generated/data](client_new/generated/data),
+  [generated/data](generated/data),
 - les vues HTML ne sont pas générées (__elles ont servi de prototypage de départ
   pour le client avant l'utilisation de Sapper).
 
 ```shell
 poetry run generate mesures --help
 ```
-```shell
-Usage: generate mesures [OPTIONS]
-
-  Convert 'mesures' markdown files to code.
-
-Options:
-  -md, --markdown TEXT  [default: ../referentiels/markdown/mesures_citergie]
-  -o, --output TEXT     [default: generated/citergie]
-  --html / --no-html    [default: True]
-  --json / --no-json    [default: True]
-  --js / --no-js        [default: True]
-  --help                Show this message and exit.
-```
 
 ```shell
 poetry run generate indicateurs --help
-```
-```shell
-Usage: generate indicateurs [OPTIONS]
-
-  Convert 'indicateurs' markdown files to code.
-
-Options:
-  -md, --markdown TEXT  [default: ../referentiels/markdown/indicateurs_citergie]
-  -o, --output TEXT     [default: generated/indicateurs_citergie]
-  --html / --no-html    [default: True]
-  --help                Show this message and exit.
 ```
 
 ##### Les structures de données
@@ -169,23 +113,11 @@ JavaScript) à partir de markdowns sources. Par défaut :
 - les fichiers sources pour la génération sont dans
 [codegen/definitions/shared](codegen/definitions/shared),
 - les classes JavaScript sont générés dans
-  [client_new/generated/models](client_new/generated/models),
+  [generated/models](generated/models),
 - les classes Python ne sont pas générées.
 
 ```shell
 poetry run generate shared --help
-```
-```shell
-Usage: generate shared [OPTIONS]
-
-Generate shared definitions.
-
-Options:
--md, --markdown TEXT    [default: definitions/shared]
--o, --output TEXT       [default: generated/definition/shared]
---python / --no-python  [default: True]
---js / --no-js          [default: True]
---help                  Show this message and exit.
 ```
 
 ## Mettre à jour les markdowns
