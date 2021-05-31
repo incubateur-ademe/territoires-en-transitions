@@ -1,7 +1,7 @@
 import os
 
 root_dir = '..'
-client_dir = '../client_new'
+client_dir = '../app.territoiresentransitions.fr'
 api_dir = '../../territoiresentransitions_api/api'
 
 thematique_markdown_file = '../referentiels/markdown/thematiques_climat_pratic/thematiques.md'

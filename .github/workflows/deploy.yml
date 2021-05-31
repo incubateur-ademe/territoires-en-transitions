@@ -99,7 +99,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: codegen-test-and-generate
     env:
-      working-directory: ./client_new
+      working-directory: ./app.territoiresentransitions.fr
 
     steps:
       # cf. https://github.com/actions/checkout
@@ -127,7 +127,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: client-app
-          path: client_new/__sapper__/export
+          path: app.territoiresentransitions.fr/__sapper__/export
 
   # This job retrieves the exported client app and upload it to Scaleway.
   deploy-on-scaleway:
