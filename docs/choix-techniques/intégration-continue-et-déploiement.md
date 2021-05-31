@@ -28,7 +28,8 @@ Inconvénients :
   - Le déploiement est fait manuellement et est donc sujet à l'erreur humaine.
 
 Pour connaitre les étapes spécifiques pour déployer en production, on peut
-[suivre cette documentation](docs/workflows/déployer-en-production.md).
+[suivre cette
+documentation](https://github.com/betagouv/territoires-en-transitions/blob/main/docs/workflows/d%C3%A9ployer-en-production.md).
 
 ## Environnements
 
