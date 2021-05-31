@@ -3,6 +3,11 @@
 Cette documentation sert pour le déploiement manuel à partir d'une machine en
 local en cas de souci avec les GitHub Actions.
 
+- [Génération d'une paire de clés d'API sur Scaleway](#génération-dune-paire-de-clés-dapi-sur-scaleway)
+- [Installation de aws-cli](#installation-de-aws-cli)
+- [Configuration de aws-cli](#configuration-de-aws-cli)
+- [Commande de déploiement manuel](#commande-de-déploiement-manuel)
+
 ## Génération d'une paire de clés d'API sur Scaleway
 
 Avoir une paire de clés d'API sur Scaleway nous permet d'avoir une permission
@@ -77,6 +82,26 @@ aws_secret_access_key=<SECRET_KEY>
 ```
 aws s3 ls
 ```
+
+## Commande de déploiement manuel
+
+Pour déployer sur sandbox, lancer à la racine du projet :
+```
+make deploy_all_on_sandbox
+```
+
+### Déploiement en production
+
+Avant de déployer en production, suivre toutes les étapes de la section "Préparer un déploiement" de la [documentation "Déployer en production](déployer-en-production.md).
+
+Puis, au lieu de pousser sur la branche `production`, lancer à la racine du projet :
+```
+make deploy_all_on_app
+```
+
+Pour terminer, prévenir l'équipe du déploiement sur le channel Mattermost
+`startup-labels-produit` et vérifier que l'application fonctionne correctement
+sur https://app.territoiresentransitions.fr.
 
 ## Ressources
 
