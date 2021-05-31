@@ -40,6 +40,8 @@
             bg-white px-5 py-5 mb-5
             border-l-8 border-pink-600">
 
+            <!-- todo liste déroulante -->
+
             <Button on:click={() => view = 'thematique'}
                     colorVariant="{view === 'thematique' ? 'ash' : 'nettle'}">
                 Thématiques
