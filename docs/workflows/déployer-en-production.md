@@ -66,9 +66,9 @@ git pull origin main
     ```
 ## Déployer
 
-| Pour pouvoir mettre à jour la branche `production` sur `origin`, il faut
-| demander que son compte GitHub soit ajouté à la liste des comptes autorisées
-| dans les règles de protection du dépôt pour la branche `production`.
+> Pour pouvoir mettre à jour la branche `production` sur `origin`, il faut
+> demander que son compte GitHub soit ajouté à la liste des comptes autorisées
+> dans les règles de protection du dépôt pour la branche `production`.
 
 1. Pousser la branche `production` sur `origin` :
    ```

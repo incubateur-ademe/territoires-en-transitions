@@ -5,16 +5,20 @@ Merci à vous de prendre le temps de contribuer à notre projet :)
 Vous trouverez ici les informations pour démarrer et comprendre comment nous
 travaillons sur ce projet.
 
+- [Discussion avec l'équipe](#discussion-avec-léquipe)
+- [Créer une Pull Request](#créer-une-pull-request)
+- [Intégration continue et déploiement](#intégration-continue-et-déploiement)
+
 ## Discussion avec l'équipe
 
 On utilise GitHub pour suivre l'avancée de nos fonctionnalités et la résolution
-de nos bugs. Pour travailler là-dessus avec nous, vous pouvez [lancer une
+de nos bugs. Pour travailler avec nous, vous pouvez [lancer une
 nouvelle discussion](https://github.com/betagouv/territoires-en-transitions/issues/new)
 ou venir discuter avec nous directement sur Mattermost.
 
-Pensez à jeter un œil à la [liste des issues](https://github.com/betagouv/territoires-en-transitions/issues)
-existantes ou à notre [story map](https://github.com/betagouv/territoires-en-transitions/projects/5)
-pour une vision plus centrée sur nos enjeux avant d'ouvrir un nouveau sujet.
+Pensez à jeter un œil à la [liste des issues existantes](https://github.com/betagouv/territoires-en-transitions/issues)
+ou à notre [story map](https://github.com/betagouv/territoires-en-transitions/projects/5)
+avant d'ouvrir un nouveau sujet.
 
 ## Créer une Pull Request
 
@@ -33,4 +37,8 @@ On utilise les [GitHub Actions](https://github.com/features/actions) pour lancer
 les tests sur chaque Pull Request et pour
 [déployer en production](docs/workflows/déployer-en-production.md).
 
-Chaque Pull Request mergée sur `main` sera déployée au prochain déploiement.
+Chaque Pull Request mergée sur `main` sera déployée au prochain déploiement. Le
+déploiement est déclenché manuellement au merge sur `production` et est exécuté
+automatiquement par une [GitHub Action](https://github.com/betagouv/territoires-en-transitions/actions).
+La liste des personnes pouvant merger sur `production` est restreinte à
+l'équipe de développement du projet.

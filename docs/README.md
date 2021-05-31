@@ -15,5 +15,7 @@ fonctionnement de l'équipe de développement](https://github.com/labels-transit
 - [Qu'est-ce que Tailwind CSS et pourquoi l'utiliser ?](choix-techniques/pourquoi-utiliser-tailwind-css.md)
 
 ### Workflows
+- [Contribuer au projet](workflows/contribuer-au-projet.md)
+- [Déployer en production](workflows/déployer-en-production.md)
 - [Déploiement manuel](workflows/déploiement-manuel.md)
 - [Environnement de staging](workflows/environnement-de-staging.md)
