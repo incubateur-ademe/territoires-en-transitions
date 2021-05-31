@@ -1,7 +1,7 @@
 # Déploiement manuel
 
 Cette documentation sert pour le déploiement manuel à partir d'une machine en
-local. À terme, ces actions seront transposées dans un script de déploiement.
+local en cas de souci avec les GitHub Actions.
 
 ## Génération d'une paire de clés d'API sur Scaleway
 
