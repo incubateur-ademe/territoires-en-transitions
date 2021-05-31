@@ -3,7 +3,7 @@
 - [Préparer un déploiement](#préparer-un-déploiement)
 - [Déployer](#déployer)
 
-Pour en savoir davantage sur le contexte, on peut consulter la [documentation sur les choix techniques de notre process de déploiement](docs/choix-techniques/intégration-continue-et-déploiement.md).
+Pour en savoir davantage sur le contexte, on peut consulter la [documentation sur les choix techniques de notre process de déploiement](https://github.com/betagouv/territoires-en-transitions/blob/main/docs/choix-techniques/int%C3%A9gration-continue-et-d%C3%A9ploiement.md).
 
 ## Préparer un déploiement
 
