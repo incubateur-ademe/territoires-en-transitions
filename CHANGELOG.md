@@ -8,10 +8,18 @@ Fonctionnalités :
 Réparation de bugs :
 -
 
-## Déploiement du
+## Déploiement du 28 mai 2021
 
 Fonctionnalités :
-  - [Label de la PR](lien-vers-la-PR)
+  - Intégration de la v3 du référentiel économie circulaire
+  - Possibilité d'ajouter des commentaires sur les indicateurs
+  - Amélioration du formulaire des fiches et des composants des formulaires
+  - Structuration des actions des référentiels par référentiel
 
 Réparation de bugs :
-  - [Label de la PR](lien-vers-la-PR)
+  - Nettoyage taches domaines 1 et 5 Climat-Air-Énergie
+  - Correction de la langue par défaut de l'application
+
+Tech :
+  - Correction des imports JavaScript erronés
+  - 🛠️ Ajout du déploiement automatisé
