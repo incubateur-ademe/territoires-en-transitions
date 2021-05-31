@@ -13,9 +13,8 @@ construction.
 
 Pour répondre à ces contraintes, nous avons choisi de décorréler la revue de
 code et la mise en production (contrairement à un process de CI/CD
-traditionnel) :
-  - les PRs revues sont mergées dans `main`,
-  - les branches à déployer sont mergées dans `production`.
+traditionnel). Les PRs revues sont mergées dans `main`, les branches à déployer
+sont mergées dans `production`.
 
 Avantages :
   - On peut mettre en production facilement sans avoir besoin que le code soit
@@ -32,38 +31,38 @@ Inconvénients :
 ## Préparer un déploiement
 
 1. Se mettre sur la branche `production` :
-```
-git co production
-```
+   ```
+   git co production
+   ```
 
 2. Récupérer la version de `production` sur `origin` :
-```
-git pull origin production
-```
+   ```
+   git pull origin production
+   ```
 
 3. Récupérer la version de `main` sur `origin` :
-```
-git pull origin main
-```
+   ```
+   git pull origin main
+   ```
 
 4. Merger les branches que l'on veut déployer. Pour chaque branche :
-  - Vérifier qu'il existe une PR associée. Si ce n'est pas le cas, créer la PR
-    ou demander à la personne en charge de la fonctionnalité de le faire.
-  - Merger la branche :
-    ```
-    git merge [NOM DE LA BRANCHE]
-    ```
-  - Fixer les conflits si nécessaire.
+   - Vérifier qu'il existe une PR associée. Si ce n'est pas le cas, créer la PR
+     ou demander à la personne en charge de la fonctionnalité de le faire.
+   - Merger la branche :
+     ```
+     git merge [NOM DE LA BRANCHE]
+     ```
+   - Fixer les conflits si nécessaire.
 
 5. Mettre à jour le `CHANGELOG.md` :
-  - Garder le titre "À venir",
-  - Ajouter un titre avec la date du jour au-dessus des modifications que l'on
-    vient d'ajouter.
-  - Enregistrer cette modification :
-    ```
-    git add CHANGELOG.md
-    git commit -m "Mise à jour du CHANGELOG"
-    ```
+   - Garder le titre "À venir",
+   - Ajouter un titre avec la date du jour au-dessus des modifications que l'on
+     vient d'ajouter.
+   - Enregistrer cette modification :
+     ```
+     git add CHANGELOG.md
+     git commit -m "Mise à jour du CHANGELOG"
+     ```
 ## Déployer
 
 > Pour pouvoir mettre à jour la branche `production` sur `origin`, il faut
