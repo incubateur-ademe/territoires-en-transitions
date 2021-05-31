@@ -5,7 +5,7 @@
 
     import {IndicateurReferentielSearch} from "../../api/search";
     import {onDestroy, onMount} from "svelte";
-    import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
+    import {IndicateurReferentiel} from "../../../../generated/models/indicateur_referentiel";
 
     const search = new IndicateurReferentielSearch()
 

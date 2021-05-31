@@ -3,7 +3,7 @@
      * The input for an indicateur yearly value.
      * Retrieve and store values.
      */
-    import {IndicateurReferentiel} from "../../../../generated/models/indicateur_referentiel";
+    import {IndicateurReferentiel} from "../../../../../generated/models/indicateur_referentiel";
 
     import {IndicateurValueStorable} from '../../../storables/IndicateurValueStorable'
     import {onMount} from "svelte";

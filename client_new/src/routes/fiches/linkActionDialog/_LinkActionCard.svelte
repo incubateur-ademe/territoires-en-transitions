@@ -2,7 +2,7 @@
     /**
      * Displays an action along with a PickButton to link the action to the current fiche.
      */
-    import {ActionReferentiel} from '../../../../generated/models/action_referentiel'
+    import {ActionReferentiel} from '../../../../../generated/models/action_referentiel'
     import RowCard from '../../../components/shared/RowCard.svelte'
     import PickButton from '../../../components/shared/Button/PickButton.svelte'
     import ActionReferentielTitle from '../../../components/shared/ActionReferentiel/ActionReferentielTitle.svelte'

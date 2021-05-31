@@ -1,8 +1,8 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
     import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
 
-    import {actions} from "../../../generated/data/referentiels.ts";
+    import {actions} from "../../../../generated/data/referentiels.ts";
     import ActionsByThematiques from "./_ActionsByThematiques.svelte"
     import ActionsClimatAirEnergie from "./_ActionsClimatAirEnergie.svelte"
     import ActionsEconomieCirculaire from "./_ActionsEconomieCirculaire.svelte"

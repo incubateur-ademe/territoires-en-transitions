@@ -1,7 +1,7 @@
 <script lang="ts">
     import {createEventDispatcher} from "svelte";
     import Button from "../Button/Button.svelte";
-    import {IndicateurPersonnaliseInterface} from "../../../../generated/models/indicateur_personnalise";
+    import {IndicateurPersonnaliseInterface} from "../../../../../generated/models/indicateur_personnalise";
     import {IndicateurPersonnaliseStorable} from "../../../storables/IndicateurPersonnaliseStorable";
     import LabeledTextInput from "../Forms/LabeledTextInput.svelte";
     import LabeledTextArea from "../Forms/LabeledTextArea.svelte";

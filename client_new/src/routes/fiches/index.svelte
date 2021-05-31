@@ -7,7 +7,7 @@
     import {HybridStore} from "../../api/hybridStore";
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
     import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
-    import {fiche_action_avancement_noms} from "../../../generated/models/fiche_action_avancement_noms";
+    import {fiche_action_avancement_noms} from "../../../../generated/models/fiche_action_avancement_noms";
 
     const defaultCategorie = new FicheActionCategorieStorable({
         uid: '',

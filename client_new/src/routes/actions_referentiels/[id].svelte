@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
-    import {actions} from "../../../generated/data/actions_referentiels";
-    import {ActionReferentiel} from "../../../generated/models/action_referentiel";
+    import {actions} from "../../../../generated/data/actions_referentiels";
+    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
 
     const search = (actions: ActionReferentiel[], id: string): ActionReferentiel | void => {
         for (let action of actions) {

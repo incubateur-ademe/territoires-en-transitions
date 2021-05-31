@@ -5,7 +5,7 @@
      *
      * Passes linkedActionIds and toggleActionId props along to its children.
      */
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
     import ReferentielSearchBar from '../../../components/shared/ReferentielSearchBar.svelte'
     import LinkActionCard from './_LinkActionCard'
     import PickButton from "../../../components/shared/Button/PickButton.svelte";

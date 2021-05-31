@@ -1,18 +1,18 @@
-import {MesureCustom, MesureCustomInterface} from "../../generated/models/mesure_custom";
-import {ActionCustom, ActionCustomInterface} from "../../generated/models/action_custom";
+import {MesureCustom, MesureCustomInterface} from "../../../generated/models/mesure_custom";
+import {ActionCustom, ActionCustomInterface} from "../../../generated/models/action_custom";
 import {ActionCustomStorable} from "../storables/ActionCustomStorable";
 import {MesureCustomStorable} from "../storables/MesureCustomStorable";
 import {ActionStatusStorable} from "../storables/ActionStatusStorable";
-import {ActionStatus, ActionStatusInterface} from "../../generated/models/action_status";
+import {ActionStatus, ActionStatusInterface} from "../../../generated/models/action_status";
 import {isStorable} from "./storable";
 import {FicheActionStorable} from "../storables/FicheActionStorable";
-import type {FicheActionInterface} from "../../generated/models/fiche_action";
+import type {FicheActionInterface} from "../../../generated/models/fiche_action";
 import {FicheActionCategorieStorable} from "../storables/FicheActionCategorieStorable";
-import type {FicheActionCategorieInterface} from "../../generated/models/fiche_action_categorie";
+import type {FicheActionCategorieInterface} from "../../../generated/models/fiche_action_categorie";
 import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnaliseStorable";
-import type {IndicateurPersonnaliseInterface} from "../../generated/models/indicateur_personnalise";
+import type {IndicateurPersonnaliseInterface} from "../../../generated/models/indicateur_personnalise";
 import {IndicateurPersonnaliseValueStorable} from "../storables/IndicateurPersonnaliseValueStorable";
-import type {IndicateurPersonnaliseValueInterface} from "../../generated/models/indicateur_personnalise_value";
+import type {IndicateurPersonnaliseValueInterface} from "../../../generated/models/indicateur_personnalise_value";
 import {IndicateurReferentielCommentaireStorable} from "../storables/IndicateurReferentielCommentaireStorable";
 
 export const storeKey = 'territoiresentransitions'

@@ -1,4 +1,4 @@
-import {FicheActionCategorie} from "../../generated/models/fiche_action_categorie";
+import {FicheActionCategorie} from "../../../generated/models/fiche_action_categorie";
 
 
 export class FicheActionCategorieStorable extends FicheActionCategorie {

@@ -1,4 +1,4 @@
-import {IndicateurValue} from "../../generated/models/indicateur_value";
+import {IndicateurValue} from "../../../generated/models/indicateur_value";
 
 export class IndicateurValueStorable extends IndicateurValue {
     static buildId(epci_id: string, indicateur_id: string, year: number) : string {

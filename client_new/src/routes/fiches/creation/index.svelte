@@ -2,9 +2,9 @@
     import {v4 as uuid} from 'uuid'
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../../api/currentEpci";
-    import {FicheActionInterface} from "../../../../generated/models/fiche_action";
+    import {FicheActionInterface} from "../../../../../generated/models/fiche_action";
     import Form from "../_Form"
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
 
     let data: FicheActionInterface = {
         epci_id: '',
@@ -34,7 +34,7 @@
         const actionId = urlParams.get('action_id')
 
         if (actionId) {
-            let referentiel = await import ("../../../../generated/data/actions_referentiels");
+            let referentiel = await import ("../../../../../generated/data/actions_referentiels");
             const search = (id: string, actions: ActionReferentiel[]): ActionReferentiel => {
                 for (let action of actions) {
                     if (action.id === id) return action

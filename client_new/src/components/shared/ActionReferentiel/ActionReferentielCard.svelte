@@ -5,7 +5,7 @@
      * Display is customizable using props such as: ficheButton, link, emoji...
      */
     import ActionStatus from "../ActionStatus.svelte";
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../../api/currentEpci";
     import Angle from "../Angle.svelte";

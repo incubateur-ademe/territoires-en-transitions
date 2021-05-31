@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {FicheActionCategorieInterface} from "../../../generated/models/fiche_action_categorie";
+    import {FicheActionCategorieInterface} from "../../../../generated/models/fiche_action_categorie";
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
     import {createEventDispatcher, onMount} from "svelte";
     import Button from "../../components/shared/Button/Button.svelte";

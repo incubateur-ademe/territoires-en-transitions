@@ -4,14 +4,14 @@
     import MultiSelect from './_MultiSelect.svelte'
     import CategoriePicker from './_CategoriePicker.svelte'
     import Status from './_Status.svelte'
-    import {FicheActionInterface} from "../../../generated/models/fiche_action"
+    import {FicheActionInterface} from "../../../../generated/models/fiche_action"
     import {onMount} from "svelte"
     import {HybridStore} from "../../api/hybridStore"
     import {testUIVisibility} from "../../api/currentEnvironment";
-    import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
+    import {IndicateurReferentiel} from "../../../../generated/models/indicateur_referentiel";
     import IndicateurReferentielCard
         from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
-    import {IndicateurPersonnalise} from "../../../generated/models/indicateur_personnalise";
+    import {IndicateurPersonnalise} from "../../../../generated/models/indicateur_personnalise";
     import IndicateurPersonnaliseCard
         from "../../components/shared/IndicateurPersonnalise/IndicateurPersonnaliseCard.svelte";
     import IndicateurPersonnaliseCreation
@@ -102,7 +102,7 @@
         ficheActionStore = hybridStores.ficheActionStore
 
         // load référentiel indicateurs
-        const indicateurs = await import("../../../generated/data/indicateurs_referentiels")
+        const indicateurs = await import("../../../../generated/data/indicateurs_referentiels")
         indicateursReferentiel = indicateurs.indicateurs
 
         // load indicateurs personnalisés

@@ -2,7 +2,7 @@
     /**
      * Display an Indicateur Personnalisé and allow edition.
      */
-    import {IndicateurPersonnalise} from "../../../../generated/models/indicateur_personnalise";
+    import {IndicateurPersonnalise} from "../../../../../generated/models/indicateur_personnalise";
     import IndicateurForm from "./IndicateurPersonnaliseForm.svelte"
     import Angle from "../Angle.svelte";
     import Button from "../Button/Button.svelte";
