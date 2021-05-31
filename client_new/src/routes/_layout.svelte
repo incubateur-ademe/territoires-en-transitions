@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Matomo from '../components/tracking/Matomo.svelte'
 	import Tailwind from '../components/Tailwind.svelte'
 	import Nav from '../components/shared/Nav/Nav.svelte'
 
@@ -15,6 +16,7 @@
 	}
 </style>
 
+<Matomo />
 <Tailwind />
 <Nav {segment}/>
 
