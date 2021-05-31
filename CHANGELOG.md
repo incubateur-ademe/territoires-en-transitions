@@ -1,5 +1,13 @@
 # Les nouveautés
 
+## À venir
+
+Fonctionnalités :
+- Suppression de l'indicateur eci_004
+
+Réparation de bugs :
+-
+
 ## Déploiement du
 
 Fonctionnalités :

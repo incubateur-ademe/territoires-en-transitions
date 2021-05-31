@@ -26,7 +26,7 @@ Nous avons donc choisi de tester le code du projet en fonction de sa probabilit√
   principaux ([Puppeteer](https://pptr.dev/)).
 
 ## Avril 2021
-- Ajout du [nouveau client](https://github.com/betagouv/label-transition-ecologique/tree/main/client_new)
+- Ajout du [nouveau client](https://github.com/betagouv/label-transition-ecologique/tree/main/app.territoiresentransitions.fr)
 avec [Sapper](https://sapper.svelte.dev/) :
   - Pas de tests mis en place (prototypage)
 
