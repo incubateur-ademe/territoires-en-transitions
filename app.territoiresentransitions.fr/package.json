@@ -1,5 +1,5 @@
 {
-  "name": "new.territoiresentransitions.fr",
+  "name": "app.territoiresentransitions.fr",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
