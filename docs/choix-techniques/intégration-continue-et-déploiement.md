@@ -27,6 +27,9 @@ Inconvénients :
     l'objet d'une PR et qui ne serait donc jamais mergé sur `main`.
   - Le déploiement est fait manuellement et est donc sujet à l'erreur humaine.
 
+Pour connaitre les étapes spécifiques pour déployer en production, on peut
+[suivre cette documentation](docs/workflows/déployer-en-production.md).
+
 ## Environnements
 
 On dispose de deux environnements pour l'application client :
