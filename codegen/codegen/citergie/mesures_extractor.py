@@ -63,7 +63,7 @@ def split_weight(title: str) -> tuple:
 
 def is_domaine(p: Paragraph) -> bool:
     """Returns True if paragraph is a sous domaine"""
-    return bool(re.match(r'domaine \d+ ', p_low(p)))
+    return bool(re.match(r'domaine \d+', p_low(p)))
 
 
 def is_sous_domaine(p: Paragraph) -> bool:
@@ -134,6 +134,34 @@ def categorized_action(cat: str) -> Callable:
             action['description'] += f'{text}\n\n'
 
     return parser
+
+
+def docx_to_parent_actions(doc: docx.Document) -> list:
+    """Returns actions from made from domaine and sous-domaine"""
+    actions = []
+
+    for p in iter_paragraphs(doc):
+        if is_domaine(p):
+            numero, nom = p.text.split(':')
+            numero = re.findall(r'\d+', numero)[0]
+            action = {
+                'id': numero,
+                'nom': nom.strip(),
+                'actions': []
+            }
+            actions.append(action)
+        if is_sous_domaine(p):
+            domaine = actions[-1]
+            text = p.text.strip()
+            numero = re.findall(r'\d+.\d+', text)[0]
+            nom = text[len(numero) + 1:]
+            action = {
+                'id': numero,
+                'nom': nom.strip()
+            }
+            domaine['actions'].append(action)
+
+    return actions
 
 
 def docx_to_mesures(doc: docx.Document) -> list:
