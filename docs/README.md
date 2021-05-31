@@ -14,6 +14,6 @@ fonctionnement de l'équipe de développement](https://github.com/labels-transit
 - [Qu'est-ce que Svelte et pourquoi l'utiliser ?](choix-techniques/pourquoi-utiliser-svelte.md)
 - [Qu'est-ce que Tailwind CSS et pourquoi l'utiliser ?](choix-techniques/pourquoi-utiliser-tailwind-css.md)
 
-### Intégration continue
-- [Déploiement manuel](intégration-continue/déploiement-manuel.md)
-- [Environnement de staging](intégration-continue/environnement-de-staging.md)
+### Workflows
+- [Déploiement manuel](workflows/déploiement-manuel.md)
+- [Environnement de staging](workflows/environnement-de-staging.md)
