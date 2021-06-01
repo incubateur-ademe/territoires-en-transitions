@@ -13,7 +13,7 @@ Pour les accès, on peut demander à une personne de l'équipe de nous créer de
 accès dédiés pour Scaleway et Gandi.
 
 Pour l'installation de aws-cli, on peut suivre la [documentation sur le
-déploiement manuel)[docs/intégration-continue/déploiement-manuel.md].
+déploiement manuel)[docs/workflows/déploiement-manuel.md].
 
 ## Choisir un nom de sous-domaine
 

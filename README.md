@@ -25,3 +25,5 @@ Ce dépôt Git contient :
 
 Chaque dossier à la racine contient son propre `README.md` et peut fonctionner
 de manière autonome.
+
+Vous pouvez contribuer à notre projet [en suivant cette documentation](docs/workflows/contribuer-au-projet.md).
