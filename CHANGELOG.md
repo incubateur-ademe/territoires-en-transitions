@@ -4,6 +4,7 @@
 
 Fonctionnalités :
 - Suppression de l'indicateur eci_004
+- L'affichage des référentiels par leur structures
 
 Réparation de bugs :
 -
