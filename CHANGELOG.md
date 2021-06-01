@@ -6,7 +6,7 @@ Fonctionnalités :
 - Suppression de l'indicateur eci_004
 
 Réparation de bugs :
--
+- Correction du titre de la page d'accueil
 
 ## Déploiement du
 
