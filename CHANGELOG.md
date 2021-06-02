@@ -3,11 +3,19 @@
 ## À venir
 
 Fonctionnalités :
-- Suppression de l'indicateur eci_004
 -  Ajout de Matomo pour suivre les statistiques d'usage de l'application
 
 Réparation de bugs :
+-
+
+## Déploiement du 1er juin 2021
+
+Fonctionnalités :
+- Affichage des référentiels par leur structures
+
+Réparation de bugs :
 - Correction du titre de la page d'accueil
+- Suppression de l'indicateur eci_004
 
 ## Déploiement du 28 mai 2021
 
