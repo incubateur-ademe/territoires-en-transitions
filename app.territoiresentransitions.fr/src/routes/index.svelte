@@ -11,7 +11,7 @@
 </script>
 
 <svelte:head>
-    <title>page temporaire</title>
+    <title>Territoires en Transitions</title>
 </svelte:head>
 
 <main class="container mx-auto lg:px-20 px-4 max-w-4xl m-auto bg-white">

@@ -11,9 +11,12 @@ fonctionnement de l'équipe de développement](https://github.com/labels-transit
 - [Architecture technique
   frontend](choix-techniques/architecture-technique-frontend.md)
 - [Langages et frameworks backend](choix-techniques/langages-et-frameworks-backend.md)
+- [Intégration continue et déploiement](choix-techniques/intégration-continue-et-déploiement.md)
 - [Qu'est-ce que Svelte et pourquoi l'utiliser ?](choix-techniques/pourquoi-utiliser-svelte.md)
 - [Qu'est-ce que Tailwind CSS et pourquoi l'utiliser ?](choix-techniques/pourquoi-utiliser-tailwind-css.md)
 
-### Intégration continue
-- [Déploiement manuel](intégration-continue/déploiement-manuel.md)
-- [Environnement de staging](intégration-continue/environnement-de-staging.md)
+### Workflows
+- [Contribuer au projet](workflows/contribuer-au-projet.md)
+- [Déployer en production](workflows/déployer-en-production.md)
+- [Déploiement manuel](workflows/déploiement-manuel.md)
+- [Environnement de staging](workflows/environnement-de-staging.md)
