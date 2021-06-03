@@ -115,9 +115,6 @@ jobs:
       # Build client with Sapper
       - name: Build client
         run: |
-          ls -la generated
-          ls -la generated/data
-          ls -la generated/models
           npm install
           npm run export
         working-directory: ${{env.working-directory}}
