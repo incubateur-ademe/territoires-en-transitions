@@ -36,7 +36,7 @@
                     Thématiques
                 </option>
                 <option value='eci'>
-                    Economie Circulaire
+                    Économie Circulaire
                 </option>
                 <option value='cae'>
                     Climat Air Énergie
@@ -58,4 +58,3 @@
 {:else if view === 'eci'}
     <ActionsEconomieCirculaire displayed={displayed} searching={searching}/>
 {/if}
-
