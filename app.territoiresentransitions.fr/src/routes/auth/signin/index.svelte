@@ -1,21 +1,15 @@
 <script lang="ts">
     /**
-     * Redirects to the keycloak sign in form
+     * Redirects to keycloak sign in form
+     * Then keycloak will redirect to `redirect/index.svelte`
      */
     import {onMount} from "svelte";
-    import {getCurrentEnvironment} from "../../../api/currentEnvironment";
 
-    const domains = {
-        "app": "https://territoiresentransitions.osc-fr1.scalingo.io",
-        "sandbox": "https://sandboxterritoires.osc-fr1.scalingo.io",
-        "local": "https://sandboxterritoires.osc-fr1.scalingo.io",
-    }
 
 
     onMount(() => {
-        const environment = getCurrentEnvironment()
-        const domain = domains[environment]
-        const redirect = `${domain}/v2/auth/${environment}/redirect`
+        const host = window.location.hostname
+        const redirect = `https://${host}/auth/redirect/`
         const realm = 'master'
         const keycloak = 'https://moncompte.ademe.fr'
 
