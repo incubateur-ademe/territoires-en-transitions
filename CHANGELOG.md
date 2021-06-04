@@ -3,6 +3,7 @@
 ## À venir
 
 Fonctionnalités :
+- L'affichage des référentiels par leur structure
 -  Ajout de Matomo pour suivre les statistiques d'usage de l'application
 
 Réparation de bugs :
