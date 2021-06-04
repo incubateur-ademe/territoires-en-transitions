@@ -3,15 +3,20 @@
 ## À venir
 
 Fonctionnalités :
-- Suppression de l'indicateur eci_004
-<<<<<<< better_referentiel_views
 - L'affichage des référentiels par leur structure
-=======
 -  Ajout de Matomo pour suivre les statistiques d'usage de l'application
->>>>>>> main
+
+Réparation de bugs :
+-
+
+## Déploiement du 1er juin 2021
+
+Fonctionnalités :
+- Affichage des référentiels par leur structures
 
 Réparation de bugs :
 - Correction du titre de la page d'accueil
+- Suppression de l'indicateur eci_004
 
 ## Déploiement du 28 mai 2021
 
