@@ -2,12 +2,12 @@
 
 ## À venir
 
-Fonctionnalités :
-- L'affichage des référentiels par leur structure
--  Ajout de Matomo pour suivre les statistiques d'usage de l'application
+## Déploiement du 4 juin 2021
 
-Réparation de bugs :
--
+Fonctionnalités :
+- Activation de l'affichage des référentiels par leur structure en production
+- Ajout de Matomo pour suivre les statistiques d'usage de l'application
+- Ajout de 3 indicateurs ECI
 
 ## Déploiement du 1er juin 2021
 
