@@ -1,23 +1,22 @@
-<script context="module">
-    export async function preload(page, session) {
-        const code = page.query['code']
-        return {code}
-    }
-</script>
-
 <script>
     import {onMount} from "svelte";
     import {getCurrentAPI} from "../../../api/currentAPI";
 
-    export let code
+    let code = ''
     let accessToken = ''
 
     onMount(async () => {
+        const urlParams = new URLSearchParams(window.location.search)
+        code = urlParams.get('code')
+
         const api = getCurrentAPI()
         const endpoint = `${api}/v2/auth/token`
 
-        const response = await fetch(`${endpoint}?code=${code}`)
-        const token = await  response.json()
+        const host = window.location.hostname
+        const redirect_uri = `https://${host}/auth/redirect/`
+
+        const response = await fetch(`${endpoint}?redirect_uri=${redirect_uri}&code=${code}`)
+        const token = await response.json()
         accessToken = token['access_token']
     })
 </script>
