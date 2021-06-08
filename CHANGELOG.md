@@ -2,8 +2,13 @@
 
 ## À venir
 
+## Déploiement du 8 juin 2021
+
 Réparations de bugs :
+- Modification de contenu sur le domaine 1 Cit'ergie
 - Restriction de l'appel à Matomo uniquement pour la production
+- Réparation de la navigation et de la position des éléments affichés sur les
+  pages
 
 ## Déploiement du 4 juin 2021
 
