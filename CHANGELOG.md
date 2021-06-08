@@ -4,6 +4,8 @@
 
 Réparations de bugs :
 - Restriction de l'appel à Matomo uniquement pour la production
+- Changement de la valeur par défaut d'une action (de `pas_faite` à non
+  renseignée)
 
 ## Déploiement du 4 juin 2021
 
