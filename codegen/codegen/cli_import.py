@@ -64,36 +64,90 @@ def correspondance_table(
                         continue
 
                     indicateur = niveau['indicateur']
+
                     # handle oui non
                     if 'question' in indicateur.keys():
                         question = indicateur['question']
                         if action['actions']:
+                            # ex 3.1.1
                             indicateur['raison'] = f"{len(action['actions'])} actions pour un seul niveau en oui non"
                             continue
 
                         question['oui']['faite'] = [action['id']]
 
-                    # handle dropdown options
-                    if 'options' in indicateur.keys():
-                        options = indicateur['options']
+                    # handle many oui non
+                    elif 'questions' in indicateur.keys():
+                        questions = indicateur['questions']
 
                         if not action['actions']:
-                            indicateur['raison'] = f"pas de sous actions à {action['id']} pour ce niveau"
+                            indicateur['raison'] = 'Pas de sous actions pour plusieurs oui non'
                             continue
 
-                        if len(options) > len(action['actions']):
-                            indicateur['raison'] = f"plus d'options ({len(options)}) que d'actions ({len(action['actions'])})"
+                        noms = [action['nom'] for action in action['actions']]
+                        for question in questions.keys():
+                            choice, score = process.extractOne(question, noms)
+                            chosen = [action for action in action['actions'] if action['nom'] == choice][0]
+
+                            questions[question]['oui']['faite'] = [chosen['id']]
+                            questions[question]['oui']['raison'] = f'"{action["id"]} {option["nom"]}" ' \
+                                                                   f'ressemble à {score}% à "{choice}"'
+
+                    # handle fonction
+                    elif 'fonction' in indicateur.keys():
+                        indicateur['raison'] = 'Pas de correspondance pour une fonction'
+
+                    # handle interval
+                    elif 'interval' in indicateur.keys():
+                        indicateur['raison'] = 'Pas de correspondance pour des intervalles de valeurs'
+
+                    # handle intervalles
+                    elif 'intervalles' in indicateur.keys():
+                        indicateur['raison'] = 'Pas de correspondance pour des intervalles de valeurs'
+
+                    # handle checkboxes
+                    elif 'choix' in indicateur.keys():
+                        choix = indicateur['choix']
+
+                        if not action['actions']:
+                            indicateur[
+                                'raison'] = f"pas de sous actions à {action['id']} pour ce niveau à choix multiple"
+                            continue
+
+                        if len(choix) > len(action['actions']):
+                            indicateur[
+                                'raison'] = f"plus d'options ({len(choix)}) que d'actions ({len(action['actions'])})"
                             continue
 
                         noms = [action['nom'] for action in action['actions']]
 
-                        for option in options:
+                        for option in choix:
                             choice, score = process.extractOne(option["nom"], noms)
-                            # print(f'{action["id"]} {option["nom"]} --{score}-> {choice}')
+                            chosen = [action for action in action['actions'] if action['nom'] == choice][0]
+                            option['faite'] = [chosen['id']]
+                            option['raison'] = f'"{action["id"]} {option["nom"]}" ressemble à {score}% à "{choice}"'
+
+                    # handle dropdown
+                    elif 'liste' in indicateur.keys():
+                        liste = indicateur['liste']
+
+                        if not action['actions']:
+                            indicateur['raison'] = f"pas de sous actions à {action['id']} pour ce niveau à liste"
+                            continue
+
+                        if len(liste) > len(action['actions']):
+                            indicateur[
+                                'raison'] = f"plus d'options ({len(liste)}) que d'actions ({len(action['actions'])})"
+                            continue
+
+                        noms = [action['nom'] for action in action['actions']]
+
+                        for option in liste:
+                            choice, score = process.extractOne(option["nom"], noms)
                             chosen = [action for action in action['actions'] if action['nom'] == choice][0]
                             i = int(chosen['id'].split('.')[-1])
+                            option['faite'] = [chosen['id']]
                             option['faite'] = [f'{parentId(chosen)}.{n}' for n in range(1, i + 1)]
-                            option['raison'] = f'{action["id"]} {option["nom"]} --{score}-> {choice}'
-                            # print(option['faite'])
+                            option['raison'] = f'"{action["id"]} {option["nom"]}" ressemble à {score}% à "{choice}"'
+                            print(option['faite'])
 
         write(os.path.join(output_dir, 'correspondance_table.json'), json.dumps(axes, indent=4, ensure_ascii=False))
