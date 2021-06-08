@@ -8,7 +8,7 @@
     import ActionsEconomieCirculaire from "./_ActionsEconomieCirculaire.svelte"
     import {onMount} from "svelte";
     import {testUIVisibility} from "../../api/currentEnvironment";
-    import Button from "../../components/shared/Button/Button.svelte";
+    import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
 
     let view: 'thematique' | 'eci' | 'cae' = 'thematique'
 
@@ -25,8 +25,24 @@
 
 <div class="flex flex-row items-center
             bg-white px-5 py-5 mb-5 ">
-    <div class="flex-grow">
-        Référentiels
+    <div class="flex-grow flex flex-row items-center">
+        <h1>
+            Référentiels
+        </h1>
+        <div class="pl-2"></div>
+        <div class="w-1/2">
+            <SelectInput bind:value={view}>
+                <option value='thematique'>
+                    Thématiques
+                </option>
+                <option value='eci'>
+                    Économie Circulaire
+                </option>
+                <option value='cae'>
+                    Climat Air Énergie
+                </option>
+            </SelectInput>
+        </div>
     </div>
     <div>
         <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
@@ -35,27 +51,6 @@
 
 </div>
 
-    {#if referentielsVisibility}
-<div class="flex flex-row items-center
-            bg-white px-5 py-5 mb-5
-            border-l-8 border-pink-600">
-
-            <Button on:click={() => view = 'thematique'}
-                    colorVariant="{view === 'thematique' ? 'ash' : 'nettle'}">
-                Thématiques
-            </Button>
-
-            <Button on:click={() => view = 'eci'}
-                    colorVariant="{view === 'eci' ? 'ash' : 'nettle'}">
-                Economie circulaire
-            </Button>
-
-            <Button on:click={() => view = 'cae'}
-                    colorVariant="{view === 'cae' ? 'ash' : 'nettle'}">
-                Climat air energie
-            </Button>
-</div>
-    {/if}
 {#if view === 'thematique'}
     <ActionsByThematiques displayed={displayed} searching={searching}/>
 {:else if view === 'cae'}
@@ -63,4 +58,3 @@
 {:else if view === 'eci'}
     <ActionsEconomieCirculaire displayed={displayed} searching={searching}/>
 {/if}
-
