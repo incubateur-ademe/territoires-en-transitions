@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
 
 from api.config import openapi_config, tortoise_config
-from api.routers import hello, action_custom, action_status, mesure_custom, indicateur_value, fiche_action, \
+from api.routers import action_custom, action_status, mesure_custom, indicateur_value, fiche_action, \
     fiche_action_categorie, indicateur_personnalise, indicateur_personnalise_value, indicateur_referentiel_commentaire
 
 app = FastAPI(
@@ -11,7 +11,6 @@ app = FastAPI(
     version=openapi_config.version,
     description=openapi_config.description,
 )
-app.include_router(hello.router)
 app.include_router(action_custom.router)
 app.include_router(action_status.router)
 app.include_router(mesure_custom.router)
