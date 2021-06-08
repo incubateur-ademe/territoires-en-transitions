@@ -4,6 +4,7 @@
 
 Réparations de bugs :
 - Restriction de l'appel à Matomo uniquement pour la production
+- Ajout de la majuscule sur le nom des domaines CAE
 
 ## Déploiement du 4 juin 2021
 
