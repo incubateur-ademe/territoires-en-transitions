@@ -2,6 +2,9 @@
 
 ## À venir
 
+Fonctionnalités :
+- Ajout du favicon
+
 Réparations de bugs :
 - Restriction de l'appel à Matomo uniquement pour la production
 
