@@ -2,6 +2,9 @@
 
 ## À venir
 
+Fonctionnalités :
+- Ajout de l'identifiant pour les axes ECI, les domaines et sous-domaines CAE
+
 Réparations de bugs :
 - Restriction de l'appel à Matomo uniquement pour la production
 
