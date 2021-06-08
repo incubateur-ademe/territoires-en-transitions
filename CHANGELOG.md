@@ -4,6 +4,7 @@
 
 Réparations de bugs :
 - Restriction de l'appel à Matomo uniquement pour la production
+- Tri par identifiant des éléments du référentiel CAE
 
 ## Déploiement du 4 juin 2021
 
