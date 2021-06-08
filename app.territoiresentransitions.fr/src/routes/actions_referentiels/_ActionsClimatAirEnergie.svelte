@@ -49,7 +49,7 @@
 
 
 {#each [...displayedByDomaine] as [domaine, sous_domaines]}
-    <h2 class="text-2xl font-bold mt-10 mb-2">{domaine.nom.toLowerCase()}</h2>
+    <h2 class="text-2xl font-bold mt-10 mb-2">{domaine.nom}</h2>
     {#each [...sous_domaines] as [sous_domaine, actions]}
         <h3 class="text-2xl mt-10 mb-2">{sous_domaine.nom}</h3>
         {#each actions as action}
