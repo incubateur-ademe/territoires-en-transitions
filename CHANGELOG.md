@@ -2,6 +2,9 @@
 
 ## À venir
 
+Réparations de bugs :
+- Restriction de l'appel à Matomo uniquement pour la production
+
 ## Déploiement du 4 juin 2021
 
 Fonctionnalités :

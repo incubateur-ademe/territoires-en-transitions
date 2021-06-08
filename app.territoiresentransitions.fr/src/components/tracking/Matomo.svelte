@@ -1,4 +1,4 @@
-<script context="module">
+<script lang="ts" context="module">
     /*
         Expose an object to handle Matomo asynchronously.
 
@@ -11,20 +11,25 @@
     // We only implement methods from Matomo API that we are using on this application.
     // You can check the documentation to add more Tracking API methods:
     // https://developer.matomo.org/api-reference/tracking-javascript.
-    const methods = [
+    const methodNames = [
         'trackPageView'
     ]
 
-    const queuedEvents = writable([])
+    const queuedCalls = writable([])
+    type EnqueuedMatomoCall = (...args: any[]) => void
+    interface AsyncMatomo {
+        [key: string]: EnqueuedMatomoCall
+    }
+    let asyncMatomo: AsyncMatomo = {}
 
-    export const asyncMatomo = methods
-        // ['trackPageView', (...args) => ]
-        .map(method =>
-            ([method, (...args) => queuedEvents.update(
-                alreadyQueued => [...alreadyQueued, [method, args]])]
-            )
+    for (let name of methodNames) {
+        let call: EnqueuedMatomoCall = (...args) => queuedCalls.update(
+            alreadyQueued => [...alreadyQueued, [name, args]]
         )
-        .reduce((acc, [key, value]) => ({...acc, [key]: value}), {})
+        asyncMatomo[name] = call
+    }
+
+    export { asyncMatomo }
 </script>
 
 <script>
@@ -38,6 +43,9 @@
         with Matomo Tracker following calls that are piled in it.
     */
     import {onMount} from 'svelte'
+    import {getCurrentEnvironment} from '../../api/currentEnvironment'
+    import { debug } from '../../utils/logger.js'
+
 
     let _matomo
     const url = 'https://stats.data.gouv.fr/'
@@ -51,18 +59,29 @@
     $: if (tracker) tracker.enableLinkTracking(true)
 
     // Loop in the events memory queue
-    $: while (tracker && $queuedEvents.length) {
+    $: while (tracker && $queuedCalls.length) {
 
         // Get the name of the method and remove the event from the queue
-        const [fnName, args] = $queuedEvents.shift()
-        if (tracker[fnName] instanceof Function) {
-            // Call Matomo Tracker API method
-            tracker[fnName](...args)
-        } else {
+        const [fnName, args] = $queuedCalls.shift()
+
+        if (!tracker[fnName] instanceof Function) {
             throw new Error(
                 `${fnName} does not exist on Matomo Tracker API. Please check https://developer.matomo.org/api-reference/tracking-javascript for mor information.`
             )
         }
+
+        // On environments differents from production, we don't call Matomo.
+        if (getCurrentEnvironment() != 'app') {
+            debug('Matomo calls are activated only on production environment.')
+            debug(`Method called: "${fnName}"`)
+
+            if (args.length > 0) debug(`Arguments: ${args.toString()}`)
+
+            continue
+        }
+
+        // Call Matomo Tracker API method
+        tracker[fnName](...args)
     }
 
     onMount(() => {
