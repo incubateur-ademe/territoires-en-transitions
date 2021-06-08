@@ -16,6 +16,7 @@ Ce dossier regroupe une partie de l'application cliente pour le projet Labels Tr
 - Node v15.6.0
 - [API Territoires en Transitions](https://github.com/betagouv/api-label-transition-ecologique)
   démarrée sur [localhost:8000](http://localhost:8000).
+- [Les fichiers générés par codegen](codegen#le-générateur-de-code)
 
 ## Pour commencer à développer
 
@@ -64,7 +65,7 @@ Storage](https://github.com/labels-transition/documentation/blob/main/tech/setup
 npm run export
 ```
 
-3- On déploie avec le script de déploiement dans le dossier `/tools`: 
+3- On déploie avec le script de déploiement dans le dossier `/tools`:
 ```sh
 cd tools
 poetry run deploy -s staging

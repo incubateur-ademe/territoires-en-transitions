@@ -75,17 +75,31 @@ Circulaire pour créer des fichiers markdown. Par défaut :
 - les fichiers de structure de données sont générés dans
 [codegen/definitions/shared](codegen/definitions/shared).
 
-##### Mesures
+Par exemple, pour extraire les indicateurs Cit'ergie, on peut lancer :
 ```shell
-poetry run extract mesures --help
+poetry run extract indicateurs-citergie
 ```
 
-##### Indicateurs
+Pour extraire un ensemble de données, lancer :
 ```shell
-poetry run extract indicateurs --help
+poetry run extract [COMMAND]
 ```
+Les commandes disponibles sont :
+- `domaines` : les domaines du référentiel Cit'ergie,
+- `indicateurs-citergie` : les indicateurs du référentiel Cit'ergie,
+- `mesures` : les mesures du référentiel Cit'ergie,
+- `indicateurs-eci` : les indicateurs du référentiel Économie Circulaire,
+- `orientations` : les orientations du référentiel Économie Circulaire.
+
+Pour plus d'informations,
 
 #### Le générateur de code
+
+Pour générer les données métiers et les structures de données en une seule fois,
+on peut lancer :
+```shell
+poetry run generate all
+```
 
 ##### Les données métiers
 
@@ -98,13 +112,19 @@ partir des markdowns générés par le parser. Par défaut :
 - les vues HTML ne sont pas générées (__elles ont servi de prototypage de départ
   pour le client avant l'utilisation de Sapper).
 
+Par exemple, pour générer les indicateurs, lancer :
 ```shell
-poetry run generate mesures --help
+poetry run generate indicateurs
 ```
 
+Pour générer un ensemble de données, lancer :
 ```shell
-poetry run generate indicateurs --help
+poetry run generate [COMMAND]
 ```
+Les commandes disponibles sont :
+- `actions` : toutes les actions des référentiels extraits,
+- `indicateurs` : tous les indicateurs des référentiels extraits,
+- `thematiques` : les thématiques des référentiels extraits.
 
 ##### Les structures de données
 
@@ -116,8 +136,9 @@ JavaScript) à partir de markdowns sources. Par défaut :
   [generated/models](generated/models),
 - les classes Python ne sont pas générées.
 
+Pour générer les structures de données partagées, on peut lancer :
 ```shell
-poetry run generate shared --help
+poetry run generate shared
 ```
 
 ## Mettre à jour les markdowns
