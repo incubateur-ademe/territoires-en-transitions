@@ -23,10 +23,10 @@
                                     "id": "politique",
                                     "nom": "Politique ECi établie",
                                     "faite": [
-                                        "1.1.1.1"
+                                        "1.1.1.2"
                                     ],
                                     "pas_faite": [],
-                                    "raison": "\"1.1.1 Politique ECi établie\" ressemble à 86% à \"Identifier un élu référent en charge de la politique économie circulaire\""
+                                    "raison": "\"1.1.1 Politique ECi établie\" ressemble à \"Engager la politique économie circulaire\""
                                 },
                                 {
                                     "id": "equipe",
@@ -67,10 +67,9 @@
                                     "id": "analyse_cartographie",
                                     "nom": "Analyse des secteurs économiques et cartographie des ressources",
                                     "faite": [
-                                        "1.1.2.1"
                                     ],
                                     "pas_faite": [],
-                                    "raison": "\"1.1.2 Analyse des secteurs économiques et cartographie des ressources\" ressemble à 86% à \"Identifier les enjeux et objectifs en lien avec l'économie circulaire  dans les documents de planification existants\""
+                                    "raison": "pas de correspondance"
                                 }
                             ]
                         }
@@ -93,10 +92,10 @@
                                     "id": "gouvernance",
                                     "nom": "Gouvernance élargie en place",
                                     "faite": [
-                                        "1.1.3.1"
+                                        "1.1.3.2"
                                     ],
                                     "pas_faite": [],
-                                    "raison": "\"1.1.3 Gouvernance élargie en place\" ressemble à 86% à \"Mettre en place un comité de pilotage interne élargi\""
+                                    "raison": "\"1.1.3 Gouvernance élargie en place\" ressemble à \"Mettre en place une gouvernance élargie avec les représentants des acteurs du territoire (société civile, acteurs publiques, acteurs économiques)\""
                                 }
                             ]
                         }
@@ -127,40 +126,40 @@
                                     "id": "aucune",
                                     "nom": "Aucune action",
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["1.1.5.1","1.1.5.2","1.1.5.3","1.1.5.4"]
                                 },
                                 {
                                     "id": "anterieures",
                                     "nom": "Actions valorisées antérieures uniquement",
-                                    "faite": [],
+                                    "faite": ["1.1.5.1"],
                                     "pas_faite": []
                                 },
                                 {
                                     "id": "anterieures_plus_25",
                                     "nom": "Actions valorisées antérieures +25% actions",
-                                    "faite": [],
+                                    "faite": ["1.1.5.1","1.1.5.2"],
                                     "pas_faite": []
                                 },
                                 {
                                     "id": "anterieures_plus_50",
                                     "nom": "Actions valorisées antérieures +50% actions",
-                                    "faite": [],
-                                    "pas_faite": []
+                                    "faite": ["1.1.5.1","1.1.5.2","1.1.5.3"],
+                                    "pas_faite": ["1.1.5.4"]
                                 },
                                 {
                                     "id": "anterieures_plus_75",
                                     "nom": "Actions valorisées antérieures +75% actions",
-                                    "faite": [],
+                                    "faite": ["1.1.5.1","1.1.5.2","1.1.5.3"],
                                     "pas_faite": []
                                 },
                                 {
                                     "id": "anterieures_plus_100",
                                     "nom": "Actions valorisées antérieures +100% actions",
-                                    "faite": [],
+                                    "faite": ["1.1.5.1","1.1.5.2","1.1.5.3"],
                                     "pas_faite": []
                                 }
                             ],
-                            "raison": "plus d'options (6) que d'actions (4)"
+                            "raison": "corrigé"
                         }
                     }
                 ]
@@ -174,15 +173,15 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["1.2.1.1"],
                                     "pas_faite": []
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["1.2.1.1"]
                                 }
                             },
-                            "raison": "5 actions pour un seul niveau en oui non"
+                            "raison": "à compléter par la collectivité"
                         }
                     },
                     {
@@ -194,7 +193,7 @@
                                     "id": "aucune",
                                     "nom": "Aucune action",
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["1.2.2"]
                                 },
                                 {
                                     "id": "1",
@@ -243,7 +242,7 @@
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["1.2.3"]
                                 }
                             }
                         }
@@ -259,15 +258,15 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["1.3.1.1","1.3.1.2","1.3.1.3"],
                                     "pas_faite": []
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["1.3.1.1","1.3.1.2","1.3.1.3"]
                                 }
                             },
-                            "raison": "3 actions pour un seul niveau en oui non"
+                            "raison": "corrigé"
                         }
                     },
                     {
@@ -279,28 +278,28 @@
                                     "id": "aucun",
                                     "nom": "Aucun point validé",
                                     "faite": [
-                                        "1.3.2.1"
+
                                     ],
-                                    "pas_faite": [],
-                                    "raison": "\"1.3.2 Aucun point validé\" ressemble à 44% à \"Réaliser le bilan bilan\""
+                                    "pas_faite": ["1.3.2.1","1.3.2.2","1.3.2.3","1.3.2.4"],
+                                    "raison": "corrigé"
                                 },
                                 {
                                     "id": "bilan",
                                     "nom": "Bilan réalisé et plan d'action mis à jour",
                                     "faite": [
-                                        "1.3.2.1"
+                                        "1.3.2.1","1.3.2.4"
                                     ],
-                                    "pas_faite": [],
+                                    "pas_faite": ["1.3.2.2","1.3.2.3"],
                                     "raison": "\"1.3.2 Bilan réalisé et plan d'action mis à jour\" ressemble à 86% à \"Réaliser le bilan bilan\""
                                 },
                                 {
                                     "id": "bilan_plan_synthese",
                                     "nom": "Bilan + Plan d'action + Document de synthèse",
                                     "faite": [
-                                        "1.3.2.1"
+                                        "1.3.2.1","1.3.2.2","1.3.2.3","1.3.2.4"
                                     ],
                                     "pas_faite": [],
-                                    "raison": "\"1.3.2 Bilan + Plan d'action + Document de synthèse\" ressemble à 86% à \"Réaliser le bilan bilan\""
+                                    "raison": "corrigé"
                                 }
                             ]
                         }
@@ -387,7 +386,7 @@
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["2.1.3"]
                                 }
                             }
                         }
@@ -410,7 +409,7 @@
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["2.2.0"]
                                 }
                             }
                         }
@@ -438,15 +437,15 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["2.2.2.1","2.2.2.2"],
                                     "pas_faite": []
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["2.2.2.2"]
                                 }
                             },
-                            "raison": "2 actions pour un seul niveau en oui non"
+                            "raison": "corrigé"
                         }
                     },
                     {
@@ -484,7 +483,7 @@
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["2.3.0"]
                                 }
                             }
                         }
@@ -497,32 +496,28 @@
                                 {
                                     "id": "aucune",
                                     "nom": "Pas d'étude lancée",
-                                    "faite": [
-                                        "2.3.1.1",
-                                        "2.3.1.2"
-                                    ],
-                                    "pas_faite": [],
-                                    "raison": "\"2.3.1 Pas d'étude lancée\" ressemble à 86% à \"Disposer d'un état des lieux de l'utilisation des filières existantes\""
+                                    "faite": [],
+                                    "pas_faite": ["2.3.1.1","2.3.1.2","2.3.1.3"],
+                                    "raison": "corrigé"
                                 },
                                 {
                                     "id": "etudes_flux",
                                     "nom": "Etudes sur les flux de déchets",
                                     "faite": [
-                                        "2.3.1.1",
-                                        "2.3.1.2"
+                                        "2.3.1.1"
                                     ],
                                     "pas_faite": [],
-                                    "raison": "\"2.3.1 Etudes sur les flux de déchets\" ressemble à 86% à \"Disposer d'un état des lieux de l'utilisation des filières existantes\""
+                                    "raison": "corrigé"
                                 },
                                 {
                                     "id": "etudes_faisabilite",
                                     "nom": "Etudes de faisabilité",
                                     "faite": [
                                         "2.3.1.1",
-                                        "2.3.1.2"
+                                        "2.3.1.2","2.3.1.3"
                                     ],
                                     "pas_faite": [],
-                                    "raison": "\"2.3.1 Etudes de faisabilité\" ressemble à 86% à \"Disposer d'un état des lieux de l'utilisation des filières existantes\""
+                                    "raison": "corrigé"
                                 }
                             ]
                         }
@@ -545,38 +540,30 @@
                                 {
                                     "id": "mtd",
                                     "nom": "Identification et intégration des MTD",
-                                    "faite": [
-                                        "2.3.3.2"
-                                    ],
+                                    "faite": [],
                                     "pas_faite": [],
-                                    "raison": "\"2.3.3 Identification et intégration des MTD\" ressemble à 35% à \"Valoriser au moins 50% des déchets\""
+                                    "raison": "aucune correspondance"
                                 },
                                 {
                                     "id": "ecarts",
                                     "nom": "Contrôle et traitement des écarts",
-                                    "faite": [
-                                        "2.3.3.1"
-                                    ],
+                                    "faite": [],
                                     "pas_faite": [],
-                                    "raison": "\"2.3.3 Contrôle et traitement des écarts\" ressemble à 43% à \"Suivre l'effet de la concrétisation\""
+                                    "raison": "aucune correspondance"
                                 },
                                 {
                                     "id": "approvisionnement",
                                     "nom": "Stratégie d'approvisionnement",
-                                    "faite": [
-                                        "2.3.3.1"
-                                    ],
+                                    "faite": [],
                                     "pas_faite": [],
-                                    "raison": "\"2.3.3 Stratégie d'approvisionnement\" ressemble à 43% à \"Suivre l'effet de la concrétisation\""
+                                    "raison": "aucune correspondance"
                                 },
                                 {
                                     "id": "refus",
                                     "nom": "Suivi des refus (refus de tri, digestat et énergie)",
-                                    "faite": [
-                                        "2.3.3.1"
-                                    ],
+                                    "faite": [],
                                     "pas_faite": [],
-                                    "raison": "\"2.3.3 Suivi des refus (refus de tri, digestat et énergie)\" ressemble à 48% à \"Suivre l'effet de la concrétisation\""
+                                    "raison": "aucune correspondance"
                                 }
                             ]
                         }
@@ -610,10 +597,8 @@
                                 {
                                     "id": "aucune",
                                     "nom": "Pas d'étude lancée",
-                                    "faite": [
-                                        "2.4.1.1"
-                                    ],
-                                    "pas_faite": [],
+                                    "faite": [],
+                                    "pas_faite": ["2.4.1.1","2.4.1.2","2.4.1.3"],
                                     "raison": "\"2.4.1 Pas d'étude lancée\" ressemble à 86% à \"Programmer une étude pour identifier les pistes de réduction des impacts\""
                                 },
                                 {
@@ -622,17 +607,15 @@
                                     "faite": [
                                         "2.4.1.1"
                                     ],
-                                    "pas_faite": [],
+                                    "pas_faite": ["2.4.1.2","2.4.1.3"],
                                     "raison": "\"2.4.1 Etude lancée\" ressemble à 60% à \"Programmer une étude pour identifier les pistes de réduction des impacts\""
                                 },
                                 {
                                     "id": "realisee",
                                     "nom": "Une étude réalisée",
-                                    "faite": [
-                                        "2.4.1.1"
-                                    ],
+                                    "faite": ["2.4.1.1","2.4.1.2"],
                                     "pas_faite": [],
-                                    "raison": "\"2.4.1 Une étude réalisée\" ressemble à 86% à \"Programmer une étude pour identifier les pistes de réduction des impacts\""
+                                    "raison": "\"2.4.1 Une étude réalisée\" ressemble à \"Réaliser l'étude et identifier les pistes de réduction des impacts\""
                                 }
                             ]
                         }
@@ -692,7 +675,7 @@
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["2.5.1"]
                                 }
                             }
                         }
@@ -747,15 +730,15 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["3.1.1.1","3.1.1.2"],
                                     "pas_faite": []
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["3.1.1.2"]
                                 }
                             },
-                            "raison": "3 actions pour un seul niveau en oui non"
+                            "raison": "corrigé"
                         }
                     },
                     {
@@ -777,28 +760,28 @@
                                     "id": "rien",
                                     "nom": "Pas de protocole défini",
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["3.1.3.1","3.1.3.2","3.1.3.3"]
                                 },
                                 {
                                     "id": "defini",
                                     "nom": "Protocole de suivi défini",
-                                    "faite": [],
-                                    "pas_faite": []
+                                    "faite": ["3.1.3.1"],
+                                    "pas_faite": ["3.1.3.2","3.1.3.3"]
                                 },
                                 {
                                     "id": "defini_receuil",
                                     "nom": "Protocole défini + Recueil des données effectué",
-                                    "faite": [],
-                                    "pas_faite": []
+                                    "faite": ["3.1.3.1","3.1.3.2"],
+                                    "pas_faite": ["3.1.3.3"]
                                 },
                                 {
                                     "id": "defini_receuil_suivi",
                                     "nom": "Protocole défini + Recueil effectué + Suivi des indicateurs et plan d'action ajusté",
-                                    "faite": [],
+                                    "faite": ["3.1.3.1","3.1.3.2","3.1.3.3"],
                                     "pas_faite": []
                                 }
                             ],
-                            "raison": "plus d'options (4) que d'actions (3)"
+                            "raison": "corrigé"
                         }
                     }
                 ]
@@ -814,11 +797,8 @@
                                 {
                                     "id": "rien",
                                     "nom": "Pas de politique d'achat structurée",
-                                    "faite": [
-                                        "3.2.1.1",
-                                        "3.2.1.2"
-                                    ],
-                                    "pas_faite": [],
+                                    "faite": [],
+                                    "pas_faite": ["3.2.1.1","3.2.1.2","3.2.1.3","3.2.1.4"],
                                     "raison": "\"3.2.1 Pas de politique d'achat structurée\" ressemble à 87% à \"Disposer d'une politique d'achat structurée\""
                                 },
                                 {
@@ -828,7 +808,7 @@
                                         "3.2.1.1",
                                         "3.2.1.2"
                                     ],
-                                    "pas_faite": [],
+                                    "pas_faite": ["3.2.1.3","3.2.1.4"],
                                     "raison": "\"3.2.1 Politique d'achat structurée\" ressemble à 90% à \"Disposer d'une politique d'achat structurée\""
                                 },
                                 {
@@ -839,7 +819,7 @@
                                         "3.2.1.2",
                                         "3.2.1.3"
                                     ],
-                                    "pas_faite": [],
+                                    "pas_faite": ["3.2.1.4"],
                                     "raison": "\"3.2.1 Politique d'achat structurée + Cartographie des achat réalisée\" ressemble à 86% à \"Réaliser une cartographie des achats\""
                                 },
                                 {
@@ -878,12 +858,12 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["3.2.3.1"],
                                     "pas_faite": []
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["3.2.3.1"]
                                 }
                             },
                             "raison": "3 actions pour un seul niveau en oui non"
@@ -919,9 +899,7 @@
                                 {
                                     "id": "attestation",
                                     "nom": "Attestation de formation/sensibilisation",
-                                    "faite": [
-                                        "3.3.2.4"
-                                    ],
+                                    "faite": [],
                                     "pas_faite": [],
                                     "raison": "\"3.3.2 Attestation de formation/sensibilisation\" ressemble à 86% à \"Formaliser dans un document une vision et un plan d'action de la collectivité sur la sobriété\""
                                 },
@@ -960,12 +938,12 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["3.3.4.1"],
                                     "pas_faite": []
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["3.3.4.1","3.3.4.2","3.3.4.3"]
                                 }
                             },
                             "raison": "3 actions pour un seul niveau en oui non"
@@ -995,18 +973,18 @@
                                     "id": "rien",
                                     "nom": "Aucun des éléments",
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["3.4.2.1","3.4.2.2"]
                                 },
                                 {
                                     "id": "list",
                                     "nom": "Liste des établissements",
-                                    "faite": [],
-                                    "pas_faite": []
+                                    "faite": ["3.4.2.1"],
+                                    "pas_faite": ["3.4.2.2"]
                                 },
                                 {
                                     "id": "liste_partenariat",
                                     "nom": "Liste + partenariat organisme/entreprise",
-                                    "faite": [],
+                                    "faite": ["3.4.2.1","3.4.2.2"],
                                     "pas_faite": []
                                 }
                             ],
@@ -1022,18 +1000,18 @@
                                     "id": "aucune",
                                     "nom": "Aucune action",
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["3.4.3.1","3.4.3.2"]
                                 },
                                 {
                                     "id": "collectives",
                                     "nom": "Opérations collectives",
-                                    "faite": [],
-                                    "pas_faite": []
+                                    "faite": ["3.4.3.1"],
+                                    "pas_faite": ["3.4.3.2"]
                                 },
                                 {
                                     "id": "collectives_individuelles",
                                     "nom": "Opérations collectives et individuelles",
-                                    "faite": [],
+                                    "faite": ["3.4.3.1","3.4.3.2"],
                                     "pas_faite": []
                                 }
                             ],
@@ -1046,12 +1024,12 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["3.4.4.1","3.4.4.2"],
                                     "pas_faite": []
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["3.4.4.1","3.4.4.2"]
                                 }
                             },
                             "raison": "2 actions pour un seul niveau en oui non"
@@ -1075,7 +1053,7 @@
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["3.5.1"]
                                 }
                             }
                         }
@@ -1089,30 +1067,30 @@
                                     "id": "0",
                                     "nom": "0 action",
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["3.5.2.1","3.5.2.2","3.5.2.3","3.5.2.4"]
                                 },
                                 {
                                     "id": "1",
                                     "nom": "1 action",
-                                    "faite": [],
-                                    "pas_faite": []
+                                    "faite": ["3.5.2.1"],
+                                    "pas_faite": ["3.5.2.2","3.5.2.3","3.5.2.4"]
                                 },
                                 {
                                     "id": "2",
                                     "nom": "2 actions",
-                                    "faite": [],
-                                    "pas_faite": []
+                                    "faite": ["3.5.2.1","3.5.2.2"],
+                                    "pas_faite": ["3.5.2.3","3.5.2.4"]
                                 },
                                 {
                                     "id": "3",
                                     "nom": "3 actions",
-                                    "faite": [],
-                                    "pas_faite": []
+                                    "faite": ["3.5.2.1","3.5.2.2","3.5.2.3"],
+                                    "pas_faite": ["3.5.2.4"]
                                 },
                                 {
                                     "id": "4",
                                     "nom": "4 actions",
-                                    "faite": [],
+                                    "faite": ["3.5.2.1","3.5.2.2","3.5.2.3","3.5.2.4"],
                                     "pas_faite": []
                                 }
                             ],
@@ -1156,10 +1134,10 @@
                                     "id": "eit",
                                     "nom": "Projets EIT renseigné sur la plateforme ELIPSE et SYNAPSE et communication",
                                     "faite": [
-                                        "3.5.4.1"
+                                        "3.5.4.3"
                                     ],
                                     "pas_faite": [],
-                                    "raison": "\"3.5.4 Projets EIT renseigné sur la plateforme ELIPSE et SYNAPSE et communication\" ressemble à 86% à \"Transférer le pilotage de la démarche\""
+                                    "raison": "\"3.5.4 Projets EIT renseigné sur la plateforme ELIPSE et SYNAPSE et communication\" ressemble à 100% à \"Renseigner les projets eit sur la plateforme elipse et synapse et communiquer\""
                                 }
                             ]
                         }
@@ -1177,27 +1155,27 @@
                                 "Le personnel interne est formé": {
                                     "oui": {
                                         "faite": [
-                                            "3.6.1.1"
+                                            "3.6.1.1","3.6.1.2"
                                         ],
                                         "pas_faite": [],
                                         "raison": "\"3.6.1 Projets EIT renseigné sur la plateforme ELIPSE et SYNAPSE et communication\" ressemble à 86% à \"Décider d'engager une formation du personnel de la collectivité\""
                                     },
                                     "non": {
                                         "faite": [],
-                                        "pas_faite": []
+                                        "pas_faite": ["3.6.1.1","3.6.1.2"]
                                     }
                                 },
                                 "Les autres acteurs sont sensibilisés": {
                                     "oui": {
                                         "faite": [
-                                            "3.6.1.3"
+                                            "3.6.1.3","3.6.1.4"
                                         ],
                                         "pas_faite": [],
                                         "raison": "\"3.6.1 Projets EIT renseigné sur la plateforme ELIPSE et SYNAPSE et communication\" ressemble à 86% à \"Décider d'engager une sensibilisation des acteurs du territoire\""
                                     },
                                     "non": {
                                         "faite": [],
-                                        "pas_faite": []
+                                        "pas_faite": ["3.6.1.3","3.6.1.4"]
                                     }
                                 }
                             }
@@ -1211,27 +1189,26 @@
                                 "Adhésion à une structure d'animation territoriale et/ou participation à des actions vers les acteurs économiques": {
                                     "oui": {
                                         "faite": [
-                                            "3.6.2.1"
+                                            "3.6.2.1","3.6.2.2"
                                         ],
                                         "pas_faite": [],
-                                        "raison": "\"3.6.2 Projets EIT renseigné sur la plateforme ELIPSE et SYNAPSE et communication\" ressemble à 86% à \"Participer à des actions d'animation\""
-                                    },
+                                        "raison": "pas la bonne raison"},
                                     "non": {
                                         "faite": [],
-                                        "pas_faite": []
+                                        "pas_faite": ["3.6.2.1","3.6.2.2"]
                                     }
                                 },
                                 "Intégration des critères d'économie de la fonctionnalité dans les pratiques et cahiers des charges": {
                                     "oui": {
                                         "faite": [
-                                            "3.6.2.1"
+                                            "3.6.2.3"
                                         ],
                                         "pas_faite": [],
-                                        "raison": "\"3.6.2 Projets EIT renseigné sur la plateforme ELIPSE et SYNAPSE et communication\" ressemble à 86% à \"Participer à des actions d'animation\""
+                                        "raison":"pas la bonne raison"
                                     },
                                     "non": {
                                         "faite": [],
-                                        "pas_faite": []
+                                        "pas_faite": ["3.6.2.3"]
                                     }
                                 }
                             }
@@ -1260,7 +1237,7 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["3.6.4.1","3.6.4.2","3.6.4.3"],
                                     "pas_faite": []
                                 },
                                 "non": {
@@ -1312,15 +1289,15 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["4.1.0.1"],
                                     "pas_faite": []
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["4.1.0.1","4.1.0.2"]
                                 }
                             },
-                            "raison": "2 actions pour un seul niveau en oui non"
+                            "raison": "corrigé"
                         }
                     },
                     {
@@ -1410,15 +1387,15 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["4.2.1.1"],
                                     "pas_faite": []
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["4.2.1.1","4.2.1.2"]
                                 }
                             },
-                            "raison": "2 actions pour un seul niveau en oui non"
+                            "raison": "corrigé"
                         }
                     },
                     {
@@ -1427,15 +1404,15 @@
                         "indicateur": {
                             "question": {
                                 "oui": {
-                                    "faite": [],
+                                    "faite": ["4.2.2.1","4.2.2.2","4.2.2.3"],
                                     "pas_faite": []
                                 },
                                 "non": {
                                     "faite": [],
-                                    "pas_faite": []
+                                    "pas_faite": ["4.2.2.3"]
                                 }
                             },
-                            "raison": "3 actions pour un seul niveau en oui non"
+                            "raison": "corrigé"
                         }
                     },
                     {
