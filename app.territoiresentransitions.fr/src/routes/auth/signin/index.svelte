@@ -1,14 +1,17 @@
 <script lang="ts">
     /**
-     * Redirects to keycloak sign in form
+     * Redirects to the ADEME keycloak sign in form
+     *
      * Then keycloak will redirect to `redirect/index.svelte`
      */
     import {onMount} from "svelte";
-
+    import {getCurrentEnvironment} from "../../../api/currentEnvironment";
 
 
     onMount(() => {
-        const host = window.location.hostname
+        const environment = getCurrentEnvironment()
+        let host = window.location.hostname
+        if (environment === 'local') host = 'sandbox.territoiresentransitions.fr'
         const redirect = `https://${host}/auth/redirect/`
         const realm = 'master'
         const keycloak = 'https://moncompte.ademe.fr'
@@ -19,4 +22,4 @@
 
     })
 </script>
-<h1>Redirection en cours</h1>
+<h1>Redirection vers moncompte.ademe.fr</h1>
