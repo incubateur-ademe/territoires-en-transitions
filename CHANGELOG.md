@@ -4,6 +4,7 @@
 
 Réparations de bugs :
 - Restriction de l'appel à Matomo uniquement pour la production
+- Répare l'ordre d'affichage de la navigation de test
 
 ## Déploiement du 4 juin 2021
 
