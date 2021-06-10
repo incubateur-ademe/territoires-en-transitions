@@ -22,7 +22,8 @@
         vie_privee: requiredValidator,
     }
 
-    let registrationResponse: Response;
+    let registrationResponse: Response
+    let error
 
     const toggle_politique = () => {
         inscription.vie_privee = inscription.vie_privee ? '' : politique_vie_privee
@@ -42,6 +43,11 @@
             mode: 'cors',
             body: JSON.stringify(inscription)
         });
+
+        if (!registrationResponse.ok) {
+            const contents = await registrationResponse.json()
+            error = contents['detail']['message']
+        }
     }
 </script>
 
@@ -65,7 +71,13 @@
         {:else }
             <h1 class="text-2xl">Erreur</h1>
             <div class="pb-10"></div>
-            <p>Votre compte "{inscription.email}" n'a pas pû être créé.</p>
+            <p>Le compte "{inscription.email}" n'a pas pu être créé.</p>
+            <div class="pb-5"></div>
+            {#if error}
+                <p>{error}</p>
+            {:else }
+                <p>Erreur indéterminée</p>
+            {/if}
         {/if}
 
     {:else }
