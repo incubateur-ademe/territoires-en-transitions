@@ -23,6 +23,7 @@
     }
 
     let registrationResponse: Response
+    let ok
     let error
 
     const toggle_politique = () => {
@@ -44,10 +45,12 @@
             body: JSON.stringify(inscription)
         });
 
+        ok = registrationResponse.ok
         if (!registrationResponse.ok) {
             const contents = await registrationResponse.json()
             error = contents['detail']['message']
         }
+        console.log(ok, registrationResponse)
     }
 </script>
 
@@ -55,7 +58,7 @@
     <div class="pb-10"></div>
 
     {#if registrationResponse}
-        {#if registrationResponse.ok}
+        {#if ok}
             <h1 class="text-2xl">Votre compte</h1>
             <div class="pb-10"></div>
             <p>Votre compte "{inscription.email}" a bien été créé.</p>
