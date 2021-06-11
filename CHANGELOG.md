@@ -2,6 +2,8 @@
 
 ## À venir
 
+## Déploiement du 11 juin 2021
+
 Fonctionnalités :
 - Ajout de l'identifiant pour les axes ECI, les domaines et sous-domaines CAE
 
@@ -9,9 +11,17 @@ Réparations de bugs :
 - Tri par identifiant des éléments du référentiel CAE
 - Changement de la valeur par défaut d'une action (de `pas_faite` à non
   renseignée)
-  - Ajout de la majuscule sur le nom des domaines CAE
+- Ajout de la majuscule sur le nom des domaines CAE
+- Nettoyage des titres des orientations ECI
 
-  
+## Déploiement du 8 juin 2021
+
+Réparations de bugs :
+- Modification de contenu sur le domaine 1 Cit'ergie
+- Restriction de l'appel à Matomo uniquement pour la production
+- Réparation de la navigation et de la position des éléments affichés sur les
+  pages
+
 ## Déploiement du 8 juin 2021
 
 Réparations de bugs :
@@ -19,7 +29,7 @@ Réparations de bugs :
 - Restriction de l'appel à Matomo uniquement pour la production
 - Réparation de la navigation et de la position des éléments affichés sur les
   pages
-  
+
 ## Déploiement du 4 juin 2021
 
 Fonctionnalités :
