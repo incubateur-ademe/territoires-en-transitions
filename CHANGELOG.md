@@ -4,7 +4,9 @@
 
 Réparations de bugs :
 - Tri par identifiant des éléments du référentiel CAE
-
+- Changement de la valeur par défaut d'une action (de `pas_faite` à non
+  renseignée)
+  
 ## Déploiement du 8 juin 2021
 
 Réparations de bugs :
