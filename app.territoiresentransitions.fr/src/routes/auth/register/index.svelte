@@ -23,11 +23,13 @@
     }
 
     let registrationResponse: Response
-    let ok
-    let error
+    let success: Boolean
+    let error: String
+    let acceptViePrivee: Boolean = false
+    $: acceptViePrivee, updateViePrivee(acceptViePrivee)
 
-    const toggle_politique = () => {
-        inscription.vie_privee = inscription.vie_privee ? '' : politique_vie_privee
+    const updateViePrivee = (accept: Boolean) => {
+        inscription.vie_privee = accept ? politique_vie_privee : ''
     }
 
     const register = async () => {
@@ -45,12 +47,11 @@
             body: JSON.stringify(inscription)
         });
 
-        ok = registrationResponse.ok
+        success = registrationResponse.ok
         if (!registrationResponse.ok) {
             const contents = await registrationResponse.json()
             error = contents['detail']['message']
         }
-        console.log(ok, registrationResponse)
     }
 </script>
 
@@ -58,7 +59,7 @@
     <div class="pb-10"></div>
 
     {#if registrationResponse}
-        {#if ok}
+        {#if success}
             <h1 class="text-2xl">Votre compte</h1>
             <div class="pb-10"></div>
             <p>Votre compte "{inscription.email}" a bien été créé.</p>
@@ -109,20 +110,15 @@
             </LabeledTextInput>
             <div class="p-5"></div>
 
-            <a class="flex w-full underline text-blue-600" href={politique_vie_privee}>Politique de protection des
-                données à
-                caractère personnel de l'ADEME</a>
-            <div class="pb-3"></div>
-
-            {#if inscription.vie_privee}
-                <Button on:click={toggle_politique} classNames="w-full">
-                    ✓ J'accepte la politique de protection des données à caractère personnel
-                </Button>
-            {:else }
-                <Button on:click={toggle_politique} classNames="w-full">
-                    Je n'accepte pas la politique de protection des données à caractère personnel
-                </Button>
-            {/if}
+            <label class="inline-flex items-center">
+                <input type=checkbox
+                       class="form-checkbox"
+                       bind:checked={acceptViePrivee}>
+                <span class="ml-2">
+                    J'accepte la <a class=" underline text-blue-600" href={politique_vie_privee}>politique de protection
+                    des données à caractère personnel de l'ADEME</a>
+                </span>
+            </label>
             <div class="p-5"></div>
 
             <Button on:click={register}>
