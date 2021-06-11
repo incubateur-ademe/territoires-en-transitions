@@ -9,7 +9,6 @@
     import {getCurrentEnvironment} from "../../../api/currentEnvironment";
 
     let code: String = ''
-    let accessToken: String = ''
     let tokenResponse: Response
     let showDebug: Boolean = false
 
@@ -28,8 +27,9 @@
         tokenResponse = await fetch(`${endpoint}?redirect_uri=${redirect_uri}&code=${code}`)
 
         if (tokenResponse.ok) {
-            const token = await tokenResponse.json()
-            accessToken = token['access_token']
+            const auth = await import("../../../api/authentication")
+            const data = await tokenResponse.json()
+            auth.saveTokens(data['access_token'], data['refresh_token'])
         }
     })
 </script>
@@ -38,13 +38,6 @@
     {#if tokenResponse}
         {#if tokenResponse.ok}
             <h1 class="text-xl">Bienvenue</h1>
-
-            {#if showDebug}
-                code:
-                <textarea disabled class="w-full">{code}</textarea>
-                token:
-                <textarea disabled class="w-full">{accessToken}</textarea>
-            {/if}
         {:else}
             <h1 class="text-xl">Erreur d'authenfication</h1>
             <div class="pb-5"></div>

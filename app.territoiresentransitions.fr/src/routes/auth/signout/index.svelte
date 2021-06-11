@@ -5,7 +5,10 @@
     import {onMount} from "svelte";
 
 
-    onMount(() => {
+    onMount(async () => {
+        const auth = await import("../../../api/authentication")
+        auth.signOut()
+
         const host = window.location.hostname
         const logout = `https://${host}`
         const realm = 'master'
