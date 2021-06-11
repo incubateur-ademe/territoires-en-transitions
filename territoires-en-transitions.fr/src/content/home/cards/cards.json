@@ -1,0 +1,54 @@
+[
+  {
+    "title": "Suivre et évaluer les plans d’actions de votre collectivité",
+    "image": {
+      "title": "Titre",
+      "alt": "Montagne",
+      "image": "./img/damien-dufour-example-unsplash.jpg"
+    },
+    "description": "",
+    "link": ""
+  },
+  {
+    "title": "Suivre vos indicateurs",
+    "image": {
+      "title": "Titre",
+      "alt": "Montagne",
+      "image": "./img/damien-dufour-example-unsplash.jpg"
+    },
+    "description": "",
+    "link": ""
+  },
+  {
+    "title": "Collaborer en interne et externe",
+    "image": {
+      "title": "Titre",
+      "alt": "Montagne",
+      "image": "./img/damien-dufour-example-unsplash.jpg"
+    },
+    "description": "",
+    "link": ""
+  },
+  {
+    "title": "",
+    "image": {
+      "title": "Titre",
+      "alt": "Montagne",
+      "image": "./img/damien-dufour-example-unsplash.jpg"
+    },
+    "description": "Suivre votre progression au regard des <a href=\"/\">référentiels nationaux climat-air-énergie</a> & <a href=\"/\">économie circulaire</a>",
+    "link": ""
+  },
+  {
+    "title": "Obtenir les labels Cit’ergie & Économie Circulaire",
+    "image": {},
+    "description": "",
+    "link": ""
+  },
+  {
+    "title": " …Et demain ce qui sera le plus important pour vous en tant qu’utilisateurs…",
+    "image": {},
+    "description": "",
+    "link": ""
+  }
+]
