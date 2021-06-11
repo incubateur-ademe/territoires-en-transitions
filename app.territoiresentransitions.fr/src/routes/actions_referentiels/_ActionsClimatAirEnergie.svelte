@@ -10,6 +10,11 @@
 
     let displayedByDomaine: Map<ActionReferentiel, Map<ActionReferentiel, ActionReferentiel[]>>
 
+    const sortById = (a: ActionReferentiel, b: ActionReferentiel) => {
+        if (a.id_nomenclature > b.id_nomenclature) return 1
+        if (a.id_nomenclature < b.id_nomenclature) return -1
+        return 0
+    }
     const refresh = () => {
         const map = new Map<ActionReferentiel, Map<ActionReferentiel, ActionReferentiel[]>>()
         const mesures: ActionReferentiel[] = []
@@ -26,7 +31,9 @@
                         mesures.push(mesure)
                     }
                 }
+                sousDomaines.sort(sortById)
             }
+            domaines.sort(sortById)
         }
 
         for (let domaine of domaines) {
@@ -37,6 +44,8 @@
                     (mesure) => mesure.id.startsWith(domaine.id)
                         && mesure.id.startsWith(sousDomaine.id)
                 )
+
+                actions.sort(sortById)
                 if (actions.length) domaineMap.set(sousDomaine, actions)
             }
             if (domaineMap.size) map.set(domaine, domaineMap)
@@ -49,9 +58,9 @@
 
 
 {#each [...displayedByDomaine] as [domaine, sous_domaines]}
-    <h2 class="text-2xl font-bold mt-10 mb-2">{domaine.nom.toLowerCase()}</h2>
+    <h2 class="text-2xl font-bold mt-10 mb-2">{domaine.id_nomenclature}. {domaine.nom}</h2>
     {#each [...sous_domaines] as [sous_domaine, actions]}
-        <h3 class="text-2xl mt-10 mb-2">{sous_domaine.nom}</h3>
+        <h3 class="text-2xl mt-10 mb-2">{sous_domaine.id_nomenclature}. {sous_domaine.nom}</h3>
         {#each actions as action}
             {#if searching}
                 <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>

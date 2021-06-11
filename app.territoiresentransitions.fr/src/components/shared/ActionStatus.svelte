@@ -44,7 +44,7 @@
         'border-t border-r border-b rounded-r flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
     ]
 
-    let actionAvancementKey = 'pas_faite';
+    let actionAvancementKey = '';
 
     let epci_id = ''
 
