@@ -10,6 +10,11 @@
 
     let displayedByDomaine: Map<ActionReferentiel, Map<ActionReferentiel, ActionReferentiel[]>>
 
+    const sortById = (a: ActionReferentiel, b: ActionReferentiel) => {
+        if (a.id_nomenclature > b.id_nomenclature) return 1
+        if (a.id_nomenclature < b.id_nomenclature) return -1
+        return 0
+    }
     const refresh = () => {
         const map = new Map<ActionReferentiel, Map<ActionReferentiel, ActionReferentiel[]>>()
         const mesures: ActionReferentiel[] = []
@@ -26,7 +31,9 @@
                         mesures.push(mesure)
                     }
                 }
+                sousDomaines.sort(sortById)
             }
+            domaines.sort(sortById)
         }
 
         for (let domaine of domaines) {
@@ -37,6 +44,8 @@
                     (mesure) => mesure.id.startsWith(domaine.id)
                         && mesure.id.startsWith(sousDomaine.id)
                 )
+
+                actions.sort(sortById)
                 if (actions.length) domaineMap.set(sousDomaine, actions)
             }
             if (domaineMap.size) map.set(domaine, domaineMap)
