@@ -2,6 +2,9 @@
 
 ## À venir
 
+Fonctionnalités :
+- Ajout de l'identifiant pour les axes ECI, les domaines et sous-domaines CAE
+
 Réparations de bugs :
 - Tri par identifiant des éléments du référentiel CAE
 - Changement de la valeur par défaut d'une action (de `pas_faite` à non
