@@ -2,6 +2,9 @@
 
 ## À venir
 
+Réparations de bugs :
+- Tri par identifiant des éléments du référentiel CAE
+
 ## Déploiement du 8 juin 2021
 
 Réparations de bugs :
