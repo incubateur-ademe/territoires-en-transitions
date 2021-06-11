@@ -11,7 +11,10 @@ Réparations de bugs :
   renseignée)
   - Ajout de la majuscule sur le nom des domaines CAE
 
-  
+Tech :
+- Mise en place des tests end-to-end avec Cypress
+
+
 ## Déploiement du 8 juin 2021
 
 Réparations de bugs :
@@ -19,7 +22,7 @@ Réparations de bugs :
 - Restriction de l'appel à Matomo uniquement pour la production
 - Réparation de la navigation et de la position des éléments affichés sur les
   pages
-  
+
 ## Déploiement du 4 juin 2021
 
 Fonctionnalités :
