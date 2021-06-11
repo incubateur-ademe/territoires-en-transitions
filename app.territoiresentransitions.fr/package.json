@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "compression": "^1.7.1",
+    "cypress-plugin-snapshots": "^1.4.4",
     "polka": "next",
     "sirv": "^1.0.0"
   },
