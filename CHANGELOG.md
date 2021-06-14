@@ -2,6 +2,8 @@
 
 ## À venir
 
+## Déploiement du 11 juin 2021
+
 Fonctionnalités :
 - Ajout du favicon
 - Ajout de l'identifiant pour les axes ECI, les domaines et sous-domaines CAE
@@ -10,8 +12,12 @@ Réparations de bugs :
 - Tri par identifiant des éléments du référentiel CAE
 - Changement de la valeur par défaut d'une action (de `pas_faite` à non
   renseignée)
-  - Ajout de la majuscule sur le nom des domaines CAE
+- Ajout de la majuscule sur le nom des domaines CAE
 
+## Déploiement du 10 juin 2021
+
+Réparations de bugs :
+- Nettoyage des titres des orientations ECI
 
 ## Déploiement du 8 juin 2021
 
