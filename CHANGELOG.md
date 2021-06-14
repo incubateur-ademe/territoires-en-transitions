@@ -2,9 +2,20 @@
 
 ## À venir
 
+## Déploiement du 14 juin 2021
+
+Fonctionnalités :
+- Ajout de 5 indicateurs ECI manquants
+
+Tech :
+- Mise en place des tests end-to-end avec Cypress
+- Ajout de la possibilité de développer l'application client avec l'API de
+  sandbox
+
 ## Déploiement du 11 juin 2021
 
 Fonctionnalités :
+- Ajout du favicon
 - Ajout de l'identifiant pour les axes ECI, les domaines et sous-domaines CAE
 
 Réparations de bugs :
@@ -12,15 +23,14 @@ Réparations de bugs :
 - Changement de la valeur par défaut d'une action (de `pas_faite` à non
   renseignée)
 - Ajout de la majuscule sur le nom des domaines CAE
+<<<<<<< HEAD
 - Nettoyage des titres des orientations ECI
 
-## Déploiement du 8 juin 2021
+
+## Déploiement du 10 juin 2021
 
 Réparations de bugs :
-- Modification de contenu sur le domaine 1 Cit'ergie
-- Restriction de l'appel à Matomo uniquement pour la production
-- Réparation de la navigation et de la position des éléments affichés sur les
-  pages
+- Nettoyage des titres des orientations ECI
 
 ## Déploiement du 8 juin 2021
 
