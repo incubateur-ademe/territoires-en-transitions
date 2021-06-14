@@ -5,6 +5,7 @@
 ## Déploiement du 11 juin 2021
 
 Fonctionnalités :
+- Ajout du favicon
 - Ajout de l'identifiant pour les axes ECI, les domaines et sous-domaines CAE
 
 Réparations de bugs :
