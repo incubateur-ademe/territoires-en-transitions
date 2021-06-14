@@ -6,10 +6,12 @@
     "build": "sapper build",
     "export": "cross-env NODE_ENV=production sapper export",
     "start": "node __sapper__/build",
-    "validate": "svelte-check --ignore src/node_modules/@sapper"
+    "validate": "svelte-check --ignore src/node_modules/@sapper",
+    "cy:open": "cypress open"
   },
   "dependencies": {
     "compression": "^1.7.1",
+    "cypress-plugin-snapshots": "^1.4.4",
     "polka": "next",
     "sirv": "^1.0.0"
   },
@@ -24,6 +26,7 @@
     "autoprefixer": "10.2.4",
     "chai": "4.3.0",
     "cross-env": "7.0.3",
+    "cypress": "^7.5.0",
     "file-loader": "^6.0.0",
     "postcss": "^8.2.13",
     "postcss-cli": "^8.3.1",

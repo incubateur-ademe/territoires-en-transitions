@@ -2,6 +2,9 @@
 
 ## À venir
 
+Tech :
+- Mise en place des tests end-to-end avec Cypress
+
 ## Déploiement du 11 juin 2021
 
 Fonctionnalités :
