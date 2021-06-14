@@ -33,3 +33,18 @@ jobs:
       - name: Run tests
         run: poetry run pytest
         working-directory: ${{env.working-directory}}
+  end-to-end:
+    runs-on: ubuntu-latest
+    env:
+      working-directory:  ./app.territoiresentransitions.fr
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run export
+          start: npx serve __sapper__/export
+        working-directory: ${{env.working-directory}}
