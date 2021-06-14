@@ -5,6 +5,9 @@
 Tech :
 - Mise en place des tests end-to-end avec Cypress
 
+Fonctionnalités :
+- Possibilité de s'authentifier en mode test
+
 ## Déploiement du 11 juin 2021
 
 Fonctionnalités :
