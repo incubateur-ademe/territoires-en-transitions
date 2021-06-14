@@ -26,9 +26,10 @@ export const isConnected = (): boolean => {
     const utilisateur = utilisateurConnecteStore.retrieveById(UtilisateurConnecteStorable.id)
     if (utilisateur == null) return false
 
-    // todo check token.
+    const decoded = jwt_decode(utilisateur.access_token)
+    const secondsLeft = decoded['exp'] - (Date.now() / 1000)
 
-    return true
+    return secondsLeft > 0
 }
 
 /**
