@@ -7,6 +7,7 @@ on:
 
 jobs:
   codegen-test-and-generate:
+    name: Tests and artifacts on Codegen
     runs-on: ubuntu-latest
     env:
       python-version: 3.9.1
@@ -93,6 +94,7 @@ jobs:
           path: ${{ github.workspace }}/generated
 
   end-to-end:
+    name: End-to-end tests on client
     runs-on: ubuntu-latest
     needs: codegen-test-and-generate
     env:
@@ -109,17 +111,10 @@ jobs:
           name: generated-client-files
           path: generated
 
-      # Build client with Sapper
-      - name: Build client
-        run: |
-          npm install
-          npm run export
-        working-directory: ${{env.working-directory}}
-
       # Use Cypress to run end-to-end tests
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          start: |
-            cd ${{env.working-directory}}
-            npx serve __sapper__/export
+          build: npm run export
+          start: npx serve __sapper__/export
+          working-directory: ${{env.working-directory}}
