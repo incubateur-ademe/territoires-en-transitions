@@ -112,7 +112,7 @@ def parse_referentiel_eci_xlsx(referentiel: str) -> List[dict]:
                                 tache = {
                                     'id': f'{niveau["id"]}.{tache_index}',
                                     'nom': stripped(nom).capitalize(),
-                                    'poids': stripped(row['poids']),
+                                    'points': str(pourcentage),
                                     'actions': [],
                                 }
                                 niveau['actions'].append(tache)
