@@ -116,5 +116,5 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           build: npm run export
-          start: npx serve __sapper__/export
+          start: npx serve __sapper__/export -p 3000
           working-directory: ${{env.working-directory}}
