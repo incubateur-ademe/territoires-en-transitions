@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
+    "dev:sandbox": "cross-env USE_SANDBOX_API=1 sapper dev",
     "build": "sapper build",
     "export": "cross-env NODE_ENV=production sapper export",
     "start": "node __sapper__/build",

@@ -4,6 +4,8 @@
 
 Tech :
 - Mise en place des tests end-to-end avec Cypress
+- Ajout de la possibilité de développer l'application client avec l'API de
+  sandbox
 
 ## Déploiement du 11 juin 2021
 
