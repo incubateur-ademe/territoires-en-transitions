@@ -10,7 +10,6 @@
 
     let code: String = ''
     let tokenResponse: Response
-    let showDebug: Boolean = false
 
     onMount(async () => {
         const urlParams = new URLSearchParams(window.location.search)
@@ -45,10 +44,5 @@
         {/if}
     {:else }
         <p>Authentification en cours...</p>
-        <div class="pb-5"></div>
-        {#if showDebug}
-            code:
-            <textarea disabled class="w-full">{code}</textarea>
-        {/if}
     {/if}
 </div>
