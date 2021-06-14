@@ -79,8 +79,8 @@ def parse_referentiel_eci_xlsx(referentiel: str) -> List[dict]:
             elif stripped(row['orientation_description']):  # sometime description is not on the same row
                 orientation['description'] = orientation['description'] + stripped(row['orientation_description'])
 
-            if stripped(row['description']) and row['description'].lower().startswith('niveau'):
-                nom, description = row['description'].split('\n', 1)
+            if stripped(row['description']) and stripped(row['description']).lower().startswith('niveau'):
+                nom, description = stripped(row['description']).split('\n', 1)
                 numero, nom = nom.split(':', 1)
                 numero = re.search(r'\d+', numero).group(0)
                 niveau_n = f'{orientation["id"]}.{numero}'
