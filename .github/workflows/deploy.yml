@@ -1,8 +1,8 @@
 name: Deploy LTE client
 
 on:
-  push:
-    branches: [production]
+  release:
+    types: [published]
 
 jobs:
   # This job runs tests in codegen and generated files that are needed by the
