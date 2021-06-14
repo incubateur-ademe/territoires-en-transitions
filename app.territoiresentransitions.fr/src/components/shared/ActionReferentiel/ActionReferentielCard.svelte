@@ -4,6 +4,7 @@
      *
      * Display is customizable using props such as: ficheButton, link, emoji...
      */
+    import { goto } from '@sapper/app'
     import ActionStatus from "../ActionStatus.svelte";
     import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
@@ -116,7 +117,7 @@
                    rel="prefetch"
                    class="flex flex-grow">
                     <ActionReferentielTitle
-                            on:click={() => window.location.href = `/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`}
+                            on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
                             action={action} emoji={emoji}/>
                 </a>
             {:else if expandButton && (action.actions.length || action.description.trim().length) }
