@@ -8,6 +8,7 @@ jobs:
   # This job runs tests in codegen and generated files that are needed by the
   # client application.
   codegen-test-and-generate:
+    name: Tests and artifacts on Codegen
     runs-on: ubuntu-latest
     env:
       python-version: 3.9.1
@@ -95,7 +96,8 @@ jobs:
 
   # This job retrieves previously generated files and builds the client
   # application.
-  client-build:
+  client-build-and-test:
+    name: Build and end-to-end tests on client
     runs-on: ubuntu-latest
     needs: codegen-test-and-generate
     env:
@@ -118,6 +120,13 @@ jobs:
           npm install
           npm run export
         working-directory: ${{env.working-directory}}
+
+      # Use Cypress to run end-to-end tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          start: npx serve __sapper__/export -p 3000
+          working-directory: ${{env.working-directory}}
 
       # Upload built client app as an artefact.
       - name: Upload exported client app
