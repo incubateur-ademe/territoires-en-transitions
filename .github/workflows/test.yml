@@ -6,30 +6,115 @@ on:
       - production
 
 jobs:
-  test-codegen:
+  codegen-test-and-generate:
+    name: Tests and artifacts on Codegen
     runs-on: ubuntu-latest
     env:
+      python-version: 3.9.1
       working-directory: ./codegen
 
     steps:
+      # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2
-      - name: Set up Python 3.x
+
+      # Restore cache or create a new one for all dependencies installed with
+      # Python.
+      - name: Set up Python cache
+        uses: actions/cache@v2
+        env:
+          python-tools-cache-name: python-tools-cache
+        with:
+          path: /opt/hostedtoolcache/Python
+          key: ${{ runner.os }}-${{ env.python-tools-cache-name }}-${{ env.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.python-tools-cache-name }}
+            ${{ runner.os }}-
+
+      # Restore cache or create a new one for the binary for Poetry, as Poetry
+      # will check if it is already installed before installing itself.
+      - name: Set up poetry binary cache
+        uses: actions/cache@v2
+        env:
+          poetry-bin-cache-name: poetry-bin
+        with:
+          path: ~/poetry
+          key: ${{ runner.os }}-${{ env.poetry-bin-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.poetry-bin-cache-name }}
+            ${{ runner.os }}-
+
+      # Restore cache or create a new one for all dependecies installed by
+      # Poetry.
+      - name: Set up dependencies cache
+        uses: actions/cache@v2
+        env:
+          poetry-cache-name: poetry-dependencies-cache
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.poetry-cache-name }}-
+            ${{ runner.os }}-
+
+      # cf. https://github.com/actions/setup-python
+      - name: Set up Python 3.9.1
         uses: actions/setup-python@v2
         with:
           python-version: '3.9.1'
 
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-
+      # Install the dependencies manager for codegen.
       - name: Install Poetry
         run: |
-          pip install --upgrade pip
-          pip --no-cache-dir install poetry
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=~/poetry python -
+          echo "$HOME/poetry/bin" >> $GITHUB_PATH
 
+      # Install the dependencies of codegen.
       - name: Install dependencies
         run: poetry install
         working-directory: ${{env.working-directory}}
 
+      # Run all the tests for codegen.
       - name: Run tests
         run: poetry run pytest
         working-directory: ${{env.working-directory}}
+
+      # Generate all JavaScript shared models and data with codegen. These files
+      # are mandatory for the client build.
+      - name: Generate shared models and data in JavaScript
+        run: |
+          poetry run generate all
+        working-directory: ${{env.working-directory}}
+
+      # Upload the generated files as an artefact so they can be download in the
+      # client build job.
+      - name: Upload generated files
+        uses: actions/upload-artifact@v2
+        with:
+          name: generated-client-files
+          path: ${{ github.workspace }}/generated
+
+  end-to-end:
+    name: End-to-end tests on client
+    runs-on: ubuntu-latest
+    needs: codegen-test-and-generate
+    env:
+      working-directory:  ./app.territoiresentransitions.fr
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # Download JavaScript models and data generated previously by codegen.
+      - name: Download generated files
+        uses: actions/download-artifact@v2
+        with:
+          name: generated-client-files
+          path: generated
+
+      # Use Cypress to run end-to-end tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run export
+          start: npx serve __sapper__/export -p 3000
+          working-directory: ${{env.working-directory}}
