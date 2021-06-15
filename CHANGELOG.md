@@ -2,6 +2,13 @@
 
 ## À venir
 
+## Déploiement du 15 juin 2021
+
+Réparations de bugs :
+- Réparation de la gestion des indicateurs sur la fiche action
+- Réparation de l'affichage des référentiels après un rafraîchissement de la
+  page
+
 ## Déploiement du 14 juin 2021
 
 Fonctionnalités :
