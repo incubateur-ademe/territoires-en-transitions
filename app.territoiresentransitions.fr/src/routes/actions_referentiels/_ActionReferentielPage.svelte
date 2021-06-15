@@ -8,12 +8,14 @@
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
 
     export let action: ActionReferentiel
+
     let displayed = action.actions
-
-
     let epciId = ''
+    let description = ''
+
     onMount(async () => {
         epciId = getCurrentEpciId()
+        description = action.description
     })
 </script>
 
@@ -29,7 +31,9 @@
 
 <ActionReferentielCard action={action} emoji ficheButton statusBar/>
 <div class="m-4">
-    {@html action.description}
+    {#if description}
+        {@html description}
+    {/if}
 </div>
 
 <h2 class="text-2xl font-semibold mt-8 mb-4 ">Les actions</h2>
