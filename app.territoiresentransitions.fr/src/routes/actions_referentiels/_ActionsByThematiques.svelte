@@ -43,7 +43,7 @@
 </script>
 
 {#each [...displayedByThematique] as [thematique, actions]}
-    <h2 class="text-2xl mt-10 mb-2">{thematique.name}</h2>
+    <h2>{thematique.name}</h2>
     {#each actions as action}
         {#if searching}
             <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>

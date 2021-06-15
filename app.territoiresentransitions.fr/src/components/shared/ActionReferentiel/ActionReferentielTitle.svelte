@@ -6,17 +6,11 @@
 
     export let action: ActionReferentiel
 
-    // Show referentiel emoji
-    export let emoji: boolean = false
-
     $: depth = action.id.split('.').length
 
 </script>
 
-<h3 class="flex flex-grow" on:click|preventDefault>
-    {#if emoji}
-        <span class="mr-1">{action.id.startsWith('citergie') ? '🌍' : '♻'} </span>
-    {/if}
+<h3 on:click|preventDefault>
     <span class="mr-4">{action.id_nomenclature} </span>
     <span class="mr-4">{action.nom}</span>
 </h3>

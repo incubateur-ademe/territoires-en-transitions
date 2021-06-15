@@ -91,10 +91,9 @@
     })
 </script>
 
-
 <RowCard id={action.id} shadowSize={shadowSize}>
         {#if ficheButton}
-            <a class="opacity-50 hover:opacity-80 mr-2"
+            <a
                href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
                 <AddFiche/>
             </a>
@@ -109,16 +108,17 @@
             />
         {/if}
 
-        <div class="flex items-center flex-grow"
-             class:statusBar={"max-w-lg"}>
+        <div class:statusBar>
 
             {#if link}
                 <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
-                   rel="prefetch"
-                   class="flex flex-grow">
+                   rel="prefetch">
+
+                    {action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}
+
                     <ActionReferentielTitle
                             on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
-                            action={action} emoji={emoji}/>
+                            action={action}/>
                 </a>
             {:else if expandButton && (action.actions.length || action.description.trim().length) }
                 <div class="flex flex-row cursor-pointer items-stretch"

@@ -23,32 +23,27 @@
     })
 </script>
 
-<div class="flex flex-row items-center
-            bg-white px-5 py-5 mb-5 ">
-    <div class="flex-grow flex flex-row items-center">
+<div>
+    <div>
         <h1>
             Référentiels
         </h1>
-        <div class="pl-2"></div>
-        <div class="w-1/2">
-            <SelectInput bind:value={view}>
-                <option value='thematique'>
-                    Thématiques
-                </option>
-                <option value='eci'>
-                    Économie Circulaire
-                </option>
-                <option value='cae'>
-                    Climat Air Énergie
-                </option>
-            </SelectInput>
-        </div>
+        <SelectInput bind:value={view}>
+            <option value='thematique'>
+                Thématiques
+            </option>
+            <option value='eci'>
+                Économie Circulaire
+            </option>
+            <option value='cae'>
+                Climat Air Énergie
+            </option>
+        </SelectInput>
     </div>
+
     <div>
         <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
     </div>
-
-
 </div>
 
 {#if view === 'thematique'}
