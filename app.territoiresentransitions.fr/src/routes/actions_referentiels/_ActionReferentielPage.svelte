@@ -27,7 +27,7 @@
     </div>
 </div>
 
-<ActionReferentielCard action={action} emoji ficheButton statusBar/>
+<ActionReferentielCard action={action} ficheButton statusBar/>
 <div class="m-4">
     {@html action.description}
 </div>

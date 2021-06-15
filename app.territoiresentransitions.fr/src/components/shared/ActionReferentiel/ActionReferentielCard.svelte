@@ -2,7 +2,7 @@
     /**
      * Display an ActionReferentiel as a card.
      *
-     * Display is customizable using props such as: ficheButton, link, emoji...
+     * Display is customizable using props such as: ficheButton, link…
      */
     import { goto } from '@sapper/app'
     import ActionStatus from "../ActionStatus.svelte";
@@ -24,9 +24,6 @@
 
     // The title links to the action page.
     export let link: boolean = false
-
-    // Show referentiel emoji
-    export let emoji: boolean = false
 
     // Show expand children button
     export let expandButton: boolean = false

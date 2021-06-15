@@ -78,11 +78,11 @@
         <div class="pb-2"></div>
         <h4 class="text-lg mt-4 mb-2">Actions liées</h4>
         {#each relatedActions as action}
-            <ActionReferentielCard action={action} link emoji/>
+            <ActionReferentielCard action={action} link/>
         {/each}
-        
+
         <div class="pb-5"></div>
-        <IndicateurReferentielCommentaireArea indicateur={indicateur} />
+        <IndicateurReferentielCommentaireArea indicateur={indicateur}/>
     </div>
 
 </section>

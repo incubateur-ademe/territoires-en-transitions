@@ -46,9 +46,9 @@
     <h2>{thematique.name}</h2>
     {#each actions as action}
         {#if searching}
-            <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>
+            <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
         {:else }
-            <ActionReferentielCard action={action} emoji link/>
+            <ActionReferentielCard action={action} link/>
         {/if}
     {/each}
 {/each}

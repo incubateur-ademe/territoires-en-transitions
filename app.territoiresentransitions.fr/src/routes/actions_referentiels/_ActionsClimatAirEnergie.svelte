@@ -63,9 +63,9 @@
         <h3 class="text-2xl mt-10 mb-2">{sous_domaine.id_nomenclature}. {sous_domaine.nom}</h3>
         {#each actions as action}
             {#if searching}
-                <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>
+                <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
             {:else }
-                <ActionReferentielCard action={action} emoji link/>
+                <ActionReferentielCard action={action} link/>
             {/if}
         {/each}
     {/each}
