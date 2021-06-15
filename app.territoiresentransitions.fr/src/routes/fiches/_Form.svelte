@@ -1,4 +1,6 @@
 <script lang="ts">
+    import find from 'ramda/src/find'
+    import prop from 'ramda/src/prop'
     import {FicheActionStorable} from "../../storables/FicheActionStorable"
     import Button from "../../components/shared/Button/Button.svelte"
     import MultiSelect from './_MultiSelect.svelte'
@@ -243,10 +245,13 @@
                 </MultiSelect>
 
                 {#each data.referentiel_indicateur_ids as indicateurId}
-                    <div class="shadow">
-                        <IndicateurReferentielCard
-                                indicateur={indicateursReferentiel.filter((i) => i.id === indicateurId)[0]}/>
-                    </div>
+                    {#if find(prop(indicateurId))(indicateursReferentiel) }
+                        <div class="shadow">
+                            <IndicateurReferentielCard
+                                indicateur={find(prop(indicateurId))(indicateursReferentiel)}
+                            />
+                        </div>
+                    {/if}
                 {/each}
             {/if}
         </div>
