@@ -4,16 +4,20 @@
 </script>
 
 <style>
-    div {
+    article {
+        padding: .8rem;
         background-color: var(--beige);
+    }
+
+    article:not(:first-of-type) {
+        margin-top: 1rem;
     }
 </style>
 
-<div id="{id}">
+<article id="{id}">
     <slot name="aside"></slot>
 
-    <div class="
-                { $$slots.secondary ? ' max-w-lg' : '' }">
+    <div class="{ $$slots.secondary ? ' max-w-lg' : '' }">
         <slot></slot>
     </div>
 
@@ -22,4 +26,4 @@
             <slot name="secondary"></slot>
         </div>
     {/if}
-</div>
+</article>

@@ -3,7 +3,7 @@
 	import Nav from '../components/shared/Nav/Nav.svelte'
 	import {stores} from '@sapper/app'
 	import {onMount} from 'svelte'
-	import Header from '../../../components/Header.svelte'
+	import Header from '../../../components/organisms/Header.svelte'
 	import Head from './_head.svelte'
 
 	export let segment: string;
