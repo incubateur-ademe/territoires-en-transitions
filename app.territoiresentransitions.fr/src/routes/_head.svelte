@@ -4,6 +4,7 @@
     import Buttons from "../../../components/DesignSystem/Buttons.svelte";
     import Inputs from "../../../components/DesignSystem/Inputs.svelte";
     import Selects from "../../../components/DesignSystem/Selects.svelte";
+    import Links from "../../../components/DesignSystem/Links.svelte";
 </script>
 
 <Variables/>
@@ -11,3 +12,4 @@
 <Buttons/>
 <Inputs/>
 <Selects/>
+<Links/>

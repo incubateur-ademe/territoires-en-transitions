@@ -103,16 +103,18 @@
         align-self: flex-end;
         color: var(--bf500);
     }
+
+    .RowCard__bottomBar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .listActions__subList {
+            margin-left: 5.313rem;
+        }
 </style>
 
 <RowCard id={action.id} shadowSize={shadowSize}>
-    {#if ficheButton}
-        <a
-                href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
-            <AddFiche/>
-        </a>
-    {/if}
-
     {#if addButton}
         <PickButton picked={isAdded}
                     handlePick={handleToggleButtonClick}
@@ -136,31 +138,33 @@
                 <span class="fr-fi-arrow-right-line"></span>
             </a>
         {:else if expandButton && (action.actions.length || action.description.trim().length) }
-            <div class="flex flex-row cursor-pointer items-stretch"
-                 on:click={handleExpand}>
+            <div on:click={handleExpand}>
                 <ActionReferentielTitle action={action}/>
+
+                {@html action.description}
+
                 <Angle direction="{expanded ? 'down' : 'right' }"/>
             </div>
         {:else }
             <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
         {/if}
     </div>
-    {#if statusBar}
-        <div class="ml-4">
+
+    {#if ficheButton && statusBar}
+        <div class="RowCard__bottomBar">
+            <a class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-file-fill fr-btn--icon-left"
+               href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
+                Créer une fiche-action
+            </a>
+
             <ActionStatus actionId={action.id}/>
         </div>
     {/if}
 </RowCard>
 
-{#if expanded && action.description.trim().length }
-    <div class="flex flex-col m-4">
-        {@html action.description}
-    </div>
-{/if}
-
 
 {#if expanded}
-    <div class="ml-6">
+    <div class="listActions__subList">
         {#each action.actions as action}
             <svelte:self action={action}
                          ficheButton={ficheButton}
