@@ -120,11 +120,11 @@
             {:else if expandButton && (action.actions.length || action.description.trim().length) }
                 <div class="flex flex-row cursor-pointer items-stretch"
                      on:click={handleExpand}>
-                    <ActionReferentielTitle action={action} emoji={emoji}/>
+                    <ActionReferentielTitle action={action}/>
                     <Angle direction="{expanded ? 'down' : 'right' }"/>
                 </div>
             {:else }
-                <ActionReferentielTitle on:click={onTitleClick(action)} action={action} emoji={emoji}/>
+                <ActionReferentielTitle on:click={onTitleClick(action)} action={action} />
             {/if}
         </div>
         {#if statusBar}
