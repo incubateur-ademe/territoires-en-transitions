@@ -56,18 +56,30 @@
     refresh()
 </script>
 
+<style>
+    section + section {
+        margin-top: 3.75rem;
+    }
+
+    section > div {
+        margin-top: 2.5rem;
+    }
+</style>
 
 {#each [...displayedByDomaine] as [domaine, sous_domaines]}
-    <h2 class="text-2xl font-bold mt-10 mb-2">{domaine.id_nomenclature}. {domaine.nom}</h2>
-    {#each [...sous_domaines] as [sous_domaine, actions]}
-        <h3 class="text-2xl mt-10 mb-2">{sous_domaine.id_nomenclature}. {sous_domaine.nom}</h3>
-        {#each actions as action}
-            {#if searching}
-                <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
-            {:else }
-                <ActionReferentielCard action={action} link/>
-            {/if}
+    <section>
+        <h2>{domaine.id_nomenclature}. {domaine.nom}</h2>
+        {#each [...sous_domaines] as [sous_domaine, actions]}
+            <div>
+                <h3>{sous_domaine.id_nomenclature}. {sous_domaine.nom}</h3>
+                {#each actions as action}
+                    {#if searching}
+                        <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
+                    {:else }
+                        <ActionReferentielCard action={action} link/>
+                    {/if}
+                {/each}
+            </div>
         {/each}
-    {/each}
-    <div class="pb-6"></div>
+    </section>
 {/each}

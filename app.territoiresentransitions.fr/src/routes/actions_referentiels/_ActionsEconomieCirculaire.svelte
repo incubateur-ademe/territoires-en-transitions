@@ -36,14 +36,21 @@
     refresh()
 </script>
 
+<style>
+    section + section {
+        margin-top: 3.75rem;
+    }
+</style>
 
 {#each [...displayedByAxe] as [parent, actions]}
-    <h2 class="text-2xl mt-10 mb-2">{parent.id_nomenclature}. {parent.nom}</h2>
-    {#each actions as action}
-        {#if searching}
-            <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
-        {:else }
-            <ActionReferentielCard action={action} link/>
-        {/if}
-    {/each}
+    <section>
+        <h2>{parent.id_nomenclature}. {parent.nom}</h2>
+        {#each actions as action}
+            {#if searching}
+                <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
+            {:else }
+                <ActionReferentielCard action={action} link/>
+            {/if}
+        {/each}
+    </section>
 {/each}
