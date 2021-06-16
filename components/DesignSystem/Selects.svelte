@@ -1,4 +1,4 @@
-<style>
+<style global>
     /*
      * DSFR v1.0.0-rc1.0 | restricted use
      */
