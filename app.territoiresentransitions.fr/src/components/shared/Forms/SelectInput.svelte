@@ -17,6 +17,12 @@
     }
 </script>
 
+<style>
+    .fr-select {
+        width: auto;
+    }
+</style>
+
 <select class="fr-select" bind:value={value}
         on:change={onChange}>
     <slot></slot>

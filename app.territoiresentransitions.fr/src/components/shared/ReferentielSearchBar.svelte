@@ -30,6 +30,20 @@
     })
 </script>
 
+<style>
+    div {
+        display: flex;
+    }
+
+    input {
+        box-shadow: inset 0 -2px 0 0 var(--bf500);
+        border-radius: 0.25rem 0 0 0;
+    }
+
+    button {
+        border-radius: 0 0.25rem 0 0;
+    }
+</style>
 
 <div>
     <input class="fr-input" type="search" placeholder="Rechercher"
@@ -40,9 +54,3 @@
     </span>
     </button>
 </div>
-
-<style>
-    div {
-        display: flex;
-    }
-</style>
