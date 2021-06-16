@@ -23,11 +23,36 @@
     })
 </script>
 
-<div>
+<style>
+    .pageIntro {
+        margin-top: 2.25rem;
+        margin-bottom: 3.75rem;
+    }
+    .pageIntro > div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .pageIntro > div + div {
+        margin-top: 1.875rem;
+    }
+
+    .pageIntro h1 {
+        margin-bottom: 0;
+    }
+</style>
+
+<div class="pageIntro">
     <div>
         <h1>
             Référentiels
         </h1>
+
+        <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
+    </div>
+
+    <div>
         <SelectInput bind:value={view}>
             <option value='thematique'>
                 Thématiques
@@ -39,10 +64,6 @@
                 Climat Air Énergie
             </option>
         </SelectInput>
-    </div>
-
-    <div>
-        <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
     </div>
 </div>
 

@@ -17,9 +17,7 @@
 <article id="{id}">
     <slot name="aside"></slot>
 
-    <div class="{ $$slots.secondary ? ' max-w-lg' : '' }">
-        <slot></slot>
-    </div>
+    <slot></slot>
 
     {#if $$slots.secondary }
         <div class="ml-4">

@@ -64,6 +64,10 @@
     section > div {
         margin-top: 2.5rem;
     }
+    
+    h3 {
+        margin-bottom: 1.875rem;
+    }
 </style>
 
 {#each [...displayedByDomaine] as [domaine, sous_domaines]}

@@ -40,6 +40,10 @@
     section + section {
         margin-top: 3.75rem;
     }
+
+    h2 {
+        margin-bottom: 1.875rem;
+    }
 </style>
 
 {#each [...displayedByAxe] as [parent, actions]}

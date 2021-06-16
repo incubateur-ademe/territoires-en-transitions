@@ -4,7 +4,7 @@
      *
      * Display is customizable using props such as: ficheButton, link…
      */
-    import { goto } from '@sapper/app'
+    import {goto} from '@sapper/app'
     import ActionStatus from "../ActionStatus.svelte";
     import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
@@ -88,50 +88,68 @@
     })
 </script>
 
+<style>
+    .label {
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+
+    .RowCard__linkOnly {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .RowCard__linkOnly .fr-fi-arrow-right-line {
+        align-self: flex-end;
+        color: var(--bf500);
+    }
+</style>
+
 <RowCard id={action.id} shadowSize={shadowSize}>
-        {#if ficheButton}
-            <a
-               href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
-                <AddFiche/>
+    {#if ficheButton}
+        <a
+                href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
+            <AddFiche/>
+        </a>
+    {/if}
+
+    {#if addButton}
+        <PickButton picked={isAdded}
+                    handlePick={handleToggleButtonClick}
+                    handleUnpick={handleToggleButtonClick}
+                    pickLabel="+"
+                    unpickLabel="✓ Ajouté"
+        />
+    {/if}
+
+    <div class:statusBar>
+        {#if link}
+            <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
+               rel="prefetch" class="RowCard__linkOnly">
+
+                <span class="label">{action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}</span>
+
+                <ActionReferentielTitle
+                        on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
+                        action={action}/>
+
+                <span class="fr-fi-arrow-right-line"></span>
             </a>
-        {/if}
-
-        {#if addButton}
-            <PickButton picked={isAdded}
-                        handlePick={handleToggleButtonClick}
-                        handleUnpick={handleToggleButtonClick}
-                        pickLabel="+"
-                        unpickLabel="✓ Ajouté"
-            />
-        {/if}
-
-        <div class:statusBar>
-
-            {#if link}
-                <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
-                   rel="prefetch">
-
-                    {action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}
-
-                    <ActionReferentielTitle
-                            on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
-                            action={action}/>
-                </a>
-            {:else if expandButton && (action.actions.length || action.description.trim().length) }
-                <div class="flex flex-row cursor-pointer items-stretch"
-                     on:click={handleExpand}>
-                    <ActionReferentielTitle action={action}/>
-                    <Angle direction="{expanded ? 'down' : 'right' }"/>
-                </div>
-            {:else }
-                <ActionReferentielTitle on:click={onTitleClick(action)} action={action} />
-            {/if}
-        </div>
-        {#if statusBar}
-            <div class="ml-4">
-                <ActionStatus actionId={action.id}/>
+        {:else if expandButton && (action.actions.length || action.description.trim().length) }
+            <div class="flex flex-row cursor-pointer items-stretch"
+                 on:click={handleExpand}>
+                <ActionReferentielTitle action={action}/>
+                <Angle direction="{expanded ? 'down' : 'right' }"/>
             </div>
+        {:else }
+            <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
         {/if}
+    </div>
+    {#if statusBar}
+        <div class="ml-4">
+            <ActionStatus actionId={action.id}/>
+        </div>
+    {/if}
 </RowCard>
 
 {#if expanded && action.description.trim().length }

@@ -10,7 +10,14 @@
 
 </script>
 
+<style>
+    h3 {
+        font-size: 1.25rem;
+        line-height: 1.33;
+    }
+</style>
+
 <h3 on:click|preventDefault>
-    <span class="mr-4">{action.id_nomenclature} </span>
-    <span class="mr-4">{action.nom}</span>
+    <span>{action.id_nomenclature} </span>
+    {action.nom}
 </h3>
