@@ -1,3 +1,8 @@
+<style>
+  h1, h2, h3, h4, h5, h6 {
+    width: 100%;
+  }
+</style>
 <script>
   export let depth;
   export let raw;
