@@ -31,6 +31,7 @@
   import Title from '../components/Title.svelte';
   import Cards from '../components/Cards.svelte';
   import LinkBtn from '../components/LinkBtn.svelte';
+  import Footer from "../components/Footer.svelte";
 
   export let description;
   export let buttons;
@@ -83,5 +84,6 @@
     </div>
   </div>
 </main>
+<Footer/>
 
 <style global src="../../node_modules/@gouvfr/dsfr/dist/css/dsfr.css"></style>
