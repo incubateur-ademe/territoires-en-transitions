@@ -11,8 +11,8 @@
         </div>
         <div class="fr-header__ademe">
           <picture>
-            <source srcset="static/img/ademe.jpg 118w" sizes="118px">
-            <img src="static/img/ademe.jpg" alt="ADEME" loading="lazy">
+            <source srcset="./img/ademe.jpg 118w" sizes="118px">
+            <img src="./img/ademe.jpg" alt="ADEME" loading="lazy">
           </picture>
         </div>
         <div class="fr-header__service">
