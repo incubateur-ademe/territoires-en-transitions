@@ -109,9 +109,11 @@
         justify-content: space-between;
         align-items: center;
     }
+
     .listActions__subList {
-            margin-left: 5.313rem;
-        }
+        margin-top: 1.25rem;
+        margin-left: 5.313rem;
+    }
 </style>
 
 <RowCard id={action.id} shadowSize={shadowSize}>
@@ -161,7 +163,6 @@
         </div>
     {/if}
 </RowCard>
-
 
 {#if expanded}
     <div class="listActions__subList">
