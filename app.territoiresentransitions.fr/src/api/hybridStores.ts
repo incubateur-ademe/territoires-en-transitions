@@ -15,12 +15,17 @@ import {
     IndicateurPersonnaliseValueInterface
 } from "../../../generated/models/indicateur_personnalise_value";
 import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnaliseStorable";
-import {IndicateurPersonnalise, IndicateurPersonnaliseInterface} from "../../../generated/models/indicateur_personnalise";
+import {
+    IndicateurPersonnalise,
+    IndicateurPersonnaliseInterface
+} from "../../../generated/models/indicateur_personnalise";
 import {
     IndicateurReferentielCommentaire,
     IndicateurReferentielCommentaireInterface
 } from "../../../generated/models/indicateur_referentiel_commentaire";
 import {IndicateurReferentielCommentaireStorable} from "../storables/IndicateurReferentielCommentaireStorable";
+import {EpciStorable} from "../storables/EpciStorable";
+import {Epci, EpciInterface} from "../../../generated/models/epci";
 
 
 export const indicateurValueStore = new HybridStore<IndicateurValueStorable>({
@@ -70,4 +75,12 @@ export const indicateurReferentielCommentaireStore = new HybridStore<IndicateurR
     endpoint: `v1/${IndicateurReferentielCommentaire.pathname}/${getCurrentEpciId()}`,
     serializer: (storable) => storable,
     deserializer: (serialized) => new IndicateurReferentielCommentaireStorable(serialized as IndicateurReferentielCommentaireInterface),
+});
+
+
+export const epciStore = new HybridStore<EpciStorable>({
+    host: getCurrentAPI(),
+    endpoint: `v2/${Epci.pathname}`,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new EpciStorable(serialized as EpciInterface),
 });
