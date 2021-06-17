@@ -6,6 +6,7 @@
     import {onMount} from "svelte";
     import {currentUtilisateurDroits} from "../../api/authentication";
     import {UtilisateurDroits} from "../../../../generated/models/utilisateur_droits";
+    import Button from "../../components/shared/Button/Button.svelte";
 
     let allEpcis: EpciStorable[] = []
     let userEpcis: EpciStorable[] = []
@@ -17,6 +18,14 @@
         allEpcis = await stores.epciStore.retrieveAll()
         userEpcis = allEpcis.filter((epci) => utilisateurDroits.filter((droits) => droits.ecriture && droits.epci_id === epci.id))
     })
+
+    const gotoFiches = (epciId) => {
+        window.location.href = `fiches/?epci_id=${epciId}`
+    }
+
+    const gotoIndicateurs = (epciId) => {
+        window.location.href = `indicateurs/?epci_id=${epciId}`
+    }
 </script>
 
 <div>
@@ -26,9 +35,8 @@
         <p>
             {epci.nom}
             <br>
-            <a href="/fiches/?epci_id={epci.uid}">Plan d'action</a>
-            <br>
-            <a href="/indicateurs/?epci_id={epci.uid}">Indicateurs</a>
+            <Button on:click={gotoFiches(epci.uid)}>Plan d'action</Button>
+            <Button on:click={gotoIndicateurs(epci.uid)}>Indicateurs</Button>
         </p>
     {/each}
 </div>
@@ -39,9 +47,8 @@
         <p>
             {epci.nom}
             <br>
-            <a href="/fiches/?epci_id={epci.uid}">Plan d'action</a>
-            <br>
-            <a href="/indicateurs/?epci_id={epci.uid}">Indicateurs</a>
+            <Button on:click={gotoFiches(epci.uid)}>Plan d'action</Button>
+            <Button on:click={gotoIndicateurs(epci.uid)}>Indicateurs</Button>
         </p>
     {/each}
 </div>
