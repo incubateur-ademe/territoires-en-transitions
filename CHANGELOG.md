@@ -2,9 +2,35 @@
 
 ## À venir
 
+Tech :
+- Mise en place des tests end-to-end avec Cypress
+- Ajout de la possibilité de développer l'application client avec l'API de
+  sandbox
+
+## Déploiement du 11 juin 2021
+
+Fonctionnalités :
+- Ajout du favicon
+- Ajout de l'identifiant pour les axes ECI, les domaines et sous-domaines CAE
+
 Réparations de bugs :
+- Tri par identifiant des éléments du référentiel CAE
+- Changement de la valeur par défaut d'une action (de `pas_faite` à non
+  renseignée)
+- Ajout de la majuscule sur le nom des domaines CAE
+
+## Déploiement du 10 juin 2021
+
+Réparations de bugs :
+- Nettoyage des titres des orientations ECI
+
+## Déploiement du 8 juin 2021
+
+Réparations de bugs :
+- Modification de contenu sur le nom des domaines CAE
 - Restriction de l'appel à Matomo uniquement pour la production
-- Répare l'ordre d'affichage de la navigation de test
+- Réparation de la navigation et de la position des éléments affichés sur les
+  pages
 
 ## Déploiement du 4 juin 2021
 
