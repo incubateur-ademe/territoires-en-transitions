@@ -29,6 +29,7 @@
             const auth = await import("../../../api/authentication")
             const data = await tokenResponse.json()
             auth.saveTokens(data['access_token'], data['refresh_token'])
+            window.location.href = '/epcis/'
         }
     })
 </script>
@@ -36,11 +37,11 @@
 <div>
     {#if tokenResponse}
         {#if tokenResponse.ok}
-            <h1 class="text-xl">Bienvenue</h1>
+            <h1 class="text-xl">Redirection en cours...</h1>
         {:else}
             <h1 class="text-xl">Erreur d'authenfication</h1>
             <div class="pb-5"></div>
-            <p>Une erreur s'est produite et nous n'avons pas pû vous authentifier</p>
+            <p>Une erreur s'est produite et nous n'avons pas pu vous authentifier</p>
         {/if}
     {:else }
         <p>Authentification en cours...</p>
