@@ -23,13 +23,25 @@
     <h2>Bienvenue !</h2>
 
     {#each userEpcis as epci}
-        <p>{epci.nom}</p>
+        <p>
+            {epci.nom}
+            <br>
+            <a href="/fiches/?epci_id={epci.uid}">Plan d'action</a>
+            <br>
+            <a href="/indicateurs/?epci_id={epci.uid}">Indicateurs</a>
+        </p>
     {/each}
 </div>
 
 <div>
     <h2>Toutes les collectivités</h2>
     {#each allEpcis as epci}
-        <p>{epci.nom}</p>
+        <p>
+            {epci.nom}
+            <br>
+            <a href="/fiches/?epci_id={epci.uid}">Plan d'action</a>
+            <br>
+            <a href="/indicateurs/?epci_id={epci.uid}">Indicateurs</a>
+        </p>
     {/each}
 </div>
