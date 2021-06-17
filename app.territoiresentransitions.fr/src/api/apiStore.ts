@@ -12,7 +12,7 @@ export class APIStore<T> {
             deserializer,
         }: {
             host: string,
-            endpoint: string,
+            endpoint: () => string,
             serializer: (storable: T) => object,
             deserializer: (serialized: object) => T,
         }) {
@@ -23,7 +23,7 @@ export class APIStore<T> {
     }
 
     host: string;
-    pathname: string;
+    pathname: () => string;
     serializer: (storable: T) => object;
     deserializer: (serialized: object) => T;
 
@@ -38,7 +38,7 @@ export class APIStore<T> {
             throw new Error(`${typeof storable} is not storable.`)
         }
 
-        const response = await fetch(`${this.host}/${this.pathname}/`, {
+        const response = await fetch(`${this.host}/${this.pathname()}/`, {
             method: 'POST',
             mode: 'cors',
             body: JSON.stringify(this.serializer(storable))
@@ -66,7 +66,7 @@ export class APIStore<T> {
     }
 
     async retrieveByPath(path: string): Promise<T | null> {
-        const response = await fetch(`${this.host}/${this.pathname}/${path}`, {
+        const response = await fetch(`${this.host}/${this.pathname()}/${path}`, {
             mode: 'cors',
             method: 'GET',
         });
@@ -76,7 +76,7 @@ export class APIStore<T> {
     }
 
     async retrieveAtPath(path: string): Promise<Array<T>> {
-        const response = await fetch(`${this.host}/${this.pathname}/${path}`, {
+        const response = await fetch(`${this.host}/${this.pathname()}/${path}`, {
             mode: 'cors',
             method: 'GET',
         });
@@ -98,7 +98,7 @@ export class APIStore<T> {
      * @param id Storable id
      */
     async deleteById(id: string): Promise<boolean> {
-        const response = await fetch(`${this.host}/${this.pathname}/${id}`, {
+        const response = await fetch(`${this.host}/${this.pathname()}/${id}`, {
             mode: 'cors',
             method: 'DELETE',
         });
