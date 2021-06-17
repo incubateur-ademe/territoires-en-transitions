@@ -13,11 +13,13 @@ export class HybridStore<T extends Storable> {
             endpoint,
             serializer,
             deserializer,
+            authorization = () => '',
         }: {
             host: string,
             endpoint: () => string,
             serializer: (storable: T) => object,
             deserializer: (serialized: object) => T,
+            authorization?: () => string,
         }) {
         this.host = host;
         this.pathname = endpoint;
@@ -28,7 +30,8 @@ export class HybridStore<T extends Storable> {
             host: this.host,
             endpoint: this.pathname,
             serializer: this.serializer,
-            deserializer: this.deserializer
+            deserializer: this.deserializer,
+            authorization: authorization
         });
 
         /*

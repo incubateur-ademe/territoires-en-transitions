@@ -26,6 +26,7 @@ import {
 import {IndicateurReferentielCommentaireStorable} from "../storables/IndicateurReferentielCommentaireStorable";
 import {EpciStorable} from "../storables/EpciStorable";
 import {Epci, EpciInterface} from "../../../generated/models/epci";
+import {currentAccessToken} from "./authentication";
 
 
 export const indicateurValueStore = new HybridStore<IndicateurValueStorable>({
@@ -77,10 +78,10 @@ export const indicateurReferentielCommentaireStore = new HybridStore<IndicateurR
     deserializer: (serialized) => new IndicateurReferentielCommentaireStorable(serialized as IndicateurReferentielCommentaireInterface),
 });
 
-
 export const epciStore = new HybridStore<EpciStorable>({
     host: getCurrentAPI(),
     endpoint: () => `v2/${Epci.pathname}`,
+    authorization: () => `Bearer ${currentAccessToken()}`,
     serializer: (storable) => storable,
     deserializer: (serialized) => new EpciStorable(serialized as EpciInterface),
 });
