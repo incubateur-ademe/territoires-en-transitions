@@ -41,7 +41,6 @@ npm run build && npm run preview
 
 Cette commande désactive le hot-reloading et génère les fichiers statiques pour la production.
 
-
 ## Contenu
 
 L'application permet de modifier son contenu sans avoir à modifier les fichiers de code.

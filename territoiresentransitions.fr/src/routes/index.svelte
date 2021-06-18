@@ -32,8 +32,8 @@
   import Cards from '../components/Cards.svelte';
   import Link from '../components/Link.svelte';
   import LinkBtn from '../components/LinkBtn.svelte';
-  import Footer from "../components/Footer.svelte";
-  import Contact from "../components/Contact.svelte";
+  import Footer from '../components/Footer.svelte';
+  import Contact from '../components/Contact.svelte';
 
   export let description;
   export let buttons;
@@ -43,11 +43,11 @@
 
   const renderers = {
     heading: Title,
-    link: Link,
+    link: Link
   };
 
   const btnRenderers = {
-    link: LinkBtn,
+    link: LinkBtn
   };
 </script>
 
@@ -85,11 +85,11 @@
         <SvelteMarkdown source={contactUs} {renderers} />
       </div>
       <div class="fr-grid-row fr-grid-row--gutters">
-        <Contact/>
+        <Contact />
       </div>
     </div>
   </div>
 </main>
-<Footer/>
+<Footer />
 
 <style global src="../../node_modules/@gouvfr/dsfr/dist/css/dsfr.css"></style>
