@@ -1,5 +1,5 @@
 <script>
-  import cards from '../content/home/cards/cards.json';
+  import cards from '../../content/home/cards/cards.json';
 </script>
 
 {#each cards as card}

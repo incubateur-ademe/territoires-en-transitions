@@ -5,12 +5,14 @@
   export async function load({ fetch }) {
     const fetcher = async (file) => await fetch('/bridge?file=' + file);
 
-    const [description, buttons, cards, howToStart, contactUs] = await Promise.all([
+    const [description, buttons, cards, howToStart, contactUs, headerLinks, footerLinks] = await Promise.all([
       fetcher('home/description.md'),
       fetcher('home/buttons.md'),
       fetcher('home/cards.md'),
       fetcher('home/how-to-start.md'),
-      fetcher('home/contact-us.md')
+      fetcher('home/contact-us.md'),
+      fetcher('header/links.md'),
+      fetcher('footer/links.md'),
     ]);
 
     return {
@@ -19,7 +21,9 @@
         buttons: await buttons.text(),
         cards: await cards.text(),
         howToStart: await howToStart.text(),
-        contactUs: await contactUs.text()
+        contactUs: await contactUs.text(),
+        headerLinks: await headerLinks.text(),
+        footerLinks: await footerLinks.text(),
       }
     };
   }
@@ -28,10 +32,10 @@
 <script>
   import SvelteMarkdown from 'svelte-markdown';
   import Header from '../components/Header.svelte';
-  import Title from '../components/Title.svelte';
-  import Cards from '../components/Cards.svelte';
-  import Link from '../components/Link.svelte';
-  import LinkBtn from '../components/LinkBtn.svelte';
+  import Title from '../components/Markdown/Title.svelte';
+  import Cards from '../components/Markdown/Cards.svelte';
+  import Link from '../components/Markdown/Link.svelte';
+  import LinkBtn from '../components/Markdown/LinkBtn.svelte';
   import Footer from '../components/Footer.svelte';
   import Contact from '../components/Contact.svelte';
 
@@ -40,6 +44,8 @@
   export let cards;
   export let howToStart;
   export let contactUs;
+  export let headerLinks;
+  export let footerLinks;
 
   const renderers = {
     heading: Title,
@@ -51,7 +57,7 @@
   };
 </script>
 
-<Header />
+<Header {headerLinks} />
 <main role="main">
   <div id="contenu" class="fr-container-fluid ds_banner">
     <div class="fr-container">
@@ -90,6 +96,6 @@
     </div>
   </div>
 </main>
-<Footer />
+<Footer {footerLinks} />
 
 <style global src="../../node_modules/@gouvfr/dsfr/dist/css/dsfr.css"></style>
