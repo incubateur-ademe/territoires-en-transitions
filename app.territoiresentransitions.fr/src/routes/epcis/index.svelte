@@ -6,7 +6,7 @@
     import {onMount} from "svelte";
     import {currentUtilisateurDroits} from "../../api/authentication";
     import {UtilisateurDroits} from "../../../../generated/models/utilisateur_droits";
-    import Button from "../../components/shared/Button/Button.svelte";
+    import Card from "./_EpciCard.svelte"
 
     let allEpcis: EpciStorable[] = []
     let userEpcis: EpciStorable[] = []
@@ -19,36 +19,28 @@
         userEpcis = allEpcis.filter((epci) => utilisateurDroits.filter((droits) => droits.ecriture && droits.epci_id === epci.id))
     })
 
-    const gotoFiches = (epciId) => {
-        window.location.href = `fiches/?epci_id=${epciId}`
-    }
 
-    const gotoIndicateurs = (epciId) => {
-        window.location.href = `indicateurs/?epci_id=${epciId}`
-    }
 </script>
 
+<div class="pb-5"></div>
 <div>
-    <h2>Bienvenue !</h2>
+    <h2 class="text-3xl text-center">Bienvenue !</h2>
+    <div class="pb-5"></div>
 
-    {#each userEpcis as epci}
-        <p>
-            {epci.nom}
-            <br>
-            <Button on:click={gotoFiches(epci.uid)}>Plan d'action</Button>
-            <Button on:click={gotoIndicateurs(epci.uid)}>Indicateurs</Button>
-        </p>
-    {/each}
+    <div class="grid grid-cols-4 gap-4">
+        {#each userEpcis as epci}
+            <Card epci={epci} writable/>
+        {/each}
+    </div>
 </div>
 
+<div class="pb-5"></div>
 <div>
-    <h2>Toutes les collectivités</h2>
-    {#each allEpcis as epci}
-        <p>
-            {epci.nom}
-            <br>
-            <Button on:click={gotoFiches(epci.uid)}>Plan d'action</Button>
-            <Button on:click={gotoIndicateurs(epci.uid)}>Indicateurs</Button>
-        </p>
-    {/each}
+    <h2 class="text-3xl text-center">Consulter les autres collectivités</h2>
+    <div class="pb-5"></div>
+    <div class="grid grid-cols-4 gap-4">
+        {#each allEpcis as epci}
+            <Card epci={epci}/>
+        {/each}
+    </div>
 </div>
