@@ -1,5 +1,5 @@
 <script>
-  export let footerLinks;
+  import links from './../content/footer/links.md';
   import SvelteMarkdown from 'svelte-markdown';
   import FooterLink from './Footer/FooterLink.svelte';
 
@@ -26,7 +26,7 @@
     </div>
     <div class="fr-footer__bottom">
       <ul class="fr-footer__bottom-list">
-        <SvelteMarkdown source={footerLinks} {renderers} />
+        <SvelteMarkdown source={links.content} {renderers} />
       </ul>
       <div class="fr-footer__bottom-copy">
         <p></p>

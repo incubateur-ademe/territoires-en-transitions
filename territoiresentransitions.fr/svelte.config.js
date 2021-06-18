@@ -1,12 +1,13 @@
 import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-static';
 import purgecss from '@fullhuman/postcss-purgecss';
+import markdownImport from './src/transform/MarkdownImport.mjs';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   // Consult https://github.com/sveltejs/svelte-preprocess
   // for more information about preprocessors
-  extensions: ['.svelte', '.md'],
+  extensions: ['.svelte'],
   preprocess: preprocess({
     postcss: {
       plugins: [
@@ -30,8 +31,12 @@ const config = {
       crawl: false
     },
     // hydrate the <div id="svelte"> element in src/app.html
-    target: '#svelte'
-  }
+    target: '#svelte',
+    vite: {
+      plugins: [markdownImport({})]
+    }
+  },
+
 };
 
 export default config;

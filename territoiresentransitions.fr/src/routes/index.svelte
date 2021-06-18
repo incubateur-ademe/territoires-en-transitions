@@ -5,14 +5,12 @@
   export async function load({ fetch }) {
     const fetcher = async (file) => await fetch('/bridge?file=' + file);
 
-    const [description, buttons, cards, howToStart, contactUs, headerLinks, footerLinks] = await Promise.all([
+    const [description, buttons, cards, howToStart, contactUs] = await Promise.all([
       fetcher('home/description.md'),
       fetcher('home/buttons.md'),
       fetcher('home/cards.md'),
       fetcher('home/how-to-start.md'),
       fetcher('home/contact-us.md'),
-      fetcher('header/links.md'),
-      fetcher('footer/links.md'),
     ]);
 
     return {
@@ -22,8 +20,6 @@
         cards: await cards.text(),
         howToStart: await howToStart.text(),
         contactUs: await contactUs.text(),
-        headerLinks: await headerLinks.text(),
-        footerLinks: await footerLinks.text(),
       }
     };
   }
@@ -44,8 +40,6 @@
   export let cards;
   export let howToStart;
   export let contactUs;
-  export let headerLinks;
-  export let footerLinks;
 
   const renderers = {
     heading: Title,
@@ -57,7 +51,7 @@
   };
 </script>
 
-<Header {headerLinks} />
+<Header />
 <main role="main">
   <div id="contenu" class="fr-container-fluid ds_banner">
     <div class="fr-container">
@@ -96,6 +90,6 @@
     </div>
   </div>
 </main>
-<Footer {footerLinks} />
+<Footer />
 
 <style global src="../../node_modules/@gouvfr/dsfr/dist/css/dsfr.css"></style>
