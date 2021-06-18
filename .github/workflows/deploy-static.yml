@@ -30,7 +30,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
-          ${{ runner.os }}-
+            ${{ runner.os }}-
 
       # Build client with SvelteKit
       - name: Build client with SvelteKit
