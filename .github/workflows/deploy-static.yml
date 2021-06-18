@@ -4,8 +4,6 @@ on:
   push:
     # TODO : change branch name to production-static
     branches: [deploy-static-workflow]
-    paths:
-      - 'territoiresentransitions.fr/**'
 
 jobs:
   build:
