@@ -30,6 +30,7 @@
   import Header from '../components/Header.svelte';
   import Title from '../components/Title.svelte';
   import Cards from '../components/Cards.svelte';
+  import Link from '../components/Link.svelte';
   import LinkBtn from '../components/LinkBtn.svelte';
   import Footer from "../components/Footer.svelte";
 
@@ -40,11 +41,12 @@
   export let contactUs;
 
   const renderers = {
-    heading: Title
+    heading: Title,
+    link: Link,
   };
 
   const btnRenderers = {
-    link: LinkBtn
+    link: LinkBtn,
   };
 </script>
 

@@ -17,13 +17,13 @@
     <div class="fr-footer__bottom">
       <ul class="fr-footer__bottom-list">
         <li class="fr-footer__bottom-item">
-          <a class="fr-footer__bottom-link" href="#plan-du-site" target="_self">Plan du site</a>
+          <a class="fr-footer__bottom-link" href="/plan-du-site" target="_self">Plan du site</a>
         </li>
         <li class="fr-footer__bottom-item">
-          <a class="fr-footer__bottom-link" href="#mentions-legales" target="_self">Mentions légales</a>
+          <a class="fr-footer__bottom-link" href="/mentions-legales" target="_self">Mentions légales</a>
         </li>
         <li class="fr-footer__bottom-item">
-          <a class="fr-footer__bottom-link" href="#statistiques" target="_self">Statistiques</a>
+          <a class="fr-footer__bottom-link" href="/statistiques" target="_self">Statistiques</a>
         </li>
         <li class="fr-footer__bottom-item">
           <a class="fr-footer__bottom-link" href="https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel" target="_blank" rel="noopener" title="Protection des données - nouvelle fenêtre">Protection des données</a>
