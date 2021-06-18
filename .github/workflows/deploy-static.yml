@@ -2,7 +2,8 @@ name: Deploy territoiresentransitions.fr
 
 on:
   push:
-    branches: [production-static]
+    # TODO : change branch name to production-static
+    branches: [deploy-static-workflow]
     paths:
       - 'territoiresentransitions.fr/**'
 
