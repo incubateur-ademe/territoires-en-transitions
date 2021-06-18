@@ -25,7 +25,7 @@
         <div class="fr-header__tools-links">
           <ul class="fr-links-group">
             <li>
-              <a href="/" class="fr-link" title="Se connecter">
+              <a href="https://app.territoiresentransitions.fr/connexion/" class="fr-link" title="Se connecter">
                 <span class="fr-fi-user fr-ds-picto fr-fi--sm fr-mr-2v" /> Se connecter
               </a>
             </li>
