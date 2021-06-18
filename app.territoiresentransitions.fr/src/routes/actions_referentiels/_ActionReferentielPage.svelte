@@ -9,12 +9,14 @@
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
 
     export let action: ActionReferentiel
+
     let displayed = action.actions
-
-
     let epciId = ''
+    let description = ''
+
     onMount(async () => {
         epciId = getCurrentEpciId()
+        description = action.description
     })
 </script>
 
@@ -58,9 +60,11 @@
         <div>
             <h1>{action.id_nomenclature} {action.nom}</h1>
 
-            <div class="pageIntro__description">
-                {@html action.description}
-            </div>
+            {#if description}
+              <div class="pageIntro__description">
+                  {@html action.description}
+              </div>
+            {/if}
         </div>
 
         <div>
