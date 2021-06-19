@@ -2,7 +2,7 @@
 
 - [Contexte](#contexte)
 - [Philosophie](#philosophie)
-- [Référent·e·s](##référentes)
+- [Référent·e·s](#référentes)
 - [Sujets tech](#sujets-tech)
 
 ## Contexte
