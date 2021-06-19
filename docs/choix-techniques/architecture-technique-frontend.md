@@ -1,7 +1,7 @@
 # Architecture technique frontend
 
 Les choix présentés ici, comme tout nos choix sont susceptibles d'évoluer conformément à
-la [philosophie de l'équipe de développement](https://github.com/labels-transition/documentation/blob/main/tech/fonctionnement-de-l-equipe.md#philosophie).
+la [philosophie de l'équipe de développement](https://github.com/betagouv/territoires-en-transitions/blob/tech-team-doc/docs/%C3%A9quipe/fonctionnement-de-l-equipe.md#philosophie).
 
 - [Langages et framewor](#langages-et-frameworks)
   - [JavaScript](#javascript)
