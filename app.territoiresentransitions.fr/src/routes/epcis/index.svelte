@@ -13,17 +13,24 @@
     let userEpcis: EpciStorable[] = []
     let showAddDialog: boolean = false
 
-    onMount(async () => {
+    const fetch = async () => {
         const stores = await import('../../api/hybridStores')
         const utilisateurDroits: UtilisateurDroits[] = await currentUtilisateurDroits()
 
         allEpcis = await stores.epciStore.retrieveAll()
         userEpcis = allEpcis.filter((epci) => {
             return utilisateurDroits.filter((droits) => {
-                return droits.ecriture && droits.epci_id === epci.id;
-            }).length > 0;
+                return droits.ecriture && droits.epci_id === epci.id
+            }).length > 0
         })
-    })
+    }
+
+    const handleDialogClose = async () => {
+        showAddDialog = false
+        await fetch()
+    }
+
+    onMount(fetch)
 </script>
 
 <div class="pb-5"></div>
@@ -61,7 +68,7 @@
     {#await import('./_AddDialog.svelte') then c}
         <svelte:component this={c.default}
                           epcis={allEpcis}
-                          on:AddDialogClose={() => showAddDialog = false}
+                          on:AddDialogClose={handleDialogClose}
         />
     {/await}
 {/if}
