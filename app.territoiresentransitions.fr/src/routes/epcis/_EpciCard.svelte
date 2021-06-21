@@ -13,7 +13,6 @@
     const goto = (section: string, epciId: string) => {
         window.location.href = `/${section}/?epci_id=${epciId}`
     }
-
 </script>
 
 <div class="shadow-sm bg-white p-2">
