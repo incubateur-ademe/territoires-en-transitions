@@ -9,6 +9,7 @@
     import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
     import ActionReferentielCard from "../ActionReferentiel/ActionReferentielCard.svelte";
     import IndicateurReferentielCommentaireArea from "./IndicateurReferentielCommentaireArea.svelte";
+    import RowCard from "../RowCard.svelte";
 
     export let indicateur: IndicateurReferentiel
     let relatedActions: ActionReferentiel[] = []
@@ -20,7 +21,7 @@
     let years = [...Array(7).keys()].map(i => i + 2016) // 2016 to 2022
 
     const prettifyId = (id: string) => {
-        return id.replace('cae-', '🌍 ').replace('eci-', '♻ ').replace(' 0', '')
+        return id.replace('cae-', '').replace('eci-', '').replace(' 0', '')
     }
 
     onMount(async () => {
@@ -43,8 +44,17 @@
     })
 </script>
 
-<section class="p-4 my-4 bg-white flex flex-col indicateur"
-         id="indicateur-{indicateur.id}">
+<style>
+    .indicatorRow {
+        display: flex;
+    }
+
+    .indicatorRow > div:not(:first-child) {
+        margin-left: 1.25rem;
+    }
+</style>
+
+<RowCard id="indicateur-{indicateur.id}">
 
     <div class="flex flex-col lg:flex-row items-start">
         <div class="flex-1 flex flex-row cursor-pointer items-stretch mr-4"
@@ -56,11 +66,9 @@
             <Angle direction="{expanded ? 'down' : 'right' }"/>
         </div>
 
-
-        <form class="flex-1 flex flex-row"
-              data-component="indicatorForm">
+        <form class="indicatorRow">
             {#each years as year}
-                <div class="flex-grow ml-2">
+                <div>
                     <IndicateurReferentielValueInput indicateur={indicateur} year={year}/>
                 </div>
             {/each}
@@ -68,21 +76,18 @@
     </div>
 
 
-    <div class="description lg:w-2/3 mt-4"
+    <div class="description"
          class:hidden="{!expanded}">
 
-        <div class="pb-2"></div>
-        <h4 class="text-lg mt-4 mb-2">Description</h4>
+        <h4>Description</h4>
         {@html indicateur.description }
 
-        <div class="pb-2"></div>
-        <h4 class="text-lg mt-4 mb-2">Actions liées</h4>
+        <h4>Actions liées</h4>
         {#each relatedActions as action}
             <ActionReferentielCard action={action} link/>
         {/each}
 
-        <div class="pb-5"></div>
         <IndicateurReferentielCommentaireArea indicateur={indicateur}/>
     </div>
 
-</section>
+</RowCard>

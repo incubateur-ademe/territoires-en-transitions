@@ -12,6 +12,10 @@
     article:not(:first-of-type) {
         margin-top: 1rem;
     }
+
+    article > h3 { /* NE FONCTIONNE PAS !*/
+        font-size: 1.25rem;
+    }
 </style>
 
 <article id="{id}">

@@ -56,8 +56,7 @@
 
 <label class="container">
     { year }
-    <input class="border border-gray-400 rounded px-2 py-1 shadow-sm
-                                       outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full"
+    <input class="fr-input"
            data-indicator-id="{ indicateur.id }"
            data-indicator-year="{ year }"
            bind:value={value}

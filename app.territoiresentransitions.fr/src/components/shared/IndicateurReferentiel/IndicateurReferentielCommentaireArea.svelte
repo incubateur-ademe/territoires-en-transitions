@@ -42,11 +42,10 @@
     }
 </script>
 
-<div class="flex flex-col">
+<div>
     <LabeledTextArea bind:value={data.value}>
         <div class="text-xl">Commentaire</div>
     </LabeledTextArea>
-    <div class="flex flex-row-reverse">
-        <Button on:click={onSave}>Enregistrer</Button>
-    </div>
+
+    <a class="fr-btn" on:click={onSave}>Enregistrer</a>
 </div>
