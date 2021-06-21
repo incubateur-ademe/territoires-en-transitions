@@ -98,7 +98,7 @@ export const addDroits = async (epciId: string, ecriture: boolean): Promise<bool
         throw "User must be connected to add droits"
 
     const droits: UtilisateurDroitsInterface = {
-        ademe_user_id: currentUser().id,
+        ademe_user_id: currentUser().ademe_user_id,
         epci_id: epciId,
         ecriture: ecriture,
     }
