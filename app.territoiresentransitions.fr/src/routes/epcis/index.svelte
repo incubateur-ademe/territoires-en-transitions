@@ -11,7 +11,7 @@
 
     let allEpcis: EpciStorable[] = []
     let userEpcis: EpciStorable[] = []
-    let showAddDialog: boolean = true
+    let showAddDialog: boolean = false
 
     onMount(async () => {
         const stores = await import('../../api/hybridStores')
