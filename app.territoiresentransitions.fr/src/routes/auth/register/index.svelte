@@ -1,6 +1,6 @@
 <script lang="ts">
     import {UtilisateurInscriptionInterface} from "../../../../../generated/models/utilisateur_inscription";
-    import {maximumLengthValidatorBuilder, requiredValidator} from "../../../api/validators";
+    import {emailValidator, maximumLengthValidatorBuilder, requiredValidator} from "../../../api/validators";
     import {joinValidators, validate} from "../../../api/validator";
     import LabeledTextInput from "../../../components/shared/Forms/LabeledTextInput.svelte";
     import Button from "../../../components/shared/Button/Button.svelte";
@@ -16,7 +16,7 @@
     }
 
     const validators = {
-        email: joinValidators([requiredValidator, maximumLengthValidatorBuilder(300)]),
+        email: joinValidators([requiredValidator, maximumLengthValidatorBuilder(300), emailValidator]),
         nom: joinValidators([requiredValidator, maximumLengthValidatorBuilder(300)]),
         prenom: joinValidators([requiredValidator, maximumLengthValidatorBuilder(300)]),
         vie_privee_conditions: requiredValidator,
@@ -88,15 +88,13 @@
 
         <h1 class="text-2xl">Créer un compte</h1>
         <div class="pb-10"></div>
+        <div>Si vous avez déjà un compte ADEME, <a class="text-blue-600" href="/auth/signin/">connectez-vous directement par ici</a>.</div>
+        <div class="p-5"></div>
         <form class="flex flex-col w-full md:w-3/4 pb-10">
-            <LabeledTextInput bind:value={inscription.email}
-                              maxlength="300"
-                              validator={validators.email}>
-                <div class="text-xl">Adresse mail</div>
-            </LabeledTextInput>
+            <div>Tous les champs sont obligatoires.</div>
             <div class="p-5"></div>
-
             <LabeledTextInput bind:value={inscription.nom}
+                              validateOnMount={false}
                               maxlength="300"
                               validator={validators.nom}>
                 <div class="text-xl">Nom</div>
@@ -104,11 +102,21 @@
             <div class="p-5"></div>
 
             <LabeledTextInput bind:value={inscription.prenom}
+                              validateOnMount={false}
                               maxlength="300"
                               validator={validators.prenom}>
                 <div class="text-xl">Prénom</div>
             </LabeledTextInput>
             <div class="p-5"></div>
+
+            <LabeledTextInput bind:value={inscription.email}
+                              validateOnMount={false}
+                              maxlength="300"
+                              validator={validators.email}>
+                <div class="text-xl">Adresse mail</div>
+            </LabeledTextInput>
+            <div class="p-5"></div>
+
 
             <label class="inline-flex items-center">
                 <input type=checkbox
