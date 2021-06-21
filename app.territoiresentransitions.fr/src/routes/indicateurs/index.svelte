@@ -54,7 +54,7 @@
 <div class="pageIntro">
     <div>
         <h1>
-            Référentiels
+            Indicateurs
         </h1>
 
         <IndicateursSearchBar bind:matches={displayed} indicateurs={indicateurs} searchCallBack={update}/>
