@@ -40,7 +40,7 @@
         {:else}
             <h1 class="text-xl">Erreur d'authenfication</h1>
             <div class="pb-5"></div>
-            <p>Une erreur s'est produite et nous n'avons pas pû vous authentifier</p>
+            <p>Une erreur s'est produite et nous n'avons pas pu vous authentifier</p>
         {/if}
     {:else }
         <p>Authentification en cours...</p>
