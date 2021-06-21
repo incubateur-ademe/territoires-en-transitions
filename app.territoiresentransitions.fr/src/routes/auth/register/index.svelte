@@ -12,14 +12,14 @@
         email: '',
         nom: '',
         prenom: '',
-        vie_privee: '',
+        vie_privee_conditions: '',
     }
 
     const validators = {
         email: joinValidators([requiredValidator, maximumLengthValidatorBuilder(300)]),
         nom: joinValidators([requiredValidator, maximumLengthValidatorBuilder(300)]),
         prenom: joinValidators([requiredValidator, maximumLengthValidatorBuilder(300)]),
-        vie_privee: requiredValidator,
+        vie_privee_conditions: requiredValidator,
     }
 
     let registrationResponse: Response
@@ -29,7 +29,7 @@
     $: acceptViePrivee, updateViePrivee(acceptViePrivee)
 
     const updateViePrivee = (accept: Boolean) => {
-        inscription.vie_privee = accept ? politique_vie_privee : ''
+        inscription.vie_privee_conditions = accept ? politique_vie_privee : ''
     }
 
     const register = async () => {

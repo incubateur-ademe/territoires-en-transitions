@@ -24,7 +24,7 @@ UtilisateurInscription:
         type: String
     prenom:
         type: String
-    vie_privee:
+    vie_privee_conditions:
         type: String
 ```
 

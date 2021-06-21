@@ -11,7 +11,10 @@
     onMount(() => {
         const environment = getCurrentEnvironment()
         let host = window.location.hostname
+
+        // use sandbox for local dev as keycloak doesn't support localhost as a valid redirect domain.
         if (environment === 'local') host = 'sandbox.territoiresentransitions.fr'
+        
         const redirect = `https://${host}/auth/redirect/`
         const realm = 'master'
         const keycloak = 'https://moncompte.ademe.fr'

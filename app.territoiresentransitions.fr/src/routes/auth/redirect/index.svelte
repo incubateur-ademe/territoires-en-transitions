@@ -20,7 +20,10 @@
 
         const environment = getCurrentEnvironment()
         let host = window.location.hostname
+
+        // use sandbox for local dev as keycloak doesn't support localhost as a valid redirect domain.
         if (environment === 'local') host = 'sandbox.territoiresentransitions.fr'
+
         const redirect_uri = `https://${host}/auth/redirect/`
 
         tokenResponse = await fetch(`${endpoint}?redirect_uri=${redirect_uri}&code=${code}`)
