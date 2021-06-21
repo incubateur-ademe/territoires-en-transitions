@@ -41,7 +41,7 @@
     <div class="grid grid-cols-4 gap-4">
         <div class="shadow-sm bg-white p-2">
             <h3 class="text-3xl">...</h3>
-            <Button on:click={() => showAddDialog = !showAddDialog}>Ajouter une collectivité</Button>
+            <Button on:click={() => showAddDialog = !showAddDialog}>Rejoindre ma collectivité</Button>
         </div>
 
         {#each userEpcis as epci}
