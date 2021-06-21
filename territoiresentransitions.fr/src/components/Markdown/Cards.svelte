@@ -1,10 +1,11 @@
 <script>
   import cards from '../../content/home/cards/cards.json';
+  import FooterLink from "../Footer/FooterLink.svelte";
 </script>
 
 {#each cards as card}
   <div class="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
-    <div class="fr-card {card.link ? 'fr-enlarge-link' : ''}">
+    <div class="fr-card {card.link ? 'fr-enlarge-link' : 'fr-card--no-arrow'}">
       <div class="fr-card__body">
         <h3 class="fr-card__title">
           {#if card.link}
@@ -19,7 +20,7 @@
       </div>
       {#if Object.keys(card.image).length}
         <div class="fr-card__img">
-          <img src={card.image.image} title={card.image.title} alt={card.image.alt} />
+          <img src={card.image.image} title={card.image.title} alt={card.image.alt} width="70%" height="70%"/>
         </div>
       {:else}
         <div class="fr-card__img">
@@ -29,3 +30,9 @@
     </div>
   </div>
 {/each}
+
+<style>
+  .fr-card__img img {
+    object-fit: none;
+  }
+</style>
