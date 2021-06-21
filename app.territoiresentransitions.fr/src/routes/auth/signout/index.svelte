@@ -15,7 +15,7 @@
         const keycloak = 'https://moncompte.ademe.fr'
 
         window.location.href =
-            `${keycloak}/auth/realms/${realm}/protocol/openid-connect/logout`
+            `${keycloak}/auth/realms/${realm}/protocol/openid-connect/logout/`
             + `?redirect_uri=${logout}`
 
     })
