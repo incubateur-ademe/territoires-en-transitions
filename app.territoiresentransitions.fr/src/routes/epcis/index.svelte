@@ -7,7 +7,6 @@
     import {currentUtilisateurDroits} from "../../api/authentication";
     import {UtilisateurDroits} from "../../../../generated/models/utilisateur_droits";
     import Card from "./_EpciCard.svelte"
-    import AddDialog from "./_AddDialog.svelte"
     import Button from "../../components/shared/Button/Button.svelte";
 
     let allEpcis: EpciStorable[] = []
@@ -35,7 +34,7 @@
     <div class="grid grid-cols-4 gap-4">
         <div class="shadow-sm bg-white p-2">
             <h3 class="text-3xl">...</h3>
-            <Button on:click={() => showAddDialog = true}>Ajouter une collectivité</Button>
+            <Button on:click={() => showAddDialog = !showAddDialog}>Ajouter une collectivité</Button>
         </div>
 
         {#each userEpcis as epci}
@@ -44,10 +43,6 @@
     </div>
 </div>
 
-
-{#if showAddDialog}
-    <AddDialog epcis={allEpcis}/>
-{/if}
 
 <div class="pb-5"></div>
 <div>
@@ -60,3 +55,13 @@
         {/each}
     </div>
 </div>
+
+
+{#if showAddDialog}
+    {#await import('./_AddDialog.svelte') then c}
+        <svelte:component this={c.default}
+                          epcis={allEpcis}
+                          on:AddDialogClose={() => showAddDialog = false}
+        />
+    {/await}
+{/if}
