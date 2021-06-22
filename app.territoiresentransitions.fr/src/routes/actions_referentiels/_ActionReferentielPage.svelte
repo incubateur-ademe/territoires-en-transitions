@@ -7,6 +7,7 @@
     import IndicateurReferentielCard
         from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
+    import ProgressStat from "../../../../components/ProgressStat.svelte";
 
     export let action: ActionReferentiel
 
@@ -42,10 +43,15 @@
 
     .pageIntro__titleWithActions {
         display: flex;
+        margin-bottom:1.875rem;;
     }
 
     .pageIntro__titleWithActions > div {
         max-width: 75%;
+    }
+
+    .pageIntro__description > p {
+        margin-bottom: 0;
     }
 </style>
 
@@ -59,12 +65,6 @@
     <div class="pageIntro__titleWithActions">
         <div>
             <h1>{action.id_nomenclature} {action.nom}</h1>
-
-            {#if description}
-              <div class="pageIntro__description">
-                  {@html action.description}
-              </div>
-            {/if}
         </div>
 
         <div>
@@ -73,6 +73,17 @@
                 Créer une fiche-action
             </a>
         </div>
+    </div>
+
+    <ProgressStat state={"alert"}/>
+
+    <div>
+        {#if description}
+            <div class="pageIntro__description">
+                <p></p>
+                {@html action.description}
+            </div>
+        {/if}
     </div>
 </div>
 
