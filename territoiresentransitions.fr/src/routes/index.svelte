@@ -62,11 +62,6 @@
           </div>
         </div>
       {/if}
-      {#if buttons }
-        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mb-10w">
-          <SvelteMarkdown source={buttons} renderers={btnRenderers} />
-        </div>
-      {/if}
     </div>
     <div class="fr-container">
       <div class="fr-grid-row fr-grid-row--gutters">
