@@ -17,10 +17,10 @@ class FicheAction:
     description: str
     budget: float
     personne_referente: str
+    structure_pilote: str
+    partenaires: str
+    elu_referent: str
     commentaire: str
     date_debut: str
     date_fin: str
     indicateur_personnalise_ids: List[str]
-    structure_pilote: str
-    partenaires: str
-    elu_referent: str
