@@ -1,3 +1,13 @@
+<script>
+  import links from './../content/footer/links.md';
+  import SvelteMarkdown from 'svelte-markdown';
+  import FooterLink from './Footer/FooterLink.svelte';
+
+  const renderers = {
+    link: FooterLink
+  }
+</script>
+
 <footer class="fr-footer fr-mt-10w" role="contentinfo" id="footer">
   <div class="fr-container">
     <div class="fr-footer__body">
@@ -16,37 +26,10 @@
     </div>
     <div class="fr-footer__bottom">
       <ul class="fr-footer__bottom-list">
-        <li class="fr-footer__bottom-item">
-          <a class="fr-footer__bottom-link" href="/plan-du-site" target="_self">Plan du site</a>
-        </li>
-        <li class="fr-footer__bottom-item">
-          <a class="fr-footer__bottom-link" href="/mentions-legales" target="_self"
-            >Mentions légales</a
-          >
-        </li>
-        <li class="fr-footer__bottom-item">
-          <a class="fr-footer__bottom-link" href="/statistiques" target="_self">Statistiques</a>
-        </li>
-        <li class="fr-footer__bottom-item">
-          <a
-            class="fr-footer__bottom-link"
-            href="https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel"
-            target="_blank"
-            rel="noopener"
-            title="Protection des données - nouvelle fenêtre">Protection des données</a
-          >
-        </li>
+        <SvelteMarkdown source={links.content} {renderers} />
       </ul>
       <div class="fr-footer__bottom-copy">
-        <p>
-          Sauf mention contraire, tous les textes de ce site sont sous licence <a
-            class="rf-link-licence"
-            title="Licence etalab-2.0 sur le site etalab - nouvelle fenêtre"
-            target="_blank"
-            rel="noopener"
-            href="https://www.etalab.gouv.fr/licence-ouverte-open-licence">etalab-2.0</a
-          >
-        </p>
+        <p></p>
       </div>
     </div>
   </div>

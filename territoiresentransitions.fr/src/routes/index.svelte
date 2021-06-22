@@ -10,7 +10,7 @@
       fetcher('home/buttons.md'),
       fetcher('home/cards.md'),
       fetcher('home/how-to-start.md'),
-      fetcher('home/contact-us.md')
+      fetcher('home/contact-us.md'),
     ]);
 
     return {
@@ -19,7 +19,7 @@
         buttons: await buttons.text(),
         cards: await cards.text(),
         howToStart: await howToStart.text(),
-        contactUs: await contactUs.text()
+        contactUs: await contactUs.text(),
       }
     };
   }
@@ -28,10 +28,10 @@
 <script>
   import SvelteMarkdown from 'svelte-markdown';
   import Header from '../components/Header.svelte';
-  import Title from '../components/Title.svelte';
-  import Cards from '../components/Cards.svelte';
-  import Link from '../components/Link.svelte';
-  import LinkBtn from '../components/LinkBtn.svelte';
+  import Title from '../components/Markdown/Title.svelte';
+  import Cards from '../components/Markdown/Cards.svelte';
+  import Link from '../components/Markdown/Link.svelte';
+  import LinkBtn from '../components/Markdown/LinkBtn.svelte';
   import Footer from '../components/Footer.svelte';
   import Contact from '../components/Contact.svelte';
 
