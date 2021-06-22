@@ -5,9 +5,9 @@ ces contenus peuvent évoluer au fur et à mesure de notre avancée dans le proj
 n'est figé, tout est ouvert à discussion.
 
 ### Équipe
-- [Fonctionnement de l'équipe](équipe/fonctionnement-de-l-equipe.md)
+- [Fonctionnement de l'équipe](equipe/fonctionnement-de-l-equipe.md)
 - [Quelques questions pour
-  commencer](équipe/quelques-questions-pour-commencer.md)
+  commencer](equipe/quelques-questions-pour-commencer.md)
 
 ### Choix techniques
 - [Architecture technique
