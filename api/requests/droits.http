@@ -1,0 +1,15 @@
+### Write droits
+POST {{host}}/v2/utilisateur_droits
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "ademe_user_id": "2e417dc2-3afc-4381-a5c0-c9849798b6f1",
+  "epci_id": "some-id",
+  "ecriture": true
+}
+
+
+### Check get utilisateur droits
+GET {{host}}/v2/utilisateur_droits/2e417dc2-3afc-4381-a5c0-c9849798b6f1
+Authorization: Bearer {{access_token}}

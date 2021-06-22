@@ -1,0 +1,21 @@
+-- upgrade --
+CREATE TABLE IF NOT EXISTS "utilisateurdroits" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "ademe_user_id" VARCHAR(300) NOT NULL,
+    "epci_id" VARCHAR(36) NOT NULL,
+    "ecriture" BOOL NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+    "modified_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP
+);;
+CREATE TABLE IF NOT EXISTS "epci" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "uid" VARCHAR(36) NOT NULL,
+    "insee" VARCHAR(5) NOT NULL,
+    "siren" VARCHAR(9) NOT NULL,
+    "nom" VARCHAR(300) NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+    "modified_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP
+);;
+-- downgrade --
+DROP TABLE IF EXISTS "utilisateurdroits";
+DROP TABLE IF EXISTS "epci";
