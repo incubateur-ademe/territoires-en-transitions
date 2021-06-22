@@ -55,14 +55,18 @@
 <main role="main">
   <div id="contenu" class="fr-container-fluid ds_banner">
     <div class="fr-container">
-      <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-mt-3w fr-mt-md-9w fr-mb-5w text-center">
-          <SvelteMarkdown source={description} {renderers} />
+      {#if description }
+        <div class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-mt-3w fr-mt-md-9w fr-mb-5w text-center">
+            <SvelteMarkdown source={description} {renderers} />
+          </div>
         </div>
-      </div>
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mb-10w">
-        <SvelteMarkdown source={buttons} renderers={btnRenderers} />
-      </div>
+      {/if}
+      {#if buttons }
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mb-10w">
+          <SvelteMarkdown source={buttons} renderers={btnRenderers} />
+        </div>
+      {/if}
     </div>
     <div class="fr-container">
       <div class="fr-grid-row fr-grid-row--gutters">
@@ -73,12 +77,16 @@
       </div>
     </div>
     <div class="fr-container fr-mt-10w">
-      <div class="fr-grid-row fr-grid-row--gutters">
-        <SvelteMarkdown source={howToStart} {renderers} />
-      </div>
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mb-10w">
-        <SvelteMarkdown source={buttons} renderers={btnRenderers} />
-      </div>
+      {#if howToStart }
+        <div class="fr-grid-row fr-grid-row--gutters">
+          <SvelteMarkdown source={howToStart} {renderers} />
+        </div>
+      {/if}
+      {#if buttons }
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mb-10w">
+          <SvelteMarkdown source={buttons} renderers={btnRenderers} />
+        </div>
+      {/if}
     </div>
     <div class="fr-container fr-mt-10w">
       <div class="fr-grid-row fr-grid-row--gutters">

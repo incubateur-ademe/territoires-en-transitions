@@ -20,7 +20,7 @@
       </div>
       {#if Object.keys(card.image).length}
         <div class="fr-card__img">
-          <img src={card.image.image} title={card.image.title} alt={card.image.alt} width="70%" height="70%"/>
+          <img src={card.image.image} title={card.image.title} alt={card.image.alt} width="50%" height="50%"/>
         </div>
       {:else}
         <div class="fr-card__img">
@@ -34,5 +34,11 @@
 <style>
   .fr-card__img img {
     object-fit: none;
+    top: 15%;
+    right: 15%;
+    bottom: 15%;
+    left: 15%;
+    height: 70%;
+    width: 70%;
   }
 </style>
