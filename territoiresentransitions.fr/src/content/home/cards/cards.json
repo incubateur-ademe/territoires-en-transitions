@@ -1,62 +1,32 @@
 [
   {
-    "title": "Suivre et évaluer les plans d’actions de votre collectivité",
+    "title": "Gérez votre plan d'actions ",
     "image": {
       "title": "Titre",
       "alt": "",
       "image": "./img/picto-1.svg"
     },
-    "description": "",
+    "description": "Créez ou embarquez votre plan d'actions existant dans l'outil. Complétez ou renforcez votre plan avec les actions des référentiels nationaux des programmes climat-air-énergie (Cit'ergie) et économie circulaire.",
     "link": ""
   },
   {
-    "title": "Suivre vos indicateurs",
+    "title": "Suivez vos indicateurs",
     "image": {
       "title": "Titre",
       "alt": "",
       "image": "./img/picto-2.svg"
     },
-    "description": "",
+    "description": "Gérez collectivement et facilement la mise à jour des actions et des données. Intégrez vos propres indicateurs et comparez vos résultats aux autres collectivités.",
     "link": ""
   },
   {
-    "title": "Collaborer en interne et externe",
-    "image": {
-      "title": "Titre",
-      "alt": "",
-      "image": "./img/picto-3.svg"
-    },
-    "description": "",
-    "link": ""
-  },
-  {
-    "title": "",
+    "title": "Situez-vous par rapport aux référentiels nationaux",
     "image": {
       "title": "Titre",
       "alt": "",
       "image": "./img/picto-4.svg"
     },
-    "description": "Suivre votre progression au regard des <a href=\"/\">référentiels nationaux climat-air-énergie</a> & <a href=\"/\">économie circulaire</a>",
-    "link": ""
-  },
-  {
-    "title": "Obtenir les labels Cit’ergie & Économie Circulaire",
-    "image": {
-      "title": "Titre",
-      "alt": "",
-      "image": "./img/picto-5.svg"
-    },
-    "description": "",
-    "link": ""
-  },
-  {
-    "title": " …Et demain ce qui sera le plus important pour vous en tant qu’utilisateurs…",
-    "image": {
-      "title": "Titre",
-      "alt": "",
-      "image": "./img/picto-6.svg"
-    },
-    "description": "",
+    "description": "Confrontez-vous aux référentiels pour évaluer votre plan d'action par rapport aux meilleures pratiques disponibles.",
     "link": ""
   }
 ]
