@@ -14,8 +14,8 @@
                 </p>
                 <div class="fr-footer__logo fr-p-1w">
                     <picture>
-                        <source srcset="./img/ademe.jpg 118w" sizes="118px" />
-                        <img class="footer__logo" height="100" src="./img/ademe.jpg" alt="ADEME" loading="lazy" />
+                        <source srcset="https://territoiresentransitions.fr/img/ademe.jpg 118w" sizes="118px" />
+                        <img class="footer__logo" height="100" src="https://territoiresentransitions.fr/img/ademe.jpg" alt="ADEME" loading="lazy" />
                     </picture>
                 </div>
                 <div class="fr-header__service">
