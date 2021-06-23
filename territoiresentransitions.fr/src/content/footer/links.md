@@ -1,1 +1,2 @@
+[Mentions légales](/mentions-legales)
 [Protection des données](https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel)
