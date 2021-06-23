@@ -27,12 +27,10 @@
 
 <script>
   import SvelteMarkdown from 'svelte-markdown';
-  import Header from '../components/Header.svelte';
   import Title from '../components/Markdown/Title.svelte';
   import Cards from '../components/Markdown/Cards.svelte';
   import Link from '../components/Markdown/Link.svelte';
   import LinkBtn from '../components/Markdown/LinkBtn.svelte';
-  import Footer from '../components/Footer.svelte';
   import Contact from '../components/Contact.svelte';
 
   export let description;
@@ -51,7 +49,6 @@
   };
 </script>
 
-<Header />
 <main role="main">
   <div id="contenu" class="fr-container-fluid ds_banner">
     <div class="fr-container">
@@ -93,6 +90,3 @@
     </div>
   </div>
 </main>
-<Footer />
-
-<style global src="../../node_modules/@gouvfr/dsfr/dist/css/dsfr.css"></style>

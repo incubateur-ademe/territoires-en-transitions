@@ -24,7 +24,7 @@
         <div class="fr-header__ademe">
           <picture>
             <source srcset="./img/ademe.jpg 118w" sizes="118px" />
-            <img src="./img/ademe.jpg" alt="ADEME" loading="lazy" />
+            <img src="./img/ademe.jpg" alt="ADEME" loading="lazy" style="height: 80px;"/>
           </picture>
         </div>
         <div class="fr-header__service">
@@ -58,4 +58,9 @@
     justify-content: flex-start;
     width: auto;
   }
+
+  .fr-header__body-row {
+    padding: 1rem 0;
+  }
+
 </style>
