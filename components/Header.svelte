@@ -1,5 +1,5 @@
 <script global>
-    import Header from '../DesignSystem/Header.svelte'
+    import Header from './DesignSystem/Header.svelte'
 </script>
 <Header />
 

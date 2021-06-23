@@ -18,6 +18,6 @@
 </style>
 
 <h3 on:click|preventDefault>
-    <span>{action.id_nomenclature} </span>
+    <span>{action.id_nomenclature} - </span>
     {action.nom}
 </h3>

@@ -13,6 +13,7 @@
     import PickButton from '../Button/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
+    import ProgressStat from "../../../../../components/ProgressStat.svelte";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -62,11 +63,6 @@
     let sizes = ['2xl', 'xl', 'l', 'md', '', 'sm']
     $: shadowSize = sizes[depth - (isCitergie ? 0 : 1)]
 
-    let expanded = false
-    const handleExpand = () => {
-        expanded = !expanded
-    }
-
     let epciId = ''
 
     // The action the link points to
@@ -112,13 +108,25 @@
         color: var(--bf500);
     }
 
-    .RowCard__bottomBar {
+    .RowCard__title,
+    .RowCard__content {
         display: flex;
         justify-content: space-between;
+    }
+
+    .RowCard__title {
+        align-items: flex-start;
+    }
+
+    .RowCard__title :global(:first-child) {
+        max-width: 75%;
+    }
+
+    .RowCard__content {
         align-items: center;
     }
 
-    .RowCard__bottomBar:not(:last-child) {
+    .RowCard__content:not(:last-child) {
         margin-bottom: 1.5rem;
     }
 
@@ -153,7 +161,7 @@
         />
     {/if}
 
-    <div class:statusBar>
+    <div>
         {#if link}
             <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
                rel="prefetch" class="RowCard__linkOnly">
@@ -166,19 +174,17 @@
 
                 <span class="fr-fi-arrow-right-line"></span>
             </a>
-        {:else if expandButton && (action.actions.length || action.description.trim().length) }
-            <div on:click={handleExpand}>
-                <ActionReferentielTitle action={action}/>
-
-                {@html action.description}
-            </div>
         {:else }
-            <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
+            <div class="RowCard__title">
+                <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
+
+                <ProgressStat position={"right"}/>
+            </div>
         {/if}
     </div>
 
     {#if ficheButton && statusBar}
-        <div class="RowCard__bottomBar">
+        <div class="RowCard__content">
             <a class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-file-fill fr-btn--icon-left"
                href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
                 Créer une fiche-action
@@ -191,7 +197,7 @@
     {#if commentBlock}
         <div class="commentBlock">
             <ExpandPanel>
-                <h2 slot="title">Description</h2>
+                <h2 slot="title">Commentaires</h2>
                 <div slot="content">
                     <textarea class="fr-input"></textarea>
                     <button class="fr-btn">Enregistrer</button>
