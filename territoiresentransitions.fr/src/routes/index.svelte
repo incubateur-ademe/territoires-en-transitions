@@ -51,7 +51,7 @@
 
 <main role="main">
   <div id="contenu" class="fr-container-fluid ds_banner">
-    <div class="fr-container">
+    <div class="container fr-container">
       {#if description }
         <div class="fr-grid-row fr-grid-row--gutters">
           <div class="fr-mt-3w fr-mt-md-9w fr-mb-5w text-center">
@@ -60,7 +60,7 @@
         </div>
       {/if}
     </div>
-    <div class="fr-container">
+    <div class="container fr-container">
       <div class="fr-grid-row fr-grid-row--gutters">
         <SvelteMarkdown source={cards} {renderers} />
       </div>
@@ -68,7 +68,7 @@
         <Cards />
       </div>
     </div>
-    <div class="fr-container fr-mt-10w">
+    <div class="container fr-container fr-mt-10w">
       {#if howToStart }
         <div class="fr-grid-row fr-grid-row--gutters">
           <SvelteMarkdown source={howToStart} {renderers} />
@@ -80,7 +80,7 @@
         </div>
       {/if}
     </div>
-    <div class="fr-container fr-mt-10w">
+    <div class="container fr-container fr-mt-10w">
       <div class="fr-grid-row fr-grid-row--gutters">
         <SvelteMarkdown source={contactUs} {renderers} />
       </div>
@@ -90,3 +90,10 @@
     </div>
   </div>
 </main>
+
+<style>
+  .container {
+    padding-right: 6rem;
+    padding-left: 6rem;
+  }
+</style>

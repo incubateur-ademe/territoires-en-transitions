@@ -12,7 +12,7 @@
 
 <header role="banner" class="fr-header">
   <div class="fr-container">
-    <div class="fr-header__body-row">
+    <div class="fr-header__body-row header__row">
       <div class="fr-header__brand fr-enlarge-link">
         <div class="fr-header__brand-top">
           <div class="fr-header__logo">
@@ -24,7 +24,7 @@
         <div class="fr-header__ademe">
           <picture>
             <source srcset="./img/ademe.jpg 118w" sizes="118px" />
-            <img src="./img/ademe.jpg" alt="ADEME" loading="lazy" style="height: 80px;"/>
+            <img src="./img/ademe.jpg" alt="ADEME" loading="lazy" class="header__logo"/>
           </picture>
         </div>
         <div class="fr-header__service">
@@ -59,7 +59,11 @@
     width: auto;
   }
 
-  .fr-header__body-row {
+  .header__logo {
+    height: 80px;
+  }
+
+  .header__row {
     padding: 1rem 0;
   }
 
