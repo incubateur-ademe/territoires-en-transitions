@@ -1,12 +1,18 @@
 <script lang="ts">
     export let id: string = ''
     export let shadowSize: string = ''
+    export let bordered: boolean = false
 </script>
 
 <style>
     article {
-        padding: .8rem;
+        padding: 1.5rem 1rem;
         background-color: var(--beige);
+        border-left: 4px solid transparent;
+    }
+    
+    article.bordered {
+        border-left-color: var(--bf500);
     }
 
     article:not(:first-of-type) {
@@ -18,7 +24,7 @@
     }
 </style>
 
-<article id="{id}">
+<article id="{id}" class:bordered>
     <slot name="aside"></slot>
 
     <slot></slot>

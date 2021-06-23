@@ -8,6 +8,7 @@
         from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
     import ProgressStat from "../../../../components/ProgressStat.svelte";
+    import ExpandPanel from "../../../../components/ExpandPanel.svelte";
 
     export let action: ActionReferentiel
 
@@ -34,7 +35,6 @@
     }
 
     .pageIntro > div + div {
-        margin-top: 1.875rem;
     }
 
     .pageIntro h1 {
@@ -43,15 +43,23 @@
 
     .pageIntro__titleWithActions {
         display: flex;
-        margin-bottom:1.875rem;;
+        margin-bottom: 1.875rem;;
     }
 
     .pageIntro__titleWithActions > div {
         max-width: 75%;
     }
 
-    .pageIntro__description > p {
+    .pageIntro__description :global(p) {
         margin-bottom: 0;
+    }
+
+    [name="title"] {
+        font-size: 1rem;
+    }
+
+    .pageIntro > :global( div + div) {
+        margin-top: 1.875rem;
     }
 </style>
 
@@ -78,21 +86,24 @@
     <ProgressStat state={"alert"}/>
 
     <div>
-        {#if description}
-            <div class="pageIntro__description">
-                <p></p>
-                {@html action.description}
-            </div>
+        {#if action.description}
+            <ExpandPanel>
+                <h2 slot="title">Description</h2>
+                <div slot="content" class="pageIntro__description">
+                    <h3>Un titre</h3>
+                    {@html action.description}
+                </div>
+            </ExpandPanel>
         {/if}
     </div>
 </div>
 
 <h2>Les actions</h2>
 {#each displayed as action}
-    <ActionReferentielCard action={action} ficheButton statusBar expandButton/>
+    <ActionReferentielCard action={action} ficheButton statusBar expandButton borderedCard commentBlock recursive/>
 {/each}
 
-<h2 class="text-2xl font-semibold mt-8 mb-4 ">Les indicateurs</h2>
+<h2>Les indicateurs</h2>
 {#each indicateurs.filter((indicateur) => indicateur.action_ids.includes(action.id)) as indicateur (indicateur.id)}
     <IndicateurReferentielCard indicateur={indicateur}/>
 {/each}

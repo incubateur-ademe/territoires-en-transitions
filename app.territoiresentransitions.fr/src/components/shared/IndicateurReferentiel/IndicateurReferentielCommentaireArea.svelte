@@ -44,7 +44,7 @@
 
 <div>
     <LabeledTextArea bind:value={data.value}>
-        <div class="text-xl">Commentaire</div>
+        <div>Commentaire</div>
     </LabeledTextArea>
 
     <a class="fr-btn" on:click={onSave}>Enregistrer</a>

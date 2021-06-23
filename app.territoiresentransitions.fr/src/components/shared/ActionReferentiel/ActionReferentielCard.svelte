@@ -9,11 +9,10 @@
     import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../../api/currentEpci";
-    import Angle from "../Angle.svelte";
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
-    import AddFiche from "../../icons/AddFiche.svelte";
     import PickButton from '../Button/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
+    import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -33,6 +32,15 @@
 
     // Show an add button
     export let addButton: boolean = false
+
+    // Adds a border to the Card
+    export let borderedCard: boolean = false
+
+    // Displays the comment part
+    export let commentBlock: boolean = false
+
+    // Displays children of the card
+    export let recursive: boolean = false
 
     // Handle add/remove button callback
     export let onAddButtonClick: ActionClick = (action) => (event) => {
@@ -110,13 +118,32 @@
         align-items: center;
     }
 
+    .RowCard__bottomBar:not(:last-child) {
+        margin-bottom: 1.5rem;
+    }
+
     .listActions__subList {
         margin-top: 1.25rem;
         margin-left: 5.313rem;
     }
+
+    .listActions__subList :global(h3 span) {
+        display: block;
+        margin-bottom: 1rem;
+        font-size: 0.75rem;
+        font-weight: normal;
+    }
+
+    .commentBlock {
+        width: 50%;
+    }
+
+    .commentBlock :global(.fr-btn) {
+        margin-top: 1rem;
+    }
 </style>
 
-<RowCard id={action.id} shadowSize={shadowSize}>
+<RowCard id={action.id} shadowSize={shadowSize} bordered={borderedCard}>
     {#if addButton}
         <PickButton picked={isAdded}
                     handlePick={handleToggleButtonClick}
@@ -144,8 +171,6 @@
                 <ActionReferentielTitle action={action}/>
 
                 {@html action.description}
-
-                <Angle direction="{expanded ? 'down' : 'right' }"/>
             </div>
         {:else }
             <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
@@ -162,9 +187,21 @@
             <ActionStatus actionId={action.id}/>
         </div>
     {/if}
+
+    {#if commentBlock}
+        <div class="commentBlock">
+            <ExpandPanel>
+                <h2 slot="title">Description</h2>
+                <div slot="content">
+                    <textarea class="fr-input"></textarea>
+                    <button class="fr-btn">Enregistrer</button>
+                </div>
+            </ExpandPanel>
+        </div>
+    {/if}
 </RowCard>
 
-{#if expanded}
+{#if recursive}
     <div class="listActions__subList">
         {#each action.actions as action}
             <svelte:self action={action}
@@ -175,6 +212,7 @@
                          addButton={addButton}
                          onAddButtonClick={onAddButtonClick}
                          isActionLinkedToFiche={isActionLinkedToFiche}
+                         commentBlock={true}
             >
             </svelte:self>
         {/each}
