@@ -2,13 +2,13 @@
   export let classNames
 </script>
 
-<div class={ `Container fr-container ${classNames}` }>
+<div class={ `container fr-container ${classNames}` }>
     <slot></slot>
 </div>
 
 <style>
   @media screen and (min-width: 640px) {
-    .Container {
+    .container {
       padding-right: 7rem;
       padding-left: 7rem;
     }

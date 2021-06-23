@@ -1,4 +1,4 @@
-<main class="Page" role="main">
+<main class="page" role="main">
   <div id="contenu" class="fr-container-fluid ds_banner">
     <div class="fr-container">
       <div class="fr-grid-row fr-grid-row--gutters">
@@ -14,7 +14,7 @@
 
 <style>
   @media screen and (min-width: 640px) {
-    .Page .fr-container {
+    .page .fr-container {
       padding-right: 6rem;
       padding-left: 6rem;
     }

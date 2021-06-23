@@ -3,7 +3,7 @@
 </script>
 
 <Header />
-<header role="banner" class="fr-header">
+<header role="banner" class="header fr-header">
     <div class="fr-container">
         <div class="fr-header__body-row header__row">
             <div class="fr-header__brand fr-enlarge-link">
@@ -40,7 +40,7 @@
 </header>
 
 <style>
-    .fr-header__brand-top {
+    .header :global(.fr-header__brand-top) {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -48,11 +48,11 @@
         width: auto;
     }
 
-    .header__logo {
+    .header :global(.header__logo) {
         height: 80px;
     }
 
-    .header__row {
+    .header :global(.header__row) {
         padding: 1rem 0;
     }
 </style>
