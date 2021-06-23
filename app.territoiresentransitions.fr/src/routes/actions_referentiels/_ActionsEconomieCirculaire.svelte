@@ -1,6 +1,7 @@
 <script lang="ts">
     import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
+    import ProgressStat from "../../../../components/ProgressStat.svelte";
 
     export let searching: boolean
 
@@ -42,13 +43,29 @@
     }
 
     h2 {
+        display: flex;
         margin-bottom: 1.875rem;
+    }
+
+    h2 :global([class^="progressBar"]) {
+        flex-shrink: 0;
+        margin-left: 1.5rem;
+    }
+
+    h2 :global([class^="progressBar"] strong) {
+        font-size: 1.125rem;
+    }
+
+    h2 :global([class^="progressBar"]) {
+        font-size: 1rem;
     }
 </style>
 
 {#each [...displayedByAxe] as [parent, actions]}
     <section>
-        <h2>{parent.id_nomenclature}. {parent.nom}</h2>
+        <h2>{parent.id_nomenclature}. {parent.nom}
+            <ProgressStat position={"bottom"}/>
+        </h2>
         {#each actions as action}
             {#if searching}
                 <ActionReferentielCard action={action} ficheButton expandButton statusBar/>

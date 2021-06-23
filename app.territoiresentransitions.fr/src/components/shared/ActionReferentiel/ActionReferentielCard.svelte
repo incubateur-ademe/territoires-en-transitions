@@ -96,11 +96,24 @@
     .label {
         display: inline-block;
         margin-bottom: 1rem;
+        font-size: 0.75rem;
     }
 
     .RowCard__linkOnly {
         display: flex;
         flex-direction: column;
+    }
+
+    .RowCard__linkOnly > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .RowCard__linkOnly .RowCard__title {
+        flex-direction: column;
+        max-width: 75%;
     }
 
     .RowCard__linkOnly .fr-fi-arrow-right-line {
@@ -166,11 +179,17 @@
             <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
                rel="prefetch" class="RowCard__linkOnly">
 
-                <span class="label">{action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}</span>
+                <div>
+                    <div class="RowCard__title">
+                        <span class="label">{action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}</span>
 
-                <ActionReferentielTitle
-                        on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
-                        action={action}/>
+                        <ActionReferentielTitle
+                                on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
+                                action={action}/>
+                    </div>
+
+                    <ProgressStat position={"right"}/>
+                </div>
 
                 <span class="fr-fi-arrow-right-line"></span>
             </a>

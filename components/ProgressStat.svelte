@@ -28,6 +28,7 @@
     div {
         padding-left: 0.75rem;
         font-size: 0.875rem;
+        font-weight: normal;
         background-color: #fff;
         border-left: 6px solid #000;
     }
@@ -53,6 +54,7 @@
         display: block;
         width: 50%;
         height: 6px;
+        margin: 0 auto;
         background-color: #000;
     }
 

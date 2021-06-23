@@ -1,6 +1,7 @@
 <script lang="ts">
     import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
+    import ProgressStat from "../../../../components/ProgressStat.svelte";
 
     export let searching: boolean
 
@@ -64,18 +65,42 @@
     section > div {
         margin-top: 2.5rem;
     }
-    
+
     h3 {
         margin-bottom: 1.875rem;
     }
+
+    h2,
+    h3 {
+        display: flex;
+    }
+
+    h2 :global([class^="progressBar"]),
+    h3 :global([class^="progressBar"]) {
+        margin-left: 1.5rem;
+    }
+
+    h2 :global([class^="progressBar"] strong),
+    h3 :global([class^="progressBar"] strong) {
+        font-size: 1.125rem;
+    }
+
+    h2 :global([class^="progressBar"]) {
+        font-size: 1rem;
+    }
+
 </style>
 
 {#each [...displayedByDomaine] as [domaine, sous_domaines]}
     <section>
-        <h2>{domaine.id_nomenclature}. {domaine.nom}</h2>
+        <h2>{domaine.id_nomenclature}. {domaine.nom}
+            <ProgressStat position={"bottom"}/>
+        </h2>
         {#each [...sous_domaines] as [sous_domaine, actions]}
             <div>
-                <h3>{sous_domaine.id_nomenclature}. {sous_domaine.nom}</h3>
+                <h3>{sous_domaine.id_nomenclature}. {sous_domaine.nom}
+                    <ProgressStat position={"bottom"}/>
+                </h3>
                 {#each actions as action}
                     {#if searching}
                         <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
