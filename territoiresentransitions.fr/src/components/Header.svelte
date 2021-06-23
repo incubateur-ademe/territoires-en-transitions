@@ -66,5 +66,4 @@
   .header__row {
     padding: 1rem 0;
   }
-
 </style>

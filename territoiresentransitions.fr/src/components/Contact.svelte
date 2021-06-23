@@ -5,6 +5,7 @@
   class="fr-col-sm-12 fr-col-md-6 fr-col-lg-6"
 >
   <label class="fr-label" for="email">Votre email :</label>
+
   <input class="fr-input h-mb" type="text" id="email" name="email" />
 
   <label class="fr-label" for="body">Votre message :</label>
