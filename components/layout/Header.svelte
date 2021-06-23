@@ -1,3 +1,8 @@
+<script>
+    import Header from './../DesignSystem/Header.svelte'
+</script>
+
+<Header />
 <header role="banner" class="fr-header">
     <div class="fr-container">
         <div class="fr-header__body-row header__row">

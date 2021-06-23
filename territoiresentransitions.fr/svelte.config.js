@@ -13,7 +13,7 @@ const config = {
     postcss: {
       plugins: [
         purgecss({
-          content: ['src/**/*.svelte', 'src/app.html'],
+          content: ['src/**/*.svelte', 'src/app.html', '../components/**/*.svelte'],
           safelist: ['body']
           // rejected: true,
         })
