@@ -28,7 +28,7 @@ const config = {
     prerender: {
       // workaround issue 1588 by still having prerendering happen with smallest scope possible
       // enabled: false
-      pages: ['/'],
+      pages: ['/', '/mentions-legales'],
       crawl: false
     },
     // hydrate the <div id="svelte"> element in src/app.html
