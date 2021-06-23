@@ -92,8 +92,10 @@
 </main>
 
 <style>
-  .container {
-    padding-right: 6rem;
-    padding-left: 6rem;
+  @media screen and (min-width: 640px) {
+    .container {
+      padding-right: 6rem;
+      padding-left: 6rem;
+    }
   }
 </style>
