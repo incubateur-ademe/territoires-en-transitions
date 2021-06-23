@@ -16,8 +16,8 @@
                 </div>
                 <div class="fr-header__ademe">
                     <picture>
-                        <source srcset="./img/ademe.jpg 118w" sizes="118px" />
-                        <img src="./img/ademe.jpg" alt="ADEME" loading="lazy" class="header__logo"/>
+                        <source srcset="https://territoiresentransitions.fr/img/ademe.jpg 118w" sizes="118px" />
+                        <img src="https://territoiresentransitions.fr/img/ademe.jpg" alt="ADEME" loading="lazy" class="header__logo"/>
                     </picture>
                 </div>
                 <div class="fr-header__service">
