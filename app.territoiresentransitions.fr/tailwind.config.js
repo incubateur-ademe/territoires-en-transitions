@@ -6,6 +6,7 @@ module.exports = {
         content: [
             './src/**/*.html',
             './src/**/*.svelte',
+            './../components/**/*.svelte',
         ],
     },
     darkMode: false, // or 'media' or 'class'

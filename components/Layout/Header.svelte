@@ -37,6 +37,8 @@
             </div>
         </div>
     </div>
+
+    <slot name="secondary"></slot>
 </header>
 
 <style>
