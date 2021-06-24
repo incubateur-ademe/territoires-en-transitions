@@ -1,12 +1,10 @@
-from __future__ import annotations
-
 from datetime import date
-from dataclasses import dataclass
 from typing import List
+from pydantic import BaseModel
+
 
 {% for class, fields in classes.items() %}
-@dataclass
-class {{ class }}:
+class {{ class }}(BaseModel):
     {%- for field, type in fields.items() %}
         {{ field }}: {{ type }}
     {%- endfor %}
