@@ -23,10 +23,14 @@
     // An optional validator
     export let validator: Validator = alwaysValid
 
+    // Show the validator message on mount.
+    export let validateOnMount: boolean = true
+
     let errorMessage: string | null = null
 
     onMount(() => {
-        errorMessage = validator(value)
+        if (validateOnMount)
+            errorMessage = validator(value)
     })
 </script>
 

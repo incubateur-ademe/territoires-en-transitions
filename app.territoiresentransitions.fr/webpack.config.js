@@ -63,7 +63,8 @@ module.exports = {
 			// dev && new webpack.HotModuleReplacementPlugin(),
 			new webpack.DefinePlugin({
 				'process.browser': true,
-				'process.env.NODE_ENV': JSON.stringify(mode)
+				'process.env.NODE_ENV': JSON.stringify(mode),
+				'process.env.USE_SANDBOX_API': JSON.stringify(process.env.USE_SANDBOX_API),
 			}),
 		].filter(Boolean),
 		devtool: dev && 'inline-source-map'
@@ -108,8 +109,11 @@ module.exports = {
 		},
 		mode,
 		plugins: [
-			new WebpackModules()
-		],
+			new WebpackModules(),
+			new webpack.DefinePlugin({
+				'process.env.USE_SANDBOX_API': JSON.stringify(process.env.USE_SANDBOX_API),
+			}),
+],
 		performance: {
 			hints: false // it doesn't matter if server.js is large
 		}

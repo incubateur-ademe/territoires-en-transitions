@@ -24,11 +24,13 @@
     });
 </script>
 
-{#if showTestNavigation}
-    {#await import('./NavDev.svelte') then c}
-        <svelte:component this={c.default}/>
-    {/await}
-{/if}
+<div>
+    {#if showTestNavigation}
+        {#await import('./NavDev.svelte') then c}
+            <svelte:component this={c.default}/>
+        {/await}
+    {/if}
+</div>
 
 <nav class="bg-seagreen-400">
     <ul class="container mx-auto lg:px-20 px-4 p-4 flex text-xl">

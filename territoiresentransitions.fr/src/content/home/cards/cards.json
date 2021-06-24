@@ -1,0 +1,62 @@
+[
+  {
+    "title": "Suivre et évaluer les plans d’actions de votre collectivité",
+    "image": {
+      "title": "Titre",
+      "alt": "",
+      "image": "./img/picto-1.svg"
+    },
+    "description": "",
+    "link": ""
+  },
+  {
+    "title": "Suivre vos indicateurs",
+    "image": {
+      "title": "Titre",
+      "alt": "",
+      "image": "./img/picto-2.svg"
+    },
+    "description": "",
+    "link": ""
+  },
+  {
+    "title": "Collaborer en interne et externe",
+    "image": {
+      "title": "Titre",
+      "alt": "",
+      "image": "./img/picto-3.svg"
+    },
+    "description": "",
+    "link": ""
+  },
+  {
+    "title": "",
+    "image": {
+      "title": "Titre",
+      "alt": "",
+      "image": "./img/picto-4.svg"
+    },
+    "description": "Suivre votre progression au regard des <a href=\"/\">référentiels nationaux climat-air-énergie</a> & <a href=\"/\">économie circulaire</a>",
+    "link": ""
+  },
+  {
+    "title": "Obtenir les labels Cit’ergie & Économie Circulaire",
+    "image": {
+      "title": "Titre",
+      "alt": "",
+      "image": "./img/picto-5.svg"
+    },
+    "description": "",
+    "link": ""
+  },
+  {
+    "title": " …Et demain ce qui sera le plus important pour vous en tant qu’utilisateurs…",
+    "image": {
+      "title": "Titre",
+      "alt": "",
+      "image": "./img/picto-6.svg"
+    },
+    "description": "",
+    "link": ""
+  }
+]

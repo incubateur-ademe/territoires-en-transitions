@@ -12,7 +12,7 @@ from codegen.utils.templates import build_jinja_environment
 
 def types_ts(t: str) -> str:
     """Converts a type from yaml to a js type hint"""
-    py_types = {'String': 'string', 'num': 'number', 'List': '[]', None: 'string'}
+    py_types = {'String': 'string', 'num': 'number', 'List': '[]', 'bool': 'boolean', None: 'string'}
     if t in py_types.keys():
         return py_types[t]
     if t.startswith('List['):

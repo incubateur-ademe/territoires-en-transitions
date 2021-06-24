@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
+    "dev:sandbox": "cross-env USE_SANDBOX_API=1 sapper dev",
     "build": "sapper build",
     "export": "cross-env NODE_ENV=production sapper export",
     "start": "node __sapper__/build",
@@ -12,7 +13,9 @@
   "dependencies": {
     "compression": "^1.7.1",
     "cypress-plugin-snapshots": "^1.4.4",
+    "jwt-decode": "^3.1.2",
     "polka": "next",
+    "ramda": "^0.27.1",
     "sirv": "^1.0.0"
   },
   "devDependencies": {
