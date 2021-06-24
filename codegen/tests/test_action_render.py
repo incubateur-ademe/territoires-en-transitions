@@ -4,9 +4,8 @@ from typing import List
 
 from codegen.action.read import build_action
 from codegen.action.render import render_actions_as_typescript
-from codegen.codegen.python import env
 from codegen.utils.files import load_md
-from codegen.utils.templates import escape_to_html
+from codegen.utils.templates import escape_to_html, build_jinja_environment
 
 
 def test_build_action_with_mesure():
@@ -63,6 +62,7 @@ def _render_actions_as_typescript(files: List[str]) -> None:
 
     typescript = render_actions_as_typescript(actions)
 
+    env = build_jinja_environment()
     to_json = env.get_template('tests/single_value_to_json.j2')
     for action in actions:
         nom_json = to_json.render(value=action['nom'])
