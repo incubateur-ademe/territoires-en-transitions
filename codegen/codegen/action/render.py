@@ -24,10 +24,24 @@ def render_descriptions_to_html(actions: List[dict]):
     render_descriptions(actions)
 
 
+def add_points(actions: List[dict]):
+    """Add missing points"""
+    for action in actions:
+        action['points'] = action.get('points', None)
+        add_points(action['actions'])
+
+
 def render_actions_as_python(actions: List[dict],
                              template_file='shared/python/actions_referentiel.j2') -> str:
     """Render all actions into a single python file."""
     env = build_jinja_environment()
+
+    def add_points(actions: List[dict]):
+        for action in actions:
+            action['points'] = action.get('points', None)
+            add_points(action['actions'])
+
+    add_points(actions)
     template = env.get_template(template_file)
     rendered = template.render(actions=actions)
     return format_str(rendered, mode=FileMode())
@@ -37,6 +51,7 @@ def render_actions_as_typescript(actions: List[dict],
                                  template_file='shared/ts/actions_referentiel.j2') -> str:
     """Render all actions into a single typescript file."""
     env = build_jinja_environment()
+    add_points(actions)
     render_descriptions_to_html(actions)
     template = env.get_template(template_file)
     rendered = template.render(actions=actions)

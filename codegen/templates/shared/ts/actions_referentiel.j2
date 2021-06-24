@@ -8,6 +8,7 @@ export const actions: ActionReferentiel[] = [
     nom: {{ action.nom | tojson }},
     description: {{ action.description | tojson }},
     thematique_id: "{{ action.thematique_id }}",
+    points: {{ action.points }},
     actions:[
     {% if action.actions %}
         {{ loop(action.actions) }}

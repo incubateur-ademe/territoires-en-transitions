@@ -8,6 +8,7 @@ actions = [
     nom= r{{ action.nom | tojson }},
     description= r{{ action.description | tojson }},
     thematique_id= "{{ action.thematique_id }}",
+    points= {{ action.points }},
     actions=[
     {% if action.actions %}
         {{ loop(action.actions) }}
