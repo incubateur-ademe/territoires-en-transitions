@@ -27,7 +27,7 @@ def render_descriptions_to_html(actions: List[dict]):
 def add_points(actions: List[dict]):
     """Add missing points"""
     for action in actions:
-        action['points'] = action.get('points', None)
+        action['points'] = action.get('points', -1.0)
         add_points(action['actions'])
 
 
