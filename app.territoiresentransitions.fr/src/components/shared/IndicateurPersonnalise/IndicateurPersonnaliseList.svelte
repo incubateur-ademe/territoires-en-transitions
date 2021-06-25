@@ -34,8 +34,7 @@
 
 <div>
     <h2>Mes indicateurs</h2>
-    <Button classNames="fr-btn" ton colorVariant={showCreation ? 'ash' : 'nettle'}
-            on:click={handleNewIndicateur}>
+    <Button classNames="fr-btn fr-btn--secondary" on:click={handleNewIndicateur}>
         Nouvel indicateur
     </Button>
 </div>
