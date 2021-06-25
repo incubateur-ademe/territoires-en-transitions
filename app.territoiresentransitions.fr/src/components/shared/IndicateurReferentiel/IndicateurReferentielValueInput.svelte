@@ -53,8 +53,7 @@
     }
 </script>
 
-
-<label class="container">
+<label>
     { year }
     <input class="fr-input"
            data-indicator-id="{ indicateur.id }"

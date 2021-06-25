@@ -42,10 +42,16 @@
     }
 </script>
 
+<style>
+    .fr-btn {
+        margin-top: 1rem;
+    }
+</style>
+
 <div>
     <LabeledTextArea bind:value={data.value}>
         <div>Commentaire</div>
     </LabeledTextArea>
 
-    <a class="fr-btn" on:click={onSave}>Enregistrer</a>
+    <button class="fr-btn" on:click={onSave}>Enregistrer</button>
 </div>

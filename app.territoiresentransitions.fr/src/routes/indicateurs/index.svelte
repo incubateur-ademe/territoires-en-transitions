@@ -36,6 +36,7 @@
         margin-top: 2.25rem;
         margin-bottom: 3.75rem;
     }
+
     .pageIntro > div {
         display: flex;
         align-items: center;
@@ -48,6 +49,17 @@
 
     .pageIntro h1 {
         margin-bottom: 0;
+    }
+
+    .indicator {
+        margin-top: 2rem;
+    }
+
+    .indicator__title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2.5rem;
     }
 </style>
 
@@ -70,8 +82,13 @@
 <IndicateurPersonnaliseList/>
 
 {#each [...byThematique] as [thematique, indicateurs]}
-    <h2>{thematique.name}</h2>
-    {#each indicateurs as indicateur}
-        <IndicateurReferentielCard indicateur={indicateur}/>
-    {/each}
+    <div class="indicator">
+        <div class="indicator__title">
+            <h2>{thematique.name}</h2>
+            <a href="" class="fr-btn">Créer un indicateur</a>
+        </div>
+        {#each indicateurs as indicateur}
+            <IndicateurReferentielCard indicateur={indicateur}/>
+        {/each}
+    </div>
 {/each}

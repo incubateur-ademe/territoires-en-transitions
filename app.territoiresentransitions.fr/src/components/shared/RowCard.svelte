@@ -19,7 +19,7 @@
         margin-top: 1rem;
     }
 
-    article > h3 { /* NE FONCTIONNE PAS !*/
+    article :global(h3) {
         font-size: 1.25rem;
     }
 </style>

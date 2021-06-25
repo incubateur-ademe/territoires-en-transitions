@@ -34,9 +34,25 @@
         font-weight: normal;
         line-height: 1.5;
     }
+    details[open] :global([slot="title"]) {
+        font-weight: bold;
+    }
 
     details :global([slot="content"] h3) {
         font-size: 1rem;
+    }
+
+    details :global([slot="content"] h3:not(:first-of-type)) {
+        margin-top: 1.5rem;
+    }
+
+    details :global([slot="content"] p) {
+        margin-bottom: .5rem;
+    }
+
+    details :global([slot="content"] ul) {
+        list-style: disc;
+        padding-left: 1rem;
     }
 </style>
 
