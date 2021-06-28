@@ -30,14 +30,27 @@
     })
 </script>
 
-<label class="flex flex-row items-center">
-    Rechercher
-    <input class="
-    ml-4
-    block w-full
-    shadow-sm outline-none
-    border border-gray-400 rounded
-    px-2 py-1
-    focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 "
+<style>
+    div {
+        display: flex;
+    }
+
+    input {
+        box-shadow: inset 0 -2px 0 0 var(--bf500);
+        border-radius: 0.25rem 0 0 0;
+    }
+
+    button {
+        border-radius: 0 0.25rem 0 0;
+    }
+</style>
+
+<div>
+    <input class="fr-input" type="search" placeholder="Rechercher"
            on:keyup={({ target: { value } }) => search.search(value)}/>
-</label>
+    <button class="fr-btn fr-fi-search-line fr-btn--icon" title="Rechercher">
+    <span class="sr-only">
+        Rechercher
+    </span>
+    </button>
+</div>

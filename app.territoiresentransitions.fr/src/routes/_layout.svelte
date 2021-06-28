@@ -1,9 +1,10 @@
 <script lang="ts">
     import Matomo, { asyncMatomo } from '../components/tracking/Matomo.svelte'
-	import Tailwind from '../components/Tailwind.svelte'
 	import Nav from '../components/shared/Nav/Nav.svelte'
 	import {stores} from '@sapper/app'
 	import {onMount} from 'svelte'
+	import Header from '../../../components/Header.svelte'
+	import Head from './_head.svelte'
 
 	export let segment: string;
 
@@ -29,9 +30,11 @@
 	}
 </style>
 
+<Head/>
+
 <Matomo />
-<Tailwind />
 <Nav {segment}/>
+<Header />
 
 <main>
 	<slot></slot>

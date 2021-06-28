@@ -22,6 +22,6 @@
 <label class="flex flex-col w-full">{label}<slot></slot>
     <textarea bind:value={value}
               on:blur={onBlur}
-              class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
+              class="fr-input"
               maxlength={maxlength}></textarea>
 </label>
