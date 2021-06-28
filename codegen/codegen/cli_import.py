@@ -36,6 +36,11 @@ def dteci(
     id_repris: List[str] = [t['id'] for t in territoires_repris]
     niveaux_repris: List[dict] = [n for n in server_niveaux.values() if n['territoireId'] in id_repris]
 
+    statuts: List[dict] = []
+
+    def add_statut(action_id: str, epci_id: str, avancement: str):
+        statuts.append({'action_id': action_id, 'epci_id': epci_id, 'avancement': avancement})
+
     # iterate on the correspondance table
     for axe in table_correspondance:
         for orientation in axe['orientations']:
@@ -45,9 +50,17 @@ def dteci(
                 choix: list = indicateur.get('choix', [])
                 niveau_data = [n for n in niveaux_repris if n['niveauId'] == niveau['id']]
 
+                # process choices one be one.
                 for c in choix:
+                    # the niveau data matching the current choice `c`
                     chosen = [n for n in niveau_data if c['id']
                               in [v['id'] for v in n.get('valeur', {}).get('ids', [])]]
+
+                    for data in chosen:
+                        for action_id in c['faite']:
+                            add_statut(action_id=action_id, epci_id=data['territoireId'], avancement='faite')
+                        for action_id in c['pas_faite']:
+                            add_statut(action_id=action_id, epci_id=data['territoireId'], avancement='pas_faite')
                     pass
 
                 pass
