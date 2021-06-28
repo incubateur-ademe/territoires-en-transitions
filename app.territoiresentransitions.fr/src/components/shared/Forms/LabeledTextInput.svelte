@@ -23,6 +23,9 @@
     // An optional validator
     export let validator: Validator = alwaysValid
 
+    // id for label and input link
+    export let id: string = ''
+
     let errorMessage: string | null = null
 
     onMount(() => {
@@ -44,12 +47,11 @@
     input {
         margin-top: .5rem;
     }
-
 </style>
 
 <fieldset>
     <!-- Besoin de mettre le for sur le label et l'id sur l'input-->
-    <label class="fr-label" for="{label}">{label}
+    <label class="fr-label" for="{id}">{label}
         <slot></slot>
     </label>
     {#if hint}<div class="hint">{hint}</div>{/if}
@@ -57,7 +59,7 @@
            maxlength={maxlength}
            on:keyup={() => errorMessage=validator(value)}
            class="fr-input"
-           id="{label}"
+           id="{id}"
     >
     {#if errorMessage}
         <div class:text-blush-700="{value}">

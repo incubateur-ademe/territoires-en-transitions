@@ -155,7 +155,8 @@
         <LabeledTextInput bind:value={data.custom_id}
                           hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
                           maxlength="36"
-                          validator={validators.custom_id}>
+                          validator={validators.custom_id}
+        id="actionNumber">
             Numérotation de l'action
         </LabeledTextInput>
 
@@ -164,7 +165,6 @@
                           maxlength="36"
                           validator={validators.titre}>
             Titre
-            <!-- d'où vient le texte "Ce champ est requis" dessous ? -->
         </LabeledTextInput>
 
         <CategoriePicker ficheActionUid={data.uid}/>
@@ -244,7 +244,7 @@
                 {/await}
                 <button
                         class="fr-btn fr-btn--secondary fr-btn--sm"
-                        on:click={() => showLinkActionDialog = true }
+                        on:click|preventDefault={() => showLinkActionDialog = true }
                         size="small">
                     + Lier une action
                 </button>
@@ -276,7 +276,7 @@
         <div>
             <div>
                 <h3>Indicateurs personnalisés</h3>
-                <button on:click={() => showIndicateurCreation = true }
+                <button on:click|preventDefault={() => showIndicateurCreation = true }
                         class="fr-btn fr-btn--secondary fr-btn--sm">
                     Créer un nouvel indicateur
                 </button>
