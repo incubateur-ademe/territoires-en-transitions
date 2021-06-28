@@ -36,9 +36,11 @@
 <div>
 
 </div>
+{#if segment === 'fiches' }
+	<Tailwind />
+{/if}
 <Head/>
 <Matomo />
-<Tailwind />
 <Header>
 	<Nav slot="nav" segment={segment}/>
 	<NavDev slot="secondary" />
