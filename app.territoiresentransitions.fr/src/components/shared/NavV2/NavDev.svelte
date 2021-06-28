@@ -33,7 +33,7 @@
         <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
             <ul class="fr-nav__list">
                 <li class="fr-nav__item">
-                    <a class="fr-tag" href="/">BETA</a>
+                    <a class="fr-tag" href="/">EN TEST</a>
                 </li>
                 {#if connected }
                     <li class="fr-nav__item">
