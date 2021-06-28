@@ -92,7 +92,7 @@ make deploy_all_on_sandbox
 
 ### Déploiement en production
 
-Avant de déployer en production, suivre toutes les étapes de la section "Préparer un déploiement" de la [documentation "Déployer en production](déployer-en-production.md).
+Avant de déployer en production, suivre toutes les étapes de la section "Préparer un déploiement" de la [documentation "Déployer en production](deployer-en-production.md).
 
 Puis, au lieu de pousser sur la branche `production`, lancer à la racine du projet :
 ```

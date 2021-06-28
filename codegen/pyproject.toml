@@ -38,6 +38,7 @@ openpyxl = "^3.0.6"
 
 # Command line
 typer = "^0.3.2"
+fuzzywuzzy = "^0.18.0"
 
 [tool.poetry.dev-dependencies]
 bumpversion = "*"
@@ -54,6 +55,7 @@ pytest-cov = "^2.11.1"
 extract = 'codegen.cli_extract:app'
 generate = 'codegen.cli_generate:app'
 regenerate = 'codegen.cli_regenerate:app'
+import = 'codegen.cli_import:app'
 
 [build-system]
 requires = ["poetry>=0.12"]

@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Gérez votre plan d'actions ",
+    "image": {
+      "title": "Titre",
+      "alt": "",
+      "image": "./img/picto-1.svg"
+    },
+    "description": "Créez ou embarquez votre plan d'actions existant dans l'outil. Complétez ou renforcez votre plan avec les actions des référentiels nationaux des programmes climat-air-énergie (Cit'ergie) et économie circulaire.",
+    "link": ""
+  },
+  {
+    "title": "Suivez vos indicateurs",
+    "image": {
+      "title": "Titre",
+      "alt": "",
+      "image": "./img/picto-2.svg"
+    },
+    "description": "Gérez collectivement et facilement la mise à jour des actions et des données. Intégrez vos propres indicateurs et comparez vos résultats aux autres collectivités.",
+    "link": ""
+  },
+  {
+    "title": "Situez-vous par rapport aux référentiels nationaux",
+    "image": {
+      "title": "Titre",
+      "alt": "",
+      "image": "./img/picto-4.svg"
+    },
+    "description": "Confrontez-vous aux référentiels pour évaluer votre plan d'actions par rapport aux meilleures pratiques disponibles.",
+    "link": ""
+  }
+]

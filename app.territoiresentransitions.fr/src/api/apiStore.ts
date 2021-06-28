@@ -10,20 +10,24 @@ export class APIStore<T> {
             endpoint,
             serializer,
             deserializer,
+            authorization,
         }: {
             host: string,
-            endpoint: string,
+            endpoint: () => string,
             serializer: (storable: T) => object,
             deserializer: (serialized: object) => T,
+            authorization: () => string,
         }) {
         this.host = host;
         this.pathname = endpoint;
         this.serializer = serializer;
         this.deserializer = deserializer;
+        this.authorization = authorization;
     }
 
     host: string;
-    pathname: string;
+    pathname: () => string;
+    authorization: () => string;
     serializer: (storable: T) => object;
     deserializer: (serialized: object) => T;
 
@@ -38,10 +42,15 @@ export class APIStore<T> {
             throw new Error(`${typeof storable} is not storable.`)
         }
 
-        const response = await fetch(`${this.host}/${this.pathname}/`, {
+        const response = await fetch(`${this.host}/${this.pathname()}/`, {
             method: 'POST',
             mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.authorization(),
+            },
             body: JSON.stringify(this.serializer(storable))
+
         });
 
         return this.deserializer(await response.json());
@@ -66,9 +75,12 @@ export class APIStore<T> {
     }
 
     async retrieveByPath(path: string): Promise<T | null> {
-        const response = await fetch(`${this.host}/${this.pathname}/${path}`, {
+        const response = await fetch(`${this.host}/${this.pathname()}/${path}`, {
             mode: 'cors',
             method: 'GET',
+            headers: {
+                'Authorization': this.authorization(),
+            },
         });
 
         if (response.status == 404) return null;
@@ -76,9 +88,12 @@ export class APIStore<T> {
     }
 
     async retrieveAtPath(path: string): Promise<Array<T>> {
-        const response = await fetch(`${this.host}/${this.pathname}/${path}`, {
+        const response = await fetch(`${this.host}/${this.pathname()}/${path}`, {
             mode: 'cors',
             method: 'GET',
+            headers: {
+                'Authorization': this.authorization(),
+            },
         });
 
         const data = await response.json();
@@ -98,9 +113,12 @@ export class APIStore<T> {
      * @param id Storable id
      */
     async deleteById(id: string): Promise<boolean> {
-        const response = await fetch(`${this.host}/${this.pathname}/${id}`, {
+        const response = await fetch(`${this.host}/${this.pathname()}/${id}`, {
             mode: 'cors',
             method: 'DELETE',
+            headers: {
+                'Authorization': this.authorization(),
+            },
         });
 
         return response.status == 200;
