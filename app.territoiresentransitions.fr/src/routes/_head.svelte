@@ -6,9 +6,11 @@
     import Inputs from "components/DesignSystem/Inputs.svelte";
     import Selects from "components/DesignSystem/Selects.svelte";
     import Links from "components/DesignSystem/Links.svelte";
+    import Utilities from 'components/DesignSystem/Utilities.svelte'
 </script>
 
 <Variables/>
+<Utilities />
 <Core />
 <DesignSystem/>
 <Buttons/>

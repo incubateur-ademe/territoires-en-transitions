@@ -7,6 +7,7 @@
 	import Head from './_head.svelte'
 	import Nav from './../components/shared/NavV2/Nav.svelte'
 	import NavDev from './../components/shared/NavV2/NavDev.svelte'
+	import Tailwind from '../components/Tailwind.svelte'
 
 	export let segment: string;
 
@@ -37,6 +38,7 @@
 </div>
 <Head/>
 <Matomo />
+<Tailwind />
 <Header>
 	<Nav slot="nav" segment={segment}/>
 	<NavDev slot="secondary" />
