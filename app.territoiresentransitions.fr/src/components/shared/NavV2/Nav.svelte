@@ -12,7 +12,7 @@
     let showTestNavigation = false
     let epciId = ''
 
-    const isLogged = segment && segment !== 'connexion'
+    $: isLogged = segment && segment !== 'connexion'
 
     onMount(async () => {
         showTestNavigation = testUIVisibility()
