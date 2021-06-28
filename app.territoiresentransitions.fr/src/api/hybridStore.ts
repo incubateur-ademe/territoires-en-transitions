@@ -13,11 +13,13 @@ export class HybridStore<T extends Storable> {
             endpoint,
             serializer,
             deserializer,
+            authorization = () => '',
         }: {
             host: string,
-            endpoint: string,
+            endpoint: () => string,
             serializer: (storable: T) => object,
             deserializer: (serialized: object) => T,
+            authorization?: () => string,
         }) {
         this.host = host;
         this.pathname = endpoint;
@@ -28,13 +30,14 @@ export class HybridStore<T extends Storable> {
             host: this.host,
             endpoint: this.pathname,
             serializer: this.serializer,
-            deserializer: this.deserializer
+            deserializer: this.deserializer,
+            authorization: authorization
         });
 
         /*
         todo use local store for caching
         this.local = new LocalStore<T>({
-            pathname: this.pathname,
+            pathname: this.pathname(),
             serializer: this.serializer,
             deserializer: this.deserializer
         });
@@ -42,7 +45,7 @@ export class HybridStore<T extends Storable> {
     }
 
     host: string;
-    pathname: string;
+    pathname: () => string;
     serializer: (storable: T) => object;
     deserializer: (serialized: object) => T;
     api: APIStore<T>;
@@ -138,7 +141,7 @@ export class HybridStore<T extends Storable> {
      * a path removed from the redundant part `epci_id`
      */
     private stripId(id: string): string {
-        const endpoint = this.pathname.split('/');
+        const endpoint = this.pathname().split('/');
         let path = id.split('/');
         let match = false;
 

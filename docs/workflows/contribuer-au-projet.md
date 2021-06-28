@@ -35,7 +35,7 @@ avant d'ouvrir un nouveau sujet.
 
 On utilise les [GitHub Actions](https://github.com/features/actions) pour lancer
 les tests sur chaque Pull Request et pour
-[déployer en production](docs/workflows/déployer-en-production.md).
+[déployer en production](docs/workflows/deployer-en-production.md).
 
 Chaque Pull Request mergée sur `main` sera déployée au prochain déploiement. Le
 déploiement est déclenché manuellement au merge sur `production` et est exécuté

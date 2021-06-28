@@ -10,7 +10,7 @@
 
     onMount(async () => {
         const auth = await import("../../../api/authentication")
-        connected = auth.isConnected()
+        connected = auth.connected()
         user = auth.currentUser()
     })
 </script>

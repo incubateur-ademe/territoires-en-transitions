@@ -1,4 +1,7 @@
 {
   "name": "components",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "devDependencies": {
+    "svelte": "^3.38.3"
+  }
 }

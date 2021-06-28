@@ -52,7 +52,7 @@
                             pickLabel="+"
                             unpickLabel="✓ Ajouté"
                 />
-                <ActionReferentielTitle action={referentielById[actionId]} emoji />
+                <ActionReferentielTitle action={referentielById[actionId]} />
             </div>
         </li>
     {/each}

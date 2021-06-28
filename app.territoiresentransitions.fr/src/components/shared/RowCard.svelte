@@ -1,25 +1,37 @@
 <script lang="ts">
     export let id: string = ''
     export let shadowSize: string = ''
+    export let bordered: boolean = false
 </script>
 
-<div class="flex flex-col mb-5 relative" id="{id}">
-    <div class="flex flex-row items-center px-4 pt-5 pb-4 bg-white
-                transform translate-y-0.5 hover:translate-y-0
-                shadow{shadowSize ? `-${shadowSize}` : '' }
-                hover:shadow{shadowSize ? `-${shadowSize}` : '' }">
+<style>
+    article {
+        padding: 1.5rem 1rem;
+        background-color: var(--beige);
+        border-left: 4px solid transparent;
+    }
+    
+    article.bordered {
+        border-left-color: var(--bf500);
+    }
 
-        <slot name="aside"></slot>
+    article:not(:first-of-type) {
+        margin-top: 1rem;
+    }
 
-        <div class="flex items-center flex-grow
-                    { $$slots.secondary ? ' max-w-lg' : '' }">
-            <slot></slot>
+    article :global(h3) {
+        font-size: 1.25rem;
+    }
+</style>
+
+<article id="{id}" class:bordered>
+    <slot name="aside"></slot>
+
+    <slot></slot>
+
+    {#if $$slots.secondary }
+        <div class="ml-4">
+            <slot name="secondary"></slot>
         </div>
-
-        {#if $$slots.secondary }
-            <div class="ml-4">
-                <slot name="secondary"></slot>
-            </div>
-        {/if}
-    </div>
-</div>
+    {/if}
+</article>
