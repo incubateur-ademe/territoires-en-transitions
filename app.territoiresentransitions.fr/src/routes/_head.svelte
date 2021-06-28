@@ -6,6 +6,7 @@
     import Selects from "../../../components/DesignSystem/Selects.svelte";
     import Links from "../../../components/DesignSystem/Links.svelte";
     import Forms from "../../../components/DesignSystem/Forms.svelte";
+    import Textarea from "../../../components/Textarea.svelte";
 </script>
 
 <Variables/>
@@ -15,3 +16,4 @@
 <Inputs/>
 <Selects/>
 <Links/>
+<Textarea/>

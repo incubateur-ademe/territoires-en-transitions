@@ -112,10 +112,11 @@
         <label class="fr-label" for="categorie_picker">Catégorie</label>
 
         <button class="fr-btn fr-btn--secondary fr-btn--sm"
-                on:click={handleNewCategorie}>
+                on:click|preventDefault={handleNewCategorie}>
             Nouvelle catégorie
         </button>
     </div>
+
     <select bind:value={selected}
             class="fr-select"
             id="categorie_picker"
@@ -128,9 +129,9 @@
         {/each}
     </select>
 
-    <!--{#if visibleCategorieCreation}-->
-        <CategorieCreation
-                ficheActionUid={ficheActionUid}
-                on:save={onCategorieSave}/>
-    <!--{/if}-->
+    {#if visibleCategorieCreation}
+    <CategorieCreation
+            ficheActionUid={ficheActionUid}
+            on:save={onCategorieSave}/>
+    {/if}
 </fieldset>

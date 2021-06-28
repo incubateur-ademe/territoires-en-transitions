@@ -50,20 +50,22 @@
 </style>
 
 <fieldset>
-    <!-- Besoin de mettre le for sur le label et l'id sur l'input-->
     <label class="fr-label" for="{id}">{label}
         <slot></slot>
     </label>
-    {#if hint}<div class="hint">{hint}</div>{/if}
+
+    {#if !errorMessage && hint}<div class="hint">{hint}</div>{/if}
+
+    {#if errorMessage}
+        <div class="hint">
+            {errorMessage}
+        </div>
+    {/if}
+
     <input bind:value={value}
            maxlength={maxlength}
            on:keyup={() => errorMessage=validator(value)}
            class="fr-input"
            id="{id}"
     >
-    {#if errorMessage}
-        <div class:text-blush-700="{value}">
-            {errorMessage}
-        </div>
-    {/if}
 </fieldset>

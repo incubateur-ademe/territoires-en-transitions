@@ -144,9 +144,15 @@
         border: none;
     }
 
-    .last-button {
+    .indicateursTitle {
         display: flex;
-        align-items: center;
+        justify-content: space-between;
+    }
+
+    .last-button {
+        margin-top: 6rem;
+        display: flex;
+        justify-content: center;
     }
 </style>
 
@@ -156,21 +162,23 @@
                           hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
                           maxlength="36"
                           validator={validators.custom_id}
-        id="actionNumber">
+                          id="actionNumber">
             Numérotation de l'action
         </LabeledTextInput>
 
         <LabeledTextInput bind:value={data.titre}
                           hint="Ce champ est requis"
                           maxlength="36"
-                          validator={validators.titre}>
+                          validator={validators.titre}
+                          id="title">
             Titre
         </LabeledTextInput>
 
         <CategoriePicker ficheActionUid={data.uid}/>
 
         <LabeledTextArea bind:value={data.description}
-                         validator={validators.description}>
+                         validator={validators.description}
+                         id="description">
             Description
         </LabeledTextArea>
 
@@ -179,43 +187,48 @@
 
         <LabeledTextInput bind:value={data.structure_pilote}
                           maxlength="300"
-                          validator={validators.structure_pilote}>
+                          validator={validators.structure_pilote}
+                          id="pilote">
             Structure pilote
         </LabeledTextInput>
 
         <LabeledTextInput bind:value={data.personne_referente}
                           maxlength="300"
-                          validator={validators.personne_referente}>
+                          validator={validators.personne_referente}
+                          id="personne-referente">
             Personne référente
         </LabeledTextInput>
 
         <LabeledTextInput bind:value={data.elu_referent}
                           maxlength="300"
-                          validator={validators.elu_referent}>
+                          validator={validators.elu_referent}
+                          id="elu-referent">
             Élu référent
         </LabeledTextInput>
 
         <LabeledTextInput bind:value={data.partenaires}
                           maxlength="300"
-                          validator={validators.partenaires}>
+                          validator={validators.partenaires}
+                          id="partenaires">
             Partenaires
         </LabeledTextInput>
 
-
         <LabeledTextInput bind:value={data.budget}
                           hint="Ce champ ne doit comporter que des chiffres sans espaces"
-                          validator={validators.budget}>
+                          validator={validators.budget}
+                          id="budget">
             Budget global
         </LabeledTextInput>
 
-        <LabeledTextArea bind:value={data.commentaire}>
+        <LabeledTextArea bind:value={data.commentaire}
+                         id="commentaire">
             Commentaire
         </LabeledTextArea>
 
         <fieldset>
             <div class="calendar">
                 <div>
-                    <label class="fr-label" for="fiche_create_debut">date de début</label>
+                    <label class="fr-label" for="fiche_create_debut">Date de début</label>
                     <input bind:value={data.date_debut}
                            id="fiche_create_debut"
                            type="date"
@@ -223,7 +236,7 @@
                 </div>
 
                 <div>
-                    <label class="fr-label" for="fiche_create_fin">date de fin</label>
+                    <label class="fr-label" for="fiche_create_fin">Date de fin</label>
                     <input bind:value={data.date_fin}
                            id="fiche_create_fin"
                            type="date"
@@ -242,19 +255,19 @@
                                       handlePickButton={toggleActionId}
                     />
                 {/await}
-                <button
-                        class="fr-btn fr-btn--secondary fr-btn--sm"
+
+                <button class="fr-btn fr-btn--secondary fr-btn--sm"
                         on:click|preventDefault={() => showLinkActionDialog = true }
-                        size="small">
+                >
                     + Lier une action
                 </button>
             </div>
         </fieldset>
 
-        <fieldset>
-            <div>Indicateurs référentiel</div>
+        {#if indicateursReferentiel}
+            <fieldset>
+                <h3 class="fr-label">Indicateurs référentiel</h3>
 
-            {#if indicateursReferentiel}
                 <MultiSelect id='fiche_create_indicateurs' bind:value={data.referentiel_indicateur_ids}>
                     {#each indicateursReferentiel as indicateur}
                         <option value="{indicateur.id}">({indicateur.id}) {indicateur.nom}</option>
@@ -270,17 +283,19 @@
                         </div>
                     {/if}
                 {/each}
-            {/if}
-        </fieldset>
+            </fieldset>
+        {/if}
 
         <div>
-            <div>
-                <h3>Indicateurs personnalisés</h3>
+            <div class="indicateursTitle">
+                <h3 class="fr-label">Indicateurs personnalisés</h3>
+
                 <button on:click|preventDefault={() => showIndicateurCreation = true }
                         class="fr-btn fr-btn--secondary fr-btn--sm">
                     Créer un nouvel indicateur
                 </button>
             </div>
+
             {#if showIndicateurCreation}
                 <IndicateurPersonnaliseCreation on:save={indicateurSaved}/>
             {/if}

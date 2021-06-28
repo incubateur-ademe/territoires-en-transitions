@@ -25,6 +25,8 @@
     div {
         margin-top: 2rem;
         margin-left: 2rem;
+        padding: 0 0 1rem 1rem;
+        border-left: 4px solid var(--bf500);
     }
 
     h2 {

@@ -15,6 +15,9 @@
     // An optional prop passed to textarea.
     export let maxlength: number = undefined
 
+    // id for label and input link
+    export let id: string = ''
+
     // The on blur function passed to textarea. Used for implicit saving.
     export let onBlur: (event: FocusEvent) => void = (event: FocusEvent): void => {
     }
@@ -33,12 +36,13 @@
 </style>
 
 <fieldset>
-    <label>{label}
+    <label for="{id}">{label}
         <slot></slot>
     </label>
 
     <textarea bind:value={value}
               on:blur={onBlur}
               class="fr-input"
-              maxlength={maxlength}></textarea>
+              maxlength={maxlength}
+    id="{id}"></textarea>
 </fieldset>

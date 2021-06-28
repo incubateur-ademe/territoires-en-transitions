@@ -19,7 +19,7 @@
     }
 </script>
 
-<section class="flex flex-col md:w-3/4">
+<section>
     <LabeledTextInput bind:value={data.nom}
                       label="Titre"/>
 
@@ -29,8 +29,8 @@
     <LabeledTextInput bind:value={data.unite}
                       label="Unité"/>
 
-    <Button classNames="md:w-1/3 self-end bg-white"
-            full
-            label="Valider"
-            on:click={handleSave}/>
+    <button class="fr-btn fr-btn--secondary"
+            on:click|preventDefault={handleSave}>
+        Valider
+    </button>
 </section>
