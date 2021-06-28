@@ -16,5 +16,3 @@ Nicolas VALLÉE - ADEME
 
 SCALEWAY<br />
 Siège social : 8 rue de la Ville l’Evêque 75008 Paris
-
-Les données sont hébergées en France (Paris) sur des serveurs alimentés en énergies 100% renouvelables.
