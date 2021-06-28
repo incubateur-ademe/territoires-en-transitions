@@ -43,6 +43,9 @@
             {:else}
                 {#if !segment }
                     <li>
+                        <a class="fr-link" href="fiches/?epci_id=test">Tester</a>
+                    </li>
+                    <li>
                         <a class="fr-link fr-fi-account-line" href="connexion/?epci_id={epciId}">Se connecter</a>
                     </li>
                 {/if}
