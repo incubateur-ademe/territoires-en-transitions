@@ -41,7 +41,7 @@
                     <a class="fr-link fr-fi-account-line" href="connexion/?epci_id={epciId}">Déconnexion</a>
                 </li>
             {:else}
-                {#if !segment }
+                {#if !segment || segment === 'connexion' }
                     <li>
                         <a class="fr-link" href="fiches/?epci_id=test">Tester</a>
                     </li>
