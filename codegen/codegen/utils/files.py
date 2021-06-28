@@ -1,9 +1,16 @@
 import glob
+import json
 import os
-from typing import List
+from typing import List, Any
 
 import docx.document
 from mistletoe import Document
+
+
+def load_json(filename: str) -> Any:
+    """Load a json file"""
+    with open(filename, 'r', encoding='utf8') as file:
+        return json.load(file)
 
 
 def load_md(filename: str) -> Document:

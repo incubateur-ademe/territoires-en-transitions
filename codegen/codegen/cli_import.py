@@ -2,15 +2,31 @@ import json
 import os
 from typing import List
 
+import pandas as pd
 import typer
 from fuzzywuzzy import process
 
 from codegen.action.process import referentiel_from_actions
 from codegen.action.read import build_action
 from codegen.paths import orientations_markdown_dir
-from codegen.utils.files import load_md, sorted_files, write
+from codegen.utils.files import load_md, sorted_files, write, load_json
 
 app = typer.Typer()
+
+
+@app.command()
+def dteci(
+    data_dir: str = '../referentiels/data',
+    output_dir: str = '../referentiels/data'
+) -> None:
+    """
+    Load dteci data (one shot)
+    """
+    table_correspondance = load_json(os.path.join(data_dir, 'table_correspondance.json'))
+    server_niveaux = load_json(os.path.join(data_dir, 'server_niveaux.json'))
+    server_territoires = load_json(os.path.join(data_dir, 'server_territoires.json'))
+    collectivites = pd.read_excel(os.path.join(data_dir, 'collectivités.xlsx'), dtype=str, sheet_name=0, header=0)
+    pass
 
 
 @app.command()
@@ -20,7 +36,7 @@ def correspondance_table(
     output_dir: str = '../referentiels/data'
 ) -> None:
     """
-    Regenerate (overwrite) markdown files in a new format
+    Generate correspondance table (one shot)
     """
     files = sorted_files(orientations_dir, 'md')
     actions_economie_circulaire = []

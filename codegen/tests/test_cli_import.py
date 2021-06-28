@@ -2,9 +2,16 @@ import os
 from unittest.mock import ANY
 from unittest.mock import patch, MagicMock
 
-from codegen.cli_import import correspondance_table
+from codegen.cli_import import correspondance_table, dteci
 
 output_dir = './tests/outputs'
+
+
+@patch("codegen.cli_import.write")
+def test_dteci(mock_write: MagicMock):
+    """Test dteci"""
+    dteci(output_dir=output_dir)
+    pass
 
 
 @patch("codegen.cli_import.write")
