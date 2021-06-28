@@ -4,11 +4,12 @@
      */
     import {IndicateurReferentiel} from "../../../../../generated/models/indicateur_referentiel";
     import IndicateurReferentielValueInput from "./IndicateurReferentielValueInput.svelte";
-    import Angle from "../Angle.svelte";
     import {onMount} from "svelte";
     import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
     import ActionReferentielCard from "../ActionReferentiel/ActionReferentielCard.svelte";
     import IndicateurReferentielCommentaireArea from "./IndicateurReferentielCommentaireArea.svelte";
+    import RowCard from "../RowCard.svelte";
+    import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
 
     export let indicateur: IndicateurReferentiel
     let relatedActions: ActionReferentiel[] = []
@@ -20,7 +21,7 @@
     let years = [...Array(7).keys()].map(i => i + 2016) // 2016 to 2022
 
     const prettifyId = (id: string) => {
-        return id.replace('cae-', '🌍 ').replace('eci-', '♻ ').replace(' 0', '')
+        return id.replace('cae-', '').replace('eci-', '').replace(' 0', '')
     }
 
     onMount(async () => {
@@ -43,46 +44,126 @@
     })
 </script>
 
-<section class="p-4 my-4 bg-white flex flex-col indicateur"
-         id="indicateur-{indicateur.id}">
+<style>
+    .indicatorRow {
+        display: flex;
+        margin-bottom: 2.5rem;
+    }
 
-    <div class="flex flex-col lg:flex-row items-start">
-        <div class="flex-1 flex flex-row cursor-pointer items-stretch mr-4"
-             on:click={handleExpand}>
-            <h3 class="flex flex-row items-stretch">
-                <span class="mr-4 flex whitespace-nowrap">{ prettifyId(indicateur.id) }</span>
-                <span class="mr-4 flex">{ indicateur.nom }</span>
-            </h3>
-            <Angle direction="{expanded ? 'down' : 'right' }"/>
+    .indicatorRow__carousel {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .indicatorRow__carousel .fr-btn {
+        box-shadow: none;
+        flex-shrink: 0;
+    }
+
+    .indicatorRow__yearsList {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        padding: 0 1.5rem;
+    }
+
+    .indicatorRow__yearsList > div:not(:first-child) {
+        margin-left: 1.25rem;
+    }
+
+    .indicatorRow :global(input) {
+        margin-top: .5rem;
+    }
+
+    .indicatorRow__target {
+        margin-left: 1.5rem;
+    }
+
+    .indicatorRow__target .fr-input {
+        box-shadow: inset 0 -2px 0 0 var(--bf500);
+    }
+
+    label.objectif {
+        font-weight: bold;
+    }
+
+    .RowCard__title {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .RowCard__title h3 {
+        width: 75%;
+    }
+
+</style>
+
+<RowCard id="indicateur-{indicateur.id}" bordered>
+    <div class="RowCard__title">
+        <h3>
+            { prettifyId(indicateur.id) } { indicateur.nom }
+        </h3>
+
+        <button class="fr-btn fr-btn--secondary">Modifier</button>
+    </div>
+
+    <form class="indicatorRow">
+        <div class="indicatorRow__carousel">
+            <button class="fr-btn fr-btn--secondary fr-fi-arrow-left-line" title="Précédent"></button>
+
+            <div class="indicatorRow__yearsList">
+                {#each years as year}
+                    <div>
+                        <IndicateurReferentielValueInput indicateur={indicateur} year={year}/>
+                    </div>
+                {/each}
+            </div>
+
+            <button class="fr-btn fr-btn--secondary fr-fi-arrow-right-line" title="Suivant"></button>
         </div>
 
+        <div class="indicatorRow__target">
+            <label for="objectif" class="objectif">
+                Objectif
+                <input class="fr-input"
+                       id="objectif"
+                       type="text"
+                />
+            </label>
+        </div>
+    </form>
 
-        <form class="flex-1 flex flex-row"
-              data-component="indicatorForm">
-            {#each years as year}
-                <div class="flex-grow ml-2">
-                    <IndicateurReferentielValueInput indicateur={indicateur} year={year}/>
-                </div>
-            {/each}
-        </form>
-    </div>
+    <ExpandPanel>
+        <h3 slot="title">
+            Description
+        </h3>
 
+        <div slot="content">
+            {@html indicateur.description }
 
-    <div class="description lg:w-2/3 mt-4"
-         class:hidden="{!expanded}">
+            <h3>Actions liées</h3>
 
-        <div class="pb-2"></div>
-        <h4 class="text-lg mt-4 mb-2">Description</h4>
-        {@html indicateur.description }
+            <ul>
+                {#each relatedActions as action}
+                    <li>
+                        <!-- ICI il faudrait un lien qui marche, je n'y arrive pas-->
+                        <!--<a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
+                           rel="prefetch" class="RowCard__linkOnly">
 
-        <div class="pb-2"></div>
-        <h4 class="text-lg mt-4 mb-2">Actions liées</h4>
-        {#each relatedActions as action}
-            <ActionReferentielCard action={action} link emoji/>
-        {/each}
-        
-        <div class="pb-5"></div>
-        <IndicateurReferentielCommentaireArea indicateur={indicateur} />
-    </div>
+                            <span>{action.id_nomenclature} - </span>
+                            {action.nom}
+                        </a>-->
+                        <a href="" class="fr-link">une mesure</a>
+                    </li>
+                {/each}
+            </ul>
+        </div>
+    </ExpandPanel>
 
-</section>
+    <ExpandPanel>
+        <h3 slot="title">Commentaire</h3>
+        <IndicateurReferentielCommentaireArea indicateur={indicateur} slot="content"/>
+    </ExpandPanel>
+
+</RowCard>

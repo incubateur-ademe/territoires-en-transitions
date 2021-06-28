@@ -56,7 +56,7 @@
 
     <div class="flex flex-row cursor-pointer items-stretch"
          on:click={expandable ? handleExpand : null}>
-        <ActionReferentielTitle action={action} emoji on:click={onTitleClick}/>
+        <ActionReferentielTitle action={action} on:click={onTitleClick}/>
 
         {#if expandable }
             <Angle direction="{expanded ? 'down' : 'right' }"/>

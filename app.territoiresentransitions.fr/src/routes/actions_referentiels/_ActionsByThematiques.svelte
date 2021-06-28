@@ -42,14 +42,24 @@
     refresh()
 </script>
 
-{#each [...displayedByThematique] as [thematique, actions]}
-    <h2 class="text-2xl mt-10 mb-2">{thematique.name}</h2>
-    {#each actions as action}
-        {#if searching}
-            <ActionReferentielCard action={action} ficheButton emoji expandButton statusBar/>
-        {:else }
-            <ActionReferentielCard action={action} emoji link/>
-        {/if}
-    {/each}
-{/each}
+<style>
+    section + section {
+        margin-top: 3.75rem;
+    }
+    h2 {
+        margin-bottom: 1.875rem;
+    }
+</style>
 
+{#each [...displayedByThematique] as [thematique, actions]}
+    <section>
+        <h2>{thematique.name}</h2>
+        {#each actions as action}
+            {#if searching}
+                <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
+            {:else }
+                <ActionReferentielCard action={action} link/>
+            {/if}
+        {/each}
+    </section>
+{/each}
