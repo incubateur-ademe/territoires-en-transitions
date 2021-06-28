@@ -4,7 +4,7 @@
 </script>
 
 {#each cards as card}
-  <div class="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
+  <div class="Cards fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
     <div class="fr-card {card.link ? 'fr-enlarge-link' : 'fr-card--no-arrow'}">
       <div class="fr-card__body">
         <h3 class="fr-card__title">
@@ -20,7 +20,7 @@
       </div>
       {#if Object.keys(card.image).length}
         <div class="fr-card__img">
-          <img src={card.image.image} title={card.image.title} alt={card.image.alt} width="70%" height="70%"/>
+          <img src={card.image.image} title={card.image.title} alt={card.image.alt} />
         </div>
       {:else}
         <div class="fr-card__img">
@@ -32,7 +32,12 @@
 {/each}
 
 <style>
-  .fr-card__img img {
+  .Cards :global(.fr-card__img img) {
     object-fit: none;
+    top: 15%;
+  }
+
+  .Cards :global(.fr-card__img::before) {
+    padding-bottom: 35%;
   }
 </style>

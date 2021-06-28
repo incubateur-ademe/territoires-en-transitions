@@ -27,6 +27,15 @@ Le site généré par cette application utilise le [design système de l'état](
 npm install
 ```
 
+Ce site utilise également des composants partagés. Ils se trouvent dans le répertoire [/components](../components).
+Pour pouvoir les utiliser, il vous faut également installer les dépendances de ce répertoire :
+
+```sh
+cd ../components
+npm install
+cd ../territoiresentransitions.fr
+```
+
 ### Lancer l'application en local
 
 ```sh

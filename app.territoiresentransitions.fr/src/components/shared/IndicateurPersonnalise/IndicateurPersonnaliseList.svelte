@@ -24,12 +24,17 @@
 
 </script>
 
-<div class="flex flex-row w-full items-center">
+<style>
+    div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+</style>
 
-    <h3 class="text-2xl">Indicateurs personnalisés</h3>
-    <div class="flex flex-grow"></div>
-    <Button colorVariant={showCreation ? 'ash' : 'nettle'}
-            on:click={handleNewIndicateur}>
+<div>
+    <h2>Mes indicateurs</h2>
+    <Button classNames="fr-btn fr-btn--secondary" on:click={handleNewIndicateur}>
         Nouvel indicateur
     </Button>
 </div>

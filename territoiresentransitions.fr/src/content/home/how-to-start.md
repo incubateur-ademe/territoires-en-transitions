@@ -1,3 +1,5 @@
-## Commencez à l’utiliser
+## A vous de jouer !
 
-Créer un compte pour votre collectivité : cela prend moins d'1 minute, c'est gratuit et c'est sans engagement.
+Territoires en Transitions est un outil public gratuit et open-source pour les collectivités, financé par l'ADEME.
+Actuellement à ses débuts, la plateforme a besoin de vous pour évoluer dans le sens de vos besoins.
+Rejoignez-nous dans sa co-construction en créant votre compte en moins d'une minute.

@@ -19,6 +19,6 @@ n'est figé, tout est ouvert à discussion.
 
 ### Workflows
 - [Contribuer au projet](workflows/contribuer-au-projet.md)
-- [Déployer en production](workflows/déployer-en-production.md)
+- [Déployer en production](workflows/deployer-en-production.md)
 - [Déploiement manuel](workflows/déploiement-manuel.md)
 - [Environnement de staging](workflows/environnement-de-staging.md)
