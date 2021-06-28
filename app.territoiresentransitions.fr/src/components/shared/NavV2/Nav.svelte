@@ -14,6 +14,13 @@
 
     $: isLogged = segment && segment !== 'connexion'
 
+    /**
+     * Hard navigate to the test epci in order to clear Sapper state.
+     */
+    const handleTest = (_) => {
+        window.location.href = 'fiches/?epci_id=test'
+    }
+
     onMount(async () => {
         showTestNavigation = testUIVisibility()
         try {
@@ -43,7 +50,7 @@
             {:else}
                 {#if !segment || segment === 'connexion' }
                     <li>
-                        <a class="fr-link" href="fiches/?epci_id=test">Tester</a>
+                        <a class="fr-link" on:click|preventDefault={handleTest} href="fiches/?epci_id=test">Tester</a>
                     </li>
                     <li>
                         <a class="fr-link fr-fi-account-line" href="connexion/?epci_id={epciId}">Se connecter</a>
