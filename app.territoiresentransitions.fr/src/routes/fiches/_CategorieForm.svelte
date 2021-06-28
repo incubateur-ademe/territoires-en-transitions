@@ -22,15 +22,22 @@
     }
 </script>
 
-<section class="flex flex-col">
-    <label class="text-sm" for="fiche_create_nom">Nom</label>
+<style>
+    .fr-btn {
+        margin-top: 1rem;
+    }
+</style>
+
+<div>
+    <label class="fr-label" for="fiche_create_nom">Nom</label>
+
     <input bind:value={data.nom}
-           class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
+           class="fr-input"
            id="fiche_create_nom"
            maxlength="100">
-    <div class="p-2"></div>
-    <Button classNames="md:w-1/3 self-end bg-white"
-            full
-            label="Valider"
-            on:click={handleSave}/>
-</section>
+
+    <button class="fr-btn fr-btn--secondary"
+            on:click={handleSave}>
+        Valider
+    </button>
+</div>

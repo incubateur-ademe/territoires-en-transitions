@@ -30,19 +30,38 @@
     })
 </script>
 
-<div class="flex flex-col w-full">
-    <label class="flex flex-col w-full">{label}
+<style>
+    fieldset {
+        max-width: 50%;
+    }
+
+    .hint {
+        margin-top: .25rem;
+        font-size: 0.75rem;
+        color: var(--g600);
+    }
+
+    input {
+        margin-top: .5rem;
+    }
+
+</style>
+
+<fieldset>
+    <!-- Besoin de mettre le for sur le label et l'id sur l'input-->
+    <label class="fr-label" for="{label}">{label}
         <slot></slot>
-        <input bind:value={value}
-               class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-               maxlength={maxlength}
-               on:keyup={() => errorMessage=validator(value)}>
     </label>
-    <div class="mb-2">{hint}</div>
+    {#if hint}<div class="hint">{hint}</div>{/if}
+    <input bind:value={value}
+           maxlength={maxlength}
+           on:keyup={() => errorMessage=validator(value)}
+           class="fr-input"
+           id="{label}"
+    >
     {#if errorMessage}
-        <div class="mb-2"
-             class:text-blush-700="{value}">
+        <div class:text-blush-700="{value}">
             {errorMessage}
         </div>
     {/if}
-</div>
+</fieldset>

@@ -125,118 +125,135 @@
     {/if}
 </svelte:head>
 
-<section class="flex flex-col">
-    <form class="flex flex-col w-full md:w-3/4 pb-10">
+<style>
+    .calendar {
+        display: flex;
+    }
+
+    .calendar div + div {
+        margin-left: 6rem;
+    }
+
+    form {
+        max-width: 70%;
+    }
+
+    form :global(fieldset) {
+        margin-bottom: 3.25rem;
+        padding: 0;
+        border: none;
+    }
+
+    .last-button {
+        display: flex;
+        align-items: center;
+    }
+</style>
+
+<section>
+    <form>
         <LabeledTextInput bind:value={data.custom_id}
                           hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
                           maxlength="36"
                           validator={validators.custom_id}>
-            <div class="text-xl">Numérotation de l'action</div>
+            Numérotation de l'action
         </LabeledTextInput>
-        <div class="p-5"></div>
-
 
         <LabeledTextInput bind:value={data.titre}
+                          hint="Ce champ est requis"
                           maxlength="36"
                           validator={validators.titre}>
-            <div class="text-xl">Titre</div>
+            Titre
+            <!-- d'où vient le texte "Ce champ est requis" dessous ? -->
         </LabeledTextInput>
-        <div class="p-5"></div>
 
         <CategoriePicker ficheActionUid={data.uid}/>
 
         <LabeledTextArea bind:value={data.description}
                          validator={validators.description}>
-            <div class="text-xl">Description</div>
+            Description
         </LabeledTextArea>
-        <div class="p-5"></div>
 
         <Status bind:avancementKey={data.avancement}
                 id="{data.uid}"/>
-        <div class="p-5"></div>
-
 
         <LabeledTextInput bind:value={data.structure_pilote}
                           maxlength="300"
                           validator={validators.structure_pilote}>
-            <div class="text-xl">Structure pilote</div>
+            Structure pilote
         </LabeledTextInput>
-        <div class="p-5"></div>
 
         <LabeledTextInput bind:value={data.personne_referente}
                           maxlength="300"
                           validator={validators.personne_referente}>
-            <div class="text-xl">Personne référente</div>
+            Personne référente
         </LabeledTextInput>
-        <div class="p-5"></div>
 
         <LabeledTextInput bind:value={data.elu_referent}
                           maxlength="300"
                           validator={validators.elu_referent}>
-            <div class="text-xl">Élu référent</div>
+            Élu référent
         </LabeledTextInput>
-        <div class="p-5"></div>
 
         <LabeledTextInput bind:value={data.partenaires}
                           maxlength="300"
                           validator={validators.partenaires}>
-            <div class="text-xl">Partenaires</div>
+            Partenaires
         </LabeledTextInput>
-        <div class="p-5"></div>
+
 
         <LabeledTextInput bind:value={data.budget}
                           hint="Ce champ ne doit comporter que des chiffres sans espaces"
                           validator={validators.budget}>
-            <div class="text-xl">Budget global</div>
+            Budget global
         </LabeledTextInput>
-        <div class="p-5"></div>
-
 
         <LabeledTextArea bind:value={data.commentaire}>
-            <div class="text-xl">Commentaire</div>
+            Commentaire
         </LabeledTextArea>
-        <div class="p-5"></div>
 
-        <span class="text-xl">Calendrier</span>
-        <div class="flex">
-            <div class="flex-1 flex flex-col pr-1">
-                <label for="fiche_create_debut">date de début</label>
-                <input bind:value={data.date_debut}
-                       class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                       id="fiche_create_debut"
-                       type="date">
-                <div class="p-5"></div>
+        <fieldset>
+            <div class="calendar">
+                <div>
+                    <label class="fr-label" for="fiche_create_debut">date de début</label>
+                    <input bind:value={data.date_debut}
+                           id="fiche_create_debut"
+                           type="date"
+                           class="fr-input">
+                </div>
+
+                <div>
+                    <label class="fr-label" for="fiche_create_fin">date de fin</label>
+                    <input bind:value={data.date_fin}
+                           id="fiche_create_fin"
+                           type="date"
+                           class="fr-input">
+                </div>
             </div>
+        </fieldset>
 
-            <div class="flex-1 flex flex-col pl-1">
-                <label for="fiche_create_fin">date de fin</label>
-                <input bind:value={data.date_fin}
-                       class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                       id="fiche_create_fin"
-                       type="date">
-                <div class="p-5"></div>
+        <fieldset>
+            <h3 class="fr-label">Actions du référentiel</h3>
+
+            <div>
+                {#await import('./_LinkedActions.svelte') then c}
+                    <svelte:component this={c.default}
+                                      actionIds={data.referentiel_action_ids}
+                                      handlePickButton={toggleActionId}
+                    />
+                {/await}
+                <button
+                        class="fr-btn fr-btn--secondary fr-btn--sm"
+                        on:click={() => showLinkActionDialog = true }
+                        size="small">
+                    + Lier une action
+                </button>
             </div>
-        </div>
+        </fieldset>
 
+        <fieldset>
+            <div>Indicateurs référentiel</div>
 
-        <div class="p-5"></div>
-        <div class="text-xl">Référentiels</div>
-        <div class="my-2 p-2">
-            {#await import('./_LinkedActions.svelte') then c}
-                <svelte:component this={c.default}
-                                  actionIds={data.referentiel_action_ids}
-                                  handlePickButton={toggleActionId}
-                />
-            {/await}
-            <Button on:click={() => showLinkActionDialog = true }
-                    size="small">
-                + Lier une action
-            </Button>
-        </div>
-
-        <div class="p-5"></div>
-        <div class="my-2 p-2">
-            <div class="text-xl mb-4">Indicateurs référentiel</div>
             {#if indicateursReferentiel}
                 <MultiSelect id='fiche_create_indicateurs' bind:value={data.referentiel_indicateur_ids}>
                     {#each indicateursReferentiel as indicateur}
@@ -248,31 +265,26 @@
                     {#if find(prop(indicateurId))(indicateursReferentiel) }
                         <div class="shadow">
                             <IndicateurReferentielCard
-                                indicateur={find(prop(indicateurId))(indicateursReferentiel)}
+                                    indicateur={find(prop(indicateurId))(indicateursReferentiel)}
                             />
                         </div>
                     {/if}
                 {/each}
             {/if}
-        </div>
+        </fieldset>
 
-
-        <div class="p-5"></div>
-        <div class="my-2 p-2">
-            <div class="flex flex-row w-full items-center">
-                <h3 class="text-xl">Indicateurs personnalisés</h3>
-                <div class="flex flex-grow"></div>
-                <Button colorVariant={showIndicateurCreation ? 'ash' : 'nettle'}
-                        on:click={() => showIndicateurCreation = true }
-                        size="small">
+        <div>
+            <div>
+                <h3>Indicateurs personnalisés</h3>
+                <button on:click={() => showIndicateurCreation = true }
+                        class="fr-btn fr-btn--secondary fr-btn--sm">
                     Créer un nouvel indicateur
-                </Button>
+                </button>
             </div>
             {#if showIndicateurCreation}
                 <IndicateurPersonnaliseCreation on:save={indicateurSaved}/>
             {/if}
 
-            <div class="p-5"></div>
             {#if indicateursPersonnalises}
                 <MultiSelect id='fiche_create_indicateurs' bind:value={data.indicateur_personnalise_ids}>
                     {#each indicateursPersonnalises as indicateur}
@@ -289,12 +301,13 @@
             {/if}
         </div>
 
-        <div class="p-5"></div>
-        <Button classNames="md:w-1/3 self-end"
-                full
-                on:click={handleSave}>
-            Valider
-        </Button>
+        <div class="last-button">
+            <a href=""
+               class="fr-btn"
+               on:click={handleSave}>
+                Valider
+            </a>
+        </div>
     </form>
 
     {#if showLinkActionDialog}

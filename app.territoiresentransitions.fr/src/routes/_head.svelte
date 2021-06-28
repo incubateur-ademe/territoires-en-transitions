@@ -5,11 +5,13 @@
     import Inputs from "../../../components/DesignSystem/Inputs.svelte";
     import Selects from "../../../components/DesignSystem/Selects.svelte";
     import Links from "../../../components/DesignSystem/Links.svelte";
+    import Forms from "../../../components/DesignSystem/Forms.svelte";
 </script>
 
 <Variables/>
 <DesignSystem/>
 <Buttons/>
+<Forms/>
 <Inputs/>
 <Selects/>
 <Links/>
