@@ -31,4 +31,4 @@ jobs:
           git fetch origin
           git checkout -b production-static origin/production-static
           git merge origin/main --allow-unrelated-histories -X theirs
-          git push origin production-static
+          git push -f origin production-static
