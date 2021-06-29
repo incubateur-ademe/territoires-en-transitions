@@ -70,11 +70,8 @@
         position: relative;
         display: grid;
         grid-template-columns: repeat(7, 1fr);
+        grid-column-gap: 1.25rem;
         padding: 0 1.5rem;
-    }
-
-    .indicatorRow__yearsList > div:not(:first-child) {
-        margin-left: 1.25rem;
     }
 
     .indicatorRow :global(input) {
