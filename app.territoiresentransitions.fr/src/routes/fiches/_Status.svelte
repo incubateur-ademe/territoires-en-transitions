@@ -51,6 +51,7 @@
         padding: 0.5rem 1rem;
         font-weight: bold;
         cursor: pointer;
+        border: none;
     }
 
     [type="radio"]:not(:checked) + label::before,
@@ -69,6 +70,8 @@
         left: 0;
         display: block;
         border-top: 2px solid transparent;
+        border-right: 1px solid transparent;
+        border-left: 1px solid transparent;
         z-index: 0;
     }
 
@@ -79,6 +82,8 @@
     [type="radio"]:checked + label::before {
         background-color: #fff;
         border-top-color: var(--bf500);
+        border-right-color: var(--g300);
+        border-left-color: var(--g300);
     }
 
     [type="radio"]:checked + label {
