@@ -34,9 +34,9 @@
 
 <div>
     <h2>Mes indicateurs</h2>
-    <Button classNames="fr-btn fr-btn--secondary" on:click={handleNewIndicateur}>
+    <button class="fr-btn fr-btn--secondary" on:click|preventDefault={handleNewIndicateur}>
         Nouvel indicateur
-    </Button>
+    </button>
 </div>
 
 {#if showCreation}

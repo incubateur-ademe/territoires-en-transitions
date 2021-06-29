@@ -58,6 +58,9 @@
     .indicatorRow__carousel .fr-btn {
         box-shadow: none;
         flex-shrink: 0;
+
+        /* caché tant que non fonctionnel */
+        display: none;
     }
 
     .indicatorRow__yearsList {
@@ -96,7 +99,6 @@
     .RowCard__title h3 {
         width: 75%;
     }
-
 </style>
 
 <RowCard id="indicateur-{indicateur.id}" bordered>
@@ -104,8 +106,6 @@
         <h3>
             { prettifyId(indicateur.id) } { indicateur.nom }
         </h3>
-
-        <button class="fr-btn fr-btn--secondary">Modifier</button>
     </div>
 
     <form class="indicatorRow">
@@ -148,13 +148,14 @@
                 {#each relatedActions as action}
                     <li>
                         <!-- ICI il faudrait un lien qui marche, je n'y arrive pas-->
+
                         <!--<a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
                            rel="prefetch" class="RowCard__linkOnly">
 
                             <span>{action.id_nomenclature} - </span>
                             {action.nom}
                         </a>-->
-                        <a href="" class="fr-link">une mesure</a>
+                        <a href="" class="fr-link fr-fi-arrow-right-line fr-link--icon-right">une mesure</a>
                     </li>
                 {/each}
             </ul>

@@ -90,7 +90,6 @@
             <ExpandPanel>
                 <h2 slot="title">Description</h2>
                 <div slot="content" class="pageIntro__description">
-                    <h3>Un titre</h3>
                     {@html action.description}
                 </div>
             </ExpandPanel>

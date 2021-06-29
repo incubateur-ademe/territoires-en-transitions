@@ -213,12 +213,24 @@
         </div>
     {/if}
 
+    {#if action.description.trim().length }
+        <div class="commentBlock">
+            <ExpandPanel>
+                <h2 slot="title">Description</h2>
+                <div slot="content">
+                    {@html action.description}
+                </div>
+            </ExpandPanel>
+        </div>
+    {/if}
+
     {#if commentBlock}
         <div class="commentBlock">
             <ExpandPanel>
-                <h2 slot="title">Commentaires</h2>
+                <h2 slot="title">Commentaire</h2>
                 <div slot="content">
-                    <textarea class="fr-input"></textarea>
+                    <label for="commentaire">Votre commentaire</label>
+                    <textarea id="commentaire" class="fr-input"></textarea>
                     <button class="fr-btn">Enregistrer</button>
                 </div>
             </ExpandPanel>

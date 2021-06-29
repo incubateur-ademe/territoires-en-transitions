@@ -2,8 +2,8 @@
     details {
         width: 100%;
         padding: 0.75rem 0;
-        border-top: 1px dashed #000;
-        border-bottom: 1px dashed #000;
+        border-top: 1px solid var(--g300);
+        border-bottom: 1px solid var(--g300);
     }
 
     details[open] {
@@ -40,6 +40,8 @@
 
     details :global([slot="content"] h3) {
         font-size: 1rem;
+        margin-top: 2rem;
+        line-height: 1.2;
     }
 
     details :global([slot="content"] h3:not(:first-of-type)) {

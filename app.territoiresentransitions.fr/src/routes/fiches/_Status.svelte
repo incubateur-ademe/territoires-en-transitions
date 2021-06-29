@@ -100,7 +100,7 @@
 
 <form>
     <div class="fr-label">État d'avancement</div>
-    
+
     <fieldset>
         {#each avancements as avancement, index}
             <div>
