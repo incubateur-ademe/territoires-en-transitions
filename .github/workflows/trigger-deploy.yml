@@ -10,6 +10,7 @@ jobs:
   trigger-app-deploy:
     name: Trigger app deployment
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
       # cf. https://github.com/actions/checkout
