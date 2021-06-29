@@ -22,11 +22,13 @@ jobs:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       # Update `production-static` branch with `main` branch and push to origin
+      # Note: we use "git pull origin main --no-rebase -X theirs" to merge `main` without rebase and to
+      #       force the version of `main` instead of the one on `production-static` in case of conflicts.
       - name: Update `production-static` branch with `main`
         run: |
           git config --global user.name 'Territoires en transition'
           git config --global user.email 'territoires-en-transitions-deploy@users.noreply.github.com'
           git fetch
           git checkout -b production-static origin/production-static
-          git pull origin main --no-rebase
+          git pull origin main --no-rebase -X theirs
           git push origin production-static
