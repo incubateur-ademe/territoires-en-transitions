@@ -10,10 +10,12 @@
     import IndicateurReferentielCommentaireArea from "./IndicateurReferentielCommentaireArea.svelte";
     import RowCard from "../RowCard.svelte";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
+    import {getCurrentEpciId} from "../../../api/currentEpci";
 
     export let indicateur: IndicateurReferentiel
     let relatedActions: ActionReferentiel[] = []
     let expanded = false
+    let epciId = ''
     const handleExpand = () => {
         expanded = !expanded
     }
@@ -25,6 +27,7 @@
     }
 
     onMount(async () => {
+        epciId = getCurrentEpciId()
         const referentiel = await import('../../../../../generated/data/actions_referentiels')
 
         const found: ActionReferentiel[] = []
@@ -147,14 +150,15 @@
             <ul>
                 {#each relatedActions as action}
                     <li>
-                        <!-- ICI il faudrait un lien qui marche, je n'y arrive pas-->
-                        <!--<a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
-                           rel="prefetch" class="RowCard__linkOnly">
+                        <a
+                          href="/actions_referentiels/{action.id}/?epci_id={epciId}#{action.id}"
+                          class="fr-link fr-fi-arrow-right-line fr-link--icon-right"
+                          rel="prefetch"
+                        >
 
                             <span>{action.id_nomenclature} - </span>
                             {action.nom}
-                        </a>-->
-                        <a href="" class="fr-link fr-fi-arrow-right-line fr-link--icon-right">une mesure</a>
+                        </a>
                     </li>
                 {/each}
             </ul>
