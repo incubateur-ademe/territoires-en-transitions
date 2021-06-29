@@ -32,7 +32,6 @@
         align-items: center;
     }
 
-
     details :global([slot="title"]) {
         margin-bottom: 0;
         font-size: 1rem;

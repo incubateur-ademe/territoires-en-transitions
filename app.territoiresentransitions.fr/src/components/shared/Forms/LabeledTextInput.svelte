@@ -26,10 +26,14 @@
     // id for label and input link
     export let id: string = ''
 
+    // Show the validator message on mount.
+    export let validateOnMount: boolean = true
+
     let errorMessage: string | null = null
 
     onMount(() => {
-        errorMessage = validator(value)
+        if (validateOnMount)
+            errorMessage = validator(value)
     })
 </script>
 

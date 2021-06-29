@@ -2,6 +2,7 @@
 
 - [Préparer un déploiement](#préparer-un-déploiement)
 - [Déployer](#déployer)
+- [Déployer les pages statiques de territoiresentransitions.fr](#déployer-les-pages-statiques-de-territoiresentransitions-fr)
 
 Pour en savoir davantage sur le contexte, on peut consulter la [documentation sur les choix techniques de notre process de déploiement](https://github.com/betagouv/territoires-en-transitions/blob/main/docs/choix-techniques/int%C3%A9gration-continue-et-d%C3%A9ploiement.md).
 
@@ -64,3 +65,8 @@ Pour en savoir davantage sur le contexte, on peut consulter la [documentation su
 En cas de problème pendant ou juste après un déploiement, on prévient l'équipe
 de développement et si cela les impacte, le reste de l'équipe, **avant d'essayer
 de fixer quoique ce soit.**
+
+## Déployer les pages statiques de territoiresentransitions.fr
+
+On peut suivre les mêmes étapes que pour le déploiement de l'application en utilisant la branche `production-static` à 
+la place de la branche `production`.

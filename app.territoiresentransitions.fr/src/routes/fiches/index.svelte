@@ -159,7 +159,7 @@
     <title>Plan d'actions</title>
 </svelte:head>
 
-<header class="flex flex-col bg-white">
+<header class="flex flex-col bg-white pb-10">
     <div class="flex flex-row my-10 mx-5">
         <h1 class="text-3xl font-semibold  flex-grow">Plan d'actions de ma collectivité</h1>
         <Button asLink

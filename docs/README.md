@@ -4,8 +4,10 @@ On peut retrouver ici toute la documentation technique liée à ce dépôt Git. 
 ces contenus peuvent évoluer au fur et à mesure de notre avancée dans le projet. Rien
 n'est figé, tout est ouvert à discussion.
 
-En parallèle de cette documentation, il existe une [documentation plus axée sur le
-fonctionnement de l'équipe de développement](https://github.com/labels-transition/documentation/tree/main/tech).
+### Équipe
+- [Fonctionnement de l'équipe](equipe/fonctionnement-de-l-equipe.md)
+- [Quelques questions pour
+  commencer](equipe/quelques-questions-pour-commencer.md)
 
 ### Choix techniques
 - [Architecture technique
@@ -17,6 +19,6 @@ fonctionnement de l'équipe de développement](https://github.com/labels-transit
 
 ### Workflows
 - [Contribuer au projet](workflows/contribuer-au-projet.md)
-- [Déployer en production](workflows/déployer-en-production.md)
+- [Déployer en production](workflows/deployer-en-production.md)
 - [Déploiement manuel](workflows/déploiement-manuel.md)
 - [Environnement de staging](workflows/environnement-de-staging.md)

@@ -1,7 +1,5 @@
-import {MesureCustom, MesureCustomInterface} from "../../../generated/models/mesure_custom";
 import {ActionCustom, ActionCustomInterface} from "../../../generated/models/action_custom";
 import {ActionCustomStorable} from "../storables/ActionCustomStorable";
-import {MesureCustomStorable} from "../storables/MesureCustomStorable";
 import {ActionStatusStorable} from "../storables/ActionStatusStorable";
 import {ActionStatus, ActionStatusInterface} from "../../../generated/models/action_status";
 import {isStorable} from "./storable";
@@ -13,27 +11,24 @@ import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnalis
 import type {IndicateurPersonnaliseInterface} from "../../../generated/models/indicateur_personnalise";
 import {IndicateurPersonnaliseValueStorable} from "../storables/IndicateurPersonnaliseValueStorable";
 import type {IndicateurPersonnaliseValueInterface} from "../../../generated/models/indicateur_personnalise_value";
-import {IndicateurReferentielCommentaireStorable} from "../storables/IndicateurReferentielCommentaireStorable";
-
-export const storeKey = 'territoiresentransitions'
-
+import {UtilisateurConnecteStorable} from "../storables/UtilisateurConnecteStorable";
+import {UtilisateurConnecte, UtilisateurConnecteInterface} from "../../../generated/models/utilisateur_connecte";
 
 /**
- * Get all data of the current user from localStorage
+ * Get store by pathname from localStorage
  *
  * Returns an empty store if none found.
  */
-const getStore = (): Record<string, any> => {
-    const storeJson = localStorage.getItem(storeKey) || '{}'
+const getStore = (pathname: string): Record<string, object> => {
+    const storeJson = localStorage.getItem(pathname) || '{}'
     return JSON.parse(storeJson)
 }
 
 /**
- * Set all data of the current user in localStorage.
+ * Set store data at pathname.
  */
-const setStore = (newStore: Record<string, any>): Record<string, any> => {
-    localStorage.setItem(storeKey, JSON.stringify(newStore))
-    return Object.assign({}, newStore)
+const saveStore = (pathname: string, newStore: Record<string, object>): void => {
+    localStorage.setItem(pathname, JSON.stringify(newStore))
 }
 
 /**
@@ -69,14 +64,10 @@ export class LocalStore<T> {
         if (!isStorable(storable)) {
             throw new Error(`${typeof storable} is not storable.`)
         }
-        const store = getStore()
 
-        if (!store[storable.pathname]) {
-            store[storable.pathname] = {}
-        }
-
-        store[storable.pathname][storable.id] = storable
-        setStore(store)
+        const store = getStore(this.pathname)
+        store[storable.id] = storable
+        saveStore(this.pathname, store)
         return storable
     }
 
@@ -85,14 +76,9 @@ export class LocalStore<T> {
      * If nothing is found returns an empty record.
      */
     retrieveAll(): Array<T> {
-        const store = getStore()
-        console.log(store)
-
-        if (!store) return []
-        if (!store[this.pathname]) return []
-        const serialized = store[this.pathname] as Record<string, object>
-
-        return this.deserializeRecord(serialized);
+        const store = getStore(this.pathname)
+        if (!Object.keys(store)) return []
+        return this.deserializeStore(store);
     }
 
     /**
@@ -102,12 +88,8 @@ export class LocalStore<T> {
      * @param id Storable id
      */
     retrieveById(id: string): T {
-        const store = getStore()
-        if (!store[this.pathname]) {
-            throw new Error(`Path '${this.pathname}' does not exist in is store.`)
-        }
-
-        const serialized = store[this.pathname][id]
+        const store = getStore(this.pathname)
+        const serialized = store[id]
         if (!serialized) {
             throw new Error(`Storable '${this.pathname}.${id}' does not exist.`)
         }
@@ -122,11 +104,10 @@ export class LocalStore<T> {
      * @param id Storable id
      */
     deleteById(id: string): boolean {
-        const store = getStore()
-        if (!store[this.pathname]) return false
-        if (!store[this.pathname][id]) return false
-        delete store[this.pathname][id]
-        setStore(store)
+        const store = getStore(this.pathname)
+        if (!store[id]) return false
+        delete store[id]
+        saveStore(this.pathname, store)
         return true
     }
 
@@ -149,20 +130,15 @@ export class LocalStore<T> {
     /**
      * Deserialize a record retrieved from local storage.
      */
-    private deserializeRecord(record: Record<string, object>): Array<T> {
+    private deserializeStore(store: Record<string, object>): Array<T> {
         const reducer = (accumulator: Array<T>, serialized: object) => {
             accumulator.push(this.deserializer(serialized))
             return accumulator
         }
-        return Object.values(record).reduce(reducer, []) as Array<T>
+        return Object.values(store).reduce(reducer, []) as Array<T>
     }
 }
 
-export const mesureCustomStore = new LocalStore<MesureCustomStorable>({
-    pathname: MesureCustom.pathname,
-    serializer: (storable) => storable,
-    deserializer: (serialized) => new MesureCustomStorable(serialized as MesureCustomInterface),
-});
 
 export const actionCustomStore = new LocalStore<ActionCustomStorable>({
     pathname: ActionCustom.pathname,
@@ -198,4 +174,10 @@ export const indicateurPersonnaliseValueStore = new LocalStore<IndicateurPersonn
     pathname: IndicateurPersonnaliseValueStorable.pathname,
     serializer: (storable) => storable,
     deserializer: (serialized) => new IndicateurPersonnaliseValueStorable(serialized as IndicateurPersonnaliseValueInterface),
+});
+
+export const utilisateurConnecteStore = new LocalStore<UtilisateurConnecteStorable>({
+    pathname: UtilisateurConnecte.pathname,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new UtilisateurConnecteStorable(serialized as UtilisateurConnecteInterface),
 });

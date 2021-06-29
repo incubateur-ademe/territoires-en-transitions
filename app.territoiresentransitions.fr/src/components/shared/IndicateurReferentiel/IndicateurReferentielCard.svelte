@@ -148,7 +148,6 @@
                 {#each relatedActions as action}
                     <li>
                         <!-- ICI il faudrait un lien qui marche, je n'y arrive pas-->
-
                         <!--<a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
                            rel="prefetch" class="RowCard__linkOnly">
 
