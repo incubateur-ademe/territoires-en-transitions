@@ -1,6 +1,5 @@
 # Application client pour Labels Transition Écologique
 
-
 - [Pré-requis](#pré-requis)
 - [Pour commencer à développer](#pour-commencer-à-développer)
     - [Installer les dépendances de
