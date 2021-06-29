@@ -26,8 +26,73 @@
     }
 </script>
 
-<form class="lg:col-span-3 lg:col-end-12">
-    <fieldset class="flex status">
+<style>
+    fieldset {
+        display: flex;
+        border: none;
+    }
+
+    div:not(:first-child) {
+        margin-left: .5rem;
+    }
+
+    [type="radio"]:not(:checked),
+    [type="radio"]:checked {
+        position: absolute;
+        left: -9999px;
+    }
+
+    [type="radio"]:not(:checked) + label,
+    [type="radio"]:checked + label {
+        position: relative;
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+        padding: 0.5rem 1rem;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    [type="radio"]:not(:checked) + label::before,
+    [type="radio"]:checked + label::before,
+    [type="radio"]:not(:checked) + label::after,
+    [type="radio"]:checked + label::after {
+        content: "";
+    }
+
+    [type="radio"]:not(:checked) + label::before,
+    [type="radio"]:checked + label::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: block;
+        border-top: 2px solid transparent;
+        z-index: 0;
+    }
+
+    [type="radio"]:not(:checked) + label::before {
+        background-color: #F2F2F9;
+    }
+
+    [type="radio"]:checked + label::before {
+        background-color: #fff;
+        border-top-color: var(--bf500);
+    }
+
+    [type="radio"]:checked + label {
+        color: var(--bf500);
+    }
+
+    span {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+
+<form>
+    <fieldset>
         {#each avancements as avancement, index}
             <div>
                 <input
@@ -43,7 +108,7 @@
                         for="action-{id}_{avancement.key}"
                         class={classes[index]}
                 >
-                    { avancement.label }
+                    <span>{ avancement.label }</span>
                 </label>
             </div>
         {/each}
