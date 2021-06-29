@@ -7,6 +7,7 @@
     import Links from "../../../components/DesignSystem/Links.svelte";
     import Forms from "../../../components/DesignSystem/Forms.svelte";
     import Modal from "../../../components/DesignSystem/Modal.svelte";
+    import Tags from "../../../components/DesignSystem/Tags.svelte";
 
     import Textarea from "../../../components/Textarea.svelte";
 </script>
@@ -19,5 +20,6 @@
 <Selects/>
 <Links/>
 <Modal/>
+<Tags/>
 
 <Textarea/>

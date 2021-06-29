@@ -5,7 +5,9 @@
     export let id: string
 
 
-    const avancements = Object.entries(fiche_action_avancement_noms).map(([key, label]) => {return {'key': key, 'label': label}})
+    const avancements = Object.entries(fiche_action_avancement_noms).map(([key, label]) => {
+        return {'key': key, 'label': label}
+    })
 
     console.log(avancements)
     const classes = [
@@ -97,6 +99,8 @@
 </style>
 
 <form>
+    <div class="fr-label">État d'avancement</div>
+    
     <fieldset>
         {#each avancements as avancement, index}
             <div>

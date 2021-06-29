@@ -88,7 +88,7 @@
                             </Button>
                         </div>
                         <div class="text-base pt-4" class:hidden={!actionDescriptionDisplayed}>
-                            {topLevelAction.description}
+                            {@html topLevelAction.description}
                         </div>
                     </div>
                 </RowCard>
