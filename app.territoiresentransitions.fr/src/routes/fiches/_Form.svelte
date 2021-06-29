@@ -2,7 +2,6 @@
     import find from 'ramda/src/find'
     import prop from 'ramda/src/prop'
     import {FicheActionStorable} from "../../storables/FicheActionStorable"
-    import Button from "../../components/shared/Button/Button.svelte"
     import MultiSelect from './_MultiSelect.svelte'
     import CategoriePicker from './_CategoriePicker.svelte'
     import Status from './_Status.svelte'
