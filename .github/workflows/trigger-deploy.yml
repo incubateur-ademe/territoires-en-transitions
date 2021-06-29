@@ -28,7 +28,7 @@ jobs:
         run: |
           git config --global user.name 'Territoires en transition'
           git config --global user.email 'territoires-en-transitions-deploy@users.noreply.github.com'
-          git fetch
+          git fetch origin
           git checkout -b production-static origin/production-static
           git merge origin/main -X theirs
           git push origin production-static
