@@ -1,0 +1,34 @@
+name: Trigger deployments on merge on default branch
+
+on:
+  push:
+    branches:
+      - main
+      - trigger-deploy-from-main
+
+jobs:
+  trigger-app-deploy:
+    name: Trigger app deployment
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      # This step uses a GitHub Personal Access Token. If the CI is broken
+      # because of that, you can login into your own GitHub account, generate
+      # a new Personal Access Token and set it in the project secrets.
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      # Update `production-static` branch with `main` branch and push to origin
+      # Note: we use "git merge origin main -X theirs" to merge `main` and to
+      #       force the version of `main` instead of the one on `production-static` in case of conflicts.
+      - name: Update `production-static` branch with `main`
+        run: |
+          git config --global user.name 'Territoires en transition'
+          git config --global user.email 'territoires-en-transitions-deploy@users.noreply.github.com'
+          git fetch
+          git checkout -b production-static origin/production-static
+          git merge origin/main -X theirs
+          git push origin production-static
