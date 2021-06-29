@@ -14,6 +14,15 @@
         margin-bottom: 1rem;
     }
 
+    details summary::after {
+        content: "+";
+        margin-left: auto;
+    }
+
+    details[open] summary::after {
+        content: "-";
+    }
+
     :global(summary::-webkit-details-marker) {
         display: none;
     }
@@ -23,10 +32,6 @@
         align-items: center;
     }
 
-    summary::after {
-        content: "+";
-        margin-left: auto;
-    }
 
     details :global([slot="title"]) {
         margin-bottom: 0;
@@ -34,6 +39,7 @@
         font-weight: normal;
         line-height: 1.5;
     }
+
     details[open] :global([slot="title"]) {
         font-weight: bold;
     }

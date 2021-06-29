@@ -19,6 +19,15 @@
     }
 </script>
 
+<style>
+    section :global(fieldset) {
+        max-width: 100%;
+        margin-bottom: 3rem;
+        padding: 0;
+        border: none;
+    }
+</style>
+
 <section>
     <LabeledTextInput bind:value={data.nom}
                       label="Titre"/>
@@ -31,6 +40,6 @@
 
     <button class="fr-btn fr-btn--secondary"
             on:click|preventDefault={handleSave}>
-        Valider
+        Enregister
     </button>
 </section>
