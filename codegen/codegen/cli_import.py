@@ -1,5 +1,6 @@
 import json
 import os
+from dataclasses import dataclass
 from typing import List, Dict
 
 import pandas as pd
@@ -12,6 +13,22 @@ from codegen.paths import orientations_markdown_dir
 from codegen.utils.files import load_md, sorted_files, write, load_json
 
 app = typer.Typer()
+
+
+@dataclass()
+class Statut:
+    action_id: str
+    epci_id: str
+    avancement: str
+    annee: int
+
+
+@dataclass()
+class Message:
+    action_id: str
+    epci_id: str
+    body: str
+    annee: int
 
 
 @app.command()
@@ -36,10 +53,8 @@ def dteci(
     id_repris: List[str] = [t['id'] for t in territoires_repris]
     niveaux_repris: List[dict] = [n for n in server_niveaux.values() if n['territoireId'] in id_repris]
 
-    statuts: List[dict] = []
-
-    def add_statut(action_id: str, epci_id: str, avancement: str):
-        statuts.append({'action_id': action_id, 'epci_id': epci_id, 'avancement': avancement})
+    statuts: List[Statut] = []
+    messages: List[Message] = []
 
     # iterate on the correspondance table
     for axe in table_correspondance:
@@ -47,25 +62,160 @@ def dteci(
             for niveau in orientation['niveaux']:
                 # process corresponding niveau data.
                 indicateur: dict = niveau.get('indicateur', {})
-                choix: list = indicateur.get('choix', [])
                 niveau_data = [n for n in niveaux_repris if n['niveauId'] == niveau['id']]
 
-                # process choices one be one.
-                for c in choix:
-                    # the niveau data matching the current choice `c`
-                    chosen = [n for n in niveau_data if c['id']
-                              in [v['id'] for v in n.get('valeur', {}).get('ids', [])]]
+                def add_statut(action_id: str, avancement: str):
+                    statuts.append(Statut(
+                        action_id=action_id,
+                        epci_id=n['territoireId'],
+                        avancement=avancement,
+                        annee=n['annee'],
+                    ))
 
-                    for data in chosen:
-                        for action_id in c['faite']:
-                            add_statut(action_id=action_id, epci_id=data['territoireId'], avancement='faite')
-                        for action_id in c['pas_faite']:
-                            add_statut(action_id=action_id, epci_id=data['territoireId'], avancement='pas_faite')
-                    pass
+                def add_message(body: str):
+                    print(niveau['id'] + f': {body}')
+                    messages.append(Message(
+                        action_id=niveau['id'],
+                        epci_id=n['territoireId'],
+                        body=body,
+                        annee=n['annee'],
+                    ))
 
-                pass
+                # question (oui/non)
+                if question := indicateur.get('question'):
+                    oui = question['oui']
+                    non = question['non']
+                    if not oui['faite'] and not oui['pas_faite'] and not non['faite'] and not non['pas_faite']:
+                        # no way to extract statuts
+                        for n in niveau_data:
+                            if valeur := n.get('valeur'):
+                                add_message(f"Votre réponse : {'oui' if valeur['oui'] else 'non'}")
 
-    pass
+                    else:
+                        # convert to statuts
+                        for n in niveau_data:
+                            if valeur := n.get('valeur'):
+                                if valeur['oui']:  # the answer is oui
+                                    for action_id in oui['faite']:
+                                        add_statut(action_id, 'faite')
+                                    for action_id in oui['pas_faite']:
+                                        add_statut(action_id, 'pas_faite')
+                                else:  # the answer is non
+                                    for action_id in non['faite']:
+                                        add_statut(action_id, 'faite')
+                                    for action_id in non['pas_faite']:
+                                        add_statut(action_id, 'pas_faite')
+
+                # choix (checkboxes)
+                elif choix := indicateur.get('choix'):
+                    for c in choix:
+                        # the niveau data matching the current choice `c`
+                        chosen = [n for n in niveau_data if c['id']
+                                  in [v['id'] for v in n.get('valeur', {}).get('ids', [])]]
+
+                        for data in chosen:
+                            for action_id in c['faite']:
+                                statuts.append(
+                                    Statut(
+                                        action_id=action_id,
+                                        epci_id=data['territoireId'],
+                                        avancement='faite',
+                                        annee=data['annee'],
+                                    ))
+                            for action_id in c['pas_faite']:
+                                statuts.append(
+                                    Statut(
+                                        action_id=action_id,
+                                        epci_id=data['territoireId'],
+                                        avancement='pas_faite',
+                                        annee=data['annee'],
+                                    ))
+
+                # liste (dropdown)
+                elif liste := indicateur.get('liste'):
+                    for n in niveau_data:
+                        if valeur := n.get('valeur'):
+                            selected = valeur['id']
+                            match = next(item for item in liste if item['id'] == selected)
+                            for action_id in match['faite']:
+                                add_statut(action_id, 'faite')
+                            for action_id in match['pas_faite']:
+                                add_statut(action_id, 'pas_faite')
+
+                # interval - no way to extract statuts
+                elif interval := indicateur.get('interval'):
+                    for n in niveau_data:
+                        if valeur := n.get('valeur'):
+                            add_message(f"Votre réponse : {valeur.get('nombre', 0)}")
+
+                # intervalles  - no way to extract statuts
+                elif intervalles := indicateur.get('intervalles'):
+                    for n in niveau_data:
+                        if valeur := n.get('valeur'):
+                            add_message(
+                                f"Vos réponses : \n"
+                                f"- {intervalles[0]['nom']}: {valeur.get('a', {}).get('nombre', 0)} \n"
+                                f"- {intervalles[1]['nom']}: {valeur.get('b', {}).get('nombre', 0)}"
+                            )
+
+                # fonction - no way to extract statuts
+                elif fonction := indicateur.get('fonction'):
+                    for n in niveau_data:
+                        if valeur := n.get('valeur'):
+                            add_message(f"Votre réponse : {valeur.get('nombre', 0)}")
+
+                # questions
+                elif questions := indicateur.get('questions'):
+                    for index, question in enumerate(questions.values()):
+                        letter = ('a', 'b')[index]
+                        oui = question['oui']
+                        non = question['non']
+                        if not oui['faite'] and not oui['pas_faite'] and not non['faite'] and not non['pas_faite']:
+                            raise NotImplementedError
+
+                        for n in niveau_data:
+                            if valeur := n.get('valeur'):
+                                if valeur[letter]['oui']:  # the answer is oui
+                                    for action_id in oui['faite']:
+                                        add_statut(action_id, 'faite')
+                                    for action_id in oui['pas_faite']:
+                                        add_statut(action_id, 'pas_faite')
+                                else:  # the answer is non
+                                    for action_id in non['faite']:
+                                        add_statut(action_id, 'faite')
+                                    for action_id in non['pas_faite']:
+                                        add_statut(action_id, 'pas_faite')
+
+                elif niveau['id'].startswith('5'):
+                    for n in niveau_data:
+                        if valeur := n.get('valeur'):
+                            if actions_pilier := valeur.get('actions'):
+                                add_message(f"Vos réponses : \n" +
+                                            '\n'.join([
+                                                f"{action.get('pilierId', '')} :\n - description {action.get('description', '')}\n - preuve: {action.get('preuve', '')}"
+                                                for action in actions_pilier])
+                                            )
+
+                else:
+                    raise NotImplementedError
+
+    def statut_to_insert(statut: Statut) -> str:
+        action_id = statut.action_id
+        epci_id = statut.epci_id
+        avancement = statut.avancement
+        return f"INSERT INTO public.actionstatus (id, action_id, epci_id, avancement, created_at, modified_at, latest) VALUES (DEFAULT, '{action_id}', '{epci_id}', '{avancement}', DEFAULT, DEFAULT, true);"
+
+    latest_statuts: List[Statut] = []
+
+    for statut in statuts:
+        # keep the latest annee for every statut
+        latest_statuts.append(sorted(
+            [s for s in statuts if s.epci_id == statut.epci_id and s.action_id == statut.action_id],
+            key=lambda statut: statut.annee
+        )[-1])
+
+    sql = '\n'.join([statut_to_insert(statut) for statut in latest_statuts])
+    write('dteci_statuts.sql', sql)
 
 
 @app.command()

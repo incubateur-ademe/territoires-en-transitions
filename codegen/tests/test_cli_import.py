@@ -11,7 +11,7 @@ output_dir = './tests/outputs'
 def test_dteci(mock_write: MagicMock):
     """Test dteci"""
     dteci(output_dir=output_dir)
-    pass
+    mock_write.assert_any_call(os.path.join(output_dir, 'dteci_statuts.sql'), ANY)
 
 
 @patch("codegen.cli_import.write")
