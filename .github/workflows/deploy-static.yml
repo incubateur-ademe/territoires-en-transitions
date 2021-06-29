@@ -91,7 +91,7 @@ jobs:
           git config --global user.name 'Territoires en transition'
           git config --global user.email 'territoires-en-transitions-deploy@users.noreply.github.com'
           git tag -a `date +%Y-%m-%d-%H-%M` -m "Déploiement de territoiresentransitions.fr du `date '+%d %B %Y %T'`"
-          git push origin release-static-`date +%Y-%m-%d-%H-%M`
+          git push origin `date +%Y-%m-%d-%H-%M`
           aws s3 cp ~/tmp/client s3://territoiresentransitions.fr --recursive --acl public-read
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
