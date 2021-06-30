@@ -146,6 +146,8 @@
     .indicateursTitle {
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
     }
 
     .last-button {
@@ -285,7 +287,7 @@
             </fieldset>
         {/if}
 
-        <div>
+        <fieldset>
             <div class="indicateursTitle">
                 <h3 class="fr-label">Indicateurs personnalisés</h3>
 
@@ -307,13 +309,11 @@
                 </MultiSelect>
 
                 {#each data.indicateur_personnalise_ids as indicateurId}
-                    <div class="shadow">
-                        <IndicateurPersonnaliseCard
-                                indicateur={indicateursPersonnalises.filter((i) => i.id === indicateurId)[0]}/>
-                    </div>
+                    <IndicateurPersonnaliseCard
+                            indicateur={indicateursPersonnalises.filter((i) => i.id === indicateurId)[0]}/>
                 {/each}
             {/if}
-        </div>
+        </fieldset>
 
         <div class="last-button">
             <a href=""

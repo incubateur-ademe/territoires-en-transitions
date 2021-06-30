@@ -112,6 +112,7 @@
         align-items: center;
         display: flex;
         flex-wrap: wrap;
+        gap: 1rem;
         position: relative;
     }
 
@@ -133,20 +134,16 @@
         left: 0;
     }
 
-    .token-remove, .remove-all {
-        align-items: center;
-        background-color: hsl(214, 15%, 55%);
+    .token-remove {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-left: .5rem;
+        color: #fff;
+        background-color: var(--bf500);
         border-radius: 50%;
-        color: hsl(214, 17%, 92%);
-        display: flex;
-        justify-content: center;
-        height: 1.25rem;
-        margin-left: .25rem;
-        min-width: 1.25rem;
     }
 
-    .token-remove:hover, .remove-all:hover {
-        background-color: hsl(215, 21%, 43%);
+    .token-remove:hover {
         cursor: pointer;
     }
 
@@ -238,9 +235,8 @@
             <div class="token fr-tag" data-id="{s.value}">
                 <span>{s.name.slice(0, 80)}</span>
                 {#if !readonly}
-                    <div class="token-remove" title="Remove {s.name}">
+                    <div class="token-remove" title="Supprimer {s.name}">
                         <span class="fr-fi-close-line" aria-hidden="true"></span>
-
                     </div>
                 {/if}
             </div>
