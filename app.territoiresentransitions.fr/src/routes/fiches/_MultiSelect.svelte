@@ -239,10 +239,8 @@
                 <span>{s.name.slice(0, 80)}</span>
                 {#if !readonly}
                     <div class="token-remove" title="Remove {s.name}">
-                        <svg class="icon-clear" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                             viewBox="0 0 24 24">
-                            <path d="{iconClearPath}"/>
-                        </svg>
+                        <span class="fr-fi-close-line" aria-hidden="true"></span>
+
                     </div>
                 {/if}
             </div>

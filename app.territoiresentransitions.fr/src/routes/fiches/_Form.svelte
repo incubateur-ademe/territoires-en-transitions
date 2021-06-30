@@ -275,7 +275,7 @@
 
                 {#each data.referentiel_indicateur_ids as indicateurId}
                     {#if find(prop(indicateurId))(indicateursReferentiel) }
-                        <div class="shadow">
+                        <div>
                             <IndicateurReferentielCard
                                     indicateur={find(prop(indicateurId))(indicateursReferentiel)}
                             />
