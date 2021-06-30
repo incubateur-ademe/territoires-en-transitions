@@ -62,6 +62,10 @@
         justify-content: space-between;
         margin-bottom: 2.5rem;
     }
+
+    .indicator :global(details) {
+        width: 70% !important;
+    }
 </style>
 
 <div class="pageIntro">

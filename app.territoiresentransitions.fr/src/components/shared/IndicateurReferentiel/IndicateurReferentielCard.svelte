@@ -142,23 +142,25 @@
         <div slot="content">
             {@html indicateur.description }
 
-            <h3>Actions liées</h3>
+            {#if relatedActions}
+                <h3>Actions liées</h3>
 
-            <ul>
-                {#each relatedActions as action}
-                    <li>
-                        <a
-                          href="/actions_referentiels/{action.id}/?epci_id={epciId}#{action.id}"
-                          class="fr-link fr-fi-arrow-right-line fr-link--icon-right"
-                          rel="prefetch"
-                        >
+                <ul>
+                    {#each relatedActions as action}
+                        <li>
+                            <a
+                                    href="/actions_referentiels/{action.id}/?epci_id={epciId}#{action.id}"
+                                    class="fr-link fr-fi-arrow-right-line fr-link--icon-right"
+                                    rel="prefetch"
+                            >
 
-                            <span>{action.id_nomenclature} - </span>
-                            {action.nom}
-                        </a>
-                    </li>
-                {/each}
-            </ul>
+                                {action.id_nomenclature} -
+                                {action.nom}
+                            </a>
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
         </div>
     </ExpandPanel>
 

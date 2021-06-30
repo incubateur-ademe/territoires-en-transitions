@@ -29,6 +29,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        margin-bottom: 2.5rem;
     }
 
     .indicators {
@@ -43,6 +44,8 @@
     </button>
 </div>
 
+
+<!-- BUG: S'affiche sous la liste -->
 {#if showCreation}
     <IndicateurPersonaliseCreation on:save={refresh}/>
 {/if}

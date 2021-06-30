@@ -30,6 +30,7 @@
     summary {
         display: flex;
         align-items: center;
+        padding-right: .5rem;
     }
 
     details :global([slot="title"]) {

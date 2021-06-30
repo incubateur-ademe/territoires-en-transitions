@@ -85,7 +85,7 @@
     }
 
     .description :global(details) {
-        max-width: 50%;
+        max-width: 70%;
     }
 </style>
 
@@ -104,9 +104,8 @@
                 {/if}
             </h3>
 
-            <button class="fr-btn fr-btn--secondary fr-btn--sm" on:click|preventDefault={handleEdit}>Modifier
-                l'indicateur
-            </button>
+            <button class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-edit-fill" title="Modifier l'indicateur"
+                on:click|preventDefault={handleEdit}></button>
         </div>
 
         <form class="indicatorRow">
