@@ -1,6 +1,8 @@
 <script lang="ts">
     /**
-     * Shows current user identity
+     * The root page either:
+     *  - shows sign in and register buttons
+     *  - redirects to /epcis/ if the user is connected
      */
     import {onMount} from "svelte";
     import Button from "../components/shared/Button/Button.svelte";
@@ -12,10 +14,6 @@
         connected = auth.connected()
         if (connected) window.location.href = '/epcis/'
     })
-
-    const goto = (section: string) => {
-        window.location.href = `/${section}/`
-    }
 </script>
 
 
@@ -34,10 +32,9 @@
             <p>Territoires en Transitions est un outil public gratuit et open-source pour les collectivités, financé par l'ADEME. Actuellement à ses débuts, la plateforme a besoin de vous pour évoluer dans le sens de vos besoins. Rejoignez-nous dans sa co-construction en créant votre compte en moins d'une minute.</p>
 
             <div class="flex flex-row flex-row-reverse">
-                <Button colorVariant="juniper" on:click={() => goto('auth/signin')}>Se connecter</Button>
-                <Button colorVariant="blueberry" on:click={() => goto('auth/register')}>Créer un compte</Button>
+                <Button colorVariant="juniper" asLink href="auth/signin/">Se connecter</Button>
+                <Button colorVariant="blueberry" asLink href="auth/register/">Créer un compte</Button>
             </div>
-
         </section>
     {/if}
 </div>
