@@ -66,6 +66,36 @@
         margin-top: 2.5rem;
     }
 
+    :global(summary::-webkit-details-marker) {
+        display: none;
+    }
+
+    details[open] summary {
+        margin-bottom: 1.875rem;
+    }
+
+    details[open] summary span {
+        transform: rotate(90deg);
+    }
+
+    summary {
+        display: flex;
+        align-items: center;
+    }
+
+    summary h2 {
+        margin-bottom: 0;
+    }
+
+    summary span {
+        margin-bottom: -0.625rem;
+        margin-left: 1rem;
+    }
+
+    summary span::before {
+        font-size: 2rem;
+    }
+
     h3 {
         margin-bottom: 1.875rem;
     }
@@ -97,10 +127,17 @@
             <ProgressStat position={"bottom"}/>
         </h2>
         {#each [...sous_domaines] as [sous_domaine, actions]}
-            <div>
-                <h3>{sous_domaine.id_nomenclature}. {sous_domaine.nom}
-                    <ProgressStat position={"bottom"}/>
-                </h3>
+            <details>
+                <summary>
+                    <h3>
+                        {sous_domaine.id_nomenclature}. {sous_domaine.nom}
+
+                        <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
+
+                        <ProgressStat position={"bottom"}/>
+                    </h3>
+                </summary>
+
                 {#each actions as action}
                     {#if searching}
                         <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
@@ -108,7 +145,7 @@
                         <ActionReferentielCard action={action} link/>
                     {/if}
                 {/each}
-            </div>
+            </details>
         {/each}
     </section>
 {/each}

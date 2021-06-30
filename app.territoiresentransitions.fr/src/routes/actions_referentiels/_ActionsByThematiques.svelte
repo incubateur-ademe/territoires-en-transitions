@@ -55,6 +55,10 @@
         margin-bottom: 1.875rem;
     }
 
+    details[open] summary span {
+        transform: rotate(90deg);
+    }
+
     summary {
         display: flex;
         align-items: center;
