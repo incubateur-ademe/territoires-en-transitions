@@ -4,6 +4,23 @@ import {utilisateurConnecteStore} from "./localStore";
 import {UtilisateurDroits, UtilisateurDroitsInterface} from "../../../generated/models/utilisateur_droits";
 import {getCurrentAPI} from "./currentAPI";
 
+const _dummyToken = 'xx'
+
+/**
+ * Save fake tokens, the user will be connected until replaced.
+ */
+export const saveDummyTokens = () => {
+    const storable = new UtilisateurConnecteStorable({
+        ademe_user_id: 'dummy',
+        access_token: _dummyToken,
+        refresh_token: _dummyToken,
+        email: 'dummy@territoiresentransitions.fr',
+        nom: 'Territoires en Transitions',
+        prenom: 'Dummy',
+    })
+    utilisateurConnecteStore.store(storable)
+}
+
 /**
  * Save the access token, the user is considered connected as long as the token is valid.
  */
@@ -32,6 +49,7 @@ export const connected = (): boolean => {
         return false
     }
     if (utilisateur == null) return false
+    if (utilisateur.access_token == _dummyToken) return true
 
     const decoded = jwt_decode(utilisateur.access_token)
     const secondsLeft = decoded['exp'] - (Date.now() / 1000)
