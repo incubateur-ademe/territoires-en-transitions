@@ -45,15 +45,12 @@
                     <a class="fr-link" href="indicateurs/?epci_id={epciId}">Indicateurs</a>
                 </li>
                 <li>
-                    <a class="fr-link fr-fi-account-line" href="connexion/?epci_id={epciId}">Déconnexion</a>
+                    <a class="fr-link fr-fi-account-line" href="auth/signout/?epci_id={epciId}">Déconnexion</a>
                 </li>
             {:else}
                 {#if !segment || segment === 'connexion' }
                     <li>
-                        <a class="fr-link" on:click|preventDefault={handleTest} href="fiches/?epci_id=test">Tester</a>
-                    </li>
-                    <li>
-                        <a class="fr-link fr-fi-account-line" href="connexion/?epci_id={epciId}">Se connecter</a>
+                        <a class="fr-link fr-fi-account-line" href="auth/signin/?epci_id={epciId}">Se connecter</a>
                     </li>
                 {/if}
             {/if}
