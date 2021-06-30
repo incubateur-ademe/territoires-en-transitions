@@ -29,51 +29,60 @@ import {Epci, EpciInterface} from "../../../generated/models/epci";
 import {currentAccessToken} from "./authentication";
 
 
+const defaultAuthorization = () => `Bearer ${currentAccessToken()}`
+
 export const indicateurValueStore = new HybridStore<IndicateurValueStorable>({
     host: getCurrentAPI(),
-    endpoint: () => `v1/${IndicateurValue.pathname}/${getCurrentEpciId()}`,
+    endpoint: () => `v2/${IndicateurValue.pathname}/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new IndicateurValueStorable(serialized as IndicateurValueInterface),
 });
 
 export const actionStatusStore = new HybridStore<ActionStatusStorable>({
     host: getCurrentAPI(),
-    endpoint: () => `v1/${ActionStatus.pathname}/${getCurrentEpciId()}`,
+    endpoint: () => `v2/${ActionStatus.pathname}/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new ActionStatusStorable(serialized as ActionStatusInterface),
 });
 
 export const ficheActionStore = new HybridStore<FicheActionStorable>({
     host: getCurrentAPI(),
-    endpoint: () => `v1/${FicheAction.pathname}/${getCurrentEpciId()}`,
+    endpoint: () => `v2/${FicheAction.pathname}/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new FicheActionStorable(serialized as FicheActionInterface),
 });
 
 export const ficheActionCategorieStore = new HybridStore<FicheActionCategorieStorable>({
     host: getCurrentAPI(),
-    endpoint: () => `v1/${FicheActionCategorie.pathname}/${getCurrentEpciId()}`,
+    endpoint: () => `v2/${FicheActionCategorie.pathname}/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new FicheActionCategorieStorable(serialized as FicheActionCategorieInterface),
 });
 
 export const indicateurPersonnaliseStore = new HybridStore<IndicateurPersonnaliseStorable>({
     host: getCurrentAPI(),
-    endpoint: () => `v1/${IndicateurPersonnalise.pathname}/${getCurrentEpciId()}`,
+    endpoint: () => `v2/${IndicateurPersonnalise.pathname}/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new IndicateurPersonnaliseStorable(serialized as IndicateurPersonnaliseInterface),
 });
 
 export const indicateurPersonnaliseValueStore = new HybridStore<IndicateurPersonnaliseValueStorable>({
     host: getCurrentAPI(),
-    endpoint: () => `v1/${IndicateurPersonnaliseValue.pathname}/${getCurrentEpciId()}`,
+    endpoint: () => `v2/${IndicateurPersonnaliseValue.pathname}/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new IndicateurPersonnaliseValueStorable(serialized as IndicateurPersonnaliseValueInterface),
 });
 
 export const indicateurReferentielCommentaireStore = new HybridStore<IndicateurReferentielCommentaireStorable>({
     host: getCurrentAPI(),
-    endpoint: () => `v1/${IndicateurReferentielCommentaire.pathname}/${getCurrentEpciId()}`,
+    endpoint: () => `v2/${IndicateurReferentielCommentaire.pathname}/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new IndicateurReferentielCommentaireStorable(serialized as IndicateurReferentielCommentaireInterface),
 });
@@ -81,7 +90,7 @@ export const indicateurReferentielCommentaireStore = new HybridStore<IndicateurR
 export const epciStore = new HybridStore<EpciStorable>({
     host: getCurrentAPI(),
     endpoint: () => `v2/${Epci.pathname}`,
-    authorization: () => `Bearer ${currentAccessToken()}`,
+    authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new EpciStorable(serialized as EpciInterface),
 });
