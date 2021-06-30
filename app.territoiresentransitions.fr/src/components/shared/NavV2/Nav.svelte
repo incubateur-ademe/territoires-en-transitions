@@ -45,7 +45,7 @@
                     <a class="fr-link" href="indicateurs/?epci_id={epciId}">Indicateurs</a>
                 </li>
                 <li>
-                    <a class="fr-link fr-fi-account-line" href="auth/signout/?epci_id={epciId}">Déconnexion</a>
+                    <a class="fr-link fr-fi-account-line" href="auth/signout/">Déconnexion</a>
                 </li>
             {:else}
                 {#if !segment || segment === 'connexion' }
