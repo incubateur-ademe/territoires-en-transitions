@@ -37,6 +37,13 @@
             </div>
         </div>
     </div>
+
+    <!--
+        This slot can be used to display a secondary content (eg. a navigation bar) at the
+        bottom of the header. For instance, we use it to display the `NavDev` component on localhost
+        and sandbox.
+    -->
+    <slot name="secondary"></slot>
 </header>
 
 <style>

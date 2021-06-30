@@ -4,6 +4,8 @@ on:
   push:
     branches-ignore:
       - production
+      - production-static
+      - trigger-deploy-from-main
       - deploy-static-workflow
 
 jobs:

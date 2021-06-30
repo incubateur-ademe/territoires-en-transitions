@@ -36,6 +36,12 @@
     }
 </script>
 
+<style>
+    button {
+        border: rgba(19, 101, 56, 100) 2px solid;
+    }
+</style>
+
 {#if asLink}
     <a
             href="{ href }"
