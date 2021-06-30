@@ -383,48 +383,48 @@
 
     @font-face {
         font-family: Marianne;
-        src: url("../fonts/Marianne-Light.woff2") format("woff2"),
-        url("../fonts/Marianne-Light.woff") format("woff");
+        src: url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Light.woff2") format("woff2"),
+        url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Light.woff") format("woff");
         font-weight: 300;
         font-style: normal;
     }
 
     @font-face {
         font-family: Marianne;
-        src: url("../fonts/Marianne-Light_Italic.woff2") format("woff2"),
-        url("../fonts/Marianne-Light_Italic.woff") format("woff");
+        src: url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Light_Italic.woff2") format("woff2"),
+        url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Light_Italic.woff") format("woff");
         font-weight: 300;
         font-style: italic;
     }
 
     @font-face {
         font-family: Marianne;
-        src: url("../fonts/Marianne-Regular.woff2") format("woff2"),
-        url("../fonts/Marianne-Regular.woff") format("woff");
+        src: url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Regular.woff2") format("woff2"),
+        url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Regular.woff") format("woff");
         font-weight: 400;
         font-style: normal;
     }
 
     @font-face {
         font-family: Marianne;
-        src: url("../fonts/Marianne-Regular_Italic.woff2") format("woff2"),
-        url("../fonts/Marianne-Regular_Italic.woff") format("woff");
+        src: url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Regular_Italic.woff2") format("woff2"),
+        url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Regular_Italic.woff") format("woff");
         font-weight: 400;
         font-style: italic;
     }
 
     @font-face {
         font-family: Marianne;
-        src: url("../fonts/Marianne-Bold.woff2") format("woff2"),
-        url("../fonts/Marianne-Bold.woff") format("woff");
+        src: url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Bold.woff2") format("woff2"),
+        url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Bold.woff") format("woff");
         font-weight: 700;
         font-style: normal;
     }
 
     @font-face {
         font-family: Marianne;
-        src: url("../fonts/Marianne-Bold_Italic.woff2") format("woff2"),
-        url("../fonts/Marianne-Bold_Italic.woff") format("woff");
+        src: url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Bold_Italic.woff2") format("woff2"),
+        url("https://territoiresentransitions.fr/_app/assets/fonts/Marianne-Bold_Italic.woff") format("woff");
         font-weight: 700;
         font-style: italic;
     }
