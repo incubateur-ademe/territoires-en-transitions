@@ -40,10 +40,9 @@
 <div class="indicator__intro">
     <h2>Mes indicateurs</h2>
     <button class="fr-btn fr-btn--secondary" on:click|preventDefault={handleNewIndicateur}>
-        Nouvel indicateur
+        Ajouter un indicateur
     </button>
 </div>
-
 
 <!-- BUG: S'affiche sous la liste -->
 {#if showCreation}
