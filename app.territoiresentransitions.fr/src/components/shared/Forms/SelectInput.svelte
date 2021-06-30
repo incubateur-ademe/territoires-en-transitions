@@ -19,11 +19,15 @@
 
 <style>
     .fr-select {
-        width: auto;
+        width: 100%;
     }
 </style>
 
-<select class="fr-select" bind:value={value}
-        on:change={onChange}>
-    <slot></slot>
-</select>
+<div>
+    <!-- voir pour améliorer le for/id en supprimant les espaces -->
+    <label for="{label}" class="fr-label">{label}</label>
+    <select id="{label}" class="fr-select" bind:value={value}
+            on:change={onChange}>
+        <slot></slot>
+    </select>
+</div>
