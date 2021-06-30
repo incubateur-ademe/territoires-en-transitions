@@ -8,7 +8,7 @@ import codegen.paths as paths
 from codegen.action.process import relativize_ids, clean_thematiques, propagate_thematiques, referentiel_from_actions, \
     remove_top_nodes
 from codegen.action.read import build_action
-from codegen.action.render import render_actions_as_typescript
+from codegen.action.render import render_actions_as_typescript, render_actions_as_python
 from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
 from codegen.codegen.python import render_markdown_as_python
 from codegen.codegen.typescript import render_markdown_as_typescript
@@ -67,7 +67,9 @@ def actions(
     mesures_markdown_dir=paths.mesures_markdown_dir,
     orientations_markdown_dir=paths.orientations_markdown_dir,
     client_output_dir=paths.shared_client_data_dir,
+    shared_api_data_dir=paths.shared_api_data_dir,
     output_typescript=True,
+    output_python=False,
 ) -> None:
     # citergie
     files = glob.glob(os.path.join(mesures_markdown_dir, '*.md'))
@@ -117,6 +119,11 @@ def actions(
         typescript = render_actions_as_typescript([citergie, economie_circulaire])
         filename = os.path.join(client_output_dir, 'referentiels.ts')
         write(filename, typescript)
+
+    if output_python:
+        python = render_actions_as_python([citergie, economie_circulaire])
+        filename = os.path.join(shared_api_data_dir, 'referentiels.py')
+        write(filename, python)
 
 
 @app.command()

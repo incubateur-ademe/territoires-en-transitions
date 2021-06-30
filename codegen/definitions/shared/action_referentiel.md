@@ -19,6 +19,8 @@ ActionReferentiel:
         type: String
     thematique_id:
         type: String
+    points:
+        type: num
     actions:
         type: List[ActionReferentiel]
 ```
