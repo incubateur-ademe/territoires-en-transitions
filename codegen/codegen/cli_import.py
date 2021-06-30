@@ -62,9 +62,12 @@ def dteci(
 
     def action_by_id(action_id: str, actions: List[ActionReferentiel]) -> ActionReferentiel:
         for action in actions:
-            if action.id_nomenclature == action_id:
+            if action.id_nomenclature.strip() == action_id.strip():
                 return action
-            return action_by_id(action_id, action.actions)
+            else:
+                found = action_by_id(action_id, action.actions)
+                if found:
+                    return found
 
     # iterate on the correspondance table
     for axe in table_correspondance:
@@ -83,7 +86,6 @@ def dteci(
                     ))
 
                 def add_message(body: str):
-                    print(niveau['id'] + f': {body}')
                     messages.append(Message(
                         action_id=niveau['id'],
                         epci_id=n['territoireId'],
@@ -207,11 +209,32 @@ def dteci(
                 else:
                     raise NotImplementedError
 
-    def statut_to_insert(statut: Statut) -> str:
+    def statut_to_statut_insert(statut: Statut) -> str:
         action_id = statut.action_id
         epci_id = statut.epci_id
         avancement = statut.avancement
         return f"INSERT INTO public.actionstatus (id, action_id, epci_id, avancement, created_at, modified_at, latest) VALUES (DEFAULT, 'economie_circulaire__{action_id}', '{epci_id}', '{avancement}', DEFAULT, DEFAULT, true);"
+
+    def data_to_meta_insert(data: dict) -> str:
+        action_id = data.get('niveauId')
+        epci_id = data.get('territoireId')
+        notes = data.get('notesUtilisateur', {}).get('notes', '')
+        preuve = data.get('preuve', {}).get('preuve', '')
+        if not notes and not preuve:
+            return ''
+
+        meta = json.dumps({'commentaire': '\n\n'.join([notes, preuve])}) \
+            .replace("'", "''") \
+            .replace('\\', '\\\\')
+        return f"INSERT INTO public.actionmeta (id, action_id, epci_id, meta, created_at, modified_at, latest) VALUES (DEFAULT, 'economie_circulaire__{action_id}', '{epci_id}', '{meta}', DEFAULT, DEFAULT, true);"
+
+    def territoire_to_epci_insert(territoire: dict) -> str:
+        uid = territoire.get('id')
+        nom = territoire.get('nom')
+        insee = territoire.get('insee', '')
+        siren = territoire.get('siren', '')
+
+        return f"INSERT INTO public.epci (id, uid, insee, siren, nom, created_at, modified_at, latest) VALUES (DEFAULT, '{uid}', '{nom}', '{insee}', '{siren}', DEFAULT, DEFAULT, DEFAULT);"
 
     latest_statuts: List[Statut] = []
 
@@ -222,8 +245,13 @@ def dteci(
             key=lambda statut: statut.annee
         )[-1])
 
-    sql = '\n'.join([statut_to_insert(statut) for statut in latest_statuts])
-    write(os.path.join(output_dir, 'dteci_statuts.sql'), sql)
+    epci_sql = '\n'.join([territoire_to_epci_insert(territoire) for territoire in territoires_repris])
+    meta_sql = '\n'.join([data_to_meta_insert(data) for data in niveaux_repris])
+    statuts_sql = '\n'.join([statut_to_statut_insert(statut) for statut in latest_statuts])
+
+    write(os.path.join(output_dir, 'dteci_statuts.sql'), statuts_sql)
+    write(os.path.join(output_dir, 'dteci_meta.sql'), meta_sql)
+    write(os.path.join(output_dir, 'dteci_epci.sql'), epci_sql)
 
 
 @app.command()
@@ -271,7 +299,6 @@ def correspondance_table(
                 for niveau in orientation['niveaux']:
                     id = niveau['id']
                     action = actionById(id, economie_circulaire['actions'])
-                    print(id)
 
                     if not action or 'indicateur' not in niveau.keys():
                         continue
