@@ -36,7 +36,7 @@
 <div>
 
 </div>
-{#if segment === 'fiches' }
+{#if segment === 'fiches' || segment === 'epcis' }
 	<Tailwind />
 {/if}
 <Head/>
