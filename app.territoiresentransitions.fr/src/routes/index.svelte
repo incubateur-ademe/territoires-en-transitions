@@ -1,6 +1,46 @@
+<script lang="ts">
+    /**
+     * Shows current user identity
+     */
+    import {onMount} from "svelte";
+    import Button from "../components/shared/Button/Button.svelte";
+
+    let connected: boolean | null = null
+
+    onMount(async () => {
+        const auth = await import("../api/authentication")
+        connected = auth.connected()
+        if (connected) window.location.href = '/epcis/'
+    })
+
+    const goto = (section: string) => {
+        window.location.href = `/${section}/`
+    }
+</script>
+
+
 <svelte:head>
     <title>Territoires en Transitions</title>
 </svelte:head>
+
+<div class="">
+    {#if connected === null}
+        <p>Chargement en cours...</p>
+    {:else if connected}
+        <p>Redirection en cours...</p>
+    {:else }
+        <section class="flex flex-col max-w-lg">
+            <h1 class="text-xl">A vous de jouer !</h1>
+            <p>Territoires en Transitions est un outil public gratuit et open-source pour les collectivités, financé par l'ADEME. Actuellement à ses débuts, la plateforme a besoin de vous pour évoluer dans le sens de vos besoins. Rejoignez-nous dans sa co-construction en créant votre compte en moins d'une minute.</p>
+
+            <div class="flex flex-row flex-row-reverse">
+                <Button colorVariant="juniper" on:click={() => goto('auth/signin')}>Se connecter</Button>
+                <Button colorVariant="blueberry" on:click={() => goto('auth/register')}>Créer un compte</Button>
+            </div>
+
+        </section>
+    {/if}
+</div>
 
 <div class="hidden">
     <!-- Forces sapper to generate html pages -->
