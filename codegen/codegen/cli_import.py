@@ -3,12 +3,15 @@ import os
 from dataclasses import dataclass
 from typing import List, Dict
 
+import itertools
 import pandas as pd
 import typer
 from fuzzywuzzy import process
 
 from codegen.action.process import referentiel_from_actions
 from codegen.action.read import build_action
+from codegen.generated.data.referentiels import actions
+from codegen.generated.models.action_referentiel import ActionReferentiel
 from codegen.paths import orientations_markdown_dir
 from codegen.utils.files import load_md, sorted_files, write, load_json
 
@@ -39,6 +42,7 @@ def dteci(
     """
     Load dteci data (one shot)
     """
+    eci = next(action for action in actions if action.id.startswith('economie_circulaire'))
     table_correspondance: list = load_json(os.path.join(data_dir, 'table_correspondance.json'))
     server_niveaux = load_json(os.path.join(data_dir, 'server_niveaux.json'))
     server_territoires: Dict[dict] = load_json(os.path.join(data_dir, 'server_territoires.json'))
@@ -55,6 +59,12 @@ def dteci(
 
     statuts: List[Statut] = []
     messages: List[Message] = []
+
+    def action_by_id(action_id: str, actions: List[ActionReferentiel]) -> ActionReferentiel:
+        for action in actions:
+            if action.id_nomenclature == action_id:
+                return action
+            return action_by_id(action_id, action.actions)
 
     # iterate on the correspondance table
     for axe in table_correspondance:
@@ -108,28 +118,26 @@ def dteci(
 
                 # choix (checkboxes)
                 elif choix := indicateur.get('choix'):
-                    for c in choix:
-                        # the niveau data matching the current choice `c`
-                        chosen = [n for n in niveau_data if c['id']
-                                  in [v['id'] for v in n.get('valeur', {}).get('ids', [])]]
 
-                        for data in chosen:
-                            for action_id in c['faite']:
-                                statuts.append(
-                                    Statut(
-                                        action_id=action_id,
-                                        epci_id=data['territoireId'],
-                                        avancement='faite',
-                                        annee=data['annee'],
-                                    ))
-                            for action_id in c['pas_faite']:
-                                statuts.append(
-                                    Statut(
-                                        action_id=action_id,
-                                        epci_id=data['territoireId'],
-                                        avancement='pas_faite',
-                                        annee=data['annee'],
-                                    ))
+                    niveau_action = action_by_id(niveau['id'], eci.actions)
+                    taches_ids = [action.id_nomenclature for action in niveau_action.actions]
+                    data_by_territoire = {}
+                    for n in niveau_data:
+                        data_by_territoire.setdefault(n['territoireId'], []).append(n)
+
+                    for territoire_data in data_by_territoire.values():
+                        for yearly_data in territoire_data:
+                            chosen = [n['id'] for n in yearly_data.get('valeur', {}).get('ids', []) if n]
+                            faites = list(
+                                itertools.chain.from_iterable([c['faite'] for c in choix if c['id'] in chosen]))
+                            pas_faites = [t for t in taches_ids if t not in faites]
+
+                            for action_id in faites:
+                                add_statut(action_id, 'faite')
+
+                            for action_id in pas_faites:
+                                add_statut(action_id, 'pas_faite')
+
 
                 # liste (dropdown)
                 elif liste := indicateur.get('liste'):
@@ -203,7 +211,7 @@ def dteci(
         action_id = statut.action_id
         epci_id = statut.epci_id
         avancement = statut.avancement
-        return f"INSERT INTO public.actionstatus (id, action_id, epci_id, avancement, created_at, modified_at, latest) VALUES (DEFAULT, '{action_id}', '{epci_id}', '{avancement}', DEFAULT, DEFAULT, true);"
+        return f"INSERT INTO public.actionstatus (id, action_id, epci_id, avancement, created_at, modified_at, latest) VALUES (DEFAULT, 'economie_circulaire__{action_id}', '{epci_id}', '{avancement}', DEFAULT, DEFAULT, true);"
 
     latest_statuts: List[Statut] = []
 
@@ -215,7 +223,7 @@ def dteci(
         )[-1])
 
     sql = '\n'.join([statut_to_insert(statut) for statut in latest_statuts])
-    write('dteci_statuts.sql', sql)
+    write(os.path.join(output_dir, 'dteci_statuts.sql'), sql)
 
 
 @app.command()
