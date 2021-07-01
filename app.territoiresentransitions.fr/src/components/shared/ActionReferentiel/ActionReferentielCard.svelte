@@ -92,8 +92,6 @@
 
     onMount(async () => {
         epciId = getCurrentEpciId()
-        const stores = await import("../../../api/hybridStores")
-        score = await stores.actionReferentielScoreStore.retrieveById(action.id)
     })
 </script>
 
@@ -181,7 +179,7 @@
 
     <div>
         {#if link}
-            <a href="/actions_referentiels/{mesureId}/#{action.id}?epci_id={epciId}"
+            <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
                rel="prefetch" class="RowCard__linkOnly">
 
                 <div>
@@ -189,7 +187,7 @@
                         <span class="label">{action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}</span>
 
                         <ActionReferentielTitle
-                                on:click={() => goto(`/actions_referentiels/${mesureId}/#${action.id}?epci_id=${epciId}`)}
+                                on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
                                 action={action}/>
                     </div>
 
