@@ -23,32 +23,48 @@
     })
 </script>
 
-<div class="flex flex-row items-center
-            bg-white px-5 py-5 mb-5 ">
-    <div class="flex-grow flex flex-row items-center">
+<style>
+    .pageIntro {
+        margin-top: 2.25rem;
+        margin-bottom: 3.75rem;
+    }
+    .pageIntro > div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .pageIntro > div + div {
+        margin-top: 1.875rem;
+    }
+
+    .pageIntro h1 {
+        margin-bottom: 0;
+    }
+</style>
+
+<div class="pageIntro">
+    <div>
         <h1>
             Référentiels
         </h1>
-        <div class="pl-2"></div>
-        <div class="w-1/2">
-            <SelectInput bind:value={view}>
-                <option value='thematique'>
-                    Thématiques
-                </option>
-                <option value='eci'>
-                    Économie Circulaire
-                </option>
-                <option value='cae'>
-                    Climat Air Énergie
-                </option>
-            </SelectInput>
-        </div>
-    </div>
-    <div>
+
         <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
     </div>
 
-
+    <div>
+        <SelectInput bind:value={view}>
+            <option value='thematique'>
+                Thématiques
+            </option>
+            <option value='eci'>
+                Économie Circulaire
+            </option>
+            <option value='cae'>
+                Climat Air Énergie
+            </option>
+        </SelectInput>
+    </div>
 </div>
 
 {#if view === 'thematique'}

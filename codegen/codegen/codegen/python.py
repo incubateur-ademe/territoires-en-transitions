@@ -10,12 +10,10 @@ from codegen.utils.templates import build_jinja_environment
 
 template_file = 'shared/python/classes.j2'
 
-env = build_jinja_environment()
-
 
 def types_python(t: str) -> str:
     """Converts a type from yaml to a python type"""
-    py_types = {'String': 'str', 'num': 'float', 'List': 'list', 'Date': 'date', None: 'str'}
+    py_types = {'String': 'str', 'num': 'float', 'List': 'list', 'Date': 'date', 'bool': 'bool', None: 'str'}
     if t in py_types.keys():
         return py_types[t]
     if t.startswith('List['):
@@ -36,6 +34,7 @@ def classes_python(yaml_data: dict) -> dict:
 
 
 def render_template(template_file: str, data: dict) -> str:
+    env = build_jinja_environment()
     template = env.get_template(template_file)
     classes = classes_python(data)
     rendered = template.render(classes=classes)

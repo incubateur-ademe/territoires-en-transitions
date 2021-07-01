@@ -8,6 +8,7 @@
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
     import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
     import {fiche_action_avancement_noms} from "../../../../generated/models/fiche_action_avancement_noms";
+    import RowCard from "../../components/shared/RowCard.svelte";
 
     const defaultCategorie = new FicheActionCategorieStorable({
         uid: '',
@@ -148,16 +149,23 @@
         await updateFiches()
     });
 </script>
+
+<style>
+    li + li {
+        margin-top: 1rem;
+    }
+</style>
 <svelte:head>
     <title>Plan d'actions</title>
 </svelte:head>
 
-<header class="flex flex-col bg-white">
+<header class="flex flex-col bg-white pb-10">
     <div class="flex flex-row my-10 mx-5">
         <h1 class="text-3xl font-semibold  flex-grow">Plan d'actions de ma collectivité</h1>
         <Button asLink
                 href="fiches/creation/?epci_id={epciId}"
-                label="Créer une fiche action"/>
+                label="Créer une fiche action"
+        classNames="fr-btn"/>
     </div>
     <div class="grid gap-4 grid-cols-4 mx-5">
 
@@ -209,9 +217,7 @@
             {/each}
         </SelectInput>
     </div>
-    <div class="pb-2"></div>
 </header>
-<div class="p-5"></div>
 
 {#each [...filteredFichesByCategorie] as [categorie, fiches]}
     {#if categorie.uid === defaultCategorie.uid}
@@ -222,17 +228,15 @@
     <ul>
         {#each fiches as fiche}
             <li>
-                <a class="block bg-white rounded
-                            my-4 p-4"
-                   href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
-                    <h3 class=" text-lg">
-                        ({fiche.custom_id}) {fiche.titre}
-                    </h3>
-                </a>
+                <RowCard>
+                    <a href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
+                        <h3>
+                            ({fiche.custom_id}) {fiche.titre}
+                        </h3>
+                    </a>
+                </RowCard>
             </li>
         {/each}
     </ul>
-    <div class="p-5"></div>
 {/each}
 
-<div class="p-5"></div>

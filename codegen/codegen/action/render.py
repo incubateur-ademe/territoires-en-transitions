@@ -2,6 +2,7 @@ import json
 from typing import List
 
 import jsbeautifier
+from black import format_str, FileMode
 from bs4 import BeautifulSoup
 from mistletoe import HTMLRenderer, Document
 
@@ -9,10 +10,8 @@ from codegen.climat_pratic.thematiques_generator import get_thematiques
 from codegen.utils.templates import build_jinja_environment
 
 
-def render_actions_as_typescript(actions: List[dict],
-                                 template_file='shared/ts/actions_referentiel.j2') -> str:
-    """Render all actions into a single typescript file."""
-    env = build_jinja_environment()
+def render_descriptions_to_html(actions: List[dict]):
+    """Renders descriptions markdown to html. Convert description in place."""
     renderer = HTMLRenderer()
 
     def render_descriptions(actions: List[dict]) -> None:
@@ -24,6 +23,36 @@ def render_actions_as_typescript(actions: List[dict],
 
     render_descriptions(actions)
 
+
+def add_points(actions: List[dict]):
+    """Add missing points"""
+    for action in actions:
+        action['points'] = action.get('points', -1.0)
+        add_points(action['actions'])
+
+
+def render_actions_as_python(actions: List[dict],
+                             template_file='shared/python/actions_referentiel.j2') -> str:
+    """Render all actions into a single python file."""
+    env = build_jinja_environment()
+
+    def add_points(actions: List[dict]):
+        for action in actions:
+            action['points'] = action.get('points', None)
+            add_points(action['actions'])
+
+    add_points(actions)
+    template = env.get_template(template_file)
+    rendered = template.render(actions=actions)
+    return format_str(rendered, mode=FileMode())
+
+
+def render_actions_as_typescript(actions: List[dict],
+                                 template_file='shared/ts/actions_referentiel.j2') -> str:
+    """Render all actions into a single typescript file."""
+    env = build_jinja_environment()
+    add_points(actions)
+    render_descriptions_to_html(actions)
     template = env.get_template(template_file)
     rendered = template.render(actions=actions)
     return jsbeautifier.beautify(rendered)
@@ -40,7 +69,6 @@ def render_mesure_as_html(mesure: dict,
     if indicateurs is None:
         indicateurs = []
 
-    # todo since those names are shared, use code generation.
     avancement_noms = {
         'faite': 'Faite',
         'programmee': 'Prévue',

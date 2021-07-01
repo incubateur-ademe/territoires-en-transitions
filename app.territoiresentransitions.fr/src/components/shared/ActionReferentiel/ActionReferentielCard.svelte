@@ -2,18 +2,18 @@
     /**
      * Display an ActionReferentiel as a card.
      *
-     * Display is customizable using props such as: ficheButton, link, emoji...
+     * Display is customizable using props such as: ficheButton, link…
      */
-    import { goto } from '@sapper/app'
+    import {goto} from '@sapper/app'
     import ActionStatus from "../ActionStatus.svelte";
     import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../../api/currentEpci";
-    import Angle from "../Angle.svelte";
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
-    import AddFiche from "../../icons/AddFiche.svelte";
     import PickButton from '../Button/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
+    import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
+    import ProgressStat from "../../../../../components/ProgressStat.svelte";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -25,9 +25,6 @@
     // The title links to the action page.
     export let link: boolean = false
 
-    // Show referentiel emoji
-    export let emoji: boolean = false
-
     // Show expand children button
     export let expandButton: boolean = false
 
@@ -36,6 +33,15 @@
 
     // Show an add button
     export let addButton: boolean = false
+
+    // Adds a border to the Card
+    export let borderedCard: boolean = false
+
+    // Displays the comment part
+    export let commentBlock: boolean = false
+
+    // Displays children of the card
+    export let recursive: boolean = false
 
     // Handle add/remove button callback
     export let onAddButtonClick: ActionClick = (action) => (event) => {
@@ -56,11 +62,6 @@
     // card shadow
     let sizes = ['2xl', 'xl', 'l', 'md', '', 'sm']
     $: shadowSize = sizes[depth - (isCitergie ? 0 : 1)]
-
-    let expanded = false
-    const handleExpand = () => {
-        expanded = !expanded
-    }
 
     let epciId = ''
 
@@ -91,61 +92,142 @@
     })
 </script>
 
+<style>
+    .label {
+        display: inline-block;
+        margin-bottom: 1rem;
+        font-size: 0.75rem;
+    }
 
-<RowCard id={action.id} shadowSize={shadowSize}>
-        {#if ficheButton}
-            <a class="opacity-50 hover:opacity-80 mr-2"
-               href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
-                <AddFiche/>
-            </a>
-        {/if}
+    .RowCard__linkOnly {
+        display: flex;
+        flex-direction: column;
+    }
 
-        {#if addButton}
-            <PickButton picked={isAdded}
-                        handlePick={handleToggleButtonClick}
-                        handleUnpick={handleToggleButtonClick}
-                        pickLabel="+"
-                        unpickLabel="✓ Ajouté"
-            />
-        {/if}
+    .RowCard__linkOnly > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 100%;
+    }
 
-        <div class="flex items-center flex-grow"
-             class:statusBar={"max-w-lg"}>
+    .RowCard__linkOnly .RowCard__title {
+        flex-direction: column;
+        max-width: 75%;
+    }
 
-            {#if link}
-                <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
-                   rel="prefetch"
-                   class="flex flex-grow">
-                    <ActionReferentielTitle
-                            on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
-                            action={action} emoji={emoji}/>
-                </a>
-            {:else if expandButton && (action.actions.length || action.description.trim().length) }
-                <div class="flex flex-row cursor-pointer items-stretch"
-                     on:click={handleExpand}>
-                    <ActionReferentielTitle action={action} emoji={emoji}/>
-                    <Angle direction="{expanded ? 'down' : 'right' }"/>
+    .RowCard__linkOnly .fr-fi-arrow-right-line {
+        align-self: flex-end;
+        color: var(--bf500);
+    }
+
+    .RowCard__title,
+    .RowCard__content {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .RowCard__title {
+        align-items: flex-start;
+    }
+
+    .RowCard__title :global(:first-child) {
+        max-width: 75%;
+    }
+
+    .RowCard__content {
+        align-items: center;
+    }
+
+    .RowCard__content:not(:last-child) {
+        margin-bottom: 1.5rem;
+    }
+
+    .listActions__subList {
+        margin-top: 1.25rem;
+        margin-left: 5.313rem;
+    }
+
+    .listActions__subList :global(h3 span) {
+        display: block;
+        margin-bottom: 1rem;
+        font-size: 0.75rem;
+        font-weight: normal;
+    }
+
+    .commentBlock {
+        width: 50%;
+    }
+
+    .commentBlock :global(.fr-btn) {
+        margin-top: 1rem;
+    }
+</style>
+
+<RowCard id={action.id} shadowSize={shadowSize} bordered={borderedCard}>
+    {#if addButton}
+        <PickButton picked={isAdded}
+                    handlePick={handleToggleButtonClick}
+                    handleUnpick={handleToggleButtonClick}
+                    pickLabel="+"
+                    unpickLabel="✓ Ajouté"
+        />
+    {/if}
+
+    <div>
+        {#if link}
+            <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
+               rel="prefetch" class="RowCard__linkOnly">
+
+                <div>
+                    <div class="RowCard__title">
+                        <span class="label">{action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}</span>
+
+                        <ActionReferentielTitle
+                                on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
+                                action={action}/>
+                    </div>
+
+                    <ProgressStat position={"right"}/>
                 </div>
-            {:else }
-                <ActionReferentielTitle on:click={onTitleClick(action)} action={action} emoji={emoji}/>
-            {/if}
-        </div>
-        {#if statusBar}
-            <div class="ml-4">
-                <ActionStatus actionId={action.id}/>
+
+                <span class="fr-fi-arrow-right-line"></span>
+            </a>
+        {:else }
+            <div class="RowCard__title">
+                <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
+
+                <ProgressStat position={"right"}/>
             </div>
         {/if}
+    </div>
+
+    {#if ficheButton && statusBar}
+        <div class="RowCard__content">
+            <a class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-file-fill fr-btn--icon-left"
+               href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
+                Créer une fiche-action
+            </a>
+
+            <ActionStatus actionId={action.id}/>
+        </div>
+    {/if}
+
+    {#if commentBlock}
+        <div class="commentBlock">
+            <ExpandPanel>
+                <h2 slot="title">Commentaires</h2>
+                <div slot="content">
+                    <textarea class="fr-input"></textarea>
+                    <button class="fr-btn">Enregistrer</button>
+                </div>
+            </ExpandPanel>
+        </div>
+    {/if}
 </RowCard>
 
-{#if expanded && action.description.trim().length }
-    <div class="flex flex-col m-4">
-        {@html action.description}
-    </div>
-{/if}
-
-
-{#if expanded}
-    <div class="ml-6">
+{#if recursive}
+    <div class="listActions__subList">
         {#each action.actions as action}
             <svelte:self action={action}
                          ficheButton={ficheButton}
@@ -155,6 +237,7 @@
                          addButton={addButton}
                          onAddButtonClick={onAddButtonClick}
                          isActionLinkedToFiche={isActionLinkedToFiche}
+                         commentBlock={true}
             >
             </svelte:self>
         {/each}

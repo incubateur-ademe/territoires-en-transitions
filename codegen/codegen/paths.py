@@ -18,3 +18,4 @@ shared_markdown_dir = 'definitions/shared'
 shared_client_models_dir = os.path.join(root_dir, 'generated/models')
 shared_client_data_dir = os.path.join(root_dir, 'generated/data')
 shared_api_models_dir = os.path.join(api_dir, 'models/generated')
+shared_api_data_dir = os.path.join(api_dir, 'data/generated')

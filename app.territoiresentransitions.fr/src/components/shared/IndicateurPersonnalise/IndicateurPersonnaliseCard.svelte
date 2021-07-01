@@ -7,6 +7,7 @@
     import Angle from "../Angle.svelte";
     import Button from "../Button/Button.svelte";
     import IndicateurPersonnaliseValueInput from "./IndicateurPersonnaliseValueInput.svelte";
+    import RowCard from "../RowCard.svelte";
 
     export let indicateur: IndicateurPersonnalise
 
@@ -31,6 +32,16 @@
     }
 </script>
 
+<style>
+    .indicatorRow {
+        display: flex;
+    }
+
+    .indicatorRow > div:not(:first-child) {
+        margin-left: 1.25rem;
+    }
+</style>
+
 {#if editing}
     <div class="bg-gray-200 p-4 mt-2 mb-5">
         <h5 class="text-lg">Modifier l'indicateur</h5>
@@ -38,7 +49,7 @@
         <IndicateurForm bind:data={indicateur} on:save={onSave}/>
     </div>
 {:else }
-    <section class="p-4 my-4 bg-white flex flex-col indicateur">
+    <RowCard>
         <div class="flex flex-col">
             <div class="flex flex-col lg:flex-row items-start w-full">
                 <div class="flex flex-row flex-1 items-center">
@@ -55,9 +66,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-row flex-1">
+
+                <div class="indicatorRow">
                     {#each years as year}
-                        <div class="flex-grow ml-2">
+                        <div>
                             <IndicateurPersonnaliseValueInput indicateur={indicateur} year={year}/>
                         </div>
                     {/each}
@@ -77,5 +89,5 @@
 
             </div>
         </div>
-    </section>
+    </RowCard>
 {/if}
