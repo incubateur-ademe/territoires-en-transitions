@@ -110,7 +110,8 @@
 
     <form class="indicatorRow">
         <div class="indicatorRow__carousel">
-            <button class="fr-btn fr-btn--secondary fr-fi-arrow-left-line" title="Précédent"></button>
+            <!-- A décommenter lorsqu'on aura un carousel sur cette liste de champs -->
+            <!-- <button class="fr-btn fr-btn--secondary fr-fi-arrow-left-line" title="Précédent"></button> -->
 
             <div class="indicatorRow__yearsList">
                 {#each years as year}
@@ -120,9 +121,12 @@
                 {/each}
             </div>
 
-            <button class="fr-btn fr-btn--secondary fr-fi-arrow-right-line" title="Suivant"></button>
+            <!-- A décommenter lorsqu'on aura un carousel sur cette liste de champs -->
+            <!-- <button class="fr-btn fr-btn--secondary fr-fi-arrow-right-line" title="Suivant"></button> -->
         </div>
 
+        <!-- A décommenter ou retirer après discussion UX/métier -->
+        <!--
         <div class="indicatorRow__target">
             <label for="objectif" class="objectif">
                 Objectif
@@ -132,6 +136,7 @@
                 />
             </label>
         </div>
+        -->
     </form>
 
     <ExpandPanel>
