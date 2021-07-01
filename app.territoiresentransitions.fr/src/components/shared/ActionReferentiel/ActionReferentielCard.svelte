@@ -167,7 +167,7 @@
     }
 </style>
 
-<RowCard id={action.id} shadowSize={shadowSize} bordered={borderedCard}>
+<RowCard bordered={borderedCard} id={action.id} shadowSize={shadowSize}>
     {#if addButton}
         <PickButton picked={isAdded}
                     handlePick={handleToggleButtonClick}
@@ -212,7 +212,9 @@
                 Créer une fiche-action
             </a>
 
-            <ActionStatus actionId={action.id}/>
+            {#if action.actions.length === 0}
+                <ActionStatus actionId={action.id}/>
+            {/if}
         </div>
     {/if}
 
