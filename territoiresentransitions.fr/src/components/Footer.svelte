@@ -12,7 +12,13 @@
 </script>
 
 <Footer>
-  <div class="fr-footer__bottom">
+  <p slot="description" class="fr-footer__content-desc">
+    Territoires en transitions accompagne les collectivités afin de les aider à piloter plus facilement leur
+    transition écologique.
+  </p>
+
+
+  <div slot="navigation" class="fr-footer__bottom">
     <ul class="fr-footer__bottom-list">
       <SvelteMarkdown source={links.content} {renderers} />
     </ul>
