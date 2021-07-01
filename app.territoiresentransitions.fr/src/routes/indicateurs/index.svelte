@@ -69,7 +69,8 @@
             Indicateurs
         </h1>
 
-        <IndicateursSearchBar bind:matches={displayed} indicateurs={indicateurs} searchCallBack={update}/>
+        <!-- TODO: cf https://github.com/betagouv/territoires-en-transitions/issues/213 -->
+        <!-- <IndicateursSearchBar bind:matches={displayed} indicateurs={indicateurs} searchCallBack={update}/> -->
     </div>
 
     <div>
