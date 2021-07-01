@@ -51,7 +51,7 @@
     /**
      * On input change store/overwrite action status.
      */
-    const handleChange = async () => {
+    let handleChange = async () => {
         const avancement = new ActionStatusStorable({
             epci_id: epci_id,
             action_id: actionId,
@@ -66,9 +66,14 @@
      */
     const handleLabelClick = async (key: string) => {
         if (actionAvancementKey === key) {
-            actionAvancementKey = ''
-            await handleChange()
-            setTimeout(() => window.location.reload(), 500)
+            const avancement = new ActionStatusStorable({
+                epci_id: epci_id,
+                action_id: actionId,
+                avancement: ''
+            })
+
+            await actionStatusStore.store(avancement)
+            setTimeout(() => window.location.reload(), 200)
         }
     }
 
