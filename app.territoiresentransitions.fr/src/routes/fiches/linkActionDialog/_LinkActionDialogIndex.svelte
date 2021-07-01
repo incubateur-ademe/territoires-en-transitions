@@ -22,59 +22,60 @@
 </script>
 
 <style>
-    details.expandable__with-arrow > summary::after {
-        @apply text-6xl;
-        transform: translateY(-1rem);
-        content: '›';
+    details + details {
+        margin-top: 3rem;
     }
 
-    details.expandable__with-arrow[open] > summary::after {
-        @apply text-6xl;
-        @apply relative;
-        @apply -top-4;
-        @apply font-normal;
-        content: '›';
-        transform: rotate(90deg) translate(10%, -10%);
+    :global(summary::-webkit-details-marker) {
+        display: none;
     }
 
-    .custom-overflow {
-        @apply overflow-auto;
-        /**
-         * The height of the dialog have to be set in order to apply the overflow-auto.
-         * The constants applied here:
-         *  - 90vh: the height of the Dialog component.
-         *  - 6rem: approximatively the height of our dialog header.
-         */
-        height: calc(90vh - 6rem);
+    details[open] summary {
+        margin-bottom: 1.875rem;
+    }
+
+    details[open] summary span {
+        transform: rotate(90deg);
+    }
+
+    summary {
+        display: flex;
+        align-items: center;
+    }
+
+    summary h2 {
+        margin-bottom: 0;
+    }
+
+    summary span {
+        margin-bottom: -0.625rem;
+        margin-left: 1rem;
+    }
+
+    summary span::before {
+        font-size: 2rem;
+    }
+
+    article + article {
+        margin-top: 1.5rem;
     }
 </style>
 
-<div class="bg-gray-100">
-    <header class="bg-white px-14 py-4 grid grid-cols-4 justify-center">
-        <button class="cursor-pointer underline col-span-1 text-left self-center"
-                on:click|preventDefault={close}>
-            ‹ Retourner à la fiche
-        </button>
-        <h2 class="text-3xl font-bold col-span-2 text-center self-center py-4" id="dialog-title">Lier une action</h2>
-    </header>
+<div>
+    {#each thematiques as thematique }
+        <details>
+            <summary>
+                <h2>{thematique.name}</h2>
 
-    <div class="p-14 focus:bg-gray-100 custom-overflow">
-        {#each thematiques as thematique }
-            <details class="expandable__with-arrow cursor-pointer">
-                <summary class="flex content-center mb-5">
-                    <h3 class="text-3xl font-bold mr-4">{thematique.name}</h3>
-                </summary>
-                <ul class="mb-16">
-                    {#each actions.filter((action) => action.thematique_id === thematique.id) as action (action.id) }
-                        <li>
-                            <LinkActionCard action={action}
-                                            linkedActionIds={linkedActionIds}
-                                            toggleActionId={toggleActionId}
-                                            onTitleClick={() => onTopLevelActionClicked(action.id)}/>
-                        </li>
-                    {/each}
-                </ul>
-            </details>
-        {/each}
-    </div>
+                <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
+            </summary>
+
+            {#each actions.filter((action) => action.thematique_id === thematique.id) as action (action.id) }
+                <LinkActionCard action={action}
+                                linkedActionIds={linkedActionIds}
+                                toggleActionId={toggleActionId}
+                                onTitleClick={() => onTopLevelActionClicked(action.id)}/>
+            {/each}
+        </details>
+    {/each}
 </div>

@@ -3,6 +3,9 @@
     export let handleClose
     export let ariaDescribedBy = undefined
 
+    // default size is medium with 6, 12 is very large, 4 is small, 8 is large
+    export let size = '6'
+
     const handleKeydown = e => {
         if (e.key == 'Escape') {
             handleClose(e)
@@ -21,7 +24,7 @@
         class="fr-modal fr-modal--opened">
     <div class="fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
-            <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-col-12 fr-col-md-{size}">
                 <div class="fr-modal__body">
                     <div class="fr-modal__header">
                         <button class="fr-link--close fr-link" title="Fermer la fenêtre modale"
@@ -30,8 +33,9 @@
                     </div>
 
                     <div class="fr-modal__content">
-                        <h1 id="fr-modal-title-modal-1" class="fr-modal__title"><span
-                                class="fr-fi-arrow-right-line fr-fi--lg"></span>Titre de la modale</h1>
+                        <h1 id="fr-modal-title-modal-1" class="fr-modal__title">
+                            <slot name="modal-title"></slot>
+                        </h1>
                         <slot></slot>
                     </div>
                 </div>
