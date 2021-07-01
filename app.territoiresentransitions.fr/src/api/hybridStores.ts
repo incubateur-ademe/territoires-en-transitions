@@ -100,7 +100,7 @@ export const epciStore = new HybridStore<EpciStorable>({
 
 export const actionReferentielScoreStore = new HybridStore<ActionReferentielScoreStorable>({
     host: getCurrentAPI(),
-    endpoint: () => `v2/notation/eci/${Epci.pathname}`,
+    endpoint: () => `v2/notation/eci/${getCurrentEpciId()}`,
     authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new ActionReferentielScoreStorable(serialized as ActionReferentielScoreInterface),
