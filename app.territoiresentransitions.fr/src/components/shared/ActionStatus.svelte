@@ -51,14 +51,25 @@
     /**
      * On input change store/overwrite action status.
      */
-    const handleChange = (_): void => {
+    const handleChange = async () => {
         const avancement = new ActionStatusStorable({
             epci_id: epci_id,
             action_id: actionId,
             avancement: actionAvancementKey
         })
 
-        actionStatusStore.store(avancement)
+        await actionStatusStore.store(avancement)
+    }
+
+    /**
+     * Hack to clear avancement when clicking the selected label
+     */
+    const handleLabelClick = async (key: string) => {
+        if (actionAvancementKey === key) {
+            actionAvancementKey = ''
+            await handleChange()
+            setTimeout(() => window.location.reload(), 500)
+        }
     }
 
     let actionStatusStore: HybridStore<ActionStatusStorable>;
@@ -160,6 +171,7 @@
                 <label
                         for="action-{actionId}_{avancement.key}"
                         class={classes[index]}
+                        on:click={() => handleLabelClick(avancement.key)}
                 >
                     <span>{ avancement.label }</span>
                 </label>
