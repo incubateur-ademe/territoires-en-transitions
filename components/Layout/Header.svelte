@@ -1,6 +1,6 @@
 <script>
-    import Header from 'components/DesignSystem/Header.svelte'
-    import Logo from 'components/DesignSystem/Logo.svelte'
+    import Header from './../DesignSystem/Header.svelte'
+    import Logo from './../DesignSystem/Logo.svelte'
 </script>
 
 <Header />
