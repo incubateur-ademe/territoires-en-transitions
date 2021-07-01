@@ -7,8 +7,8 @@
     import IndicateurReferentielCard
         from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
-    import ProgressStat from "../../../../components/ProgressStat.svelte";
     import ExpandPanel from "../../../../components/ExpandPanel.svelte";
+    import ProgressStat from "../../components/shared/ActionReferentiel/ProgressStat.svelte";
 
     export let action: ActionReferentiel
 
@@ -83,7 +83,7 @@
         </div>
     </div>
 
-    <ProgressStat state={"alert"}/>
+    <ProgressStat action={action}/>
 
     <div>
         {#if action.description}

@@ -13,7 +13,8 @@
     import PickButton from '../Button/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
-    import ProgressStat from "../../../../../components/ProgressStat.svelte";
+    import ProgressStat from "./ProgressStat.svelte";
+    import {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -77,6 +78,8 @@
         updateAddButton()
     }
 
+    export let score: ActionReferentielScore | null = null
+
     // Update the add button depending on if it is linked to the current fiche or not
     const updateAddButton = () => {
         if (isActionLinkedToFiche(action.id)) {
@@ -89,6 +92,8 @@
 
     onMount(async () => {
         epciId = getCurrentEpciId()
+        const stores = await import("../../../api/hybridStores")
+        score = await stores.actionReferentielScoreStore.retrieveById(action.id)
     })
 </script>
 
@@ -176,7 +181,7 @@
 
     <div>
         {#if link}
-            <a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
+            <a href="/actions_referentiels/{mesureId}/#{action.id}?epci_id={epciId}"
                rel="prefetch" class="RowCard__linkOnly">
 
                 <div>
@@ -184,11 +189,11 @@
                         <span class="label">{action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}</span>
 
                         <ActionReferentielTitle
-                                on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
+                                on:click={() => goto(`/actions_referentiels/${mesureId}/#${action.id}?epci_id=${epciId}`)}
                                 action={action}/>
                     </div>
 
-                    <ProgressStat position={"right"}/>
+                    <ProgressStat position="right" action={action}/>
                 </div>
 
                 <span class="fr-fi-arrow-right-line"></span>
@@ -197,7 +202,7 @@
             <div class="RowCard__title">
                 <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
 
-                <ProgressStat position={"right"}/>
+                <ProgressStat position="right" action={action}/>
             </div>
         {/if}
     </div>
