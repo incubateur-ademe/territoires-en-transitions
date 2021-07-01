@@ -42,6 +42,7 @@
 <div class="hidden">
     <!-- Forces sapper to generate html pages -->
     <a href="fiches/">Plan d'actions</a>
+    <a href="fiches/epcis/">Collectivités</a>
     <a href="fiches/creation/">Nouvelle fiche action</a>
     <a href="fiches/edition/">Fiche action</a>
     <a href="actions_referentiels/">Référentiels</a>
