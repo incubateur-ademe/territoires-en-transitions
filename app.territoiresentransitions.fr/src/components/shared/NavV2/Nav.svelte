@@ -35,15 +35,17 @@
     <div class="fr-header__tools-links">
         <ul class="fr-links-group">
             {#if isLogged}
-                <li>
-                    <a class="fr-link" href="fiches/?ecpi_id={epciId}">Mon plan d'actions</a>
-                </li>
-                <li>
-                    <a class="fr-link" href="actions_referentiels/?epci_id={epciId}">Référentiels</a>
-                </li>
-                <li>
-                    <a class="fr-link" href="indicateurs/?epci_id={epciId}">Indicateurs</a>
-                </li>
+                {#if epciId}
+                    <li>
+                        <a class="fr-link" href="fiches/?ecpi_id={epciId}">Mon plan d'actions</a>
+                    </li>
+                    <li>
+                        <a class="fr-link" href="actions_referentiels/?epci_id={epciId}">Référentiels</a>
+                    </li>
+                    <li>
+                        <a class="fr-link" href="indicateurs/?epci_id={epciId}">Indicateurs</a>
+                    </li>
+                {/if}
                 <li>
                     <a class="fr-link fr-fi-account-line" href="auth/signout/">Déconnexion</a>
                 </li>
