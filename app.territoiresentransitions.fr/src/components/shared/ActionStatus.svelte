@@ -59,6 +59,10 @@
         })
 
         await actionStatusStore.store(avancement)
+
+        // force reload to refresh notation
+        // todo make notation reactive #288
+        setTimeout(() => window.location.reload(), 200)
     }
 
     /**
