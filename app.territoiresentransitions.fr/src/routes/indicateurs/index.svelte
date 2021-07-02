@@ -87,7 +87,9 @@
     <div class="indicator">
         <div class="indicator__title">
             <h2>{thematique.name}</h2>
+            <!-- hidden
             <a href="" class="fr-btn fr-btn--secondary">Créer un indicateur</a>
+            --->
         </div>
         {#each indicateurs as indicateur}
             <IndicateurReferentielCard indicateur={indicateur}/>
