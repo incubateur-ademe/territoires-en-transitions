@@ -77,20 +77,20 @@ def dteci(
                 indicateur: dict = niveau.get('indicateur', {})
                 niveau_data = [n for n in niveaux_repris if n['niveauId'] == niveau['id']]
 
-                def add_statut(action_id: str, avancement: str):
+                def add_statut(action_id: str, avancement: str, data: dict):
                     statuts.append(Statut(
                         action_id=action_id,
-                        epci_id=n['territoireId'],
+                        epci_id=data['territoireId'],
                         avancement=avancement,
-                        annee=n['annee'],
+                        annee=data['annee'],
                     ))
 
-                def add_message(body: str):
+                def add_message(body: str, data: dict):
                     messages.append(Message(
                         action_id=niveau['id'],
-                        epci_id=n['territoireId'],
+                        epci_id=data['territoireId'],
                         body=body,
-                        annee=n['annee'],
+                        annee=data['annee'],
                     ))
 
                 # question (oui/non)
@@ -101,7 +101,7 @@ def dteci(
                         # no way to extract statuts
                         for n in niveau_data:
                             if valeur := n.get('valeur'):
-                                add_message(f"Votre réponse : {'oui' if valeur['oui'] else 'non'}")
+                                add_message(f"Votre réponse : {'oui' if valeur['oui'] else 'non'}", n)
 
                     else:
                         # convert to statuts
@@ -109,14 +109,14 @@ def dteci(
                             if valeur := n.get('valeur'):
                                 if valeur['oui']:  # the answer is oui
                                     for action_id in oui['faite']:
-                                        add_statut(action_id, 'faite')
+                                        add_statut(action_id, 'faite', n)
                                     for action_id in oui['pas_faite']:
-                                        add_statut(action_id, 'pas_faite')
+                                        add_statut(action_id, 'pas_faite', n)
                                 else:  # the answer is non
                                     for action_id in non['faite']:
-                                        add_statut(action_id, 'faite')
+                                        add_statut(action_id, 'faite', n)
                                     for action_id in non['pas_faite']:
-                                        add_statut(action_id, 'pas_faite')
+                                        add_statut(action_id, 'pas_faite', n)
 
                 # choix (checkboxes)
                 elif choix := indicateur.get('choix'):
@@ -135,10 +135,10 @@ def dteci(
                             pas_faites = [t for t in taches_ids if t not in faites]
 
                             for action_id in faites:
-                                add_statut(action_id, 'faite')
+                                add_statut(action_id, 'faite', yearly_data)
 
                             for action_id in pas_faites:
-                                add_statut(action_id, 'pas_faite')
+                                add_statut(action_id, 'pas_faite', yearly_data)
 
 
                 # liste (dropdown)
@@ -148,15 +148,15 @@ def dteci(
                             selected = valeur['id']
                             match = next(item for item in liste if item['id'] == selected)
                             for action_id in match['faite']:
-                                add_statut(action_id, 'faite')
+                                add_statut(action_id, 'faite', n)
                             for action_id in match['pas_faite']:
-                                add_statut(action_id, 'pas_faite')
+                                add_statut(action_id, 'pas_faite', n)
 
                 # interval - no way to extract statuts
                 elif interval := indicateur.get('interval'):
                     for n in niveau_data:
                         if valeur := n.get('valeur'):
-                            add_message(f"Votre réponse : {valeur.get('nombre', 0)}")
+                            add_message(f"Votre réponse : {valeur.get('nombre', 0)}", n)
 
                 # intervalles  - no way to extract statuts
                 elif intervalles := indicateur.get('intervalles'):
@@ -165,14 +165,15 @@ def dteci(
                             add_message(
                                 f"Vos réponses : \n"
                                 f"- {intervalles[0]['nom']}: {valeur.get('a', {}).get('nombre', 0)} \n"
-                                f"- {intervalles[1]['nom']}: {valeur.get('b', {}).get('nombre', 0)}"
+                                f"- {intervalles[1]['nom']}: {valeur.get('b', {}).get('nombre', 0)}",
+                                n
                             )
 
                 # fonction - no way to extract statuts
                 elif fonction := indicateur.get('fonction'):
                     for n in niveau_data:
                         if valeur := n.get('valeur'):
-                            add_message(f"Votre réponse : {valeur.get('nombre', 0)}")
+                            add_message(f"Votre réponse : {valeur.get('nombre', 0)}", n)
 
                 # questions
                 elif questions := indicateur.get('questions'):
@@ -187,14 +188,14 @@ def dteci(
                             if valeur := n.get('valeur'):
                                 if valeur[letter]['oui']:  # the answer is oui
                                     for action_id in oui['faite']:
-                                        add_statut(action_id, 'faite')
+                                        add_statut(action_id, 'faite', n)
                                     for action_id in oui['pas_faite']:
-                                        add_statut(action_id, 'pas_faite')
+                                        add_statut(action_id, 'pas_faite', n)
                                 else:  # the answer is non
                                     for action_id in non['faite']:
-                                        add_statut(action_id, 'faite')
+                                        add_statut(action_id, 'faite', n)
                                     for action_id in non['pas_faite']:
-                                        add_statut(action_id, 'pas_faite')
+                                        add_statut(action_id, 'pas_faite', n)
 
                 elif niveau['id'].startswith('5'):
                     for n in niveau_data:
@@ -203,11 +204,15 @@ def dteci(
                                 add_message(f"Vos réponses : \n" +
                                             '\n'.join([
                                                 f"{action.get('pilierId', '')} :\n - description {action.get('description', '')}\n - preuve: {action.get('preuve', '')}"
-                                                for action in actions_pilier])
+                                                for action in actions_pilier]),
+                                                n,
                                             )
 
                 else:
                     raise NotImplementedError
+
+    def escape_string(s: str):
+        return s.replace("'", "''").replace('\\', '\\\\')
 
     def statut_to_statut_insert(statut: Statut) -> str:
         action_id = statut.action_id
@@ -223,18 +228,17 @@ def dteci(
         if not notes and not preuve:
             return ''
 
-        meta = json.dumps({'commentaire': '\n\n'.join([notes, preuve])}) \
-            .replace("'", "''") \
-            .replace('\\', '\\\\')
+        meta = json.dumps({'commentaire': '\n\n'.join([notes, preuve]).replace('"', "'")})
+        meta = escape_string(meta)
         return f"INSERT INTO public.actionmeta (id, action_id, epci_id, meta, created_at, modified_at, latest) VALUES (DEFAULT, 'economie_circulaire__{action_id}', '{epci_id}', '{meta}', DEFAULT, DEFAULT, true);"
 
     def territoire_to_epci_insert(territoire: dict) -> str:
         uid = territoire.get('id')
-        nom = territoire.get('nom')
-        insee = territoire.get('insee', '')
-        siren = territoire.get('siren', '')
+        nom = escape_string(territoire.get('nom'))
+        insee = ''
+        siren = escape_string(territoire.get('siren', ''))
 
-        return f"INSERT INTO public.epci (id, uid, insee, siren, nom, created_at, modified_at, latest) VALUES (DEFAULT, '{uid}', '{nom}', '{insee}', '{siren}', DEFAULT, DEFAULT, DEFAULT);"
+        return f"INSERT INTO public.epci (id, uid, insee, siren, nom, created_at, modified_at, latest) VALUES (DEFAULT, '{uid}', '{insee}', '{siren}', '{nom}',  DEFAULT, DEFAULT, DEFAULT);"
 
     latest_statuts: List[Statut] = []
 
