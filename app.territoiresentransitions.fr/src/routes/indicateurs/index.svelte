@@ -69,7 +69,9 @@
             Indicateurs
         </h1>
 
+        <!-- hidden until issue #213 is fixed
         <IndicateursSearchBar bind:matches={displayed} indicateurs={indicateurs} searchCallBack={update}/>
+        -->
     </div>
 
     <div>

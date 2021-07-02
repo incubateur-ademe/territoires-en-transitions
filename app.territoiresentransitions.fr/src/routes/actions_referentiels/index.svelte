@@ -48,8 +48,9 @@
         <h1>
             Référentiels
         </h1>
-
+        <!-- hidden until issues #160 #149 are fixed
         <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
+        --->
     </div>
 
     <div>
