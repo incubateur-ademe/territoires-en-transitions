@@ -103,8 +103,9 @@
         <h3>
             { prettifyId(indicateur.id) } { indicateur.nom }
         </h3>
-
+        <!-- indicateurs are not modifiable
         <button class="fr-btn fr-btn--secondary">Modifier</button>
+        -->
     </div>
 
     <form class="indicatorRow">
