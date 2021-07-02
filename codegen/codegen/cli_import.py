@@ -205,14 +205,14 @@ def dteci(
                                             '\n'.join([
                                                 f"{action.get('pilierId', '')} :\n - description {action.get('description', '')}\n - preuve: {action.get('preuve', '')}"
                                                 for action in actions_pilier]),
-                                                n,
+                                            n,
                                             )
 
                 else:
                     raise NotImplementedError
 
     def escape_string(s: str):
-        return s.replace("'", "''").replace('\\', '\\\\')
+        return s.replace("'", "''").replace('\\', '\\\\').replace(r'\\n', r'\n')
 
     def statut_to_statut_insert(statut: Statut) -> str:
         action_id = statut.action_id
@@ -220,15 +220,31 @@ def dteci(
         avancement = statut.avancement
         return f"INSERT INTO public.actionstatus (id, action_id, epci_id, avancement, created_at, modified_at, latest) VALUES (DEFAULT, 'economie_circulaire__{action_id}', '{epci_id}', '{avancement}', DEFAULT, DEFAULT, true);"
 
+    exclusion = {
+        'ZLhTzjZHTAqKd2s-N75n7Q': '1.2.1',  # Communauté urbaine Alençon
+        'Wq6fEvvbRFOnKFQ-tNIowQ': '1.2.2',  # SM4
+        'UXnbUZlLSYOz2OCSoAfZsw': '3.6.3',  # Rennes Métropole
+        'CCHtu5vtRx6dp0jsyd6qPg': '4.3.1',  # Communauté d'agglomération Rochefort Océan
+    }
+
     def data_to_meta_insert(data: dict) -> str:
         action_id = data.get('niveauId')
+
+        if '.' not in action_id:
+            return ''
+
         epci_id = data.get('territoireId')
+
+        if excluded_id := exclusion.get(epci_id):
+            if action_id == excluded_id:
+                return ''
+
         notes = data.get('notesUtilisateur', {}).get('notes', '')
         preuve = data.get('preuve', {}).get('preuve', '')
         if not notes and not preuve:
             return ''
 
-        meta = json.dumps({'commentaire': '\n\n'.join([notes, preuve]).replace('"', "'")})
+        meta = json.dumps({'commentaire': f'{notes}\n\nPreuve :\n{preuve}'.replace('"', "'")}, ensure_ascii=False)
         meta = escape_string(meta)
         return f"INSERT INTO public.actionmeta (id, action_id, epci_id, meta, created_at, modified_at, latest) VALUES (DEFAULT, 'economie_circulaire__{action_id}', '{epci_id}', '{meta}', DEFAULT, DEFAULT, true);"
 
@@ -249,8 +265,8 @@ def dteci(
             key=lambda statut: statut.annee
         )[-1])
 
+    meta_sql = '\n'.join([line for line in [data_to_meta_insert(data) for data in niveaux_repris] if line])
     epci_sql = '\n'.join([territoire_to_epci_insert(territoire) for territoire in territoires_repris])
-    meta_sql = '\n'.join([data_to_meta_insert(data) for data in niveaux_repris])
     statuts_sql = '\n'.join([statut_to_statut_insert(statut) for statut in latest_statuts])
 
     write(os.path.join(output_dir, 'dteci_statuts.sql'), statuts_sql)
