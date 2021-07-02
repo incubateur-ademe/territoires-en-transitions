@@ -39,14 +39,16 @@
     <div class="pb-5"></div>
 
     <div class="grid grid-cols-4 gap-4">
-        <div class="shadow-sm bg-white p-2">
-            <h3 class="text-3xl">...</h3>
-            <Button on:click={() => showAddDialog = !showAddDialog}>Rejoindre ma collectivité</Button>
-        </div>
-
         {#each userEpcis as epci}
             <Card epci={epci} writable/>
         {/each}
+
+        <div class="bg-gray-100 p-2">
+            <h3 class="text-3xl">...</h3>
+            <Button colorVariant="blueberry" on:click={() => showAddDialog = !showAddDialog}>Rejoindre ma collectivité</Button>
+        </div>
+
+
     </div>
 </div>
 

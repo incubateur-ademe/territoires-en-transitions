@@ -1,5 +1,7 @@
 from api.models.generated.action_referentiel import ActionReferentiel
 
+ActionReferentiel.update_forward_refs()
+
 actions = [
 {% for action in actions recursive %}
     ActionReferentiel(
