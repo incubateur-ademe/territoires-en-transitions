@@ -58,6 +58,10 @@
         margin-left: 1rem;
     }
 
+    .title.expandable {
+        cursor: pointer;
+    }
+
     .title :global(h3) {
         margin-bottom: 0;
     }
@@ -65,9 +69,19 @@
     .title span {
         margin-left: .5rem;
     }
+
+    .title.expanded span {
+        transform: rotate(90deg);
+    }
+
+    .subActions {
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+        margin-left: 3rem;
+    }
 </style>
 
-<RowCard class="addCard" id={action.id}>
+<RowCard id={action.id}>
     <div>
         <PickButton handlePick={handlePick}
                     handleUnpick={handlePick}
@@ -75,22 +89,25 @@
                     picked={added}
                     unpickLabel="Supprimer"/>
 
-        <div class="title" on:click={expandable ? handleExpand : null}>
+        <div class="title {expandable ? 'expandable' : null} {expanded? 'expanded' : null}" on:click={expandable ?
+        handleExpand : null}>
             <ActionReferentielTitle action={action} on:click={onTitleClick}/>
 
-            <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
+            {#if expandable}
+                <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
+            {/if}
         </div>
     </div>
 </RowCard>
 
 {#if expanded }
-    {#if action.description.trim().length }
-        <div class="flex m-4">
-            {@html action.description}
-        </div>
-    {/if}
+    <div class="subActions">
+        {#if action.description.trim().length }
+            <div class="description">
+                {@html action.description}
+            </div>
+        {/if}
 
-    <div class="ml-6">
         {#each action.actions as action}
             <svelte:self action={action}
                          linkedActionIds={linkedActionIds}

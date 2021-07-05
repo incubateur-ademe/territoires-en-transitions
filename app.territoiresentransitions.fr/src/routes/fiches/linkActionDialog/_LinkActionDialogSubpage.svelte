@@ -9,7 +9,6 @@
     import ReferentielSearchBar from '../../../components/shared/ReferentielSearchBar.svelte'
     import LinkActionCard from './_LinkActionCard'
     import PickButton from "../../../components/shared/Button/PickButton.svelte";
-    import Button from "../../../components/shared/Button/Button.svelte";
     import RowCard from "../../../components/shared/RowCard.svelte";
 
     // Main action of the subpage
@@ -42,55 +41,36 @@
 </script>
 
 <style>
-    .custom-overflow {
-        @apply overflow-auto;
-        /**
-         * The height of the dialog have to be set in order to apply the overflow-auto.
-         * The constants applied here:
-         *  - 90vh: the height of the Dialog component.
-         *  - 6rem: approximatively the height of our dialog header.
-         */
-        height: calc(90vh - 6rem);
+    ul {
+        margin-top: 2rem;
     }
 </style>
 
-<div class="bg-gray-100 absolute top-0 right-0 left-0">
-    <header class="bg-white px-14 py-4 grid grid-cols-4 justify-center">
-        <button class="cursor-pointer underline col-span-1 text-left self-center"
-                on:click|preventDefault={handleBack}>
-            ‹ Retour
+<div>
+    <header>
+        <button class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-left-s-line fr-btn--icon-left" on:click|preventDefault={handleBack}>
+            Retour
         </button>
-        <h2 class="text-3xl font-bold col-span-2 text-center self-center py-4" id="dialog-title">Lier une action</h2>
+        
         <ReferentielSearchBar actions={topLevelAction.actions}
                               bind:matches={displayedActions}
                               bind:needle={needle}/>
     </header>
 
-    <div class="p-14 focus:bg-gray-100 custom-overflow">
-
+    <div>
         {#if notSearching}
-            <div class="mb-10">
-                <RowCard id={topLevelAction.id} shadowSize="lg">
+            <div>
+                <RowCard id={topLevelAction.id}>
                     <PickButton picked={isActionLinkedToFiche(topLevelAction.id)}
                                 handlePick={handleTopLevelPick}
                                 handleUnpick={handleTopLevelPick}
-                                pickLabel="+"
-                                unpickLabel="✓ Ajouté"
+                                pickLabel="Ajouter"
+                                unpickLabel="Supprimer"
                     />
-                    <div>
-                        <div class="flex">
-                            <h3 class="text-xl font-bold flex-initial self-center mr-4">{topLevelAction.nom}</h3>
-                            <Button classNames="cursor-pointer self-center flex-none"
-                                    colorVariant="bramble"
-                                    on:click={() => actionDescriptionDisplayed = !actionDescriptionDisplayed }
-                                    size="small">
-                                Détails
-                            </Button>
-                        </div>
-                        <div class="text-base pt-4" class:hidden={!actionDescriptionDisplayed}>
-                            {@html topLevelAction.description}
-                        </div>
-                    </div>
+
+                    <h3>{topLevelAction.nom}</h3>
+
+                    {@html topLevelAction.description}
                 </RowCard>
             </div>
         {/if}
