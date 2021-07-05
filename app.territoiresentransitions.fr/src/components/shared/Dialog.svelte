@@ -26,8 +26,14 @@
         max-width: 100%;
     }
 
+    .fr-modal__header {
+        margin-bottom: 3rem;
+    }
+
     .fr-modal__title {
+        margin-bottom: 0;
         font-size: 2.5rem;
+        line-height: 1.2;
     }
 
 </style>
@@ -43,15 +49,16 @@
             <div class="fr-col-12 fr-col-md-{size}">
                 <div class="fr-modal__body">
                     <div class="fr-modal__header">
+                        <h1 id="fr-modal-title-modal-1" class="fr-modal__title">
+                            <slot name="modal-title"></slot>
+                        </h1>
+
                         <button class="fr-link--close fr-link" title="Fermer la fenêtre modale"
                                 aria-controls="fr-modal-1" on:click|preventDefault={handleClose}>Fermer
                         </button>
                     </div>
 
                     <div class="fr-modal__content">
-                        <h1 id="fr-modal-title-modal-1" class="fr-modal__title">
-                            <slot name="modal-title"></slot>
-                        </h1>
                         <slot></slot>
                     </div>
                 </div>

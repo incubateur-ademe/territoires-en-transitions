@@ -41,49 +41,56 @@
 </script>
 
 <style>
+
+    .intro {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
     ul {
         margin-top: 2rem;
     }
 </style>
 
+<div class="intro">
+    <button class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-left-s-line fr-btn--icon-left"
+            on:click|preventDefault={handleBack}>
+        Retour
+    </button>
+
+    <ReferentielSearchBar actions={topLevelAction.actions}
+                          bind:matches={displayedActions}
+                          bind:needle={needle}/>
+</div>
+
 <div>
-    <header>
-        <button class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-left-s-line fr-btn--icon-left" on:click|preventDefault={handleBack}>
-            Retour
-        </button>
-        
-        <ReferentielSearchBar actions={topLevelAction.actions}
-                              bind:matches={displayedActions}
-                              bind:needle={needle}/>
-    </header>
+    {#if notSearching}
+        <div>
+            <RowCard id={topLevelAction.id}>
+                <PickButton picked={isActionLinkedToFiche(topLevelAction.id)}
+                            handlePick={handleTopLevelPick}
+                            handleUnpick={handleTopLevelPick}
+                            pickLabel="Ajouter"
+                            unpickLabel="Supprimer"
+                />
 
-    <div>
-        {#if notSearching}
-            <div>
-                <RowCard id={topLevelAction.id}>
-                    <PickButton picked={isActionLinkedToFiche(topLevelAction.id)}
-                                handlePick={handleTopLevelPick}
-                                handleUnpick={handleTopLevelPick}
-                                pickLabel="Ajouter"
-                                unpickLabel="Supprimer"
-                    />
+                <h3>{topLevelAction.nom}</h3>
 
-                    <h3>{topLevelAction.nom}</h3>
+                {@html topLevelAction.description}
+            </RowCard>
+        </div>
+    {/if}
 
-                    {@html topLevelAction.description}
-                </RowCard>
-            </div>
-        {/if}
-
-        <ul>
-            <li>
-                {#each displayedActions as action (action.id) }
-                    <LinkActionCard action={action}
-                                    expandable
-                                    linkedActionIds={linkedActionIds}
-                                    toggleActionId={toggleActionId}/>
-                {/each}
-            </li>
-        </ul>
-    </div>
+    <ul>
+        <li>
+            {#each displayedActions as action (action.id) }
+                <LinkActionCard action={action}
+                                expandable
+                                linkedActionIds={linkedActionIds}
+                                toggleActionId={toggleActionId}/>
+            {/each}
+        </li>
+    </ul>
 </div>

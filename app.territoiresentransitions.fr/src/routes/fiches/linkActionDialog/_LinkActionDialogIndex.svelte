@@ -61,21 +61,19 @@
     }
 </style>
 
-<div>
-    {#each thematiques as thematique }
-        <details>
-            <summary>
-                <h2>{thematique.name}</h2>
+{#each thematiques as thematique }
+    <details>
+        <summary>
+            <h2>{thematique.name}</h2>
 
-                <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
-            </summary>
+            <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
+        </summary>
 
-            {#each actions.filter((action) => action.thematique_id === thematique.id) as action (action.id) }
-                <LinkActionCard action={action}
-                                linkedActionIds={linkedActionIds}
-                                toggleActionId={toggleActionId}
-                                onTitleClick={() => onTopLevelActionClicked(action.id)}/>
-            {/each}
-        </details>
-    {/each}
-</div>
+        {#each actions.filter((action) => action.thematique_id === thematique.id) as action (action.id) }
+            <LinkActionCard action={action}
+                            linkedActionIds={linkedActionIds}
+                            toggleActionId={toggleActionId}
+                            onTitleClick={() => onTopLevelActionClicked(action.id)}/>
+        {/each}
+    </details>
+{/each}
