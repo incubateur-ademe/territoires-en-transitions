@@ -37,14 +37,14 @@
                 </li>
                 {#if connected }
                     <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="auth/signout">Déconnexion</a>
+                        <a class="fr-nav__link" href="auth/signout/">Déconnexion</a>
                     </li>
                 {:else }
                     <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="auth/signin" target="_self">Se connecter</a>
+                        <a class="fr-nav__link" href="auth/signin/" target="_self">Se connecter</a>
                     </li>
                     <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="auth/register" target="_self">Création de compte</a>
+                        <a class="fr-nav__link" href="auth/register/" target="_self">Création de compte</a>
                     </li>
                 {/if}
             </ul>
