@@ -29,6 +29,8 @@ import {Epci, EpciInterface} from "../../../generated/models/epci";
 import {currentAccessToken} from "./authentication";
 import {ActionReferentielScoreStorable} from "../storables/ActionReferentielScoreStorable";
 import type {ActionReferentielScoreInterface} from "../../../generated/models/action_referentiel_score";
+import {ActionMetaStorable} from "../storables/ActionMetaStorable";
+import {ActionMeta, ActionMetaInterface} from "../../../generated/models/action_meta";
 
 
 const defaultAuthorization = () => `Bearer ${currentAccessToken()}`
@@ -97,11 +99,18 @@ export const epciStore = new HybridStore<EpciStorable>({
     deserializer: (serialized) => new EpciStorable(serialized as EpciInterface),
 });
 
-
 export const actionReferentielScoreStore = new HybridStore<ActionReferentielScoreStorable>({
     host: getCurrentAPI(),
     endpoint: () => `v2/notation/eci/${getCurrentEpciId()}`,
     authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new ActionReferentielScoreStorable(serialized as ActionReferentielScoreInterface),
+});
+
+export const actionMetaStore = new HybridStore<ActionMetaStorable>({
+    host: getCurrentAPI(),
+    endpoint: () => `v2/${ActionMeta.pathname}/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new ActionMetaStorable(serialized as ActionMetaInterface),
 });
