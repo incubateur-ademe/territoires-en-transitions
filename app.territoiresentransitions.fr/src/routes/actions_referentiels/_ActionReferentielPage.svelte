@@ -65,7 +65,7 @@
 
 <div class="pageIntro">
     <div>
-        <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="#">Retour</a>
+        <!-- <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="#">Retour</a> -->
 
         <ReferentielSearchBar actions={action.actions} bind:matches={displayed}/>
     </div>
