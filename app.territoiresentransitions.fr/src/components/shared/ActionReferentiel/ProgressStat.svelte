@@ -32,7 +32,6 @@
     onMount(async () => {
         const stores = await import("../../../api/hybridStores")
         score = await stores.actionReferentielScoreStore.retrieveById(action.id)
-        console.log(score)
     })
 </script>
 
