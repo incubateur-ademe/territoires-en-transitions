@@ -94,12 +94,16 @@
 {#each [...displayedByDomaine] as [domaine, sous_domaines]}
     <section>
         <h2>{domaine.id_nomenclature}. {domaine.nom}
+            <!-- does not work yet for Climat Air Energie
             <ProgressStat position={"bottom"}/>
+            --->
         </h2>
         {#each [...sous_domaines] as [sous_domaine, actions]}
             <div>
                 <h3>{sous_domaine.id_nomenclature}. {sous_domaine.nom}
+                    <!-- does not work yet for Climat Air Energie
                     <ProgressStat position={"bottom"}/>
+                    --->
                 </h3>
                 {#each actions as action}
                     {#if searching}

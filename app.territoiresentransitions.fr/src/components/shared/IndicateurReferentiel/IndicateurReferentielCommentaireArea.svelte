@@ -50,7 +50,6 @@
 
 <div>
     <LabeledTextArea bind:value={data.value}>
-        <div>Commentaire</div>
     </LabeledTextArea>
 
     <button class="fr-btn" on:click={onSave}>Enregistrer</button>
