@@ -37,7 +37,7 @@
             {#if isLogged}
                 {#if epciId}
                     <li>
-                        <a class="fr-link" href="fiches/?ecpi_id={epciId}">Mon plan d'actions</a>
+                        <a class="fr-link" href="fiches/?epci_id={epciId}">Mon plan d'actions</a>
                     </li>
                     <li>
                         <a class="fr-link" href="actions_referentiels/?epci_id={epciId}">Référentiels</a>

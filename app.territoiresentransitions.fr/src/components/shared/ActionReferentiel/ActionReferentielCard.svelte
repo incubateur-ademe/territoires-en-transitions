@@ -12,9 +12,9 @@
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
     import PickButton from '../Button/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
-    import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
     import ProgressStat from "./ProgressStat.svelte";
     import {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
+    import ActionReferentielCommentaire from "./ActionReferentielCommentaire.svelte";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -157,14 +157,6 @@
         font-size: 0.75rem;
         font-weight: normal;
     }
-
-    .commentBlock {
-        width: 50%;
-    }
-
-    .commentBlock :global(.fr-btn) {
-        margin-top: 1rem;
-    }
 </style>
 
 <RowCard bordered={borderedCard} id={action.id} shadowSize={shadowSize}>
@@ -219,15 +211,7 @@
     {/if}
 
     {#if commentBlock}
-        <div class="commentBlock">
-            <ExpandPanel>
-                <h2 slot="title">Commentaires</h2>
-                <div slot="content">
-                    <textarea class="fr-input"></textarea>
-                    <button class="fr-btn">Enregistrer</button>
-                </div>
-            </ExpandPanel>
-        </div>
+        <ActionReferentielCommentaire action={action}/>
     {/if}
 </RowCard>
 

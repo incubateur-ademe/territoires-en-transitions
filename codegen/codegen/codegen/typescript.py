@@ -12,9 +12,9 @@ from codegen.utils.templates import build_jinja_environment
 
 def types_ts(t: str) -> str:
     """Converts a type from yaml to a js type hint"""
-    py_types = {'String': 'string', 'num': 'number', 'List': '[]', 'bool': 'boolean', None: 'string'}
-    if t in py_types.keys():
-        return py_types[t]
+    ts_types = {'String': 'string', 'num': 'number', 'List': '[]', 'Dict': 'object', 'bool': 'boolean', None: 'string'}
+    if t in ts_types.keys():
+        return ts_types[t]
     if t.startswith('List['):
         types = t.replace('List[', '').replace(']', '')
         params = ', '.join([types_ts(t.strip()) for t in types.split(',')])
