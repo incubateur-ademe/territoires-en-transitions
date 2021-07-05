@@ -25,8 +25,9 @@
                 </div>
             </div>
             <div class="fr-footer__content">
-                <p class="fr-footer__content-desc">Territoires en transitions accompagne les collectivités afin de les aider à piloter plus facilement leur
-                    transition écologique.</p>
+                <!-- A small sentence in the footer to describe the service -->
+                <slot name="description"></slot>
+
                 <ul class="fr-footer__content-list">
                     <li class="fr-footer__content-item">
                         <a class="fr-footer__content-link" href="https://www.ademe.fr/">ademe.fr</a>
@@ -41,7 +42,8 @@
             </div>
         </div>
 
-        <slot></slot>
+        <!-- The footer navigation bar -->
+        <slot name="navigation"></slot>
 
     </div>
 </footer>

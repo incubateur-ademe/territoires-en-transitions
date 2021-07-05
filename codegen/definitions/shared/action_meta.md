@@ -8,6 +8,10 @@ Elles sont stockées à l'adresse `epci_id/action_id`
 
 Pour l'instant ces méta données stockent un commentaire à la clé "commentaire" de l'objet meta.
 
+| nom de la meta  | description |
+| --------------- | ----------- |
+| 'commentaire'   | Permet de stocker un commentaire lié à l'action |
+
 ```yaml
 ActionMeta:
   action_id:
