@@ -8,6 +8,7 @@
     import {actions} from '../../../../generated/data/actions_referentiels'
     import ActionReferentielTitle from '../../components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
     import PickButton from '../../components/shared/Button/PickButton.svelte'
+    import ActionStatus from '../../components/shared/ActionStatus.svelte'
 
     export let actionIds: string[]
     export let handlePickButton: () => {}
@@ -53,6 +54,7 @@
                             unpickLabel="✓ Ajouté"
                 />
                 <ActionReferentielTitle action={referentielById[actionId]} />
+                <ActionStatus actionId={actionId} />
             </div>
         </li>
     {/each}
