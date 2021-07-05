@@ -49,7 +49,7 @@ def dteci(
     collectivites = pd.read_excel(os.path.join(data_dir, 'collectivités.xlsx'), dtype=str, sheet_name=0, header=0)
 
     nom_repris: List[str] = [row['nom'] for index, row in collectivites.iterrows()
-                             if str(row['Repris']).strip().startswith('o')]
+                               if not str(row['Repris']).strip().startswith('n')]
 
     territoires_repris: List[dict] = [territoire for territoire in server_territoires.values()
                                       if territoire['nom'] in nom_repris]
