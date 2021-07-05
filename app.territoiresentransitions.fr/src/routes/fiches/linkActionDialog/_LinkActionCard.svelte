@@ -47,20 +47,39 @@
 
 </script>
 
-<RowCard id={action.id} shadowSize={shadowSize}>
-    <PickButton handlePick={handlePick}
-                handleUnpick={handlePick}
-                pickLabel="+"
-                picked={added}
-                unpickLabel="✓ Ajouté"/>
+<style>
+    div:first-child,
+    .title {
+        display: flex;
+        align-items: center;
+    }
 
-    <div class="flex flex-row cursor-pointer items-stretch"
-         on:click={expandable ? handleExpand : null}>
-        <ActionReferentielTitle action={action} on:click={onTitleClick}/>
+    .title {
+        margin-left: 1rem;
+    }
 
-        {#if expandable }
-            <Angle direction="{expanded ? 'down' : 'right' }"/>
-        {/if}
+    .title :global(h3) {
+        margin-bottom: 0;
+    }
+
+    .title span {
+        margin-left: .5rem;
+    }
+</style>
+
+<RowCard class="addCard" id={action.id}>
+    <div>
+        <PickButton handlePick={handlePick}
+                    handleUnpick={handlePick}
+                    pickLabel="Ajouter"
+                    picked={added}
+                    unpickLabel="Supprimer"/>
+
+        <div class="title" on:click={expandable ? handleExpand : null}>
+            <ActionReferentielTitle action={action} on:click={onTitleClick}/>
+
+            <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
+        </div>
     </div>
 </RowCard>
 

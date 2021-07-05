@@ -29,7 +29,7 @@
     <slot></slot>
 
     {#if $$slots.secondary }
-        <div class="ml-4">
+        <div>
             <slot name="secondary"></slot>
         </div>
     {/if}

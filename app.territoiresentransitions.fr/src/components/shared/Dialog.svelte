@@ -16,13 +16,29 @@
 
 <svelte:window on:keydown={handleKeydown}/>
 
+<style>
+    .fr-container--fluid {
+        margin: 0 auto;
+    }
+
+    .fr-container-lg {
+        width: 70em;
+        max-width: 100%;
+    }
+
+    .fr-modal__title {
+        font-size: 2.5rem;
+    }
+
+</style>
+
 <!-- Pas de fermeture sur le click de l'overlay, ça serait cool -->
 <dialog aria-labelledby="{ariaLabelledBy}"
         aria-describedby="{ariaDescribedBy}"
         role="dialog"
         id="fr-modal-1"
         class="fr-modal fr-modal--opened">
-    <div class="fr-container--fluid fr-container-md">
+    <div class="fr-container--fluid fr-container-lg">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-{size}">
                 <div class="fr-modal__body">

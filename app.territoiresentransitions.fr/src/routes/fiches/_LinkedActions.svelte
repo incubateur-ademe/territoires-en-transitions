@@ -42,18 +42,36 @@
     const referentielById = actionsById(actions)
 </script>
 
+<style>
+    ul {
+        margin-bottom: 2rem;
+    }
+
+    li {
+        display: flex;
+        align-items: center;
+    }
+
+    li + li {
+        margin-top: 1.5rem;
+    }
+
+    li :global(h3) {
+        margin-bottom: 0;
+        margin-left: 1rem;
+    }
+</style>
+
 <ul>
     {#each actionIdsHistory as actionId }
         <li>
-            <div class="mb-4 flex">
-                <PickButton picked={actionIds.includes(actionId)}
-                            handlePick={() => { handlePickButton(actionId) }}
-                            handleUnpick={() => { handlePickButton(actionId) }}
-                            pickLabel="+"
-                            unpickLabel="✓ Ajouté"
-                />
-                <ActionReferentielTitle action={referentielById[actionId]} />
-            </div>
+            <PickButton picked={actionIds.includes(actionId)}
+                        handlePick={() => { handlePickButton(actionId) }}
+                        handleUnpick={() => { handlePickButton(actionId) }}
+                        pickLabel="Ajouter"
+                        unpickLabel="Ajouté"
+            />
+            <ActionReferentielTitle action={referentielById[actionId]}/>
         </li>
     {/each}
 </ul>
