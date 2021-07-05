@@ -6,7 +6,6 @@
     import IndicateurReferentielValueInput from "./IndicateurReferentielValueInput.svelte";
     import {onMount} from "svelte";
     import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
-    import ActionReferentielCard from "../ActionReferentiel/ActionReferentielCard.svelte";
     import IndicateurReferentielCommentaireArea from "./IndicateurReferentielCommentaireArea.svelte";
     import RowCard from "../RowCard.svelte";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
@@ -104,13 +103,16 @@
         <h3>
             { prettifyId(indicateur.id) } { indicateur.nom }
         </h3>
-
+        <!-- indicateurs are not modifiable
         <button class="fr-btn fr-btn--secondary">Modifier</button>
+        -->
     </div>
 
     <form class="indicatorRow">
         <div class="indicatorRow__carousel">
+            <!-- issue #43
             <button class="fr-btn fr-btn--secondary fr-fi-arrow-left-line" title="Précédent"></button>
+            -->
 
             <div class="indicatorRow__yearsList">
                 {#each years as year}
@@ -119,10 +121,12 @@
                     </div>
                 {/each}
             </div>
-
+            <!-- issue #43
             <button class="fr-btn fr-btn--secondary fr-fi-arrow-right-line" title="Suivant"></button>
+            -->
         </div>
 
+        <!-- hidden until a valid solution is found
         <div class="indicatorRow__target">
             <label for="objectif" class="objectif">
                 Objectif
@@ -132,6 +136,7 @@
                 />
             </label>
         </div>
+        -->
     </form>
 
     <ExpandPanel>
@@ -142,22 +147,24 @@
         <div slot="content">
             {@html indicateur.description }
 
-            <h3>Actions liées</h3>
+            {#if false}
+                <!-- issue #298 -->
+                <h3>Actions liées</h3>
+                <ul>
+                    {#each relatedActions as action}
+                        <li>
+                            <!-- ICI il faudrait un lien qui marche, je n'y arrive pas-->
+                            <!--<a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
+                               rel="prefetch" class="RowCard__linkOnly">
 
-            <ul>
-                {#each relatedActions as action}
-                    <li>
-                        <!-- ICI il faudrait un lien qui marche, je n'y arrive pas-->
-                        <!--<a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
-                           rel="prefetch" class="RowCard__linkOnly">
-
-                            <span>{action.id_nomenclature} - </span>
-                            {action.nom}
-                        </a>-->
-                        <a href="" class="fr-link">une mesure</a>
-                    </li>
-                {/each}
-            </ul>
+                                <span>{action.id_nomenclature} - </span>
+                                {action.nom}
+                            </a>-->
+                            <a href="" class="fr-link">une mesure</a>
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
         </div>
     </ExpandPanel>
 

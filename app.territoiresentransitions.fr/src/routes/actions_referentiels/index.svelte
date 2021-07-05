@@ -10,7 +10,7 @@
     import {testUIVisibility} from "../../api/currentEnvironment";
     import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
 
-    let view: 'thematique' | 'eci' | 'cae' = 'thematique'
+    let view: 'thematique' | 'eci' | 'cae' = 'eci'
 
     let allActions: ActionReferentiel[] = actions;
     let displayed: ActionReferentiel[] = actions;
@@ -48,20 +48,21 @@
         <h1>
             Référentiels
         </h1>
-
+        <!-- hidden until issues #160 #149 are fixed
         <ReferentielSearchBar actions={allActions} bind:matches={displayed}/>
+        --->
     </div>
 
     <div>
         <SelectInput bind:value={view}>
-            <option value='thematique'>
-                Thématiques
-            </option>
             <option value='eci'>
                 Économie Circulaire
             </option>
             <option value='cae'>
                 Climat Air Énergie
+            </option>
+            <option value='thematique'>
+                Thématiques
             </option>
         </SelectInput>
     </div>
