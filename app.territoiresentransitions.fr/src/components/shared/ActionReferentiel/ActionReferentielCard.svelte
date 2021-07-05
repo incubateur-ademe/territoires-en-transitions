@@ -13,7 +13,8 @@
     import PickButton from '../Button/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
-    import ProgressStat from "../../../../../components/ProgressStat.svelte";
+    import ProgressStat from "./ProgressStat.svelte";
+    import {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -76,6 +77,8 @@
         onAddButtonClick(action)(event)
         updateAddButton()
     }
+
+    export let score: ActionReferentielScore | null = null
 
     // Update the add button depending on if it is linked to the current fiche or not
     const updateAddButton = () => {
@@ -164,7 +167,7 @@
     }
 </style>
 
-<RowCard id={action.id} shadowSize={shadowSize} bordered={borderedCard}>
+<RowCard bordered={borderedCard} id={action.id} shadowSize={shadowSize}>
     {#if addButton}
         <PickButton picked={isAdded}
                     handlePick={handleToggleButtonClick}
@@ -188,7 +191,7 @@
                                 action={action}/>
                     </div>
 
-                    <ProgressStat position={"right"}/>
+                    <ProgressStat position="right" action={action}/>
                 </div>
 
                 <span class="fr-fi-arrow-right-line"></span>
@@ -197,7 +200,7 @@
             <div class="RowCard__title">
                 <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
 
-                <ProgressStat position={"right"}/>
+                <ProgressStat position="right" action={action}/>
             </div>
         {/if}
     </div>
@@ -209,7 +212,9 @@
                 Créer une fiche-action
             </a>
 
-            <ActionStatus actionId={action.id}/>
+            {#if action.actions.length === 0}
+                <ActionStatus actionId={action.id}/>
+            {/if}
         </div>
     {/if}
 

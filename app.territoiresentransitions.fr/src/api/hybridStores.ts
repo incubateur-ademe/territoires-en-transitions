@@ -27,6 +27,8 @@ import {IndicateurReferentielCommentaireStorable} from "../storables/IndicateurR
 import {EpciStorable} from "../storables/EpciStorable";
 import {Epci, EpciInterface} from "../../../generated/models/epci";
 import {currentAccessToken} from "./authentication";
+import {ActionReferentielScoreStorable} from "../storables/ActionReferentielScoreStorable";
+import type {ActionReferentielScoreInterface} from "../../../generated/models/action_referentiel_score";
 
 
 const defaultAuthorization = () => `Bearer ${currentAccessToken()}`
@@ -93,4 +95,13 @@ export const epciStore = new HybridStore<EpciStorable>({
     authorization: defaultAuthorization,
     serializer: (storable) => storable,
     deserializer: (serialized) => new EpciStorable(serialized as EpciInterface),
+});
+
+
+export const actionReferentielScoreStore = new HybridStore<ActionReferentielScoreStorable>({
+    host: getCurrentAPI(),
+    endpoint: () => `v2/notation/eci/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
+    serializer: (storable) => storable,
+    deserializer: (serialized) => new ActionReferentielScoreStorable(serialized as ActionReferentielScoreInterface),
 });
