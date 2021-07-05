@@ -30,7 +30,7 @@ def test_build_action_with_orientation():
     assert orientation
     assert orientation['id'] == '1.1'
     assert orientation['nom'] == \
-           'Définir une stratégie globale de la politique économie circulaire et assurer un portage politique fort'
+           'Définir une stratégie globale de la politique Economie Circulaire et assurer un portage politique fort'
     assert len(orientation['description']) > 10
     assert len(orientation['actions']) == 5
 
