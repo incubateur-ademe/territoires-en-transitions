@@ -51,7 +51,21 @@
 </main>
 
 <Footer>
-	<div class="fr-footer__bottom">
+	<div slot="description">
+		<p class="fr-footer__content-desc">
+			Territoires en transitions accompagne les collectivités afin de les aider à piloter plus facilement leur
+			transition écologique.
+		</p>
+		<p class="fr-footer__content-desc">
+			Vous rencontrez une difficulté ? Une suggestion pour nous aider à améliorer l'outil ? Écrivez-nous à :
+			<a href="mailto:aide@territoiresentransitions.fr?subject=Aide sur app.territoiresentransitions.fr">
+				aide@territoiresentransitions.fr
+			</a>
+		</p>
+	</div>
+
+
+	<div slot="navigation" class="fr-footer__bottom">
 		<ul class="fr-footer__bottom-list">
 			<li class="fr-footer__bottom-item">
 				<a class="fr-footer__bottom-link" href="/mentions-legales" target="_self">Mentions légales</a>
