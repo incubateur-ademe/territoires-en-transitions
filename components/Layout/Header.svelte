@@ -1,8 +1,11 @@
 <script>
     import Header from './../DesignSystem/Header.svelte'
+    import Logo from './../DesignSystem/Logo.svelte'
 </script>
 
 <Header />
+<Logo />
+
 <header role="banner" class="header fr-header">
     <div class="fr-container">
         <div class="fr-header__body-row header__row">
@@ -61,5 +64,21 @@
 
     .header :global(.header__row) {
         padding: 1rem 0;
+    }
+
+    .header :global([class^="fr-fi-"]::before),
+    .header :global([class*=" fr-fi-"]::before),
+    .header :global(a[target="_blank" i]::after) {
+        font-family: icons !important;
+        font-style: normal;
+        font-weight: normal !important;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+    }
+
+    .header :global([class^="fr-fi-"]::before),
+    .header :global([class*=" fr-fi-"]::before) {
+        font-size: 1.5rem;
     }
 </style>
