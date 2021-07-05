@@ -11,7 +11,18 @@
         const auth = await import("../../../api/authentication")
         auth.saveTokens(accessToken.trim(), refreshToken.trim())
     }
+
+    const saveDummy = async () => {
+        const auth = await import("../../../api/authentication")
+        auth.saveDummyTokens()
+    }
 </script>
+
+<style>
+    pre {
+        display: inline;
+    }
+</style>
 
 <div class="flex flex-col">
     <h1 class="text-2xl">Connexion par token</h1>
@@ -35,6 +46,15 @@
     <Button on:click={save}>Se connecter</Button>
     <div class="pb-5"></div>
 
+    <hr>
+    <h1 class="text-2xl">Connexion avec un faux token</h1>
+    <div>
+        Fonctionne avec l'API en mode <pre>AUTH_DISABLED_DUMMY_USER</pre> enregistre un faux token dans localstorage.
+    </div>
+    <Button on:click={saveDummy}>Utiliser un faux token</Button>
+
+    <hr>
+    <h1 class="text-2xl">Vérifier l'identité</h1>
     <a href="/auth/identity">Identity</a>
 </div>
 
