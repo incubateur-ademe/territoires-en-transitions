@@ -15,6 +15,7 @@
     import ProgressStat from "./ProgressStat.svelte";
     import {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
     import ActionReferentielCommentaire from "./ActionReferentielCommentaire.svelte";
+    import ActionReferentielDescription from "./ActionReferentielDescription.svelte";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -209,6 +210,8 @@
             {/if}
         </div>
     {/if}
+
+    <ActionReferentielDescription action={action}/>
 
     {#if commentBlock}
         <ActionReferentielCommentaire action={action}/>
