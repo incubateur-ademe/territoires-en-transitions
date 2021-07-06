@@ -60,9 +60,11 @@
         Retour
     </button>
 
+    <!-- Hidden til the search engine works
     <ReferentielSearchBar actions={topLevelAction.actions}
                           bind:matches={displayedActions}
                           bind:needle={needle}/>
+                          -->
 </div>
 
 <div>
