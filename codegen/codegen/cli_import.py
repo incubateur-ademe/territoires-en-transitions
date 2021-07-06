@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from dataclasses import dataclass
 from typing import List, Dict
 
@@ -49,7 +50,7 @@ def dteci(
     collectivites = pd.read_excel(os.path.join(data_dir, 'collectivités.xlsx'), dtype=str, sheet_name=0, header=0)
 
     nom_repris: List[str] = [row['nom'] for index, row in collectivites.iterrows()
-                               if not str(row['Repris']).strip().startswith('n')]
+                             if not str(row['Repris']).strip().startswith('n')]
 
     territoires_repris: List[dict] = [territoire for territoire in server_territoires.values()
                                       if territoire['nom'] in nom_repris]
@@ -272,6 +273,42 @@ def dteci(
     write(os.path.join(output_dir, 'dteci_statuts.sql'), statuts_sql)
     write(os.path.join(output_dir, 'dteci_meta.sql'), meta_sql)
     write(os.path.join(output_dir, 'dteci_epci.sql'), epci_sql)
+
+    messages_by_epci: Dict[str, List[Message]] = {}
+    for message in messages:
+        msgs = messages_by_epci.get(message.epci_id, [])
+        msgs.append(message)
+        messages_by_epci[message.epci_id] = msgs
+
+    mail = """
+Bonjour,
+
+Nous sommes ravis de vous accueillir sur Territoires en Transition, votre nouvel outil pour le référentiel économie circulaire !
+
+Vous retrouverez la majorité des données DTECI de votre collectivité directement sur le nouvel outil. Certaines données n’ont malheureusement pas pu bénéficier de ce transfert automatique et nécessitent une action manuelle de votre part. Vous les trouverez à la fin de cet email.
+
+Rendez-vous sur https://territoiresentransitions.fr/ pour créer votre compte et rejoindre votre collectivité. Vous pourrez alors ajouter les éléments listés plus bas pour que vos données soient au grand complet.
+
+Si vous avez la moindre question ou remarque, n’hésitez pas à répondre à ce message pour que nous puissions vous aider.
+
+Cordialement,
+
+L’équipe de Territoires en Transitions
+
+–
+
+Vos données à actualiser manuellement dans votre référentiel sur Territoires en Transitions :
+    """
+    for territoire in territoires_repris:
+        msgs: List[Message] = messages_by_epci.get(territoire.get('id'), [])
+        text = '\n\n'.join(f'Niveau {msg.action_id}, année {msg.annee}:\n{msg.body}' for msg in msgs)
+        dirname = re.sub('[^0-9a-zA-Z]+', '', territoire.get('nom'))
+        write(os.path.join(output_dir, dirname, 'données-non-reprises.txt'), text)
+
+        infos = next(f"{row['prénom']} {row['nom.1']} <{row['email']}>" for index, row in collectivites.iterrows()
+                     if str(row['nom']).strip() == territoire.get('nom', '').strip())
+
+        write(os.path.join(output_dir, dirname, 'mail.txt'), infos + '\n' + mail + '\n\n' + text)
 
 
 @app.command()
