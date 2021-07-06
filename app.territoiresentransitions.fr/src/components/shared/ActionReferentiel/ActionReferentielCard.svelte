@@ -183,8 +183,10 @@
                                 on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
                                 action={action}/>
                     </div>
-
-                    <ProgressStat position="right" action={action}/>
+                    
+                    {#if !isCitergie}
+                        <ProgressStat position="right" action={action}/>
+                    {/if}
                 </div>
 
                 <span class="fr-fi-arrow-right-line"></span>
@@ -193,7 +195,9 @@
             <div class="RowCard__title">
                 <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
 
-                <ProgressStat position="right" action={action}/>
+                {#if !isCitergie}
+                    <ProgressStat position="right" action={action}/>
+                {/if}
             </div>
         {/if}
     </div>
