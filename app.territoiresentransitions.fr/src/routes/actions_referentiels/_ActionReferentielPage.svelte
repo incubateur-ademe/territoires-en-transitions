@@ -7,8 +7,8 @@
     import IndicateurReferentielCard
         from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
-    import ProgressStat from "../../../../components/ProgressStat.svelte";
     import ExpandPanel from "../../../../components/ExpandPanel.svelte";
+    import ProgressStat from "../../components/shared/ActionReferentiel/ProgressStat.svelte";
 
     export let action: ActionReferentiel
 
@@ -66,7 +66,7 @@
 
 <div class="pageIntro">
     <div>
-        <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="#">Retour</a>
+        <!-- <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="#">Retour</a> -->
 
         <ReferentielSearchBar actions={action.actions} bind:matches={displayed}/>
     </div>
@@ -84,7 +84,9 @@
         </div>
     </div>
 
-    <ProgressStat state={"alert"}/>
+    <!-- Broken fixme in issue #316
+    <ProgressStat action={action}/>
+    --->
 
     {#if action.description}
         <ExpandPanel>

@@ -99,6 +99,7 @@
     .RowCard__title h3 {
         width: 75%;
     }
+
 </style>
 
 <RowCard id="indicateur-{indicateur.id}" bordered>
@@ -106,11 +107,16 @@
         <h3>
             { prettifyId(indicateur.id) } { indicateur.nom }
         </h3>
+        <!-- indicateurs are not modifiable
+        <button class="fr-btn fr-btn--secondary">Modifier</button>
+        -->
     </div>
 
     <form class="indicatorRow">
         <div class="indicatorRow__carousel">
+            <!-- issue #43
             <button class="fr-btn fr-btn--secondary fr-fi-arrow-left-line" title="Précédent"></button>
+            -->
 
             <div class="indicatorRow__yearsList">
                 {#each years as year}
@@ -119,10 +125,12 @@
                     </div>
                 {/each}
             </div>
-
+            <!-- issue #43
             <button class="fr-btn fr-btn--secondary fr-fi-arrow-right-line" title="Suivant"></button>
+            -->
         </div>
 
+        <!-- hidden until a valid solution is found
         <div class="indicatorRow__target">
             <label for="objectif" class="objectif">
                 Objectif
@@ -132,6 +140,7 @@
                 />
             </label>
         </div>
+        -->
     </form>
 
     <ExpandPanel>

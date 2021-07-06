@@ -2,15 +2,15 @@ name: Trigger deployments on merge on default branch
 
 on:
   push:
-    branches:
-      - main
-      - trigger-deploy-from-main
+    paths:
+      - territoiresentransitions.fr
 
 jobs:
   trigger-app-deploy:
     name: Trigger app deployment
     runs-on: ubuntu-latest
     environment: production
+    if: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
       # cf. https://github.com/actions/checkout

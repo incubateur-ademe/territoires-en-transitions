@@ -1,0 +1,21 @@
+from api.models.generated.action_referentiel import ActionReferentiel
+
+ActionReferentiel.update_forward_refs()
+
+actions = [
+{% for action in actions recursive %}
+    ActionReferentiel(
+    id= "{{ action.id }}",
+    id_nomenclature= "{{ action.id_nomenclature }}",
+    nom= r{{ action.nom | tojson }},
+    description= r{{ action.description | tojson }},
+    thematique_id= "{{ action.thematique_id }}",
+    points= {{ action.points }},
+    actions=[
+    {% if action.actions %}
+        {{ loop(action.actions) }}
+    {% endif %}
+    ],
+    ),
+{% endfor %}
+]

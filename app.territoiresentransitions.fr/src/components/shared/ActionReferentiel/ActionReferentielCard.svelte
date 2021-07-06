@@ -13,7 +13,9 @@
     import PickButton from '../Button/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
-    import ProgressStat from "../../../../../components/ProgressStat.svelte";
+    import ProgressStat from "./ProgressStat.svelte";
+    import {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
+    import ActionReferentielCommentaire from "./ActionReferentielCommentaire.svelte";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -72,6 +74,8 @@
         onAddButtonClick(action)(event)
         updateAddButton()
     }
+
+    export let score: ActionReferentielScore | null = null
 
     // Update the add button depending on if it is linked to the current fiche or not
     const updateAddButton = () => {
@@ -191,7 +195,7 @@
                 <div>
                     <div class="RowCard__header">
                         <span class="label">{action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}</span>
-                        <ProgressStat position={"right"}/>
+                        <ProgressStat position="right" action={action}/>
                     </div>
 
                     <div class="RowCard__title">
@@ -207,7 +211,7 @@
             <div class="RowCard__title">
                 <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
 
-                <ProgressStat position={"right"}/>
+                <ProgressStat position="right" action={action}/>
             </div>
         {/if}
     </div>
@@ -219,7 +223,9 @@
                 Créer une fiche-action
             </a>
 
-            <ActionStatus actionId={action.id}/>
+            {#if action.actions.length === 0}
+                <ActionStatus actionId={action.id}/>
+            {/if}
         </div>
     {/if}
 
@@ -235,16 +241,7 @@
     {/if}
 
     {#if commentBlock}
-        <div class="commentBlock">
-            <ExpandPanel>
-                <h2 slot="title">Commentaire</h2>
-                <div slot="content">
-                    <label for="commentaire">Votre commentaire</label>
-                    <textarea id="commentaire" class="fr-input"></textarea>
-                    <button class="fr-btn">Enregistrer</button>
-                </div>
-            </ExpandPanel>
-        </div>
+        <ActionReferentielCommentaire action={action}/>
     {/if}
 </RowCard>
 

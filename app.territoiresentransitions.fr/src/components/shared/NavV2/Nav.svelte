@@ -35,25 +35,24 @@
     <div class="fr-header__tools-links">
         <ul class="fr-links-group">
             {#if isLogged}
+                {#if epciId}
+                    <li>
+                        <a class="fr-link" href="fiches/?epci_id={epciId}">Mon plan d'actions</a>
+                    </li>
+                    <li>
+                        <a class="fr-link" href="actions_referentiels/?epci_id={epciId}">Référentiels</a>
+                    </li>
+                    <li>
+                        <a class="fr-link" href="indicateurs/?epci_id={epciId}">Indicateurs</a>
+                    </li>
+                {/if}
                 <li>
-                    <a class="fr-link" href="fiches/?ecpi_id={epciId}">Mon plan d'actions</a>
-                </li>
-                <li>
-                    <a class="fr-link" href="actions_referentiels/?epci_id={epciId}">Référentiels</a>
-                </li>
-                <li>
-                    <a class="fr-link" href="indicateurs/?epci_id={epciId}">Indicateurs</a>
-                </li>
-                <li>
-                    <a class="fr-link fr-fi-account-line" href="connexion/?epci_id={epciId}">Déconnexion</a>
+                    <a class="fr-link fr-fi-account-line" href="auth/signout/">Déconnexion</a>
                 </li>
             {:else}
                 {#if !segment || segment === 'connexion' }
                     <li>
-                        <a class="fr-link" on:click|preventDefault={handleTest} href="fiches/?epci_id=test">Tester</a>
-                    </li>
-                    <li>
-                        <a class="fr-link fr-fi-account-line" href="connexion/?epci_id={epciId}">Se connecter</a>
+                        <a class="fr-link fr-fi-account-line" href="auth/signin/?epci_id={epciId}">Se connecter</a>
                     </li>
                 {/if}
             {/if}

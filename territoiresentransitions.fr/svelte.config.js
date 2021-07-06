@@ -14,7 +14,19 @@ const config = {
       plugins: [
         purgecss({
           content: ['src/**/*.svelte', 'src/app.html', '../components/**/*.svelte'],
-          safelist: ['body']
+          safelist: ['body'],
+          keyframes: true,
+          defaultExtractor(content) {
+            const contentWithoutStyleBlocks = content.replace(
+              /<style[^]+?<\/style>/gi,
+              ""
+            );
+            return (
+              contentWithoutStyleBlocks.match(
+                /[A-Za-z0-9-_/:]*[A-Za-z0-9-_/]+/g
+              ) || []
+            );
+          },
           // rejected: true,
         })
       ]
