@@ -83,9 +83,7 @@
         </div>
     </div>
 
-    <!-- Broken fixme in issue #316
     <ProgressStat action={action}/>
-    --->
 
     <div>
         {#if action.description}
