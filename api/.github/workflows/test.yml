@@ -9,6 +9,9 @@ jobs:
   test-routers:
     runs-on: ubuntu-latest
 
+    env:
+      AUTH_DISABLED_DUMMY_USER: YES
+
     steps:
       # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2

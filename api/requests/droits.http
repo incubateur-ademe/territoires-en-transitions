@@ -4,8 +4,8 @@ Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
 {
-  "ademe_user_id": "2e417dc2-3afc-4381-a5c0-c9849798b6f1",
-  "epci_id": "some-id",
+  "ademe_user_id": "dummy",
+  "epci_id": "test",
   "ecriture": true
 }
 

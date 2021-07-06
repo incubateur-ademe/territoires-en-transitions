@@ -8,6 +8,7 @@ class Utilisateur(models.Model):
     vie_privee_conditions = fields.CharField(max_length=300)
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
+    latest = fields.BooleanField()
 
 
 Utilisateur_Pydantic = pydantic_model_creator(Utilisateur, name="Utilisateur")

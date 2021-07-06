@@ -11,10 +11,10 @@ Content-Type: application/json
 }
 
 
-### Check identity
+### Get all epcis
 GET {{host}}/v2/epci/all
 Authorization: Bearer {{access_token}}
 
-### Check identity
-GET {{host}}/v2/epci/abc-def
+### Get epci
+GET {{host}}/v2/epci/test
 Authorization: Bearer {{access_token}}

@@ -12,7 +12,7 @@ from api.routers.v2.auth import get_user_from_header
 router = APIRouter(prefix='/v2/utilisateur_droits')
 
 
-@router.post("/", response_model=UtilisateurDroits_Pydantic)
+@router.post("", response_model=UtilisateurDroits_Pydantic)
 async def write_droits(
         droits: UtilisateurDroitsIn_Pydantic,
         utilisateur: UtilisateurConnecte = Depends(get_user_from_header)
@@ -23,18 +23,22 @@ async def write_droits(
     query = UtilisateurDroits.filter(ademe_user_id=droits.ademe_user_id, epci_id=droits.epci_id)
 
     if await query.exists():
-        await query.delete()
+        await query.update(latest=False)
 
-    droits_obj = await UtilisateurDroits.create(**droits.dict(exclude_unset=True))
+    droits_obj = await UtilisateurDroits.create(
+        **droits.dict(exclude_unset=True),
+        latest=True,
+    )
     return await UtilisateurDroits_Pydantic.from_tortoise_orm(droits_obj)
 
 
 @router.get(
-    "/{ademe_user_id}", response_model=List[UtilisateurDroits_Pydantic],
+    "/{ademe_user_id}",
+    response_model=List[UtilisateurDroits_Pydantic],
     responses={404: {"model": HTTPNotFoundError}}
 )
 async def get_droits(ademe_user_id: str):
-    query = UtilisateurDroits.filter(ademe_user_id=ademe_user_id)
+    query = UtilisateurDroits.filter(ademe_user_id=ademe_user_id, latest=True)
     try:
         return await UtilisateurDroits_Pydantic.from_queryset(query)
     except DoesNotExist as error:

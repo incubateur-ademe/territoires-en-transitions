@@ -11,8 +11,14 @@ class FicheActionCategorie(models.Model):
     fiche_actions_uids = fields.JSONField()
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
+    latest = fields.BooleanField()
+    deleted = fields.BooleanField()
 
 
 FicheActionCategorie_Pydantic = pydantic_model_creator(FicheActionCategorie, name="FicheActionCategorie")
-FicheActionCategorieIn_Pydantic = pydantic_model_creator(FicheActionCategorie, name="FicheActionCategorieIn",
-                                                         exclude_readonly=True)
+FicheActionCategorieIn_Pydantic = pydantic_model_creator(
+    FicheActionCategorie,
+    name="FicheActionCategorieIn",
+    exclude_readonly=True,
+    exclude=("latest", "deleted")
+)

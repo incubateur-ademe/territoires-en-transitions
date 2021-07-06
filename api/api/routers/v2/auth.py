@@ -1,3 +1,5 @@
+from collections import deque
+from time import time
 from typing import List
 
 import jwt
@@ -23,10 +25,13 @@ router = APIRouter(prefix='/v2/auth')
 token_endpoint = f'{AUTH_KEYCLOAK}/auth/realms/{AUTH_REALM}/protocol/openid-connect/token'
 auth_endpoint = f'{AUTH_KEYCLOAK}/auth/realms/{AUTH_REALM}/protocol/openid-connect/auth'
 certs_endpoint = f'{AUTH_KEYCLOAK}/auth/realms/{AUTH_REALM}/protocol/openid-connect/certs'
+userinfo_endpoint = f'{AUTH_KEYCLOAK}/auth/realms/{AUTH_REALM}/protocol/openid-connect/userinfo'
 users_endpoint = f'{AUTH_USER_API}/api/users'
 count_endpoint = f'{AUTH_USER_API}/api/supervision/count'
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=token_endpoint)
+
+verified_token_cache = deque(maxlen=1000)  # cache verified tokens to limit calls to ADEME keycloak
 
 
 async def get_user_from_header(token: str = Depends(oauth2_scheme)) -> UtilisateurConnecte:
@@ -42,8 +47,28 @@ async def get_user_from_header(token: str = Depends(oauth2_scheme)) -> Utilisate
         )
 
     try:
-        # fixme: both jwt and jose libraries fail at verifying access token using keycloak's JWKs
         payload = jwt.decode(token, options={"verify_signature": False})
+
+        if payload['exp'] < time():
+            if token in verified_token_cache:
+                verified_token_cache.remove(token)
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Access token expired",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        # todo verify signature instead
+        # both jwt and jose libraries fail at verifying access token using keycloak's JWKs
+        if token not in verified_token_cache:
+            users_response = requests.post(userinfo_endpoint, {'access_token': token})
+            if not users_response.ok:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Could not validate access token",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+            verified_token_cache.append(token)
 
         user = UtilisateurConnecte(
             ademe_user_id=payload.get('sub', ''),
@@ -54,9 +79,12 @@ async def get_user_from_header(token: str = Depends(oauth2_scheme)) -> Utilisate
             refresh_token=''
         )
     except JWTError:
+        if token in verified_token_cache:
+            verified_token_cache.remove(token)
+
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
+            detail="Could not validate JWT claims",
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user

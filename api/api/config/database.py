@@ -9,7 +9,7 @@ DB_MODELS = ["aerich.models",
              "api.models.tortoise.fiche_action", "api.models.tortoise.fiche_action_categorie",
              "api.models.tortoise.indicateur_personnalise", "api.models.tortoise.indicateur_personnalise_value",
              "api.models.tortoise.indicateur_referentiel_commentaire", "api.models.tortoise.utilisateur",
-             "api.models.tortoise.utilisateur_droits", "api.models.tortoise.epci"]
+             "api.models.tortoise.utilisateur_droits", "api.models.tortoise.epci", "api.models.tortoise.action_meta"]
 SQLITE_DB_URL = "sqlite://:memory:"
 DATABASE_URL = environ.get("DATABASE_URL", SQLITE_DB_URL)
 

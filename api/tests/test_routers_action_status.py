@@ -9,9 +9,10 @@ from tortoise.contrib.test import finalizer, initializer
 
 from api.app import app
 from api.config.database import DB_MODELS
+from tests.auth_utils import add_ecriture_droit, auth_headers
 
 client = TestClient(app)
-path = "/v1/action_status"
+path = "/v2/action_status"
 
 status = {
     "action_id": "1.1.1.1",
@@ -37,61 +38,64 @@ def event_loop(client: TestClient) -> Generator:
     yield client.task.get_loop()
 
 
+def test_droits(client: TestClient, event_loop: asyncio.AbstractEventLoop):
+    # 401
+    # POST /v2/action_status/epci_id
+    response = client.post(
+        post_path,
+        headers=auth_headers(),
+        json=status,
+    )
+    assert response.status_code == 401
+
+
 def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
-    # POST /v1/action_status/epci_id
-    response = client.post(post_path, json=status)
+    add_ecriture_droit(client, epci_id=status['epci_id'])
+
+    # POST /v2/action_status/epci_id
+    response = client.post(post_path, json=status, headers=auth_headers())
     assert response.status_code == 200
     assert response.json()['action_id'] == status['action_id']
 
-    # GET /v1/action_status/epci_id/all
+    # GET /v2/action_status/epci_id/all
     response = client.get(list_path)
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert response.json()[0]['action_id'] == status['action_id']
 
-    # GET /v1/action_status/epci_id/action_id
+    # GET /v2/action_status/epci_id/action_id
     response = client.get(item_path)
     assert response.status_code == 200
     assert response.json()['action_id'] == status['action_id']
 
-    # DELETE /v1/action_status/epci_id/action_id
-    response = client.delete(item_path)
-    assert response.status_code == 200
-
-    # 404
-    # GET /v1/action_status/epci_id/action_id
-    response = client.get(item_path)
-    assert response.status_code == 404
-
-    # DELETE /v1/action_status/epci_id/action_id
-    response = client.delete(item_path)
-    assert response.status_code == 404
-
 
 def test_update_status(client: TestClient):
+    add_ecriture_droit(client, epci_id=status['epci_id'])
+
     new_data = {
         "avancement": "programmee",
     }
 
-    existing_status = {
+    new_status = {
         **status, **new_data
     }
 
-    post_path = f"{path}/{existing_status['epci_id']}"
-    response = client.post(post_path, json=existing_status)
+    post_path = f"{path}/{new_status['epci_id']}"
+    response = client.post(post_path, headers=auth_headers(), json=new_status)
 
     assert response.status_code == 200
     assert response.json()['action_id'] == status['action_id']
-    assert response.json()['avancement'] == existing_status['avancement']
+    assert response.json()['avancement'] == new_status['avancement']
 
     response = client.get(list_path)
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert response.json()[0]['action_id'] == status['action_id']
-    assert response.json()[0]['avancement'] == existing_status['avancement']
+    assert response.json()[0]['avancement'] == new_status['avancement']
 
 
 def test_create_mismatched_status(client: TestClient):
+    add_ecriture_droit(client, epci_id=status['epci_id'])
     mismatched_data = {
         "epci_id": "mismatch-epci-id",
     }
@@ -100,6 +104,7 @@ def test_create_mismatched_status(client: TestClient):
     }
 
     post_path = f"{path}/{status['epci_id']}"
-    response = client.post(post_path, json=mismatched_status)
+    response = client.post(post_path, headers=auth_headers(), json=mismatched_status
+                           )
 
     assert response.status_code == 400

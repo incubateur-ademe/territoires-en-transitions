@@ -1,6 +1,6 @@
 
 ### Add a fiche action
-POST {{host}}/v1/fiche_action/test
+POST {{host}}/v2/fiche_action/test
 Content-Type: application/json
 
 
@@ -21,9 +21,9 @@ Content-Type: application/json
 }
 
 ### Get all fiches
-GET {{host}}/v1/fiche_action/test/all
+GET {{host}}/v2/fiche_action/test/all
 
 
 ### Get a fiche by its path
-GET {{host}}/v1/fiche_action/test/4a1bc73d-aa72-4d28-8424-889643fa29c2
+GET {{host}}/v2/fiche_action/test/4a1bc73d-aa72-4d28-8424-889643fa29c2
 

@@ -10,7 +10,17 @@ class IndicateurPersonnaliseValue(models.Model):
     year = fields.IntField(max_length=4)
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
+    latest = fields.BooleanField()
 
 
-IndicateurPersonnaliseValue_Pydantic = pydantic_model_creator(IndicateurPersonnaliseValue, name="IndicateurPersonnaliseValue")
-IndicateurPersonnaliseValueIn_Pydantic = pydantic_model_creator(IndicateurPersonnaliseValue, name="IndicateurPersonnaliseValueIn", exclude_readonly=True)
+IndicateurPersonnaliseValue_Pydantic = pydantic_model_creator(
+    IndicateurPersonnaliseValue,
+    name="IndicateurPersonnaliseValue",
+)
+
+IndicateurPersonnaliseValueIn_Pydantic = pydantic_model_creator(
+    IndicateurPersonnaliseValue,
+    name="IndicateurPersonnaliseValueIn",
+    exclude_readonly=True,
+    exclude=('latest',),
+)

@@ -1,7 +1,6 @@
 # mypy: no-disallow-untyped-decorators
 # pylint: disable=E0611,E0401
 import asyncio
-
 from typing import Generator
 
 import pytest
@@ -10,9 +9,10 @@ from tortoise.contrib.test import finalizer, initializer
 
 from api.app import app
 from api.config.database import DB_MODELS
+from tests.auth_utils import add_ecriture_droit, auth_headers
 
 client = TestClient(app)
-path = "/v1/fiche_action"
+path = "/v2/fiche_action"
 
 fiche_action = {
     "avancement": "pas_faite",
@@ -38,6 +38,7 @@ list_path = f"{path}/{fiche_action['epci_id']}/all"
 post_path = f"{path}/{fiche_action['epci_id']}"
 item_path = f"{path}/{fiche_action['epci_id']}/{fiche_action['uid']}"
 
+
 @pytest.fixture(scope="module")
 def client() -> Generator:
     initializer(DB_MODELS)
@@ -51,34 +52,43 @@ def event_loop(client: TestClient) -> Generator:
     yield client.task.get_loop()
 
 
+def test_droits(client: TestClient, event_loop: asyncio.AbstractEventLoop):
+    # 401
+    # POST /v2/fiche_action/epci_id
+    response = client.post(post_path, json=fiche_action, headers=auth_headers())
+    assert response.status_code == 401
+
+
 def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
-    # POST /v1/fiche_action/epci_id
-    response = client.post(post_path, json=fiche_action)
+    add_ecriture_droit(client, epci_id=fiche_action['epci_id'])
+
+    # POST /v2/fiche_action/epci_id
+    response = client.post(post_path, json=fiche_action, headers=auth_headers())
     assert response.status_code == 200
     assert response.json()['uid'] == fiche_action['uid']
 
-    # GET /v1/fiche_action/epci_id/all
+    # GET /v2/fiche_action/epci_id/all
     response = client.get(list_path)
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert response.json()[0]['uid'] == fiche_action['uid']
 
-    # GET /v1/fiche_action/epci_id/uid
+    # GET /v2/fiche_action/epci_id/uid
     response = client.get(item_path)
     assert response.status_code == 200
     assert response.json()['uid'] == fiche_action['uid']
 
-    # DELETE /v1/fiche_action/epci_id/uid
-    response = client.delete(item_path)
+    # DELETE /v2/fiche_action/epci_id/uid
+    response = client.delete(item_path, headers=auth_headers())
     assert response.status_code == 200
 
     # 404
-    # GET /v1/fiche_action/epci_id/uid
+    # GET /v2/fiche_action/epci_id/uid
     response = client.get(item_path)
     assert response.status_code == 404
 
-    # DELETE /v1/fiche_action/epci_id/uid
-    response = client.delete(item_path)
+    # DELETE /v2/fiche_action/epci_id/uid
+    response = client.delete(item_path, headers=auth_headers())
     assert response.status_code == 404
 
 
@@ -93,7 +103,7 @@ def test_update_fiche_action(client: TestClient):
     }
 
     post_path = f"{path}/{existing_fiche_action['epci_id']}"
-    response = client.post(post_path, json=existing_fiche_action)
+    response = client.post(post_path, json=existing_fiche_action, headers=auth_headers())
 
     assert response.status_code == 200
     assert response.json()['uid'] == existing_fiche_action['uid']
@@ -117,7 +127,6 @@ def test_create_mismatched_fiche_action(client: TestClient):
     }
 
     post_path = f"{path}/{fiche_action['epci_id']}"
-    response = client.post(post_path, json=mismatched_fiche_action)
+    response = client.post(post_path, json=mismatched_fiche_action, headers=auth_headers())
 
     assert response.status_code == 400
-

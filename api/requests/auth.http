@@ -4,13 +4,30 @@ POST {{host}}/v2/auth/register
 Content-Type: application/json
 
 {
-  "email": "dev@derfurth.com",
-  "nom": "Florian",
-  "prenom": "d'Erfurth",
-  "vie_privee": "yolo"
+  "email": "tweedledee@wood.com",
+  "nom": "Tweedle",
+  "prenom": "Dum",
+  "vie_privee": "ditto"
 }
 
 
 ### Check identity
 GET {{host}}/v2/auth/identity
+Authorization: Bearer {{access_token}}
+
+
+### Add droits
+POST {{host}}/v2/utilisateur_droits
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "ademe_user_id": "dummy",
+  "epci_id": "test",
+  "ecriture": true
+}
+
+
+### Get droits
+GET {{host}}/v2/utilisateur_droits/dummy
 Authorization: Bearer {{access_token}}

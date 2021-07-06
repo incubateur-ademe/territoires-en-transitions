@@ -1,6 +1,6 @@
 
 ### Add an indicateur value
-POST {{host}}/v1/indicateur_value/test
+POST {{host}}/v2/indicateur_value/test
 Content-Type: application/json
 
 {
@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ### Add an indicateur value
-POST {{host}}/v1/indicateur_value/test
+POST {{host}}/v2/indicateur_value/test
 Content-Type: application/json
 
 {
@@ -22,7 +22,7 @@ Content-Type: application/json
 }
 
 ### Add an indicateur value
-POST {{host}}/v1/indicateur_value/bad_epci
+POST {{host}}/v2/indicateur_value/bad_epci
 Content-Type: application/json
 
 {
@@ -32,12 +32,23 @@ Content-Type: application/json
   "value": "88"
 }
 
+### Add an indicateur value
+POST {{host}}/v2/indicateur_value/test
+Content-Type: application/json
+
+{
+  "epci_id": "test",
+  "indicateur_id": "29",
+  "year": 2018,
+  "value": "2000"
+}
+
 ### Get all indicateurs values
-GET {{host}}/v1/indicateur_value/test/all
+GET {{host}}/v2/indicateur_value/test/all
 
 ### Get an indicateur values by its id
-GET {{host}}/v1/indicateur_value/test/29
+GET {{host}}/v2/indicateur_value/test/29
 
 ### Get an indicateur value by fullpath
-GET {{host}}/v1/indicateur_value/test/21a/2022
+GET {{host}}/v2/indicateur_value/test/21a/2022
 

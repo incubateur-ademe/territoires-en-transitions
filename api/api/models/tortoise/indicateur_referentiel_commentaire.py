@@ -9,8 +9,16 @@ class IndicateurReferentielCommentaire(models.Model):
     value = fields.TextField()
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
+    latest = fields.BooleanField()
 
 
-IndicateurReferentielCommentaire_Pydantic = pydantic_model_creator(IndicateurReferentielCommentaire, name="IndicateurReferentielCommentaire")
-IndicateurReferentielCommentaireIn_Pydantic = pydantic_model_creator(IndicateurReferentielCommentaire, name="IndicateurReferentielCommentaireIn",
-                                                         exclude_readonly=True)
+IndicateurReferentielCommentaire_Pydantic = pydantic_model_creator(
+    IndicateurReferentielCommentaire,
+    name="IndicateurReferentielCommentaire"
+)
+IndicateurReferentielCommentaireIn_Pydantic = pydantic_model_creator(
+    IndicateurReferentielCommentaire,
+    name="IndicateurReferentielCommentaireIn",
+    exclude_readonly=True,
+    exclude=("latest",),
+)
