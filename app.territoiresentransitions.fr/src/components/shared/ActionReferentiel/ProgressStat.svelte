@@ -32,7 +32,6 @@
     onMount(async () => {
         const stores = await import("../../../api/hybridStores")
         score = await stores.actionReferentielScoreStore.retrieveById(action.id)
-        console.log(score)
     })
 </script>
 
@@ -98,8 +97,8 @@
 
 <div class={`progressBar--position-${position} progressBar--status-${state}`}>
     {#if score}
-        <strong>{score.percentage * 100}%</strong>
-        ({score.points} / {score.potentiel})
+        <strong>{(score.percentage * 100).toFixed(1)}%</strong>
+        ({score.points.toFixed(2)} / {score.potentiel.toFixed(2)})
     {:else }
         <strong>0%</strong>
         (../..)
