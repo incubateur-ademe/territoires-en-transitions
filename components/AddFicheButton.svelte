@@ -7,5 +7,5 @@
 
 <a class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-file-fill fr-btn--icon-left"
    href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
-    Créer une fiche-action
+    Ajouter à mes actions
 </a>
