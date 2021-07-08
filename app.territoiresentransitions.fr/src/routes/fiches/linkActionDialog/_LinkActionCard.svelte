@@ -47,31 +47,67 @@
 
 </script>
 
-<RowCard id={action.id} shadowSize={shadowSize}>
-    <PickButton handlePick={handlePick}
-                handleUnpick={handlePick}
-                pickLabel="+"
-                picked={added}
-                unpickLabel="✓ Ajouté"/>
+<style>
+    div:first-child,
+    .title {
+        display: flex;
+        align-items: center;
+    }
 
-    <div class="flex flex-row cursor-pointer items-stretch"
-         on:click={expandable ? handleExpand : null}>
-        <ActionReferentielTitle action={action} on:click={onTitleClick}/>
+    .title {
+        margin-left: 1rem;
+    }
 
-        {#if expandable }
-            <Angle direction="{expanded ? 'down' : 'right' }"/>
-        {/if}
+    .title.expandable {
+        cursor: pointer;
+    }
+
+    .title :global(h3) {
+        margin-bottom: 0;
+    }
+
+    .title span {
+        margin-left: .5rem;
+    }
+
+    .title.expanded span {
+        transform: rotate(90deg);
+    }
+
+    .subActions {
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+        margin-left: 3rem;
+    }
+</style>
+
+<RowCard id={action.id}>
+    <div>
+        <PickButton handlePick={handlePick}
+                    handleUnpick={handlePick}
+                    pickLabel="Ajouter"
+                    picked={added}
+                    unpickLabel="Supprimer"/>
+
+        <div class="title {expandable ? 'expandable' : null} {expanded? 'expanded' : null}" on:click={expandable ?
+        handleExpand : null}>
+            <ActionReferentielTitle action={action} on:click={onTitleClick}/>
+
+            {#if expandable}
+                <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
+            {/if}
+        </div>
     </div>
 </RowCard>
 
 {#if expanded }
-    {#if action.description.trim().length }
-        <div class="flex m-4">
-            {action.description}
-        </div>
-    {/if}
+    <div class="subActions">
+        {#if action.description.trim().length }
+            <div class="description">
+                {@html action.description}
+            </div>
+        {/if}
 
-    <div class="ml-6">
         {#each action.actions as action}
             <svelte:self action={action}
                          linkedActionIds={linkedActionIds}

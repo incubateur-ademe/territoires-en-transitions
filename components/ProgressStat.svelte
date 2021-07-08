@@ -26,6 +26,7 @@
 
 <style>
     div {
+        flex-shrink: 0;
         padding-left: 0.75rem;
         font-size: 0.875rem;
         font-weight: normal;
@@ -38,6 +39,7 @@
     }
 
     .progressBar--position-right {
+        margin-right: -1rem;
         padding-right: 0.75rem;
         padding-left: 1.5rem;
         border-right: 6px solid #000;

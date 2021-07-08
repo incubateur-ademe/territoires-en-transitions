@@ -34,9 +34,6 @@
         justify-content: space-between;
     }
 
-    .pageIntro > div + div {
-    }
-
     .pageIntro h1 {
         margin-bottom: 0;
     }
@@ -58,8 +55,12 @@
         font-size: 1rem;
     }
 
-    .pageIntro > :global( div + div) {
+    .pageIntro > :global( * + *) {
         margin-top: 1.875rem;
+    }
+
+    .pageIntro > :global(details) {
+        width: 70% !important;
     }
 </style>
 
@@ -85,17 +86,14 @@
 
     <ProgressStat action={action}/>
 
-    <div>
-        {#if action.description}
-            <ExpandPanel>
-                <h2 slot="title">Description</h2>
-                <div slot="content" class="pageIntro__description">
-                    <h3>Un titre</h3>
-                    {@html action.description}
-                </div>
-            </ExpandPanel>
-        {/if}
-    </div>
+    {#if action.description}
+        <ExpandPanel>
+            <h2 slot="title">Description</h2>
+            <div slot="content" class="pageIntro__description">
+                {@html action.description}
+            </div>
+        </ExpandPanel>
+    {/if}
 </div>
 
 <h2>Les actions</h2>

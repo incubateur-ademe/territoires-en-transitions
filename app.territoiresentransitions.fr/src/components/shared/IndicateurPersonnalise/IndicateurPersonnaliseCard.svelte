@@ -4,10 +4,9 @@
      */
     import {IndicateurPersonnalise} from "../../../../../generated/models/indicateur_personnalise";
     import IndicateurForm from "./IndicateurPersonnaliseForm.svelte"
-    import Angle from "../Angle.svelte";
-    import Button from "../Button/Button.svelte";
     import IndicateurPersonnaliseValueInput from "./IndicateurPersonnaliseValueInput.svelte";
     import RowCard from "../RowCard.svelte";
+    import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
 
     export let indicateur: IndicateurPersonnalise
 
@@ -35,59 +34,119 @@
 <style>
     .indicatorRow {
         display: flex;
+        margin-bottom: 2.5rem;
     }
 
-    .indicatorRow > div:not(:first-child) {
-        margin-left: 1.25rem;
+    .indicatorRow__carousel {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .indicatorRow__carousel .fr-btn {
+        box-shadow: none;
+        flex-shrink: 0;
+
+        /* caché tant que non fonctionnel */
+        display: none;
+    }
+
+    .indicatorRow__yearsList {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-column-gap: 1.25rem;
+        padding: 0 1.5rem;
+    }
+
+    .indicatorRow :global(input) {
+        margin-top: .5rem;
+    }
+
+    .indicatorRow__target {
+        margin-left: 1.5rem;
+    }
+
+    .indicatorRow__target .fr-input {
+        box-shadow: inset 0 -2px 0 0 var(--bf500);
+    }
+
+    label.objectif {
+        font-weight: bold;
+    }
+
+    .RowCard__title {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .RowCard__title h3 {
+        width: 75%;
+    }
+
+    .description :global(details) {
+        max-width: 70%;
     }
 </style>
 
 {#if editing}
-    <div class="bg-gray-200 p-4 mt-2 mb-5">
+    <RowCard bordered>
         <h5 class="text-lg">Modifier l'indicateur</h5>
-        <div class="pb-5"></div>
         <IndicateurForm bind:data={indicateur} on:save={onSave}/>
-    </div>
+    </RowCard>
 {:else }
     <RowCard>
-        <div class="flex flex-col">
-            <div class="flex flex-col lg:flex-row items-start w-full">
-                <div class="flex flex-row flex-1 items-center">
-                    <div class="flex-1 flex flex-row cursor-pointer items-stretch mr-4"
-                         on:click={handleExpand}>
-                        <h3 class="flex flex-row items-stretch">
-                            <span class="mr-2 flex">{ indicateur.nom }</span>
-                            {#if indicateur.unite }
-                                <span class="mr-2 flex">({ indicateur.unite })</span>
-                            {/if}
-                        </h3>
-                        <div class="ml-2 flex">
-                            <Angle direction="{expanded ? 'down' : 'right' }"/>
-                        </div>
-                    </div>
-                </div>
+        <div class="RowCard__title">
+            <h3>
+                { indicateur.nom }
+                {#if indicateur.unite }
+                    ({ indicateur.unite })
+                {/if}
+            </h3>
 
-                <div class="indicatorRow">
+            <button class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-edit-fill" title="Modifier l'indicateur"
+                on:click|preventDefault={handleEdit}></button>
+        </div>
+
+        <form class="indicatorRow">
+            <div class="indicatorRow__carousel">
+                <button class="fr-btn fr-btn--secondary fr-fi-arrow-left-line" title="Précédent"></button>
+
+                <div class="indicatorRow__yearsList">
                     {#each years as year}
                         <div>
                             <IndicateurPersonnaliseValueInput indicateur={indicateur} year={year}/>
                         </div>
                     {/each}
                 </div>
+
+                <button class="fr-btn fr-btn--secondary fr-fi-arrow-right-line" title="Suivant"></button>
             </div>
 
-            <div class="flex flex-col lg:w-1/2 mt-4"
-                 class:hidden="{!expanded}">
-                <div class="flex">
-                    {indicateur.description}
-                </div>
-                <div class="flex mb-5"></div>
-
-                <div class="flex">
-                    <Button on:click={handleEdit}>Modifier l'indicateur</Button>
-                </div>
-
+            <div class="indicatorRow__target">
+                <label for="objectif" class="objectif">
+                    Objectif
+                    <input class="fr-input"
+                           id="objectif"
+                           type="text"
+                    />
+                </label>
             </div>
-        </div>
+        </form>
+
+        {#if indicateur.description}
+            <div class="description">
+                <ExpandPanel>
+                    <h3 slot="title">
+                        Description
+                    </h3>
+
+                    <div slot="content">
+                        {@html indicateur.description }
+                    </div>
+                </ExpandPanel>
+            </div>
+        {/if}
+
     </RowCard>
 {/if}

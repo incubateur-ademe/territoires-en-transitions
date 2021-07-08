@@ -6,7 +6,7 @@
      * In order to style the label text, a child element should be passed instead.
      */
 
-    // The textarea value, must be set.
+        // The textarea value, must be set.
     export let value: string
 
     // An optional unstyled label text.
@@ -15,13 +15,34 @@
     // An optional prop passed to textarea.
     export let maxlength: number = undefined
 
+    // id for label and input link
+    export let id: string = ''
+
     // The on blur function passed to textarea. Used for implicit saving.
-    export let onBlur: (event: FocusEvent) => void = (event: FocusEvent): void => {}
+    export let onBlur: (event: FocusEvent) => void = (event: FocusEvent): void => {
+    }
 </script>
 
-<label class="flex flex-col w-full">{label}<slot></slot>
+<style>
+    fieldset {
+        margin-bottom: 3.25rem;
+        padding: 0;
+        border: none;
+    }
+
+    textarea {
+        margin-top: .5rem;
+    }
+</style>
+
+<fieldset>
+    <label for="{id}">{label}
+        <slot></slot>
+    </label>
+
     <textarea bind:value={value}
               on:blur={onBlur}
               class="fr-input"
-              maxlength={maxlength}></textarea>
-</label>
+              maxlength={maxlength}
+    id="{id}"></textarea>
+</fieldset>

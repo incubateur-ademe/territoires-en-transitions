@@ -151,24 +151,44 @@
 </script>
 
 <style>
+    .page-intro {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-intro h1 {
+        max-width: 80%;
+    }
+
+    .select-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 2.875rem;
+        max-width: 75%;
+        margin-top: 3.25rem;
+    }
+
     li + li {
         margin-top: 1rem;
     }
 </style>
+
 <svelte:head>
     <title>Plan d'actions</title>
 </svelte:head>
 
-<header class="flex flex-col bg-white pb-10">
-    <div class="flex flex-row my-10 mx-5">
-        <h1 class="text-3xl font-semibold  flex-grow">Plan d'actions de ma collectivité</h1>
-        <Button asLink
-                href="fiches/creation/?epci_id={epciId}"
-                label="Créer une fiche action"
-        classNames="fr-btn"/>
-    </div>
-    <div class="grid gap-4 grid-cols-4 mx-5">
+<header>
+    <div class="page-intro">
+        <h1>Plan d'actions de ma collectivité</h1>
 
+        <a href="fiches/creation/?epci_id={epciId}"
+           class="fr-btn">
+            Créer une fiche action
+        </a>
+    </div>
+
+    <div class="select-list">
         <!-- status -->
         <SelectInput bind:value={selectedAvancementKey}
                      class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"

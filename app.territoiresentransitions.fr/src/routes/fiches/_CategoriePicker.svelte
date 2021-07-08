@@ -91,25 +91,47 @@
     })
 </script>
 
-<label class="text-xl" for="categorie_picker">Catégorie</label>
-<select bind:value={selected}
-        class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-        id="categorie_picker"
-        on:change={onSelect}
-        on:blur={onSelect}>
-    {#each categories as categorie}
-        <option value={categorie}>
-            {categorie.nom}
-        </option>
-    {/each}
-</select>
-<Button classNames="md:w-1/3 self-end"
-        full
-        label="Nouvelle catégorie"
-        on:click={handleNewCategorie}/>
+<style>
+    fieldset {
+        max-width: 75%;
+    }
 
-{#if visibleCategorieCreation}
+    div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    select {
+        margin-top: .5rem;
+    }
+</style>
+
+<fieldset>
+    <div>
+        <label class="fr-label" for="categorie_picker">Catégorie</label>
+
+        <button class="fr-btn fr-btn--secondary fr-btn--sm"
+                on:click|preventDefault={handleNewCategorie}>
+            Nouvelle catégorie
+        </button>
+    </div>
+
+    <select bind:value={selected}
+            class="fr-select"
+            id="categorie_picker"
+            on:change={onSelect}
+            on:blur={onSelect}>
+        {#each categories as categorie}
+            <option value={categorie}>
+                {categorie.nom}
+            </option>
+        {/each}
+    </select>
+
+    {#if visibleCategorieCreation}
     <CategorieCreation
             ficheActionUid={ficheActionUid}
             on:save={onCategorieSave}/>
-{/if}
+    {/if}
+</fieldset>

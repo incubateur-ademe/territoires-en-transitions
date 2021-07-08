@@ -9,7 +9,6 @@
     import ReferentielSearchBar from '../../../components/shared/ReferentielSearchBar.svelte'
     import LinkActionCard from './_LinkActionCard'
     import PickButton from "../../../components/shared/Button/PickButton.svelte";
-    import Button from "../../../components/shared/Button/Button.svelte";
     import RowCard from "../../../components/shared/RowCard.svelte";
 
     // Main action of the subpage
@@ -42,68 +41,56 @@
 </script>
 
 <style>
-    .custom-overflow {
-        @apply overflow-auto;
-        /**
-         * The height of the dialog have to be set in order to apply the overflow-auto.
-         * The constants applied here:
-         *  - 90vh: the height of the Dialog component.
-         *  - 6rem: approximatively the height of our dialog header.
-         */
-        height: calc(90vh - 6rem);
+
+    .intro {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    ul {
+        margin-top: 2rem;
     }
 </style>
 
-<div class="bg-gray-100 absolute top-0 right-0 left-0">
-    <header class="bg-white px-14 py-4 grid grid-cols-4 justify-center">
-        <button class="cursor-pointer underline col-span-1 text-left self-center"
-                on:click|preventDefault={handleBack}>
-            ‹ Retour
-        </button>
-        <h2 class="text-3xl font-bold col-span-2 text-center self-center py-4" id="dialog-title">Lier une action</h2>
-        <ReferentielSearchBar actions={topLevelAction.actions}
-                              bind:matches={displayedActions}
-                              bind:needle={needle}/>
-    </header>
+<div class="intro">
+    <button class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-left-s-line fr-btn--icon-left"
+            on:click|preventDefault={handleBack}>
+        Retour
+    </button>
 
-    <div class="p-14 focus:bg-gray-100 custom-overflow">
+    <ReferentielSearchBar actions={topLevelAction.actions}
+                          bind:matches={displayedActions}
+                          bind:needle={needle}/>
+</div>
 
-        {#if notSearching}
-            <div class="mb-10">
-                <RowCard id={topLevelAction.id} shadowSize="lg">
-                    <PickButton picked={isActionLinkedToFiche(topLevelAction.id)}
-                                handlePick={handleTopLevelPick}
-                                handleUnpick={handleTopLevelPick}
-                                pickLabel="+"
-                                unpickLabel="✓ Ajouté"
-                    />
-                    <div>
-                        <div class="flex">
-                            <h3 class="text-xl font-bold flex-initial self-center mr-4">{topLevelAction.nom}</h3>
-                            <Button classNames="cursor-pointer self-center flex-none"
-                                    colorVariant="bramble"
-                                    on:click={() => actionDescriptionDisplayed = !actionDescriptionDisplayed }
-                                    size="small">
-                                Détails
-                            </Button>
-                        </div>
-                        <div class="text-base pt-4" class:hidden={!actionDescriptionDisplayed}>
-                            {topLevelAction.description}
-                        </div>
-                    </div>
-                </RowCard>
-            </div>
-        {/if}
+<div>
+    {#if notSearching}
+        <div>
+            <RowCard id={topLevelAction.id}>
+                <PickButton picked={isActionLinkedToFiche(topLevelAction.id)}
+                            handlePick={handleTopLevelPick}
+                            handleUnpick={handleTopLevelPick}
+                            pickLabel="Ajouter"
+                            unpickLabel="Supprimer"
+                />
 
-        <ul>
-            <li>
-                {#each displayedActions as action (action.id) }
-                    <LinkActionCard action={action}
-                                    expandable
-                                    linkedActionIds={linkedActionIds}
-                                    toggleActionId={toggleActionId}/>
-                {/each}
-            </li>
-        </ul>
-    </div>
+                <h3>{topLevelAction.nom}</h3>
+
+                {@html topLevelAction.description}
+            </RowCard>
+        </div>
+    {/if}
+
+    <ul>
+        <li>
+            {#each displayedActions as action (action.id) }
+                <LinkActionCard action={action}
+                                expandable
+                                linkedActionIds={linkedActionIds}
+                                toggleActionId={toggleActionId}/>
+            {/each}
+        </li>
+    </ul>
 </div>

@@ -30,7 +30,16 @@
     initialize()
 </script>
 
-<div class="bg-gray-200 p-4 mt-2 mb-5">
-    <h5 class="text-lg">Nouvel indicateur</h5>
+<style>
+    div {
+        margin-top: 2rem;
+        margin-left: 2rem;
+        padding: 0 0 1rem 1rem;
+        border-left: 4px solid var(--bf500);
+    }
+</style>
+
+<div>
+    <h3 class="text-lg">Nouvel indicateur</h3>
     <IndicateurForm bind:data={data} on:save={handleSave}/>
 </div>
