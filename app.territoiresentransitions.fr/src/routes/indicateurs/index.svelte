@@ -52,6 +52,7 @@
     }
 
     .indicator {
+        max-width: 75%;
         margin-top: 2rem;
     }
 
@@ -60,6 +61,10 @@
         align-items: center;
         justify-content: space-between;
         margin-bottom: 2.5rem;
+    }
+
+    .indicator :global(details) {
+        width: 70% !important;
     }
 </style>
 

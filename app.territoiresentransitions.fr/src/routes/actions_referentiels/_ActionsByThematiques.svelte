@@ -46,20 +46,55 @@
     section + section {
         margin-top: 3.75rem;
     }
-    h2 {
+
+    :global(summary::-webkit-details-marker) {
+        display: none;
+    }
+
+    details[open] summary {
         margin-bottom: 1.875rem;
+    }
+
+    details[open] summary span {
+        transform: rotate(90deg);
+    }
+
+    summary {
+        display: flex;
+        align-items: center;
+    }
+
+    summary h2 {
+        margin-bottom: 0;
+    }
+
+    summary span {
+        margin-bottom: -0.625rem;
+        margin-left: 1rem;
+    }
+
+    summary span::before {
+        font-size: 2rem;
     }
 </style>
 
 {#each [...displayedByThematique] as [thematique, actions]}
     <section>
-        <h2>{thematique.name}</h2>
-        {#each actions as action}
-            {#if searching}
-                <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
-            {:else }
-                <ActionReferentielCard action={action} link/>
-            {/if}
-        {/each}
+        <details>
+            <summary>
+                <h2>{thematique.name}</h2>
+
+                <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
+            </summary>
+
+            {#each actions as action}
+                {#if searching}
+                    <ActionReferentielCard action={action} ficheButton expandButton statusBar/>
+                {:else }
+                    <ActionReferentielCard action={action} link/>
+                {/if}
+            {/each}
+
+        </details>
     </section>
 {/each}

@@ -34,9 +34,6 @@
         justify-content: space-between;
     }
 
-    .pageIntro > div + div {
-    }
-
     .pageIntro h1 {
         margin-bottom: 0;
     }
@@ -58,14 +55,18 @@
         font-size: 1rem;
     }
 
-    .pageIntro > :global( div + div) {
+    .pageIntro > :global( * + *) {
         margin-top: 1.875rem;
+    }
+
+    .pageIntro > :global(details) {
+        width: 70% !important;
     }
 </style>
 
 <div class="pageIntro">
     <div>
-        <!-- <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="#">Retour</a> -->
+        <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="actions_referentiels/?epci_id={epciId}">Retour</a>
 
         <ReferentielSearchBar actions={action.actions} bind:matches={displayed}/>
     </div>
@@ -83,21 +84,16 @@
         </div>
     </div>
 
-    <!-- Broken fixme in issue #316
     <ProgressStat action={action}/>
-    --->
 
-    <div>
-        {#if action.description}
-            <ExpandPanel>
-                <h2 slot="title">Description</h2>
-                <div slot="content" class="pageIntro__description">
-                    <h3>Un titre</h3>
-                    {@html action.description}
-                </div>
-            </ExpandPanel>
-        {/if}
-    </div>
+    {#if action.description}
+        <ExpandPanel>
+            <h2 slot="title">Description</h2>
+            <div slot="content" class="pageIntro__description">
+                {@html action.description}
+            </div>
+        </ExpandPanel>
+    {/if}
 </div>
 
 <h2>Les actions</h2>

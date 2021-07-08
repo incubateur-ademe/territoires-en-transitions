@@ -21,7 +21,20 @@
     });
 </script>
 
-<div class="bg-gray-200 p-4 mt-2 mb-5">
-    <h5 class="text-lg">Nouvelle catégorie</h5>
+<style>
+    div {
+        margin-top: 2rem;
+        margin-left: 2rem;
+        padding: 0 0 1rem 1rem;
+        border-left: 4px solid var(--bf500);
+    }
+
+    h2 {
+        font-size: 1.375rem;
+    }
+</style>
+
+<div>
+    <h2>Nouvelle catégorie</h2>
     <CategorieForm bind:data={data} on:save/>
 </div>

@@ -15,6 +15,7 @@
     import ProgressStat from "./ProgressStat.svelte";
     import {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
     import ActionReferentielCommentaire from "./ActionReferentielCommentaire.svelte";
+    import ActionReferentielDescription from "./ActionReferentielDescription.svelte";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -59,10 +60,6 @@
     $: isCitergie = action.id.startsWith('citergie')
     $: isMesure = isCitergie ? depth === 3 : depth === 2
     $: mesureId = isCitergie ? action.id.split('.').slice(0, 3).join('.') : action.id.split('.').slice(0, 2).join('.')
-
-    // card shadow
-    let sizes = ['2xl', 'xl', 'l', 'md', '', 'sm']
-    $: shadowSize = sizes[depth - (isCitergie ? 0 : 1)]
 
     let epciId = ''
 
@@ -109,19 +106,30 @@
 
     .RowCard__linkOnly > div {
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .RowCard__linkOnly .label {
         width: 100%;
+        margin-bottom: 0;
     }
 
     .RowCard__linkOnly .RowCard__title {
-        flex-direction: column;
-        max-width: 75%;
+        flex-wrap: wrap;
+        width: 100%;
     }
 
     .RowCard__linkOnly .fr-fi-arrow-right-line {
         align-self: flex-end;
         color: var(--bf500);
+    }
+
+    .RowCard__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 1rem;
     }
 
     .RowCard__title,
@@ -134,12 +142,14 @@
         align-items: flex-start;
     }
 
-    .RowCard__title :global(:first-child) {
-        max-width: 75%;
+    .RowCard__title :global(h3) {
+        max-width: 90%;
+        margin-bottom: 0;
     }
 
     .RowCard__content {
         align-items: center;
+        margin-top: 1.5rem;
     }
 
     .RowCard__content:not(:last-child) {
@@ -157,9 +167,17 @@
         font-size: 0.75rem;
         font-weight: normal;
     }
+
+    .commentBlock {
+        width: 70%;
+    }
+
+    .commentBlock :global(.fr-btn) {
+        margin-top: 1rem;
+    }
 </style>
 
-<RowCard bordered={borderedCard} id={action.id} shadowSize={shadowSize}>
+<RowCard id={action.id} bordered={borderedCard}>
     {#if addButton}
         <PickButton picked={isAdded}
                     handlePick={handleToggleButtonClick}
@@ -175,24 +193,29 @@
                rel="prefetch" class="RowCard__linkOnly">
 
                 <div>
-                    <div class="RowCard__title">
+                    <div class="RowCard__header">
                         <span class="label">{action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}</span>
+                        {#if !isCitergie}
+                            <ProgressStat position="right" action={action}/>
+                        {/if}
+                    </div>
 
+                    <div class="RowCard__title">
                         <ActionReferentielTitle
                                 on:click={() => goto(`/actions_referentiels/${mesureId}/?epci_id=${epciId}#${action.id}`)}
                                 action={action}/>
+
+                        <span class="fr-fi-arrow-right-line"></span>
                     </div>
-
-                    <ProgressStat position="right" action={action}/>
                 </div>
-
-                <span class="fr-fi-arrow-right-line"></span>
             </a>
         {:else }
             <div class="RowCard__title">
                 <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
 
-                <ProgressStat position="right" action={action}/>
+                {#if !isCitergie}
+                    <ProgressStat position="right" action={action}/>
+                {/if}
             </div>
         {/if}
     </div>
@@ -209,6 +232,8 @@
             {/if}
         </div>
     {/if}
+
+    <ActionReferentielDescription action={action}/>
 
     {#if commentBlock}
         <ActionReferentielCommentaire action={action}/>

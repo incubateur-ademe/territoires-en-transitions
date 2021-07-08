@@ -6,13 +6,16 @@
     import IndicateurReferentielValueInput from "./IndicateurReferentielValueInput.svelte";
     import {onMount} from "svelte";
     import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
+    import ActionReferentielCard from "../ActionReferentiel/ActionReferentielCard.svelte";
     import IndicateurReferentielCommentaireArea from "./IndicateurReferentielCommentaireArea.svelte";
     import RowCard from "../RowCard.svelte";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
+    import {getCurrentEpciId} from "../../../api/currentEpci";
 
     export let indicateur: IndicateurReferentiel
     let relatedActions: ActionReferentiel[] = []
     let expanded = false
+    let epciId = ''
     const handleExpand = () => {
         expanded = !expanded
     }
@@ -24,6 +27,7 @@
     }
 
     onMount(async () => {
+        epciId = getCurrentEpciId()
         const referentiel = await import('../../../../../generated/data/actions_referentiels')
 
         const found: ActionReferentiel[] = []
@@ -57,17 +61,17 @@
     .indicatorRow__carousel .fr-btn {
         box-shadow: none;
         flex-shrink: 0;
+
+        /* caché tant que non fonctionnel */
+        display: none;
     }
 
     .indicatorRow__yearsList {
         position: relative;
         display: grid;
         grid-template-columns: repeat(7, 1fr);
+        grid-column-gap: 1.25rem;
         padding: 0 1.5rem;
-    }
-
-    .indicatorRow__yearsList > div:not(:first-child) {
-        margin-left: 1.25rem;
     }
 
     .indicatorRow :global(input) {
@@ -147,20 +151,21 @@
         <div slot="content">
             {@html indicateur.description }
 
-            {#if false}
-                <!-- issue #298 -->
+            {#if relatedActions}
                 <h3>Actions liées</h3>
+
                 <ul>
                     {#each relatedActions as action}
                         <li>
-                            <!-- ICI il faudrait un lien qui marche, je n'y arrive pas-->
-                            <!--<a href="/actions_referentiels/{mesureId}/?epci_id={epciId}#{action.id}"
-                               rel="prefetch" class="RowCard__linkOnly">
+                            <a
+                                    href="/actions_referentiels/{action.id}/?epci_id={epciId}#{action.id}"
+                                    class="fr-link fr-fi-arrow-right-line fr-link--icon-right"
+                                    rel="prefetch"
+                            >
 
-                                <span>{action.id_nomenclature} - </span>
+                                {action.id_nomenclature} -
                                 {action.nom}
-                            </a>-->
-                            <a href="" class="fr-link">une mesure</a>
+                            </a>
                         </li>
                     {/each}
                 </ul>
