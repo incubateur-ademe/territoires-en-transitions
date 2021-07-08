@@ -169,7 +169,7 @@
     }
 
     .commentBlock {
-        width: 70%;
+        width: 50%;
     }
 
     .commentBlock :global(.fr-btn) {
