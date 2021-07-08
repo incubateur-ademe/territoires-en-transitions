@@ -1,12 +1,11 @@
 <script lang="ts">
     export let id: string = ''
-    export let shadowSize: string = ''
     export let bordered: boolean = false
 </script>
 
 <style>
     article {
-        padding: 1.5rem 1rem;
+        padding: .8rem 1rem 1.5rem;
         background-color: var(--beige);
         border-left: 4px solid transparent;
     }
@@ -30,7 +29,7 @@
     <slot></slot>
 
     {#if $$slots.secondary }
-        <div class="ml-4">
+        <div>
             <slot name="secondary"></slot>
         </div>
     {/if}

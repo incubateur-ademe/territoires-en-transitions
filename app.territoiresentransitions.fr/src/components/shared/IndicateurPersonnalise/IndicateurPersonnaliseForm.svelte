@@ -19,7 +19,16 @@
     }
 </script>
 
-<section class="flex flex-col md:w-3/4">
+<style>
+    section :global(fieldset) {
+        max-width: 100%;
+        margin-bottom: 3rem;
+        padding: 0;
+        border: none;
+    }
+</style>
+
+<section>
     <LabeledTextInput bind:value={data.nom}
                       label="Titre"/>
 
@@ -29,8 +38,8 @@
     <LabeledTextInput bind:value={data.unite}
                       label="Unité"/>
 
-    <Button classNames="md:w-1/3 self-end bg-white"
-            full
-            label="Valider"
-            on:click={handleSave}/>
+    <button class="fr-btn fr-btn--secondary"
+            on:click|preventDefault={handleSave}>
+        Enregister
+    </button>
 </section>

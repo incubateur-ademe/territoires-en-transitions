@@ -21,14 +21,13 @@
 	onMount(() => {
 		asyncMatomo.trackPageView()
 	})
-
 </script>
 
 <style>
 	main {
 		position: relative;
 		max-width: 70em;
-		padding: 0 2em;
+		padding: 3.25rem 2em;
 		margin: 0 auto;
 		box-sizing: border-box;
 	}

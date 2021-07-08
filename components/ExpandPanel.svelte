@@ -2,8 +2,8 @@
     details {
         width: 100%;
         padding: 0.75rem 0;
-        border-top: 1px dashed #000;
-        border-bottom: 1px dashed #000;
+        border-top: 1px solid var(--g300);
+        border-bottom: 1px solid var(--g300);
     }
 
     details[open] {
@@ -14,6 +14,15 @@
         margin-bottom: 1rem;
     }
 
+    details summary::after {
+        content: "+";
+        margin-left: auto;
+    }
+
+    details[open] summary::after {
+        content: "-";
+    }
+
     :global(summary::-webkit-details-marker) {
         display: none;
     }
@@ -21,11 +30,7 @@
     summary {
         display: flex;
         align-items: center;
-    }
-
-    summary::after {
-        content: "+";
-        margin-left: auto;
+        padding-right: .5rem;
     }
 
     details :global([slot="title"]) {
@@ -34,12 +39,15 @@
         font-weight: normal;
         line-height: 1.5;
     }
+
     details[open] :global([slot="title"]) {
         font-weight: bold;
     }
 
     details :global([slot="content"] h3) {
         font-size: 1rem;
+        margin-top: 2rem;
+        line-height: 1.2;
     }
 
     details :global([slot="content"] h3:not(:first-of-type)) {

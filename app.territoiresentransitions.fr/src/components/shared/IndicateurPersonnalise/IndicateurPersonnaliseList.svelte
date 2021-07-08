@@ -25,24 +25,32 @@
 </script>
 
 <style>
-    div {
+    .indicator__intro {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        margin-bottom: 2.5rem;
+    }
+
+    .indicators {
+        max-width: 75%;
     }
 </style>
 
-<div>
+<div class="indicator__intro">
     <h2>Mes indicateurs</h2>
-    <Button classNames="fr-btn fr-btn--secondary" on:click={handleNewIndicateur}>
-        Nouvel indicateur
-    </Button>
+    <button class="fr-btn fr-btn--secondary" on:click|preventDefault={handleNewIndicateur}>
+        Ajouter un indicateur
+    </button>
 </div>
 
+<!-- BUG: S'affiche sous la liste -->
 {#if showCreation}
     <IndicateurPersonaliseCreation on:save={refresh}/>
 {/if}
 
-{#each indicateurs as indicateur}
-    <IndicateurPersonnaliseElement indicateur={indicateur}/>
-{/each}                               
+<div class="indicators">
+    {#each indicateurs as indicateur}
+        <IndicateurPersonnaliseElement indicateur={indicateur}/>
+    {/each}
+</div>

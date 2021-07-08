@@ -15,11 +15,38 @@
     }
 </script>
 
-<div class="shadow-sm bg-gray-100 p-2">
-    <h3 class="text-xl">{epci.nom}</h3>
-    <div class="pb-5"></div>
-    <Button colorVariant="{color}" on:click={() => goto('fiches', epci.uid)}>Plan d'actions</Button>
-    <Button colorVariant="{color}" on:click={() => goto('actions_referentiels', epci.uid)}>Référentiels</Button>
-    <Button colorVariant="{color}" on:click={() => goto('indicateurs', epci.uid)}>Indicateurs</Button>
+<style>
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1.5rem 1.5rem;
+        background-color: var(--beige);
+    }
+
+    h3 {
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .fr-btn:not(:first-of-type) {
+        margin-top: 1.25rem;
+    }
+</style>
+
+<div>
+    <h3>{epci.nom}</h3>
+
+    <button class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
+            on:click={() => goto('fiches', epci.uid)}>Plan d'actions
+    </button>
+
+    <button class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
+            on:click={() => goto('actions_referentiels',epci.uid)}>Référentiels
+    </button>
+
+    <button class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
+            on:click={() => goto('indicateurs', epci.uid)}>Indicateurs
+    </button>
 </div>
 

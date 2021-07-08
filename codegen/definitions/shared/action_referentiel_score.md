@@ -2,6 +2,9 @@
 
 Représente le score d'une action du référentiel. Il est calculé à partir des status des actions.
 
+referentiel_points et referentiel_percentage contiennent des informations concernant le référentiel en tant que tel, mais pas la collectivité.
+
+
 ```yaml
 ActionReferentielScore:
     action_id:

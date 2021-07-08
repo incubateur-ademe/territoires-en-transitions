@@ -23,6 +23,9 @@
     // An optional validator
     export let validator: Validator = alwaysValid
 
+    // id for label and input link
+    export let id: string = ''
+
     // Show the validator message on mount.
     export let validateOnMount: boolean = true
 
@@ -34,19 +37,39 @@
     })
 </script>
 
-<div class="flex flex-col w-full">
-    <label class="flex flex-col w-full">{label}
+<style>
+    fieldset {
+        max-width: 50%;
+    }
+
+    .hint {
+        margin-top: .25rem;
+        font-size: 0.75rem;
+        color: var(--g600);
+    }
+
+    input {
+        margin-top: .5rem;
+    }
+</style>
+
+<fieldset>
+    <label class="fr-label" for="{id}">{label}
         <slot></slot>
-        <input bind:value={value}
-               class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-               maxlength={maxlength}
-               on:keyup={() => errorMessage=validator(value)}>
     </label>
-    <div class="mb-2">{hint}</div>
+
+    {#if !errorMessage && hint}<div class="hint">{hint}</div>{/if}
+
     {#if errorMessage}
-        <div class="mb-2"
-             class:text-blush-700="{value}">
+        <div class="hint">
             {errorMessage}
         </div>
     {/if}
-</div>
+
+    <input bind:value={value}
+           maxlength={maxlength}
+           on:keyup={() => errorMessage=validator(value)}
+           class="fr-input"
+           id="{id}"
+    >
+</fieldset>

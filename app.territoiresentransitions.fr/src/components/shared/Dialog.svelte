@@ -2,25 +2,9 @@
     export let ariaLabelledBy
     export let handleClose
     export let ariaDescribedBy = undefined
-    export let classNames = ''
-    export let size = 'small'
 
-    let dialogClassNames = 'dialog fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
-
-    if (classNames) {
-        dialogClassNames += ` ${classNames}`
-    }
-
-    /**
-     * Size variant
-     */
-    if (size == 'small') {
-        dialogClassNames += ' dialog__small'
-    }
-
-    if (size == 'large') {
-        dialogClassNames += ' dialog__large'
-    }
+    // default size is medium with 6, 12 is very large, 4 is small, 8 is large
+    export let size = '6'
 
     const handleKeydown = e => {
         if (e.key == 'Escape') {
@@ -30,29 +14,55 @@
     }
 </script>
 
+<svelte:window on:keydown={handleKeydown}/>
+
 <style>
-    .dialog__small {
-        height: 60vh;
-        width: 40vw;
+    .fr-container--fluid {
+        margin: 0 auto;
     }
 
-    .dialog__large {
-        height: 90vh;
-        width: 90vw;
+    .fr-container-lg {
+        width: 70em;
+        max-width: 100%;
     }
+
+    .fr-modal__header {
+        margin-bottom: 3rem;
+    }
+
+    .fr-modal__title {
+        margin-bottom: 0;
+        font-size: 2.5rem;
+        line-height: 1.2;
+    }
+
 </style>
 
-<svelte:window on:keydown={handleKeydown} />
+<!-- Pas de fermeture sur le click de l'overlay, ça serait cool -->
+<dialog aria-labelledby="{ariaLabelledBy}"
+        aria-describedby="{ariaDescribedBy}"
+        role="dialog"
+        id="fr-modal-1"
+        class="fr-modal fr-modal--opened">
+    <div class="fr-container--fluid fr-container-lg">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-{size}">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <h1 id="fr-modal-title-modal-1" class="fr-modal__title">
+                            <slot name="modal-title"></slot>
+                        </h1>
 
-<div class="bg-black bg-opacity-25 fixed top-0 left-0 h-full w-full"
-     on:click|preventDefault={handleClose}>
-</div>
+                        <button class="fr-link--close fr-link" title="Fermer la fenêtre modale"
+                                aria-controls="fr-modal-1" on:click|preventDefault={handleClose}>Fermer
+                        </button>
+                    </div>
 
-<div role="alertdialog"
-     aria-modal="true"
-     aria-labelledby={ariaLabelledBy}
-     aria-describedby={ariaDescribedBy}
-     class="{dialogClassNames}"
->
-    <slot></slot>
-</div>
+                    <div class="fr-modal__content">
+                        <slot></slot>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
