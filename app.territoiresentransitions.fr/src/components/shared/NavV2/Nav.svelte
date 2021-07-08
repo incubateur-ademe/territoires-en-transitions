@@ -1,18 +1,23 @@
-<script>
+<script lang="ts">
     /**
      * Top navigation bar
      */
     import {onMount} from 'svelte'
     import {testUIVisibility} from '../../../api/currentEnvironment'
     import {getCurrentEpciId} from '../../../api/currentEpci'
+    import {currentUtilisateurDroits} from "../../../api/authentication";
+    import {EpciStorable} from "../../../storables/EpciStorable";
 
     export let segment // Type string. Typing this variable makes sapper crash.
     export let slot
 
     let showTestNavigation = false
     let epciId = ''
+    let epci: EpciStorable | null = null
+    let readOnly = false
 
     $: isLogged = segment && segment !== 'connexion'
+
 
     /**
      * Hard navigate to the test epci in order to clear Sapper state.
@@ -23,8 +28,17 @@
 
     onMount(async () => {
         showTestNavigation = testUIVisibility()
+
         try {
             epciId = getCurrentEpciId()
+            const stores = await import('../../../api/hybridStores')
+            epci = await stores.epciStore.retrieveById(epciId)
+
+            const utilisateurDroits = await currentUtilisateurDroits()
+            const droits = utilisateurDroits.filter((droits) => {
+                return droits.ecriture && droits.epci_id === epciId
+            })
+            readOnly = droits.length === 0
         } catch (e) {
             // not signed in, it's fine
         }
@@ -35,6 +49,11 @@
     <div class="fr-header__tools-links">
         <ul class="fr-links-group">
             {#if isLogged}
+                {#if epci}
+                    <li>
+                        {epci.nom} <a class="fr-link" href="epcis/">Changer</a>
+                    </li>
+                {/if}
                 {#if epciId}
                     <li>
                         <a class="fr-link" href="fiches/?epci_id={epciId}">Mon plan d'actions</a>
@@ -59,3 +78,35 @@
         </ul>
     </div>
 </div>
+
+<div class="fr-header__tools">
+    <div class="readOnly">
+        {#if readOnly}
+            <p>lecture seule</p>
+        {/if}
+    </div>
+</div>
+
+<style>
+    .readOnly {
+        background-color: #F59E0B;
+        padding-right: 1.5rem;
+        padding-left: 1.5rem;
+        position: absolute;
+        height: 2em;
+        top: 0;
+        right: 0;
+    }
+
+    .readOnly :global(.fr-nav__link) {
+        color: var(--w);
+    }
+
+    .readOnly :global(.fr-tag) {
+        margin: 0.9rem;
+    }
+
+    .readOnly p {
+        text-align: center;
+    }
+</style>
