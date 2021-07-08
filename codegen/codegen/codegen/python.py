@@ -13,7 +13,7 @@ template_file = 'shared/python/classes.j2'
 
 def types_python(t: str) -> str:
     """Converts a type from yaml to a python type"""
-    py_types = {'String': 'str', 'num': 'float', 'List': 'list', 'Date': 'date', 'bool': 'bool', None: 'str'}
+    py_types = {'String': 'str', 'num': 'float', 'List': 'list', 'Dict': 'dict', 'Date': 'date', 'bool': 'bool', None: 'str'}
     if t in py_types.keys():
         return py_types[t]
     if t.startswith('List['):

@@ -64,7 +64,9 @@
 {#each [...displayedByAxe] as [parent, actions]}
     <section>
         <h2>{parent.id_nomenclature}. {parent.nom}
+            <!-- broken fixme in #316
             <ProgressStat position={"bottom"}/>
+            -->
         </h2>
         {#each actions as action}
             {#if searching}

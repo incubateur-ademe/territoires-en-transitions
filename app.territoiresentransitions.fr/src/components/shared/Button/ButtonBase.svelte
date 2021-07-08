@@ -34,11 +34,32 @@
         buttonClassNames +=
             ' border-gray-600 border bg-gray-200 text-gray-600'
     }
+
+    if (colorVariant == 'juniper') {
+        buttonClassNames +=
+            ' button juniper'
+    }
+
+    if (colorVariant == 'blueberry') {
+        buttonClassNames +=
+            ' button blueberry'
+    }
 </script>
 
 <style>
     button {
-        border: rgba(19, 101, 56, 100) 2px solid;
+        border: 2px solid;
+    }
+
+    :global(.juniper) {
+        color: var(--w);
+        background-color: var(--bf500);
+        border-color: var(--bf500);
+    }
+
+    :global(.blueberry) {
+        color: var(--bf500);
+        border-color: var(--bf500);
     }
 </style>
 

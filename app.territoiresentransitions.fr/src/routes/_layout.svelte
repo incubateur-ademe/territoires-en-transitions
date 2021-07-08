@@ -21,6 +21,7 @@
 	onMount(() => {
 		asyncMatomo.trackPageView()
 	})
+
 </script>
 
 <style>
@@ -36,7 +37,7 @@
 <div>
 
 </div>
-{#if segment === 'fiches' }
+{#if segment === 'fiches' || segment === 'epcis' || !segment }
 	<Tailwind />
 {/if}
 <Head/>
