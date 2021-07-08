@@ -7,7 +7,6 @@
     import {currentUtilisateurDroits} from "../../api/authentication";
     import {UtilisateurDroits} from "../../../../generated/models/utilisateur_droits";
     import Card from "./_EpciCard.svelte"
-    import Button from "../../components/shared/Button/Button.svelte";
 
     let allEpcis: EpciStorable[] = []
     let userEpcis: EpciStorable[] = []
