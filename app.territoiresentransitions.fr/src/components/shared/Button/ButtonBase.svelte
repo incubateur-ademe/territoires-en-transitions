@@ -10,7 +10,7 @@
     export let asLink = false
     export let href = ''
 
-    let buttonClassNames = ''
+    let buttonClassNames = 'legacy-button'
 
     /**
      * Color variants
@@ -51,13 +51,13 @@
         border: 2px solid;
     }
 
-    :global(.juniper) {
+    .juniper {
         color: var(--w);
         background-color: var(--bf500);
         border-color: var(--bf500);
     }
 
-    :global(.blueberry) {
+    .blueberry {
         color: var(--bf500);
         border-color: var(--bf500);
     }

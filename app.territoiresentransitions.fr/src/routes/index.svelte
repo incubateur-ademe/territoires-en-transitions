@@ -21,7 +21,7 @@
     <title>Territoires en Transitions</title>
 </svelte:head>
 
-<div class="">
+<div class="introduction">
     {#if connected === null}
         <p>Chargement en cours...</p>
     {:else if connected}
@@ -57,5 +57,10 @@
 <style>
     .hidden {
         display: none;
+    }
+
+    .introduction {
+        margin-top: 2.25rem;
+        margin-bottom: 3.75rem;
     }
 </style>
