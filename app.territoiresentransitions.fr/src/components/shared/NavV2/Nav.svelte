@@ -79,12 +79,12 @@
     </div>
 </div>
 
-<div class="fr-header__tools">
-    <div class="readOnly">
-        {#if readOnly}
+<div>
+    {#if readOnly}
+        <div class="readOnly">
             <p>lecture seule</p>
-        {/if}
-    </div>
+        </div>
+    {/if}
 </div>
 
 <style>
