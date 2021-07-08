@@ -41,8 +41,6 @@
         const api = getCurrentAPI()
         const endpoint = `${api}/v2/auth/register`
 
-        console.log(inscription)
-        window['inscription'] = inscription
         registrationResponse = await fetch(endpoint, {
             method: 'POST',
             mode: 'cors',
