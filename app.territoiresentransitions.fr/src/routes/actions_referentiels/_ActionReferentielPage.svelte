@@ -66,7 +66,7 @@
 
 <div class="pageIntro">
     <div>
-        <!-- <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="#">Retour</a> -->
+        <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="actions_referentiels/?epci_id={epciId}">Retour</a>
 
         <ReferentielSearchBar actions={action.actions} bind:matches={displayed}/>
     </div>
@@ -84,9 +84,7 @@
         </div>
     </div>
 
-    <!-- Broken fixme in issue #316
     <ProgressStat action={action}/>
-    --->
 
     {#if action.description}
         <ExpandPanel>

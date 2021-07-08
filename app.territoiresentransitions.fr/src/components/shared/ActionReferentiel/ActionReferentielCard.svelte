@@ -12,10 +12,10 @@
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
     import PickButton from '../Button/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
-    import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
     import ProgressStat from "./ProgressStat.svelte";
     import {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
     import ActionReferentielCommentaire from "./ActionReferentielCommentaire.svelte";
+    import ActionReferentielDescription from "./ActionReferentielDescription.svelte";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -195,7 +195,9 @@
                 <div>
                     <div class="RowCard__header">
                         <span class="label">{action.id.startsWith('citergie') ? "Cit'ergie" : 'Économie circulaire'}</span>
-                        <ProgressStat position="right" action={action}/>
+                        {#if !isCitergie}
+                            <ProgressStat position="right" action={action}/>
+                        {/if}
                     </div>
 
                     <div class="RowCard__title">
@@ -211,7 +213,9 @@
             <div class="RowCard__title">
                 <ActionReferentielTitle on:click={onTitleClick(action)} action={action}/>
 
-                <ProgressStat position="right" action={action}/>
+                {#if !isCitergie}
+                    <ProgressStat position="right" action={action}/>
+                {/if}
             </div>
         {/if}
     </div>
@@ -229,16 +233,7 @@
         </div>
     {/if}
 
-    {#if action.description.trim().length }
-        <div class="commentBlock">
-            <ExpandPanel>
-                <h2 slot="title">Description</h2>
-                <div slot="content">
-                    {@html action.description}
-                </div>
-            </ExpandPanel>
-        </div>
-    {/if}
+    <ActionReferentielDescription action={action}/>
 
     {#if commentBlock}
         <ActionReferentielCommentaire action={action}/>
