@@ -1,8 +1,15 @@
 <script lang="ts">
     import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
+    import {onMount} from "svelte";
 
     export let action: ActionReferentiel
+
+    let description = ''
+
+    onMount(() => {
+        description = action.description
+    })
 </script>
 
 <style>
@@ -16,11 +23,11 @@
 </style>
 
 <div class="commentBlock">
-    {#if action.description.trim().length }
+    {#if description.trim().length }
         <ExpandPanel>
             <h2 slot="title">Description</h2>
             <div slot="content">
-                {@html action.description}
+                {@html description}
             </div>
         </ExpandPanel>
     {/if}
