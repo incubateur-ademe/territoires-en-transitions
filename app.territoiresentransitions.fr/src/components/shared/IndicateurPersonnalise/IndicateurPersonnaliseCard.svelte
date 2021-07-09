@@ -123,6 +123,7 @@
                 <button class="fr-btn fr-btn--secondary fr-fi-arrow-right-line" title="Suivant"></button>
             </div>
 
+            <!-- Pas validé métier
             <div class="indicatorRow__target">
                 <label for="objectif" class="objectif">
                     Objectif
@@ -132,6 +133,7 @@
                     />
                 </label>
             </div>
+            -->
         </form>
 
         {#if indicateur.description}
