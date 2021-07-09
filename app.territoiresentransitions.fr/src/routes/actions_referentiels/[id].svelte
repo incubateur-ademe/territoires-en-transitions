@@ -1,21 +1,14 @@
 <script context="module" lang="ts">
     import {actions} from "../../../../generated/data/actions_referentiels";
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import {searchById} from "./utils";
 
-    const search = (actions: ActionReferentiel[], id: string): ActionReferentiel | void => {
-        for (let action of actions) {
-            if (action.id === id) return action;
-            const found = search(action.actions, id);
-            if (found) return found;
-        }
-    }
 
     export async function preload({params}) {
         const id = params.id;
-        const found = search(actions, id);
+        const found = searchById(actions, id);
 
         if (found) {
-            return {action: found};
+            return {actionId: found.id};
         } else {
             this.error(404, `Aucune action trouvée pour ${id}`);
         }
@@ -25,9 +18,14 @@
 <script lang="ts">
     import ActionReferentielPage from "./_ActionReferentielPage.svelte";
 
-    export let action: ActionReferentiel
+    export let actionId: string
+    $: action = searchById(actions, actionId)
 </script>
 
-<ActionReferentielPage action={action}/>
+<div>
+    {#if action}
+        <ActionReferentielPage action={action}/>
+    {/if}
+</div>
 
 
