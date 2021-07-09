@@ -173,7 +173,6 @@
         margin-top: 1rem;
     }
 </style>
-
 <svelte:head>
     <title>Plan d'actions</title>
 </svelte:head>
