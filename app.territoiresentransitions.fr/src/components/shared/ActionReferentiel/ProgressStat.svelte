@@ -10,7 +10,10 @@
 
     const updateState = () => {
         const percentage: number = score ? score.percentage * 100 : 0
-        if (percentage < 34) {
+        if (score && score.status.includes('non_concerne')) {
+            state = "nc"
+        }
+        else if (percentage < 34) {
             state = "alert"
         }
         else if (percentage < 49) {
@@ -67,6 +70,11 @@
         height: 6px;
         margin: 0 auto;
         background-color: #000;
+    }
+
+    .progressBar--status-nc,
+    .progressBar--position-bottom.progressBar--status-nc {
+        border-color: #444;
     }
 
     .progressBar--status-alert,
