@@ -184,7 +184,7 @@
 
         <a href="fiches/creation/?epci_id={epciId}"
            class="fr-btn">
-            Créer une fiche action
+            Ajouter à mes actions
         </a>
     </div>
 

@@ -7,7 +7,6 @@
     import {currentUtilisateurDroits} from "../../api/authentication";
     import {UtilisateurDroits} from "../../../../generated/models/utilisateur_droits";
     import Card from "./_EpciCard.svelte"
-    import Button from "../../components/shared/Button/Button.svelte";
 
     let allEpcis: EpciStorable[] = []
     let userEpcis: EpciStorable[] = []
@@ -41,9 +40,8 @@
 
     .grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-column-gap: 10%;
-        grid-row-gap: 3rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-gap: 3rem;
     }
 
     .card {
