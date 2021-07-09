@@ -1,1 +1,1 @@
-[Créer un compte](https://app.territoiresentransitions.fr/#je-veux-un-compte)
+[Créer un compte](https://app.territoiresentransitions.fr/auth/register/)
