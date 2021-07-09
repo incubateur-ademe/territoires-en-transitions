@@ -66,7 +66,8 @@
 
 <div class="pageIntro">
     <div>
-        <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="actions_referentiels/?epci_id={epciId}">Retour</a>
+        <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left"
+           href="actions_referentiels/?epci_id={epciId}">Retour</a>
 
         <ReferentielSearchBar actions={action.actions} bind:matches={displayed}/>
     </div>
@@ -97,11 +98,22 @@
 </div>
 
 <h2>Les actions</h2>
-{#each displayed as action}
-    <ActionReferentielCard action={action} ficheButton statusBar expandButton borderedCard commentBlock recursive/>
-{/each}
+<ul>
+
+    {#each displayed as action}
+        <li>
+
+            <ActionReferentielCard action={action} ficheButton statusBar expandButton borderedCard commentBlock
+                                   recursive/>
+        </li>
+    {/each}
+</ul>
 
 <h2>Les indicateurs</h2>
-{#each indicateurs.filter((indicateur) => indicateur.action_ids.includes(action.id)) as indicateur (indicateur.id)}
-    <IndicateurReferentielCard indicateur={indicateur}/>
-{/each}
+<ul>
+    {#each indicateurs.filter((indicateur) => indicateur.action_ids.includes(action.id)) as indicateur (indicateur.id)}
+        <li>
+            <IndicateurReferentielCard indicateur={indicateur}/>
+        </li>
+    {/each}
+</ul>
