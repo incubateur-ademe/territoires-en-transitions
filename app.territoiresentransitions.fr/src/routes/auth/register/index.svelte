@@ -44,6 +44,9 @@
         registrationResponse = await fetch(endpoint, {
             method: 'POST',
             mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(inscription)
         });
 
@@ -88,7 +91,9 @@
 
         <h1 class="text-2xl">Créer un compte</h1>
         <div class="pb-10"></div>
-        <div>Si vous avez déjà un compte ADEME, <a class="text-blue-600" href="/auth/signin/">connectez-vous directement par ici</a>.</div>
+        <div>Si vous avez déjà un compte ADEME, <a class="text-blue-600" href="/auth/signin/">connectez-vous directement
+            par ici</a>.
+        </div>
         <div class="p-5"></div>
         <form class="flex flex-col w-full md:w-3/4 pb-10">
             <div>Tous les champs sont obligatoires.</div>
@@ -123,7 +128,8 @@
                        class="form-checkbox"
                        bind:checked={acceptViePrivee}>
                 <span class="ml-2">
-                    J'accepte la <a class=" underline text-blue-600" href={politique_vie_privee}>politique de protection
+                    J'accepte la <a target="_blank" rel="noopener noreferrer" class="underline text-blue-600"
+                                    href={politique_vie_privee}>politique de protection
                     des données à caractère personnel de l'ADEME</a>
                 </span>
             </label>
