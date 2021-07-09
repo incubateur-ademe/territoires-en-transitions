@@ -86,11 +86,11 @@
 
     <ProgressStat action={action}/>
 
-    {#if action.description}
+    {#if description}
         <ExpandPanel>
             <h2 slot="title">Description</h2>
             <div slot="content" class="pageIntro__description">
-                {@html action.description}
+                {@html description}
             </div>
         </ExpandPanel>
     {/if}
