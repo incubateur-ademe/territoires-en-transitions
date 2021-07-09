@@ -16,7 +16,8 @@
         const stores = await import('../../api/hybridStores')
         const utilisateurDroits: UtilisateurDroits[] = await currentUtilisateurDroits()
 
-        allEpcis = await stores.epciStore.retrieveAll()
+        const all = await stores.epciStore.retrieveAll()
+        allEpcis = all.sort((a, b) => a.nom > b.nom ? 1 : -1)
         userEpcis = allEpcis.filter((epci) => {
             return utilisateurDroits.filter((droits) => {
                 return droits.ecriture && droits.epci_id === epci.id
