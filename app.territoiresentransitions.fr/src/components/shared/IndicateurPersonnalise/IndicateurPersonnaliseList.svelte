@@ -53,7 +53,7 @@
 
 
 {#if showCreation}
-    {#await import('./IndicateurPersonaliseCreatioDialog.svelte') then c}
+    {#await import('./IndicateurPersonnaliseCreationDialog.svelte') then c}
         <svelte:component this={c.default}
                           on:AddDialogClose={handleDialogClose}
         />
