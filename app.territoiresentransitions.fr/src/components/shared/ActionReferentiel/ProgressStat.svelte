@@ -13,16 +13,16 @@
         if (percentage < 34) {
             state = "alert"
         }
-        if (percentage > 35 && percentage < 49) {
+        else if (percentage < 49) {
             state = "warning"
         }
-        if (percentage > 50 && percentage < 64) {
+        else if (percentage < 64) {
             state = "ok"
         }
-        if (percentage > 65 && percentage < 74) {
+        else if (percentage < 74) {
             state = "good"
         }
-        if (percentage > 75) {
+        else {
             state = "best"
         }
     }
