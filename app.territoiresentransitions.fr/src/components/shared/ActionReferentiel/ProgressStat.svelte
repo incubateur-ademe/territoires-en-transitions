@@ -22,7 +22,7 @@
         if (percentage > 65 && percentage < 74) {
             state = "good"
         }
-        if (percentage > 75 && percentage < 100) {
+        if (percentage > 75) {
             state = "best"
         }
     }
