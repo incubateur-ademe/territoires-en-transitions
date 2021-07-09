@@ -24,7 +24,7 @@
                     </picture>
                 </div>
                 <div class="fr-header__service">
-                    <a href="https://territoiresentransitions.fr" title="Accueil">
+                    <a href="/" title="Accueil">
                         <p class="fr-header__service-title">Territoires en Transitions</p>
                     </a>
                 </div>
