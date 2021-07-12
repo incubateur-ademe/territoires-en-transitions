@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from datetime import date
-from dataclasses import dataclass
 from typing import List
+from pydantic import BaseModel
 
 
-@dataclass
-class UtilisateurConnecte:
+class UtilisateurConnecte(BaseModel):
     ademe_user_id: str
     access_token: str
     refresh_token: str

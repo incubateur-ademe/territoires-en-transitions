@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from datetime import date
-from dataclasses import dataclass
 from typing import List
+from pydantic import BaseModel
 
 
-@dataclass
-class IndicateurPersonnalise:
+class IndicateurPersonnalise(BaseModel):
     epci_id: str
     uid: str
     custom_id: str

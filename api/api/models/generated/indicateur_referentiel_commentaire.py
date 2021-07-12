@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from datetime import date
-from dataclasses import dataclass
 from typing import List
+from pydantic import BaseModel
 
 
-@dataclass
-class IndicateurReferentielCommentaire:
+class IndicateurReferentielCommentaire(BaseModel):
     epci_id: str
     indicateur_id: str
     value: str
