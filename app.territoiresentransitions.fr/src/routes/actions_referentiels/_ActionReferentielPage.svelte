@@ -98,7 +98,16 @@
 
 <h2>Les actions</h2>
 {#each displayed as action}
-    <ActionReferentielCard action={action} ficheButton statusBar expandButton borderedCard commentBlock recursive/>
+    <ActionReferentielCard
+      action={action}
+      ficheButton
+      statusBar
+      expandButton
+      borderedCard
+      commentBlock
+      descriptionBlock
+      recursive
+    />
 {/each}
 
 <h2>Les indicateurs</h2>
