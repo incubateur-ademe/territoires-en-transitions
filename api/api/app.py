@@ -7,7 +7,6 @@ from api.routers.v2 import auth, epci, utilisateur_droits, indicateur_personnali
     indicateur_value, fiche_action, indicateur_referentiel_commentaire, action_status, fiche_action_categorie, \
     action_meta, notation
 
-
 app = FastAPI(
     title=openapi_config.name,
     version=openapi_config.version,
@@ -25,7 +24,6 @@ app.include_router(indicateur_personnalise.router)
 app.include_router(indicateur_value.router)
 app.include_router(action_meta.router)
 app.include_router(notation.router)
-
 
 register_tortoise(
     app,

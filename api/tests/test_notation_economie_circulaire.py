@@ -58,11 +58,11 @@ def test_notation_redistribution(notation: Notation):
     point_of_1_1_1 = notation.referentiel.points[('1', '1', '1')]
     notation.compute()
 
-    # test that orientation 1.1 have scored all the points of 1.1.1
-    assert math.isclose(notation.points[('1', '1')], point_of_1_1_1)
-
-    # test that niveau 1.1.1 have scored 100% of the points
+    # test that orientation 1.1.1 have score 100% of the points
     assert math.isclose(notation.points[('1', '1', '1')], point_of_1_1_1)
+
+    # test that niveau 1.1.1.1 is worth the total its parent orientation.
+    assert math.isclose(notation.points[('1', '1')], point_of_1_1_1)
 
     # test that tache 1.1.1.1 is worth the total its parent orientation.
     assert math.isclose(notation.points[('1', '1', '1', '1')], point_of_1_1_1)

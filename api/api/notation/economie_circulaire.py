@@ -61,7 +61,6 @@ class Referentiel:
 
     def __build_points(self):
         """Build points
-
         A référentiel is worth 500 points thus if every actions had a been done
         perfectly a collectivité would obtain 500 points.
 
@@ -106,7 +105,8 @@ class Statut(Enum):
     def from_avancement(cls, avancement: str) -> Statut:
         """Returns a Statut from the avancement of ActionStatus
 
-        Note there is no 'programmée' as it does not count toward notation."""
+        Note there is no 'programmée' as it does not count toward notation.
+        """
         if avancement == 'non_concernee':
             return Statut.pas_concerne
         elif avancement == 'pas_faite':

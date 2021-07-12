@@ -141,7 +141,11 @@ async def register(inscription: UtilisateurInscription, response: Response):
     user_id = user_data['userId']
 
     # add the created user to our db.
-    await Utilisateur.create(ademe_user_id=user_id, vie_privee=inscription.vie_privee)
+    await Utilisateur.create(
+        ademe_user_id=user_id,
+        vie_privee_conditions=inscription.vie_privee_conditions,
+        latest=True
+    )
 
     try:
         requests.put(f'{users_endpoint}/{user_id}/enableCGU', headers=headers)

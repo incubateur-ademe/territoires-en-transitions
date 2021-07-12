@@ -7,7 +7,7 @@ Content-Type: application/json
   "email": "tweedledee@wood.com",
   "nom": "Tweedle",
   "prenom": "Dum",
-  "vie_privee": "ditto"
+  "vie_privee_conditions": "ditto"
 }
 
 

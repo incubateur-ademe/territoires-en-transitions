@@ -18,11 +18,12 @@ async def get_eci_scores(epci_id: str):
     for s in status:
         if s.action_id.startswith('economie_circulaire'):
             index = tuple(s.action_id.split('__')[-1].split('.'))
-            
+        
             # convert the avancement set by the user to a statut for the notation engine
             notation_statut = Statut.from_avancement(s.avancement)
 
             # set the status in the epci notation so the scores can be computed.
             notation.set_statut(index, notation_statut)
+
 
     return notation.scores()

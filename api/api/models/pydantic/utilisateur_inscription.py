@@ -8,7 +8,7 @@ class UtilisateurInscription(BaseModel):
     email: str
     nom: str
     prenom: str
-    vie_privee: str
+    vie_privee_conditions: str
 
     def to_registration(self) -> AdemeUserRegistration:
         return AdemeUserRegistration(email=self.email, lastname=self.nom, firstname=self.prenom)
