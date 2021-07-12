@@ -16,6 +16,10 @@
     let epciId = ''
     let description = ''
 
+    const isIndicateurRelatedToAction = (indicateur) => indicateur.action_ids.includes(action.id)
+    const actionIndicateurs = indicateurs.filter(isIndicateurRelatedToAction)
+    const hasIndicateurs = actionIndicateurs.length > 0
+
     onMount(async () => {
         epciId = getCurrentEpciId()
         description = action.description
@@ -62,6 +66,10 @@
     .pageIntro > :global(details) {
         width: 70% !important;
     }
+
+    .listActions {
+        margin-bottom: 3.75rem;
+    }
 </style>
 
 <div class="pageIntro">
@@ -97,11 +105,17 @@
 </div>
 
 <h2>Les actions</h2>
-{#each displayed as action}
-    <ActionReferentielCard action={action} ficheButton statusBar expandButton borderedCard commentBlock recursive/>
-{/each}
+<div class="listActions">
+    {#each displayed as action}
+        <ActionReferentielCard action={action} ficheButton statusBar expandButton borderedCard commentBlock recursive/>
+    {/each}
+</div>
 
 <h2>Les indicateurs</h2>
-{#each indicateurs.filter((indicateur) => indicateur.action_ids.includes(action.id)) as indicateur (indicateur.id)}
-    <IndicateurReferentielCard indicateur={indicateur}/>
-{/each}
+{#if hasIndicateurs }
+    {#each actionIndicateurs as indicateur (indicateur.id)}
+        <IndicateurReferentielCard indicateur={indicateur}/>
+    {/each}
+{:else }
+    Il n'existe pas d'indicateur dans le référentiel pour ces actions.
+{/if}
