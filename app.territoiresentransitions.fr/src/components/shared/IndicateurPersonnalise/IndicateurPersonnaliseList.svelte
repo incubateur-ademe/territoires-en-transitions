@@ -3,7 +3,7 @@
     import {onMount} from "svelte";
     import IndicateurPersonnaliseElement from "./IndicateurPersonnaliseCard.svelte"
     import IndicateurPersonaliseCreation from "./IndicateurPersonnaliseCreation.svelte"
-    import Button from "../Button/Button.svelte";
+    import IndicateurPersonaliseCreatioDialog from "./IndicateurPersonnaliseCreationDialog.svelte"
 
     let indicateurs: IndicateurPersonnaliseStorable[] = []
     let showCreation: boolean = false
@@ -18,9 +18,16 @@
         indicateurs = await hybridStores.indicateurPersonnaliseStore.retrieveAll()
     }
 
+    const handleDialogClose = async () => {
+        showCreation = false
+        await refresh()
+    }
+
     onMount(async () => {
         await refresh()
     })
+
+
 
 </script>
 
@@ -44,10 +51,15 @@
     </button>
 </div>
 
-<!-- BUG: S'affiche sous la liste -->
+
 {#if showCreation}
-    <IndicateurPersonaliseCreation on:save={refresh}/>
+    {#await import('./IndicateurPersonnaliseCreationDialog.svelte') then c}
+        <svelte:component this={c.default}
+                          on:AddDialogClose={handleDialogClose}
+        />
+    {/await}
 {/if}
+
 
 <div class="indicators">
     {#each indicateurs as indicateur}

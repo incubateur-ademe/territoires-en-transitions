@@ -79,18 +79,18 @@
         <div>
             <a class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-file-fill fr-btn--icon-left"
                href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
-                Créer une fiche-action
+                Ajouter à mes actions
             </a>
         </div>
     </div>
 
     <ProgressStat action={action}/>
 
-    {#if action.description}
+    {#if description}
         <ExpandPanel>
             <h2 slot="title">Description</h2>
             <div slot="content" class="pageIntro__description">
-                {@html action.description}
+                {@html description}
             </div>
         </ExpandPanel>
     {/if}

@@ -173,7 +173,6 @@
         margin-top: 1rem;
     }
 </style>
-
 <svelte:head>
     <title>Plan d'actions</title>
 </svelte:head>
@@ -184,7 +183,7 @@
 
         <a href="fiches/creation/?epci_id={epciId}"
            class="fr-btn">
-            Créer une fiche action
+            Ajouter à mes actions
         </a>
     </div>
 

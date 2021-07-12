@@ -52,36 +52,33 @@
 </script>
 
 <style>
-    .custom-overflow {
-        @apply overflow-auto;
-        /**
-         * The height of the dialog have to be set in order to apply the overflow-auto.
-         * The constants applied here:
-         *  - 90vh: the height of the Dialog component.
-         *  - 6rem: approximatively the height of our dialog header.
-         */
-        height: calc(90vh - 6rem);
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-column-gap: 10%;
     }
+
+    .bottom {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    div :global(fieldset) {
+        max-width: 100%;
+    }
+
 </style>
 
 <Dialog ariaLabelledBy="dialog-title"
         handleClose={close}
         size="small">
 
-    <header class="flex flex-row bg-white w-full">
-        <div class="flex flex-grow"></div>
-        <button class="cursor-pointer p-4"
-                on:click|preventDefault={close}>
-            Fermer x
-        </button>
-    </header>
-
-    <div class="p-14 bg-white">
-
-        <div class="grid grid-cols-2 gap-4">
+    <div>
+        <div class="grid">
             <div class="flex flex-col">
                 <h1 class="text-xl">Ma collectivité a déjà un compte</h1>
-                <SelectInput bind:value={selectedEpciId}>
+                <SelectInput bind:value={selectedEpciId} label="Nom de ma collectivité">
                     <option value="">Sélectionnez une collectivité</option>
                     {#each epcis as epci}
                         <option value="{epci.id}">{epci.nom}</option>
@@ -96,10 +93,8 @@
             </div>
         </div>
 
-        <div class="w-full flex flex-row justify-center">
-
-        <Button on:click={submit}>Valider</Button>
+        <div class="bottom">
+            <button class="fr-btn fr-btn--secondary fr-btn--sm" on:click={submit}>Valider</button>
         </div>
-
     </div>
 </Dialog>

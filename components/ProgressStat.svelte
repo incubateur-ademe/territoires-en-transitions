@@ -27,6 +27,7 @@
 <style>
     div {
         flex-shrink: 0;
+        display: flex;
         padding-left: 0.75rem;
         font-size: 0.875rem;
         font-weight: normal;
@@ -35,6 +36,7 @@
     }
 
     strong {
+        margin-right: .5rem;
         font-size: 1rem;
     }
 
