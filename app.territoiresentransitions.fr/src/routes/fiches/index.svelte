@@ -173,10 +173,6 @@
     li + li {
         margin-top: 1rem;
     }
-
-    .enRetard {
-
-    }
 </style>
 <svelte:head>
     <title>Plan d'actions</title>
