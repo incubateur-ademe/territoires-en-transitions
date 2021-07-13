@@ -20,22 +20,13 @@ ActionStatus:
       type: String
   epci_id:
       type: String
-  avancement:
+  valeur_selectionnee:
       type: String
-      possibles: # pas implémenté
+      options: # pas implémenté
           - faite
           - programmee
           - pas_faite
-          - non_concerne
+          - non_concernee
 ```
 
-## Avancement
-L'avancement est représenté par les valeurs suivantes
 
-```yaml
-avancement_noms:
-    non_concerne: 'Non concerné'
-    programmee: 'Programmée'
-    pas_faite: 'Pas faite'
-    faite: 'Faite'
-```
