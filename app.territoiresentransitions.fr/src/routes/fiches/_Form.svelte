@@ -20,7 +20,13 @@
     import LabeledTextArea from "../../components/shared/Forms/LabeledTextArea.svelte";
     import LabeledTextInput from "../../components/shared/Forms/LabeledTextInput.svelte";
     import {alwaysValid, joinValidators, validate} from "../../api/validator";
-    import {maximumLengthValidatorBuilder, numbersOnlyValidator, requiredValidator} from "../../api/validators";
+    import {
+        booleanValidator,
+        maximumLengthValidatorBuilder,
+        numbersOnlyValidator,
+        requiredValidator
+    } from "../../api/validators";
+    import CheckboxInput from "../../components/shared/Forms/CheckboxInput.svelte";
 
     export let data: FicheActionInterface
 
@@ -35,6 +41,7 @@
         uid: maximumLengthValidatorBuilder(36),
         custom_id: maximumLengthValidatorBuilder(36),
         avancement: maximumLengthValidatorBuilder(36),
+        en_retard: booleanValidator,
         referentiel_action_ids: alwaysValid,
         referentiel_indicateur_ids: alwaysValid,
         titre: joinValidators([requiredValidator, maximumLengthValidatorBuilder(300)]),
@@ -169,7 +176,7 @@
 
         <LabeledTextInput bind:value={data.titre}
                           hint="Ce champ est requis"
-                          maxlength="36"
+                          maxlength="300"
                           validator={validators.titre}
                           id="title">
             Titre
@@ -185,6 +192,10 @@
 
         <Status bind:avancementKey={data.avancement}
                 id="{data.uid}"/>
+
+        <CheckboxInput bind:value={data.en_retard}>
+            Action en retard
+        </CheckboxInput>
 
         <LabeledTextInput bind:value={data.structure_pilote}
                           maxlength="300"
@@ -316,9 +327,9 @@
         </fieldset>
 
         <div class="last-button">
-            <a href=""
-               class="fr-btn"
-               on:click={handleSave}>
+            <a class="fr-btn"
+               href="#"
+               on:click|preventDefault|once={handleSave}>
                 Valider
             </a>
         </div>

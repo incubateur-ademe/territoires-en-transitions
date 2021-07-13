@@ -10,6 +10,11 @@ export const requiredValidator: Validator = joinValidators([
     (value: any) => (value === '') ? 'Ce champ est requis' : null,
 ]);
 
+export const booleanValidator: Validator = joinValidators([
+    prequisite,
+    (value: any) => (value === true || value === false) ? null : 'Ce champ comporte un bug',
+]);
+
 export const maximumLengthValidatorBuilder = (len: number): Validator => joinValidators([
     prequisite,
     (value: any) => (value.toString().length > len) ? `Ce champ doit faire au maximum ${len} caractères` : null,
