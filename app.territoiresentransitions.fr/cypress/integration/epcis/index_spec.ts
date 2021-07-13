@@ -20,8 +20,6 @@ describe('index', () => {
             cy.contains('Ajouter').click()
             cy.get('input').type('Alice')
             cy.contains('Valider').click()
-            cy.wait('@createEPCI').its('request.body').should('contains',)
-
             cy.contains('Alice')
         })
     })
