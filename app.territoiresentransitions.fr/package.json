@@ -20,6 +20,8 @@
     "sirv": "^1.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.14.5",
     "@fullhuman/postcss-purgecss": "^4.0.2",
     "@tsconfig/svelte": "^1.0.10",
