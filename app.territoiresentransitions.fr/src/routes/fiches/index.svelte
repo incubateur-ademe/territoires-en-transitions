@@ -189,11 +189,11 @@
     </div>
 
     <div class="select-list">
-        <!-- status -->
+        <!-- statut -->
         <SelectInput bind:value={selectedAvancementKey}
                      class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
                      id="categorie_picker"
-                     label="Status d'avancement"
+                     label="Statut d'avancement"
                      onChange={applyFilters}>
             <option value=''>
                 Toutes
