@@ -119,3 +119,31 @@ jobs:
           build: npm run export
           start: npx serve __sapper__/export -p 3000
           working-directory: ${{env.working-directory}}
+
+  client-test:
+    name: Unit tests on client
+    runs-on: ubuntu-latest
+    needs: codegen-test-and-generate
+    env:
+      working-directory:  ./app.territoiresentransitions.fr
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # Download JavaScript models and data generated previously by codegen.
+      - name: Download generated files
+        uses: actions/download-artifact@v2
+        with:
+          name: generated-client-files
+          path: generated
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          npm install
+
+      # Use Mocha to run unit tests
+      - name: Mocha run
+        run: |
+          npm run test
