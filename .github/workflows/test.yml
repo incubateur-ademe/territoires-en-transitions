@@ -142,8 +142,10 @@ jobs:
       - name: Install dependencies
         run: |
           npm install
+        working-directory: ${{env.working-directory}}
 
       # Use Mocha to run unit tests
       - name: Mocha run
         run: |
           npm run test
+        working-directory: ${{env.working-directory}}
