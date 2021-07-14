@@ -27,7 +27,7 @@ def types_ts(type: str, options: Optional[List[Any]] = None) -> str:
         return f"{params}[]"
     if type == "String":
         if not options:
-            return "String"
+            return "string"
         else:
             return "'" + "'|'".join(options) + "'"
     return type
