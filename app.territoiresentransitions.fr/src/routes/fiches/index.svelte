@@ -9,6 +9,7 @@
     import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
     import {fiche_action_avancement_noms} from "../../../../generated/models/fiche_action_avancement_noms";
     import RowCard from "../../components/shared/RowCard.svelte";
+    import FicheActionCard from "../../components/shared/FicheAction/FicheActionCard.svelte";
 
     const defaultCategorie = new FicheActionCategorieStorable({
         uid: '',
@@ -247,13 +248,7 @@
     <ul>
         {#each fiches as fiche}
             <li>
-                <RowCard>
-                    <a href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
-                        <h3>
-                            ({fiche.custom_id}) {fiche.titre}
-                        </h3>
-                    </a>
-                </RowCard>
+                <FicheActionCard fiche={fiche}/>
             </li>
         {/each}
     </ul>

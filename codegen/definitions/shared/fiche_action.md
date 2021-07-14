@@ -13,6 +13,8 @@ FicheAction:
         type: String
     avancement:
         type: String
+    en_retard:
+        type: bool
     referentiel_action_ids:
         type: List[String]
     referentiel_indicateur_ids:
