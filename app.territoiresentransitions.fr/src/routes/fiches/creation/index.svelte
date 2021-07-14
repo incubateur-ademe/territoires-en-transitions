@@ -24,6 +24,7 @@
         date_debut: '',
         date_fin: '',
         indicateur_personnalise_ids: [],
+        en_retard: false,
     }
 
 
