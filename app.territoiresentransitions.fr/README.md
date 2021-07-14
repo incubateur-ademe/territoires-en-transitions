@@ -15,9 +15,16 @@ Territoires en Transitions. Cette application est construite avec
 ## Pré-requis
 
 - Node v15.6.0
-- [Les fichiers générés par codegen](codegen#le-générateur-de-code)
+- [Les fichiers générés par codegen](https://github.com/betagouv/territoires-en-transitions/tree/main/codegen#le-g%C3%A9n%C3%A9rateur-de-code) : 
+    Pour générer les fichiers nécessaires, lancer à la racine du repo : 
+    ```
+    cd codegen
+    poetry run generate all
+    ```
 
 ## Pour commencer à développer
+
+Ces instructions doivent être lancées dans le dossier `app.territoiresentransitions.fr`.
 
 ### Installer les dépendances de développement
 
@@ -51,6 +58,30 @@ npm run dev
 npm run build && npm start
 ```
 Cette commande désactive le hot-reloading et charge les plugins nécessaires à la production.
+
+## S'authentifier sur l'application en local
+
+En production, pour s'authentifier, on passe par le flot Keycloack de l'ADEME. En local, on outrepasse cette 
+authentification en passant par la route `/auth/token_signin`. Sur cette page, on permet deux possibilités : 
+- l'authentification via un `accessToken` collecté via sandbox ou la production,
+- l'authentification via un faux token.
+
+### Connexion par token
+
+Cette action permet d'enregistrer un `accessToken` collecté via sandbox ou la production dans `LocalStorage`.
+Pour cela, aller sur `/auth/token_signin`, puis :
+- Se connecter via la route `/auth/signin`. Cela va rediriger sur une url de sandbox ou de production.
+- Dans les dev tools, récupérer les tokens sur la réponse de l'endpoint `v2/auth/token` ou depuis
+  `LocalStorage`.
+- Les coller dans les champs correspondants et cliquer sur `Se connecter`.
+
+### Connextion avec un faux token
+
+Cette action permet d'enregistrer un faux token dans `LocalStorage`. Ce faux token permet d'utiliser l'API comme si on 
+avec un vrai token d'accès. Pour que l'API puisse accepter ce faux token, il faut lancer l'API avec la variable 
+d'environnement `AUTH_DISABLED_DUMMY_USER`. 
+
+Sur sandbox, cette fonctionnalité est activée par défaut.
 
 ## Lancer les tests end-to-end
 

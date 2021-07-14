@@ -13,13 +13,22 @@ Nous avons donc choisi de tester le code du projet en fonction de sa probabilit�
   objectifs et les actions qui vont être nécessaires aux EPCIs sont plus ou
   moins scopés. On s'assure donc que ces actions fonctionnent bien quelque
   soient les contextes de manière unitaire.
-- le code UX/UI front est testé de manière fonctionnelle (tests fonctionnels et
-  end-to-end) : une partie des interactions utilisateurs sont en cours de test
-  (via les entretiens utilisateurs). L'interface peut donc être amenée à
-  énormément changer. On s'assure donc simplement que l'accès aux
-  fonctionnalités est cohérent et fonctionnel.
+- le code UX/UI front est testé de manière fonctionnelle : une partie des
+  interactions utilisateurs sont en cours de test (via les entretiens
+  utilisateurs). L'interface peut donc être amenée à énormément changer. On
+  s'assure donc simplement que l'accès aux fonctionnalités est cohérent et
+  fonctionnel avec des tests end-to-end sur les happy paths et des tests
+  unitaires sur le store et les utilitaires.
 
 ## Historique
+
+## Juillet 2021
+- Écriture des premiers tests end-to-end et ajout des tests unitaires sur
+  l'application client pour https://app.territoiresentransitions.fr
+
+## Juin 2021
+- Mise en place de [Cypress](https://www.cypress.io/) pour lancer des tests
+  end-to-end en local et dans le CI.
 
 ## Mai 2021
 - Choix du framework de tests end-to-end à ajouter pour tester les scénarios
