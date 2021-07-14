@@ -31,7 +31,6 @@
         meta = await stores.actionMetaStore.retrieveById(ActionMetaStorable.buildId(getCurrentEpciId(), action.id))
         if (meta)
             commentaire = meta.meta['commentaire'] ?? ''
-        console.log(action.id, meta)
     })
 </script>
 

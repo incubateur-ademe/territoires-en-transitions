@@ -2,7 +2,6 @@
     import find from 'ramda/src/find'
     import prop from 'ramda/src/prop'
     import {FicheActionStorable} from "../../storables/FicheActionStorable"
-    import Button from "../../components/shared/Button/Button.svelte"
     import MultiSelect from './_MultiSelect.svelte'
     import CategoriePicker from './_CategoriePicker.svelte'
     import Status from './_Status.svelte'
@@ -21,7 +20,13 @@
     import LabeledTextArea from "../../components/shared/Forms/LabeledTextArea.svelte";
     import LabeledTextInput from "../../components/shared/Forms/LabeledTextInput.svelte";
     import {alwaysValid, joinValidators, validate} from "../../api/validator";
-    import {maximumLengthValidatorBuilder, numbersOnlyValidator, requiredValidator} from "../../api/validators";
+    import {
+        booleanValidator,
+        maximumLengthValidatorBuilder,
+        numbersOnlyValidator,
+        requiredValidator
+    } from "../../api/validators";
+    import CheckboxInput from "../../components/shared/Forms/CheckboxInput.svelte";
 
     export let data: FicheActionInterface
 
@@ -36,6 +41,7 @@
         uid: maximumLengthValidatorBuilder(36),
         custom_id: maximumLengthValidatorBuilder(36),
         avancement: maximumLengthValidatorBuilder(36),
+        en_retard: booleanValidator,
         referentiel_action_ids: alwaysValid,
         referentiel_indicateur_ids: alwaysValid,
         titre: joinValidators([requiredValidator, maximumLengthValidatorBuilder(300)]),
@@ -125,119 +131,155 @@
     {/if}
 </svelte:head>
 
-<section class="flex flex-col">
-    <form class="flex flex-col w-full md:w-3/4 pb-10">
+<style>
+    .calendar {
+        display: flex;
+    }
+
+    .calendar div + div {
+        margin-left: 6rem;
+    }
+
+    form {
+        max-width: 70%;
+    }
+
+    form :global(fieldset) {
+        margin-bottom: 3.25rem;
+        padding: 0;
+        border: none;
+    }
+
+    .indicateursTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .last-button {
+        margin-top: 6rem;
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+<section>
+    <form>
         <LabeledTextInput bind:value={data.custom_id}
                           hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
                           maxlength="36"
-                          validator={validators.custom_id}>
-            <div class="text-xl">Numérotation de l'action</div>
+                          validator={validators.custom_id}
+                          id="actionNumber">
+            Numérotation de l'action
         </LabeledTextInput>
-        <div class="p-5"></div>
-
 
         <LabeledTextInput bind:value={data.titre}
-                          maxlength="36"
-                          validator={validators.titre}>
-            <div class="text-xl">Titre</div>
+                          hint="Ce champ est requis"
+                          maxlength="300"
+                          validator={validators.titre}
+                          id="title">
+            Titre
         </LabeledTextInput>
-        <div class="p-5"></div>
 
         <CategoriePicker ficheActionUid={data.uid}/>
 
         <LabeledTextArea bind:value={data.description}
-                         validator={validators.description}>
-            <div class="text-xl">Description</div>
+                         validator={validators.description}
+                         id="description">
+            Description
         </LabeledTextArea>
-        <div class="p-5"></div>
 
         <Status bind:avancementKey={data.avancement}
                 id="{data.uid}"/>
-        <div class="p-5"></div>
 
+        <CheckboxInput bind:value={data.en_retard}>
+            Action en retard
+        </CheckboxInput>
 
         <LabeledTextInput bind:value={data.structure_pilote}
                           maxlength="300"
-                          validator={validators.structure_pilote}>
-            <div class="text-xl">Structure pilote</div>
+                          validator={validators.structure_pilote}
+                          id="pilote">
+            Structure pilote
         </LabeledTextInput>
-        <div class="p-5"></div>
 
         <LabeledTextInput bind:value={data.personne_referente}
                           maxlength="300"
-                          validator={validators.personne_referente}>
-            <div class="text-xl">Personne référente</div>
+                          validator={validators.personne_referente}
+                          id="personne-referente">
+            Personne référente
         </LabeledTextInput>
-        <div class="p-5"></div>
 
         <LabeledTextInput bind:value={data.elu_referent}
                           maxlength="300"
-                          validator={validators.elu_referent}>
-            <div class="text-xl">Élu référent</div>
+                          validator={validators.elu_referent}
+                          id="elu-referent">
+            Élu référent
         </LabeledTextInput>
-        <div class="p-5"></div>
 
         <LabeledTextInput bind:value={data.partenaires}
                           maxlength="300"
-                          validator={validators.partenaires}>
-            <div class="text-xl">Partenaires</div>
+                          validator={validators.partenaires}
+                          id="partenaires">
+            Partenaires
         </LabeledTextInput>
-        <div class="p-5"></div>
 
         <LabeledTextInput bind:value={data.budget}
                           hint="Ce champ ne doit comporter que des chiffres sans espaces"
-                          validator={validators.budget}>
-            <div class="text-xl">Budget global</div>
+                          validator={validators.budget}
+                          id="budget">
+            Budget global
         </LabeledTextInput>
-        <div class="p-5"></div>
 
-
-        <LabeledTextArea bind:value={data.commentaire}>
-            <div class="text-xl">Commentaire</div>
+        <LabeledTextArea bind:value={data.commentaire}
+                         id="commentaire">
+            Commentaire
         </LabeledTextArea>
-        <div class="p-5"></div>
 
-        <span class="text-xl">Calendrier</span>
-        <div class="flex">
-            <div class="flex-1 flex flex-col pr-1">
-                <label for="fiche_create_debut">date de début</label>
-                <input bind:value={data.date_debut}
-                       class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                       id="fiche_create_debut"
-                       type="date">
-                <div class="p-5"></div>
+        <fieldset>
+            <div class="calendar">
+                <div>
+                    <label class="fr-label" for="fiche_create_debut">Date de début</label>
+                    <input bind:value={data.date_debut}
+                           id="fiche_create_debut"
+                           type="date"
+                           class="fr-input">
+                </div>
+
+                <div>
+                    <label class="fr-label" for="fiche_create_fin">Date de fin</label>
+                    <input bind:value={data.date_fin}
+                           id="fiche_create_fin"
+                           type="date"
+                           class="fr-input">
+                </div>
             </div>
+        </fieldset>
 
-            <div class="flex-1 flex flex-col pl-1">
-                <label for="fiche_create_fin">date de fin</label>
-                <input bind:value={data.date_fin}
-                       class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                       id="fiche_create_fin"
-                       type="date">
-                <div class="p-5"></div>
+        <fieldset>
+            <h3 class="fr-label">Actions du référentiel</h3>
+
+            <div>
+                {#await import('./_LinkedActions.svelte') then c}
+                    <svelte:component this={c.default}
+                                      actionIds={data.referentiel_action_ids}
+                                      handlePickButton={toggleActionId}
+                    />
+                {/await}
+
+                <button class="fr-btn fr-btn--secondary fr-btn--sm"
+                        on:click|preventDefault={() => showLinkActionDialog = true }
+                >
+                    + Lier une action
+                </button>
             </div>
-        </div>
+        </fieldset>
 
+        {#if indicateursReferentiel}
+            <fieldset>
+                <h3 class="fr-label">Indicateurs référentiel</h3>
 
-        <div class="p-5"></div>
-        <div class="text-xl">Référentiels</div>
-        <div class="my-2 p-2">
-            {#await import('./_LinkedActions.svelte') then c}
-                <svelte:component this={c.default}
-                                  actionIds={data.referentiel_action_ids}
-                                  handlePickButton={toggleActionId}
-                />
-            {/await}
-            <Button on:click={() => showLinkActionDialog = true }
-                    size="small">
-                + Lier une action
-            </Button>
-        </div>
-
-        <div class="p-5"></div>
-        <div class="my-2 p-2">
-            <div class="text-xl mb-4">Indicateurs référentiel</div>
-            {#if indicateursReferentiel}
                 <MultiSelect id='fiche_create_indicateurs' bind:value={data.referentiel_indicateur_ids}>
                     {#each indicateursReferentiel as indicateur}
                         <option value="{indicateur.id}">({indicateur.id}) {indicateur.nom}</option>
@@ -246,33 +288,30 @@
 
                 {#each data.referentiel_indicateur_ids as indicateurId}
                     {#if find(prop(indicateurId))(indicateursReferentiel) }
-                        <div class="shadow">
+                        <div>
                             <IndicateurReferentielCard
-                                indicateur={find(prop(indicateurId))(indicateursReferentiel)}
+                                    indicateur={find(prop(indicateurId))(indicateursReferentiel)}
                             />
                         </div>
                     {/if}
                 {/each}
-            {/if}
-        </div>
+            </fieldset>
+        {/if}
 
+        <fieldset>
+            <div class="indicateursTitle">
+                <h3 class="fr-label">Indicateurs personnalisés</h3>
 
-        <div class="p-5"></div>
-        <div class="my-2 p-2">
-            <div class="flex flex-row w-full items-center">
-                <h3 class="text-xl">Indicateurs personnalisés</h3>
-                <div class="flex flex-grow"></div>
-                <Button colorVariant={showIndicateurCreation ? 'ash' : 'nettle'}
-                        on:click={() => showIndicateurCreation = true }
-                        size="small">
+                <button on:click|preventDefault={() => showIndicateurCreation = true }
+                        class="fr-btn fr-btn--secondary fr-btn--sm">
                     Créer un nouvel indicateur
-                </Button>
+                </button>
             </div>
+
             {#if showIndicateurCreation}
                 <IndicateurPersonnaliseCreation on:save={indicateurSaved}/>
             {/if}
 
-            <div class="p-5"></div>
             {#if indicateursPersonnalises}
                 <MultiSelect id='fiche_create_indicateurs' bind:value={data.indicateur_personnalise_ids}>
                     {#each indicateursPersonnalises as indicateur}
@@ -281,20 +320,19 @@
                 </MultiSelect>
 
                 {#each data.indicateur_personnalise_ids as indicateurId}
-                    <div class="shadow">
-                        <IndicateurPersonnaliseCard
-                                indicateur={indicateursPersonnalises.filter((i) => i.id === indicateurId)[0]}/>
-                    </div>
+                    <IndicateurPersonnaliseCard
+                            indicateur={indicateursPersonnalises.filter((i) => i.id === indicateurId)[0]}/>
                 {/each}
             {/if}
-        </div>
+        </fieldset>
 
-        <div class="p-5"></div>
-        <Button classNames="md:w-1/3 self-end"
-                full
-                on:click={handleSave}>
-            Valider
-        </Button>
+        <div class="last-button">
+            <a class="fr-btn"
+               href="#"
+               on:click|preventDefault|once={handleSave}>
+                Valider
+            </a>
+        </div>
     </form>
 
     {#if showLinkActionDialog}

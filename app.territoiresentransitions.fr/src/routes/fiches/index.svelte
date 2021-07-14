@@ -9,6 +9,7 @@
     import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
     import {fiche_action_avancement_noms} from "../../../../generated/models/fiche_action_avancement_noms";
     import RowCard from "../../components/shared/RowCard.svelte";
+    import FicheActionCard from "../../components/shared/FicheAction/FicheActionCard.svelte";
 
     const defaultCategorie = new FicheActionCategorieStorable({
         uid: '',
@@ -151,6 +152,24 @@
 </script>
 
 <style>
+    .page-intro {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-intro h1 {
+        max-width: 80%;
+    }
+
+    .select-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 2.875rem;
+        max-width: 75%;
+        margin-top: 3.25rem;
+    }
+
     li + li {
         margin-top: 1rem;
     }
@@ -159,16 +178,17 @@
     <title>Plan d'actions</title>
 </svelte:head>
 
-<header class="flex flex-col bg-white pb-10">
-    <div class="flex flex-row my-10 mx-5">
-        <h1 class="text-3xl font-semibold  flex-grow">Plan d'actions de ma collectivité</h1>
-        <Button asLink
-                href="fiches/creation/?epci_id={epciId}"
-                label="Créer une fiche action"
-        classNames="fr-btn"/>
-    </div>
-    <div class="grid gap-4 grid-cols-4 mx-5">
+<header>
+    <div class="page-intro">
+        <h1>Plan d'actions de ma collectivité</h1>
 
+        <a href="fiches/creation/?epci_id={epciId}"
+           class="fr-btn">
+            Ajouter à mes actions
+        </a>
+    </div>
+
+    <div class="select-list">
         <!-- status -->
         <SelectInput bind:value={selectedAvancementKey}
                      class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
@@ -228,13 +248,7 @@
     <ul>
         {#each fiches as fiche}
             <li>
-                <RowCard>
-                    <a href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
-                        <h3>
-                            ({fiche.custom_id}) {fiche.titre}
-                        </h3>
-                    </a>
-                </RowCard>
+                <FicheActionCard fiche={fiche}/>
             </li>
         {/each}
     </ul>

@@ -24,7 +24,7 @@
                     </picture>
                 </div>
                 <div class="fr-header__service">
-                    <a href="https://territoiresentransitions.fr" title="Accueil">
+                    <a href="/" title="Accueil">
                         <p class="fr-header__service-title">Territoires en Transitions</p>
                     </a>
                 </div>
@@ -64,21 +64,5 @@
 
     .header :global(.header__row) {
         padding: 1rem 0;
-    }
-
-    .header :global([class^="fr-fi-"]::before),
-    .header :global([class*=" fr-fi-"]::before),
-    .header :global(a[target="_blank" i]::after) {
-        font-family: icons !important;
-        font-style: normal;
-        font-weight: normal !important;
-        font-variant: normal;
-        text-transform: none;
-        line-height: 1;
-    }
-
-    .header :global([class^="fr-fi-"]::before),
-    .header :global([class*=" fr-fi-"]::before) {
-        font-size: 1.5rem;
     }
 </style>

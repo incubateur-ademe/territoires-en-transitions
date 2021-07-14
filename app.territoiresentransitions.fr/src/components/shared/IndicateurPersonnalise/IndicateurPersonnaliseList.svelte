@@ -3,7 +3,7 @@
     import {onMount} from "svelte";
     import IndicateurPersonnaliseElement from "./IndicateurPersonnaliseCard.svelte"
     import IndicateurPersonaliseCreation from "./IndicateurPersonnaliseCreation.svelte"
-    import Button from "../Button/Button.svelte";
+    import IndicateurPersonaliseCreatioDialog from "./IndicateurPersonnaliseCreationDialog.svelte"
 
     let indicateurs: IndicateurPersonnaliseStorable[] = []
     let showCreation: boolean = false
@@ -18,31 +18,51 @@
         indicateurs = await hybridStores.indicateurPersonnaliseStore.retrieveAll()
     }
 
+    const handleDialogClose = async () => {
+        showCreation = false
+        await refresh()
+    }
+
     onMount(async () => {
         await refresh()
     })
 
+
+
 </script>
 
 <style>
-    div {
+    .indicator__intro {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        margin-bottom: 2.5rem;
+    }
+
+    .indicators {
+        max-width: 75%;
     }
 </style>
 
-<div>
+<div class="indicator__intro">
     <h2>Mes indicateurs</h2>
-    <Button classNames="fr-btn fr-btn--secondary" on:click={handleNewIndicateur}>
-        Nouvel indicateur
-    </Button>
+    <button class="fr-btn fr-btn--secondary" on:click|preventDefault={handleNewIndicateur}>
+        Ajouter un indicateur
+    </button>
 </div>
 
+
 {#if showCreation}
-    <IndicateurPersonaliseCreation on:save={refresh}/>
+    {#await import('./IndicateurPersonnaliseCreationDialog.svelte') then c}
+        <svelte:component this={c.default}
+                          on:AddDialogClose={handleDialogClose}
+        />
+    {/await}
 {/if}
 
-{#each indicateurs as indicateur}
-    <IndicateurPersonnaliseElement indicateur={indicateur}/>
-{/each}                               
+
+<div class="indicators">
+    {#each indicateurs as indicateur}
+        <IndicateurPersonnaliseElement indicateur={indicateur}/>
+    {/each}
+</div>

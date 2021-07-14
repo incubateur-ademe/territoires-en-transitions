@@ -41,7 +41,10 @@
 
 <Dialog ariaLabelledBy="dialog-title"
         handleClose={close}
-        size="large">
+        size="12">
+
+    <span slot="modal-title">Lier une action</span>
+
     {#if topLevelAction}
         <LinkActionDialogSubpage
                 linkedActionIds={linkedActionIds}

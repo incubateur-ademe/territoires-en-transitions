@@ -1,7 +1,7 @@
 <script lang="ts">
     import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
-    import ProgressStat from "../../../../components/ProgressStat.svelte";
+    import ProgressStat from "../../components/shared/ActionReferentiel/ProgressStat.svelte";
 
     export let searching: boolean
 
@@ -63,11 +63,9 @@
 
 {#each [...displayedByAxe] as [parent, actions]}
     <section>
-        <h2>{parent.id_nomenclature}. {parent.nom}
-            <!-- broken fixme in #316
-            <ProgressStat position={"bottom"}/>
-            -->
-        </h2>
+        <h2>{parent.id_nomenclature} {parent.nom}</h2>
+        <ProgressStat action={parent} position="left"/>
+        <div style="height: 4em"></div>
         {#each actions as action}
             {#if searching}
                 <ActionReferentielCard action={action} ficheButton expandButton statusBar/>

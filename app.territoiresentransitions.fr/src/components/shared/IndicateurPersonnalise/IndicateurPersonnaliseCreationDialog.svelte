@@ -4,6 +4,7 @@
     import {getCurrentEpciId} from "../../../api/currentEpci";
     import {v4 as uuid} from 'uuid'
     import {IndicateurPersonnaliseInterface} from "../../../../../generated/models/indicateur_personnalise";
+    import Dialog from "../Dialog.svelte";
 
     let data: IndicateurPersonnaliseInterface
     const dispatch = createEventDispatcher()
@@ -21,6 +22,7 @@
     const handleSave = async (event: any) => {
         dispatch('save', event.detail)
         initialize()
+        close(event)
     }
 
     onMount(async () => {
@@ -28,18 +30,17 @@
     });
 
     initialize()
+
+    const close = (event: MouseEvent) => dispatch('AddDialogClose', event)
+
 </script>
 
-<style>
-    div {
-        margin-top: 2rem;
-        margin-left: 2rem;
-        padding: 0 0 1rem 1rem;
-        border-left: 4px solid var(--bf500);
-    }
-</style>
 
-<div>
-    <h3 class="text-lg">Nouvel indicateur</h3>
+<Dialog ariaLabelledBy="dialog-title"
+        handleClose={close}
+        size="small">
+
+    <span slot="modal-title">Nouvel indicateur</span>
+
     <IndicateurForm bind:data={data} on:save={handleSave}/>
-</div>
+</Dialog>

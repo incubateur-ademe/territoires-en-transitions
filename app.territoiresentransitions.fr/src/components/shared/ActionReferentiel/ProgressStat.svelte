@@ -10,19 +10,22 @@
 
     const updateState = () => {
         const percentage: number = score ? score.percentage * 100 : 0
-        if (percentage < 34) {
+        if (score && score.status.includes('non_concerne')) {
+            state = "nc"
+        }
+        else if (percentage < 34) {
             state = "alert"
         }
-        if (percentage > 35 && percentage < 49) {
+        else if (percentage < 49) {
             state = "warning"
         }
-        if (percentage > 50 && percentage < 64) {
+        else if (percentage < 64) {
             state = "ok"
         }
-        if (percentage > 65 && percentage < 74) {
+        else if (percentage < 74) {
             state = "good"
         }
-        if (percentage > 75 && percentage < 100) {
+        else {
             state = "best"
         }
     }
@@ -32,7 +35,6 @@
     onMount(async () => {
         const stores = await import("../../../api/hybridStores")
         score = await stores.actionReferentielScoreStore.retrieveById(action.id)
-        console.log(score)
     })
 </script>
 
@@ -70,6 +72,11 @@
         background-color: #000;
     }
 
+    .progressBar--status-nc,
+    .progressBar--position-bottom.progressBar--status-nc {
+        border-color: #444;
+    }
+
     .progressBar--status-alert,
     .progressBar--position-bottom.progressBar--status-alert {
         border-color: #DA0505;
@@ -98,8 +105,8 @@
 
 <div class={`progressBar--position-${position} progressBar--status-${state}`}>
     {#if score}
-        <strong>{score.percentage * 100}%</strong>
-        ({score.points} / {score.potentiel})
+        <strong>{(score.percentage * 100).toFixed(1)}%</strong>
+        ({score.points.toFixed(2)} / {score.potentiel.toFixed(2)})
     {:else }
         <strong>0%</strong>
         (../..)

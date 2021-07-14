@@ -1,26 +1,15 @@
 <script lang="ts">
     import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
-    import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
 
     import {actions} from "../../../../generated/data/referentiels.ts";
     import ActionsByThematiques from "./_ActionsByThematiques.svelte"
     import ActionsClimatAirEnergie from "./_ActionsClimatAirEnergie.svelte"
     import ActionsEconomieCirculaire from "./_ActionsEconomieCirculaire.svelte"
-    import {onMount} from "svelte";
-    import {testUIVisibility} from "../../api/currentEnvironment";
     import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
 
     let view: 'thematique' | 'eci' | 'cae' = 'eci'
 
     let allActions: ActionReferentiel[] = actions;
-    let displayed: ActionReferentiel[] = actions;
-    let referentielsVisibility: boolean = false
-
-    $: searching = allActions.length != displayed.length
-
-    onMount(() => {
-        referentielsVisibility = testUIVisibility()
-    })
 </script>
 
 <style>
@@ -28,6 +17,7 @@
         margin-top: 2.25rem;
         margin-bottom: 3.75rem;
     }
+
     .pageIntro > div {
         display: flex;
         align-items: center;
@@ -69,9 +59,9 @@
 </div>
 
 {#if view === 'thematique'}
-    <ActionsByThematiques displayed={displayed} searching={searching}/>
+    <ActionsByThematiques displayed={allActions} searching={false}/>
 {:else if view === 'cae'}
-    <ActionsClimatAirEnergie displayed={displayed} searching={searching}/>
+    <ActionsClimatAirEnergie displayed={allActions} searching={false}/>
 {:else if view === 'eci'}
-    <ActionsEconomieCirculaire displayed={displayed} searching={searching}/>
+    <ActionsEconomieCirculaire displayed={allActions} searching={false}/>
 {/if}

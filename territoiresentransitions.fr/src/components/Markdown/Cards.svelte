@@ -33,7 +33,7 @@
 
 <style>
   .Cards :global(.fr-card__img img) {
-    object-fit: none;
+    object-fit: contain;
     top: 15%;
   }
 
