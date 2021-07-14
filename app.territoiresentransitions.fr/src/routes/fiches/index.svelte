@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Button from "../../components/shared/Button/Button.svelte";
     import CategorieInlineEdition from './_CategorieInlineEdition.svelte'
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
@@ -8,7 +7,6 @@
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
     import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
     import {fiche_action_avancement_noms} from "../../../../generated/models/fiche_action_avancement_noms";
-    import RowCard from "../../components/shared/RowCard.svelte";
     import FicheActionCard from "../../components/shared/FicheAction/FicheActionCard.svelte";
 
     const defaultCategorie = new FicheActionCategorieStorable({
@@ -173,6 +171,10 @@
     li + li {
         margin-top: 1rem;
     }
+
+    .categorie {
+        padding-top: 4rem;
+    }
 </style>
 <svelte:head>
     <title>Plan d'actions</title>
@@ -182,18 +184,18 @@
     <div class="page-intro">
         <h1>Plan d'actions de ma collectivité</h1>
 
-        <a href="fiches/creation/?epci_id={epciId}"
-           class="fr-btn">
+        <a class="fr-btn"
+           href="fiches/creation/?epci_id={epciId}">
             Ajouter à mes actions
         </a>
     </div>
 
     <div class="select-list">
-        <!-- status -->
+        <!-- statut -->
         <SelectInput bind:value={selectedAvancementKey}
                      class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
                      id="categorie_picker"
-                     label="Status d'avancement"
+                     label="Statut d'avancement"
                      onChange={applyFilters}>
             <option value=''>
                 Toutes
@@ -239,18 +241,22 @@
     </div>
 </header>
 
-{#each [...filteredFichesByCategorie] as [categorie, fiches]}
-    {#if categorie.uid === defaultCategorie.uid}
-        <h3 class="text-2xl">{categorie.nom}</h3>
-    {:else}
-        <CategorieInlineEdition categorie={categorie}/>
-    {/if}
-    <ul>
-        {#each fiches as fiche}
-            <li>
-                <FicheActionCard fiche={fiche}/>
-            </li>
-        {/each}
-    </ul>
-{/each}
+<section>
+    {#each [...filteredFichesByCategorie] as [categorie, fiches]}
+        <div class="categorie">
+            {#if categorie.uid === defaultCategorie.uid}
+                <h3 class="text-2xl">{categorie.nom}</h3>
+            {:else}
+                <CategorieInlineEdition categorie={categorie}/>
+            {/if}
+            <ul>
+                {#each fiches as fiche}
+                    <li>
+                        <FicheActionCard fiche={fiche}/>
+                    </li>
+                {/each}
+            </ul>
+        </div>
+    {/each}
+</section>
 
