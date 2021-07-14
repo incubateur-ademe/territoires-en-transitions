@@ -20,13 +20,15 @@ ActionStatus:
       type: String
   epci_id:
       type: String
-  valeur_selectionnee:
+  avancement:
       type: String
       options: # pas implémenté
           - faite
           - programmee
           - pas_faite
           - non_concernee
+          - en_cours
+          - "" 
 ```
 
 

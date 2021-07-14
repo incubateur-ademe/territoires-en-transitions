@@ -11,7 +11,7 @@ ActionReferentielScore:
         type: String
     action_nomenclature_id:
         type: String
-    action_status_valeur_selectionnee:
+    avancement:
         type: String
         options: # pas implémenté
             - faite
