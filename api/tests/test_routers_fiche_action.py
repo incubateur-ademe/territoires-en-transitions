@@ -32,6 +32,7 @@ fiche_action = {
     "titre": "hello",
     "uid": "59fcc45b-ff19-4723-9c18-9a972f4440f3",
     "indicateur_personnalise_ids": [],
+    "en_retard": False,
 }
 
 list_path = f"{path}/{fiche_action['epci_id']}/all"

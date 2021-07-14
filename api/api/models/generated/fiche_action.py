@@ -10,6 +10,7 @@ class FicheAction(BaseModel):
     uid: str
     custom_id: str
     avancement: str
+    en_retard: bool
     referentiel_action_ids: List[str]
     referentiel_indicateur_ids: List[str]
     titre: str

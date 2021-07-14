@@ -5,7 +5,7 @@ from typing import List
 from pydantic import BaseModel
 
 
-class UtilisateurDroits(BaseModel):
-    ademe_user_id: str
+class ActionMeta(BaseModel):
+    action_id: str
     epci_id: str
-    ecriture: bool
+    meta: dict
