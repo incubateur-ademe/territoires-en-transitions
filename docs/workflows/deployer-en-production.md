@@ -32,15 +32,6 @@ Pour en savoir davantage sur le contexte, on peut consulter la [documentation su
      ```
    - Fixer les conflits si nécessaire.
 
-5. Mettre à jour le `CHANGELOG.md` :
-   - Garder le titre "À venir",
-   - Ajouter un titre avec la date du jour au-dessus des modifications que l'on
-     vient d'ajouter.
-   - Enregistrer cette modification :
-     ```
-     git add CHANGELOG.md
-     git commit -m "Mise à jour du CHANGELOG"
-     ```
 ## Déployer
 
 > Pour pouvoir mettre à jour la branche `production` sur `origin`, il faut
@@ -62,11 +53,14 @@ Pour en savoir davantage sur le contexte, on peut consulter la [documentation su
 4. Tant que les tests end-to-end ne sont pas implémentés, prendre le temps de
    naviguer sur l'application en production et tester les scénarios principaux.
 
+5. Mettre à jour le CHANGELOG sur la [page des releases de GitHub](https://github.com/betagouv/territoires-en-transitions/releases). Le script de déploiement tag chaque déploiement : on peut [créer une
+  release](https://docs.github.com/en/github/administering-a-repository/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release) à partir de ce tag.
+
 En cas de problème pendant ou juste après un déploiement, on prévient l'équipe
 de développement et si cela les impacte, le reste de l'équipe, **avant d'essayer
 de fixer quoique ce soit.**
 
 ## Déployer les pages statiques de territoiresentransitions.fr
 
-On peut suivre les mêmes étapes que pour le déploiement de l'application en utilisant la branche `production-static` à 
+On peut suivre les mêmes étapes que pour le déploiement de l'application en utilisant la branche `production-static` à
 la place de la branche `production`.
