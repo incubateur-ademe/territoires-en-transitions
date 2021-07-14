@@ -10,7 +10,7 @@ def test_render_markdown_as_typescript():
 
 def test_str_literal_without_options():
     actual_literal = types_ts(type="String")
-    assert actual_literal == "String"
+    assert actual_literal == "string"
 
 
 def test_str_literal_with_options():
