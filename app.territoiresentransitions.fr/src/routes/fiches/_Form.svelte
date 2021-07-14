@@ -327,11 +327,10 @@
         </fieldset>
 
         <div class="last-button">
-            <a class="fr-btn"
-               href="#"
-               on:click|preventDefault|once={handleSave}>
+            <button class="fr-btn"
+                    on:click={handleSave}>
                 Valider
-            </a>
+            </button>
         </div>
     </form>
 
