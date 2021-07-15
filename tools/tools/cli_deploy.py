@@ -31,6 +31,9 @@ def upload_folder(bucket: str, path: str, s3: BaseClient) -> int:
     with typer.progressbar(filenames) as progress:
         for filename in progress:
             name = filename.lstrip(path)
+            if os.name == 'nt':
+                name = name.replace("\\", "/")[1:]  # replace slashes and remove the preceding slash
+            
             s3.upload_file(filename, bucket, name, ExtraArgs={'ACL': 'public-read'})
             count += 1
     return count
