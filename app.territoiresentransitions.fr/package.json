@@ -12,6 +12,7 @@
     "test": "mocha --recursive --require @babel/register"
   },
   "dependencies": {
+    "@types/ramda": "^0.27.44",
     "compression": "^1.7.1",
     "cypress-plugin-snapshots": "^1.4.4",
     "jwt-decode": "^3.1.2",
