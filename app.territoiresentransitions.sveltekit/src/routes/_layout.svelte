@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Matomo, {asyncMatomo} from '../components/tracking/Matomo.svelte'
-	import {stores} from '@sapper/app'
 	import {onMount} from 'svelte'
 	import Header from 'components/Layout/Header.svelte'
 	import Footer from 'components/Layout/Footer.svelte'
@@ -8,11 +7,9 @@
 	import Nav from './../components/shared/NavV2/Nav.svelte'
 	import NavDev from './../components/shared/NavV2/NavDev.svelte'
 	import Tailwind from '../components/Tailwind.svelte'
+import { page } from '$app/stores';
 
 	export let segment: string;
-
-	// Use Sapper store (called `page`) to track page changes.
-	const {page} = stores()
 
 	$: if ($page) {
 		asyncMatomo.trackPageView()
@@ -42,7 +39,7 @@
 <Head/>
 <Matomo />
 <Header>
-	<Nav slot="nav" segment={segment}/>
+	<Nav segment={segment}/>
 	<NavDev slot="secondary" />
 </Header>
 

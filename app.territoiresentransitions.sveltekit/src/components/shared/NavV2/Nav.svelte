@@ -8,8 +8,7 @@
     import {currentUtilisateurDroits} from "../../../api/authentication";
     import {EpciStorable} from "../../../storables/EpciStorable";
 
-    export let segment // Type string. Typing this variable makes sapper crash.
-    export let slot
+    export let segment: string // Type string. Typing this variable makes sapper crash.
 
     let showTestNavigation = false
     let epciId = ''
