@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../generated/models/action_referentieliel";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
     import ProgressStat from "../../components/shared/ActionReferentiel/ProgressStat.svelte";
 

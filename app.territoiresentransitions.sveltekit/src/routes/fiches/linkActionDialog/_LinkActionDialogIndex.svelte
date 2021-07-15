@@ -4,8 +4,8 @@
      *
      * Passes linkedActionIds and toggleActionId props along to its children.
      */
-    import {actions} from "../../../../../generated/data/actions_referentiels";
-    import {thematiques} from "../../../../../generated/data/thematiques";
+    import {actions} from "../../../generated/data/actions_referentielsels";
+    import {thematiques} from "../../../generated/data/thematiquesues";
     import LinkActionCard from './_LinkActionCard'
 
     export let onTopLevelActionClicked: (actionId: string) => void

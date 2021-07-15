@@ -1,6 +1,6 @@
 <script lang="ts">
     import {onMount} from "svelte";
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../../generated/models/action_referentieliel";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
     import {ActionMetaStorable} from "../../../storables/ActionMetaStorable";
     import {joinValidators, validate} from "../../../api/validator";

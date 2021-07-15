@@ -1,5 +1,5 @@
-import type { FicheAction } from "../../../generated/models/fiche_action";
-import type { FicheActionCategorie } from "../../../generated/models/fiche_action_categorie";
+import type { FicheAction } from "../../generated/models/fiche_action";
+import type { FicheActionCategorie } from "../../generated/models/fiche_action_categorie";
 import * as R from "ramda"
 
 const stringToNumberArray = (stringIndexes: string) => stringIndexes.split(/[^a-zA-Z0-9']/).map(char=> /^-?\d+$/.test(char) ? Number(char) : char.charCodeAt(0));

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {FicheAction} from "../../../../../generated/models/fiche_action";
+    import {FicheAction} from "../../../generated/models/fiche_actionion";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../../api/currentEpci";
 

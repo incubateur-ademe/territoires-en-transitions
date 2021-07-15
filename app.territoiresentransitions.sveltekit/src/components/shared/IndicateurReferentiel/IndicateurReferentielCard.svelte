@@ -2,10 +2,10 @@
     /**
      * Displays an indicateur an its yearly values.
      */
-    import {IndicateurReferentiel} from "../../../../../generated/models/indicateur_referentiel";
+    import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentieliel";
     import IndicateurReferentielValueInput from "./IndicateurReferentielValueInput.svelte";
     import {onMount} from "svelte";
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../../generated/models/action_referentieliel";
     import ActionReferentielCard from "../ActionReferentiel/ActionReferentielCard.svelte";
     import IndicateurReferentielCommentaireArea from "./IndicateurReferentielCommentaireArea.svelte";
     import RowCard from "../RowCard.svelte";
@@ -28,7 +28,7 @@
 
     onMount(async () => {
         epciId = getCurrentEpciId()
-        const referentiel = await import('../../../../../generated/data/actions_referentiels')
+        const referentiel = await import('../../../generated/data/actions_referentielsels')
 
         const found: ActionReferentiel[] = []
         for (let actionId of indicateur.action_ids) {

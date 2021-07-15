@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../../generated/models/action_referentieliel";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
     import {onMount} from "svelte";
 

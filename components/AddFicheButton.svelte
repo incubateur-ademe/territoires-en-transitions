@@ -1,5 +1,5 @@
 <script>
-    /*import {ActionReferentiel} from "../../generated/models/action_referentiel";
+    /*import {ActionReferentiel} from "../generated/models/action_referentiel";
 
     export let action: ActionReferentiel
     let epciId = ''*/

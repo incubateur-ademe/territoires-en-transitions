@@ -3,7 +3,7 @@
     import {createEventDispatcher, onMount} from "svelte";
     import {getCurrentEpciId} from "../../../api/currentEpci";
     import {v4 as uuid} from 'uuid'
-    import {IndicateurPersonnaliseInterface} from "../../../../../generated/models/indicateur_personnalise";
+    import {IndicateurPersonnaliseInterface} from "../../../generated/models/indicateur_personnaliseise";
 
     let data: IndicateurPersonnaliseInterface
     const dispatch = createEventDispatcher()

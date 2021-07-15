@@ -12,8 +12,8 @@
     import LinkActionDialogIndex from './_LinkActionDialogIndex.svelte'
     import LinkActionDialogSubpage from './_LinkActionDialogSubpage.svelte'
 
-    import {actions} from "../../../../../generated/data/actions_referentiels";
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
+    import {actions} from "../../../generated/data/actions_referentielsels";
+    import {ActionReferentiel} from "../../../generated/models/action_referentieliel";
 
     // List of linked actions of the current fiche
     export let linkedActionIds: string[]

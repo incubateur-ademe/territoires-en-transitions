@@ -3,7 +3,7 @@
      * The input for an indicateur yearly value.
      * Retrieve and store values.
      */
-    import {IndicateurReferentiel} from "../../../../../generated/models/indicateur_referentiel";
+    import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentieliel";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../../api/currentEpci";
     import {IndicateurPersonnaliseValueStorable} from "../../../storables/IndicateurPersonnaliseValueStorable";

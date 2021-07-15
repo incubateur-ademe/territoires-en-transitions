@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-    import {actions} from "../../../../generated/data/actions_referentiels";
+    import {actions} from "../../generated/data/actions_referentielsels";
     import {searchById} from "./utils";
 
 

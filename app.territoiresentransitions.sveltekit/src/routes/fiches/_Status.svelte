@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {fiche_action_avancement_noms} from "../../../../generated/models/fiche_action_avancement_noms";
+    import {fiche_action_avancement_noms} from "../../generated/models/fiche_action_avancement_nomsoms";
 
     export let avancementKey: string
     export let id: string

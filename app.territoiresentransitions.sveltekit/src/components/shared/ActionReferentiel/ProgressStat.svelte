@@ -1,7 +1,7 @@
 <script lang="ts">
-    import {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
+    import {ActionReferentielScore} from "../../../generated/models/action_referentiel_scoreore";
     import {onMount} from "svelte";
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../../generated/models/action_referentieliel";
 
     export let action: ActionReferentiel
     export let position = "left";

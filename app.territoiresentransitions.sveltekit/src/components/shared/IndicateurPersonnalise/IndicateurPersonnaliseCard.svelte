@@ -2,7 +2,7 @@
     /**
      * Display an Indicateur Personnalisé and allow edition.
      */
-    import {IndicateurPersonnalise} from "../../../../../generated/models/indicateur_personnalise";
+    import {IndicateurPersonnalise} from "../../../generated/models/indicateur_personnaliseise";
     import IndicateurForm from "./IndicateurPersonnaliseForm.svelte"
     import IndicateurPersonnaliseValueInput from "./IndicateurPersonnaliseValueInput.svelte";
     import RowCard from "../RowCard.svelte";

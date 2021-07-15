@@ -3,7 +3,7 @@
      * Provides matches for a *given* list of actions.
      */
 
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../generated/models/action_referentieliel";
     import {ActionReferentielSearch} from "../../api/search";
     import {onDestroy, onMount} from "svelte";
 

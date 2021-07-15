@@ -2,11 +2,11 @@
     /**
      * List indicateurs per catégorie.
      */
-    import {IndicateurReferentiel} from "../../../../generated/models/indicateur_referentiel";
-    import {indicateurs} from "../../../../generated/data/indicateurs_referentiels";
+    import {IndicateurReferentiel} from "../../generated/models/indicateur_referentieliel";
+    import {indicateurs} from "../../generated/data/indicateurs_referentielsels";
     import IndicateurReferentielCard
         from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
-    import {Thematique, thematiques} from "../../../../generated/data/thematiques";
+    import {Thematique, thematiques} from "../../generated/data/thematiquesues";
     import {onMount} from "svelte";
     import IndicateursSearchBar from "../../components/shared/IndicateursSearchBar.svelte";
     import IndicateurPersonnaliseList

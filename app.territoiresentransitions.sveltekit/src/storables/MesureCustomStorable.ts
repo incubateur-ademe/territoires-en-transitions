@@ -1,4 +1,4 @@
-import {MesureCustom} from "../../../generated/models/mesure_custom";
+import {MesureCustom} from "../generated/models/mesure_custom";
 
 export class MesureCustomStorable extends MesureCustom {
     static buildId(epci_id: string, uid: string) : string {

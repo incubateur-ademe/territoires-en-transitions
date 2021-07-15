@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../generated/models/action_referentieliel";
 
     import {actions} from "../../../../generated/data/referentiels.ts";
     import ActionsByThematiques from "./_ActionsByThematiques.svelte"

@@ -1,7 +1,7 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../generated/models/action_referentieliel";
 
-    import {Thematique, thematiques} from "../../../../generated/data/thematiques";
+    import {Thematique, thematiques} from "../../generated/data/thematiquesues";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
 
     export let searching: boolean

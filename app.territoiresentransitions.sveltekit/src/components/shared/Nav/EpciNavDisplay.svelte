@@ -4,7 +4,7 @@
      */
     import {onMount} from 'svelte';
     import {getCurrentEpciId} from "../../../api/currentEpci";
-    import {epcis_default} from "../../../../../generated/models/epcis_default";
+    import {epcis_default} from "../../../generated/models/epcis_defaultult";
 
     let epciId = ''
     let epciName = ''

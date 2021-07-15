@@ -1,7 +1,7 @@
 import jwt_decode from "jwt-decode";
 import {UtilisateurConnecteStorable} from "../storables/UtilisateurConnecteStorable";
 import {utilisateurConnecteStore} from "./localStore";
-import {UtilisateurDroits, UtilisateurDroitsInterface} from "../../../generated/models/utilisateur_droits";
+import type {UtilisateurDroits, UtilisateurDroitsInterface} from "../generated/models/utilisateur_droits";
 import {getCurrentAPI} from "./currentAPI";
 
 const _dummyToken = 'xx'

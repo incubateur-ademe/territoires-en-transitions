@@ -1,9 +1,9 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import {ActionReferentiel} from "../../generated/models/action_referentieliel";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
     import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
-    import {indicateurs} from "../../../../generated/data/indicateurs_referentiels";
+    import {indicateurs} from "../../generated/data/indicateurs_referentielsels";
     import IndicateurReferentielCard
         from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";

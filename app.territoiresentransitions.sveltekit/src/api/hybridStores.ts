@@ -1,36 +1,36 @@
 import {IndicateurValueStorable} from "../storables/IndicateurValueStorable";
-import {IndicateurValue, IndicateurValueInterface} from "../../../generated/models/indicateur_value";
+import {IndicateurValue, IndicateurValueInterface} from "../generated/models/indicateur_value";
 import {getCurrentEpciId} from "./currentEpci";
-import {ActionStatus, ActionStatusInterface} from "../../../generated/models/action_status";
+import {ActionStatus, ActionStatusInterface} from "../generated/models/action_status";
 import {ActionStatusStorable} from "../storables/ActionStatusStorable";
 import {getCurrentAPI} from "./currentAPI";
 import {HybridStore} from "./hybridStore";
 import {FicheActionStorable} from "../storables/FicheActionStorable";
-import {FicheAction, FicheActionInterface} from "../../../generated/models/fiche_action";
+import {FicheAction, FicheActionInterface} from "../generated/models/fiche_action";
 import {FicheActionCategorieStorable} from "../storables/FicheActionCategorieStorable";
-import {FicheActionCategorie, FicheActionCategorieInterface} from "../../../generated/models/fiche_action_categorie";
+import {FicheActionCategorie, FicheActionCategorieInterface} from "../generated/models/fiche_action_categorie";
 import {IndicateurPersonnaliseValueStorable} from "../storables/IndicateurPersonnaliseValueStorable";
 import {
     IndicateurPersonnaliseValue,
     IndicateurPersonnaliseValueInterface
-} from "../../../generated/models/indicateur_personnalise_value";
+} from "../generated/models/indicateur_personnalise_value";
 import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnaliseStorable";
 import {
     IndicateurPersonnalise,
     IndicateurPersonnaliseInterface
-} from "../../../generated/models/indicateur_personnalise";
+} from "../generated/models/indicateur_personnalise";
 import {
     IndicateurReferentielCommentaire,
     IndicateurReferentielCommentaireInterface
-} from "../../../generated/models/indicateur_referentiel_commentaire";
+} from "../generated/models/indicateur_referentiel_commentaire";
 import {IndicateurReferentielCommentaireStorable} from "../storables/IndicateurReferentielCommentaireStorable";
 import {EpciStorable} from "../storables/EpciStorable";
-import {Epci, EpciInterface} from "../../../generated/models/epci";
+import {Epci, EpciInterface} from "../generated/models/epci";
 import {currentAccessToken} from "./authentication";
 import {ActionReferentielScoreStorable} from "../storables/ActionReferentielScoreStorable";
-import type {ActionReferentielScoreInterface} from "../../../generated/models/action_referentiel_score";
+import type {ActionReferentielScoreInterface} from "../generated/models/action_referentiel_score";
 import {ActionMetaStorable} from "../storables/ActionMetaStorable";
-import {ActionMeta, ActionMetaInterface} from "../../../generated/models/action_meta";
+import {ActionMeta, ActionMetaInterface} from "../generated/models/action_meta";
 
 
 const defaultAuthorization = () => `Bearer ${currentAccessToken()}`

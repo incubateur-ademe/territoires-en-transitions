@@ -1,4 +1,4 @@
-import {ActionReferentielScore} from "../../../generated/models/action_referentiel_score";
+import {ActionReferentielScore} from "../generated/models/action_referentiel_score";
 
 export class ActionReferentielScoreStorable extends ActionReferentielScore {
     static buildId(action_id: string): string {

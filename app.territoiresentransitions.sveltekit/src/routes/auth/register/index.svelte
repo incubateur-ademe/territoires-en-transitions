@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {UtilisateurInscriptionInterface} from "../../../../../generated/models/utilisateur_inscription";
+    import {UtilisateurInscriptionInterface} from "../../../generated/models/utilisateur_inscriptionion";
     import {emailValidator, maximumLengthValidatorBuilder, requiredValidator} from "../../../api/validators";
     import {joinValidators, validate} from "../../../api/validator";
     import LabeledTextInput from "../../../components/shared/Forms/LabeledTextInput.svelte";

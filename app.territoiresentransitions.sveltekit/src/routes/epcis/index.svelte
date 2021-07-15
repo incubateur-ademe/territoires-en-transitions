@@ -5,7 +5,7 @@
     import type {EpciStorable} from "storables";
     import {onMount} from "svelte";
     import {currentUtilisateurDroits} from "../../api/authentication";
-    import {UtilisateurDroits} from "../../../../generated/models/utilisateur_droits";
+    import {UtilisateurDroits} from "../../generated/models/utilisateur_droits";
     import Card from "./_EpciCard.svelte"
 
     let allEpcis: EpciStorable[] = []
