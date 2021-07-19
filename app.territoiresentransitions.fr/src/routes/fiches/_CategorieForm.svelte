@@ -37,7 +37,7 @@
            maxlength="100">
 
     <button class="fr-btn fr-btn--secondary"
-            on:click={handleSave}>
+            on:click|preventDefault={handleSave}>
         Valider
     </button>
 </div>

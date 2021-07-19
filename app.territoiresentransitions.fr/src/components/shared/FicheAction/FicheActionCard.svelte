@@ -1,4 +1,6 @@
 <script lang="ts">
+    import {fiche_action_avancement_noms} from "../../../../../generated/models/fiche_action_avancement_noms";
+
     import {FicheAction} from "../../../../../generated/models/fiche_action";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../../api/currentEpci";
@@ -15,10 +17,13 @@
 
 <style>
     article {
-        padding: .8rem 1rem 1.5rem;
+        padding: 1.5rem 1rem;
         background-color: var(--beige);
         border-left: 4px solid transparent;
-        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
     }
 
     article:not(:first-of-type) {
@@ -29,26 +34,53 @@
         font-size: 1.25rem;
     }
 
+    .titre {
+        
+    }
+
+     .statuts {
+         display: flex;
+         flex-direction: row;
+         align-items: center;
+     }
+
+    .avancement {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+        padding: 0.5rem 1rem;
+
+        background-color: white;
+        border-top: 2px solid var(--bf500);
+        border-right: 1px solid var(--g300);
+        border-left: 1px solid var(--g300);
+
+        margin-right: 10px;
+    }
+
     .en-retard {
-        position: absolute;
-        top: 1rem;
-        right: 0;
-        padding: 0.5rem 0.75rem;
+        padding: 0.5rem 1rem;
         background-color: white;
         border-right: 6px solid #DA0505;
     }
 </style>
 
 <article>
-    <a href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
+    <a class="titre" href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
         <h3>
             ({fiche.custom_id}) {fiche.titre}
         </h3>
     </a>
 
-    {#if enRetard}
-        <div class="en-retard">
-            En retard
+    <div class="statuts">
+        <div class="avancement">
+            {fiche_action_avancement_noms[fiche.avancement]}
         </div>
-    {/if}
+
+        {#if enRetard}
+            <div class="en-retard">
+                En retard
+            </div>
+        {/if}
+    </div>
 </article>
