@@ -1,0 +1,22 @@
+[
+  {
+    "id":	"1",
+    "uid": "alice-123",
+    "insee": "",
+    "siren": "",
+    "nom": "Alice",
+    "created_at":	"2021-07-05T14:53:58.415295+00:00",
+    "modified_at": "2021-07-05T14:53:58.415295+00:00",
+    "latest":	true
+  },
+  {
+    "id":	"2",
+    "uid": "madhatter-456",
+    "insee": "",
+    "siren": "",
+    "nom": "Mad Hatter",
+    "created_at":	"2021-07-05T14:53:58.415295+00:00",
+    "modified_at": "2021-07-05T14:53:58.415295+00:00",
+    "latest":	true
+  }
+]
