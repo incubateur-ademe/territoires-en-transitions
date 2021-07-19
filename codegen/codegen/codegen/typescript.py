@@ -12,19 +12,28 @@ from codegen.utils.templates import build_jinja_environment
 
 def types_ts(t: str) -> str:
     """Converts a type from yaml to a js type hint"""
-    ts_types = {'String': 'string', 'num': 'number', 'List': '[]', 'Dict': 'object', 'bool': 'boolean', None: 'string'}
+    ts_types = {
+        "String": "string",
+        "num": "number",
+        "List": "[]",
+        "Dict": "object",
+        "bool": "boolean",
+        None: "string",
+    }
     if t in ts_types.keys():
         return ts_types[t]
-    if t.startswith('List['):
-        types = t.replace('List[', '').replace(']', '')
-        params = ', '.join([types_ts(t.strip()) for t in types.split(',')])
-        return f'{params}[]'
+    if t.startswith("List["):
+        types = t.replace("List[", "").replace("]", "")
+        params = ", ".join([types_ts(t.strip()) for t in types.split(",")])
+        return f"{params}[]"
     return t
 
 
 def fields_ts(yaml_data: dict) -> dict:
     """Transform yaml class fields."""
-    return {name: types_ts(properties['type']) for name, properties in yaml_data.items()}
+    return {
+        name: types_ts(properties["type"]) for name, properties in yaml_data.items()
+    }
 
 
 def classes_ts(yaml_data: dict) -> dict:
@@ -37,26 +46,30 @@ def objects_ts(yaml_data: dict) -> dict:
     return {name: json.dumps(obj, indent=4) for name, obj in yaml_data.items()}
 
 
-def render_classes(definition: dict, pathname: str, template_file='shared/ts/classes.j2') -> str:
+def render_classes(
+    definition: dict, pathname: str, template_file="shared/ts/classes.j2"
+) -> str:
     env = build_jinja_environment()
     template = env.get_template(template_file)
-    classes = classes_ts(definition['yaml'])
-    rendered = template.render(classes=classes, comments=definition['comments'], pathname=pathname)
+    classes = classes_ts(definition["yaml"])
+    rendered = template.render(
+        classes=classes, comments=definition["comments"], pathname=pathname
+    )
     return jsbeautifier.beautify(rendered)
 
 
-def render_object(definition: dict, template_file='shared/ts/objects.j2') -> str:
+def render_object(definition: dict, template_file="shared/ts/objects.j2") -> str:
     env = build_jinja_environment()
     template = env.get_template(template_file)
-    objects = objects_ts(definition['yaml'])
-    rendered = template.render(objects=objects, comments=definition['comments'])
+    objects = objects_ts(definition["yaml"])
+    rendered = template.render(objects=objects, comments=definition["comments"])
     return jsbeautifier.beautify(rendered)
 
 
 def yaml_to_ts(definition: dict) -> tuple[str, str]:
-    rendered = ''
-    filename = ''
-    data = definition['yaml']
+    rendered = ""
+    filename = ""
+    data = definition["yaml"]
 
     if data:
         name = list(data.keys())[0]
@@ -70,7 +83,7 @@ def yaml_to_ts(definition: dict) -> tuple[str, str]:
         else:
             rendered = render_object(definition)
 
-    return f'{filename}.ts', rendered
+    return f"{filename}.ts", rendered
 
 
 def render_markdown_as_typescript(markdown: Document) -> List[tuple[str, str]]:

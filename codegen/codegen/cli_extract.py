@@ -3,9 +3,16 @@ import os
 import typer
 
 from codegen.action.write import action_to_markdown
-from codegen.citergie.indicator_extractor import parse_indicators_xlsx, indicators_to_markdowns_legacy
-from codegen.citergie.mesures_extractor import docx_to_mesures, add_climat_pratic, mesure_to_markdown_legacy, \
-    docx_to_parent_actions
+from codegen.citergie.indicator_extractor import (
+    parse_indicators_xlsx,
+    indicators_to_markdowns_legacy,
+)
+from codegen.citergie.mesures_extractor import (
+    docx_to_mesures,
+    add_climat_pratic,
+    mesure_to_markdown_legacy,
+    docx_to_parent_actions,
+)
 from codegen.economie_circulaire.indicateurs_extractor import parse_indicateurs_eci_xlsx
 from codegen.economie_circulaire.referentiel_extractor import parse_referentiel_eci_xlsx
 from codegen.indicateur.write import indicateur_to_markdown
@@ -17,16 +24,25 @@ app = typer.Typer()
 
 @app.command()
 def indicateurs_citergie(
-    indicateurs_xlsx: str = typer.Option('../referentiels/sources/indicateurs_citergie.xlsx', "--indicateurs", "-i"),
-    correspondance_xlsx: str = typer.Option('../referentiels/sources/correspondance_citergie_climat_pratique.xlsx',
-                                            "--correspondance", "-c"),
-    output_dir: str = typer.Option('../referentiels/markdown/indicateurs_citergie', "--output", "-o")
+    indicateurs_xlsx: str = typer.Option(
+        "../referentiels/sources/indicateurs_citergie.xlsx", "--indicateurs", "-i"
+    ),
+    correspondance_xlsx: str = typer.Option(
+        "../referentiels/sources/correspondance_citergie_climat_pratique.xlsx",
+        "--correspondance",
+        "-c",
+    ),
+    output_dir: str = typer.Option(
+        "../referentiels/markdown/indicateurs_citergie", "--output", "-o"
+    ),
 ) -> None:
     """
     Convert source xlsx files to 'indicateurs' markdown files.
     """
     typer.echo(f"Parsing files...")
-    indicators = parse_indicators_xlsx(indicateurs=indicateurs_xlsx, correspondance=correspondance_xlsx)
+    indicators = parse_indicators_xlsx(
+        indicateurs=indicateurs_xlsx, correspondance=correspondance_xlsx
+    )
     mds = indicators_to_markdowns_legacy(indicators)
 
     with typer.progressbar(mds.items()) as progress:
@@ -34,13 +50,17 @@ def indicateurs_citergie(
             filename = os.path.join(output_dir, f"{number}.md")
             write(filename, md)
 
-    typer.echo(f"All {len(mds)} 'indicateurs' were exported in '{output_dir}' as markdown files.")
+    typer.echo(
+        f"All {len(mds)} 'indicateurs' were exported in '{output_dir}' as markdown files."
+    )
 
 
 @app.command()
 def indicateurs_eci(
-    indicateurs_xlsx: str = '../referentiels/sources/indicateurs_eci_proposition_4.xlsx',
-    output_dir: str = typer.Option('../referentiels/markdown/indicateurs', "--output", "-o")
+    indicateurs_xlsx: str = "../referentiels/sources/indicateurs_eci_proposition_4.xlsx",
+    output_dir: str = typer.Option(
+        "../referentiels/markdown/indicateurs", "--output", "-o"
+    ),
 ) -> None:
     """
     Convert source xlsx files to 'indicateurs' markdown files.
@@ -51,18 +71,29 @@ def indicateurs_eci(
     with typer.progressbar(indicateurs) as progress:
         for indicateur in progress:
             md = indicateur_to_markdown(indicateur)
-            filename = os.path.join(output_dir, f"{indicateur['id'].replace('-', '_')}.md")
+            filename = os.path.join(
+                output_dir, f"{indicateur['id'].replace('-', '_')}.md"
+            )
             write(filename, md)
 
-    typer.echo(f"All {len(indicateurs)} 'indicateurs' were exported in '{output_dir}' as markdown files.")
+    typer.echo(
+        f"All {len(indicateurs)} 'indicateurs' were exported in '{output_dir}' as markdown files."
+    )
 
 
 @app.command()
 def mesures(
-    doc_file: str = typer.Option('../referentiels/sources/citergie.docx', "--docx", "-d"),
-    correspondance_xlsx: str = typer.Option('../referentiels/sources/correspondance_citergie_climat_pratique.xlsx',
-                                            "--correspondance", "-c"),
-    output_dir: str = typer.Option('../referentiels/markdown/mesures_citergie', "--output", "-o")
+    doc_file: str = typer.Option(
+        "../referentiels/sources/citergie.docx", "--docx", "-d"
+    ),
+    correspondance_xlsx: str = typer.Option(
+        "../referentiels/sources/correspondance_citergie_climat_pratique.xlsx",
+        "--correspondance",
+        "-c",
+    ),
+    output_dir: str = typer.Option(
+        "../referentiels/markdown/mesures_citergie", "--output", "-o"
+    ),
 ) -> None:
     """
     Convert source docx file to 'mesures' markdown files.
@@ -81,7 +112,9 @@ def mesures(
             md = mesure_to_markdown_legacy(mesure)
             write(filename, md)
 
-    typer.echo(f"All {len(mesures)} 'mesures' were exported in '{output_dir}' as markdown files.")
+    typer.echo(
+        f"All {len(mesures)} 'mesures' were exported in '{output_dir}' as markdown files."
+    )
 
 
 @app.command()
@@ -97,13 +130,15 @@ def orientations(
             filename = os.path.join(output_dir, f"{orientation['id']}.md")
             write(filename, markdown)
 
-    typer.echo(f"All {len(orientations)} 'orientations' were exported in '{output_dir}' as markdown files.")
+    typer.echo(
+        f"All {len(orientations)} 'orientations' were exported in '{output_dir}' as markdown files."
+    )
 
 
 @app.command()
 def domaines(
-    doc_file: str = '../referentiels/sources/citergie.docx',
-    output_dir: str = '../referentiels/markdown/mesures_citergie',
+    doc_file: str = "../referentiels/sources/citergie.docx",
+    output_dir: str = "../referentiels/markdown/mesures_citergie",
 ) -> None:
     """
     Convert source docx file to 'actions' markdown files.
@@ -120,4 +155,6 @@ def domaines(
             md = action_to_markdown(action)
             write(filename, md)
 
-    typer.echo(f"All {len(actions)} 'domaines' were exported in '{output_dir}' as markdown files.")
+    typer.echo(
+        f"All {len(actions)} 'domaines' were exported in '{output_dir}' as markdown files."
+    )
