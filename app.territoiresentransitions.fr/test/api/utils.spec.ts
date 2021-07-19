@@ -1,7 +1,11 @@
 import { expect } from "chai";
-import { FicheAction } from "../../../../generated/models/fiche_action";
-import { FicheActionCategorie } from "../../../../generated/models/fiche_action_categorie";
-import { categorizeAndSortFiches, sortFiches } from "./utils";
+import { FicheAction } from "../../../generated/models/fiche_action";
+import { FicheActionCategorie } from "../../../generated/models/fiche_action_categorie";
+
+import {
+  categorizeAndSortFiches,
+  sortFiches,
+} from "../../src/routes/fiches/utils";
 
 const makeCategorie = (uid: string, fiche_actions_uids: string[] = []) =>
   new FicheActionCategorie({
