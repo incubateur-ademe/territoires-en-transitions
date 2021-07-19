@@ -305,10 +305,13 @@ Vos données à actualiser manuellement dans votre référentiel sur Territoires
         dirname = re.sub('[^0-9a-zA-Z]+', '', territoire.get('nom'))
         write(os.path.join(output_dir, dirname, 'données-non-reprises.txt'), text)
 
-        infos = next(f"{row['prénom']} {row['nom.1']} <{row['email']}>" for index, row in collectivites.iterrows()
-                     if str(row['nom']).strip() == territoire.get('nom', '').strip())
+        try:
+            infos = next(f"{row['prénom']} {row['nom.1']} <{row['email']}>" for index, row in collectivites.iterrows()
+                         if str(row['nom']).strip() == territoire.get('nom', '').strip())
 
-        write(os.path.join(output_dir, dirname, 'mail.txt'), infos + '\n' + mail + '\n\n' + text)
+            write(os.path.join(output_dir, dirname, 'mail.txt'), infos + '\n' + mail + '\n\n' + text)
+        except:
+            print(f"error could not write mail for {territoire.get('nom')}")
 
 
 @app.command()
