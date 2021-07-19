@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     /**
      * Top navigation bar
      */
@@ -8,7 +8,7 @@
     import NavSignedOut from "./NavSignedOut.svelte";
     import {getCurrentEpciId} from '../../../api/currentEpci'
 
-    export let segment // Type string. Typing this variable makes sapper crash.
+    export let segment: string 
 
     let showTestNavigation = false
     let epciId = ''

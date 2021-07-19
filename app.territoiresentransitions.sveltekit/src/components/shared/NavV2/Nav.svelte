@@ -6,9 +6,9 @@
     import {testUIVisibility} from '../../../api/currentEnvironment'
     import {getCurrentEpciId} from '../../../api/currentEpci'
     import {currentUtilisateurDroits} from "../../../api/authentication";
-    import {EpciStorable} from "../../../storables/EpciStorable";
+    import type {EpciStorable} from "../../../storables/EpciStorable";
 
-    export let segment: string // Type string. Typing this variable makes sapper crash.
+    export let segment: string 
 
     let showTestNavigation = false
     let epciId = ''

@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../../api/currentEpci";
 
-    export let segment // Type string. Typing this variable makes sapper crash.
+    export let segment : string 
 
     let epciId = ''
     onMount(async () => {

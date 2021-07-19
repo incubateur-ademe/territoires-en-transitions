@@ -5,7 +5,6 @@
      *  - redirects to /epcis/ if the user is connected
      */
     import {onMount} from "svelte";
-    import Button from "../components/shared/Button/Button.svelte";
 
     let connected: boolean | null = null
 
