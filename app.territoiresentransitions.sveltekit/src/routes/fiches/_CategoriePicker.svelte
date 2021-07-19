@@ -6,8 +6,7 @@
     import CategorieCreation from './_CategorieCreation.svelte'
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
     import {onMount} from "svelte";
-    import Button from "../../components/shared/Button/Button.svelte";
-    import {HybridStore} from "../../api/hybridStore";
+    import type     {HybridStore} from "../../api/hybridStore";
 
     export let ficheActionUid: string
     const defaultCategorie = new FicheActionCategorieStorable({

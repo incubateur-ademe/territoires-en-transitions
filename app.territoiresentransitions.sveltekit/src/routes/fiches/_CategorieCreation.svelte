@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {FicheActionCategorieInterface} from "../../generated/models/fiche_action_categorierie";
+    import type {FicheActionCategorieInterface} from "$generated/models/fiche_action_categorie";
     import CategorieForm from './_CategorieForm.svelte'
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";

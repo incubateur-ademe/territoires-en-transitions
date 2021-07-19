@@ -3,14 +3,13 @@
      * The text area for an indicateur commentaire
      * Retrieve and store values.
      */
-    import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentieliel";
+    import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
     import {onMount} from "svelte";
-    import {HybridStore} from "../../../api/hybridStore";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
-    import {IndicateurReferentielCommentaireStorable} from "../../../storables/IndicateurReferentielCommentaireStorable";
+    import type {HybridStore} from "$api/hybridStore";
+    import {getCurrentEpciId} from "$api/currentEpci";
+    import {IndicateurReferentielCommentaireStorable} from "$storables/IndicateurReferentielCommentaireStorable";
     import LabeledTextArea from "../Forms/LabeledTextArea.svelte";
-    import Button from "../Button/Button.svelte";
-    import {IndicateurReferentielCommentaireInterface} from "../../../generated/models/indicateur_referentiel_commentaireire";
+    import type {IndicateurReferentielCommentaireInterface} from "$generated/models/indicateur_referentiel_commentaire";
 
     // Mandatory indicateur prop to attach the commentaire.
     export let indicateur: IndicateurReferentiel

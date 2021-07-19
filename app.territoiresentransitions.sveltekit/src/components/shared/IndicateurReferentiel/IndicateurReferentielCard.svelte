@@ -2,15 +2,14 @@
     /**
      * Displays an indicateur an its yearly values.
      */
-    import {IndicateurReferentiel} from "../../../generated/models/indicateur_referentieliel";
+    import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
     import IndicateurReferentielValueInput from "./IndicateurReferentielValueInput.svelte";
     import {onMount} from "svelte";
-    import {ActionReferentiel} from "../../../generated/models/action_referentieliel";
-    import ActionReferentielCard from "../ActionReferentiel/ActionReferentielCard.svelte";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
     import IndicateurReferentielCommentaireArea from "./IndicateurReferentielCommentaireArea.svelte";
     import RowCard from "../RowCard.svelte";
-    import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import ExpandPanel from "$components/ExpandPanel.svelte";
+    import {getCurrentEpciId} from "$api/currentEpci";
 
     export let indicateur: IndicateurReferentiel
     let relatedActions: ActionReferentiel[] = []
@@ -28,7 +27,7 @@
 
     onMount(async () => {
         epciId = getCurrentEpciId()
-        const referentiel = await import('../../../generated/data/actions_referentielsels')
+        const referentiel = await import('$generated/data/actions_referentiels')
 
         const found: ActionReferentiel[] = []
         for (let actionId of indicateur.action_ids) {

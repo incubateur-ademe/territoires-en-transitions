@@ -1,15 +1,13 @@
 <script lang="ts">
-    import Button from "../../components/shared/Button/Button.svelte";
     import CategorieInlineEdition from './_CategorieInlineEdition.svelte'
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
-    import {FicheActionStorable} from "../../storables/FicheActionStorable";
-    import {HybridStore} from "../../api/hybridStore";
-    import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
-    import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
-    import {fiche_action_avancement_noms} from "../../generated/models/fiche_action_avancement_noms";
-    import RowCard from "../../components/shared/RowCard.svelte";
-    import FicheActionCard from "../../components/shared/FicheAction/FicheActionCard.svelte";
+    import {getCurrentEpciId} from "$api/currentEpci";
+    import type {FicheActionStorable} from "$storables/FicheActionStorable";
+    import type {HybridStore} from "$api/hybridStore";
+    import {FicheActionCategorieStorable} from "$storables/FicheActionCategorieStorable";
+    import SelectInput from "$components/shared/Forms/SelectInput.svelte";
+    import {fiche_action_avancement_noms} from "$generated/models/fiche_action_avancement_noms";
+    import FicheActionCard from "$components/shared/FicheAction/FicheActionCard.svelte";
 
     const defaultCategorie = new FicheActionCategorieStorable({
         uid: '',
@@ -191,8 +189,6 @@
     <div class="select-list">
         <!-- status -->
         <SelectInput bind:value={selectedAvancementKey}
-                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                     id="categorie_picker"
                      label="Status d'avancement"
                      onChange={applyFilters}>
             <option value=''>
@@ -207,8 +203,6 @@
 
         <!-- personne -->
         <SelectInput bind:value={selectedPersonneReferente}
-                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                     id="categorie_picker"
                      label="Personne référente"
                      onChange={applyFilters}>
             <option value=''>
@@ -223,8 +217,6 @@
 
         <!-- structure -->
         <SelectInput bind:value={selectedStructuresPilote}
-                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                     id="categorie_picker"
                      label="Structure pilote"
                      onChange={applyFilters}>
             <option value=''>

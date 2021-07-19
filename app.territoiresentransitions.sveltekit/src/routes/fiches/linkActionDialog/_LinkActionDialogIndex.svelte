@@ -4,9 +4,9 @@
      *
      * Passes linkedActionIds and toggleActionId props along to its children.
      */
-    import {actions} from "../../../generated/data/actions_referentielsels";
-    import {thematiques} from "../../../generated/data/thematiquesues";
-    import LinkActionCard from './_LinkActionCard'
+    import {actions} from "$generated/data/actions_referentiels";
+    import {thematiques} from "$generated/data/thematiques";
+    import LinkActionCard from './_LinkActionCard.svelte'
 
     export let onTopLevelActionClicked: (actionId: string) => void
     export let close: (event: MouseEvent) => void

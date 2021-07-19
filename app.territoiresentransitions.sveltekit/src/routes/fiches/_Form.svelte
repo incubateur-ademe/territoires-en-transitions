@@ -1,32 +1,32 @@
 <script lang="ts">
     import find from 'ramda/src/find'
     import prop from 'ramda/src/prop'
-    import {FicheActionStorable} from "../../storables/FicheActionStorable"
+    import {FicheActionStorable} from "$storables/FicheActionStorable"
     import MultiSelect from './_MultiSelect.svelte'
     import CategoriePicker from './_CategoriePicker.svelte'
     import Status from './_Status.svelte'
-    import {FicheActionInterface} from "../../generated/models/fiche_actionion"
+    import type {FicheActionInterface} from "$generated/models/fiche_action"
     import {onMount} from "svelte"
-    import {HybridStore} from "../../api/hybridStore"
-    import {testUIVisibility} from "../../api/currentEnvironment";
-    import {IndicateurReferentiel} from "../../generated/models/indicateur_referentieliel";
+    import type {HybridStore} from "$api/hybridStore"
+    import {testUIVisibility} from "$api/currentEnvironment";
+    import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
     import IndicateurReferentielCard
-        from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
-    import {IndicateurPersonnalise} from "../../generated/models/indicateur_personnaliseise";
+        from "$components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
+    import type {IndicateurPersonnalise} from "$generated/models/indicateur_personnalise";
     import IndicateurPersonnaliseCard
-        from "../../components/shared/IndicateurPersonnalise/IndicateurPersonnaliseCard.svelte";
+        from "$components/shared/IndicateurPersonnalise/IndicateurPersonnaliseCard.svelte";
     import IndicateurPersonnaliseCreation
-        from "../../components/shared/IndicateurPersonnalise/IndicateurPersonnaliseCreation.svelte";
-    import LabeledTextArea from "../../components/shared/Forms/LabeledTextArea.svelte";
-    import LabeledTextInput from "../../components/shared/Forms/LabeledTextInput.svelte";
-    import {alwaysValid, joinValidators, validate} from "../../api/validator";
+        from "$components/shared/IndicateurPersonnalise/IndicateurPersonnaliseCreation.svelte";
+    import LabeledTextArea from "$components/shared/Forms/LabeledTextArea.svelte";
+    import LabeledTextInput from "$components/shared/Forms/LabeledTextInput.svelte";
+    import {alwaysValid, joinValidators, validate} from "$api/validator";
     import {
         booleanValidator,
         maximumLengthValidatorBuilder,
         numbersOnlyValidator,
         requiredValidator
-    } from "../../api/validators";
-    import CheckboxInput from "../../components/shared/Forms/CheckboxInput.svelte";
+    } from "$api/validators";
+    import CheckboxInput from "$components/shared/Forms/CheckboxInput.svelte";
 
     export let data: FicheActionInterface
 
@@ -85,7 +85,7 @@
     const indicateurSaved = async (event) => {
         showIndicateurCreation = false
 
-        const hybridStores = await import ("../../api/hybridStores")
+        const hybridStores = await import ("$api/hybridStores")
         indicateursPersonnalises = await hybridStores.indicateurPersonnaliseStore.retrieveAll()
         data.indicateur_personnalise_ids.push(event.detail.indicateur.id)
     }
@@ -106,11 +106,11 @@
 
     onMount(async () => {
         // initialize store
-        const hybridStores = await import ("../../api/hybridStores")
+        const hybridStores = await import ("$api/hybridStores")
         ficheActionStore = hybridStores.ficheActionStore
 
         // load référentiel indicateurs
-        const indicateurs = await import("../../generated/data/indicateurs_referentielsels")
+        const indicateurs = await import("$generated/data/indicateurs_referentiels")
         indicateursReferentiel = indicateurs.indicateurs
 
         // load indicateurs personnalisés
@@ -168,7 +168,7 @@
     <form>
         <LabeledTextInput bind:value={data.custom_id}
                           hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
-                          maxlength="36"
+                          maxlength={36}
                           validator={validators.custom_id}
                           id="actionNumber">
             Numérotation de l'action
@@ -176,7 +176,7 @@
 
         <LabeledTextInput bind:value={data.titre}
                           hint="Ce champ est requis"
-                          maxlength="300"
+                          maxlength={300}
                           validator={validators.titre}
                           id="title">
             Titre
@@ -198,28 +198,28 @@
         </CheckboxInput>
 
         <LabeledTextInput bind:value={data.structure_pilote}
-                          maxlength="300"
+                          maxlength={300}
                           validator={validators.structure_pilote}
                           id="pilote">
             Structure pilote
         </LabeledTextInput>
 
         <LabeledTextInput bind:value={data.personne_referente}
-                          maxlength="300"
+                          maxlength={300}
                           validator={validators.personne_referente}
                           id="personne-referente">
             Personne référente
         </LabeledTextInput>
 
         <LabeledTextInput bind:value={data.elu_referent}
-                          maxlength="300"
+                          maxlength={300}
                           validator={validators.elu_referent}
                           id="elu-referent">
             Élu référent
         </LabeledTextInput>
 
         <LabeledTextInput bind:value={data.partenaires}
-                          maxlength="300"
+                          maxlength={300}
                           validator={validators.partenaires}
                           id="partenaires">
             Partenaires

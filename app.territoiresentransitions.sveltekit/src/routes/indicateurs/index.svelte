@@ -2,16 +2,15 @@
     /**
      * List indicateurs per catégorie.
      */
-    import {IndicateurReferentiel} from "../../generated/models/indicateur_referentieliel";
-    import {indicateurs} from "../../generated/data/indicateurs_referentielsels";
+    import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
+    import {indicateurs} from "$generated/data/indicateurs_referentiels";
     import IndicateurReferentielCard
-        from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
-    import {Thematique, thematiques} from "../../generated/data/thematiquesues";
+        from "$components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
+    import {Thematique, thematiques} from "$generated/data/thematiques";
     import {onMount} from "svelte";
-    import IndicateursSearchBar from "../../components/shared/IndicateursSearchBar.svelte";
     import IndicateurPersonnaliseList
-        from "../../components/shared/IndicateurPersonnalise/IndicateurPersonnaliseList.svelte"
-    import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
+        from "$components/shared/IndicateurPersonnalise/IndicateurPersonnaliseList.svelte"
+    import SelectInput from "$components/shared/Forms/SelectInput.svelte";
 
     let byThematique = new Map<Thematique, IndicateurReferentiel[]>()
     let displayed: IndicateurReferentiel[] = indicateurs

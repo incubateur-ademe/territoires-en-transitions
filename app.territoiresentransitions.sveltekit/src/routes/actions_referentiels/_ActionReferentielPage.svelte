@@ -1,14 +1,14 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../generated/models/action_referentieliel";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
-    import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
-    import {indicateurs} from "../../generated/data/indicateurs_referentielsels";
+    import {getCurrentEpciId} from "$api/currentEpci";
+    import ReferentielSearchBar from "$components/shared/ReferentielSearchBar.svelte";
+    import {indicateurs} from "$generated/data/indicateurs_referentiels";
     import IndicateurReferentielCard
-        from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
-    import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
-    import ExpandPanel from "../../../../components/ExpandPanel.svelte";
-    import ProgressStat from "../../components/shared/ActionReferentiel/ProgressStat.svelte";
+        from "$components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
+    import ActionReferentielCard from "$components/shared/ActionReferentiel/ActionReferentielCard.svelte";
+    import ExpandPanel from "$components/ExpandPanel.svelte";
+    import ProgressStat from "$components/shared/ActionReferentiel/ProgressStat.svelte";
 
     export let action: ActionReferentiel
 

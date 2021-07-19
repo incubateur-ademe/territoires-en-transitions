@@ -3,50 +3,67 @@
      * A navigation bar shown only for testing features.
      */
 
-    import {UtilisateurConnecteStorable} from "../../../storables/UtilisateurConnecteStorable";
+    import type {UtilisateurConnecteStorable} from "$storables/UtilisateurConnecteStorable";
     import {onMount} from "svelte";
+    import Navigation from '$components/shared/DesignSystem/Navigation.svelte'
+    import Tags from '$components/shared//DesignSystem/Tags.svelte'
+    import {testUIVisibility} from '../../../api/currentEnvironment'
 
 
     let connected = false
     let user: UtilisateurConnecteStorable
+    let showTestNavigation = false
 
     onMount(async () => {
-        const auth = await import("../../../api/authentication")
-        connected = auth.connected()
-        user = auth.currentUser()
+        showTestNavigation = testUIVisibility()
+
+        if (showTestNavigation) {
+            const auth = await import("../../../api/authentication")
+            connected = auth.connected()
+            user = auth.currentUser()
+        }
     })
 </script>
-<nav class="bg-pink-600">
-    <!-- test only navigation items -->
-    <ul class="container mx-auto lg:px-20 px-4 p-4 flex text-xl">
-        <li class="mr-4 flex-grow text-center">
 
-        </li>
-        {#if connected}
-            <li class="mr-4">
-                <a class="p-1 rounded hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 active:text-gray-900 active:shadow-inner active:bg-white"
-                   href="auth/signout">
-                    Se déconnecter
-                </a>
-            </li>
-            {#if user}
-                <li class="mr-4">
-                    {user.email}
+<Navigation />
+<Tags />
+
+<div class="navDev">
+    {#if showTestNavigation }
+        <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
+            <ul class="fr-nav__list">
+                <li class="fr-nav__item">
+                    <a class="fr-tag" href="/">EN TEST</a>
                 </li>
-            {/if}
-        {:else }
-            <li class="mr-4">
-                <a class="p-1 rounded hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 active:text-gray-900 active:shadow-inner active:bg-white"
-                   href="auth/signin">
-                    Se connecter
-                </a>
-            </li>
-            <li class="mr-4">
-                <a class="p-1 rounded hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 active:text-gray-900 active:shadow-inner active:bg-white"
-                   href="auth/register">
-                    Création de compte
-                </a>
-            </li>
-        {/if}
-    </ul>
-</nav>
+                {#if connected }
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="auth/signout/">Déconnexion</a>
+                    </li>
+                {:else }
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="auth/signin/" target="_self">Se connecter</a>
+                    </li>
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="auth/register/" target="_self">Création de compte</a>
+                    </li>
+                {/if}
+            </ul>
+        </nav>
+    {/if}
+</div>
+
+<style>
+    .navDev {
+        background-color: var(--g700);
+        padding-right: 1.5rem;
+        padding-left: 1.5rem;
+    }
+
+    .navDev :global(.fr-nav__link) {
+        color: var(--w);
+    }
+
+    .navDev :global(.fr-tag) {
+        margin: 0.9rem;
+    }
+</style>

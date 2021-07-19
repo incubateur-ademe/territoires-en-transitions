@@ -1,10 +1,10 @@
 <script lang="ts">
-    import {UtilisateurInscriptionInterface} from "../../../generated/models/utilisateur_inscriptionion";
-    import {emailValidator, maximumLengthValidatorBuilder, requiredValidator} from "../../../api/validators";
-    import {joinValidators, validate} from "../../../api/validator";
-    import LabeledTextInput from "../../../components/shared/Forms/LabeledTextInput.svelte";
-    import Button from "../../../components/shared/Button/Button.svelte";
-    import {getCurrentAPI} from "../../../api/currentAPI";
+    import type {UtilisateurInscriptionInterface} from "$generated/models/utilisateur_inscription";
+    import {emailValidator, maximumLengthValidatorBuilder, requiredValidator} from "$api/validators";
+    import {joinValidators, validate} from "$api/validator";
+    import LabeledTextInput from "$components/shared/Forms/LabeledTextInput.svelte";
+    import Button from "$components/shared/ButtonV2/Button.svelte";
+    import {getCurrentAPI} from "$api/currentAPI";
 
     const politique_vie_privee = "https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel"
 

@@ -2,8 +2,7 @@
     /**
      * Display an Epci in an card
      */
-    import {EpciStorable} from "../../storables/EpciStorable";
-    import Button from "../../components/shared/Button/Button.svelte";
+    import type {EpciStorable} from "$storables/EpciStorable";
 
     export let epci: EpciStorable
     export let writable: boolean = false

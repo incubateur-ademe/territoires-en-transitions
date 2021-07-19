@@ -1,9 +1,8 @@
 <script lang="ts">
-    import {FicheActionCategorieInterface} from "../../generated/models/fiche_action_categorierie";
+    import type {FicheActionCategorieInterface} from "$generated/models/fiche_action_categorie";
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
     import {createEventDispatcher, onMount} from "svelte";
-    import Button from "../../components/shared/Button/Button.svelte";
-    import {HybridStore} from "../../api/hybridStore";
+    import type {HybridStore} from "../../api/hybridStore";
 
     export let data: FicheActionCategorieInterface
     let categorieStore: HybridStore<FicheActionCategorieStorable>

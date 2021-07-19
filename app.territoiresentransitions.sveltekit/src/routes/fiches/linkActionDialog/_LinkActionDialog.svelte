@@ -8,12 +8,12 @@
      * Passes linkedActionIds and toggleActionId props along to its children.
      */
     import {createEventDispatcher} from 'svelte'
-    import Dialog from '../../../components/shared/Dialog.svelte'
+    import Dialog from '$components/shared/Dialog.svelte'
     import LinkActionDialogIndex from './_LinkActionDialogIndex.svelte'
     import LinkActionDialogSubpage from './_LinkActionDialogSubpage.svelte'
 
-    import {actions} from "../../../generated/data/actions_referentielsels";
-    import {ActionReferentiel} from "../../../generated/models/action_referentieliel";
+    import {actions} from "$generated/data/actions_referentiels";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
 
     // List of linked actions of the current fiche
     export let linkedActionIds: string[]

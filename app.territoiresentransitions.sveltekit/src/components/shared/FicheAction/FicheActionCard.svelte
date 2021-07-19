@@ -1,7 +1,7 @@
 <script lang="ts">
-    import {FicheAction} from "../../../generated/models/fiche_actionion";
+    import type {FicheAction} from "$generated/models/fiche_action";
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import {getCurrentEpciId} from "$api/currentEpci";
 
     export let fiche: FicheAction
     $: enRetard = fiche.en_retard

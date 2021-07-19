@@ -6,14 +6,14 @@
      */
     import ActionStatus from "../ActionStatus.svelte";
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import {getCurrentEpciId} from "$api/currentEpci";
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
-    import PickButton from '../Button/PickButton.svelte'
+    import PickButton from '$components/shared/ButtonV2/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
     import ProgressStat from "./ProgressStat.svelte";
     import ActionReferentielCommentaire from "./ActionReferentielCommentaire.svelte";
     import ActionReferentielDescription from "./ActionReferentielDescription.svelte";
-    import type {ActionReferentiel} from "../../../generated/models/action_referentiel"
+    import type {ActionReferentiel} from "$generated/models/action_referentiel"
     import type { ActionReferentielScore } from "src/generated/models/action_referentiel_score";
     import { goto } from "$app/navigation";
 

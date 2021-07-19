@@ -1,9 +1,9 @@
 <script lang="ts">
     import IndicateurForm from './IndicateurPersonnaliseForm.svelte'
     import {createEventDispatcher, onMount} from "svelte";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import {getCurrentEpciId} from "$api/currentEpci";
     import {v4 as uuid} from 'uuid'
-    import {IndicateurPersonnaliseInterface} from "../../../generated/models/indicateur_personnaliseise";
+    import type {IndicateurPersonnaliseInterface} from "$generated/models/indicateur_personnaliseise";
     import Dialog from "../Dialog.svelte";
 
     let data: IndicateurPersonnaliseInterface

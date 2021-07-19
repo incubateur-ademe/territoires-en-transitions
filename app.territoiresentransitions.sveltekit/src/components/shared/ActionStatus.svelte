@@ -7,9 +7,9 @@
 
     import {onMount} from "svelte";
 
-    import {getCurrentEpciId} from "../../api/currentEpci";
-    import {ActionStatusStorable} from "../../storables/ActionStatusStorable";
-    import {HybridStore} from "../../api/hybridStore";
+    import {getCurrentEpciId} from "$api/currentEpci";
+    import {ActionStatusStorable} from "$storables/ActionStatusStorable";
+    import type {HybridStore} from "$api/hybridStore";
 
     export let actionId
 

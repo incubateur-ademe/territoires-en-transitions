@@ -1,7 +1,6 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../generated/models/action_referentieliel";
-    import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
-    import ProgressStat from "../../../../components/ProgressStat.svelte";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
+    import ActionReferentielCard from "$components/shared/ActionReferentiel/ActionReferentielCard.svelte";
 
     export let searching: boolean
 

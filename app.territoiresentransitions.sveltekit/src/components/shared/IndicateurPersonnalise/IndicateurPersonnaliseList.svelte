@@ -1,9 +1,7 @@
 <script lang="ts">
-    import {IndicateurPersonnaliseStorable} from "../../../storables/IndicateurPersonnaliseStorable";
+    import type {IndicateurPersonnaliseStorable} from "$storables/IndicateurPersonnaliseStorable";
     import {onMount} from "svelte";
     import IndicateurPersonnaliseElement from "./IndicateurPersonnaliseCard.svelte"
-    import IndicateurPersonaliseCreation from "./IndicateurPersonnaliseCreation.svelte"
-    import IndicateurPersonaliseCreatioDialog from "./IndicateurPersonnaliseCreationDialog.svelte"
 
     let indicateurs: IndicateurPersonnaliseStorable[] = []
     let showCreation: boolean = false
@@ -13,7 +11,7 @@
     }
 
     const refresh = async () => {
-        const hybridStores = await import ("../../../api/hybridStores");
+        const hybridStores = await import ("$api/hybridStores");
         showCreation = false
         indicateurs = await hybridStores.indicateurPersonnaliseStore.retrieveAll()
     }
