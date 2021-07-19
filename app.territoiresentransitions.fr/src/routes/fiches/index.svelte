@@ -2,12 +2,13 @@
     import CategorieInlineEdition from './_CategorieInlineEdition.svelte'
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "../../api/currentEpci";
-    import {FicheActionStorable} from "../../storables/FicheActionStorable";
-    import {HybridStore} from "../../api/hybridStore";
+    import type {FicheActionStorable} from "../../storables/FicheActionStorable";
+    import type {HybridStore} from "../../api/hybridStore";
     import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
     import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
     import {fiche_action_avancement_noms} from "../../../../generated/models/fiche_action_avancement_noms";
     import FicheActionCard from "../../components/shared/FicheAction/FicheActionCard.svelte";
+    import { categorizeAndSortFiches, CategorizedFiche } from './utils';
 
     const defaultCategorie = new FicheActionCategorieStorable({
         uid: '',
@@ -25,38 +26,8 @@
     let categories: FicheActionCategorieStorable[] = []
     let categorieStore: HybridStore<FicheActionCategorieStorable>
 
-    let fichesByCategorie = new Map<FicheActionCategorieStorable, FicheActionStorable[]>()
-    let filteredFichesByCategorie = new Map<FicheActionCategorieStorable, FicheActionStorable[]>()
-
-
-    /**
-     * Updates fichesByName by sorting all fiches by category name.
-     */
-    const categorizeAll = () => {
-        let byCategorie = new Map<FicheActionCategorieStorable, FicheActionStorable[]>()
-        const addAt = (fiche: FicheActionStorable, categorie: FicheActionCategorieStorable) => {
-            if (!byCategorie.has(categorie)) byCategorie.set(categorie, [])
-            byCategorie.get(categorie).push(fiche)
-        }
-
-        let uncategorized = [...fiches]
-
-        for (let categorie of categories) {
-            for (let fiche of fiches) {
-                if (categorie.fiche_actions_uids.includes(fiche.uid)) {
-                    addAt(fiche, categorie)
-                    uncategorized = uncategorized.filter((f) => f.uid != fiche.uid)
-                }
-            }
-        }
-
-        for (let fiche of uncategorized) {
-            addAt(fiche, defaultCategorie)
-
-        }
-
-        filteredFichesByCategorie = fichesByCategorie = byCategorie
-    }
+    let categorizedFiches:  CategorizedFiche[] = [] 
+    let filteredCategorizedFiches:  CategorizedFiche[] = []
 
     // Les avancements pour filtrer les fiches.
     const avancementsChoices = fiche_action_avancement_noms
@@ -77,35 +48,8 @@
      * Populate filter values from fiches.
      */
     const populateFilters = () => {
-        personnesReferentesChoices.clear()
-        structuresPiloteChoices.clear()
-
-        for (let fiche of fiches) {
-            if (fiche.personne_referente)
-                personnesReferentesChoices.add(fiche.personne_referente)
-            if (fiche.structure_pilote)
-                structuresPiloteChoices.add(fiche.structure_pilote)
-        }
-
-        personnesReferentesChoices = personnesReferentesChoices
-        structuresPiloteChoices = structuresPiloteChoices
-    }
-
-    /**
-     * Apply filters
-     */
-    const applyFilters = () => {
-        let filtered = new Map<FicheActionCategorieStorable, FicheActionStorable[]>()
-        fichesByCategorie.forEach(
-            (fiches: FicheActionStorable[], category: FicheActionCategorieStorable, _) => {
-                let matches = []
-                for (let fiche of fiches) {
-                    if (filterPredicate(fiche)) matches.push(fiche)
-                }
-                filtered.set(category, matches)
-            });
-
-        filteredFichesByCategorie = filtered
+        personnesReferentesChoices = new Set(fiches.map((fiche) => fiche.personne_referente))
+        structuresPiloteChoices = new Set(fiches.map((fiche) => fiche.structure_pilote))
     }
 
     /**
@@ -116,25 +60,34 @@
             && (!selectedAvancementKey || fiche.avancement === selectedAvancementKey)
             && (!selectedStructuresPilote || fiche.structure_pilote === selectedStructuresPilote)
     }
-
-
     /**
-     * Update fiches using store.
+     * Filter fiches.
      */
-    const updateFiches = async () => {
-        let retrieved = await ficheActionStore.retrieveAll()
-        fiches = retrieved.sort((a, b) => a.custom_id.localeCompare(b.custom_id))
+     const filterFiches = async () => {
         populateFilters()
-        categorizeAll()
+        filteredCategorizedFiches = categorizedFiches.map((categorizedFiche) => ({...categorizedFiche, fiches: categorizedFiche.fiches.filter(filterPredicate)})) 
+    }
+    /**
+     * Categorize fiches
+     */
+     const categorizeFiches = async () => {
+        categorizedFiches = categorizeAndSortFiches(fiches, categories, defaultCategorie)
     }
 
     /**
-     * Update categories using store.
+     * Get fiches from store.
      */
-    const updateCategories = async () => {
+    const getFiches = async () => {
+        let fiches = await ficheActionStore.retrieveAll()
+        categorizedFiches = categorizeAndSortFiches(fiches, categories, defaultCategorie)
+    }
+
+    /**
+     * Get categories from store.
+     */
+    const getCategories = async () => {
         let retrieved = await categorieStore.retrieveAll()
         categories = retrieved.sort((a, b) => a.nom.localeCompare(b.nom))
-        categorizeAll()
     }
 
 
@@ -144,8 +97,10 @@
         categorieStore = hybridStores.ficheActionCategorieStore;
         ficheActionStore = hybridStores.ficheActionStore
 
-        await updateCategories()
-        await updateFiches()
+        await getCategories()
+        await getFiches()
+        await filterFiches()
+        await categorizeFiches()
     });
 </script>
 
@@ -193,10 +148,8 @@
     <div class="select-list">
         <!-- statut -->
         <SelectInput bind:value={selectedAvancementKey}
-                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                     id="categorie_picker"
                      label="Statut d'avancement"
-                     onChange={applyFilters}>
+                     onChange={filterFiches}>
             <option value=''>
                 Toutes
             </option>
@@ -209,10 +162,8 @@
 
         <!-- personne -->
         <SelectInput bind:value={selectedPersonneReferente}
-                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                     id="categorie_picker"
                      label="Personne référente"
-                     onChange={applyFilters}>
+                     onChange={filterFiches}>
             <option value=''>
                 Toutes
             </option>
@@ -225,10 +176,8 @@
 
         <!-- structure -->
         <SelectInput bind:value={selectedStructuresPilote}
-                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                     id="categorie_picker"
                      label="Structure pilote"
-                     onChange={applyFilters}>
+                     onChange={filterFiches}>
             <option value=''>
                 Toutes
             </option>
@@ -242,15 +191,15 @@
 </header>
 
 <section>
-    {#each [...filteredFichesByCategorie] as [categorie, fiches]}
+    {#each [...filteredCategorizedFiches] as categorizedFiche}
         <div class="categorie">
-            {#if categorie.uid === defaultCategorie.uid}
-                <h3 class="text-2xl">{categorie.nom}</h3>
+            {#if categorizedFiche.categorie.uid === defaultCategorie.uid}
+                <h3 class="text-2xl">{categorizedFiche.categorie.nom}</h3>
             {:else}
-                <CategorieInlineEdition categorie={categorie}/>
+                <CategorieInlineEdition categorie={categorizedFiche.categorie}/>
             {/if}
             <ul>
-                {#each fiches as fiche}
+                {#each categorizedFiche.fiches as fiche}
                     <li>
                         <FicheActionCard fiche={fiche}/>
                     </li>

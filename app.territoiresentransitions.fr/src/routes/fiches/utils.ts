@@ -20,7 +20,7 @@ export const sortFiches = (fiches: FicheAction[]): FicheAction[] => fiches.sort(
 
 })
 
-type CategorizedFiche = {fiches: FicheAction[], categorie: FicheActionCategorie}
+export type CategorizedFiche = {fiches: FicheAction[], categorie: FicheActionCategorie}
 
 const findFicheCategorie = (fiche: FicheAction, categories: FicheActionCategorie[]): FicheActionCategorie | undefined => categories.find((categorie) => categorie.fiche_actions_uids.includes(fiche.uid))
 
