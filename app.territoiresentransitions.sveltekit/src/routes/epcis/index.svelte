@@ -2,10 +2,11 @@
     /**
      * Shows all Epcis.
      */
-    import type {EpciStorable} from "storables";
+    import type {EpciStorable} from "$storables/EpciStorable";
     import {onMount} from "svelte";
-    import {currentUtilisateurDroits} from "../../api/authentication";
-    import {UtilisateurDroits} from "../../generated/models/utilisateur_droits";
+    import {currentUtilisateurDroits} from "$api/authentication";
+    import type {UtilisateurDroits} from "$generated/models/utilisateur_droits";
+    import AddDialog from "./_AddDialog.svelte"
     import Card from "./_EpciCard.svelte"
 
     let allEpcis: EpciStorable[] = []
@@ -13,7 +14,7 @@
     let showAddDialog: boolean = false
 
     const fetch = async () => {
-        const stores = await import('../../api/hybridStores')
+        const stores = await import('$api/hybridStores')
         const utilisateurDroits: UtilisateurDroits[] = await currentUtilisateurDroits()
 
         const all = await stores.epciStore.retrieveAll()
@@ -98,10 +99,8 @@
 
 
 {#if showAddDialog}
-    {#await import('./_AddDialog.svelte') then c}
-        <svelte:component this={c.default}
+        <AddDialog
                           epcis={allEpcis}
                           on:AddDialogClose={handleDialogClose}
         />
-    {/await}
 {/if}

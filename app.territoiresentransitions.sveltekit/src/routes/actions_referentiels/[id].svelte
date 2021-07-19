@@ -1,14 +1,17 @@
 <script context="module" lang="ts">
-    import {actions} from "../../generated/data/actions_referentielsels";
+    /**
+	 * @type {import('@sveltejs/kit').Load}
+	 */
+    import {actions} from "$generated/data/actions_referentiels";
     import {searchById} from "./utils";
 
 
-    export async function preload({params}) {
-        const id = params.id;
+    export async function load({page}) {
+        
+        const id = page.params.id;
         const found = searchById(actions, id);
-
         if (found) {
-            return {actionId: found.id};
+            return {props: {actionId: found.id}};
         } else {
             this.error(404, `Aucune action trouvée pour ${id}`);
         }

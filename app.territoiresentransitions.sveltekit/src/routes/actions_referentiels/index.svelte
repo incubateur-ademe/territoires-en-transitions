@@ -5,7 +5,7 @@
     import ActionsByThematiques from "./_ActionsByThematiques.svelte"
     import ActionsClimatAirEnergie from "./_ActionsClimatAirEnergie.svelte"
     import ActionsEconomieCirculaire from "./_ActionsEconomieCirculaire.svelte"
-    import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
+    import SelectInput from "$components/shared/Forms/SelectInput.svelte";
 
     let view: 'thematique' | 'eci' | 'cae' = 'eci'
 

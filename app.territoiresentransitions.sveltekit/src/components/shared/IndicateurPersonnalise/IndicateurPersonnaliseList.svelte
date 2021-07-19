@@ -2,7 +2,8 @@
     import type {IndicateurPersonnaliseStorable} from "$storables/IndicateurPersonnaliseStorable";
     import {onMount} from "svelte";
     import IndicateurPersonnaliseElement from "./IndicateurPersonnaliseCard.svelte"
-
+    import IndicateurPersonnaliseCreationDialog from "./IndicateurPersonnaliseCreationDialog.svelte"
+    
     let indicateurs: IndicateurPersonnaliseStorable[] = []
     let showCreation: boolean = false
 
@@ -51,11 +52,9 @@
 
 
 {#if showCreation}
-    {#await import('./IndicateurPersonnaliseCreationDialog.svelte') then c}
-        <svelte:component this={c.default}
-                          on:AddDialogClose={handleDialogClose}
+        <IndicateurPersonnaliseCreationDialog
+         on:AddDialogClose={handleDialogClose}
         />
-    {/await}
 {/if}
 
 

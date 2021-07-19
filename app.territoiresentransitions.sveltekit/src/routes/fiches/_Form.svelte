@@ -1,6 +1,4 @@
 <script lang="ts">
-    import find from 'ramda/src/find'
-    import prop from 'ramda/src/prop'
     import {FicheActionStorable} from "$storables/FicheActionStorable"
     import MultiSelect from './_MultiSelect.svelte'
     import CategoriePicker from './_CategoriePicker.svelte'
@@ -10,9 +8,6 @@
     import type {HybridStore} from "$api/hybridStore"
     import {testUIVisibility} from "$api/currentEnvironment";
     import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
-    import IndicateurReferentielCard
-        from "$components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
-    import type {IndicateurPersonnalise} from "$generated/models/indicateur_personnalise";
     import IndicateurPersonnaliseCard
         from "$components/shared/IndicateurPersonnalise/IndicateurPersonnaliseCard.svelte";
     import IndicateurPersonnaliseCreation
@@ -27,8 +22,12 @@
         requiredValidator
     } from "$api/validators";
     import CheckboxInput from "$components/shared/Forms/CheckboxInput.svelte";
+    import type { IndicateurPersonnaliseStorable } from "$storables/IndicateurPersonnaliseStorable";
+    import LinkedActions from "./_LinkedActions.svelte"
+    import LinkActionDialog from "./linkActionDialog/_LinkActionDialog.svelte"
 
     export let data: FicheActionInterface
+    
 
     let ficheActionStore: HybridStore<FicheActionStorable>
 
@@ -76,7 +75,7 @@
     let indicateursReferentiel: IndicateurReferentiel[]
 
     // Indicateur personnalise list to pick from.
-    let indicateursPersonnalises: IndicateurPersonnalise[]
+    let indicateursPersonnalises: IndicateurPersonnaliseStorable[]
 
     // Show the indicateur personnalisé creation form.
     let showIndicateurCreation = false
@@ -94,7 +93,7 @@
     const isActionLinkedToFiche = (actionId) => data.referentiel_action_ids.includes(actionId)
 
     // Update the array of action ids linked to the current fiche
-    const toggleActionId = (actionId) => {
+    const toggleActionId = (actionId: string): void => {
         const actionIds = data.referentiel_action_ids
 
         if (isActionLinkedToFiche(actionId)) {
@@ -185,7 +184,6 @@
         <CategoriePicker ficheActionUid={data.uid}/>
 
         <LabeledTextArea bind:value={data.description}
-                         validator={validators.description}
                          id="description">
             Description
         </LabeledTextArea>
@@ -225,7 +223,7 @@
             Partenaires
         </LabeledTextInput>
 
-        <LabeledTextInput bind:value={data.budget}
+        <LabeledTextInput bind:value={data.budget} 
                           hint="Ce champ ne doit comporter que des chiffres sans espaces"
                           validator={validators.budget}
                           id="budget">
@@ -261,12 +259,11 @@
             <h3 class="fr-label">Actions du référentiel</h3>
 
             <div>
-                {#await import('./_LinkedActions.svelte') then c}
-                    <svelte:component this={c.default}
-                                      actionIds={data.referentiel_action_ids}
-                                      handlePickButton={toggleActionId}
+                    <LinkedActions
+                        actionIds={data.referentiel_action_ids}
+                        handlePickButton={toggleActionId}
                     />
-                {/await}
+                
 
                 <button class="fr-btn fr-btn--secondary fr-btn--sm"
                         on:click|preventDefault={() => showLinkActionDialog = true }
@@ -287,13 +284,14 @@
                 </MultiSelect>
 
                 {#each data.referentiel_indicateur_ids as indicateurId}
-                    {#if find(prop(indicateurId))(indicateursReferentiel) }
+                <!-- TODO : Fix this once you understand what it does -->
+                    <!-- {#if find(prop(indicateurId))(indicateursReferentiel) }
                         <div>
                             <IndicateurReferentielCard
                                     indicateur={find(prop(indicateurId))(indicateursReferentiel)}
                             />
                         </div>
-                    {/if}
+                    {/if} -->
                 {/each}
             </fieldset>
         {/if}
@@ -315,13 +313,13 @@
             {#if indicateursPersonnalises}
                 <MultiSelect id='fiche_create_indicateurs' bind:value={data.indicateur_personnalise_ids}>
                     {#each indicateursPersonnalises as indicateur}
-                        <option value="{indicateur.id}">{indicateur.nom}</option>
+                        <option value="{indicateur.uid}">{indicateur.nom}</option>
                     {/each}
                 </MultiSelect>
 
                 {#each data.indicateur_personnalise_ids as indicateurId}
                     <IndicateurPersonnaliseCard
-                            indicateur={indicateursPersonnalises.filter((i) => i.id === indicateurId)[0]}/>
+                            indicateur={indicateursPersonnalises.filter((i) => i.uid === indicateurId)[0]}/>
                 {/each}
             {/if}
         </fieldset>
@@ -336,12 +334,10 @@
     </form>
 
     {#if showLinkActionDialog}
-        {#await import('./linkActionDialog/_LinkActionDialog.svelte') then c}
-            <svelte:component this={c.default}
+            <LinkActionDialog
                               on:LinkActionDialogClose={() => showLinkActionDialog = false }
                               linkedActionIds={data.referentiel_action_ids}
                               toggleActionId={toggleActionId}
             />
-        {/await}
     {/if}
 </section>

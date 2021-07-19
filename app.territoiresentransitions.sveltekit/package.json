@@ -35,6 +35,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@tsconfig/svelte": "^2.0.1",
     "@types/ramda": "^0.27.44",
     "jwt-decode": "^3.1.2",
     "ramda": "^0.27.1",

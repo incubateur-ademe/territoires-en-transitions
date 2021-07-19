@@ -3,13 +3,13 @@
      * The input for an indicateur yearly value.
      * Retrieve and store values.
      */
-    import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "$api/currentEpci";
     import {IndicateurPersonnaliseValueStorable} from "$storables/IndicateurPersonnaliseValueStorable";
     import type {HybridStore} from "$api/hybridStore";
+    import type { IndicateurPersonnaliseStorable } from "$storables/IndicateurPersonnaliseStorable";
 
-    export let indicateur: IndicateurReferentiel
+    export let indicateur: IndicateurPersonnaliseStorable
     export let year: number
 
     let indicateurValueStore: HybridStore<IndicateurPersonnaliseValueStorable>

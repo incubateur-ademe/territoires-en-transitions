@@ -2,7 +2,7 @@
     import type {FicheActionCategorie} from "$generated/models/fiche_action_categorie";
     import CategorieForm from './_CategorieForm.svelte'
     import {createEventDispatcher} from "svelte";
-    import Button from "$components/shared/ButtonV2/Button.svelte";
+    import Button from "$components/shared/Button/Button.svelte";
 
     export let categorie: FicheActionCategorie
     const dispatch = createEventDispatcher()

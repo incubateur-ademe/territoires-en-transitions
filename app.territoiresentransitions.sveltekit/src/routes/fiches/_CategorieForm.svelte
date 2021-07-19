@@ -1,15 +1,15 @@
 <script lang="ts">
     import type {FicheActionCategorieInterface} from "$generated/models/fiche_action_categorie";
-    import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
+    import {FicheActionCategorieStorable} from "$storables/FicheActionCategorieStorable";
     import {createEventDispatcher, onMount} from "svelte";
-    import type {HybridStore} from "../../api/hybridStore";
+    import type {HybridStore} from "$api/hybridStore";
 
     export let data: FicheActionCategorieInterface
     let categorieStore: HybridStore<FicheActionCategorieStorable>
     const dispatch = createEventDispatcher()
 
     onMount(async () => {
-        const hybridStores = await import ("../../api/hybridStores");
+        const hybridStores = await import ("$api/hybridStores");
         categorieStore = hybridStores.ficheActionCategorieStore;
     })
 

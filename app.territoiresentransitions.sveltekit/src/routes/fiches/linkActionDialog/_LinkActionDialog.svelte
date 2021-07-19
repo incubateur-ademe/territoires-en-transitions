@@ -19,7 +19,7 @@
     export let linkedActionIds: string[]
 
     // Handle pick button callback.
-    export let toggleActionId: () => void
+    export let toggleActionId: (actionId: string) => void
 
     // The action selected by the user.
     let topLevelAction: ActionReferentiel | null
@@ -34,7 +34,7 @@
     }
 
     // Called by the back button.
-    const showIndex = (event: MouseEvent) => {
+    const showIndex = () => {
         topLevelAction = null
     }
 </script>

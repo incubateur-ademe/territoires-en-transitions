@@ -78,11 +78,6 @@
         -->
     </div>
 
-    <div>
-        <SelectInput>
-            <option value="">Tri par thématique</option>
-        </SelectInput>
-    </div>
 </div>
 
 <IndicateurPersonnaliseList/>

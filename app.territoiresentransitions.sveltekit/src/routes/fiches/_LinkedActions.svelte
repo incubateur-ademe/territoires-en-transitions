@@ -10,7 +10,7 @@
     import PickButton from '$components/shared/ButtonV2/PickButton.svelte'
 
     export let actionIds: string[]
-    export let handlePickButton: () => {}
+    export let handlePickButton: (actionId: string) => void
 
     let actionIdsHistory: string[] = []
 

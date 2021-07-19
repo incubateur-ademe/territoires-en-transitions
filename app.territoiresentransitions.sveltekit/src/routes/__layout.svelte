@@ -1,12 +1,12 @@
 <script lang="ts">
-	import Matomo, {asyncMatomo} from '../components/tracking/Matomo.svelte'
+	import Matomo, {asyncMatomo} from '$components/tracking/Matomo.svelte'
 	import {onMount} from 'svelte'
-	import Header from './../components/shared/Layout/Header.svelte'
-	import Footer from './../components/shared/Layout/Footer.svelte'
+	import Header from '$components/shared/Layout/Header.svelte'
+	import Footer from '$components/shared/Layout/Footer.svelte'
 	import Head from './_head.svelte'
-	import Nav from '../components/shared/Nav/Nav.svelte'
-	import NavDev from '../components/shared/Nav/NavDev.svelte'
-	import Tailwind from '../components/Tailwind.svelte'
+	import Nav from '$components/shared/Nav/Nav.svelte'
+	import NavDev from '$components/shared/Nav/NavDev.svelte'
+	import Tailwind from '$components/Tailwind.svelte'
 import { page } from '$app/stores';
 
 	$: if ($page) {

@@ -2,13 +2,13 @@
     /**
      * Display an Indicateur Personnalisé and allow edition.
      */
-    import type {IndicateurPersonnalise} from "$generated/models/indicateur_personnalise";
     import IndicateurForm from "./IndicateurPersonnaliseForm.svelte"
     import IndicateurPersonnaliseValueInput from "./IndicateurPersonnaliseValueInput.svelte";
     import RowCard from "../RowCard.svelte";
     import ExpandPanel from "$components/ExpandPanel.svelte";
+    import type { IndicateurPersonnaliseStorable } from "$storables/IndicateurPersonnaliseStorable";
 
-    export let indicateur: IndicateurPersonnalise
+    export let indicateur: IndicateurPersonnaliseStorable
 
     // When editing the form is displayed instead of the card.
     let editing = false

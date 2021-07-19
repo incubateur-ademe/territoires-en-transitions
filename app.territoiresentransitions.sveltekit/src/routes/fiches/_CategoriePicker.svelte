@@ -82,7 +82,7 @@
     }
 
     onMount(async () => {
-        const hybridStores = await import ("../../api/hybridStores");
+        const hybridStores = await import ("$api/hybridStores");
         categorieStore = hybridStores.ficheActionCategorieStore;
         categories = await categorieStore.retrieveAll()
         categories.push(defaultCategorie)
