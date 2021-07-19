@@ -21,11 +21,11 @@ class FicheAction(models.Model):
     commentaire = fields.TextField()
     date_debut = fields.CharField(max_length=36)
     date_fin = fields.CharField(max_length=36)
-    created_at = fields.DatetimeField(auto_now_add=True)
-    modified_at = fields.DatetimeField(auto_now=True)
     indicateur_personnalise_ids = fields.JSONField()
     latest = fields.BooleanField()
     deleted = fields.BooleanField()
+    created_at = fields.DatetimeField(auto_now_add=True)
+    modified_at = fields.DatetimeField(auto_now=True)
 
 
 FicheAction_Pydantic = pydantic_model_creator(

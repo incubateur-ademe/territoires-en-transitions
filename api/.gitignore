@@ -9,3 +9,7 @@ venv/
 # Local environment variables
 .env
 
+# pycache
+*/__pycache__/*
+*/*/__pycache__/*
+*/*/*/__pycache__/*

@@ -1,7 +1,5 @@
 from api.models.generated.action_referentiel import ActionReferentiel
 
-ActionReferentiel.update_forward_refs()
-
 actions = [
     ActionReferentiel(
         id="citergie",

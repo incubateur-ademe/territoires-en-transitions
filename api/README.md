@@ -23,10 +23,11 @@ Ce projet utilise pipenv comme package manager, [Scalingo prenant en charge pipe
 
 Il y a aussi un fichier d'installation poetry, une autre approche envisageable serait de faire un export de poetry vers un `requirement.txt` pris en charge par Scalingo. Ceci rajoutant une étape, le fichier poetry est considéré comme déprécié pour l'instant.
 
-Installer les dépendances :
+Installer les dépendances et l'api :
 ```shell
 pipenv install
 pipenv install --dev
+pip install -e . 
 ```
 
 ### Servir en local

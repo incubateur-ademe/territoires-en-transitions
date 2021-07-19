@@ -1,14 +1,17 @@
 from __future__ import annotations
+from api.models.generated.action_status import ActionStatusAvancement
 
 from datetime import date
-from typing import List
+from typing import List, Literal
 from pydantic import BaseModel
+from dataclasses import dataclass
 
 
-class ActionReferentielScore(BaseModel):
+@dataclass
+class ActionReferentielScore:
     action_id: str
     action_nomenclature_id: str
-    status: str
+    avancement: ActionStatusAvancement
     points: float
     percentage: float
     potentiel: float
