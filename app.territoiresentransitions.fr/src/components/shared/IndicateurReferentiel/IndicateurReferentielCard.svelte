@@ -6,7 +6,6 @@
     import IndicateurReferentielValueInput from "./IndicateurReferentielValueInput.svelte";
     import {onMount} from "svelte";
     import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
-    import ActionReferentielCard from "../ActionReferentiel/ActionReferentielCard.svelte";
     import IndicateurReferentielCommentaireArea from "./IndicateurReferentielCommentaireArea.svelte";
     import RowCard from "../RowCard.svelte";
     import ExpandPanel from "../../../../../components/ExpandPanel.svelte";

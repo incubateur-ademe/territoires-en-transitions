@@ -13,7 +13,7 @@
     import PickButton from '../Button/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
     import ProgressStat from "./ProgressStat.svelte";
-    import {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
+    import type {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
     import ActionReferentielCommentaire from "./ActionReferentielCommentaire.svelte";
     import ActionReferentielDescription from "./ActionReferentielDescription.svelte";
 

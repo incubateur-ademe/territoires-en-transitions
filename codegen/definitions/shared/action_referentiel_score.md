@@ -11,8 +11,13 @@ ActionReferentielScore:
         type: String
     action_nomenclature_id:
         type: String
-    status:
+    avancement:
         type: String
+        options: # pas implémenté
+            - faite
+            - programmee
+            - pas_faite
+            - non_concernee
     points:
         type: num
     percentage:

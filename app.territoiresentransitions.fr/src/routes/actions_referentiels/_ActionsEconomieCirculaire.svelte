@@ -1,7 +1,8 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import type {ActionReferentiel} from "../../../../generated/models/action_referentiel";
     import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
     import ProgressStat from "../../components/shared/ActionReferentiel/ProgressStat.svelte";
+    import {actions} from "../../../../generated/data/referentiels";
 
     export let searching: boolean
 
@@ -10,12 +11,14 @@
     $: displayed, refresh()
 
     let displayedByAxe: Map<ActionReferentiel, ActionReferentiel[]>
+    const rootAction = actions.find((action) => action.id.startsWith("economie_circulaire"))
 
     const refresh = () => {
         const map = new Map<ActionReferentiel, ActionReferentiel[]>()
         const orientations: ActionReferentiel[] = []
         const axes: ActionReferentiel[] = []
-
+        
+        
         for (let action of displayed) {
             for (let level1 of action.actions) {
                 axes.push(level1)
@@ -60,6 +63,9 @@
         font-size: 1rem;
     }
 </style>
+
+<h1>{rootAction.nom}</h1>
+<div style="padding-bottom: 4em"><ProgressStat action={rootAction} position="left" /></div>
 
 {#each [...displayedByAxe] as [parent, actions]}
     <section>

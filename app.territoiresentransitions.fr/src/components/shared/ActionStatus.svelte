@@ -10,9 +10,11 @@
     import {getCurrentEpciId} from "../../api/currentEpci";
     import {ActionStatusStorable} from "../../storables/ActionStatusStorable";
     import {HybridStore} from "../../api/hybridStore";
+import SelectInput from "./Forms/SelectInput.svelte";
 
     export let actionId
 
+    
     const avancements = [
         {
             key: 'non_concernee',
@@ -44,7 +46,7 @@
         'border-t border-r border-b rounded-r flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
     ]
 
-    let actionAvancementKey = '';
+    let actionAvancementKey =  '';
 
     let epci_id = ''
 
