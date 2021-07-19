@@ -37,6 +37,7 @@ class Message:
 
 @app.command()
 def dteci(
+    nom: str,
     data_dir: str = '../referentiels/data',
     output_dir: str = '../referentiels/data'
 ) -> None:
@@ -49,11 +50,10 @@ def dteci(
     server_territoires: Dict[dict] = load_json(os.path.join(data_dir, 'server_territoires.json'))
     collectivites = pd.read_excel(os.path.join(data_dir, 'collectivités.xlsx'), dtype=str, sheet_name=0, header=0)
 
-    nom_repris: List[str] = [row['nom'] for index, row in collectivites.iterrows()
-                             if not str(row['Repris']).strip().startswith('n')]
+    nom_repris: List[str] = [nom]
 
     territoires_repris: List[dict] = [territoire for territoire in server_territoires.values()
-                                      if territoire['nom'] in nom_repris]
+                                      if str(territoire['nom']).strip() in nom_repris]
 
     id_repris: List[str] = [t['id'] for t in territoires_repris]
     niveaux_repris: List[dict] = [n for n in server_niveaux.values() if n['territoireId'] in id_repris]

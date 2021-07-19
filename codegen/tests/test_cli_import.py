@@ -10,7 +10,7 @@ output_dir = './tests/outputs'
 @patch("codegen.cli_import.write")
 def test_dteci(mock_write: MagicMock):
     """Test dteci"""
-    dteci(output_dir=output_dir)
+    dteci(nom="Syndicat du Bois de l'Aumône", output_dir=output_dir)
     mock_write.assert_any_call(os.path.join(output_dir, 'dteci_statuts.sql'), ANY)
 
 
