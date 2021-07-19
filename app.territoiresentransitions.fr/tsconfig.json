@@ -1,9 +1,26 @@
 {
 	"extends": "@tsconfig/svelte/tsconfig.json",
 	"compilerOptions": {
-		"lib": ["DOM", "DOM.iterable", "ESNext", "WebWorker"],
-		"types": ["cypress", "mocha", "chai"]
+		"lib": [
+			"DOM",
+			"DOM.iterable",
+			"ESNext",
+			"WebWorker"
+		],
+		"types": [
+			"cypress",
+			"mocha",
+			"chai"
+		]
 	},
-	"include": ["src/**/*", "src/node_modules/**/*"],
-	"exclude": ["node_modules/*", "__sapper__/*", "static/*"]
+	"include": [
+		"src/**/*.ts",
+		"src/node_modules/**/*.ts",
+		"test",
+	],
+	"exclude": [
+		"node_modules/*",
+		"__sapper__/*",
+		"static/*"
+	]
 }
