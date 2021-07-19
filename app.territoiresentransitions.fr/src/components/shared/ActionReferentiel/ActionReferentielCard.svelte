@@ -42,6 +42,9 @@
     // Displays the comment part
     export let commentBlock: boolean = false
 
+    // Displays the description part
+    export let descriptionBlock: boolean = false
+
     // Displays children of the card
     export let recursive: boolean = false
 
@@ -233,7 +236,9 @@
         </div>
     {/if}
 
-    <ActionReferentielDescription action={action}/>
+    {#if descriptionBlock }
+        <ActionReferentielDescription action={action}/>
+    {/if}
 
     {#if commentBlock}
         <ActionReferentielCommentaire action={action}/>
