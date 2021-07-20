@@ -10,7 +10,7 @@
 
     const updateState = () => {
         const percentage: number = score ? score.percentage * 100 : 0
-        if (score && score.status.includes('non_concerne')) {
+        if (score && score.avancement.includes('non_concernee')) {
             state = "nc"
         }
         else if (percentage < 34) {

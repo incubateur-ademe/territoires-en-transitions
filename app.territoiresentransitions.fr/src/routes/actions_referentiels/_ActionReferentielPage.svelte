@@ -106,9 +106,18 @@
 
 <h2 class="fr-h2">Les actions</h2>
 <div class="listActions">
-    {#each displayed as action}
-        <ActionReferentielCard action={action} ficheButton statusBar expandButton borderedCard commentBlock recursive/>
-    {/each}
+  {#each displayed as action}
+      <ActionReferentielCard
+        action={action}
+        ficheButton
+        statusBar
+        expandButton
+        borderedCard
+        commentBlock
+        descriptionBlock
+        recursive
+      />
+  {/each}
 </div>
 
 <h2 class="fr-h2">Les indicateurs</h2>

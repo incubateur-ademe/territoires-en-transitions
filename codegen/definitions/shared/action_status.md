@@ -22,20 +22,13 @@ ActionStatus:
       type: String
   avancement:
       type: String
-      possibles: # pas implémenté
+      options: # pas implémenté
           - faite
           - programmee
           - pas_faite
-          - non_concerne
+          - non_concernee
+          - en_cours
+          - "" 
 ```
 
-## Avancement
-L'avancement est représenté par les valeurs suivantes
 
-```yaml
-avancement_noms:
-    non_concerne: 'Non concerné'
-    programmee: 'Programmée'
-    pas_faite: 'Pas faite'
-    faite: 'Faite'
-```
