@@ -44,7 +44,7 @@
 </style>
 
 <div class="indicator__intro">
-    <h2>Mes indicateurs</h2>
+    <h2 class="fr-h2">Mes indicateurs</h2>
     <button class="fr-btn fr-btn--secondary" on:click|preventDefault={handleNewIndicateur}>
         Ajouter un indicateur
     </button>

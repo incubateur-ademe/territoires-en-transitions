@@ -57,6 +57,6 @@
 </svelte:head>
 
 <div>
-    <h1>Ajouter une fiche action</h1>
+    <h1 class="fr-h1">Ajouter une fiche action</h1>
     <Form bind:data="{data}"/>
 </div>

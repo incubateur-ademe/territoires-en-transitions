@@ -37,6 +37,6 @@
 </style>
 
 <div>
-    <h2>Nouvelle catégorie</h2>
+    <h2 class="fr-h2">Nouvelle catégorie</h2>
     <CategorieForm bind:data={data} on:save/>
 </div>

@@ -12,4 +12,4 @@
 	export let title;
 </script>
 
-<h1>{title}</h1>
+<h1 class="fr-h1">{title}</h1>

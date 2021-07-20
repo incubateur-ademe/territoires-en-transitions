@@ -63,7 +63,7 @@
 
 {#each [...displayedByAxe] as [parent, actions]}
     <section>
-        <h2>{parent.id_nomenclature} {parent.nom}</h2>
+        <h2 class="fr-h2">{parent.id_nomenclature} {parent.nom}</h2>
         <ProgressStat action={parent} position="left"/>
         <div style="height: 4em"></div>
         {#each actions as action}

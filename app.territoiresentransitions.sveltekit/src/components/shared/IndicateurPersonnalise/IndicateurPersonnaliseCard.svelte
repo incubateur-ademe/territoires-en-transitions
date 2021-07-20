@@ -97,7 +97,7 @@
 {:else }
     <RowCard>
         <div class="RowCard__title">
-            <h3>
+            <h3 class="fr-h3">
                 { indicateur.nom }
                 {#if indicateur.unite }
                     ({ indicateur.unite })

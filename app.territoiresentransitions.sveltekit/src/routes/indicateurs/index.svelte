@@ -69,7 +69,7 @@
 
 <div class="pageIntro">
     <div>
-        <h1>
+        <h1 class="fr-h1">
             Indicateurs
         </h1>
 
@@ -85,7 +85,7 @@
 {#each [...byThematique] as [thematique, indicateurs]}
     <div class="indicator">
         <div class="indicator__title">
-            <h2>{thematique.name}</h2>
+            <h2 class="fr-h2">{thematique.name}</h2>
             <!-- hidden
             <a href="" class="fr-btn fr-btn--secondary">Créer un indicateur</a>
             --->

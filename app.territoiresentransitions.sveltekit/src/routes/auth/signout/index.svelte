@@ -20,4 +20,4 @@
 
     })
 </script>
-<h1>Redirection en cours</h1>
+<h1 class="fr-h1">Redirection en cours</h1>

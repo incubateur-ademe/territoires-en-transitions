@@ -64,7 +64,7 @@
 {#each thematiques as thematique }
     <details>
         <summary>
-            <h2>{thematique.name}</h2>
+            <h2 class="fr-h2">{thematique.name}</h2>
 
             <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
         </summary>

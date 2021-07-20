@@ -103,7 +103,7 @@
 
 <RowCard id="indicateur-{indicateur.id}" bordered>
     <div class="RowCard__title">
-        <h3>
+        <h3 class="fr-h3">
             { prettifyId(indicateur.id) } { indicateur.nom }
         </h3>
         <!-- indicateurs are not modifiable
@@ -151,7 +151,7 @@
             {@html indicateur.description }
 
             {#if relatedActions}
-                <h3>Actions liées</h3>
+                <h3 class="fr-h3">Actions liées</h3>
 
                 <ul>
                     {#each relatedActions as action}

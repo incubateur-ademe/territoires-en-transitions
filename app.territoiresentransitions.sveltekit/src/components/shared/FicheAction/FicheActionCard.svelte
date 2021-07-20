@@ -41,7 +41,7 @@
 
 <article>
     <a href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
-        <h3>
+        <h3 class="fr-h3">
             ({fiche.custom_id}) {fiche.titre}
         </h3>
     </a>

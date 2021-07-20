@@ -69,9 +69,9 @@
 </style>
 
 <section>
-    <h1>Bienvenue !</h1>
+    <h1 class="fr-h1">Bienvenue !</h1>
 
-    <h2>Vos collectivités</h2>
+    <h2 class="fr-h2">Vos collectivités</h2>
 
     <div class="grid">
         {#each userEpcis as epci}
@@ -79,7 +79,7 @@
         {/each}
 
         <div class="card">
-            <h3>…</h3>
+            <h3 class="fr-h3">…</h3>
             <button class="fr-btn fr-btn--sm" on:click|preventDefault={() => showAddDialog = !showAddDialog}>Ajouter ma
                 collectivité
             </button>
@@ -88,7 +88,7 @@
 </section>
 
 <section>
-    <h2>Consulter les autres collectivités</h2>
+    <h2 class="fr-h2">Consulter les autres collectivités</h2>
 
     <div class="grid">
         {#each allEpcis as epci}

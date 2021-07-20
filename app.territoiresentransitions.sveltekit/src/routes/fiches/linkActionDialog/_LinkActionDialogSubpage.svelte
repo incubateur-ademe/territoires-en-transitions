@@ -77,7 +77,7 @@
                             unpickLabel="Supprimer"
                 />
 
-                <h3>{topLevelAction.nom}</h3>
+                <h3 class="fr-h3">{topLevelAction.nom}</h3>
 
                 {@html topLevelAction.description}
             </RowCard>

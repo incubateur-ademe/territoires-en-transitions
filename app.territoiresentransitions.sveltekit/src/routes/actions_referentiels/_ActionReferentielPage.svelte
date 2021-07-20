@@ -81,7 +81,7 @@
 
     <div class="pageIntro__titleWithActions">
         <div>
-            <h1>{action.id_nomenclature} {action.nom}</h1>
+            <h1 class="fr-h1">{action.id_nomenclature} {action.nom}</h1>
         </div>
 
         <div>
@@ -104,14 +104,14 @@
     {/if}
 </div>
 
-<h2>Les actions</h2>
+<h2 class="fr-h2">Les actions</h2>
 <div class="listActions">
     {#each displayed as action}
         <ActionReferentielCard action={action} ficheButton statusBar expandButton borderedCard commentBlock recursive/>
     {/each}
 </div>
 
-<h2>Les indicateurs</h2>
+<h2 class="fr-h2">Les indicateurs</h2>
 {#if hasIndicateurs }
     {#each actionIndicateurs as indicateur (indicateur.id)}
         <IndicateurReferentielCard indicateur={indicateur}/>

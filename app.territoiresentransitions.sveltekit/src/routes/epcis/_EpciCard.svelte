@@ -34,7 +34,7 @@
 </style>
 
 <div>
-    <h3>{epci.nom}</h3>
+    <h3 class="fr-h3">{epci.nom}</h3>
 
     <button class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
             on:click={() => goto('fiches', epci.uid)}>Plan d'actions

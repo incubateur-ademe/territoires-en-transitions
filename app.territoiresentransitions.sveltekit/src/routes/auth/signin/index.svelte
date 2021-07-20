@@ -25,4 +25,4 @@
 
     })
 </script>
-<h1>Redirection vers moncompte.ademe.fr</h1>
+<h1 class="fr-h1">Redirection vers moncompte.ademe.fr</h1>

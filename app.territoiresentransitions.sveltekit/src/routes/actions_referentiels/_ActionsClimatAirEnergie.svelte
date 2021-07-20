@@ -122,7 +122,7 @@
 
 {#each [...displayedByDomaine] as [domaine, sous_domaines]}
     <section>
-        <h2>{domaine.id_nomenclature}. {domaine.nom}
+        <h2 class="fr-h2">{domaine.id_nomenclature}. {domaine.nom}
             <!-- does not work yet for Climat Air Energie
             <ProgressStat position={"bottom"}/>
             --->
@@ -130,7 +130,7 @@
         {#each [...sous_domaines] as [sous_domaine, actions]}
             <details>
                 <summary>
-                    <h3>
+                    <h3 class="fr-h3">
                         {sous_domaine.id_nomenclature}. {sous_domaine.nom}
 
                         <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>

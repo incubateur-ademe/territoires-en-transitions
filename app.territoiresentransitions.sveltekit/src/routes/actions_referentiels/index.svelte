@@ -35,7 +35,7 @@
 
 <div class="pageIntro">
     <div>
-        <h1>
+        <h1 class="fr-h1">
             Référentiels
         </h1>
         <!-- hidden until issues #160 #149 are fixed
