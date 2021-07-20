@@ -1,0 +1,34 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "0.63.0"
+tortoise-orm = "0.16.21"
+pydantic = "1.8.2"
+asyncpg = "0.22.0"
+loguru = "0.5.3"
+requests = "2.25.1"
+uvicorn = "0.13.4"
+aerich = "*"
+atomicwrites = "*"
+python-jose = "*"
+pyjwt = "*"
+
+[dev-packages]
+flake8 = "*"
+invoke = "*"
+isort = "*"
+pylint = "*"
+pytest = "*"
+asynctest = "*"
+yapf = "*"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+test="pytest"
+serve="python server.py"
+dev="python dev_server.py"
