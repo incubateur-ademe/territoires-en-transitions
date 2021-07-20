@@ -2,6 +2,7 @@
     import type {FicheAction} from "$generated/models/fiche_action";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "$api/currentEpci";
+import { fiche_action_avancement_noms } from "$generated/models/fiche_action_avancement_noms";
 
     export let fiche: FicheAction
     $: enRetard = fiche.en_retard
@@ -15,7 +16,7 @@
 
 <style>
     article {
-        padding: .8rem 1rem 1.5rem;
+        padding: 1.5rem 1rem;
         background-color: var(--beige);
         border-left: 4px solid transparent;
         position: relative;
@@ -40,15 +41,21 @@
 </style>
 
 <article>
-    <a href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
+    <a class="titre" href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
         <h3 class="fr-h3">
             ({fiche.custom_id}) {fiche.titre}
         </h3>
     </a>
 
-    {#if enRetard}
-        <div class="en-retard">
-            En retard
+    <div class="statuts">
+        <div class="avancement">
+            {fiche_action_avancement_noms[fiche.avancement]}
         </div>
-    {/if}
+
+        {#if enRetard}
+            <div class="en-retard">
+                En retard
+            </div>
+        {/if}
+    </div>
 </article>

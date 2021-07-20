@@ -171,6 +171,10 @@
     li + li {
         margin-top: 1rem;
     }
+    .categorie {
+        padding-top: 4rem;
+    }
+
 </style>
 <svelte:head>
     <title>Plan d'actions</title>
@@ -180,16 +184,16 @@
     <div class="page-intro">
         <h1 class="fr-h1">Plan d'actions de ma collectivité</h1>
 
-        <a href="fiches/creation/?epci_id={epciId}"
-           class="fr-btn">
-            Ajouter à mes actions
+        <a class="fr-btn"
+            href="fiches/creation/?epci_id={epciId}">
+            Ajouter une fiche action
         </a>
     </div>
 
     <div class="select-list">
-        <!-- status -->
+        <!-- statut -->
         <SelectInput bind:value={selectedAvancementKey}
-                     label="Status d'avancement"
+                     label="Statut d'avancement"
                      onChange={applyFilters}>
             <option value=''>
                 Toutes
@@ -231,18 +235,22 @@
     </div>
 </header>
 
-{#each [...filteredFichesByCategorie] as [categorie, fiches]}
-    {#if categorie.uid === defaultCategorie.uid}
-        <h3 class="fr-h3  mt-4">{categorie.nom}</h3>
-    {:else}
-        <CategorieInlineEdition categorie={categorie}/>
-    {/if}
-    <ul>
-        {#each fiches as fiche}
-            <li>
-                <FicheActionCard fiche={fiche}/>
-            </li>
-        {/each}
-    </ul>
-{/each}
+<section>
+    {#each [...filteredFichesByCategorie] as [categorie, fiches]}
+        <div class="categorie">
+            {#if categorie.uid === defaultCategorie.uid}
+                <h3 class="text-2xl">{categorie.nom}</h3>
+            {:else}
+                <CategorieInlineEdition categorie={categorie}/>
+            {/if}
+            <ul>
+                {#each fiches as fiche}
+                    <li>
+                        <FicheActionCard fiche={fiche}/>
+                    </li>
+                {/each}
+            </ul>
+        </div>
+    {/each}
+</section>
 

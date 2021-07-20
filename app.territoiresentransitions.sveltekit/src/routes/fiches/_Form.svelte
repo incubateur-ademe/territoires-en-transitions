@@ -191,7 +191,8 @@
         <Status bind:avancementKey={data.avancement}
                 id="{data.uid}"/>
 
-        <CheckboxInput bind:value={data.en_retard}>
+        <CheckboxInput bind:value={data.en_retard}
+                       validator={validators.en_retard}>
             Action en retard
         </CheckboxInput>
 
@@ -325,11 +326,10 @@
         </fieldset>
 
         <div class="last-button">
-            <a class="fr-btn"
-               href="#"
-               on:click|preventDefault|once={handleSave}>
+            <button class="fr-btn"
+                    on:click={handleSave}>
                 Valider
-            </a>
+            </button>
         </div>
     </form>
 
