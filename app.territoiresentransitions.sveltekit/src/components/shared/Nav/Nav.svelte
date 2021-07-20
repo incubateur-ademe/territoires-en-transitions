@@ -3,10 +3,10 @@
      * Top navigation bar
      */
     import {onMount} from 'svelte'
-    import {testUIVisibility} from '../../../api/currentEnvironment'
-    import {getCurrentEpciId} from '../../../api/currentEpci'
-    import {connected, currentUtilisateurDroits} from "../../../api/authentication";
-    import type {EpciStorable} from "../../../storables/EpciStorable";
+    import {testUIVisibility} from '$api/currentEnvironment'
+    import {getCurrentEpciId} from '$api/currentEpci'
+    import {connected, currentUtilisateurDroits} from "$api/authentication";
+    import type {EpciStorable} from "$storables/EpciStorable";
 
     let showTestNavigation = false
     let epciId = ''

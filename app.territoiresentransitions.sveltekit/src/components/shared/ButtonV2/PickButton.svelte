@@ -7,10 +7,10 @@
     export let picked: boolean = false
 
     // Handle pick callback
-    export let handlePick: () => void = () => {}
+    export let handlePick: (event: any) => void = () => {}
 
     // Handle unpick callbakc
-    export let handleUnpick: () => void = () => {}
+    export let handleUnpick: (event: any) => void = () => {}
 
     // Define label for unpicked state
     export let pickLabel: string = 'Ajouter'
@@ -26,11 +26,11 @@
 </style>
 
 {#if picked}
-    <button class="fr-btn fr-btn--sm" on:click|preventDefault={() => handleUnpick()}>
+    <button class="fr-btn fr-btn--sm" on:click|preventDefault={handleUnpick}>
         {unpickLabel}
     </button>
 {:else }
-    <button class="fr-btn fr-btn--sm fr-btn--secondary" on:click|preventDefault={() => handlePick()}>
+    <button class="fr-btn fr-btn--sm fr-btn--secondary" on:click|preventDefault={handlePick}>
         {pickLabel}
     </button>
 {/if}

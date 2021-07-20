@@ -1,4 +1,4 @@
-import {IndicateurReferentielCommentaire} from "../generated/models/indicateur_referentiel_commentaire";
+import {IndicateurReferentielCommentaire} from "$generated/models/indicateur_referentiel_commentaire";
 
 export class IndicateurReferentielCommentaireStorable extends IndicateurReferentielCommentaire {
     static buildId(epci_id: string, indicateur_id: string) : string {

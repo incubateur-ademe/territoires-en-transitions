@@ -14,7 +14,7 @@
     import ActionReferentielCommentaire from "./ActionReferentielCommentaire.svelte";
     import ActionReferentielDescription from "./ActionReferentielDescription.svelte";
     import type {ActionReferentiel} from "$generated/models/action_referentiel"
-    import type { ActionReferentielScore } from "src/generated/models/action_referentiel_score";
+    import type { ActionReferentielScore } from "$generated/models/action_referentiel_score";
     import { goto } from "$app/navigation";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void

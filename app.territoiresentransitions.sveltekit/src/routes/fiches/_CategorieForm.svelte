@@ -14,9 +14,12 @@
     })
 
     const handleSave = async () => {
+        console.log("data: ", data)
         if (!data.nom) return;
         const categorie = new FicheActionCategorieStorable(data)
+        console.log("categorie: ", categorie)
         const saved = await categorieStore.store(categorie)
+        console.log("saved: ", saved)
         dispatch('save', {'categorie': saved})
     }
 </script>

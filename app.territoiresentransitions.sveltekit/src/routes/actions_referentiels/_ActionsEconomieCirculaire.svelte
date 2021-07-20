@@ -16,10 +16,10 @@
         const orientations: ActionReferentiel[] = []
         const axes: ActionReferentiel[] = []
 
-        for (let action of displayed) {
-            for (let level1 of action.actions) {
+        for (const action of displayed) {
+            for (const level1 of action.actions) {
                 axes.push(level1)
-                for (let level2 of level1.actions) {
+                for (const level2 of level1.actions) {
                     orientations.push(level2)
                 }
             }

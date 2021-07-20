@@ -2,7 +2,7 @@
     import type {FicheActionCategorieInterface} from "$generated/models/fiche_action_categorie";
     import CategorieForm from './_CategorieForm.svelte'
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
+    import {getCurrentEpciId} from "$api/currentEpci";
     import {v4 as uuid} from 'uuid'
 
     // Set from the `fiche action` form.
@@ -18,6 +18,8 @@
 
     onMount(async () => {
         data.epci_id = getCurrentEpciId()
+        console.log("epci_id: ", data.epci_id)
+
     });
 </script>
 

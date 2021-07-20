@@ -18,7 +18,7 @@
         showTestNavigation = testUIVisibility()
 
         if (showTestNavigation) {
-            const auth = await import("../../../api/authentication")
+            const auth = await import("$api/authentication")
             connected = auth.connected()
             user = auth.currentUser()
         }
