@@ -1,0 +1,44 @@
+### Write epci
+POST {{host}}/v2/epci
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "uid": "test",
+  "insee": "",
+  "siren": "",
+  "nom": "yolo"
+}
+
+### Add an action status
+POST {{host}}/v2/action_status/test
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+
+{
+  "action_id": "economie_circulaire__1.1.1.1",
+  "epci_id": "test",
+  "avancement": "faite"
+}
+
+### Add an action status
+POST {{host}}/v2/action_status/test
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+
+{
+  "action_id": "economie_circulaire__1.1.1.2",
+  "epci_id": "test",
+  "avancement": "faite"
+}
+
+### Get all custom actions
+GET {{host}}/v2/action_status/test/all
+
+
+### Get scores
+GET {{host}}/v2/notation/eci/test/all
+
+
