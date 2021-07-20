@@ -52,23 +52,23 @@
             besoins. Rejoignez-nous dans sa co-construction en créant votre compte en moins d'une minute.</p>
 
         <div>
-            <a class="fr-btn" href="auth/signin/">Se connecter</a>
-            <a class="fr-btn fr-btn--secondary" href="auth/register/">Créer un compte</a>
+            <a class="fr-btn" href="/auth/signin/">Se connecter</a>
+            <a class="fr-btn fr-btn--secondary" href="/auth/register/">Créer un compte</a>
         </div>
     </section>
 {/if}
 
 <div class="hidden">
     <!-- Forces sapper to generate html pages -->
-    <a href="fiches/">Plan d'actions</a>
-    <a href="epcis/">Collectivités</a>
-    <a href="fiches/creation/">Nouvelle fiche action</a>
-    <a href="fiches/edition/">Fiche action</a>
-    <a href="actions_referentiels/">Référentiels</a>
-    <a href="indicateurs/">Indicateurs</a>
-    <a href="auth/signin/">Se connecter</a>
-    <a href="auth/signout/">Se déconnecter</a>
-    <a href="auth/redirect/">Connexion</a>
-    <a href="auth/token_signin/">Connexion</a>
-    <a href="auth/register/">Créer un compte</a>
+    <a href="/fiches/">Plan d'actions</a>
+    <a href="/epcis/">Collectivités</a>
+    <a href="/fiches/creation/">Nouvelle fiche action</a>
+    <a href="/fiches/edition/">Fiche action</a>
+    <a href="/actions_referentiels/">Référentiels</a>
+    <a href="/indicateurs/">Indicateurs</a>
+    <a href="/auth/signin/">Se connecter</a>
+    <a href="/auth/signout/">Se déconnecter</a>
+    <a href="/auth/redirect/">Connexion</a>
+    <a href="/auth/token_signin/">Connexion</a>
+    <a href="/auth/register/">Créer un compte</a>
 </div>

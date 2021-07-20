@@ -53,22 +53,22 @@
                 {/if}
                 {#if epciId}
                     <li>
-                        <a class="fr-link" href="fiches/?epci_id={epciId}">Mon plan d'actions</a>
+                        <a class="fr-link" href="/fiches/?epci_id={epciId}">Mon plan d'actions</a>
                     </li>
                     <li>
-                        <a class="fr-link" href="actions_referentiels/?epci_id={epciId}">Référentiels</a>
+                        <a class="fr-link" href="/actions_referentiels/?epci_id={epciId}">Référentiels</a>
                     </li>
                     <li>
-                        <a class="fr-link" href="indicateurs/?epci_id={epciId}">Indicateurs</a>
+                        <a class="fr-link" href="/indicateurs/?epci_id={epciId}">Indicateurs</a>
                     </li>
                 {/if}
                 <li>
-                    <a class="fr-link fr-fi-account-line" href="auth/signout/">Déconnexion</a>
+                    <a class="fr-link fr-fi-account-line" href="/auth/signout/">Déconnexion</a>
                 </li>
             {:else}
                 <!-- {#if !segment || segment === 'connexion' } -->
                     <li>
-                        <a class="fr-link fr-fi-account-line" href="auth/signin/?epci_id={epciId}">Se connecter</a>
+                        <a class="fr-link fr-fi-account-line" href="/auth/signin/?epci_id={epciId}">Se connecter</a>
                     </li>
                 <!-- {/if} -->
             {/if}

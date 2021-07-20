@@ -41,7 +41,7 @@ import { fiche_action_avancement_noms } from "$generated/models/fiche_action_ava
 </style>
 
 <article>
-    <a class="titre" href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
+    <a class="titre" href="/fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
         <h3 class="fr-h3">
             ({fiche.custom_id}) {fiche.titre}
         </h3>

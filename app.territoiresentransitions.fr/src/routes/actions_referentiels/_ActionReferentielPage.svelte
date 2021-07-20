@@ -74,7 +74,7 @@
 
 <div class="pageIntro">
     <div>
-        <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="actions_referentiels/?epci_id={epciId}">Retour</a>
+        <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="/actions_referentiels/?epci_id={epciId}">Retour</a>
 
         <ReferentielSearchBar actions={action.actions} bind:matches={displayed}/>
     </div>
@@ -86,7 +86,7 @@
 
         <div>
             <a class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-file-fill fr-btn--icon-left"
-               href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
+               href="/fiches/creation/?epci_id={epciId}&action_id={action.id}">
                 Ajouter à mes actions
             </a>
         </div>
