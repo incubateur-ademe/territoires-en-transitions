@@ -27,8 +27,9 @@
     }
 
     const handleDialogClose = async () => {
-        showAddDialog = false
         await fetch()
+        // Order matters, fetch updates [allEpcis] which is still bound to [AddDialog]
+        showAddDialog = false
     }
 
     onMount(fetch)
@@ -99,8 +100,7 @@
 
 
 {#if showAddDialog}
-        <AddDialog
-                          epcis={allEpcis}
-                          on:AddDialogClose={handleDialogClose}
-        />
+    <AddDialog epcis={allEpcis}
+               on:AddDialogClose={handleDialogClose}
+    />
 {/if}
