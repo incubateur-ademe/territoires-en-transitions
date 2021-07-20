@@ -4,7 +4,7 @@
     import type {FicheActionInterface} from "$generated/models/fiche_action";
     import Form from "../_Form.svelte"
     import {FicheActionStorable} from "$storables/FicheActionStorable";
-    import Button from "$components/shared/ButtonV2/Button.svelte";
+    import Button from "$components/shared/Button/Button.svelte";
     import type {HybridStore} from "$api/hybridStore";
 
     let data: FicheActionInterface
