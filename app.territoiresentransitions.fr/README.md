@@ -1,93 +1,68 @@
-# Application client pour Labels Transition Écologique
+# SvelteKit (vite) using typescript with Tailwind
 
-- [Pré-requis](#pré-requis)
-- [Pour commencer à développer](#pour-commencer-à-développer)
-    - [Installer les dépendances de
-      développement](#installer-les-dépendances-de-développement)
-    - [Lancer l'application en local](#lancer-l-application-en-local)
-    - [Lancer la version de production en local](#lancer-la-version-de-production-en-local)
-- [Lancer les tests end-to-end](#lancer-les-tests-end-to-end)
+## Changelog
 
-Ce dossier regroupe une partie de l'application cliente pour le projet
-Territoires en Transitions. Cette application est construite avec
-[Sapper](https://sapper.svelte.dev/).
+### Now version 0.0.4
+Looks like this will be the last beta version, hope the stable version will be released soon.
 
-## Pré-requis
+- ```
+  @sveltejs/kit 1.0.0.next-110 
+  @sveltejs/adapter-static 1.0.0.next-12
+  ```
+- `@tailwindcss/jit` already merge to `tailwindcss 2.1`, read https://blog.tailwindcss.com/tailwindcss-2-1 for more detail
+  
+> Still using `postcss-preset-env to postcss-nested`, feel free to replace it back
 
-- Node v15.6.0
-- [Les fichiers générés par codegen](https://github.com/betagouv/territoires-en-transitions/tree/main/codegen#le-g%C3%A9n%C3%A9rateur-de-code) : 
-    Pour générer les fichiers nécessaires, lancer à la racine du repo : 
-    ```
-    cd codegen
-    poetry run generate all
-    ```
+### version 0.0.3
 
-## Pour commencer à développer
+- **SvelteKit beta**
+  ```
+  @sveltejs/kit 1.0.0.next-71 
+  @sveltejs/adapter-static 1.0.0.next-4
+  ```
+- using `@tailwindcss/jit`
+- replace `postcss-preset-env to postcss-nested`, feel free to replace it back
+- add transition
 
-Ces instructions doivent être lancées dans le dossier `app.territoiresentransitions.fr`.
+### version 0.0.2
 
-### Installer les dépendances de développement
-
-```sh
-npm i
+```
+@sveltejs/kit 1.0.0.next-49
+@sveltejs/adapter-static 1.0.0.next-3
 ```
 
-### Lancer l'application en local
+## Demo
 
-```sh
-npm run dev:sandbox
+![Sveltekit with Tailwind](static/screenshot.png)
+
+Go to [**Live Demo**](https://sveltekit-tailwind2.netlify.app/)
+
+## Running the project
+
+Clone this repo and cd to the directory, then run npm or yarn
+
+```bash
+pnpx degit dansvel/sveltekit-typescript-postcss-tailwind2 myproject
+cd myproject
+pnpm install ## or npm or yarn
+pnpm run dev
 ```
 
-L'application va alors se lancer sur [localhost:3000](http://localhost:3000).
+Open up your favorite browser, go to localhost:3000 and try clicking around.
 
-**Important** :
+Or you can play with the code, just check `src/routes/index.svelte` and try to edit the something.
 
-L'application client communique avec une API pour récupérer certaines données et les mettre à jour. Cette API est
-disponible sur https://github.com/betagouv/api-label-transition-ecologique.
+## build and generate static web
 
-On peut développer l'application cliente avec une API lancée en local sur
-[localhost:8000](http://localhost:8000). Pour cela, démarrer l'API, puis pour
-lancer le client :
-```
-npm run dev
+```bash
+pnpm run build
 ```
 
-### Lancer la version de production en local
+with the command above, now you can generate static web, you can deploy the project in netlify, begin, vercel or else
 
-```sh
-npm run build && npm start
-```
-Cette commande désactive le hot-reloading et charge les plugins nécessaires à la production.
+## Documentation
+ - dev.to post [here](https://dev.to/dansvel/sveltekit-svelte-next-with-tailwind-2-4dnn) (outdate).
+ - please read the [official documentation](https://kit.svelte.dev/)
 
-## S'authentifier sur l'application en local
-
-En production, pour s'authentifier, on passe par le flot Keycloack de l'ADEME. En local, on outrepasse cette 
-authentification en passant par la route `/auth/token_signin`. Sur cette page, on permet deux possibilités : 
-- l'authentification via un `accessToken` collecté via sandbox ou la production,
-- l'authentification via un faux token.
-
-### Connexion par token
-
-Cette action permet d'enregistrer un `accessToken` collecté via sandbox ou la production dans `LocalStorage`.
-Pour cela, aller sur `/auth/token_signin`, puis :
-- Se connecter via la route `/auth/signin`. Cela va rediriger sur une url de sandbox ou de production.
-- Dans les dev tools, récupérer les tokens sur la réponse de l'endpoint `v2/auth/token` ou depuis
-  `LocalStorage`.
-- Les coller dans les champs correspondants et cliquer sur `Se connecter`.
-
-### Connextion avec un faux token
-
-Cette action permet d'enregistrer un faux token dans `LocalStorage`. Ce faux token permet d'utiliser l'API comme si on 
-avec un vrai token d'accès. Pour que l'API puisse accepter ce faux token, il faut lancer l'API avec la variable 
-d'environnement `AUTH_DISABLED_DUMMY_USER`. 
-
-Sur sandbox, cette fonctionnalité est activée par défaut.
-
-## Lancer les tests end-to-end
-
-On utilise [Cypress](https://www.cypress.io/) pour lancer nos tests end-to-end.
-Pour lancer le Test Runner de Cypress :
-```sh
-npm i
-npm run cy:open
-```
+## Credits
+- [svelte-local-storage-store](https://github.com/joshnuss/svelte-local-storage-store) by Joshua Nussbaum

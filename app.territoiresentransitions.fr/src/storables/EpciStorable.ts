@@ -1,4 +1,4 @@
-import {Epci} from "../../../generated/models/epci";
+import {Epci} from "$generated/models/epci";
 
 export class EpciStorable extends Epci {
     static buildId(uid: string): string {

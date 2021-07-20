@@ -2,10 +2,11 @@
     /**
      * Shows all Epcis.
      */
-    import {EpciStorable} from "../../storables/EpciStorable";
+    import type {EpciStorable} from "$storables/EpciStorable";
     import {onMount} from "svelte";
-    import {currentUtilisateurDroits} from "../../api/authentication";
-    import {UtilisateurDroits} from "../../../../generated/models/utilisateur_droits";
+    import {currentUtilisateurDroits} from "$api/authentication";
+    import type {UtilisateurDroits} from "$generated/models/utilisateur_droits";
+    import AddDialog from "./_AddDialog.svelte"
     import Card from "./_EpciCard.svelte"
 
     let allEpcis: EpciStorable[] = []
@@ -13,7 +14,7 @@
     let showAddDialog: boolean = false
 
     const fetch = async () => {
-        const stores = await import('../../api/hybridStores')
+        const stores = await import('$api/hybridStores')
         const utilisateurDroits: UtilisateurDroits[] = await currentUtilisateurDroits()
 
         const all = await stores.epciStore.retrieveAll()
@@ -26,8 +27,9 @@
     }
 
     const handleDialogClose = async () => {
-        showAddDialog = false
         await fetch()
+        // Order matters, fetch updates [allEpcis] which is still bound to [AddDialog]
+        showAddDialog = false
     }
 
     onMount(fetch)
@@ -68,9 +70,9 @@
 </style>
 
 <section>
-    <h1>Bienvenue !</h1>
+    <h1 class="fr-h1">Bienvenue !</h1>
 
-    <h2>Vos collectivités</h2>
+    <h2 class="fr-h2">Vos collectivités</h2>
 
     <div class="grid">
         {#each userEpcis as epci}
@@ -78,7 +80,7 @@
         {/each}
 
         <div class="card">
-            <h3>…</h3>
+            <h3 class="fr-h3">…</h3>
             <button class="fr-btn fr-btn--sm" on:click|preventDefault={() => showAddDialog = !showAddDialog}>Ajouter ma
                 collectivité
             </button>
@@ -87,7 +89,7 @@
 </section>
 
 <section>
-    <h2>Consulter les autres collectivités</h2>
+    <h2 class="fr-h2">Consulter les autres collectivités</h2>
 
     <div class="grid">
         {#each allEpcis as epci}
@@ -98,10 +100,7 @@
 
 
 {#if showAddDialog}
-    {#await import('./_AddDialog.svelte') then c}
-        <svelte:component this={c.default}
-                          epcis={allEpcis}
-                          on:AddDialogClose={handleDialogClose}
-        />
-    {/await}
+    <AddDialog epcis={allEpcis}
+               on:AddDialogClose={handleDialogClose}
+    />
 {/if}

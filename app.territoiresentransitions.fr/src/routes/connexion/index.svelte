@@ -1,8 +1,8 @@
 <script lang="ts">
-    import {epcis_default} from "../../../../generated/models/epcis_default";
-    import Button from "../../components/shared/Button/Button.svelte";
+    import {epcis_default} from "$generated/models/epcis_default";
+    import Button from "$components/shared/ButtonV2/Button.svelte";
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
+    import {getCurrentEpciId} from "$api/currentEpci";
 
     $: epciId = ''
     onMount(async () => {

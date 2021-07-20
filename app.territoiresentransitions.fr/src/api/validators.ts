@@ -1,5 +1,5 @@
-import type {Validator} from "./validator";
-import {joinValidators} from "./validator";
+import type {Validator} from "$api/validator";
+import {joinValidators} from "$api/validator";
 
 
 const prequisite: Validator = (value: any) =>

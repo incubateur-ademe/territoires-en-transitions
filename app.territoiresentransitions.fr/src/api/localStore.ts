@@ -1,18 +1,18 @@
-import {ActionCustom, ActionCustomInterface} from "../../../generated/models/action_custom";
-import {ActionCustomStorable} from "../storables/ActionCustomStorable";
-import {ActionStatusStorable} from "../storables/ActionStatusStorable";
-import {ActionStatus, ActionStatusInterface} from "../../../generated/models/action_status";
+import {ActionCustom, ActionCustomInterface} from "$generated/models/action_custom";
+import {ActionCustomStorable} from "$storables/ActionCustomStorable";
+import {ActionStatusStorable} from "$storables/ActionStatusStorable";
+import {ActionStatus, ActionStatusInterface} from "$generated/models/action_status";
 import {isStorable} from "./storable";
-import {FicheActionStorable} from "../storables/FicheActionStorable";
-import type {FicheActionInterface} from "../../../generated/models/fiche_action";
-import {FicheActionCategorieStorable} from "../storables/FicheActionCategorieStorable";
-import type {FicheActionCategorieInterface} from "../../../generated/models/fiche_action_categorie";
-import {IndicateurPersonnaliseStorable} from "../storables/IndicateurPersonnaliseStorable";
-import type {IndicateurPersonnaliseInterface} from "../../../generated/models/indicateur_personnalise";
-import {IndicateurPersonnaliseValueStorable} from "../storables/IndicateurPersonnaliseValueStorable";
-import type {IndicateurPersonnaliseValueInterface} from "../../../generated/models/indicateur_personnalise_value";
-import {UtilisateurConnecteStorable} from "../storables/UtilisateurConnecteStorable";
-import {UtilisateurConnecte, UtilisateurConnecteInterface} from "../../../generated/models/utilisateur_connecte";
+import {FicheActionStorable} from "$storables/FicheActionStorable";
+import type {FicheActionInterface} from "$generated/models/fiche_action";
+import {FicheActionCategorieStorable} from "$storables/FicheActionCategorieStorable";
+import type {FicheActionCategorieInterface} from "$generated/models/fiche_action_categorie";
+import {IndicateurPersonnaliseStorable} from "$storables/IndicateurPersonnaliseStorable";
+import type {IndicateurPersonnaliseInterface} from "$generated/models/indicateur_personnalise";
+import {IndicateurPersonnaliseValueStorable} from "$storables/IndicateurPersonnaliseValueStorable";
+import type {IndicateurPersonnaliseValueInterface} from "$generated/models/indicateur_personnalise_value";
+import {UtilisateurConnecteStorable} from "$storables/UtilisateurConnecteStorable";
+import {UtilisateurConnecte, UtilisateurConnecteInterface} from "$generated/models/utilisateur_connecte";
 
 /**
  * Get store by pathname from localStorage
@@ -120,7 +120,7 @@ export class LocalStore<T> {
     where(predicate: (storable: T) => boolean): Array<T> {
         const matches: T[] = []
         const all = this.retrieveAll()
-        for (let storable of all) {
+        for (const storable of all) {
             if (predicate(storable)) matches.push(storable)
         }
         return matches;

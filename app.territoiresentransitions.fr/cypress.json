@@ -1,7 +1,0 @@
-{
-  "baseUrl": "http://localhost:3000",
-  "ignoreTestFiles": [
-    "**/__snapshots__/*",
-    "**/__image_snapshots__/*"
-  ]
-}

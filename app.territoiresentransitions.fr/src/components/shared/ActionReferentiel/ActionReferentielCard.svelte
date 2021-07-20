@@ -4,18 +4,18 @@
      *
      * Display is customizable using props such as: ficheButton, link…
      */
-    import {goto} from '@sapper/app'
     import ActionStatus from "../ActionStatus.svelte";
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import {getCurrentEpciId} from "$api/currentEpci";
     import ActionReferentielTitle from "./ActionReferentielTitle.svelte";
-    import PickButton from '../Button/PickButton.svelte'
+    import PickButton from '$components/shared/ButtonV2/PickButton.svelte'
     import RowCard from "../RowCard.svelte";
     import ProgressStat from "./ProgressStat.svelte";
-    import type {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
     import ActionReferentielCommentaire from "./ActionReferentielCommentaire.svelte";
     import ActionReferentielDescription from "./ActionReferentielDescription.svelte";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel"
+    import type { ActionReferentielScore } from "$generated/models/action_referentiel_score";
+    import { goto } from "$app/navigation";
 
     type ActionClick = (action: ActionReferentiel) => (event: MouseEvent) => void
 
@@ -41,9 +41,6 @@
 
     // Displays the comment part
     export let commentBlock: boolean = false
-
-    // Displays the description part
-    export let descriptionBlock: boolean = false
 
     // Displays children of the card
     export let recursive: boolean = false
@@ -226,7 +223,7 @@
     {#if ficheButton && statusBar}
         <div class="RowCard__content">
             <a class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-file-fill fr-btn--icon-left"
-               href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
+               href="/fiches/creation/?epci_id={epciId}&action_id={action.id}">
                 Ajouter à mes actions
             </a>
 
@@ -236,9 +233,7 @@
         </div>
     {/if}
 
-    {#if descriptionBlock }
-        <ActionReferentielDescription action={action}/>
-    {/if}
+    <ActionReferentielDescription action={action}/>
 
     {#if commentBlock}
         <ActionReferentielCommentaire action={action}/>

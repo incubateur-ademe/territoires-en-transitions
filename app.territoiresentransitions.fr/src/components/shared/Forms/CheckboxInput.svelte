@@ -5,7 +5,8 @@
      * One can use the label prop to display an _unstyled_ text on top of the textarea.
      * In order to style the label text, a child element should be passed instead.
      */
-    import {alwaysValid, Validator} from "../../../api/validator";
+    import type { Validator} from "$api/validator";
+    import {alwaysValid} from "$api/validator";
     import {onMount} from "svelte";
     import {v4 as uuid} from 'uuid'
 

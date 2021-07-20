@@ -1,10 +1,10 @@
 <script lang="ts">
     import {v4 as uuid} from 'uuid'
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
-    import {FicheActionInterface} from "../../../../../generated/models/fiche_action";
-    import Form from "../_Form"
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
+    import {getCurrentEpciId} from "$api/currentEpci";
+    import type {FicheActionInterface} from "$generated/models/fiche_action";
+    import Form from "../_Form.svelte"
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
 
     let data: FicheActionInterface = {
         epci_id: '',
@@ -24,7 +24,7 @@
         date_debut: '',
         date_fin: '',
         indicateur_personnalise_ids: [],
-        en_retard: false,
+        en_retard: false
     }
 
 
@@ -33,9 +33,8 @@
 
         const urlParams = new URLSearchParams(window.location.search)
         const actionId = urlParams.get('action_id')
-
         if (actionId) {
-            let referentiel = await import ("../../../../../generated/data/actions_referentiels");
+            let referentiel = await import ("$generated/data/actions_referentiels");
             const search = (id: string, actions: ActionReferentiel[]): ActionReferentiel => {
                 for (let action of actions) {
                     if (action.id === id) return action
@@ -58,6 +57,6 @@
 </svelte:head>
 
 <div>
-    <h1>Ajouter une fiche action</h1>
+    <h1 class="fr-h1">Ajouter une fiche action</h1>
     <Form bind:data="{data}"/>
 </div>

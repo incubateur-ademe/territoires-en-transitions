@@ -1,5 +1,5 @@
-import type {ActionReferentiel} from "../../../generated/models/action_referentiel";
-import type {IndicateurReferentiel} from "../../../generated/models/indicateur_referentiel";
+import type {ActionReferentiel} from "$generated/models/action_referentiel";
+import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
 
 const possiblyId = new RegExp('^\\d+');
 type voidCallback = () => void
@@ -10,7 +10,7 @@ type voidCallback = () => void
 class ChangeNotifier {
     private _listeners: voidCallback[] = []
     public notifyListeners = (): void => {
-        for (let listener of this._listeners) {
+        for (const listener of this._listeners) {
             listener()
         }
     }
@@ -52,7 +52,7 @@ class Search<T> extends ChangeNotifier {
     public matches: T[] = [];
 
     private _timer;
-    private _needle: string = '';
+    private _needle = '';
     get needle(): string {
         return this._needle;
     }
@@ -85,9 +85,9 @@ class Search<T> extends ChangeNotifier {
 export class ActionReferentielSearch extends Search<ActionReferentiel> {
 
     protected lookup = (actions: ActionReferentiel[], needle: string, asId: boolean): ActionReferentiel[] => {
-        let results = []
+        const results = []
         for (let i = 0; i < actions.length; i++) {
-            let action = actions[i]
+            const action = actions[i]
             if (asId && action.id_nomenclature.startsWith(needle)) {
                 results.push(action)
             } else if (action.nom.toLowerCase().includes(needle)) {
@@ -111,9 +111,9 @@ export class ActionReferentielSearch extends Search<ActionReferentiel> {
 export class IndicateurReferentielSearch extends Search<IndicateurReferentiel> {
 
     protected lookup = (indicateurs: IndicateurReferentiel[], needle: string, asId: boolean): IndicateurReferentiel[] => {
-        let results: IndicateurReferentiel[] = []
+        const results: IndicateurReferentiel[] = []
         for (let i = 0; i < indicateurs.length; i++) {
-            let indicateur = indicateurs[i]
+            const indicateur = indicateurs[i]
             if (asId && indicateur.id.startsWith(needle)) {
                 results.push(indicateur)
             } else if (

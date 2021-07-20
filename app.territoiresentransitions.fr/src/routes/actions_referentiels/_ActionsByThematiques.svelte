@@ -1,8 +1,8 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
 
-    import {Thematique, thematiques} from "../../../../generated/data/thematiques";
-    import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
+    import {Thematique, thematiques} from "$generated/data/thematiques";
+    import ActionReferentielCard from "$components/shared/ActionReferentiel/ActionReferentielCard.svelte";
 
     export let searching: boolean
 
@@ -82,7 +82,7 @@
     <section>
         <details>
             <summary>
-                <h2>{thematique.name}</h2>
+                <h2 class="fr-h2">{thematique.name}</h2>
 
                 <span class="fr-fi-arrow-right-s-line" aria-hidden="true"></span>
             </summary>

@@ -16,7 +16,7 @@ export const validate = (value: any, validator: Validator): boolean => {
 export const joinValidators = (validators: Validator[]): Validator => {
     return (value: any) => {
         let error: string | null = null
-        for (let validator of validators) {
+        for (const validator of validators) {
             error = validator(value)
             if (error !== null) break;
         }

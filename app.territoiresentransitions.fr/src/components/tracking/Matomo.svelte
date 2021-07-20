@@ -43,8 +43,8 @@
         with Matomo Tracker following calls that are piled in it.
     */
     import {onMount} from 'svelte'
-    import {getCurrentEnvironment} from '../../api/currentEnvironment'
-    import { debug } from '../../utils/logger.js'
+    import {getCurrentEnvironment} from '$api/currentEnvironment'
+    import { debug } from '$utils/logger'
 
 
     let _matomo

@@ -1,8 +1,7 @@
 <script lang="ts">
-    import type {ActionReferentiel} from "../../../../generated/models/action_referentiel";
-    import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
-    import ProgressStat from "../../components/shared/ActionReferentiel/ProgressStat.svelte";
-    import {actions} from "../../../../generated/data/referentiels";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
+    import ActionReferentielCard from "$components/shared/ActionReferentiel/ActionReferentielCard.svelte";
+    import ProgressStat from "$components/shared/ActionReferentiel/ProgressStat.svelte";
 
     export let searching: boolean
 
@@ -11,18 +10,16 @@
     $: displayed, refresh()
 
     let displayedByAxe: Map<ActionReferentiel, ActionReferentiel[]>
-    const rootAction = actions.find((action) => action.id.startsWith("economie_circulaire"))
 
     const refresh = () => {
         const map = new Map<ActionReferentiel, ActionReferentiel[]>()
         const orientations: ActionReferentiel[] = []
         const axes: ActionReferentiel[] = []
-        
-        
-        for (let action of displayed) {
-            for (let level1 of action.actions) {
+
+        for (const action of displayed) {
+            for (const level1 of action.actions) {
                 axes.push(level1)
-                for (let level2 of level1.actions) {
+                for (const level2 of level1.actions) {
                     orientations.push(level2)
                 }
             }
@@ -64,12 +61,9 @@
     }
 </style>
 
-<h1>{rootAction.nom}</h1>
-<div style="padding-bottom: 4em"><ProgressStat action={rootAction} position="left" /></div>
-
 {#each [...displayedByAxe] as [parent, actions]}
     <section>
-        <h2>{parent.id_nomenclature} {parent.nom}</h2>
+        <h2 class="fr-h2">{parent.id_nomenclature} {parent.nom}</h2>
         <ProgressStat action={parent} position="left"/>
         <div style="height: 4em"></div>
         {#each actions as action}

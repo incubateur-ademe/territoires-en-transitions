@@ -3,12 +3,12 @@
      * The input for an indicateur yearly value.
      * Retrieve and store values.
      */
-    import {IndicateurReferentiel} from "../../../../../generated/models/indicateur_referentiel";
+    import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
 
-    import {IndicateurValueStorable} from '../../../storables/IndicateurValueStorable'
+    import {IndicateurValueStorable} from '$storables/IndicateurValueStorable'
     import {onMount} from "svelte";
-    import {HybridStore} from "../../../api/hybridStore";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import type {HybridStore} from "$api/hybridStore";
+    import {getCurrentEpciId} from "$api/currentEpci";
 
     export let indicateur: IndicateurReferentiel
     export let year: number
@@ -17,7 +17,7 @@
     let epciId =''
 
     onMount(async () => {
-        const hybridStores = await import ("../../../api/hybridStores");
+        const hybridStores = await import ("$api/hybridStores");
         indicateurValueStore = hybridStores.indicateurValueStore;
         epciId = getCurrentEpciId()
 

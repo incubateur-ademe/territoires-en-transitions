@@ -5,11 +5,10 @@
      *
      * Passes linkedActionIds and toggleActionId props along to its children.
      */
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
-    import ReferentielSearchBar from '../../../components/shared/ReferentielSearchBar.svelte'
-    import LinkActionCard from './_LinkActionCard'
-    import PickButton from "../../../components/shared/Button/PickButton.svelte";
-    import RowCard from "../../../components/shared/RowCard.svelte";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
+    import LinkActionCard from './_LinkActionCard.svelte'
+    import PickButton from "$components/shared/ButtonV2/PickButton.svelte";
+    import RowCard from "$components/shared/RowCard.svelte";
 
     // Main action of the subpage
     export let topLevelAction: ActionReferentiel
@@ -78,7 +77,7 @@
                             unpickLabel="Supprimer"
                 />
 
-                <h3>{topLevelAction.nom}</h3>
+                <h3 class="fr-h3">{topLevelAction.nom}</h3>
 
                 {@html topLevelAction.description}
             </RowCard>

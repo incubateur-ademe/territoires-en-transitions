@@ -1,7 +1,7 @@
 <script lang="ts">
-    import {ActionReferentielScore} from "../../../../../generated/models/action_referentiel_score";
+    import type {ActionReferentielScore} from "$generated/models/action_referentiel_score";
     import {onMount} from "svelte";
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
 
     export let action: ActionReferentiel
     export let position = "left";
@@ -33,7 +33,7 @@
 
 
     onMount(async () => {
-        const stores = await import("../../../api/hybridStores")
+        const stores = await import("$api/hybridStores")
         score = await stores.actionReferentielScoreStore.retrieveById(action.id)
     })
 </script>

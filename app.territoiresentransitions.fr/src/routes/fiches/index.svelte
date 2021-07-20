@@ -1,13 +1,13 @@
 <script lang="ts">
     import CategorieInlineEdition from './_CategorieInlineEdition.svelte'
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
-    import {FicheActionStorable} from "../../storables/FicheActionStorable";
-    import {HybridStore} from "../../api/hybridStore";
-    import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
-    import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
-    import {fiche_action_avancement_noms} from "../../../../generated/models/fiche_action_avancement_noms";
-    import FicheActionCard from "../../components/shared/FicheAction/FicheActionCard.svelte";
+    import {getCurrentEpciId} from "$api/currentEpci";
+    import type {FicheActionStorable} from "$storables/FicheActionStorable";
+    import type {HybridStore} from "$api/hybridStore";
+    import {FicheActionCategorieStorable} from "$storables/FicheActionCategorieStorable";
+    import SelectInput from "$components/shared/Forms/SelectInput.svelte";
+    import {fiche_action_avancement_noms} from "$generated/models/fiche_action_avancement_noms";
+    import FicheActionCard from "$components/shared/FicheAction/FicheActionCard.svelte";
 
     const defaultCategorie = new FicheActionCategorieStorable({
         uid: '',
@@ -171,10 +171,10 @@
     li + li {
         margin-top: 1rem;
     }
-
     .categorie {
         padding-top: 4rem;
     }
+
 </style>
 <svelte:head>
     <title>Plan d'actions</title>
@@ -182,19 +182,17 @@
 
 <header>
     <div class="page-intro">
-        <h1>Plan d'actions de ma collectivité</h1>
+        <h1 class="fr-h1">Plan d'actions de ma collectivité</h1>
 
         <a class="fr-btn"
-           href="fiches/creation/?epci_id={epciId}">
-            Ajouter à mes actions
+            href="fiches/creation/?epci_id={epciId}">
+            Ajouter une fiche action
         </a>
     </div>
 
     <div class="select-list">
         <!-- statut -->
         <SelectInput bind:value={selectedAvancementKey}
-                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                     id="categorie_picker"
                      label="Statut d'avancement"
                      onChange={applyFilters}>
             <option value=''>
@@ -209,8 +207,6 @@
 
         <!-- personne -->
         <SelectInput bind:value={selectedPersonneReferente}
-                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                     id="categorie_picker"
                      label="Personne référente"
                      onChange={applyFilters}>
             <option value=''>
@@ -225,8 +221,6 @@
 
         <!-- structure -->
         <SelectInput bind:value={selectedStructuresPilote}
-                     class="border border-gray-300 p-2 my-2 focus:outline-none focus:ring-2 ring-green-100"
-                     id="categorie_picker"
                      label="Structure pilote"
                      onChange={applyFilters}>
             <option value=''>

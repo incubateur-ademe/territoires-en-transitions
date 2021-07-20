@@ -1,4 +1,4 @@
-import {ActionCustom} from "../../../generated/models/action_custom";
+import { ActionCustom } from "$generated/models/action_custom"
 
 export  class ActionCustomStorable extends ActionCustom {
     static buildId(epci_id: string, mesure_id: string, uid: string) : string {

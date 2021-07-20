@@ -1,18 +1,13 @@
 <script lang="ts">
-	import Matomo, {asyncMatomo} from '../components/tracking/Matomo.svelte'
-	import {stores} from '@sapper/app'
+	import Matomo, {asyncMatomo} from '$components/tracking/Matomo.svelte'
 	import {onMount} from 'svelte'
-	import Header from 'components/Layout/Header.svelte'
-	import Footer from 'components/Layout/Footer.svelte'
+	import Header from '$components/shared/Layout/Header.svelte'
+	import Footer from '$components/shared/Layout/Footer.svelte'
 	import Head from './_head.svelte'
-	import Nav from './../components/shared/NavV2/Nav.svelte'
-	import NavDev from './../components/shared/NavV2/NavDev.svelte'
-	import Tailwind from '../components/Tailwind.svelte'
-
-	export let segment: string;
-
-	// Use Sapper store (called `page`) to track page changes.
-	const {page} = stores()
+	import Nav from '$components/shared/Nav/Nav.svelte'
+	import NavDev from '$components/shared/Nav/NavDev.svelte'
+	import Tailwind from '$components/Tailwind.svelte'
+import { page } from '$app/stores';
 
 	$: if ($page) {
 		asyncMatomo.trackPageView()
@@ -36,13 +31,11 @@
 <div>
 
 </div>
-{#if segment === 'fiches' || segment === 'epcis' || !segment }
-	<Tailwind />
-{/if}
+<Tailwind />
 <Head/>
 <Matomo />
 <Header>
-	<Nav slot="nav" segment={segment}/>
+	<Nav slot="nav"/>
 	<NavDev slot="secondary" />
 </Header>
 
