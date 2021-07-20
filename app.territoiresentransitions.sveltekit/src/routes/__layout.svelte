@@ -35,7 +35,7 @@ import { page } from '$app/stores';
 <Head/>
 <Matomo />
 <Header>
-	<Nav />
+	<Nav slot="nav"/>
 	<NavDev slot="secondary" />
 </Header>
 
