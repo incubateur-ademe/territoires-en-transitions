@@ -1,9 +1,4 @@
-<script lang="typescript">
-    enum colorVariants {
-        juniper,
-        whitelily,
-    }
-
+<script lang="ts">
     export let classNames = ''
     export let colorVariant = 'juniper'
     export let size = 'medium'

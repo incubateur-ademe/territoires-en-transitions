@@ -2,14 +2,14 @@
     /**
      * Displays an indicateur an its yearly values.
      */
-    import {IndicateurReferentiel} from "../../../../../generated/models/indicateur_referentiel";
+    import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
     import IndicateurReferentielValueInput from "./IndicateurReferentielValueInput.svelte";
     import {onMount} from "svelte";
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
     import IndicateurReferentielCommentaireArea from "./IndicateurReferentielCommentaireArea.svelte";
     import RowCard from "../RowCard.svelte";
-    import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import ExpandPanel from "$components/ExpandPanel.svelte";
+    import {getCurrentEpciId} from "$api/currentEpci";
 
     export let indicateur: IndicateurReferentiel
     let relatedActions: ActionReferentiel[] = []
@@ -27,7 +27,7 @@
 
     onMount(async () => {
         epciId = getCurrentEpciId()
-        const referentiel = await import('../../../../../generated/data/actions_referentiels')
+        const referentiel = await import('$generated/data/actions_referentiels')
 
         const found: ActionReferentiel[] = []
         for (let actionId of indicateur.action_ids) {
@@ -103,7 +103,7 @@
 
 <RowCard id="indicateur-{indicateur.id}" bordered>
     <div class="RowCard__title">
-        <h3>
+        <h3 class="fr-h3">
             { prettifyId(indicateur.id) } { indicateur.nom }
         </h3>
         <!-- indicateurs are not modifiable
@@ -151,7 +151,7 @@
             {@html indicateur.description }
 
             {#if relatedActions}
-                <h3>Actions liées</h3>
+                <h3 class="fr-h3">Actions liées</h3>
 
                 <ul>
                     {#each relatedActions as action}

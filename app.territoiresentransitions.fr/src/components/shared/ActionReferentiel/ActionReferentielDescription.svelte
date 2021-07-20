@@ -1,6 +1,6 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
-    import ExpandPanel from "../../../../../components/ExpandPanel.svelte";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
+    import ExpandPanel from "../../ExpandPanel.svelte";
     import {onMount} from "svelte";
 
     export let action: ActionReferentiel

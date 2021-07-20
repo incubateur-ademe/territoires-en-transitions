@@ -2,11 +2,10 @@
     /**
      * Displays an action along with a PickButton to link the action to the current fiche.
      */
-    import {ActionReferentiel} from '../../../../../generated/models/action_referentiel'
-    import RowCard from '../../../components/shared/RowCard.svelte'
-    import PickButton from '../../../components/shared/Button/PickButton.svelte'
-    import ActionReferentielTitle from '../../../components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
-    import Angle from '../../../components/shared/Angle.svelte'
+    import type {ActionReferentiel} from '$generated/models/action_referentiel'
+    import RowCard from '$components/shared/RowCard.svelte'
+    import PickButton from '$components/shared/ButtonV2/PickButton.svelte'
+    import ActionReferentielTitle from '$components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
 
     // Main action of the bar
     export let action: ActionReferentiel

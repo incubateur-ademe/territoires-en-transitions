@@ -1,2 +1,0 @@
-# Sapper needs the static folder to exist to be able to export the app.
-# This .gitignore stays here to enable us to commit the `static` directory.

@@ -4,13 +4,13 @@
      * The list is reactive and only keeps added actions.
      * Removed actions are not discarded.
      */
-    import {ActionReferentiel} from '../../../../generated/models/action_referentiel'
-    import {actions} from '../../../../generated/data/actions_referentiels'
-    import ActionReferentielTitle from '../../components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
-    import PickButton from '../../components/shared/Button/PickButton.svelte'
+    import type {ActionReferentiel} from '$generated/models/action_referentiel'
+    import {actions} from '$generated/data/actions_referentiels'
+    import ActionReferentielTitle from '$components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
+    import PickButton from '$components/shared/ButtonV2/PickButton.svelte'
 
     export let actionIds: string[]
-    export let handlePickButton: () => {}
+    export let handlePickButton: (actionId: string) => void
 
     let actionIdsHistory: string[] = []
 

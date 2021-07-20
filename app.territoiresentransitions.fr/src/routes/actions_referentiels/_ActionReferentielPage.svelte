@@ -1,14 +1,14 @@
 <script lang="ts">
-    import {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../api/currentEpci";
-    import ReferentielSearchBar from "../../components/shared/ReferentielSearchBar.svelte";
-    import {indicateurs} from "../../../../generated/data/indicateurs_referentiels";
+    import {getCurrentEpciId} from "$api/currentEpci";
+    import ReferentielSearchBar from "$components/shared/ReferentielSearchBar.svelte";
+    import {indicateurs} from "$generated/data/indicateurs_referentiels";
     import IndicateurReferentielCard
-        from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
-    import ActionReferentielCard from "../../components/shared/ActionReferentiel/ActionReferentielCard.svelte";
-    import ExpandPanel from "../../../../components/ExpandPanel.svelte";
-    import ProgressStat from "../../components/shared/ActionReferentiel/ProgressStat.svelte";
+        from "$components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
+    import ActionReferentielCard from "$components/shared/ActionReferentiel/ActionReferentielCard.svelte";
+    import ExpandPanel from "$components/ExpandPanel.svelte";
+    import ProgressStat from "$components/shared/ActionReferentiel/ProgressStat.svelte";
 
     export let action: ActionReferentiel
 
@@ -74,19 +74,19 @@
 
 <div class="pageIntro">
     <div>
-        <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="actions_referentiels/?epci_id={epciId}">Retour</a>
+        <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="/actions_referentiels/?epci_id={epciId}">Retour</a>
 
         <ReferentielSearchBar actions={action.actions} bind:matches={displayed}/>
     </div>
 
     <div class="pageIntro__titleWithActions">
         <div>
-            <h1>{action.id_nomenclature} {action.nom}</h1>
+            <h1 class="fr-h1">{action.id_nomenclature} {action.nom}</h1>
         </div>
 
         <div>
             <a class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-file-fill fr-btn--icon-left"
-               href="fiches/creation/?epci_id={epciId}&action_id={action.id}">
+               href="/fiches/creation/?epci_id={epciId}&action_id={action.id}">
                 Ajouter à mes actions
             </a>
         </div>
@@ -104,7 +104,7 @@
     {/if}
 </div>
 
-<h2>Les actions</h2>
+<h2 class="fr-h2">Les actions</h2>
 <div class="listActions">
   {#each displayed as action}
       <ActionReferentielCard
@@ -120,7 +120,7 @@
   {/each}
 </div>
 
-<h2>Les indicateurs</h2>
+<h2 class="fr-h2">Les indicateurs</h2>
 {#if hasIndicateurs }
     {#each actionIndicateurs as indicateur (indicateur.id)}
         <IndicateurReferentielCard indicateur={indicateur}/>

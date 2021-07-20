@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type {ActionReferentiel} from "../../../../generated/models/action_referentiel";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
 
-    import {actions} from "../../../../generated/data/referentiels";
+    import {actions} from "$generated/data/referentiels";
     import ActionsByThematiques from "./_ActionsByThematiques.svelte"
     import ActionsClimatAirEnergie from "./_ActionsClimatAirEnergie.svelte"
     import ActionsEconomieCirculaire from "./_ActionsEconomieCirculaire.svelte"
-    import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
+    import SelectInput from "$components/shared/Forms/SelectInput.svelte";
 
     let view: 'thematique' | 'eci' | 'cae' = 'eci'
 
@@ -35,7 +35,7 @@
 
 <div class="pageIntro">
     <div>
-        <h1>
+        <h1 class="fr-h1">
             Référentiels
         </h1>
         <!-- hidden until issues #160 #149 are fixed

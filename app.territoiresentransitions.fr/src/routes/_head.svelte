@@ -1,16 +1,16 @@
 <script lang="ts">
-    import Variables from "../../../components/DesignSystem/Variables.svelte";
-    import Core from "components/DesignSystem/Core.svelte";
-    import DesignSystem from "../../../components/DesignSystem/DesignSystem.svelte";
-    import Buttons from "../../../components/DesignSystem/Buttons.svelte";
-    import Inputs from "../../../components/DesignSystem/Inputs.svelte";
-    import Selects from "../../../components/DesignSystem/Selects.svelte";
-    import Links from "../../../components/DesignSystem/Links.svelte";
-    import Forms from "../../../components/DesignSystem/Forms.svelte";
-    import Modal from "../../../components/DesignSystem/Modal.svelte";
-    import Tags from "../../../components/DesignSystem/Tags.svelte";
-    import Utilities from 'components/DesignSystem/Utilities.svelte'
-    import Textarea from "../../../components/Textarea.svelte";
+    import Variables from "$components/shared/DesignSystem/Variables.svelte";
+    import Core from "$components/shared/DesignSystem/Core.svelte"
+    import DesignSystem from "$components/shared/DesignSystem/DesignSystem.svelte";
+    import Buttons from "$components/shared/DesignSystem/Buttons.svelte";
+    import Inputs from "$components/shared/DesignSystem/Inputs.svelte";
+    import Selects from "$components/shared/DesignSystem/Selects.svelte";
+    import Links from "$components/shared/DesignSystem/Links.svelte";
+    import Forms from "$components/shared/DesignSystem/Forms.svelte";
+    import Modal from "$components/shared/DesignSystem/Modal.svelte";
+    import Tags from "$components/shared/DesignSystem/Tags.svelte";
+    import Utilities from '$components/shared/DesignSystem/Utilities.svelte'
+    import Textarea from '$components/shared/DesignSystem/Textarea.svelte'
 </script>
 
 <Variables/>

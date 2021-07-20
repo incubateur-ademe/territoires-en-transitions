@@ -1,8 +1,7 @@
 <script lang="ts">
     import {createEventDispatcher} from "svelte";
-    import Button from "../Button/Button.svelte";
-    import {IndicateurPersonnaliseInterface} from "../../../../../generated/models/indicateur_personnalise";
-    import {IndicateurPersonnaliseStorable} from "../../../storables/IndicateurPersonnaliseStorable";
+    import type {IndicateurPersonnaliseInterface} from "$generated/models/indicateur_personnalise";
+    import {IndicateurPersonnaliseStorable} from "$storables/IndicateurPersonnaliseStorable";
     import LabeledTextInput from "../Forms/LabeledTextInput.svelte";
     import LabeledTextArea from "../Forms/LabeledTextArea.svelte";
 
@@ -12,7 +11,7 @@
     const handleSave = async () => {
         if (!data.nom) return
 
-        const hybridStores = await import ("../../../api/hybridStores")
+        const hybridStores = await import ("$api/hybridStores")
         const indicateur = new IndicateurPersonnaliseStorable(data)
         const saved = await hybridStores.indicateurPersonnaliseStore.store(indicateur)
         dispatch('save', {'indicateur': saved})

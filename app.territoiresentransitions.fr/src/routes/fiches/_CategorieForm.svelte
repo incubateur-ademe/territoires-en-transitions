@@ -1,23 +1,25 @@
 <script lang="ts">
-    import {FicheActionCategorieInterface} from "../../../../generated/models/fiche_action_categorie";
-    import {FicheActionCategorieStorable} from "../../storables/FicheActionCategorieStorable";
+    import type {FicheActionCategorieInterface} from "$generated/models/fiche_action_categorie";
+    import {FicheActionCategorieStorable} from "$storables/FicheActionCategorieStorable";
     import {createEventDispatcher, onMount} from "svelte";
-    import Button from "../../components/shared/Button/Button.svelte";
-    import {HybridStore} from "../../api/hybridStore";
+    import type {HybridStore} from "$api/hybridStore";
 
     export let data: FicheActionCategorieInterface
     let categorieStore: HybridStore<FicheActionCategorieStorable>
     const dispatch = createEventDispatcher()
 
     onMount(async () => {
-        const hybridStores = await import ("../../api/hybridStores");
+        const hybridStores = await import ("$api/hybridStores");
         categorieStore = hybridStores.ficheActionCategorieStore;
     })
 
     const handleSave = async () => {
+        console.log("data: ", data)
         if (!data.nom) return;
         const categorie = new FicheActionCategorieStorable(data)
+        console.log("categorie: ", categorie)
         const saved = await categorieStore.store(categorie)
+        console.log("saved: ", saved)
         dispatch('save', {'categorie': saved})
     }
 </script>

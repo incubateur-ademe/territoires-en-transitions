@@ -3,9 +3,9 @@
      * Provides matches for a *given* list of actions.
      */
 
-    import {IndicateurReferentielSearch} from "../../api/search";
+    import {IndicateurReferentielSearch} from "$api/search";
     import {onDestroy, onMount} from "svelte";
-    import {IndicateurReferentiel} from "../../../../generated/models/indicateur_referentiel";
+    import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
 
     const search = new IndicateurReferentielSearch()
 

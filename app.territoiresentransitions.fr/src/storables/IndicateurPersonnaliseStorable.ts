@@ -1,4 +1,4 @@
-import {IndicateurPersonnalise} from "../../../generated/models/indicateur_personnalise";
+import {IndicateurPersonnalise} from "$generated/models/indicateur_personnalise";
 
 export class IndicateurPersonnaliseStorable extends IndicateurPersonnalise {
     static buildId(epci_id: string, uid: string): string {

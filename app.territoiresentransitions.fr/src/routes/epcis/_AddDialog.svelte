@@ -2,14 +2,13 @@
     /**
      * Permet d'ajouter une epci a la liste des epcis de l'utilisateur.
      */
-    import LabeledTextInput from "../../components/shared/Forms/LabeledTextInput.svelte";
+    import LabeledTextInput from "$components/shared/Forms/LabeledTextInput.svelte";
 
     import {v4 as uuid} from 'uuid'
-    import {EpciStorable} from "../../storables/EpciStorable";
-    import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
-    import Button from "../../components/shared/Button/Button.svelte";
+    import {EpciStorable} from "$storables/EpciStorable";
+    import SelectInput from "$components/shared/Forms/SelectInput.svelte";
     import {createEventDispatcher} from "svelte";
-    import Dialog from '../../components/shared/Dialog.svelte'
+    import Dialog from '$components/shared/Dialog.svelte'
 
     export let epcis: EpciStorable[]
     const dispatch = createEventDispatcher()

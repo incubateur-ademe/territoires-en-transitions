@@ -2,7 +2,7 @@
     /**
      * Display the title of an action.
      */
-    import {ActionReferentiel} from "../../../../../generated/models/action_referentiel";
+    import type {ActionReferentiel} from "$generated/models/action_referentiel";
 
     export let action: ActionReferentiel
 

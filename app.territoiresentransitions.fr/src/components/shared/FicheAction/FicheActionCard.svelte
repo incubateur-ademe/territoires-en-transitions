@@ -1,9 +1,8 @@
 <script lang="ts">
-    import {fiche_action_avancement_noms} from "../../../../../generated/models/fiche_action_avancement_noms";
-
-    import {FicheAction} from "../../../../../generated/models/fiche_action";
+    import type {FicheAction} from "$generated/models/fiche_action";
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
+    import {getCurrentEpciId} from "$api/currentEpci";
+import { fiche_action_avancement_noms } from "$generated/models/fiche_action_avancement_noms";
 
     export let fiche: FicheAction
     $: enRetard = fiche.en_retard
@@ -20,10 +19,7 @@
         padding: 1.5rem 1rem;
         background-color: var(--beige);
         border-left: 4px solid transparent;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+        position: relative;
     }
 
     article:not(:first-of-type) {
@@ -34,40 +30,19 @@
         font-size: 1.25rem;
     }
 
-    .titre {
-        
-    }
-
-     .statuts {
-         display: flex;
-         flex-direction: row;
-         align-items: center;
-     }
-
-    .avancement {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0;
-        padding: 0.5rem 1rem;
-
-        background-color: white;
-        border-top: 2px solid var(--bf500);
-        border-right: 1px solid var(--g300);
-        border-left: 1px solid var(--g300);
-
-        margin-right: 10px;
-    }
-
     .en-retard {
-        padding: 0.5rem 1rem;
+        position: absolute;
+        top: 1rem;
+        right: 0;
+        padding: 0.5rem 0.75rem;
         background-color: white;
         border-right: 6px solid #DA0505;
     }
 </style>
 
 <article>
-    <a class="titre" href="fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
-        <h3>
+    <a class="titre" href="/fiches/edition/?epci_id={epciId}&uid={fiche.uid}">
+        <h3 class="fr-h3">
             ({fiche.custom_id}) {fiche.titre}
         </h3>
     </a>

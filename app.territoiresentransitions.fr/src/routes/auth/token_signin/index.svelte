@@ -26,7 +26,7 @@
 
 <div class="fr-container">
     <div class="fr-grid-row fr-mb-2w">
-        <h1>Connexion par token</h1>
+        <h1 class="fr-h1">Connexion par token</h1>
         <div>
             Cette action permet d'enregistrer un <pre>AccessToken</pre> collecté via sandbox ou la production dans
             <pre>LocalStorage</pre>. Pour cela :
@@ -46,7 +46,7 @@
     </div>
 
     <div class="fr-grid-row">
-        <h2>Access Token</h2>
+        <h2 class="fr-h2">Access Token</h2>
     </div>
 
     <div class="fr-grid-row fr-mb-2w">
@@ -54,7 +54,7 @@
     </div>
 
     <div class="fr-grid-row">
-        <h2>Refresh Token</h2>
+        <h2 class="fr-h2">Refresh Token</h2>
     </div>
 
     <div class="fr-grid-row fr-mb-2w">
@@ -68,7 +68,7 @@
     <hr>
 
     <div class="fr-grid-row">
-        <h1>Connexion avec un faux token</h1>
+        <h1 class="fr-h1">Connexion avec un faux token</h1>
         <div class="fr-mb-2w">
             Cette méthode fonctionne avec l'API en mode <pre>AUTH_DISABLED_DUMMY_USER</pre>. Cette action enregistre un
             faux token dans <pre>LocalStorage</pre>.
@@ -82,7 +82,7 @@
     <hr>
 
     <div class="fr-grid-row">
-        <h1>Vérifier l'identité</h1>
+        <h1 class="fr-h1">Vérifier l'identité</h1>
     </div>
 
     <p class="fr-mb-2w">

@@ -2,16 +2,15 @@
     /**
      * List indicateurs per catégorie.
      */
-    import {IndicateurReferentiel} from "../../../../generated/models/indicateur_referentiel";
-    import {indicateurs} from "../../../../generated/data/indicateurs_referentiels";
+    import type {IndicateurReferentiel} from "$generated/models/indicateur_referentiel";
+    import {indicateurs} from "$generated/data/indicateurs_referentiels";
     import IndicateurReferentielCard
-        from "../../components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
-    import {Thematique, thematiques} from "../../../../generated/data/thematiques";
+        from "$components/shared/IndicateurReferentiel/IndicateurReferentielCard.svelte";
+    import {Thematique, thematiques} from "$generated/data/thematiques";
     import {onMount} from "svelte";
-    import IndicateursSearchBar from "../../components/shared/IndicateursSearchBar.svelte";
     import IndicateurPersonnaliseList
-        from "../../components/shared/IndicateurPersonnalise/IndicateurPersonnaliseList.svelte"
-    import SelectInput from "../../components/shared/Forms/SelectInput.svelte";
+        from "$components/shared/IndicateurPersonnalise/IndicateurPersonnaliseList.svelte"
+    import SelectInput from "$components/shared/Forms/SelectInput.svelte";
 
     let byThematique = new Map<Thematique, IndicateurReferentiel[]>()
     let displayed: IndicateurReferentiel[] = indicateurs
@@ -70,7 +69,7 @@
 
 <div class="pageIntro">
     <div>
-        <h1>
+        <h1 class="fr-h1">
             Indicateurs
         </h1>
 
@@ -79,11 +78,6 @@
         -->
     </div>
 
-    <div>
-        <SelectInput>
-            <option value="">Tri par thématique</option>
-        </SelectInput>
-    </div>
 </div>
 
 <IndicateurPersonnaliseList/>
@@ -91,7 +85,7 @@
 {#each [...byThematique] as [thematique, indicateurs]}
     <div class="indicator">
         <div class="indicator__title">
-            <h2>{thematique.name}</h2>
+            <h2 class="fr-h2">{thematique.name}</h2>
             <!-- hidden
             <a href="" class="fr-btn fr-btn--secondary">Créer un indicateur</a>
             --->

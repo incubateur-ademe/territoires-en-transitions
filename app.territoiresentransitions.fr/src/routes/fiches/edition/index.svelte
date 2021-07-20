@@ -1,11 +1,11 @@
 <script lang="ts">
     import {onMount} from "svelte";
-    import {getCurrentEpciId} from "../../../api/currentEpci";
-    import {FicheActionInterface} from "../../../../../generated/models/fiche_action";
-    import Form from "../_Form"
-    import {FicheActionStorable} from "../../../storables/FicheActionStorable";
-    import Button from "../../../components/shared/Button/Button.svelte";
-    import {HybridStore} from "../../../api/hybridStore";
+    import {getCurrentEpciId} from "$api/currentEpci";
+    import type {FicheActionInterface} from "$generated/models/fiche_action";
+    import Form from "../_Form.svelte"
+    import {FicheActionStorable} from "$storables/FicheActionStorable";
+    import Button from "$components/shared/Button/Button.svelte";
+    import type {HybridStore} from "$api/hybridStore";
 
     let data: FicheActionInterface
     let id: string
@@ -14,7 +14,7 @@
     onMount(async () => {
         const epci_id = getCurrentEpciId()
 
-        const hybridStores = await import ("../../../api/hybridStores");
+        const hybridStores = await import ("$api/hybridStores");
         ficheActionStore = hybridStores.ficheActionStore;
 
         const urlParams = new URLSearchParams(window.location.search)
