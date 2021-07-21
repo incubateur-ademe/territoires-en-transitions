@@ -8,6 +8,7 @@
     import type {UtilisateurDroits} from "$generated/models/utilisateur_droits";
     import AddDialog from "./_AddDialog.svelte"
     import Card from "./_EpciCard.svelte"
+    import {raf} from "svelte/internal";
 
     let allEpcis: EpciStorable[] = []
     let userEpcis: EpciStorable[] = []
@@ -28,8 +29,7 @@
 
     const handleDialogClose = async () => {
         await fetch()
-        // Order matters, fetch updates [allEpcis] which is still bound to [AddDialog]
-        showAddDialog = false
+        await setTimeout(() => showAddDialog = false, 32);
     }
 
     onMount(fetch)
