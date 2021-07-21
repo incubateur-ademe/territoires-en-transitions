@@ -11,7 +11,7 @@ app = typer.Typer()
 @app.command()
 def upload_client(
         subdomain: str = typer.Option('sandbox', "--subdomain", "-s"),
-        app_dir: str = typer.Option('../app.territoiresentransitions.fr/__sapper__/export', "--client-new", "-cn"),
+        app_dir: str = typer.Option('../app.territoiresentransitions.fr/build', "--client-new", "-cn"),
 ) -> None:
     """Upload files into a sub domain bucket"""
     s3 = make_s3_client()
