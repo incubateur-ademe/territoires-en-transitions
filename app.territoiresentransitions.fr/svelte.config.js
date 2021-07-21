@@ -17,7 +17,7 @@ export default {
         adapter: ssr(),
         target: '#svelte',
         vite: {
-            mode: process.env.MODE,
+            mode: process.env.MODE || 'dev',
             resolve: {
                 alias: {
                     $api: path.resolve('./src/api'),

@@ -2,7 +2,7 @@
   "name": "sveltekit-typescript-postcss-tailwind2",
   "version": "0.0.4",
   "scripts": {
-    "dev": "svelte-kit dev",
+    "dev": "cross-env MODE=dev svelte-kit dev",
     "build_dev": "cross-env MODE=dev svelte-kit build",
     "build_sandbox": "cross-env MODE=sandbox svelte-kit build",
     "build_production": "cross-env MODE=production svelte-kit build",
