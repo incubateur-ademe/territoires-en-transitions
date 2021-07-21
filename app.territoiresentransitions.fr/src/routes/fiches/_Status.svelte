@@ -8,8 +8,7 @@
     const avancements = Object.entries(fiche_action_avancement_noms).map(([key, label]) => {
         return {'key': key, 'label': label}
     })
-
-    console.log(avancements)
+    
     const classes = [
         'border rounded-l flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
         'border-t border-r border-b flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
