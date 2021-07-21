@@ -1,8 +1,8 @@
-name: Deploy LTE client
+name: Deploy LTE client on sandbox
 
 on:
   push:
-    branches: [production]
+    branches: [sandbox]
 
 jobs:
   # This job runs tests in codegen and generated files that are needed by the
@@ -75,15 +75,16 @@ jobs:
         working-directory: ${{env.working-directory}}
 
       # Run all the tests for codegen.
-      - name: Run tests
-        run: poetry run pytest
-        working-directory: ${{env.working-directory}}
+      # - name: Run tests
+      #   run: poetry run pytest
+      #   working-directory: ${{env.working-directory}}
 
       # Generate all JavaScript shared models and data with codegen. These files
       # are mandatory for the client build.
       - name: Generate shared models and data in JavaScript
         run: |
           poetry run generate all
+          pwd
         working-directory: ${{env.working-directory}}
 
       # Upload the generated files as an artefact so they can be download in the
@@ -92,7 +93,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: generated-client-files
-          path: ${{ github.workspace }}/generated
+          path: ${{ github.workspace }}/app.territoiresentransitions.fr/src/generated
 
   # This job retrieves previously generated files and builds the client
   # application.
@@ -112,28 +113,28 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: generated-client-files
-          path: generated
+          path: app.territoiresentransitions.fr/src/generated
 
       # Build client with Sapper
       - name: Build client
         run: |
           npm install
-          npm run export
+          npm run build_sandbox
         working-directory: ${{env.working-directory}}
 
       # Use Cypress to run end-to-end tests
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        with:
-          start: npx serve __sapper__/export -p 3000
-          working-directory: ${{env.working-directory}}
+      # - name: Cypress run
+      #   uses: cypress-io/github-action@v2
+      #   with:
+      #     start: npx serve __sapper__/export -p 3000
+      #     working-directory: ${{env.working-directory}}
 
       # Upload built client app as an artefact.
       - name: Upload exported client app
         uses: actions/upload-artifact@v2
         with:
           name: client-app
-          path: app.territoiresentransitions.fr/__sapper__/export
+          path: app.territoiresentransitions.fr/build
 
   # This job retrieves the exported client app and upload it to Scaleway.
   deploy-on-scaleway:
@@ -178,11 +179,7 @@ jobs:
       # Use AWS CLI to upload the client app on Scaleway.
       - name: Deploy on Scaleway
         run: |
-          git config --global user.name 'Territoires en transition'
-          git config --global user.email 'territoires-en-transitions-deploy@users.noreply.github.com'
-          git tag -a `date +%Y-%m-%d-%H-%M` -m "Déploiement du `date '+%d %B %Y %T'`"
-          git push origin `date +%Y-%m-%d-%H-%M`
-          aws s3 cp ~/tmp/client s3://app.territoiresentransitions.fr --recursive --acl public-read
+          aws s3 cp ~/tmp/client s3://sandbox.territoiresentransitions.fr --recursive --acl public-read
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
