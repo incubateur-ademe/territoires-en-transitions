@@ -2,7 +2,7 @@ name: Deploy LTE client on sandbox
 
 on:
   push:
-    branches: [deploy_makefile]
+    branches: [sandbox]
 
 jobs:
   # This job runs tests in codegen and generated files that are needed by the
