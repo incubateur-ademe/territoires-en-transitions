@@ -20,13 +20,13 @@ export const sortFiches = (fiches: FicheAction[]): FicheAction[] => fiches.sort(
 
 })
 
-type CategorizedFiche = {fiches: FicheAction[], categorie: FicheActionCategorie}
+export type CategorizedFiche = {fiches: FicheAction[], categorie: FicheActionCategorie}
 
 const findFicheCategorie = (fiche: FicheAction, categories: FicheActionCategorie[]): FicheActionCategorie | undefined => categories.find((categorie) => categorie.fiche_actions_uids.includes(fiche.uid))
 
 export const categorizeAndSortFiches = (fiches: FicheAction[], categories: FicheActionCategorie[], defaultCategorie: FicheActionCategorie): CategorizedFiche[] => {
   const byCategorieUid = R.groupBy(function(fiche: FicheAction) {
-    const categorie =  findFicheCategorie(fiche, categories) || defaultCategorie
+    const categorie =  findFicheCategorie(fiche, categories) || defaultCategorie
     return categorie.uid
   });
   const asCategorizedFiche = R.mapObjIndexed((fiches: FicheAction[], categorieUid: string) => ({
@@ -48,4 +48,3 @@ export const categorizeAndSortFiches = (fiches: FicheAction[], categories: Fiche
                     (fiches)
   return sortedCategorizedFiches
 }
-
