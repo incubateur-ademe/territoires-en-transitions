@@ -5,11 +5,19 @@ import os
 import typer
 
 import codegen.paths as paths
-from codegen.action.process import relativize_ids, clean_thematiques, propagate_thematiques, referentiel_from_actions, \
-    remove_top_nodes
+from codegen.action.process import (
+    relativize_ids,
+    clean_thematiques,
+    propagate_thematiques,
+    referentiel_from_actions,
+    remove_top_nodes,
+)
 from codegen.action.read import build_action
 from codegen.action.render import render_actions_as_typescript, render_actions_as_python
-from codegen.climat_pratic.thematiques_generator import build_thematiques, render_thematiques_as_typescript
+from codegen.climat_pratic.thematiques_generator import (
+    build_thematiques,
+    render_thematiques_as_typescript,
+)
 from codegen.codegen.python import render_markdown_as_python
 from codegen.codegen.typescript import render_markdown_as_typescript
 from codegen.indicateur.read import indicateurs_builder
@@ -72,7 +80,7 @@ def actions(
     output_python=False,
 ) -> None:
     # citergie
-    files = glob.glob(os.path.join(mesures_markdown_dir, '*.md'))
+    files = glob.glob(os.path.join(mesures_markdown_dir, "*.md"))
     actions_citergie = []
 
     for file in files:
@@ -80,28 +88,26 @@ def actions(
         action = build_action(md)
         actions_citergie.append(action)
 
-    relativize_ids(actions_citergie, 'citergie')
+    relativize_ids(actions_citergie, "citergie")
     citergie = referentiel_from_actions(
-        actions_citergie,
-        id='citergie',
-        name="Cit'ergie"
+        actions_citergie, id="citergie", name="Cit'ergie"
     )
 
     # economie circulaire
-    files = sorted_files(orientations_markdown_dir, 'md')
+    files = sorted_files(orientations_markdown_dir, "md")
     actions_economie_circulaire = []
 
     for file in files:
         md = load_md(file)
         action = build_action(md)
-        action['climat_pratic_id'] = 'eci'
+        action["climat_pratic_id"] = "eci"
         actions_economie_circulaire.append(action)
 
-    relativize_ids(actions_economie_circulaire, 'economie_circulaire')
+    relativize_ids(actions_economie_circulaire, "economie_circulaire")
     economie_circulaire = referentiel_from_actions(
         actions_economie_circulaire,
-        id='economie_circulaire',
-        name="Economie circulaire"
+        id="economie_circulaire",
+        name="Economie circulaire",
     )
 
     all_actions = actions_citergie + actions_economie_circulaire
@@ -112,39 +118,41 @@ def actions(
     if output_typescript:
         # actions list (soon to be deprecated)
         typescript = render_actions_as_typescript(all_actions)
-        filename = os.path.join(client_output_dir, 'actions_referentiels.ts')
+        filename = os.path.join(client_output_dir, "actions_referentiels.ts")
         write(filename, typescript)
 
         # two referentiels
         typescript = render_actions_as_typescript([citergie, economie_circulaire])
-        filename = os.path.join(client_output_dir, 'referentiels.ts')
+        filename = os.path.join(client_output_dir, "referentiels.ts")
         write(filename, typescript)
 
     if output_python:
         python = render_actions_as_python([citergie, economie_circulaire])
-        filename = os.path.join(shared_api_data_dir, 'referentiels.py')
+        filename = os.path.join(shared_api_data_dir, "referentiels.py")
         write(filename, python)
 
 
 @app.command()
 def indicateurs(
-    indicateurs_markdown_dir: str = typer.Option(paths.indicateurs_markdown_dir, "--markdown", "-md"),
+    indicateurs_markdown_dir: str = typer.Option(
+        paths.indicateurs_markdown_dir, "--markdown", "-md"
+    ),
     client_output_dir: str = paths.shared_client_data_dir,
     typescript: bool = True,
 ) -> None:
     """
     Convert 'indicateurs' markdown files to code.
     """
-    files = sorted_files(indicateurs_markdown_dir, 'md')
+    files = sorted_files(indicateurs_markdown_dir, "md")
     indicators = []
     for filename in files:
-        typer.echo(f'Processing {filename}...')
+        typer.echo(f"Processing {filename}...")
         md = load_md(filename)
         indicators.extend(indicateurs_builder(md))
 
     if typescript:
         rendered = render_indicators_as_typescript(indicators)
-        filename = os.path.join(client_output_dir, 'indicateurs_referentiels.ts')
+        filename = os.path.join(client_output_dir, "indicateurs_referentiels.ts")
         write(filename, rendered)
 
     typer.echo(f"Rendered {len(files)} 'indicateurs' in {client_output_dir}.")
@@ -161,13 +169,13 @@ def shared(
     """
     Generate shared definitions.
     """
-    files = glob.glob(os.path.join(markdown_dir, '*.md'))
+    files = glob.glob(os.path.join(markdown_dir, "*.md"))
     with typer.progressbar(files) as progress:
         for filename in progress:
-            if filename[-6:] == 'poc.md':
+            if filename[-6:] == "poc.md":
                 continue
 
-            typer.echo(f'Processing {filename}...')
+            typer.echo(f"Processing {filename}...")
             md = load_md(filename)
 
             if typescript:
@@ -185,10 +193,14 @@ def shared(
 
 @app.command()
 def thematiques(
-    markdown_file: str = typer.Option(paths.thematique_markdown_file, '--markdown', '-md'),
-    output_dir: str = typer.Option(paths.thematique_client_output_dir, '--output', '-o'),
-    output_typescript: bool = typer.Option(True, '--typescript', '-ts'),
-    output_json: bool = typer.Option(False, '--json'),
+    markdown_file: str = typer.Option(
+        paths.thematique_markdown_file, "--markdown", "-md"
+    ),
+    output_dir: str = typer.Option(
+        paths.thematique_client_output_dir, "--output", "-o"
+    ),
+    output_typescript: bool = typer.Option(True, "--typescript", "-ts"),
+    output_json: bool = typer.Option(False, "--json"),
 ) -> None:
     """
     Convert 'thematiques' markdown to code.
@@ -198,12 +210,12 @@ def thematiques(
 
     if output_json:
         data = json.dumps(thematiques, indent=4)
-        filename = os.path.join(output_dir, 'thematiques.json')
+        filename = os.path.join(output_dir, "thematiques.json")
         write(filename, data)
 
     if output_typescript:
         typescript = render_thematiques_as_typescript(thematiques)
-        filename = os.path.join(output_dir, 'thematiques.ts')
+        filename = os.path.join(output_dir, "thematiques.ts")
         write(filename, typescript)
 
     typer.echo(f"Rendered {len(thematiques)} 'thematiques' in {output_dir}.")

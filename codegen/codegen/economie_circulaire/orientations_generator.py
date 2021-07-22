@@ -9,17 +9,17 @@ from codegen.utils.markdown_utils import void, is_heading, is_yaml, is_keyword
 
 # todo use utils
 def token_to_string(token: BlockToken, level=0) -> str:
-    rendered = ''
+    rendered = ""
     for child in token.children:
-        if hasattr(child, 'leader'):
-            rendered += ' ' * level + f'{child.leader} '
-        if hasattr(child, 'children'):
+        if hasattr(child, "leader"):
+            rendered += " " * level + f"{child.leader} "
+        if hasattr(child, "children"):
             rendered += token_to_string(child, level + 1)
-        elif hasattr(child, 'content'):
-            rendered += child.content + '\n'
+        elif hasattr(child, "content"):
+            rendered += child.content + "\n"
 
     if isinstance(token, Paragraph):
-        rendered += '\n'
+        rendered += "\n"
 
     return rendered
 
@@ -40,7 +40,7 @@ def member_writer(keyword: str) -> Callable:
         if is_keyword(token, keyword):
             return
         if keyword not in data.keys():
-            data[keyword] = ''
+            data[keyword] = ""
 
         if is_yaml(token):
             meta(token, data[keyword])
@@ -77,18 +77,18 @@ def niveaux_writer() -> Callable:
     def head(token: BlockToken, niveau: dict) -> None:
         """Save niveau h3"""
         if isinstance(token, Heading) and token.level == 3:
-            niveau['nom'] = token.children[0].content
+            niveau["nom"] = token.children[0].content
 
     members = members_writer(4)
     current: Callable = head
 
     def writer(token: BlockToken, orientation: dict) -> None:
         """Save niveaux"""
-        if is_keyword(token, 'niveaux'):
+        if is_keyword(token, "niveaux"):
             return
-        if 'niveaux' not in orientation.keys():
-            orientation['niveaux'] = [{}]
-        niveaux: list = orientation['niveaux']
+        if "niveaux" not in orientation.keys():
+            orientation["niveaux"] = [{}]
+        niveaux: list = orientation["niveaux"]
         niveau: dict = niveaux[-1]
 
         nonlocal current
@@ -113,15 +113,15 @@ def orientation_writer() -> Callable:
     def head(token: BlockToken, orientation: dict) -> None:
         """save h1 into orientation"""
         if isinstance(token, Heading) and token.level == 1:
-            orientation['nom'] = token.children[0].content
+            orientation["nom"] = token.children[0].content
 
     def description(token: BlockToken, orientation: dict) -> None:
         """Save description as an HTML string"""
-        if is_keyword(token, 'description'):
+        if is_keyword(token, "description"):
             return
-        if 'description' not in orientation.keys():
-            orientation['description'] = ''
-        orientation['description'] += token_to_string(token)
+        if "description" not in orientation.keys():
+            orientation["description"] = ""
+        orientation["description"] += token_to_string(token)
 
     niveaux = niveaux_writer()
 
@@ -134,9 +134,9 @@ def orientation_writer() -> Callable:
         elif current is meta:
             current = void
         if is_heading(token, 2):
-            if is_keyword(token, 'description'):
+            if is_keyword(token, "description"):
                 current = description
-            if is_keyword(token, 'niveaux'):
+            if is_keyword(token, "niveaux"):
                 current = niveaux
         current(token, orientation)
 
