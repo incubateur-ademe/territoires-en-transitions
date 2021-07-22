@@ -16,7 +16,7 @@
     const avancements = [
         {
             key: 'non_concernee',
-            label: 'NC',
+            label: 'Non concernée',
         },
         {
             key: 'pas_faite',
