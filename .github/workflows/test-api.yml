@@ -11,6 +11,7 @@ jobs:
 
     env:
       AUTH_DISABLED_DUMMY_USER: YES
+      working-directory: ./api
 
     steps:
       # cf. https://github.com/actions/checkout
