@@ -74,7 +74,20 @@ jobs:
         run: poetry install
         working-directory: ${{env.working-directory}}
 
-      # # Run all the tests for codegen.
+      - name: Verify Changed files
+        uses: tj-actions/verify-changed-files@v7.1
+        id: verify-changed-files
+        with:
+          files: |
+             ../referentiels
+             referentiels
+
+      - name: Perform action when test_directory changes
+        if: contains(steps.verify-changed-files.outputs.changed_files, 'referentiels')
+        run: |
+          echo "referentiels has changed."
+
+      # Run all the tests for codegen.
       # - name: Run tests
       #   run: poetry run pytest
       #   working-directory: ${{env.working-directory}}
