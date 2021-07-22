@@ -54,6 +54,12 @@ jobs:
         run: |
           python -m pip install --upgrade pipenv wheel
         working-directory: ${{env.working-directory}}
+        
+      # Install black and check formatting
+      - name: Black checking 
+        run: |
+          pipenv install install black==21.5b1 & pipenv run black --check . 
+        working-directory: ${{env.working-directory}}
 
       # Install the project's dependencies.
       - name: Install dependencies
