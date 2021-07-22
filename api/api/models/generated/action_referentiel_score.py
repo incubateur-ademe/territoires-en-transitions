@@ -16,4 +16,4 @@ class ActionReferentielScore:
     percentage: float
     potentiel: float
     referentiel_points: float
-    referentiel_percentage: float
+    referentiel_percentage: float  # TODO : Ce champ ne semble utilisé nulle-part, on le supprime ?
