@@ -42,7 +42,6 @@ jobs:
   codegen-test-and-generate:
     name: Tests and artifacts on Codegen
     needs: check
-    if: needs.check.outputs.run_job == 'true'
     runs-on: ubuntu-latest
     env:
       python-version: 3.9.1
@@ -108,19 +107,11 @@ jobs:
         run: poetry install
         working-directory: ${{env.working-directory}}
 
-      - name: Verify Changed files
-        uses: tj-actions/verify-changed-files@v7.1
-        id: verify-changed-files
-
-      - name: Perform action when test_directory changes
-        if: contains(steps.verify-changed-files.outputs.changed_files, 'referentiels')
-        run: |
-          echo "referentiels has changed."
-
       # Run all the tests for codegen.
-      # - name: Run tests
-      #   run: poetry run pytest
-      #   working-directory: ${{env.working-directory}}
+      - name: Run tests
+        if: needs.check.outputs.run_job == 'true'
+        run: poetry run pytest
+        working-directory: ${{env.working-directory}}
 
       # Generate all JavaScript shared models and data with codegen. These files
       # are mandatory for the client build.
@@ -138,33 +129,7 @@ jobs:
           name: generated-client-files
           path: ${{ github.workspace }}/app.territoiresentransitions.fr/src/generated
 
-#  end-to-end:
-#    name: End-to-end tests on client
-#    runs-on: ubuntu-latest
-#    needs: codegen-test-and-generate
-#    env:
-#      working-directory:  ./app.territoiresentransitions.fr
-#
-#    steps:
-#      # cf. https://github.com/actions/checkout
-#      - uses: actions/checkout@v2
-#
-#      # Download JavaScript models and data generated previously by codegen.
-#      - name: Download generated files
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: generated-client-files
-#          path: generated
-#
-#      # Use Cypress to run end-to-end tests
-#      - name: Cypress run
-#        uses: cypress-io/github-action@v2
-#        with:
-#          build: npm run export
-#          start: npx serve __sapper__/export -p 3000
-#          working-directory: ${{env.working-directory}}
-#
-  client-test:
+  client-unit-test:
     name: Unit tests on client
     runs-on: ubuntu-latest
     needs: codegen-test-and-generate
@@ -193,3 +158,31 @@ jobs:
         run: |
           npm run test
         working-directory: ${{env.working-directory}}
+
+
+#  end-to-end:
+#    name: End-to-end tests on client
+#    runs-on: ubuntu-latest
+#    needs: codegen-test-and-generate
+#    env:
+#      working-directory:  ./app.territoiresentransitions.fr
+#
+#    steps:
+#      # cf. https://github.com/actions/checkout
+#      - uses: actions/checkout@v2
+#
+#      # Download JavaScript models and data generated previously by codegen.
+#      - name: Download generated files
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: generated-client-files
+#          path: generated
+#
+#      # Use Cypress to run end-to-end tests
+#      - name: Cypress run
+#        uses: cypress-io/github-action@v2
+#        with:
+#          build: npm run export
+#          start: npx serve __sapper__/export -p 3000
+#          working-directory: ${{env.working-directory}}
+#
