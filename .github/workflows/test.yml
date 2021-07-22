@@ -157,7 +157,7 @@ jobs:
       - name: Jest run
         run: |
           npm run test
-        working-directory: ${{env.working-directory}}
+        # working-directory: ${{env.working-directory}}
 
 
 #  end-to-end:
