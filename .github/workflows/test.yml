@@ -145,7 +145,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: generated-client-files
-          path: generated
+          path: app.territoiresentransitions.fr/src/generated
 
       # Install dependencies
       - name: Install dependencies
@@ -157,7 +157,7 @@ jobs:
       - name: Jest run
         run: |
           npm run test
-        # working-directory: ${{env.working-directory}}
+        working-directory: ${{env.working-directory}}
 
 
 #  end-to-end:
