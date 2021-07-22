@@ -13,4 +13,6 @@ class MesureCustom(models.Model):
 
 
 MesureCustom_Pydantic = pydantic_model_creator(MesureCustom, name="MesureCustom")
-MesureCustomIn_Pydantic = pydantic_model_creator(MesureCustom, name="MesureCustomIn", exclude_readonly=True)
+MesureCustomIn_Pydantic = pydantic_model_creator(
+    MesureCustom, name="MesureCustomIn", exclude_readonly=True
+)

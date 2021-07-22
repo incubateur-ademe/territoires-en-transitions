@@ -39,8 +39,8 @@ def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     )
     assert response.status_code == 200
     assert (
-            response.json()["indicateur_id"]
-            == indicateur_referentiel_commentaire["indicateur_id"]
+        response.json()["indicateur_id"]
+        == indicateur_referentiel_commentaire["indicateur_id"]
     )
 
     # GET /v2/indicateur_referentiel_commentaire/epci_id/all
@@ -48,16 +48,16 @@ def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert (
-            response.json()[0]["indicateur_id"]
-            == indicateur_referentiel_commentaire["indicateur_id"]
+        response.json()[0]["indicateur_id"]
+        == indicateur_referentiel_commentaire["indicateur_id"]
     )
 
     # GET /v2/indicateur_referentiel_commentaire/epci_id/indicateur_id
     response = client.get(item_path)
     assert response.status_code == 200
     assert (
-            response.json()["indicateur_id"]
-            == indicateur_referentiel_commentaire["indicateur_id"]
+        response.json()["indicateur_id"]
+        == indicateur_referentiel_commentaire["indicateur_id"]
     )
 
 
@@ -80,23 +80,23 @@ def test_update_indicateur_referentiel_commentaire(client: TestClient):
 
     assert response.status_code == 200
     assert (
-            response.json()["indicateur_id"]
-            == existing_indicateur_referentiel_commentaire["indicateur_id"]
+        response.json()["indicateur_id"]
+        == existing_indicateur_referentiel_commentaire["indicateur_id"]
     )
     assert (
-            response.json()["value"] == existing_indicateur_referentiel_commentaire["value"]
+        response.json()["value"] == existing_indicateur_referentiel_commentaire["value"]
     )
 
     response = client.get(list_path)
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert (
-            response.json()[0]["indicateur_id"]
-            == existing_indicateur_referentiel_commentaire["indicateur_id"]
+        response.json()[0]["indicateur_id"]
+        == existing_indicateur_referentiel_commentaire["indicateur_id"]
     )
     assert (
-            response.json()[0]["value"]
-            == existing_indicateur_referentiel_commentaire["value"]
+        response.json()[0]["value"]
+        == existing_indicateur_referentiel_commentaire["value"]
     )
 
 
