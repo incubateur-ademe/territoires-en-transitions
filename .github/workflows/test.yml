@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: check modified files
+      - name: check modified referentiels md files
         id: check_files
         run: |
           echo "=============== list modified files ==============="
