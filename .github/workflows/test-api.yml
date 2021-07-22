@@ -6,7 +6,21 @@ on:
       - main
 
 jobs:
-  test-routers:
+
+  black:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./api
+
+    steps:
+      - uses: actions/checkout@v2-beta
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - name: Black Code Formatter
+        uses: psf/black@21.5b1
+
+  test-api:
     runs-on: ubuntu-latest
 
     env:
@@ -29,6 +43,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ env.python-tools-cache-name }}
             ${{ runner.os }}-
+
+      # Check black formatting :( Does not work. Any clue ?
+      # - name: Black checking 
+      #   run: |
+      #     pipenv run black --check . 
+      #   working-directory: ${{env.working-directory}}
 
       # Restore cache or create a new one for all dependencies installed with
       # Pipenv
@@ -60,12 +80,6 @@ jobs:
         run: |
           pipenv install
           pipenv install --dev
-        working-directory: ${{env.working-directory}}
-
-      # Check black formatting
-      - name: Black checking 
-        run: |
-          black --check . 
         working-directory: ${{env.working-directory}}
 
       # Run tests
