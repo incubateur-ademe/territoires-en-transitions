@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  black:
+  check-black-format:
     runs-on: ubuntu-latest
     env:
       working-directory: ./api
