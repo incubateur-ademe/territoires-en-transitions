@@ -1,4 +1,4 @@
-name: Test
+name: Test API
 
 on:
   push:
@@ -53,14 +53,16 @@ jobs:
       - name: Install pipenv
         run: |
           python -m pip install --upgrade pipenv wheel
+        working-directory: ${{env.working-directory}}
 
       # Install the project's dependencies.
       - name: Install dependencies
         run: |
           pipenv install
           pipenv install --dev
+        working-directory: ${{env.working-directory}}
 
       # Run tests
       - name: Run tests
         run: pipenv run pytest
-
+        working-directory: ${{env.working-directory}}
