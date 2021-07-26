@@ -6,13 +6,13 @@
      */
 
     import {storeActions, storeState} from "$api/svelteStore"
-import { avancement_noms } from "$generated/models/avancement_noms";
+    import { fiche_action_avancement_noms } from "$generated/models/fiche_action_avancement_noms";
     import * as R from "ramda";
 
 
     export let actionId
 
-    const avancements = R.values(R.mapObjIndexed((label, key) => ({key, label}) , avancement_noms))
+    const avancements = R.values(R.mapObjIndexed((label, key) => ({key, label}) , fiche_action_avancement_noms))
 
     const classes = [
         'border rounded-l flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
@@ -24,7 +24,6 @@ import { avancement_noms } from "$generated/models/avancement_noms";
 
     let actionAvancementKey: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | 'en_cours' | '' = '';
 
-    // let epci_id = ''
     storeState.actionsReferentielsWithStatusAndScoreById[actionId].subscribe(value => {
         if (value.status) actionAvancementKey = value.status.avancement
 

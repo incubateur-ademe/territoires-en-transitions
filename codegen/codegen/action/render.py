@@ -60,6 +60,7 @@ def render_actions_as_typescript(
     return jsbeautifier.beautify(rendered)
 
 
+# Question : where is this used ?
 def render_mesure_as_html(
     mesure: dict,
     indicateurs: List[dict] = None,
@@ -72,7 +73,7 @@ def render_mesure_as_html(
 
     if indicateurs is None:
         indicateurs = []
-
+    # Question : This code is never used, or is it ?
     avancement_noms = {
         "faite": "Faite",
         "programmee": "Prévue",

@@ -49,7 +49,7 @@ L'avancement des fiches actions est représenté par les valeurs suivantes
 
 ```yaml
 fiche_action_avancement_noms:
-    non_concerne: 'Non concernée'
+    non_concernee: 'Non concernée'
     programmee: 'Prévue'
     pas_faite: 'Pas faite'
     en_cours: 'En cours'
