@@ -4,14 +4,14 @@
      * The list is reactive and only keeps added actions.
      * Removed actions are not discarded.
      */
-    import type {ActionReferentiel} from '$generated/models/action_referentiel'
+	import type {ActionReferentiel} from '$generated/models/action_referentiel'
     import {actions} from '$generated/data/actions_referentiels'
     import ActionReferentielTitle from '$components/shared/ActionReferentiel/ActionReferentielTitle.svelte'
     import PickButton from '$components/shared/ButtonV2/PickButton.svelte'
+    import ActionStatus from "$components/shared/ActionStatus.svelte"
 
     export let actionIds: string[]
     export let handlePickButton: (actionId: string) => void
-
     let actionIdsHistory: string[] = []
 
     $: {
@@ -43,35 +43,36 @@
 </script>
 
 <style>
-    ul {
-        margin-bottom: 2rem;
-    }
+	.linked-action {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-around;
+	}
 
-    li {
-        display: flex;
-        align-items: center;
-    }
-
-    li + li {
-        margin-top: 1.5rem;
-    }
-
-    li :global(h3) {
-        margin-bottom: 0;
-        margin-left: 1rem;
-    }
+	.linked-action .title-and-status {
+		flex-basis: 75%;
+	}
 </style>
 
 <ul>
-    {#each actionIdsHistory as actionId }
-        <li>
-            <PickButton picked={actionIds.includes(actionId)}
-                        handlePick={() => { handlePickButton(actionId) }}
-                        handleUnpick={() => { handlePickButton(actionId) }}
-                        pickLabel="Ajouter"
-                        unpickLabel="Ajouté"
-            />
-            <ActionReferentielTitle action={referentielById[actionId]}/>
-        </li>
-    {/each}
+	{#each actionIdsHistory as actionId}
+		<li>
+			<div class="linked-action">
+				<PickButton
+					picked={actionIds.includes(actionId)}
+					handlePick={() => {
+						handlePickButton(actionId)
+					}}
+					handleUnpick={() => {
+						handlePickButton(actionId)
+					}}
+					pickLabel={"Lier"}
+					unpickLabel="Liée"
+				/>
+				<div class="title-and-status">
+					<ActionReferentielTitle action={referentielById[actionId]} />
+					<ActionStatus {actionId} />
+				</div>
+			</div>
+		</li>{/each}
 </ul>

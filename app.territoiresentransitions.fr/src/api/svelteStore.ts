@@ -42,7 +42,8 @@ const updateStoreScoresFromApi = async () => {
   })
 }
 
-type Avancement = "" | "faite" | "programmee" | "pas_faite" | "non_concernee" | "en_cours"
+// This should be generared. 
+export type Avancement = "" | "faite" | "programmee" | "pas_faite" | "non_concernee" | "en_cours"
 
 
 const updateAvancementForAction = async (actionId: string, avancement: Avancement): Promise<void> => {

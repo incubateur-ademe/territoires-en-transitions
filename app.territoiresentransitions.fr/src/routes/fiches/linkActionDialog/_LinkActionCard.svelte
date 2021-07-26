@@ -82,12 +82,13 @@
 
 <RowCard id={action.id}>
     <div>
-        <PickButton handlePick={handlePick}
-                    handleUnpick={handlePick}
-                    pickLabel="Ajouter"
-                    picked={added}
-                    unpickLabel="Supprimer"/>
-
+        {#if action.actions.length === 0 } 
+            <PickButton handlePick={handlePick}
+                        handleUnpick={handlePick}
+                        pickLabel="Ajouter"
+                        picked={added}
+                        unpickLabel="Supprimer"/>
+        {/if}
         <div class="title {expandable ? 'expandable' : null} {expanded? 'expanded' : null}" on:click={expandable ?
         handleExpand : null}>
             <ActionReferentielTitle action={action} on:click={onTitleClick}/>
