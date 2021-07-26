@@ -6,32 +6,13 @@
      */
 
     import {storeActions, storeState} from "$api/svelteStore"
+import { avancement_noms } from "$generated/models/avancement_noms";
+    import * as R from "ramda";
 
 
     export let actionId
 
-    const avancements = [
-        {
-            key: 'non_concernee',
-            label: 'Non concernée',
-        },
-        {
-            key: 'pas_faite',
-            label: 'Pas faite',
-        },
-        {
-            key: 'programmee',
-            label: 'Prévue',
-        },
-        {
-            key: 'en_cours',
-            label: 'En cours',
-        },
-        {
-            key: 'faite',
-            label: 'Faite',
-        },
-    ]
+    const avancements = R.values(R.mapObjIndexed((label, key) => ({key, label}) , avancement_noms))
 
     const classes = [
         'border rounded-l flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
