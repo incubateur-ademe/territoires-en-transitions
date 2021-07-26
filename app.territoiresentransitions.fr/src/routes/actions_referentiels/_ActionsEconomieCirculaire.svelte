@@ -7,7 +7,7 @@
 
     export let displayed: ActionReferentiel[]
 
-    $: displayed, refresh()
+    $: displayed, refresh() // What is this supposed to do?
 
     let displayedByAxe: Map<ActionReferentiel, ActionReferentiel[]>
 
