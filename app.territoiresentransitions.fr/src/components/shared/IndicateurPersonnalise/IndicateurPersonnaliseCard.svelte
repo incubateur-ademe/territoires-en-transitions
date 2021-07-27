@@ -84,7 +84,7 @@
         width: 75%;
     }
 
-    .description :global(details) {
+    .expandableFields :global(details) {
         max-width: 70%;
     }
 </style>
@@ -137,7 +137,7 @@
         </form>
 
         {#if indicateur.description}
-            <div class="description">
+            <div class="expandableFields">
                 <ExpandPanel>
                     <h3 slot="title">
                         Description
@@ -149,6 +149,19 @@
                 </ExpandPanel>
             </div>
         {/if}
+        {#if indicateur.meta.commentaire}
+        <div class="expandableFields">
+            <ExpandPanel>
+                <h3 slot="title">
+                    Commentaire
+                </h3>
+
+                <div slot="content">
+                    {@html indicateur.meta.commentaire }
+                </div>
+            </ExpandPanel>
+        </div>
+    {/if}
 
     </RowCard>
 {/if}

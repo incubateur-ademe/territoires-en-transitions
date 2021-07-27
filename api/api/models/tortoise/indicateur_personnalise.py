@@ -10,6 +10,7 @@ class IndicateurPersonnalise(models.Model):
     nom = fields.CharField(max_length=300)
     description = fields.TextField()
     unite = fields.CharField(max_length=36)
+    meta = fields.JSONField()
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
     latest = fields.BooleanField()
