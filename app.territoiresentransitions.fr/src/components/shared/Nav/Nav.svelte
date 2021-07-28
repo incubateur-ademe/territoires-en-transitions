@@ -12,7 +12,6 @@
     let epciId = ''
     let epci: EpciStorable | null = null
     let readOnly = false
-    let isLogged = false
     $: isLogged = connected()
 
 
@@ -48,7 +47,7 @@
             {#if isLogged}
                 {#if epci}
                     <li>
-                        {epci.nom} <a class="fr-link" href="epcis/">Changer</a>
+                        {epci.nom} <a class="fr-link" href="/epcis/">Changer</a>
                     </li>
                 {/if}
                 {#if epciId}

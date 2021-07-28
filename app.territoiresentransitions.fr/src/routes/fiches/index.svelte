@@ -140,7 +140,7 @@
 
     onMount(async () => {
         epciId = getCurrentEpciId()
-        const hybridStores = await import ("../../api/hybridStores");
+        const hybridStores = await import ("$api/hybridStores");
         categorieStore = hybridStores.ficheActionCategorieStore;
         ficheActionStore = hybridStores.ficheActionStore
 
@@ -185,7 +185,7 @@
         <h1 class="fr-h1">Plan d'actions de ma collectivité</h1>
 
         <a class="fr-btn"
-            href="fiches/creation/?epci_id={epciId}">
+            href="/fiches/creation/?epci_id={epciId}">
             Ajouter une fiche action
         </a>
     </div>

@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "isolatedModules": false,
+    "lib": [
+      "es2020",
+      "DOM"
+    ]
+  },
+  "exclude": [
+    "src/**"
+  ],
+  "include": [
+    "src/**/*.spec.ts"
+  ]
+}
