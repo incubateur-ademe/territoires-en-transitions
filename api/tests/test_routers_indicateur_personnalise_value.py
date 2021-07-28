@@ -41,8 +41,8 @@ def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     )
     assert response.status_code == 200
     assert (
-            response.json()["indicateur_id"]
-            == indicateur_personnalise_value["indicateur_id"]
+        response.json()["indicateur_id"]
+        == indicateur_personnalise_value["indicateur_id"]
     )
 
     # GET /v2/indicateur_personnalise_value/epci_id/all
@@ -50,8 +50,8 @@ def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert (
-            response.json()[0]["indicateur_id"]
-            == indicateur_personnalise_value["indicateur_id"]
+        response.json()[0]["indicateur_id"]
+        == indicateur_personnalise_value["indicateur_id"]
     )
 
     # GET /v2/indicateur_personnalise_value/epci_id/indicateur_id
@@ -59,16 +59,16 @@ def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert (
-            response.json()[0]["indicateur_id"]
-            == indicateur_personnalise_value["indicateur_id"]
+        response.json()[0]["indicateur_id"]
+        == indicateur_personnalise_value["indicateur_id"]
     )
 
     # GET /v2/indicateur_personnalise_value/epci_id/indicateur_id/year
     response = client.get(item_path)
     assert response.status_code == 200
     assert (
-            response.json()["indicateur_id"]
-            == indicateur_personnalise_value["indicateur_id"]
+        response.json()["indicateur_id"]
+        == indicateur_personnalise_value["indicateur_id"]
     )
 
 
@@ -89,8 +89,8 @@ def test_update_indicateur_personnalise_value(client: TestClient):
 
     assert response.status_code == 200
     assert (
-            response.json()["indicateur_id"]
-            == existing_indicateur_personnalise_value["indicateur_id"]
+        response.json()["indicateur_id"]
+        == existing_indicateur_personnalise_value["indicateur_id"]
     )
     assert response.json()["value"] == existing_indicateur_personnalise_value["value"]
 
@@ -98,11 +98,11 @@ def test_update_indicateur_personnalise_value(client: TestClient):
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert (
-            response.json()[0]["indicateur_id"]
-            == existing_indicateur_personnalise_value["indicateur_id"]
+        response.json()[0]["indicateur_id"]
+        == existing_indicateur_personnalise_value["indicateur_id"]
     )
     assert (
-            response.json()[0]["value"] == existing_indicateur_personnalise_value["value"]
+        response.json()[0]["value"] == existing_indicateur_personnalise_value["value"]
     )
 
 

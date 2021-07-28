@@ -24,7 +24,6 @@ jobs:
         run: |
           echo "=============== list modified files ==============="
           git diff --name-only HEAD^ HEAD
-
           echo "========== check paths of modified files =========="
           git diff --name-only HEAD^ HEAD > files.txt
           while IFS= read -r file
@@ -41,6 +40,7 @@ jobs:
 
   codegen-test-and-generate:
     name: Tests and artifacts on Codegen
+    needs: check
     runs-on: ubuntu-latest
     env:
       python-version: 3.9.1
@@ -117,6 +117,7 @@ jobs:
       - name: Generate shared models and data in JavaScript
         run: |
           poetry run generate all
+          pwd
         working-directory: ${{env.working-directory}}
 
       # Upload the generated files as an artefact so they can be download in the

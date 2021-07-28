@@ -14,4 +14,6 @@ class ActionCustom(models.Model):
 
 
 ActionCustom_Pydantic = pydantic_model_creator(ActionCustom, name="ActionCustom")
-ActionCustomIn_Pydantic = pydantic_model_creator(ActionCustom, name="ActionCustomIn", exclude_readonly=True)
+ActionCustomIn_Pydantic = pydantic_model_creator(
+    ActionCustom, name="ActionCustomIn", exclude_readonly=True
+)
