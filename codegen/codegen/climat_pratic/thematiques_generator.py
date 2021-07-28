@@ -14,7 +14,7 @@ def thematiques(token: BlockToken, thematiques: dict):
 
 
 def get_thematiques(
-    markdown_file='../referentiels/markdown/thematiques_climat_pratic/thematiques.md'
+    markdown_file="../referentiels/markdown/thematiques_climat_pratic/thematiques.md",
 ) -> Dict[str, str]:
     """Returns thématiques built from markdown file"""
     markdown = load_md(markdown_file)
@@ -34,11 +34,12 @@ def build_thematiques(markdown: Document) -> Dict[str, str]:
 
         writer(token, data)
 
-    return data['yaml']['thematiques']
+    return data["yaml"]["thematiques"]
 
 
-def render_thematiques_as_typescript(thematiques: Dict[str, str],
-                                     template_file='shared/ts/thematiques.j2') -> str:
+def render_thematiques_as_typescript(
+    thematiques: Dict[str, str], template_file="shared/ts/thematiques.j2"
+) -> str:
     """Render all thématiques into a single typescript file."""
     env = build_jinja_environment()
     template = env.get_template(template_file)

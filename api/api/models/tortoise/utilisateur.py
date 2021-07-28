@@ -12,5 +12,6 @@ class Utilisateur(models.Model):
 
 
 Utilisateur_Pydantic = pydantic_model_creator(Utilisateur, name="Utilisateur")
-UtilisateurIn_Pydantic = pydantic_model_creator(Utilisateur, name="UtilisateurIn",
-                                                exclude_readonly=True)
+UtilisateurIn_Pydantic = pydantic_model_creator(
+    Utilisateur, name="UtilisateurIn", exclude_readonly=True
+)

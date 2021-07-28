@@ -17,12 +17,11 @@ class IndicateurPersonnalise(models.Model):
 
 
 IndicateurPersonnalise_Pydantic = pydantic_model_creator(
-    IndicateurPersonnalise,
-    name="IndicateurPersonnalise"
+    IndicateurPersonnalise, name="IndicateurPersonnalise"
 )
 IndicateurPersonnaliseIn_Pydantic = pydantic_model_creator(
     IndicateurPersonnalise,
     name="IndicateurPersonnaliseIn",
     exclude_readonly=True,
-    exclude=("latest", "deleted")
+    exclude=("latest", "deleted"),
 )

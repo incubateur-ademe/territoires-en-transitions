@@ -50,66 +50,68 @@ def p_low(p: Paragraph) -> str:
 def split_title(title: str) -> tuple:
     """Returns the id part (ex: 1.1.1) and the title parts."""
     title = title.strip()
-    uid = re.match(r'\d+.\d+.\d+', title).group()
-    return uid, title[len(uid):].strip()
+    uid = re.match(r"\d+.\d+.\d+", title).group()
+    return uid, title[len(uid) :].strip()
 
 
 def split_weight(title: str) -> tuple:
     """Returns the percentage of an action along with its name."""
     title = title.strip()
-    percentage = re.match(r'\d+%', title).group()
-    return int(percentage[:-1]), title[len(percentage):].strip()
+    percentage = re.match(r"\d+%", title).group()
+    return int(percentage[:-1]), title[len(percentage) :].strip()
 
 
 def is_domaine(p: Paragraph) -> bool:
     """Returns True if paragraph is a sous domaine"""
-    return bool(re.match(r'domaine \d+', p_low(p)))
+    return bool(re.match(r"domaine \d+", p_low(p)))
 
 
 def is_sous_domaine(p: Paragraph) -> bool:
     """Returns True if paragraph is a sous domaine"""
-    return bool(re.match(r'\d+.\d+. ', p_low(p)))
+    return bool(re.match(r"\d+.\d+. ", p_low(p)))
 
 
 def is_mesure_title(p: Paragraph) -> bool:
     """Returns True if paragraph is a mesure title."""
-    return bool(re.match(r'\d+.\d+.\d+ ', p_low(p)))
+    return bool(re.match(r"\d+.\d+.\d+ ", p_low(p)))
 
 
 def is_action_title(p: Paragraph) -> bool:
     """Returns True if paragraph is an action title."""
-    return bool(re.match(r'\d+% ', p_low(p)))
+    return bool(re.match(r"\d+% ", p_low(p)))
 
 
 def is_action_cat(p: Paragraph) -> bool:
     """Returns True if paragraph is an action category."""
     low = p_low(p)
-    return low == 'bases' or low == 'effets' or low == 'mise en œuvre'
+    return low == "bases" or low == "effets" or low == "mise en œuvre"
 
 
 def is_reduction(p: Paragraph) -> bool:
     """Returns if paragraph is 'Réduction de potentiel'"""
-    return p_low(p) == 'réduction de potentiel'
+    return p_low(p) == "réduction de potentiel"
 
 
 def is_perimeter(p: Paragraph) -> bool:
     """Returns if paragraph is 'Périmètre de l’évaluation'"""
-    return p_low(p) == 'périmètre de l’évaluation'
+    return p_low(p) == "périmètre de l’évaluation"
 
 
 def mesure(p: Paragraph, mesures: list) -> None:
     """Parse mesure"""
     if is_mesure_title(p):
         uid, nom = split_title(p.text)
-        mesures.append({
-            'id': uid,
-            'nom': nom,
-            'description': '',
-            'actions': [],
-        })
+        mesures.append(
+            {
+                "id": uid,
+                "nom": nom,
+                "description": "",
+                "actions": [],
+            }
+        )
     else:
         mesure = mesures[-1]
-        mesure['description'] += f'{p.text}\n\n'
+        mesure["description"] += f"{p.text}\n\n"
 
 
 def categorized_action(cat: str) -> Callable:
@@ -119,19 +121,21 @@ def categorized_action(cat: str) -> Callable:
         mesure = mesures[-1]
         if is_action_title(p):
             weight, name = split_weight(p.text)
-            mesure['actions'].append({
-                'nom': name,
-                'points': weight,
-                'categorie': cat,
-                'description': '',
-                'id': f"{mesure['id']}.{len(mesure['actions']) + 1}"
-            })
+            mesure["actions"].append(
+                {
+                    "nom": name,
+                    "points": weight,
+                    "categorie": cat,
+                    "description": "",
+                    "id": f"{mesure['id']}.{len(mesure['actions']) + 1}",
+                }
+            )
         else:
-            action = mesure['actions'][-1]
+            action = mesure["actions"][-1]
             text = p.text
-            if text.startswith('-') and not text.startswith('- '):
-                text = '- ' + text[1:]
-            action['description'] += f'{text}\n\n'
+            if text.startswith("-") and not text.startswith("- "):
+                text = "- " + text[1:]
+            action["description"] += f"{text}\n\n"
 
     return parser
 
@@ -142,24 +146,17 @@ def docx_to_parent_actions(doc: docx.Document) -> list:
 
     for p in iter_paragraphs(doc):
         if is_domaine(p):
-            numero, nom = p.text.split(':')
-            numero = re.findall(r'\d+', numero)[0]
-            action = {
-                'id': numero,
-                'nom': nom.strip(),
-                'actions': []
-            }
+            numero, nom = p.text.split(":")
+            numero = re.findall(r"\d+", numero)[0]
+            action = {"id": numero, "nom": nom.strip(), "actions": []}
             actions.append(action)
         if is_sous_domaine(p):
             domaine = actions[-1]
             text = p.text.strip()
-            numero = re.findall(r'\d+.\d+', text)[0]
-            nom = text[len(numero) + 1:]
-            action = {
-                'id': numero,
-                'nom': nom.strip()
-            }
-            domaine['actions'].append(action)
+            numero = re.findall(r"\d+.\d+", text)[0]
+            nom = text[len(numero) + 1 :]
+            action = {"id": numero, "nom": nom.strip()}
+            domaine["actions"].append(action)
 
     return actions
 
@@ -168,7 +165,7 @@ def docx_to_mesures(doc: docx.Document) -> list:
     """Returns mesures from document"""
     parser: Callable = void
     mesures = []
-    action_cat = ''
+    action_cat = ""
 
     for p in iter_paragraphs(doc):
         if is_domaine(p) or is_sous_domaine(p):
@@ -195,16 +192,17 @@ def add_climat_pratic(mesures: List[dict], correspondance: str) -> List[dict]:
     """Add climat pratic theme in mesure"""
     correspondance = pd.read_excel(correspondance, dtype=str, sheet_name=0, header=1)
     correspondance = correspondance.iloc[:, [4, 5]]
-    correspondance.columns = ['n', 'climat_pratic']
+    correspondance.columns = ["n", "climat_pratic"]
 
     for mesure in mesures:
+
         def find_cc(n: str) -> str:
             try:
-                return str(correspondance[correspondance['n'] == n].iat[0, 1]).strip()
+                return str(correspondance[correspondance["n"] == n].iat[0, 1]).strip()
             except:
-                return ''
+                return ""
 
-        mesure['climat_pratic'] = find_cc(mesure['id'])
+        mesure["climat_pratic"] = find_cc(mesure["id"])
 
     return mesures
 
@@ -229,24 +227,24 @@ def mesure_to_markdown_legacy(mesure: dict) -> str:
     add_line(f"id: {mesure['id']}")
     add_line(f"climat_pratic: {clean_climat_pratic(mesure['climat_pratic'])}")
     add_line("```")
-    if mesure['description']:
-        add_line('## Description')
-        add_line(mesure['description'])
-    add_line('')
-    add_line('## Actions')
-    for action in mesure['actions']:
+    if mesure["description"]:
+        add_line("## Description")
+        add_line(mesure["description"])
+    add_line("")
+    add_line("## Actions")
+    for action in mesure["actions"]:
         add_line(f"### {action['nom']}")
         add_line("```yaml")
         add_line(f"id: {action['id']}")
         add_line(f"points: {action['points']}")
         add_line(f"categorie: {action['categorie']}")
         add_line("```")
-        if action['description']:
-            add_line(action['description'])
-        add_line('')
-        add_line('')
+        if action["description"]:
+            add_line(action["description"])
+        add_line("")
+        add_line("")
 
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def mesure_to_markdown(mesure: dict) -> str:

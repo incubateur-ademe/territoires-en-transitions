@@ -22,5 +22,5 @@ IndicateurPersonnaliseValueIn_Pydantic = pydantic_model_creator(
     IndicateurPersonnaliseValue,
     name="IndicateurPersonnaliseValueIn",
     exclude_readonly=True,
-    exclude=('latest',),
+    exclude=("latest",),
 )

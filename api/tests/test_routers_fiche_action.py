@@ -91,8 +91,8 @@ def test_update_fiche_action(client: TestClient):
     assert response.json()["uid"] == existing_fiche_action["uid"]
     assert response.json()["avancement"] == existing_fiche_action["avancement"]
     assert (
-            response.json()["indicateur_personnalise_ids"]
-            == existing_fiche_action["indicateur_personnalise_ids"]
+        response.json()["indicateur_personnalise_ids"]
+        == existing_fiche_action["indicateur_personnalise_ids"]
     )
 
     response = client.get(list_path)
@@ -101,8 +101,8 @@ def test_update_fiche_action(client: TestClient):
     assert response.json()[0]["uid"] == existing_fiche_action["uid"]
     assert response.json()[0]["avancement"] == existing_fiche_action["avancement"]
     assert (
-            response.json()[0]["indicateur_personnalise_ids"]
-            == existing_fiche_action["indicateur_personnalise_ids"]
+        response.json()[0]["indicateur_personnalise_ids"]
+        == existing_fiche_action["indicateur_personnalise_ids"]
     )
 
 

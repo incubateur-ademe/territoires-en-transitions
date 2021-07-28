@@ -12,10 +12,12 @@ class UtilisateurDroits(models.Model):
     latest = fields.BooleanField()
 
 
-UtilisateurDroits_Pydantic = pydantic_model_creator(UtilisateurDroits, name="UtilisateurDroits")
+UtilisateurDroits_Pydantic = pydantic_model_creator(
+    UtilisateurDroits, name="UtilisateurDroits"
+)
 UtilisateurDroitsIn_Pydantic = pydantic_model_creator(
     UtilisateurDroits,
     name="UtilisateurDroitsIn",
     exclude_readonly=True,
-    exclude=('latest',),
+    exclude=("latest",),
 )
