@@ -1,4 +1,4 @@
-name: Test
+name: Test Codegen and App 
 
 on:
   pull_request:
