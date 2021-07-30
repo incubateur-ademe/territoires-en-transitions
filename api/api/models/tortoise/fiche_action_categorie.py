@@ -15,10 +15,12 @@ class FicheActionCategorie(models.Model):
     deleted = fields.BooleanField()
 
 
-FicheActionCategorie_Pydantic = pydantic_model_creator(FicheActionCategorie, name="FicheActionCategorie")
+FicheActionCategorie_Pydantic = pydantic_model_creator(
+    FicheActionCategorie, name="FicheActionCategorie"
+)
 FicheActionCategorieIn_Pydantic = pydantic_model_creator(
     FicheActionCategorie,
     name="FicheActionCategorieIn",
     exclude_readonly=True,
-    exclude=("latest", "deleted")
+    exclude=("latest", "deleted"),
 )

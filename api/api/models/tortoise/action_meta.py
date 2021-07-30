@@ -14,8 +14,5 @@ class ActionMeta(models.Model):
 
 ActionMeta_Pydantic = pydantic_model_creator(ActionMeta, name="ActionMeta")
 ActionMetaIn_Pydantic = pydantic_model_creator(
-    ActionMeta,
-    name="ActionMetaIn",
-    exclude_readonly=True,
-    exclude=("latest",)
+    ActionMeta, name="ActionMetaIn", exclude_readonly=True, exclude=("latest",)
 )

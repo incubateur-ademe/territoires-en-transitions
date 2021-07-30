@@ -75,7 +75,7 @@ def test_update_indicateur_value(client: TestClient):
 
     assert response.status_code == 200
     assert (
-            response.json()["indicateur_id"] == existing_indicateur_value["indicateur_id"]
+        response.json()["indicateur_id"] == existing_indicateur_value["indicateur_id"]
     )
     assert response.json()["value"] == existing_indicateur_value["value"]
 
@@ -83,8 +83,8 @@ def test_update_indicateur_value(client: TestClient):
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert (
-            response.json()[0]["indicateur_id"]
-            == existing_indicateur_value["indicateur_id"]
+        response.json()[0]["indicateur_id"]
+        == existing_indicateur_value["indicateur_id"]
     )
     assert response.json()[0]["value"] == existing_indicateur_value["value"]
 

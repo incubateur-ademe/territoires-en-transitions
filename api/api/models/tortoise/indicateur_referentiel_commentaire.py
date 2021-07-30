@@ -13,8 +13,7 @@ class IndicateurReferentielCommentaire(models.Model):
 
 
 IndicateurReferentielCommentaire_Pydantic = pydantic_model_creator(
-    IndicateurReferentielCommentaire,
-    name="IndicateurReferentielCommentaire"
+    IndicateurReferentielCommentaire, name="IndicateurReferentielCommentaire"
 )
 IndicateurReferentielCommentaireIn_Pydantic = pydantic_model_creator(
     IndicateurReferentielCommentaire,

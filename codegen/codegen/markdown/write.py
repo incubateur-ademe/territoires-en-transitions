@@ -6,7 +6,7 @@ def node_to_markdown(
     yaml_keys: List[str],
     yaml_list: List[str],
     body_keys: List[str],
-    children_key: str = '',
+    children_key: str = "",
     heading: int = 1,
 ) -> str:
     """
@@ -18,8 +18,8 @@ def node_to_markdown(
     def simplify(value: str) -> str:
         """Make a yaml value from a string"""
         if isinstance(value, str):
-            value = value.replace('\n', ' ')
-            if value.startswith('%'):
+            value = value.replace("\n", " ")
+            if value.startswith("%"):
                 return f"'{value}'"
             return value
         if isinstance(value, bool):
@@ -46,7 +46,7 @@ def node_to_markdown(
         if key in node.keys() and node[key]:
             add_line(f"{'#' * heading}# {key.capitalize()}")
             add_line(node[key])
-            add_line('')
+            add_line("")
 
     if children_key and children_key in node.keys() and node[children_key]:
         add_line(f"{'#' * heading}# {children_key.capitalize()}")
@@ -57,9 +57,9 @@ def node_to_markdown(
                 yaml_list=yaml_list,
                 body_keys=body_keys,
                 children_key=children_key,
-                heading=heading + 2
+                heading=heading + 2,
             )
             add_line(sub_section)
 
-    add_line('')
-    return '\n'.join(lines)
+    add_line("")
+    return "\n".join(lines)
