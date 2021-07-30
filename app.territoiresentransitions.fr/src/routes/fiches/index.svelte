@@ -123,7 +123,7 @@
         <h1>Plan d'actions de ma collectivité</h1>
 
         <a class="fr-btn"
-           href="fiches/creation/?epci_id={epciId}">
+            href="/fiches/creation/?epci_id={epciId}">
             Ajouter une fiche action
         </a>
     </div>
