@@ -44,7 +44,7 @@
         'border-t border-r border-b rounded-r flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
     ]
 
-    let actionAvancementKey = '';
+    let actionAvancementKey: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | 'en_cours' | '' = '';
 
     let epci_id = ''
 
@@ -92,7 +92,7 @@
     }
 
     onMount(async () => {
-        const hybridStores = await import ("../../api/hybridStores");
+        const hybridStores = await import ("$api/hybridStores");
         actionStatusStore = hybridStores.actionStatusStore;
         epci_id = getCurrentEpciId()
         await fetch();
