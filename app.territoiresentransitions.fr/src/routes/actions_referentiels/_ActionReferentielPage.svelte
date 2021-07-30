@@ -114,7 +114,6 @@
         expandButton
         borderedCard
         commentBlock
-        descriptionBlock
         recursive
       />
   {/each}
