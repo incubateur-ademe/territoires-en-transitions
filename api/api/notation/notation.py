@@ -6,7 +6,7 @@ from api.models.generated.action_referentiel_score import (
 from api.notation.referentiel import Referentiel
 
 from enum import Enum, unique
-from typing import Literal, Tuple, Dict, List
+from typing import Tuple, Dict, List
 
 
 @unique
@@ -101,7 +101,7 @@ class Notation:
                 potentiel=self.potentiels[index],
                 percentage=self.percentages[index],
                 referentiel_points=self.referentiel.points[index],
-                referentiel_percentage=self.referentiel.percentages[index],
+                referentiel_percentage=self.referentiel.percentages[index], 
             )
             for index in self.referentiel.indices
         ]
@@ -197,3 +197,5 @@ class Notation:
         for index in self.referentiel.indices:
             if self.potentiels[index] != 0:
                 self.percentages[index] = self.points[index] / self.potentiels[index]
+            if self.points[index] == 0 and self.statuses[index] == Status.faite:
+                self.percentages[index] = 1.0

@@ -87,7 +87,7 @@
         <div>
             <a class="fr-btn fr-btn--secondary fr-btn--sm fr-fi-file-fill fr-btn--icon-left"
                href="/fiches/creation/?epci_id={epciId}&action_id={action.id}">
-                Ajouter à mes actions
+                Ajouter une fiche action
             </a>
         </div>
     </div>
@@ -114,7 +114,6 @@
         expandButton
         borderedCard
         commentBlock
-        descriptionBlock
         recursive
       />
   {/each}

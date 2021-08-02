@@ -1,6 +1,6 @@
 ## Les méta données d'une action
 
-Ces méta données permettent de stocker des choses relative à une collectivité *et* à une action, elles sont rattachées :
+Ces méta données permettent de stocker des choses relatives à une collectivité *et* à une action, elles sont rattachées :
 - à une action via `action_id` qui est égal à l'`id` d'une [action](action.md).
 - à une epci via `epci_id` qui est égal à l'`id` d'une [EPCI](epci.md).
 
