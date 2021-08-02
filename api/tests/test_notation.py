@@ -71,7 +71,13 @@ def referentiel() -> Referentiel:
     action_1 = make_action_referentiel(
         id_nomenclature="1", actions=[action_1_1, action_1_2]
     )
-    root_action = make_action_referentiel(actions=[action_1])
+    action_2_mandatory = make_action_referentiel(
+        id_nomenclature="2.mandatory", actions=[], points=0
+    )
+    action_2 = make_action_referentiel(
+        id_nomenclature="2", actions=[action_2_mandatory]
+    )
+    root_action = make_action_referentiel(actions=[action_1, action_2])
     referentiel = Referentiel(root_action)
     return referentiel
 
@@ -279,4 +285,31 @@ def test_notation_with_two_actions_from_which_parent_axis_is_faite(notation):
         potentiel=70,
         referentiel_points=70,
         referentiel_percentage=0.7,
+    )
+
+
+def test_percentage_is_100_if_points_is_0_and_status_faite(notation):
+
+    notation.set_status(index=("2", "mandatory"), status=Status.faite)
+
+    scores = notation.compute_and_get_scores()
+
+    assert_score_with_nomenclature_id_equals(
+        scores,
+        "2.mandatory",
+        points=0.0,
+        percentage=1.0,
+        potentiel=0,
+        referentiel_points=0,
+        referentiel_percentage=0.0,
+    )
+
+    assert_score_with_nomenclature_id_equals(
+        scores,
+        "2",
+        points=0.0,
+        percentage=1.0,
+        potentiel=100,
+        referentiel_points=100,
+        referentiel_percentage=0.2,
     )

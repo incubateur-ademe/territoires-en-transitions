@@ -2,7 +2,7 @@
     import type {FicheAction} from "$generated/models/fiche_action";
     import {onMount} from "svelte";
     import {getCurrentEpciId} from "$api/currentEpci";
-import { fiche_action_avancement_noms } from "$generated/models/fiche_action_avancement_noms";
+    import { fiche_action_avancement_noms } from "$generated/models/fiche_action_avancement_noms";
 
     export let fiche: FicheAction
     $: enRetard = fiche.en_retard
