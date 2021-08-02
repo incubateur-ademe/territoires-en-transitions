@@ -57,17 +57,21 @@
 
 <section>
     <LabeledTextInput bind:value={data.nom}
+                      id="indicateur-personnalise-form-titre"
                       label="Titre"/>
 
     <LabeledTextArea bind:value={data.description}
+                     id="indicateur-personnalise-form-description"
                      label="Description"/>
 
     <LabeledTextInput bind:value={data.unite}
+                      id="indicateur-personnalise-form-unite"
                       label="Unité"/>
     <!-- Note: Property 'commentaire' does not exist on type 'object'. -->
     <!-- Suggestion #1 (quicker) : `any` instead of `object` -->
     <!-- Suggestion #2 (better - I think - ) : Define the field interface with type IndicateurMeta = {commentaire?: string} but save in DB meta as a JSON field -->
     <LabeledTextArea bind:value={data.meta.commentaire} 
+                      id="indicateur-personnalise-form-commentaire"
                       label="Commentaire"/>
     <button class="fr-btn fr-btn--secondary"
             on:click|preventDefault={handleSave}>
