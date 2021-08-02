@@ -32,10 +32,9 @@
 	<RowCard bordered>
 		<h5 class="text-lg">Modifier l'indicateur</h5>
 		<IndicateurForm
-			bind:data={indicateur}
+			bind:indicateurUid={indicateur.uid}
 			on:save={() => {
 				editing = false
-				console.log("editing: ", editing)
 			}}
 		/>
 	</RowCard>
