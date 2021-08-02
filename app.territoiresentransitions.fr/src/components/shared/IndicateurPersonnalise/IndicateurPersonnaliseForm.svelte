@@ -5,7 +5,7 @@
     import LabeledTextInput from "../Forms/LabeledTextInput.svelte";
     import LabeledTextArea from "../Forms/LabeledTextArea.svelte";
 
-    export let data: IndicateurPersonnaliseInterface
+    export let data: IndicateurPersonnaliseInterface 
     const dispatch = createEventDispatcher()
 
     const handleSave = async () => {
@@ -36,7 +36,11 @@
 
     <LabeledTextInput bind:value={data.unite}
                       label="Unité"/>
-
+    <!-- Note: Property 'commentaire' does not exist on type 'object'. -->
+    <!-- Suggestion #1 (quicker) : `any` instead of `object` -->
+    <!-- Suggestion #2 (better - I think - ) : Define the field interface with type IndicateurMeta = {commentaire?: string} but save in DB meta as a JSON field -->
+    <LabeledTextArea bind:value={data.meta.commentaire} 
+                      label="Commentaire"/>
     <button class="fr-btn fr-btn--secondary"
             on:click|preventDefault={handleSave}>
         Enregister
