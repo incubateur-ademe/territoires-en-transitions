@@ -1,21 +1,49 @@
 <script lang="ts">
-    import {createEventDispatcher} from "svelte";
+    import {createEventDispatcher, onMount} from "svelte";
     import type {IndicateurPersonnaliseInterface} from "$generated/models/indicateur_personnalise";
     import {IndicateurPersonnaliseStorable} from "$storables/IndicateurPersonnaliseStorable";
     import LabeledTextInput from "../Forms/LabeledTextInput.svelte";
     import LabeledTextArea from "../Forms/LabeledTextArea.svelte";
+    import { getCurrentEpciId } from "$api/currentEpci";
+    import { indicateurPersonnaliseStore } from "$api/hybridStores";
 
-    export let data: IndicateurPersonnaliseInterface 
+    export let indicateurUid: string
+    const epciId = getCurrentEpciId()
+
+
+    let data: IndicateurPersonnaliseInterface = {custom_id:  "", 
+                description:  "", 
+                nom:  "", 
+                uid: indicateurUid,
+                unite:  "", 
+                epci_id: epciId,
+                meta:  {commentaire: ""}, 
+            }
+
     const dispatch = createEventDispatcher()
 
     const handleSave = async () => {
         if (!data.nom) return
 
-        const hybridStores = await import ("$api/hybridStores")
         const indicateur = new IndicateurPersonnaliseStorable(data)
-        const saved = await hybridStores.indicateurPersonnaliseStore.store(indicateur)
-        dispatch('save', {'indicateur': saved})
+        const saved = await indicateurPersonnaliseStore.store(indicateur)
+        dispatch('save', {'indicateur': saved}) // Qui écoute cet évènement ? 
     }
+
+    onMount(async () => {    
+        const stored = await indicateurPersonnaliseStore.retrieveAtPath(`${epciId}/${indicateurUid}`)
+        if (stored.length){
+            const indicateurPersonnaliseStorable = stored.length? stored[0]: undefined
+            data = {custom_id: indicateurPersonnaliseStorable.custom_id, 
+                description: indicateurPersonnaliseStorable.description, 
+                nom: indicateurPersonnaliseStorable.nom, 
+                uid: indicateurUid,
+                unite: indicateurPersonnaliseStorable.unite, 
+                epci_id: epciId,
+                meta: indicateurPersonnaliseStorable.meta, 
+            }
+        }
+    });
 </script>
 
 <style>
