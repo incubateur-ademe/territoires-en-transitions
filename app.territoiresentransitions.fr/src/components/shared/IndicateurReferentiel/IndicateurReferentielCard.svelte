@@ -11,7 +11,7 @@
 
 	export let indicateur: IndicateurReferentiel // Pourquoi IndicateurReferentiel ici, et IndicateurPersonnaliseStorable dans l'autre ?
 	let relatedActions: ActionReferentiel[] = []
-	const epciId = getCurrentEpciId()
+	let epciId = ""
 
 	const prettifyId = (id: string) => {
 		return id.replace("cae-", "").replace("eci-", "").replace(" 0", "")
@@ -34,6 +34,9 @@
 	}
 
 	onMount(async () => {
+
+		epciId = getCurrentEpciId()
+		
 		const referentiel = await import("$generated/data/actions_referentiels")
 
 		const found: ActionReferentiel[] = []

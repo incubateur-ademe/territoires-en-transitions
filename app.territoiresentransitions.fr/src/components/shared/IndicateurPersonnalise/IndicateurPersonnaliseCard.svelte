@@ -9,7 +9,7 @@
 	export let indicateur: IndicateurPersonnaliseStorable
 
 	let editing = false
-	const epciId = getCurrentEpciId()
+	let epciId = ""
 
 	const retrieveIndicateur = async (): Promise<IndicateurPersonnaliseStorable | undefined > => {
 		const indicateurValues = await indicateurPersonnaliseStore.retrieveAtPath(
