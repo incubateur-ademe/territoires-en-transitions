@@ -62,7 +62,7 @@ import { page } from '$app/stores';
 	<div slot="navigation" class="fr-footer__bottom">
 		<ul class="fr-footer__bottom-list">
 			<li class="fr-footer__bottom-item">
-				<a class="fr-footer__bottom-link" href="/mentions-legales" target="_self">Mentions légales</a>
+				<a class="fr-footer__bottom-link" href="https://territoiresentransitions.fr/mentions-legales/" target="_self">Mentions légales</a>
 			</li>
 			<li class="fr-footer__bottom-item">
 				<a class="fr-footer__bottom-link" href="https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel" rel="external" target="_blank">Protection des données</a>
