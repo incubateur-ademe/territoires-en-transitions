@@ -1,1 +1,2 @@
-web: bash scalingo.sh
+web: python server.py
+postdeploy: aerich upgrade

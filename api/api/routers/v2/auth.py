@@ -55,7 +55,7 @@ verified_token_cache = deque(
 
 
 async def get_user_from_header(
-        token: str = Depends(oauth2_scheme),
+    token: str = Depends(oauth2_scheme),
 ) -> UtilisateurConnecte:
     """Retrieve user info from the token."""
     if AUTH_DISABLED_DUMMY_USER:
@@ -113,7 +113,7 @@ async def get_user_from_header(
 
 
 async def get_utilisateur_droits_from_header(
-        utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
+    utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
 ) -> List[UtilisateurDroits_Pydantic]:
     """Retrieve the token bearer list of droits"""
     ademe_user_id = utilisateur.ademe_user_id
@@ -131,7 +131,11 @@ def can_write_epci(epci_id: str, droits: List[UtilisateurDroits_Pydantic]) -> bo
     )
 
 
-@memoize(configuration=DefaultInMemoryCacheConfiguration(update_after=timedelta(milliseconds=3000)))
+@memoize(
+    configuration=DefaultInMemoryCacheConfiguration(
+        update_after=timedelta(milliseconds=3000)
+    )
+)
 async def get_service_token() -> str:
     """Retrieve a service token to call ADEME users API"""
     token_parameters = {
@@ -216,7 +220,7 @@ async def token(code: str, redirect_uri: str, response: Response):
 
 @router.get("/identity", response_model=UtilisateurConnecte)
 async def get_current_user(
-        utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
+    utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
 ):
     """Return the identity of the currently authenticated user"""
     return utilisateur

@@ -2,6 +2,19 @@
 
 ## À venir
 
+
+## Déploiement du 15 juin 2021
+
+Réparations de bugs :
+- Réparation de la gestion des indicateurs sur la fiche action
+- Réparation de l'affichage des référentiels après un rafraîchissement de la
+  page
+
+## Déploiement du 14 juin 2021
+
+Fonctionnalités :
+- Ajout de 5 indicateurs ECI manquants
+
 Tech :
 - Mise en place des tests end-to-end avec Cypress
 - Ajout de la possibilité de développer l'application client avec l'API de
@@ -21,6 +34,9 @@ Réparations de bugs :
 - Changement de la valeur par défaut d'une action (de `pas_faite` à non
   renseignée)
 - Ajout de la majuscule sur le nom des domaines CAE
+<<<<<<< HEAD
+- Nettoyage des titres des orientations ECI
+
 
 ## Déploiement du 10 juin 2021
 

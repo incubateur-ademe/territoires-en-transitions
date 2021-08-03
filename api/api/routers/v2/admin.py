@@ -28,8 +28,8 @@ class AdemeUser(BaseModel):
     responses={404: {"model": HTTPNotFoundError}},
 )
 async def get_user(
-        ademe_user_id: str,
-        credentials: HTTPBasicCredentials = Depends(security),
+    ademe_user_id: str,
+    credentials: HTTPBasicCredentials = Depends(security),
 ):
     """Forward to ADEME's users endpoint."""
     if not AUTH_ADMIN_USER or not AUTH_ADMIN_PASSWORD:
