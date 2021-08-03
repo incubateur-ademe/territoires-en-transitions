@@ -1,5 +1,5 @@
 from collections import deque
-from time import time
+from datetime import timedelta
 from typing import List
 
 import jwt
@@ -9,8 +9,11 @@ from fastapi import Depends, HTTPException
 from fastapi import Response
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
+from memoize.configuration import DefaultInMemoryCacheConfiguration
+from memoize.wrapper import memoize
 from starlette import status
 from starlette.responses import JSONResponse
+from time import time
 from tortoise.exceptions import DoesNotExist
 
 from api.config.configuration import AUTH_DISABLED_DUMMY_USER
@@ -52,7 +55,7 @@ verified_token_cache = deque(
 
 
 async def get_user_from_header(
-    token: str = Depends(oauth2_scheme),
+        token: str = Depends(oauth2_scheme),
 ) -> UtilisateurConnecte:
     """Retrieve user info from the token."""
     if AUTH_DISABLED_DUMMY_USER:
@@ -110,7 +113,7 @@ async def get_user_from_header(
 
 
 async def get_utilisateur_droits_from_header(
-    utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
+        utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
 ) -> List[UtilisateurDroits_Pydantic]:
     """Retrieve the token bearer list of droits"""
     ademe_user_id = utilisateur.ademe_user_id
@@ -128,10 +131,9 @@ def can_write_epci(epci_id: str, droits: List[UtilisateurDroits_Pydantic]) -> bo
     )
 
 
-@router.post("/register", response_class=JSONResponse)
-async def register(inscription: UtilisateurInscription, response: Response):
-    """Register a new user"""
-    # retrieve a service token to call ADEME users API
+@memoize(configuration=DefaultInMemoryCacheConfiguration(update_after=timedelta(milliseconds=3000)))
+async def get_service_token() -> str:
+    """Retrieve a service token to call ADEME users API"""
     token_parameters = {
         "client_id": AUTH_CLIENT_ID,
         "client_secret": AUTH_SECRET,
@@ -145,10 +147,16 @@ async def register(inscription: UtilisateurInscription, response: Response):
         )
 
     token_json = token_response.json()
-    access_token = token_json["access_token"]
+    return token_json["access_token"]
+
+
+@router.post("/register", response_class=JSONResponse)
+async def register(inscription: UtilisateurInscription, response: Response):
+    """Register a new user"""
+    service_token = await get_service_token()
 
     # use the ADEME user API using our token
-    headers = {"Authorization": "Bearer " + access_token}
+    headers = {"Authorization": "Bearer " + service_token}
     users_response = requests.post(
         users_endpoint, json=inscription.to_registration().dict(), headers=headers
     )
@@ -208,7 +216,7 @@ async def token(code: str, redirect_uri: str, response: Response):
 
 @router.get("/identity", response_model=UtilisateurConnecte)
 async def get_current_user(
-    utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
+        utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
 ):
     """Return the identity of the currently authenticated user"""
     return utilisateur
