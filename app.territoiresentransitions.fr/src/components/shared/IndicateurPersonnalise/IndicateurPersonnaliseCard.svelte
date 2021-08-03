@@ -27,12 +27,8 @@
 	}
 	const saveCommentaire = async (value: string) => {
 		// Note : here, we're a bit limited because meta is typed as `any` instead of {commentaire: string}
-		// Question : I'm still not sure I understand why we use object instead of interfaces here.
-		const updatedIndicateur = new IndicateurPersonnaliseStorable({
-			...indicateur,
-			meta: { commentaire: value }
-		})
-		await indicateurPersonnaliseStore.store(updatedIndicateur)
+		indicateur.meta.commentaire = value
+		await indicateurPersonnaliseStore.store(indicateur)
 	}
 </script>
 
