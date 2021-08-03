@@ -6,7 +6,6 @@ on:
       - production
       - production-static
   push:
-
 jobs:
   check:
     name: Check files
@@ -128,37 +127,6 @@ jobs:
           name: generated-client-files
           path: ${{ github.workspace }}/app.territoiresentransitions.fr/src/generated
 
-  client-unit-test:
-    name: Unit tests on client
-    runs-on: ubuntu-latest
-    needs: codegen-test-and-generate
-    env:
-      working-directory:  ./app.territoiresentransitions.fr
-
-    steps:
-      # cf. https://github.com/actions/checkout
-      - uses: actions/checkout@v2
-
-      # Download JavaScript models and data generated previously by codegen.
-      - name: Download generated files
-        uses: actions/download-artifact@v2
-        with:
-          name: generated-client-files
-          path: app.territoiresentransitions.fr/src/generated
-
-      # Install dependencies
-      - name: Install dependencies
-        run: |
-          npm install
-        working-directory: ${{env.working-directory}}
-
-      # Use Jest to run unit tests
-      - name: Jest run
-        run: |
-          npm run test
-        working-directory: ${{env.working-directory}}
-
-
 #  end-to-end:
 #    name: End-to-end tests on client
 #    runs-on: ubuntu-latest
@@ -185,3 +153,32 @@ jobs:
 #          start: npx serve __sapper__/export -p 3000
 #          working-directory: ${{env.working-directory}}
 #
+  client-test:
+    name: Unit tests on client
+    runs-on: ubuntu-latest
+    needs: codegen-test-and-generate
+    env:
+      working-directory:  ./app.territoiresentransitions.fr
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # Download JavaScript models and data generated previously by codegen.
+      - name: Download generated files
+        uses: actions/download-artifact@v2
+        with:
+          name: generated-client-files
+          path: generated
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          npm install
+        working-directory: ${{env.working-directory}}
+
+      # Use Jest to run unit tests
+      - name: Jest run
+        run: |
+          npm run test
+        working-directory: ${{env.working-directory}}
