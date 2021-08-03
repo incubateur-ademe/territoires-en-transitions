@@ -169,7 +169,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: generated-client-files
-          path: generated
+          path: app.territoiresentransitions.fr/src/generated
 
       # Install dependencies
       - name: Install dependencies
