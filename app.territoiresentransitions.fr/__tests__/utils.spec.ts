@@ -1,12 +1,12 @@
 import '@testing-library/jest-dom/extend-expect';
 // Note: using $generated paths does not work. TODO : eventually, investigate how to configurate this. 
-import { FicheAction } from "../../generated/models/fiche_action";
-import { FicheActionCategorie } from "../../generated/models/fiche_action_categorie";
+import { FicheAction } from "../src/generated/models/fiche_action";
+import { FicheActionCategorie } from "../src/generated/models/fiche_action_categorie";
 
 import {
   categorizeAndSortFiches,
   sortFiches,
-} from "./utils";
+} from "../src/routes/fiches/utils";
 
 const makeCategorie = (uid: string, fiche_actions_uids: string[] = []) =>
   new FicheActionCategorie({
