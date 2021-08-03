@@ -16,7 +16,7 @@
     export let maxlength: number = undefined
 
     // id for label and input link
-    export let id: string = ''
+    export let id: string = '' // TODO : dangerous to set default id to '' => Leading to warnings `<LabeledTextArea> was created without expected prop 'id'` 
 
     // The on blur function passed to textarea. Used for implicit saving.
     export let onBlur: (event: FocusEvent) => void = (event: FocusEvent): void => {

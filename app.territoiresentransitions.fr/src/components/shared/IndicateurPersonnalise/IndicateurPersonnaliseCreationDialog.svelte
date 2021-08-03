@@ -6,33 +6,18 @@
     import type {IndicateurPersonnaliseInterface} from "$generated/models/indicateur_personnalise";
     import Dialog from "../Dialog.svelte";
 
-    let data: IndicateurPersonnaliseInterface
+    let indicateurUid: string
     const dispatch = createEventDispatcher()
-    const initialize = () => {
-        data = {
-            epci_id: '',
-            uid: uuid(),
-            custom_id: '',
-            nom: '',
-            description: '',
-            unite: '',
-            meta: {
-                commentaire: ''
-            }
-        }
+    const resetUid = () => {
+        indicateurUid = uuid()
     }
 
     const handleSave = async (event: any) => {
         dispatch('save', event.detail)
-        initialize()
+        resetUid()
         close(event)
     }
-
-    onMount(async () => {
-        data.epci_id = getCurrentEpciId()
-    });
-
-    initialize()
+    resetUid()
 
     const close = (event: MouseEvent) => dispatch('AddDialogClose', event)
 
@@ -45,5 +30,5 @@
 
     <span slot="modal-title">Nouvel indicateur</span>
 
-    <IndicateurForm bind:data={data} on:save={handleSave}/>
+    <IndicateurForm bind:indicateurUid={indicateurUid} on:save={handleSave}/>
 </Dialog>

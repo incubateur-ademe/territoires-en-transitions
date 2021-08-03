@@ -9,6 +9,6 @@ def make_s3_client():
     session = boto3.session.Session()
 
     return session.client(
-        service_name='s3',
-        endpoint_url='https://s3.fr-par.scw.cloud',
+        service_name="s3",
+        endpoint_url="https://s3.fr-par.scw.cloud",
     )

@@ -1,33 +1,19 @@
 <script lang="ts">
     import IndicateurForm from './IndicateurPersonnaliseForm.svelte'
-    import {createEventDispatcher, onMount} from "svelte";
-    import {getCurrentEpciId} from "$api/currentEpci";
+    import {createEventDispatcher} from "svelte";
     import {v4 as uuid} from 'uuid'
-    import type {IndicateurPersonnaliseInterface} from "$generated/models/indicateur_personnalise";
 
-    let data: IndicateurPersonnaliseInterface
+    let indicateurUid: string
     const dispatch = createEventDispatcher()
-    const initialize = () => {
-        data = {
-            epci_id: '',
-            uid: uuid(),
-            custom_id: '',
-            nom: '',
-            description: '',
-            unite: '',
-        }
+    const resetUid = () => {
+        indicateurUid = uuid()
     }
 
     const handleSave = async (event: any) => {
         dispatch('save', event.detail)
-        initialize()
+        resetUid()
     }
-
-    onMount(async () => {
-        data.epci_id = getCurrentEpciId()
-    });
-
-    initialize()
+    resetUid()
 </script>
 
 <style>
@@ -41,5 +27,5 @@
 
 <div>
     <h3 class="text-lg">Nouvel indicateur</h3>
-    <IndicateurForm bind:data={data} on:save={handleSave}/>
+    <IndicateurForm bind:indicateurUid={indicateurUid} on:save={handleSave}/>
 </div>
