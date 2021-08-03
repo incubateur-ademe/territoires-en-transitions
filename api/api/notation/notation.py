@@ -101,7 +101,7 @@ class Notation:
                 potentiel=self.potentiels[index],
                 percentage=self.percentages[index],
                 referentiel_points=self.referentiel.points[index],
-                referentiel_percentage=self.referentiel.percentages[index],
+                referentiel_percentage=self.referentiel.percentages[index], 
             )
             for index in self.referentiel.indices
         ]

@@ -10,7 +10,6 @@
     import {onMount} from "svelte";
     import IndicateurPersonnaliseList
         from "$components/shared/IndicateurPersonnalise/IndicateurPersonnaliseList.svelte"
-    import SelectInput from "$components/shared/Forms/SelectInput.svelte";
 
     let byThematique = new Map<Thematique, IndicateurReferentiel[]>()
     let displayed: IndicateurReferentiel[] = indicateurs
