@@ -104,11 +104,16 @@
 </style>
 
 <div class={`progressBar--position-${position} progressBar--status-${state}`}>
-    {#if score}
-        <strong>{(score.percentage * 100).toFixed(1)}%</strong>
-        ({score.points.toFixed(2)} / {score.potentiel.toFixed(2)})
-    {:else }
-        <strong>0%</strong>
-        (../..)
+    {#if state == "nc"}
+        {"non concernée"}
+    {:else}
+        {#if score}
+            <strong>{(score.percentage * 100).toFixed(1)}%</strong>
+            ({score.points.toFixed(2)} / {score.potentiel.toFixed(2)})
+        {:else }
+            <strong>0%</strong>
+            (../..)
+        {/if}
     {/if}
+    
 </div>

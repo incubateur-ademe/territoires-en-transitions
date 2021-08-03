@@ -8,3 +8,5 @@ AUTH_SECRET = environ.get("AUTH_SECRET", "")
 AUTH_REALM = environ.get("AUTH_REALM", "master")
 AUTH_USER_API = environ.get("AUTH_USER_API", "https://prod-fa-api.ademe-dri.fr")
 AUTH_DISABLED_DUMMY_USER = environ.get("AUTH_DISABLED_DUMMY_USER", "") == "YES"
+AUTH_ADMIN_USER = environ.get("AUTH_ADMIN_USER", "")
+AUTH_ADMIN_PASSWORD = environ.get("AUTH_ADMIN_PASSWORD", "")

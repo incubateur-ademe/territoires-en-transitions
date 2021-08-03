@@ -15,6 +15,7 @@ aerich = "*"
 atomicwrites = "*"
 python-jose = "*"
 pyjwt = "*"
+py-memoize = "*"
 
 [dev-packages]
 flake8 = "*"

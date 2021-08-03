@@ -25,7 +25,7 @@
     export let validator: Validator = alwaysValid
 
     // id for label and input link
-    export let id: string = ''
+    export let id: string = '' // TODO : dangerous to set default id to ''  => Leading to warnings `<LabeledTextInput> was created without expected prop 'id'` 
 
     // Show the validator message on mount.
     export let validateOnMount: boolean = true
