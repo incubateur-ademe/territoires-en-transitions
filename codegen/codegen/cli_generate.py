@@ -100,7 +100,6 @@ def actions(
     for file in files:
         md = load_md(file)
         action = build_action(md)
-        action["climat_pratic_id"] = "eci"
         actions_economie_circulaire.append(action)
 
     relativize_ids(actions_economie_circulaire, "economie_circulaire")

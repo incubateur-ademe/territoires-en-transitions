@@ -1,46 +1,14 @@
-name: Test
+name: Deploy LTE client on production
 
 on:
-  pull_request:
-    branches-ignore:
-      - production
-      - production-static
   push:
+    branches: [ production ]
 
 jobs:
-  check:
-    name: Check files
-    outputs:
-      run_job: ${{ steps.check_files.outputs.run_job }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-
-      - name: check modified referentiels md files
-        id: check_files
-        run: |
-          echo "=============== list modified files ==============="
-          git diff --name-only HEAD^ HEAD
-          echo "========== check paths of modified files =========="
-          git diff --name-only HEAD^ HEAD > files.txt
-          while IFS= read -r file
-          do
-            echo $file
-            if [[ $file != referentiels/* ]]; then
-              echo "This modified file is not under the 'referentiels' folder."
-              echo "::set-output name=run_job::false"
-              break
-            else
-              echo "::set-output name=run_job::true"
-            fi
-          done < files.txt
-
+  # This job runs tests in codegen and generated files that are needed by the
+  # client application.
   codegen-test-and-generate:
     name: Tests and artifacts on Codegen
-    needs: check
     runs-on: ubuntu-latest
     env:
       python-version: 3.9.1
@@ -107,10 +75,9 @@ jobs:
         working-directory: ${{env.working-directory}}
 
       # Run all the tests for codegen.
-      - name: Run tests
-        if: needs.check.outputs.run_job == 'true'
-        run: poetry run pytest
-        working-directory: ${{env.working-directory}}
+      # - name: Run tests
+      #   run: poetry run pytest
+      #   working-directory: ${{env.working-directory}}
 
       # Generate all JavaScript shared models and data with codegen. These files
       # are mandatory for the client build.
@@ -128,12 +95,14 @@ jobs:
           name: generated-client-files
           path: ${{ github.workspace }}/app.territoiresentransitions.fr/src/generated
 
-  client-unit-test:
-    name: Unit tests on client
+  # This job retrieves previously generated files and builds the client
+  # application.
+  client-build-and-test:
+    name: Build and end-to-end tests on client
     runs-on: ubuntu-latest
     needs: codegen-test-and-generate
     env:
-      working-directory:  ./app.territoiresentransitions.fr
+      working-directory: ./app.territoiresentransitions.fr
 
     steps:
       # cf. https://github.com/actions/checkout
@@ -146,42 +115,73 @@ jobs:
           name: generated-client-files
           path: app.territoiresentransitions.fr/src/generated
 
-      # Install dependencies
-      - name: Install dependencies
+      # Build client with Sapper
+      - name: Build client
         run: |
           npm install
+          npm run build_production
         working-directory: ${{env.working-directory}}
 
-      # Use Jest to run unit tests
-      - name: Jest run
+      # Use Cypress to run end-to-end tests
+      # - name: Cypress run
+      #   uses: cypress-io/github-action@v2
+      #   with:
+      #     start: npx serve __sapper__/export -p 3000
+      #     working-directory: ${{env.working-directory}}
+
+      # Upload built client app as an artefact.
+      - name: Upload exported client app
+        uses: actions/upload-artifact@v2
+        with:
+          name: client-app
+          path: app.territoiresentransitions.fr/build
+
+  # This job retrieves the exported client app and upload it to Scaleway.
+  deploy-on-scaleway:
+    runs-on: ubuntu-latest
+    needs: client-build-and-test
+    environment: production
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      # This step uses a GitHub Personal Access Token. If the CI is broken
+      # because of that, you can login into your own GitHub account, generate
+      # a new Personal Access Token and set it in the project secrets.
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      # Download the previously built client app.
+      - name: Download exported client app
+        uses: actions/download-artifact@v2
+        with:
+          name: client-app
+          path: ~/tmp/client
+
+      # Restore cache or create a new one for awscli-plugin-endpoint
+      - name: Set up Python cache
+        uses: actions/cache@v2
+        env:
+          python-deploy-cache-name: python-deploy-cache
+        with:
+          path: /opt/hostedtoolcache/Python
+          key: ${{ runner.os }}-${{ env.python-deploy-cache-name }}-${{ env.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.python-deploy-cache-name }}
+            ${{ runner.os }}-
+
+      # Install awscli-plugin-endpoint to enable custom endpoints on Scaleway
+      # with AWS CLI
+      - name: Install awscli-plugin-endpoint
         run: |
-          npm run test
-        working-directory: ${{env.working-directory}}
+          pip3 install awscli-plugin-endpoint
 
+      # Use AWS CLI to upload the client app on Scaleway.
+      - name: Deploy on Scaleway
+        run: |
+          aws s3 cp ~/tmp/client s3://app.territoiresentransitions.fr --recursive --acl public-read
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_CONFIG_FILE: ${{github.workspace}}/awscli_config
 
-#  end-to-end:
-#    name: End-to-end tests on client
-#    runs-on: ubuntu-latest
-#    needs: codegen-test-and-generate
-#    env:
-#      working-directory:  ./app.territoiresentransitions.fr
-#
-#    steps:
-#      # cf. https://github.com/actions/checkout
-#      - uses: actions/checkout@v2
-#
-#      # Download JavaScript models and data generated previously by codegen.
-#      - name: Download generated files
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: generated-client-files
-#          path: generated
-#
-#      # Use Cypress to run end-to-end tests
-#      - name: Cypress run
-#        uses: cypress-io/github-action@v2
-#        with:
-#          build: npm run export
-#          start: npx serve __sapper__/export -p 3000
-#          working-directory: ${{env.working-directory}}
-#

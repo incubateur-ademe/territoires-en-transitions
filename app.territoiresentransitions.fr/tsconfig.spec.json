@@ -11,6 +11,6 @@
     "src/**"
   ],
   "include": [
-    "src/**/*.spec.ts"
+    "__tests__/*.spec.ts",
   ]
 }

@@ -15,6 +15,7 @@ indicateur_personnalise = {
     "nom": "Teacup",
     "description": "We’re all mad here. I’m mad. You’re mad.",
     "unite": "spoon",
+    "meta": {"commentaire": "This is it."},
 }
 
 post_path = f"{path}/{indicateur_personnalise['epci_id']}"
@@ -55,6 +56,7 @@ def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     response = client.get(item_path)
     assert response.status_code == 200
     assert response.json()["uid"] == indicateur_personnalise["uid"]
+    assert response.json()["meta"] == indicateur_personnalise["meta"]
 
     # DELETE /epci_id/v2/indicateur_personnalise/uid
     response = client.delete(item_path, headers=auth_headers())

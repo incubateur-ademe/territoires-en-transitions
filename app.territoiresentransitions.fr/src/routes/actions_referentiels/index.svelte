@@ -45,14 +45,14 @@
 
     <div>
         <SelectInput bind:value={view}>
-            <option value='eci'>
-                Économie Circulaire
-            </option>
             <option value='cae'>
                 Climat Air Énergie
             </option>
+            <option value='eci'>
+                Économie Circulaire
+            </option>
             <option value='thematique'>
-                Thématiques
+                Vue combinée
             </option>
         </SelectInput>
     </div>
