@@ -8,7 +8,7 @@
     import { indicateurPersonnaliseStore } from "$api/hybridStores";
 
     export let indicateurUid: string
-    const epciId = getCurrentEpciId()
+    let epciId = ""
 
 
     let data: IndicateurPersonnaliseInterface = {custom_id:  "", 
@@ -30,7 +30,8 @@
         dispatch('save', {'indicateur': saved}) // Qui écoute cet évènement ? 
     }
 
-    onMount(async () => {    
+    onMount(async () => {  
+        epciId = getCurrentEpciId()
         const stored = await indicateurPersonnaliseStore.retrieveAtPath(`${epciId}/${indicateurUid}`)
         if (stored.length){
             const indicateurPersonnaliseStorable = stored.length? stored[0]: undefined
