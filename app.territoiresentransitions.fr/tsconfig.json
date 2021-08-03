@@ -48,9 +48,7 @@
 		"src/**/*.d.ts",
 		"src/**/*.js",
 		"src/**/*.ts",
-		"src/**/*.svelte"
+		"src/**/*.svelte",
+		"__tests__/*.spec.ts"
 	],
-	// "exclude": [
-	// 	"src/**/*.spec.ts"
-	// ]
 }
