@@ -18,4 +18,6 @@ IndicateurPersonnalise:
         type: String
     unite:
         type: String
+    meta: 
+        type: Any
 ```

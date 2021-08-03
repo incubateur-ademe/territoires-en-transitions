@@ -10,6 +10,7 @@ class IndicateurPersonnalise(models.Model):
     nom = fields.CharField(max_length=300)
     description = fields.TextField()
     unite = fields.CharField(max_length=36)
+    meta = fields.JSONField()
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
     latest = fields.BooleanField()
@@ -17,12 +18,11 @@ class IndicateurPersonnalise(models.Model):
 
 
 IndicateurPersonnalise_Pydantic = pydantic_model_creator(
-    IndicateurPersonnalise,
-    name="IndicateurPersonnalise"
+    IndicateurPersonnalise, name="IndicateurPersonnalise"
 )
 IndicateurPersonnaliseIn_Pydantic = pydantic_model_creator(
     IndicateurPersonnalise,
     name="IndicateurPersonnaliseIn",
     exclude_readonly=True,
-    exclude=("latest", "deleted")
+    exclude=("latest", "deleted"),
 )

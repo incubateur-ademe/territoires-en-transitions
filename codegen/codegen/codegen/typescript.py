@@ -16,6 +16,7 @@ def types_ts(type: str, options: Optional[List[Any]] = None) -> str:
         "num": "number",
         "List": "[]",
         "Dict": "object",
+        "Any": "any",
         "bool": "boolean",
         None: "string",
     }

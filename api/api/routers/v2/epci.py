@@ -7,17 +7,26 @@ from tortoise.exceptions import DoesNotExist
 
 from api.models.pydantic.utilisateur_connecte import UtilisateurConnecte
 from api.models.tortoise.epci import Epci_Pydantic, Epci, EpciIn_Pydantic
-from api.models.tortoise.utilisateur_droits import UtilisateurDroits_Pydantic, UtilisateurDroits
-from api.routers.v2.auth import can_write_epci, get_user_from_header, get_utilisateur_droits_from_header
+from api.models.tortoise.utilisateur_droits import (
+    UtilisateurDroits_Pydantic,
+    UtilisateurDroits,
+)
+from api.routers.v2.auth import (
+    can_write_epci,
+    get_user_from_header,
+    get_utilisateur_droits_from_header,
+)
 
-router = APIRouter(prefix='/v2/epci')
+router = APIRouter(prefix="/v2/epci")
 
 
 @router.post("", response_model=Epci_Pydantic)
 async def write_epci(
-        epci: EpciIn_Pydantic,
-        utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
-        droits: List[UtilisateurDroits_Pydantic] = Depends(get_utilisateur_droits_from_header)
+    epci: EpciIn_Pydantic,
+    utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
+    droits: List[UtilisateurDroits_Pydantic] = Depends(
+        get_utilisateur_droits_from_header
+    ),
 ):
     """
     For an existing Epci corresponding `utilisateur droits` are needed.
@@ -27,7 +36,9 @@ async def write_epci(
 
     if await query.exists():
         if not can_write_epci(epci.uid, droits):
-            raise HTTPException(status_code=401, detail=f"droits not found for epci {epci.uid}")
+            raise HTTPException(
+                status_code=401, detail=f"droits not found for epci {epci.uid}"
+            )
         await query.update(latest=False)
 
     else:
@@ -53,12 +64,13 @@ async def get_all_epci():
 
 
 @router.get(
-    "/{uid}", response_model=Epci_Pydantic,
-    responses={404: {"model": HTTPNotFoundError}}
+    "/{uid}",
+    response_model=Epci_Pydantic,
+    responses={404: {"model": HTTPNotFoundError}},
 )
 async def get_epci(uid: str):
     query = Epci.get(uid=uid, latest=True)
-    
+
     try:
         return await Epci_Pydantic.from_queryset_single(query)
     except DoesNotExist as error:

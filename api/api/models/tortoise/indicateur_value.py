@@ -14,12 +14,11 @@ class IndicateurValue(models.Model):
 
 
 IndicateurValue_Pydantic = pydantic_model_creator(
-    IndicateurValue,
-    name="IndicateurValue"
+    IndicateurValue, name="IndicateurValue"
 )
 IndicateurValueIn_Pydantic = pydantic_model_creator(
     IndicateurValue,
     name="IndicateurValueIn",
     exclude_readonly=True,
-    exclude=('latest',),
+    exclude=("latest",),
 )
