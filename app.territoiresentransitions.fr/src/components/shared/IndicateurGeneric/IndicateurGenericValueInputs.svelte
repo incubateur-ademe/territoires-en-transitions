@@ -1,6 +1,9 @@
 <script lang="ts">
+import { getCurrentEpciId } from "$api/currentEpci";
+
 import { indicateurValueStore } from "$api/hybridStores";
 import { IndicateurValueStorable } from "$storables/IndicateurValueStorable";
+import { onMount } from "svelte";
 
 	/**
 	 * Displays an indicateur an its yearly values.
@@ -35,6 +38,11 @@ import { IndicateurValueStorable } from "$storables/IndicateurValueStorable";
 	let cursor = actualYear
 	let yearIsDisplayed: (year: number) => boolean
 	$: yearIsDisplayed = year => year <= cursor && year > cursor - numberOfYearsToDisplay
+
+	onMount(() => {
+		epciId = getCurrentEpciId()
+	})
+	
 </script>
 
 <form class="indicatorRow">

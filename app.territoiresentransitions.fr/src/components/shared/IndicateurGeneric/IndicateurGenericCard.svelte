@@ -4,6 +4,7 @@
 	import ExpandPanel from "$components/ExpandPanel.svelte"
 	import IndicateurGenericValueInputs from "./IndicateurGenericValueInputs.svelte"
 	import { getCurrentEpciId } from "$api/currentEpci"
+	import { onMount } from "svelte";
 
 	export let indicateurId: string
 	export let indicateurTitle: string
@@ -11,6 +12,12 @@
 
 	export let retrieveCommentaire: () => Promise<string>
 	export let saveCommentaire: (value: string) => Promise<void>
+
+	let epciId = ""
+
+	onMount(() => {
+		epciId = getCurrentEpciId()
+	})
 </script>
 
 <RowCard bordered>
@@ -20,7 +27,7 @@
 				{indicateurTitle}
 			</h3>
 			<div>
-				<IndicateurGenericValueInputs epciId={getCurrentEpciId()} {indicateurId} />
+				<IndicateurGenericValueInputs epciId={epciId} {indicateurId} />
 			</div>
 		</div>
 	</div>

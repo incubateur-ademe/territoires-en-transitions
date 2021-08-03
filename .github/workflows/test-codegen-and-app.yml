@@ -154,7 +154,7 @@ jobs:
 #          working-directory: ${{env.working-directory}}
 #
   client-test:
-    name: Unit tests on client
+    name: Unit tests and build client 
     runs-on: ubuntu-latest
     needs: codegen-test-and-generate
     env:
@@ -181,4 +181,10 @@ jobs:
       - name: Jest run
         run: |
           npm run test
+        working-directory: ${{env.working-directory}}
+      
+      # Build sandbox
+      - name: Build sandbox
+        run: |
+          npm run build_sandbox
         working-directory: ${{env.working-directory}}
