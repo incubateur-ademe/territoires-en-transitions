@@ -11,7 +11,7 @@
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
 		"format": "prettier --write --plugin-search-dir=. .",
-		"test": "jest __tests__ --config jest.config.json",
+		"test": "jest src --config jest.config.json",
 		"test:watch": "npm run test -- --watch"
 	},
 	"devDependencies": {
