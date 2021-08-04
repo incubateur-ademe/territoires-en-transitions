@@ -90,6 +90,7 @@ jobs:
 
   test-referentiels:
     runs-on: ubuntu-latest
+    needs: codegen-generate-actions
 
     env:
       AUTH_DISABLED_DUMMY_USER: YES
