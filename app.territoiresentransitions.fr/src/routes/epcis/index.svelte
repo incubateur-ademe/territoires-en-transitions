@@ -89,7 +89,7 @@
 </section>
 
 <section>
-    <h2 class="fr-h2">Consulter les autres collectivités</h2>
+    <h2 class="fr-h2">Consulter toutes les collectivités</h2>
 
     <div class="grid">
         {#each allEpcis as epci}
