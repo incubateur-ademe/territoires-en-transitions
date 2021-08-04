@@ -1,12 +1,13 @@
 <script lang="ts">
     /**
-     * An text input with a label on top
+     * A text area with a label on top
      *
      * One can use the label prop to display an _unstyled_ text on top of the textarea.
      * In order to style the label text, a child element should be passed instead.
      */
+    import {v4 as uuid} from 'uuid'
 
-        // The textarea value, must be set.
+    // The textarea value, must be set.
     export let value: string
 
     // An optional unstyled label text.
@@ -15,11 +16,11 @@
     // An optional prop passed to textarea.
     export let maxlength: number = undefined
 
-    // id for label and input link
-    export let id: string = '' // TODO : dangerous to set default id to '' => Leading to warnings `<LabeledTextArea> was created without expected prop 'id'` 
+    // An optional id for label and input link
+    export let id: string = uuid()
 
     // The on blur function passed to textarea. Used for implicit saving.
-    export let onBlur: (event: FocusEvent) => void = (event: FocusEvent): void => {
+    export let onBlur: (event: FocusEvent) => void = (_): void => {
     }
 </script>
 
