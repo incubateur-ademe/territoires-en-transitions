@@ -1,19 +1,23 @@
 <script lang="ts">
     /**
-     * An text input with a label on top
+     * A select input with a label on top
      *
-     * One can use the label prop to display an _unstyled_ text on top of the textarea.
+     * One can use the label prop to display an _unstyled_ text on top of the select.
      * In order to style the label text, a child element should be passed instead.
      */
+    import {v4 as uuid} from "uuid";
 
-        // The textarea value, must be set.
+    // The textarea value, must be set.
     export let value: string
 
     // An optional unstyled label text.
     export let label: string = ''
 
-    // The on blur function passed to textarea. Used for implicit saving.
-    export let onChange: (event: Event) => void = (event: Event): void => {
+    // An optional id for label and input link
+    export let id: string = uuid()
+
+    // The on blur callback passed to textarea. Used for implicit saving.
+    export let onChange: (event: Event) => void = (_): void => {
     }
 </script>
 
@@ -24,9 +28,8 @@
 </style>
 
 <div>
-    <!-- voir pour améliorer le for/id en supprimant les espaces -->
-    <label for="{label}" class="fr-label">{label}</label>
-    <select id="{label}" class="fr-select" bind:value={value}
+    <label class="fr-label" for="{id}">{label}</label>
+    <select bind:value={value} class="fr-select" id="{id}"
             on:change={onChange}>
         <slot></slot>
     </select>
