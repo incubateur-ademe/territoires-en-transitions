@@ -6,7 +6,7 @@
     type legal = 'right' | 'down' | 'left'
     const styles = new Map<legal, string>([['right', 'rotate-0'], ['down', 'rotate-90'], ['left', 'rotate-180']])
     export let direction: legal = 'right'
-</script>
+</script> 
 
 
 <button on:click|preventDefault type="button" class="focus:outline-none">
