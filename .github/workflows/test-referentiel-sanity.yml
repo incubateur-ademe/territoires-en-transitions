@@ -7,7 +7,6 @@ on:
 jobs:
   codegen-generate-actions:
     name: Generate actions on Codegen
-    needs: check
     runs-on: ubuntu-latest
     env:
       python-version: 3.9.1
