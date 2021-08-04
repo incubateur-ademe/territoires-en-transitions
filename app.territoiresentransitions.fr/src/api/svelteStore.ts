@@ -5,7 +5,6 @@ import { Writable, writable } from 'svelte/store';
 import {actions as actions_referentiels} from "$generated/data/actions_referentiels"
 import {actions as referentiels} from "$generated/data/referentiels"
 import * as R from 'ramda';
-import { actionReferentielScoreStore, actionStatusStore } from './hybridStores';
 import { ActionStatusStorable } from '$storables/ActionStatusStorable';
 import { actionReferentielScoreEndpoint, actionStatusEndpoint } from './apiEndpoints';
 
@@ -29,7 +28,7 @@ export let currentEpciId = ""
 
 export const updateEpciIdAndFetchAll = async (epciId: string): Promise<void> => {
   storeState.epciId.set(epciId)
-  await fetchAllActionsReferentielsStatusAndScoreForThisEpci()
+  await fetchAllActionsReferentielsStatusesAndScoresForThisEpci()
 }
 
 // Initial state
@@ -45,14 +44,20 @@ storeState.epciId.subscribe(value => {
 })
 
 
-const updateStoreScoresFromApi = async () => {
-  const newScores = await actionReferentielScoreEndpoint.retrieveAll() //actionReferentielScoreStore.retrieveById(actionId)
-  newScores.forEach((newScore) => {
-    storeState.actionsReferentielsWithStatusAndScoreById[newScore.action_id].update((state) => {
-      state.score = newScore
-      return state
-    })
-  })
+const fetchAllActionReferentielScoresFromApi = async () => {
+  const allActionReferentielScores = await actionReferentielScoreEndpoint.retrieveAll()
+  allActionReferentielScores.forEach((actionReferentielScore) => storeState.actionsReferentielsWithStatusAndScoreById[actionReferentielScore.action_id].update((action) => {
+    action.score = actionReferentielScore
+    return action}))
+}
+
+const fetchAllActionStatusesFromApi = async () => {
+  const allActionStatuses = await actionStatusEndpoint.retrieveAll()
+  
+  allActionStatuses.forEach((actionStatus) => storeState.actionsReferentielsWithStatusAndScoreById[actionStatus.action_id].update((action) => {
+    action.status = actionStatus
+    return action}))
+
 }
 
 type Avancement = "" | "faite" | "programmee" | "pas_faite" | "non_concernee" | "en_cours"
@@ -68,27 +73,18 @@ export const updateAvancementForAction = async (actionId: string, avancement: Av
 
   // Update status in DB
   const updatedStatus = await actionStatusEndpoint.store(newStatus)
-  
   // Update in store
   storeState.actionsReferentielsWithStatusAndScoreById[actionId].update((state) => {
     state.status = updatedStatus
     return state  
 })
 
-await updateStoreScoresFromApi()
+await fetchAllActionReferentielScoresFromApi()
 
 }
 
-const fetchAllActionsReferentielsStatusAndScoreForThisEpci = async (): Promise<void> => {
-  await Promise.all(Object.keys(storeState.actionsReferentielsWithStatusAndScoreById).map(async (actionId) => {
-    const newStatus = await actionStatusStore.retrieveById(`${storeState.epciId}/${actionId}`);
-    const newScore = await actionReferentielScoreStore.retrieveById(`${storeState.epciId}/${actionId}`);
-    
-    storeState.actionsReferentielsWithStatusAndScoreById[actionId].update((action) => {
-      action.status = newStatus
-      action.score = newScore
-      return action;
-    });
-  }))
-  await updateStoreScoresFromApi()
+const fetchAllActionsReferentielsStatusesAndScoresForThisEpci = async (): Promise<void> => {
+  await fetchAllActionStatusesFromApi()
+  await fetchAllActionReferentielScoresFromApi()
+
 }
