@@ -85,7 +85,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: generated-actions-files
-          path: ${{ github.workspace }}/api/api/generated/data
+          path: api/api/generated/data
 
 
   test-referentiels:
