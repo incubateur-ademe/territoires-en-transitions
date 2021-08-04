@@ -45,6 +45,7 @@
 			commentaire = indicateurPersonnaliseStorable.meta.commentaire
 		}
 	})
+
 </script>
 
 <section>
