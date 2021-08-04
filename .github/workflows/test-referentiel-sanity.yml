@@ -84,8 +84,8 @@ jobs:
       - name: Upload generated files
         uses: actions/upload-artifact@v2
         with:
-          name: generated-actions-files
-          path: ${{ github.workspace }}/api/api/data/generated
+          name: generated-actions-file
+          path: ${{ github.workspace }}/api/api/data/generated/referentiels.py
 
 
   test-referentiels:
@@ -103,8 +103,8 @@ jobs:
       - name: Download generated files
         uses: actions/download-artifact@v2
         with:
-          name: generated-actions-files
-          path: api/api/data/generated
+          name: generated-actions-file
+          path: ${{ github.workspace }}/api/api/data/generated/
 
       # Restore cache or create a new one for all dependencies installed with
       # Python.
