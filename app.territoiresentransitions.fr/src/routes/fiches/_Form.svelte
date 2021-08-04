@@ -58,15 +58,12 @@
 
     // Save the form data
     const handleSave = async () => {
-        console.log('YOLO')
-        console.log(data)
         for (let key of Object.keys(validators)) {
             let valid = validate(data[key], validators[key])
             if (!valid) return window.alert(`Le champ ${key} du formulaire n'est pas valide : ${validators[key](data[key])}`);
         }
 
         const fiche = new FicheActionStorable(data)
-        console.log(fiche)
         const saved = await ficheActionStore.store(fiche)
 
         if (saved.uid) window.location.href = `/fiches/?epci_id=${data.epci_id}`
