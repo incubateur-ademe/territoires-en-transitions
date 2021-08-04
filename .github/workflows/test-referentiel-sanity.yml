@@ -1,4 +1,4 @@
-name: Test référentiel
+name: Test de cohérence du référentiel
 
 on:
   pull_request:
@@ -75,7 +75,7 @@ jobs:
       # Generate all Python shared models and data with codegen.
       - name: Generate shared models and data in JavaScript
         run: |
-          poetry run generate actions --output_python=True
+          poetry run generate actions --output-python=True
           pwd
         working-directory: ${{ env.working-directory }}
 
