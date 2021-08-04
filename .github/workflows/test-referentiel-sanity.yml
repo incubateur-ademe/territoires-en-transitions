@@ -1,7 +1,7 @@
 name: Test référentiel
 
 on:
-  push:
+  pull_request:
     branches-ignore:
       - main
 
