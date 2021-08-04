@@ -7,7 +7,7 @@ import {actions as referentiels} from "$generated/data/referentiels"
 import * as R from 'ramda';
 import { actionReferentielScoreStore, actionStatusStore } from './hybridStores';
 import { ActionStatusStorable } from '$storables/ActionStatusStorable';
-import { actionReferentielScoreApi, actionStatusApi } from './currentAPI';
+import { actionReferentielScoreEndpoint, actionStatusEndpoint } from './apiEndpoints';
 
 
 type ActionsReferentielsWithStatusAndScore = ActionReferentiel & {status?: ActionStatus, score?: ActionReferentielScore}
@@ -25,7 +25,7 @@ const flattenActionReferentielActions = (accActions: ActionReferentiel[] , actio
   return accActions;
 }
 
-let currentEpciId = ""
+export let currentEpciId = ""
 
 export const updateEpciIdAndFetchAll = async (epciId: string): Promise<void> => {
   storeState.epciId.set(epciId)
@@ -46,7 +46,7 @@ storeState.epciId.subscribe(value => {
 
 
 const updateStoreScoresFromApi = async () => {
-  const newScores = await actionReferentielScoreApi.retrieveAll() //actionReferentielScoreStore.retrieveById(actionId)
+  const newScores = await actionReferentielScoreEndpoint.retrieveAll() //actionReferentielScoreStore.retrieveById(actionId)
   newScores.forEach((newScore) => {
     storeState.actionsReferentielsWithStatusAndScoreById[newScore.action_id].update((state) => {
       state.score = newScore
@@ -67,7 +67,7 @@ export const updateAvancementForAction = async (actionId: string, avancement: Av
 })
 
   // Update status in DB
-  const updatedStatus = await actionStatusApi.store(newStatus)
+  const updatedStatus = await actionStatusEndpoint.store(newStatus)
   
   // Update in store
   storeState.actionsReferentielsWithStatusAndScoreById[actionId].update((state) => {
