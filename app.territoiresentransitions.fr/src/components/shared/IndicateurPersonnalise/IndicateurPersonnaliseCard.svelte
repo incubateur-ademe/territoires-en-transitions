@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { getCurrentEpciId } from "$api/currentEpci"
 	import { indicateurPersonnaliseStore } from "$api/hybridStores"
-	import { IndicateurPersonnaliseStorable } from "$storables/IndicateurPersonnaliseStorable"
+	import type { IndicateurPersonnaliseStorable } from "$storables/IndicateurPersonnaliseStorable"
 	import IndicateurGenericCard from "../IndicateurGeneric/IndicateurGenericCard.svelte"
 	import IndicateurForm from "./IndicateurPersonnaliseForm.svelte"
 	import RowCard from "../RowCard.svelte"
+	import { onMount } from "svelte";
 
 	export let indicateur: IndicateurPersonnaliseStorable
 
@@ -30,6 +31,9 @@
 		indicateur.meta.commentaire = value
 		await indicateurPersonnaliseStore.store(indicateur)
 	}
+	onMount(async () => {  
+        epciId = getCurrentEpciId()
+			})
 </script>
 
 {#if editing}

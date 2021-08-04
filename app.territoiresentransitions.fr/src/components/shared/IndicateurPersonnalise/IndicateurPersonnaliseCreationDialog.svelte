@@ -1,6 +1,6 @@
 <script lang="ts">
     import IndicateurForm from './IndicateurPersonnaliseForm.svelte'
-    import {createEventDispatcher, onMount} from "svelte";
+    import {createEventDispatcher} from "svelte";
     import {v4 as uuid} from 'uuid'
     import Dialog from "../Dialog.svelte";
 
