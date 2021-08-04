@@ -5,14 +5,14 @@
      *  - redirects to /epcis/ if the user is connected
      */
     import {onMount} from "svelte";
-    import {API_URL} from "../api/currentAPI";
+    import {API_URL} from "$api/currentAPI";
 
     let connected: boolean | null = null
 
     console.log(`Using API ${API_URL}`)
 
     onMount(async () => {
-        const auth = await import("../api/authentication")
+        const auth = await import("$api/authentication")
         connected = auth.connected()
         if (connected) window.location.href = '/epcis/'
     })

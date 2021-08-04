@@ -9,6 +9,7 @@
     import ActionReferentielCard from "$components/shared/ActionReferentiel/ActionReferentielCard.svelte";
     import ExpandPanel from "$components/ExpandPanel.svelte";
     import ProgressStat from "$components/shared/ActionReferentiel/ProgressStat.svelte";
+    import { storeActions } from "$api/svelteStore";
 
     export let action: ActionReferentiel
 
@@ -23,6 +24,7 @@
     onMount(async () => {
         epciId = getCurrentEpciId()
         description = action.description
+        await storeActions.fetchAllActionsReferentielsStatusAndScoreForThisEpci() 
     })
 </script>
 

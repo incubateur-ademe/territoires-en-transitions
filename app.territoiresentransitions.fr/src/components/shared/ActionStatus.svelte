@@ -1,15 +1,16 @@
 <script lang="ts">
+import { getCurrentEpciId } from "$api/currentEpci";
+
     /**
      * Show the status input for a given action.
      *
      * This component is responsible for retrieving and storing status data.
      */
 
-    import {onMount} from "svelte";
+    import {storeActions, storeState} from "$api/svelteStore"
+    import { fiche_action_avancement_noms } from "$generated/models/fiche_action_avancement_noms";
+    import * as R from "ramda";
 
-    import {getCurrentEpciId} from "$api/currentEpci";
-    import {ActionStatusStorable} from "$storables/ActionStatusStorable";
-    import type {HybridStore} from "$api/hybridStore";
 
     export let actionId
 
@@ -46,23 +47,12 @@
 
     let actionAvancementKey: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | 'en_cours' | '' = '';
 
-    let epci_id = ''
 
     /**
      * On input change store/overwrite action status.
      */
     let handleChange = async () => {
-        const avancement = new ActionStatusStorable({
-            epci_id: epci_id,
-            action_id: actionId,
-            avancement: actionAvancementKey
-        })
-
-        await actionStatusStore.store(avancement)
-
-        // force reload to refresh notation
-        // todo make notation reactive #288
-        setTimeout(() => window.location.reload(), 200)
+        storeActions.updateAvancementForAction(actionId, actionAvancementKey)
     }
 
     /**
@@ -70,25 +60,10 @@
      */
     const handleLabelClick = async (key: string) => {
         if (actionAvancementKey === key) {
-            const avancement = new ActionStatusStorable({
-                epci_id: epci_id,
-                action_id: actionId,
-                avancement: ''
-            })
 
-            await actionStatusStore.store(avancement)
-            setTimeout(() => window.location.reload(), 200)
+            storeActions.updateAvancementForAction(actionId, "")
+            // Question : not sure I understand what is this "hack" supposed to be for. 
         }
-    }
-
-    let actionStatusStore: HybridStore<ActionStatusStorable>;
-
-    /**
-     * Get data from store.
-     */
-    const fetch = async () => {
-        const status = await actionStatusStore.retrieveById(`${epci_id}/${actionId}`)
-        if (status) actionAvancementKey = status.avancement;
     }
 
     onMount(async () => {

@@ -72,7 +72,7 @@ def render_mesure_as_html(
 
     if indicateurs is None:
         indicateurs = []
-
+    # Question : This code is never used, or is it ?
     avancement_noms = {
         "faite": "Faite",
         "programmee": "Prévue",
