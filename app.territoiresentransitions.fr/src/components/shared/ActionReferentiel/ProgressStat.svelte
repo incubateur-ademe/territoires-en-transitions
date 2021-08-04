@@ -1,7 +1,7 @@
 <script lang="ts">
     import type {ActionReferentielScore} from "$generated/models/action_referentiel_score";
-    import {onMount} from "svelte";
     import type {ActionReferentiel} from "$generated/models/action_referentiel";
+    import { storeState } from "$api/svelteStore";
 
     export let action: ActionReferentiel
     export let position = "left";
@@ -29,13 +29,11 @@
             state = "best"
         }
     }
-    $:score, updateState();
-
-
-    onMount(async () => {
-        const stores = await import("$api/hybridStores")
-        score = await stores.actionReferentielScoreStore.retrieveById(action.id)
+    
+    storeState.actionsReferentielsWithStatusAndScoreById[action.id].subscribe(value => {
+        score = value.score;
     })
+    $: [score] && updateState();
 </script>
 
 <style>
