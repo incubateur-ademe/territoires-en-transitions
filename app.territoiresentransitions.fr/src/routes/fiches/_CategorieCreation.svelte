@@ -18,7 +18,6 @@
 
     onMount(async () => {
         data.epci_id = getCurrentEpciId()
-        console.log("epci_id: ", data.epci_id)
 
     });
 </script>

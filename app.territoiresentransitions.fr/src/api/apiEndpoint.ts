@@ -3,7 +3,7 @@ import {isStorable} from "./storable";
 /**
  * A Store for Storable object using a remote api
  */
-export class APIStore<T> {
+export class APIEndpoint<T> {
     constructor(
         {
             host,
