@@ -104,7 +104,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: generated-actions-files
-          path: ${{ github.workspace }}/api/api/data/generated
+          path: api/api/data/generated
 
       # Restore cache or create a new one for all dependencies installed with
       # Python.
