@@ -2,8 +2,7 @@ name: Test référentiel
 
 on:
   pull_request:
-    branches-ignore:
-      - main
+  push:
 
 jobs:
   codegen-generate-actions:
