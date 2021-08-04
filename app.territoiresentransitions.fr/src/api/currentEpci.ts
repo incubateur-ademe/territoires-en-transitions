@@ -1,3 +1,6 @@
+/**
+ * @deprecated use store variable instead.
+ */
 export const getCurrentEpciId = (): string => {
     const urlParams = new URLSearchParams(window.location.search)
     const id = urlParams.get('epci_id')

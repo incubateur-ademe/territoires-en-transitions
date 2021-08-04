@@ -7,14 +7,20 @@
 	import Nav from '$components/shared/Nav/Nav.svelte'
 	import NavDev from '$components/shared/Nav/NavDev.svelte'
 	import Tailwind from '$components/Tailwind.svelte'
-import { page } from '$app/stores';
+	import { page } from '$app/stores';
+	import { updateEpciIdAndFetchAll } from '$api/svelteStore';
+	import { getCurrentEpciId } from '$api/currentEpci';
+	
 
 	$: if ($page) {
 		asyncMatomo.trackPageView()
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		asyncMatomo.trackPageView()
+		// Note that `getCurrentEpciId` method is deprecated to get rid of it everywhere, except here. 
+		const epciId = getCurrentEpciId() 
+		if (epciId) await updateEpciIdAndFetchAll(epciId)
 	})
 
 </script>
