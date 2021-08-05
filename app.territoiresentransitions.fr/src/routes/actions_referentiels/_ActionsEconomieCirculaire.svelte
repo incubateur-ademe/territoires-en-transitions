@@ -2,6 +2,7 @@
     import type {ActionReferentiel} from "$generated/models/action_referentiel";
     import ActionReferentielCard from "$components/shared/ActionReferentiel/ActionReferentielCard.svelte";
     import ProgressStat from "$components/shared/ActionReferentiel/ProgressStat.svelte";
+    import ActionReferentielDescription from "$components/shared/ActionReferentiel/ActionReferentielDescription.svelte";
 
     export let searching: boolean
 
@@ -64,6 +65,8 @@
 {#each [...displayedByAxe] as [parent, actions]}
     <section>
         <h2 class="fr-h2">{parent.id_nomenclature} {parent.nom}</h2>
+        <ActionReferentielDescription action={parent}/>
+
         <ProgressStat action={parent} position="left"/>
         <div style="height: 4em"></div>
         {#each actions as action}
