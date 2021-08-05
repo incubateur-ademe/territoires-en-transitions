@@ -13,6 +13,7 @@
 	let epciId = ""
 
 	const retrieveIndicateur = async (): Promise<IndicateurPersonnaliseStorable | undefined > => {
+		await new Promise(r => setTimeout(r, 20));
 		const indicateurValues = await indicateurPersonnaliseStore.retrieveAtPath(
 			`${epciId}/${indicateur.uid}` // TODO : This should probably be `id`, like for IndicateurReferentiel
 		)
