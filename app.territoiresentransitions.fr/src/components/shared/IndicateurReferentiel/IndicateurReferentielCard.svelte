@@ -19,6 +19,7 @@
 
 	const indicateurTitle = `${prettifyId(indicateur.id)} ${indicateur.nom}`
 	const retrieveCommentaire = async () => {
+		await new Promise(r => setTimeout(r, 20));
 		const indicateurValues = await indicateurReferentielCommentaireStore.retrieveAtPath(
 			`${epciId}/${indicateur.id}`
 		)
