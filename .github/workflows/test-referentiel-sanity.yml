@@ -1,8 +1,6 @@
-name: Test de cohérence du référentiel
+name: Référentiel - Génération et test de cohérence
 
-on:
-  pull_request:
-  push:
+on: [ push, pull_request ]
 
 jobs:
   codegen-generate-actions:
