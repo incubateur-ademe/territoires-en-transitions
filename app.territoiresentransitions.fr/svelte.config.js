@@ -16,6 +16,7 @@ export default {
     kit: {
         adapter: ssr(),
         target: '#svelte',
+        trailingSlash: 'always',
         vite: {
             mode: process.env.MODE || 'dev',
             resolve: {

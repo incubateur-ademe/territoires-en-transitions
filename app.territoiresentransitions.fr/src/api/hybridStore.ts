@@ -1,5 +1,5 @@
 import {isStorable, Storable} from "./storable";
-import {APIStore} from "./apiStore";
+import {APIEndpoint} from "./apiEndpoint";
 
 /**
  * A Store for Storable object using a remote api and a local cache.
@@ -26,7 +26,7 @@ export class HybridStore<T extends Storable> {
         this.serializer = serializer;
         this.deserializer = deserializer;
 
-        this.api = new APIStore<T>({
+        this.api = new APIEndpoint<T>({
             host: this.host,
             endpoint: this.pathname,
             serializer: this.serializer,
@@ -48,7 +48,7 @@ export class HybridStore<T extends Storable> {
     pathname: () => string;
     serializer: (storable: T) => object;
     deserializer: (serialized: object) => T;
-    api: APIStore<T>;
+    api: APIEndpoint<T>;
     private cache: T[] | null = null;
 
     // local: LocalStore<T>;

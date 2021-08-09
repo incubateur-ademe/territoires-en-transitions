@@ -327,7 +327,7 @@
 
         <div class="last-button">
             <button class="fr-btn"
-                    on:click={handleSave}>
+                    on:click|preventDefault={handleSave}>
                 Valider
             </button>
         </div>

@@ -5,36 +5,13 @@
      * This component is responsible for retrieving and storing status data.
      */
 
-    import {onMount} from "svelte";
-
-    import {getCurrentEpciId} from "$api/currentEpci";
-    import {ActionStatusStorable} from "$storables/ActionStatusStorable";
-    import type {HybridStore} from "$api/hybridStore";
+    import * as R from "ramda";
+    import { fiche_action_avancement_noms } from "$generated/models/fiche_action_avancement_noms";
+    import { storeState, updateAvancementForAction } from "$api/svelteStore";
 
     export let actionId
 
-    const avancements = [
-        {
-            key: 'non_concernee',
-            label: 'Non concernée',
-        },
-        {
-            key: 'pas_faite',
-            label: 'Pas faite',
-        },
-        {
-            key: 'programmee',
-            label: 'Prévue',
-        },
-        {
-            key: 'en_cours',
-            label: 'En cours',
-        },
-        {
-            key: 'faite',
-            label: 'Faite',
-        },
-    ]
+    const avancements = R.values(R.mapObjIndexed((label, key) => ({key, label}) , fiche_action_avancement_noms))
 
     const classes = [
         'border rounded-l flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400',
@@ -46,57 +23,24 @@
 
     let actionAvancementKey: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | 'en_cours' | '' = '';
 
-    let epci_id = ''
+    storeState.actionsReferentielsWithStatusAndScoreById[actionId].subscribe(value => {
+        if (value.status) actionAvancementKey = value.status.avancement
+    })
 
     /**
      * On input change store/overwrite action status.
      */
     let handleChange = async () => {
-        const avancement = new ActionStatusStorable({
-            epci_id: epci_id,
-            action_id: actionId,
-            avancement: actionAvancementKey
-        })
-
-        await actionStatusStore.store(avancement)
-
-        // force reload to refresh notation
-        // todo make notation reactive #288
-        setTimeout(() => window.location.reload(), 200)
+        updateAvancementForAction(actionId, actionAvancementKey)
     }
 
     /**
      * Hack to clear avancement when clicking the selected label
      */
     const handleLabelClick = async (key: string) => {
-        if (actionAvancementKey === key) {
-            const avancement = new ActionStatusStorable({
-                epci_id: epci_id,
-                action_id: actionId,
-                avancement: ''
-            })
-
-            await actionStatusStore.store(avancement)
-            setTimeout(() => window.location.reload(), 200)
-        }
+        updateAvancementForAction(actionId, "")
     }
 
-    let actionStatusStore: HybridStore<ActionStatusStorable>;
-
-    /**
-     * Get data from store.
-     */
-    const fetch = async () => {
-        const status = await actionStatusStore.retrieveById(`${epci_id}/${actionId}`)
-        if (status) actionAvancementKey = status.avancement;
-    }
-
-    onMount(async () => {
-        const hybridStores = await import ("$api/hybridStores");
-        actionStatusStore = hybridStores.actionStatusStore;
-        epci_id = getCurrentEpciId()
-        await fetch();
-    });
 </script>
 
 <style>

@@ -134,7 +134,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: client-app
-          path: app.territoiresentransitions.fr/build
+          path: app.territoiresentransitions.fr/.svelte-kit/static/build
 
   # This job retrieves the exported client app and upload it to Scaleway.
   deploy-on-scaleway:
