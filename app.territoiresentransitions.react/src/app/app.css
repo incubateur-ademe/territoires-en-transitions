@@ -1,0 +1,15 @@
+#root {
+  width: 100%;
+}
+
+.app {
+  min-width: 300px;
+}
+
+.flex-4 {
+  flex: 4;
+}
+
+.width-420 {
+  width: 420px;
+}
