@@ -1,5 +1,5 @@
 #!/bin/sh
 
-echo $FLAVOR
+echo "$FLAVOR"
 npm run build-$FLAVOR
 serve -s build
