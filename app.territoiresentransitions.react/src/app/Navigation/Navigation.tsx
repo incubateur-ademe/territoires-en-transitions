@@ -1,37 +1,43 @@
-import { Link } from "react-router-dom";
-import { useAppState } from "core-logic/overmind";
+import {Link, useParams, useRouteMatch} from "react-router-dom";
+import {overmind, useAppState} from "core-logic/overmind";
 
 export const EpciNavigation = () => {
-  const epciId = useAppState().epciId;
 
-  console.log("EpciNavigation thinks epci id is ", epciId);
+    const {epciId} = useParams<{ epciId: string }>();
+    const {path} = useRouteMatch();
+    console.log("Path in EpciNavigation is ", path)
+    overmind.actions.setCurrentEpci(epciId);
+    // const epciId = useAppState().epciId;
 
-  if (epciId)
-    return (
-      <>
-        <li>
-          <Link className="fr-link" to="/epcis">
-            Changer
-          </Link>
-        </li>
-        <li>
-          <Link className="fr-link" to="/">
-            Mon plan d'actions
-          </Link>
-        </li>
-        <li>
-          <Link className="fr-link" to="/actions_referentiels">
-            Référentiels
-          </Link>
-        </li>
-        <li>
-          <Link className="fr-link" to="/">
-            Indicateurs
-          </Link>
-        </li>
-      </>
-    );
-  return <></>;
+    console.log("EpciNavigation thinks epci id is ", epciId);
+
+    if (epciId)
+        return (
+            <>
+                <h1>{epciId}</h1>
+                <li>
+                    <Link className="fr-link" to="/epcis">
+                        Changer
+                    </Link>
+                </li>
+                <li>
+                    <Link className="fr-link" to="/">
+                        Mon plan d'actions
+                    </Link>
+                </li>
+                <li>
+                    <Link className="fr-link" to="/actions_referentiels">
+                        Référentiels
+                    </Link>
+                </li>
+                <li>
+                    <Link className="fr-link" to="/">
+                        Indicateurs
+                    </Link>
+                </li>
+            </>
+        );
+    return <></>;
 };
 
 export const Navigation = () => {

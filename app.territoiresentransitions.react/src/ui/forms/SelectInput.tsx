@@ -46,8 +46,6 @@ export const SelectInput = <T extends string>({
       <FormControl className={classes.formControl}>
         <InputLabel>{label ?? ""}</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
           value={value}
           onChange={handleChange}
         >

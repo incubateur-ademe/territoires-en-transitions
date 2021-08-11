@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 
 export const setCurrentEpci = ({ state }: { state: State }, epciId: string) => {
   state.epciId = epciId;
-  console.log("set current epci in store ");
+  console.log("set current epci in store ", epciId, typeof epciId);
 };
 
 export const createNewEpci = async (

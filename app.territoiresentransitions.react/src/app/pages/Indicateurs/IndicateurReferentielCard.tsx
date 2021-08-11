@@ -38,6 +38,8 @@ function IndicateurReferentielValueInput(props: { year: number, indicateur: Indi
 
     const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
         const inputValue = event.currentTarget.value;
+        // overmind.actions.storeIndicateurValue().then(...)
+
         indicateurValueStore.store(
             new IndicateurValueStorable(
                 {
@@ -46,7 +48,8 @@ function IndicateurReferentielValueInput(props: { year: number, indicateur: Indi
                     year: props.year,
                     value: inputValue
                 }
-            )).then((storable) => setValue(storable.value));
+            )
+        ).then((storable) => setValue(storable.value));
     };
     return (
         <label>
@@ -66,7 +69,10 @@ const IndicateurReferentielValues = (props: { indicateur: IndicateurReferentiel 
     </ul>
 );
 
-class IndicateurReferentielCommentaire extends React.Component<{ indicateur: IndicateurReferentiel }, { commentaire: IndicateurReferentielCommentaireStorable | null }> {
+class IndicateurReferentielCommentaire extends React.Component
+    <{
+        indicateur: IndicateurReferentiel
+    }, { commentaire: IndicateurReferentielCommentaireStorable | null }> {
 
     constructor(props: Readonly<{ indicateur: IndicateurReferentiel }> | { indicateur: IndicateurReferentiel }) {
         super(props);
