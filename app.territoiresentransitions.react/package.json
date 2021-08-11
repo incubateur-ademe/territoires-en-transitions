@@ -8,7 +8,8 @@
   "scripts": {
     "format": "prettier src --check",
     "format-write": "prettier src --write",
-    "start": "craco start",
+    "start": "serve -s build",
+    "dev": "craco start",
     "build": "craco build",
     "build-prod": "cross-env FLAVOR=prod craco build",
     "build-sandbox": "cross-env FLAVOR=sandbox craco build",
