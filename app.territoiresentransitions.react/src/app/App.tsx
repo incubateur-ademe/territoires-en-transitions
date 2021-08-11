@@ -11,7 +11,8 @@ import {
   Redirect,
 } from "react-router-dom";
 
-import { Footer, Header } from "ui";
+import {Footer, Header} from "ui";
+import {Indicateurs} from "./pages/Indicateurs/Indicateurs";
 
 const Connected = () => {
   let { path } = useRouteMatch();
@@ -19,17 +20,18 @@ const Connected = () => {
   overmind.actions.setCurrentEpci(epciId);
 
   if (false) {
+    // todo redirect when user is not authenticated: https://reactrouter.com/web/example/auth-workflow
     return <Redirect to="" />;
   }
   return (
-    <>
-      <Route path={`${path}/actions_referentiels`}>
-        <ActionsReferentiels />
-      </Route>
-      <Route path="/indicateurs">
-        <ActionsReferentiels />
-      </Route>
-    </>
+      <>
+        <Route path={`${path}/actions_referentiels`}>
+          <ActionsReferentiels/>
+        </Route>
+        <Route path={`${path}/indicateurs`}>
+          <Indicateurs/>
+        </Route>
+      </>
   );
 };
 

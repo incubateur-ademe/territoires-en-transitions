@@ -9,21 +9,23 @@ export const EpciCard = ({ epci }: EpciCardProps) => (
       className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
       onClick={() => console.log('goto("fiches", epci.uid)')}
     >
-      Plan d'actions
+        Plan d'actions
     </button>
 
-    <Link
-      className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
-      to={`${epci.id}/actions_referentiels`}
-    >
-      Référentiels
-    </Link>
+      <Link
+          className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
+          to={`${epci.id}/actions_referentiels`}
+      >
+          Référentiels
+      </Link>
 
-    <button
-      className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
-      onClick={() => console.log('goto("indicateurs", epci.uid)')}
-    >
-      Indicateurs
-    </button>
+
+      <Link
+          className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
+          to={`${epci.id}/indicateurs`}
+      >
+          Indicateurs
+      </Link>
+
   </div>
 );

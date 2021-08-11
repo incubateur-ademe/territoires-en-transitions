@@ -3,8 +3,7 @@ import React from "react";
 import {IndicateurValueStorable} from "storables/IndicateurValueStorable";
 import {indicateurReferentielCommentaireStore, indicateurValueStore} from "../../../core-logic/api/hybridStores";
 import {IndicateurReferentielCommentaireStorable} from "../../../storables/IndicateurReferentielCommentaireStorable";
-import {ActionReferentiel} from "../../../generated/models/action_referentiel";
-import {actions} from "../../../generated/data/referentiels";
+import {overmind} from "../../../core-logic/overmind";
 
 
 const ExpandPanel = (props: { content: string, title: string }) => (
@@ -29,12 +28,15 @@ class IndicateurReferentielValueInput extends React.Component<{ year: number, in
     constructor(props: Readonly<{ year: number; indicateur: IndicateurReferentiel }> | { year: number; indicateur: IndicateurReferentiel }) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
+
         this.state = {value: null}
     }
 
 
     componentDidMount() {
-        const id = IndicateurValueStorable.buildId('test', this.props.indicateur.id, this.props.year)
+        const epci_id = overmind.state.epciId!;
+
+        const id = IndicateurValueStorable.buildId(epci_id, this.props.indicateur.id, this.props.year)
         indicateurValueStore
             .retrieveById(id)
             .then((storable) => this.setState({value: storable}))
@@ -50,11 +52,12 @@ class IndicateurReferentielValueInput extends React.Component<{ year: number, in
     }
 
     handleChange(event: React.FormEvent<HTMLInputElement>) {
+        const epci_id = overmind.state.epciId!;
         const inputValue = event.currentTarget.value;
         indicateurValueStore.store(
             new IndicateurValueStorable(
                 {
-                    epci_id: 'test',
+                    epci_id: epci_id,
                     indicateur_id: this.props.indicateur.id,
                     year: this.props.year,
                     value: inputValue
