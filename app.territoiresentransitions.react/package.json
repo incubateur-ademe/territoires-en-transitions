@@ -8,7 +8,7 @@
   "scripts": {
     "format": "prettier src --check",
     "format-write": "prettier src --write",
-    "start": "serve -s build",
+    "start": "node server.js",
     "dev": "craco start",
     "build": "craco build",
     "test": "craco test",
@@ -35,6 +35,7 @@
     "autoprefixer": "^9.8.6",
     "axios": "^0.21.1",
     "date-fns": "^2.16.1",
+    "express": "^4.17.1",
     "http-proxy-middleware": "^2.0.0",
     "jwt-decode": "^3.1.2",
     "overmind": "^28.0.1",
