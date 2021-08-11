@@ -4,16 +4,16 @@ import "./index.css";
 
 import { App } from "app/App";
 import reportWebVitals from "./reportWebVitals";
-import { RouteProvider } from "app/Router";
+// import { RouteProvider } from "app/Router";
 import { overmind } from "core-logic/overmind";
 import { Provider } from "overmind-react";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider value={overmind}>
-      <RouteProvider>
-        <App />
-      </RouteProvider>
+      {/* <RouteProvider> */}
+      <App />
+      {/* </RouteProvider> */}
     </Provider>
   </React.StrictMode>,
   document.getElementById("root"),

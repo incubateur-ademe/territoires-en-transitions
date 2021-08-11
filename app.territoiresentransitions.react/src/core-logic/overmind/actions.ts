@@ -3,11 +3,9 @@ import { State } from "core-logic/overmind/state";
 import { EpciStorable } from "storables/EpciStorable";
 import { v4 as uuid } from "uuid";
 
-export const setCurrentEpci = async (
-  { state }: { state: State },
-  epciId: string,
-) => {
+export const setCurrentEpci = ({ state }: { state: State }, epciId: string) => {
   state.epciId = epciId;
+  console.log("set current epci in store ");
 };
 
 export const createNewEpci = async (
@@ -35,5 +33,4 @@ export const onInitializeOvermind = async ({
   effects: Effects;
 }) => {
   state.allEpcis = await effects.epciStore.retrieveAll();
-  console.log("All Epcis : ", state.allEpcis.length)
 };

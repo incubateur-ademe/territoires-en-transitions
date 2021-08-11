@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { EpciStorable } from "storables/EpciStorable";
 
 type EpciCardProps = { epci: EpciStorable };
@@ -11,12 +12,12 @@ export const EpciCard = ({ epci }: EpciCardProps) => (
       Plan d'actions
     </button>
 
-    <button
+    <Link
       className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
-      onClick={() => console.log('goto("actions_referentiels", epci.uid)')}
+      to={`${epci.id}/actions_referentiels`}
     >
       Référentiels
-    </button>
+    </Link>
 
     <button
       className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right"
