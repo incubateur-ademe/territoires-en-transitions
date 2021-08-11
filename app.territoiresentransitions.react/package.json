@@ -1,12 +1,17 @@
 {
   "name": "app.territoiresentransitions.fr",
   "version": "0.1.0",
+  "engines": {
+    "node": "14"
+  },
   "private": true,
   "scripts": {
     "format": "prettier src --check",
     "format-write": "prettier src --write",
     "start": "craco start",
     "build": "craco build",
+    "build-app": "craco build",
+    "build-sandbox": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
