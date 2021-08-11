@@ -10,8 +10,8 @@
     "format-write": "prettier src --write",
     "start": "craco start",
     "build": "craco build",
-    "build-app": "craco build",
-    "build-sandbox": "craco build",
+    "build-prod": "cross-env FLAVOR=prod craco build",
+    "build-sandbox": "cross-env FLAVOR=sandbox craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
