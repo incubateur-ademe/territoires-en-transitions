@@ -19,16 +19,16 @@ const ConditionnalActionsReferentiels = ({ view }: { view: View }) => {
 //   route: Route<typeof routes.actionsReferentiels>;
 // };
 
-export const ActionsReferentiels = () => {
-  const { epciId } = useParams<{ epciId: string }>();
+const ActionsReferentiels = () => {
+    const {epciId} = useParams<{ epciId: string }>();
 
-  const viewOptions: Option<View>[] = [
-    { value: "cae", label: "Climat Air Énergie" },
-    { value: "eci", label: "Économie Circulaire" },
-    { value: "both", label: "Vue combinée" },
-  ];
+    const viewOptions: Option<View>[] = [
+        {value: "cae", label: "Climat Air Énergie"},
+        {value: "eci", label: "Économie Circulaire"},
+        {value: "both", label: "Vue combinée"},
+    ];
 
-  const [view, setView] = React.useState<View>("eci");
+    const [view, setView] = React.useState<View>("eci");
 
   return (
     <div className="pageIntro">
@@ -37,13 +37,15 @@ export const ActionsReferentiels = () => {
       </div>
       <div>
         <SelectInput<View>
-          options={viewOptions}
-          label=""
-          onChange={setView}
-          defaultValue="eci"
+            options={viewOptions}
+            label=""
+            onChange={setView}
+            defaultValue="eci"
         />
       </div>
-      <ConditionnalActionsReferentiels view={view} />
+        <ConditionnalActionsReferentiels view={view}/>
     </div>
   );
 };
+
+export default ActionsReferentiels

@@ -1,10 +1,11 @@
 import {Navigation} from "app/Navigation/Navigation";
-import {ActionsReferentiels} from "app/pages/ActionsReferentiels/ActionsReferentiels";
-import {Epcis} from "app/pages/Epcis/Epcis";
+
 import {BrowserRouter as Router, Redirect, Route, Switch, useParams, useRouteMatch,} from "react-router-dom";
 
 import {Footer, Header} from "ui";
-import {Indicateurs} from "./pages/Indicateurs/Indicateurs";
+import {IndicateursPage} from "./pages/Indicateurs/IndicateursPage";
+import {ReferentielsPage} from "./pages/ActionsReferentiels/ReferentielsPage";
+import {EpcisPage} from "./pages/Epcis/EpcisPage";
 
 const Connected = () => {
 
@@ -19,10 +20,10 @@ const Connected = () => {
     return (
         <>
             <Route path={`${path}/actions_referentiels/`}>
-                <ActionsReferentiels/>
+                <ReferentielsPage/>
             </Route>
             <Route path={`${path}/indicateurs/`}>
-                <Indicateurs/>
+                <IndicateursPage/>
             </Route>
         </>
     );
@@ -35,12 +36,12 @@ export const App = () => {
             <Switch>
                 <Route exact path="/">
                     <Header nav={<Navigation/>}/>
-                    <Epcis/>
+                    <EpcisPage/>
                 </Route>
 
                 <Route path={`/epcis/:epciId`}>
                     <Header nav={<Navigation/>}/>
-                    <Epcis/>
+                    <EpcisPage/>
                 </Route>
 
                 <Route path={`/:epciId`}>

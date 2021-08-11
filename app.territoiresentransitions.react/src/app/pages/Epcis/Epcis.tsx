@@ -29,7 +29,7 @@ const useStyle = makeStyles({
   },
 });
 
-export const Epcis = () => {
+const Epcis = () => {
   const classes = useStyle();
   const [addEpciDialogOpen, setAddEpciDialogOpen] = React.useState(false);
 
@@ -38,8 +38,8 @@ export const Epcis = () => {
   };
 
   return (
-    <div className="app mx-5 mt-5">
-      <section>
+      <div className="app mx-5 mt-5">
+        <section>
         <h1 className="fr-h1 mb-16 text-center">Bienvenue !</h1>
 
         <h2 className="fr-h2 mb-20 text-center">Vos collectivités</h2>
@@ -78,3 +78,5 @@ export const Epcis = () => {
     </div>
   );
 };
+
+export default Epcis;
