@@ -23,50 +23,6 @@ const DescriptionPanel = (props: { description: string }) => (
 
 const years: number[] = Array.from({length: (2022 - 2010)}, (v, k) => k + 2010);
 
-
-class _IndicateurReferentielValueInput extends React.Component<{ year: number, indicateur: IndicateurReferentiel }, { value: IndicateurValueStorable | null }> {
-    constructor(props: Readonly<{ year: number; indicateur: IndicateurReferentiel }> | { year: number; indicateur: IndicateurReferentiel }) {
-        super(props);
-        this.handleChange = this.handleChange.bind(this);
-
-        this.state = {value: null}
-    }
-
-
-    componentDidMount() {
-        const epci_id = overmind.state.epciId!;
-
-        const id = IndicateurValueStorable.buildId(epci_id, this.props.indicateur.id, this.props.year)
-        indicateurValueStore
-            .retrieveById(id)
-            .then((storable) => this.setState({value: storable}))
-    }
-
-    render() {
-        return (
-            <label>
-                {this.props.year}
-                <input className="fr-input" defaultValue={this.state.value?.value} onChange={this.handleChange}/>
-            </label>
-        );
-    }
-
-    handleChange(event: React.FormEvent<HTMLInputElement>) {
-        const epci_id = overmind.state.epciId!;
-        const inputValue = event.currentTarget.value;
-        indicateurValueStore.store(
-            new IndicateurValueStorable(
-                {
-                    epci_id: epci_id,
-                    indicateur_id: this.props.indicateur.id,
-                    year: this.props.year,
-                    value: inputValue
-                }
-            )).then((storable) => this.setState({value: storable}));
-    }
-}
-
-
 function IndicateurReferentielValueInput(props: { year: number, indicateur: IndicateurReferentiel }) {
     const [value, setValue] = React.useState('');
     const epci_id = useAppState().epciId;
@@ -95,7 +51,7 @@ function IndicateurReferentielValueInput(props: { year: number, indicateur: Indi
     return (
         <label>
             {props.year}
-            <input className="fr-input" defaultValue={value} onChange={handleChange}/>
+            <input className="fr-input" defaultValue={value} onBlur={handleChange}/>
         </label>
     );
 }

@@ -31,17 +31,20 @@ const Connected = () => {
 export const App = () => {
     return (
         <Router>
-            <Header nav={<Navigation/>}/>
 
             <Switch>
                 <Route exact path="/">
+                    <Header nav={<Navigation/>}/>
                     <Epcis/>
                 </Route>
+
                 <Route path={`/epcis/:epciId`}>
+                    <Header nav={<Navigation/>}/>
                     <Epcis/>
                 </Route>
 
                 <Route path={`/:epciId`}>
+                    <Header nav={<Navigation/>}/>
                     <Connected/>
                 </Route>
             </Switch>

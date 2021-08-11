@@ -53,6 +53,7 @@ export const indicateurValueStore = new HybridStore<IndicateurValueStorable>({
   serializer: (storable) => storable,
   deserializer: (serialized) =>
     new IndicateurValueStorable(serialized as IndicateurValueInterface),
+
 });
 
 export const actionStatusStore = new HybridStore<ActionStatusStorable>({
