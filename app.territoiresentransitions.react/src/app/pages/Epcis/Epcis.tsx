@@ -1,5 +1,5 @@
-import { Route } from "type-route";
-import { routes } from "app/Router";
+// import { Route } from "type-route";
+// import { routes } from "app/Router";
 import { AddDialog } from "./_AddDialog";
 
 import "app/DesignSystem/buttons.css";
@@ -11,7 +11,7 @@ import React from "react";
 import { overmind } from "core-logic/overmind";
 import { EpciCard } from "./_EpciCard";
 
-type EpcisProps = { route: Route<typeof routes.epcis> };
+// type EpcisProps = { route: Route<typeof routes.epcis> };
 
 const useStyle = makeStyles({
   card: {
@@ -29,7 +29,7 @@ const useStyle = makeStyles({
   },
 });
 
-export const Epcis = (props: EpcisProps) => {
+export const Epcis = () => {
   const classes = useStyle();
   const [addEpciDialogOpen, setAddEpciDialogOpen] = React.useState(false);
 
@@ -45,9 +45,6 @@ export const Epcis = (props: EpcisProps) => {
         <h2 className="fr-h2 mb-20 text-center">Vos collectivités</h2>
 
         <div className={classes.grid}>
-          {/* {#each userEpcis as epci}
-                <Card epci={epci} writable/>
-            {/each} */}
           <div className={classes.card}>
             <h3 className="fr-h3">…</h3>
             <button className="fr-btn fr-btn--sm" onClick={handleClickOpen}>

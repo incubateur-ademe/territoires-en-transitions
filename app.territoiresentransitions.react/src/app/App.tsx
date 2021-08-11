@@ -1,12 +1,56 @@
 import { Navigation } from "app/Navigation/Navigation";
-import { Router } from "app/Router";
+import { ActionsReferentiels } from "app/pages/ActionsReferentiels/ActionsReferentiels";
+import { Epcis } from "app/pages/Epcis/Epcis";
+import { overmind } from "core-logic/overmind";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useParams,
+  useRouteMatch,
+  Redirect,
+} from "react-router-dom";
+
 import { Footer, Header } from "ui";
+
+const Connected = () => {
+  let { path } = useRouteMatch();
+  const { epciId } = useParams<{ epciId: string }>();
+  overmind.actions.setCurrentEpci(epciId);
+
+  if (false) {
+    return <Redirect to="" />;
+  }
+  return (
+    <>
+      <Route path={`${path}/actions_referentiels`}>
+        <ActionsReferentiels />
+      </Route>
+      <Route path="/indicateurs">
+        <ActionsReferentiels />
+      </Route>
+    </>
+  );
+};
 
 export const App = () => {
   return (
-    <>
+    <Router>
       <Header nav={<Navigation />} />
-      <Router />
+
+      <Switch>
+        <Route exact path="/">
+          <Epcis />
+        </Route>
+        <Route path={`/epcis/:epciId`}>
+          <Epcis />
+        </Route>
+
+        <Route path={`/:epciId`}>
+          <Connected></Connected>
+        </Route>
+      </Switch>
+
       <Footer
         description={
           <div>
@@ -52,6 +96,6 @@ export const App = () => {
           </div>
         }
       />
-    </>
+    </Router>
   );
 };

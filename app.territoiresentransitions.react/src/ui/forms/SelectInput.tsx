@@ -1,27 +1,63 @@
-import { ChangeEvent, useState } from "react";
+import { Select, MenuItem, FormControl, InputLabel } from "@material-ui/core";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { useState } from "react";
 
-export type SelectInputProps = {
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 120,
+    },
+    selectEmpty: {
+      marginTop: theme.spacing(2),
+    },
+  }),
+);
+
+export type Option<T extends string> = {
+  value: T;
   label: string;
-  values: { key: string; label: string }[];
-  onChange?: (valueId: string) => void;
 };
-export const SelectInput = ({ label, values, onChange }: SelectInputProps) => {
-  const [value, setValue] = useState("");
-  const handleChange = (e: ChangeEvent) => {
-    const selectedValueId = e.target.id;
-    setValue(selectedValueId);
-    if (onChange) onChange(selectedValueId);
+
+type SelectInputProps<T extends string> = {
+  onChange: (selected: T) => void;
+  options: Option<T>[];
+  defaultValue: T;
+  label: string;
+};
+
+export const SelectInput = <T extends string>({
+  label,
+  options,
+  onChange,
+  defaultValue,
+}: SelectInputProps<T>) => {
+  const classes = useStyles();
+  const [value, setValue] = useState<T>(defaultValue);
+
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const selectedValue = event.target.value as T;
+    setValue(selectedValue);
+    onChange(selectedValue);
   };
+
   return (
     <div>
-      <label className="fr-label">{label}</label>
-      <select value={value} className="fr-select" onChange={handleChange}>
-        {values.map((value) => (
-          <option value={value.key} key={value.key}>
-            {value.label}
-          </option>
-        ))}
-      </select>
+      <FormControl className={classes.formControl}>
+        <InputLabel>{label ?? ""}</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={value}
+          onChange={handleChange}
+        >
+          {options.map((option) => (
+            <MenuItem value={option.value} key={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     </div>
   );
 };

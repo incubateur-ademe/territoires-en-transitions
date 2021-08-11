@@ -1,63 +1,52 @@
-// import { routes, useRoute } from "app/Router";
+import { Link } from "react-router-dom";
+import { useAppState } from "core-logic/overmind";
+
+export const EpciNavigation = () => {
+  const epciId = useAppState().epciId;
+
+  console.log("EpciNavigation thinks epci id is ", epciId);
+
+  if (epciId)
+    return (
+      <>
+        <li>
+          <Link className="fr-link" to="/epcis">
+            Changer
+          </Link>
+        </li>
+        <li>
+          <Link className="fr-link" to="/">
+            Mon plan d'actions
+          </Link>
+        </li>
+        <li>
+          <Link className="fr-link" to="/actions_referentiels">
+            Référentiels
+          </Link>
+        </li>
+        <li>
+          <Link className="fr-link" to="/">
+            Indicateurs
+          </Link>
+        </li>
+      </>
+    );
+  return <></>;
+};
 
 export const Navigation = () => {
-  // const route = useRoute();
-
   return (
     <div className="fr-header__tools">
       <div className="fr-header__tools-links">
         <ul className="fr-links-group">
-          {/* {#if isLogged} */}
-          {/* {#if epci} */}
+          <EpciNavigation />
           <li>
-            epci.nom{" "}
-            <a className="fr-link" href="/epcis/">
-              Changer
-            </a>
-          </li>
-          {/* {/if} */}
-          {/* {#if epciId} */}
-          <li>
-            <a className="fr-link" href="/fiches/?epci_id={epciId}">
-              Mon plan d'actions
-            </a>
-          </li>
-          <li>
-            <a
-              className="fr-link"
-              href="/actions_referentiels/?epci_id={epciId}"
-            >
-              Référentiels
-            </a>
-          </li>
-          <li>
-            <a className="fr-link" href="/indicateurs/?epci_id={epciId}">
-              Indicateurs
-            </a>
-          </li>
-          {/* {/if} */}
-          <li>
-            <a className="fr-link fr-fi-account-line" href="/auth/signout/">
+            <Link className="fr-link" to="/">
               Déconnexion
-            </a>
+            </Link>
           </li>
         </ul>
       </div>
     </div>
-
-    // <UiAppBar isLoading={false}>
-    //   <UiTabs tabValue={route.name}>
-    //     <LinkTab
-    //       label="Epcis"
-    //       {...routes.epcis().link}
-    //       value={routes.epcis().name}
-    //     />
-    //     <LinkTab
-    //       label="Actions Referentiels"
-    //       {...routes.actionsReferentiels().link}
-    //       value={routes.actionsReferentiels().name}
-    //     />
-    //   </UiTabs>
-    // </UiAppBar>
   );
 };

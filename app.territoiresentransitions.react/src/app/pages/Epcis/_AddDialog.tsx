@@ -13,7 +13,7 @@ export interface AddDialogProps {
 export const AddDialog = (props: AddDialogProps) => {
   const { open, close, epcis } = props;
   const selectInputValues = epcis.map((epciStorable) => ({
-    key: epciStorable.id,
+    value: epciStorable.id,
     label: epciStorable.nom,
   }));
 
@@ -45,18 +45,13 @@ export const AddDialog = (props: AddDialogProps) => {
             <h1 className="text-xl">Ma collectivité a déjà un compte</h1>
             <SelectInput
               label="Nom de ma collectivité"
-              values={selectInputValues}
+              options={selectInputValues}
+              defaultValue=""
               onChange={(epciId) => {
                 console.log(epciId);
                 setSelectedEpciId(epciId);
               }}
             />
-            {/* <SelectInput bind:value={selectedEpciId} label="Nom de ma collectivité">
-                    <option value="">Sélectionnez une collectivité</option>
-                    {#each epcis as epci}
-                        <option value="{epci.id}">{epci.nom}</option>
-                    {/each}
-                </SelectInput> */}
           </div>
           <div className="flex flex-col">
             <h1 className="text-xl">
