@@ -45,10 +45,7 @@ export const SelectInput = <T extends string>({
     <div>
       <FormControl className={classes.formControl}>
         <InputLabel>{label ?? ""}</InputLabel>
-        <Select
-          value={value}
-          onChange={handleChange}
-        >
+        <Select value={value} onChange={handleChange}>
           {options.map((option) => (
             <MenuItem value={option.value} key={option.value}>
               {option.label}

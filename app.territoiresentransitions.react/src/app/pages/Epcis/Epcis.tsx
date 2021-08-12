@@ -1,5 +1,3 @@
-// import { Route } from "type-route";
-// import { routes } from "app/Router";
 import { AddDialog } from "./_AddDialog";
 
 import "app/DesignSystem/buttons.css";
@@ -8,10 +6,8 @@ import "app/DesignSystem/variables.css";
 
 import { makeStyles } from "@material-ui/core";
 import React from "react";
-import { overmind } from "core-logic/overmind";
+import { useAppState } from "core-logic/overmind";
 import { EpciCard } from "./_EpciCard";
-
-// type EpcisProps = { route: Route<typeof routes.epcis> };
 
 const useStyle = makeStyles({
   card: {
@@ -60,16 +56,13 @@ const Epcis = () => {
         </h2>
 
         <div className={classes.grid}>
-          {overmind.state.allEpcis.map((epci) => (
+          {useAppState().allEpcis.map((epci) => (
             <EpciCard epci={epci} />
           ))}
-          {/* {#each allEpcis as epci}
-                <Card epci={epci}/>
-            {/each} */}
         </div>
       </section>
       <AddDialog
-        epcis={overmind.state.allEpcis}
+        epcis={useAppState().allEpcis}
         open={addEpciDialogOpen}
         close={() => {
           setAddEpciDialogOpen(false);

@@ -19,7 +19,7 @@ const ExpandPanel = (props: { content: string, title: string }) => (
 );
 
 const DescriptionPanel = (props: { description: string }) => (
-    <ExpandPanel title={'description'} content={props.description}/>
+  <ExpandPanel title={"description"} content={props.description} />
 );
 
 
@@ -64,14 +64,18 @@ function IndicateurReferentielValueInput(props: { year: number, indicateur: Indi
     );
 }
 
-const IndicateurReferentielValues = (props: { indicateur: IndicateurReferentiel }) => (
-    <ul className="bg-grey">
-        {years.map((year) =>
-            <IndicateurReferentielValueInput
-                year={year}
-                indicateur={props.indicateur}
-                key={`${props.indicateur.id}-${year}`}/>)}
-    </ul>
+const IndicateurReferentielValues = (props: {
+  indicateur: IndicateurReferentiel;
+}) => (
+  <ul className="bg-grey">
+    {years.map((year) => (
+      <IndicateurReferentielValueInput
+        year={year}
+        indicateur={props.indicateur}
+        key={`${props.indicateur.id}-${year}`}
+      />
+    ))}
+  </ul>
 );
 
 
@@ -117,6 +121,7 @@ function Commentaire(props: { indicateur: IndicateurReferentiel }) {
 export const IndicateurReferentielCard = (props: { indicateur: IndicateurReferentiel }) => {
     // todo lookup related actions
 
+  render() {
     return (
         <div className="flex flex-col items-center pt-8 pr-6 pb-6">
             <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
@@ -125,4 +130,20 @@ export const IndicateurReferentielCard = (props: { indicateur: IndicateurReferen
             <Commentaire indicateur={props.indicateur}/>
         </div>
     );
+  }
+}
+
+export const IndicateurReferentielCard = (props: {
+  indicateur: IndicateurReferentiel;
+}) => {
+  // todo lookup related actions
+
+  return (
+    <div className="flex flex-col items-center pt-8 pr-6 pb-6">
+      <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
+      <IndicateurReferentielValues indicateur={props.indicateur} />
+      <DescriptionPanel description={props.indicateur.description} />
+      <IndicateurReferentielCommentaire indicateur={props.indicateur} />
+    </div>
+  );
 };

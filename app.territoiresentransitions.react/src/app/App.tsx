@@ -1,100 +1,80 @@
-import {Navigation} from "app/Navigation/Navigation";
+import { Navigation } from "app/Navigation";
+import { EpcisPage } from "app/pages/Epcis/EpcisPage";
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+  useParams,
+  useRouteMatch,
+} from "react-router-dom";
 
-import {BrowserRouter as Router, Redirect, Route, Switch, useParams, useRouteMatch,} from "react-router-dom";
-
-import {Footer, Header} from "ui";
-import {IndicateursPage} from "./pages/Indicateurs/IndicateursPage";
-import {ReferentielsPage} from "./pages/ActionsReferentiels/ReferentielsPage";
-import {EpcisPage} from "./pages/Epcis/EpcisPage";
+import { Footer, Header } from "ui";
+import { FooterDescription, FooterNavigation } from "ui/Footer";
+import { IndicateursPage } from "./pages/Indicateurs/IndicateursPage";
 
 const Connected = () => {
+  const { path, url } = useRouteMatch();
+  const { epciId } = useParams<{ epciId: string }>();
+  console.log(
+    "path in connected is ",
+    path,
+    "url is",
+    url,
+    " and EPCI ID is",
+    epciId,
+  );
 
-    const {path, url} = useRouteMatch();
-    const {epciId} = useParams<{ epciId: string }>();
-    console.log("path in connected is ", path, "url is", url, " and EPCI ID is", epciId)
+  console.log(
+    "path in connected is ",
+    path,
+    "url is",
+    url,
+    " and EPCI ID is",
+    epciId,
+  );
 
-    if (false) {
-        // todo redirect when user is not authenticated: https://reactrouter.com/web/example/auth-workflow
-        return <Redirect to=""/>;
-    }
-    return (
-        <>
-            <Route path={`${path}/actions_referentiels/`}>
-                <ReferentielsPage/>
-            </Route>
-            <Route path={`${path}/indicateurs/`}>
-                <IndicateursPage/>
-            </Route>
-        </>
-    );
+  if (false) {
+    // todo redirect when user is not authenticated: https://reactrouter.com/web/example/auth-workflow
+    return <Redirect to="" />;
+  }
+  return (
+    <>
+      <Route path={`${path}/actions_referentiels/`}>
+        <ReferentielsPage />
+      </Route>
+      <Route path={`${path}/indicateurs/`}>
+        <IndicateursPage />
+      </Route>
+    </>
+  );
 };
 
 export const App = () => {
-    return (
-        <Router>
+  return (
+    <Router>
+      <div className="relative max-w-6xl py-14 px-8 my-0 mx-auto box-border">
+        <Switch>
+          <Route exact path="/">
+            <Header nav={<Navigation />} />
+            <EpcisPage />
+          </Route>
 
-            <Switch>
-                <Route exact path="/">
-                    <Header nav={<Navigation/>}/>
-                    <EpcisPage/>
-                </Route>
+          <Route path={`/epcis/:epciId`}>
+            <Header nav={<Navigation />} />
+            <EpcisPage />
+          </Route>
 
-                <Route path={`/epcis/:epciId`}>
-                    <Header nav={<Navigation/>}/>
-                    <EpcisPage/>
-                </Route>
-
-                <Route path={`/:epciId`}>
-                    <Header nav={<Navigation/>}/>
-                    <Connected/>
-                </Route>
-            </Switch>
-
-            <Footer
-                description={
-                    <div>
-                        <p className="fr-footer__content-desc">
-                            Territoires en transitions accompagne les collectivités afin de
-                            les aider à piloter plus facilement leur transition écologique.
-                        </p>
-                        <p className="fr-footer__content-desc">
-                            Vous rencontrez une difficulté ? Une suggestion pour nous aider à
-                            améliorer l'outil ? Écrivez-nous à :
-                            <a href="mailto:aide@territoiresentransitions.fr?subject=Aide sur app.territoiresentransitions.fr">
-                                aide@territoiresentransitions.fr
-                            </a>
-                        </p>
-                    </div>
-                }
-                navigation={
-                    <div>
-                        {" "}
-                        <div className="fr-footer__bottom">
-                            <ul className="fr-footer__bottom-list">
-                                <li className="fr-footer__bottom-item">
-                                    <a
-                                        className="fr-footer__bottom-link"
-                                        href="https://territoiresentransitions.fr/mentions-legales/"
-                                        target="_self"
-                                    >
-                                        Mentions légales
-                                    </a>
-                                </li>
-                                <li className="fr-footer__bottom-item">
-                                    <a
-                                        className="fr-footer__bottom-link"
-                                        href="https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel"
-                                        rel="external noreferrer"
-                                        target="_blank"
-                                    >
-                                        Protection des données
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                }
-            />
-        </Router>
-    );
+          <Route path={`/:epciId`}>
+            <Header nav={<Navigation />} />
+            <Connected />
+          </Route>
+        </Switch>
+      </div>
+      <Footer
+        description={<FooterDescription />}
+        navigation={<FooterNavigation />}
+      />
+    </Router>
+  );
 };
