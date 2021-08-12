@@ -12,6 +12,7 @@ import {
 import { Footer, Header } from "ui";
 import { FooterDescription, FooterNavigation } from "ui/Footer";
 import { IndicateursPage } from "./pages/Indicateurs/IndicateursPage";
+import { ReferentielsPage } from "./pages/Referentiels/ReferentielsPage";
 
 const Connected = () => {
   const { path, url } = useRouteMatch();

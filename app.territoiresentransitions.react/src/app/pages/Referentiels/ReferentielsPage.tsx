@@ -1,14 +1,12 @@
-import React, {lazy, Suspense} from 'react';
-import {renderLoader} from "../../utils/renderLoader";
+import React, { lazy, Suspense } from "react";
+import { renderLoader } from "../../utils/renderLoader";
 
-const ActionsReferentiels = lazy(() => import('./ActionsReferentiels'));
-
+const Referentiels = lazy(() => import("./Referentiels"));
 
 export const ReferentielsPage = () => {
-
-    return (
-        <Suspense fallback={renderLoader()}>
-            <ActionsReferentiels/>
-        </Suspense>
-    );
+  return (
+    <Suspense fallback={renderLoader()}>
+      <Referentiels />
+    </Suspense>
+  );
 };
