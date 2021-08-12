@@ -11,8 +11,11 @@ import {
 
 import { Footer, Header } from "ui";
 import { FooterDescription, FooterNavigation } from "ui/Footer";
-import { IndicateursPage } from "./pages/Indicateurs/IndicateursPage";
-import { ReferentielsPage } from "./pages/Referentiels/ReferentielsPage";
+import {
+  IndicateursPage,
+  ActionReferentielPage,
+  ReferentielsPage,
+} from "./pages";
 
 const Connected = () => {
   const { path, url } = useRouteMatch();
@@ -43,6 +46,9 @@ const Connected = () => {
     <>
       <Route path={`${path}/actions_referentiels/`}>
         <ReferentielsPage />
+      </Route>
+      <Route path={`${path}/action/:actionId`}>
+        <ActionReferentielPage />
       </Route>
       <Route path={`${path}/indicateurs/`}>
         <IndicateursPage />

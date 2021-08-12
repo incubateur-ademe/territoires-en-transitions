@@ -4,13 +4,17 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: { colors: {
+      // Progress Stat Component
       'progress-nc': "#444",
       'progress-alert': '#DA0505',
       'progress-warning': '#F59E0B',
       'progress-ok': '#FCD34D',
       'progress-good': '#C0D72D',
       'progress-best': "#059669",
-      'beige': "#f9f8f6"
+      // Misc
+      'beige': "#f9f8f6",
+      // Design system 
+      "bf500": "#000091"
     }},
   },
   variants: {

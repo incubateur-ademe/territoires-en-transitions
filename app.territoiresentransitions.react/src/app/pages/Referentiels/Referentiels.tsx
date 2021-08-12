@@ -3,7 +3,7 @@ import { SelectInput } from "ui";
 import type { Option } from "ui";
 
 import React from "react";
-import { ActionsEconomieCirculaire } from "./_ReferentielEconomieCirculaire";
+import { EconomieCirculaireReferentiel } from "./_ReferentielEconomieCirculaire";
 import { actions } from "generated/data/referentiels";
 
 type View = "cae" | "eci" | "both";
@@ -11,7 +11,7 @@ type View = "cae" | "eci" | "both";
 const ConditionnalActionsReferentiels = ({ view }: { view: View }) => {
   if (view === "cae") return <div>CLIMAT AIR ENERGIE</div>;
   else if (view === "both") return <div>VUE COMBINEE</div>;
-  else return <ActionsEconomieCirculaire actions={actions} />;
+  else return <EconomieCirculaireReferentiel actions={actions} />;
 };
 
 export const ActionsReferentiels = () => {
@@ -22,25 +22,6 @@ export const ActionsReferentiels = () => {
   ];
 
   const [view, setView] = React.useState<View>("eci");
-
-  //   .pageIntro {
-  //     margin-top: 2.25rem;
-  //     margin-bottom: 3.75rem;
-  // }
-
-  // .pageIntro > div {
-  //     display: flex;
-  //     align-items: center;
-  //     justify-content: space-between;
-  // }
-
-  // .pageIntro > div + div {
-  //     margin-top: 1.875rem;
-  // }
-
-  // .pageIntro h1 {
-  //     margin-bottom: 0;
-  // }
 
   return (
     <div className="mt-9 mb-16">
