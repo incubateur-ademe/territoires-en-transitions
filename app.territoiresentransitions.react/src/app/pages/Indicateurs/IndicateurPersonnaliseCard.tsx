@@ -75,11 +75,28 @@ const IndicateurPersonnaliseValues = (props: { indicateur: IndicateurPersonnalis
 );
 
 
-const IndicateurPersonnaliseCommentaire = (props: { indicateur: IndicateurPersonnaliseStorable }) => (
-    <>
-        <h3>Commentaire</h3>
-    </>
-);
+const IndicateurPersonnaliseCommentaire = (props: { indicateur: IndicateurPersonnaliseStorable }) => {
+    const [value, setValue] = React.useState(props.indicateur.meta['commentaire'] ?? '');
+
+    function handleSave(event: React.FormEvent<HTMLTextAreaElement>) {
+        const inputValue = event.currentTarget.value;
+        const data = {
+            ...props.indicateur,
+        };
+        data.meta['commentaire'] = inputValue;
+        commands.indicateurCommands
+            .storeIndicateurPersonnalise(new IndicateurPersonnaliseStorable(data))
+            .then((storable) => setValue(storable.meta['commentaire']));
+    }
+
+    return (
+
+        <details>
+            <summary>Commentaire</summary>
+            <textarea defaultValue={value} onBlur={handleSave}/>
+        </details>
+    )
+};
 
 export const IndicateurPersonnaliseCard = (props: { indicateur: IndicateurPersonnaliseStorable }) => {
     // todo lookup related actions

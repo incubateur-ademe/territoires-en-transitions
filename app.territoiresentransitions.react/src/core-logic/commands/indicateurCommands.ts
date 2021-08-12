@@ -1,12 +1,13 @@
 import {
     indicateurPersonnaliseStore,
     indicateurPersonnaliseValueStore,
-    indicateurValueStore,
-    indicateurReferentielCommentaireStore
+    indicateurReferentielCommentaireStore,
+    indicateurValueStore
 } from "../api/hybridStores";
 import {IndicateurPersonnaliseValueStorable} from "storables/IndicateurPersonnaliseValueStorable";
 import {IndicateurValueStorable} from "storables/IndicateurValueStorable";
 import {IndicateurReferentielCommentaireStorable} from "storables/IndicateurReferentielCommentaireStorable";
+import {IndicateurPersonnaliseStorable} from "../../storables/IndicateurPersonnaliseStorable";
 
 
 const getIndicateurReferentielValue =
@@ -20,6 +21,7 @@ const getAllIndicateursPersonnalises =
 
 export const getIndicateurPersonnaliseValue =
     (indicateurId: string) => indicateurPersonnaliseValueStore.retrieveById(indicateurId);
+const storeIndicateurPersonnalise = (storable: IndicateurPersonnaliseStorable) => indicateurPersonnaliseStore.store(storable);
 
 const storeIndicateurPersonnaliseValue =
     (storable: IndicateurPersonnaliseValueStorable) => indicateurPersonnaliseValueStore.store(storable);
@@ -30,15 +32,19 @@ const getIndicateurReferentielCommentaire = (id: string) => indicateurReferentie
 const storeIndicateurReferentielCommentaire =
     (storable: IndicateurReferentielCommentaireStorable) => indicateurReferentielCommentaireStore.store(storable);
 
+
 export const indicateurCommands = {
 
     getIndicateurReferentielValue,
     storeIndicateurReferentielValue,
 
     getAllIndicateursPersonnalises,
+    storeIndicateurPersonnalise,
+
     getIndicateurPersonnaliseValue,
     storeIndicateurPersonnaliseValue,
 
     getIndicateurReferentielCommentaire,
     storeIndicateurReferentielCommentaire,
+
 }

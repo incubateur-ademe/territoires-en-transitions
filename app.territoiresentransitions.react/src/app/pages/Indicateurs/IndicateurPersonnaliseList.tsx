@@ -11,8 +11,7 @@ export const IndicateurPersonnaliseList = () => {
         commands.indicateurCommands
             .getAllIndicateursPersonnalises()
             .then((results) => {
-                console.log('results', results);
-                setList(results);
+                setList(results.sort((a, b) => a.nom.localeCompare(b.nom)));
             });
     }, [list.length])
 
