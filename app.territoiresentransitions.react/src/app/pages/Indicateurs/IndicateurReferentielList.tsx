@@ -5,7 +5,7 @@ import {overmind} from "../../../core-logic/overmind";
 import React from "react";
 
 
-const Indicateurs = () => {
+const IndicateurReferentielList = () => {
     const [list, setList] = React.useState(indicateurs.slice(0, 10))
 
     setTimeout(() => setList(indicateurs), 2000)
@@ -13,7 +13,6 @@ const Indicateurs = () => {
     return (
 
         <div className="app mx-5 mt-5">
-            <h1>Indicateurs</h1>
             <section className="flex flex-col">
                 {list.map((indicateur) => (
                     <IndicateurReferentielCard indicateur={indicateur}/>
@@ -23,4 +22,4 @@ const Indicateurs = () => {
     );
 };
 
-export default Indicateurs;
+export default IndicateurReferentielList;

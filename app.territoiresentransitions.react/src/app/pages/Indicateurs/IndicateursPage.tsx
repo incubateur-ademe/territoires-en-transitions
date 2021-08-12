@@ -1,14 +1,21 @@
 import React, {lazy, Suspense} from 'react';
 import {renderLoader} from "../../utils/renderLoader";
 
-const Indicateurs = lazy(() => import('./Indicateurs'));
+const IndicateurReferentielList = lazy(() => import('./IndicateurReferentielList'));
+const IndicateurPersonnaliseList = lazy(() => import('./IndicateurPersonnaliseList'));
 
 
+/**
+ * Indicateurs page show both indicateurs personnalisés and indicateurs référentiel.
+ */
 export const IndicateursPage = () => {
 
     return (
         <Suspense fallback={renderLoader()}>
-            <Indicateurs/>
+
+            <h1 className="fr-h1">Indicateurs</h1>
+            <IndicateurPersonnaliseList/>
+            <IndicateurReferentielList/>
         </Suspense>
     );
 };
