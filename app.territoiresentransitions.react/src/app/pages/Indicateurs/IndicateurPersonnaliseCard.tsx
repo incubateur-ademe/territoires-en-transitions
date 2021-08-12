@@ -3,6 +3,7 @@ import {IndicateurValueStorable} from "storables/IndicateurValueStorable";
 import {useAppState} from "core-logic/overmind";
 import {IndicateurPersonnaliseStorable} from "storables/IndicateurPersonnaliseStorable";
 import {commands} from "core-logic/commands/commands";
+import {indicateurs} from "../../../generated/data/indicateurs_referentiels";
 
 
 const ExpandPanel = (props: { content: string, title: string }) => (
@@ -63,13 +64,15 @@ const IndicateurPersonnaliseValueInput = (props: { year: number, indicateur: Ind
 };
 
 const IndicateurPersonnaliseValues = (props: { indicateur: IndicateurPersonnaliseStorable }) => (
-    <ul className="bg-grey">
+    <>
         {years.map((year) =>
+
             <IndicateurPersonnaliseValueInput
                 year={year}
                 indicateur={props.indicateur}
-                key={`${props.indicateur.id}-${year}`}/>)}
-    </ul>
+                key={`${props.indicateur.id}-${year}`}/>
+        )}
+    </>
 );
 
 

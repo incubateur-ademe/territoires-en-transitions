@@ -19,13 +19,9 @@ export const IndicateurPersonnaliseList = () => {
     return (
         <div className="app mx-5 mt-5">
             <section className="flex flex-col">
-                <ul>
-                    {list.map((indicateur) => (
-                        <li key={indicateur.id}>
-                            <IndicateurPersonnaliseCard indicateur={indicateur}/>
-                        </li>
-                    ))}
-                </ul>
+                {list.map((indicateur) => (
+                    <IndicateurPersonnaliseCard indicateur={indicateur} key={indicateur.id}/>
+                ))}
             </section>
         </div>
     );

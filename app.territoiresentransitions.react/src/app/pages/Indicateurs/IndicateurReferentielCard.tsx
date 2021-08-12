@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {IndicateurReferentiel} from "generated/models/indicateur_referentiel";
 import {IndicateurValueStorable} from "storables/IndicateurValueStorable";
 import {useAppState} from "core-logic/overmind";
@@ -25,20 +25,24 @@ const DescriptionPanel = (props: { description: string }) => (
 function IndicateurReferentielValueInput(props: { year: number, indicateur: IndicateurReferentiel }) {
     const [value, setValue] = React.useState<string>('');
     const epci_id = useAppState().epciId;
+
+    useEffect(() => {
+        commands.indicateurCommands.getIndicateurReferentielValue(id)
+            .then((storable) => {
+                console.log('got storable', storable?.id)
+                setValue(storable?.value ?? '');
+            })
+    }, [value, epci_id])
+
     if (!epci_id) {
         return (<div>EPCI ? </div>)
     }
 
     const id = IndicateurValueStorable.buildId(epci_id, props.indicateur.id, props.year);
-    commands.indicateurCommands.getIndicateurReferentielValue(id)
-        .then((storable) => {
-            console.log('got storable', storable?.id)
-            setValue(storable?.value ?? '');
-        })
+
 
     const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
         const inputValue = event.currentTarget.value;
-        // overmind.actions.storeIndicateurValue().then(...)
 
         commands.indicateurCommands.storeIndicateurReferentielValue(
             new IndicateurValueStorable(

@@ -7,10 +7,10 @@ import {IndicateurReferentielList} from "./IndicateurReferentielList";
  */
 const IndicateurLists = () => {
     return (
-        <div>
+        <>
             <IndicateurPersonnaliseList/>
             <IndicateurReferentielList/>
-        </div>
+        </>
     );
 };
 

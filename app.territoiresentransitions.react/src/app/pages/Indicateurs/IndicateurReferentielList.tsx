@@ -21,24 +21,17 @@ export const IndicateurReferentielList = () => {
     return (
         <div className="app mx-5 mt-5">
             <section className="flex flex-col">
-                <ul>
-                    {initialList.map((indicateur) => (
-                        <li>
-                            <IndicateurReferentielCard indicateur={indicateur} key={indicateur.id}/>
-                        </li>
-                    ))}
-                </ul>
+                {initialList.map((indicateur) => (
+                    <IndicateurReferentielCard indicateur={indicateur} key={indicateur.id}/>
+                ))}
 
                 {delayedList.length == 0 &&
                 <button className="fr-btn" onClick={loadMore}>Plus</button>
                 }
-                <ul>
-                    {delayedList.map((indicateur) => (
-                        <li>
-                            <IndicateurReferentielCard indicateur={indicateur} key={indicateur.id}/>
-                        </li>
-                    ))}
-                </ul>
+
+                {delayedList.map((indicateur) => (
+                    <IndicateurReferentielCard indicateur={indicateur} key={indicateur.id}/>
+                ))}
             </section>
         </div>
     );
