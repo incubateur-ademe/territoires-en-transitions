@@ -1,7 +1,8 @@
 import * as actions from "./actions";
-import { effects } from "./effects";
-import { state } from "./state";
-import { createOvermind, IContext } from "overmind";
+import * as indicateurCommands from "./indicateurCommands";
+import {effects} from "./effects";
+import {state} from "./state";
+import {createOvermind, IContext} from "overmind";
 import {
   createActionsHook,
   createEffectsHook,
@@ -11,7 +12,7 @@ import {
 
 export const config = {
   state: state,
-  actions: actions,
+  actions: {...actions, indicateurCommands},
   effects: effects,
 };
 

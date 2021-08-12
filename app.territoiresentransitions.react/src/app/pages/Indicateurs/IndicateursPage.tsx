@@ -12,10 +12,11 @@ export const IndicateursPage = () => {
 
     return (
         <Suspense fallback={renderLoader()}>
-
-            <h1 className="fr-h1">Indicateurs</h1>
-            <IndicateurPersonnaliseList/>
-            <IndicateurReferentielList/>
+            <div className="my-5 flex flex-col">
+                <h1 className="fr-h1">Indicateurs</h1>
+                <IndicateurPersonnaliseList/>
+                <IndicateurReferentielList/>
+            </div>
         </Suspense>
     );
 };

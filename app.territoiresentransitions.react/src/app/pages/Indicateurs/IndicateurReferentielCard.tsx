@@ -1,9 +1,10 @@
-import {IndicateurReferentiel} from "generated/models/indicateur_referentiel";
 import React from "react";
+import {IndicateurReferentiel} from "generated/models/indicateur_referentiel";
 import {IndicateurValueStorable} from "storables/IndicateurValueStorable";
-import {indicateurReferentielCommentaireStore, indicateurValueStore} from "../../../core-logic/api/hybridStores";
-import {IndicateurReferentielCommentaireStorable} from "../../../storables/IndicateurReferentielCommentaireStorable";
-import {overmind, useAppState} from "../../../core-logic/overmind";
+import {IndicateurReferentielCommentaireStorable} from "storables/IndicateurReferentielCommentaireStorable";
+import {overmind, useAppState} from "core-logic/overmind";
+import years from "./years";
+import {storeIndicateurReferentielValue} from "../../../core-logic/overmind/indicateurCommands";
 
 
 const ExpandPanel = (props: { content: string, title: string }) => (
@@ -21,26 +22,23 @@ const DescriptionPanel = (props: { description: string }) => (
     <ExpandPanel title={'description'} content={props.description}/>
 );
 
-const years: number[] = Array.from({length: (2022 - 2010)}, (v, k) => k + 2010);
 
 function IndicateurReferentielValueInput(props: { year: number, indicateur: IndicateurReferentiel }) {
     const [value, setValue] = React.useState('');
     const epci_id = useAppState().epciId;
-    console.log("IndicateurReferentielValueInput epciId is ", epci_id)
     if (!epci_id) {
         return (<div>EPCI ? </div>)
     }
 
-    const id = IndicateurValueStorable.buildId(epci_id, props.indicateur.id, props.year)
-    indicateurValueStore
-        .retrieveById(id)
+    const id = IndicateurValueStorable.buildId(epci_id, props.indicateur.id, props.year);
+    overmind.actions.indicateurCommands.getIndicateurReferentielValue(id)
         .then((storable) => setValue(storable?.value ?? ''))
 
     const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
         const inputValue = event.currentTarget.value;
         // overmind.actions.storeIndicateurValue().then(...)
 
-        indicateurValueStore.store(
+        overmind.actions.indicateurCommands.storeIndicateurReferentielValue(
             new IndicateurValueStorable(
                 {
                     epci_id: epci_id,
@@ -84,8 +82,8 @@ class IndicateurReferentielCommentaire extends React.Component
     componentDidMount() {
         const epci_id = overmind.state.epciId!;
         const id = IndicateurReferentielCommentaireStorable.buildId(epci_id, this.props.indicateur.id);
-        indicateurReferentielCommentaireStore
-            .retrieveById(id)
+        overmind.actions.indicateurCommands
+            .getIndicateurPersonnaliseValue(id)
             .then((storable) => this.setState({commentaire: storable}));
     }
 
@@ -108,7 +106,6 @@ export const IndicateurReferentielCard = (props: { indicateur: IndicateurReferen
     // todo lookup related actions
 
     return (
-
         <div className="flex flex-col items-center pt-8 pr-6 pb-6">
             <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
             <IndicateurReferentielValues indicateur={props.indicateur}/>
