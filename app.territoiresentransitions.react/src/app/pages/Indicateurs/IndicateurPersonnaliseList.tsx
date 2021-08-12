@@ -1,22 +1,32 @@
+import React, {useEffect} from "react";
+import {IndicateurPersonnaliseStorable} from "storables/IndicateurPersonnaliseStorable";
+import {commands} from "core-logic/commands/commands";
 import {IndicateurPersonnaliseCard} from "./IndicateurPersonnaliseCard";
-import {overmind} from "../../../core-logic/overmind";
-import React from "react";
-import {IndicateurPersonnaliseStorable} from "../../../storables/IndicateurPersonnaliseStorable";
 
 
-const IndicateurPersonnaliseList = () => {
+export const IndicateurPersonnaliseList = () => {
     const [list, setList] = React.useState<IndicateurPersonnaliseStorable[]>([]);
-    overmind.actions.indicateurCommands.getAllIndicateursPersonnalises().then((results) => setList(results));
+
+    useEffect(() => {
+        commands.indicateurCommands
+            .getAllIndicateursPersonnalises()
+            .then((results) => {
+                console.log('results', results);
+                setList(results);
+            });
+    }, [list.length])
 
     return (
         <div className="app mx-5 mt-5">
             <section className="flex flex-col">
-                {list.map((indicateur) => (
-                    <IndicateurPersonnaliseCard indicateur={indicateur}/>
-                ))}
+                <ul>
+                    {list.map((indicateur) => (
+                        <li key={indicateur.id}>
+                            <IndicateurPersonnaliseCard indicateur={indicateur}/>
+                        </li>
+                    ))}
+                </ul>
             </section>
         </div>
     );
 };
-
-export default IndicateurPersonnaliseList;

@@ -1,8 +1,7 @@
 import React, {lazy, Suspense} from 'react';
 import {renderLoader} from "../../utils/renderLoader";
 
-const IndicateurReferentielList = lazy(() => import('./IndicateurReferentielList'));
-const IndicateurPersonnaliseList = lazy(() => import('./IndicateurPersonnaliseList'));
+const IndicateurLists = lazy(() => import('./IndicateurLists'));
 
 
 /**
@@ -11,13 +10,13 @@ const IndicateurPersonnaliseList = lazy(() => import('./IndicateurPersonnaliseLi
 export const IndicateursPage = () => {
 
     return (
-        <Suspense fallback={renderLoader()}>
-            <div className="my-5 flex flex-col">
-                <h1 className="fr-h1">Indicateurs</h1>
-                <IndicateurPersonnaliseList/>
-                <IndicateurReferentielList/>
-            </div>
-        </Suspense>
+        <div className="my-5 flex flex-col">
+            <h1 className="fr-h1">Indicateurs</h1>
+
+            <Suspense fallback={renderLoader()}>
+                <IndicateurLists/>
+            </Suspense>
+        </div>
     );
 };
 

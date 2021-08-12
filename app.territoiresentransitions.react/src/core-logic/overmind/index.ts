@@ -1,5 +1,4 @@
 import * as actions from "./actions";
-import * as indicateurCommands from "./indicateurCommands";
 import {effects} from "./effects";
 import {state} from "./state";
 import {createOvermind, IContext} from "overmind";
@@ -12,7 +11,7 @@ import {
 
 export const config = {
   state: state,
-  actions: {...actions, indicateurCommands},
+  actions: actions,
   effects: effects,
 };
 

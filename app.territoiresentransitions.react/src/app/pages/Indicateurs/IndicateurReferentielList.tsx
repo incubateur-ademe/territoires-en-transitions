@@ -1,25 +1,46 @@
+import React from "react";
 import {indicateurs} from "generated/data/indicateurs_referentiels";
 import {IndicateurReferentielCard} from "./IndicateurReferentielCard";
-import {useParams, useRouteMatch} from "react-router-dom";
-import {overmind} from "../../../core-logic/overmind";
-import React from "react";
+import {IndicateurReferentiel} from "generated/models/indicateur_referentiel";
 
 
-const IndicateurReferentielList = () => {
-    const [list, setList] = React.useState(indicateurs.slice(0, 10))
+/**
+ * Display the list of indicateur referentiel.
+ *
+ * Loads the list in two times to postpone rendering time.
+ * todo: load the delayed list on scroll instead of using a timeout.
+ */
+export const IndicateurReferentielList = () => {
+    const [delayedList, setDelayedList] = React.useState<IndicateurReferentiel[]>([])
+    const initialList = indicateurs.slice(0, 10);
 
-    setTimeout(() => setList(indicateurs), 2000)
+    const loadMore = () => {
+        setDelayedList(indicateurs.slice(10));
+    };
 
     return (
-
         <div className="app mx-5 mt-5">
             <section className="flex flex-col">
-                {list.map((indicateur) => (
-                    <IndicateurReferentielCard indicateur={indicateur}/>
-                ))}
+                <ul>
+                    {initialList.map((indicateur) => (
+                        <li>
+                            <IndicateurReferentielCard indicateur={indicateur} key={indicateur.id}/>
+                        </li>
+                    ))}
+                </ul>
+
+                {delayedList.length == 0 &&
+                <button className="fr-btn" onClick={loadMore}>Plus</button>
+                }
+                <ul>
+                    {delayedList.map((indicateur) => (
+                        <li>
+                            <IndicateurReferentielCard indicateur={indicateur} key={indicateur.id}/>
+                        </li>
+                    ))}
+                </ul>
             </section>
         </div>
     );
 };
 
-export default IndicateurReferentielList;

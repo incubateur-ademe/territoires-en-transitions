@@ -1,10 +1,9 @@
 import React from "react";
 import {IndicateurReferentiel} from "generated/models/indicateur_referentiel";
 import {IndicateurValueStorable} from "storables/IndicateurValueStorable";
-import {IndicateurReferentielCommentaireStorable} from "storables/IndicateurReferentielCommentaireStorable";
-import {overmind, useAppState} from "core-logic/overmind";
+import {useAppState} from "core-logic/overmind";
 import years from "./years";
-import {storeIndicateurReferentielValue} from "../../../core-logic/overmind/indicateurCommands";
+import {commands} from "core-logic/commands/commands";
 
 
 const ExpandPanel = (props: { content: string, title: string }) => (
@@ -24,21 +23,24 @@ const DescriptionPanel = (props: { description: string }) => (
 
 
 function IndicateurReferentielValueInput(props: { year: number, indicateur: IndicateurReferentiel }) {
-    const [value, setValue] = React.useState('');
+    const [value, setValue] = React.useState<string>('');
     const epci_id = useAppState().epciId;
     if (!epci_id) {
         return (<div>EPCI ? </div>)
     }
 
     const id = IndicateurValueStorable.buildId(epci_id, props.indicateur.id, props.year);
-    overmind.actions.indicateurCommands.getIndicateurReferentielValue(id)
-        .then((storable) => setValue(storable?.value ?? ''))
+    commands.indicateurCommands.getIndicateurReferentielValue(id)
+        .then((storable) => {
+            console.log('got storable', storable?.id)
+            setValue(storable?.value ?? '');
+        })
 
     const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
         const inputValue = event.currentTarget.value;
         // overmind.actions.storeIndicateurValue().then(...)
 
-        overmind.actions.indicateurCommands.storeIndicateurReferentielValue(
+        commands.indicateurCommands.storeIndicateurReferentielValue(
             new IndicateurValueStorable(
                 {
                     epci_id: epci_id,
@@ -67,40 +69,6 @@ const IndicateurReferentielValues = (props: { indicateur: IndicateurReferentiel 
     </ul>
 );
 
-class IndicateurReferentielCommentaire extends React.Component
-    <{
-        indicateur: IndicateurReferentiel
-    }, { commentaire: IndicateurReferentielCommentaireStorable | null }> {
-
-    constructor(props: Readonly<{ indicateur: IndicateurReferentiel }> | { indicateur: IndicateurReferentiel }) {
-        super(props);
-        this.state = {commentaire: null};
-    }
-
-    // todo on update.
-
-    componentDidMount() {
-        const epci_id = overmind.state.epciId!;
-        const id = IndicateurReferentielCommentaireStorable.buildId(epci_id, this.props.indicateur.id);
-        overmind.actions.indicateurCommands
-            .getIndicateurPersonnaliseValue(id)
-            .then((storable) => this.setState({commentaire: storable}));
-    }
-
-    render() {
-        return (
-            <details>
-                <summary>
-                    Commentaire
-                </summary>
-                <div>
-                    <textarea defaultValue={this.state.commentaire?.value ?? ''}/>
-                </div>
-            </details>
-        );
-    }
-}
-
 
 export const IndicateurReferentielCard = (props: { indicateur: IndicateurReferentiel }) => {
     // todo lookup related actions
@@ -110,7 +78,6 @@ export const IndicateurReferentielCard = (props: { indicateur: IndicateurReferen
             <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
             <IndicateurReferentielValues indicateur={props.indicateur}/>
             <DescriptionPanel description={props.indicateur.description}/>
-            <IndicateurReferentielCommentaire indicateur={props.indicateur}/>
         </div>
     );
 };
