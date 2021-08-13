@@ -57,22 +57,18 @@ const AxisSectionClimatAirEnergie = ({ axis }: { axis: ActionReferentiel }) => (
 );
 
 export const ReferentielClimatAirEnergie = ({
-  actions,
+  caeAxes,
 }: {
-  actions: ActionReferentiel[];
+  caeAxes: ActionReferentiel[];
 }) => {
-  const citergieReferentiel = actions.find(
-    (action) => action.id === "citergie",
-  );
-  const citergieAxes = citergieReferentiel ? citergieReferentiel.actions : [];
-  const citergieAxesSorted = R.sort(
+  const caeAxesSorted = R.sort(
     (a, b) => compareIndexes(a.id_nomenclature, b.id_nomenclature),
-    citergieAxes,
+    caeAxes,
   );
 
   return (
     <section>
-      {citergieAxesSorted.map((axis) => (
+      {caeAxesSorted.map((axis) => (
         <AxisSectionClimatAirEnergie axis={axis} key={axis.id} />
       ))}
     </section>

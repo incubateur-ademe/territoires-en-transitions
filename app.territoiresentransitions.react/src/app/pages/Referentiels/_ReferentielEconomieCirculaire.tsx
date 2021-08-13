@@ -23,15 +23,10 @@ const AxisSectionEconomieCirculaire = ({
 );
 
 export const ReferentielEconomieCirculaire = ({
-  actions,
+  eciAxes,
 }: {
-  actions: ActionReferentiel[];
+  eciAxes: ActionReferentiel[];
 }) => {
-  const eciReferentiel = actions.find(
-    (action) => action.id === "economie_circulaire",
-  );
-  const eciAxes = eciReferentiel ? eciReferentiel.actions : [];
-
   return (
     <section>
       {eciAxes.map((axis) => (
