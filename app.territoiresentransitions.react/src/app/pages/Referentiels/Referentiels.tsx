@@ -1,21 +1,22 @@
 import "app/DesignSystem/core.css";
 import { SelectInput } from "ui";
-import type { Option } from "ui";
 
 import React from "react";
-import { EconomieCirculaireReferentiel } from "./_ReferentielEconomieCirculaire";
+import { ReferentielEconomieCirculaire } from "./_ReferentielEconomieCirculaire";
+import { ReferentielClimatAirEnergie } from "./_ReferentielClimatAirEnergie";
 import { actions } from "generated/data/referentiels";
+import { Options } from "types";
 
 type View = "cae" | "eci" | "both";
 
 const ConditionnalActionsReferentiels = ({ view }: { view: View }) => {
-  if (view === "cae") return <div>CLIMAT AIR ENERGIE</div>;
+  if (view === "cae") return <ReferentielClimatAirEnergie actions={actions} />;
   else if (view === "both") return <div>VUE COMBINEE</div>;
-  else return <EconomieCirculaireReferentiel actions={actions} />;
+  else return <ReferentielEconomieCirculaire actions={actions} />;
 };
 
 export const ActionsReferentiels = () => {
-  const viewOptions: Option<View>[] = [
+  const viewOptions: Options<View> = [
     { value: "cae", label: "Climat Air Énergie" },
     { value: "eci", label: "Économie Circulaire" },
     { value: "both", label: "Vue combinée" },

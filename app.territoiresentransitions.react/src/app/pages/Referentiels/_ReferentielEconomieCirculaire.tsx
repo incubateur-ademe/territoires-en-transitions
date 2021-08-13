@@ -1,7 +1,7 @@
 import type { ActionReferentiel } from "generated/models/action_referentiel";
 import { ProgressStat, ActionReferentielTitleCard } from "ui/referentiels";
 
-const EconomieCirculaireAxisSection = ({
+const AxisSectionEconomieCirculaire = ({
   axis,
 }: {
   axis: ActionReferentiel;
@@ -15,14 +15,14 @@ const EconomieCirculaireAxisSection = ({
     {axis.actions.map((action) => (
       <ActionReferentielTitleCard
         action={action}
-        referentielName="Économie circulaire"
+        referentiel="eci"
         key={action.id}
       />
     ))}
   </div>
 );
 
-export const EconomieCirculaireReferentiel = ({
+export const ReferentielEconomieCirculaire = ({
   actions,
 }: {
   actions: ActionReferentiel[];
@@ -35,7 +35,7 @@ export const EconomieCirculaireReferentiel = ({
   return (
     <section>
       {eciAxes.map((axis) => (
-        <EconomieCirculaireAxisSection axis={axis} key={axis.id} />
+        <AxisSectionEconomieCirculaire axis={axis} key={axis.id} />
       ))}
     </section>
   );

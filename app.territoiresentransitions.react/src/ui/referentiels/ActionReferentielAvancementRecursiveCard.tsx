@@ -35,45 +35,49 @@ const ActionReferentielRecursiveCard = ({
     );
 };
 
-const ActionReferentielAvancementCard = ({
-  action,
-}: {
-  action: ActionReferentiel;
-}) => {
-  const isTache = action.actions.length === 0;
-  return (
-    <article
-      className={` bg-beige my-8 p-4 border-bf500  ${
-        isTache ? "" : "border-l-4"
-      }`}
-    >
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-normal">
-          <span>{action.id_nomenclature} - </span>
-          {action.nom}
-        </h3>
-        <ProgressStat action={action} position="right" />
-      </div>
-      <div className="flex justify-between my-6">
-        {" "}
-        <AddFicheActionButton />
-        <div className={` ${!isTache ? "hidden" : ""}`}>
-          <ActionStatusRadio actionId={action.id} />
+const makeActionReferentielAvancementCard =
+  ({ displayProgressStat }: { displayProgressStat: boolean }) =>
+  ({ action }: { action: ActionReferentiel }) => {
+    const isTache = action.actions.length === 0;
+    return (
+      <article
+        className={` bg-beige my-8 p-4 border-bf500  ${
+          isTache ? "" : "border-l-4"
+        }`}
+      >
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-normal">
+            <span>{action.id_nomenclature} - </span>
+            {action.nom}
+          </h3>
+          <ProgressStat
+            action={action}
+            position="right"
+            className={`${displayProgressStat ? "" : "hidden"}`}
+          />
         </div>
-      </div>
+        <div className="flex justify-between my-6">
+          {" "}
+          <AddFicheActionButton />
+          <div className={` ${!isTache ? "hidden" : ""}`}>
+            <ActionStatusRadio actionId={action.id} />
+          </div>
+        </div>
 
-      <ActionDescription content={action.description} width="1/2" />
-      <ActionCommentaire content={"TODO"} width="1/2" />
-    </article>
-  );
-};
+        <ActionDescription content={action.description} width="1/2" />
+        <ActionCommentaire content={"TODO"} width="1/2" />
+      </article>
+    );
+  };
 
 export const ActionReferentielAvancementRecusiveCard = ({
   action,
+  displayProgressStat,
 }: {
   action: ActionReferentiel;
+  displayProgressStat: boolean;
 }) =>
   ActionReferentielRecursiveCard({
     action,
-    card: ActionReferentielAvancementCard,
+    card: makeActionReferentielAvancementCard({ displayProgressStat }),
   });

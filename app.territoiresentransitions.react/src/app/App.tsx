@@ -40,7 +40,7 @@ const Connected = () => {
       <Route path={`${path}/actions_referentiels/`}>
         <ReferentielsPage />
       </Route>
-      <Route path={`${path}/action/:actionId`}>
+      <Route path={`${path}/action/:referentiel/:actionId`}>
         <ActionReferentielAvancementPage />
       </Route>
       <Route path={`${path}/indicateurs/`}>

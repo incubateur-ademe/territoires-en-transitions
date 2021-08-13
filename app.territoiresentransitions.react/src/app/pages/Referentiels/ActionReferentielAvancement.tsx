@@ -11,8 +11,10 @@ import { ActionDescription, AddFicheActionButton } from "ui/shared";
 
 export const ActionReferentielAvancement = ({
   actionId,
+  displayProgressStat,
 }: {
   actionId: string;
+  displayProgressStat: boolean;
 }) => {
   const action = searchById(referentielActions, actionId);
   if (!action) {
@@ -31,7 +33,7 @@ export const ActionReferentielAvancement = ({
         <ProgressStat
           action={action}
           position="left"
-          className="w-full mb-10"
+          className={` ${displayProgressStat ? "w-full mb-10" : "hidden"}`}
         />
 
         <ActionDescription content={action.description} width="2/3" />
@@ -43,6 +45,7 @@ export const ActionReferentielAvancement = ({
           <ActionReferentielAvancementRecusiveCard
             action={action}
             key={action.id}
+            displayProgressStat={displayProgressStat}
           />
         ))}
       </div>

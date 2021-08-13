@@ -1,9 +1,8 @@
-import { Link, useParams, useRouteMatch } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { overmind } from "core-logic/overmind";
 
 export const EpciNavigation = () => {
   const { epciId } = useParams<{ epciId: string }>();
-  const { path } = useRouteMatch();
   overmind.actions.setCurrentEpci(epciId);
 
   if (epciId)

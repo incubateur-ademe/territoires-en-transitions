@@ -1,4 +1,4 @@
-import { ExpandPanel } from "ui/shared";
+import { CrossExpandPanelWithHtmlContent } from "ui/shared";
 
 export const ActionDescription = (props: {
   content: string;
@@ -9,7 +9,10 @@ export const ActionDescription = (props: {
     <div
       className={`w-${props.width ?? "full"} border-t border-b border-gray-300`}
     >
-      <ExpandPanel title="Description" content={props.content} />
+      <CrossExpandPanelWithHtmlContent
+        title="Description"
+        content={props.content}
+      />
     </div>
   );
 };

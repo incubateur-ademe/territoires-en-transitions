@@ -17,14 +17,10 @@ describe("Actions", () => {
         //   },
         // }
       );
-      // overmind.state.epciId = "lala";
       overmind.actions.setCurrentEpci("lala");
 
-      expect(overmind.state).toEqual({
-        epciId: "lala",
-        epciDataIsLoading: false,
-        allEpcis: [],
-      });
+      expect(overmind.state.epciId).toEqual("lala");
+      // TODO : check that it also fetched actions, scores, ...
     });
     test("should handle errors if epci is empty", async () => {});
     test("should handle errors if epci does not exist", async () => {});

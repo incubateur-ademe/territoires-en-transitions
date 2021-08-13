@@ -1,4 +1,4 @@
-import { overmind, useAppState } from "core-logic/overmind";
+import { useAppState } from "core-logic/overmind";
 import type { ActionReferentielScoreInterface } from "generated/models/action_referentiel_score";
 import { ActionReferentiel } from "generated/models/action_referentiel";
 import { useEffect, useState } from "react";

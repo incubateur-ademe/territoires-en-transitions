@@ -1,36 +1,36 @@
-details {
+.CrossExpandPanel details {
   width: 100%;
   padding: 0.75rem 0;
   border-top: 1px solid var(--g300);
   border-bottom: 1px solid var(--g300);
 }
 
-details[open] {
+.CrossExpandPanel details[open] {
   padding-bottom: 1.5rem;
 }
 
-details[open] summary {
+.CrossExpandPanel details[open] summary {
   margin-bottom: 1rem;
 }
 
-details[open] .title {
+.CrossExpandPanel details[open] .title {
   font-weight: bold;
 }
 
-details summary::after {
+.CrossExpandPanel details summary::after {
   content: "+";
   margin-left: auto;
 }
 
-details[open] summary::after {
+.CrossExpandPanel details[open] summary::after {
   content: "-";
 }
 
-:global(summary::-webkit-details-marker) {
+.CrossExpandPanel summary::-webkit-details-marker {
   display: none;
 }
 
-summary {
+.CrossExpandPanel summary {
   display: flex;
   align-items: center;
   padding-right: 0.5rem;

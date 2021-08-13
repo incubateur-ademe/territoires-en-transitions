@@ -9,14 +9,20 @@ const { ActionReferentielAvancement } = lazyImport(
 );
 
 export const ActionReferentielAvancementPage = () => {
-  const { epciId, actionId } =
-    useParams<{ epciId: string; actionId: string }>();
+  const { epciId, actionId, referentiel } = useParams<{
+    epciId: string;
+    actionId: string;
+    referentiel: "cae" | "eci";
+  }>();
 
   overmind.actions.setCurrentEpci(epciId);
 
   return (
     <Suspense fallback={renderLoader()}>
-      <ActionReferentielAvancement actionId={actionId} />
+      <ActionReferentielAvancement
+        actionId={actionId}
+        displayProgressStat={referentiel === "eci"}
+      />
     </Suspense>
   );
 };

@@ -6,3 +6,5 @@ export type Avancement =
   | "pas_faite"
   | "non_concernee"
   | "en_cours";
+
+export type Referentiel = "eci" | "cae";
