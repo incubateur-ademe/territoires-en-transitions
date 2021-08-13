@@ -10,7 +10,7 @@ export const setCurrentEpci = (
   epciId: string,
 ) => {
   state.epciId = epciId;
-  fetchStatesFromApiForThisEpci({ state, effects });
+  // fetchStatesFromApiForThisEpci({ state, effects }); // TODO !
 };
 
 export const createNewEpci = async (
