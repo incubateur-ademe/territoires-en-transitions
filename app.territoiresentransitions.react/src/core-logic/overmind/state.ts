@@ -8,6 +8,7 @@ export type State = {
   allEpcis: EpciStorable[];
   actionReferentielScoresById: Record<string, ActionReferentielScoreInterface>;
   actionReferentielStatusAvancementById: Record<string, Avancement>;
+  actionReferentielCommentaireById: Record<string, string>;
 };
 
 export const state: State = {
@@ -16,4 +17,5 @@ export const state: State = {
   allEpcis: [],
   actionReferentielScoresById: {},
   actionReferentielStatusAvancementById: {},
+  actionReferentielCommentaireById: {},
 };

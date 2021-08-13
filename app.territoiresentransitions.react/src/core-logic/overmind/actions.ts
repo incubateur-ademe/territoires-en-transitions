@@ -4,6 +4,7 @@ import { EpciStorable } from "storables/EpciStorable";
 import { v4 as uuid } from "uuid";
 import type { Avancement } from "types";
 import { ActionStatusStorable } from "storables/ActionStatusStorable";
+import { ActionMetaStorable } from "storables/ActionMetaStorable";
 
 export const setCurrentEpci = (
   { state, effects }: { state: State; effects: Effects },
@@ -45,7 +46,7 @@ export const fetchAllActionReferentielScoresFromApi = async ({
   });
 };
 
-export const fetchAllActionReferentieLStatusAvancementFromApi = async ({
+export const fetchAllActionReferentielStatusAvancementsFromApi = async ({
   state,
   effects,
 }: {
@@ -59,6 +60,23 @@ export const fetchAllActionReferentieLStatusAvancementFromApi = async ({
     state.actionReferentielStatusAvancementById[status.action_id] =
       status.avancement;
   });
+};
+
+export const fetchAllActionReferentielCommentaireFromApi = async ({
+  state,
+  effects,
+}: {
+  state: State;
+  effects: Effects;
+}) => {
+  const allActionMetastorables = await effects.actionMetaStore.retrieveAll();
+  console.log("allActionMetastorables ", allActionMetastorables);
+  allActionMetastorables.forEach((metaStorable) => {
+    const metaObject = metaStorable.meta as any; // TODO : object is not easy to use in react :/
+    state.actionReferentielCommentaireById[metaStorable.action_id] =
+      metaObject?.commentaire || "";
+  });
+  console.log("state : ", state.actionReferentielCommentaireById);
 };
 
 export const updateActionReferentielAvancement = async (
@@ -87,6 +105,29 @@ export const updateActionReferentielAvancement = async (
   }
 };
 
+export const updateActionReferentielCommentaire = async (
+  {
+    state,
+    effects,
+  }: {
+    state: State;
+    effects: Effects;
+  },
+  props: { actionId: string; commentaire: string },
+) => {
+  if (!state.epciId) return; // TODO : Should raise ? Or at lease not happened.
+  const stored = await effects.actionMetaStore.store(
+    new ActionMetaStorable({
+      action_id: props.actionId,
+      epci_id: state.epciId,
+      meta: { commentaire: props.commentaire },
+    }),
+  );
+  console.log("Stored ", stored);
+  state.actionReferentielCommentaireById[props.actionId] =
+    (stored.meta as any).commentaire ?? "";
+};
+
 const fetchStatesFromApiForThisEpci = async ({
   state,
   effects,
@@ -94,8 +135,9 @@ const fetchStatesFromApiForThisEpci = async ({
   state: State;
   effects: Effects;
 }) => {
-  await fetchAllActionReferentieLStatusAvancementFromApi({ state, effects });
+  await fetchAllActionReferentielStatusAvancementsFromApi({ state, effects });
   await fetchAllActionReferentielScoresFromApi({ state, effects });
+  await fetchAllActionReferentielCommentaireFromApi({ state, effects });
 };
 
 export const onInitializeOvermind = async ({

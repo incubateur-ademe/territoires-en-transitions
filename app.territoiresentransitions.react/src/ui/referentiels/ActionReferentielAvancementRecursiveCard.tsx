@@ -65,7 +65,7 @@ const makeActionReferentielAvancementCard =
         </div>
 
         <ActionDescription content={action.description} width="1/2" />
-        <ActionCommentaire content={"TODO"} width="1/2" />
+        <ActionCommentaire actionId={action.id} width="1/2" />
       </article>
     );
   };
