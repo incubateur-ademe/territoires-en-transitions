@@ -2,10 +2,7 @@ import { useActions, useAppState } from "core-logic/overmind";
 import React from "react";
 import "../CrossExpandPanel.css";
 
-export const ActionCommentaire = (props: {
-  actionId: string;
-  width?: string;
-}) => {
+export const ActionCommentaire = (props: { actionId: string }) => {
   const overmindActions = useActions();
   const overmindState = useAppState();
 
@@ -14,7 +11,6 @@ export const ActionCommentaire = (props: {
   React.useEffect(() => {
     const commentaireFromState =
       overmindState.actionReferentielCommentaireById[props.actionId] ?? "";
-    console.log("commentaireFromState ", commentaireFromState);
     setCommentaire(commentaireFromState);
   }, [useAppState().actionReferentielCommentaireById]);
 
@@ -25,9 +21,7 @@ export const ActionCommentaire = (props: {
     });
   };
   return (
-    <div
-      className={`w-${props.width ?? "full"} border-t border-b border-gray-300`}
-    >
+    <div className={`border-t border-b border-gray-300`}>
       <div className="CrossExpandPanel">
         <details>
           <summary className="title">Commentaire</summary>

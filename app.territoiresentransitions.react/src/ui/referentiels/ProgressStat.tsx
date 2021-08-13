@@ -2,6 +2,7 @@ import { useAppState } from "core-logic/overmind";
 import type { ActionReferentielScoreInterface } from "generated/models/action_referentiel_score";
 import { ActionReferentiel } from "generated/models/action_referentiel";
 import { useEffect, useState } from "react";
+import { makeStyles } from "@material-ui/core";
 
 type ProgressState = "nc" | "alert" | "warning" | "ok" | "good" | "best";
 
@@ -24,6 +25,27 @@ const inferStateFromScore = (
   }
 };
 
+const useStyle = makeStyles({
+  nc: {
+    borderColor: "#444",
+  },
+  alert: {
+    borderColor: "#DA0505",
+  },
+  warning: {
+    borderColor: "#F59E0B",
+  },
+  ok: {
+    borderColor: "#FCD34D",
+  },
+  good: {
+    borderColor: "#C0D72D",
+  },
+  best: {
+    borderColor: "#059669",
+  },
+});
+
 const ProgressStatText = ({
   score,
 }: {
@@ -37,7 +59,7 @@ const ProgressStatText = ({
     : "(../..)";
 
   if (score?.avancement === "non_concernee") {
-    return <span className="text-progress-nc"> non concernée</span>;
+    return <span className="text-gray-700"> non concernée</span>;
   }
   return (
     <>
@@ -56,9 +78,11 @@ export const ProgressStat = ({
   position: "left" | "right";
   className?: string;
 }) => {
-  const actionId = action.id;
+  const classes = useStyle();
 
+  const actionId = action.id;
   const score = useAppState().actionReferentielScoresById[actionId];
+
   useEffect(() => {
     const state = inferStateFromScore(score);
     setState(state);
@@ -73,7 +97,7 @@ export const ProgressStat = ({
 
   return (
     <div
-      className={`py-1 text-base font-normal bg-white border-progress-${state} bg-y ${
+      className={`py-1 text-base font-normal bg-white  bg-y ${classes[state]} ${
         className ? className : ""
       } ${positionDependentStyle}`}
     >

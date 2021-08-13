@@ -35,8 +35,9 @@ export const ActionReferentielAvancement = ({
           position="left"
           className={` ${displayProgressStat ? "w-full mb-10" : "hidden"}`}
         />
-
-        <ActionDescription content={action.description} width="2/3" />
+        <div className="w-2/3">
+          <ActionDescription content={action.description} />
+        </div>
       </div>
 
       <div>

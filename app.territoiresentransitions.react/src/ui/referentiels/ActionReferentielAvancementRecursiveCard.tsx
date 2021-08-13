@@ -63,9 +63,10 @@ const makeActionReferentielAvancementCard =
             <ActionStatusRadio actionId={action.id} />
           </div>
         </div>
-
-        <ActionDescription content={action.description} width="1/2" />
-        <ActionCommentaire actionId={action.id} width="1/2" />
+        <div className="w-1/2">
+          <ActionDescription content={action.description} />
+          <ActionCommentaire actionId={action.id} />
+        </div>
       </article>
     );
   };

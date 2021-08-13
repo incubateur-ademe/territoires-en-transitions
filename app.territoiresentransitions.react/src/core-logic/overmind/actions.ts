@@ -70,13 +70,11 @@ export const fetchAllActionReferentielCommentaireFromApi = async ({
   effects: Effects;
 }) => {
   const allActionMetastorables = await effects.actionMetaStore.retrieveAll();
-  console.log("allActionMetastorables ", allActionMetastorables);
   allActionMetastorables.forEach((metaStorable) => {
     const metaObject = metaStorable.meta as any; // TODO : object is not easy to use in react :/
     state.actionReferentielCommentaireById[metaStorable.action_id] =
       metaObject?.commentaire || "";
   });
-  console.log("state : ", state.actionReferentielCommentaireById);
 };
 
 export const updateActionReferentielAvancement = async (
@@ -123,7 +121,6 @@ export const updateActionReferentielCommentaire = async (
       meta: { commentaire: props.commentaire },
     }),
   );
-  console.log("Stored ", stored);
   state.actionReferentielCommentaireById[props.actionId] =
     (stored.meta as any).commentaire ?? "";
 };

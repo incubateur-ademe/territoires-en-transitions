@@ -38,8 +38,8 @@ export const ActionReferentielTitleCard = ({
           <div className="fr-fi-arrow-right-line text-bf500"></div>
         </div>
       </Link>
-      <div className="p-4">
-        <ActionDescription content={action.description} width="2/3" />
+      <div className="p-4 w-2/3">
+        <ActionDescription content={action.description} />
       </div>
     </article>
   );
