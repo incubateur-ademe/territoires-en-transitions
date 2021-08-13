@@ -29,7 +29,6 @@ export const AddDialog = (props: AddDialogProps) => {
     } else if (inputEpciNom.trim()) {
       // await actions.createNewEpci({ state }, selectedEpciId);
       await overmind.actions.setCurrentEpci(selectedEpciId);
-      console.log("creating new epci with name ", inputEpciNom);
       // Create Epci
       await overmind.actions.createNewEpci(inputEpciNom);
     }

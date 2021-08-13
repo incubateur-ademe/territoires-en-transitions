@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import { renderLoader } from "../../utils/renderLoader";
+import { renderLoader } from "../../../utils/renderLoader";
 
 const Referentiels = lazy(() => import("./Referentiels"));
 

@@ -1,11 +1,13 @@
-import { useAppState } from "core-logic/overmind";
-import { ActionReferentielScore } from "generated/models/action_referentiel_score";
+import { overmind, useAppState } from "core-logic/overmind";
+import type { ActionReferentielScoreInterface } from "generated/models/action_referentiel_score";
 import { ActionReferentiel } from "generated/models/action_referentiel";
 import { useEffect, useState } from "react";
 
 type ProgressState = "nc" | "alert" | "warning" | "ok" | "good" | "best";
 
-const inferStateFromScore = (score?: ActionReferentielScore): ProgressState => {
+const inferStateFromScore = (
+  score?: ActionReferentielScoreInterface,
+): ProgressState => {
   const percentage: number = score ? score.percentage * 100 : 0;
   if (score && score.avancement.includes("non_concernee")) {
     return "nc";
@@ -22,7 +24,11 @@ const inferStateFromScore = (score?: ActionReferentielScore): ProgressState => {
   }
 };
 
-const ProgressStatText = ({ score }: { score?: ActionReferentielScore }) => {
+const ProgressStatText = ({
+  score,
+}: {
+  score?: ActionReferentielScoreInterface;
+}) => {
   const percentageText = score
     ? `${(score.percentage * 100).toFixed(1)}% `
     : "0% ";
@@ -51,21 +57,14 @@ export const ProgressStat = ({
   className?: string;
 }) => {
   const actionId = action.id;
-  const actionReferentielScoresById = useAppState().actionReferentielScoresById;
 
-  const [score, setScore] = useState<ActionReferentielScore | undefined>(
-    undefined,
-  );
-  const [state, setState] = useState<ProgressState>("nc");
-
+  const score = useAppState().actionReferentielScoresById[actionId];
   useEffect(() => {
-    const score = actionReferentielScoresById[actionId];
-    if (score) {
-      setScore(score);
-      const state = inferStateFromScore(score);
-      setState(state);
-    }
-  }, [actionReferentielScoresById]);
+    const state = inferStateFromScore(score);
+    setState(state);
+  }, [score]);
+
+  const [state, setState] = useState<ProgressState>("nc");
 
   const positionDependentStyle =
     position === "left"

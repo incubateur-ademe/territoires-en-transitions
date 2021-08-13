@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { renderLoader } from "../../utils/renderLoader";
+import { renderLoader } from "utils/renderLoader";
 import { overmind } from "core-logic/overmind";
 import { useParams } from "react-router-dom";
 

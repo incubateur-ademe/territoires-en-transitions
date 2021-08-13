@@ -1,6 +1,6 @@
 import { ExpandPanel } from "ui/shared";
 
-export const ActionDescription = (props: {
+export const ActionCommentaire = (props: {
   content: string;
   width?: string;
 }) => {
@@ -9,7 +9,7 @@ export const ActionDescription = (props: {
     <div
       className={`w-${props.width ?? "full"} border-t border-b border-gray-300`}
     >
-      <ExpandPanel title="Description" content={props.content} />
+      <ExpandPanel title="Commentaire" content={props.content} />
     </div>
   );
 };

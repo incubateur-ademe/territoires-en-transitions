@@ -4,10 +4,7 @@ import { overmind } from "core-logic/overmind";
 export const EpciNavigation = () => {
   const { epciId } = useParams<{ epciId: string }>();
   const { path } = useRouteMatch();
-  console.log("Path in EpciNavigation is ", path);
   overmind.actions.setCurrentEpci(epciId);
-
-  console.log("EpciNavigation thinks epci id is ", epciId);
 
   if (epciId)
     return (

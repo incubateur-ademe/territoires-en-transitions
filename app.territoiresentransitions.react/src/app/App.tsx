@@ -13,21 +13,14 @@ import { Footer, Header } from "ui";
 import { FooterDescription, FooterNavigation } from "ui/Footer";
 import {
   IndicateursPage,
-  ActionReferentielPage,
+  ActionReferentielAvancementPage,
   ReferentielsPage,
 } from "./pages";
+import "app/DesignSystem/core.css";
 
 const Connected = () => {
   const { path, url } = useRouteMatch();
   const { epciId } = useParams<{ epciId: string }>();
-  console.log(
-    "path in connected is ",
-    path,
-    "url is",
-    url,
-    " and EPCI ID is",
-    epciId,
-  );
 
   console.log(
     "path in connected is ",
@@ -48,7 +41,7 @@ const Connected = () => {
         <ReferentielsPage />
       </Route>
       <Route path={`${path}/action/:actionId`}>
-        <ActionReferentielPage />
+        <ActionReferentielAvancementPage />
       </Route>
       <Route path={`${path}/indicateurs/`}>
         <IndicateursPage />

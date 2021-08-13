@@ -2,12 +2,7 @@ import { Link, useRouteMatch } from "react-router-dom";
 import type { ActionReferentiel } from "generated/models/action_referentiel";
 import { ProgressStat } from "ui/referentiels";
 import { ActionDescription } from "ui/shared";
-
-const ActionReferentielTitle = ({ action }: { action: ActionReferentiel }) => (
-  <span className="text-lg h-8">
-    {action.id_nomenclature} - {action.nom}
-  </span>
-);
+import { ActionReferentielTitle } from "./ActionReferentielTitle";
 
 export const ActionReferentielTitleCard = ({
   action,
@@ -17,10 +12,9 @@ export const ActionReferentielTitleCard = ({
   referentielName: string;
 }) => {
   const p = useRouteMatch();
-  console.log(p);
 
   return (
-    <article className="bg-beige my-4">
+    <article className="bg-white my-4">
       <Link to={`./action/${action.id}`} className="LinkedCardHeader">
         <div className="flex p-4 justify-between">
           <div>

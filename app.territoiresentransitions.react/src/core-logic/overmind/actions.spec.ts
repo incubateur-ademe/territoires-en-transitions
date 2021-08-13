@@ -18,7 +18,7 @@ describe("Actions", () => {
         // }
       );
       // overmind.state.epciId = "lala";
-      await overmind.actions.setCurrentEpci("lala");
+      overmind.actions.setCurrentEpci("lala");
 
       expect(overmind.state).toEqual({
         epciId: "lala",
