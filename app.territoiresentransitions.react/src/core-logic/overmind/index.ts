@@ -1,7 +1,7 @@
 import * as actions from "./actions";
-import { effects } from "./effects";
-import { state } from "./state";
-import { createOvermind, IContext } from "overmind";
+import {effects} from "./effects";
+import {state} from "./state";
+import {createOvermind, IContext} from "overmind";
 import {
   createActionsHook,
   createEffectsHook,

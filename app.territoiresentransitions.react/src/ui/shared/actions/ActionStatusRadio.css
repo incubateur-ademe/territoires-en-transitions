@@ -1,0 +1,28 @@
+fieldset {
+  display: flex;
+  border: none;
+}
+
+[type="radio"] {
+  position: absolute;
+  left: -9999px;
+}
+
+[type="radio"] + label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+label.checked {
+  color: #000091;
+  background-color: #fff;
+  border-top: solid;
+  border-top-color: #000091;
+}
+
+/* TODO : use var(--bf500) from design-system for the blues */

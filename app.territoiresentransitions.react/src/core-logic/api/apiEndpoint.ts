@@ -39,7 +39,6 @@ export class APIEndpoint<T> {
     if (!isStorable(storable)) {
       throw new Error(`${typeof storable} is not storable.`);
     }
-    console.log("fetching API at ", `${this.host}/${this.pathname()}/`);
     const response = await fetch(`${this.host}/${this.pathname()}/`, {
       method: "POST",
       mode: "cors",
