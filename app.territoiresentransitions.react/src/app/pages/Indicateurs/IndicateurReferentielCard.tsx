@@ -22,7 +22,7 @@ function IndicateurReferentielValueInput(props: {
   indicateur: IndicateurReferentiel;
 }) {
   const [value, setValue] = React.useState<string>("");
-  const epci_id = useAppState().epciId;
+  const epci_id = useAppState().currentEpciId;
 
   useEffect(() => {
     commands.indicateurCommands
@@ -81,7 +81,7 @@ const IndicateurReferentielValues = (props: {
 
 const Commentaire = (props: { indicateur: IndicateurReferentiel }) => {
   const [value, setValue] = React.useState("");
-  const epci_id = useAppState().epciId;
+  const epci_id = useAppState().currentEpciId; // Rq : C'est relou d'avoir à chercher l'Epci Id dans le moindre petit composant ... Je propose de faire le fetch all au moment de monter la page, en useEffect avec currentEpci (cf. RefPage et RefAvancementPage)
 
   const id = IndicateurReferentielCommentaireStorable.buildId(
     epci_id!,

@@ -1,37 +1,9 @@
-import type { Effects } from "./effects";
-import type { State } from "core-logic/overmind/state";
-import { EpciStorable } from "storables/EpciStorable";
-import { v4 as uuid } from "uuid";
+import type { Effects, State } from "core-logic/overmind";
 import type { Avancement } from "types";
 import { ActionStatusStorable } from "storables/ActionStatusStorable";
 import { ActionMetaStorable } from "storables/ActionMetaStorable";
 
-export const setCurrentEpci = (
-  { state, effects }: { state: State; effects: Effects },
-  epciId: string,
-) => {
-  state.epciId = epciId;
-  // fetchStatesFromApiForThisEpci({ state, effects }); // TODO !
-};
-
-export const createNewEpci = async (
-  { state, effects }: { state: State; effects: Effects },
-  nom: string,
-) => {
-  if (state.allEpcis.find((epciStorable) => epciStorable.nom === nom))
-    throw Error("Le nom de cette collectivité est déjà utilisé. ");
-
-  const newEpci = new EpciStorable({
-    uid: uuid(),
-    nom: nom.trim(),
-    insee: "",
-    siren: "",
-  });
-  const stored = await effects.epciStore.store(newEpci);
-  if (stored) state.allEpcis.push(stored);
-};
-
-export const fetchAllActionReferentielScoresFromApi = async ({
+const fetchAllActionReferentielScoresFromApi = async ({
   state,
   effects,
 }: {
@@ -46,7 +18,7 @@ export const fetchAllActionReferentielScoresFromApi = async ({
   });
 };
 
-export const fetchAllActionReferentielStatusAvancementsFromApi = async ({
+const fetchAllActionReferentielStatusAvancementsFromApi = async ({
   state,
   effects,
 }: {
@@ -54,7 +26,7 @@ export const fetchAllActionReferentielStatusAvancementsFromApi = async ({
   effects: Effects;
 }) => {
   const allActionReferentielStatuses =
-    await effects.actionStatusStore.retrieveAll();
+    await effects.actionStatusStore.api.retrieveAll(); // Note that if I don't call API, it does not work ...
 
   allActionReferentielStatuses.forEach((status) => {
     state.actionReferentielStatusAvancementById[status.action_id] =
@@ -62,7 +34,7 @@ export const fetchAllActionReferentielStatusAvancementsFromApi = async ({
   });
 };
 
-export const fetchAllActionReferentielCommentaireFromApi = async ({
+const fetchAllActionReferentielCommentaireFromApi = async ({
   state,
   effects,
 }: {
@@ -77,7 +49,7 @@ export const fetchAllActionReferentielCommentaireFromApi = async ({
   });
 };
 
-export const updateActionReferentielAvancement = async (
+const updateActionReferentielAvancement = async (
   {
     state,
     effects,
@@ -87,11 +59,11 @@ export const updateActionReferentielAvancement = async (
   },
   { actionId, avancement }: { actionId: string; avancement: Avancement },
 ) => {
-  if (state.epciId) {
+  if (state.currentEpciId) {
     const actionStatusStorable = new ActionStatusStorable({
       action_id: actionId,
       avancement: avancement,
-      epci_id: state.epciId,
+      epci_id: state.currentEpciId,
     });
     const updatedStatus = await effects.actionStatusStore.store(
       actionStatusStorable,
@@ -103,7 +75,7 @@ export const updateActionReferentielAvancement = async (
   }
 };
 
-export const updateActionReferentielCommentaire = async (
+const updateActionReferentielCommentaire = async (
   {
     state,
     effects,
@@ -113,11 +85,11 @@ export const updateActionReferentielCommentaire = async (
   },
   props: { actionId: string; commentaire: string },
 ) => {
-  if (!state.epciId) return; // TODO : Should raise ? Or at lease not happened.
+  if (!state.currentEpciId) return; // TODO : Should raise ? Or at lease not happened.
   const stored = await effects.actionMetaStore.store(
     new ActionMetaStorable({
       action_id: props.actionId,
-      epci_id: state.epciId,
+      epci_id: state.currentEpciId,
       meta: { commentaire: props.commentaire },
     }),
   );
@@ -125,25 +97,10 @@ export const updateActionReferentielCommentaire = async (
     (stored.meta as any).commentaire ?? "";
 };
 
-const fetchStatesFromApiForThisEpci = async ({
-  state,
-  effects,
-}: {
-  state: State;
-  effects: Effects;
-}) => {
-  await fetchAllActionReferentielStatusAvancementsFromApi({ state, effects });
-  await fetchAllActionReferentielScoresFromApi({ state, effects });
-  await fetchAllActionReferentielCommentaireFromApi({ state, effects });
-};
-
-export const onInitializeOvermind = async ({
-  state,
-  effects,
-}: {
-  state: State;
-  effects: Effects;
-}) => {
-  state.allEpcis = await effects.epciStore.retrieveAll();
-  await fetchStatesFromApiForThisEpci({ state, effects });
+export const actionsReferentiels = {
+  fetchAllActionReferentielScoresFromApi,
+  fetchAllActionReferentielStatusAvancementsFromApi,
+  fetchAllActionReferentielCommentaireFromApi,
+  updateActionReferentielAvancement,
+  updateActionReferentielCommentaire,
 };

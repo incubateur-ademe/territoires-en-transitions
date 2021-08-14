@@ -18,6 +18,7 @@ const flattenActions = (actions: ActionReferentiel[]): ActionReferentiel[] =>
     [] as ActionReferentiel[],
     actions,
   );
+
 const ConditionnalActionsReferentiels = ({ view }: { view: View }) => {
   const eciReferentiel = actions.find(
     (action) => action.id === "economie_circulaire",

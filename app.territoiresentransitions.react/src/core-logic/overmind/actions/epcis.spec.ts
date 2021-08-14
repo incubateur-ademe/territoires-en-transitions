@@ -1,5 +1,5 @@
 import { createOvermindMock } from "overmind";
-import { config } from "./";
+import { config } from "..";
 
 describe("Actions", () => {
   describe("setCurrentEpci", () => {
@@ -17,7 +17,7 @@ describe("Actions", () => {
         //   },
         // }
       );
-      overmind.actions.setCurrentEpci("lala");
+      overmind.actions.epcis.setCurrentEpci("lala");
 
       expect(overmind.state.epciId).toEqual("lala");
       // TODO : check that it also fetched actions, scores, ...

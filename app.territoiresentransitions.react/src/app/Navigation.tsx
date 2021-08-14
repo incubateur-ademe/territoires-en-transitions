@@ -1,11 +1,14 @@
 import { Link, useParams } from "react-router-dom";
-import { overmind } from "core-logic/overmind";
+import { useActions, useAppState } from "core-logic/overmind";
 
 export const EpciNavigation = () => {
   const { epciId } = useParams<{ epciId: string }>();
-  overmind.actions.setCurrentEpci(epciId);
 
-  if (epciId)
+  useActions().epcis.setCurrentEpci(epciId);
+
+  const currentEpciId = useAppState().currentEpciId;
+
+  if (currentEpciId)
     return (
       <>
         <li>
@@ -30,7 +33,16 @@ export const EpciNavigation = () => {
         </li>
       </>
     );
-  return <></>;
+  console.log("EPCI ID", epciId, "inconnue ... (devrait être un pop-up) ");
+  return (
+    <>
+      <li>
+        <Link className="fr-link" to="/epcis">
+          Changer
+        </Link>
+      </li>
+    </>
+  );
 };
 
 export const Navigation = () => {

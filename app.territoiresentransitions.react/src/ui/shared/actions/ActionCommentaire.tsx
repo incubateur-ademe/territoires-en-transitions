@@ -12,14 +12,19 @@ export const ActionCommentaire = (props: { actionId: string }) => {
     const commentaireFromState =
       overmindState.actionReferentielCommentaireById[props.actionId] ?? "";
     setCommentaire(commentaireFromState);
-  }, [useAppState().actionReferentielCommentaireById]);
+  }, [overmindState.actionReferentielCommentaireById[props.actionId]]);
 
-  const onBlur = (event: React.FormEvent<HTMLTextAreaElement>) => {
-    overmindActions.updateActionReferentielCommentaire({
+  const onChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
+    setCommentaire(event.currentTarget.value);
+  };
+
+  const onBlur = () => {
+    overmindActions.referentiels.updateActionReferentielCommentaire({
       actionId: props.actionId,
-      commentaire: event.currentTarget.value,
+      commentaire: commentaire,
     });
   };
+
   return (
     <div className={`border-t border-b border-gray-300`}>
       <div className="CrossExpandPanel">
@@ -27,7 +32,8 @@ export const ActionCommentaire = (props: { actionId: string }) => {
           <summary className="title">Commentaire</summary>
           <textarea
             className="content w-full h-24 min-h-full overflow-scroll"
-            defaultValue={commentaire} // TODO : fix me ! Ca ne marche pas quand on recharge la page, car le composant est monté avec une valeur par défaut vide, avant qu'il y ait le fetch via l'action fetchAllCommentaireFromApi
+            value={commentaire} // TODO : fix me ! Ca ne marche pas quand on recharge la page, car le composant est monté avec une valeur par défaut vide, avant qu'il y ait le fetch via l'action fetchAllCommentaireFromApi
+            onChange={onChange}
             onBlur={onBlur}
           />
         </details>

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { overmind } from "core-logic/overmind";
 import { lazyImport, renderLoader } from "utils";
+import { useReferentielState } from "core-logic/overmind/hooks";
 
 const { ActionReferentielAvancement } = lazyImport(
   () => import("./ActionReferentielAvancement"),
@@ -9,13 +10,15 @@ const { ActionReferentielAvancement } = lazyImport(
 );
 
 export const ActionReferentielAvancementPage = () => {
+  useReferentielState();
+
   const { epciId, actionId, referentiel } = useParams<{
     epciId: string;
     actionId: string;
     referentiel: "cae" | "eci";
   }>();
 
-  overmind.actions.setCurrentEpci(epciId);
+  overmind.actions.epcis.setCurrentEpci(epciId);
 
   return (
     <Suspense fallback={renderLoader()}>
