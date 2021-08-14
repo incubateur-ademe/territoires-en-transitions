@@ -35,7 +35,7 @@ export const ActionStatusRadio = ({ actionId }: { actionId: string }) => {
               }`}
               onClick={async () => {
                 const avancement = checked ? "" : option.value;
-                await actions.updateActionReferentielAvancement({
+                await actions.referentiels.updateActionReferentielAvancement({
                   actionId,
                   avancement: avancement,
                 });

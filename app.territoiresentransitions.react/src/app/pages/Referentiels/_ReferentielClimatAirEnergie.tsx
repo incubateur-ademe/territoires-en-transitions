@@ -42,7 +42,7 @@ const AxisSectionClimatAirEnergie = ({ axis }: { axis: ActionReferentiel }) => (
   <div className="flex flex-col justify-between  mt-8">
     <ActionReferentielTitle action={axis} className="fr-h2" />
     {axis.actions.map((subAxis) => (
-      <SubAxisSectionClimatAirEnergie subAxis={subAxis} />
+      <SubAxisSectionClimatAirEnergie subAxis={subAxis} key={subAxis.id} />
     ))}
 
     {/* <div className="h-16" />

@@ -5,8 +5,8 @@ import "app/DesignSystem/core.css";
 import "app/DesignSystem/variables.css";
 
 import { makeStyles } from "@material-ui/core";
-import React from "react";
-import { useAppState } from "core-logic/overmind";
+import React, { useEffect } from "react";
+import { useActions, useAppState } from "core-logic/overmind";
 import { EpciCard } from "./_EpciCard";
 
 const useStyle = makeStyles({
@@ -26,6 +26,12 @@ const useStyle = makeStyles({
 });
 
 const Epcis = () => {
+  const overmindActions = useActions();
+  useEffect(() => {
+    // Equivalent to componentDidMount and componentDidUpdate : fetch API State on Mount (TODO : fetch again when epciId changes... )
+    overmindActions.epcis.fetchAllEpcisFromApi();
+  }, []);
+
   const classes = useStyle();
   const [addEpciDialogOpen, setAddEpciDialogOpen] = React.useState(false);
 
@@ -34,8 +40,8 @@ const Epcis = () => {
   };
 
   return (
-      <div className="app mx-5 mt-5">
-        <section>
+    <div className="app mx-5 mt-5">
+      <section>
         <h1 className="fr-h1 mb-16 text-center">Bienvenue !</h1>
 
         <h2 className="fr-h2 mb-20 text-center">Vos collectivités</h2>
@@ -57,7 +63,7 @@ const Epcis = () => {
 
         <div className={classes.grid}>
           {useAppState().allEpcis.map((epci) => (
-            <EpciCard epci={epci} />
+            <EpciCard epci={epci} key={epci.id} />
           ))}
         </div>
       </section>

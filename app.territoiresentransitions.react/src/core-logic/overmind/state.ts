@@ -3,8 +3,7 @@ import { EpciStorable } from "storables/EpciStorable";
 import { Avancement } from "types";
 
 export type State = {
-  epciId?: string;
-  epciDataIsLoading: boolean;
+  currentEpciId?: string;
   allEpcis: EpciStorable[];
   actionReferentielScoresById: Record<string, ActionReferentielScoreInterface>;
   actionReferentielStatusAvancementById: Record<string, Avancement>;
@@ -12,8 +11,7 @@ export type State = {
 };
 
 export const state: State = {
-  epciId: undefined,
-  epciDataIsLoading: false,
+  currentEpciId: undefined,
   allEpcis: [],
   actionReferentielScoresById: {},
   actionReferentielStatusAvancementById: {},
