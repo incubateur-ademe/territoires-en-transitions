@@ -52,8 +52,8 @@ export const Navigation = () => {
         <ul className="fr-links-group">
           <EpciNavigation />
           <li>
-            <Link className="fr-link" to="/">
-              Déconnexion
+            <Link className="fr-link" to="/auth/signout">
+                Déconnexion
             </Link>
           </li>
         </ul>
