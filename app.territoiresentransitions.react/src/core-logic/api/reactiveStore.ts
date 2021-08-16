@@ -231,6 +231,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
                 for (let [key, value] of retrieved.entries()) {
                     cache.set(key, value);
                 }
+                this.fetchedPaths.push(pathname);
             });
 
             this.retrieving[pathname] = promise;
