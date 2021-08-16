@@ -61,7 +61,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
         serializer: (storable: T) => object;
         deserializer: (serialized: object) => T;
         authorization?: () => string;
-        stateAccessor: (state: S) => Array<T>;
+        stateAccessor: (state: S) => Map<string, T>;
     }) {
         super();
         this.host = host;
@@ -85,7 +85,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
     serializer: (storable: T) => object;
     deserializer: (serialized: object) => T;
     api: APIEndpoint<T>;
-    stateAccessor: (state: S) => Array<T>;
+    stateAccessor: (state: S) => Map<string, T>;
     private fetchedPaths: string[] = [];
 
     // local: LocalStore<T>;
@@ -112,8 +112,8 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
      * @param state the overmind state
      */
     async retrieveAll({state}: { state: S }): Promise<Array<T>> {
-        let all = await this.getCache(state);
-        return [...all];
+        let cache = await this.getCache(state);
+        return [...cache.values()];
     }
 
     /**
@@ -136,8 +136,8 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
      */
     async retrieveByPath({state}: { state: S }, path: string): Promise<T | null> {
         const cache = await this.getCache(state);
-        for (let storable of cache) {
-            if (storable.id.startsWith(path)) return storable;
+        for (let key of cache.keys()) {
+            if (key.startsWith(path)) return cache.get(key)!;
         }
         return null;
     }
@@ -150,8 +150,8 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
         const cache = await this.getCache(state);
         const results = [];
 
-        for (let storable of cache) {
-            if (storable.id.startsWith(path)) results.push(storable);
+        for (let key of cache.keys()) {
+            if (key.startsWith(path)) results.push(cache.get(key)!);
         }
 
         return [...results];
@@ -198,35 +198,46 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
 
     private async writeInCache(state: S, storable: T): Promise<T> {
         await this.removeFromCache(state, storable.id);
-        this.stateAccessor(state).push(storable);
+        this.stateAccessor(state).set(storable.id, storable);
         return storable;
     }
 
     private async removeFromCache(state: S, id: string): Promise<boolean> {
-        const cache = this.stateAccessor(state);
-        const filtered = cache.filter((cached) => cached.id !== id);
-        const deleted = filtered.length !== cache.length;
-        if (deleted) {
-            cache.length = 0;
-            cache.push(...filtered);
-        }
-        return deleted;
+        return this.stateAccessor(state).delete(id);
     }
 
-    private async getCache(state: S): Promise<Array<T>> {
-        if (this.fetchedPaths.includes(this.pathname())) return this.stateAccessor(state);
+    private async getCache(state: S): Promise<Map<string, T>> {
+        const pathname = this.pathname();
 
-        if (!this.retrieving[this.pathname()]) {
-            this.retrieving[this.pathname()] = this.api.retrieveAll();
+        if (this.fetchedPaths.includes(pathname)) {
+            return this.stateAccessor(state);
+        }
 
-            this.retrieving[this.pathname()].then((retrieved) => {
-                this.stateAccessor(state).push(...retrieved);
-                this.fetchedPaths.push(this.pathname());
+        if (!this.retrieving[pathname]) {
+            const promise =
+                this.api
+                    .retrieveAll()
+                    .then((all) => {
+                        const cache = new Map<string, T>();
+                        for (let storable of all) {
+                            cache.set(storable.id, storable);
+                        }
+                        return cache;
+                    });
+
+            promise.then((retrieved) => {
+                const cache = this.stateAccessor(state);
+                // cache.clear();
+                for (let [key, value] of retrieved.entries()) {
+                    cache.set(key, value);
+                }
             });
+
+            this.retrieving[pathname] = promise;
         }
 
-        return this.retrieving[this.pathname()];
+        return this.retrieving[pathname];
     }
 
-    private retrieving: Record<string, Promise<Array<T>>> = {};
+    private retrieving: Record<string, Promise<Map<string, T>>> = {};
 }
