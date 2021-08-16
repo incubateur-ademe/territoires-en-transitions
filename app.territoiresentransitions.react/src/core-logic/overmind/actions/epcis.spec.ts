@@ -19,7 +19,7 @@ describe("Actions", () => {
       );
       overmind.actions.epcis.setCurrentEpci("lala");
 
-      expect(overmind.state.epciId).toEqual("lala");
+      expect(overmind.state.currentEpciId).toEqual("lala");
       // TODO : check that it also fetched actions, scores, ...
     });
     test("should handle errors if epci is empty", async () => {});
