@@ -60,12 +60,12 @@ export const App = () => {
             <EpcisPage />
           </Route>
 
-          <Route path={`/epcis/:epciId`}>
+          <Route path={'/epcis/:epciId'}>
             <Header nav={<Navigation />} />
             <EpcisPage />
           </Route>
 
-          <Route path={`/:epciId`}>
+          <Route path={'/:epciId'}>
             <Header nav={<Navigation />} />
             <Connected />
           </Route>

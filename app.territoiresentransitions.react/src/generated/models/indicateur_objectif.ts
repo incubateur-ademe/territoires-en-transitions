@@ -6,7 +6,7 @@ export interface IndicateurObjectifInterface {
 }
 
 export class IndicateurObjectif {
-  public static pathname: string = 'indicateur_objectif';
+  public static pathname = 'indicateur_objectif';
   get pathname(): string {
     return IndicateurObjectif.pathname;
   }

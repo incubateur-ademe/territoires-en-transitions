@@ -6,7 +6,7 @@ export interface IndicateurValueInterface {
 }
 
 export class IndicateurValue {
-  public static pathname: string = 'indicateur_value';
+  public static pathname = 'indicateur_value';
   get pathname(): string {
     return IndicateurValue.pathname;
   }

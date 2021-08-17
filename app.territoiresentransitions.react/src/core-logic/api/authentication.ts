@@ -51,7 +51,7 @@ export const connected = (): boolean => {
   } catch (e) {
     return false;
   }
-  if (utilisateur == null) return false;
+  if (utilisateur === null) return false;
   if (utilisateur.access_token === _dummyToken) return true;
 
   const decoded = jwt_decode<JwtPayload>(utilisateur.access_token);

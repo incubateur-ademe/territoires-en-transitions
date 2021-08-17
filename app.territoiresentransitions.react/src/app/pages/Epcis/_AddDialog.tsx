@@ -61,7 +61,9 @@ export const AddDialog = (props: AddDialogProps) => {
             <LabeledTextInput
               label="Nom de ma collectivité"
               maxLength={100}
-              onChange={setInputEpciNom}
+              onChange={event => {
+                setInputEpciNom(event.target.value);
+              }}
             />
           </div>
         </div>

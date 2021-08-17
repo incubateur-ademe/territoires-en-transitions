@@ -7,7 +7,7 @@ export interface IndicateurPersonnaliseMetaInterface {
 }
 
 export class IndicateurPersonnaliseMeta {
-  public static pathname: string = 'indicateur_personnalise_meta';
+  public static pathname = 'indicateur_personnalise_meta';
   get pathname(): string {
     return IndicateurPersonnaliseMeta.pathname;
   }
