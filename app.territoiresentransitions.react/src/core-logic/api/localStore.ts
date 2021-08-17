@@ -8,7 +8,7 @@ import {
   ActionStatus,
   ActionStatusInterface,
 } from 'generated/models/action_status';
-import {isStorable} from './storable';
+import {isStorable, Storable} from './storable';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
 import type {FicheActionInterface} from 'generated/models/fiche_action';
 import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
@@ -46,7 +46,7 @@ const saveStore = (
 /**
  * A Store for Storable object using local storage.
  */
-export class LocalStore<T> {
+export class LocalStore<T extends Storable> {
   constructor({
     pathname,
     serializer,
