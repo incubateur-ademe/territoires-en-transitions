@@ -1,7 +1,7 @@
 import os
 
 client_dir = "../app.territoiresentransitions.fr/src"
-api_dir = "../../territoiresentransitions_api/api"
+api_dir = "../api/api"
 
 thematique_markdown_file = (
     "../referentiels/markdown/thematiques_climat_pratic/thematiques.md"
