@@ -1,54 +1,12 @@
 import {Navigation} from 'app/Navigation';
 import {EpcisPage} from 'app/pages/Epcis/EpcisPage';
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-  useParams,
-  useRouteMatch,
-} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
 import {Footer, Header} from 'ui';
 import {FooterDescription, FooterNavigation} from 'ui/Footer';
-import {
-  IndicateursPage,
-  ActionReferentielAvancementPage,
-  ReferentielsPage,
-} from './pages';
 import 'app/DesignSystem/core.css';
-
-const Connected = () => {
-  const {path, url} = useRouteMatch();
-  const {epciId} = useParams<{epciId: string}>();
-
-  console.log(
-    'path in connected is ',
-    path,
-    'url is',
-    url,
-    ' and EPCI ID is',
-    epciId
-  );
-
-  // if (false) {
-  //   // todo redirect when user is not authenticated: https://reactrouter.com/web/example/auth-workflow
-  //   return <Redirect to="" />;
-  // }
-  return (
-    <>
-      <Route path={`${path}/actions_referentiels/`}>
-        <ReferentielsPage />
-      </Route>
-      <Route path={`${path}/action/:referentiel/:actionId`}>
-        <ActionReferentielAvancementPage />
-      </Route>
-      <Route path={`${path}/indicateurs/`}>
-        <IndicateursPage />
-      </Route>
-    </>
-  );
-};
+import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
+import {EpciRoutes} from 'app/pages/Epci/EpciRoutes';
 
 export const App = () => {
   return (
@@ -65,9 +23,14 @@ export const App = () => {
             <EpcisPage />
           </Route>
 
+          <Route path={'/auth'}>
+            <Header nav={<Navigation />} />
+            <AuthRoutes />
+          </Route>
+
           <Route path={'/:epciId'}>
             <Header nav={<Navigation />} />
-            <Connected />
+            <EpciRoutes />
           </Route>
         </Switch>
       </div>

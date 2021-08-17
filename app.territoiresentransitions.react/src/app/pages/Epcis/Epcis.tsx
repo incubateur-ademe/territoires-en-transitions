@@ -1,4 +1,4 @@
-import {AddDialog} from './_AddDialog';
+import {AddDialog} from 'app/pages/Epcis/_AddDialog';
 
 import 'app/DesignSystem/buttons.css';
 import 'app/DesignSystem/core.css';
@@ -7,7 +7,7 @@ import 'app/DesignSystem/variables.css';
 import {makeStyles} from '@material-ui/core';
 import React, {useEffect} from 'react';
 import {useActions, useAppState} from 'core-logic/overmind';
-import {EpciCard} from './_EpciCard';
+import {EpciCard} from 'app/pages/Epcis/_EpciCard';
 
 const useStyle = makeStyles({
   card: {

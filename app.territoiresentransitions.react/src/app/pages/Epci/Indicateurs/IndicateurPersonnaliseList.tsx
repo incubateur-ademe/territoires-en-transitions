@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import {commands} from 'core-logic/commands/commands';
-import {IndicateurPersonnaliseCard} from './IndicateurPersonnaliseCard';
+import {IndicateurPersonnaliseCard} from 'app/pages/Epci/Indicateurs/IndicateurPersonnaliseCard';
 
 export const IndicateurPersonnaliseList = () => {
   const [list, setList] = React.useState<IndicateurPersonnaliseStorable[]>([]);

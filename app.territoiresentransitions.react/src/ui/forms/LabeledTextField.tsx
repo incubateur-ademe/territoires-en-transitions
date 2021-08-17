@@ -22,6 +22,7 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
 }) => {
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
+  const isTouched = touched[field.name];
 
   return (
     <fieldset>
@@ -31,7 +32,7 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
       </label>
 
       {!errorMessage && props.hint && <div className="hint">{props.hint}</div>}
-      {errorMessage && <div className="hint">{errorMessage}</div>}
+      {errorMessage && isTouched && <div className="hint">{errorMessage}</div>}
 
       <input
         id={htmlId}

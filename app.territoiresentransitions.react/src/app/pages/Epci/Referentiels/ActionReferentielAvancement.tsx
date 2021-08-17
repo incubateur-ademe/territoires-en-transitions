@@ -5,11 +5,11 @@ import {
   ActionReferentielTitle,
   ProgressStat,
 } from 'ui/referentiels';
-import {searchById} from './searchById';
+import {searchById} from 'app/pages/Epci/Referentiels/searchById';
 import 'app/DesignSystem/buttons.css';
 import {ActionDescription, AddFicheActionButton} from 'ui/shared';
 
-export const ActionReferentielAvancement = ({
+const ActionReferentielAvancement = ({
   actionId,
   displayProgressStat,
 }: {
@@ -53,3 +53,5 @@ export const ActionReferentielAvancement = ({
     </div>
   );
 };
+
+export default ActionReferentielAvancement;

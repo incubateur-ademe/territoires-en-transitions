@@ -1,6 +1,6 @@
 import React from 'react';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
-import {IndicateurReferentielCard} from './IndicateurReferentielCard';
+import {IndicateurReferentielCard} from 'app/pages/Epci/Indicateurs/IndicateurReferentielCard';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 
 /**
