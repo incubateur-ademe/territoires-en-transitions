@@ -1,5 +1,5 @@
-import { isStorable, Storable } from "./storable";
-import { APIEndpoint } from "./apiEndpoint";
+import {isStorable, Storable} from './storable';
+import {APIEndpoint} from './apiEndpoint';
 
 /**
  * A Store for Storable object using a remote api and a local cache.
@@ -12,7 +12,7 @@ export class HybridStore<T extends Storable> {
     endpoint,
     serializer,
     deserializer,
-    authorization = () => "",
+    authorization = () => '',
   }: {
     host: string;
     endpoint: () => string;
@@ -123,7 +123,7 @@ export class HybridStore<T extends Storable> {
   async deleteById(id: string): Promise<boolean> {
     const deleted = await this.api.deleteById(this.stripId(id));
     const cache = await this.getCache();
-    this.cache = cache.filter((cached) => cached.id !== id);
+    this.cache = cache.filter(cached => cached.id !== id);
     return deleted;
   }
 
@@ -136,8 +136,8 @@ export class HybridStore<T extends Storable> {
    * a path removed from the redundant part `epci_id`
    */
   private stripId(id: string): string {
-    const endpoint = this.pathname().split("/");
-    let path = id.split("/");
+    const endpoint = this.pathname().split('/');
+    let path = id.split('/');
     let match = false;
 
     for (let i = 0; i < endpoint.length; i++) {
@@ -150,7 +150,7 @@ export class HybridStore<T extends Storable> {
       }
     }
 
-    return path.join("/");
+    return path.join('/');
   }
 
   private async writeInCache(storable: T): Promise<T> {
@@ -163,7 +163,7 @@ export class HybridStore<T extends Storable> {
 
   private async removeFromCache(id: string): Promise<boolean> {
     const cache = await this.getCache();
-    const filtered = cache.filter((cached) => cached.id !== id);
+    const filtered = cache.filter(cached => cached.id !== id);
     const deleted = filtered.length !== cache.length;
     this.cache = filtered;
     return deleted;
@@ -175,7 +175,7 @@ export class HybridStore<T extends Storable> {
     if (this.retrieving === null) {
       this.retrieving = this.api.retrieveAll();
 
-      this.retrieving.then((retrieved) => {
+      this.retrieving.then(retrieved => {
         this.cache = retrieved;
       });
     }

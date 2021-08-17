@@ -1,27 +1,27 @@
-import { AddDialog } from "./_AddDialog";
+import {AddDialog} from './_AddDialog';
 
-import "app/DesignSystem/buttons.css";
-import "app/DesignSystem/core.css";
-import "app/DesignSystem/variables.css";
+import 'app/DesignSystem/buttons.css';
+import 'app/DesignSystem/core.css';
+import 'app/DesignSystem/variables.css';
 
-import { makeStyles } from "@material-ui/core";
-import React, { useEffect } from "react";
-import { useActions, useAppState } from "core-logic/overmind";
-import { EpciCard } from "./_EpciCard";
+import {makeStyles} from '@material-ui/core';
+import React, {useEffect} from 'react';
+import {useActions, useAppState} from 'core-logic/overmind';
+import {EpciCard} from './_EpciCard';
 
 const useStyle = makeStyles({
   card: {
-    display: "flex",
-    alignItems: "center",
-    padding: "2rem 1.5rem 1.125rem",
-    backgroundColor: "var(--beige)",
-    borderBottom: "4px solid var(--bf500)", // var(--bf500)
-    flexDirection: "column",
+    display: 'flex',
+    alignItems: 'center',
+    padding: '2rem 1.5rem 1.125rem',
+    backgroundColor: 'var(--beige)',
+    borderBottom: '4px solid var(--bf500)', // var(--bf500)
+    flexDirection: 'column',
   },
   grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-    gridGap: "3rem",
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+    gridGap: '3rem',
   },
 });
 
@@ -62,7 +62,7 @@ const Epcis = () => {
         </h2>
 
         <div className={classes.grid}>
-          {useAppState().allEpcis.map((epci) => (
+          {useAppState().allEpcis.map(epci => (
             <EpciCard epci={epci} key={epci.id} />
           ))}
         </div>

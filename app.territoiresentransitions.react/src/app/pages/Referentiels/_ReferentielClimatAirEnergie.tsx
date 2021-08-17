@@ -1,11 +1,11 @@
-import type { ActionReferentiel } from "generated/models/action_referentiel";
-import * as R from "ramda";
+import type {ActionReferentiel} from 'generated/models/action_referentiel';
+import * as R from 'ramda';
 import {
   ActionReferentielTitle,
   ActionReferentielTitleCard,
-} from "ui/referentiels";
-import { compareIndexes } from "utils";
-import "./ArrowExpandable.css";
+} from 'ui/referentiels';
+import {compareIndexes} from 'utils';
+import './ArrowExpandable.css';
 
 const SubAxisSectionClimatAirEnergie = ({
   subAxis,
@@ -25,7 +25,7 @@ const SubAxisSectionClimatAirEnergie = ({
           </div>
         </summary>
         <div className="mt-8 ml-4 mb-6">
-          {subAxis.actions.map((action) => (
+          {subAxis.actions.map(action => (
             <ActionReferentielTitleCard
               key={action.id}
               action={action}
@@ -38,10 +38,10 @@ const SubAxisSectionClimatAirEnergie = ({
   );
 };
 
-const AxisSectionClimatAirEnergie = ({ axis }: { axis: ActionReferentiel }) => (
+const AxisSectionClimatAirEnergie = ({axis}: {axis: ActionReferentiel}) => (
   <div className="flex flex-col justify-between  mt-8">
     <ActionReferentielTitle action={axis} className="fr-h2" />
-    {axis.actions.map((subAxis) => (
+    {axis.actions.map(subAxis => (
       <SubAxisSectionClimatAirEnergie subAxis={subAxis} key={subAxis.id} />
     ))}
 
@@ -63,12 +63,12 @@ export const ReferentielClimatAirEnergie = ({
 }) => {
   const caeAxesSorted = R.sort(
     (a, b) => compareIndexes(a.id_nomenclature, b.id_nomenclature),
-    caeAxes,
+    caeAxes
   );
 
   return (
     <section>
-      {caeAxesSorted.map((axis) => (
+      {caeAxesSorted.map(axis => (
         <AxisSectionClimatAirEnergie axis={axis} key={axis.id} />
       ))}
     </section>

@@ -74,7 +74,7 @@ export class HybridStore<T extends Storable> {
      * If nothing is found returns an empty record.
      */
     async retrieveAll(): Promise<Array<T>> {
-        let all = await this.getCache();
+        const all = await this.getCache();
         return [...all]
     }
 
@@ -97,7 +97,7 @@ export class HybridStore<T extends Storable> {
      */
     async retrieveByPath(path: string): Promise<T | null> {
         const cache = await this.getCache();
-        for (let storable of cache) {
+        for (const storable of cache) {
             if (storable.id.startsWith(path)) return storable;
         }
         return null;
@@ -111,7 +111,7 @@ export class HybridStore<T extends Storable> {
         const cache = await this.getCache();
         const results = [];
 
-        for (let storable of cache) {
+        for (const storable of cache) {
             if (storable.id.startsWith(path)) results.push(storable);
         }
 
@@ -146,7 +146,7 @@ export class HybridStore<T extends Storable> {
         let match = false;
 
         for (let i = 0; i < endpoint.length; i++) {
-            let part = endpoint[i];
+            const part = endpoint[i];
             if (part == path[0]) {
                 match = true;
                 path = path.slice(1);

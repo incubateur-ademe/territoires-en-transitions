@@ -1,32 +1,32 @@
-import React, { useEffect } from "react";
-import { IndicateurValueStorable } from "storables/IndicateurValueStorable";
-import { useAppState } from "core-logic/overmind";
-import { IndicateurPersonnaliseStorable } from "storables/IndicateurPersonnaliseStorable";
-import { commands } from "core-logic/commands/commands";
+import React, {useEffect} from 'react';
+import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
+import {useAppState} from 'core-logic/overmind';
+import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
+import {commands} from 'core-logic/commands/commands';
 
-const ExpandPanel = (props: { content: string; title: string }) => (
+const ExpandPanel = (props: {content: string; title: string}) => (
   <details>
     <summary>{props.title}</summary>
     <div>{props.content}</div>
   </details>
 );
 
-const DescriptionPanel = (props: { description: string }) => (
-  <ExpandPanel title={"description"} content={props.description} />
+const DescriptionPanel = (props: {description: string}) => (
+  <ExpandPanel title={'description'} content={props.description} />
 );
 
-const years: number[] = Array.from({ length: 2022 - 2010 }, (v, k) => k + 2010);
+const years: number[] = Array.from({length: 2022 - 2010}, (v, k) => k + 2010);
 
 const IndicateurPersonnaliseValueInput = (props: {
   year: number;
   indicateur: IndicateurPersonnaliseStorable;
 }) => {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState('');
   const epci_id = useAppState().currentEpciId; // Même remarque que dans le commentaire
   useEffect(() => {
     commands.indicateurCommands
       .getIndicateurPersonnaliseValue(id)
-      .then((storable) => setValue(storable?.value ?? ""));
+      .then(storable => setValue(storable?.value ?? ''));
   }, [value, epci_id]);
 
   if (!epci_id) {
@@ -36,7 +36,7 @@ const IndicateurPersonnaliseValueInput = (props: {
   const id = IndicateurValueStorable.buildId(
     epci_id,
     props.indicateur.id,
-    props.year,
+    props.year
   );
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -49,9 +49,9 @@ const IndicateurPersonnaliseValueInput = (props: {
           indicateur_id: props.indicateur.id,
           year: props.year,
           value: inputValue,
-        }),
+        })
       )
-      .then((storable) => setValue(storable.value));
+      .then(storable => setValue(storable.value));
   };
   return (
     <label>
@@ -65,7 +65,7 @@ const IndicateurPersonnaliseValues = (props: {
   indicateur: IndicateurPersonnaliseStorable;
 }) => (
   <>
-    {years.map((year) => (
+    {years.map(year => (
       <IndicateurPersonnaliseValueInput
         year={year}
         indicateur={props.indicateur}
@@ -79,7 +79,7 @@ const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseStorable;
 }) => {
   const [value, setValue] = React.useState(
-    props.indicateur.meta["commentaire"] ?? "",
+    props.indicateur.meta['commentaire'] ?? ''
   );
 
   function handleSave(event: React.FormEvent<HTMLTextAreaElement>) {
@@ -87,10 +87,10 @@ const IndicateurPersonnaliseCommentaire = (props: {
     const data = {
       ...props.indicateur,
     };
-    data.meta["commentaire"] = inputValue;
+    data.meta['commentaire'] = inputValue;
     commands.indicateurCommands
       .storeIndicateurPersonnalise(new IndicateurPersonnaliseStorable(data))
-      .then((storable) => setValue(storable.meta["commentaire"]));
+      .then(storable => setValue(storable.meta['commentaire']));
   }
 
   return (

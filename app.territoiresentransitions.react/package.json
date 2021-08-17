@@ -12,13 +12,7 @@
     "dev": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject",
-    "lint": "gts lint",
-    "clean": "gts clean",
-    "fix": "gts fix",
-    "prepare": "npm.cmd run compile",
-    "pretest": "npm.cmd run compile",
-    "posttest": "npm.cmd run lint"
+    "eject": "react-scripts eject"
   },
   "dependencies": {
     "@craco/craco": "^6.0.0",

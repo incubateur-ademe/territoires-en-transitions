@@ -1,8 +1,8 @@
-import type { ActionReferentiel } from "generated/models/action_referentiel";
+import type {ActionReferentiel} from 'generated/models/action_referentiel';
 
 export const searchById = (
   actions: ActionReferentiel[],
-  id: string,
+  id: string
 ): ActionReferentiel | void => {
   for (const action of actions) {
     if (action.id === id) return action;

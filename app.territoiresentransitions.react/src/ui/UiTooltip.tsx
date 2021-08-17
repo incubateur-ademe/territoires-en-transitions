@@ -1,9 +1,9 @@
-import Tooltip from "@material-ui/core/Tooltip";
-import { useState } from "react";
+import Tooltip from '@material-ui/core/Tooltip';
+import {useState} from 'react';
 
 type UiTooltipProps = {
   content: React.ReactElement | string;
-  placement?: "top" | "left" | "bottom";
+  placement?: 'top' | 'left' | 'bottom';
   children: React.ReactElement;
   disable?: boolean;
   delay?: number;
@@ -21,7 +21,7 @@ export const UiTooltip = ({
       WrapperComponent={Tooltip}
       wrapperProps={{
         title: content,
-        placement: placement ?? "top",
+        placement: placement ?? 'top',
         disableHoverListener: disable,
         children: children,
         enterDelay: delay,
@@ -30,7 +30,7 @@ export const UiTooltip = ({
   );
 };
 
-type WithChildren = { children: React.ReactElement };
+type WithChildren = {children: React.ReactElement};
 
 type RenderWrapperOnHoverProps<P extends WithChildren> = {
   WrapperComponent: React.ComponentType<P>;
@@ -41,7 +41,7 @@ const RenderWrapperOnHover = <P extends WithChildren>({
   WrapperComponent,
   wrapperProps,
 }: RenderWrapperOnHoverProps<P>) => {
-  const { children } = wrapperProps;
+  const {children} = wrapperProps;
   const [isHovered, setIsHovered] = useState(false);
 
   const renderWrapped = () => (

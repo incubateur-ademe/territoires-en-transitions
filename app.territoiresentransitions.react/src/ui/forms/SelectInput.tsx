@@ -1,6 +1,6 @@
-import { Select, MenuItem, FormControl, InputLabel } from "@material-ui/core";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { useState } from "react";
+import {Select, MenuItem, FormControl, InputLabel} from '@material-ui/core';
+import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+import {useState} from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
     selectEmpty: {
       marginTop: theme.spacing(2),
     },
-  }),
+  })
 );
 
 export type Option<T extends string> = {
@@ -35,7 +35,7 @@ export const SelectInput = <T extends string>({
   const classes = useStyles();
   const [value, setValue] = useState<T>(defaultValue);
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleChange = (event: React.ChangeEvent<{value: unknown}>) => {
     const selectedValue = event.target.value as T;
     setValue(selectedValue);
     onChange(selectedValue);
@@ -44,9 +44,9 @@ export const SelectInput = <T extends string>({
   return (
     <div>
       <FormControl className={classes.formControl}>
-        <InputLabel>{label ?? ""}</InputLabel>
+        <InputLabel>{label ?? ''}</InputLabel>
         <Select value={value} onChange={handleChange}>
-          {options.map((option) => (
+          {options.map(option => (
             <MenuItem value={option.value} key={option.value}>
               {option.label}
             </MenuItem>

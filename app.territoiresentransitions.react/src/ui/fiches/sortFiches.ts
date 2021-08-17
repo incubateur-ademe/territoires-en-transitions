@@ -1,7 +1,7 @@
-import type { FicheAction } from "generated/models/fiche_action";
-import type { FicheActionCategorie } from "generated/models/fiche_action_categorie";
-import { compareIndexes } from "utils";
-import * as R from "ramda";
+import type {FicheAction} from 'generated/models/fiche_action';
+import type {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
+import {compareIndexes} from 'utils';
+import * as R from 'ramda';
 
 export const sortFiches = (fiches: FicheAction[]): FicheAction[] =>
   fiches.sort((ficheA, ficheB) => {
@@ -15,16 +15,16 @@ export type CategorizedFiche = {
 
 const findFicheCategorie = (
   fiche: FicheAction,
-  categories: FicheActionCategorie[],
+  categories: FicheActionCategorie[]
 ): FicheActionCategorie | undefined =>
-  categories.find((categorie) =>
-    categorie.fiche_actions_uids.includes(fiche.uid),
+  categories.find(categorie =>
+    categorie.fiche_actions_uids.includes(fiche.uid)
   );
 
 export const categorizeAndSortFiches = (
   fiches: FicheAction[],
   categories: FicheActionCategorie[],
-  defaultCategorie: FicheActionCategorie,
+  defaultCategorie: FicheActionCategorie
 ): CategorizedFiche[] => {
   const byCategorieUid = R.groupBy(function (fiche: FicheAction) {
     const categorie = findFicheCategorie(fiche, categories) || defaultCategorie;
@@ -34,9 +34,9 @@ export const categorizeAndSortFiches = (
     (fiches: FicheAction[], categorieUid: string) => ({
       fiches: fiches,
       categorie: [...categories, defaultCategorie].find(
-        (categorie) => categorie.uid === categorieUid,
+        categorie => categorie.uid === categorieUid
       )!,
-    }),
+    })
   );
 
   const sortCategorizedFiches = R.map((categorizedFiche: CategorizedFiche) => ({
@@ -54,7 +54,7 @@ export const categorizeAndSortFiches = (
     byCategorieUid,
     asCategorizedFiche,
     R.values,
-    sortCategorizedFiches,
+    sortCategorizedFiches
   )(fiches);
   return sortedCategorizedFiches;
 };

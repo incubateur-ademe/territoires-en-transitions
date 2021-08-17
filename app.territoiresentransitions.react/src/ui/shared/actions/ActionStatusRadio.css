@@ -3,12 +3,12 @@ fieldset {
   border: none;
 }
 
-[type="radio"] {
+[type='radio'] {
   position: absolute;
   left: -9999px;
 }
 
-[type="radio"] + label {
+[type='radio'] + label {
   position: relative;
   display: flex;
   align-items: center;

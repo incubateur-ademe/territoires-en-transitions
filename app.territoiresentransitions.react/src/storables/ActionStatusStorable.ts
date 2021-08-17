@@ -1,4 +1,4 @@
-import { ActionStatus } from "generated/models/action_status";
+import {ActionStatus} from 'generated/models/action_status';
 
 export class ActionStatusStorable extends ActionStatus {
   static buildId(epci_id: string, action_id: string): string {

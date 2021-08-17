@@ -1,50 +1,50 @@
 import {
-    indicateurPersonnaliseStore,
-    indicateurPersonnaliseValueStore,
-    indicateurReferentielCommentaireStore,
-    indicateurValueStore
-} from "../api/hybridStores";
-import {IndicateurPersonnaliseValueStorable} from "storables/IndicateurPersonnaliseValueStorable";
-import {IndicateurValueStorable} from "storables/IndicateurValueStorable";
-import {IndicateurReferentielCommentaireStorable} from "storables/IndicateurReferentielCommentaireStorable";
-import {IndicateurPersonnaliseStorable} from "../../storables/IndicateurPersonnaliseStorable";
+  indicateurPersonnaliseStore,
+  indicateurPersonnaliseValueStore,
+  indicateurReferentielCommentaireStore,
+  indicateurValueStore,
+} from '../api/hybridStores';
+import {IndicateurPersonnaliseValueStorable} from 'storables/IndicateurPersonnaliseValueStorable';
+import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
+import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
+import {IndicateurPersonnaliseStorable} from '../../storables/IndicateurPersonnaliseStorable';
 
+const getIndicateurReferentielValue = (indicateurId: string) =>
+  indicateurValueStore.retrieveById(indicateurId);
 
-const getIndicateurReferentielValue =
-    (indicateurId: string) => indicateurValueStore.retrieveById(indicateurId);
+const storeIndicateurReferentielValue = (storable: IndicateurValueStorable) =>
+  indicateurValueStore.store(storable);
 
-const storeIndicateurReferentielValue =
-    (storable: IndicateurValueStorable) => indicateurValueStore.store(storable);
+const getAllIndicateursPersonnalises = () =>
+  indicateurPersonnaliseStore.retrieveAll();
 
-const getAllIndicateursPersonnalises =
-    () => indicateurPersonnaliseStore.retrieveAll();
+export const getIndicateurPersonnaliseValue = (indicateurId: string) =>
+  indicateurPersonnaliseValueStore.retrieveById(indicateurId);
+const storeIndicateurPersonnalise = (
+  storable: IndicateurPersonnaliseStorable
+) => indicateurPersonnaliseStore.store(storable);
 
-export const getIndicateurPersonnaliseValue =
-    (indicateurId: string) => indicateurPersonnaliseValueStore.retrieveById(indicateurId);
-const storeIndicateurPersonnalise = (storable: IndicateurPersonnaliseStorable) => indicateurPersonnaliseStore.store(storable);
+const storeIndicateurPersonnaliseValue = (
+  storable: IndicateurPersonnaliseValueStorable
+) => indicateurPersonnaliseValueStore.store(storable);
 
-const storeIndicateurPersonnaliseValue =
-    (storable: IndicateurPersonnaliseValueStorable) => indicateurPersonnaliseValueStore.store(storable);
+const getIndicateurReferentielCommentaire = (id: string) =>
+  indicateurReferentielCommentaireStore.retrieveById(id);
 
-
-const getIndicateurReferentielCommentaire = (id: string) => indicateurReferentielCommentaireStore.retrieveById(id);
-
-const storeIndicateurReferentielCommentaire =
-    (storable: IndicateurReferentielCommentaireStorable) => indicateurReferentielCommentaireStore.store(storable);
-
+const storeIndicateurReferentielCommentaire = (
+  storable: IndicateurReferentielCommentaireStorable
+) => indicateurReferentielCommentaireStore.store(storable);
 
 export const indicateurCommands = {
+  getIndicateurReferentielValue,
+  storeIndicateurReferentielValue,
 
-    getIndicateurReferentielValue,
-    storeIndicateurReferentielValue,
+  getAllIndicateursPersonnalises,
+  storeIndicateurPersonnalise,
 
-    getAllIndicateursPersonnalises,
-    storeIndicateurPersonnalise,
+  getIndicateurPersonnaliseValue,
+  storeIndicateurPersonnaliseValue,
 
-    getIndicateurPersonnaliseValue,
-    storeIndicateurPersonnaliseValue,
-
-    getIndicateurReferentielCommentaire,
-    storeIndicateurReferentielCommentaire,
-
-}
+  getIndicateurReferentielCommentaire,
+  storeIndicateurReferentielCommentaire,
+};

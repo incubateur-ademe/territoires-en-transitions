@@ -1,5 +1,5 @@
-import { Navigation } from "app/Navigation";
-import { EpcisPage } from "app/pages/Epcis/EpcisPage";
+import {Navigation} from 'app/Navigation';
+import {EpcisPage} from 'app/pages/Epcis/EpcisPage';
 import {
   BrowserRouter as Router,
   Redirect,
@@ -7,34 +7,34 @@ import {
   Switch,
   useParams,
   useRouteMatch,
-} from "react-router-dom";
+} from 'react-router-dom';
 
-import { Footer, Header } from "ui";
-import { FooterDescription, FooterNavigation } from "ui/Footer";
+import {Footer, Header} from 'ui';
+import {FooterDescription, FooterNavigation} from 'ui/Footer';
 import {
   IndicateursPage,
   ActionReferentielAvancementPage,
   ReferentielsPage,
-} from "./pages";
-import "app/DesignSystem/core.css";
+} from './pages';
+import 'app/DesignSystem/core.css';
 
 const Connected = () => {
-  const { path, url } = useRouteMatch();
-  const { epciId } = useParams<{ epciId: string }>();
+  const {path, url} = useRouteMatch();
+  const {epciId} = useParams<{epciId: string}>();
 
   console.log(
-    "path in connected is ",
+    'path in connected is ',
     path,
-    "url is",
+    'url is',
     url,
-    " and EPCI ID is",
-    epciId,
+    ' and EPCI ID is',
+    epciId
   );
 
-  if (false) {
-    // todo redirect when user is not authenticated: https://reactrouter.com/web/example/auth-workflow
-    return <Redirect to="" />;
-  }
+  // if (false) {
+  //   // todo redirect when user is not authenticated: https://reactrouter.com/web/example/auth-workflow
+  //   return <Redirect to="" />;
+  // }
   return (
     <>
       <Route path={`${path}/actions_referentiels/`}>

@@ -1,23 +1,23 @@
-import jwt_decode, { JwtPayload } from "jwt-decode";
-import { UtilisateurConnecteStorable } from "storables/UtilisateurConnecteStorable";
-import { utilisateurConnecteStore } from "./localStore";
-import type { UtilisateurDroitsInterface } from "generated/models/utilisateur_droits";
-import { UtilisateurDroits } from "generated/models/utilisateur_droits";
-import { ENV } from "environmentVariables";
+import jwt_decode, {JwtPayload} from 'jwt-decode';
+import {UtilisateurConnecteStorable} from 'storables/UtilisateurConnecteStorable';
+import {utilisateurConnecteStore} from './localStore';
+import type {UtilisateurDroitsInterface} from 'generated/models/utilisateur_droits';
+import {UtilisateurDroits} from 'generated/models/utilisateur_droits';
+import {ENV} from 'environmentVariables';
 
-const _dummyToken = "xx";
+const _dummyToken = 'xx';
 
 /**
  * Save fake tokens, the user will be connected until replaced.
  */
 export const saveDummyTokens = () => {
   const storable = new UtilisateurConnecteStorable({
-    ademe_user_id: "dummy",
+    ademe_user_id: 'dummy',
     access_token: _dummyToken,
     refresh_token: _dummyToken,
-    email: "dummy@territoiresentransitions.fr",
-    nom: "Territoires en Transitions",
-    prenom: "Dummy",
+    email: 'dummy@territoiresentransitions.fr',
+    nom: 'Territoires en Transitions',
+    prenom: 'Dummy',
   });
   utilisateurConnecteStore.store(storable);
 };
@@ -28,12 +28,12 @@ export const saveDummyTokens = () => {
 export const saveTokens = (accessToken: string, refreshToken: string) => {
   const decoded = jwt_decode<JwtPayload>(accessToken);
   const storable = new UtilisateurConnecteStorable({
-    ademe_user_id: decoded["sub"] || "",
+    ademe_user_id: decoded['sub'] || '',
     access_token: accessToken,
     refresh_token: refreshToken,
-    email: "", // decoded["email"] ||
-    nom: "", // decoded["family_name"] ||
-    prenom: "", // decoded["given_name"] ||
+    email: '', // decoded["email"] ||
+    nom: '', // decoded["family_name"] ||
+    prenom: '', // decoded["given_name"] ||
   });
   utilisateurConnecteStore.store(storable);
 };
@@ -46,7 +46,7 @@ export const connected = (): boolean => {
 
   try {
     utilisateur = utilisateurConnecteStore.retrieveById(
-      UtilisateurConnecteStorable.id,
+      UtilisateurConnecteStorable.id
     );
   } catch (e) {
     return false;
@@ -66,7 +66,7 @@ export const connected = (): boolean => {
 export const currentUser = (): UtilisateurConnecteStorable | null => {
   if (connected())
     return utilisateurConnecteStore.retrieveById(
-      UtilisateurConnecteStorable.id,
+      UtilisateurConnecteStorable.id
     );
   return null;
 };
@@ -97,12 +97,12 @@ export const currentUtilisateurDroits = async (): Promise<
   if (!user) return [];
   const token = currentAccessToken();
   const api = ENV.backendHost;
-  const endpoint = "v2/utilisateur_droits";
+  const endpoint = 'v2/utilisateur_droits';
   const response = await fetch(`${api}/${endpoint}/${user.ademe_user_id}`, {
-    mode: "cors",
-    method: "GET",
+    mode: 'cors',
+    method: 'GET',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
   });
@@ -112,7 +112,7 @@ export const currentUtilisateurDroits = async (): Promise<
   const data = (await response.json()) as UtilisateurDroitsInterface[];
 
   return data.map<UtilisateurDroits>(
-    (serialized) => new UtilisateurDroits(serialized),
+    serialized => new UtilisateurDroits(serialized)
   );
 };
 
@@ -121,10 +121,10 @@ export const currentUtilisateurDroits = async (): Promise<
  */
 export const addDroits = async (
   epciId: string,
-  ecriture: boolean,
+  ecriture: boolean
 ): Promise<boolean> => {
   const user = currentUser();
-  if (!user) throw Error("User must be connected to add droits");
+  if (!user) throw Error('User must be connected to add droits');
 
   const droits: UtilisateurDroitsInterface = {
     ademe_user_id: user.ademe_user_id,
@@ -134,12 +134,12 @@ export const addDroits = async (
 
   const token = currentAccessToken();
   const api = ENV.backendHost;
-  const endpoint = "v2/utilisateur_droits";
+  const endpoint = 'v2/utilisateur_droits';
   const response = await fetch(`${api}/${endpoint}`, {
-    mode: "cors",
-    method: "POST",
+    mode: 'cors',
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(droits),

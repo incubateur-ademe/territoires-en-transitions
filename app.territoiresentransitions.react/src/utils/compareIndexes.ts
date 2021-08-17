@@ -1,7 +1,7 @@
 const stringToNumberArray = (stringIndexes: string) =>
   stringIndexes
     .split(/[^a-zA-Z0-9']/)
-    .map((char) => (/^-?\d+$/.test(char) ? Number(char) : char.charCodeAt(0)));
+    .map(char => (/^-?\d+$/.test(char) ? Number(char) : char.charCodeAt(0)));
 
 export const compareIndexes = (indexA: string, indexB: string): 0 | 1 | -1 => {
   const indexA_array = stringToNumberArray(indexA);

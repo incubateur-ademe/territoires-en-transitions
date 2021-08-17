@@ -1,4 +1,4 @@
-import "./CrossExpandPanel.css";
+import './CrossExpandPanel.css';
 
 export const CrossExpandPanelWithHtmlContent = (props: {
   content: string;
@@ -10,7 +10,7 @@ export const CrossExpandPanelWithHtmlContent = (props: {
       <summary className="title">{props.title}</summary>
       <div
         className="content"
-        dangerouslySetInnerHTML={{ __html: props.content }}
+        dangerouslySetInnerHTML={{__html: props.content}}
       />
     </details>
   </div>

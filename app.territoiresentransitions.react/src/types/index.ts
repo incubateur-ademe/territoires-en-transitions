@@ -1,2 +1,2 @@
-export * from "./litterals";
-export * from "./componentSharedInterfaces";
+export * from './litterals';
+export * from './componentSharedInterfaces';
