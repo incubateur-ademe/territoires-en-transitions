@@ -39,7 +39,7 @@ export const RedirectPage = () => {
     return <p>Authentification en cours...</p>;
   } else if (state === 'ok') {
     return <h1 className="text-xl">Redirection en cours...</h1>;
-  } else if (state === 'error') {
+  } else {
     return (
       <>
         <h1 className="text-xl">Erreur d'authenfication</h1>

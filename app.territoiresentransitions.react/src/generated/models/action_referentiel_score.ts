@@ -10,7 +10,7 @@ export interface ActionReferentielScoreInterface {
 }
 
 export class ActionReferentielScore {
-  public static pathname: string = 'action_referentiel_score';
+  public static pathname = 'action_referentiel_score';
   get pathname(): string {
     return ActionReferentielScore.pathname;
   }

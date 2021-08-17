@@ -1,7 +1,7 @@
 import type {Effects} from '../effects';
 import type {State} from 'core-logic/overmind/state';
-import {EpciStorable} from 'storables/EpciStorable';
 import {v4 as uuid} from 'uuid';
+import {EpciStorable} from 'storables/EpciStorable';
 
 const setCurrentEpci = ({state}: {state: State}, epciId: string) => {
   state.currentEpciId = epciId;

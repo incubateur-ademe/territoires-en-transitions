@@ -26,7 +26,7 @@ export const categorizeAndSortFiches = (
   categories: FicheActionCategorie[],
   defaultCategorie: FicheActionCategorie
 ): CategorizedFiche[] => {
-  const byCategorieUid = R.groupBy(function (fiche: FicheAction) {
+  const byCategorieUid = R.groupBy((fiche: FicheAction) => {
     const categorie = findFicheCategorie(fiche, categories) || defaultCategorie;
     return categorie.uid;
   });

@@ -5,7 +5,7 @@ export interface UtilisateurDroitsInterface {
 }
 
 export class UtilisateurDroits {
-  public static pathname: string = 'utilisateur_droits';
+  public static pathname = 'utilisateur_droits';
   get pathname(): string {
     return UtilisateurDroits.pathname;
   }

@@ -26,7 +26,7 @@ export const ActionCommentaire = (props: {actionId: string}) => {
   };
 
   return (
-    <div className={`border-t border-b border-gray-300`}>
+    <div className={'border-t border-b border-gray-300'}>
       <div className="CrossExpandPanel">
         <details>
           <summary className="title">Commentaire</summary>

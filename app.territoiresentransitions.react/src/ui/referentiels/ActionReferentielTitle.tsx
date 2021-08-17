@@ -7,7 +7,7 @@ export const ActionReferentielTitle = ({
   action: ActionReferentiel;
   className?: string;
 }) => (
-  <span className={className ? className : `text-lg h-8`}>
+  <span className={className ? className : 'text-lg h-8'}>
     {action.id_nomenclature} - {action.nom}
   </span>
 );

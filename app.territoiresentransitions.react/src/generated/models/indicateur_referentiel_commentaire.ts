@@ -5,7 +5,7 @@ export interface IndicateurReferentielCommentaireInterface {
 }
 
 export class IndicateurReferentielCommentaire {
-  public static pathname: string = 'indicateur_referentiel_commentaire';
+  public static pathname = 'indicateur_referentiel_commentaire';
   get pathname(): string {
     return IndicateurReferentielCommentaire.pathname;
   }

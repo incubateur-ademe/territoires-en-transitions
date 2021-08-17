@@ -6,7 +6,7 @@ export interface MesureCustomInterface {
 }
 
 export class MesureCustom {
-  public static pathname: string = 'mesure_custom';
+  public static pathname = 'mesure_custom';
   get pathname(): string {
     return MesureCustom.pathname;
   }

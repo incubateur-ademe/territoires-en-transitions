@@ -17,9 +17,9 @@ class PathNotifier {
   >();
 
   public notifyListeners = (path: string): void => {
-    for (let [key, listeners] of this._listeners) {
+    for (const [key, listeners] of this._listeners) {
       if (key.startsWith(path)) {
-        for (let listener of listeners) {
+        for (const listener of listeners) {
           listener();
         }
       }
@@ -35,7 +35,7 @@ class PathNotifier {
 
   public removeListener = (path: string, listener: voidCallback): void => {
     if (this._listeners.has(path)) {
-      const filtered = this._listeners.get(path)!.filter(l => l != listener);
+      const filtered = this._listeners.get(path)!.filter(l => l !== listener);
       if (filtered.length) {
         this._listeners.set(path, filtered);
       } else {
@@ -112,7 +112,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
    * @param state the overmind state
    */
   async retrieveAll({state}: {state: S}): Promise<Array<T>> {
-    let cache = await this.getCache(state);
+    const cache = await this.getCache(state);
     return [...cache.values()];
   }
 
@@ -136,7 +136,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
    */
   async retrieveByPath({state}: {state: S}, path: string): Promise<T | null> {
     const cache = await this.getCache(state);
-    for (let key of cache.keys()) {
+    for (const key of cache.keys()) {
       if (key.startsWith(path)) return cache.get(key)!;
     }
     return null;
@@ -150,7 +150,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
     const cache = await this.getCache(state);
     const results = [];
 
-    for (let key of cache.keys()) {
+    for (const key of cache.keys()) {
       if (key.startsWith(path)) results.push(cache.get(key)!);
     }
 
@@ -184,7 +184,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
     let match = false;
 
     for (let i = 0; i < endpoint.length; i++) {
-      let part = endpoint[i];
+      const part = endpoint[i];
       if (part === path[0]) {
         match = true;
         path = path.slice(1);
@@ -216,7 +216,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
     if (!this.retrieving[pathname]) {
       const promise = this.api.retrieveAll().then(all => {
         const cache = new Map<string, T>();
-        for (let storable of all) {
+        for (const storable of all) {
           cache.set(storable.id, storable);
         }
         return cache;
@@ -225,7 +225,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
       promise.then(retrieved => {
         const cache = this.stateAccessor(state);
         // cache.clear();
-        for (let [key, value] of retrieved.entries()) {
+        for (const [key, value] of retrieved.entries()) {
           cache.set(key, value);
         }
         this.fetchedPaths.push(pathname);

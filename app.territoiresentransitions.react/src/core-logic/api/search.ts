@@ -19,7 +19,7 @@ class ChangeNotifier {
   };
 
   public removeListener = (listener: voidCallback): void => {
-    this._listeners = this._listeners.filter(l => l != listener);
+    this._listeners = this._listeners.filter(l => l !== listener);
   };
 }
 

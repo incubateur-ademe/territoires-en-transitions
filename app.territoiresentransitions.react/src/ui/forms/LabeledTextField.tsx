@@ -1,17 +1,12 @@
 import {v4 as uuid} from 'uuid';
-import {ChangeEventHandler, FocusEventHandler} from 'react';
+import {FC} from 'react';
+import {FieldProps} from 'formik';
 
 type LabeledTextInputProps = {
   label: string;
-  value?: string;
-  maxLength?: number;
-  onChange?: ChangeEventHandler<HTMLInputElement>;
-  onBlur?: FocusEventHandler<HTMLInputElement>;
-
-  maxlength?: number;
   id?: string;
   hint?: string;
-  errorMessage?: string;
+  maxLength?: number;
 };
 
 /**
@@ -20,8 +15,13 @@ type LabeledTextInputProps = {
  * One can use the label prop to display an _unstyled_ text on top of the textarea.
  * In order to style the label text, a child element should be passed instead.
  */
-export const LabeledTextInput = (props: LabeledTextInputProps) => {
+const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
+  field, // { name, value, onChange, onBlur }
+  form: {touched, errors},
+  ...props
+}) => {
   const htmlId = props.id ?? uuid();
+  const errorMessage = errors[field.name];
 
   return (
     <fieldset>
@@ -30,19 +30,17 @@ export const LabeledTextInput = (props: LabeledTextInputProps) => {
         <slot />
       </label>
 
-      {!props.errorMessage && props.hint && (
-        <div className="hint">{props.hint}</div>
-      )}
-      {props.errorMessage && <div className="hint">{props.errorMessage}</div>}
+      {!errorMessage && props.hint && <div className="hint">{props.hint}</div>}
+      {errorMessage && <div className="hint">{errorMessage}</div>}
 
       <input
         id={htmlId}
         className="fr-input"
-        value={props.value}
         maxLength={props.maxLength}
-        onChange={props.onChange}
-        onBlur={props.onChange}
+        {...field}
       />
     </fieldset>
   );
 };
+
+export default LabeledTextField;

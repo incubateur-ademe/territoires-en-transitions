@@ -1,8 +1,9 @@
 import {UtilisateurInscriptionInterface} from 'generated/models/utilisateur_inscription';
 import React from 'react';
 import {ENV} from 'environmentVariables';
-import {Formik} from 'formik';
+import {Field, Formik} from 'formik';
 import * as Yup from 'yup';
+import LabeledTextField from 'ui/forms/LabeledTextField';
 
 const RegistrationSuccess = (props: {
   inscription: UtilisateurInscriptionInterface;
@@ -83,56 +84,6 @@ const RegistrationForm = () => {
     }
   };
 
-  // <h1 className="text-2xl">Créer un compte</h1>
-  // <div className="pb-10"/>
-  // <div>Si vous avez déjà un compte ADEME, <a className="text-blue-600" href="/auth/signin/">connectez-vous
-  //   directement
-  //   par ici</a>.
-  // </div>
-  // <div className="p-5"/>
-  // <form className="flex flex-col w-full md:w-3/4 pb-10">
-  //   <div>Tous les champs sont obligatoires.</div>
-  //   <div className="p-5"/>
-  //   <LabeledTextInput initialValue={inscription.nom}
-  //                     validateOnMount={false}
-  //                     maxlength={300}
-  //                     validator={validators.nom}>
-  //     <div className="text-xl">Nom</div>
-  //   </LabeledTextInput>
-  //   <div className="p-5"/>
-  //
-  //   <LabeledTextInput initialValue={inscription.prenom}
-  //                     validateOnMount={false}
-  //                     maxlength={300}
-  //                     validator={validators.prenom}>
-  //     <div className="text-xl">Prénom</div>
-  //   </LabeledTextInput>
-  //   <div className="p-5"/>
-  //
-  //   <LabeledTextInput initialValue={inscription.email}
-  //                     validateOnMount={false}
-  //                     maxlength={300}
-  //                     validator={validators.email}>
-  //     <div className="text-xl">Adresse mail</div>
-  //   </LabeledTextInput>
-  //   <div className="p-5"/>
-  //
-  //
-  //   <label className="inline-flex items-center">
-  //     <input type="checkbox"
-  //            className="form-checkbox"/>
-  //     <span className="ml-2">
-  //                 J'accepte la <a target="_blank" rel="noopener noreferrer" className="underline text-blue-600"
-  //                                 href={politique_vie_privee}>politique de protection
-  //                 des données à caractère personnel de l'ADEME</a>
-  //             </span>
-  //   </label>
-  //   <div className="p-5"/>
-  //
-  //   <button className="fr-btn" onClick={register}>
-  //     Créer mon compte
-  //   </button>
-  // </form>
   return (
     <>
       <Formik<UtilisateurInscriptionInterface>
@@ -142,15 +93,11 @@ const RegistrationForm = () => {
       >
         {props => (
           <form onSubmit={props.handleSubmit}>
-            <input
-              type="text"
-              onChange={props.handleChange}
-              onBlur={props.handleBlur}
-              value={props.values.nom}
-              name="name"
-            />
-            {props.errors.nom && <div id="feedback">{props.errors.nom}</div>}
-            <button type="submit">Submit</button>
+            <Field as={LabeledTextField} name="email" />
+            <Field as={LabeledTextField} name="nom" />
+            <Field as={LabeledTextField} name="prenom" />
+
+            <button type="submit">Créer mon compte</button>
           </form>
         )}
       </Formik>
