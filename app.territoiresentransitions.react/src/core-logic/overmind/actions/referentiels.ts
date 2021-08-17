@@ -43,6 +43,7 @@ const fetchAllActionReferentielCommentaireFromApi = async ({
 }) => {
   const allActionMetastorables = await effects.actionMetaStore.retrieveAll();
   allActionMetastorables.forEach(metaStorable => {
+    // eslint-disable-next-line
     const metaObject = metaStorable.meta as any; // TODO : object is not easy to use in react :/
     state.actionReferentielCommentaireById[metaStorable.action_id] =
       metaObject?.commentaire || '';
