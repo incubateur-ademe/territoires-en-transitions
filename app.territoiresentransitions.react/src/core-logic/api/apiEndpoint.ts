@@ -1,9 +1,9 @@
-import {isStorable} from './storable';
+import {isStorable, Storable} from './storable';
 
 /**
  * A Store for Storable object using a remote api
  */
-export class APIEndpoint<T> {
+export class APIEndpoint<T extends Storable> {
   constructor({
     host,
     endpoint,

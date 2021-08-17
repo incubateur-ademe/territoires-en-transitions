@@ -9,7 +9,7 @@ export interface Storable {
 /**
  * Storable type guard.
  */
-export const isStorable = (storable: any): storable is Storable => {
+export const isStorable = (storable: Storable): storable is Storable => {
   return (
     (storable as Storable).id !== undefined &&
     (storable as Storable).pathname !== undefined
