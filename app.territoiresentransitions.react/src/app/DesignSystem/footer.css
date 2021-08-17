@@ -1,7 +1,7 @@
+@charset "UTF-8";
 /*
 * DSFR v1.0.0-rc1.0 | restricted use
 */
-@charset "UTF-8";
 
 /* ------------------------------------ *\
 FOOTER
@@ -114,11 +114,11 @@ FOOTER
   margin-left: 1.5rem;
 }
 
-.fr-footer__body--operator
-  .fr-footer__brand
-  .fr-footer__brand-link
-  + .fr-footer__brand-link
-  .fr-footer__logo {
+.fr-footer__body--operator,
+.fr-footer__brand,
+.fr-footer__brand-link,
++ .fr-footer__brand-link,
+.fr-footer__logo {
   width: auto;
   min-width: initial;
   max-height: 100px;
@@ -150,7 +150,7 @@ FOOTER
 }
 
 .fr-footer__content-desc {
-  --is-link: ;
+  --is-link: true;
   margin: 0 0 0.5rem;
   width: 100%;
   font-size: 0.875rem;
@@ -223,7 +223,6 @@ FOOTER
   align-items: center;
   width: 100%;
   padding: 0.5rem 0 1rem;
-  width: 100%;
   margin: 0;
 }
 
@@ -259,7 +258,7 @@ FOOTER
 }
 
 .fr-footer__bottom-copy * {
-  --is-link: ;
+  --is-link: true;
   font-size: 0.75rem;
   line-height: 1.25rem;
   margin-bottom: 1rem;
