@@ -1,3 +1,11 @@
+import {signInRedirect} from 'core-logic/api/authRedirect';
+
+/**
+ * Redirects to the ADEME keycloak sign in form.
+ *
+ * Then keycloak will redirect to `auth/redirect/`
+ */
 export const SignInPage = () => {
-  return <></>;
+  signInRedirect();
+  return <h1 className="fr-h1">Redirection vers moncompte.ademe.fr</h1>;
 };
