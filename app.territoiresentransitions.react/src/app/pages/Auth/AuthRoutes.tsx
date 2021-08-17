@@ -4,6 +4,7 @@ import {RedirectPage} from 'app/pages/Auth/RedirectPage';
 import {RegisterPage} from 'app/pages/Auth/RegisterPage';
 import {SignInPage} from 'app/pages/Auth/SignInPage';
 import {SignOutPage} from 'app/pages/Auth/SignOutPage';
+import {TokenSignInPage} from 'app/pages/Auth/TokenSignInPage';
 
 export const AuthRoutes = () => {
   const {path} = useRouteMatch();
@@ -24,6 +25,9 @@ export const AuthRoutes = () => {
       </Route>
       <Route path={`${path}/signout/`}>
         <SignOutPage />
+      </Route>
+      <Route path={`${path}/token_signin/`}>
+        <TokenSignInPage />
       </Route>
     </>
   );

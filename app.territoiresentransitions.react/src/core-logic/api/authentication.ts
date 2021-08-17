@@ -81,6 +81,15 @@ export const currentAccessToken = (): string | null => {
 };
 
 /**
+ * Retrieve the current refresh token, returns null if not connected
+ */
+export const currentRefreshToken = (): string | null => {
+  const user = currentUser();
+  if (!user) return null;
+  return user.refresh_token;
+};
+
+/**
  * Sign the current user out. Return true on success, false otherwise.
  */
 export const signOut = (): boolean => {
