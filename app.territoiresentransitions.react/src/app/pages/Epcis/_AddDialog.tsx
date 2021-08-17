@@ -1,8 +1,8 @@
-import Dialog from "@material-ui/core/Dialog";
-import { useActions } from "core-logic/overmind";
-import React from "react";
-import { EpciStorable } from "storables/EpciStorable";
-import { LabeledTextInput, SelectInput } from "ui";
+import Dialog from '@material-ui/core/Dialog';
+import {useActions} from 'core-logic/overmind';
+import React from 'react';
+import {EpciStorable} from 'storables/EpciStorable';
+import {LabeledTextInput, SelectInput} from 'ui';
 
 export interface AddDialogProps {
   open: boolean;
@@ -11,14 +11,14 @@ export interface AddDialogProps {
 }
 
 export const AddDialog = (props: AddDialogProps) => {
-  const { open, close, epcis } = props;
-  const selectInputValues = epcis.map((epciStorable) => ({
+  const {open, close, epcis} = props;
+  const selectInputValues = epcis.map(epciStorable => ({
     value: epciStorable.id,
     label: epciStorable.nom,
   }));
 
-  const [selectedEpciId, setSelectedEpciId] = React.useState("");
-  const [inputEpciNom, setInputEpciNom] = React.useState("");
+  const [selectedEpciId, setSelectedEpciId] = React.useState('');
+  const [inputEpciNom, setInputEpciNom] = React.useState('');
 
   const overmindActions = useActions();
 
@@ -48,7 +48,7 @@ export const AddDialog = (props: AddDialogProps) => {
               label="Nom de ma collectivité"
               options={selectInputValues}
               defaultValue=""
-              onChange={(epciId) => {
+              onChange={epciId => {
                 console.log(epciId);
                 setSelectedEpciId(epciId);
               }}

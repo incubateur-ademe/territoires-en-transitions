@@ -3,9 +3,9 @@ import {
   ActionCommentaire,
   AddFicheActionButton,
   ActionStatusRadio,
-} from "ui/shared";
-import type { ActionReferentiel } from "generated/models/action_referentiel";
-import { ProgressStat } from ".";
+} from 'ui/shared';
+import type {ActionReferentiel} from 'generated/models/action_referentiel';
+import {ProgressStat} from '.';
 
 const ActionReferentielRecursiveCard = ({
   action,
@@ -13,17 +13,17 @@ const ActionReferentielRecursiveCard = ({
   marginLeft,
 }: {
   action: ActionReferentiel;
-  card: ({ action }: { action: ActionReferentiel }) => JSX.Element;
+  card: ({action}: {action: ActionReferentiel}) => JSX.Element;
   marginLeft?: number;
 }) => {
   const ml = marginLeft ?? 0;
   if (action.actions.length === 0)
-    return <div className={`ml-${ml}`}> {card({ action })}</div>;
+    return <div className={`ml-${ml}`}> {card({action})}</div>;
   else
     return (
       <div>
-        <div className={`ml-${ml}`}> {card({ action })}</div>{" "}
-        {action.actions.map((action) => (
+        <div className={`ml-${ml}`}> {card({action})}</div>{' '}
+        {action.actions.map(action => (
           <ActionReferentielRecursiveCard
             key={action.id}
             action={action}
@@ -36,13 +36,13 @@ const ActionReferentielRecursiveCard = ({
 };
 
 const makeActionReferentielAvancementCard =
-  ({ displayProgressStat }: { displayProgressStat: boolean }) =>
-  ({ action }: { action: ActionReferentiel }) => {
+  ({displayProgressStat}: {displayProgressStat: boolean}) =>
+  ({action}: {action: ActionReferentiel}) => {
     const isTache = action.actions.length === 0;
     return (
       <article
         className={` bg-beige my-8 p-4 border-bf500  ${
-          isTache ? "" : "border-l-4"
+          isTache ? '' : 'border-l-4'
         }`}
       >
         <div className="flex justify-between items-center">
@@ -53,13 +53,13 @@ const makeActionReferentielAvancementCard =
           <ProgressStat
             action={action}
             position="right"
-            className={`${displayProgressStat ? "" : "hidden"}`}
+            className={`${displayProgressStat ? '' : 'hidden'}`}
           />
         </div>
         <div className="flex justify-between my-6">
-          {" "}
+          {' '}
           <AddFicheActionButton />
-          <div className={` ${!isTache ? "hidden" : ""}`}>
+          <div className={` ${!isTache ? 'hidden' : ''}`}>
             <ActionStatusRadio actionId={action.id} />
           </div>
         </div>
@@ -80,5 +80,5 @@ export const ActionReferentielAvancementRecusiveCard = ({
 }) =>
   ActionReferentielRecursiveCard({
     action,
-    card: makeActionReferentielAvancementCard({ displayProgressStat }),
+    card: makeActionReferentielAvancementCard({displayProgressStat}),
   });

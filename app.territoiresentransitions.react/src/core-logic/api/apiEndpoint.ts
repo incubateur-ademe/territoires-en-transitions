@@ -1,4 +1,4 @@
-import { isStorable } from "./storable";
+import {isStorable} from './storable';
 
 /**
  * A Store for Storable object using a remote api
@@ -40,10 +40,10 @@ export class APIEndpoint<T> {
       throw new Error(`${typeof storable} is not storable.`);
     }
     const response = await fetch(`${this.host}/${this.pathname()}/`, {
-      method: "POST",
-      mode: "cors",
+      method: 'POST',
+      mode: 'cors',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: this.authorization(),
       },
       body: JSON.stringify(this.serializer(storable)),
@@ -57,7 +57,7 @@ export class APIEndpoint<T> {
    * If nothing is found returns an empty record.
    */
   async retrieveAll(): Promise<Array<T>> {
-    return this.retrieveAtPath("all");
+    return this.retrieveAtPath('all');
   }
 
   /**
@@ -72,8 +72,8 @@ export class APIEndpoint<T> {
 
   async retrieveByPath(path: string): Promise<T | null> {
     const response = await fetch(`${this.host}/${this.pathname()}/${path}`, {
-      mode: "cors",
-      method: "GET",
+      mode: 'cors',
+      method: 'GET',
       headers: {
         Authorization: this.authorization(),
       },
@@ -85,8 +85,8 @@ export class APIEndpoint<T> {
 
   async retrieveAtPath(path: string): Promise<Array<T>> {
     const response = await fetch(`${this.host}/${this.pathname()}/${path}`, {
-      mode: "cors",
-      method: "GET",
+      mode: 'cors',
+      method: 'GET',
       headers: {
         Authorization: this.authorization(),
       },
@@ -110,8 +110,8 @@ export class APIEndpoint<T> {
    */
   async deleteById(id: string): Promise<boolean> {
     const response = await fetch(`${this.host}/${this.pathname()}/${id}`, {
-      mode: "cors",
-      method: "DELETE",
+      mode: 'cors',
+      method: 'DELETE',
       headers: {
         Authorization: this.authorization(),
       },

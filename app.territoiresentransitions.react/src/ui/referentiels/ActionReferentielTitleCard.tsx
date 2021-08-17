@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
-import type { ActionReferentiel } from "generated/models/action_referentiel";
-import { ProgressStat } from "ui/referentiels";
-import { ActionDescription } from "ui/shared";
-import { ActionReferentielTitle } from "./ActionReferentielTitle";
-import { referentielToName } from "app/labels";
-import { Referentiel } from "types";
+import {Link} from 'react-router-dom';
+import type {ActionReferentiel} from 'generated/models/action_referentiel';
+import {ProgressStat} from 'ui/referentiels';
+import {ActionDescription} from 'ui/shared';
+import {ActionReferentielTitle} from './ActionReferentielTitle';
+import {referentielToName} from 'app/labels';
+import {Referentiel} from 'types';
 
 export const ActionReferentielTitleCard = ({
   action,
@@ -13,7 +13,7 @@ export const ActionReferentielTitleCard = ({
   action: ActionReferentiel;
   referentiel: Referentiel;
 }) => {
-  const displayProgressStat = referentiel === "eci";
+  const displayProgressStat = referentiel === 'eci';
 
   return (
     <article className="bg-white my-4">
@@ -28,7 +28,7 @@ export const ActionReferentielTitleCard = ({
             </span>
           </div>
           <ProgressStat
-            className={`${displayProgressStat ? "w-100" : "hidden"}`}
+            className={`${displayProgressStat ? 'w-100' : 'hidden'}`}
             action={action}
             position="right"
           />

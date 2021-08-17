@@ -18,12 +18,12 @@
 }
 
 .CrossExpandPanel details summary::after {
-  content: "+";
+  content: '+';
   margin-left: auto;
 }
 
 .CrossExpandPanel details[open] summary::after {
-  content: "-";
+  content: '-';
 }
 
 .CrossExpandPanel summary::-webkit-details-marker {

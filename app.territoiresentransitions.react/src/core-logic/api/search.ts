@@ -1,7 +1,7 @@
-import type { ActionReferentiel } from "generated/models/action_referentiel";
-import type { IndicateurReferentiel } from "generated/models/indicateur_referentiel";
+import type {ActionReferentiel} from 'generated/models/action_referentiel';
+import type {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 
-const possiblyId = new RegExp("^\\d+");
+const possiblyId = new RegExp('^\\d+');
 type voidCallback = () => void;
 
 /**
@@ -19,7 +19,7 @@ class ChangeNotifier {
   };
 
   public removeListener = (listener: voidCallback): void => {
-    this._listeners = this._listeners.filter((l) => l != listener);
+    this._listeners = this._listeners.filter(l => l != listener);
   };
 }
 
@@ -51,7 +51,7 @@ class Search<T> extends ChangeNotifier {
   public matches: T[] = [];
 
   private _timer: any;
-  private _needle = "";
+  private _needle = '';
   get needle(): string {
     return this._needle;
   }
@@ -61,7 +61,7 @@ class Search<T> extends ChangeNotifier {
       this.matches = this.lookup(
         this.haystack,
         this._needle.toLowerCase(),
-        possiblyId.test(this._needle),
+        possiblyId.test(this._needle)
       );
     } else {
       this.matches = this.haystack;
@@ -89,7 +89,7 @@ export class ActionReferentielSearch extends Search<ActionReferentiel> {
   protected lookup = (
     actions: ActionReferentiel[],
     needle: string,
-    asId: boolean,
+    asId: boolean
   ): ActionReferentiel[] => {
     const results = [];
     for (let i = 0; i < actions.length; i++) {
@@ -118,7 +118,7 @@ export class IndicateurReferentielSearch extends Search<IndicateurReferentiel> {
   protected lookup = (
     indicateurs: IndicateurReferentiel[],
     needle: string,
-    asId: boolean,
+    asId: boolean
   ): IndicateurReferentiel[] => {
     const results: IndicateurReferentiel[] = [];
     for (let i = 0; i < indicateurs.length; i++) {

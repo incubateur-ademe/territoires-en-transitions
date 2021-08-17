@@ -1,16 +1,16 @@
-import { useActions, useAppState } from "core-logic/overmind";
-import React from "react";
-import "../CrossExpandPanel.css";
+import {useActions, useAppState} from 'core-logic/overmind';
+import React from 'react';
+import '../CrossExpandPanel.css';
 
-export const ActionCommentaire = (props: { actionId: string }) => {
+export const ActionCommentaire = (props: {actionId: string}) => {
   const overmindActions = useActions();
   const overmindState = useAppState();
 
-  const [commentaire, setCommentaire] = React.useState("");
+  const [commentaire, setCommentaire] = React.useState('');
 
   React.useEffect(() => {
     const commentaireFromState =
-      overmindState.actionReferentielCommentaireById[props.actionId] ?? "";
+      overmindState.actionReferentielCommentaireById[props.actionId] ?? '';
     setCommentaire(commentaireFromState);
   }, [overmindState.actionReferentielCommentaireById[props.actionId]]);
 

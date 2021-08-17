@@ -1,35 +1,35 @@
-import React, { useEffect } from "react";
-import { IndicateurReferentiel } from "generated/models/indicateur_referentiel";
-import { IndicateurValueStorable } from "storables/IndicateurValueStorable";
-import { useAppState } from "core-logic/overmind";
-import years from "./years";
-import { commands } from "core-logic/commands/commands";
-import { IndicateurReferentielCommentaireStorable } from "storables/IndicateurReferentielCommentaireStorable";
+import React, {useEffect} from 'react';
+import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
+import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
+import {useAppState} from 'core-logic/overmind';
+import years from './years';
+import {commands} from 'core-logic/commands/commands';
+import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 
-const ExpandPanel = (props: { content: string; title: string }) => (
+const ExpandPanel = (props: {content: string; title: string}) => (
   <details>
     <summary>{props.title}</summary>
     <div>{props.content}</div>
   </details>
 );
 
-const DescriptionPanel = (props: { description: string }) => (
-  <ExpandPanel title={"description"} content={props.description} />
+const DescriptionPanel = (props: {description: string}) => (
+  <ExpandPanel title={'description'} content={props.description} />
 );
 
 function IndicateurReferentielValueInput(props: {
   year: number;
   indicateur: IndicateurReferentiel;
 }) {
-  const [value, setValue] = React.useState<string>("");
+  const [value, setValue] = React.useState<string>('');
   const epci_id = useAppState().currentEpciId;
 
   useEffect(() => {
     commands.indicateurCommands
       .getIndicateurReferentielValue(id)
-      .then((storable) => {
-        console.log("got storable", storable?.id);
-        setValue(storable?.value ?? "");
+      .then(storable => {
+        console.log('got storable', storable?.id);
+        setValue(storable?.value ?? '');
       });
   }, [value, epci_id]);
 
@@ -40,7 +40,7 @@ function IndicateurReferentielValueInput(props: {
   const id = IndicateurValueStorable.buildId(
     epci_id,
     props.indicateur.id,
-    props.year,
+    props.year
   );
 
   const handleSave = (event: React.FormEvent<HTMLInputElement>) => {
@@ -53,9 +53,9 @@ function IndicateurReferentielValueInput(props: {
           indicateur_id: props.indicateur.id,
           year: props.year,
           value: inputValue,
-        }),
+        })
       )
-      .then((storable) => setValue(storable.value));
+      .then(storable => setValue(storable.value));
   };
   return (
     <label>
@@ -69,7 +69,7 @@ const IndicateurReferentielValues = (props: {
   indicateur: IndicateurReferentiel;
 }) => (
   <ul className="bg-grey">
-    {years.map((year) => (
+    {years.map(year => (
       <IndicateurReferentielValueInput
         year={year}
         indicateur={props.indicateur}
@@ -79,19 +79,19 @@ const IndicateurReferentielValues = (props: {
   </ul>
 );
 
-const Commentaire = (props: { indicateur: IndicateurReferentiel }) => {
-  const [value, setValue] = React.useState("");
+const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
+  const [value, setValue] = React.useState('');
   const epci_id = useAppState().currentEpciId; // Rq : C'est relou d'avoir à chercher l'Epci Id dans le moindre petit composant ... Je propose de faire le fetch all au moment de monter la page, en useEffect avec currentEpci (cf. RefPage et RefAvancementPage)
 
   const id = IndicateurReferentielCommentaireStorable.buildId(
     epci_id!,
-    props.indicateur.id,
+    props.indicateur.id
   );
 
   useEffect(() => {
     commands.indicateurCommands
       .getIndicateurReferentielCommentaire(id)
-      .then((storable) => setValue(storable?.value ?? ""));
+      .then(storable => setValue(storable?.value ?? ''));
   }, [value, epci_id]);
 
   if (!epci_id) {
@@ -105,7 +105,7 @@ const Commentaire = (props: { indicateur: IndicateurReferentiel }) => {
         epci_id: epci_id,
         indicateur_id: props.indicateur.id,
         value: inputValue,
-      }),
+      })
     );
   };
 

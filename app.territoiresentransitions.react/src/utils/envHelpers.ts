@@ -4,7 +4,7 @@ type EnumFromArray<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<
   ? ElementType
   : never;
 
-type ProcessEnv = { [key: string]: string | undefined };
+type ProcessEnv = {[key: string]: string | undefined};
 
 type ThrowIfNotInArrayParams<T> = {
   processEnv: ProcessEnv;
@@ -19,9 +19,9 @@ export const throwIfNotInArray = <T extends string>({
 }: ThrowIfNotInArrayParams<T>): T => {
   if (!authorizedValues.includes(processEnv[variableName] as T))
     throw new Error(
-      `${variableName} to be one of : ${authorizedValues.join(" | ")}, got : ${
+      `${variableName} to be one of : ${authorizedValues.join(' | ')}, got : ${
         processEnv[variableName]
-      }`,
+      }`
     );
   return processEnv[variableName] as EnumFromArray<typeof authorizedValues>;
 };

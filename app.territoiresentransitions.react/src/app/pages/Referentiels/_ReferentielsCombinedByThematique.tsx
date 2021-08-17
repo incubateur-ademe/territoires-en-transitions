@@ -1,9 +1,9 @@
-import type { ActionReferentiel } from "generated/models/action_referentiel";
-import { thematiques } from "generated/data/thematiques";
-import * as R from "ramda";
+import type {ActionReferentiel} from 'generated/models/action_referentiel';
+import {thematiques} from 'generated/data/thematiques';
+import * as R from 'ramda';
 
-import "./ArrowExpandable.css";
-import { ActionReferentielTitleCard } from "ui/referentiels";
+import './ArrowExpandable.css';
+import {ActionReferentielTitleCard} from 'ui/referentiels';
 
 const ThematiqueSectionCombined = ({
   eciActions,
@@ -29,14 +29,14 @@ const ThematiqueSectionCombined = ({
           </div>
         </summary>
         <div className="mt-8 ml-4 mb-6">
-          {eciActions.map((action) => (
+          {eciActions.map(action => (
             <ActionReferentielTitleCard
               key={action.id}
               action={action}
               referentiel="eci"
             />
           ))}
-          {caeActions.map((action) => (
+          {caeActions.map(action => (
             <ActionReferentielTitleCard
               key={action.id}
               action={action}
@@ -57,16 +57,16 @@ export const ReferentielCombinedByThematique = ({
   eciActions: ActionReferentiel[];
 }) => {
   const eciActionsGroupedByThematique = R.groupBy(
-    (action) => action.thematique_id,
-    eciActions,
+    action => action.thematique_id,
+    eciActions
   );
   const caeActionsGroupedByThematique = R.groupBy(
-    (action) => action.thematique_id,
-    caeActions,
+    action => action.thematique_id,
+    caeActions
   );
   return (
     <section>
-      {thematiques.map((thematique) => (
+      {thematiques.map(thematique => (
         <ThematiqueSectionCombined
           key={thematique.id}
           thematiqueName={thematique.name}

@@ -1,4 +1,4 @@
-import { ActionMeta } from "generated/models/action_meta";
+import {ActionMeta} from 'generated/models/action_meta';
 
 export class ActionMetaStorable extends ActionMeta {
   static buildId(epci_id: string, action_id: string): string {

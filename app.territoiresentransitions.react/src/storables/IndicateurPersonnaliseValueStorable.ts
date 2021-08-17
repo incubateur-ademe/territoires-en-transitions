@@ -1,4 +1,4 @@
-import { IndicateurPersonnaliseValue } from "generated/models/indicateur_personnalise_value";
+import {IndicateurPersonnaliseValue} from 'generated/models/indicateur_personnalise_value';
 
 export class IndicateurPersonnaliseValueStorable extends IndicateurPersonnaliseValue {
   static buildId(epci_id: string, indicateur_id: string, year: number): string {
@@ -9,7 +9,7 @@ export class IndicateurPersonnaliseValueStorable extends IndicateurPersonnaliseV
     return IndicateurPersonnaliseValueStorable.buildId(
       this.epci_id,
       this.indicateur_id,
-      this.year,
+      this.year
     );
   }
 }

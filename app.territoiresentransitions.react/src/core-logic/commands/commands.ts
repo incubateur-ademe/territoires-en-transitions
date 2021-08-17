@@ -1,5 +1,5 @@
-import {indicateurCommands} from "./indicateurCommands";
+import {indicateurCommands} from './indicateurCommands';
 
 export const commands = {
-    indicateurCommands,
-}
+  indicateurCommands,
+};

@@ -1,4 +1,4 @@
-import { IndicateurReferentielCommentaire } from "generated/models/indicateur_referentiel_commentaire";
+import {IndicateurReferentielCommentaire} from 'generated/models/indicateur_referentiel_commentaire';
 
 export class IndicateurCommentaireStorable extends IndicateurReferentielCommentaire {
   static buildId(epci_id: string, indicateur_id: string): string {
@@ -8,7 +8,7 @@ export class IndicateurCommentaireStorable extends IndicateurReferentielCommenta
   get id(): string {
     return IndicateurCommentaireStorable.buildId(
       this.epci_id,
-      this.indicateur_id,
+      this.indicateur_id
     );
   }
 }

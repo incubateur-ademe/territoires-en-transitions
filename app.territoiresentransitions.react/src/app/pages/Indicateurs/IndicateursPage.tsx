@@ -1,7 +1,7 @@
-import { lazy, Suspense } from "react";
-import { renderLoader } from "utils/renderLoader";
+import {lazy, Suspense} from 'react';
+import {renderLoader} from 'utils/renderLoader';
 
-const IndicateurLists = lazy(() => import("./IndicateurLists"));
+const IndicateurLists = lazy(() => import('./IndicateurLists'));
 
 /**
  * Indicateurs page show both indicateurs personnalisés and indicateurs référentiel.

@@ -1,27 +1,27 @@
 import {
   ActionCustom,
   ActionCustomInterface,
-} from "generated/models/action_custom";
-import { ActionCustomStorable } from "storables/ActionCustomStorable";
-import { ActionStatusStorable } from "storables/ActionStatusStorable";
+} from 'generated/models/action_custom';
+import {ActionCustomStorable} from 'storables/ActionCustomStorable';
+import {ActionStatusStorable} from 'storables/ActionStatusStorable';
 import {
   ActionStatus,
   ActionStatusInterface,
-} from "generated/models/action_status";
-import { isStorable } from "./storable";
-import { FicheActionStorable } from "storables/FicheActionStorable";
-import type { FicheActionInterface } from "generated/models/fiche_action";
-import { FicheActionCategorieStorable } from "storables/FicheActionCategorieStorable";
-import type { FicheActionCategorieInterface } from "generated/models/fiche_action_categorie";
-import { IndicateurPersonnaliseStorable } from "storables/IndicateurPersonnaliseStorable";
-import type { IndicateurPersonnaliseInterface } from "generated/models/indicateur_personnalise";
-import { IndicateurPersonnaliseValueStorable } from "storables/IndicateurPersonnaliseValueStorable";
-import type { IndicateurPersonnaliseValueInterface } from "generated/models/indicateur_personnalise_value";
-import { UtilisateurConnecteStorable } from "storables/UtilisateurConnecteStorable";
+} from 'generated/models/action_status';
+import {isStorable} from './storable';
+import {FicheActionStorable} from 'storables/FicheActionStorable';
+import type {FicheActionInterface} from 'generated/models/fiche_action';
+import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
+import type {FicheActionCategorieInterface} from 'generated/models/fiche_action_categorie';
+import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
+import type {IndicateurPersonnaliseInterface} from 'generated/models/indicateur_personnalise';
+import {IndicateurPersonnaliseValueStorable} from 'storables/IndicateurPersonnaliseValueStorable';
+import type {IndicateurPersonnaliseValueInterface} from 'generated/models/indicateur_personnalise_value';
+import {UtilisateurConnecteStorable} from 'storables/UtilisateurConnecteStorable';
 import {
   UtilisateurConnecte,
   UtilisateurConnecteInterface,
-} from "generated/models/utilisateur_connecte";
+} from 'generated/models/utilisateur_connecte';
 
 /**
  * Get store by pathname from localStorage
@@ -29,7 +29,7 @@ import {
  * Returns an empty store if none found.
  */
 const getStore = (pathname: string): Record<string, object> => {
-  const storeJson = localStorage.getItem(pathname) || "{}";
+  const storeJson = localStorage.getItem(pathname) || '{}';
   return JSON.parse(storeJson);
 };
 
@@ -38,7 +38,7 @@ const getStore = (pathname: string): Record<string, object> => {
  */
 const saveStore = (
   pathname: string,
-  newStore: Record<string, object>,
+  newStore: Record<string, object>
 ): void => {
   localStorage.setItem(pathname, JSON.stringify(newStore));
 };
@@ -150,61 +150,61 @@ export class LocalStore<T> {
 
 export const actionCustomStore = new LocalStore<ActionCustomStorable>({
   pathname: ActionCustom.pathname,
-  serializer: (storable) => storable,
-  deserializer: (serialized) =>
+  serializer: storable => storable,
+  deserializer: serialized =>
     new ActionCustomStorable(serialized as ActionCustomInterface),
 });
 
 export const actionStatusStore = new LocalStore<ActionStatusStorable>({
   pathname: ActionStatus.pathname,
-  serializer: (storable) => storable,
-  deserializer: (serialized) =>
+  serializer: storable => storable,
+  deserializer: serialized =>
     new ActionStatusStorable(serialized as ActionStatusInterface),
 });
 
 export const ficheActionStore = new LocalStore<FicheActionStorable>({
   pathname: FicheActionStorable.pathname,
-  serializer: (storable) => storable,
-  deserializer: (serialized) =>
+  serializer: storable => storable,
+  deserializer: serialized =>
     new FicheActionStorable(serialized as FicheActionInterface),
 });
 
 export const ficheActionCategorieStore =
   new LocalStore<FicheActionCategorieStorable>({
     pathname: FicheActionCategorieStorable.pathname,
-    serializer: (storable) => storable,
-    deserializer: (serialized) =>
+    serializer: storable => storable,
+    deserializer: serialized =>
       new FicheActionCategorieStorable(
-        serialized as FicheActionCategorieInterface,
+        serialized as FicheActionCategorieInterface
       ),
   });
 
 export const indicateurPersonnaliseStore =
   new LocalStore<IndicateurPersonnaliseStorable>({
     pathname: IndicateurPersonnaliseStorable.pathname,
-    serializer: (storable) => storable,
-    deserializer: (serialized) =>
+    serializer: storable => storable,
+    deserializer: serialized =>
       new IndicateurPersonnaliseStorable(
-        serialized as IndicateurPersonnaliseInterface,
+        serialized as IndicateurPersonnaliseInterface
       ),
   });
 
 export const indicateurPersonnaliseValueStore =
   new LocalStore<IndicateurPersonnaliseValueStorable>({
     pathname: IndicateurPersonnaliseValueStorable.pathname,
-    serializer: (storable) => storable,
-    deserializer: (serialized) =>
+    serializer: storable => storable,
+    deserializer: serialized =>
       new IndicateurPersonnaliseValueStorable(
-        serialized as IndicateurPersonnaliseValueInterface,
+        serialized as IndicateurPersonnaliseValueInterface
       ),
   });
 
 export const utilisateurConnecteStore =
   new LocalStore<UtilisateurConnecteStorable>({
     pathname: UtilisateurConnecte.pathname,
-    serializer: (storable) => storable,
-    deserializer: (serialized) =>
+    serializer: storable => storable,
+    deserializer: serialized =>
       new UtilisateurConnecteStorable(
-        serialized as UtilisateurConnecteInterface,
+        serialized as UtilisateurConnecteInterface
       ),
   });

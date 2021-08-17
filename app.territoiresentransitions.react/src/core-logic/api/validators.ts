@@ -1,18 +1,18 @@
-import type { Validator } from "./validator";
-import { joinValidators } from "./validator";
+import type {Validator} from './validator';
+import {joinValidators} from './validator';
 
 const prequisite: Validator = (value: any) =>
-  value === undefined || value === null ? "Ce champ comporte un bug" : null;
+  value === undefined || value === null ? 'Ce champ comporte un bug' : null;
 
 export const requiredValidator: Validator = joinValidators([
   prequisite,
-  (value: any) => (value === "" ? "Ce champ est requis" : null),
+  (value: any) => (value === '' ? 'Ce champ est requis' : null),
 ]);
 
 export const booleanValidator: Validator = joinValidators([
   prequisite,
   (value: any) =>
-    value === true || value === false ? null : "Ce champ comporte un bug",
+    value === true || value === false ? null : 'Ce champ comporte un bug',
 ]);
 
 export const maximumLengthValidatorBuilder = (len: number): Validator =>
@@ -24,17 +24,17 @@ export const maximumLengthValidatorBuilder = (len: number): Validator =>
         : null,
   ]);
 
-const numbersOnlyRegex = new RegExp("^\\d+$");
+const numbersOnlyRegex = new RegExp('^\\d+$');
 export const numbersOnlyValidator: Validator = joinValidators([
   prequisite,
   (value: any) =>
     numbersOnlyRegex.test(value)
       ? null
-      : "Ce champ comporte autre chose que des chiffres sans espaces",
+      : 'Ce champ comporte autre chose que des chiffres sans espaces',
 ]);
 
 const emailRegex = new RegExp(
-  '^(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$',
+  '^(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$'
 );
 export const emailValidator: Validator = joinValidators([
   prequisite,

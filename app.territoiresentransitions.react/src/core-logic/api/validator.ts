@@ -7,22 +7,22 @@ export type Validator = (value: any) => string | null;
  * Validates a value against a validator. Returns true if the value is valid, false otherwise.
  */
 export const validate = (value: any, validator: Validator): boolean => {
-    return validator(value) === null;
-}
+  return validator(value) === null;
+};
 
 /**
  * Builds a validator from many validators. The validators are executed in list order.
  */
 export const joinValidators = (validators: Validator[]): Validator => {
-    return (value: any) => {
-        let error: string | null = null
-        for (const validator of validators) {
-            error = validator(value)
-            if (error !== null) break;
-        }
-        return error
+  return (value: any) => {
+    let error: string | null = null;
+    for (const validator of validators) {
+      error = validator(value);
+      if (error !== null) break;
     }
-}
+    return error;
+  };
+};
 
 /**
  * A validator that always returns null.

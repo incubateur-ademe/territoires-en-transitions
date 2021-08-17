@@ -1,13 +1,13 @@
-import { useActions, useAppState } from ".";
-import { useEffect } from "react";
+import {useActions, useAppState} from '.';
+import {useEffect} from 'react';
 
 export const useReferentielState = () => {
   const overmindActions = useActions();
   const overmindState = useAppState();
   useEffect(() => {
     console.log(
-      "Fetching state related to Referentiel for epci with ID ",
-      overmindState.currentEpciId,
+      'Fetching state related to Referentiel for epci with ID ',
+      overmindState.currentEpciId
     );
     overmindActions.referentiels.fetchAllActionReferentielStatusAvancementsFromApi();
     overmindActions.referentiels.fetchAllActionReferentielScoresFromApi();

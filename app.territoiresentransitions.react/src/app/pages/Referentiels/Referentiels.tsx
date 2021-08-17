@@ -1,39 +1,39 @@
-import "app/DesignSystem/core.css";
-import { SelectInput } from "ui";
+import 'app/DesignSystem/core.css';
+import {SelectInput} from 'ui';
 
-import React from "react";
-import { ReferentielEconomieCirculaire } from "./_ReferentielEconomieCirculaire";
-import { ReferentielClimatAirEnergie } from "./_ReferentielClimatAirEnergie";
-import { actions } from "generated/data/referentiels";
-import { Options } from "types";
-import { ReferentielCombinedByThematique } from "app/pages/Referentiels/_ReferentielsCombinedByThematique";
-import { ActionReferentiel } from "generated/models/action_referentiel";
-import * as R from "ramda";
+import React from 'react';
+import {ReferentielEconomieCirculaire} from './_ReferentielEconomieCirculaire';
+import {ReferentielClimatAirEnergie} from './_ReferentielClimatAirEnergie';
+import {actions} from 'generated/data/referentiels';
+import {Options} from 'types';
+import {ReferentielCombinedByThematique} from 'app/pages/Referentiels/_ReferentielsCombinedByThematique';
+import {ActionReferentiel} from 'generated/models/action_referentiel';
+import * as R from 'ramda';
 
-type View = "cae" | "eci" | "both";
+type View = 'cae' | 'eci' | 'both';
 
 const flattenActions = (actions: ActionReferentiel[]): ActionReferentiel[] =>
   R.reduce(
     (acc, action) => [...acc, ...action.actions],
     [] as ActionReferentiel[],
-    actions,
+    actions
   );
 
-const ConditionnalActionsReferentiels = ({ view }: { view: View }) => {
+const ConditionnalActionsReferentiels = ({view}: {view: View}) => {
   const eciReferentiel = actions.find(
-    (action) => action.id === "economie_circulaire",
+    action => action.id === 'economie_circulaire'
   );
   const eciAxes = eciReferentiel ? eciReferentiel.actions : [];
   // For ECI, main action is at level #1, here, we flatten the actions once.
   const eciFlattenMainActions = flattenActions(eciAxes);
 
-  const caeReferentiel = actions.find((action) => action.id === "citergie");
+  const caeReferentiel = actions.find(action => action.id === 'citergie');
   const caeAxes = caeReferentiel ? caeReferentiel.actions : [];
   // For ECI, main action is at level #1, here, we flatten the actions twice.
   const caeFlattenMainActions = flattenActions(flattenActions(caeAxes));
 
-  if (view === "cae") return <ReferentielClimatAirEnergie caeAxes={caeAxes} />;
-  else if (view === "both")
+  if (view === 'cae') return <ReferentielClimatAirEnergie caeAxes={caeAxes} />;
+  else if (view === 'both')
     return (
       <ReferentielCombinedByThematique
         eciActions={eciFlattenMainActions}
@@ -45,12 +45,12 @@ const ConditionnalActionsReferentiels = ({ view }: { view: View }) => {
 
 export const ActionsReferentiels = () => {
   const viewOptions: Options<View> = [
-    { value: "cae", label: "Climat Air Énergie" },
-    { value: "eci", label: "Économie Circulaire" },
-    { value: "both", label: "Vue combinée" },
+    {value: 'cae', label: 'Climat Air Énergie'},
+    {value: 'eci', label: 'Économie Circulaire'},
+    {value: 'both', label: 'Vue combinée'},
   ];
 
-  const [view, setView] = React.useState<View>("eci");
+  const [view, setView] = React.useState<View>('eci');
 
   return (
     <div className="mt-9 mb-16">

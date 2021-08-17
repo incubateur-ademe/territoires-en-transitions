@@ -1,4 +1,4 @@
-import type { ActionReferentiel } from "generated/models/action_referentiel";
+import type {ActionReferentiel} from 'generated/models/action_referentiel';
 
 export const ActionReferentielTitle = ({
   action,

@@ -1,13 +1,13 @@
-const { createProxyMiddleware } = require("http-proxy-middleware");
+const {createProxyMiddleware} = require('http-proxy-middleware');
 
 module.exports = function (app) {
-  if (process.env.REACT_APP_WITH_PROXY === "TRUE") {
+  if (process.env.REACT_APP_WITH_PROXY === 'TRUE') {
     app.use(
-      "/api",
+      '/api',
       createProxyMiddleware({
-        target: "http://localhost:8080",
+        target: 'http://localhost:8080',
         changeOrigin: true,
-      }),
+      })
     );
   }
 };

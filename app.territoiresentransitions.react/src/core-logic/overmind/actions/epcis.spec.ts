@@ -1,11 +1,11 @@
-import { createOvermindMock } from "overmind";
-import { config } from "..";
+import {createOvermindMock} from 'overmind';
+import {config} from '..';
 
-describe("Actions", () => {
-  describe("setCurrentEpci", () => {
-    test("should change state", async () => {
+describe('Actions', () => {
+  describe('setCurrentEpci', () => {
+    test('should change state', async () => {
       const overmind = createOvermindMock(
-        config,
+        config
         // Eventually, we can "mock" the API here, to test the store separately.
         //    {
         //   api: {
@@ -17,12 +17,12 @@ describe("Actions", () => {
         //   },
         // }
       );
-      overmind.actions.epcis.setCurrentEpci("lala");
+      overmind.actions.epcis.setCurrentEpci('lala');
 
-      expect(overmind.state.currentEpciId).toEqual("lala");
+      expect(overmind.state.currentEpciId).toEqual('lala');
       // TODO : check that it also fetched actions, scores, ...
     });
-    test("should handle errors if epci is empty", async () => {});
-    test("should handle errors if epci does not exist", async () => {});
+    test('should handle errors if epci is empty', async () => {});
+    test('should handle errors if epci does not exist', async () => {});
   });
 });

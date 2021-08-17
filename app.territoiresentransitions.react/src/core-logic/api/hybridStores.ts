@@ -1,48 +1,45 @@
-import { IndicateurValueStorable } from "storables/IndicateurValueStorable";
+import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
 import {
   IndicateurValue,
   IndicateurValueInterface,
-} from "generated/models/indicateur_value";
-import { getCurrentEpciId } from "./currentEpci";
+} from 'generated/models/indicateur_value';
+import {getCurrentEpciId} from './currentEpci';
 import {
   ActionStatus,
   ActionStatusInterface,
-} from "generated/models/action_status";
-import { ActionStatusStorable } from "storables/ActionStatusStorable";
-import { HybridStore } from "./hybridStore";
-import { FicheActionStorable } from "storables/FicheActionStorable";
-import {
-  FicheAction,
-  FicheActionInterface,
-} from "generated/models/fiche_action";
-import { FicheActionCategorieStorable } from "storables/FicheActionCategorieStorable";
+} from 'generated/models/action_status';
+import {ActionStatusStorable} from 'storables/ActionStatusStorable';
+import {HybridStore} from './hybridStore';
+import {FicheActionStorable} from 'storables/FicheActionStorable';
+import {FicheAction, FicheActionInterface} from 'generated/models/fiche_action';
+import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
 import {
   FicheActionCategorie,
   FicheActionCategorieInterface,
-} from "generated/models/fiche_action_categorie";
-import { IndicateurPersonnaliseValueStorable } from "storables/IndicateurPersonnaliseValueStorable";
+} from 'generated/models/fiche_action_categorie';
+import {IndicateurPersonnaliseValueStorable} from 'storables/IndicateurPersonnaliseValueStorable';
 import {
   IndicateurPersonnaliseValue,
   IndicateurPersonnaliseValueInterface,
-} from "generated/models/indicateur_personnalise_value";
-import { IndicateurPersonnaliseStorable } from "storables/IndicateurPersonnaliseStorable";
+} from 'generated/models/indicateur_personnalise_value';
+import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import {
   IndicateurPersonnalise,
   IndicateurPersonnaliseInterface,
-} from "generated/models/indicateur_personnalise";
+} from 'generated/models/indicateur_personnalise';
 import {
   IndicateurReferentielCommentaire,
   IndicateurReferentielCommentaireInterface,
-} from "generated/models/indicateur_referentiel_commentaire";
-import { IndicateurReferentielCommentaireStorable } from "storables/IndicateurReferentielCommentaireStorable";
-import { EpciStorable } from "storables/EpciStorable";
-import { Epci, EpciInterface } from "generated/models/epci";
-import { currentAccessToken } from "./authentication";
-import { ActionReferentielScoreStorable } from "storables/ActionReferentielScoreStorable";
-import type { ActionReferentielScoreInterface } from "generated/models/action_referentiel_score";
-import { ActionMetaStorable } from "storables/ActionMetaStorable";
-import { ActionMeta, ActionMetaInterface } from "generated/models/action_meta";
-import { ENV } from "environmentVariables";
+} from 'generated/models/indicateur_referentiel_commentaire';
+import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
+import {EpciStorable} from 'storables/EpciStorable';
+import {Epci, EpciInterface} from 'generated/models/epci';
+import {currentAccessToken} from './authentication';
+import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
+import type {ActionReferentielScoreInterface} from 'generated/models/action_referentiel_score';
+import {ActionMetaStorable} from 'storables/ActionMetaStorable';
+import {ActionMeta, ActionMetaInterface} from 'generated/models/action_meta';
+import {ENV} from 'environmentVariables';
 
 const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
 
@@ -50,18 +47,17 @@ export const indicateurValueStore = new HybridStore<IndicateurValueStorable>({
   host: ENV.backendHost,
   endpoint: () => `v2/${IndicateurValue.pathname}/${getCurrentEpciId()}`,
   authorization: defaultAuthorization,
-  serializer: (storable) => storable,
-  deserializer: (serialized) =>
+  serializer: storable => storable,
+  deserializer: serialized =>
     new IndicateurValueStorable(serialized as IndicateurValueInterface),
-
 });
 
 export const actionStatusStore = new HybridStore<ActionStatusStorable>({
   host: ENV.backendHost,
   endpoint: () => `v2/${ActionStatus.pathname}/${getCurrentEpciId()}`,
   authorization: defaultAuthorization,
-  serializer: (storable) => storable,
-  deserializer: (serialized) =>
+  serializer: storable => storable,
+  deserializer: serialized =>
     new ActionStatusStorable(serialized as ActionStatusInterface),
 });
 
@@ -69,8 +65,8 @@ export const ficheActionStore = new HybridStore<FicheActionStorable>({
   host: ENV.backendHost,
   endpoint: () => `v2/${FicheAction.pathname}/${getCurrentEpciId()}`,
   authorization: defaultAuthorization,
-  serializer: (storable) => storable,
-  deserializer: (serialized) =>
+  serializer: storable => storable,
+  deserializer: serialized =>
     new FicheActionStorable(serialized as FicheActionInterface),
 });
 
@@ -79,10 +75,10 @@ export const ficheActionCategorieStore =
     host: ENV.backendHost,
     endpoint: () => `v2/${FicheActionCategorie.pathname}/${getCurrentEpciId()}`,
     authorization: defaultAuthorization,
-    serializer: (storable) => storable,
-    deserializer: (serialized) =>
+    serializer: storable => storable,
+    deserializer: serialized =>
       new FicheActionCategorieStorable(
-        serialized as FicheActionCategorieInterface,
+        serialized as FicheActionCategorieInterface
       ),
   });
 
@@ -92,10 +88,10 @@ export const indicateurPersonnaliseStore =
     endpoint: () =>
       `v2/${IndicateurPersonnalise.pathname}/${getCurrentEpciId()}`,
     authorization: defaultAuthorization,
-    serializer: (storable) => storable,
-    deserializer: (serialized) =>
+    serializer: storable => storable,
+    deserializer: serialized =>
       new IndicateurPersonnaliseStorable(
-        serialized as IndicateurPersonnaliseInterface,
+        serialized as IndicateurPersonnaliseInterface
       ),
   });
 
@@ -105,10 +101,10 @@ export const indicateurPersonnaliseValueStore =
     endpoint: () =>
       `v2/${IndicateurPersonnaliseValue.pathname}/${getCurrentEpciId()}`,
     authorization: defaultAuthorization,
-    serializer: (storable) => storable,
-    deserializer: (serialized) =>
+    serializer: storable => storable,
+    deserializer: serialized =>
       new IndicateurPersonnaliseValueStorable(
-        serialized as IndicateurPersonnaliseValueInterface,
+        serialized as IndicateurPersonnaliseValueInterface
       ),
   });
 
@@ -118,10 +114,10 @@ export const indicateurReferentielCommentaireStore =
     endpoint: () =>
       `v2/${IndicateurReferentielCommentaire.pathname}/${getCurrentEpciId()}`,
     authorization: defaultAuthorization,
-    serializer: (storable) => storable,
-    deserializer: (serialized) =>
+    serializer: storable => storable,
+    deserializer: serialized =>
       new IndicateurReferentielCommentaireStorable(
-        serialized as IndicateurReferentielCommentaireInterface,
+        serialized as IndicateurReferentielCommentaireInterface
       ),
   });
 
@@ -129,8 +125,8 @@ export const epciStore = new HybridStore<EpciStorable>({
   host: ENV.backendHost,
   endpoint: () => `v2/${Epci.pathname}`,
   authorization: defaultAuthorization,
-  serializer: (storable) => storable,
-  deserializer: (serialized) => new EpciStorable(serialized as EpciInterface),
+  serializer: storable => storable,
+  deserializer: serialized => new EpciStorable(serialized as EpciInterface),
 });
 
 export const actionReferentielScoreStore =
@@ -138,10 +134,10 @@ export const actionReferentielScoreStore =
     host: ENV.backendHost,
     endpoint: () => `v2/notation/eci/${getCurrentEpciId()}`,
     authorization: defaultAuthorization,
-    serializer: (storable) => storable,
-    deserializer: (serialized) =>
+    serializer: storable => storable,
+    deserializer: serialized =>
       new ActionReferentielScoreStorable(
-        serialized as ActionReferentielScoreInterface,
+        serialized as ActionReferentielScoreInterface
       ),
   });
 
@@ -149,7 +145,7 @@ export const actionMetaStore = new HybridStore<ActionMetaStorable>({
   host: ENV.backendHost,
   endpoint: () => `v2/${ActionMeta.pathname}/${getCurrentEpciId()}`,
   authorization: defaultAuthorization,
-  serializer: (storable) => storable,
-  deserializer: (serialized) =>
+  serializer: storable => storable,
+  deserializer: serialized =>
     new ActionMetaStorable(serialized as ActionMetaInterface),
 });

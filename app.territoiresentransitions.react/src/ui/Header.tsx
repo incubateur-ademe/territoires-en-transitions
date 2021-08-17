@@ -1,7 +1,7 @@
-import "app/DesignSystem/header.css";
-import "app/DesignSystem/logo.css";
+import 'app/DesignSystem/header.css';
+import 'app/DesignSystem/logo.css';
 
-import React from "react";
+import React from 'react';
 
 export type HeaderProps = {
   nav: React.ReactElement;

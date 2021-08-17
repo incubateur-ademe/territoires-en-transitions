@@ -70,7 +70,7 @@
   padding-top: 1.65625rem;
 }
 
-:root[data-fr-theme="dark" i] .fr-header__logo .fr-logo::after {
+:root[data-fr-theme='dark' i] .fr-header__logo .fr-logo::after {
   background-position: -1.96875rem 100%;
 }
 
@@ -110,7 +110,7 @@
   padding-bottom: 4.5rem;
 }
 
-.fr-header .fr-modal:not([role="dialog"]) {
+.fr-header .fr-modal:not([role='dialog']) {
   transition: none;
 }
 
@@ -171,11 +171,11 @@
 }
 
 .fr-header__navbar .fr-btn--menu::before {
-  content: "";
+  content: '';
 }
 
 .fr-header__navbar .fr-btn--search::before {
-  content: "";
+  content: '';
 }
 
 .fr-header .fr-links-group .fr-link {
@@ -212,7 +212,7 @@
 .fr-header__tools-links .fr-links-group > *:not(:last-child) > .fr-link::after,
 .fr-header__tools-links .fr-links-group > .fr-link:not(last-child)::after {
   display: block;
-  content: "";
+  content: '';
   position: relative;
   right: -1rem;
   width: 1px;
@@ -261,36 +261,36 @@
   color: var(--bf500);
 }
 
-:root:not([data-fr-theme="dark" i]) .fr-header__navbar .fr-btn {
+:root:not([data-fr-theme='dark' i]) .fr-header__navbar .fr-btn {
   --color-hover: var(--block-color-hover);
   --color-active: var(--block-color-active);
 }
 
-:root:not([data-fr-theme="dark" i])
-  [class*="fr-scheme-light"]
+:root:not([data-fr-theme='dark' i])
+  [class*='fr-scheme-light']
   .fr-header__navbar
   .fr-btn,
-:root:not([data-fr-theme="dark" i])
-  [class*="--scheme-light-"]
+:root:not([data-fr-theme='dark' i])
+  [class*='--scheme-light-']
   .fr-header__navbar
   .fr-btn {
   --color-hover: var(--block-color-hover);
   --color-active: var(--block-color-active);
 }
 
-:root:not([data-fr-theme="dark" i])
-  [class*="fr-scheme-dark"]
+:root:not([data-fr-theme='dark' i])
+  [class*='fr-scheme-dark']
   .fr-header__navbar
   .fr-btn,
-:root:not([data-fr-theme="dark" i])
-  [class*="--scheme-dark-"]
+:root:not([data-fr-theme='dark' i])
+  [class*='--scheme-dark-']
   .fr-header__navbar
   .fr-btn {
   --color-hover: var(--block-color-hover);
   --color-active: var(--block-color-active);
 }
 
-:root[data-fr-theme="dark" i] .fr-header__navbar .fr-btn {
+:root[data-fr-theme='dark' i] .fr-header__navbar .fr-btn {
   --color-hover: var(--block-color-hover);
   --color-active: var(--block-color-active);
 }

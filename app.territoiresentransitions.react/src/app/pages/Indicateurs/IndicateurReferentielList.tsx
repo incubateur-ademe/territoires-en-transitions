@@ -1,7 +1,7 @@
-import React from "react";
-import { indicateurs } from "generated/data/indicateurs_referentiels";
-import { IndicateurReferentielCard } from "./IndicateurReferentielCard";
-import { IndicateurReferentiel } from "generated/models/indicateur_referentiel";
+import React from 'react';
+import {indicateurs} from 'generated/data/indicateurs_referentiels';
+import {IndicateurReferentielCard} from './IndicateurReferentielCard';
+import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 
 /**
  * Display the list of indicateur referentiel.
@@ -11,7 +11,7 @@ import { IndicateurReferentiel } from "generated/models/indicateur_referentiel";
  */
 export const IndicateurReferentielList = () => {
   const [delayedList, setDelayedList] = React.useState<IndicateurReferentiel[]>(
-    [],
+    []
   );
   const initialList = indicateurs.slice(0, 10);
 
@@ -22,7 +22,7 @@ export const IndicateurReferentielList = () => {
   return (
     <div className="app mx-5 mt-5">
       <section className="flex flex-col">
-        {initialList.map((indicateur) => (
+        {initialList.map(indicateur => (
           <IndicateurReferentielCard
             indicateur={indicateur}
             key={indicateur.id}
@@ -35,7 +35,7 @@ export const IndicateurReferentielList = () => {
           </button>
         )}
 
-        {delayedList.map((indicateur) => (
+        {delayedList.map(indicateur => (
           <IndicateurReferentielCard
             indicateur={indicateur}
             key={indicateur.id}
