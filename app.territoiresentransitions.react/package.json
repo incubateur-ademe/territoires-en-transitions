@@ -12,7 +12,13 @@
     "dev": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "fix": "gts fix",
+    "prepare": "npm.cmd run compile",
+    "pretest": "npm.cmd run compile",
+    "posttest": "npm.cmd run lint"
   },
   "dependencies": {
     "@craco/craco": "^6.0.0",
@@ -36,6 +42,7 @@
     "axios": "^0.21.1",
     "date-fns": "^2.16.1",
     "express": "^4.17.1",
+    "formik": "^2.2.9",
     "http-proxy-middleware": "^2.0.0",
     "jwt-decode": "^3.1.2",
     "overmind": "^28.0.1",
@@ -52,7 +59,8 @@
     "react-scripts": "^4.0.3",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7",
     "typescript": "^4.1.3",
-    "web-vitals": "^0.2.4"
+    "web-vitals": "^0.2.4",
+    "yup": "^0.32.9"
   },
   "eslintConfig": {
     "extends": [
@@ -84,6 +92,9 @@
   },
   "devDependencies": {
     "@types/react-router-dom": "^5.1.8",
-    "@types/uuid": "^8.3.1"
+    "@types/uuid": "^8.3.1",
+    "gts": "^3.1.0",
+    "typescript": "^4.0.3",
+    "@types/node": "^14.11.2"
   }
 }

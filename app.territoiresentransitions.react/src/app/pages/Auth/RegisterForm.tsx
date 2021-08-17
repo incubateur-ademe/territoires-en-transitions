@@ -4,6 +4,10 @@ import {emailValidator, maximumLengthValidatorBuilder, requiredValidator} from "
 import {useState} from "react";
 import {LabeledTextInput} from "ui";
 import {ENV} from "environmentVariables";
+import {Formik} from 'formik';
+import React from 'react';
+import {useFormik} from 'formik';
+import * as Yup from 'yup';
 
 const RegistrationSuccess = (props: { inscription: UtilisateurInscriptionInterface }) => {
     return (
@@ -45,20 +49,25 @@ const validators = {
 const politique_vie_privee = "https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel"
 
 const RegistrationForm = () => {
-    const [inscription, setInscription] = useState<UtilisateurInscriptionInterface>({
+    const initialValues: UtilisateurInscriptionInterface = {
         email: '',
         nom: '',
         prenom: '',
         vie_privee_conditions: '',
+    }
+
+    const validation = Yup.object({
+        email: Yup.string().email("Cette adresse email n'est pas valide").required('Champ requis'),
+        nom: Yup.string()
+            .max(300, 'Ce champ doit faire au maximum 300 caractères')
+            .required('Champ requis'),
+        prenom: Yup.string()
+            .max(300, 'Ce champ doit faire au maximum 300 caractères')
+            .required('Champ requis'),
+        vie_privee_conditions: Yup.string().required('Champ requis'),
     });
 
-    const register = async () => {
-        for (let key of Object.keys(validators)) {
-            // @ts-ignore
-            let valid = validate(inscription[key], validators[key])
-            if (!valid) return window.alert(`Le champ ${key} du formulaire n'est pas valide : ${validators[key](inscription[key])}`);
-        }
-
+    const register = async (inscription: UtilisateurInscriptionInterface) => {
         const endpoint = `${ENV.backendHost}/v2/auth/register`
 
         const registrationResponse = await fetch(endpoint, {
@@ -77,8 +86,28 @@ const RegistrationForm = () => {
         }
     }
 
+
     return (
         <>
+            <Formik<UtilisateurInscriptionInterface>
+                initialValues={initialValues}
+                validationSchema={validation}
+                onSubmit={register}
+            >
+                {props => (
+                    <form onSubmit={props.handleSubmit}>
+                        <input
+                            type="text"
+                            onChange={props.handleChange}
+                            onBlur={props.handleBlur}
+                            value={props.values.name}
+                            name="name"
+                        />
+                        {props.errors.name && <div id="feedback">{props.errors.name}</div>}
+                        <button type="submit">Submit</button>
+                    </form>
+                )}
+            </Formik>
 
             <h1 className="text-2xl">Créer un compte</h1>
             <div className="pb-10"/>
