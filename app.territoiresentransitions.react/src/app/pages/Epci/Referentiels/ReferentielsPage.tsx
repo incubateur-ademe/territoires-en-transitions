@@ -2,7 +2,9 @@ import {useReferentielState} from 'core-logic/overmind/hooks';
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
 
-const Referentiels = lazy(() => import('./Referentiels'));
+const Referentiels = lazy(
+  () => import('app/pages/Epci/Referentiels/Referentiels')
+);
 
 export const ReferentielsPage = () => {
   useReferentielState();

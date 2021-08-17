@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
 import {useAppState} from 'core-logic/overmind';
-import years from './years';
+import years from 'app/pages/Epci/Indicateurs/years';
 import {commands} from 'core-logic/commands/commands';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 

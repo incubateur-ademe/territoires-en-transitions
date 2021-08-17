@@ -1,4 +1,4 @@
-export {ActionReferentielAvancementPage} from './Referentiels/ActionReferentielAvancementPage';
-export {ReferentielsPage} from './Referentiels/ReferentielsPage';
-export {IndicateursPage} from './Indicateurs/IndicateursPage';
+export {ActionReferentielAvancementPage} from './Epci/Referentiels/ActionReferentielAvancementPage';
+export {ReferentielsPage} from './Epci/Referentiels/ReferentielsPage';
+export {IndicateursPage} from './Epci/Indicateurs/IndicateursPage';
 export {EpcisPage} from './Epcis/EpcisPage';

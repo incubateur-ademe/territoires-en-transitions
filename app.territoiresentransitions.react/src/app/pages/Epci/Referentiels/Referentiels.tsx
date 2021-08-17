@@ -2,11 +2,11 @@ import 'app/DesignSystem/core.css';
 import {SelectInput} from 'ui';
 
 import React from 'react';
-import {ReferentielEconomieCirculaire} from './_ReferentielEconomieCirculaire';
-import {ReferentielClimatAirEnergie} from './_ReferentielClimatAirEnergie';
+import {ReferentielEconomieCirculaire} from 'app/pages/Epci/Referentiels/_ReferentielEconomieCirculaire';
+import {ReferentielClimatAirEnergie} from 'app/pages/Epci/Referentiels/_ReferentielClimatAirEnergie';
 import {actions} from 'generated/data/referentiels';
 import {Options} from 'types';
-import {ReferentielCombinedByThematique} from 'app/pages/Referentiels/_ReferentielsCombinedByThematique';
+import {ReferentielCombinedByThematique} from 'app/pages/Epci/Referentiels/_ReferentielsCombinedByThematique';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import * as R from 'ramda';
 

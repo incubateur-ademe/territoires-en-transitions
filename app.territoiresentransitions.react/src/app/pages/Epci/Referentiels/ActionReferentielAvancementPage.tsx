@@ -1,12 +1,11 @@
-import {Suspense} from 'react';
+import {lazy, Suspense} from 'react';
 import {useParams} from 'react-router-dom';
 import {overmind} from 'core-logic/overmind';
-import {lazyImport, renderLoader} from 'utils';
+import {renderLoader} from 'utils';
 import {useReferentielState} from 'core-logic/overmind/hooks';
 
-const {ActionReferentielAvancement} = lazyImport(
-  () => import('./ActionReferentielAvancement'),
-  'ActionReferentielAvancement'
+const ActionReferentielAvancement = lazy(
+  () => import('app/pages/Epci/Referentiels/ActionReferentielAvancement')
 );
 
 export const ActionReferentielAvancementPage = () => {

@@ -5,7 +5,7 @@ import {
   ActionReferentielTitleCard,
 } from 'ui/referentiels';
 import {compareIndexes} from 'utils';
-import './ArrowExpandable.css';
+import 'app/pages/Epci/Referentiels/ArrowExpandable.css';
 
 const SubAxisSectionClimatAirEnergie = ({
   subAxis,
