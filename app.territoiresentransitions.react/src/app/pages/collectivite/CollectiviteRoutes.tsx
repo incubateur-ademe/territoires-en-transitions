@@ -4,19 +4,17 @@ import {
   IndicateursPage,
   ReferentielsPage,
 } from 'app/pages/index';
+import {useActions} from 'core-logic/overmind';
 
-export const EpciRoutes = () => {
+/**
+ * Routes starting with collectivite/:epciId/ see App.ts Router.
+ *
+ * Is responsible for setting the current epci id.
+ */
+export const CollectiviteRoutes = () => {
   const {path, url} = useRouteMatch();
   const {epciId} = useParams<{epciId: string}>();
-
-  console.log(
-    'path in connected is ',
-    path,
-    'url is',
-    url,
-    ' and EPCI ID is',
-    epciId
-  );
+  useActions().epcis.setCurrentEpci(epciId);
 
   // if (false) {
   //   // todo redirect when user is not authenticated: https://reactrouter.com/web/example/auth-workflow

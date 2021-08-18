@@ -6,7 +6,7 @@ import {Footer, Header} from 'ui';
 import {FooterDescription, FooterNavigation} from 'ui/Footer';
 import 'app/DesignSystem/core.css';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
-import {EpciRoutes} from 'app/pages/Epci/EpciRoutes';
+import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 
 export const App = () => {
   return (
@@ -18,7 +18,7 @@ export const App = () => {
             <EpcisPage />
           </Route>
 
-          <Route path={'/epcis/:epciId'}>
+          <Route path={'/epcis'}>
             <Header nav={<Navigation />} />
             <EpcisPage />
           </Route>
@@ -28,9 +28,9 @@ export const App = () => {
             <AuthRoutes />
           </Route>
 
-          <Route path={'/:epciId'}>
+          <Route path={'/collectivite/:epciId'}>
             <Header nav={<Navigation />} />
-            <EpciRoutes />
+            <CollectiviteRoutes />
           </Route>
         </Switch>
       </div>

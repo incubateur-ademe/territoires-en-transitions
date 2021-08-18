@@ -5,7 +5,7 @@ import {
   ActionReferentielTitle,
   ProgressStat,
 } from 'ui/referentiels';
-import {searchById} from 'app/pages/Epci/Referentiels/searchById';
+import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
 import 'app/DesignSystem/buttons.css';
 import {ActionDescription, AddFicheActionButton} from 'ui/shared';
 
