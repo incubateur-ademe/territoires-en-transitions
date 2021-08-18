@@ -1,12 +1,13 @@
 import {isStorable, Storable} from './storable';
 import {APIEndpoint} from './apiEndpoint';
+import {ChangeNotifier} from 'core-logic/api/reactivity';
 
 /**
  * A Store for Storable object using a remote api and a local cache.
  *
  * The local cache is kept in memory for now.
  */
-export class HybridStore<T extends Storable> {
+export class HybridStore<T extends Storable> extends ChangeNotifier {
   constructor({
     host,
     endpoint,
@@ -20,6 +21,7 @@ export class HybridStore<T extends Storable> {
     deserializer: (serialized: object) => T;
     authorization?: () => string;
   }) {
+    super();
     this.host = host;
     this.pathname = endpoint;
     this.serializer = serializer;
@@ -48,7 +50,7 @@ export class HybridStore<T extends Storable> {
   serializer: (storable: T) => object;
   deserializer: (serialized: object) => T;
   api: APIEndpoint<T>;
-  private cache: T[] | null = null;
+  private cache: Map<string, T> = new Map<string, T>();
 
   // local: LocalStore<T>;
 
@@ -72,7 +74,7 @@ export class HybridStore<T extends Storable> {
    */
   async retrieveAll(): Promise<Array<T>> {
     const all = await this.getCache();
-    return [...all];
+    return [...all.values()];
   }
 
   /**
@@ -82,7 +84,8 @@ export class HybridStore<T extends Storable> {
    * @param id Storable id
    */
   async retrieveById(id: string): Promise<T | null> {
-    return this.retrieveByPath(id);
+    const cache = await this.getCache();
+    return cache.get(id) ?? null;
   }
 
   /**
@@ -93,8 +96,8 @@ export class HybridStore<T extends Storable> {
    */
   async retrieveByPath(path: string): Promise<T | null> {
     const cache = await this.getCache();
-    for (const storable of cache) {
-      if (storable.id.startsWith(path)) return storable;
+    for (const key of cache.keys()) {
+      if (key.startsWith(path)) return cache.get(key)!;
     }
     return null;
   }
@@ -107,8 +110,8 @@ export class HybridStore<T extends Storable> {
     const cache = await this.getCache();
     const results = [];
 
-    for (const storable of cache) {
-      if (storable.id.startsWith(path)) results.push(storable);
+    for (const key of cache.keys()) {
+      if (key.startsWith(path)) results.push(cache.get(key)!);
     }
 
     return [...results];
@@ -122,8 +125,7 @@ export class HybridStore<T extends Storable> {
    */
   async deleteById(id: string): Promise<boolean> {
     const deleted = await this.api.deleteById(this.stripId(id));
-    const cache = await this.getCache();
-    this.cache = cache.filter(cached => cached.id !== id);
+    await this.removeFromCache(id);
     return deleted;
   }
 
@@ -154,33 +156,47 @@ export class HybridStore<T extends Storable> {
   }
 
   private async writeInCache(storable: T): Promise<T> {
-    await this.removeFromCache(storable.id);
     const cache = await this.getCache();
-    cache.push(storable);
-    this.cache = cache;
+    cache.set(storable.id, storable);
+    this.notifyListeners();
     return storable;
   }
 
   private async removeFromCache(id: string): Promise<boolean> {
     const cache = await this.getCache();
-    const filtered = cache.filter(cached => cached.id !== id);
-    const deleted = filtered.length !== cache.length;
-    this.cache = filtered;
-    return deleted;
+    return cache.delete(id);
   }
 
-  private async getCache(): Promise<Array<T>> {
-    if (this.cache !== null) return this.cache;
+  private async getCache(): Promise<Map<string, T>> {
+    const pathname = this.pathname();
 
-    if (this.retrieving === null) {
-      this.retrieving = this.api.retrieveAll();
-
-      this.retrieving.then(retrieved => {
-        this.cache = retrieved;
-      });
+    if (this.fetchedPaths.includes(pathname)) {
+      return this.cache;
     }
-    return this.retrieving;
+
+    if (!this.retrieving[pathname]) {
+      const promise = this.api.retrieveAll().then(all => {
+        const retrieved = new Map<string, T>();
+        for (const storable of all) {
+          retrieved.set(storable.id, storable);
+        }
+        return retrieved;
+      });
+
+      promise.then(retrieved => {
+        for (const [key, value] of retrieved.entries()) {
+          this.cache.set(key, value);
+        }
+        this.notifyListeners();
+        this.fetchedPaths.push(pathname);
+      });
+
+      this.retrieving[pathname] = promise;
+    }
+
+    return this.retrieving[pathname];
   }
 
-  private retrieving: Promise<Array<T>> | null = null;
+  private fetchedPaths: string[] = [];
+  private retrieving: Record<string, Promise<Map<string, T>>> = {};
 }

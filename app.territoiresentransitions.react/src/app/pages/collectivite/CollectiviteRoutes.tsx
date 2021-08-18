@@ -5,6 +5,8 @@ import {
   ReferentielsPage,
 } from 'app/pages/index';
 import {useActions} from 'core-logic/overmind';
+import {PlanActionPage} from 'app/pages/collectivite/PlanActions/PlanActionsPage';
+import {FicheActionPage} from 'app/pages/collectivite/PlanActions/FicheActionPage';
 
 /**
  * Routes starting with collectivite/:epciId/ see App.ts Router.
@@ -22,7 +24,7 @@ export const CollectiviteRoutes = () => {
   // }
   return (
     <>
-      <Route path={`${path}/actions_referentiels/`}>
+      <Route path={`${path}/referentiels/`}>
         <ReferentielsPage />
       </Route>
       <Route path={`${path}/action/:referentiel/:actionId`}>
@@ -30,6 +32,12 @@ export const CollectiviteRoutes = () => {
       </Route>
       <Route path={`${path}/indicateurs/`}>
         <IndicateursPage />
+      </Route>
+      <Route path={`${path}/plan_actions/`}>
+        <PlanActionPage />
+      </Route>
+      <Route path={`${path}/fiche/:ficheUid`}>
+        <FicheActionPage />
       </Route>
     </>
   );

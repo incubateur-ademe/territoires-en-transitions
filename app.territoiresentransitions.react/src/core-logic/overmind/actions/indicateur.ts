@@ -1,12 +1,15 @@
-import {IndicateurValueStorable} from '../../../storables/IndicateurValueStorable';
-import {ENV} from '../../../environmentVariables';
+import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
+import {ENV} from 'environmentVariables';
 import {
   IndicateurValue,
   IndicateurValueInterface,
-} from '../../../generated/models/indicateur_value';
-import {getCurrentEpciId} from '../../api/currentEpci';
-import {defaultAuthorization, ReactiveStore} from '../../api/reactiveStore';
-import {State} from '../state';
+} from 'generated/models/indicateur_value';
+import {getCurrentEpciId} from 'core-logic/api/currentEpci';
+import {
+  defaultAuthorization,
+  ReactiveStore,
+} from 'core-logic/api/reactiveStore';
+import {State} from 'core-logic/overmind/state';
 
 const indicateurValueStore = new ReactiveStore<IndicateurValueStorable, State>({
   host: ENV.backendHost,

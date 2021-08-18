@@ -10,7 +10,7 @@ type LabeledTextInputProps = {
 };
 
 /**
- * A text input with a label on top
+ * A text input with a label on top, to be used with Formik.
  *
  * One can use the label prop to display an _unstyled_ text on top of the textarea.
  * In order to style the label text, a child element should be passed instead.
