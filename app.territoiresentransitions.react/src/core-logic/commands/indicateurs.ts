@@ -7,7 +7,7 @@ import {
 import {IndicateurPersonnaliseValueStorable} from 'storables/IndicateurPersonnaliseValueStorable';
 import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
-import {IndicateurPersonnaliseStorable} from '../../storables/IndicateurPersonnaliseStorable';
+import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 
 const getIndicateurReferentielValue = (indicateurId: string) =>
   indicateurValueStore.retrieveById(indicateurId);
@@ -35,7 +35,7 @@ const storeIndicateurReferentielCommentaire = (
   storable: IndicateurReferentielCommentaireStorable
 ) => indicateurReferentielCommentaireStore.store(storable);
 
-export const indicateurCommands = {
+export const indicateurs = {
   getIndicateurReferentielValue,
   storeIndicateurReferentielValue,
 

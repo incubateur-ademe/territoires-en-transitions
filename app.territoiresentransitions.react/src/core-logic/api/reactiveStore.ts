@@ -2,53 +2,14 @@ import {isStorable, Storable} from './storable';
 
 import {APIEndpoint} from './apiEndpoint';
 import {currentAccessToken} from './authentication';
-
-type voidCallback = () => void;
+import {ChangeNotifier} from 'core-logic/api/reactivity';
 
 export const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
 
 /**
- * Allow to subscribe to changes at a given path so Hooks can be made.
- */
-class PathNotifier {
-  private _listeners: Map<string, voidCallback[]> = new Map<
-    string,
-    voidCallback[]
-  >();
-
-  public notifyListeners = (path: string): void => {
-    for (const [key, listeners] of this._listeners) {
-      if (key.startsWith(path)) {
-        for (const listener of listeners) {
-          listener();
-        }
-      }
-    }
-  };
-  public subscribeToPath = (path: string, listener: voidCallback): void => {
-    if (this._listeners.has(path)) {
-      this._listeners.get(path)!.push(listener);
-    } else {
-      this._listeners.set(path, [listener]);
-    }
-  };
-
-  public removeListener = (path: string, listener: voidCallback): void => {
-    if (this._listeners.has(path)) {
-      const filtered = this._listeners.get(path)!.filter(l => l !== listener);
-      if (filtered.length) {
-        this._listeners.set(path, filtered);
-      } else {
-        this._listeners.delete(path);
-      }
-    }
-  };
-}
-
-/**
  * A subscribable store with an external cache.
  */
-export class ReactiveStore<T extends Storable, S> extends PathNotifier {
+export class ReactiveStore<T extends Storable, S> extends ChangeNotifier {
   constructor({
     host,
     endpoint,
@@ -166,7 +127,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
    */
   async deleteById({state}: {state: S}, id: string): Promise<boolean> {
     const deleted = await this.api.deleteById(this.stripId(id));
-    await this.removeFromCache(state, id);
+    await this.removeFromCache(state, id, true);
     return deleted;
   }
 
@@ -197,13 +158,20 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
   }
 
   private async writeInCache(state: S, storable: T): Promise<T> {
-    await this.removeFromCache(state, storable.id);
+    await this.removeFromCache(state, storable.id, false);
     this.stateAccessor(state).set(storable.id, storable);
+    this.notifyListeners();
     return storable;
   }
 
-  private async removeFromCache(state: S, id: string): Promise<boolean> {
-    return this.stateAccessor(state).delete(id);
+  private async removeFromCache(
+    state: S,
+    id: string,
+    notify: boolean
+  ): Promise<boolean> {
+    const deleted = this.stateAccessor(state).delete(id);
+    if (notify) this.notifyListeners();
+    return deleted;
   }
 
   private async getCache(state: S): Promise<Map<string, T>> {
@@ -228,6 +196,7 @@ export class ReactiveStore<T extends Storable, S> extends PathNotifier {
         for (const [key, value] of retrieved.entries()) {
           cache.set(key, value);
         }
+        this.notifyListeners();
         this.fetchedPaths.push(pathname);
       });
 
