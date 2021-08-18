@@ -1,7 +1,8 @@
 import {signInRedirect} from 'core-logic/api/authRedirect';
 
 /**
- * Redirects to the ADEME keycloak sign in form.
+ * Redirects to the ADEME keycloak sign in form,
+ * one could use the signInRedirect() directly.
  *
  * Then keycloak will redirect to `auth/redirect/`
  */

@@ -1,5 +1,8 @@
 import {connected, currentUser} from 'core-logic/api/authentication';
 
+/**
+ * Allows to check current user identity. Not used for now.
+ */
 export const IdentityPage = () => {
   const isConnected = connected();
   const user = currentUser();

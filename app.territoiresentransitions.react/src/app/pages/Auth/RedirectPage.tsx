@@ -4,6 +4,11 @@ import {saveTokens} from 'core-logic/api/authentication';
 
 type RedirectState = 'fetching' | 'ok' | 'error';
 
+/**
+ * This is where we land after a successful login attempt on ADEME keycloak.
+ *
+ * We exchange the code for an access token using our API.
+ */
 export const RedirectPage = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');

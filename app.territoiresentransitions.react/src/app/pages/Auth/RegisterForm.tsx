@@ -18,6 +18,9 @@ export interface InscriptionFormData {
 
 type FormState = 'ready' | 'success' | 'failure';
 
+/**
+ * The user registration form.
+ */
 const RegistrationForm = () => {
   const [state, setState] = useState<FormState>('ready');
   const [errorMessage, setErrorMessage] = useState<string>('');
