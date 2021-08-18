@@ -7,6 +7,8 @@ import {v4 as uuid} from 'uuid';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
+import {flattenActions} from 'app/utils/actions';
+import {actions} from 'generated/data/referentiels';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -45,7 +47,9 @@ const top100Films = [
 ];
 
 /**
- * A material UI
+ * A material UI tags field (multi picker)
+ *
+ * todo should use generics and be written as TagsField<T>.
  */
 const ActionsTagsField: FC<
   ActionsTagsFieldProps & TagsFieldProps & FieldProps
@@ -57,6 +61,9 @@ const ActionsTagsField: FC<
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
   const isTouched = touched[field.name];
+  const allActions = flattenActions(actions, true).sort((a, b) =>
+    a.id.localeCompare(b.id)
+  );
 
   return (
     <fieldset>
@@ -67,9 +74,13 @@ const ActionsTagsField: FC<
       <Autocomplete
         multiple
         id={htmlId}
-        options={top100Films}
-        getOptionLabel={option => option.title}
-        defaultValue={[top100Films[3]]}
+        options={allActions}
+        getOptionLabel={action =>
+          `${action.id.startsWith('eco') ? '♻' : '🌍'} ${
+            action.id_nomenclature
+          }. ${action.nom}`
+        }
+        defaultValue={props.selected}
         renderInput={params => (
           <TextField
             {...params}
