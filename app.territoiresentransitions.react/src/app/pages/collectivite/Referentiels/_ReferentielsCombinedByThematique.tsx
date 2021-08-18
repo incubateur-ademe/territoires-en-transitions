@@ -2,7 +2,7 @@ import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {thematiques} from 'generated/data/thematiques';
 import * as R from 'ramda';
 
-import 'app/pages/Epci/Referentiels/ArrowExpandable.css';
+import 'app/pages/collectivite/Referentiels/ArrowExpandable.css';
 import {ActionReferentielTitleCard} from 'ui/referentiels';
 
 const ThematiqueSectionCombined = ({

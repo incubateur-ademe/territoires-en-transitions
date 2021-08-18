@@ -5,7 +5,8 @@ import {renderLoader} from 'utils';
 import {useReferentielState} from 'core-logic/overmind/hooks';
 
 const ActionReferentielAvancement = lazy(
-  () => import('app/pages/Epci/Referentiels/ActionReferentielAvancement')
+  () =>
+    import('app/pages/collectivite/Referentiels/ActionReferentielAvancement')
 );
 
 export const ActionReferentielAvancementPage = () => {
