@@ -3,7 +3,7 @@ import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
 import {useAppState} from 'core-logic/overmind';
 import years from 'app/pages/collectivite/Indicateurs/years';
-import {commands} from 'core-logic/commands/commands';
+import {commands} from 'core-logic/commands';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 
 const ExpandPanel = (props: {content: string; title: string}) => (

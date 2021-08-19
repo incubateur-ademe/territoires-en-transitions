@@ -64,7 +64,7 @@ export const Footer = (props: FooterProps) => {
               <br />
               française
             </p>
-            <div className="fr-footer__logo fr-p-1w">
+            <div className="px-5">
               <picture>
                 <source
                   src="https://territoiresentransitions.fr/img/ademe.jpg 118w"
@@ -86,37 +86,38 @@ export const Footer = (props: FooterProps) => {
                 </p>
               </a>
             </div>
-          </div>
-          <div className="fr-footer__content">
-            {/* <!-- A small sentence in the footer to describe the service --> */}
-            {/* <slot name="description"></slot> */}
-            {props.description}
-            <ul className="fr-footer__content-list">
-              <li className="fr-footer__content-item">
-                <a
-                  className="fr-footer__content-link"
-                  href="https://www.ademe.fr/"
-                >
-                  ademe.fr
-                </a>
-              </li>
-              <li className="fr-footer__content-item">
-                <a
-                  className="fr-footer__content-link"
-                  href="https://beta.gouv.fr/"
-                >
-                  beta.gouv
-                </a>
-              </li>
-              <li className="fr-footer__content-item">
-                <a
-                  className="fr-footer__content-link"
-                  href="http://citergie.ademe.fr/"
-                >
-                  citergie.fr
-                </a>
-              </li>
-            </ul>
+
+            <div className="fr-footer__content">
+              {/* <!-- A small sentence in the footer to describe the service --> */}
+              {/* <slot name="description"></slot> */}
+              {props.description}
+              <ul className="fr-footer__content-list">
+                <li className="fr-footer__content-item">
+                  <a
+                    className="fr-footer__content-link"
+                    href="https://www.ademe.fr/"
+                  >
+                    ademe.fr
+                  </a>
+                </li>
+                <li className="fr-footer__content-item">
+                  <a
+                    className="fr-footer__content-link"
+                    href="https://beta.gouv.fr/"
+                  >
+                    beta.gouv
+                  </a>
+                </li>
+                <li className="fr-footer__content-item">
+                  <a
+                    className="fr-footer__content-link"
+                    href="http://citergie.ademe.fr/"
+                  >
+                    citergie.fr
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         {props.navigation}

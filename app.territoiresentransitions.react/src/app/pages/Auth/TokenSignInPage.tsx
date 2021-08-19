@@ -64,10 +64,7 @@ export const TokenSignInPage = () => {
                   en tant que {user.prenom} {user.nom} ({user.email})
                 </p>
               )}
-              <button
-                className="fr-btn--secondary fr-btn--sm"
-                onClick={disconnect}
-              >
+              <button className="fr-btn" onClick={disconnect}>
                 Se déconnecter
               </button>
             </>
@@ -81,11 +78,11 @@ export const TokenSignInPage = () => {
           <h1 className="fr-h1">Connexion dummy</h1>
           <p>
             Permet d'utiliser le dummy token pour le développement en local. Il
-            faut que l'API ai la variable <code>AUTH_DISABLED_DUMMY_USER</code>
+            faut que l'API aie la variable <code>AUTH_DISABLED_DUMMY_USER</code>
             <span> égale à </span>
             <code>YES</code>
           </p>
-          <button className="fr-btn--secondary fr-btn--sm" onClick={dummy}>
+          <button className="fr-btn" onClick={dummy}>
             Enregistrer dummy token
           </button>
         </section>
@@ -129,7 +126,7 @@ export const TokenSignInPage = () => {
                 </div>
                 <Field name="refreshToken" as="textarea" />
                 <div className="p-5" />
-                <button type="submit" className="fr-btn--secondary fr-btn--sm">
+                <button type="submit" className="fr-btn">
                   Enregistrer
                 </button>
               </Form>
