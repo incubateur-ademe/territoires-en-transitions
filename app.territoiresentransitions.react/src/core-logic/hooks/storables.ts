@@ -2,6 +2,19 @@ import {HybridStore} from 'core-logic/api/hybridStore';
 import {Storable} from 'core-logic/api/storable';
 import {useEffect, useState} from 'react';
 
+// Store hooks
+
+/**
+ * Use a single storable from a store.
+ *
+ * The function is O(n), should be ok for most of our use cases though.
+ *
+ *
+ * @param storableId the id of the storable, best use the static buildId
+ * methods to create an id from parameters rather than passing a string.
+ *
+ * @param store the store
+ */
 export function useStorable<T extends Storable>(
   storableId: string,
   store: HybridStore<T>
@@ -26,6 +39,13 @@ export function useStorable<T extends Storable>(
   return storable;
 }
 
+/**
+ * Use all the storable from a store.
+ *
+ * The function is O(n), should be ok for most of our use cases though.
+ *
+ * @param store the store
+ */
 export function useAllStorables<T extends Storable>(
   store: HybridStore<T>
 ): T[] {
@@ -48,6 +68,13 @@ export function useAllStorables<T extends Storable>(
   return storables;
 }
 
+/**
+ * Use all the storable from a store.
+ *
+ * The function is O(n), should be ok for most of our use cases though.
+ *
+ * @param store the store
+ */
 export function useAllStorablesAsMap<T extends Storable>(
   store: HybridStore<T>
 ): Map<string, T> {
