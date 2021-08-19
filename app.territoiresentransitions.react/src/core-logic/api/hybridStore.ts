@@ -193,6 +193,10 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
       });
 
       promise.then(retrieved => {
+        // todo multiple paths support.
+        this.cache.clear();
+        this.fetchedPaths.length = 0;
+
         for (const [key, value] of retrieved.entries()) {
           this.cache.set(key, value);
         }
