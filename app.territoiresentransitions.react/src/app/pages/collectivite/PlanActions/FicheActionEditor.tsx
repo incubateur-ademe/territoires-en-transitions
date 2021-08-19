@@ -1,7 +1,7 @@
 import {useParams} from 'react-router-dom';
 import {useFiche} from 'core-logic/hooks/fiches';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
-import {FicheActionForm} from 'app/pages/collectivite/PlanActions/FicheActionForm';
+import {FicheActionForm} from 'app/pages/collectivite/PlanActions/Form/FicheActionForm';
 import {FicheActionInterface} from 'generated/models/fiche_action';
 import {ficheActionStore} from 'core-logic/api/hybridStores';
 

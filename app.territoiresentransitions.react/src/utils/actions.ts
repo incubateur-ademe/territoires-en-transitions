@@ -12,3 +12,18 @@ export const flattenActions = (
 
   return flattened;
 };
+
+export const actionsById = (
+  actions: ActionReferentiel[]
+): Map<string, ActionReferentiel> => {
+  const results = new Map<string, ActionReferentiel>();
+  const append = (actions: ActionReferentiel[]) => {
+    for (const action of actions) {
+      results.set(action.id, action);
+      append(action.actions);
+    }
+  };
+  append(actions);
+
+  return results;
+};
