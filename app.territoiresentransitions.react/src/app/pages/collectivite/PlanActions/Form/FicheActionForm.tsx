@@ -1,14 +1,10 @@
 import {FicheActionInterface} from 'generated/models/fiche_action';
-import React, {FC, useState} from 'react';
+import React, {useState} from 'react';
 import * as Yup from 'yup';
-import {Field, FieldProps, Form, Formik} from 'formik';
+import {Field, Form, Formik} from 'formik';
 import LabeledTextField from 'ui/forms/LabeledTextField';
-import {v4 as uuid} from 'uuid';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextField from '@material-ui/core/TextField';
-import {ActionReferentiel} from 'generated/models/action_referentiel';
-import {flattenActions} from 'app/utils/actions';
-import {actions} from 'generated/data/referentiels';
+import {ActionsField} from 'app/pages/collectivite/PlanActions/Form/ActionsField';
+import {IndicateursField} from 'app/pages/collectivite/PlanActions/Form/IndicateursField';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -25,74 +21,6 @@ function onKeyDown(event: React.KeyboardEvent) {
     event.preventDefault();
   }
 }
-
-type TagsFieldProps = {
-  label: string;
-  id?: string;
-  hint?: string;
-};
-
-type ActionsTagsFieldProps = {
-  selected: ActionReferentiel[];
-};
-
-const top100Films = [
-  {title: 'The Shawshank Redemption', year: 1994},
-  {title: 'The Godfather', year: 1972},
-  {title: 'The Godfather: Part II', year: 1974},
-  {title: 'The Dark Knight', year: 2008},
-  {title: '12 Angry Men', year: 1957},
-  {title: "Schindler's List", year: 1993},
-  {title: 'Pulp Fiction', year: 1994},
-];
-
-/**
- * A material UI tags field (multi picker)
- *
- * todo should use generics and be written as TagsField<T>.
- */
-const ActionsTagsField: FC<
-  ActionsTagsFieldProps & TagsFieldProps & FieldProps
-> = ({
-  field, // { name, value, onChange, onBlur }
-  form: {touched, errors},
-  ...props
-}) => {
-  const htmlId = props.id ?? uuid();
-  const errorMessage = errors[field.name];
-  const isTouched = touched[field.name];
-  const allActions = flattenActions(actions, true).sort((a, b) =>
-    a.id.localeCompare(b.id)
-  );
-
-  return (
-    <fieldset>
-      <h3>yolo dodo</h3>
-      {!errorMessage && props.hint && <div className="hint">{props.hint}</div>}
-      {errorMessage && isTouched && <div className="hint">{errorMessage}</div>}
-
-      <Autocomplete
-        multiple
-        id={htmlId}
-        options={allActions}
-        getOptionLabel={action =>
-          `${action.id.startsWith('eco') ? '♻' : '🌍'} ${
-            action.id_nomenclature
-          }. ${action.nom}`
-        }
-        defaultValue={props.selected}
-        renderInput={params => (
-          <TextField
-            {...params}
-            variant="standard"
-            label={props.label}
-            placeholder={props.label}
-          />
-        )}
-      />
-    </fieldset>
-  );
-};
 
 /**
  * Used to edit a fiche.
@@ -222,7 +150,21 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
           <Field
             name="referentiel_action_ids"
             label="Actions du référentiel"
-            component={ActionsTagsField}
+            component={ActionsField}
+          />
+          <div className="p-5" />
+
+          <Field
+            name="referentiel_action_ids"
+            label="Actions du référentiel"
+            component={IndicateursField}
+          />
+          <div className="p-5" />
+
+          <Field
+            name="referentiel_indicateur_ids"
+            label="Indicateurs référentiel"
+            component={ActionsField}
           />
           <div className="p-5" />
 
