@@ -69,12 +69,21 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
   }
 
   /**
-   * Return all storable of type T existing at pathname.
+   * Return all storables of type T existing at pathname.
    * If nothing is found returns an empty record.
    */
   async retrieveAll(): Promise<Array<T>> {
     const all = await this.getCache();
     return [...all.values()];
+  }
+
+  /**
+   * Return all storables by id in map of type string, T existing at pathname.
+   * If nothing is found returns an empty record.
+   */
+  async retrieveAllAsMap(): Promise<Map<string, T>> {
+    const all = await this.getCache();
+    return new Map(all);
   }
 
   /**

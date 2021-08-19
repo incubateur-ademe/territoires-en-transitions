@@ -47,3 +47,32 @@ export function useAllStorables<T extends Storable>(
 
   return storables;
 }
+
+export function useAllStorablesAsMap<T extends Storable>(
+  store: HybridStore<T>
+): Map<string, T> {
+  const [storables, setStorables] = useState<Map<string, T>>(
+    new Map<string, T>()
+  );
+
+  useEffect(() => {
+    const listener = async () => {
+      const storables = await store.retrieveAllAsMap();
+      setStorables(storables);
+    };
+    store.retrieveAllAsMap().then(all => {
+      for (const id of all.keys()) {
+        if (storables.get(id) !== all.get(id)) {
+          setStorables(all);
+          break;
+        }
+      }
+    });
+    store.addListener(listener);
+    return () => {
+      store.removeListener(listener);
+    };
+  });
+
+  return storables;
+}

@@ -12,7 +12,10 @@ const EpciNavigation = () => {
         </Link>
       </li>
       <li>
-        <Link className="fr-link" to={`/collectivite/${currentEpciId}/fiches`}>
+        <Link
+          className="fr-link"
+          to={`/collectivite/${currentEpciId}/plan_actions`}
+        >
           Mon plan d'actions
         </Link>
       </li>
