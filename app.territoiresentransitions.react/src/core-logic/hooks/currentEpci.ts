@@ -5,6 +5,5 @@ import {epciStore} from 'core-logic/api/hybridStores';
 
 export function useCurrentEpci(): EpciStorable | null {
   const epciId = useEpciId();
-  const epci = useStorable<EpciStorable>(epciId ?? '', epciStore);
-  return epci;
+  return useStorable<EpciStorable>(epciId ?? '', epciStore);
 }
