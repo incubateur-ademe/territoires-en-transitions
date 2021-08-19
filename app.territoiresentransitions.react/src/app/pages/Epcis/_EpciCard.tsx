@@ -16,7 +16,7 @@ export const EpciCard = ({epci}: EpciCardProps) => (
     <h3 className="fr-h3 mb-6">{epci.nom}</h3>
     <EpciCardLink
       label="Plan d'actions"
-      linkTo={`collectivite/${epci.id}/fiches`}
+      linkTo={`collectivite/${epci.id}/plan_actions`}
     />
     <EpciCardLink
       label="Référentiels"

@@ -5,6 +5,7 @@ import {Field, Form, Formik} from 'formik';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ActionsField} from 'app/pages/collectivite/PlanActions/Form/ActionsField';
 import {IndicateursField} from 'app/pages/collectivite/PlanActions/Form/IndicateursField';
+import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Form/IndicateursPersonnalisesField';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -155,16 +156,16 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
           <div className="p-5" />
 
           <Field
-            name="referentiel_action_ids"
-            label="Actions du référentiel"
+            name="referentiel_indicateur_ids"
+            label="Indicateurs du référentiel"
             component={IndicateursField}
           />
           <div className="p-5" />
 
           <Field
-            name="referentiel_indicateur_ids"
-            label="Indicateurs référentiel"
-            component={ActionsField}
+            name="indicateur_personnalise_ids"
+            label="Indicateurs personnalisés"
+            component={IndicateursPersonnalisesField}
           />
           <div className="p-5" />
 

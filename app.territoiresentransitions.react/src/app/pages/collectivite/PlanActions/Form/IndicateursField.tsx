@@ -47,7 +47,9 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
         options={allIndicateurIds}
         getOptionLabel={id => {
           const indicateur = allIndicateurs.get(id)!;
-          return `${indicateur.nom}`;
+          return `${indicateur.id.startsWith('eci') ? '♻' : '🌍'} ${
+            indicateur.id
+          }. ${indicateur.nom}`;
         }}
         value={field.value}
         onChange={(e, value) => {

@@ -3,14 +3,9 @@ import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import {indicateurs} from 'generated/data/indicateurs_referentiels';
-import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
-
-const indicateursById = () => {
-  const results = new Map<string, IndicateurReferentiel>();
-  indicateurs.forEach(indicateur => results.set(indicateur.id, indicateur));
-  return results;
-};
+import {useAllStorablesAsMap} from 'core-logic/hooks/storables';
+import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
+import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 
 type IndicateursFieldProps = {
   label: string;
@@ -29,14 +24,14 @@ export const IndicateursPersonnalisesField: FC<
   form: {touched, errors, setFieldValue},
   ...props
 }) => {
+  const indicateurs = useAllStorablesAsMap<IndicateurPersonnaliseStorable>(
+    indicateurPersonnaliseStore
+  );
+  const allIndicateurIds = [...indicateurs.keys()];
+
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
   const isTouched = touched[field.name];
-  const allIndicateurs = indicateursById();
-
-  const allIndicateurIds = indicateurs
-    .map(indicateur => indicateur.id)
-    .sort((a, b) => a.localeCompare(b));
 
   return (
     <fieldset>
@@ -48,10 +43,12 @@ export const IndicateursPersonnalisesField: FC<
         id={htmlId}
         options={allIndicateurIds}
         getOptionLabel={id => {
-          const indicateur = allIndicateurs.get(id)!;
-          return `${indicateur.nom}`;
+          const indicateur = indicateurs.get(id)!;
+          return `${
+            indicateur.custom_id ? '(' + indicateur.custom_id + ') ' : ''
+          } ${indicateur.nom}`;
         }}
-        value={field.value}
+        value={field.value as string[]}
         onChange={(e, value) => {
           setFieldValue(field.name, value);
         }}
