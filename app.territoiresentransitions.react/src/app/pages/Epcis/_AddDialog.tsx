@@ -27,10 +27,8 @@ export const AddDialog = (props: AddDialogProps) => {
       // Add rights.
       // const auth = await import("../../api/authentication");
       // await auth.addDroits(selectedEpciId, true);
-      await overmindActions.epcis.setCurrentEpci(selectedEpciId);
+      await overmindActions.epcis.addEpciToMyList(selectedEpciId);
     } else if (inputEpciNom.trim()) {
-      // await actions.createNewEpci({ state }, selectedEpciId);
-      await overmindActions.epcis.setCurrentEpci(selectedEpciId);
       // Create Epci
       await overmindActions.epcis.createNewEpci(inputEpciNom);
     }

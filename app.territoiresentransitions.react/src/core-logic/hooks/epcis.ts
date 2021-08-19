@@ -3,12 +3,14 @@ import {currentUtilisateurDroits} from 'core-logic/api/authentication';
 import {EpciStorable} from 'storables/EpciStorable';
 import {useAllStorables} from 'core-logic/hooks/storables';
 import {epciStore} from 'core-logic/api/hybridStores';
+import {useDroits} from 'core-logic/hooks/authentication';
 
 /**
  * Returns the list of epcis owned by the current user.
  */
 export function currentUserEpcis(): EpciStorable[] {
   const all = allSortedEpcis();
+  const droits = useDroits();
   const [epcis, setEpcis] = useState<EpciStorable[]>([]);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export function currentUserEpcis(): EpciStorable[] {
         if (!writable.every(s => epcis.includes(s))) setEpcis(writable);
       }
     });
-  }, [epcis, all]);
+  }, [epcis, all, droits]);
 
   return epcis;
 }

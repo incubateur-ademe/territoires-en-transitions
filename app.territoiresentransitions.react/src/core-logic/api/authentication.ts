@@ -4,8 +4,24 @@ import {utilisateurConnecteStore} from './localStore';
 import type {UtilisateurDroitsInterface} from 'generated/models/utilisateur_droits';
 import {UtilisateurDroits} from 'generated/models/utilisateur_droits';
 import {ENV} from 'environmentVariables';
+import {ChangeNotifier} from 'core-logic/api/reactivity';
 
 const _dummyToken = 'xx';
+
+class Authentication extends ChangeNotifier {
+  get currentUtilisateurDroits(): UtilisateurDroits[] {
+    return this._currentUtilisateurDroits;
+  }
+
+  set currentUtilisateurDroits(value: UtilisateurDroits[]) {
+    this._currentUtilisateurDroits = value;
+    this.notifyListeners();
+  }
+
+  private _currentUtilisateurDroits: UtilisateurDroits[] = [];
+}
+
+export const auth = new Authentication();
 
 /**
  * Save fake tokens, the user will be connected until replaced.
@@ -120,9 +136,12 @@ export const currentUtilisateurDroits = async (): Promise<
 
   const data = (await response.json()) as UtilisateurDroitsInterface[];
 
-  return data.map<UtilisateurDroits>(
+  const droits = data.map<UtilisateurDroits>(
     serialized => new UtilisateurDroits(serialized)
   );
+
+  auth.currentUtilisateurDroits = droits;
+  return droits;
 };
 
 /**
@@ -153,6 +172,13 @@ export const addDroits = async (
     },
     body: JSON.stringify(droits),
   });
+
+  if (response.ok) {
+    auth.currentUtilisateurDroits = [
+      new UtilisateurDroits(droits),
+      ...auth.currentUtilisateurDroits,
+    ];
+  }
 
   return response.ok;
 };

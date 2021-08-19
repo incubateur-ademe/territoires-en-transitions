@@ -12,16 +12,18 @@ const EpciCardLink = (props: {label: string; linkTo: string}) => (
 
 type EpciCardProps = {epci: EpciStorable};
 export const EpciCard = ({epci}: EpciCardProps) => (
-  <div className="flex flex-col items-center pt-8 pr-6 pb-6">
-    <h3 className="fr-h3 mb-6">{epci.nom}</h3>
+  <div className="flex flex-col items-center pt-4 pr-6 pb-10 bg-gray-50">
+    <h3 className="fr-h3 pb-6 text-center ">{epci.nom}</h3>
     <EpciCardLink
       label="Plan d'actions"
       linkTo={`collectivite/${epci.id}/plan_actions`}
     />
+    <div className="pb-3" />
     <EpciCardLink
       label="Référentiels"
       linkTo={`collectivite/${epci.id}/referentiels`}
     />
+    <div className="pb-3" />
     <EpciCardLink
       label="Indicateurs"
       linkTo={`collectivite/${epci.id}/indicateurs`}
