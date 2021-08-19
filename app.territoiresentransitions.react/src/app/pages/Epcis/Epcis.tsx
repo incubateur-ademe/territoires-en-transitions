@@ -10,26 +10,9 @@ import {useActions, useAppState} from 'core-logic/overmind';
 import {EpciCard} from 'app/pages/Epcis/_EpciCard';
 import {allSortedEpcis, currentUserEpcis} from 'core-logic/hooks';
 
-const useStyle = makeStyles({
-  card: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '2rem 1.5rem 1.125rem',
-    backgroundColor: 'var(--beige)',
-    borderBottom: '4px solid var(--bf500)', // var(--bf500)
-    flexDirection: 'column',
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-    gridGap: '3rem',
-  },
-});
-
 const Epcis = () => {
   const usersEpcis = currentUserEpcis();
   const allEpcis = allSortedEpcis();
-  const classes = useStyle();
   const [addEpciDialogOpen, setAddEpciDialogOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -37,22 +20,19 @@ const Epcis = () => {
   };
 
   return (
-    <div className="app fr-container mx-5 mt-5">
+    <div className="app fr-container m-5">
       <section>
         <h1 className="fr-h1 mb-16 text-center">Bienvenue !</h1>
 
         <h2 className="fr-h2 mb-20 text-center">Vos collectivités</h2>
 
-        <div className={classes.grid}>
-          <div className={classes.card}>
+        <div className="grid grid-cols-4 gap-3">
+          <div className="flex flex-col items-center pt-4 pr-6 pb-10 bg-gray-50">
             <h3 className="fr-h3">…</h3>
             <button className="fr-btn fr-btn--sm" onClick={handleClickOpen}>
               Ajouter ma collectivité
             </button>
           </div>
-        </div>
-
-        <div className={classes.grid}>
           {usersEpcis.map(epci => (
             <EpciCard epci={epci} key={epci.id} />
           ))}
@@ -60,11 +40,11 @@ const Epcis = () => {
       </section>
 
       <section>
-        <h2 className="fr-h2 mb-20 text-center">
+        <h2 className="fr-h2 pt-20 pb-10 text-center">
           Consulter toutes les collectivités
         </h2>
 
-        <div className={classes.grid}>
+        <div className="grid grid-cols-4 gap-3">
           {allEpcis.map(epci => (
             <EpciCard epci={epci} key={epci.id} />
           ))}
