@@ -8,6 +8,7 @@ import {makeStyles} from '@material-ui/core';
 import React, {useEffect} from 'react';
 import {useActions, useAppState} from 'core-logic/overmind';
 import {EpciCard} from 'app/pages/Epcis/_EpciCard';
+import {allSortedEpcis, currentUserEpcis} from 'core-logic/hooks';
 
 const useStyle = makeStyles({
   card: {
@@ -26,12 +27,8 @@ const useStyle = makeStyles({
 });
 
 const Epcis = () => {
-  const overmindActions = useActions();
-  useEffect(() => {
-    // Equivalent to componentDidMount and componentDidUpdate : fetch API State on Mount (TODO : fetch again when epciId changes... )
-    overmindActions.epcis.fetchAllEpcisFromApi();
-  }, []);
-
+  const usersEpcis = currentUserEpcis();
+  const allEpcis = allSortedEpcis();
   const classes = useStyle();
   const [addEpciDialogOpen, setAddEpciDialogOpen] = React.useState(false);
 
@@ -40,7 +37,7 @@ const Epcis = () => {
   };
 
   return (
-    <div className="app mx-5 mt-5">
+    <div className="app fr-container mx-5 mt-5">
       <section>
         <h1 className="fr-h1 mb-16 text-center">Bienvenue !</h1>
 
@@ -54,6 +51,12 @@ const Epcis = () => {
             </button>
           </div>
         </div>
+
+        <div className={classes.grid}>
+          {usersEpcis.map(epci => (
+            <EpciCard epci={epci} key={epci.id} />
+          ))}
+        </div>
       </section>
 
       <section>
@@ -62,13 +65,13 @@ const Epcis = () => {
         </h2>
 
         <div className={classes.grid}>
-          {useAppState().allEpcis.map(epci => (
+          {allEpcis.map(epci => (
             <EpciCard epci={epci} key={epci.id} />
           ))}
         </div>
       </section>
       <AddDialog
-        epcis={useAppState().allEpcis}
+        epcis={allEpcis}
         open={addEpciDialogOpen}
         close={() => {
           setAddEpciDialogOpen(false);

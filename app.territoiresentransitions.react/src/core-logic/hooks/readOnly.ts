@@ -2,6 +2,9 @@ import {useEpciId} from 'core-logic/hooks/params';
 import {useEffect, useState} from 'react';
 import {currentUtilisateurDroits} from 'core-logic/api/authentication';
 
+/**
+ * Returns true if the current user have no rights over the current epci.
+ */
 export function useReadOnly(): boolean {
   const epciId = useEpciId();
   const [readOnly, setReadOnly] = useState<boolean>(false);
