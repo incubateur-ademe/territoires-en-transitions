@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
-import {commands} from 'core-logic/commands/commands';
+import {commands} from 'core-logic/commands';
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
 
 export const IndicateurPersonnaliseList = () => {

@@ -18,7 +18,7 @@ const ActionReferentielAvancement = ({
 }) => {
   const action = searchById(referentielActions, actionId);
   if (!action) {
-    return <Link to="./actions_referentiels"></Link>;
+    return <Link to="./referentiels"></Link>;
   }
   return (
     <div>

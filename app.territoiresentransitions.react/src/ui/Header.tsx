@@ -2,6 +2,7 @@ import 'app/DesignSystem/header.css';
 import 'app/DesignSystem/logo.css';
 
 import React from 'react';
+import {useReadOnly} from 'core-logic/hooks/readOnly';
 
 export type HeaderProps = {
   nav: React.ReactElement;
@@ -9,8 +10,10 @@ export type HeaderProps = {
 };
 
 export const Header = (props: HeaderProps) => {
+  const readOnly = useReadOnly();
+
   return (
-    <header role="banner" className="header fr-header">
+    <header role="banner" className="header fr-header ">
       <div className="fr-container">
         <div className="fr-header__body-row header__row">
           <div className="fr-header__brand fr-enlarge-link">
@@ -69,6 +72,12 @@ export const Header = (props: HeaderProps) => {
         and sandbox. */}
 
       {props.secondary}
+
+      {readOnly && (
+        <div className="absolute h-8 px-4 top-0 right-0 bg-yellow-400">
+          <p>lecture seule</p>
+        </div>
+      )}
     </header>
   );
 };

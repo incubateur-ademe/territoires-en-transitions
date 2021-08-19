@@ -1,40 +1,27 @@
 import {Link, useParams} from 'react-router-dom';
-import {useAppState} from 'core-logic/overmind';
+import {useEpciId} from 'core-logic/hooks';
+import {useCurrentEpci} from 'core-logic/hooks';
 
 const EpciNavigation = () => {
-  const currentEpciId = useAppState().currentEpciId;
+  const epciId = useEpciId();
+  const epci = useCurrentEpci();
 
   return (
     <>
-      <li>
-        <Link className="fr-link" to="/epcis">
-          Changer
-        </Link>
-      </li>
-      <li>
-        <Link
-          className="fr-link"
-          to={`/collectivite/${currentEpciId}/plan_actions`}
-        >
-          Mon plan d'actions
-        </Link>
-      </li>
-      <li>
-        <Link
-          className="fr-link"
-          to={`/collectivite/${currentEpciId}/actions_referentiels`}
-        >
-          Référentiels
-        </Link>
-      </li>
-      <li>
-        <Link
-          className="fr-link"
-          to={`/collectivite/${currentEpciId}/indicateurs`}
-        >
-          Indicateurs
-        </Link>
-      </li>
+      {epci && <span>{epci.nom}</span>}
+      <Link className="fr-link" to="/epcis">
+        Changer
+      </Link>
+
+      <Link className="fr-link" to={`/collectivite/${epciId}/plan_actions`}>
+        Mon plan d'actions
+      </Link>
+      <Link className="fr-link" to={`/collectivite/${epciId}/referentiels`}>
+        Référentiels
+      </Link>
+      <Link className="fr-link" to={`/collectivite/${epciId}/indicateurs`}>
+        Indicateurs
+      </Link>
     </>
   );
 };
@@ -42,17 +29,15 @@ const EpciNavigation = () => {
 export const Navigation = () => {
   const {epciId} = useParams<{epciId: string}>();
   const isEpciRoute = !!epciId;
-
   return (
     <div className="fr-header__tools">
       <div className="fr-header__tools-links">
-        <ul className="fr-links-group">
+        <ul className="fr-links-group pt-5">
           {isEpciRoute && <EpciNavigation />}
-          <li>
-            <Link className="fr-link" to="/auth/signout">
-              Déconnexion
-            </Link>
-          </li>
+
+          <Link className="fr-link" to="/auth/signout">
+            Déconnexion
+          </Link>
         </ul>
       </div>
     </div>

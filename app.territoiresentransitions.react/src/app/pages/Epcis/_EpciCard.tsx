@@ -20,7 +20,7 @@ export const EpciCard = ({epci}: EpciCardProps) => (
     />
     <EpciCardLink
       label="Référentiels"
-      linkTo={`collectivite/${epci.id}/actions_referentiels`}
+      linkTo={`collectivite/${epci.id}/referentiels`}
     />
     <EpciCardLink
       label="Indicateurs"

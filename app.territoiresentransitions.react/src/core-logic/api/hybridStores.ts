@@ -3,7 +3,6 @@ import {
   IndicateurValue,
   IndicateurValueInterface,
 } from 'generated/models/indicateur_value';
-import {getCurrentEpciId} from './currentEpci';
 import {
   ActionStatus,
   ActionStatusInterface,
@@ -40,6 +39,7 @@ import type {ActionReferentielScoreInterface} from 'generated/models/action_refe
 import {ActionMetaStorable} from 'storables/ActionMetaStorable';
 import {ActionMeta, ActionMetaInterface} from 'generated/models/action_meta';
 import {ENV} from 'environmentVariables';
+import {getCurrentEpciId} from 'core-logic/api/currentEpci';
 
 const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
 
