@@ -6,8 +6,8 @@
  */
 export const getCurrentEpciId = (): string | undefined => {
   const parts = window.location.pathname.split('/');
-  if (parts.length > 1 && parts[0] === 'collectivite') {
-    return parts[1];
+  if (parts.length > 2 && parts[1] === 'collectivite') {
+    return parts[2];
   }
   return;
 };

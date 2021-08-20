@@ -8,12 +8,12 @@ export function useDroits(): UtilisateurDroits[] {
   useEffect(() => {
     const listener = async () => {
       const droitsJson = droits.map(d => JSON.stringify(d));
-      const currentJson = auth.currentUtilisateurDroits.map(d =>
+      const currentJson = auth.currentUtilisateurDroits!.map(d =>
         JSON.stringify(d)
       );
       if (!currentJson.every(s => droitsJson.includes(s))) {
         console.log(currentJson, droitsJson);
-        setDroits(auth.currentUtilisateurDroits);
+        setDroits(auth.currentUtilisateurDroits!);
       }
     };
     currentUtilisateurDroits();
