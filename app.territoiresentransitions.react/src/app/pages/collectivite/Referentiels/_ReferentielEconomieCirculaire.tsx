@@ -7,7 +7,7 @@ const AxisSectionEconomieCirculaire = ({axis}: {axis: ActionReferentiel}) => (
       {axis.id_nomenclature} {axis.nom}
     </h2>
     <ProgressStat action={axis} position="left" className="w-full" />
-    <div className="h-16" />
+    <div className="h-5" />
     {axis.actions.map(action => (
       <ActionReferentielTitleCard
         action={action}

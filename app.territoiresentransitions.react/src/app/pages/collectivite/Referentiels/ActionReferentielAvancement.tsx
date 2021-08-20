@@ -21,7 +21,7 @@ const ActionReferentielAvancement = ({
     return <Link to="./referentiels"></Link>;
   }
   return (
-    <div>
+    <div className="fr-container">
       <div className="mt-8 mb-16">
         <div className="pt-8 flex justify-between items-center">
           <ActionReferentielTitle
