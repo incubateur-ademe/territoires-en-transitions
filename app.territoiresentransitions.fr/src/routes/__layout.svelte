@@ -44,18 +44,11 @@
 <div class="fr-container">
 
 	<p class="p-5">
-		⚠🐞⌛ Nous sommes actuellement en cours de migration de l’interface
-		de
-		l’application et de correction de bugs d’affichage. Vous pouvez
-		continuer à utiliser l’application. Il est possible que vous
-		rencontriez des bugs d’affichage.
-	</p>
-
-	<p class="p-5">
-		⚠🐞⌛ Les sessions de connexion sont limitées à 60 minutes. Au-delà,
-		reconnectez vous à l’application afin d’assurer l’enregistrement des
-		vos informations.
-
+		⚠🐞⌛ Migration technique et correction de bugs d'affichage en cours. Vous
+		pouvez continuer à utiliser l'application, il est possible que vous
+		rencontriez des bugs d'affichage. Les sessions sont limitées à 60 minutes.
+		Au-delà, reconnectez vous à l'application afin d'assurer l'enregistrement
+		des vos informations. ⌛🐞⚠
 	</p>
 </div>
 <Header>
