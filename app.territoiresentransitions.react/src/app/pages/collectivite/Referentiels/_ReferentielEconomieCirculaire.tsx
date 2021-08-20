@@ -2,7 +2,7 @@ import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {ProgressStat, ActionReferentielTitleCard} from 'ui/referentiels';
 
 const AxisSectionEconomieCirculaire = ({axis}: {axis: ActionReferentiel}) => (
-  <div>
+  <div className="pb-10">
     <h2 className="fr-h2">
       {axis.id_nomenclature} {axis.nom}
     </h2>

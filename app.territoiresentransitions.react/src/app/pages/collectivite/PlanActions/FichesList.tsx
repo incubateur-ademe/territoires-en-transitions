@@ -60,7 +60,7 @@ const FichesList = () => {
     <main className="fr-container">
       <header className="flex justify-between items-center ">
         <h2>Plan d'actions de ma collectivité</h2>
-        <Link className="fr-btn" to={`/collectivite/${epciId}/nouvelle_fiche`}>
+        <Link className="fr-btn " to={`/collectivite/${epciId}/nouvelle_fiche`}>
           Ajouter une fiche action
         </Link>
       </header>

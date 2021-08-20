@@ -80,6 +80,8 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
           />
           <div className="p-5" />
 
+          <div className="bg-yellow-400 w-1/2 m-5">catégorie</div>
+
           <Field
             name="description"
             label="Description"
@@ -160,6 +162,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             label="Actions du référentiel"
             component={ActionsField}
           />
+          <span className="bg-yellow-400">todo cartes actions</span>
           <div className="p-5" />
 
           <Field
@@ -167,6 +170,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             label="Indicateurs du référentiel"
             component={IndicateursField}
           />
+          <span className="bg-yellow-400">todo cartes indicateurs</span>
           <div className="p-5" />
 
           <Field
@@ -174,11 +178,14 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             label="Indicateurs personnalisés"
             component={IndicateursPersonnalisesField}
           />
+          <button className="bg-yellow-400">todo créer un indicateur</button>
+          <span className="bg-yellow-400">todo cartes indicateurs perso</span>
           <div className="p-5" />
 
           <button className="fr-btn" type="submit">
             Enregistrer
           </button>
+          <span className="bg-yellow-400">todo config validation</span>
         </Form>
       )}
     </Formik>

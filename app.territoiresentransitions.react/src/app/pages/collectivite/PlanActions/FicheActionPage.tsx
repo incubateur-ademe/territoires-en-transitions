@@ -12,7 +12,7 @@ export const FicheActionPage = () => {
   return (
     <div className="my-5 flex flex-col">
       <Suspense fallback={renderLoader()}>
-        <FicheActionEditor />;
+        <FicheActionEditor />
       </Suspense>
     </div>
   );
