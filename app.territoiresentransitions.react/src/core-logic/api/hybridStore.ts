@@ -34,15 +34,6 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
       deserializer: this.deserializer,
       authorization: authorization,
     });
-
-    /*
-        todo use local store for caching
-        this.local = new LocalStore<T>({
-            pathname: this.pathname(),
-            serializer: this.serializer,
-            deserializer: this.deserializer
-        });
-        */
   }
 
   host: string;

@@ -8,6 +8,8 @@ export const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
 
 /**
  * A subscribable store with an external cache.
+ *
+ * todo: remove Bad idea not used
  */
 export class ReactiveStore<T extends Storable, S> extends ChangeNotifier {
   constructor({
