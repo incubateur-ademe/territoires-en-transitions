@@ -8,18 +8,18 @@ const EpciNavigation = () => {
 
   return (
     <>
-      {epci && <span>{epci.nom}</span>}
-      <Link className="fr-link" to="/epcis">
+      {epci && <span className="text-lg px-2">{epci.nom}</span>}
+      <Link className="px-2" to="/epcis">
         Changer
       </Link>
 
-      <Link className="fr-link" to={`/collectivite/${epciId}/plan_actions`}>
+      <Link className="px-2" to={`/collectivite/${epciId}/plan_actions`}>
         Mon plan d'actions
       </Link>
-      <Link className="fr-link" to={`/collectivite/${epciId}/referentiels`}>
+      <Link className="px-2" to={`/collectivite/${epciId}/referentiels`}>
         Référentiels
       </Link>
-      <Link className="fr-link" to={`/collectivite/${epciId}/indicateurs`}>
+      <Link className="px-2" to={`/collectivite/${epciId}/indicateurs`}>
         Indicateurs
       </Link>
     </>
@@ -32,10 +32,10 @@ export const Navigation = () => {
   return (
     <div className="fr-header__tools">
       <div className="fr-header__tools-links">
-        <ul className="fr-links-group pt-5">
+        <ul className="fr-links-group">
           {isEpciRoute && <EpciNavigation />}
 
-          <Link className="fr-link" to="/auth/signout">
+          <Link className="px-2" to="/auth/signout">
             Déconnexion
           </Link>
         </ul>

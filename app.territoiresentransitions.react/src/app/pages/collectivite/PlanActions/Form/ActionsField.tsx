@@ -39,6 +39,7 @@ export const ActionsField: FC<ActionsFieldProps & FieldProps> = ({
         multiple
         id={htmlId}
         options={allActionIds}
+        className="bg-beige"
         getOptionLabel={id => {
           const action = allActions.get(id)!;
           return `${action.id.startsWith('eco') ? '♻' : '🌍'} ${
@@ -52,7 +53,7 @@ export const ActionsField: FC<ActionsFieldProps & FieldProps> = ({
         renderInput={params => (
           <TextField
             {...params}
-            variant="standard"
+            variant="outlined"
             label={props.label}
             placeholder={props.label}
           />

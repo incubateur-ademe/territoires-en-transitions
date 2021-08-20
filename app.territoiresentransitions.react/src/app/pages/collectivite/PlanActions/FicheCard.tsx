@@ -1,7 +1,6 @@
 import {useEpciId} from 'core-logic/hooks';
 import {Link} from 'react-router-dom';
 import {FicheAction} from 'generated/models/fiche_action';
-import {fiche_action_avancement_noms} from 'generated/models/fiche_action_avancement_noms';
 import {Avancement} from 'types';
 
 type FicheCardProps = {

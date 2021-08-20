@@ -64,7 +64,7 @@ const FichesList = () => {
           Ajouter une fiche action
         </Link>
       </header>
-      <nav className="bg-yellow-200 p-5">
+      <nav className="bg-yellow-200 p-5 my-5">
         <section>todo filtres</section>
       </nav>
 

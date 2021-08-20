@@ -20,10 +20,11 @@ const FicheActionEditor = () => {
   };
 
   return (
-    <>
+    <main className="fr-container">
+      <h1>Ajouter une fiche action</h1>
       {fiche && <FicheActionForm fiche={fiche} onSave={save} />}
       {!fiche && <h2>Aucune fiche trouvée</h2>}
-    </>
+    </main>
   );
 };
 

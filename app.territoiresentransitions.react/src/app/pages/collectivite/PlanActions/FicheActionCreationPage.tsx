@@ -10,10 +10,8 @@ const FicheActionCreator = lazy(
  */
 export const FicheActionCreationPage = () => {
   return (
-    <div className="my-5 flex flex-col">
-      <Suspense fallback={renderLoader()}>
-        <FicheActionCreator />;
-      </Suspense>
-    </div>
+    <Suspense fallback={renderLoader()}>
+      <FicheActionCreator />;
+    </Suspense>
   );
 };

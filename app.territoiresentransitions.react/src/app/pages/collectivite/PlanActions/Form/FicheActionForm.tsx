@@ -83,6 +83,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
           <Field
             name="description"
             label="Description"
+            type="area"
             component={LabeledTextField}
           />
           <div className="p-5" />
@@ -129,21 +130,27 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
           />
           <div className="p-5" />
 
-          <fieldset>
-            <div className="calendar">
-              <div>
-                <label className="fr-label" htmlFor="fiche_create_debut">
-                  Date de début
-                </label>
-                <Field name="date_debut" type="date" className="fr-input" />
-              </div>
+          <fieldset className="flex flex-row">
+            <div className="flex flex-col mr-5">
+              <label className="fr-label mb-2" htmlFor="fiche_create_debut">
+                Date de début
+              </label>
+              <Field
+                name="date_debut"
+                type="date"
+                className="fr-input bg-beige p-3 border-b-2 border-gray-500"
+              />
+            </div>
 
-              <div>
-                <label className="fr-label" htmlFor="fiche_create_debut">
-                  Date de début
-                </label>
-                <Field name="date_fin" type="date" className="fr-input" />
-              </div>
+            <div className="flex flex-col mr-5">
+              <label className="fr-label mb-2" htmlFor="fiche_create_debut">
+                Date de début
+              </label>
+              <Field
+                name="date_fin"
+                type="date"
+                className="fr-input bg-beige p-3 border-b-2 border-gray-500"
+              />
             </div>
           </fieldset>
           <div className="p-5" />
@@ -169,7 +176,9 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
           />
           <div className="p-5" />
 
-          <button type="submit">Submit</button>
+          <button className="fr-btn" type="submit">
+            Enregistrer
+          </button>
         </Form>
       )}
     </Formik>

@@ -36,7 +36,11 @@ const FicheActionCreator = () => {
     // todo redirect to plan action
   };
 
-  return <FicheActionForm fiche={fiche} onSave={save} />;
+  return (
+    <main className="fr-container">
+      <FicheActionForm fiche={fiche} onSave={save} />;
+    </main>
+  );
 };
 
 export default FicheActionCreator;
