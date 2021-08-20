@@ -1,7 +1,7 @@
 import {ActionReferentielScoreInterface} from 'generated/models/action_referentiel_score';
 import {EpciStorable} from 'storables/EpciStorable';
 import {Avancement} from 'types';
-import {IndicateurValueStorable} from '../../storables/IndicateurValueStorable';
+import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
 import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
 

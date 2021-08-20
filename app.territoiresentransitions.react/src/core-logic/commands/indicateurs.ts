@@ -9,6 +9,10 @@ import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 
+/**
+ * todo remove getters and use hooks instead.
+ */
+
 const getIndicateurReferentielValue = (indicateurId: string) =>
   indicateurValueStore.retrieveById(indicateurId);
 
