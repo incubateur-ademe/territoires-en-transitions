@@ -22,6 +22,7 @@ import {
   UtilisateurConnecte,
   UtilisateurConnecteInterface,
 } from 'generated/models/utilisateur_connecte';
+import {ChangeNotifier} from 'core-logic/api/reactivity';
 
 /**
  * Get store by pathname from localStorage
@@ -46,7 +47,7 @@ const saveStore = (
 /**
  * A Store for Storable object using local storage.
  */
-export class LocalStore<T extends Storable> {
+export class LocalStore<T extends Storable> extends ChangeNotifier {
   constructor({
     pathname,
     serializer,
@@ -56,6 +57,7 @@ export class LocalStore<T extends Storable> {
     serializer: (storable: T) => object;
     deserializer: (serialized: object) => T;
   }) {
+    super();
     this.pathname = pathname;
     this.serializer = serializer;
     this.deserializer = deserializer;
@@ -71,13 +73,10 @@ export class LocalStore<T extends Storable> {
    * @param storable the object to save
    */
   store(storable: T): T {
-    if (!isStorable(storable)) {
-      throw new Error(`${typeof storable} is not storable.`);
-    }
-
     const store = getStore(this.pathname);
     store[storable.id] = storable;
     saveStore(this.pathname, store);
+    this.notifyListeners();
     return storable;
   }
 
@@ -118,6 +117,7 @@ export class LocalStore<T extends Storable> {
     if (!store[id]) return false;
     delete store[id];
     saveStore(this.pathname, store);
+    this.notifyListeners();
     return true;
   }
 

@@ -9,19 +9,23 @@ import {ChangeNotifier} from 'core-logic/api/reactivity';
 const _dummyToken = 'xx';
 
 class Authentication extends ChangeNotifier {
-  get currentUtilisateurDroits(): UtilisateurDroits[] {
+  get currentUtilisateurDroits(): UtilisateurDroits[] | null {
     return this._currentUtilisateurDroits;
   }
 
-  set currentUtilisateurDroits(value: UtilisateurDroits[]) {
+  set currentUtilisateurDroits(value: UtilisateurDroits[] | null) {
     this._currentUtilisateurDroits = value;
     this.notifyListeners();
   }
 
-  private _currentUtilisateurDroits: UtilisateurDroits[] = [];
+  private _currentUtilisateurDroits: UtilisateurDroits[] | null = [];
 }
 
 export const auth = new Authentication();
+
+utilisateurConnecteStore.addListener(() => {
+  auth.currentUtilisateurDroits = null;
+});
 
 /**
  * Save fake tokens, the user will be connected until replaced.
@@ -120,6 +124,11 @@ export const currentUtilisateurDroits = async (): Promise<
 > => {
   const user = currentUser();
   if (!user) return [];
+  if (droitsFetchedForUser === user.ademe_user_id) {
+    return auth.currentUtilisateurDroits;
+  }
+
+  droitsFetchedForUser = user.ademe_user_id;
   const token = currentAccessToken();
   const api = ENV.backendHost;
   const endpoint = 'v2/utilisateur_droits';
@@ -132,7 +141,10 @@ export const currentUtilisateurDroits = async (): Promise<
     },
   });
 
-  if (response.status === 404) return null; // Shouln't we raise instead?
+  if (!response.ok) {
+    droitsFetchedForUser = '';
+    return null;
+  } // we should raise
 
   const data = (await response.json()) as UtilisateurDroitsInterface[];
 
@@ -143,6 +155,9 @@ export const currentUtilisateurDroits = async (): Promise<
   auth.currentUtilisateurDroits = droits;
   return droits;
 };
+
+// todo should use memoization on fetch.
+let droitsFetchedForUser = '';
 
 /**
  * Add utilisateurs droits to our API, returns true on success.
@@ -174,10 +189,8 @@ export const addDroits = async (
   });
 
   if (response.ok) {
-    auth.currentUtilisateurDroits = [
-      new UtilisateurDroits(droits),
-      ...auth.currentUtilisateurDroits,
-    ];
+    const current = auth.currentUtilisateurDroits ?? [];
+    auth.currentUtilisateurDroits = [new UtilisateurDroits(droits), ...current];
   }
 
   return response.ok;
