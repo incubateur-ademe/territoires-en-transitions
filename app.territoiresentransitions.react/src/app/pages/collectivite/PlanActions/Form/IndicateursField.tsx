@@ -45,6 +45,7 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
         multiple
         id={htmlId}
         options={allIndicateurIds}
+        className="bg-beige"
         getOptionLabel={id => {
           const indicateur = allIndicateurs.get(id)!;
           return `${indicateur.id.startsWith('eci') ? '♻' : '🌍'} ${
@@ -58,7 +59,7 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
         renderInput={params => (
           <TextField
             {...params}
-            variant="standard"
+            variant="outlined"
             label={props.label}
             placeholder={props.label}
           />

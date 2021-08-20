@@ -42,6 +42,7 @@ export const IndicateursPersonnalisesField: FC<
         multiple
         id={htmlId}
         options={allIndicateurIds}
+        className="bg-beige"
         getOptionLabel={id => {
           const indicateur = indicateurs.get(id)!;
           return `${
@@ -55,7 +56,7 @@ export const IndicateursPersonnalisesField: FC<
         renderInput={params => (
           <TextField
             {...params}
-            variant="standard"
+            variant="outlined"
             label={props.label}
             placeholder={props.label}
           />

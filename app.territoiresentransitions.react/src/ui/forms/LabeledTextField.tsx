@@ -7,6 +7,7 @@ type LabeledTextInputProps = {
   id?: string;
   hint?: string;
   maxLength?: number;
+  type?: 'area' | 'text';
 };
 
 /**
@@ -25,22 +26,37 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
   const isTouched = touched[field.name];
 
   return (
-    <fieldset>
+    <div className="max-w-xl">
       <label className="fr-label" htmlFor={htmlId}>
         {props.label}
         <slot />
       </label>
 
-      {!errorMessage && props.hint && <div className="hint">{props.hint}</div>}
-      {errorMessage && isTouched && <div className="hint">{errorMessage}</div>}
+      {!errorMessage && props.hint && (
+        <div className="mt-2 text-sm opacity-80">{props.hint}</div>
+      )}
+      {errorMessage && isTouched && (
+        <div className="mt-2 text-sm opacity-80">{errorMessage}</div>
+      )}
 
-      <input
-        id={htmlId}
-        className="fr-input"
-        maxLength={props.maxLength}
-        {...field}
-      />
-    </fieldset>
+      {props.type !== 'area' && (
+        <input
+          id={htmlId}
+          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          maxLength={props.maxLength}
+          {...field}
+        />
+      )}
+
+      {props.type === 'area' && (
+        <textarea
+          id={htmlId}
+          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          maxLength={props.maxLength}
+          {...field}
+        />
+      )}
+    </div>
   );
 };
 
