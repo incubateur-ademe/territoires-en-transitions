@@ -29,7 +29,7 @@ export const ActionCommentaire = (props: {actionId: string}) => {
     <div className={'border-t border-b border-gray-300'}>
       <div className="CrossExpandPanel">
         <details>
-          <summary className="title">Commentaire</summary>
+          <summary className="title bg-yellow-400">todo Commentaire</summary>
           <textarea
             className="content w-full h-24 min-h-full overflow-scroll"
             value={commentaire} // TODO : fix me ! Ca ne marche pas quand on recharge la page, car le composant est monté avec une valeur par défaut vide, avant qu'il y ait le fetch via l'action fetchAllCommentaireFromApi

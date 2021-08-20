@@ -11,7 +11,7 @@ const FicheActionCreator = lazy(
 export const FicheActionCreationPage = () => {
   return (
     <Suspense fallback={renderLoader()}>
-      <FicheActionCreator />;
+      <FicheActionCreator />
     </Suspense>
   );
 };

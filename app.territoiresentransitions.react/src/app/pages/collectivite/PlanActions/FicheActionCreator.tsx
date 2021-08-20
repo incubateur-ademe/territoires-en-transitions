@@ -38,7 +38,8 @@ const FicheActionCreator = () => {
 
   return (
     <main className="fr-container">
-      <FicheActionForm fiche={fiche} onSave={save} />;
+      <h1 className="fr-h1 pt-5">Ajouter une fiche action</h1>
+      <FicheActionForm fiche={fiche} onSave={save} />
     </main>
   );
 };
