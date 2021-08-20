@@ -53,7 +53,7 @@ export const ActionsReferentiels = () => {
   const [view, setView] = React.useState<View>('eci');
 
   return (
-    <div className="mt-9 mb-16">
+    <main className="fr-container mt-9 mb-16">
       <div>
         <h1 className="fr-h1 mb-0">Référentiels</h1>
       </div>
@@ -65,8 +65,9 @@ export const ActionsReferentiels = () => {
           defaultValue="eci"
         />
       </div>
+      <div className="pb-5" />
       <ConditionnalActionsReferentiels view={view} />
-    </div>
+    </main>
   );
 };
 

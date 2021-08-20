@@ -16,7 +16,7 @@ export const ActionReferentielTitleCard = ({
   const displayProgressStat = referentiel === 'eci';
 
   return (
-    <article className="bg-white my-4">
+    <article className="bg-beige my-4">
       <Link
         to={`./action/${referentiel}/${action.id}`}
         className="LinkedCardHeader"
@@ -35,7 +35,7 @@ export const ActionReferentielTitleCard = ({
         </div>
         <div className="p-4 flex justify-between">
           <ActionReferentielTitle action={action} />
-          <div className="fr-fi-arrow-right-line text-bf500"></div>
+          <div className="fr-fi-arrow-right-line text-bf500" />
         </div>
       </Link>
       <div className="p-4 w-2/3">
