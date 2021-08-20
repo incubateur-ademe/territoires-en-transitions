@@ -10,17 +10,17 @@
 	import { page } from '$app/stores';
 	import { updateEpciIdAndFetchAll } from '$api/svelteStore';
 	import { getCurrentEpciId } from '$api/currentEpci';
-	
+
 
 	$: if ($page) {
 		asyncMatomo.trackPageView()
 	}
 
 	onMount(async () => {
-		asyncMatomo.trackPageView()
-		// Note that `getCurrentEpciId` method is deprecated to get rid of it everywhere, except here. 
-		const epciId = getCurrentEpciId() 
-		if (epciId) await updateEpciIdAndFetchAll(epciId)
+		asyncMatomo.trackPageView();
+		// Note that `getCurrentEpciId` method is deprecated to get rid of it everywhere, except here.
+		const epciId = getCurrentEpciId();
+		if (epciId) await updateEpciIdAndFetchAll(epciId);
 	})
 
 </script>
@@ -41,8 +41,25 @@
 <Tailwind />
 <Head/>
 <Matomo />
+<div class="fr-container">
+
+	<p class="p-5">
+		⚠🐞⌛ Nous sommes actuellement en cours de migration de l’interface
+		de
+		l’application et de correction de bugs d’affichage. Vous pouvez
+		continuer à utiliser l’application. Il est possible que vous
+		rencontriez des bugs d’affichage.
+	</p>
+
+	<p class="p-5">
+		⚠🐞⌛ Les sessions de connexion sont limitées à 60 minutes. Au-delà,
+		reconnectez vous à l’application afin d’assurer l’enregistrement des
+		vos informations.
+
+	</p>
+</div>
 <Header>
-	<Nav slot="nav"/>
+	<Nav slot="nav" />
 	<NavDev slot="secondary" />
 </Header>
 
