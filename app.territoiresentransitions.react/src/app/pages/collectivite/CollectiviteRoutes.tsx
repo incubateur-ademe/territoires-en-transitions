@@ -7,6 +7,7 @@ import {
 import {useActions} from 'core-logic/overmind';
 import {PlanActionPage} from 'app/pages/collectivite/PlanActions/PlanActionsPage';
 import {FicheActionPage} from 'app/pages/collectivite/PlanActions/FicheActionPage';
+import {FicheActionCreationPage} from 'app/pages/collectivite/PlanActions/FicheActionCreationPage';
 
 /**
  * Routes starting with collectivite/:epciId/ see App.ts Router.
@@ -38,6 +39,9 @@ export const CollectiviteRoutes = () => {
       </Route>
       <Route path={`${path}/fiche/:ficheUid`}>
         <FicheActionPage />
+      </Route>
+      <Route path={`${path}/nouvelle_fiche/`}>
+        <FicheActionCreationPage />
       </Route>
     </>
   );

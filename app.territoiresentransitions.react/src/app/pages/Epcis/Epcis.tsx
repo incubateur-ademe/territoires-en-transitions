@@ -27,7 +27,7 @@ const Epcis = () => {
         <h2 className="fr-h2 mb-20 text-center">Vos collectivités</h2>
 
         <div className="grid grid-cols-4 gap-3">
-          <div className="flex flex-col items-center pt-4 pr-6 pb-10 bg-gray-50">
+          <div className="flex flex-col items-center pt-4 pr-6 pb-10 bg-beige">
             <h3 className="fr-h3">…</h3>
             <button className="fr-btn fr-btn--sm" onClick={handleClickOpen}>
               Ajouter ma collectivité
