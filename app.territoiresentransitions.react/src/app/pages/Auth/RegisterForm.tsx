@@ -113,42 +113,54 @@ const RegistrationForm = () => {
   };
 
   return (
-    <main className="fr-container">
-      <Formik<InscriptionFormData>
-        initialValues={initialData}
-        validationSchema={validation}
-        onSubmit={register}
-      >
-        {() => (
-          <Form>
-            <h1 className="text-2xl">Créer un compte</h1>
-            <div className="pb-10" />
-            <Field name="email" label="Email" component={LabeledTextField} />
-            <div className="p-5" />
-            <Field name="nom" label="Prénom" component={LabeledTextField} />
-            <div className="p-5" />
-            <Field name="prenom" label="Nom" component={LabeledTextField} />
-            <div className="p-5" />
-            <label>
-              <Field type="checkbox" name="vie_privee_conditions" />
-              <span className="ml-2">
-                J'accepte la{' '}
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className=" text-blue-600"
-                  href={politique_vie_privee}
-                >
-                  politique de protection des données à caractère personnel de
-                  l'ADEME
-                </a>
-              </span>
-            </label>
-            <div className="p-5" />
-            <button type="submit">Submit</button>
-          </Form>
-        )}
-      </Formik>
+    <main className="fr-container ">
+      <div className="max-w-3xl pt-8 mx-auto">
+        <Formik<InscriptionFormData>
+          initialValues={initialData}
+          validationSchema={validation}
+          onSubmit={register}
+        >
+          {() => (
+            <Form>
+              <div className="max-w-2xl">
+                <h1 className="text-2xl">Créer un compte</h1>
+                <div className="pb-10" />
+                <Field
+                  name="email"
+                  label="Email"
+                  component={LabeledTextField}
+                />
+                <div className="p-5" />
+                <Field name="nom" label="Prénom" component={LabeledTextField} />
+                <div className="p-5" />
+                <Field name="prenom" label="Nom" component={LabeledTextField} />
+              </div>
+              <div className="p-5" />
+              <label>
+                <Field type="checkbox" name="vie_privee_conditions" />
+                <span className="ml-2">
+                  J'accepte la{' '}
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className=" text-blue-600"
+                    href={politique_vie_privee}
+                  >
+                    politique de protection des données à caractère personnel de
+                    l'ADEME
+                  </a>
+                </span>
+              </label>
+              <div className="p-5" />
+              <div className="max-w-2xl flex flex-row-reverse">
+                <button type="submit" className="fr-btn">
+                  Envoyer
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
     </main>
   );
 };

@@ -1,22 +1,40 @@
-import {useParams} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import {FicheActionForm} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {FicheActionInterface} from 'generated/models/fiche_action';
 import {v4 as uuid} from 'uuid';
 import {ficheActionStore} from 'core-logic/api/hybridStores';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
+import {searchActionById} from 'utils/actions';
+import {useQuery} from 'core-logic/hooks/query';
+import {actions} from 'generated/data/referentiels';
 
 /**
  * This is the main component of FicheActionPage, use to show a fiche.
  */
 const FicheActionCreator = () => {
   const {epciId} = useParams<{epciId: string}>();
+  const history = useHistory();
+
+  const query = useQuery();
+
+  let titre = '';
+  let referentiel_action_ids: string[] = [];
+
+  if (query.get('action_id')) {
+    const action = searchActionById(query.get('action_id')!, actions);
+    if (action) {
+      titre = action.nom;
+      referentiel_action_ids = [action.id];
+    }
+  }
+
   const fiche: FicheActionInterface = {
-    epci_id: epciId,
     uid: uuid(),
-    custom_id: '',
+    epci_id: epciId,
+    referentiel_action_ids: referentiel_action_ids,
+    titre: titre,
     avancement: 'pas_faite',
-    titre: '',
-    referentiel_action_ids: [],
+    custom_id: '',
     referentiel_indicateur_ids: [],
     description: '',
     budget: 0,
@@ -33,11 +51,11 @@ const FicheActionCreator = () => {
 
   const save = async (fiche: FicheActionInterface) => {
     await ficheActionStore.store(new FicheActionStorable(fiche));
-    // todo redirect to plan action
+    history.push(`/collectivite/${epciId}/plan_actions`);
   };
 
   return (
-    <main className="fr-container">
+    <main className="fr-container pt-8">
       <h1 className="fr-h1 pt-5">Ajouter une fiche action</h1>
       <FicheActionForm fiche={fiche} onSave={save} />
     </main>

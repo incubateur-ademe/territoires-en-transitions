@@ -1,4 +1,4 @@
-import {useParams} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import {useFiche} from 'core-logic/hooks/fiches';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
 import {FicheActionForm} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
@@ -11,16 +11,16 @@ import {ficheActionStore} from 'core-logic/api/hybridStores';
 const FicheActionEditor = () => {
   const {epciId, ficheUid} = useParams<{epciId: string; ficheUid: string}>();
   const ficheStorableId = FicheActionStorable.buildId(epciId, ficheUid);
-
+  const history = useHistory();
   const fiche = useFiche(ficheStorableId);
 
   const save = async (fiche: FicheActionInterface) => {
     await ficheActionStore.store(new FicheActionStorable(fiche));
-    // todo redirect to plan action
+    history.push(`/collectivite/${epciId}/plan_actions`);
   };
 
   return (
-    <main className="fr-container">
+    <main className="fr-container pt-8">
       <h1>Ajouter une fiche action</h1>
       {fiche && <FicheActionForm fiche={fiche} onSave={save} />}
       {!fiche && <h2>Aucune fiche trouvée</h2>}

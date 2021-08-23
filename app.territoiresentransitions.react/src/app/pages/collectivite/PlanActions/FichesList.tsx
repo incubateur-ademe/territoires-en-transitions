@@ -22,7 +22,10 @@ function CategoryTitle(props: {categorie: FicheActionCategorie}) {
           <span className="fr-fi-arrow-right-s-line ml-10" aria-hidden={true} />
         </h3>
         {editable && !editing && (
-          <button className="fr-btn" onClick={() => setEditing(!editing)}>
+          <button
+            className="fr-btn fr-btn--secondary"
+            onClick={() => setEditing(!editing)}
+          >
             Modifier
           </button>
         )}
@@ -31,7 +34,10 @@ function CategoryTitle(props: {categorie: FicheActionCategorie}) {
         <div className="border-bf500 border-l-4 p-4 mt-2 mb-5 ml-5 bg-beige max-w-2xl">
           <div className="flex flex-row  w-full items-center justify-between">
             <h5 className="text-lg">Modifier la catégorie</h5>
-            <button className="fr-btn" onClick={() => setEditing(false)}>
+            <button
+              className="fr-btn fr-btn--secondary"
+              onClick={() => setEditing(false)}
+            >
               x
             </button>
           </div>
@@ -82,10 +88,7 @@ const FichesList = () => {
     <main className="fr-container">
       <header className="flex justify-between items-center ">
         <h1>Plan d'actions de ma collectivité</h1>
-        <Link
-          className="fr-btn fr-btn--secondary"
-          to={`/collectivite/${epciId}/nouvelle_fiche`}
-        >
+        <Link className="fr-btn" to={`/collectivite/${epciId}/nouvelle_fiche`}>
           Ajouter une fiche action
         </Link>
       </header>
