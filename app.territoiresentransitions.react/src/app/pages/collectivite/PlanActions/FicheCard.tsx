@@ -19,7 +19,7 @@ export const FicheCard = (props: FicheCardProps) => {
         </h3>
       </Link>
       <div className="flex flex-row whitespace-nowrap items-center">
-        <div className=" px-2 py-3  bg-white border-blue-500 border-b-4">
+        <div className="px-2 py-3 bg-white border-blue-500 border-b-4">
           {avancement}
         </div>
 

@@ -24,25 +24,27 @@ export const LabeledTextInput = (props: LabeledTextInputProps) => {
   const htmlId = props.id ?? uuid();
 
   return (
-    <fieldset>
+    <div className="max-w-xl">
       <label className="fr-label" htmlFor={htmlId}>
         {props.label}
         <slot />
       </label>
 
       {!props.errorMessage && props.hint && (
-        <div className="hint">{props.hint}</div>
+        <div className="mt-2 text-sm opacity-80">{props.hint}</div>
       )}
-      {props.errorMessage && <div className="hint">{props.errorMessage}</div>}
+      {props.errorMessage && (
+        <div className="mt-2 text-sm opacity-80">{props.errorMessage}</div>
+      )}
 
       <input
         id={htmlId}
-        className="fr-input"
+        className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
         value={props.value}
         maxLength={props.maxLength}
         onChange={props.onChange}
         onBlur={props.onChange}
       />
-    </fieldset>
+    </div>
   );
 };
