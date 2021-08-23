@@ -38,39 +38,46 @@ function CategoryForm(props: {
   return (
     <div>
       <LabeledTextInput
-        label="Nom de ma collectivité"
+        label="Nom de la categorie"
         maxLength={100}
         value={nom}
         onChange={event => {
           setNom(event.target.value);
         }}
       />
-      <button className="fr-btn" onClick={handleSave}>
-        Enregistrer
-      </button>
+      <div className="flex flex-row-reverse p-5">
+        <button className="fr-btn" onClick={handleSave}>
+          Enregistrer
+        </button>
+      </div>
     </div>
   );
 }
 
 function CategoryTitle(props: {categorie: FicheActionCategorie}) {
   const [editing, setEditing] = useState<boolean>(false);
-
+  const editable = props.categorie.uid !== defaultCategorie.uid;
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full ">
       <div className="flex flex-row justify-between">
         <h3 className="text-2xl">
           {props.categorie.nom}
           <span className="fr-fi-arrow-right-s-line ml-10" aria-hidden={true} />
         </h3>
-        {props.categorie.uid !== defaultCategorie.uid && (
+        {editable && !editing && (
           <button className="fr-btn" onClick={() => setEditing(!editing)}>
             Modifier
           </button>
         )}
       </div>
-      {editing && (
-        <div className="bg-gray-200 p-4 mt-2 mb-5">
-          <h5 className="text-lg">Modifier la catégorie</h5>
+      {editing && editable && (
+        <div className="border-bf500 border-l-4 p-4 mt-2 mb-5 ml-5 bg-beige max-w-2xl">
+          <div className="flex flex-row  w-full items-center justify-between">
+            <h5 className="text-lg">Modifier la catégorie</h5>
+            <button className="fr-btn" onClick={() => setEditing(false)}>
+              x
+            </button>
+          </div>
           <CategoryForm
             categorie={props.categorie}
             onSave={() => setEditing(false)}
@@ -85,7 +92,7 @@ const CategorizedFichesList = (props: {categorized: CategorizedFiche[]}) => (
   <>
     {props.categorized.map(cat => {
       return (
-        <details open={true}>
+        <details open={true} className="pt-8">
           <summary className="flex items-center">
             <CategoryTitle categorie={cat.categorie} />
           </summary>
@@ -117,8 +124,11 @@ const FichesList = () => {
   return (
     <main className="fr-container">
       <header className="flex justify-between items-center ">
-        <h2>Plan d'actions de ma collectivité</h2>
-        <Link className="fr-btn " to={`/collectivite/${epciId}/nouvelle_fiche`}>
+        <h1>Plan d'actions de ma collectivité</h1>
+        <Link
+          className="fr-btn fr-btn--secondary"
+          to={`/collectivite/${epciId}/nouvelle_fiche`}
+        >
           Ajouter une fiche action
         </Link>
       </header>
