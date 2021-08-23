@@ -12,7 +12,7 @@ export function CategoryForm(props: {
   const [nom, setNom] = useState<string>(categorie.nom);
 
   const handleSave = async () => {
-    if (!categorie.nom) return;
+    if (!nom) return;
     const storable = new FicheActionCategorieStorable({...categorie, nom: nom});
     await ficheActionCategorieStore.store(storable);
     props.onSave();
@@ -29,7 +29,13 @@ export function CategoryForm(props: {
         }}
       />
       <div className="flex flex-row-reverse p-5">
-        <button className="fr-btn" onClick={handleSave}>
+        <button
+          className="fr-btn"
+          onClick={e => {
+            e.preventDefault();
+            handleSave();
+          }}
+        >
           Enregistrer
         </button>
       </div>
