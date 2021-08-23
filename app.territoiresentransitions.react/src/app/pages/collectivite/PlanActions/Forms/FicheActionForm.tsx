@@ -6,6 +6,7 @@ import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ActionsField} from 'app/pages/collectivite/PlanActions/Forms/ActionsField';
 import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursField';
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
+import {CategoriePicker} from 'app/pages/collectivite/PlanActions/Forms/CategoriePicker';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -80,7 +81,10 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
           />
           <div className="p-5" />
 
-          <div className="bg-yellow-400 w-1/2 m-5">catégorie</div>
+          <div className="max-w-xl">
+            <CategoriePicker ficheUid={props.fiche.uid} />
+          </div>
+          <div className="p-5" />
 
           <Field
             name="description"
