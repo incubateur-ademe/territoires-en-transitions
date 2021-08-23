@@ -6,6 +6,12 @@ import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorab
 import {ficheActionCategorieStore} from 'core-logic/api/hybridStores';
 import {categorizeAndSortFiches, CategorizedFiche} from 'ui/fiches/sortFiches';
 import {FicheCard} from 'app/pages/collectivite/PlanActions/FicheCard';
+import {
+  FicheActionCategorie,
+  FicheActionCategorieInterface,
+} from 'generated/models/fiche_action_categorie';
+import React, {useState} from 'react';
+import {LabeledTextInput} from 'ui';
 
 const defaultCategorie = new FicheActionCategorieStorable({
   uid: '',
@@ -15,34 +21,86 @@ const defaultCategorie = new FicheActionCategorieStorable({
   fiche_actions_uids: [],
 });
 
-function CategorizedFichesList(props: {categorized: CategorizedFiche[]}) {
+function CategoryForm(props: {
+  categorie: FicheActionCategorieInterface;
+  onSave: () => void;
+}) {
+  const categorie = props.categorie;
+  const [nom, setNom] = useState<string>(categorie.nom);
+
+  const handleSave = async () => {
+    if (!categorie.nom) return;
+    const storable = new FicheActionCategorieStorable({...categorie, nom: nom});
+    await ficheActionCategorieStore.store(storable);
+    props.onSave();
+  };
+
   return (
-    <>
-      {props.categorized.map(cat => {
-        return (
-          <details open={true}>
-            <summary className="flex items-center">
-              <h3 className="text-2xl">
-                {cat.categorie.nom}
-                <span
-                  className="fr-fi-arrow-right-s-line ml-10"
-                  aria-hidden={true}
-                />
-              </h3>
-            </summary>
-            {cat.fiches.map(fiche => {
-              return (
-                <div className="ml-5">
-                  <FicheCard fiche={fiche} />
-                </div>
-              );
-            })}
-          </details>
-        );
-      })}
-    </>
+    <div>
+      <LabeledTextInput
+        label="Nom de ma collectivité"
+        maxLength={100}
+        value={nom}
+        onChange={event => {
+          setNom(event.target.value);
+        }}
+      />
+      <button className="fr-btn" onClick={handleSave}>
+        Enregistrer
+      </button>
+    </div>
   );
 }
+
+function CategoryTitle(props: {categorie: FicheActionCategorie}) {
+  const [editing, setEditing] = useState<boolean>(false);
+
+  return (
+    <div className="flex flex-col w-full">
+      <div className="flex flex-row justify-between">
+        <h3 className="text-2xl">
+          {props.categorie.nom}
+          <span className="fr-fi-arrow-right-s-line ml-10" aria-hidden={true} />
+        </h3>
+        {props.categorie.uid !== defaultCategorie.uid && (
+          <button className="fr-btn" onClick={() => setEditing(!editing)}>
+            Modifier
+          </button>
+        )}
+      </div>
+      {editing && (
+        <div className="bg-gray-200 p-4 mt-2 mb-5">
+          <h5 className="text-lg">Modifier la catégorie</h5>
+          <CategoryForm
+            categorie={props.categorie}
+            onSave={() => setEditing(false)}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+const CategorizedFichesList = (props: {categorized: CategorizedFiche[]}) => (
+  <>
+    {props.categorized.map(cat => {
+      return (
+        <details open={true}>
+          <summary className="flex items-center">
+            <CategoryTitle categorie={cat.categorie} />
+          </summary>
+          {cat.fiches.map(fiche => {
+            return (
+              <div className="ml-5">
+                <FicheCard fiche={fiche} />
+              </div>
+            );
+          })}
+        </details>
+      );
+    })}
+  </>
+);
 
 const FichesList = () => {
   const epciId = useEpciId();
@@ -66,6 +124,10 @@ const FichesList = () => {
       </header>
       <nav className="bg-yellow-200 p-5 my-5">
         <section>todo filtres</section>
+      </nav>
+
+      <nav className="bg-yellow-200 p-5 my-5">
+        <section>todo new categorie</section>
       </nav>
 
       <CategorizedFichesList categorized={categorized} />
