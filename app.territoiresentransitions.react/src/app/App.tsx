@@ -25,11 +25,6 @@ export const App = () => {
           <Home />
         </HomeRoute>
 
-        <Route path={'/epcis'}>
-          <Header nav={<Navigation />} />
-          <EpcisPage />
-        </Route>
-
         <Route path={'/auth'}>
           <Header nav={<Navigation />} />
           <AuthRoutes />
