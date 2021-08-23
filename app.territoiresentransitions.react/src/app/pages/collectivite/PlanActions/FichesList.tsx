@@ -6,53 +6,10 @@ import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorab
 import {ficheActionCategorieStore} from 'core-logic/api/hybridStores';
 import {categorizeAndSortFiches, CategorizedFiche} from 'ui/fiches/sortFiches';
 import {FicheCard} from 'app/pages/collectivite/PlanActions/FicheCard';
-import {
-  FicheActionCategorie,
-  FicheActionCategorieInterface,
-} from 'generated/models/fiche_action_categorie';
+import {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
 import React, {useState} from 'react';
-import {LabeledTextInput} from 'ui';
-
-const defaultCategorie = new FicheActionCategorieStorable({
-  uid: '',
-  epci_id: '',
-  nom: 'sans categorie',
-  parent_uid: '',
-  fiche_actions_uids: [],
-});
-
-function CategoryForm(props: {
-  categorie: FicheActionCategorieInterface;
-  onSave: () => void;
-}) {
-  const categorie = props.categorie;
-  const [nom, setNom] = useState<string>(categorie.nom);
-
-  const handleSave = async () => {
-    if (!categorie.nom) return;
-    const storable = new FicheActionCategorieStorable({...categorie, nom: nom});
-    await ficheActionCategorieStore.store(storable);
-    props.onSave();
-  };
-
-  return (
-    <div>
-      <LabeledTextInput
-        label="Nom de la categorie"
-        maxLength={100}
-        value={nom}
-        onChange={event => {
-          setNom(event.target.value);
-        }}
-      />
-      <div className="flex flex-row-reverse p-5">
-        <button className="fr-btn" onClick={handleSave}>
-          Enregistrer
-        </button>
-      </div>
-    </div>
-  );
-}
+import {defaultCategorie} from 'app/pages/collectivite/PlanActions/defaultCategorie';
+import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
 
 function CategoryTitle(props: {categorie: FicheActionCategorie}) {
   const [editing, setEditing] = useState<boolean>(false);
