@@ -27,18 +27,18 @@ const RegistrationForm = () => {
 
   if (state === 'failure') {
     return (
-      <>
+      <main className="mx-auto max-w-2xl">
         <h1 className="text-2xl">Erreur</h1>
         <div className="pb-10" />
         <p>Le compte n'a pas pu être créé.</p>
         {errorMessage && <p>{errorMessage}</p>}
         {!errorMessage && <p>Erreur indéterminée</p>}
         <div className="pb-5" />
-      </>
+      </main>
     );
   } else if (state === 'success') {
     return (
-      <>
+      <main className="mx-auto max-w-2xl">
         <h1 className="text-2xl">Votre compte</h1>
         <div className="pb-10" />
         <p>Votre compte a bien été créé.</p>
@@ -53,7 +53,7 @@ const RegistrationForm = () => {
             Me connecter
           </Link>
         </div>
-      </>
+      </main>
     );
   }
 
@@ -113,30 +113,43 @@ const RegistrationForm = () => {
   };
 
   return (
-    <Formik<InscriptionFormData>
-      initialValues={initialData}
-      validationSchema={validation}
-      onSubmit={register}
-    >
-      {() => (
-        <Form>
-          <h1 className="text-2xl">Créer un compte</h1>
-          <div className="pb-10" />
-          <Field name="email" label="Email" component={LabeledTextField} />
-          <div className="p-5" />
-          <Field name="nom" label="Prénom" component={LabeledTextField} />
-          <div className="p-5" />
-          <Field name="prenom" label="Nom" component={LabeledTextField} />
-          <div className="p-5" />
-          <label>
-            <Field type="checkbox" name="vie_privee_conditions" />
-            {`${politique_vie_privee}`}
-          </label>
-          <div className="p-5" />
-          <button type="submit">Submit</button>
-        </Form>
-      )}
-    </Formik>
+    <main className="fr-container">
+      <Formik<InscriptionFormData>
+        initialValues={initialData}
+        validationSchema={validation}
+        onSubmit={register}
+      >
+        {() => (
+          <Form>
+            <h1 className="text-2xl">Créer un compte</h1>
+            <div className="pb-10" />
+            <Field name="email" label="Email" component={LabeledTextField} />
+            <div className="p-5" />
+            <Field name="nom" label="Prénom" component={LabeledTextField} />
+            <div className="p-5" />
+            <Field name="prenom" label="Nom" component={LabeledTextField} />
+            <div className="p-5" />
+            <label>
+              <Field type="checkbox" name="vie_privee_conditions" />
+              <span className="ml-2">
+                J'accepte la{' '}
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className=" text-blue-600"
+                  href={politique_vie_privee}
+                >
+                  politique de protection des données à caractère personnel de
+                  l'ADEME
+                </a>
+              </span>
+            </label>
+            <div className="p-5" />
+            <button type="submit">Submit</button>
+          </Form>
+        )}
+      </Formik>
+    </main>
   );
 };
 

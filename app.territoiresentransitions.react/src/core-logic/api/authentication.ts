@@ -8,6 +8,9 @@ import {ChangeNotifier} from 'core-logic/api/reactivity';
 
 const _dummyToken = 'xx';
 
+/**
+ * Authentication, only manage rights for now.
+ */
 class Authentication extends ChangeNotifier {
   get currentUtilisateurDroits(): UtilisateurDroits[] | null {
     return this._currentUtilisateurDroits;
@@ -21,6 +24,9 @@ class Authentication extends ChangeNotifier {
   private _currentUtilisateurDroits: UtilisateurDroits[] | null = [];
 }
 
+/**
+ * The global auth object.
+ */
 export const auth = new Authentication();
 
 utilisateurConnecteStore.addListener(() => {
