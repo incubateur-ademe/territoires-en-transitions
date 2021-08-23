@@ -27,3 +27,15 @@ export const actionsById = (
 
   return results;
 };
+
+export const searchActionById = (
+  actionId: string,
+  actions: ActionReferentiel[]
+): ActionReferentiel | null => {
+  for (const action of actions) {
+    if (actionId === action.id) return action;
+    if (actionId.startsWith(action.id))
+      return searchActionById(actionId, action.actions);
+  }
+  return null;
+};

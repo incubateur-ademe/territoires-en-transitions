@@ -58,7 +58,7 @@ const makeActionReferentielAvancementCard =
         </div>
         <div className="flex justify-between my-6">
           {' '}
-          <AddFicheActionButton />
+          <AddFicheActionButton actionId={action.id} />
           <div className={` ${!isTache ? 'hidden' : ''}`}>
             <ActionStatusRadio actionId={action.id} />
           </div>

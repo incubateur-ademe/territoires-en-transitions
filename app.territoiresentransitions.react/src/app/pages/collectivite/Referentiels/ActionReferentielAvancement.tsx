@@ -28,7 +28,7 @@ const ActionReferentielAvancement = ({
             className="fr-h1 w-5/6 text-gray-900"
             action={action}
           />
-          <AddFicheActionButton />
+          <AddFicheActionButton actionId={action.id} />
         </div>
         <ProgressStat
           action={action}

@@ -26,7 +26,7 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
   const isTouched = touched[field.name];
 
   return (
-    <div className="max-w-xl">
+    <div>
       <label className="fr-label" htmlFor={htmlId}>
         {props.label}
         <slot />
