@@ -1,5 +1,5 @@
 import {useParams} from 'react-router-dom';
-import {FicheActionForm} from 'app/pages/collectivite/PlanActions/Form/FicheActionForm';
+import {FicheActionForm} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {FicheActionInterface} from 'generated/models/fiche_action';
 import {v4 as uuid} from 'uuid';
 import {ficheActionStore} from 'core-logic/api/hybridStores';

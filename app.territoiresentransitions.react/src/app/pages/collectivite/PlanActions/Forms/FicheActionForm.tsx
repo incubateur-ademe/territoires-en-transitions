@@ -3,9 +3,9 @@ import React, {useState} from 'react';
 import * as Yup from 'yup';
 import {Field, Form, Formik} from 'formik';
 import LabeledTextField from 'ui/forms/LabeledTextField';
-import {ActionsField} from 'app/pages/collectivite/PlanActions/Form/ActionsField';
-import {IndicateursField} from 'app/pages/collectivite/PlanActions/Form/IndicateursField';
-import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Form/IndicateursPersonnalisesField';
+import {ActionsField} from 'app/pages/collectivite/PlanActions/Forms/ActionsField';
+import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursField';
+import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
