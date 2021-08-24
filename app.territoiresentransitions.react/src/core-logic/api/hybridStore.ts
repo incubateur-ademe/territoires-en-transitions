@@ -27,7 +27,7 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
     this.serializer = serializer;
     this.deserializer = deserializer;
 
-    this.api = new APIEndpoint<T>({
+    this._api = new APIEndpoint<T>({
       host: this.host,
       endpoint: this.pathname,
       serializer: this.serializer,
@@ -36,12 +36,16 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
     });
   }
 
-  host: string;
-  pathname: () => string;
-  serializer: (storable: T) => object;
-  deserializer: (serialized: object) => T;
-  api: APIEndpoint<T>;
+  private readonly host: string;
+  private readonly pathname: () => string;
+  private readonly serializer: (storable: T) => object;
+  private readonly deserializer: (serialized: object) => T;
+  private readonly _api: APIEndpoint<T>;
   private cache: Map<string, T> = new Map<string, T>();
+
+  get api(): APIEndpoint<T> {
+    return this._api;
+  }
 
   // local: LocalStore<T>;
 
@@ -55,7 +59,7 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
       throw new Error(`${typeof storable} is not storable.`);
     }
 
-    const stored = await this.api.store(storable);
+    const stored = await this._api.store(storable);
     return this.writeInCache(stored);
   }
 
@@ -124,7 +128,7 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
    * @param id Storable id
    */
   async deleteById(id: string): Promise<boolean> {
-    const deleted = await this.api.deleteById(this.stripId(id));
+    const deleted = await this._api.deleteById(this.stripId(id));
     await this.removeFromCache(id);
     return deleted;
   }
@@ -175,7 +179,7 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
     }
 
     if (!this.retrieving[pathname]) {
-      const promise = this.api.retrieveAll().then(all => {
+      const promise = this._api.retrieveAll().then(all => {
         const retrieved = new Map<string, T>();
         for (const storable of all) {
           retrieved.set(storable.id, storable);

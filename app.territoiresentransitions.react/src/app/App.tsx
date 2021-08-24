@@ -18,10 +18,12 @@ import {useConnected} from 'core-logic/hooks';
 import 'app/DesignSystem/core.css';
 import 'app/DesignSystem/variables.css';
 import 'app/DesignSystem/buttons.css';
+import {Toasters} from 'app/Toasters';
 
 export const App = () => {
   return (
     <Router>
+      <Toasters />
       <Switch>
         <HomeRoute exact path="/">
           <Header nav={<Navigation />} />
