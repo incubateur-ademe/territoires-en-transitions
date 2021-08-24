@@ -71,7 +71,7 @@ const makeActionReferentielAvancementCard =
     );
   };
 
-export const ActionReferentielAvancementRecusiveCard = ({
+export const ActionReferentielAvancementRecursiveCard = ({
   action,
   displayProgressStat,
 }: {
