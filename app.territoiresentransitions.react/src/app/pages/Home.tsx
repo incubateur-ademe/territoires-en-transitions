@@ -1,5 +1,6 @@
 import React from 'react';
 import {signInRedirect} from 'core-logic/api/authRedirect';
+import {Link} from 'react-router-dom';
 
 function Home() {
   return (
@@ -18,9 +19,9 @@ function Home() {
         <button className="fr-btn mr-4" onClick={signInRedirect}>
           Se connecter
         </button>
-        <a className="fr-btn fr-btn--secondary mr-4" href="/auth/register/">
+        <Link className="fr-btn fr-btn--secondary mr-4" to="/auth/register/">
           Créer un compte
-        </a>
+        </Link>
       </div>
     </section>
   );
