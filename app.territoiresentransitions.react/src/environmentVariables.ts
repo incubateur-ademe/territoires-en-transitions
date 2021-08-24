@@ -1,9 +1,7 @@
-const processEnv = process.env;
-
 const getBackendHost = () => {
-  if (processEnv.FLAVOR === 'sandbox')
+  if (process.env.REACT_APP_FLAVOR === 'sandbox')
     return 'https://sandboxterritoires.osc-fr1.scalingo.io';
-  else if (processEnv.FLAVOR === 'prod')
+  else if (process.env.REACT_APP_FLAVOR === 'prod')
     return 'https://territoiresentransitions.osc-fr1.scalingo.io';
   else return 'http://localhost:8000';
 };
