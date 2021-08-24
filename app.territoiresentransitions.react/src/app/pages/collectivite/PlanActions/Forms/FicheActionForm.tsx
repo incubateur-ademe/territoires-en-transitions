@@ -39,7 +39,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
   const validation = Yup.object({
     epci_id: Yup.string().max(36).required(),
     uid: Yup.string().max(36).required(),
-    custom_id: Yup.string().max(36).required(),
+    custom_id: Yup.string().max(36),
     avancement: Yup.string().max(36).required(),
     en_retard: Yup.boolean().required(),
     referentiel_action_ids: Yup.array(),
