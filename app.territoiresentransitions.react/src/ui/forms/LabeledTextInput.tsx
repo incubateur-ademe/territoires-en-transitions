@@ -5,13 +5,14 @@ type LabeledTextInputProps = {
   label: string;
   value?: string;
   maxLength?: number;
-  onChange?: ChangeEventHandler<HTMLInputElement>;
-  onBlur?: FocusEventHandler<HTMLInputElement>;
+  onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onBlur?: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 
   maxlength?: number;
   id?: string;
   hint?: string;
   errorMessage?: string;
+  type?: 'area' | 'text';
 };
 
 /**
@@ -24,7 +25,7 @@ export const LabeledTextInput = (props: LabeledTextInputProps) => {
   const htmlId = props.id ?? uuid();
 
   return (
-    <div className="max-w-xl">
+    <div>
       <label className="fr-label" htmlFor={htmlId}>
         {props.label}
         <slot />
@@ -36,15 +37,25 @@ export const LabeledTextInput = (props: LabeledTextInputProps) => {
       {props.errorMessage && (
         <div className="mt-2 text-sm opacity-80">{props.errorMessage}</div>
       )}
-
-      <input
-        id={htmlId}
-        className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
-        value={props.value}
-        maxLength={props.maxLength}
-        onChange={props.onChange}
-        onBlur={props.onChange}
-      />
+      {props.type !== 'area' && (
+        <input
+          id={htmlId}
+          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          value={props.value}
+          maxLength={props.maxLength}
+          onChange={props.onChange}
+          onBlur={props.onChange}
+        />
+      )}
+      {props.type === 'area' && (
+        <textarea
+          id={htmlId}
+          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          value={props.value}
+          onChange={props.onChange}
+          onBlur={props.onChange}
+        />
+      )}
     </div>
   );
 };

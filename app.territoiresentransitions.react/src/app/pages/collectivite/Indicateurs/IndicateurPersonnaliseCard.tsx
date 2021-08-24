@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
 import {useAppState} from 'core-logic/overmind';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
@@ -22,8 +22,6 @@ const DescriptionPanel = (props: {description: string}) => {
     </div>
   );
 };
-
-const years: number[] = Array.from({length: 2022 - 2010}, (v, k) => k + 2010);
 
 const IndicateurPersonnaliseValueInput = (props: {
   year: number;
@@ -78,18 +76,42 @@ const IndicateurPersonnaliseValueInput = (props: {
 
 const IndicateurPersonnaliseValues = (props: {
   indicateur: IndicateurPersonnaliseStorable;
-}) => (
-  <div className="flex flex row">
-    {years.map(year => (
-      <IndicateurPersonnaliseValueInput
-        year={year}
-        indicateur={props.indicateur}
-        key={`${props.indicateur.id}-${year}`}
-      />
-    ))}
-    <div className="bg-yellow-400">todo: scroll</div>
-  </div>
-);
+}) => {
+  const min = 2008;
+  const stride = 2;
+  const window = 7;
+  const [index, setIndex] = useState<number>(4);
+
+  const years = Array.from(
+    {length: window},
+    (v, k) => k + min + stride * index
+  );
+
+  return (
+    <div className="flex flex row">
+      <button
+        className="fr-btn fr-btn--secondary whitespace-nowrap"
+        onClick={() => setIndex(index - 1)}
+        disabled={index < 1}
+      >
+        &lt;-
+      </button>
+      {years.map(year => (
+        <IndicateurPersonnaliseValueInput
+          year={year}
+          indicateur={props.indicateur}
+          key={`${props.indicateur.id}-${year}`}
+        />
+      ))}
+      <button
+        className="fr-btn fr-btn--secondary whitespace-nowrap"
+        onClick={() => setIndex(index + 1)}
+      >
+        -&gt;
+      </button>
+    </div>
+  );
+};
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseStorable;
@@ -98,7 +120,9 @@ const IndicateurPersonnaliseCommentaire = (props: {
     props.indicateur.meta['commentaire'] ?? ''
   );
 
-  function handleSave(event: React.FormEvent<HTMLTextAreaElement>) {
+  function handleSave(
+    event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
     const inputValue = event.currentTarget.value;
     const data = {
       ...props.indicateur,
@@ -113,7 +137,11 @@ const IndicateurPersonnaliseCommentaire = (props: {
     <div className="CrossExpandPanel">
       <details>
         <summary>Commentaire</summary>
-        <textarea defaultValue={value} onBlur={handleSave} />
+        <textarea
+          defaultValue={value}
+          onBlur={handleSave}
+          className="fr-input mt-2 w-4/5 bg-white p-3 border-b-2 border-gray-500 mr-5"
+        />
       </details>
     </div>
   );
@@ -126,7 +154,10 @@ export const IndicateurPersonnaliseCard = (props: {
 
   return (
     <div className="flex flex-col px-5 py-4 bg-beige mb-5">
-      <h3 className="text-xl">{props.indicateur.nom}</h3>
+      <div className="flex flex-row justify-between items-center">
+        <h3 className="text-xl">{props.indicateur.nom}</h3>
+        <span className="bg-yellow-400">todo edit</span>
+      </div>
       <IndicateurPersonnaliseValues indicateur={props.indicateur} />
       <div className="h-5" />
       <DescriptionPanel description={props.indicateur.description} />
