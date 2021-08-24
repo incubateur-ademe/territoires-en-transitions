@@ -1,7 +1,7 @@
 import {actions as referentielActions} from 'generated/data/referentiels';
 import {Link} from 'react-router-dom';
 import {
-  ActionReferentielAvancementRecusiveCard,
+  ActionReferentielAvancementRecursiveCard,
   ActionReferentielTitle,
   ProgressStat,
 } from 'ui/referentiels';
@@ -43,7 +43,7 @@ const ActionReferentielAvancement = ({
       <div>
         <h2 className="fr-h2"> Les actions</h2>
         {action.actions.map(action => (
-          <ActionReferentielAvancementRecusiveCard
+          <ActionReferentielAvancementRecursiveCard
             action={action}
             key={action.id}
             displayProgressStat={displayProgressStat}

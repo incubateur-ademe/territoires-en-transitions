@@ -1,6 +1,6 @@
 import {HybridStore} from 'core-logic/api/hybridStore';
 import {Storable} from 'core-logic/api/storable';
-import {useEffect, useState} from 'react';
+import {DependencyList, useEffect, useState} from 'react';
 
 // Store hooks
 
@@ -17,7 +17,8 @@ import {useEffect, useState} from 'react';
  */
 export function useStorable<T extends Storable>(
   storableId: string,
-  store: HybridStore<T>
+  store: HybridStore<T>,
+  deps?: DependencyList
 ): T | null {
   const [storable, setStorable] = useState<T | null>(null);
 
@@ -34,7 +35,7 @@ export function useStorable<T extends Storable>(
     return () => {
       store.removeListener(listener);
     };
-  });
+  }, deps);
 
   return storable;
 }
