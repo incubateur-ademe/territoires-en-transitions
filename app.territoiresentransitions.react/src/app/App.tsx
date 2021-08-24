@@ -10,11 +10,14 @@ import {
 import React from 'react';
 import {Footer, Header} from 'ui';
 import {FooterDescription, FooterNavigation} from 'ui/Footer';
-import 'app/DesignSystem/core.css';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import Home from 'app/pages/Home';
 import {useConnected} from 'core-logic/hooks';
+
+import 'app/DesignSystem/core.css';
+import 'app/DesignSystem/variables.css';
+import 'app/DesignSystem/buttons.css';
 
 export const App = () => {
   return (
