@@ -36,9 +36,7 @@ export const ActionCommentaire = (props: {actionId: string}) => {
     <div className={'border-t border-b border-gray-300'}>
       <div className="CrossExpandPanel">
         <details>
-          <summary>
-            {ActionMetaStorable.buildId(epciId!, props.actionId)}
-          </summary>
+          <summary className="title">Commentaire</summary>
 
           <textarea
             defaultValue={value}

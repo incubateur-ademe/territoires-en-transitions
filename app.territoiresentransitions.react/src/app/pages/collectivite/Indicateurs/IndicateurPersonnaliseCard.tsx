@@ -5,13 +5,6 @@ import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseSt
 import {commands} from 'core-logic/commands';
 import {CrossExpandPanelWithHtmlContent} from 'ui/shared';
 
-const ExpandPanel = (props: {content: string; title: string}) => (
-  <details>
-    <summary>{props.title}</summary>
-    <div>{props.content}</div>
-  </details>
-);
-
 const DescriptionPanel = (props: {description: string}) => {
   return (
     <div className={'border-t border-b border-gray-300'}>
