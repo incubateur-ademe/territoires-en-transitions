@@ -1,9 +1,16 @@
 import {isStorable, Storable} from './storable';
+import {ChangeNotifier} from 'core-logic/api/reactivity';
+
+export interface APIEvent<T extends Storable> {
+  outcome: 'error' | 'success';
+  intent: 'store' | 'retrieve' | 'delete';
+  stored: T | null;
+}
 
 /**
  * A Store for Storable object using a remote api
  */
-export class APIEndpoint<T extends Storable> {
+export class APIEndpoint<T extends Storable> extends ChangeNotifier {
   constructor({
     host,
     endpoint,
@@ -17,6 +24,7 @@ export class APIEndpoint<T extends Storable> {
     deserializer: (serialized: object) => T;
     authorization: () => string;
   }) {
+    super();
     this.host = host;
     this.pathname = endpoint;
     this.serializer = serializer;
@@ -24,11 +32,21 @@ export class APIEndpoint<T extends Storable> {
     this.authorization = authorization;
   }
 
-  host: string;
-  pathname: () => string;
-  authorization: () => string;
-  serializer: (storable: T) => object;
-  deserializer: (serialized: object) => T;
+  private readonly host: string;
+  private readonly pathname: () => string;
+  private readonly authorization: () => string;
+  private readonly serializer: (storable: T) => object;
+  private readonly deserializer: (serialized: object) => T;
+  private _lastEvent: APIEvent<T> | null = null;
+  private _lastResponse: Response | null = null;
+
+  get lastResponse(): Response | null {
+    return this._lastResponse;
+  }
+
+  get lastEvent(): APIEvent<T> | null {
+    return this._lastEvent;
+  }
 
   /**
    * Store a Storable at pathname/id.
@@ -47,13 +65,24 @@ export class APIEndpoint<T extends Storable> {
         Authorization: this.authorization(),
       },
       body: JSON.stringify(this.serializer(storable)),
+    }).catch(e => {
+      this._lastResponse = null;
     });
 
+    this._lastResponse = response ?? null;
+    this._lastEvent = {
+      outcome: response?.ok ? 'success' : 'error',
+      stored: storable,
+      intent: 'store',
+    };
+    this.notifyListeners();
+
+    if (!response) throw new Error('Network error');
     return this.deserializer(await response.json());
   }
 
   /**
-   * Return all storable of type T existing at pathname.
+   * ;Return all storable of type T existing at pathname.
    * If nothing is found returns an empty record.
    */
   async retrieveAll(): Promise<Array<T>> {
@@ -79,8 +108,30 @@ export class APIEndpoint<T extends Storable> {
       },
     });
 
-    if (response.status === 404) return null;
-    return this.deserializer(await response.json());
+    this._lastResponse = response;
+
+    let storable: T | null;
+
+    try {
+      if (response.status === 404) storable = null;
+      storable = this.deserializer(await response.json());
+      this._lastEvent = {
+        outcome: 'success',
+        intent: 'retrieve',
+        stored: null,
+      };
+    } catch (e) {
+      this._lastEvent = {
+        outcome: 'error',
+        intent: 'retrieve',
+        stored: null,
+      };
+      storable = null;
+    } finally {
+      this.notifyListeners();
+    }
+
+    return storable;
   }
 
   async retrieveAtPath(path: string): Promise<Array<T>> {
@@ -92,11 +143,28 @@ export class APIEndpoint<T extends Storable> {
       },
     });
 
-    const data = await response.json();
-    const results = [];
+    this._lastResponse = response;
+    const results: T[] = [];
 
-    for (let i = 0; i < data.length; i++) {
-      results.push(this.deserializer(data[i]));
+    try {
+      const data = await response.json();
+
+      for (let i = 0; i < data.length; i++) {
+        results.push(this.deserializer(data[i]));
+      }
+      this._lastEvent = {
+        outcome: 'success',
+        intent: 'retrieve',
+        stored: null,
+      };
+    } catch (e) {
+      this._lastEvent = {
+        outcome: 'error',
+        intent: 'retrieve',
+        stored: null,
+      };
+    } finally {
+      this.notifyListeners();
     }
 
     return results;
@@ -117,6 +185,22 @@ export class APIEndpoint<T extends Storable> {
       },
     });
 
-    return response.status === 200;
+    this._lastResponse = response;
+
+    if (response.ok) {
+      this._lastEvent = {
+        outcome: 'success',
+        intent: 'delete',
+        stored: null,
+      };
+    } else {
+      this._lastEvent = {
+        outcome: 'error',
+        intent: 'delete',
+        stored: null,
+      };
+    }
+    this.notifyListeners();
+    return response.ok;
   }
 }
