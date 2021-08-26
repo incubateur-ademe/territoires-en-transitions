@@ -3,7 +3,7 @@ import {
   indicateurPersonnaliseValueStore,
   indicateurReferentielCommentaireStore,
   indicateurValueStore,
-} from '../api/hybridStores';
+} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseValueStorable} from 'storables/IndicateurPersonnaliseValueStorable';
 import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';

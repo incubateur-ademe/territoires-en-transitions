@@ -5,6 +5,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
+import {indicateurToEmoji} from 'app/pages/collectivite/PlanActions/Forms/toEmoji';
 
 const indicateursById = () => {
   const results = new Map<string, IndicateurReferentiel>();
@@ -17,6 +18,7 @@ type IndicateursFieldProps = {
   id?: string;
   hint?: string;
 };
+
 /**
  * A material UI tags field (multi picker) for action ids.
  *
@@ -37,7 +39,7 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
     .sort((a, b) => a.localeCompare(b));
 
   return (
-    <fieldset>
+    <fieldset className="block">
       {!errorMessage && props.hint && <div className="hint">{props.hint}</div>}
       {errorMessage && isTouched && <div className="hint">{errorMessage}</div>}
 
@@ -45,12 +47,16 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
         multiple
         id={htmlId}
         options={allIndicateurIds}
-        className="bg-beige"
+        className="bg-beige list-none"
+        renderOption={id => {
+          const indicateur = allIndicateurs.get(id)!;
+          return `${indicateurToEmoji(indicateur)} ${indicateur.id} - ${
+            indicateur.nom
+          }`;
+        }}
         getOptionLabel={id => {
           const indicateur = allIndicateurs.get(id)!;
-          return `${indicateur.id.startsWith('eci') ? '♻' : '🌍'} ${
-            indicateur.id
-          }. ${indicateur.nom}`;
+          return `${indicateurToEmoji(indicateur)} ${indicateur.id}`;
         }}
         value={field.value}
         onChange={(e, value) => {

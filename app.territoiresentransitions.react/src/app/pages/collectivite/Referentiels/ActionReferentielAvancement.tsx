@@ -47,6 +47,7 @@ const ActionReferentielAvancement = ({
             action={action}
             key={action.id}
             displayProgressStat={displayProgressStat}
+            displayAddFicheActionButton={true}
           />
         ))}
       </div>

@@ -1,12 +1,21 @@
 import {FicheActionInterface} from 'generated/models/fiche_action';
 import React, {useState} from 'react';
 import * as Yup from 'yup';
-import {Field, Form, Formik} from 'formik';
+import {Field, Form, Formik, useFormikContext} from 'formik';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ActionsField} from 'app/pages/collectivite/PlanActions/Forms/ActionsField';
 import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursField';
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
 import {CategoriePicker} from 'app/pages/collectivite/PlanActions/Forms/CategoriePicker';
+import {ActionReferentielAvancementCard} from 'ui/referentiels';
+import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
+import {actions} from 'generated/data/referentiels';
+import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
+import {indicateurs} from 'generated/data/indicateurs_referentiels';
+import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
+import {useAllStorables} from 'core-logic/hooks';
+import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
+import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -23,6 +32,71 @@ function onKeyDown(event: React.KeyboardEvent) {
     event.preventDefault();
   }
 }
+
+const LinkedActionsReferentielCards = () => {
+  const {values} = useFormikContext<FicheActionInterface>();
+  const linkedActions = values.referentiel_action_ids.map(
+    actionId => searchById(actions, actionId)!
+  );
+
+  return (
+    <div>
+      {linkedActions.map(action => (
+        <ActionReferentielAvancementCard
+          key={action.id}
+          action={action}
+          displayProgressStat={false}
+          displayAddFicheActionButton={false}
+        />
+      ))}
+    </div>
+  );
+};
+
+const LinkedIndicateurCards = () => {
+  const {values} = useFormikContext<FicheActionInterface>();
+  const linkedIndicateurs = values.referentiel_indicateur_ids.map(
+    indicateurId =>
+      indicateurs.find(indicateur => indicateur.id === indicateurId)!
+  );
+  return (
+    <div>
+      {linkedIndicateurs.map(indicateur => (
+        <IndicateurReferentielCard indicateur={indicateur} />
+      ))}
+    </div>
+  );
+};
+
+const LinkedIndicateurPersonnaliseCards = () => {
+  const indicateurPersonnalises =
+    useAllStorables<IndicateurPersonnaliseStorable>(
+      indicateurPersonnaliseStore
+    );
+
+  const {values} = useFormikContext<FicheActionInterface>();
+  const linkedIndicateursPersonnalises = values.indicateur_personnalise_ids.map(
+    indicateurId =>
+      indicateurPersonnalises.find(indicateur => indicateur.id === indicateurId)
+  );
+
+  return (
+    <div>
+      {linkedIndicateursPersonnalises.map(indicateur => {
+        if (indicateur)
+          return (
+            <IndicateurPersonnaliseCard
+              indicateur={indicateur}
+              key={indicateur.id}
+            />
+          );
+        return <></>;
+      })}
+    </div>
+  );
+};
+
+const Spacer = () => <div className="p-5" />;
 
 /**
  * Used to edit a fiche.
@@ -93,7 +167,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
               hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
               component={LabeledTextField}
             />
-            <div className="p-5" />
+            <Spacer />
 
             <Field
               name="titre"
@@ -101,12 +175,12 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
               hint="Ce champ est requis"
               component={LabeledTextField}
             />
-            <div className="p-5" />
+            <Spacer />
 
             <div className="max-w-xl">
               <CategoriePicker ficheUid={props.fiche.uid} />
             </div>
-            <div className="p-5" />
+            <Spacer />
 
             <Field
               name="description"
@@ -114,41 +188,41 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
               type="area"
               component={LabeledTextField}
             />
-            <div className="p-5" />
+            <Spacer />
 
             <label>
               <Field type="checkbox" name="en_retard" />
               Action en retard
             </label>
-            <div className="p-5" />
+            <Spacer />
 
             <Field
               name="structure_pilote"
               label="Structure pilote"
               component={LabeledTextField}
             />
-            <div className="p-5" />
+            <Spacer />
 
             <Field
               name="personne_referente"
               label="Personne référente"
               component={LabeledTextField}
             />
-            <div className="p-5" />
+            <Spacer />
 
             <Field
               name="elu_referent"
               label="Élu référent"
               component={LabeledTextField}
             />
-            <div className="p-5" />
+            <Spacer />
 
             <Field
               name="partenaires"
               label="Partenaires"
               component={LabeledTextField}
             />
-            <div className="p-5" />
+            <Spacer />
 
             <Field
               name="budget"
@@ -156,7 +230,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
               hint="Ce champ ne doit comporter que des chiffres sans espaces"
               component={LabeledTextField}
             />
-            <div className="p-5" />
+            <Spacer />
 
             <fieldset className="flex flex-row">
               <div className="flex flex-col mr-5">
@@ -181,7 +255,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
                 />
               </div>
             </fieldset>
-            <div className="p-5" />
+            <Spacer />
           </div>
 
           <Field
@@ -189,16 +263,18 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             label="Actions du référentiel"
             component={ActionsField}
           />
-          <span className="bg-yellow-400">todo cartes actions</span>
-          <div className="p-5" />
+          <LinkedActionsReferentielCards />
+
+          <Spacer />
 
           <Field
             name="referentiel_indicateur_ids"
             label="Indicateurs du référentiel"
             component={IndicateursField}
           />
-          <span className="bg-yellow-400">todo cartes indicateurs</span>
-          <div className="p-5" />
+          <LinkedIndicateurCards />
+
+          <Spacer />
 
           <Field
             name="indicateur_personnalise_ids"
@@ -206,8 +282,9 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             component={IndicateursPersonnalisesField}
           />
           <button className="bg-yellow-400">todo créer un indicateur</button>
-          <span className="bg-yellow-400">todo cartes indicateurs perso</span>
-          <div className="p-5" />
+          <LinkedIndicateurPersonnaliseCards />
+
+          <Spacer />
 
           <div className="flex flex-row-reverse">
             {state === 'ready' && (

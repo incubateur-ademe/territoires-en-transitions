@@ -633,7 +633,7 @@ ul > li > ul > li::before {
 
 ul > li::before {
   display: var(--is-list) inline-block;
-  content: var(--is-list) '●';
+  /* content: var(--is-list) '●'; */
   font-size: var(--is-list) 0.75rem;
 }
 
