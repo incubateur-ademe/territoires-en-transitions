@@ -19,33 +19,35 @@ export const ActionStatusRadio = ({actionId}: {actionId: string}) => {
   const actions = useActions();
 
   return (
-    <fieldset id={`actionStatusRadio-${actionId}`}>
-      {avancements.map(option => {
-        const checked = option.value === avancement;
-        return (
-          <div key={option.value} className="mx-1">
-            <input
-              value={option.value}
-              name="actionStatusAvancement"
-              type="radio"
-            />
-            <label
-              className={`border rounded-l flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400 text-gray-700 ${
-                checked ? 'checked' : ''
-              }`}
-              onClick={async () => {
-                const avancement = checked ? '' : option.value;
-                await actions.referentiels.updateActionReferentielAvancement({
-                  actionId,
-                  avancement: avancement,
-                });
-              }}
-            >
-              <span>{option.label}</span>
-            </label>
-          </div>
-        );
-      })}
-    </fieldset>
+    <div className="ActionStatusRadio">
+      <fieldset id={`actionStatusRadio-${actionId}`}>
+        {avancements.map(option => {
+          const checked = option.value === avancement;
+          return (
+            <div key={option.value} className="mx-1">
+              <input
+                value={option.value}
+                name="actionStatusAvancement"
+                type="radio"
+              />
+              <label
+                className={`border rounded-l flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400 text-gray-700 ${
+                  checked ? 'checked' : ''
+                }`}
+                onClick={async () => {
+                  const avancement = checked ? '' : option.value;
+                  await actions.referentiels.updateActionReferentielAvancement({
+                    actionId,
+                    avancement: avancement,
+                  });
+                }}
+              >
+                <span>{option.label}</span>
+              </label>
+            </div>
+          );
+        })}
+      </fieldset>
+    </div>
   );
 };

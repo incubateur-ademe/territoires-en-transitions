@@ -1,14 +1,14 @@
-fieldset {
+.ActionStatusRadio fieldset {
   display: flex;
   border: none;
 }
 
-[type='radio'] {
+.ActionStatusRadio [type='radio'] {
   position: absolute;
   left: -9999px;
 }
 
-[type='radio'] + label {
+.ActionStatusRadio [type='radio'] + label {
   position: relative;
   display: flex;
   align-items: center;
@@ -18,7 +18,7 @@ fieldset {
   cursor: pointer;
 }
 
-label.checked {
+.ActionStatusRadio label.checked {
   color: #000091;
   background-color: #fff;
   border-top: solid;
