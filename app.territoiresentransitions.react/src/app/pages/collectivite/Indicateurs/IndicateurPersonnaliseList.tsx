@@ -1,11 +1,10 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
-import {commands} from 'core-logic/commands';
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
 import {v4 as uuid} from 'uuid';
 
 import {IndicateurPersonnaliseInterface} from 'generated/models/indicateur_personnalise';
-import {useAllStorables, useEpciId, useStorable} from 'core-logic/hooks';
+import {useAllStorables, useEpciId} from 'core-logic/hooks';
 import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 
