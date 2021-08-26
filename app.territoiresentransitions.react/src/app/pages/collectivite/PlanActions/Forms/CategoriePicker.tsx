@@ -75,7 +75,7 @@ export function CategoriePicker(props: {ficheUid: string}) {
 
   return (
     <fieldset className="flex flex-col ">
-      <div className="flex flex-row w-full space-between items-center">
+      <div className="flex flex-row w-full space-between items-center justify-between">
         <label className="fr-label" htmlFor="categorie_picker">
           Catégorie
         </label>

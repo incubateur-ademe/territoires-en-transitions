@@ -5,7 +5,7 @@ import {actionsById} from 'utils/actions';
 import {actions} from 'generated/data/referentiels';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import type {ActionReferentiel} from 'generated/models/action_referentiel';
+import {actionToEmoji} from 'app/pages/collectivite/PlanActions/Forms/toEmoji';
 
 type ActionsFieldProps = {
   label: string;
@@ -13,8 +13,6 @@ type ActionsFieldProps = {
   hint?: string;
 };
 
-const actionToEmoji = (action: ActionReferentiel) =>
-  action.id.startsWith('eco') ? '♻' : '🌍';
 /**
  * A material UI tags field (multi picker) for action ids.
  *

@@ -10,6 +10,12 @@ import {CategoriePicker} from 'app/pages/collectivite/PlanActions/Forms/Categori
 import {ActionReferentielAvancementCard} from 'ui/referentiels';
 import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
 import {actions} from 'generated/data/referentiels';
+import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
+import {indicateurs} from 'generated/data/indicateurs_referentiels';
+import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
+import {useAllStorables} from 'core-logic/hooks';
+import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
+import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -43,6 +49,49 @@ const LinkedActionsReferentielCards = () => {
           displayAddFicheActionButton={false}
         />
       ))}
+    </div>
+  );
+};
+
+const LinkedIndicateurCards = () => {
+  const {values} = useFormikContext<FicheActionInterface>();
+  const linkedIndicateurs = values.referentiel_indicateur_ids.map(
+    indicateurId =>
+      indicateurs.find(indicateur => indicateur.id === indicateurId)!
+  );
+  return (
+    <div>
+      {linkedIndicateurs.map(indicateur => (
+        <IndicateurReferentielCard indicateur={indicateur} />
+      ))}
+    </div>
+  );
+};
+
+const LinkedIndicateurPersonnaliseCards = () => {
+  const indicateurPersonnalises =
+    useAllStorables<IndicateurPersonnaliseStorable>(
+      indicateurPersonnaliseStore
+    );
+
+  const {values} = useFormikContext<FicheActionInterface>();
+  const linkedIndicateursPersonnalises = values.indicateur_personnalise_ids.map(
+    indicateurId =>
+      indicateurPersonnalises.find(indicateur => indicateur.id === indicateurId)
+  );
+
+  return (
+    <div>
+      {linkedIndicateursPersonnalises.map(indicateur => {
+        if (indicateur)
+          return (
+            <IndicateurPersonnaliseCard
+              indicateur={indicateur}
+              key={indicateur.id}
+            />
+          );
+        return <></>;
+      })}
     </div>
   );
 };
@@ -221,7 +270,8 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             label="Indicateurs du référentiel"
             component={IndicateursField}
           />
-          <span className="bg-yellow-400">todo cartes indicateurs</span>
+          <LinkedIndicateurCards />
+
           <div className="p-5" />
 
           <Field
@@ -230,7 +280,8 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             component={IndicateursPersonnalisesField}
           />
           <button className="bg-yellow-400">todo créer un indicateur</button>
-          <span className="bg-yellow-400">todo cartes indicateurs perso</span>
+          <LinkedIndicateurPersonnaliseCards />
+
           <div className="p-5" />
 
           <div className="flex flex-row-reverse">
