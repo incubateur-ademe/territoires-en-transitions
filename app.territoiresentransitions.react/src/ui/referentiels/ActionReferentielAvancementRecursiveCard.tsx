@@ -35,50 +35,65 @@ const ActionReferentielRecursiveCard = ({
     );
 };
 
-const makeActionReferentielAvancementCard =
-  ({displayProgressStat}: {displayProgressStat: boolean}) =>
-  ({action}: {action: ActionReferentiel}) => {
-    const isTache = action.actions.length === 0;
-    return (
-      <article
-        className={` bg-beige my-8 p-4 border-bf500  ${
-          isTache ? '' : 'border-l-4'
-        }`}
-      >
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-normal">
-            <span>{action.id_nomenclature} - </span>
-            {action.nom}
-          </h3>
-          <ProgressStat
-            action={action}
-            position="right"
-            className={`${displayProgressStat ? '' : 'hidden'}`}
-          />
-        </div>
-        <div className="flex justify-between my-6">
-          {' '}
+export const ActionReferentielAvancementCard = ({
+  displayProgressStat,
+  displayAddFicheActionButton,
+  action,
+}: {
+  displayProgressStat: boolean;
+  displayAddFicheActionButton: boolean;
+  action: ActionReferentiel;
+}) => {
+  const isTache = action.actions.length === 0;
+  return (
+    <article
+      className={` bg-beige my-8 p-4 border-bf500  ${
+        isTache ? '' : 'border-l-4'
+      }`}
+    >
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-normal">
+          <span>{action.id_nomenclature} - </span>
+          {action.nom}
+        </h3>
+        <ProgressStat
+          action={action}
+          position="right"
+          className={`${displayProgressStat ? '' : 'hidden'}`}
+        />
+      </div>
+      <div className="flex justify-between my-6">
+        {' '}
+        <div className={` ${!displayAddFicheActionButton ? 'hidden' : ''}`}>
           <AddFicheActionButton actionId={action.id} />
-          <div className={` ${!isTache ? 'hidden' : ''}`}>
-            <ActionStatusRadio actionId={action.id} />
-          </div>
         </div>
-        <div className="w-1/2">
-          <ActionDescription content={action.description} />
-          <ActionCommentaire actionId={action.id} />
+        <div className={` ${!isTache ? 'hidden' : ''}`}>
+          <ActionStatusRadio actionId={action.id} />
         </div>
-      </article>
-    );
-  };
+      </div>
+      <div className="w-1/2">
+        <ActionDescription content={action.description} />
+        <ActionCommentaire actionId={action.id} />
+      </div>
+    </article>
+  );
+};
 
 export const ActionReferentielAvancementRecursiveCard = ({
   action,
   displayProgressStat,
+  displayAddFicheActionButton,
 }: {
   action: ActionReferentiel;
   displayProgressStat: boolean;
+  displayAddFicheActionButton: boolean;
 }) =>
   ActionReferentielRecursiveCard({
     action,
-    card: makeActionReferentielAvancementCard({displayProgressStat}),
+    card: ({action}) =>
+      ActionReferentielAvancementCard({
+        action,
+        displayProgressStat,
+        displayAddFicheActionButton,
+      }),
   });

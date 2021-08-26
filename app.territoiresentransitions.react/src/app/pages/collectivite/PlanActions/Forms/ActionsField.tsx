@@ -1,16 +1,20 @@
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 import {actionsById} from 'utils/actions';
 import {actions} from 'generated/data/referentiels';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
+import type {ActionReferentiel} from 'generated/models/action_referentiel';
 
 type ActionsFieldProps = {
   label: string;
   id?: string;
   hint?: string;
 };
+
+const actionToEmoji = (action: ActionReferentiel) =>
+  action.id.startsWith('eco') ? '♻' : '🌍';
 /**
  * A material UI tags field (multi picker) for action ids.
  *
@@ -40,11 +44,15 @@ export const ActionsField: FC<ActionsFieldProps & FieldProps> = ({
         id={htmlId}
         options={allActionIds}
         className="bg-beige"
+        renderOption={id => {
+          const action = allActions.get(id)!;
+          return `${actionToEmoji(action)} ${action.id_nomenclature} - ${
+            action.nom
+          }`;
+        }}
         getOptionLabel={id => {
           const action = allActions.get(id)!;
-          return `${action.id.startsWith('eco') ? '♻' : '🌍'} ${
-            action.id_nomenclature
-          }. ${action.nom}`;
+          return `${actionToEmoji(action)} ${action.id_nomenclature}`;
         }}
         value={field.value}
         onChange={(e, value) => {

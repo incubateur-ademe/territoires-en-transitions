@@ -1,12 +1,15 @@
 import {FicheActionInterface} from 'generated/models/fiche_action';
 import React, {useState} from 'react';
 import * as Yup from 'yup';
-import {Field, Form, Formik} from 'formik';
+import {Field, Form, Formik, useFormikContext} from 'formik';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ActionsField} from 'app/pages/collectivite/PlanActions/Forms/ActionsField';
 import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursField';
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
 import {CategoriePicker} from 'app/pages/collectivite/PlanActions/Forms/CategoriePicker';
+import {ActionReferentielAvancementCard} from 'ui/referentiels';
+import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
+import {actions} from 'generated/data/referentiels';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -23,6 +26,26 @@ function onKeyDown(event: React.KeyboardEvent) {
     event.preventDefault();
   }
 }
+
+const LinkedActionsReferentielCards = () => {
+  const {values} = useFormikContext<FicheActionInterface>();
+  const linkedActions = values.referentiel_action_ids.map(
+    actionId => searchById(actions, actionId)!
+  );
+
+  return (
+    <div>
+      {linkedActions.map(action => (
+        <ActionReferentielAvancementCard
+          key={action.id}
+          action={action}
+          displayProgressStat={false}
+          displayAddFicheActionButton={false}
+        />
+      ))}
+    </div>
+  );
+};
 
 /**
  * Used to edit a fiche.
@@ -189,7 +212,8 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             label="Actions du référentiel"
             component={ActionsField}
           />
-          <span className="bg-yellow-400">todo cartes actions</span>
+          <LinkedActionsReferentielCards />
+
           <div className="p-5" />
 
           <Field
