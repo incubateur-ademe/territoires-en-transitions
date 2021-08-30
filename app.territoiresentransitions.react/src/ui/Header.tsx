@@ -1,5 +1,6 @@
-import 'app/DesignSystem/header.css';
-import 'app/DesignSystem/logo.css';
+import '@gouvfr/dsfr/dist/css/header.css';
+import '@gouvfr/dsfr/dist/css/logo.css';
+import '@gouvfr/dsfr/dist/css/links.css';
 
 import React from 'react';
 import {useReadOnly} from 'core-logic/hooks/readOnly';
@@ -47,7 +48,6 @@ export const Header = (props: HeaderProps) => {
               </a>
             </div>
           </div>
-
           {props.nav}
         </div>
         <div
