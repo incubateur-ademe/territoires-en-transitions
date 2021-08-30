@@ -100,9 +100,7 @@ export function CategoriePicker(props: {ficheUid: string}) {
               label: categorie.nom,
             }))}
             defaultValue={defaultCategorie.uid}
-            onChange={(event: any) => {
-              selectCategorie(`${event.target.value}`);
-            }}
+            onChange={selectCategorie}
           />
         </div>
       )}
