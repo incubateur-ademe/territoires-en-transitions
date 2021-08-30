@@ -244,7 +244,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
               <div className="flex flex-col mr-5">
                 <label className="fr-label mb-2" htmlFor="fiche_create_debut">
-                  Date de début
+                  Date de fin
                 </label>
                 <Field
                   name="date_fin"

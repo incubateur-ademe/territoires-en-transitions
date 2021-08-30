@@ -46,7 +46,7 @@ export function IndicateurPersonnaliseForm(props: {
       validationSchema={validation}
       onSubmit={save}
     >
-      <Form onKeyDown={onKeyDown} onSubmit={e => e.preventDefault()}>
+      <Form onKeyDown={onKeyDown}>
         <Field name="nom" label="Titre" component={LabeledTextField} />
         <div className="p-5" />
 
