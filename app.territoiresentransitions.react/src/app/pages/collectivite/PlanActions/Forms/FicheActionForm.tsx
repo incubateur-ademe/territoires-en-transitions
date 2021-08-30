@@ -16,6 +16,8 @@ import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/Indi
 import {useAllStorables} from 'core-logic/hooks';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
+import {Spacer} from 'ui/shared';
+import {IndicateurPersonnaliseCreator} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreator';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -96,8 +98,6 @@ const LinkedIndicateurPersonnaliseCards = () => {
   );
 };
 
-const Spacer = () => <div className="p-5" />;
-
 /**
  * Used to edit a fiche.
  *
@@ -177,9 +177,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             />
             <Spacer />
 
-            <div className="max-w-xl">
-              <CategoriePicker ficheUid={props.fiche.uid} />
-            </div>
+            <CategoriePicker ficheUid={props.fiche.uid} />
             <Spacer />
 
             <Field
@@ -192,7 +190,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
             <label>
               <Field type="checkbox" name="en_retard" />
-              Action en retard
+              <span className="ml-2">Action en retard</span>
             </label>
             <Spacer />
 
@@ -282,6 +280,22 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             component={IndicateursPersonnalisesField}
           />
           <button className="bg-yellow-400">todo créer un indicateur</button>
+
+          <div className="w-2/3 mb-5 border-bf500 border-l-4 pl-4">
+            <div className="flex flex-row justify-between">
+              <h3 className="fr-h3">Nouvel indicateur</h3>
+              <button
+                className="fr-btn fr-btn--secondary"
+                onClick={() => setCreatingIndiateurPersonnalise(false)}
+              >
+                x
+              </button>
+            </div>
+            <IndicateurPersonnaliseCreator
+              onClose={() => setCreatingIndiateurPersonnalise(false)}
+            />
+          </div>
+
           <LinkedIndicateurPersonnaliseCards />
 
           <Spacer />
