@@ -90,7 +90,7 @@ export const IndicateurPersonnaliseCard = (props: {
   return (
     <div className="flex flex-col px-5 py-4 bg-beige mb-5">
       <div className="flex flex-row justify-between items-center">
-        <h3 className="text-xl">{props.indicateur.nom}</h3>
+        <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
         <button
           className="fr-btn fr-btn--secondary"
           onClick={() => setEditing(true)}

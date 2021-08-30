@@ -1,15 +1,14 @@
-#root {
-  width: 100%;
+
+details > .content ul {
+  list-style: disc;
+  margin-left: 1.5rem;
 }
 
-.app {
-  min-width: 300px;
+details > .content li > p {
+  display: inline;
 }
 
-.flex-4 {
-  flex: 4;
+details > .content p {
+  margin-bottom: 1rem;
 }
 
-.width-420 {
-  width: 420px;
-}

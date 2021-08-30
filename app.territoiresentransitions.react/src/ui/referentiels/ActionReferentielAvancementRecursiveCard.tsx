@@ -7,6 +7,16 @@ import {
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {ProgressStat} from '.';
 
+/**
+ * Displays an actions and it's children indented below.
+ *
+ * @param action
+ * @param card
+ * @param marginLeft the accumulated margin passed down to children for
+ * indentation, beware the resulting tailwind classes have to be excluded
+ * from purge in `tailwind.config.js`.
+ * @constructor
+ */
 const ActionReferentielRecursiveCard = ({
   action,
   card,

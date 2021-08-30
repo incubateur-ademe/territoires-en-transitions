@@ -15,6 +15,7 @@ import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import Home from 'app/pages/Home';
 import {useConnected} from 'core-logic/hooks';
 
+import 'app/app.css';
 import 'app/DesignSystem/core.css';
 import 'app/DesignSystem/variables.css';
 import 'app/DesignSystem/buttons.css';

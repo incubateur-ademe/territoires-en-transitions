@@ -16,6 +16,8 @@ import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/Indi
 import {useAllStorables} from 'core-logic/hooks';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
+import {Spacer} from 'ui/shared';
+import {IndicateurPersonnaliseCreatorExpandable} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreatorExpandable';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -81,7 +83,7 @@ const LinkedIndicateurPersonnaliseCards = () => {
   );
 
   return (
-    <div>
+    <div className="flex flex-col justify-between mt-6">
       {linkedIndicateursPersonnalises.map(indicateur => {
         if (indicateur)
           return (
@@ -95,8 +97,6 @@ const LinkedIndicateurPersonnaliseCards = () => {
     </div>
   );
 };
-
-const Spacer = () => <div className="p-5" />;
 
 /**
  * Used to edit a fiche.
@@ -171,15 +171,13 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
             <Field
               name="titre"
-              label="Titre"
-              hint="Ce champ est requis"
+              label="Titre *"
+              hint="Champ requis"
               component={LabeledTextField}
             />
             <Spacer />
 
-            <div className="max-w-xl">
-              <CategoriePicker ficheUid={props.fiche.uid} />
-            </div>
+            <CategoriePicker ficheUid={props.fiche.uid} />
             <Spacer />
 
             <Field
@@ -192,7 +190,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
             <label>
               <Field type="checkbox" name="en_retard" />
-              Action en retard
+              <span className="ml-2">Action en retard</span>
             </label>
             <Spacer />
 
@@ -246,7 +244,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
               <div className="flex flex-col mr-5">
                 <label className="fr-label mb-2" htmlFor="fiche_create_debut">
-                  Date de début
+                  Date de fin
                 </label>
                 <Field
                   name="date_fin"
@@ -281,12 +279,13 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             label="Indicateurs personnalisés"
             component={IndicateursPersonnalisesField}
           />
-          <button className="bg-yellow-400">todo créer un indicateur</button>
+
+          <IndicateurPersonnaliseCreatorExpandable buttonClasses="fr-btn--secondary" />
           <LinkedIndicateurPersonnaliseCards />
 
           <Spacer />
 
-          <div className="flex flex-row-reverse">
+          <div className="flex flex-row-reverse mb-12">
             {state === 'ready' && (
               <button className="fr-btn" type="submit">
                 Enregistrer

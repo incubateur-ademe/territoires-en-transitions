@@ -125,12 +125,12 @@ export const signOut = (): boolean => {
 /**
  * Retrieve utilisateurs droits from our API, returns an empty list if not connected
  */
-export const currentUtilisateurDroits = async (): Promise<
-  UtilisateurDroits[] | null
-> => {
+export const currentUtilisateurDroits = async (
+  force?: boolean | undefined
+): Promise<UtilisateurDroits[] | null> => {
   const user = currentUser();
   if (!user) return [];
-  if (droitsFetchedForUser === user.ademe_user_id) {
+  if (droitsFetchedForUser === user.ademe_user_id && !force) {
     return auth.currentUtilisateurDroits;
   }
 

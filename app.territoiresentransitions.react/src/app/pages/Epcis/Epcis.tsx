@@ -6,6 +6,7 @@ import 'app/DesignSystem/variables.css';
 import React from 'react';
 import {EpciCard, OwnedEpciCard} from 'app/pages/Epcis/_EpciCard';
 import {allSortedEpcis, currentUserEpcis} from 'core-logic/hooks';
+import {Spacer} from 'ui/shared';
 
 const Epcis = () => {
   const usersEpcis = currentUserEpcis();
@@ -20,18 +21,20 @@ const Epcis = () => {
     <div className="app fr-container m-5">
       <section>
         <h1 className="fr-h1 mb-16 text-center">Bienvenue !</h1>
-
+        <Spacer />
         <h2 className="fr-h2 mb-20 text-center">Vos collectivités</h2>
-
-        <div className="grid grid-cols-4 gap-3">
+        <Spacer />
+        <div className="grid grid-cols-3 gap-12">
           {usersEpcis.map(epci => (
             <OwnedEpciCard epci={epci} key={epci.id} />
           ))}
-          <div className="flex flex-col items-center pt-4 pr-6 pb-10 bg-beige border-bf500 border-b-4">
-            <h3 className="fr-h3">…</h3>
-            <button className="fr-btn fr-btn--sm" onClick={handleClickOpen}>
-              Ajouter ma collectivité
-            </button>
+          <div>
+            <div className="flex flex-col items-center pt-4 pr-6 pb-10 bg-beige border-bf500 border-b-4">
+              <h3 className="fr-h3">…</h3>
+              <button className="fr-btn fr-btn--sm" onClick={handleClickOpen}>
+                Ajouter ma collectivité
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -41,7 +44,7 @@ const Epcis = () => {
           Consulter toutes les collectivités
         </h2>
 
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 gap-12">
           {allEpcis.map(epci => (
             <EpciCard epci={epci} key={epci.id} />
           ))}

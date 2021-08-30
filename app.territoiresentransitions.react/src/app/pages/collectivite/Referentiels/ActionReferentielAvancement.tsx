@@ -7,7 +7,10 @@ import {
 } from 'ui/referentiels';
 import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
 import 'app/DesignSystem/buttons.css';
-import {ActionDescription, AddFicheActionButton} from 'ui/shared';
+import {ActionDescription, AddFicheActionButton, Spacer} from 'ui/shared';
+import {isIndicateurRelatedToAction} from 'utils/indicateurs';
+import {indicateurs} from 'generated/data/indicateurs_referentiels';
+import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 
 const ActionReferentielAvancement = ({
   actionId,
@@ -18,14 +21,17 @@ const ActionReferentielAvancement = ({
 }) => {
   const action = searchById(referentielActions, actionId);
   if (!action) {
-    return <Link to="./referentiels"></Link>;
+    return <Link to="./referentiels" />;
   }
+  const relatedIndicateurs = indicateurs.filter(indicateur =>
+    isIndicateurRelatedToAction(indicateur, action)
+  );
   return (
     <div className="fr-container">
       <div className="mt-8 mb-16">
         <div className="pt-8 flex justify-between items-center">
           <ActionReferentielTitle
-            className="fr-h1 w-5/6 text-gray-900"
+            className="fr-h1 w-9/12 text-gray-900"
             action={action}
           />
           <AddFicheActionButton actionId={action.id} />
@@ -40,7 +46,7 @@ const ActionReferentielAvancement = ({
         </div>
       </div>
 
-      <div>
+      <section>
         <h2 className="fr-h2"> Les actions</h2>
         {action.actions.map(action => (
           <ActionReferentielAvancementRecursiveCard
@@ -50,11 +56,19 @@ const ActionReferentielAvancement = ({
             displayAddFicheActionButton={true}
           />
         ))}
-      </div>
+      </section>
 
-      <div>
-        <h2 className="fr-h2 bg-yellow-200 ">todo Les indicateurs</h2>
-      </div>
+      <Spacer />
+      <section>
+        <h2 className="fr-h2">Les indicateurs</h2>
+        {relatedIndicateurs.length === 0 && (
+          <p>Cette action ne comporte pas d'indicateur</p>
+        )}
+
+        {relatedIndicateurs.map(indicateur => (
+          <IndicateurReferentielCard indicateur={indicateur} />
+        ))}
+      </section>
     </div>
   );
 };

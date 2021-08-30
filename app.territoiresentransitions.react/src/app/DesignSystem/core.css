@@ -539,10 +539,6 @@ p {
   --is-link: ;
 }
 
-a {
-  box-shadow: var(--is-link) 0 1px 0 0 currentColor;
-}
-
 a[target='_blank' i]::after {
   font-size: var(--is-link) 1rem;
   content: var(--is-link) '';
@@ -593,10 +589,10 @@ a:not([href]) {
   --is-list: ;
 }
 
-ol,
+/* ol,
 ul {
   padding-bottom: var(--is-list) 0.5rem;
-}
+} */
 
 ol > li,
 ul > li {

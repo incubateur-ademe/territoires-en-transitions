@@ -11,17 +11,18 @@ function LazyDetails(props: {
 }) {
   const [open, setOpen] = useState(props.startOpen);
   return (
-    <details open={open} className="flex items-center">
-      <summary
+    <section className="flex flex-col">
+      <header
+        className="w-full cursor-pointer"
         onClick={e => {
           e.preventDefault();
           setOpen(open => !open);
         }}
       >
         {props.summary}
-      </summary>
+      </header>
       {open && props.children}
-    </details>
+    </section>
   );
 }
 
@@ -42,7 +43,18 @@ export const IndicateurReferentielList = () => {
       <section className="flex flex-col">
         {[...byThematique.keys()].map(thematique => {
           return (
-            <LazyDetails summary={<h2>{thematique.name}</h2>} startOpen={false}>
+            <LazyDetails
+              summary={
+                <div className="flex items-center mb-5">
+                  <h2 className="mb-0">{thematique.name}</h2>
+                  <span
+                    className="fr-fi-arrow-right-s-line ml-10 text-xl rotate"
+                    aria-hidden={true}
+                  />
+                </div>
+              }
+              startOpen={false}
+            >
               {byThematique.get(thematique)!.map(indicateur => {
                 return (
                   <IndicateurReferentielCard

@@ -7,22 +7,22 @@ const EpciNavigation = () => {
   const epci = useCurrentEpci();
 
   return (
-    <>
+    <div className="fr-links-group">
       {epci && <span className="text-lg px-2">{epci.nom}</span>}
-      <Link className="px-2" to="/epcis">
+      <Link className="fr-link" to="/epcis">
         Changer
       </Link>
 
-      <Link className="px-2" to={`/collectivite/${epciId}/plan_actions`}>
+      <Link className="fr-link" to={`/collectivite/${epciId}/plan_actions`}>
         Mon plan d'actions
       </Link>
-      <Link className="px-2" to={`/collectivite/${epciId}/referentiels`}>
+      <Link className="fr-link" to={`/collectivite/${epciId}/referentiels`}>
         Référentiels
       </Link>
-      <Link className="px-2" to={`/collectivite/${epciId}/indicateurs`}>
+      <Link className="fr-link" to={`/collectivite/${epciId}/indicateurs`}>
         Indicateurs
       </Link>
-    </>
+    </div>
   );
 };
 
@@ -34,8 +34,8 @@ export const Navigation = () => {
       <div className="fr-header__tools-links">
         <ul className="fr-links-group">
           {isEpciRoute && <EpciNavigation />}
-
-          <Link className="px-2" to="/auth/signout">
+          <Link className="fr-link" to="/auth/signout">
+            <div className="fr-fi-account-line m-1"></div>
             Déconnexion
           </Link>
         </ul>

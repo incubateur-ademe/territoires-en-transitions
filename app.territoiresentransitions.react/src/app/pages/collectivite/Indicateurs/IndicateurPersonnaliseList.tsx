@@ -1,45 +1,10 @@
-import React from 'react';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
-import {v4 as uuid} from 'uuid';
-
-import {IndicateurPersonnaliseInterface} from 'generated/models/indicateur_personnalise';
-import {useAllStorables, useEpciId} from 'core-logic/hooks';
-import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
+import {IndicateurPersonnaliseCreatorExpandable} from './IndicateurPersonnaliseCreatorExpandable';
+import {useAllStorables} from 'core-logic/hooks';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 
-function IndicateurPersonnaliseCreator(props: {onClose: () => void}) {
-  const epciId = useEpciId();
-  const freshData = (): IndicateurPersonnaliseInterface => {
-    return {
-      epci_id: epciId!,
-      uid: uuid(),
-      custom_id: '',
-      nom: '',
-      description: '',
-      unite: '',
-      meta: {
-        commentaire: '',
-      },
-    };
-  };
-  const [data, setData] = React.useState<IndicateurPersonnaliseInterface>(
-    freshData()
-  );
-
-  const onSave = (indicateur: IndicateurPersonnaliseInterface) => {
-    indicateurPersonnaliseStore.store(
-      new IndicateurPersonnaliseStorable(indicateur)
-    );
-    setData(freshData());
-    props.onClose();
-  };
-
-  return <IndicateurPersonnaliseForm indicateur={data} onSave={onSave} />;
-}
-
 export const IndicateurPersonnaliseList = () => {
-  const [creating, setCreating] = React.useState<boolean>(false);
   const indicateurs = useAllStorables<IndicateurPersonnaliseStorable>(
     indicateurPersonnaliseStore
   );
@@ -47,39 +12,18 @@ export const IndicateurPersonnaliseList = () => {
 
   return (
     <div className="app mx-5 mt-5">
-      <div className="flex flex-row justify-between">
+      <IndicateurPersonnaliseCreatorExpandable buttonClasses="float-right" />
+      <div className="flex flex-col justify-between">
         <h2 className="fr-h2">Mes indicateurs</h2>
-
-        {!creating && (
-          <div>
-            <button className="fr-btn " onClick={() => setCreating(true)}>
-              Ajouter un indicateur
-            </button>
-          </div>
-        )}
+        <section className="flex flex-col">
+          {indicateurs.map(indicateur => (
+            <IndicateurPersonnaliseCard
+              indicateur={indicateur}
+              key={indicateur.id}
+            />
+          ))}
+        </section>
       </div>
-      {creating && (
-        <div className="w-2/3 mb-5 border-bf500 border-l-4 pl-4">
-          <div className="flex flex-row justify-between">
-            <h3 className="fr-h3">Nouvel indicateur</h3>
-            <button
-              className="fr-btn fr-btn--secondary"
-              onClick={() => setCreating(false)}
-            >
-              x
-            </button>
-          </div>
-          <IndicateurPersonnaliseCreator onClose={() => setCreating(false)} />
-        </div>
-      )}
-      <section className=" flex flex-col">
-        {indicateurs.map(indicateur => (
-          <IndicateurPersonnaliseCard
-            indicateur={indicateur}
-            key={indicateur.id}
-          />
-        ))}
-      </section>
     </div>
   );
 };

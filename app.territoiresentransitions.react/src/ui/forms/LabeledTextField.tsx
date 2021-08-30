@@ -36,7 +36,9 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
         <div className="mt-2 text-sm opacity-80">{props.hint}</div>
       )}
       {errorMessage && isTouched && (
-        <div className="mt-2 text-sm opacity-80">{errorMessage}</div>
+        <div className="mt-2 text-sm opacity-80 text-red-500">
+          {errorMessage}
+        </div>
       )}
 
       {props.type !== 'area' && (

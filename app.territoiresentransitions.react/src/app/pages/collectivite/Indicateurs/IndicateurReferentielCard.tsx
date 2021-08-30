@@ -40,16 +40,18 @@ const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   };
 
   return (
-    <details className="CrossExpandPanel">
-      <summary>Commentaire</summary>
-      <div>
-        <textarea
-          defaultValue={value}
-          onBlur={handleSave}
-          className="fr-input mt-2 w-4/5 bg-white p-3 border-b-2 border-gray-500 mr-5"
-        />
-      </div>
-    </details>
+    <div className="CrossExpandPanel">
+      <details>
+        <summary>Commentaire</summary>
+        <div>
+          <textarea
+            defaultValue={value}
+            onBlur={handleSave}
+            className="fr-input mt-2 w-4/5 bg-white p-3 border-b-2 border-gray-500 mr-5"
+          />
+        </div>
+      </details>
+    </div>
   );
 };
 

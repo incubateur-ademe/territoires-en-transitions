@@ -1,6 +1,9 @@
 module.exports = {
   style: 'jit',
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  purge: {
+    content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+    safelist: ['ml-0', 'ml-20', 'ml-40', 'ml-60'],
+  },
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
