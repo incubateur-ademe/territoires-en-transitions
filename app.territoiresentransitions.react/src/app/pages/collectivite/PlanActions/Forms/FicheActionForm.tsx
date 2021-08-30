@@ -17,7 +17,7 @@ import {useAllStorables} from 'core-logic/hooks';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import {Spacer} from 'ui/shared';
-import {IndicateurPersonnaliseCreator} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreator';
+import {IndicateurPersonnaliseCreatorExpandable} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreatorExpandable';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -83,7 +83,7 @@ const LinkedIndicateurPersonnaliseCards = () => {
   );
 
   return (
-    <div>
+    <div className="flex flex-col justify-between mt-6">
       {linkedIndicateursPersonnalises.map(indicateur => {
         if (indicateur)
           return (
@@ -279,28 +279,13 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             label="Indicateurs personnalisés"
             component={IndicateursPersonnalisesField}
           />
-          <button className="bg-yellow-400">todo créer un indicateur</button>
 
-          <div className="w-2/3 mb-5 border-bf500 border-l-4 pl-4">
-            <div className="flex flex-row justify-between">
-              <h3 className="fr-h3">Nouvel indicateur</h3>
-              <button
-                className="fr-btn fr-btn--secondary"
-                onClick={() => setCreatingIndiateurPersonnalise(false)}
-              >
-                x
-              </button>
-            </div>
-            <IndicateurPersonnaliseCreator
-              onClose={() => setCreatingIndiateurPersonnalise(false)}
-            />
-          </div>
-
+          <IndicateurPersonnaliseCreatorExpandable buttonClasses="fr-btn--secondary" />
           <LinkedIndicateurPersonnaliseCards />
 
           <Spacer />
 
-          <div className="flex flex-row-reverse">
+          <div className="flex flex-row-reverse mb-12">
             {state === 'ready' && (
               <button className="fr-btn" type="submit">
                 Enregistrer
