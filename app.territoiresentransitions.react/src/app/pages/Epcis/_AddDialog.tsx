@@ -37,9 +37,9 @@ export const AddDialog = (props: AddDialogProps) => {
   };
 
   return (
-    <Dialog open={open} onClose={close}>
-      <div>
-        <div className="flex">
+    <Dialog open={open} onClose={close} maxWidth="md" fullWidth={true}>
+      <div className="p-7">
+        <div className="flex min-w-xl justify-evenly">
           <div className="flex flex-col">
             <h1 className="text-xl">Ma collectivité a déjà un compte</h1>
             <SelectInput
@@ -66,7 +66,7 @@ export const AddDialog = (props: AddDialogProps) => {
           </div>
         </div>
 
-        <div className="flex justify-center mt-1">
+        <div className="flex justify-center mt-8">
           <button
             className="fr-btn fr-btn--secondary fr-btn--sm"
             onClick={submit}
