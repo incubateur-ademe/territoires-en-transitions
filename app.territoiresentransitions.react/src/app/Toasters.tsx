@@ -132,8 +132,8 @@ export function Toasters() {
       <EndpointToaster
         endpoint={ficheActionCategorieStore.api}
         composer={makeComposer({
-          storeSuccess: "La valeur de l'indicateur est enregistrée",
-          storeError: "La valeur de l'indicateur n'a pas été enregistrée",
+          storeSuccess: 'La catégorie est enregistrée',
+          storeError: "La catégorie n'a pas été enregistrée",
         })}
       />
 
