@@ -35,7 +35,6 @@ export const EpciCard = ({epci}: EpciCardProps) => (
 export const OwnedEpciCard = ({epci}: EpciCardProps) => {
   return (
     <div className="relative">
-      <span className="bg-yellow-400 absolute top-0 right-0 p-3"> ❌</span>
       <EpciCard epci={epci} />
     </div>
   );
