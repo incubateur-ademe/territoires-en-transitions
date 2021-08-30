@@ -57,7 +57,7 @@ export const ActionsReferentiels = () => {
       <div>
         <h1 className="fr-h1 mb-0">Référentiels</h1>
       </div>
-      <div>
+      <div className="w-1/3">
         <SelectInput<View>
           options={viewOptions}
           label=""
