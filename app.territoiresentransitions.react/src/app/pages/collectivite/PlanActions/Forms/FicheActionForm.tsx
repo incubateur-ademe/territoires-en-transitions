@@ -171,8 +171,8 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
             <Field
               name="titre"
-              label="Titre"
-              hint="Ce champ est requis"
+              label="Titre *"
+              hint="Champ requis"
               component={LabeledTextField}
             />
             <Spacer />
