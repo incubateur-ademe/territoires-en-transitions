@@ -1444,7 +1444,7 @@ details > summary:first-of-type {
 }
 
 body {
-  background-color: #f3f4f6;
+  background-color: var(--w);
   --block-color-hover: rgba(224, 224, 224, 0.5);
   --block-color-active: rgba(194, 194, 194, 0.5);
   color: var(--g700);
