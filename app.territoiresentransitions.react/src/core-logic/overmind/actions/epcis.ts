@@ -2,7 +2,10 @@ import type {Effects} from '../effects';
 import type {State} from 'core-logic/overmind/state';
 import {v4 as uuid} from 'uuid';
 import {EpciStorable} from 'storables/EpciStorable';
-import {addDroits} from 'core-logic/api/authentication';
+import {
+  addDroits,
+  currentUtilisateurDroits,
+} from 'core-logic/api/authentication';
 
 const setCurrentEpci = ({state}: {state: State}, epciId: string) => {
   state.currentEpciId = epciId;
@@ -29,6 +32,7 @@ const createNewEpci = async (
     siren: '',
   });
   const stored = await effects.epciStore.store(newEpci);
+  await currentUtilisateurDroits(true);
   if (stored) state.allEpcis.push(stored);
 };
 
