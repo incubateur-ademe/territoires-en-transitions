@@ -17,7 +17,7 @@ import {useAllStorables} from 'core-logic/hooks';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import {Spacer} from 'ui/shared';
-import {IndicateurPersonnaliseCreatorExpandable} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreatorExpandable';
+import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -280,7 +280,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             component={IndicateursPersonnalisesField}
           />
 
-          <IndicateurPersonnaliseCreatorExpandable buttonClasses="fr-btn--secondary" />
+          <IndicateurPersonnaliseCreationDialog buttonClasses="fr-btn--secondary" />
           <LinkedIndicateurPersonnaliseCards />
 
           <Spacer />

@@ -10,6 +10,7 @@ import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/Ind
 import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnaliseMetaTypedInterface';
 import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
+import {UiDialogButton} from 'ui/UiDialogButton';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -55,48 +56,40 @@ const IndicateurPersonnaliseCommentaire = (props: {
   );
 };
 
-export const IndicateurPersonnaliseCard = (props: {
+const IndicateurPersonnaliseEditionDialog = ({
+  indicateur,
+}: {
   indicateur: IndicateurPersonnaliseStorable;
 }) => {
   const [editing, setEditing] = React.useState<boolean>(false);
-
   const onSave = (indicateur: IndicateurPersonnaliseInterface) => {
     indicateurPersonnaliseStore.store(
       new IndicateurPersonnaliseStorable(indicateur)
     );
     setEditing(false);
   };
+  return (
+    <div>
+      <UiDialogButton
+        buttonClasses="fr-btn--secondary"
+        title="Modifier l'indicateur"
+        opened={editing}
+        setOpened={setEditing}
+      >
+        <IndicateurPersonnaliseForm indicateur={indicateur} onSave={onSave} />
+      </UiDialogButton>
+    </div>
+  );
+};
 
-  if (editing) {
-    return (
-      <div className="w-2/3 mb-5 border-bf500 border-l-4 pl-4">
-        <div className="flex flex-row justify-between">
-          <h3 className="fr-h3">{props.indicateur.nom}</h3>
-          <button
-            className="fr-btn fr-btn--secondary"
-            onClick={() => setEditing(false)}
-          >
-            x
-          </button>
-        </div>
-        <IndicateurPersonnaliseForm
-          indicateur={props.indicateur}
-          onSave={onSave}
-        />
-      </div>
-    );
-  }
-
+export const IndicateurPersonnaliseCard = (props: {
+  indicateur: IndicateurPersonnaliseStorable;
+}) => {
   return (
     <div className="flex flex-col px-5 py-4 bg-beige mb-5">
       <div className="flex flex-row justify-between items-center">
         <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
-        <button
-          className="fr-btn fr-btn--secondary"
-          onClick={() => setEditing(true)}
-        >
-          Modifier l'indicateur
-        </button>
+        <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
       </div>
       <AnyIndicateurValues
         storage={{
