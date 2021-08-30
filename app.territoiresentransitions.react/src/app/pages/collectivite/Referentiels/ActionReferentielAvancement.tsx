@@ -31,7 +31,7 @@ const ActionReferentielAvancement = ({
       <div className="mt-8 mb-16">
         <div className="pt-8 flex justify-between items-center">
           <ActionReferentielTitle
-            className="fr-h1 w-5/6 text-gray-900"
+            className="fr-h1 w-9/12 text-gray-900"
             action={action}
           />
           <AddFicheActionButton actionId={action.id} />
