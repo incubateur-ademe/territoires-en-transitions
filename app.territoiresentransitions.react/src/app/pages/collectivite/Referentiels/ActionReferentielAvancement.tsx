@@ -7,7 +7,7 @@ import {
 } from 'ui/referentiels';
 import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
 import 'app/DesignSystem/buttons.css';
-import {ActionDescription, AddFicheActionButton} from 'ui/shared';
+import {ActionDescription, AddFicheActionButton, Spacer} from 'ui/shared';
 import {isIndicateurRelatedToAction} from 'utils/indicateurs';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
@@ -46,7 +46,7 @@ const ActionReferentielAvancement = ({
         </div>
       </div>
 
-      <div>
+      <section>
         <h2 className="fr-h2"> Les actions</h2>
         {action.actions.map(action => (
           <ActionReferentielAvancementRecursiveCard
@@ -56,18 +56,19 @@ const ActionReferentielAvancement = ({
             displayAddFicheActionButton={true}
           />
         ))}
-      </div>
+      </section>
 
-      <div>
-        <h2 className="fr-h2 bg-yellow-200 ">Les indicateurs</h2>
-        {indicateurs.length === 0 && (
+      <Spacer />
+      <section>
+        <h2 className="fr-h2">Les indicateurs</h2>
+        {relatedIndicateurs.length === 0 && (
           <p>Cette action ne comporte pas d'indicateur</p>
         )}
 
-        {indicateurs.map(indicateur => (
+        {relatedIndicateurs.map(indicateur => (
           <IndicateurReferentielCard indicateur={indicateur} />
         ))}
-      </div>
+      </section>
     </div>
   );
 };
