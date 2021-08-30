@@ -8,6 +8,9 @@ import {
 import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
 import 'app/DesignSystem/buttons.css';
 import {ActionDescription, AddFicheActionButton} from 'ui/shared';
+import {isIndicateurRelatedToAction} from 'utils/indicateurs';
+import {indicateurs} from 'generated/data/indicateurs_referentiels';
+import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 
 const ActionReferentielAvancement = ({
   actionId,
@@ -18,8 +21,11 @@ const ActionReferentielAvancement = ({
 }) => {
   const action = searchById(referentielActions, actionId);
   if (!action) {
-    return <Link to="./referentiels"></Link>;
+    return <Link to="./referentiels" />;
   }
+  const relatedIndicateurs = indicateurs.filter(indicateur =>
+    isIndicateurRelatedToAction(indicateur, action)
+  );
   return (
     <div className="fr-container">
       <div className="mt-8 mb-16">
@@ -53,7 +59,14 @@ const ActionReferentielAvancement = ({
       </div>
 
       <div>
-        <h2 className="fr-h2 bg-yellow-200 ">todo Les indicateurs</h2>
+        <h2 className="fr-h2 bg-yellow-200 ">Les indicateurs</h2>
+        {indicateurs.length === 0 && (
+          <p>Cette action ne comporte pas d'indicateur</p>
+        )}
+
+        {indicateurs.map(indicateur => (
+          <IndicateurReferentielCard indicateur={indicateur} />
+        ))}
       </div>
     </div>
   );
