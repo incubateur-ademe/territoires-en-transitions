@@ -1,6 +1,4 @@
 import {v4 as uuid} from 'uuid';
-import {Select, MenuItem, FormControl, InputLabel} from '@material-ui/core';
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {useState} from 'react';
 
 export type Option<T extends string> = {
@@ -33,7 +31,7 @@ export const SelectInput = <T extends string>(props: SelectInputProps<T>) => {
         <slot />
       </label>
       <select
-        className="mt-2  bg-beige p-3 border-b-2 border-gray-500"
+        className="mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
         value={value}
         onChange={handleChange}
       >

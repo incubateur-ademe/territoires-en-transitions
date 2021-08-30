@@ -38,10 +38,10 @@ export const AddDialog = (props: AddDialogProps) => {
 
   return (
     <Dialog open={open} onClose={close} maxWidth="md" fullWidth={true}>
-      <div className="p-7">
+      <div className="py-7">
         <h3 className="text-center pb-4"> Ajouter ma collectivité </h3>
-        <div className="flex min-w-xl justify-evenly">
-          <div className="flex flex-col">
+        <div className="flex flex-row w-full">
+          <div className="flex flex-col w-1/2 p-5">
             <h1 className="text-xl">Ma collectivité a déjà un compte</h1>
             <SelectInput
               label="Sélectionner une collectivité"
@@ -53,7 +53,7 @@ export const AddDialog = (props: AddDialogProps) => {
               }}
             />
           </div>
-          <div className="flex flex-col flex-shrink-0">
+          <div className="flex flex-col w-1/2 p-5">
             <h1 className="text-xl">
               Ma collectivité n'a pas encore de compte
             </h1>
