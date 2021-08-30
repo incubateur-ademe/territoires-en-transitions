@@ -21,7 +21,7 @@ export function CategoryForm(props: {
   return (
     <div>
       <LabeledTextInput
-        label="Nom de la categorie"
+        label="Nom de la catégorie"
         maxLength={100}
         value={nom}
         onChange={event => {
