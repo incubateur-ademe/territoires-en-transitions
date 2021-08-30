@@ -4,7 +4,7 @@ import {ProgressStat, ActionReferentielTitleCard} from 'ui/referentiels';
 const AxisSectionEconomieCirculaire = ({axis}: {axis: ActionReferentiel}) => (
   <div className="pb-10">
     <h2 className="fr-h2">
-      {axis.id_nomenclature} {axis.nom}
+      {axis.id_nomenclature} - {axis.nom}
     </h2>
     <ProgressStat action={axis} position="left" className="w-full" />
     <div className="h-5" />
