@@ -39,11 +39,12 @@ export const AddDialog = (props: AddDialogProps) => {
   return (
     <Dialog open={open} onClose={close} maxWidth="md" fullWidth={true}>
       <div className="p-7">
+        <h3 className="text-center pb-4"> Ajouter ma collectivité </h3>
         <div className="flex min-w-xl justify-evenly">
           <div className="flex flex-col">
             <h1 className="text-xl">Ma collectivité a déjà un compte</h1>
             <SelectInput
-              label="Nom de ma collectivité"
+              label="Sélectionner une collectivité"
               options={selectInputValues}
               defaultValue=""
               onChange={epciId => {
@@ -52,12 +53,12 @@ export const AddDialog = (props: AddDialogProps) => {
               }}
             />
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col flex-shrink-0">
             <h1 className="text-xl">
               Ma collectivité n'a pas encore de compte
             </h1>
             <LabeledTextInput
-              label="Nom de ma collectivité"
+              label="Créer une collectivité"
               maxLength={100}
               onChange={event => {
                 setInputEpciNom(event.target.value);

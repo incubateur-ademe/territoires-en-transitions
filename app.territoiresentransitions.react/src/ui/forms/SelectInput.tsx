@@ -1,18 +1,7 @@
+import {v4 as uuid} from 'uuid';
 import {Select, MenuItem, FormControl, InputLabel} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {useState} from 'react';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-    selectEmpty: {
-      marginTop: theme.spacing(2),
-    },
-  })
-);
 
 export type Option<T extends string> = {
   value: T;
@@ -23,36 +12,37 @@ type SelectInputProps<T extends string> = {
   onChange: (selected: T) => void;
   options: Option<T>[];
   defaultValue: T;
-  label: string;
+  label?: string;
+  id?: string;
 };
 
-export const SelectInput = <T extends string>({
-  label,
-  options,
-  onChange,
-  defaultValue,
-}: SelectInputProps<T>) => {
-  const classes = useStyles();
-  const [value, setValue] = useState<T>(defaultValue);
+export const SelectInput = <T extends string>(props: SelectInputProps<T>) => {
+  const htmlId = props.id ?? uuid();
+  const [value, setValue] = useState<T>(props.defaultValue);
 
   const handleChange = (event: React.ChangeEvent<{value: unknown}>) => {
     const selectedValue = event.target.value as T;
     setValue(selectedValue);
-    onChange(selectedValue);
+    props.onChange(selectedValue);
   };
 
   return (
     <div>
-      <FormControl className={classes.formControl}>
-        <InputLabel>{label ?? ''}</InputLabel>
-        <Select value={value} onChange={handleChange}>
-          {options.map(option => (
-            <MenuItem value={option.value} key={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <label className="fr-label" htmlFor={htmlId}>
+        {props.label}
+        <slot />
+      </label>
+      <select
+        className="mt-2  bg-beige p-3 border-b-2 border-gray-500"
+        value={value}
+        onChange={handleChange}
+      >
+        {props.options.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 };
