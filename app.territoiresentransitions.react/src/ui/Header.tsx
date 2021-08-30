@@ -27,18 +27,12 @@ export const Header = (props: HeaderProps) => {
               </div>
             </div>
             <div className="fr-header__ademe">
-              <picture>
-                <source
-                  src="https://territoiresentransitions.fr/img/ademe.jpg 118w"
-                  sizes="118px"
-                />
-                <img
-                  src="https://territoiresentransitions.fr/img/ademe.jpg"
-                  alt="ADEME"
-                  loading="lazy"
-                  className="header__logo"
-                />
-              </picture>
+              <img
+                src="https://territoiresentransitions.fr/img/ademe.jpg"
+                alt="logo ADEME"
+                loading="lazy"
+                className="h-20"
+              />
             </div>
             <div className="fr-header__service">
               <a href="/" title="Accueil">

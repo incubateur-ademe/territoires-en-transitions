@@ -34,7 +34,6 @@ export const Navigation = () => {
       <div className="fr-header__tools-links">
         <ul className="fr-links-group">
           {isEpciRoute && <EpciNavigation />}
-
           <Link className="fr-link" to="/auth/signout">
             <div className="fr-fi-account-line m-1"></div>
             Déconnexion
