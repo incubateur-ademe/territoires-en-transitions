@@ -3,7 +3,7 @@ import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorab
 export const defaultCategorie = new FicheActionCategorieStorable({
   uid: 'default',
   epci_id: '',
-  nom: 'sans categorie',
+  nom: 'Sans catégorie',
   parent_uid: '',
   fiche_actions_uids: [],
 });

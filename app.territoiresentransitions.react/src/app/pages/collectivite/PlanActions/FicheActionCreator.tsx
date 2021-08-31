@@ -7,6 +7,7 @@ import {FicheActionStorable} from 'storables/FicheActionStorable';
 import {searchActionById} from 'utils/actions';
 import {useQuery} from 'core-logic/hooks/query';
 import {actions} from 'generated/data/referentiels';
+import {RetourButton} from 'ui/shared';
 
 /**
  * This is the main component of FicheActionPage, use to show a fiche.
@@ -56,6 +57,7 @@ const FicheActionCreator = () => {
 
   return (
     <main className="fr-container pt-8">
+      <RetourButton />
       <h1 className="fr-h1 pt-5">Ajouter une fiche action</h1>
       <FicheActionForm fiche={fiche} onSave={save} />
     </main>

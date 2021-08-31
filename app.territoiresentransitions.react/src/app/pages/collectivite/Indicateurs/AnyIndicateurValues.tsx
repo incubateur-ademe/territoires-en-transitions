@@ -103,7 +103,10 @@ export const AnyIndicateurValues = (props: {
     <div className="flex flex row items-center">
       <button
         className="fr-btn fr-btn--secondary"
-        onClick={() => setIndex(index - 1)}
+        onClick={e => {
+          e.preventDefault();
+          setIndex(index - 1);
+        }}
         disabled={index < 1}
       >
         ←
@@ -117,7 +120,10 @@ export const AnyIndicateurValues = (props: {
       ))}
       <button
         className="fr-btn fr-btn--secondary"
-        onClick={() => setIndex(index + 1)}
+        onClick={e => {
+          e.preventDefault();
+          setIndex(index + 1);
+        }}
       >
         →
       </button>

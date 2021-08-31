@@ -1,14 +1,14 @@
-.ActionStatusRadio fieldset {
+.AvancementRadioButton fieldset {
   display: flex;
   border: none;
 }
 
-.ActionStatusRadio [type='radio'] {
+.AvancementRadioButton [type='radio'] {
   position: absolute;
   left: -9999px;
 }
 
-.ActionStatusRadio [type='radio'] + label {
+.AvancementRadioButton [type='radio'] + label {
   position: relative;
   display: flex;
   align-items: center;
@@ -18,7 +18,7 @@
   cursor: pointer;
 }
 
-.ActionStatusRadio label.checked {
+.AvancementRadioButton label.checked {
   color: #000091;
   background-color: #fff;
   border-top: solid;

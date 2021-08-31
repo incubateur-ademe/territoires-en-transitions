@@ -2,7 +2,7 @@ import {
   ActionDescription,
   ActionCommentaire,
   AddFicheActionButton,
-  ActionStatusRadio,
+  ActionStatusAvancementRadioButton,
 } from 'ui/shared';
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {ProgressStat} from '.';
@@ -78,7 +78,7 @@ export const ActionReferentielAvancementCard = ({
           <AddFicheActionButton actionId={action.id} />
         </div>
         <div className={` ${!isTache ? 'hidden' : ''}`}>
-          <ActionStatusRadio actionId={action.id} />
+          <ActionStatusAvancementRadioButton actionId={action.id} />
         </div>
       </div>
       <div className="w-1/2">

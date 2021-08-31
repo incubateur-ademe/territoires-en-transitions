@@ -20,10 +20,12 @@ import 'app/DesignSystem/core.css';
 import 'app/DesignSystem/variables.css';
 import 'app/DesignSystem/buttons.css';
 import {Toasters} from 'app/Toasters';
+import {ScrollToTop} from 'app/ScrollToTop';
 
 export const App = () => {
   return (
     <Router>
+      <ScrollToTop />
       <Toasters />
       <Switch>
         <HomeRoute exact path="/">
