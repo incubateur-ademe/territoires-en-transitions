@@ -72,7 +72,7 @@ export const AddDialog = (props: AddDialogProps) => {
             className="fr-btn fr-btn--secondary fr-btn--sm"
             onClick={submit}
           >
-            Valider
+            Ajouter
           </button>
         </div>
       </div>
