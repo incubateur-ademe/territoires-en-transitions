@@ -44,10 +44,12 @@ export const IndicateursPersonnalisesField: FC<
         options={allIndicateurIds}
         className="bg-beige"
         getOptionLabel={id => {
-          const indicateur = indicateurs.get(id)!;
-          return `${
-            indicateur.custom_id ? '(' + indicateur.custom_id + ') ' : ''
-          } ${indicateur.nom}`;
+          const indicateur = indicateurs.get(id);
+          if (indicateur)
+            return `${
+              indicateur.custom_id ? '(' + indicateur.custom_id + ') ' : ''
+            } ${indicateur.nom}`;
+          return '...';
         }}
         value={field.value as string[]}
         onChange={(e, value) => {
