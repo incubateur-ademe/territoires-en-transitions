@@ -1,5 +1,5 @@
 import {useActions, useAppState} from 'core-logic/overmind';
-import {fiche_action_avancement_noms} from 'generated/models/fiche_action_avancement_noms';
+import {avancementLabels} from 'app/labels';
 import * as R from 'ramda';
 import type {Avancement, Option, Options} from 'types';
 import {AvancementRadioButton} from 'ui/shared/AvancementRadioButton';
@@ -10,10 +10,7 @@ export const ActionStatusAvancementRadioButton = ({
   actionId: string;
 }) => {
   const avancements: Options<Avancement> = R.values(
-    R.mapObjIndexed(
-      (label, value) => ({value, label}),
-      fiche_action_avancement_noms // TODO : this should be renamed since it's used both by fiches & actions referentielles
-    )
+    R.mapObjIndexed((label, value) => ({value, label}), avancementLabels)
   );
   const avancement =
     useAppState().actionReferentielStatusAvancementById[actionId];
