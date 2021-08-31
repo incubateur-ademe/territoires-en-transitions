@@ -1,9 +1,9 @@
 <script>
-  export let classNames
+  export let classNames;
 </script>
 
-<div class={ `container fr-container ${classNames}` }>
-    <slot></slot>
+<div class={`container fr-container ${classNames}`}>
+  <slot />
 </div>
 
 <style>

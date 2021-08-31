@@ -3,9 +3,7 @@
     <div class="fr-container">
       <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-mt-3w fr-mt-md-9w fr-mb-5w">
-
-          <slot></slot>
-
+          <slot />
         </div>
       </div>
     </div>
