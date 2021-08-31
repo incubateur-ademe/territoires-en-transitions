@@ -7,15 +7,31 @@ import {ficheActionCategorieStore} from 'core-logic/api/hybridStores';
 import {categorizeAndSortFiches, CategorizedFiche} from 'ui/fiches/sortFiches';
 import {FicheCard} from 'app/pages/collectivite/PlanActions/FicheCard';
 import {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {defaultCategorie} from 'app/pages/collectivite/PlanActions/defaultCategorie';
 import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
 import {Spacer} from 'ui/shared';
 import {FicheAction} from 'generated/models/fiche_action';
+import {UiDialogButton} from 'ui/UiDialogButton';
 
-function CategoryTitle(props: {categorie: FicheActionCategorie}) {
+const ModificationDialogButton = (props: {categorie: FicheActionCategorie}) => {
   const [editing, setEditing] = useState<boolean>(false);
-  const editable = props.categorie.uid !== defaultCategorie.uid;
+  return (
+    <UiDialogButton
+      title="Modifier la catégorie"
+      opened={editing}
+      setOpened={setEditing}
+      buttonClasses="fr-btn--secondary"
+    >
+      <CategoryForm
+        categorie={props.categorie}
+        onSave={() => setEditing(false)}
+      />
+    </UiDialogButton>
+  );
+};
+
+const CategoryTitle = (props: {categorie: FicheActionCategorie}) => {
   return (
     <div className="flex flex-col w-full ">
       <div className="flex flex-row justify-between">
@@ -23,35 +39,11 @@ function CategoryTitle(props: {categorie: FicheActionCategorie}) {
           {props.categorie.nom}
           <span className="fr-fi-arrow-right-s-line ml-10" aria-hidden={true} />
         </h3>
-        {editable && !editing && (
-          <button
-            className="fr-btn fr-btn--secondary"
-            onClick={() => setEditing(!editing)}
-          >
-            Modifier
-          </button>
-        )}
+        <ModificationDialogButton categorie={props.categorie} />
       </div>
-      {editing && editable && (
-        <div className="border-bf500 border-l-4 p-4 mt-2 mb-5 ml-5 bg-beige max-w-2xl">
-          <div className="flex flex-row  w-full items-center justify-between">
-            <h5 className="text-lg">Modifier la catégorie</h5>
-            <button
-              className="fr-btn fr-btn--secondary"
-              onClick={() => setEditing(false)}
-            >
-              x
-            </button>
-          </div>
-          <CategoryForm
-            categorie={props.categorie}
-            onSave={() => setEditing(false)}
-          />
-        </div>
-      )}
     </div>
   );
-}
+};
 
 const CategorizedFichesList = (props: {categorized: CategorizedFiche[]}) => (
   <>
@@ -80,6 +72,7 @@ const UncategorizedFichesList = ({fiches}: {fiches: FicheAction[]}) => {
     <details open={true} className="pt-8">
       <summary className="flex items-center">
         <h3 className="text-2xl"> Fiches actions non classées</h3>
+        <span className="fr-fi-arrow-right-s-line ml-10" aria-hidden={true} />
       </summary>
       {fiches.map(fiche => {
         return (
@@ -110,6 +103,7 @@ const FichesList = () => {
     categorized.find(
       categorizedFiche => categorizedFiche.categorie === defaultCategorie
     )?.fiches || [];
+
   return (
     <main className="fr-container">
       <header className="flex justify-between items-center ">
