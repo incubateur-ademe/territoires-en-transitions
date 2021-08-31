@@ -2,7 +2,7 @@ import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-static';
 import purgecss from '@fullhuman/postcss-purgecss';
 import markdownImport from './src/transform/MarkdownImport.mjs';
-import path from 'path'
+import path from 'path';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -17,16 +17,9 @@ const config = {
           safelist: ['body'],
           keyframes: true,
           defaultExtractor(content) {
-            const contentWithoutStyleBlocks = content.replace(
-              /<style[^]+?<\/style>/gi,
-              ""
-            );
-            return (
-              contentWithoutStyleBlocks.match(
-                /[A-Za-z0-9-_/:]*[A-Za-z0-9-_/]+/g
-              ) || []
-            );
-          },
+            const contentWithoutStyleBlocks = content.replace(/<style[^]+?<\/style>/gi, '');
+            return contentWithoutStyleBlocks.match(/[A-Za-z0-9-_/:]*[A-Za-z0-9-_/]+/g) || [];
+          }
           // rejected: true,
         })
       ]
@@ -53,8 +46,7 @@ const config = {
         }
       }
     }
-  },
-
+  }
 };
 
 export default config;
