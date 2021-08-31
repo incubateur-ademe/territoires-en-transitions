@@ -26,7 +26,7 @@ export const AvancementRadioField: FC<AvancementRadioFieldProps & FieldProps> =
     const htmlId = props.id ?? uuid();
 
     const filtered_avancementLabels = R.omit(
-      ['non_concernee'],
+      ['non_concernee', 'programmee'],
       avancementLabels
     );
     const avancements: Options<Avancement> = R.values(
