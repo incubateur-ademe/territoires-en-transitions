@@ -1,5 +1,6 @@
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
+import {Spacer} from 'ui/shared';
 
 const RegisterForm = lazy(() => import('./RegisterForm'));
 
@@ -10,6 +11,7 @@ export const RegisterPage = () => {
   return (
     <Suspense fallback={renderLoader()}>
       <RegisterForm />
+      <Spacer />
     </Suspense>
   );
 };
