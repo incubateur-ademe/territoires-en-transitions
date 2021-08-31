@@ -745,7 +745,7 @@ actions = [
                                 nom=r"Planifier la r\u00e9novation  des b\u00e2timents r\u00e9sidentiels et tertiaires et la construction durable sur le territoire",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 poss\u00e8de un ou des dispositifs structurant la politique de construction et de r\u00e9novation des b\u00e2timents (r\u00e9sidentiels et tertiaires) sur son territoire, visant \u00e0 promouvoir la performance climat-air-\u00e9nergie.\u003c/p\u003e\n\u003cp\u003eCette politique hi\u00e9rarchise les priorit\u00e9s d\u2019actions, et fixe des objectifs chiffr\u00e9s op\u00e9rationnels et territorialis\u00e9s (nombre, type de b\u00e2timents et niveau de performances\u2026), en accord avec les objectifs nationaux (d\u00e9clinaison du plan de r\u00e9novation \u00e9nerg\u00e9tique de l\u2019habitat notamment).\u003c/p\u003e\n\u003cp\u003eLa strat\u00e9gie locale est formalis\u00e9e : dans un programme local de l\u2019habitat (PLH), dans une strat\u00e9gie de r\u00e9novation du tertiaire ou dans les documents de cadrage  d\u2019un espace conseil FAIRE, par exemple. Elle est construite de fa\u00e7on transversale et int\u00e9gr\u00e9e avec la planification des d\u00e9placements, l\u2019am\u00e9nagement du territoire, la planification urbaine et le plan climat air \u00e9nergie territorial.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=12,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__1.2.4.1",
@@ -1885,7 +1885,7 @@ actions = [
                                 nom=r"Utiliser les documents d\u0027urbanisme pour assurer la mise en \u0153uvre des objectifs climat-air-\u00e9nergie et lutter contre l\u0027artificialisation des sols",
                                 description=r"\u003cp\u003eLes documents d\u2019urbanisme sont en coh\u00e9rence avec la strat\u00e9gie climat-air-\u00e9nergie de la collectivit\u00e9, ils en permettent la traduction spatiale, dans une logique d\u0027\u00e9conomie circulaire et de solidarit\u00e9 rural/urbain.\u003c/p\u003e\n\u003cp\u003eDes dispositions incitatives et opposables sont notamment pr\u00e9vues pour favoriser la conception bioclimatique, les formes urbaines resserr\u00e9es et la mobilit\u00e9 durable, l\u2019efficacit\u00e9 \u00e9nerg\u00e9tique et les \u00e9nergies renouvelables, les r\u00e9seaux de chaleur/froid, la limitation des \u00e9missions et l\u0027impact des polluants atmosph\u00e9riques sur la population, l\u2019adaptation au changement climatique.\u003c/p\u003e\n\u003cp\u003eLa lutte contre l\u0027artificialisation des sols et le maintien des espaces naturels, agricoles et forestiers font partie int\u00e9grante de la strat\u00e9gie mise en place.\u003c/p\u003e\n",
                                 thematique_id="urbanisme",
-                                points=12,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__1.3.1.1",
@@ -2234,7 +2234,7 @@ actions = [
                                 nom=r"Accompagner et contr\u00f4ler les travaux de construction et de r\u00e9novation",
                                 description=r"\u003cp\u003eLes proc\u00e9dures d\u2019autorisation d\u0027urbanisme et de contr\u00f4le des travaux visent \u00e0 favoriser l\u2019\u00e9mergence de constructions et de r\u00e9novations de meilleure qualit\u00e9 sur le territoire, en termes de performance climat-air-\u00e9nergie.\u003c/p\u003e\n\u003cp\u003eLes p\u00e9titionnaires sont sensibilis\u00e9s et accompagn\u00e9s en ce sens.\u003c/p\u003e\n",
                                 thematique_id="urbanisme",
-                                points=4,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__1.3.3.1",
@@ -2400,7 +2400,7 @@ actions = [
                                 nom=r"Transcrire les enjeux climat-air-\u00e9nergie et de pr\u00e9servation des ressources naturelles dans les op\u00e9rations d\u0027am\u00e9nagement",
                                 description=r"\u003cp\u003eL\u0027efficacit\u00e9 \u00e9nerg\u00e9tique, l\u2019adaptation et la lutte contre le changement climatique et l\u0027utilisation des \u00e9nergies renouvelables, la pr\u00e9servation de la qualit\u00e9 de l\u0027air, sont des crit\u00e8res importants dans les op\u00e9rations d\u2019am\u00e9nagement de la collectivit\u00e9.\u003c/p\u003e\n\u003cp\u003eDes exigences sp\u00e9cifiques sont int\u00e9gr\u00e9es dans les appels d\u0027offres d\u2019urbanisme/d\u0027architecture \u00e0 ce sujet, ainsi que lors de la vente de terrain appartenant \u00e0 la collectivit\u00e9 ou pour tout autre dispositif de contractualisation impliquant la collectivit\u00e9.\u003c/p\u003e\n\u003cp\u003eDes projets d\u0027am\u00e9nagement sont men\u00e9s \u00e0 l\u2019aune des enjeux/principes de l\u2019\u00e9conomie circulaire.\u003c/p\u003e\n",
                                 thematique_id="urbanisme",
-                                points=10,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__1.3.2.1",
@@ -2698,7 +2698,7 @@ actions = [
                                 nom=r"Inciter \u00e0 la r\u00e9duction des consommations et \u00e0 l\u2019achat d\u2019\u00e9lectricit\u00e9 verte avec les fournisseurs et syndicats d\u2019\u00e9nergie",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 \u0153uvre, en partenariat avec les fournisseurs d\u2019\u00e9nergie actifs sur le territoire et le syndicat d\u2019\u00e9nergie, \u00e0 inciter les usagers \u00e0 baisser leur consommation et \u00e0 augmenter la part d\u2019\u00e9lectricit\u00e9 renouvelable achet\u00e9e. Les clients et adh\u00e9rents sont sensibilis\u00e9s et des prestations de services dans ce domaine sont propos\u00e9es.\u003c/p\u003e\n",
                                 thematique_id="energie",
-                                points=10,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__3.1.2.1",
@@ -2856,7 +2856,7 @@ actions = [
                                 nom=r"Optimiser le service public de la distribution d\u0027\u00e9nergie",
                                 description=r"\u003cp\u003eLa collectivit\u00e9, en lien avec les gestionnaires/concessionnaires de r\u00e9seaux d\u2019\u00e9lectricit\u00e9, de gaz et de chaleur, veille \u00e0 la qualit\u00e9 du service rendu et \u00e0 la contribution de cette mission \u00e0 sa strat\u00e9gie d\u0027efficacit\u00e9 \u00e9nerg\u00e9tique, de d\u00e9veloppement des \u00e9nergies renouvelables et de lutte contre le changement climatique. Des r\u00e9flexions et des actions pour une optimisation du r\u00e9seau, notamment via la flexibilit\u00e9 de la demande, de la production et/ou du stockage (SmartGrid) sont men\u00e9es.\u003c/p\u003e\n",
                                 thematique_id="energie",
-                                points=10,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__3.1.1.1",
@@ -3079,7 +3079,7 @@ actions = [
                                 nom=r"Augmenter l\u0027utilisation des \u00e9nergies renouvelables pour la chaleur et le rafra\u00eechissement",
                                 description=r"\u003cp\u003eLe potentiel d\u0027utilisation des \u00e9nergies renouvelables pour le chauffage des b\u00e2timents, l\u0027eau chaude sanitaire et le rafra\u00eechissement est \u00e9puis\u00e9, avec une attention sur la qualit\u00e9 de l\u0027air. Lorsque cela est possible, des r\u00e9seaux de chaleur renouvelable sont mis en place. L\u2019atteinte des objectifs est mesur\u00e9e avec le pourcentage d\u2019\u00e9nergie d\u0027origine renouvelable dans la consommation de chaleur ou de  sur le territoire.\u003c/p\u003e\n",
                                 thematique_id="energie",
-                                points=12,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__3.2.2.1",
@@ -3145,7 +3145,7 @@ actions = [
                                 nom=r"Augmenter la production d\u0027\u00e9lectricit\u00e9 issue d\u0027\u00e9nergies renouvelables sur le territoire",
                                 description=r"\u003cp\u003eIl y a un pourcentage \u00e9lev\u00e9 de production d\u0027\u00e9lectricit\u00e9 renouvelable sur le territoire, comptabilis\u00e9 en MWh/an et en % de la consommation totale d\u2019\u00e9lectricit\u00e9 sur le territoire (photovolta\u00efque, hydraulique, \u00e9olien, etc.). Le choix du type d\u2019\u00e9nergie renouvelable pour la production d\u2019\u00e9lectricit\u00e9 est  en fonction des avantages \u00e9cologiques.\u003c/p\u003e\n",
                                 thematique_id="energie",
-                                points=12,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__3.2.3.1",
@@ -3239,7 +3239,7 @@ actions = [
                                 nom=r"R\u00e9cup\u00e9rer la chaleur industrielle, pratiquer la cog\u00e9n\u00e9ration, utiliser les r\u00e9seaux de chaleur/froid comme vecteur",
                                 description=r"\u003cp\u003eLes possibilit\u00e9s de r\u00e9cup\u00e9ration de chaleur des grandes entreprises industrielles et des centrales \u00e9lectriques, y compris \u00e0 partir et pour la production de froid, sont exploit\u00e9es.\u003c/p\u003e\n\u003cp\u003eLe potentiel de cog\u00e9n\u00e9ration voire de tri-g\u00e9n\u00e9ration (\u00e0 partir d\u2019\u00e9nergies renouvelables prioritairement, puis de gaz naturel) par exemple pour le secteur du chauffage ou du rafra\u00eechissement, est connu et exploit\u00e9. Les technologies et les sources d\u2019\u00e9nergie utilis\u00e9es, sont choisies dans une approche multicrit\u00e8re climat-air-\u00e9nergie.\u003c/p\u003e\n\u003cp\u003eLa mobilisation du potentiel de r\u00e9cup\u00e9ration de chaleur est pens\u00e9e en coh\u00e9rence avec le d\u00e9veloppement des r\u00e9seaux chaleur.\u003c/p\u003e\n",
                                 thematique_id="energie",
-                                points=12,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__3.2.1.1",
@@ -3442,7 +3442,7 @@ actions = [
                                 nom=r"Optimiser la gestion des eaux pluviales",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 pratique une gestion int\u00e9gr\u00e9e des eaux pluviales, permettant de ma\u00eetriser le ruissellement pluvial sur les zones am\u00e9nag\u00e9es (\u00e0 la source), ainsi qu\u2019\u00e0 l\u2019aval (ralentissement, stockage temporaire, infiltration), la d\u00e9pollution et de s\u2019adapter au site.\u003c/p\u003e\n\u003cp\u003eLa mesure inclut \u00e9galement la prise en compte des impacts du changement climatique, par exemple par la gestion des risques inondations (limitation de l\u0027imperm\u00e9abilisation des rues, places, chemins pi\u00e9tonniers, espaces publics).\u003c/p\u003e\n",
                                 thematique_id="eau",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__3.3.3.1",
@@ -3728,7 +3728,7 @@ actions = [
                                 nom=r"Valoriser les d\u00e9chets r\u00e9siduels et les biod\u00e9chets",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 valorise les d\u00e9chets r\u00e9siduels (comprenant les ordures m\u00e9nag\u00e8res r\u00e9siduelles, les refus des centres de tri, le tout-venant, les d\u00e9chets non recyclables incin\u00e9rables) et les bio-d\u00e9chets du territoire :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eLe potentiel \u00e9nerg\u00e9tique g\u00e9n\u00e9r\u00e9 par l\u2019incin\u00e9ration des d\u00e9chets produits sur le territoire de la collectivit\u00e9 ou par la combustion de d\u00e9chets pr\u00e9par\u00e9s sous forme de CSR (Combustibles Solides de R\u00e9cup\u00e9ration) dans des unit\u00e9s d\u00e9di\u00e9es est utilis\u00e9, au regard de la strat\u00e9gie de pr\u00e9vention et gestion des d\u00e9chets et ressources d\u00e9finie dans la mesure 1.2.3.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eLe potentiel \u00e9nerg\u00e9tique issu des gaz des d\u00e9charges est utilis\u00e9.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eLe potentiel de valorisation des biod\u00e9chets (paille, lisier, d\u00e9chets de bois, restes de r\u00e9coltes, d\u00e9chets organiques des m\u00e9nages et des activit\u00e9s \u00e9conomiques) est utilis\u00e9 via le compostage, la production de bio-diesel/bio-m\u00e9thane pour le chauffage (combustible) ou pour le transport (agro-carburant), des installations sp\u00e9cifiques de combustion de biod\u00e9chets.\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n",
                                 thematique_id="dechets",
-                                points=12,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__3.3.5.1",
@@ -3939,7 +3939,7 @@ actions = [
                                 nom=r"Optimiser l\u2019efficacit\u00e9 des installations d\u0027eau potable (\u00e9nergie et ressource)",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 souhaite r\u00e9duire ses consommations \u00e9nerg\u00e9tiques et \u00e9tend donc son action \u00e0 l\u0027am\u00e9lioration et l\u0027optimisation de l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique de ses installations d\u0027eau potable. Des mesures sont prises pour favoriser une utilisation \u00e9conome de l\u0027eau et la prise de conscience des consommateurs, par exemple :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003ela collectivit\u00e9 agit en faveur de  l\u2019efficacit\u00e9 de la production et distribution de l\u2019eau potable et de la pr\u00e9servation des ressources en eau.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ela consommation individuelle d\u0027eau est clairement indiqu\u00e9e/d\u00e9taill\u00e9e dans les factures d\u0027eau\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eles consommations d\u0027eau de l\u0027ann\u00e9e pr\u00e9c\u00e9dente et des donn\u00e9es moyennes (rep\u00e8res) sont communiqu\u00e9es pour comparaison\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003etarifs int\u00e9grant le principe du \u0026quot;pollueur-payeur\u0026quot; et encourageant \u00e0 \u00e9conomiser l\u2019eau\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003edistinction des charges pour l\u2019eau potable et pour les eaux us\u00e9es\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n",
                                 thematique_id="eau",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__3.3.1.1",
@@ -4124,7 +4124,7 @@ actions = [
                                 nom=r"Optimiser le potentiel \u00e9nerg\u00e9tique des syst\u00e8mes d\u0027assainissement",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 optimise le potentiel \u00e9nerg\u00e9tique des syst\u00e8mes d\u0027assainissement :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eL\u2019efficacit\u00e9 \u00e9nerg\u00e9tique des installations de collecte et d\u2019\u00e9puration des eaux us\u00e9es de la collectivit\u00e9 est \u00e9lev\u00e9e et est mesur\u00e9e par des indicateurs.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eLe potentiel de r\u00e9cup\u00e9ration de la chaleur provenant des collecteurs d\u2019eaux us\u00e9es et/ou des installations d\u2019\u00e9puration des eaux us\u00e9es est \u00e9puis\u00e9.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eLe potentiel de valorisation des boues d\u2019\u00e9puration est \u00e9puis\u00e9.\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n",
                                 thematique_id="eau",
-                                points=12,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__3.3.2.1",
@@ -4293,7 +4293,7 @@ actions = [
                                 nom=r"Pr\u00e9server la biodiversit\u00e9 du territoire et d\u00e9velopper des espaces verts",
                                 description=r"\u003cp\u003eA travers ses services techniques et ses partenariats, la collectivit\u00e9 contribue \u00e0 l\u2019am\u00e9lioration de la connaissance de la biodiversit\u00e9 de son territoire et \u00e0 la sensibilisation de tous les acteurs \u00e0 ce sujet. La collectivit\u00e9 met en place des actions concr\u00e8tes pour pr\u00e9server et/ou renforcer la biodiversit\u00e9 sur son territoire et d\u00e9velopper des espaces verts, notamment via une politique de v\u00e9g\u00e9talisation, de lutte contre la pollution lumineuse, de mobilisation des documents d\u2019urbanisme ou d\u2019outils de contractualisation sp\u00e9cifiques. L\u2019approche men\u00e9e est transversale et les co-b\u00e9n\u00e9fices avec les orientations climat-air-\u00e9nergie, notamment en  au changement climatique sont particuli\u00e8rement recherch\u00e9es.\u003c/p\u003e\n",
                                 thematique_id="foret_biodiv",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__3.3.4.1",
@@ -4673,7 +4673,7 @@ actions = [
                                 nom=r"D\u00e9velopper une strat\u00e9gie partenariale multi-niveaux",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 d\u00e9finit une strat\u00e9gie de coop\u00e9ration multi-niveaux (locale, r\u00e9gionale, nationale, europ\u00e9enne et internationale) et \u00e0 destination de tous les acteurs travaillant sur les th\u00e9matiques climat air \u00e9nergie. Elle recommande et d\u00e9fend sa politique climat-air-\u00e9nergie par exemple par des prises de position sur l\u0027\u00e9laboration des lois et r\u00e8glements. Par ailleurs, elle d\u00e9veloppe des actions de coop\u00e9ration d\u00e9centralis\u00e9e.\u003c/p\u003e\n",
                                 thematique_id="parten_coop",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.1.1.1",
@@ -4922,7 +4922,7 @@ actions = [
                                 nom=r"D\u00e9velopper un plan de communication pour chaque cible du territoire",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 \u00e9tablit chaque ann\u00e9e un plan de communication sp\u00e9cifique climat-air-\u00e9nergie et le met \u00e0 jour r\u00e9guli\u00e8rement. Il fixe les objectifs, distribue les t\u00e2ches et responsabilit\u00e9s et planifie les diff\u00e9rentes actions de communication qui seront conduites en continu (par groupes cibles, avec tous les m\u00e9dias). L\u2019identit\u00e9 climat air \u00e9nergie de la collectivit\u00e9 est d\u00e9clin\u00e9e dans ce plan de communication et toutes les actions men\u00e9es sont exemplaires en mati\u00e8re d\u2019\u00e9co-responsabilit\u00e9.\u003c/p\u003e\n",
                                 thematique_id="forma_sensib",
-                                points=4,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.1.3.1",
@@ -5117,7 +5117,7 @@ actions = [
                                 nom=r"Renforcer la coop\u00e9ration au sein de l\u0027intercommunalit\u00e9",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 met en place des actions de coop\u00e9ration renforc\u00e9e avec les autres collectivit\u00e9s de son territoire (dans le p\u00e9rim\u00e8tre administratif de l\u2019intercommunalit\u00e9), dans une approche solidaire et efficace en mati\u00e8re de politique climat-air-\u00e9nergie entre intercommunalit\u00e9 et communes membres. Elle s\u0027implique en tant qu\u0027animateur ou moteur du territoire. Elle accompagne les communes ou sert d\u2019exemple dans la mise en place de leur politique climat air \u00e9nergie et encourage la mise en place d\u2019actions mutualis\u00e9es.\u003c/p\u003e\n",
                                 thematique_id="parten_coop",
-                                points=4,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.1.2.1",
@@ -5276,7 +5276,7 @@ actions = [
                                 nom=r"Accompagner les particuliers pour la r\u00e9novation et la construction durable de leur logement (habitat individuel et collectif)",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 g\u00e8re ou soutient un ou des centre(s) de conseil (local ou r\u00e9gional) sur le climat, l\u0027air et l\u0027\u00e9nergie \u00e0 l\u0027intention des particuliers. Elle soutient \u00e9galement financi\u00e8rement les travaux de r\u00e9novation du secteur r\u00e9sidentiel. Ces missions sont assur\u00e9es dans l\u0027id\u00e9al par un guichet unique type espace conseil FAIRE .\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=10,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.2.3.1",
@@ -5526,7 +5526,7 @@ actions = [
                                 nom=r"Accompagner les acteurs du secteur tertiaire pour la r\u00e9novation et la construction durable de leurs locaux",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 a un r\u00f4le d\u2019animateur territorial \u00e0 jouer pour impulser une dynamique sur le territoire afin d\u2019agir indirectement sur les d\u00e9perditions \u00e9nerg\u00e9tiques des b\u00e2timents tertiaires.\u003c/p\u003e\n\u003cp\u003eLes acteurs du secteur tertiaire priv\u00e9 notamment sont incit\u00e9s et accompagn\u00e9s pour l\u0027am\u00e9lioration des performances \u00e9nerg\u00e9tiques et climatiques de leurs locaux.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=8,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.2.4.1",
@@ -5722,7 +5722,7 @@ actions = [
                                 nom=r"Coop\u00e9rer avec les acteurs professionnels du b\u00e2timent et de l\u0027immobilier",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 informe et incite les acteurs professionnels du b\u00e2timent (bailleurs sociaux, promoteurs, investisseurs, artisans, bureau d\u0027\u00e9tudes, administrateurs de biens, notaires, agents immobiliers...) \u00e0 int\u00e9grer les enjeux climat-air-\u00e9nergie \u00e0 leurs activit\u00e9s. Ces actions sont r\u00e9alis\u00e9es via  des espaces conseils FAIRE ou des conventions volontaires, contenant des standards de construction et de r\u00e9novation \u00e9lev\u00e9s, des objectifs d\u0027efficacit\u00e9 \u00e9nerg\u00e9tique, la sensibilisation des occupants.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=10,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.2.1.1",
@@ -5842,7 +5842,7 @@ actions = [
                                 nom=r"Pr\u00e9venir et lutter contre la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 engage une politique de pr\u00e9vention et de lutte contre la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique (li\u00e9e au logement et \u00e0 la mobilit\u00e9) et l\u0027inscrit dans ses documents strat\u00e9giques.\u003c/p\u003e\n\u003cp\u003eLa collectivit\u00e9 a initialement r\u00e9alis\u00e9 un travail d\u2019inventaire des acteurs de la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique et des actions existantes, sur lesquelles elle peut construire son dispositif.\u003c/p\u003e\n\u003cp\u003eLa collectivit\u00e9 utilise au mieux les moyens humains \u00e0 disposition pour identifier des situations de pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique et orienter les familles directement vers les dispositifs existants ou indirectement vers des associations sp\u00e9cialis\u00e9es. Dans une approche partenariale, des actions visant \u00e0 diminuer la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique sont men\u00e9es.\u003c/p\u003e\n",
                                 thematique_id="preca_energie",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.2.2.1",
@@ -6037,7 +6037,7 @@ actions = [
                                 nom=r"Contribuer \u00e0 l\u0027innovation et l\u0027excellence sur la th\u00e9matique climat-air-\u00e9nergie",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 contribue \u00e0 l\u2019innovation et l\u2019excellence sur la th\u00e9matique climat-air-\u00e9nergie. Elle peut collaborer avec les centres de formation et le milieu de la recherche ou soutenir un projet phare exemplaire et ambitieux priv\u00e9, dans ces m\u00eames domaines, en apportant son expertise et/ou ses conseils pour pousser le projet plus loin dans l\u2019excellence. Elle peut en outre favoriser l\u2019\u00e9mergence de projets en f\u00e9d\u00e9rant les acteurs (organisation de rencontres entre collectivit\u00e9, entreprises, associations et chercheurs) ou en facilitant le d\u00e9p\u00f4t de projets (recherche des projets, soutien m\u00e9thodologique).\u003c/p\u003e\n\u003cp\u003eEn particulier, la collectivit\u00e9 est coh\u00e9rente dans sa prise de position \u00e0 l\u2019\u00e9gard des grands projets impactant en mati\u00e8re d\u2019\u00e9mission de gaz \u00e0 effet de serre, de qualit\u00e9 de l\u2019air ou la consommation d\u2019\u00e9nergie ou l\u2019utilisation des terres agricoles sous l\u2019influence de son territoire.\u003c/p\u003e\n",
                                 thematique_id="parten_coop",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.3.3.1",
@@ -6241,7 +6241,7 @@ actions = [
                                 nom=r"D\u00e9velopper un  tourisme durable",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 \u00e9labore une strat\u00e9gie touristique durable prenant en compte de mani\u00e8re int\u00e9gr\u00e9e les impacts du tourisme sur les ressources naturelles et les \u00e9cosyst\u00e8mes (la pression sur la ressource locale en eau, \u2026), en mati\u00e8re d\u0027\u00e9missions GES (notamment li\u00e9es au transport) et l\u0027acc\u00e8s aux activit\u00e9s touristiques pour tous. Elle prend des mesures pour r\u00e9duire ces impacts.\u003c/p\u003e\n\u003cp\u003eLa collectivit\u00e9 implique les prestataires de tourisme sp\u00e9cialis\u00e9s (tourisme d\u0027affaires, de sport, de loisirs, \u00e9v\u00e9nementiel) et inscrit cet objectif dans sa strat\u00e9gie de tourisme durable. Elle incite en particulier les acteurs de l\u0027h\u00e9bergement et de la restauration \u00e0 s\u0027engager dans une d\u00e9marche \u00e9coresponsable.\u003c/p\u003e\n",
                                 thematique_id="tourisme",
-                                points=4,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.3.2.1",
@@ -6526,7 +6526,7 @@ actions = [
                                 nom=r"Favoriser les activit\u00e9s \u00e9conomiques durables",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 initie, soutient ou participe \u00e0 des projets de coop\u00e9ration avec les acteurs de l\u0027\u00e9conomie locale ou r\u00e9gionale sur le climat, l\u0027air et l\u0027\u00e9nergie, afin d\u0027encourager la mutation des activit\u00e9s \u00e9conomiques vers un mod\u00e8le bas-carbon. Elle participe notamment au d\u00e9veloppement des projets d\u2019\u00e9cologie industrielle et plus g\u00e9n\u00e9ralement d\u0027\u00e9conomie circulaire sur le territoire. Elle contribue \u00e0 l\u0027am\u00e9lioration de la qualit\u00e9 environnementale des zones d\u2019activit\u00e9s .\u003c/p\u003e\n",
                                 thematique_id="dev_eco",
-                                points=8,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.3.1.1",
@@ -6740,7 +6740,7 @@ actions = [
                                 nom=r"Soutenir l\u0027utilisation durable des for\u00eats et des espaces bois\u00e9s",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 prend en compte la for\u00eat et les espaces bois\u00e9s dans ses documents d\u2019urbanisme, dans un objectif d\u2019identification, de pr\u00e9servation, d\u2019utilisation rationnelle ou de d\u00e9veloppement. Elle incite aux pratiques sylvicoles durables et au d\u00e9veloppement des pratiques de gestion raisonn\u00e9e des for\u00eats et espaces bois\u00e9s, en interne et aupr\u00e8s des particuliers et des professionnels. Elle contribue \u00e0 structurer et d\u00e9velopper des fili\u00e8res bois-\u00e9nergie et bois-construction.\u003c/p\u003e\n",
                                 thematique_id="foret_biodiv",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.4.2.1",
@@ -7064,7 +7064,7 @@ actions = [
                                 nom=r"Soutenir une agriculture et une alimentation plus durable",
                                 description=r"\u003cp\u003eAu travers de ses comp\u00e9tences, la collectivit\u00e9 soutient, promeut et encourage des pratiques agricoles et alimentaires durables sur son territoire et sur ses territoires d\u2019approvisionnement :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003een menant des actions visant \u00e0 r\u00e9duire les \u00e9missions de gaz \u00e0 effet de serre, de particules et plus globalement les impacts environnementaux du secteur agricole (formation aux pratiques agro-\u00e9cologiques, certification environnementale des exploitations...)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003een pr\u00e9servant le foncier agricole au travers des documents d\u2019urbanisme et en accompagnant la mise en place d\u2019espace agricoles ou jardiniers urbains ou p\u00e9ri-urbains (mesure 1.3.1)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003een mobilisant les acteurs du territoire, par exemple par le biais d\u2019un PAT \u2013 projet alimentaire territorial \u2013 sur l\u2019ensemble de la cha\u00eene alimentaire (du producteur au consommateur, en passant par la transformation, la distribution et la restauration)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003een orientant ses actions et ses soutiens (techniques et financiers) pour accompagner des projets exemplaires en terme d\u2019alimentation durable et les fili\u00e8res agricoles locales et durables\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003een agissant sur sa restauration collective et ses achats alimentaires (prestations \u00e9v\u00e8nementielles), par le biais de la commande publique (approvisionnements durables et des proximit\u00e9, sensibilisation des convives) en sensibilisant les habitants aux enjeux et aux actions \u00e0 mettre en place (plus v\u00e9g\u00e9tale et diversifi\u00e9e, qualit\u00e9 des produits, respect de la saisonnalit\u00e9, gestion durable des sols, lutte contre le gaspillage alimentaire...)\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n",
                                 thematique_id="agri_alim",
-                                points=12,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.4.1.1",
@@ -7514,7 +7514,7 @@ actions = [
                                 nom=r"Inciter les citoyens et les relais d\u0027opinions \u00e0 une consommation responsable, limiter l\u0027emprise de la publicit\u00e9",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 incite les citoyens aux comportements et \u00e0 la consommation \u00e9co-responsables et soutient, sensibilise les relais d\u0027opinion (partis politiques, associations, ONG) pour qu\u0027ils deviennent des mod\u00e8les d\u0027exemplarit\u00e9 et exercent une influence sur les habitants pour qu\u0027ils agissent en conformit\u00e9 avec la politique climat-air-\u00e9nergie de la collectivit\u00e9. Des actions sont en particulier men\u00e9es pour limiter l\u2019emprise de la publicit\u00e9.\u003c/p\u003e\n",
                                 thematique_id="conso_resp",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.5.2.1",
@@ -7736,7 +7736,7 @@ actions = [
                                 nom=r"D\u00e9velopper des actions d\u0027\u00e9ducation et de sensibilisation dans les \u00e9tablissements scolaires et centres de petite enfance",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 d\u00e9veloppe des actions d\u2019\u00e9ducation et de sensibilisation \u00e0 la probl\u00e9matique climat-air-\u00e9nergie dans les \u00e9tablissements scolaires, cr\u00e8ches et garderies. Ces actions sont vari\u00e9es (forme et contenu), et impliquent les \u00e9l\u00e8ves, le corps enseignant et le personnel. Autant que possible, elles s\u2019int\u00e8grent dans un projet p\u00e9dagogique global et sont planifi\u00e9es sur l\u2019ann\u00e9e voire sur l\u2019ensemble du cycle. Certaines actions visent directement la r\u00e9duction des consommations d\u2019\u00e9nergie, d\u2019eau et les \u00e9missions de polluants li\u00e9es \u00e0 l\u2019utilisation des locaux et aux d\u00e9placements scolaires.\u003c/p\u003e\n",
                                 thematique_id="forma_sensib",
-                                points=4,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.5.3.1",
@@ -8039,7 +8039,7 @@ actions = [
                                 nom=r"Mobiliser la soci\u00e9t\u00e9 civile en d\u00e9veloppant la concertation",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 mobilise les citoyens dans le processus de d\u00e9cision et organise, en collaboration avec le service public concern\u00e9, des groupes de travail et des dispositifs participatifs vari\u00e9s relatifs aux projets climat-air-\u00e9nergie. La concertation peut \u00eatre aussi bien men\u00e9e en phase de diagnostic que lors de la construction du programme d\u2019actions ou de sa mise \u0153uvre.\u003c/p\u003e\n",
                                 thematique_id="parten_coop",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__6.5.1.1",
@@ -8252,7 +8252,7 @@ actions = [
                                 nom=r"Former et mobiliser les \u00e9lus et les services sur les th\u00e9matiques climat-air-\u00e9nergie",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 propose des actions de sensibilisation et de formation sur l\u2019adaptation au changement climatique, la pollution de l\u2019air, les \u00e9missions de GES (gaz \u00e0 effet de serre), les \u00e9nergies renouvelables et la ma\u00eetrise des consommations d\u0027\u00e9nergie \u00e0 ses \u00e9lus et \u00e0 l\u0027ensemble de ses agents (techniciens, directeurs, \u2026).\u003c/p\u003e\n\u003cp\u003eSoutenus par les \u00e9lus, les agents participent activement \u00e0 la d\u00e9finition et \u00e0 l\u2019atteinte des objectifs climat-air-\u00e9nergie fix\u00e9s par la collectivit\u00e9, notamment ceux en relation directe avec leurs services et leurs postes.\u003c/p\u003e\n\u003cp\u003eLa collectivit\u00e9 met en place des actions entretenant la motivation de ses agents du type : concours inter-services, syst\u00e8me de reconnaissance des initiatives personnelles, bo\u00eete \u00e0 id\u00e9e\u2026.\u003c/p\u003e\n",
                                 thematique_id="orga_interne",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__5.1.3.1",
@@ -8475,7 +8475,7 @@ actions = [
                                 nom=r"Assurer le pilotage et le portage de la politique climat-air-\u00e9nergie",
                                 description=r"\u003cp\u003eLe comit\u00e9 de pilotage a pour t\u00e2che de traiter, au plus haut niveau, des questions climat air \u00e9nergie.\u003c/p\u003e\n\u003cp\u003eIl effectue des choix et prend des d\u00e9cisions strat\u00e9giques pour la politique climat-air-\u00e9nergie de la collectivit\u00e9.\u003c/p\u003e\n\u003cp\u003eCelui-ci peut \u00eatre commun \u00e0 plusieurs d\u00e9marches (Agenda 2030, Cit\u2019ergie, Plan climat air \u00e9nergie territorial, Contrat de Transition \u00c9cologique (CTE), Contrat de Relance et de Transition \u00c9cologique (CRTE), Territoire \u00e0 \u00e9nergie positive (TEPOS), etc.) dans la mesure o\u00f9 les questions \u00e9nerg\u00e9tiques et climatiques y sont abord\u00e9es de mani\u00e8re transversale.\u003c/p\u003e\n\u003cp\u003eLe portage politique de la strat\u00e9gie climat air \u00e9nergie est assur\u00e9.\u003c/p\u003e\n\u003cp\u003eUn ou plusieurs \u00e9lus sont d\u00e9sign\u00e9s comme r\u00e9f\u00e9rents sur les sujets climat-air-\u00e9nergie et participent au comit\u00e9 de pilotage.\u003c/p\u003e\n",
                                 thematique_id="orga_interne",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__5.1.2.1",
@@ -8641,7 +8641,7 @@ actions = [
                                 nom=r"Organiser les ressources humaines pour mener la politique climat-air-\u00e9nergie",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 met \u00e0 disposition les ressources n\u00e9cessaires en personnel pour les questions li\u00e9es au climat, \u00e0 l\u0027air et \u00e0 l\u0027\u00e9nergie. Les responsabilit\u00e9s, les r\u00f4les et les t\u00e2ches ainsi que les pouvoirs de d\u00e9cision sont fix\u00e9s et formalis\u00e9s.\u003c/p\u003e\n\u003cp\u003eLe temps de travail \u00e0 disposition pour chaque collaborateur pour les t\u00e2ches concernant les questions d\u0027\u00e9nergie, de lutte contre le changement climatique et les services permet aux personnels de disposer de moyens d\u2019agir.\u003c/p\u003e\n",
                                 thematique_id="orga_interne",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__5.1.1.1",
@@ -8826,7 +8826,7 @@ actions = [
                                 nom=r"Suivre l\u0027avancement et \u00e9valuer r\u00e9guli\u00e8rement la politique climat-air-\u00e9nergie",
                                 description=r"\u003cp\u003eCette mesure porte sur le suivi et l\u2019\u00e9valuation du programme d\u0027actions climat air \u00e9nergie.\u003c/p\u003e\n\u003cp\u003eLa collectivit\u00e9 adopte une m\u00e9thodologie claire et pr\u00e9cise pour mettre \u00e0 jour, \u00e9valuer l\u2019efficacit\u00e9 et l\u2019avancement de son plan d\u0027actions en se basant sur des documents v\u00e9rifiables et sur ses activit\u00e9s ant\u00e9rieures :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003er\u00e9alisation annuelle\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ebas\u00e9 sur des outils d\u0027\u00e9valuation existants\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eanalyse de la planification des ann\u00e9es pr\u00e9c\u00e9dentes (les actions planifi\u00e9es et r\u00e9alis\u00e9es)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003erenforcement/ajustement des mesures planifi\u00e9es\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003edocumentation des r\u00e9sultats\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ecommunication interne et externe et renseignement des r\u00e9sultats bas\u00e9s sur des indicateurs\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n",
                                 thematique_id="strategie",
-                                points=8,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__5.1.4.1",
@@ -9003,7 +9003,7 @@ actions = [
                                 nom=r"Etre exemplaire en mati\u00e8re d\u0027\u00e9coresponsabilit\u00e9 de la commande publique",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 int\u00e8gre syst\u00e9matiquement dans ses march\u00e9s publics d\u0027achat de biens mat\u00e9riels ou de services, des crit\u00e8res d\u0027efficacit\u00e9 \u00e9nerg\u00e9tique, de r\u00e9duction de l\u0027impact environnemental (y compris qualit\u00e9 de l\u0027air), de co\u00fbt du cycle de vie s\u0027ils existent, par exemple pour :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003el\u0027acquisition de mat\u00e9riel de bureau (ordinateur, imprimante, papier...)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ele mat\u00e9riel et fournitures d\u0027entretien (y compris d\u00e9tergents pour le nettoyage, lubrifiants)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eles autres march\u00e9s/achats ayant un impact sur le climat (par ex. l\u0027alimentation)\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n",
                                 thematique_id="conso_resp",
-                                points=8,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__5.2.2.1",
@@ -9291,7 +9291,7 @@ actions = [
                                 nom=r"Financer la politique Climat Air Energie et r\u00e9aliser une \u00e9valuation climat du budget",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 identifie et se dote chaque ann\u00e9e d\u0027un budget directement li\u00e9 \u00e0 sa politique climat-air-\u00e9nergie. Il s\u0027agit du budget destin\u00e9 \u00e0 des actions de soutien (techniques ou financi\u00e8res) \u00e0 la ma\u00eetrise de la demande d\u0027\u00e9nergie, \u00e0 l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique, aux \u00e9nergies renouvelables, \u00e0 la baisse des \u00e9missions de GES, des polluants atmosph\u00e9riques et \u00e0 l\u0027adaptation au changement climatique, en fonctionnement et en investissement.\u003c/p\u003e\n\u003cp\u003eCes budgets ne sont pas des budgets ind\u00e9pendants, mais une partie de chacun des budgets des diff\u00e9rents services, relative \u00e0 la mise en \u0153uvre des actions. En lien avec cette d\u00e9marche, la collectivit\u00e9 trace et valorise les diff\u00e9rentes ressources li\u00e9es \u00e0 l\u2019\u00e9nergie et cherche des financements compl\u00e9mentaires et innovants pour sa politique climat-air-\u00e9nergie.\u003c/p\u003e\n\u003cp\u003eParall\u00e8lement, la collectivit\u00e9 \u00e9value chaque ann\u00e9e l\u2019impact sur les enjeux\u00a0\u00ab\u00a0climat\u00a0\u00bb (favorable, neutre ou d\u00e9favorable) de l\u2019ensemble des lignes de d\u00e9pense de son budget, pour pr\u00e9sentation aux \u00e9lu.e.s en amont des discussions budg\u00e9taires, et am\u00e9liore d\u2019ann\u00e9e en ann\u00e9e l\u2019impact climat de ses choix budg\u00e9taires.\u003c/p\u003e\n\u003cp\u003eMieux piloter les d\u00e9penses d\u2019\u00e9nergie et diminuer les d\u00e9penses d\u00e9favorables d\u2019un point de vue climatique peut par ailleurs permettre \u00e0 la collectivit\u00e9 d\u2019am\u00e9liorer sa capacit\u00e9 budg\u00e9taire.\u003c/p\u003e\n",
                                 thematique_id="strategie",
-                                points=12,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__5.2.1.1",
@@ -9524,7 +9524,7 @@ actions = [
                                 nom=r"Etre exemplaire sur les b\u00e2timents publics neufs et r\u00e9nov\u00e9s",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 d\u00e9finit des niveaux de performance pour la construction et la r\u00e9novation de b\u00e2timents publics concernant :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003el\u0027utilisation efficace de l\u0027\u00e9lectricit\u00e9 ;\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ele niveau minimum en mati\u00e8re de performance thermique et d\u0027\u00e9nergies renouvelables ;\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ela sant\u00e9 et la qualit\u00e9 environnementale des b\u00e2timents (notamment la qualit\u00e9 de l\u0027air int\u00e9rieur) ;\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ela durabilit\u00e9 dans la construction et les \u00e9tudes, l\u0027exploitation et la maintenance ;\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e; - l\u0027adaptation au changement climatique, et notamment le confort d\u0027\u00e9t\u00e9\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003ela construction \u00e9cologique dans les passations de march\u00e9s.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eLes impacts, notamment \u00e9conomiques, du changement climatique doivent \u00eatre pris en compte dans l\u0027\u00e9tablissement de ces niveaux de performance de construction.\u003c/p\u003e\n\u003cp\u003eCes niveaux de performance sont appliqu\u00e9s concr\u00e8tement sur des projets de r\u00e9novation ou de construction exemplaires, \u00e0 haut niveau de performances climat-air-\u00e9nergie.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.1.3.1",
@@ -9828,7 +9828,7 @@ actions = [
                                 nom=r"Mettre en place une comptabilit\u00e9 \u00e9nerg\u00e9tique et des \u00e9missions de GES des b\u00e2timents publics",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 dispose d\u2019un bilan \u00e9nerg\u00e9tique et technique de tous les b\u00e2timents et \u00e9quipements publics significatifs. Ce bilan inclut des \u00e9l\u00e9ments sur les consommations d\u2019\u00e9nergie, les gaz \u00e0 effet de serre, les \u00e9nergies renouvelables, la qualit\u00e9 de l\u2019air int\u00e9rieur.\u003c/p\u003e\n\u003cp\u003eLa collectivit\u00e9 a mis en place un syst\u00e8me de contr\u00f4le r\u00e9gulier des consommations d\u0027\u00e9nergie de ses b\u00e2timents municipaux et \u00e9quipements (incluant un outil de comptabilit\u00e9 \u00e9nerg\u00e9tique par usage pour suivre les consommations dans le temps, avec notamment des compteurs communicants), permettant l\u2019optimisation de son exploitation.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=10,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.1.1.1",
@@ -10224,7 +10224,7 @@ actions = [
                                 nom=r"Elaborer une strat\u00e9gie patrimoniale incluant un programme de r\u00e9novation",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 formule une strat\u00e9gie patrimoniale permettant de planifier et de phaser son \u00e9volution \u00e0 5 ou 10 ans (extension, r\u00e9habilitation, d\u00e9molition, r\u00e9affectation, vente...), en coh\u00e9rence avec des objectifs de r\u00e9duction des \u00e9missions GES et de consommation \u00e9nerg\u00e9tique de ses b\u00e2timents. Cette strat\u00e9gie est d\u00e9clin\u00e9e plus pr\u00e9cis\u00e9ment en un programme de r\u00e9novation prenant en compte :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003edes crit\u00e8res de performances climat-air-\u00e9nergie ambitieux\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003el\u2019optimisation de l\u2019usage du patrimoine (mutualisation/regroupement)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eles modalit\u00e9s de suivi permettant le maintien des performances dans le temps\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eles co\u00fbts et les \u00e9conomies pr\u00e9vus\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ela date de r\u00e9alisation\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eles responsables de la r\u00e9alisation\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eles modes de contractualisations comme le contrat de performance \u00e9nerg\u00e9tique (march\u00e9 global de performance \u00e9nerg\u00e9tique ou march\u00e9 public de partenariat \u00e9nerg\u00e9tique)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eles gains attendus en mati\u00e8re d\u0027att\u00e9nuation du changement climatique, d\u0027adaptation au changement climatique, d\u0027am\u00e9lioration de la qualit\u00e9 de l\u0027air int\u00e9rieur et ext\u00e9rieur\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n",
                                 thematique_id="batiments",
-                                points=8,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.1.2.1",
@@ -10502,7 +10502,7 @@ actions = [
                                 nom=r"Augmenter l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique pour la chaleur et le rafra\u00eechissement des b\u00e2timents publics",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 met en place une d\u00e9marche de sobri\u00e9t\u00e9 \u00e9nerg\u00e9tique, syst\u00e9matise l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique, pour le chauffage, l\u0027eau chaude et le rafra\u00eechissement de ses b\u00e2timents et l\u0027\u00e9value au moyen d\u0027indicateurs \u00e9nerg\u00e9tiques pour diff\u00e9rentes cat\u00e9gories de b\u00e2timents.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.2.1.1",
@@ -10595,7 +10595,7 @@ actions = [
                                 nom=r"Augmenter la part de consommation en \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration pour la chaleur et le rafra\u00eechissement des b\u00e2timents publics",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 augmente et mesure la part de chaleur et de rafra\u00eechissement d\u0027origine renouvelable et de r\u00e9cup\u00e9ration dans les consommations de ses b\u00e2timents et \u00e9quipements, avec une attention \u00e0 la qualit\u00e9 de l\u0027air ext\u00e9rieur. Il s\u2019agit de prioriser les sources locales, peu \u00e9missives et la distribution via des r\u00e9seaux de chaleur/froid vertueux lorsque cela est possible.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.2.3.1",
@@ -10707,7 +10707,7 @@ actions = [
                                 nom=r"Augmenter la part de consommation en \u00e9nergies renouvelables pour l\u0027\u00e9lectricit\u00e9 des b\u00e2timents publics",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 augmente et mesure la part d\u0027\u00e9lectricit\u00e9 renouvelable dans les consommations de ses b\u00e2timents et \u00e9quipements, en priorit\u00e9 via la mise en service d\u2019installations de production d\u2019\u00e9nergie \u00e9olienne, photovolta\u00efque, hydraulique, etc. mais \u00e9galement via l\u2019achat d\u2019\u00e9lectricit\u00e9 renouvelable.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.2.4.1",
@@ -10837,7 +10837,7 @@ actions = [
                                 nom=r"Limiter les \u00e9missions de gaz \u00e0 effet de serre des b\u00e2timents publics",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 r\u00e9duit les \u00e9missions de gaz \u00e0 effet de serre g\u00e9n\u00e9r\u00e9es par le fonctionnement de ses b\u00e2timents, et int\u00e8gre \u00e9galement une r\u00e9flexion sur l\u2019ensemble de leur cycle de vie.\u003c/p\u003e\n\u003cp\u003eLa collectivit\u00e9 \u00e9value son avancement par rapport \u00e0 ses objectifs de r\u00e9duction d\u0027\u00e9missions de CO2 et de gaz \u00e0 effet de serre sur les diff\u00e9rentes cat\u00e9gories de b\u00e2timents.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.2.5.1",
@@ -10940,7 +10940,7 @@ actions = [
                                 nom=r"Augmenter l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique pour l\u0027\u00e9lectricit\u00e9 des b\u00e2timents publics",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 d\u00e9veloppe l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique pour les usages de l\u0027\u00e9lectricit\u00e9 dans ses b\u00e2timents et l\u0027\u00e9value au moyen d\u0027indicateurs \u00e9nerg\u00e9tiques pour diff\u00e9rentes cat\u00e9gories de b\u00e2timents.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.2.2.1",
@@ -11006,7 +11006,7 @@ actions = [
                                 nom=r"Economiser l\u0027eau dans les b\u00e2timents publics",
                                 description=r"\u003cp\u003eDans une logique de r\u00e9duction de sa facture d\u0027eau et de pr\u00e9servation de la ressource en eau, la collectivit\u00e9 augmente la ma\u00eetrise de la consommation d\u0027eau de ses b\u00e2timents publics. Elle l\u2019\u00e9value gr\u00e2ce \u00e0 des indicateurs par habitant et par la consommation d\u0027eau annuelle de diff\u00e9rentes cat\u00e9gories de b\u00e2timents. La collectivit\u00e9 met en place une politique rationnelle de gestion de l\u0027eau (besoins et utilisation) favorisant une utilisation \u00e9conome de l\u0027eau.\u003c/p\u003e\n",
                                 thematique_id="eau",
-                                points=2,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.3.2.1",
@@ -11183,7 +11183,7 @@ actions = [
                                 nom=r"Optimiser l\u0027\u00e9clairage public",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 syst\u00e9matise la sobri\u00e9t\u00e9 et l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique de son \u00e9clairage public et l\u0027\u00e9value sur la base d\u0027indicateurs. Elle met en place des technologies et pratiques \u00e9conomes en \u00e9nergie et contribue \u00e0 la pr\u00e9vention, \u00e0 la r\u00e9duction et \u00e0 la limitation des nuisances lumineuses (suppression des lampadaires inutiles et redondants, horaires d\u2019allumage et d\u2019extinction dans les zones propices, \u00e9clairages \u00e0 d\u00e9tection de pr\u00e9sence, lampadaires \u00e9conomes, proportion de lumi\u00e8re, limitation des temp\u00e9ratures de couleur etc.).\u003c/p\u003e\n\u003cp\u003eL\u2019action s\u2019\u00e9tend \u00e0 l\u2019ensemble de l\u2019\u00e9clairage de l\u2019espace public : mobilier urbain lumineux, monuments et fa\u00e7ades, enseignes, festivit\u00e9s, \u00e9clairages de No\u00ebl,  etc.\u003c/p\u003e\n",
                                 thematique_id="energie",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.3.1.1",
@@ -11385,7 +11385,7 @@ actions = [
                                 nom=r"G\u00e9rer sa voirie durablement",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 g\u00e8re sa voirie durablement : elle est attentive \u00e0 limiter l\u0027impact \u00e9nerg\u00e9tique et les \u00e9missions de gaz \u00e0 effet de serre de sa politique de cr\u00e9ation et d\u0027entretien de voirie, de l\u0027amont \u00e0 l\u0027aval (choix des mat\u00e9riaux, technique de mise en oeuvre, action pr\u00e9ventive, priorisation des voiries \u00e0 r\u00e9nover...). Elle anticipe les risques li\u00e9s au changement climatique et contribue \u00e0 l\u0027adaptation du territoire.\u003c/p\u003e\n",
                                 thematique_id="batiments",
-                                points=2,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__2.3.3.1",
@@ -11628,7 +11628,7 @@ actions = [
                                 nom=r"Promouvoir la mobilit\u00e9 durable en interne au sein de la collectivit\u00e9",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 veille \u00e0 la gestion, l\u0027utilisation efficace et \u00e0 la faible consommation de carburant de sa flotte de v\u00e9hicules. Cette action implique des mesures portant sur la maintenance, l\u0027entretien, la conduite ou encore l\u0027\u00e9volution du parc de v\u00e9hicules. Il s\u0027agit \u00e9galement d\u0027optimiser, rationaliser et mutualiser l\u0027ensemble des d\u00e9placements des agents de la collectivit\u00e9 :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003ela collectivit\u00e9 encourage son personnel \u00e0 un comportement intelligent et durable en mati\u00e8re de mobilit\u00e9 par notamment la mise en place d\u0027un plan de mobilit\u00e9 employeur\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ela collectivit\u00e9 veille \u00e0 l\u0027utilisation efficace et \u00e0 la faible consommation de carburant de sa flotte de v\u00e9hicules\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ela collectivit\u00e9 choisit des v\u00e9hicules \u00e0 faibles \u00e9missions de polluants atmosph\u00e9riques lors du renouvellement de sa flotte\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n",
                                 thematique_id="mobilites",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__4.1.2.1",
@@ -12033,7 +12033,7 @@ actions = [
                                 nom=r"Promouvoir et suivre les pratiques multimodales sur le territoire",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 conduit des actions r\u00e9guli\u00e8res de promotion et d\u0027information pour une mobilit\u00e9 efficace et active \u00e0 l\u0027\u00e9chelle de l\u0027ensemble de son territoire. Elle s\u2019associe pour cela \u00e0 l\u2019ensemble des acteurs impliqu\u00e9s dans le domaine de la mobilit\u00e9.\u003c/p\u003e\n\u003cp\u003eLa collectivit\u00e9 \u00e9value, constate des \u00e9volutions positives, et communique ainsi l\u0027\u00e9volution des parts modales associ\u00e9es \u00e0 l\u0027ensemble des modes actifs et alternatifs \u00e0 la voiture individuelle (v\u00e9lo, marche, transports publics, covoiturage...).\u003c/p\u003e\n",
                                 thematique_id="mobilites",
-                                points=10,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__4.1.1.1",
@@ -12284,7 +12284,7 @@ actions = [
                                 nom=r"\u00c9laborer une politique de stationnement volontariste",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 souhaite mieux partager l\u0027espace public entre les diff\u00e9rents modes de transport, en particulier au niveau des zones centres, en s\u0027appuyant sur une politique de stationnement des v\u00e9hicules motoris\u00e9s raisonn\u00e9e. Ainsi la collectivit\u00e9 met en place une strat\u00e9gie efficace, elle g\u00e8re l\u2019ensemble du stationnement sur l\u2019espace public, y compris en dehors du centre (payant).\u003c/p\u003e\n",
                                 thematique_id="mobilites",
-                                points=8,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__4.2.1.1",
@@ -12561,7 +12561,7 @@ actions = [
                                 nom=r"R\u00e9guler le trafic, r\u00e9duire la vitesse et valoriser l\u0027espace public",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 met en \u0153uvre des actions destin\u00e9es \u00e0 limiter et r\u00e9duire le trafic sur les axes principaux, r\u00e9duire les vitesses dans certaines zones et am\u00e9liorer la qualit\u00e9 des espaces publics. Il s\u0027agit notamment, \u00e0 travers l\u2019acquisition d\u2019outil de gestion du trafic d\u2019une part, de la signal\u00e9tique, la restructuration et le r\u00e9am\u00e9nagement de la voirie et des espaces publics d\u2019autre part, de privil\u00e9gier les usagers les plus vuln\u00e9rables tels que les pi\u00e9tons et cyclistes ainsi que de redynamiser les commerces de proximit\u00e9.\u003c/p\u003e\n",
                                 thematique_id="mobilites",
-                                points=16,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__4.2.2.1",
@@ -12764,7 +12764,7 @@ actions = [
                                 nom=r"Optimiser la logistique et la gestion des flux de marchandises sur le territoire",
                                 description=r"\u003cp\u003ePour r\u00e9duire ses consommations d\u2019\u00e9nergie et r\u00e9duire les \u00e9missions de gaz \u00e0 effet de serre, la collectivit\u00e9 d\u00e9finit des r\u00e8gles et organise l\u0027approvisionnement et la distribution des marchandises de son territoire. Elle favorise \u00e9galement une activit\u00e9 de circuits de proximit\u00e9.\u003c/p\u003e\n",
                                 thematique_id="mobilites",
-                                points=6,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__4.2.3.1",
@@ -13059,7 +13059,7 @@ actions = [
                                 nom=r"D\u00e9velopper le r\u00e9seau pi\u00e9tonnier",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 d\u00e9veloppe le r\u00e9seau pi\u00e9tonnier, la signalisation associ\u00e9e et am\u00e9nage la voirie afin d\u0027encourager le d\u00e9veloppement de ce mode de d\u00e9placement et favoriser le report modal.\u003c/p\u003e\n",
                                 thematique_id="mobilites",
-                                points=12,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__4.3.1.1",
@@ -13235,7 +13235,7 @@ actions = [
                                 nom=r"D\u00e9velopper l\u0027offre multimodale et l\u0027intermodalit\u00e9",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 et ses partenaires proposent des offres multiples et compl\u00e9mentaires favorisant la multimodalit\u00e9 et l\u0027intermodalit\u00e9 (auto-partage, co-voiturage, parkings relais, location de v\u00e9los...). La tarification et les modalit\u00e9s d\u0027utilisation des services doivent \u00eatre attractives et simples pour limiter le recours \u00e0 la voiture individuelle.\u003c/p\u003e\n",
                                 thematique_id="mobilites",
-                                points=10,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__4.3.4.1",
@@ -13466,7 +13466,7 @@ actions = [
                                 nom=r"Proposer une offre de transports publics attractive et de qualit\u00e9",
                                 description=r"\u003cp\u003eLa collectivit\u00e9 souhaite d\u00e9velopper et am\u00e9liorer les performances du service public de transports publics dans une perspective d\u0027augmentation de son usage et de diminution du recours \u00e0 la voiture. Le d\u00e9veloppement et l\u0027am\u00e9lioration du service public passe par une augmentation du niveau de fr\u00e9quence, la qualit\u00e9 des connexions, une densification du maillage, une tarification attractive, un bon service de bus de nuit, la qualit\u00e9 des points d\u0027arr\u00eat ainsi que des v\u00e9hicules de transport.\u003c/p\u003e\n",
                                 thematique_id="mobilites",
-                                points=14,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__4.3.3.1",
@@ -13725,7 +13725,7 @@ actions = [
                                 nom=r"D\u00e9velopper le r\u00e9seau et les infrastructures cyclables",
                                 description=r"\u003cp\u003ePour r\u00e9duire les consommations d\u0027\u00e9nergie et les \u00e9missions de gaz \u00e0 effet de serre, la collectivit\u00e9 d\u00e9veloppe le r\u00e9seau cyclable, la signalisation et le stationnements associ\u00e9s et am\u00e9nage la voirie afin d\u0027encourager le d\u00e9veloppement de ce mode de d\u00e9placement.\u003c/p\u003e\n",
                                 thematique_id="mobilites",
-                                points=16,
+                                points=-1.0,
                                 actions=[
                                     ActionReferentiel(
                                         id="citergie__4.3.2.1",
