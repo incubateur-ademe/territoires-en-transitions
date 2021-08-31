@@ -11,6 +11,7 @@ import React, {useState} from 'react';
 import {defaultCategorie} from 'app/pages/collectivite/PlanActions/defaultCategorie';
 import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
 import {Spacer} from 'ui/shared';
+import {FicheAction} from 'generated/models/fiche_action';
 
 function CategoryTitle(props: {categorie: FicheActionCategorie}) {
   const [editing, setEditing] = useState<boolean>(false);
@@ -73,6 +74,24 @@ const CategorizedFichesList = (props: {categorized: CategorizedFiche[]}) => (
   </>
 );
 
+const UncategorizedFichesList = ({fiches}: {fiches: FicheAction[]}) => {
+  if (!fiches.length) return <></>;
+  return (
+    <details open={true} className="pt-8">
+      <summary className="flex items-center">
+        <h3 className="text-2xl"> Fiches actions non classées</h3>
+      </summary>
+      {fiches.map(fiche => {
+        return (
+          <div className="ml-5 mt-3">
+            <FicheCard fiche={fiche} />
+          </div>
+        );
+      })}
+    </details>
+  );
+};
+
 const FichesList = () => {
   const epciId = useEpciId();
   const fiches = useAllFiches();
@@ -84,7 +103,13 @@ const FichesList = () => {
     categories,
     defaultCategorie
   );
-
+  const categorizedFichesWithCategorie = categorized.filter(
+    categorizedFiche => categorizedFiche.categorie !== defaultCategorie
+  );
+  const uncategorizedFiches =
+    categorized.find(
+      categorizedFiche => categorizedFiche.categorie === defaultCategorie
+    )?.fiches || [];
   return (
     <main className="fr-container">
       <header className="flex justify-between items-center ">
@@ -95,7 +120,8 @@ const FichesList = () => {
         </Link>
       </header>
 
-      <CategorizedFichesList categorized={categorized} />
+      <CategorizedFichesList categorized={categorizedFichesWithCategorie} />
+      <UncategorizedFichesList fiches={uncategorizedFiches} />
     </main>
   );
 };
