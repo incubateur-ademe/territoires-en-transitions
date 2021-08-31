@@ -18,6 +18,7 @@ import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import {Spacer} from 'ui/shared';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
+import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -188,6 +189,14 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             />
             <Spacer />
 
+            <Field
+              name="avancement"
+              label="Avancement"
+              component={AvancementRadioField}
+            />
+
+            <Spacer />
+
             <label>
               <Field type="checkbox" name="en_retard" />
               <span className="ml-2">Action en retard</span>
@@ -280,10 +289,11 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             component={IndicateursPersonnalisesField}
           />
 
-          <IndicateurPersonnaliseCreationDialog buttonClasses="fr-btn--secondary" />
-          <LinkedIndicateurPersonnaliseCards />
+          <Spacer size={2} />
 
-          <Spacer />
+          <IndicateurPersonnaliseCreationDialog buttonClasses="fr-btn--secondary" />
+
+          <LinkedIndicateurPersonnaliseCards />
 
           <div className="flex flex-row-reverse mb-12">
             {state === 'ready' && (

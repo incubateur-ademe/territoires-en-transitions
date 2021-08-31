@@ -10,6 +10,7 @@ import {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
 import React, {useState} from 'react';
 import {defaultCategorie} from 'app/pages/collectivite/PlanActions/defaultCategorie';
 import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
+import {Spacer} from 'ui/shared';
 
 function CategoryTitle(props: {categorie: FicheActionCategorie}) {
   const [editing, setEditing] = useState<boolean>(false);
@@ -61,7 +62,7 @@ const CategorizedFichesList = (props: {categorized: CategorizedFiche[]}) => (
           </summary>
           {cat.fiches.map(fiche => {
             return (
-              <div className="ml-5">
+              <div className="ml-5 mt-3">
                 <FicheCard fiche={fiche} />
               </div>
             );
@@ -88,6 +89,7 @@ const FichesList = () => {
     <main className="fr-container">
       <header className="flex justify-between items-center ">
         <h1>Plan d'actions de ma collectivité</h1>
+        <Spacer />
         <Link className="fr-btn" to={`/collectivite/${epciId}/nouvelle_fiche`}>
           Ajouter une fiche action
         </Link>
