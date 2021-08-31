@@ -81,9 +81,10 @@ export const connected = (): boolean => {
   if (utilisateur.access_token === _dummyToken) return true;
 
   const decoded = jwt_decode<JwtPayload>(utilisateur.access_token);
-  const secondsLeft = decoded.exp ? decoded.exp - Date.now() / 1000 : 1; // TODO / QUESTION : Here, if decode.exp is undefined, we leave the session open. Is it what we want ?
+  // const secondsLeft = decoded.exp ? decoded.exp - Date.now() / 1000 : 1;
+  // return secondsLeft > 0;
 
-  return secondsLeft > 0;
+  return decoded !== null && decoded !== undefined;
 };
 
 /**
