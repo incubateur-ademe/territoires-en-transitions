@@ -28,9 +28,11 @@ function CategorieCreation(props: {ficheUid: string; onSave: () => void}) {
  * belongs to.
  */
 export function CategoriePicker(props: {ficheUid: string}) {
-  const categories = useAllStorables<FicheActionCategorieStorable>(
+  const storedCategories = useAllStorables<FicheActionCategorieStorable>(
     ficheActionCategorieStore
   );
+  const categories = [...storedCategories, defaultCategorie];
+
   const [creating, setCreating] = useState<boolean>(false);
 
   const ficheActionUid = props.ficheUid;
