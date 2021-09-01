@@ -12,7 +12,10 @@ export const UiDialogButton = (props: {
     <div>
       <button
         className={`fr-btn ${props.buttonClasses ?? ''}`}
-        onClick={() => props.setOpened(true)}
+        onClick={e => {
+          e.preventDefault();
+          props.setOpened(true);
+        }}
       >
         {props.title}
       </button>
