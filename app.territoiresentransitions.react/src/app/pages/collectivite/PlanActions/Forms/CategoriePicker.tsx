@@ -1,7 +1,7 @@
 import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
 import {ficheActionCategorieStore} from 'core-logic/api/hybridStores';
 import {useAllStorables, useEpciId} from 'core-logic/hooks';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {defaultCategorie} from 'app/pages/collectivite/PlanActions/defaultCategorie';
 import {FicheActionCategorieInterface} from 'generated/models/fiche_action_categorie';
 import {v4 as uuid} from 'uuid';
@@ -34,11 +34,18 @@ export function CategoriePicker(props: {ficheUid: string}) {
   const categories = [...storedCategories, defaultCategorie];
 
   const [creating, setCreating] = useState<boolean>(false);
+  const [active, setActive] =
+    useState<FicheActionCategorieStorable>(defaultCategorie);
 
   const ficheActionUid = props.ficheUid;
-  // const active = categories.find(cat =>
-  //   cat.fiche_actions_uids.includes(props.ficheUid)
-  // );
+
+  useEffect(() => {
+    setActive(
+      categories.find(cat =>
+        cat.fiche_actions_uids?.includes(props.ficheUid)
+      ) ?? defaultCategorie
+    );
+  }, [active, storedCategories]);
 
   /**
    * Update and save categories that needs to be updated.
@@ -48,7 +55,7 @@ export function CategoriePicker(props: {ficheUid: string}) {
   const selectCategorie = (selectedUid: string) => {
     const changed: FicheActionCategorieStorable[] = [];
     // Cleanup
-    for (const categorie of categories) {
+    for (const categorie of storedCategories) {
       // search for categories with this fiche uid excluding selected.
       if (selectedUid === categorie.uid) continue;
       if (categorie.fiche_actions_uids.includes(ficheActionUid)) {
@@ -61,7 +68,7 @@ export function CategoriePicker(props: {ficheUid: string}) {
     }
 
     // Update selected
-    const selected = categories.find(cat => cat.uid === selectedUid);
+    const selected = storedCategories.find(cat => cat.uid === selectedUid);
     if (selected && !selected.fiche_actions_uids.includes(ficheActionUid)) {
       // add this fiche uid to selected categorie
       selected.fiche_actions_uids.push(ficheActionUid);
@@ -101,7 +108,8 @@ export function CategoriePicker(props: {ficheUid: string}) {
               value: categorie.uid,
               label: categorie.nom,
             }))}
-            defaultValue={defaultCategorie.uid}
+            key={active.uid}
+            defaultValue={active.uid}
             onChange={selectCategorie}
           />
         </div>
