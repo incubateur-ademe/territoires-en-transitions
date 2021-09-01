@@ -7,7 +7,12 @@ import {
 } from 'ui/referentiels';
 import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
 import 'app/DesignSystem/buttons.css';
-import {ActionDescription, AddFicheActionButton, Spacer} from 'ui/shared';
+import {
+  ActionDescription,
+  AddFicheActionButton,
+  RetourButton,
+  Spacer,
+} from 'ui/shared';
 import {isIndicateurRelatedToAction} from 'utils/indicateurs';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
@@ -29,6 +34,7 @@ const ActionReferentielAvancement = ({
   return (
     <div className="fr-container">
       <div className="mt-8 mb-16">
+        <RetourButton />
         <div className="pt-8 flex justify-between items-center">
           <ActionReferentielTitle
             className="fr-h1 w-9/12 text-gray-900"
