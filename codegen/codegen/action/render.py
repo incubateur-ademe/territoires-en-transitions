@@ -10,7 +10,10 @@ from codegen.climat_pratic.thematiques_generator import get_thematiques
 from codegen.utils.templates import build_jinja_environment
 
 
-def render_field_text_to_html(actions: List[dict], field: Literal["description", "contexte", "exemples", "ressources"]):
+def render_field_text_to_html(
+    actions: List[dict],
+    field: Literal["description", "contexte", "exemples", "ressources"],
+):
     """Renders descriptions markdown to html. Convert description in place."""
     renderer = HTMLRenderer()
 
@@ -54,14 +57,14 @@ def render_actions_as_typescript(
     """Render all actions into a single typescript file."""
 
     env = build_jinja_environment()
-    
+
     add_points(actions)
 
     render_field_text_to_html(actions, "description")
     render_field_text_to_html(actions, "contexte")
     render_field_text_to_html(actions, "exemples")
     render_field_text_to_html(actions, "ressources")
-    
+
     template = env.get_template(template_file)
     rendered = template.render(actions=actions)
     return jsbeautifier.beautify(rendered)
@@ -81,7 +84,7 @@ def render_mesure_as_html(
         indicateurs = []
 
     # TODO /!\ This should not be hard-coded here, since it is defined elsewhere /!\
-    avancement_noms = { 
+    avancement_noms = {
         "faite": "Faite",
         "programmee": "Prévue",
         "en_cours": "En cours",

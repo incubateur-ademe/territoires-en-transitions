@@ -14,21 +14,29 @@ def test_build_action_with_mesure():
     mesure = build_action(md)
     assert mesure
     assert mesure["id"] == "1.1.1"
-    
+
     assert (
         mesure["nom"]
         == "Définir la vision, les objectifs et la stratégie Climat-Air-Energie"
     )
-    
-    assert mesure["description"] == 'Description de 1.1.1\n\n'
-    assert mesure["ressources"] == '<a href="http://www.ademe.fr/reference">Une référence</a>\n\n'
-    assert mesure["contexte"] == "**Un titre**\n\nLes baleines.\n\n**Réglementation**\n\nLa Loi dit\n\n- qu'il faut faire ça,\n\n- et aussi ceci,\n\n"
-    assert mesure["exemples"] == '**Exemple 1**\n\nVoilà par exemple.\n\n**Exemple 2**\n\nOu bien comme ça.\n\n'
+
+    assert mesure["description"] == "Description de 1.1.1\n\n"
+    assert (
+        mesure["ressources"]
+        == '<a href="http://www.ademe.fr/reference">Une référence</a>\n\n'
+    )
+    assert (
+        mesure["contexte"]
+        == "**Un titre**\n\nLes baleines.\n\n**Réglementation**\n\nLa Loi dit\n\n- qu'il faut faire ça,\n\n- et aussi ceci,\n\n"
+    )
+    assert (
+        mesure["exemples"]
+        == "**Exemple 1**\n\nVoilà par exemple.\n\n**Exemple 2**\n\nOu bien comme ça.\n\n"
+    )
     actions = mesure["actions"]
     assert len(actions) == 3
     assert [action["id"] for action in actions] == ["1.1.1.1", "1.1.1.2", "1.1.1.3"]
     assert [action["nom"] for action in actions] == ["Tache 1", "Tache 2", "Tache 3"]
-
 
 
 def test_build_action_with_orientation():

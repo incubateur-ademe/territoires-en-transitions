@@ -8,7 +8,7 @@ def token_to_string(token: BlockToken, level=0) -> str:
     for child in token.children:
         if isinstance(child, Strong):
             rendered += f"**{child.children[0].content}**\n"
-            continue   
+            continue
         if hasattr(child, "leader"):
             rendered += " " * level + f"{child.leader} "
         if hasattr(child, "children"):
