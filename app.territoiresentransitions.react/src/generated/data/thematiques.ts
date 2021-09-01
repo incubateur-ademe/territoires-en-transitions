@@ -1,44 +1,46 @@
 export class Thematique {
-  id: string;
-  name: string;
-  constructor(id: string, name: string) {
-    this.id = id;
-    this.name = name;
-  }
+    id: string;
+    name: string;
+    constructor(id: string, name: string) {
+        this.id = id;
+        this.name = name;
+    }
 }
 
 export const thematiques: Thematique[] = [
-  new Thematique('strategie', 'Stratégie'),
 
-  new Thematique('urbanisme', 'Urbanisme et aménagement'),
+    new Thematique("strategie", "Stratégie"),
 
-  new Thematique('batiments', 'Bâtiments et patrimoine'),
+    new Thematique("urbanisme", "Urbanisme et aménagement"),
 
-  new Thematique('energie', "Gestion, production et distribution de l'énergie"),
+    new Thematique("batiments", "Bâtiments et patrimoine"),
 
-  new Thematique('mobilites', 'Mobilités'),
+    new Thematique("energie", "Gestion, production et distribution de l'énergie"),
 
-  new Thematique('agri_alim', 'Agriculture et alimentation'),
+    new Thematique("mobilites", "Mobilités"),
 
-  new Thematique('foret_biodiv', 'Forêts, espaces verts et biodiversité'),
+    new Thematique("agri_alim", "Agriculture et alimentation"),
 
-  new Thematique('conso_resp', 'Consommation écoresponsable'),
+    new Thematique("foret_biodiv", "Forêts, espaces verts et biodiversité"),
 
-  new Thematique('dechets', 'Déchets'),
+    new Thematique("conso_resp", "Consommation écoresponsable"),
 
-  new Thematique('eau', 'Eau et assainissement'),
+    new Thematique("dechets", "Déchets"),
 
-  new Thematique('preca_energie', 'Précarité énergétique'),
+    new Thematique("eau", "Eau et assainissement"),
 
-  new Thematique('dev_eco', 'Activités économiques'),
+    new Thematique("preca_energie", "Précarité énergétique"),
 
-  new Thematique('tourisme', 'Tourisme'),
+    new Thematique("dev_eco", "Activités économiques"),
 
-  new Thematique('orga_interne', 'Organisation interne'),
+    new Thematique("tourisme", "Tourisme"),
 
-  new Thematique('forma_sensib', 'Formation, sensibilisation, communication'),
+    new Thematique("orga_interne", "Organisation interne"),
 
-  new Thematique('parten_coop', 'Partenariat et coopération'),
+    new Thematique("forma_sensib", "Formation, sensibilisation, communication"),
 
-  new Thematique('eci', 'Économie circulaire'),
-];
+    new Thematique("parten_coop", "Partenariat et coopération"),
+
+    new Thematique("eci", "Économie circulaire"),
+
+]
