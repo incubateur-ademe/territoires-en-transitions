@@ -4,7 +4,6 @@ import {
   AddFicheActionButton,
   ActionStatusAvancementRadioButton,
   ActionExemplesExpandPanel,
-  Spacer,
 } from 'ui/shared';
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {ProgressStat} from '.';
