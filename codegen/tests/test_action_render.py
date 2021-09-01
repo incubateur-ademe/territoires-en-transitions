@@ -10,20 +10,25 @@ from codegen.utils.templates import escape_to_html, build_jinja_environment
 
 def test_build_action_with_mesure():
     """Test that a specific mesure is parsed correctly"""
-    md = load_md("../referentiels/markdown/mesures_citergie/1.1.1.md")
+    md = load_md("tests/md/exemple_citergie_1.1.1.md")
     mesure = build_action(md)
     assert mesure
     assert mesure["id"] == "1.1.1"
+    
     assert (
         mesure["nom"]
         == "Définir la vision, les objectifs et la stratégie Climat-Air-Energie"
     )
-    assert len(mesure["description"]) > 10
-    assert len(mesure["actions"]) == 7
+    
+    assert mesure["description"] == 'Description de 1.1.1\n\n'
+    assert mesure["ressources"] == '<a href="http://www.ademe.fr/reference">Une référence</a>\n\n'
+    assert mesure["contexte"] == "Contexte et enjeux\n\nLes baleines.\n\nRéglementation\n\nLa Loi dit\n\n●\tqu'il faut faire ça,\n\n●\tet aussi ceci,\n\n"
+    assert mesure["exemples"] == 'Exemple 1\n\nVoilà par exemple.\n\nExemple 2\n\nOu bien comme ça.\n\n'
+    actions = mesure["actions"]
+    assert len(actions) == 3
+    assert [action["id"] for action in actions] == ["1.1.1.1", "1.1.1.2", "1.1.1.3"]
+    assert [action["nom"] for action in actions] == ["Tache 1", "Tache 2", "Tache 3"]
 
-    for action in mesure["actions"]:
-        assert str(action["id"]).startswith(mesure["id"])
-        assert len(action["nom"]) > 10
 
 
 def test_build_action_with_orientation():

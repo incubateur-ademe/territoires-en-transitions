@@ -18,6 +18,7 @@ def types_ts(type: str, options: Optional[List[Any]] = None) -> str:
         "Dict": "object",
         "Any": "any",
         "bool": "boolean",
+        "Optional[String]": "string | undefined",
         None: "string",
     }
     if type in ts_types.keys():

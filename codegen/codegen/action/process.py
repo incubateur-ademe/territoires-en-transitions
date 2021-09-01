@@ -17,7 +17,7 @@ def referentiel_from_actions(actions: List[dict], name: str, id: str) -> dict:
 
     This function is tightly coupled with the way markdowns are organized in each referentiels directories
     """
-    referentiel = {"nom": name, "id": id, "actions": [], "description": ""}
+    referentiel = {"nom": name, "id": id, "actions": [], "description": "", "ressources": "", "exemples": "", "contexte": ""} 
 
     def attach_children(parent: dict) -> None:
         for action in actions:

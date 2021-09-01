@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Literal
 
 import jsbeautifier
 from black import format_str, FileMode
@@ -10,18 +10,18 @@ from codegen.climat_pratic.thematiques_generator import get_thematiques
 from codegen.utils.templates import build_jinja_environment
 
 
-def render_descriptions_to_html(actions: List[dict]):
+def render_field_text_to_html(actions: List[dict], field: Literal["description", "contexte", "ressources", "exemples"]):
     """Renders descriptions markdown to html. Convert description in place."""
     renderer = HTMLRenderer()
 
-    def render_descriptions(actions: List[dict]) -> None:
+    def recursively_render(actions: List[dict]) -> None:
         for action in actions:
-            if action["description"]:
-                description = Document(action["description"])
-                action["description"] = renderer.render(description)
-            render_descriptions(action["actions"])
+            if action[field]:
+                document = Document(action[field])
+                action[field] = renderer.render(document)
+            recursively_render(action["actions"])
 
-    render_descriptions(actions)
+    recursively_render(actions)
 
 
 def add_points(actions: List[dict]):
@@ -52,9 +52,16 @@ def render_actions_as_typescript(
     actions: List[dict], template_file="shared/ts/actions_referentiel.j2"
 ) -> str:
     """Render all actions into a single typescript file."""
+
     env = build_jinja_environment()
+    
     add_points(actions)
-    render_descriptions_to_html(actions)
+
+    render_field_text_to_html(actions, "description")
+    render_field_text_to_html(actions, "contexte")
+    render_field_text_to_html(actions, "exemples")
+    render_field_text_to_html(actions, "ressources")
+    
     template = env.get_template(template_file)
     rendered = template.render(actions=actions)
     return jsbeautifier.beautify(rendered)
@@ -73,7 +80,8 @@ def render_mesure_as_html(
     if indicateurs is None:
         indicateurs = []
 
-    avancement_noms = {
+    # TODO /!\ This should not be hard-coded here, since it is defined elsewhere /!\
+    avancement_noms = { 
         "faite": "Faite",
         "programmee": "Prévue",
         "en_cours": "En cours",

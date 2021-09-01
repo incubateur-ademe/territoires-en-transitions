@@ -16,7 +16,13 @@ ActionReferentiel:
     nom:
         type: String
     description:
-        type: String
+        type: Optional[String]
+    contexte:
+        type: Optional[String]
+    exemples:
+        type: Optional[String]
+    ressources:
+        type: Optional[String]
     thematique_id:
         type: String
     points:

@@ -7,6 +7,9 @@ export const actions: ActionReferentiel[] = [
     id_nomenclature: "{{ action.id_nomenclature }}",
     nom: {{ action.nom | tojson }},
     description: {{ action.description | tojson }},
+    contexte: {{ action.contexte | tojson }}, 
+    exemples: {{ action.exemples | tojson }},
+    ressources: {{ action.ressources | tojson }},   
     thematique_id: "{{ action.thematique_id }}",
     points: {{ action.points | tojson }},
     actions:[
