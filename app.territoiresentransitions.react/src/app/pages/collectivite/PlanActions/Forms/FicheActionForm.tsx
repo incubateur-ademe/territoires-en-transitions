@@ -123,7 +123,11 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
       .max(300, 'Ce champ doit faire au maximum 300 caractères')
       .required('Champ requis'),
     description: Yup.string(),
-    budget: Yup.number(),
+    budget: Yup.number()
+      .transform(
+        (value, originalValue) => (/\s/.test(originalValue) ? NaN : value) // disallow whitespaces
+      )
+      .typeError('Ce champ ne doit comporter que des chiffres sans espaces'),
     personne_referente: Yup.string().max(
       100,
       'Ce champ doit faire au maximum 100 caractères'
