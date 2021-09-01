@@ -22,8 +22,8 @@ def test_build_action_with_mesure():
     
     assert mesure["description"] == 'Description de 1.1.1\n\n'
     assert mesure["ressources"] == '<a href="http://www.ademe.fr/reference">Une référence</a>\n\n'
-    assert mesure["contexte"] == "Contexte et enjeux\n\nLes baleines.\n\nRéglementation\n\nLa Loi dit\n\n●\tqu'il faut faire ça,\n\n●\tet aussi ceci,\n\n"
-    assert mesure["exemples"] == 'Exemple 1\n\nVoilà par exemple.\n\nExemple 2\n\nOu bien comme ça.\n\n'
+    assert mesure["contexte"] == "**Un titre**\n\nLes baleines.\n\n**Réglementation**\n\nLa Loi dit\n\n- qu'il faut faire ça,\n\n- et aussi ceci,\n\n"
+    assert mesure["exemples"] == '**Exemple 1**\n\nVoilà par exemple.\n\n**Exemple 2**\n\nOu bien comme ça.\n\n'
     actions = mesure["actions"]
     assert len(actions) == 3
     assert [action["id"] for action in actions] == ["1.1.1.1", "1.1.1.2", "1.1.1.3"]

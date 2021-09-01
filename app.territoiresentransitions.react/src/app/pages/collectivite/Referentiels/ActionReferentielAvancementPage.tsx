@@ -19,12 +19,13 @@ export const ActionReferentielAvancementPage = () => {
   }>();
 
   overmind.actions.epcis.setCurrentEpci(epciId);
-
+  const displayProgressStat = referentiel === 'eci';
   return (
     <Suspense fallback={renderLoader()}>
+      {displayProgressStat}
       <ActionReferentielAvancement
         actionId={actionId}
-        displayProgressStat={referentiel === 'eci'}
+        displayProgressStat={displayProgressStat}
       />
     </Suspense>
   );

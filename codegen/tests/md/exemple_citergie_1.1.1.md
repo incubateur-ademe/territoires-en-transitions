@@ -8,14 +8,14 @@ climat_pratic_id: strategie
 Description de 1.1.1
 
 ## Contexte
-**Contexte et enjeux**
+**Un titre**
 Les baleines. 
 
 **Réglementation**
 
 La Loi dit  
-●	qu'il faut faire ça,
-●	et aussi ceci, 
+- qu'il faut faire ça,
+- et aussi ceci, 
 
 ## Ressources
 

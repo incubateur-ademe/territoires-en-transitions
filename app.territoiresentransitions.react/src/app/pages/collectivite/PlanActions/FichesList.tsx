@@ -10,7 +10,7 @@ import {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
 import React, {useState} from 'react';
 import {defaultCategorie} from 'app/pages/collectivite/PlanActions/defaultCategorie';
 import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
-import {Spacer} from 'ui/shared';
+import {AddFicheActionButton, Spacer} from 'ui/shared';
 import {FicheAction} from 'generated/models/fiche_action';
 
 function CategoryTitle(props: {categorie: FicheActionCategorie}) {
@@ -115,9 +115,7 @@ const FichesList = () => {
       <header className="flex justify-between items-center ">
         <h1>Plan d'actions de ma collectivité</h1>
         <Spacer />
-        <Link className="fr-btn" to={`/collectivite/${epciId}/nouvelle_fiche`}>
-          Ajouter une fiche action
-        </Link>
+        <AddFicheActionButton />
       </header>
 
       <CategorizedFichesList categorized={categorizedFichesWithCategorie} />

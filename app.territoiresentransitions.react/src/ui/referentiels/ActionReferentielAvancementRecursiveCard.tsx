@@ -1,8 +1,10 @@
 import {
-  ActionDescription,
+  ActionDescriptionExpandPanel,
   ActionCommentaire,
   AddFicheActionButton,
   ActionStatusAvancementRadioButton,
+  ActionExemplesExpandPanel,
+  Spacer,
 } from 'ui/shared';
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {ProgressStat} from '.';
@@ -82,7 +84,8 @@ export const ActionReferentielAvancementCard = ({
         </div>
       </div>
       <div className="w-1/2">
-        <ActionDescription content={action.description} />
+        <ActionDescriptionExpandPanel action={action} />
+        <ActionExemplesExpandPanel action={action} />
         <ActionCommentaire actionId={action.id} />
       </div>
     </article>

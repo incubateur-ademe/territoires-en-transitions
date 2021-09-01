@@ -1,7 +1,7 @@
 import {Link} from 'react-router-dom';
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {ProgressStat} from 'ui/referentiels';
-import {ActionDescription} from 'ui/shared';
+import {ActionDescriptionExpandPanel} from 'ui/shared';
 import {ActionReferentielTitle} from './ActionReferentielTitle';
 import {referentielToName} from 'app/labels';
 import {Referentiel} from 'types';
@@ -16,12 +16,12 @@ export const ActionReferentielTitleCard = ({
   const displayProgressStat = referentiel === 'eci';
 
   return (
-    <article className="bg-beige my-4">
+    <article className="bg-beige my-4 p-4">
       <Link
         to={`./action/${referentiel}/${action.id}`}
         className="LinkedCardHeader"
       >
-        <div className="flex p-4 justify-between">
+        <div className="flex p-2 justify-between">
           <div>
             <span className="inline-block text-xs font-thin">
               {referentielToName[referentiel]}
@@ -38,8 +38,8 @@ export const ActionReferentielTitleCard = ({
           <div className="fr-fi-arrow-right-line text-bf500" />
         </div>
       </Link>
-      <div className="p-4 w-2/3">
-        <ActionDescription content={action.description} />
+      <div className="w-2/3">
+        <ActionDescriptionExpandPanel action={action} />
       </div>
     </article>
   );

@@ -10,7 +10,7 @@ from codegen.climat_pratic.thematiques_generator import get_thematiques
 from codegen.utils.templates import build_jinja_environment
 
 
-def render_field_text_to_html(actions: List[dict], field: Literal["description", "contexte", "ressources", "exemples"]):
+def render_field_text_to_html(actions: List[dict], field: Literal["description", "contexte", "exemples", "ressources"]):
     """Renders descriptions markdown to html. Convert description in place."""
     renderer = HTMLRenderer()
 
