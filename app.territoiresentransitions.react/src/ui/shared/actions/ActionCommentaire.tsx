@@ -25,7 +25,6 @@ export const ActionCommentaire = (props: {actionId: string}) => {
       epci_id: epciId!,
       meta: {commentaire: event.currentTarget.value},
     };
-    console.log(data);
     actionMetaStore.store(new ActionMetaStorable(data)).then(storable => {
       const data = storable as ActionMetaTypedInterface;
       setValue(data.meta.commentaire);

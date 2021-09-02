@@ -1,16 +1,10 @@
 import React, {useEffect} from 'react';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
-import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
-import {useAppState} from 'core-logic/overmind';
-import years from 'app/pages/collectivite/Indicateurs/years';
 import {commands} from 'core-logic/commands';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
-import {
-  indicateurPersonnaliseValueStore,
-  indicateurValueStore,
-} from 'core-logic/api/hybridStores';
+import {indicateurValueStore} from 'core-logic/api/hybridStores';
 import {useEpciId} from 'core-logic/hooks';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {

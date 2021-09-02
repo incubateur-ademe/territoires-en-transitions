@@ -1,14 +1,14 @@
 import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
 import {ficheActionCategorieStore} from 'core-logic/api/hybridStores';
 import {useAllStorables, useEpciId} from 'core-logic/hooks';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {defaultCategorie} from 'app/pages/collectivite/PlanActions/defaultCategorie';
 import {FicheActionCategorieInterface} from 'generated/models/fiche_action_categorie';
 import {v4 as uuid} from 'uuid';
 import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
-import {SelectInput} from 'ui';
+import {SelectInput, UiDialogButton} from 'ui';
 
-function CategorieCreation(props: {ficheUid: string; onSave: () => void}) {
+const CategorieCreation = (props: {ficheUid: string; onSave: () => void}) => {
   const epciId = useEpciId();
   const categorie: FicheActionCategorieInterface = {
     epci_id: epciId!,
@@ -18,7 +18,7 @@ function CategorieCreation(props: {ficheUid: string; onSave: () => void}) {
     fiche_actions_uids: [props.ficheUid],
   };
   return <CategoryForm categorie={categorie} onSave={props.onSave} />;
-}
+};
 
 /**
  * Pick a categorie for a given fiche uid.
@@ -34,11 +34,18 @@ export function CategoriePicker(props: {ficheUid: string}) {
   const categories = [...storedCategories, defaultCategorie];
 
   const [creating, setCreating] = useState<boolean>(false);
+  const [active, setActive] =
+    useState<FicheActionCategorieStorable>(defaultCategorie);
 
   const ficheActionUid = props.ficheUid;
-  // const active = categories.find(cat =>
-  //   cat.fiche_actions_uids.includes(props.ficheUid)
-  // );
+
+  useEffect(() => {
+    setActive(
+      categories.find(cat =>
+        cat.fiche_actions_uids?.includes(props.ficheUid)
+      ) ?? defaultCategorie
+    );
+  }, [active, storedCategories]);
 
   /**
    * Update and save categories that needs to be updated.
@@ -48,7 +55,7 @@ export function CategoriePicker(props: {ficheUid: string}) {
   const selectCategorie = (selectedUid: string) => {
     const changed: FicheActionCategorieStorable[] = [];
     // Cleanup
-    for (const categorie of categories) {
+    for (const categorie of storedCategories) {
       // search for categories with this fiche uid excluding selected.
       if (selectedUid === categorie.uid) continue;
       if (categorie.fiche_actions_uids.includes(ficheActionUid)) {
@@ -61,7 +68,7 @@ export function CategoriePicker(props: {ficheUid: string}) {
     }
 
     // Update selected
-    const selected = categories.find(cat => cat.uid === selectedUid);
+    const selected = storedCategories.find(cat => cat.uid === selectedUid);
     if (selected && !selected.fiche_actions_uids.includes(ficheActionUid)) {
       // add this fiche uid to selected categorie
       selected.fiche_actions_uids.push(ficheActionUid);
@@ -81,50 +88,30 @@ export function CategoriePicker(props: {ficheUid: string}) {
         <label className="fr-label" htmlFor="categorie_picker">
           Catégorie
         </label>
-
-        {!creating && (
-          <button
-            className="fr-btn fr-btn--secondary fr-btn--sm"
-            onClick={e => {
-              e.preventDefault();
-              setCreating(true);
-            }}
-          >
-            Nouvelle catégorie
-          </button>
-        )}
-      </div>
-      {!creating && (
-        <div className="w-full">
-          <SelectInput
-            options={categories.map(categorie => ({
-              value: categorie.uid,
-              label: categorie.nom,
-            }))}
-            defaultValue={defaultCategorie.uid}
-            onChange={selectCategorie}
+        <UiDialogButton
+          buttonClasses="fr-btn--secondary"
+          title="Créer une catégorie"
+          opened={creating}
+          setOpened={setCreating}
+        >
+          <CategorieCreation
+            ficheUid={props.ficheUid}
+            onSave={() => setCreating(false)}
           />
-        </div>
-      )}
-      {creating && (
-        <div className="border-bf500 border-l-4 p-2 mt-2 mb-5 ml-5 bg-beige">
-          <button
-            className="bg-bf500 text-white float-right w-5 pb-0.5"
-            onClick={() => setCreating(false)}
-          >
-            x
-          </button>
-          <div className="flex flex-col ">
-            <div className="flex flex-row  w-full items-center justify-between">
-              <h5 className="text-lg">Nouvelle catégorie</h5>
-            </div>
-            <CategorieCreation
-              ficheUid={props.ficheUid}
-              onSave={() => setCreating(false)}
-            />
-          </div>
-        </div>
-      )}
+        </UiDialogButton>
+      </div>
+
+      <div className="w-full">
+        <SelectInput
+          options={categories.map(categorie => ({
+            value: categorie.uid,
+            label: categorie.nom,
+          }))}
+          key={active.uid}
+          defaultValue={active.uid}
+          onChange={selectCategorie}
+        />
+      </div>
     </fieldset>
   );
 }

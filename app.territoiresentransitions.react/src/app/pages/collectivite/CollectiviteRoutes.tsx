@@ -1,10 +1,9 @@
-import {Route, useParams, useRouteMatch} from 'react-router-dom';
+import {Route, useRouteMatch} from 'react-router-dom';
 import {
   ActionReferentielAvancementPage,
   IndicateursPage,
   ReferentielsPage,
 } from 'app/pages/index';
-import {useActions} from 'core-logic/overmind';
 import {PlanActionPage} from 'app/pages/collectivite/PlanActions/PlanActionsPage';
 import {FicheActionPage} from 'app/pages/collectivite/PlanActions/FicheActionPage';
 import {FicheActionCreationPage} from 'app/pages/collectivite/PlanActions/FicheActionCreationPage';
@@ -15,9 +14,7 @@ import {FicheActionCreationPage} from 'app/pages/collectivite/PlanActions/FicheA
  * Is responsible for setting the current epci id.
  */
 export const CollectiviteRoutes = () => {
-  const {path, url} = useRouteMatch();
-  const {epciId} = useParams<{epciId: string}>();
-  useActions().epcis.setCurrentEpci(epciId);
+  const {path} = useRouteMatch();
 
   // if (false) {
   //   // todo redirect when user is not authenticated: https://reactrouter.com/web/example/auth-workflow

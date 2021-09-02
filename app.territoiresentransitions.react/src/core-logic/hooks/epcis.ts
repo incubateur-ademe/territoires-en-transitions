@@ -8,7 +8,7 @@ import {useDroits} from 'core-logic/hooks/authentication';
 /**
  * Returns the list of epcis owned by the current user.
  */
-export function currentUserEpcis(): EpciStorable[] {
+export const currentUserEpcis = (): EpciStorable[] => {
   const all = allSortedEpcis();
   const droits = useDroits();
   const [epcis, setEpcis] = useState<EpciStorable[]>([]);
@@ -32,14 +32,14 @@ export function currentUserEpcis(): EpciStorable[] {
     });
   }, [epcis, all, droits]);
 
-  return epcis;
-}
+  return epcis.sort((a, b) => a.nom.localeCompare(b.nom));
+};
 
 /**
  * Returns all the stored Epcis sorted alphabetically.
  */
-export function allSortedEpcis(): EpciStorable[] {
+export const allSortedEpcis = (): EpciStorable[] => {
   const allEpcis = useAllStorables<EpciStorable>(epciStore);
   allEpcis.sort((a, b) => a.nom.localeCompare(b.nom));
   return allEpcis;
-}
+};

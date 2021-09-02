@@ -1,6 +1,8 @@
 import '@testing-library/jest-dom/extend-expect';
+import {Console} from 'console';
 import {FicheAction} from 'generated/models/fiche_action';
 import {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
+import {compareIndexes} from 'utils';
 
 import {categorizeAndSortFiches, sortFiches} from './sortFiches';
 
@@ -13,7 +15,7 @@ const makeCategorie = (uid: string, fiche_actions_uids: string[] = []) =>
     fiche_actions_uids: fiche_actions_uids,
   });
 
-const makeFicheAction = (custom_id: string, uid: string) => {
+const makeFicheAction = (custom_id: string, uid: string, titre?: string) => {
   return new FicheAction({
     epci_id: '',
     uid: uid,
@@ -22,7 +24,7 @@ const makeFicheAction = (custom_id: string, uid: string) => {
     en_retard: false,
     referentiel_action_ids: [],
     referentiel_indicateur_ids: [],
-    titre: '',
+    titre: titre ?? '',
     description: '',
     budget: 1,
     personne_referente: '',
@@ -73,7 +75,29 @@ describe('categorize fiches', () => {
   });
 });
 
+describe('compareIndexes', () => {
+  it('sorts empty string after non empty strings', () => {
+    expect(compareIndexes('', '1.1')).toEqual(1);
+  });
+});
+
 describe('sort fiches', () => {
+  it('sorts fiches without custom_id at the end and sorted by title', () => {
+    const fiche_with_custom_id = makeFicheAction('1.1', 'Lala', 'Lala');
+    const fiche_without_custom_id_A2 = makeFicheAction('', 'A2', 'A.2 - titre');
+    const fiche_without_custom_id_A1 = makeFicheAction('', 'A1', 'A.1 - titre');
+    expect(
+      sortFiches([
+        fiche_without_custom_id_A2,
+        fiche_with_custom_id,
+        fiche_without_custom_id_A1,
+      ])
+    ).toEqual([
+      fiche_with_custom_id,
+      fiche_without_custom_id_A1,
+      fiche_without_custom_id_A2,
+    ]);
+  });
   it('sorts correctly when numbers are 1.9 and 1.10', () => {
     const fiche_9 = makeFicheAction('1.9', '1.9');
     const fiche_10 = makeFicheAction('1.10', '1.10');

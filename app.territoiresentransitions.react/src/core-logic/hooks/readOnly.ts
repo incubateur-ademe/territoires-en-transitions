@@ -6,7 +6,7 @@ import {useDroits} from 'core-logic/hooks/authentication';
 /**
  * Returns true if the current user have no rights over the current epci.
  */
-export function useReadOnly(): boolean {
+export const useReadOnly = (): boolean => {
   const epciId = useEpciId();
   const droits = useDroits();
   const [readOnly, setReadOnly] = useState<boolean>(false);
@@ -25,4 +25,4 @@ export function useReadOnly(): boolean {
   }, [readOnly, epciId, droits]);
 
   return readOnly;
-}
+};

@@ -67,8 +67,8 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
    * Return all storables of type T existing at pathname.
    * If nothing is found returns an empty record.
    */
-  async retrieveAll(): Promise<Array<T>> {
-    const all = await this.getCache();
+  async retrieveAll(force = false): Promise<Array<T>> {
+    const all = await this.getCache(force);
     return [...all.values()];
   }
 
@@ -171,10 +171,10 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
     return cache.delete(id);
   }
 
-  private async getCache(): Promise<Map<string, T>> {
+  private async getCache(force = false): Promise<Map<string, T>> {
     const pathname = this.pathname();
 
-    if (this.fetchedPaths.includes(pathname)) {
+    if (!force && this.fetchedPaths.includes(pathname)) {
       return this.cache;
     }
 
@@ -197,11 +197,11 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
         }
         this.notifyListeners();
         this.fetchedPaths.push(pathname);
+        delete this.retrieving[pathname];
       });
 
       this.retrieving[pathname] = promise;
     }
-
     return this.retrieving[pathname];
   }
 

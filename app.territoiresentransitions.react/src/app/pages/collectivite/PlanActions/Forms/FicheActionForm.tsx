@@ -123,7 +123,11 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
       .max(300, 'Ce champ doit faire au maximum 300 caractères')
       .required('Champ requis'),
     description: Yup.string(),
-    budget: Yup.number(),
+    budget: Yup.number()
+      .transform(
+        (value, originalValue) => (/\s/.test(originalValue) ? NaN : value) // disallow whitespaces
+      )
+      .typeError('Ce champ ne doit comporter que des chiffres sans espaces'),
     personne_referente: Yup.string().max(
       100,
       'Ce champ doit faire au maximum 100 caractères'
@@ -147,7 +151,6 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
   });
 
   const save = (data: FicheActionInterface) => {
-    console.log(data);
     if (state !== 'ready') return;
     setState('saving');
     props.onSave(data);
@@ -267,7 +270,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
           <Field
             name="referentiel_action_ids"
-            label="Actions du référentiel"
+            label="Actions des référentiels liées"
             component={ActionsField}
           />
           <LinkedActionsReferentielCards />
@@ -276,7 +279,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
           <Field
             name="referentiel_indicateur_ids"
-            label="Indicateurs du référentiel"
+            label="Indicateurs des référentiels liés"
             component={IndicateursField}
           />
           <LinkedIndicateurCards />
@@ -285,7 +288,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
           <Field
             name="indicateur_personnalise_ids"
-            label="Indicateurs personnalisés"
+            label="Indicateurs personnalisés liés"
             component={IndicateursPersonnalisesField}
           />
 

@@ -1,8 +1,7 @@
-import React from 'react';
 import {signInRedirect} from 'core-logic/api/authRedirect';
 import {Link} from 'react-router-dom';
 
-function Home() {
+const Home = () => {
   return (
     <section className="max-w-2xl mx-auto p-5">
       <h1 className="fr-h1">À vous de jouer !</h1>
@@ -15,16 +14,16 @@ function Home() {
         d'une minute.
       </p>
 
-      <div className="flex flex-row-reverse">
-        <button className="fr-btn mr-4" onClick={signInRedirect}>
+      <div className="flex flex-row-reverse gap-3">
+        <button className="fr-btn" onClick={signInRedirect}>
           Se connecter
         </button>
-        <Link className="fr-btn fr-btn--secondary mr-4" to="/auth/register/">
+        <Link className="fr-btn fr-btn--secondary" to="/auth/register/">
           Créer un compte
         </Link>
       </div>
     </section>
   );
-}
+};
 
 export default Home;

@@ -4,17 +4,16 @@ import {auth, currentUtilisateurDroits} from 'core-logic/api/authentication';
 import {UtilisateurConnecteStorable} from 'storables/UtilisateurConnecteStorable';
 import {utilisateurConnecteStore} from 'core-logic/api/localStore';
 
-export function useDroits(): UtilisateurDroits[] {
+export const useDroits = (): UtilisateurDroits[] => {
   const [droits, setDroits] = useState<UtilisateurDroits[]>([]);
 
   useEffect(() => {
     const listener = async () => {
       const droitsJson = droits.map(d => JSON.stringify(d));
-      const currentJson = auth.currentUtilisateurDroits!.map(d =>
-        JSON.stringify(d)
-      );
+      const currentJson = auth.currentUtilisateurDroits
+        ? auth.currentUtilisateurDroits.map(d => JSON.stringify(d))
+        : [];
       if (!currentJson.every(s => droitsJson.includes(s))) {
-        console.log(currentJson, droitsJson);
         setDroits(auth.currentUtilisateurDroits!);
       }
     };
@@ -27,7 +26,7 @@ export function useDroits(): UtilisateurDroits[] {
   });
 
   return droits;
-}
+};
 
 export const useUser = (): UtilisateurConnecteStorable | null => {
   const [user, setUser] = useState<UtilisateurConnecteStorable | null>(null);
