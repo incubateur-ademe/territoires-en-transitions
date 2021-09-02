@@ -62,10 +62,12 @@ export const ActionReferentielAvancementCard = ({
       }`}
     >
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-normal">
-          <span>{action.id_nomenclature} - </span>
-          {action.nom}
-        </h3>
+        <div className="w-4/5">
+          <h3 className="text-lg font-normal">
+            <span>{action.id_nomenclature} - </span>
+            {action.nom}
+          </h3>
+        </div>
         <ProgressStat
           action={action}
           position="right"

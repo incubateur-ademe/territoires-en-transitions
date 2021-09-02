@@ -6,7 +6,11 @@ const stringToNumberArray = (stringIndexes: string) =>
 export const compareIndexes = (indexA: string, indexB: string): 0 | 1 | -1 => {
   const indexA_array = stringToNumberArray(indexA);
   const indexB_array = stringToNumberArray(indexB);
+
   if (indexA_array === indexB_array) return 0;
+
+  if (!indexA) return 1;
+  if (!indexB) return -1;
 
   for (
     let index = 0;
@@ -19,5 +23,6 @@ export const compareIndexes = (indexA: string, indexB: string): 0 | 1 | -1 => {
     if (ficheAIndex === undefined) return -1; // fiche B is parent of fiche A
     if (ficheAIndex !== ficheBIndex) return ficheAIndex > ficheBIndex ? 1 : -1; // siblings comparison
   }
+
   return 0;
 };

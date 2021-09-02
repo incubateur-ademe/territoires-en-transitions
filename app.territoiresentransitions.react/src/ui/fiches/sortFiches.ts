@@ -4,9 +4,13 @@ import {compareIndexes} from 'utils';
 import * as R from 'ramda';
 
 export const sortFiches = (fiches: FicheAction[]): FicheAction[] =>
-  fiches.sort((ficheA, ficheB) => {
-    return compareIndexes(ficheA.custom_id, ficheB.custom_id);
-  });
+  fiches
+    .sort((ficheA, ficheB) => {
+      return compareIndexes(ficheA.titre, ficheB.titre);
+    })
+    .sort((ficheA, ficheB) => {
+      return compareIndexes(ficheA.custom_id, ficheB.custom_id);
+    });
 
 export type CategorizedFiche = {
   fiches: FicheAction[];
