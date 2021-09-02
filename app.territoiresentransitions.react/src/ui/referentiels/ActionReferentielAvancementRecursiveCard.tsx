@@ -1,11 +1,12 @@
+import type {ActionReferentiel} from 'generated/models/action_referentiel';
+import {ProgressStat} from '.';
 import {
-  ActionDescription,
+  ActionDescriptionExpandPanel,
   ActionCommentaire,
   AddFicheActionButton,
   ActionStatusAvancementRadioButton,
+  ActionExemplesExpandPanel,
 } from 'ui/shared';
-import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ProgressStat} from '.';
 
 /**
  * Displays an actions and it's children indented below.
@@ -82,8 +83,9 @@ export const ActionReferentielAvancementCard = ({
         </div>
       </div>
       <div className="w-1/2">
-        <ActionDescription content={action.description} />
-        <ActionCommentaire actionId={action.id} />
+        <ActionDescriptionExpandPanel action={action} />
+        <ActionExemplesExpandPanel action={action} />
+        <ActionCommentaire actionId={action.id} />{' '}
       </div>
     </article>
   );
