@@ -178,7 +178,7 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
       return this.cache;
     }
 
-    if (!this.retrieving[pathname] || force) {
+    if (!this.retrieving[pathname]) {
       const promise = this._api.retrieveAll().then(all => {
         const retrieved = new Map<string, T>();
         for (const storable of all) {
@@ -197,6 +197,7 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
         }
         this.notifyListeners();
         this.fetchedPaths.push(pathname);
+        delete this.retrieving[pathname];
       });
 
       this.retrieving[pathname] = promise;
