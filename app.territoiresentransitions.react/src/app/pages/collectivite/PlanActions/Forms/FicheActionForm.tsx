@@ -271,7 +271,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
           <Field
             name="referentiel_action_ids"
-            label="Actions du référentiel"
+            label="Actions des référentiels liées"
             component={ActionsField}
           />
           <LinkedActionsReferentielCards />
@@ -280,7 +280,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
           <Field
             name="referentiel_indicateur_ids"
-            label="Indicateurs du référentiel"
+            label="Indicateurs des référentiels liés"
             component={IndicateursField}
           />
           <LinkedIndicateurCards />
@@ -289,7 +289,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
           <Field
             name="indicateur_personnalise_ids"
-            label="Indicateurs personnalisés"
+            label="Indicateurs personnalisés liés"
             component={IndicateursPersonnalisesField}
           />
 
