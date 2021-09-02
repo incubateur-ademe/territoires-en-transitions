@@ -26,18 +26,20 @@ export const RedirectPage = () => {
   const [state, setState] = useState<RedirectState>('fetching');
 
   useEffect(() => {
-    fetch(`${endpoint}?redirect_uri=${redirect_uri}&code=${code}`)
-      .then(async tokenResponse => {
-        if (tokenResponse.ok) {
-          setState('ok');
-          const data = await tokenResponse.json();
-          saveTokens(data['access_token'], data['refresh_token']);
-          window.location.href = '/epcis/';
-        } else {
-          setState('error');
-        }
-      })
-      .catch(() => setState('error'));
+    if (state === 'fetching') {
+      fetch(`${endpoint}?redirect_uri=${redirect_uri}&code=${code}`)
+        .then(async tokenResponse => {
+          if (tokenResponse.ok) {
+            setState('ok');
+            const data = await tokenResponse.json();
+            saveTokens(data['access_token'], data['refresh_token']);
+            window.location.href = '/epcis/';
+          } else {
+            setState('error');
+          }
+        })
+        .catch(() => setState('error'));
+    }
   });
 
   if (state === 'fetching') {
