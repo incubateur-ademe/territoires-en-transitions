@@ -1,6 +1,6 @@
 import os
 
-client_dir = "../app.territoiresentransitions.fr/src"
+client_dir = "../app.territoiresentransitions.react/src"
 api_dir = "../../api/api"
 
 thematique_markdown_file = (
