@@ -1,6 +1,23 @@
 import {Link, useParams} from 'react-router-dom';
-import {useEpciId} from 'core-logic/hooks';
+import {useConnected, useEpciId} from 'core-logic/hooks';
 import {useCurrentEpci} from 'core-logic/hooks';
+
+const ConnexionSwitchLink = () => {
+  const connected = useConnected();
+  if (connected)
+    return (
+      <Link className="fr-link" to="/auth/signout">
+        <div className="fr-fi-account-line m-1"></div>
+        Déconnexion
+      </Link>
+    );
+  return (
+    <Link className="fr-link" to="/auth/signin">
+      <div className="fr-fi-account-line m-1"></div>
+      Se connecter
+    </Link>
+  );
+};
 
 const EpciNavigation = () => {
   const epciId = useEpciId();
@@ -34,10 +51,7 @@ export const Navigation = () => {
       <div className="fr-header__tools-links">
         <ul className="fr-links-group">
           {isEpciRoute && <EpciNavigation />}
-          <Link className="fr-link" to="/auth/signout">
-            <div className="fr-fi-account-line m-1"></div>
-            Déconnexion
-          </Link>
+          <ConnexionSwitchLink />
         </ul>
       </div>
     </div>
