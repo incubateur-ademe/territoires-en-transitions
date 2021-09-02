@@ -81,7 +81,7 @@ class Referentiel:
                 points = defaut_referentiel_root_points_value
             elif len(index) == 1:
                 # axe
-                points = defaut_referentiel_axis_points_value
+                points = max(self.actions[index].points, 0)
             else:
                 # orientation, niveau, tache
                 points = max(self.actions[index].points, 0) * (
