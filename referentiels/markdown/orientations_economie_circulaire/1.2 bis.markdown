@@ -15,20 +15,20 @@ La collectivité co-construit des actions en économie circulaire, en mode  inte
 La stratégie Economie Circulaire est ainsi liée avec les stratégies sectorielles existantes.
 
 #### Exemples
-• Intégrer les équipes économie circulaire dans la conception et réalisation de projets en interaction avec les differents services de la collectivité :
+- Intégrer les équipes économie circulaire dans la conception et réalisation de projets en interaction avec les differents services de la collectivité :
 -  Renouvellement du transport en commun : motorisation au biogaz
 -  Communication : promotion sensibilisation citoyens consommation responsable
 -  Jardins partagés : promotion du compostage collectif et formation au jardinage
 -  Marchés d'approvisionnement de la cantine scolaire : alimentation durable, local et de saison, cantine zéro gaspillage
 -  Manifestation culturelle : transfert vers l'éco-manifestation, événements zéro déchets, zéro-gaspi
-• Identifier des cycles de révision des stratégies sectorielles pour passer à la transversalité amont
+- Identifier des cycles de révision des stratégies sectorielles pour passer à la transversalité amont
 
 #### Critère
 Part des compétences obligatoires et facultatives exercées par la collectivité (mobilité, urbanisme, etc.) pour lesquelles l'équipe économie circulaire a co-construit au moins une action favorisant l'économie circulaire dans les 4 dernières années
 
 #### Preuve
-• Description de l'action co-construite pour chaque compétence, avec l'explication sur ce qui favorise l'économie circulaire
-• Fiches actions sur Optigede
+- Description de l'action co-construite pour chaque compétence, avec l'explication sur ce qui favorise l'économie circulaire
+- Fiches actions sur Optigede
 
 
 ### Intégrer l'économie circulaire dans les politiques territoriales
@@ -41,9 +41,9 @@ La collectivité intègre les équipes économie circulaire dans la conception d
 
 #### Exemples
 Les futurs axes stratégiques intègrent les composantes de l'économie circulaire dès leur élaboration.
-•  Créer des groupes de coordination ad hoc (comités, commissions, agences ou groupes de travail)
-• Organiser des points de coordination ad hoc au niveau municipal, départemental, régional ou national. Conclure des accords avec le niveau adapté pour faciliter la mise en œuvre de la stratégie
-• Renforcer les liens avec les politiques et les stratégies de la collectivité :
+-  Créer des groupes de coordination ad hoc (comités, commissions, agences ou groupes de travail)
+- Organiser des points de coordination ad hoc au niveau municipal, départemental, régional ou national. Conclure des accords avec le niveau adapté pour faciliter la mise en œuvre de la stratégie
+- Renforcer les liens avec les politiques et les stratégies de la collectivité :
 - Plan Alimentaires Territoriaux
 - PLUi
 - Stratégie Mobilité
@@ -55,8 +55,8 @@ Les futurs axes stratégiques intègrent les composantes de l'économie circulai
 Dans les compétences obligatoires et facultatives exercées par la collectivité (mobilité, urbanisme, etc.), part des stratégies ou des politiques dans lesquelles l'équipe Economie Circulaire a été associée lors de  leur conception.
 
 #### Preuve
-• Document approuvé par un élu précisant comment l'économie circulaire est prise en compte dans les nouvelles stratégies
-• Compte Rendu  des réunions d'élaboration des nouvelles stratégies
+- Document approuvé par un élu précisant comment l'économie circulaire est prise en compte dans les nouvelles stratégies
+- Compte Rendu  des réunions d'élaboration des nouvelles stratégies
 
 
 ### Mettre en place une transversalité inter-collectivités
@@ -82,7 +82,7 @@ Utiliser la caractérisation des flux entrants dans les installations gérées p
 Accompagner les collectivités dans leurs autres compétences pour améliorer la situation en amont de la production de déchets, par la sobriété et la prévention des déchets, l'éco-conception, etc.
 
 #### Preuve
-• Comptes Rendus des réunions d'échange
+- Comptes Rendus des réunions d'échange
 
 #### Actions
 ##### Partager avec les EPCI les observations sur les gisements de déchets à optimiser
