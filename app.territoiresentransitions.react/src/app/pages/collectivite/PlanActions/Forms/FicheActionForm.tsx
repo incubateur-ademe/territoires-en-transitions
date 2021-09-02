@@ -151,7 +151,6 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
   });
 
   const save = (data: FicheActionInterface) => {
-    console.log(data);
     if (state !== 'ready') return;
     setState('saving');
     props.onSave(data);

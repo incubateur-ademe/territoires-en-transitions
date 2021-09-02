@@ -34,7 +34,6 @@ export function IndicateurPersonnaliseForm(props: {
   });
 
   const save = (data: IndicateurPersonnaliseInterface) => {
-    console.log(data);
     if (state !== 'ready') return;
     setState('saving');
     props.onSave(data);

@@ -14,7 +14,6 @@ export const useDroits = (): UtilisateurDroits[] => {
         ? auth.currentUtilisateurDroits.map(d => JSON.stringify(d))
         : [];
       if (!currentJson.every(s => droitsJson.includes(s))) {
-        console.log(currentJson, droitsJson);
         setDroits(auth.currentUtilisateurDroits!);
       }
     };

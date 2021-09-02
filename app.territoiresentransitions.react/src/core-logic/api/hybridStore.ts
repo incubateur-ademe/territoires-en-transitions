@@ -173,7 +173,7 @@ export class HybridStore<T extends Storable> extends ChangeNotifier {
 
   private async getCache(force = false): Promise<Map<string, T>> {
     const pathname = this.pathname();
-    console.log('getCache ', force, pathname);
+
     if (!force && this.fetchedPaths.includes(pathname)) {
       return this.cache;
     }

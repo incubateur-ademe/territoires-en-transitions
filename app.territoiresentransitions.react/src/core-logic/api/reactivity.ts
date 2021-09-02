@@ -51,18 +51,10 @@ export class ChangeNotifier {
     }
   };
   public addListener = (listener: VoidCallback): void => {
-    console.log(
-      `adding listener to the ${this._listeners.length} listeners of`,
-      this
-    );
     this._listeners.push(listener);
   };
 
   public removeListener = (listener: VoidCallback): void => {
-    console.log(
-      `removing listener from the ${this._listeners.length} listeners of`,
-      this
-    );
     this._listeners = this._listeners.filter(l => l !== listener);
   };
 }

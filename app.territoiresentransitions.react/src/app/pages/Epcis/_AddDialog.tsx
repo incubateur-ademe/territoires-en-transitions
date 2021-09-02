@@ -48,7 +48,6 @@ export const AddDialog = (props: AddDialogProps) => {
               options={selectInputValues}
               defaultValue=""
               onChange={epciId => {
-                console.log(epciId);
                 setSelectedEpciId(epciId);
               }}
             />
