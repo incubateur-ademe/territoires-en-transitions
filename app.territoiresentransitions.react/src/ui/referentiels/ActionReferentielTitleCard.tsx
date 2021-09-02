@@ -1,7 +1,7 @@
 import {Link} from 'react-router-dom';
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {ProgressStat} from 'ui/referentiels';
-import {ActionDescription} from 'ui/shared';
+import {ActionDescriptionExpandPanel} from 'ui/shared';
 import {ActionReferentielTitle} from './ActionReferentielTitle';
 import {referentielToName} from 'app/labels';
 import {Referentiel} from 'types';
@@ -39,7 +39,7 @@ export const ActionReferentielTitleCard = ({
         </div>
       </Link>
       <div className="p-4 w-2/3">
-        <ActionDescription content={action.description} />
+        <ActionDescriptionExpandPanel action={action} />
       </div>
     </article>
   );
