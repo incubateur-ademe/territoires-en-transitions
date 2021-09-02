@@ -1,5 +1,5 @@
 import Dialog from '@material-ui/core/Dialog';
-import {useActions} from 'core-logic/overmind';
+import {commands} from 'core-logic/commands';
 import React from 'react';
 import {EpciStorable} from 'storables/EpciStorable';
 import {LabeledTextInput, SelectInput} from 'ui';
@@ -20,17 +20,17 @@ export const AddDialog = (props: AddDialogProps) => {
   const [selectedEpciId, setSelectedEpciId] = React.useState('');
   const [inputEpciNom, setInputEpciNom] = React.useState('');
 
-  const overmindActions = useActions();
+  // const overmindActions = useActions();
 
   const submit = async () => {
     if (selectedEpciId) {
       // Add rights.
       // const auth = await import("../../api/authentication");
       // await auth.addDroits(selectedEpciId, true);
-      await overmindActions.epcis.addEpciToMyList(selectedEpciId);
+      await commands.epcisCommands.addEpciToMyList(selectedEpciId);
     } else if (inputEpciNom.trim()) {
       // Create Epci
-      await overmindActions.epcis.createNewEpci(inputEpciNom);
+      await commands.epcisCommands.createNewEpci(inputEpciNom);
     }
 
     close();

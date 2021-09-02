@@ -47,9 +47,9 @@ export function useStorable<T extends Storable>(
  *
  * @param store the store
  */
-export function useAllStorables<T extends Storable>(
+export const useAllStorables = <T extends Storable>(
   store: HybridStore<T>
-): T[] {
+): T[] => {
   const [storables, setStorables] = useState<T[]>([]);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function useAllStorables<T extends Storable>(
   });
 
   return storables;
-}
+};
 
 /**
  * Use all the storable from a store.
@@ -76,9 +76,9 @@ export function useAllStorables<T extends Storable>(
  *
  * @param store the store
  */
-export function useAllStorablesAsMap<T extends Storable>(
+export const useAllStorablesAsMap = <T extends Storable>(
   store: HybridStore<T>
-): Map<string, T> {
+): Map<string, T> => {
   const [storables, setStorables] = useState<Map<string, T>>(
     new Map<string, T>()
   );
@@ -103,4 +103,4 @@ export function useAllStorablesAsMap<T extends Storable>(
   });
 
   return storables;
-}
+};

@@ -1,5 +1,5 @@
-import {useAppState} from 'core-logic/overmind';
-import type {ActionReferentielScoreInterface} from 'generated/models/action_referentiel_score';
+import {useActionReferentielScore} from 'core-logic/hooks/actionReferentielScore';
+import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core';
@@ -7,7 +7,7 @@ import {makeStyles} from '@material-ui/core';
 type ProgressState = 'nc' | 'alert' | 'warning' | 'ok' | 'good' | 'best';
 
 const inferStateFromScore = (
-  score?: ActionReferentielScoreInterface
+  score: ActionReferentielScoreStorable | null
 ): ProgressState => {
   const percentage: number = score ? score.percentage * 100 : 0;
   if (score && score.avancement.includes('non_concernee')) {
@@ -49,7 +49,7 @@ const useStyle = makeStyles({
 const ProgressStatText = ({
   score,
 }: {
-  score?: ActionReferentielScoreInterface;
+  score: ActionReferentielScoreStorable | null;
 }) => {
   const percentageText = score
     ? `${(score.percentage * 100).toFixed(1)}% `
@@ -80,8 +80,8 @@ export const ProgressStat = ({
 }) => {
   const classes = useStyle();
 
-  const actionId = action.id;
-  const score = useAppState().actionReferentielScoresById[actionId];
+  const storableId = ActionReferentielScoreStorable.buildId(action.id);
+  const score = useActionReferentielScore(storableId);
 
   useEffect(() => {
     const state = inferStateFromScore(score);
