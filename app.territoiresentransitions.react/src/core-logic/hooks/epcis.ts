@@ -32,7 +32,7 @@ export const currentUserEpcis = (): EpciStorable[] => {
     });
   }, [epcis, all, droits]);
 
-  return epcis;
+  return epcis.sort((a, b) => a.nom.localeCompare(b.nom));
 };
 
 /**
