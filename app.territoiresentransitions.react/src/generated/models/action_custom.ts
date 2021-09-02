@@ -7,7 +7,7 @@ export interface ActionCustomInterface {
 }
 
 export class ActionCustom {
-  public static pathname = 'action_custom';
+  public static pathname: string = 'action_custom';
   get pathname(): string {
     return ActionCustom.pathname;
   }

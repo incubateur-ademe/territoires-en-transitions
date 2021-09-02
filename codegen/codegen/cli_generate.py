@@ -80,7 +80,7 @@ def actions(
     output_python=False,
 ) -> None:
     # citergie
-    files = glob.glob(os.path.join(mesures_markdown_dir, "*.md"))
+    files = sorted_files(mesures_markdown_dir, "md")
     actions_citergie = []
 
     for file in files:

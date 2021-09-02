@@ -20,7 +20,7 @@ export interface FicheActionInterface {
 }
 
 export class FicheAction {
-  public static pathname = 'fiche_action';
+  public static pathname: string = 'fiche_action';
   get pathname(): string {
     return FicheAction.pathname;
   }

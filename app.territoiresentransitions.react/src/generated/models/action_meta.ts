@@ -5,7 +5,7 @@ export interface ActionMetaInterface {
 }
 
 export class ActionMeta {
-  public static pathname = 'action_meta';
+  public static pathname: string = 'action_meta';
   get pathname(): string {
     return ActionMeta.pathname;
   }

@@ -8,7 +8,7 @@ export interface UtilisateurConnecteInterface {
 }
 
 export class UtilisateurConnecte {
-  public static pathname = 'utilisateur_connecte';
+  public static pathname: string = 'utilisateur_connecte';
   get pathname(): string {
     return UtilisateurConnecte.pathname;
   }

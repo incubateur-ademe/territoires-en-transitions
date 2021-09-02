@@ -6,7 +6,7 @@ export interface UtilisateurInscriptionInterface {
 }
 
 export class UtilisateurInscription {
-  public static pathname = 'utilisateur_inscription';
+  public static pathname: string = 'utilisateur_inscription';
   get pathname(): string {
     return UtilisateurInscription.pathname;
   }

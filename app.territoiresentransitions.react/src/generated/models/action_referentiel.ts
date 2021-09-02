@@ -9,7 +9,7 @@ export interface ActionReferentielInterface {
 }
 
 export class ActionReferentiel {
-  public static pathname = 'action_referentiel';
+  public static pathname: string = 'action_referentiel';
   get pathname(): string {
     return ActionReferentiel.pathname;
   }

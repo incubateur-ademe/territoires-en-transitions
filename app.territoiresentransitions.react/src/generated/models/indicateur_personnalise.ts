@@ -9,7 +9,7 @@ export interface IndicateurPersonnaliseInterface {
 }
 
 export class IndicateurPersonnalise {
-  public static pathname = 'indicateur_personnalise';
+  public static pathname: string = 'indicateur_personnalise';
   get pathname(): string {
     return IndicateurPersonnalise.pathname;
   }
