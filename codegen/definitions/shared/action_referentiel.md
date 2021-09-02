@@ -15,6 +15,8 @@ ActionReferentiel:
         type: String
     nom:
         type: String
+    thematique_id: 
+        type: String
     description:
         type: Optional[String]
     contexte:

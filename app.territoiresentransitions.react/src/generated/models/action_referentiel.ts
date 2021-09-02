@@ -2,8 +2,11 @@ export interface ActionReferentielInterface {
   id: string;
   id_nomenclature: string;
   nom: string;
-  description: string;
   thematique_id: string;
+  description: string | undefined;
+  contexte: string | undefined;
+  exemples: string | undefined;
+  ressources: string | undefined;
   points: number;
   actions: ActionReferentiel[];
 }
@@ -16,8 +19,11 @@ export class ActionReferentiel {
   id: string;
   id_nomenclature: string;
   nom: string;
-  description: string;
   thematique_id: string;
+  description: string | undefined;
+  contexte: string | undefined;
+  exemples: string | undefined;
+  ressources: string | undefined;
   points: number;
   actions: ActionReferentiel[];
 
@@ -28,24 +34,33 @@ export class ActionReferentiel {
     id,
     id_nomenclature,
     nom,
-    description,
     thematique_id,
+    description,
+    contexte,
+    exemples,
+    ressources,
     points,
     actions,
   }: {
     id: string;
     id_nomenclature: string;
     nom: string;
-    description: string;
     thematique_id: string;
+    description: string | undefined;
+    contexte: string | undefined;
+    exemples: string | undefined;
+    ressources: string | undefined;
     points: number;
     actions: ActionReferentiel[];
   }) {
     this.id = id;
     this.id_nomenclature = id_nomenclature;
     this.nom = nom;
-    this.description = description;
     this.thematique_id = thematique_id;
+    this.description = description;
+    this.contexte = contexte;
+    this.exemples = exemples;
+    this.ressources = ressources;
     this.points = points;
     this.actions = actions;
   }
