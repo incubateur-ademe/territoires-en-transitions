@@ -1,5 +1,4 @@
 import {useAllFiches} from 'core-logic/hooks/fiches';
-import {Link} from 'react-router-dom';
 import {useEpciId} from 'core-logic/hooks/params';
 import {useAllStorables} from 'core-logic/hooks';
 import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
@@ -10,7 +9,7 @@ import {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
 import {useState} from 'react';
 import {defaultCategorie} from 'app/pages/collectivite/PlanActions/defaultCategorie';
 import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
-import {Spacer} from 'ui/shared';
+import {AddFicheActionButton, Spacer} from 'ui/shared';
 import {FicheAction} from 'generated/models/fiche_action';
 import {UiDialogButton} from 'ui/UiDialogButton';
 
@@ -109,9 +108,7 @@ const FichesList = () => {
       <header className="flex justify-between items-center ">
         <h1>Plan d'actions de ma collectivité</h1>
         <Spacer />
-        <Link className="fr-btn" to={`/collectivite/${epciId}/nouvelle_fiche`}>
-          Ajouter une fiche action
-        </Link>
+        <AddFicheActionButton />
       </header>
 
       <CategorizedFichesList categorized={categorizedFichesWithCategorie} />
