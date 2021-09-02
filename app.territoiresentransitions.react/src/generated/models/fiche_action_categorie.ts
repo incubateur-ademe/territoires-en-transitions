@@ -7,7 +7,7 @@ export interface FicheActionCategorieInterface {
 }
 
 export class FicheActionCategorie {
-  public static pathname: string = 'fiche_action_categorie';
+  public static pathname = 'fiche_action_categorie';
   get pathname(): string {
     return FicheActionCategorie.pathname;
   }

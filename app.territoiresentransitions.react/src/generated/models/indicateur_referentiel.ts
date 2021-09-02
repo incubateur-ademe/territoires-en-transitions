@@ -8,7 +8,7 @@ export interface IndicateurReferentielInterface {
 }
 
 export class IndicateurReferentiel {
-  public static pathname: string = 'indicateur_referentiel';
+  public static pathname = 'indicateur_referentiel';
   get pathname(): string {
     return IndicateurReferentiel.pathname;
   }

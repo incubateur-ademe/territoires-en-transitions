@@ -11,7 +11,7 @@ export interface ActionStatusInterface {
 }
 
 export class ActionStatus {
-  public static pathname: string = 'action_status';
+  public static pathname = 'action_status';
   get pathname(): string {
     return ActionStatus.pathname;
   }

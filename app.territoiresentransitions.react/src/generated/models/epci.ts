@@ -6,7 +6,7 @@ export interface EpciInterface {
 }
 
 export class Epci {
-  public static pathname: string = 'epci';
+  public static pathname = 'epci';
   get pathname(): string {
     return Epci.pathname;
   }
