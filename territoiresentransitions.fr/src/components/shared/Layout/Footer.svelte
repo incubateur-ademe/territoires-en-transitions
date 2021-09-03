@@ -23,6 +23,16 @@
               loading="lazy"
             />
           </picture>
+          <picture>
+            <source srcset="/img/logo-territoires-en-transitions.jpg 118w" media="(max-width: 800px)" sizes="500px"/>
+            <source srcset="/img/logo-territoires-en-transitions-high.jpg 118w" sizes="500px"/>
+            <img
+              src="/img/logo-territoires-en-transitions.jpg"
+              alt="Territoires en transitions"
+              height="100"
+              loading="lazy"
+            />
+          </picture>
         </div>
         <div class="fr-header__service">
           <a href="https://territoiresentransitions.fr" title="Accueil">
