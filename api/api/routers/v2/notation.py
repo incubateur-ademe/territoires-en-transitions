@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 from api.models.generated.action_referentiel_score import ActionReferentielScore
 from api.models.tortoise.action_status import ActionStatus, ActionStatus_Pydantic
-from api.notation.notation import Notation, Status
+from api.notation.notation import Notation, Status, UnknownActionIndex
 from api.notation.referentiel_eci import referentiel_eci
 
 router = APIRouter(prefix="/v2/notation")
@@ -24,6 +24,9 @@ async def get_eci_scores(epci_id: str):
             notation_statut = Status.from_action_status_avancement(status.avancement)
 
             # set the status in the epci notation so the scores can be computed.
-            notation.set_status(index, notation_statut)
+            try:
+                notation.set_status(index, notation_statut)
+            except UnknownActionIndex:
+                print(f"Warning - UnknownActionIndex {index}")
 
     return notation.compute_and_get_scores()
