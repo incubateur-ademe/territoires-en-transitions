@@ -10,7 +10,6 @@ class ReferentielValueError(Exception):
 
 
 defaut_referentiel_root_points_value = 500  # TODO: this should not be hard-coded
-defaut_referentiel_axis_points_value = 100  # TODO: this should not be hard-coded
 
 
 class Referentiel:

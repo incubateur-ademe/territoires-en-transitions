@@ -6,7 +6,6 @@ from api.notation.notation import Notation, Status, UnknownActionIndex
 from api.models.generated.action_referentiel_score import ActionReferentielScore
 from api.notation.referentiel import Referentiel
 from api.notation.referentiel import (
-    defaut_referentiel_axis_points_value,
     defaut_referentiel_root_points_value,
 )
 from tests.utils.factory import make_action_referentiel
@@ -48,7 +47,7 @@ def assert_score_with_nomenclature_id_equals(
 
 
 def test_notation_only_root_default_status():
-    referentiel = Referentiel(root_action=make_action_referentiel())
+    referentiel = Referentiel(root_action=make_action_referentiel(points=42))
     notation = Notation(referentiel)
 
     scores = notation.compute_and_get_scores()
@@ -105,10 +104,9 @@ def test_notation_with_two_actions_default_status(notation):
         "1",
         points=0.0,
         percentage=0.0,
-        potentiel=defaut_referentiel_axis_points_value,
-        referentiel_points=defaut_referentiel_axis_points_value,
-        referentiel_percentage=defaut_referentiel_axis_points_value
-        / defaut_referentiel_root_points_value,
+        potentiel=100,
+        referentiel_points=100,
+        referentiel_percentage=0.2,
     )
     assert_score_with_nomenclature_id_equals(
         scores,
@@ -161,10 +159,9 @@ def test_notation_with_two_actions_amongst_which_one_is_non_concernee(notation):
         "1",
         points=0.0,
         percentage=0.0,
-        potentiel=defaut_referentiel_axis_points_value,
-        referentiel_points=defaut_referentiel_axis_points_value,
-        referentiel_percentage=defaut_referentiel_axis_points_value
-        / defaut_referentiel_root_points_value,
+        potentiel=100,
+        referentiel_points=100,
+        referentiel_percentage=0.2,
     )
 
     assert_score_with_nomenclature_id_equals(
@@ -182,7 +179,7 @@ def test_notation_with_two_actions_amongst_which_one_is_non_concernee(notation):
         "1.2",
         points=0.0,
         percentage=0.0,
-        potentiel=defaut_referentiel_axis_points_value,  # points have been redistributed
+        potentiel=100,  # points have been redistributed
         referentiel_points=70,
         referentiel_percentage=0.7,
     )
@@ -197,9 +194,7 @@ def test_notation_with_two_actions_amongst_which_one_is_faite(notation):
         scores,
         "",
         points=30.0,
-        percentage=0.3
-        * defaut_referentiel_axis_points_value
-        / defaut_referentiel_root_points_value,
+        percentage=0.3 * 0.2,
         potentiel=defaut_referentiel_root_points_value,
         referentiel_points=defaut_referentiel_root_points_value,
         referentiel_percentage=1,
@@ -210,10 +205,9 @@ def test_notation_with_two_actions_amongst_which_one_is_faite(notation):
         "1",
         points=30.0,
         percentage=0.3,
-        potentiel=defaut_referentiel_axis_points_value,
-        referentiel_points=defaut_referentiel_axis_points_value,
-        referentiel_percentage=defaut_referentiel_axis_points_value
-        / defaut_referentiel_root_points_value,
+        potentiel=100,
+        referentiel_points=100,
+        referentiel_percentage=0.2,
     )
 
     assert_score_with_nomenclature_id_equals(
@@ -248,9 +242,8 @@ def test_notation_with_two_actions_from_which_parent_axis_is_faite(notation):
     assert_score_with_nomenclature_id_equals(
         scores,
         "",
-        points=defaut_referentiel_axis_points_value,
-        percentage=defaut_referentiel_axis_points_value
-        / defaut_referentiel_root_points_value,
+        points=100,
+        percentage=0.2,
         potentiel=defaut_referentiel_root_points_value,
         referentiel_points=defaut_referentiel_root_points_value,
         referentiel_percentage=1,
@@ -259,12 +252,11 @@ def test_notation_with_two_actions_from_which_parent_axis_is_faite(notation):
     assert_score_with_nomenclature_id_equals(
         scores,
         "1",
-        points=defaut_referentiel_axis_points_value,
+        points=100,
         percentage=1.0,
-        potentiel=defaut_referentiel_axis_points_value,
-        referentiel_points=defaut_referentiel_axis_points_value,
-        referentiel_percentage=defaut_referentiel_axis_points_value
-        / defaut_referentiel_root_points_value,
+        potentiel=100,
+        referentiel_points=100,
+        referentiel_percentage=0.2,
     )
 
     assert_score_with_nomenclature_id_equals(

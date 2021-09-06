@@ -19,9 +19,11 @@ def test_referentiel_when_some_root_action_has_no_actions():
 
 
 def test_referentiel_when_root_action_has_one_level():
-    action_1_1 = make_action_referentiel(id="ref__1", id_nomenclature="1", actions=[])
+    action_1_1 = make_action_referentiel(
+        id="ref__1", id_nomenclature="1", actions=[], points=100
+    )
     root_action = make_action_referentiel(
-        id="ref", id_nomenclature="", actions=[action_1_1], points=42
+        id="ref", id_nomenclature="", actions=[action_1_1], points=500
     )
     referentiel = Referentiel(root_action)
 
@@ -29,5 +31,5 @@ def test_referentiel_when_root_action_has_one_level():
     assert referentiel.backward == [("1",), ()]
     assert referentiel.forward == [(), ("1",)]
     assert referentiel.actions == {(): root_action, ("1",): action_1_1}
-    assert referentiel.points == {(): 500, ("1",): 100}
+    assert referentiel.points[()] == 500
     assert referentiel.percentages == {(): 1, ("1",): 0.2}
