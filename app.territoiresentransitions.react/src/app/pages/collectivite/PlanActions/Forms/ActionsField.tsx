@@ -5,7 +5,15 @@ import {actionsById} from 'utils/actions';
 import {actions} from 'generated/data/referentiels';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import {actionToEmoji} from 'app/pages/collectivite/PlanActions/Forms/toEmoji';
+import {actionToEmoji, shortenLabel} from './utils';
+
+const allActions = actionsById(actions);
+const allActionIds = [...allActions.keys()].sort((a, b) => a.localeCompare(b));
+
+const renderActionOption = (id: string) => {
+  const action = allActions.get(id)!;
+  return `${actionToEmoji(action)} ${action.id_nomenclature} - ${action.nom}`;
+};
 
 type ActionsFieldProps = {
   label: string;
@@ -26,11 +34,6 @@ export const ActionsField: FC<ActionsFieldProps & FieldProps> = ({
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
   const isTouched = touched[field.name];
-  const allActions = actionsById(actions);
-
-  const allActionIds = [...allActions.keys()].sort((a, b) =>
-    a.localeCompare(b)
-  );
 
   return (
     <fieldset>
@@ -42,16 +45,8 @@ export const ActionsField: FC<ActionsFieldProps & FieldProps> = ({
         id={htmlId}
         options={allActionIds}
         className="bg-beige"
-        renderOption={id => {
-          const action = allActions.get(id)!;
-          return `${actionToEmoji(action)} ${action.id_nomenclature} - ${
-            action.nom
-          }`;
-        }}
-        getOptionLabel={id => {
-          const action = allActions.get(id)!;
-          return `${actionToEmoji(action)} ${action.id_nomenclature}`;
-        }}
+        renderOption={renderActionOption}
+        getOptionLabel={id => shortenLabel(renderActionOption(id))}
         value={field.value}
         onChange={(e, value) => {
           setFieldValue(field.name, value);
