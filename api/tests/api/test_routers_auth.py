@@ -6,7 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from api.config.configuration import AUTH_DISABLED_DUMMY_USER
-from tests.auth_utils import auth_headers
+from tests.utils.auth import auth_headers
 
 path = "/v2/auth"
 

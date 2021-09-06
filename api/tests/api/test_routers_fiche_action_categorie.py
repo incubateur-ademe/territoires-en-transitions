@@ -4,7 +4,7 @@ import asyncio
 
 from fastapi.testclient import TestClient
 
-from tests.auth_utils import add_ecriture_droit, auth_headers
+from tests.utils.auth import add_ecriture_droit, auth_headers
 
 path = "/v2/fiche_action_categorie"
 
