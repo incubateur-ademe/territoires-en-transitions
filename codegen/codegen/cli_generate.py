@@ -37,7 +37,7 @@ def all(
     indicateurs_typescript=True,
     shared_markdown_dir=paths.shared_markdown_dir,
     shared_client_output_dir=paths.shared_client_models_dir,
-    shared_python=False,
+    shared_python=True,
     shared_typescript=True,
     thematique_markdown_file=paths.thematique_markdown_file,
     thematique_client_output_dir=paths.thematique_client_output_dir,
@@ -77,7 +77,7 @@ def actions(
     client_output_dir=paths.shared_client_data_dir,
     shared_api_data_dir=paths.shared_api_data_dir,
     output_typescript=True,
-    output_python=False,
+    output_python=True,
 ) -> None:
     # citergie
     files = sorted_files(mesures_markdown_dir, "md")
@@ -162,7 +162,7 @@ def shared(
     markdown_dir: str = paths.shared_markdown_dir,
     typescript: bool = True,
     client_output_dir: str = paths.shared_client_models_dir,
-    python: bool = False,
+    python: bool = True,
     api_output_dir: str = paths.shared_api_models_dir,
 ) -> None:  # pragma: no cover
     """

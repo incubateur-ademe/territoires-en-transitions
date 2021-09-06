@@ -30,6 +30,7 @@ def types_ts(type: str, options: Optional[List[Any]] = None) -> str:
         if not options:
             return "string"
         else:
+            options = [option or "" for option in options]  # Replace None by ""
             return "'" + "'|'".join(options) + "'"
     return type
 

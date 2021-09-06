@@ -1,7 +1,7 @@
 export interface ActionReferentielScoreInterface {
   action_id: string;
   action_nomenclature_id: string;
-  avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee';
+  avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | '';
   points: number;
   percentage: number;
   potentiel: number;
@@ -16,7 +16,7 @@ export class ActionReferentielScore {
   }
   action_id: string;
   action_nomenclature_id: string;
-  avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee';
+  avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | '';
   points: number;
   percentage: number;
   potentiel: number;
@@ -38,7 +38,7 @@ export class ActionReferentielScore {
   }: {
     action_id: string;
     action_nomenclature_id: string;
-    avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee';
+    avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | '';
     points: number;
     percentage: number;
     potentiel: number;

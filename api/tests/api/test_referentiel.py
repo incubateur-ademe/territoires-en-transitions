@@ -1,7 +1,7 @@
 import pytest
 
 from api.notation.referentiel import Referentiel, ReferentielValueError
-from .utils.factory import make_action_referentiel
+from tests.utils.factory import make_action_referentiel
 
 
 def test_referentiel_fails_when_wrong_root_action():

@@ -12,3 +12,4 @@ class IndicateurPersonnalise(BaseModel):
     nom: str
     description: str
     unite: str
+    meta: Any

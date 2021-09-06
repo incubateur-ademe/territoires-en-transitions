@@ -1,12 +1,11 @@
 from __future__ import annotations
 from api.models.generated.action_referentiel_score import (
     ActionReferentielScore,
-    ActionStatusAvancement,
 )
 from api.notation.referentiel import Referentiel
 
 from enum import Enum, unique
-from typing import Tuple, Dict, List
+from typing import Literal, Tuple, Dict, List, Literal
 
 
 @unique
@@ -20,7 +19,10 @@ class Status(Enum):
 
     @classmethod
     def from_action_status_avancement(
-        cls, action_status_avancement: ActionStatusAvancement
+        cls,
+        action_status_avancement: Literal[
+            "faite", "programmee", "pas_faite", "non_concernee"
+        ],  # Should be generated
     ) -> Status:
         """Returns a Status from the avancement of ActionStatus
 
@@ -36,7 +38,7 @@ class Status(Enum):
 
     def to_action_status_selected_value(
         self,
-    ) -> ActionStatusAvancement:
+    ) -> Literal["faite", "programmee", "pas_faite", "non_concernee", ""]:
         if self == Status.pas_faite:
             return "pas_faite"
         elif self == Status.faite:

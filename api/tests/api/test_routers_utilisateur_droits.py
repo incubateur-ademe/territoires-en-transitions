@@ -5,7 +5,7 @@ import asyncio
 from fastapi.testclient import TestClient
 
 from api.config.configuration import AUTH_DISABLED_DUMMY_USER
-from tests.auth_utils import add_ecriture_droit
+from tests.utils.auth import add_ecriture_droit
 
 path = "/v2/utilisateur_droits"
 

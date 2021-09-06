@@ -16,6 +16,7 @@ atomicwrites = "*"
 python-jose = "*"
 pyjwt = "*"
 py-memoize = "*"
+setuptools = "*"
 
 [dev-packages]
 flake8 = "*"
@@ -30,6 +31,6 @@ yapf = "*"
 python_version = "3.9"
 
 [scripts]
-test="pytest"
+test="pytest --rootdir ../api"
 serve="python server.py"
 dev="python dev_server.py"
