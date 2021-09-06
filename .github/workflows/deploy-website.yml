@@ -1,4 +1,4 @@
-name: Deploy territoiresentransitions.fr
+name: Deploy territoiresentransitions.fr website
 
 on:
   push:
