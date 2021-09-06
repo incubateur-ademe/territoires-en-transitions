@@ -1,6 +1,6 @@
 name: Référentiels - Génération et test de cohérence
 
-on: [ push, pull_request ]
+on: [ pull_request ] # push
 
 jobs:
   check:
