@@ -78,7 +78,7 @@ class Referentiel:
             if len(index) == 0:
                 # référentiel
                 points = defaut_referentiel_root_points_value
-            elif len(index) == 1:
+            elif len(index) < 3:
                 # axe
                 points = max(self.actions[index].points, 0)
             else:
