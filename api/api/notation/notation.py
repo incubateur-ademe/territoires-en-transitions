@@ -38,7 +38,7 @@ class Status(Enum):
 
     def to_action_status_selected_value(
         self,
-    ) -> Literal["faite", "programmee", "pas_faite", "non_concernee"]:
+    ) -> Literal["faite", "programmee", "pas_faite", "non_concernee", ""]:
         if self == Status.pas_faite:
             return "pas_faite"
         elif self == Status.faite:

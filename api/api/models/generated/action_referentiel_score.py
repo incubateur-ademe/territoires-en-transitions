@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class ActionReferentielScore(BaseModel):
     action_id: str
     action_nomenclature_id: str
-    avancement: Literal["faite", "programmee", "pas_faite", "non_concernee"]
+    avancement: Literal["faite", "programmee", "pas_faite", "non_concernee", ""]
     points: float
     percentage: float
     potentiel: float
