@@ -31,6 +31,7 @@ def types_python(type: str, options: Optional[List[Any]] = None) -> str:
         if not options:
             return "str"
         else:
+            options = [option or "" for option in options]  # Replace None by ""
             return f"Literal{str(options)}"
     return type
 
