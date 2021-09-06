@@ -19045,7 +19045,7 @@ actions = [
                                 exemples=r"\u003cp\u003eLa collectivit\u00e9 peut r\u00e9pertorier les comp\u00e9tences n\u00e9cessaires \u00e0 la mise en \u0153uvre des formations sur la base des fiches de poste de l\u0027\u00e9quipe technique.\u003c/p\u003e\n\u003cp\u003eExemples de sujets de formation :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eEconomie circulaire en regard des 7 piliers\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ePr\u00e9vention des d\u00e9chets\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eCompostage\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eAchat durable\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eGaspillage alimentaire\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eDes pistes de formations par l\u0027ADEME - catalogue de formations programm\u00e9es : https://formations.ademe.fr/solutions/recherche-de-formation.html?stab=0\u0026amp;start=0\u0026amp;folid=26\u0026amp;search=\u0026amp;theme=31\u003c/p\u003e\n",
                                 ressources=r"",
                                 thematique_id="orga_interne",
-                                points=25,
+                                points=20,
                                 actions=[
                                     ActionReferentiel(
                                         id="economie_circulaire__1.2.1.1",
@@ -19118,7 +19118,7 @@ actions = [
                                 exemples=r"\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eInt\u00e9grer les \u00e9quipes \u00e9conomie circulaire dans la conception et r\u00e9alisation de projets en interaction avec les differents services de la collectivit\u00e9 :\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eRenouvellement du transport en commun : motorisation au biogaz\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eCommunication : promotion sensibilisation citoyens consommation responsable\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eJardins partag\u00e9s : promotion du compostage collectif et formation au jardinage\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eMarch\u00e9s d\u0027approvisionnement de la cantine scolaire : alimentation durable, local et de saison, cantine z\u00e9ro gaspillage\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eManifestation culturelle : transfert vers l\u0027\u00e9co-manifestation, \u00e9v\u00e9nements z\u00e9ro d\u00e9chets, z\u00e9ro-gaspi\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eIdentifier des cycles de r\u00e9vision des strat\u00e9gies sectorielles pour passer \u00e0 la transversalit\u00e9 amont\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n",
                                 ressources=r"",
                                 thematique_id="orga_interne",
-                                points=25,
+                                points=20,
                                 actions=[],
                             ),
                             ActionReferentiel(
@@ -19130,7 +19130,7 @@ actions = [
                                 exemples=r"\u003cp\u003eLes futurs axes strat\u00e9giques int\u00e8grent les composantes de l\u0027\u00e9conomie circulaire d\u00e8s leur \u00e9laboration.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eCr\u00e9er des groupes de coordination ad hoc (comit\u00e9s, commissions, agences ou groupes de travail)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eOrganiser des points de coordination ad hoc au niveau municipal, d\u00e9partemental, r\u00e9gional ou national. Conclure des accords avec le niveau adapt\u00e9 pour faciliter la mise en \u0153uvre de la strat\u00e9gie\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eRenforcer les liens avec les politiques et les strat\u00e9gies de la collectivit\u00e9 :\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ePlan Alimentaires Territoriaux\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ePLUi\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eStrat\u00e9gie Mobilit\u00e9\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eAffaires culturelles\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eStrat\u00e9gie RSE\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eetc.\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n",
                                 ressources=r"",
                                 thematique_id="orga_interne",
-                                points=25,
+                                points=20,
                                 actions=[],
                             ),
                             ActionReferentiel(
@@ -19142,7 +19142,7 @@ actions = [
                                 exemples=r"\u003cp\u003ePar sa connaissance des flux de d\u00e9chets, le syndicat est capable d\u0027identifier les gisements de d\u00e9chets probl\u00e9matiques \u00e0 optimiser. Sur cette base le syndicat peut ainsi prendre un r\u00f4le d\u0027animateur pour un dialogue entre ses EPCI adh\u00e9rents.\u003c/p\u003e\n\u003cp\u003eExemples:\u003c/p\u003e\n\u003cp\u003ePour la comp\u00e9tence B\u00e2timent - Le syndicat mobilise les EPCI adh\u00e9rents afin d\u0027am\u00e9liorer le tri sur chantier ou permettre une organisation diff\u00e9rente de la collecte, facilitant la gestion des d\u00e9chets du BTP. Le syndicat propose les bourses aux mat\u00e9riaux facilitant le r\u00e9emploi.\u003c/p\u003e\n\u003cp\u003ePour la fili\u00e8re Tourisme - Le syndicat mobilise les EPCI adh\u00e9rents pour instaurer un dialogue entre les producteurs locaux d\u0027alimentation et les organisations h\u00e9bergeant les touristes, afin d\u0027 instaurer des chaines d\u0027approvisionnement locales et limiter la quantit\u00e9 d\u0027emballages individuels utilis\u00e9s.\u003c/p\u003e\n\u003cp\u003eAgir sur la sobri\u00e9t\u00e9 - voir 3.3 et particuli\u00e8rement 3.3.4\u003c/p\u003e\n",
                                 ressources=r"",
                                 thematique_id="orga_interne",
-                                points=25,
+                                points=40,
                                 actions=[
                                     ActionReferentiel(
                                         id="economie_circulaire__1.2.4.1",
