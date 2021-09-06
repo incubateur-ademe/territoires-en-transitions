@@ -102,9 +102,9 @@ jobs:
         working-directory: ${{env.working-directory}}
 
       # Run all the tests for codegen.
-      - name: Run tests
+      - name: Run codegen tests
         if: needs.check.outputs.run_job == 'true'
-        run: poetry run pytest tests/referentiels
+        run: poetry run pytest tests
         working-directory: ${{env.working-directory}}
 
       # Generate all JavaScript shared models and data with codegen. These files
@@ -194,8 +194,8 @@ jobs:
         working-directory: ${{env.working-directory}}
 
       # Run tests
-      - name: Run tests
-        run: pipenv run pytest tests/test_referentiel_sanity.py
+      - name: Run api tests on referentiels
+        run: pipenv run pytest tests/referentiels
         working-directory: ${{env.working-directory}}
 
       # Commit changes
