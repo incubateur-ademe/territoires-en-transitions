@@ -77,7 +77,7 @@ def actions(
     client_output_dir=paths.shared_client_data_dir,
     shared_api_data_dir=paths.shared_api_data_dir,
     output_typescript=True,
-    output_python=False,
+    output_python=True,
 ) -> None:
     # citergie
     files = sorted_files(mesures_markdown_dir, "md")
