@@ -367,7 +367,7 @@ def test_notation_non_concernee_changes_parents_potentiels():
         "",
         points=0.0,
         percentage=0.0,
-        potentiel=defaut_referentiel_root_points_value,
+        potentiel=470,
         referentiel_points=defaut_referentiel_root_points_value,
         referentiel_percentage=1,
     )
@@ -407,7 +407,7 @@ def test_notation_non_concernee_changes_parents_potentiels():
         "2",
         points=0,
         percentage=0.0,
-        potentiel=500,
+        potentiel=470,
         referentiel_points=470,
         referentiel_percentage=0.94,
     )

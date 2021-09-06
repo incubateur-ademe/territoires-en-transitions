@@ -23,11 +23,15 @@ class Referentiel:
     ## Indices
     indices, forward and backward are indices list for iterating either
     in no particular order, forward (from root to tâches) or backward (tâches to root) respectively.
+
+    :argument mesure_level the level of mesure/orientation used for potentiel redistribution.
+        ex action 1.1.1 is an orientation in eci, so mesure_level is 3.
     """
 
-    def __init__(self, root_action: ActionReferentiel):
+    def __init__(self, root_action: ActionReferentiel, mesure_level: int = 3):
         self.__sanity_check(root_action)
         self.root_action: ActionReferentiel = root_action
+        self.mesure_level: int = mesure_level
         self.points: Dict[Tuple, float] = {}
         self.percentages: Dict[Tuple, float] = {}
         self.actions: Dict[Tuple, ActionReferentiel] = {}
@@ -78,7 +82,7 @@ class Referentiel:
             if len(index) == 0:
                 # référentiel
                 points = defaut_referentiel_root_points_value
-            elif len(index) < 3:
+            elif len(index) < self.mesure_level:
                 # axe
                 points = max(self.actions[index].points, 0)
             else:
