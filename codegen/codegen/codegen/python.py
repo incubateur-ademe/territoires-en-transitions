@@ -19,6 +19,7 @@ def types_python(type: str, options: Optional[List[Any]] = None) -> str:
         "Dict": "dict",
         "Date": "date",
         "bool": "bool",
+        "Optional[String]": "Optional[str]",
         None: "str",
     }
     if type in py_types.keys():

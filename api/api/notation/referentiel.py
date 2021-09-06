@@ -10,7 +10,6 @@ class ReferentielValueError(Exception):
 
 
 defaut_referentiel_root_points_value = 500  # TODO: this should not be hard-coded
-defaut_referentiel_axis_points_value = 100  # TODO: this should not be hard-coded
 
 
 class Referentiel:
@@ -79,9 +78,9 @@ class Referentiel:
             if len(index) == 0:
                 # référentiel
                 points = defaut_referentiel_root_points_value
-            elif len(index) == 1:
+            elif len(index) < 3:
                 # axe
-                points = defaut_referentiel_axis_points_value
+                points = max(self.actions[index].points, 0)
             else:
                 # orientation, niveau, tache
                 points = max(self.actions[index].points, 0) * (
