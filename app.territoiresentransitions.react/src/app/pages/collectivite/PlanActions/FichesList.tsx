@@ -1,5 +1,4 @@
 import {useAllFiches} from 'core-logic/hooks/fiches';
-import {useEpciId} from 'core-logic/hooks/params';
 import {useAllStorables} from 'core-logic/hooks';
 import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
 import {ficheActionCategorieStore} from 'core-logic/api/hybridStores';
@@ -85,7 +84,6 @@ const UncategorizedFichesList = ({fiches}: {fiches: FicheAction[]}) => {
 };
 
 const FichesList = () => {
-  const epciId = useEpciId();
   const fiches = useAllFiches();
   const categories = useAllStorables<FicheActionCategorieStorable>(
     ficheActionCategorieStore

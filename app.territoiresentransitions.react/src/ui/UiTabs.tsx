@@ -5,13 +5,13 @@ import Tab from '@material-ui/core/Tab';
 import MuiToolbar from '@material-ui/core/Toolbar';
 import {withStyles} from '@material-ui/core';
 
-const Toolbar = withStyles(theme => ({
+const Toolbar = withStyles(() => ({
   root: {
     minHeight: 0,
   },
 }))(MuiToolbar);
 
-const Tabs = withStyles(theme => ({
+const Tabs = withStyles(() => ({
   indicator: {
     height: '3px',
   },
