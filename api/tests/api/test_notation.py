@@ -139,7 +139,7 @@ def test_status_if_index_does_not_exists(notation):
         notation.set_status(index=(1, 3), status=Status.non_concernee)
 
 
-def test_notation_with_two_actions_amongst_which_one_is_non_concernee(notation):
+def test_notation_with_two_orientations_amongst_which_one_is_non_concernee(notation):
     notation.set_status(index=("1", "1"), status=Status.non_concernee)
 
     scores = notation.compute_and_get_scores()
@@ -179,7 +179,7 @@ def test_notation_with_two_actions_amongst_which_one_is_non_concernee(notation):
         "1.2",
         points=0.0,
         percentage=0.0,
-        potentiel=100,  # points have been redistributed
+        potentiel=70,  # points are not redistributed amongst orientations
         referentiel_points=70,
         referentiel_percentage=0.7,
     )
