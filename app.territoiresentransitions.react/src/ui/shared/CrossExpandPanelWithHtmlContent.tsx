@@ -6,7 +6,7 @@ export const CrossExpandPanelWithHtmlContent = (props: {
   className?: string;
 }) => (
   <div className="CrossExpandPanel">
-    <details className={`htmlContent ${props.className}`}>
+    <details className={`htmlContent ${props.className ?? ''}`}>
       <summary className="title">{props.title}</summary>
       <div
         className="content"
