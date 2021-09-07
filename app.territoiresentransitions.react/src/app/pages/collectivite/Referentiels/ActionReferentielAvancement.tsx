@@ -5,13 +5,14 @@ import {
   ActionReferentielTitle,
   ProgressStat,
 } from 'ui/referentiels';
-import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
 import 'app/DesignSystem/buttons.css';
-import {AddFicheActionButton, RetourButton, Spacer} from 'ui/shared';
+import {AddFicheActionButton, Spacer} from 'ui/shared';
 import {isIndicateurRelatedToAction} from 'utils/indicateurs';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
+import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
+import {searchActionById} from 'utils/actions';
 
 const ActionReferentielAvancement = ({
   actionId,
@@ -20,7 +21,7 @@ const ActionReferentielAvancement = ({
   actionId: string;
   displayProgressStat: boolean;
 }) => {
-  const action = searchById(referentielActions, actionId);
+  const action = searchActionById(actionId, referentielActions);
   if (!action) {
     return <Link to="./referentiels" />;
   }
@@ -30,7 +31,7 @@ const ActionReferentielAvancement = ({
   return (
     <div className="fr-container">
       <div className="mt-8 mb-16">
-        <RetourButton />
+        <OrientationQuickNav action={action} />
         <div className="pt-8 flex justify-between items-center">
           <ActionReferentielTitle
             className="fr-h1 w-9/12 text-gray-900"
