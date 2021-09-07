@@ -154,6 +154,9 @@ class Notation:
 
         That is if every action siblings had a status `non_concernee` except one,
         this remaining action would inherit all points of its siblings.
+
+        However if we are at the mesure_level points are not redistributed, so the root potentiel is less than
+        the referentiel root points.
         """
         for index in self.referentiel.backward:
             children = self.referentiel.children(index)
@@ -161,11 +164,14 @@ class Notation:
             exclusions = children_statuses.count(Status.non_concernee)
 
             if exclusions == 0:
+                # no exclusions, we don't change potentiels.
                 continue
             elif exclusions == len(children):
+                # all children are excluded, set their potentiels to 0.
                 for child in children:
                     self.potentiels[child] = 0.0
-            else:
+            elif len(index) >= self.referentiel.mesure_level:
+                # smaller action than mesure, we redistribute potentiels equally amongst remaining children.
                 excluded = sum(
                     [
                         self.referentiel.points[child]
@@ -180,6 +186,17 @@ class Notation:
                         self.potentiels[child] = 0.0
                     else:
                         self.potentiels[child] += redistribution
+            else:
+                # mesure or larger, update potentiels without redistribution.
+                for child in children:
+                    if self.statuses[child] == Status.non_concernee:
+                        self.potentiels[child] = 0.0
+
+            if len(index) == 0 and exclusions:
+                # root action, sum potentiels.
+                self.potentiels[index] = sum(
+                    [self.potentiels[child] for child in children]
+                )
 
     def __compute_points(self):
         """Compute points from potentiels the propagate the sums"""
