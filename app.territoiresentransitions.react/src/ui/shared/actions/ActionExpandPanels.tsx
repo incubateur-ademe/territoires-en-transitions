@@ -7,11 +7,13 @@ const ActionExpandPanelAdemeContent = (props: {
 }) => {
   if (!props.content) return <></>;
   return (
-    <div className={' border-gray-300'}>
-      <CrossExpandPanelWithHtmlContent
-        title={props.title}
-        content={props.content}
-      />
+    <div className="ActionExpandPanelAdemeContent">
+      <div className="border-gray-300">
+        <CrossExpandPanelWithHtmlContent
+          title={props.title}
+          content={props.content}
+        />
+      </div>
     </div>
   );
 };

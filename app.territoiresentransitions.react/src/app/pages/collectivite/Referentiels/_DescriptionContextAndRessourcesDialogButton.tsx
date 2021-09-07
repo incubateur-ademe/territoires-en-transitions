@@ -13,7 +13,7 @@ const DescriptionBlock = ({description}: {description?: string}) => {
   if (!description) return <></>;
   return (
     <div>
-      <h6>Description</h6>
+      <div className="font-bold pb-2 text-lg">Description</div>
       <div
         className="htmlContent"
         dangerouslySetInnerHTML={{__html: description}}

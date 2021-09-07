@@ -65,7 +65,7 @@ export class APIEndpoint<T extends Storable> extends ChangeNotifier {
         Authorization: this.authorization(),
       },
       body: JSON.stringify(this.serializer(storable)),
-    }).catch(e => {
+    }).catch(() => {
       this._lastResponse = null;
     });
 
