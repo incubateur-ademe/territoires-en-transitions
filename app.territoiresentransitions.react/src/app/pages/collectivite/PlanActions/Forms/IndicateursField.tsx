@@ -36,10 +36,10 @@ const allIndicateurs = indicateursById();
 const allIndicateurIds = indicateurs.map(indicateur => indicateur.id);
 const allSortedIndicateurIds = [
   ...sortIndicateurIds(
-    allIndicateurIds.filter(indicateurId => indicateurId.startsWith('eci'))
+    allIndicateurIds.filter(indicateurId => indicateurId.startsWith('cae'))
   ),
   ...sortIndicateurIds(
-    allIndicateurIds.filter(indicateurId => indicateurId.startsWith('cae'))
+    allIndicateurIds.filter(indicateurId => indicateurId.startsWith('eci'))
   ),
 ];
 
