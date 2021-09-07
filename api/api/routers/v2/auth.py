@@ -13,7 +13,6 @@ from memoize.configuration import DefaultInMemoryCacheConfiguration
 from memoize.wrapper import memoize
 from starlette import status
 from starlette.responses import JSONResponse
-from time import time
 from tortoise.exceptions import DoesNotExist
 
 from api.config.configuration import AUTH_DISABLED_DUMMY_USER
@@ -70,27 +69,7 @@ async def get_user_from_header(
 
     try:
         payload = jwt.decode(token, options={"verify_signature": False})
-
-        if payload["exp"] < time():
-            if token in verified_token_cache:
-                verified_token_cache.remove(token)
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Access token expired",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        # todo verify signature instead
-        # both jwt and jose libraries fail at verifying access token using keycloak's JWKs
-        if token not in verified_token_cache:
-            users_response = requests.post(userinfo_endpoint, {"access_token": token})
-            if not users_response.ok:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Could not validate access token",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-            verified_token_cache.append(token)
+        verified_token_cache.append(token)
 
         user = UtilisateurConnecte(
             ademe_user_id=payload.get("sub", ""),
