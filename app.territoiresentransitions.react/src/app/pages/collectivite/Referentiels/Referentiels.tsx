@@ -9,6 +9,7 @@ import {Options} from 'types';
 import {ReferentielCombinedByThematique} from 'app/pages/collectivite/Referentiels/_ReferentielsCombinedByThematique';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import * as R from 'ramda';
+import {ProgressStat} from 'ui/referentiels';
 
 type View = 'cae' | 'eci' | 'both';
 
@@ -19,19 +20,19 @@ const flattenActions = (actions: ActionReferentiel[]): ActionReferentiel[] =>
     actions
   );
 
+const eciReferentiel = actions.find(
+  action => action.id === 'economie_circulaire'
+);
+const eciAxes = eciReferentiel ? eciReferentiel.actions : [];
+// For ECI, main action is at level #1, here, we flatten the actions once.
+const eciFlattenMainActions = flattenActions(eciAxes);
+
+const caeReferentiel = actions.find(action => action.id === 'citergie');
+const caeAxes = caeReferentiel ? caeReferentiel.actions : [];
+// For ECI, main action is at level #1, here, we flatten the actions twice.
+const caeFlattenMainActions = flattenActions(flattenActions(caeAxes));
+
 const ConditionnalActionsReferentiels = ({view}: {view: View}) => {
-  const eciReferentiel = actions.find(
-    action => action.id === 'economie_circulaire'
-  );
-  const eciAxes = eciReferentiel ? eciReferentiel.actions : [];
-  // For ECI, main action is at level #1, here, we flatten the actions once.
-  const eciFlattenMainActions = flattenActions(eciAxes);
-
-  const caeReferentiel = actions.find(action => action.id === 'citergie');
-  const caeAxes = caeReferentiel ? caeReferentiel.actions : [];
-  // For ECI, main action is at level #1, here, we flatten the actions twice.
-  const caeFlattenMainActions = flattenActions(flattenActions(caeAxes));
-
   if (view === 'cae') return <ReferentielClimatAirEnergie caeAxes={caeAxes} />;
   else if (view === 'both')
     return (
@@ -57,13 +58,20 @@ export const ActionsReferentiels = () => {
       <div>
         <h1 className="fr-h1 mb-0">Référentiels</h1>
       </div>
-      <div className="w-1/3">
+      <div className="w-1/3 flex items-center justify-between">
         <SelectInput<View>
           options={viewOptions}
           label=""
           onChange={setView}
           defaultValue="eci"
         />
+        <div className={`${view === 'eci' ? '' : 'hidden'}`}>
+          <ProgressStat
+            action={eciReferentiel!}
+            position="left"
+            className="w-full"
+          />
+        </div>
       </div>
       <div className="pb-5" />
       <ConditionnalActionsReferentiels view={view} />
