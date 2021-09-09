@@ -1,5 +1,5 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ProgressStat} from '.';
+import {ProgressStatStatic} from '.';
 import {
   ActionDescriptionExpandPanel,
   ActionCommentaire,
@@ -69,7 +69,7 @@ export const ActionReferentielAvancementCard = ({
             {action.nom}
           </h3>
         </div>
-        <ProgressStat
+        <ProgressStatStatic
           action={action}
           position="right"
           className={`${displayProgressStat ? '' : 'hidden'}`}

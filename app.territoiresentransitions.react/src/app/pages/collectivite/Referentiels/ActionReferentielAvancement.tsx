@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import {
   ActionReferentielAvancementRecursiveCard,
   ActionReferentielTitle,
-  ProgressStat,
+  ProgressStatStatic,
 } from 'ui/referentiels';
 import 'app/DesignSystem/buttons.css';
 import {AddFicheActionButton, Spacer} from 'ui/shared';
@@ -33,7 +33,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
           />
           <AddFicheActionButton actionId={action.id} />
         </div>
-        <ProgressStat
+        <ProgressStatStatic
           action={action}
           position="left"
           className="w-full mb-10"
