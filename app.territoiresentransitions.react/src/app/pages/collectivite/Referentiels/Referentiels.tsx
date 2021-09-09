@@ -65,9 +65,9 @@ export const ActionsReferentiels = () => {
           onChange={setView}
           defaultValue="eci"
         />
-        <div className={`${view === 'eci' ? '' : 'hidden'}`}>
+        <div className={`${view === 'both' ? 'hidden' : ''}`}>
           <ProgressStat
-            action={eciReferentiel!}
+            action={view === 'eci' ? eciReferentiel! : caeReferentiel!}
             position="left"
             className="w-full"
           />
