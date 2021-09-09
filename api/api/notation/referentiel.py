@@ -98,38 +98,40 @@ class Referentiel:
         """
         # add points from orientations up to root
         for index in self.backward:
-            if len(index) < self.mesure_depth:
+            if len(index) == self.mesure_depth:
+                self.points[index] = self.actions[index].points
+            elif len(index) < self.mesure_depth:
                 self.points[index] = sum(
-                    [self.actions[child].points for child in self.children(index)]
+                    [self.points[child] for child in self.children(index)]
                 )
 
         # build points from root down to the smallest action
         for index in self.forward:
-            if len(index) <= self.mesure_depth:
-                # root to mesure points are already set
-                points = self.actions[index].points
-
-            else:
+            if len(index) > self.mesure_depth:
                 # from this depth (mesure children) points from actions are actually percentages
-                points = self.actions[index].points * self.points[index[:-1]] / 100
+                percentage = self.actions[index].points
+                self.points[index] = percentage * self.points[index[:-1]] / 100
 
+            if len(index) >= self.mesure_depth:
+                # redistribute PERCENTAGES amongst children without points
                 children = self.children(index)
                 unspecified_children = [
                     child for child in children if self.actions[child].points == -1
                 ]
 
                 if unspecified_children:
-                    distributed_points = sum(
+                    distributed_percentage = sum(
                         [max(0.0, self.actions[child].points) for child in children]
                     )
-                    remaining_points = self.actions[index].points - distributed_points
-                    points_per_child = remaining_points / len(unspecified_children)
+                    remaining_percentages = 100 - distributed_percentage
+                    assert remaining_percentages >= 0
+                    percentage_per_child = remaining_percentages / len(
+                        unspecified_children
+                    )
 
                     for child in unspecified_children:
-                        self.points[child] = points_per_child
-
-            self.actions[index].points = points
-            self.points[index] = points
+                        # we set percentage as points until yaml supports percentage
+                        self.actions[child].points = percentage_per_child
 
     def __build_percentages(self):
         """Build percentages
