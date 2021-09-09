@@ -33,3 +33,17 @@ def test_eci_action_points(index):
         assert math.isclose(
             total_points, referentiel_eci.points[index]
         ), _points_error_message(referentiel_eci, index)
+
+
+def test_import_referentiel_eci():
+    from api.notation.referentiels import referentiel_eci
+
+    assert referentiel_eci
+    assert referentiel_eci.points[()] == 500
+
+
+def test_import_referentiel_cae():
+    from api.notation.referentiels import referentiel_cae
+
+    assert referentiel_cae
+    assert referentiel_cae.points[()] == 500
