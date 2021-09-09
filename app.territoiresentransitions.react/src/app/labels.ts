@@ -13,3 +13,12 @@ export const avancementLabels: Omit<Record<Avancement, string>, ''> = {
   en_cours: 'En cours',
   faite: 'Faite',
 };
+
+export const epciCard_AxisShortLabel: Record<string, string> = {
+  economie_circulaire__1: '1 - Stratégie globale',
+  economie_circulaire__2:
+    '2 - Services de réduction, collecte et valorisation des déchets',
+  economie_circulaire__3: "3 - Autres piliers de l'économie circulaire",
+  economie_circulaire__4: '4 - Outils financiers du changement de comportement',
+  economie_circulaire__5: '5 - Coopération et engagement',
+};
