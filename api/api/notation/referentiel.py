@@ -74,21 +74,6 @@ class Referentiel:
         self.forward: List[Tuple] = sorted(self.indices, key=lambda i: len(i))
         self.backward: List[Tuple] = self.forward[::-1]
 
-    # def __fix_actions_points(self):
-    #     """Convert percentage to points for actions after mesure level
-    #     Note : this step will not be required once it's possible to specify either points or percentage for an action
-    #     ----
-    #     """
-    #     for index in self.forward:
-    #         if len(index) > self.mesure_depth:
-    #             points = self.actions[index].points
-    #             if points != -1:
-    #                 parent_points = self.actions[index[:-1]].points
-    #                 if parent_points != -1:
-    #                     self.actions[index].points = (
-    #                         self.actions[index].points / 100 * parent_points
-    #                     )
-
     def __build_points(self):
         """Build points
         A référentiel is worth 500 points thus if every actions had a been done
@@ -97,14 +82,33 @@ class Referentiel:
         If mesure_level is 3, then actions points of 1, 1.1 and 1.1.1 are expressed in points. Hence, should some to 500.
         """
         # add points from orientations up to root
+        # missing_mesures = []
+        # given_mesures = []
         for index in self.backward:
             if len(index) == self.mesure_depth:
                 self.points[index] = self.actions[index].points
+
+                # assert (
+                #     self.actions[index].points > 0.0
+                # ), f"Action {index} is a mesure but has no points specified. "
+
+                # ----REMOVE FROM HERE ---------
+                if self.points[index] == -1:
+                    self.points[index] = 8
+
+                # if self.actions[index].points == -1:
+                #     missing_mesures.append(index)
+                #     self.points[index] = 0
+                # else:
+                #     given_mesures.append(index)
+                #     self.points[index] = self.actions[index].points
+
+                # ---- TO THERE ---------
+
             elif len(index) < self.mesure_depth:
                 self.points[index] = sum(
                     [self.points[child] for child in self.children(index)]
                 )
-
         # build points from root down to the smallest action
         for index in self.forward:
             if len(index) > self.mesure_depth:
