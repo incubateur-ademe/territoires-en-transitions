@@ -4,7 +4,7 @@ import pytest
 
 from api.notation.notation import Notation, Status
 from api.notation.referentiel import Referentiel
-from api.notation.referentiel_eci import referentiel_eci
+from api.notation.referentiels import referentiel_eci
 
 
 @pytest.fixture
@@ -18,8 +18,10 @@ def notation(referentiel: Referentiel) -> Notation:
 
 
 def test_referentiel(referentiel: Referentiel):
-    # Compare hard a coded value
-    math.isclose(referentiel.points[("1", "1", "1")], 6.6)
+    # Compare hard coded value
+    # Points value in level 3 for ECI (1.1.1 here) are expressed in percentage
+    # Hence 20 points is relative to 1.1 points which is 30 points.
+    math.isclose(referentiel.points[("1", "1", "1")], 30 / 20)
 
 
 def test_notation(notation: Notation):

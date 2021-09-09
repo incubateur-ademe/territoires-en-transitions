@@ -47,7 +47,9 @@ def assert_score_with_nomenclature_id_equals(
 
 
 def test_notation_only_root_default_status():
-    referentiel = Referentiel(root_action=make_action_referentiel(points=42))
+    referentiel = Referentiel(
+        root_action=make_action_referentiel(points=42), mesure_depth=3
+    )
     notation = Notation(referentiel)
 
     scores = notation.compute_and_get_scores()
@@ -77,7 +79,7 @@ def referentiel() -> Referentiel:
         id_nomenclature="2", actions=[action_2_mandatory]
     )
     root_action = make_action_referentiel(actions=[action_1, action_2])
-    referentiel = Referentiel(root_action)
+    referentiel = Referentiel(root_action, mesure_depth=3)
     return referentiel
 
 
@@ -351,7 +353,7 @@ def test_notation_non_concernee_changes_parents_potentiels():
     action_2 = make_action_referentiel(id_nomenclature="2", actions=[], points=470)
     root_action = make_action_referentiel(actions=[action_1, action_2])
 
-    referentiel = Referentiel(root_action)
+    referentiel = Referentiel(root_action, mesure_depth=3)
 
     notation = Notation(referentiel)
 

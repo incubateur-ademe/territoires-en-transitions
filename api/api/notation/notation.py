@@ -170,7 +170,7 @@ class Notation:
                 # all children are excluded, set their potentiels to 0.
                 for child in children:
                     self.potentiels[child] = 0.0
-            elif len(index) >= self.referentiel.mesure_level:
+            elif len(index) > self.referentiel.mesure_depth:
                 # smaller action than mesure, we redistribute potentiels equally amongst remaining children.
                 excluded = sum(
                     [
