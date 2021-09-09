@@ -160,39 +160,39 @@ class Notation:
         """
         for index in self.referentiel.backward:
             children = self.referentiel.children(index)
-            children_statuses = [self.statuses[child] for child in children]
-            exclusions = children_statuses.count(Status.non_concernee)
 
-            if exclusions == 0:
+            non_concernee_children = [
+                child
+                for child in children
+                if self.statuses[child] == Status.non_concernee
+            ]
+            if len(non_concernee_children) == 0:
                 # no exclusions, we don't change potentiels.
                 continue
-            elif exclusions == len(children):
+            elif len(non_concernee_children) == len(children):
                 # all children are excluded, set their potentiels to 0.
                 for child in children:
                     self.potentiels[child] = 0.0
             elif len(index) > self.referentiel.mesure_depth:
                 # smaller action than mesure, we redistribute potentiels equally amongst remaining children.
-                excluded = sum(
-                    [
-                        self.referentiel.points[child]
-                        for child in children
-                        if self.statuses[child] == Status.non_concernee
-                    ]
+                sum_points_of_non_concernee_children = sum(
+                    [self.referentiel.points[child] for child in non_concernee_children]
                 )
-                redistribution = excluded / (len(children) - exclusions)
+                redistribution = sum_points_of_non_concernee_children / (
+                    len(children) - len(non_concernee_children)
+                )
 
                 for child in children:
-                    if self.statuses[child] == Status.non_concernee:
+                    if child in non_concernee_children:
                         self.potentiels[child] = 0.0
                     else:
                         self.potentiels[child] += redistribution
             else:
                 # mesure or larger, update potentiels without redistribution.
-                for child in children:
-                    if self.statuses[child] == Status.non_concernee:
-                        self.potentiels[child] = 0.0
+                for child in non_concernee_children:
+                    self.potentiels[child] = 0.0
 
-            if len(index) == 0 and exclusions:
+            if len(index) == 0 and non_concernee_children:
                 # root action, sum potentiels.
                 self.potentiels[index] = sum(
                     [self.potentiels[child] for child in children]
