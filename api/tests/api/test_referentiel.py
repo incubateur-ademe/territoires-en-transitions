@@ -1,3 +1,4 @@
+from api.notation import referentiels
 import pytest
 
 from api.notation.referentiel import Referentiel, ReferentielValueError
@@ -146,17 +147,3 @@ def test_referentiel_when_a_():
     assert referentiel.points[("1", "2")] == 350.0
     assert referentiel.points[("1", "2", "1")] == 175.0
     assert referentiel.percentages[("1", "2", "1")] == 0.5
-
-
-def test_import_referentiel_eci():
-    from api.notation.referentiels import referentiel_eci
-
-    referentiel = referentiel_eci
-    assert referentiel
-
-
-def test_import_referentiel_cae():
-    from api.notation.referentiels import referentiel_cae
-
-    referentiel = referentiel_cae
-    assert referentiel

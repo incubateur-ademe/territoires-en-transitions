@@ -5,9 +5,6 @@ import pytest
 from api.models.generated.action_referentiel_score import ActionReferentielScore
 from api.notation.notation import Notation, Status, UnknownActionIndex
 from api.notation.referentiel import Referentiel
-from api.notation.referentiel import (
-    defaut_referentiel_root_points_value,
-)
 from tests.utils.factory import make_action_referentiel
 
 
@@ -49,7 +46,7 @@ def assert_score_with_nomenclature_id_equals(
 def test_notation_only_root_default_status():
     # todo, do we want to keep this ?
     referentiel = Referentiel(
-        root_action=make_action_referentiel(points=42), mesure_depth=3
+        root_action=make_action_referentiel(points=42), mesure_depth=0
     )
     notation = Notation(referentiel)
 
@@ -71,17 +68,15 @@ def referentiel() -> Referentiel:
     action_1_1 = make_action_referentiel(id_nomenclature="1.1", actions=[], points=30)
     action_1_2 = make_action_referentiel(id_nomenclature="1.2", actions=[], points=70)
     action_1 = make_action_referentiel(
-        id_nomenclature="1", actions=[action_1_1, action_1_2]
+        id_nomenclature="1", actions=[action_1_1, action_1_2], points=100
     )
-    action_2_mandatory = make_action_referentiel(
-        id_nomenclature="2.mandatory", actions=[], points=0
-    )
+    action_2_0 = make_action_referentiel(id_nomenclature="2.0", actions=[], points=0)
     action_2 = make_action_referentiel(
-        id_nomenclature="2", actions=[action_2_mandatory]
+        id_nomenclature="2", actions=[action_2_0], points=100
     )
-    action_3 = make_action_referentiel(id_nomenclature="3", points=400)
+    action_3 = make_action_referentiel(id_nomenclature="3", points=300)
     root_action = make_action_referentiel(actions=[action_1, action_2, action_3])
-    referentiel = Referentiel(root_action, mesure_depth=3)
+    referentiel = Referentiel(root_action, mesure_depth=1)
     return referentiel
 
 
@@ -96,10 +91,10 @@ def test_notation_with_two_actions_default_status(notation):
     assert_score_with_nomenclature_id_equals(
         scores,
         "",
-        points=500,
-        percentage=1,
-        potentiel=defaut_referentiel_root_points_value,
-        referentiel_points=defaut_referentiel_root_points_value,
+        points=0.0,
+        percentage=0.0,
+        potentiel=500,
+        referentiel_points=500,
         referentiel_percentage=1,
     )
 
@@ -153,8 +148,8 @@ def test_notation_with_two_orientations_amongst_which_one_is_non_concernee(notat
         "",
         points=0.0,
         percentage=0.0,
-        potentiel=defaut_referentiel_root_points_value,
-        referentiel_points=defaut_referentiel_root_points_value,
+        potentiel=500,
+        referentiel_points=500,
         referentiel_percentage=1,
     )
 
@@ -199,8 +194,8 @@ def test_notation_with_two_actions_amongst_which_one_is_faite(notation):
         "",
         points=30.0,
         percentage=0.3 * 0.2,
-        potentiel=defaut_referentiel_root_points_value,
-        referentiel_points=defaut_referentiel_root_points_value,
+        potentiel=500,
+        referentiel_points=500,
         referentiel_percentage=1,
     )
 
@@ -248,8 +243,8 @@ def test_notation_with_two_actions_from_which_parent_axis_is_faite(notation):
         "",
         points=100,
         percentage=0.2,
-        potentiel=defaut_referentiel_root_points_value,
-        referentiel_points=defaut_referentiel_root_points_value,
+        potentiel=500,
+        referentiel_points=500,
         referentiel_percentage=1,
     )
 
@@ -285,13 +280,13 @@ def test_notation_with_two_actions_from_which_parent_axis_is_faite(notation):
 
 
 def test_percentage_is_100_if_points_is_0_and_status_faite(notation):
-    notation.set_status(index=("2", "mandatory"), status=Status.faite)
+    notation.set_status(index=("2", "0"), status=Status.faite)
 
     scores = notation.compute_and_get_scores()
 
     assert_score_with_nomenclature_id_equals(
         scores,
-        "2.mandatory",
+        "2.0",
         points=0.0,
         percentage=1.0,
         potentiel=0,
@@ -313,24 +308,26 @@ def test_percentage_is_100_if_points_is_0_and_status_faite(notation):
 def test_notation_non_concernee_changes_parents_potentiels():
     """
     A l'intérieur d'une mesure/orientation :
-    - Si une action a un statut "Non concerné", alors cette action n'est pas prise en compte pour calculer le score.
+    - Si une action a un statut "Non concernée", alors cette action n'est pas prise en compte pour calculer le score.
     *Exemple : Orientation 1.2. = 30 points
     Si niveau 1.2.1 dont le poids est 20% est "Non concerné" alors l'orientation 1.2 reste évaluée sur 30 points
     et le poids est reventilé sur les autres niveaux en augmentant de façon proportionnelle
-    (1.2.2=20%+1/3x20%, 1.2.3=20%+1/3x20%, 1.2.4=40%+1/3x40%).*
+        - 1.2.2 = 20% + 1/3 x 20%
+        - 1.2.3 = 20% + 1/3 x 20%
+        - 1.2.4 = 40% + 1/3 x 40%
 
-    - Si toutes les actions sœurs ont un statut "Non concerné" (en dehors des mesures/orientations),
+    - Si toutes les actions sœurs ont un statut "Non concernée" (en dehors des mesures/orientations),
     alors le niveau parent est "Non concerné" et l'action n'est pas prise en compte pour calculer le score.
     *Exemple : Niveau 1.2.1.
-    Si 1.2.1.1/2/3/4/5 sont "Non concerné" alors 1.2.1 = Non concerné*
+    Si 1.2.1.1/2/3/4/5 sont "Non concernée" alors 1.2.1 = Non concernée*
 
-    - Cas particulier : Si tous les enfants d'une mesure/orientation sont "Non concerné"
-    alors la mesure/orientation a bien un statut "Non concerné"
+    - Cas particulier : Si tous les enfants d'une mesure/orientation sont "Non concernée"
+    alors la mesure/orientation a bien un statut "Non concernée"
     MAIS son nombre de points passe à "0" sans être reventilé sur les autres mesures/orientations.
 
     *Exemple : Orientation 1.2 = 30 points
-    Si 1.2.1/2/3/4 = "Non concerné"
-    alors 1.2= "Non concerné" et "0/0 points" et la collectivité n'est plus évaluée sur 500 points mais sur 470 points.*
+    Si 1.2.1/2/3/4 = "Non concernée"
+    alors 1.2 = "Non concernée" et "0/0 points" et la collectivité n'est plus évaluée sur 500 points mais sur 470 points.*
     """
     action_1_2_1 = make_action_referentiel(
         id_nomenclature="1.2.1", actions=[], points=25
@@ -349,13 +346,18 @@ def test_notation_non_concernee_changes_parents_potentiels():
         actions=[action_1_2_1, action_1_2_2, action_1_2_3, action_1_2_4],
         points=30,
     )
-    action_1 = make_action_referentiel(
-        id_nomenclature="1", actions=[action_1_2], points=30
+    action_1 = make_action_referentiel(id_nomenclature="1", actions=[action_1_2])
+    action_2_2 = make_action_referentiel(
+        id_nomenclature="2.2",
+        actions=[],
+        points=470,
     )
-    action_2 = make_action_referentiel(id_nomenclature="2", actions=[], points=470)
+
+    action_2 = make_action_referentiel(id_nomenclature="2", actions=[action_2_2])
+
     root_action = make_action_referentiel(actions=[action_1, action_2])
 
-    referentiel = Referentiel(root_action, mesure_depth=3)
+    referentiel = Referentiel(root_action, mesure_depth=2)
 
     notation = Notation(referentiel)
 
@@ -372,7 +374,7 @@ def test_notation_non_concernee_changes_parents_potentiels():
         points=0.0,
         percentage=0.0,
         potentiel=470,
-        referentiel_points=defaut_referentiel_root_points_value,
+        referentiel_points=500,
         referentiel_percentage=1,
     )
 
@@ -383,7 +385,7 @@ def test_notation_non_concernee_changes_parents_potentiels():
         percentage=0.0,
         potentiel=0,
         referentiel_points=30,
-        referentiel_percentage=30 / defaut_referentiel_root_points_value,
+        referentiel_percentage=30 / 500,
     )
 
     assert_score_with_nomenclature_id_equals(
