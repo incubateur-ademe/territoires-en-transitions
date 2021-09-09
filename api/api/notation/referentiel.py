@@ -42,7 +42,7 @@ class Referentiel:
         self.forward: List[Tuple]
         self.backward: List[Tuple]
         self.__build_indices_and_actions()
-        self.__fix_actions_points()
+        # self.__fix_actions_points()
         self.__build_points()
         self.__build_percentages()
 
@@ -74,22 +74,20 @@ class Referentiel:
         self.forward: List[Tuple] = sorted(self.indices, key=lambda i: len(i))
         self.backward: List[Tuple] = self.forward[::-1]
 
-    def __fix_actions_points(self):
-        """Convert percentage to points for actions after mesure level
-        Note : this step will not be required once it's possible to specify either points or percentage for an action
-        ----
-        """
-        for index in self.forward:
-            if len(index) > self.mesure_depth:
-                points = self.actions[index].points
-                if points != -1:
-                    parent_points = self.actions[index[:-1]].points
-                    # print(
-                    #     f"{index} = {self.actions[index].points} * {parent_points} / 100"
-                    # )
-                    self.actions[index].points = (
-                        self.actions[index].points * parent_points / 100
-                    )
+    # def __fix_actions_points(self):
+    #     """Convert percentage to points for actions after mesure level
+    #     Note : this step will not be required once it's possible to specify either points or percentage for an action
+    #     ----
+    #     """
+    #     for index in self.forward:
+    #         if len(index) > self.mesure_depth:
+    #             points = self.actions[index].points
+    #             if points != -1:
+    #                 parent_points = self.actions[index[:-1]].points
+    #                 if parent_points != -1:
+    #                     self.actions[index].points = (
+    #                         self.actions[index].points / 100 * parent_points
+    #                     )
 
     def __build_points(self):
         """Build points
@@ -98,17 +96,22 @@ class Referentiel:
 
         If mesure_level is 3, then actions points of 1, 1.1 and 1.1.1 are expressed in points. Hence, should some to 500.
         """
-
-        # propagation
+        # add points from orientations up to root
         for index in self.backward:
-            self.points[index] = self.actions[index].points
             if len(index) < self.mesure_depth:
                 self.points[index] = sum(
-                    [self.points[child] for child in self.children(index)]
+                    [self.actions[child].points for child in self.children(index)]
                 )
 
+        # build points from root down to the smallest action
         for index in self.forward:
-            if len(index) >= self.mesure_depth:
+            if len(index) <= self.mesure_depth:
+                # root to mesure points are already set
+                points = self.actions[index].points
+
+            else:
+                # from this depth (mesure children) points from actions are actually percentages
+                points = self.actions[index].points * self.points[index[:-1]] / 100
 
                 children = self.children(index)
                 unspecified_children = [
@@ -116,18 +119,17 @@ class Referentiel:
                 ]
 
                 if unspecified_children:
-                    # Points are expressed in percentage
                     distributed_points = sum(
-                        [max(0, self.actions[child].points) for child in children]
+                        [max(0.0, self.actions[child].points) for child in children]
                     )
-                    remaining_points = self.points[index] - distributed_points
-                    points_to_distribute_amongst_unspecified_children = (
-                        remaining_points / len(unspecified_children)
-                    )
+                    remaining_points = self.actions[index].points - distributed_points
+                    points_per_child = remaining_points / len(unspecified_children)
+
                     for child in unspecified_children:
-                        self.points[
-                            child
-                        ] = points_to_distribute_amongst_unspecified_children
+                        self.points[child] = points_per_child
+
+            self.actions[index].points = points
+            self.points[index] = points
 
     def __build_percentages(self):
         """Build percentages
@@ -135,13 +137,22 @@ class Referentiel:
         Percentages are relative to parents. If an action had 4 children, each would be .25 that is 25%"""
         for index in self.points:
             if len(index) > 0:
-                p = self.points[index]
-                if p == 0:
-                    self.percentages[index] = 0
-                else:
-                    self.percentages[index] = (
-                        self.points[index] / self.points[index[:-1]]
-                    )
+                points = self.points[index]
+                parent_points = self.points[index[:-1]]
+                sibling_points = sum(
+                    self.points[child] for child in self.children(index[:-1])
+                )
+                denominator = parent_points or sibling_points
+                self.percentages[index] = (
+                    points / denominator if denominator != 0 else 0
+                )
+
+                # if points == 0:
+                #     self.percentages[index] = 0
+                # else:
+                #     self.percentages[index] = (
+                #             self.points[index] / self.points[index[:-1]]
+                #     )
         self.percentages[tuple()] = 1
 
     @staticmethod

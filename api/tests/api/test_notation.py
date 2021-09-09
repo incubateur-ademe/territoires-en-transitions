@@ -47,6 +47,7 @@ def assert_score_with_nomenclature_id_equals(
 
 
 def test_notation_only_root_default_status():
+    # todo, do we want to keep this ?
     referentiel = Referentiel(
         root_action=make_action_referentiel(points=42), mesure_depth=3
     )
@@ -59,8 +60,8 @@ def test_notation_only_root_default_status():
         "",
         points=0.0,
         percentage=0.0,
-        potentiel=defaut_referentiel_root_points_value,
-        referentiel_points=defaut_referentiel_root_points_value,
+        potentiel=42,
+        referentiel_points=42,
         referentiel_percentage=1,
     )
 
@@ -78,7 +79,8 @@ def referentiel() -> Referentiel:
     action_2 = make_action_referentiel(
         id_nomenclature="2", actions=[action_2_mandatory]
     )
-    root_action = make_action_referentiel(actions=[action_1, action_2])
+    action_3 = make_action_referentiel(id_nomenclature="3", points=400)
+    root_action = make_action_referentiel(actions=[action_1, action_2, action_3])
     referentiel = Referentiel(root_action, mesure_depth=3)
     return referentiel
 
@@ -94,8 +96,8 @@ def test_notation_with_two_actions_default_status(notation):
     assert_score_with_nomenclature_id_equals(
         scores,
         "",
-        points=0.0,
-        percentage=0.0,
+        points=500,
+        percentage=1,
         potentiel=defaut_referentiel_root_points_value,
         referentiel_points=defaut_referentiel_root_points_value,
         referentiel_percentage=1,

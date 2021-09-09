@@ -8,7 +8,7 @@ referentiel_eci = Referentiel(
     mesure_depth=2,
 )
 
-# referentiel_cae = Referentiel(
-#     next(action for action in actions if get_referentiel_from_action(action) == "cae"),
-#     mesure_level=3,
-# )
+referentiel_cae = Referentiel(
+    next(action for action in actions if get_referentiel_from_action(action) == "cae"),
+    mesure_depth=3,
+)

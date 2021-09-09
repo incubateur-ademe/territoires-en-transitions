@@ -2,7 +2,7 @@ import math
 import pytest
 
 from api.notation.referentiel import Referentiel
-from api.notation.referentiel_eci import referentiel_eci
+from api.notation.referentiels import referentiel_eci
 
 
 def _points_error_message(referentiel: Referentiel, index: tuple) -> str:

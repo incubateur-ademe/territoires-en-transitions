@@ -47,7 +47,7 @@ def test_referentiel_when_root_action_has_one_mesure():
     )
 
     action_1_2_1 = make_action_referentiel(
-        id="ref__1_2_1", id_nomenclature="1.2.1", actions=[], points=100
+        id="ref__1_2_1", id_nomenclature="1.2.1", actions=[]
     )
 
     action_1_2 = make_action_referentiel(
@@ -116,3 +116,47 @@ def test_referentiel_when_root_action_has_one_mesure():
         assert (
             referentiel.percentages[action_index] == expected_percentages[action_index]
         ), f"Error in percentage at index {action_index}"
+
+
+def test_referentiel_when_a_():
+    action_1_2_1 = make_action_referentiel(
+        id="ref__1_2_1", id_nomenclature="1.2.1", actions=[], points=50
+    )
+    action_1_2_2 = make_action_referentiel(
+        id="ref__1_2_2", id_nomenclature="1.2.2", actions=[], points=50
+    )
+
+    action_1_2 = make_action_referentiel(
+        id="ref__1_2", id_nomenclature="1.2", actions=[action_1_2_1, action_1_2_2]
+    )
+
+    action_1_1 = make_action_referentiel(
+        id="ref__1_1", id_nomenclature="1.1", points=30
+    )
+
+    action_1 = make_action_referentiel(
+        id="ref__1", id_nomenclature="1", actions=[action_1_1, action_1_2], points=500
+    )
+
+    root_action = make_action_referentiel(
+        id="ref", id_nomenclature="", actions=[action_1]
+    )
+    referentiel = Referentiel(root_action, mesure_depth=1)
+    assert referentiel.points[("1", "1")] == 150.0
+    assert referentiel.points[("1", "2")] == 350.0
+    assert referentiel.points[("1", "2", "1")] == 175.0
+    assert referentiel.percentages[("1", "2", "1")] == 0.5
+
+
+def test_import_referentiel_eci():
+    from api.notation.referentiels import referentiel_eci
+
+    referentiel = referentiel_eci
+    assert referentiel
+
+
+def test_import_referentiel_cae():
+    from api.notation.referentiels import referentiel_cae
+
+    referentiel = referentiel_cae
+    assert referentiel
