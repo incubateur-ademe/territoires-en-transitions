@@ -1,9 +1,4 @@
-import Cascader, {
-  CascaderOptionType,
-  CascaderValueType,
-} from 'antd/es/cascader';
-import 'antd/es/cascader/style/css';
-import React from 'react';
+import React, {useState} from 'react';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useHistory} from 'react-router-dom';
 import {useEpciId} from 'core-logic/hooks';
@@ -17,28 +12,40 @@ import {
 } from 'utils/actions';
 import {actions as referentielActions} from 'generated/data/referentiels';
 import {Link} from 'react-router-dom';
+import {Menu, MenuItem} from '@material-ui/core';
+import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
 
 const actionsToOptions = (
-  actions: ActionReferentiel[]
-): CascaderOptionType[] => {
-  return actions.map((action: ActionReferentiel): CascaderOptionType => {
-    return {
-      value: action.id,
-      label: <span>{displayName(action)}</span>,
-      disabled: false,
-      children:
-        actionIdDepth(action.id) < referentielMesureDepth(action.id)
-          ? actionsToOptions(action.actions)
-          : undefined,
-    };
+  actions: ActionReferentiel[],
+  onSelect: (actionId: string) => void
+): React.ReactNode[] => {
+  return actions.map((action: ActionReferentiel): React.ReactNode => {
+    if (
+      actionIdDepth(action.id) < referentielMesureDepth(action.id) &&
+      actionsToOptions(action.actions, onSelect)
+    )
+      return (
+        <NestedMenuItem
+          parentMenuOpen={true}
+          label={<div className="truncate max-w-sm">{displayName(action)}</div>}
+        >
+          {actionIdDepth(action.id) === referentielMesureDepth(action.id) && (
+            <MenuItem>
+              <div
+                className="truncate max-w-sm"
+                onClick={() => onSelect(action.id)}
+              >
+                {displayName(action)}
+              </div>
+            </MenuItem>
+          )}
+        </NestedMenuItem>
+      );
   });
 };
 
 export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
-  const parents: ActionReferentiel[] = searchParents(
-    props.action.id,
-    referentielActions
-  );
+  const parents = searchParents(props.action.id, referentielActions);
   const epciId = useEpciId()!;
 
   return (
@@ -60,29 +67,46 @@ export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
 };
 
 export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
+  const [opened, setOpened] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const menuId = `${props.action.id}-menu`;
   const siblings = searchActionSiblingsOfId(
     props.action.id,
     referentielActions
-  )!;
-
-  const options = actionsToOptions(siblings);
+  );
   const history = useHistory();
   const epciId = useEpciId()!;
 
-  const onChange = (value: CascaderValueType) => {
-    const selectedId = '' + value[value.length - 1];
-    history.push(
-      `/collectivite/${epciId}/action/${referentielId(
-        selectedId
-      )}/${selectedId}`
-    );
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const onSelect = (selectedId: string) => {
+    handleClose();
+    setOpened(false);
+    const path =
+      `/collectivite/${epciId}/action/` +
+      `${referentielId(selectedId)}/` +
+      selectedId;
+    history.push(path);
   };
 
   return (
-    <Cascader options={options} onChange={onChange}>
-      <span className="block truncate max-w-sm">
+    <>
+      <span
+        className="truncate max-w-lg"
+        aria-controls={menuId}
+        aria-haspopup="true"
+        onClick={e => {
+          setAnchorEl(e.currentTarget);
+          setOpened(!opened);
+        }}
+      >
         {displayName(props.action)}
       </span>
-    </Cascader>
+      <Menu id={menuId} open={opened} onClose={handleClose} anchorEl={anchorEl}>
+        {opened && actionsToOptions(siblings!, onSelect)}
+      </Menu>
+    </>
   );
 };
