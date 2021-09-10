@@ -15,35 +15,48 @@ import {Link} from 'react-router-dom';
 import {Menu, MenuItem} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
 
-const actionsToOptions = (
+/**
+ * Converts a list of actions to a list of menu items.
+ *
+ * When actions are above mesure level we show nested items until we are at
+ * the mesure level where we show a clickable item that calls onSelect.
+ *
+ * @param actions Actions must be less or equal to mesure level
+ * @param onSelect A callback that takes a mesure id.
+ */
+const actionsToMenuItems = (
   actions: ActionReferentiel[],
   onSelect: (actionId: string) => void
 ): React.ReactNode[] => {
   return actions.map((action: ActionReferentiel): React.ReactNode => {
-    if (
-      actionIdDepth(action.id) < referentielMesureDepth(action.id) &&
-      actionsToOptions(action.actions, onSelect)
-    )
+    if (actionIdDepth(action.id) < referentielMesureDepth(action.id))
       return (
         <NestedMenuItem
           parentMenuOpen={true}
           label={<div className="truncate max-w-sm">{displayName(action)}</div>}
         >
-          {actionIdDepth(action.id) === referentielMesureDepth(action.id) && (
-            <MenuItem>
-              <div
-                className="truncate max-w-sm"
-                onClick={() => onSelect(action.id)}
-              >
-                {displayName(action)}
-              </div>
-            </MenuItem>
-          )}
+          {actionsToMenuItems(action.actions, onSelect)}
         </NestedMenuItem>
       );
+    else if (actionIdDepth(action.id) === referentielMesureDepth(action.id))
+      return (
+        <MenuItem>
+          <div
+            className="truncate max-w-sm"
+            onClick={() => onSelect(action.id)}
+          >
+            {displayName(action)}
+          </div>
+        </MenuItem>
+      );
+    throw `Error building quick nav item: "${action.id}" is smaller than mesure level`;
   });
 };
 
+/**
+ * The nav bar at the to of an orientation page, made of several
+ * OrientationSwitcher
+ */
 export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
   const parents = searchParents(props.action.id, referentielActions);
   const epciId = useEpciId()!;
@@ -53,6 +66,7 @@ export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
       <Link to={`/collectivite/${epciId}/referentiels`}>Référentiels</Link>
       <span className="mx-2"> / </span>
       {parents.map(parent => {
+        // we build a menu for every parent
         return (
           <>
             <OrientationSwitcher action={parent} />
@@ -60,12 +74,14 @@ export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
           </>
         );
       })}
-
       <OrientationSwitcher action={props.action} />
     </nav>
   );
 };
 
+/**
+ * Builds a link that opens a menu showing the action siblings as items.
+ */
 export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
   const [opened, setOpened] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
@@ -78,13 +94,12 @@ export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
   const epciId = useEpciId()!;
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setOpened(false);
   };
 
   const onSelect = (selectedId: string) => {
-    handleClose();
     setOpened(false);
-    const path =
+    const path = // makes formater work
       `/collectivite/${epciId}/action/` +
       `${referentielId(selectedId)}/` +
       selectedId;
@@ -93,7 +108,7 @@ export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
 
   return (
     <>
-      <span
+      <div
         className="truncate max-w-lg"
         aria-controls={menuId}
         aria-haspopup="true"
@@ -103,9 +118,17 @@ export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
         }}
       >
         {displayName(props.action)}
-      </span>
-      <Menu id={menuId} open={opened} onClose={handleClose} anchorEl={anchorEl}>
-        {opened && actionsToOptions(siblings!, onSelect)}
+      </div>
+      <Menu
+        id={menuId}
+        open={opened}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+        getContentAnchorEl={null}
+        anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
+        transformOrigin={{vertical: 'top', horizontal: 'left'}}
+      >
+        {actionsToMenuItems(siblings!, onSelect)}
       </Menu>
     </>
   );
