@@ -21,7 +21,7 @@ import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
  * When actions are above mesure level we show nested items until we are at
  * the mesure level where we show a clickable item that calls onSelect.
  *
- * @param actions Actions must be less or equal to mesure level
+ * @param actions Actions must be less or equal to mesure depth
  * @param onSelect A callback that takes a mesure id.
  */
 const actionsToMenuItems = (
@@ -49,7 +49,7 @@ const actionsToMenuItems = (
           </div>
         </MenuItem>
       );
-    throw `Error building quick nav item: "${action.id}" is smaller than mesure level`;
+    throw `Error building quick nav item: "${action.id}" is below mesure depth`;
   });
 };
 
