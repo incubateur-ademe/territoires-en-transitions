@@ -109,7 +109,7 @@ export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
   return (
     <>
       <div
-        className="truncate max-w-lg"
+        className="truncate max-w-lg cursor-pointer"
         aria-controls={menuId}
         aria-haspopup="true"
         onClick={e => {
