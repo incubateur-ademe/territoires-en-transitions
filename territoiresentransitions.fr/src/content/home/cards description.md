@@ -1,6 +1,6 @@
 ## Situez-vous par rapport aux référentiels nationaux
 
-Évaluez vos politiques économie circulaire et climat-air-énergie et faites labelliser le score de performance de vos actions réalisées."
+Évaluez vos politiques économie circulaire et climat-air-énergie et faites labelliser le score de performance de vos actions réalisées.
 
 ## Gérez votre plan d'actions
 
