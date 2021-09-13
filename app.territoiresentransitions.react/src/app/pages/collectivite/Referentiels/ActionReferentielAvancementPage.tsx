@@ -14,14 +14,9 @@ export const ActionReferentielAvancementPage = () => {
     referentiel: 'cae' | 'eci';
   }>();
 
-  const displayProgressStat = referentiel === 'eci';
-
   return (
     <Suspense fallback={renderLoader()}>
-      <ActionReferentielAvancement
-        actionId={actionId}
-        displayProgressStat={displayProgressStat}
-      />
+      <ActionReferentielAvancement actionId={actionId} />
     </Suspense>
   );
 };

@@ -13,13 +13,7 @@ import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 
-const ActionReferentielAvancement = ({
-  actionId,
-  displayProgressStat,
-}: {
-  actionId: string;
-  displayProgressStat: boolean;
-}) => {
+const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   const action = searchById(referentielActions, actionId);
   if (!action) {
     return <Link to="./referentiels" />;
@@ -41,7 +35,7 @@ const ActionReferentielAvancement = ({
         <ProgressStat
           action={action}
           position="left"
-          className={` ${displayProgressStat ? 'w-full mb-10' : 'hidden'}`}
+          className="w-full mb-10"
         />
         <div className="w-2/3">
           <DescriptionContextAndRessourcesDialogButton action={action} />
@@ -54,8 +48,8 @@ const ActionReferentielAvancement = ({
           <ActionReferentielAvancementRecursiveCard
             action={action}
             key={action.id}
-            displayProgressStat={displayProgressStat}
             displayAddFicheActionButton={true}
+            displayProgressStat={true}
           />
         ))}
       </section>
@@ -68,7 +62,10 @@ const ActionReferentielAvancement = ({
         )}
 
         {relatedIndicateurs.map(indicateur => (
-          <IndicateurReferentielCard indicateur={indicateur} />
+          <IndicateurReferentielCard
+            key={indicateur.id}
+            indicateur={indicateur}
+          />
         ))}
       </section>
     </div>

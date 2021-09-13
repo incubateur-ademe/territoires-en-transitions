@@ -129,7 +129,7 @@ export const epciStore = new HybridStore<EpciStorable>({
   deserializer: serialized => new EpciStorable(serialized as EpciInterface),
 });
 
-export const actionReferentielScoreStore =
+export const actionEciReferentielScoreStore =
   new HybridStore<ActionReferentielScoreStorable>({
     host: ENV.backendHost,
     endpoint: () => `v2/notation/eci/${getCurrentEpciId()}`,
@@ -140,6 +140,24 @@ export const actionReferentielScoreStore =
         serialized as ActionReferentielScoreInterface
       ),
   });
+
+export const actionCaeReferentielScoreStore =
+  new HybridStore<ActionReferentielScoreStorable>({
+    host: ENV.backendHost,
+    endpoint: () => `v2/notation/cae/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
+    serializer: storable => storable,
+    deserializer: serialized =>
+      new ActionReferentielScoreStorable(
+        serialized as ActionReferentielScoreInterface
+      ),
+  });
+
+export const getActionReferentielScoreStoreFromId = (id: string) => {
+  if (id.startsWith('economie_circulaire'))
+    return actionEciReferentielScoreStore;
+  else return actionCaeReferentielScoreStore;
+};
 
 export const actionMetaStore = new HybridStore<ActionMetaStorable>({
   host: ENV.backendHost,

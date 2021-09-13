@@ -2,7 +2,7 @@ import math
 import pytest
 
 from api.notation.referentiel import Referentiel
-from api.notation.referentiel_eci import referentiel_eci
+from api.notation.referentiels import referentiel_eci
 
 
 def _points_error_message(referentiel: Referentiel, index: tuple) -> str:
@@ -33,3 +33,31 @@ def test_eci_action_points(index):
         assert math.isclose(
             total_points, referentiel_eci.points[index]
         ), _points_error_message(referentiel_eci, index)
+
+
+def assert_referentiel_total_points_is_500(referentiel: Referentiel, name: str):
+    total_points = referentiel.points[()]
+    detailed_message_for_axes = "\n".join(
+        [
+            f"- L'axe {k} compte {referentiel.points.get(str(k), )} points;"
+            for k in range(1, 7)
+        ]
+    )
+
+    assert (
+        total_points == 500
+    ), f"La somme des points du référentiel {name} est de {total_points} au lieu de 500. --> {detailed_message_for_axes}"
+
+
+def test_import_referentiel_eci():
+    from api.notation.referentiels import referentiel_eci
+
+    assert referentiel_eci
+    assert_referentiel_total_points_is_500(referentiel_eci, "Economie Circulaire")
+
+
+def test_import_referentiel_cae():
+    from api.notation.referentiels import referentiel_cae
+
+    assert referentiel_cae
+    assert_referentiel_total_points_is_500(referentiel_cae, "Climat Air Energie")
