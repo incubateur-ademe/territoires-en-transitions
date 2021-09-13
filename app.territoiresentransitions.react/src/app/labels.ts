@@ -1,4 +1,5 @@
-import type {Avancement, Referentiel} from 'types';
+import * as R from 'ramda';
+import type {Avancement, FicheActionAvancement, Referentiel} from 'types';
 
 // Define all labels from app
 export const referentielToName: Record<Referentiel, string> = {
@@ -13,6 +14,11 @@ export const avancementLabels: Omit<Record<Avancement, string>, ''> = {
   en_cours: 'En cours',
   faite: 'Faite',
 };
+
+export const ficheActionAvancementLabels: Record<
+  FicheActionAvancement,
+  string
+> = R.omit(['non_concernee', 'programmee'], avancementLabels);
 
 export const epciCard_AxisShortLabel: Record<string, string> = {
   economie_circulaire__1: '1 - Stratégie globale',
