@@ -4,7 +4,7 @@ import {v4 as uuid} from 'uuid';
 import {AvancementRadioButton} from 'ui/shared/AvancementRadioButton';
 import {Avancement} from 'types';
 import {Option, Options} from 'types';
-import {avancementLabels} from 'app/labels';
+import {ficheActionAvancementLabels} from 'app/labels';
 import * as R from 'ramda';
 
 type AvancementRadioFieldProps = {
@@ -25,14 +25,10 @@ export const AvancementRadioField: FC<AvancementRadioFieldProps & FieldProps> =
   }) => {
     const htmlId = props.id ?? uuid();
 
-    const filtered_avancementLabels = R.omit(
-      ['non_concernee', 'programmee'],
-      avancementLabels
-    );
     const avancements: Options<Avancement> = R.values(
       R.mapObjIndexed(
         (label, value) => ({value, label}),
-        filtered_avancementLabels
+        ficheActionAvancementLabels
       )
     );
 

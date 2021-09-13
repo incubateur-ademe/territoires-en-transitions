@@ -7,4 +7,9 @@ export type Avancement =
   | 'non_concernee'
   | 'en_cours';
 
+export type FicheActionAvancement = Exclude<
+  Avancement,
+  'non_concernee' | 'programmee' | ''
+>;
+
 export type Referentiel = 'eci' | 'cae';

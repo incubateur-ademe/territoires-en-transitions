@@ -71,6 +71,16 @@ export const ficheActionStore = new HybridStore<FicheActionStorable>({
     new FicheActionStorable(serialized as FicheActionInterface),
 });
 
+export const makeFicheActionStoreForEpci = (props: {epciId: string}) =>
+  new HybridStore<FicheActionStorable>({
+    host: ENV.backendHost,
+    endpoint: () => `v2/${FicheAction.pathname}/${props.epciId}`,
+    authorization: defaultAuthorization,
+    serializer: storable => storable,
+    deserializer: serialized =>
+      new FicheActionStorable(serialized as FicheActionInterface),
+  });
+
 export const ficheActionCategorieStore =
   new HybridStore<FicheActionCategorieStorable>({
     host: ENV.backendHost,
