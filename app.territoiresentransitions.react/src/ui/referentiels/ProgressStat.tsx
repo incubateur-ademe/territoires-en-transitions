@@ -90,30 +90,22 @@ export const ProgressStatStatic = ({
   );
 };
 
-export const GaugeProgressStat = ({
-  action,
-  className,
+export const UiGaugeProgressStat = ({
+  score,
 }: {
-  action: ActionReferentiel;
-  className?: string;
+  score: ActionReferentielScoreStorable | null;
 }) => {
-  const storableId = ActionReferentielScoreStorable.buildId(action.id);
-  const score = useActionReferentielScore(storableId);
-
   const makeStyle = (score: ActionReferentielScoreStorable | null) => {
     const state = inferStateFromScore(score);
     const color = progressStateColors[state];
     return {
-      width: '25%', //percentageTextFromScore(score),
-      'background-color': color,
+      width: percentageTextFromScore(score),
+      backgroundColor: color,
     };
   };
-
   return (
     <div className="flex items-center justify-between">
-      <div className={`font-bold text-xs`}>
-        {percentageTextFromScore(score)}
-      </div>
+      <div className="font-bold text-xs">{percentageTextFromScore(score)}</div>
       <div className="w-2"></div>
       <div className="w-10">
         <div className="h-2 bg-gray-300 rounded-md">
@@ -127,6 +119,13 @@ export const GaugeProgressStat = ({
   );
 };
 
-ProgressStatStatic.defaultProps = {
-  showPoints: true,
+export const CurrentEpciGaugeProgressStat = ({
+  action,
+}: {
+  action: ActionReferentiel;
+}) => {
+  const storableId = ActionReferentielScoreStorable.buildId(action.id);
+  const score = useActionReferentielScore(storableId);
+
+  return <UiGaugeProgressStat score={score} />;
 };

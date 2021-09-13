@@ -19,6 +19,18 @@ const useStyle = makeStyles(
   )
 );
 
+export const RootProgressStat = (props: {
+  state: ProgressState;
+  score: ActionReferentielScoreStorable | null;
+}) => {
+  const classes = useStyle();
+  return (
+    <div className={`font-bold text-lg px-2 py-1 ${classes[props.state]}`}>
+      {percentageTextFromScore(props.score)}
+    </div>
+  );
+};
+
 export const EconomieCirculaireRootProgressStat = () => {
   const storableId = ActionReferentielScoreStorable.buildId(
     'economie_circulaire'
@@ -30,11 +42,6 @@ export const EconomieCirculaireRootProgressStat = () => {
   }, [score]);
 
   const [state, setState] = useState<ProgressState>('alert');
-  const classes = useStyle();
 
-  return (
-    <div className={`font-bold text-lg px-2 py-1 ${classes[state]}`}>
-      {percentageTextFromScore(score)}
-    </div>
-  );
+  return <RootProgressStat score={score} state={state} />;
 };
