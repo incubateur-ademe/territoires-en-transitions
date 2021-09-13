@@ -1,6 +1,6 @@
 <script>
   import cards from '../../content/home/cards/cards.json';
-  import FooterLink from "../Footer/FooterLink.svelte";
+  import FooterLink from '../Footer/FooterLink.svelte';
 </script>
 
 {#each cards as card}

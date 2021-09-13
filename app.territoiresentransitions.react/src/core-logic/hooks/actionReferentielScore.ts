@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
-import {actionReferentielScoreStore} from 'core-logic/api/hybridStores';
+import {getActionReferentielScoreStoreFromId} from 'core-logic/api/hybridStores';
 
 export const useActionReferentielScore = (
   actionReferentielScoreStorableId: string
@@ -8,6 +8,9 @@ export const useActionReferentielScore = (
   const [actionReferentielScore, setActionReferentielScore] =
     useState<ActionReferentielScoreStorable | null>(null);
 
+  const actionReferentielScoreStore = getActionReferentielScoreStoreFromId(
+    actionReferentielScoreStorableId
+  );
   useEffect(() => {
     const listener = async () => {
       const actionReferentielScore =

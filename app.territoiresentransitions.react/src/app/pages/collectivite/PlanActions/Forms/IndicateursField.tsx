@@ -5,12 +5,53 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
-import {indicateurToEmoji} from 'app/pages/collectivite/PlanActions/Forms/toEmoji';
+import {refToEmoji, shortenLabel} from './utils';
+
+const indicateurIdRegexp =
+  '(?<ref>eci|cae)-(?<number>[0-9]{1,3})(?<literal>.+)?';
 
 const indicateursById = () => {
   const results = new Map<string, IndicateurReferentiel>();
   indicateurs.forEach(indicateur => results.set(indicateur.id, indicateur));
   return results;
+};
+
+const sortIndicateurIds = (indicateursIds: string[]): string[] =>
+  indicateursIds.sort((a, b) => {
+    const a_groups = a.match(indicateurIdRegexp)?.groups;
+    const b_groups = a.match(indicateurIdRegexp)?.groups;
+
+    if (!a_groups || !b_groups) return a.localeCompare(b);
+    const a_number = Number(a_groups['number']);
+    const b_number = Number(b_groups['number']);
+
+    if (a_number !== b_number) {
+      return a_number > b_number ? 1 : -1;
+    }
+
+    return (a_groups['literal'] ?? '').localeCompare(b_groups['literal'] ?? '');
+  });
+
+const allIndicateurs = indicateursById();
+const allIndicateurIds = indicateurs.map(indicateur => indicateur.id);
+const allSortedIndicateurIds = [
+  ...sortIndicateurIds(
+    allIndicateurIds.filter(indicateurId => indicateurId.startsWith('cae'))
+  ),
+  ...sortIndicateurIds(
+    allIndicateurIds.filter(indicateurId => indicateurId.startsWith('eci'))
+  ),
+];
+
+const renderIndicateurOption = (id: string) => {
+  const indicateur = allIndicateurs.get(id)!;
+  const id_groups = id.match(indicateurIdRegexp)?.groups;
+  if (!id_groups) return id;
+  const ref = id_groups['ref'] as 'eci' | 'cae';
+
+  return `${refToEmoji[ref]} ${Number(id_groups['number'])}${
+    id_groups['literal'] ? '.' + id_groups['literal'] : ''
+  } - ${indicateur.nom}`;
 };
 
 type IndicateursFieldProps = {
@@ -32,11 +73,6 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
   const isTouched = touched[field.name];
-  const allIndicateurs = indicateursById();
-
-  const allIndicateurIds = indicateurs
-    .map(indicateur => indicateur.id)
-    .sort((a, b) => a.localeCompare(b));
 
   return (
     <fieldset className="block">
@@ -46,17 +82,11 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
       <Autocomplete
         multiple
         id={htmlId}
-        options={allIndicateurIds}
+        options={allSortedIndicateurIds}
         className="bg-beige list-none"
-        renderOption={id => {
-          const indicateur = allIndicateurs.get(id)!;
-          return `${indicateurToEmoji(indicateur)} ${indicateur.id} - ${
-            indicateur.nom
-          }`;
-        }}
+        renderOption={renderIndicateurOption}
         getOptionLabel={id => {
-          const indicateur = allIndicateurs.get(id)!;
-          return `${indicateurToEmoji(indicateur)} ${indicateur.id}`;
+          return shortenLabel(renderIndicateurOption(id));
         }}
         value={field.value}
         onChange={(e, value) => {
