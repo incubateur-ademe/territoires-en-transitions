@@ -69,12 +69,14 @@ export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
         // we build a menu for every parent
         return (
           <>
-            <OrientationSwitcher action={parent} />
-            <span className="mx-2"> / </span>
+            <OrientationSwitcher action={parent} key={parent.id} />
+            <span className="mx-2" key={parent.id + 'sep'}>
+              /
+            </span>
           </>
         );
       })}
-      <OrientationSwitcher action={props.action} />
+      <OrientationSwitcher action={props.action} key={props.action.id} />
     </nav>
   );
 };
