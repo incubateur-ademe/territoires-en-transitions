@@ -1,5 +1,15 @@
 [
   {
+    "title": "Situez-vous par rapport aux référentiels nationaux",
+    "image": {
+      "title": "Titre",
+      "alt": "",
+      "image": "./img/picto-4.svg"
+    },
+    "description": "Évaluez vos politiques économie circulaire et climat-air-énergie et faites labelliser le score de performance de vos actions réalisées.",
+    "link": ""
+  },
+  {
     "title": "Gérez votre plan d'actions ",
     "image": {
       "title": "Titre",
@@ -17,16 +27,6 @@
       "image": "./img/picto-2.svg"
     },
     "description": "Gérez collectivement et facilement la mise à jour des actions et des données. Intégrez vos propres indicateurs et comparez vos résultats aux autres collectivités.",
-    "link": ""
-  },
-  {
-    "title": "Situez-vous par rapport aux référentiels nationaux",
-    "image": {
-      "title": "Titre",
-      "alt": "",
-      "image": "./img/picto-4.svg"
-    },
-    "description": "Confrontez-vous aux référentiels pour évaluer votre plan d'actions par rapport aux meilleures pratiques disponibles.",
     "link": ""
   }
 ]
