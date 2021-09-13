@@ -8,7 +8,6 @@ import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/Indicat
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
 import {CategoriePicker} from 'app/pages/collectivite/PlanActions/Forms/CategoriePicker';
 import {ActionReferentielAvancementCard} from 'ui/referentiels';
-import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
 import {actions} from 'generated/data/referentiels';
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
@@ -19,6 +18,7 @@ import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseSt
 import {Spacer} from 'ui/shared';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
+import {searchActionById} from 'utils/actions';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -39,7 +39,7 @@ function onKeyDown(event: React.KeyboardEvent) {
 const LinkedActionsReferentielCards = () => {
   const {values} = useFormikContext<FicheActionInterface>();
   const linkedActions = values.referentiel_action_ids.map(
-    actionId => searchById(actions, actionId)!
+    actionId => searchActionById(actionId, actions)!
   );
 
   return (
