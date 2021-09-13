@@ -82,28 +82,12 @@ class Referentiel:
         If mesure_level is 3, then actions points of 1, 1.1 and 1.1.1 are expressed in points. Hence, should some to 500.
         """
         # add points from orientations up to root
-        # missing_mesures = []
-        # given_mesures = []
         for index in self.backward:
             if len(index) == self.mesure_depth:
                 self.points[index] = self.actions[index].points
-
-                # assert (
-                #     self.actions[index].points > 0.0
-                # ), f"Action {index} is a mesure but has no points specified. "
-
-                # ----REMOVE FROM HERE ---------
-                if self.points[index] == -1:
-                    self.points[index] = 8
-
-                # if self.actions[index].points == -1:
-                #     missing_mesures.append(index)
-                #     self.points[index] = 0
-                # else:
-                #     given_mesures.append(index)
-                #     self.points[index] = self.actions[index].points
-
-                # ---- TO THERE ---------
+                assert (
+                    self.actions[index].points > 0.0
+                ), f"Action {index} is a mesure but has no points specified. "
 
             elif len(index) < self.mesure_depth:
                 self.points[index] = sum(
