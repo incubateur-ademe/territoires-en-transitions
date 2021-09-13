@@ -39,7 +39,7 @@ def assert_referentiel_total_points_is_500(referentiel: Referentiel, name: str):
     total_points = referentiel.points[()]
     detailed_message_for_axes = "\n".join(
         [
-            f"- L'axe {k} compte {referentiel.points[(str(k), )]} points;"
+            f"- L'axe {k} compte {referentiel.points.get(str(k), )} points;"
             for k in range(1, 7)
         ]
     )
