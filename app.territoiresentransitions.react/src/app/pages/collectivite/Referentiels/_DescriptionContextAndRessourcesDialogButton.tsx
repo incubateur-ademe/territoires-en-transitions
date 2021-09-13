@@ -8,6 +8,7 @@ import {
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useState} from 'react';
 import Dialog from '@material-ui/core/Dialog';
+import {addTargetToContentAnchors} from 'utils/content';
 
 const DescriptionBlock = ({description}: {description?: string}) => {
   if (!description) return <></>;
@@ -16,7 +17,9 @@ const DescriptionBlock = ({description}: {description?: string}) => {
       <div className="font-bold pb-2 text-lg">Description</div>
       <div
         className="htmlContent"
-        dangerouslySetInnerHTML={{__html: description}}
+        dangerouslySetInnerHTML={{
+          __html: addTargetToContentAnchors(description),
+        }}
       />
     </div>
   );
