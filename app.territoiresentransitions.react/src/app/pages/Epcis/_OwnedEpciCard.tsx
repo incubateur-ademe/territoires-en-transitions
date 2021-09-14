@@ -37,19 +37,19 @@ const DetailedEpciCard = ({epci}: {epci: EpciStorable}) => {
         <div>
           <DetailedReferentiel
             epciId={epci.id}
-            scores={eciScores}
-            axes={eciAxes}
-            title="Économie Circulaire"
-            referentiel="eci"
+            scores={caeScores}
+            axes={caeAxes}
+            title="Climat Air Énergie"
+            referentiel="cae"
           />
         </div>
         <div>
           <DetailedReferentiel
             epciId={epci.id}
-            scores={caeScores}
-            axes={caeAxes}
-            title="Climat Air Énergie"
-            referentiel="cae"
+            scores={eciScores}
+            axes={eciAxes}
+            title="Économie Circulaire"
+            referentiel="eci"
           />
         </div>
       </div>

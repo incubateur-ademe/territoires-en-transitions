@@ -37,6 +37,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
           action={action}
           position="left"
           className="w-full mb-10"
+          showPoints={true}
         />
         <div className="w-2/3">
           <DescriptionContextAndRessourcesDialogButton action={action} />

@@ -5,6 +5,7 @@ import {ActionDescriptionExpandPanel} from 'ui/shared';
 import {ActionReferentielTitle} from './ActionReferentielTitle';
 import {referentielToName} from 'app/labels';
 import {Referentiel} from 'types';
+import {getCurrentEpciId} from 'core-logic/api/currentEpci';
 
 export const ActionReferentielTitleCard = ({
   action,
@@ -16,7 +17,9 @@ export const ActionReferentielTitleCard = ({
   return (
     <article className="bg-beige my-4">
       <Link
-        to={`./action/${referentiel}/${action.id}`}
+        to={`/collectivite/${getCurrentEpciId()}/action/${referentiel}/${
+          action.id
+        }`}
         className="LinkedCardHeader"
       >
         <div className="flex p-4 justify-between">

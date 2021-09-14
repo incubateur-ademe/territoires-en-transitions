@@ -4,7 +4,7 @@ import {LazyDetails} from 'ui/shared/LazyDetails';
 import {
   ActionReferentielTitle,
   ActionReferentielTitleCard,
-  ProgressStat,
+  ProgressStatStatic,
 } from 'ui/referentiels';
 import {Chevron} from 'ui/shared/Chevron';
 
@@ -30,7 +30,7 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
               <Chevron direction={opened ? 'down' : 'left'} />
             </div>
             <div className="mb-2">
-              <ProgressStat
+              <ProgressStatStatic
                 className="w-100"
                 action={action}
                 position="right"
