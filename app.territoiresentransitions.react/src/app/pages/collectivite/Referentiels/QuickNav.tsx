@@ -32,6 +32,7 @@ const actionsToMenuItems = (
     if (actionIdDepth(action.id) < referentielMesureDepth(action.id))
       return (
         <NestedMenuItem
+          key={action.id}
           parentMenuOpen={true}
           label={<div className="truncate max-w-sm">{displayName(action)}</div>}
         >
@@ -40,7 +41,7 @@ const actionsToMenuItems = (
       );
     else if (actionIdDepth(action.id) === referentielMesureDepth(action.id))
       return (
-        <MenuItem>
+        <MenuItem key={action.id}>
           <div
             className="truncate max-w-sm"
             onClick={() => onSelect(action.id)}
@@ -68,12 +69,12 @@ export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
       {parents.map(parent => {
         // we build a menu for every parent
         return (
-          <>
-            <OrientationSwitcher action={parent} key={parent.id} />
+          <div key={parent.id} className="flex">
+            <OrientationSwitcher action={parent} />
             <span className="mx-2" key={parent.id + 'sep'}>
               /
             </span>
-          </>
+          </div>
         );
       })}
       <OrientationSwitcher action={props.action} key={props.action.id} />
