@@ -7,8 +7,8 @@ import React from 'react';
 import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
 
 const AxisSectionClimatAirEnergie = ({axis}: {axis: ActionReferentiel}) => (
-  <div className="flex flex-col justify-between  mt-8">
-    <ActionReferentielTitle action={axis} className="fr-h2" />
+  <div className="flex flex-col justify-between  mb-8">
+    <ActionReferentielTitle action={axis} className="fr-h3" />
     {axis.actions.map(subAxis => (
       <ExpandableAction action={subAxis} key={subAxis.id} />
     ))}
