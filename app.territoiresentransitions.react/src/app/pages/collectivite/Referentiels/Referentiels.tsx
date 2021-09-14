@@ -75,10 +75,18 @@ function ReferentielTitle(props: {view: View}) {
     <header className="flex flex-row items-center justify-between mb-6">
       <h2 className="fr-h2">{viewTitles[props.view]}</h2>
       {props.view === 'eci' && (
-        <ProgressStatStatic position="right" action={eciReferentiel} />
+        <ProgressStatStatic
+          position="right"
+          action={eciReferentiel}
+          showPoints={true}
+        />
       )}
       {props.view === 'cae' && (
-        <ProgressStatStatic position="right" action={caeReferentiel} />
+        <ProgressStatStatic
+          position="right"
+          action={caeReferentiel}
+          showPoints={true}
+        />
       )}
     </header>
   );

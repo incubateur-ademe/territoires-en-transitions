@@ -34,8 +34,6 @@ export const useEpciPlanActionAvancementSummmary = (
   ] = useState<PlanActionAvancementSummmary>({enRetardCount: 0, total: 0});
 
   useEffect(() => {
-    console.log('useEpciPlanActionAvancementSummmary useEffect ');
-
     const store = getFicheActionStoreForEpci(epciId);
     const listener = async () => {
       const ficheActions = await store.retrieveAll();
@@ -48,7 +46,6 @@ export const useEpciPlanActionAvancementSummmary = (
         JSON.stringify(newState) !==
         JSON.stringify(epciPlanActionAvancementSummmary)
       ) {
-        console.log('setEpciPlanActionAvancementSummmary ');
         setEpciPlanActionAvancementSummmary(newState);
       }
     });

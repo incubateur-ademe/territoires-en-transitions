@@ -27,11 +27,7 @@ export const useActionReferentielScore = (
           return;
         }
         if (!actionReferentielScore.equals(storable))
-          console.log(
-            'it changed, hence setActionReferentielScore to ',
-            storable
-          );
-        setActionReferentielScore(storable);
+          setActionReferentielScore(storable);
       });
     actionReferentielScoreStore.addListener(listener);
     return () => {

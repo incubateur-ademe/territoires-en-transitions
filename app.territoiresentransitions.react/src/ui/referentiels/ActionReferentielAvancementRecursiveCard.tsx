@@ -73,6 +73,7 @@ export const ActionReferentielAvancementCard = ({
           action={action}
           position="right"
           className={`${displayProgressStat ? '' : 'hidden'}`}
+          showPoints={true}
         />
       </div>
       <div className="flex justify-between my-6">
