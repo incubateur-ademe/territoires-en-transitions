@@ -3,16 +3,17 @@ import {useFiche} from 'core-logic/hooks/fiches';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
 import {FicheActionForm} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {FicheActionInterface} from 'generated/models/fiche_action';
-import {ficheActionStore} from 'core-logic/api/hybridStores';
+import {getFicheActionStoreForEpci} from 'core-logic/api/hybridStores';
 
 /**
  * This is the main component of FicheActionPage, use to show a fiche.
  */
 const FicheActionEditor = () => {
   const {epciId, ficheUid} = useParams<{epciId: string; ficheUid: string}>();
+  const ficheActionStore = getFicheActionStoreForEpci(epciId);
   const ficheStorableId = FicheActionStorable.buildId(epciId, ficheUid);
   const history = useHistory();
-  const fiche = useFiche(ficheStorableId);
+  const fiche = useFiche(ficheStorableId, epciId);
 
   const save = async (fiche: FicheActionInterface) => {
     await ficheActionStore.store(new FicheActionStorable(fiche));

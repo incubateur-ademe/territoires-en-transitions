@@ -1,9 +1,10 @@
+import {getFicheActionStoreForEpci} from 'core-logic/api/hybridStores';
 import {useEffect, useState} from 'react';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
-import {ficheActionStore} from 'core-logic/api/hybridStores';
 
-export const useFiche = (ficheId: string) => {
+export const useFiche = (ficheId: string, epciId: string) => {
   const [fiche, setFiche] = useState<FicheActionStorable | null>(null);
+  const ficheActionStore = getFicheActionStoreForEpci(epciId);
 
   useEffect(() => {
     const listener = async () => {
@@ -23,7 +24,8 @@ export const useFiche = (ficheId: string) => {
   return fiche;
 };
 
-export const useAllFiches = () => {
+export const useAllFiches = (epciId: string) => {
+  const ficheActionStore = getFicheActionStoreForEpci(epciId);
   const [fiches, setFiches] = useState<FicheActionStorable[]>([]);
 
   useEffect(() => {
