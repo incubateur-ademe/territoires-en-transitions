@@ -13,8 +13,6 @@ export const ActionReferentielTitleCard = ({
   action: ActionReferentiel;
   referentiel: Referentiel;
 }) => {
-  const displayProgressStat = referentiel === 'eci';
-
   return (
     <article className="bg-beige my-4">
       <Link
@@ -27,11 +25,7 @@ export const ActionReferentielTitleCard = ({
               {referentielToName[referentiel]}
             </span>
           </div>
-          <ProgressStat
-            className={`${displayProgressStat ? 'w-100' : 'hidden'}`}
-            action={action}
-            position="right"
-          />
+          <ProgressStat className="w-100" action={action} position="right" />
         </div>
         <div className="p-4 flex justify-between">
           <ActionReferentielTitle action={action} />
