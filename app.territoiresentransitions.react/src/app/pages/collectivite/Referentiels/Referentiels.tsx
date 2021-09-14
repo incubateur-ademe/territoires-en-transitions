@@ -10,6 +10,7 @@ import {ReferentielCombinedByThematique} from 'app/pages/collectivite/Referentie
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import * as R from 'ramda';
 import {ProgressStat} from 'ui/referentiels';
+import {useParams} from 'react-router-dom';
 
 type View = 'cae' | 'eci' | 'both';
 
@@ -50,8 +51,11 @@ export const ActionsReferentiels = () => {
     {value: 'eci', label: 'Économie Circulaire'},
     {value: 'both', label: 'Vue combinée'},
   ];
+  const {referentiel} = useParams<{
+    referentiel?: 'cae' | 'eci' | 'both';
+  }>();
 
-  const [view, setView] = React.useState<View>('eci');
+  const [view, setView] = React.useState<View>(referentiel ?? 'cae');
 
   return (
     <main className="fr-container mt-9 mb-16">

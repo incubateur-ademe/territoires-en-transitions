@@ -16,13 +16,12 @@ import {FicheActionCreationPage} from 'app/pages/collectivite/PlanActions/FicheA
 export const CollectiviteRoutes = () => {
   const {path} = useRouteMatch();
 
-  // if (false) {
-  //   // todo redirect when user is not authenticated: https://reactrouter.com/web/example/auth-workflow
-  //   return <Redirect to="" />;
-  // }
   return (
     <>
       <Route path={`${path}/referentiels/`}>
+        <ReferentielsPage />
+      </Route>
+      <Route path={`${path}/referentiel/:referentiel/`}>
         <ReferentielsPage />
       </Route>
       <Route path={`${path}/action/:referentiel/:actionId`}>

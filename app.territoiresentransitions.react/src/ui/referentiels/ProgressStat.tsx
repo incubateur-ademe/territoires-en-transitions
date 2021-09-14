@@ -48,8 +48,10 @@ const useStyle = makeStyles({
 
 const ProgressStatText = ({
   score,
+  showPoints,
 }: {
   score: ActionReferentielScoreStorable | null;
+  showPoints: boolean;
 }) => {
   const percentageText = score
     ? `${(score.percentage * 100).toFixed(1)}% `
@@ -64,7 +66,7 @@ const ProgressStatText = ({
   return (
     <>
       <strong className="font-bold">{percentageText}</strong>
-      {pointsRatioText}
+      {showPoints && pointsRatioText}
     </>
   );
 };
@@ -73,10 +75,12 @@ export const ProgressStat = ({
   action,
   position,
   className,
+  showPoints,
 }: {
   action: ActionReferentiel;
   position: 'left' | 'right';
   className?: string;
+  showPoints: boolean;
 }) => {
   const classes = useStyle();
 
@@ -109,7 +113,11 @@ export const ProgressStat = ({
         className ? className : ''
       } ${positionDependentStyle}`}
     >
-      <ProgressStatText score={score} />
+      <ProgressStatText score={score} showPoints={showPoints} />
     </div>
   );
+};
+
+ProgressStat.defaultProps = {
+  showPoints: true,
 };

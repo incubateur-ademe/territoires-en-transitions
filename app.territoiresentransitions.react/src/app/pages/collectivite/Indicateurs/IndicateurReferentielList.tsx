@@ -1,30 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {Thematique, thematiques} from 'generated/data/thematiques';
-
-function LazyDetails(props: {
-  summary: React.ReactNode;
-  children: React.ReactNode;
-  startOpen: boolean;
-}) {
-  const [open, setOpen] = useState(props.startOpen);
-  return (
-    <section className="flex flex-col">
-      <header
-        className="w-full cursor-pointer"
-        onClick={e => {
-          e.preventDefault();
-          setOpen(open => !open);
-        }}
-      >
-        {props.summary}
-      </header>
-      {open && props.children}
-    </section>
-  );
-}
+import {LazyDetails} from 'ui/shared/LazyDetails';
 
 /**
  * Display the list of indicateur referentiel.
