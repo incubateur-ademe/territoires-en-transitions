@@ -1,24 +1,19 @@
-import type {EpciStorable} from 'storables/EpciStorable';
-import {useEpciFicheAction} from 'core-logic/hooks';
-import * as R from 'ramda';
-import {FicheActionStorable} from 'storables/FicheActionStorable';
 import {Spacer} from 'ui/shared';
 import {ficheActionAvancementColors} from 'app/theme';
-import {Avancement} from 'types';
+import {FicheActionAvancement} from 'types';
 import {DetailedEpciCardPropsLink} from 'app/pages/Epcis/_DetailedEpciCardPropsLink';
+import {useEpciPlanActionAvancementSummmary} from 'core-logic/hooks';
+import * as R from 'ramda';
 
 const addSAtTheEndOfWordIfCountGreaterThan1 = (props: {
   count: number;
   word: string;
 }): string => `${props.word}${props.count === 1 ? '' : 's'}`;
 
-const hiddenIfCountIsZero = (count: number) => `${count ? '' : 'hidden'}`;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const hiddenIfNullable = (variable: any) => `${variable ? '' : 'hidden'}`;
 
-export const DetailedPlanActions = ({epci}: {epci: EpciStorable}) => {
-  const monPlanDActions = useEpciFicheAction({
-    epciId: epci.id,
-  });
-
+export const DetailedPlanActions = ({epciId}: {epciId: string}) => {
   return (
     <div>
       {' '}
@@ -33,33 +28,57 @@ export const DetailedPlanActions = ({epci}: {epci: EpciStorable}) => {
         <div className="text-sm font-bold">Mon plan d'action</div>
         <DetailedEpciCardPropsLink
           label="Voir"
-          linkTo={`/collectivite/${epci.id}/plan_actions`} // TODO link to specific plan d'action
+          linkTo={`/collectivite/${epciId}/plan_actions`} // TODO link to specific plan d'action
         />
       </div>
       <Spacer size={2} />
-      <FicheActionAvancementCountBarAndLegend ficheActions={monPlanDActions} />
+      <FicheActionAvancementCountBarAndLegend epciId={epciId} />
     </div>
   );
 };
 
-const FicheActionAvancementCountBarAndLegend = ({
-  ficheActions,
-}: {
-  ficheActions: FicheActionStorable[];
-}) => {
-  const actionCountByAvancement = R.countBy(
-    ficheAction => ficheAction.avancement,
-    ficheActions
-  ) as Record<Avancement, number>; // TODO : infer type with Ramda
-  const actionsEnRetard = ficheActions.filter(
-    ficheAction => ficheAction.en_retard
-  ).length;
-  const nbOfActions = ficheActions.length;
+const FicheActionAvancementCountBarAndLegend = ({epciId}: {epciId: string}) => {
+  const epciPlanActionAvancementSummmary =
+    useEpciPlanActionAvancementSummmary(epciId);
+
+  if (
+    !epciPlanActionAvancementSummmary.avancementsCount ||
+    epciPlanActionAvancementSummmary.total === 0
+  )
+    return <></>;
+  const avancementsCount = epciPlanActionAvancementSummmary.avancementsCount;
+
+  const avancementToGetAdjectiveFromCount: Record<
+    FicheActionAvancement,
+    (count: number) => string
+  > = {
+    faite: count =>
+      addSAtTheEndOfWordIfCountGreaterThan1({count, word: 'faite'}),
+    en_cours: () => 'en cours',
+    pas_faite: count =>
+      addSAtTheEndOfWordIfCountGreaterThan1({count, word: 'non faite'}),
+  };
+
+  const avancementLegends = R.keys(avancementToGetAdjectiveFromCount).map(
+    avancement => {
+      const count = avancementsCount[avancement as FicheActionAvancement] ?? 0;
+      if (count > 0)
+        return `${count} ${avancementToGetAdjectiveFromCount[avancement](
+          count
+        )}`;
+      return undefined;
+    }
+  );
 
   const enCoursPercentage =
-    (actionCountByAvancement['en_cours'] / nbOfActions) * 100;
+    ((epciPlanActionAvancementSummmary.avancementsCount['en_cours'] ?? 0) /
+      epciPlanActionAvancementSummmary.total) *
+    100;
   const faitePercentage =
-    (actionCountByAvancement['faite'] / nbOfActions) * 100;
+    ((epciPlanActionAvancementSummmary.avancementsCount['faite'] ?? 0) /
+      epciPlanActionAvancementSummmary.total) *
+    100;
+
   return (
     <div>
       <div className="">
@@ -80,38 +99,26 @@ const FicheActionAvancementCountBarAndLegend = ({
           ></div>
         </div>
       </div>
-      <div className="flex justify-evenly text-xs">
-        <div className={hiddenIfCountIsZero(actionCountByAvancement['faite'])}>
-          {actionCountByAvancement['faite']}{' '}
-          {addSAtTheEndOfWordIfCountGreaterThan1({
-            word: 'finie',
-            count: actionCountByAvancement['faite'],
-          })}
-        </div>
 
-        <div
-          className={hiddenIfCountIsZero(actionCountByAvancement['en_cours'])}
-        >
-          {actionCountByAvancement['en_cours']} en cours
-        </div>
-        <div
-          className={hiddenIfCountIsZero(actionCountByAvancement['pas_faite'])}
-        >
-          {actionCountByAvancement['pas_faite']}{' '}
-          {addSAtTheEndOfWordIfCountGreaterThan1({
-            word: 'non faite',
-            count: actionCountByAvancement['pas_faite'],
-          })}
-        </div>
+      <div className="flex justify-evenly text-xs">
+        {avancementLegends.map((legend, index) => (
+          <div key={index} className={hiddenIfNullable(legend)}>
+            {legend}
+          </div>
+        ))}
       </div>
-      <div className="flex justify-center text-xs">
+      <div
+        className={`flex justify-center text-xs ${hiddenIfNullable(
+          epciPlanActionAvancementSummmary.enRetardCount
+        )}`}
+      >
         <div className="text-red-600">
-          {actionsEnRetard}{' '}
+          {'( '} {epciPlanActionAvancementSummmary.enRetardCount}{' '}
           {addSAtTheEndOfWordIfCountGreaterThan1({
             word: 'action',
-            count: actionsEnRetard,
+            count: epciPlanActionAvancementSummmary.enRetardCount,
           })}
-          {' en retard'}
+          {' en retard )'}
         </div>
       </div>
     </div>
