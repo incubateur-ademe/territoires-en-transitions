@@ -60,14 +60,6 @@ export const ProgressStatStatic = ({
   const score = useActionReferentielScore(storableId);
 
   useEffect(() => {
-    console.log(
-      '[useEffect in progressStat]. Score ref point is :',
-      score?.referentiel_points,
-      ' and potentiel is ',
-      score?.referentiel_points,
-      ' avancement is',
-      score?.avancement
-    );
     const state = inferStateFromScore(score);
     setState(state);
   }, [score]);
