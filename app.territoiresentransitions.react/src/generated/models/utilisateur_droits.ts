@@ -29,4 +29,12 @@ export class UtilisateurDroits {
     this.epci_id = epci_id;
     this.ecriture = ecriture;
   }
+  equals(other: UtilisateurDroitsInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.ademe_user_id === this.ademe_user_id &&
+      other.epci_id === this.epci_id &&
+      other.ecriture === this.ecriture
+    );
+  }
 }
