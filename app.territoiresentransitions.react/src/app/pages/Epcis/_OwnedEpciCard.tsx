@@ -1,17 +1,17 @@
 import type {EpciStorable} from 'storables/EpciStorable';
 import {caeAxes, eciAxes} from 'utils/referentiels';
-import {useEpciAxisActionReferentielScores} from 'core-logic/hooks';
+import {useEpciAxisReferentielScores} from 'core-logic/hooks';
 
 import {DetailedEpciCardPropsLink} from './_DetailedEpciCardPropsLink';
 import {DetailedPlanActions} from './_DetailedPlanActions';
 import {DetailedReferentiel} from './_DetailedReferentiel';
 
 const DetailedEpciCard = ({epci}: {epci: EpciStorable}) => {
-  const caeScores = useEpciAxisActionReferentielScores({
+  const caeScores = useEpciAxisReferentielScores({
     epciId: epci.id,
     referentiel: 'cae',
   });
-  const eciScores = useEpciAxisActionReferentielScores({
+  const eciScores = useEpciAxisReferentielScores({
     epciId: epci.id,
     referentiel: 'eci',
   });
@@ -30,9 +30,9 @@ const DetailedEpciCard = ({epci}: {epci: EpciStorable}) => {
           />
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-12">
+      <div className="grid grid-cols-3 gap-12 col-end-auto">
         <div>
-          <DetailedPlanActions epci={epci} />
+          <DetailedPlanActions epciId={epci.id} />
         </div>
         <div>
           <DetailedReferentiel

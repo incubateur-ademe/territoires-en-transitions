@@ -12,7 +12,7 @@ const AxisSummary = (props: {
   score: ActionReferentielScoreStorable | null;
 }) => (
   <div className="flex items-center justify-between text-xs">
-    <div className="w-1/2">{props.title}</div>
+    <div className="w-3/5">{props.title}</div>
     <div className="flex">
       <UiGaugeProgressStat score={props.score} />
       <DetailedEpciCardPropsLink
@@ -41,25 +41,30 @@ export const DetailedReferentiel = ({
     <div>
       <div className="flex justify-between items-center">
         <div className="text-lg font-bold">{title}</div>
-        <RootProgressStat state="good" score={root_score} />
+        <RootProgressStat score={root_score} />
       </div>
       <Spacer size={3} />
-      {axes.map(axis => {
-        // todo : use utils to format title
-        const title =
-          epciCard_AxisShortLabel[axis.id] ??
-          `${axis.id_nomenclature} - ${axis.nom}`;
+      <div>
+        {axes.map(axis => {
+          // todo : use utils to format title
+          const title =
+            epciCard_AxisShortLabel[axis.id] ??
+            `${axis.id_nomenclature} - ${axis.nom}`;
 
-        return (
-          <div className="my-1" key={axis.id}>
-            <AxisSummary
-              title={title}
-              epciId={epciId}
-              score={scores.find(score => score.action_id === axis.id) || null}
-            />
-          </div>
-        );
-      })}
+          return (
+            <div className="my-1" key={axis.id}>
+              <AxisSummary
+                title={title}
+                epciId={epciId}
+                score={
+                  scores.find(score => score.action_id === axis.id) || null
+                }
+              />
+            </div>
+          );
+        })}
+      </div>
+      <Spacer size={2} />
       <DetailedEpciCardPropsLink
         label="Voir le référentiel"
         linkTo={`/collectivite/${epciId}/referentiels`} // TODO link to ECI ref
