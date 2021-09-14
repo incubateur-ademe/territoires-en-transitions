@@ -40,6 +40,7 @@ const DetailedEpciCard = ({epci}: {epci: EpciStorable}) => {
             scores={eciScores}
             axes={eciAxes}
             title="Économie Circulaire"
+            referentiel="eci"
           />
         </div>
         <div>
@@ -48,6 +49,7 @@ const DetailedEpciCard = ({epci}: {epci: EpciStorable}) => {
             scores={caeScores}
             axes={caeAxes}
             title="Climat Air Énergie"
+            referentiel="cae"
           />
         </div>
       </div>

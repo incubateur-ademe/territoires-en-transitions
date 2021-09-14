@@ -1,10 +1,11 @@
-import {epciCard_AxisShortLabel} from 'app/labels';
 import {UiGaugeProgressStat, RootProgressStat} from 'ui/referentiels';
 import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {Spacer} from 'ui/shared';
 
 import {DetailedEpciCardPropsLink} from './_DetailedEpciCardPropsLink';
+import {displayName} from 'utils/actions';
+import {Referentiel} from 'types';
 
 const AxisSummary = (props: {
   title: string;
@@ -17,7 +18,7 @@ const AxisSummary = (props: {
       <UiGaugeProgressStat score={props.score} />
       <DetailedEpciCardPropsLink
         label=""
-        linkTo={`/collectivite/${props.epciId}/referentiels`} // TODO link to ECI ref
+        linkTo={`/collectivite/${props.epciId}/action/${props.score?.action_id}`} // TODO link to ECI ref
       />
     </div>
   </div>
@@ -28,11 +29,13 @@ export const DetailedReferentiel = ({
   scores,
   epciId,
   axes,
+  referentiel,
 }: {
   title: string;
   scores: ActionReferentielScoreStorable[];
   axes: ActionReferentiel[];
   epciId: string;
+  referentiel: Referentiel;
 }) => {
   const root_score =
     scores.find(score => score.action_nomenclature_id === '') || null;
@@ -46,10 +49,7 @@ export const DetailedReferentiel = ({
       <Spacer size={3} />
       <div>
         {axes.map(axis => {
-          // todo : use utils to format title
-          const title =
-            epciCard_AxisShortLabel[axis.id] ??
-            `${axis.id_nomenclature} - ${axis.nom}`;
+          const title = displayName(axis);
 
           return (
             <div className="my-1" key={axis.id}>
@@ -67,7 +67,7 @@ export const DetailedReferentiel = ({
       <Spacer size={2} />
       <DetailedEpciCardPropsLink
         label="Voir le référentiel"
-        linkTo={`/collectivite/${epciId}/referentiels`} // TODO link to ECI ref
+        linkTo={`/collectivite/${epciId}/referentiels/${referentiel}`} // TODO link to ECI ref
       />
     </div>
   );
