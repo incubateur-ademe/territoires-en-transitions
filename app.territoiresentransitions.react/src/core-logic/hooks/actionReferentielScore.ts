@@ -23,7 +23,10 @@ export const useActionReferentielScore = (
     actionReferentielScoreStore
       .retrieveById(actionReferentielScoreStorableId)
       .then(storable => {
-        if (actionReferentielScore !== storable)
+        if (!actionReferentielScore) {
+          return;
+        }
+        if (!actionReferentielScore.equals(storable))
           console.log(
             'it changed, hence setActionReferentielScore to ',
             storable
@@ -34,7 +37,7 @@ export const useActionReferentielScore = (
     return () => {
       actionReferentielScoreStore.removeListener(listener);
     };
-  });
+  }, [actionReferentielScore]);
 
   return actionReferentielScore;
 };
