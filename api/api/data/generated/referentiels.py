@@ -6,7 +6,7 @@ actions = [
     ActionReferentiel(
         id="citergie",
         id_nomenclature="",
-        nom=r"Cit\u0027ergie",
+        nom=r"Climat Air \u00c9nergie",
         description=r"",
         contexte=r"",
         exemples=r"",
