@@ -78,14 +78,14 @@ function ReferentielTitle(props: {view: View}) {
         <ProgressStatStatic
           position="right"
           action={eciReferentiel}
-          showPoints={true}
+          showPoints={false}
         />
       )}
       {props.view === 'cae' && (
         <ProgressStatStatic
           position="right"
           action={caeReferentiel}
-          showPoints={true}
+          showPoints={false}
         />
       )}
     </header>
