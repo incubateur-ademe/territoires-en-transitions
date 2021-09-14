@@ -29,4 +29,12 @@ export class IndicateurReferentielCommentaire {
     this.indicateur_id = indicateur_id;
     this.value = value;
   }
+  equals(other: IndicateurReferentielCommentaireInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.epci_id === this.epci_id &&
+      other.indicateur_id === this.indicateur_id &&
+      other.value === this.value
+    );
+  }
 }

@@ -49,4 +49,16 @@ export class IndicateurPersonnalise {
     this.unite = unite;
     this.meta = meta;
   }
+  equals(other: IndicateurPersonnaliseInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.epci_id === this.epci_id &&
+      other.uid === this.uid &&
+      other.custom_id === this.custom_id &&
+      other.nom === this.nom &&
+      other.description === this.description &&
+      other.unite === this.unite &&
+      other.meta === this.meta
+    );
+  }
 }

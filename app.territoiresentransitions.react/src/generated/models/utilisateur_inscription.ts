@@ -34,4 +34,13 @@ export class UtilisateurInscription {
     this.prenom = prenom;
     this.vie_privee_conditions = vie_privee_conditions;
   }
+  equals(other: UtilisateurInscriptionInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.email === this.email &&
+      other.nom === this.nom &&
+      other.prenom === this.prenom &&
+      other.vie_privee_conditions === this.vie_privee_conditions
+    );
+  }
 }
