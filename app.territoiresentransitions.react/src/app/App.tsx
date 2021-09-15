@@ -21,38 +21,44 @@ import 'app/DesignSystem/variables.css';
 import 'app/DesignSystem/buttons.css';
 import {Toasters} from 'app/Toasters';
 import {ScrollToTop} from 'app/ScrollToTop';
+import {MatomoProvider} from '@datapunt/matomo-tracker-react';
+import {matomoInstance} from 'app/matomo_instance';
+import {Tracker} from 'app/Tracker';
 
 export const App = () => {
   return (
-    <Router>
-      <ScrollToTop />
-      <Toasters />
-      <Switch>
-        <HomeRoute exact path="/">
-          <Header nav={<Navigation />} />
-          <Home />
-        </HomeRoute>
+    <MatomoProvider value={matomoInstance}>
+      <Router>
+        <ScrollToTop />
+        <Toasters />
+        <Tracker />
+        <Switch>
+          <HomeRoute exact path="/">
+            <Header nav={<Navigation />} />
+            <Home />
+          </HomeRoute>
 
-        <Route path={'/auth'}>
-          <Header nav={<Navigation />} />
-          <AuthRoutes />
-        </Route>
+          <Route path={'/auth'}>
+            <Header nav={<Navigation />} />
+            <AuthRoutes />
+          </Route>
 
-        <Route path={'/epcis'}>
-          <Header nav={<Navigation />} />
-          <EpcisPage />
-        </Route>
+          <Route path={'/epcis'}>
+            <Header nav={<Navigation />} />
+            <EpcisPage />
+          </Route>
 
-        <Route path={'/collectivite/:epciId'}>
-          <Header nav={<Navigation />} />
-          <CollectiviteRoutes />
-        </Route>
-      </Switch>
-      <Footer
-        description={<FooterDescription />}
-        navigation={<FooterNavigation />}
-      />
-    </Router>
+          <Route path={'/collectivite/:epciId'}>
+            <Header nav={<Navigation />} />
+            <CollectiviteRoutes />
+          </Route>
+        </Switch>
+        <Footer
+          description={<FooterDescription />}
+          navigation={<FooterNavigation />}
+        />
+      </Router>
+    </MatomoProvider>
   );
 };
 
