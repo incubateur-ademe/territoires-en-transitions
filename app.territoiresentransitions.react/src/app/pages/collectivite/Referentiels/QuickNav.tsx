@@ -6,7 +6,6 @@ import {
   actionIdDepth,
   actionPath,
   displayName,
-  referentielId,
   referentielMesureDepth,
   searchActionSiblingsOfId,
   searchParents,
