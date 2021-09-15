@@ -1,5 +1,4 @@
 import {CrossExpandPanelWithHtmlContent} from 'ui/shared';
-import React from 'react';
 
 export const IndicateurDescriptionPanel = (props: {description: string}) => {
   return (

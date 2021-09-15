@@ -9,4 +9,4 @@ class IndicateurPersonnaliseValue(BaseModel):
     epci_id: str
     indicateur_id: str
     year: float
-    value: str
+    value: float
