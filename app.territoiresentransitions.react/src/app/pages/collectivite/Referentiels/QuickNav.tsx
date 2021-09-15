@@ -4,6 +4,7 @@ import {useHistory} from 'react-router-dom';
 import {useEpciId} from 'core-logic/hooks';
 import {
   actionIdDepth,
+  actionPath,
   displayName,
   referentielId,
   referentielMesureDepth,
@@ -11,7 +12,6 @@ import {
   searchParents,
 } from 'utils/actions';
 import {actions as referentielActions} from 'generated/data/referentiels';
-import {Link} from 'react-router-dom';
 import {Menu, MenuItem} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
 
@@ -33,7 +33,14 @@ const actionsToMenuItems = (
       return (
         <NestedMenuItem
           parentMenuOpen={true}
-          label={<div className="truncate max-w-sm">{displayName(action)}</div>}
+          label={
+            <div
+              className="truncate max-w-sm"
+              onClick={() => onSelect(action.id)}
+            >
+              {displayName(action)}
+            </div>
+          }
         >
           {actionsToMenuItems(action.actions, onSelect)}
         </NestedMenuItem>
@@ -59,24 +66,20 @@ const actionsToMenuItems = (
  */
 export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
   const parents = searchParents(props.action.id, referentielActions);
-  const epciId = useEpciId()!;
-
+  const parent = parents[parents.length - 1];
+  const grandParents = parents.slice(0, parents.length - 1);
   return (
     <nav className="flex flex-row">
-      <Link to={`/collectivite/${epciId}/referentiels`}>Référentiels</Link>
-      <span className="mx-2"> / </span>
-      {parents.map(parent => {
+      {grandParents.map(parent => {
         // we build a menu for every parent
         return (
-          <>
-            <OrientationSwitcher action={parent} key={parent.id} />
-            <span className="mx-2" key={parent.id + 'sep'}>
-              /
-            </span>
-          </>
+          <div className="flex flex-row flex-nowrap" key={parent.id}>
+            <OrientationSwitcher action={parent} />
+            <span className="mx-2">/</span>
+          </div>
         );
       })}
-      <OrientationSwitcher action={props.action} key={props.action.id} />
+      <OrientationSwitcher action={parent} />
     </nav>
   );
 };
@@ -101,11 +104,7 @@ export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
 
   const onSelect = (selectedId: string) => {
     setOpened(false);
-    const path = // makes formater work
-      `/collectivite/${epciId}/action/` +
-      `${referentielId(selectedId)}/` +
-      selectedId;
-    history.push(path);
+    history.push(actionPath(epciId, selectedId));
   };
 
   return (

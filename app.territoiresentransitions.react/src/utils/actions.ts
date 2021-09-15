@@ -100,3 +100,20 @@ export const displayName = (action: ActionReferentiel) =>
 
 export const referentielId = (actionId: string): string =>
   actionId.startsWith('economie_circulaire') ? 'eci' : 'cae';
+
+export const actionPath = (epciId: string, actionId: string): string => {
+  const elements = actionId.split('.');
+  const depth = elements.length;
+  const mesureDepth = referentielMesureDepth(actionId);
+  const epciPath = `/collectivite/${epciId}`;
+
+  if (depth < mesureDepth) {
+    return `${epciPath}/referentiel/${referentielId(actionId)}/#${actionId}`;
+  }
+  if (depth === mesureDepth) {
+    return `${epciPath}/action/${referentielId(actionId)}/${actionId}`;
+  }
+  while (elements.length > mesureDepth) elements.pop();
+  const mesureId = elements.join('.');
+  return `${epciPath}/action/${referentielId(actionId)}/${mesureId}`;
+};
