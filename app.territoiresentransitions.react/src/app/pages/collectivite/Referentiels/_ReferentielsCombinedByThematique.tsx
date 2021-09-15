@@ -3,14 +3,10 @@ import {thematiques} from 'generated/data/thematiques';
 import * as R from 'ramda';
 
 import 'app/pages/collectivite/Referentiels/ArrowExpandable.css';
-import {
-  ActionReferentielTitle,
-  ActionReferentielTitleCard,
-  ProgressStat,
-} from 'ui/referentiels';
+import {ActionReferentielTitleCard} from 'ui/referentiels';
 import {LazyDetails} from 'ui/shared/LazyDetails';
 import {Chevron} from 'ui/shared/Chevron';
-import React, {useState} from 'react';
+import {useState} from 'react';
 
 const ThematiqueSectionCombined = ({
   eciActions,
@@ -27,13 +23,12 @@ const ThematiqueSectionCombined = ({
       summary={
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <h3 className="flex items-center mr-6">{thematiqueName}</h3>
+            <h3 className="flex items-center mr-6 mb-4">{thematiqueName}</h3>
             <Chevron direction={opened ? 'down' : 'left'} />
           </div>
         </div>
       }
       onChange={opened => {
-        console.log(opened);
         setOpened(opened);
       }}
     >

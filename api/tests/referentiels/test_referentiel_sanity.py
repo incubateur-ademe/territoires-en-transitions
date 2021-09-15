@@ -24,6 +24,7 @@ def _points_error_message(referentiel: Referentiel, index: tuple) -> str:
     )
 
 
+# we a generate a list of test cases in order to run them all and avoid failing early.
 @pytest.mark.parametrize("index", referentiel_eci.backward)
 def test_eci_action_points(index):
     """Test that an action points is equal to the total points of its children."""
@@ -39,7 +40,7 @@ def assert_referentiel_total_points_is_500(referentiel: Referentiel, name: str):
     total_points = referentiel.points[()]
     detailed_message_for_axes = "\n".join(
         [
-            f"- L'axe {k} compte {referentiel.points.get(str(k), )} points;"
+            f"- L'axe {k} compte {referentiel.points.get((str(k),))} points;"
             for k in range(1, 7)
         ]
     )

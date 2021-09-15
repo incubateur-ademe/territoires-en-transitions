@@ -31,6 +31,7 @@ const actionsToMenuItems = (
     if (actionIdDepth(action.id) < referentielMesureDepth(action.id))
       return (
         <NestedMenuItem
+          key={action.id}
           parentMenuOpen={true}
           label={
             <div
@@ -46,7 +47,7 @@ const actionsToMenuItems = (
       );
     else if (actionIdDepth(action.id) === referentielMesureDepth(action.id))
       return (
-        <MenuItem>
+        <MenuItem key={action.id}>
           <div
             className="truncate max-w-sm"
             onClick={() => onSelect(action.id)}

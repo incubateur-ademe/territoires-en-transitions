@@ -39,4 +39,14 @@ export class FicheActionCategorie {
     this.nom = nom;
     this.fiche_actions_uids = fiche_actions_uids;
   }
+  equals(other: FicheActionCategorieInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.epci_id === this.epci_id &&
+      other.uid === this.uid &&
+      other.parent_uid === this.parent_uid &&
+      other.nom === this.nom &&
+      other.fiche_actions_uids === this.fiche_actions_uids
+    );
+  }
 }

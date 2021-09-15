@@ -9,10 +9,6 @@ const storeActionStatusAvancement = async (storable: ActionStatusStorable) => {
   const actionReferentielScoreStore = getActionReferentielScoreStoreFromId(
     storable.id
   );
-  console.log(
-    '[Command retrieve all] Store endpoint url is ',
-    actionReferentielScoreStore.api.lastResponse?.url
-  );
   await actionReferentielScoreStore.retrieveAll(true);
 };
 

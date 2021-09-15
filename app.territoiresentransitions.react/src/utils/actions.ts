@@ -1,4 +1,5 @@
 import {ActionReferentiel} from 'generated/models/action_referentiel';
+import {Referentiel} from 'types';
 
 export const flattenActions = (
   actions: ActionReferentiel[],
@@ -98,7 +99,7 @@ export const displayName = (action: ActionReferentiel) =>
     ? `${action.id_nomenclature} - ${action.nom}`
     : action.nom;
 
-export const referentielId = (actionId: string): string =>
+export const referentielId = (actionId: string): Referentiel =>
   actionId.startsWith('economie_circulaire') ? 'eci' : 'cae';
 
 export const actionPath = (epciId: string, actionId: string): string => {

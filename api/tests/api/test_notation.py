@@ -6,6 +6,7 @@ from api.models.generated.action_referentiel_score import ActionReferentielScore
 from api.notation.notation import Notation, Status, UnknownActionIndex
 from api.notation.referentiel import Referentiel
 from tests.utils.factory import make_action_referentiel
+from tests.utils.referentiel import referentiel_sanity
 
 
 def find_score_with_id_nomenclature(
@@ -71,8 +72,9 @@ def referentiel() -> Referentiel:
         id_nomenclature="1", actions=[action_1_1, action_1_2], points=100
     )
     action_2_0 = make_action_referentiel(id_nomenclature="2.0", actions=[], points=0)
+    action_2_1 = make_action_referentiel(id_nomenclature="2.1", actions=[], points=100)
     action_2 = make_action_referentiel(
-        id_nomenclature="2", actions=[action_2_0], points=100
+        id_nomenclature="2", actions=[action_2_0, action_2_1], points=100
     )
     action_3 = make_action_referentiel(id_nomenclature="3", points=300)
     root_action = make_action_referentiel(actions=[action_1, action_2, action_3])
@@ -83,6 +85,11 @@ def referentiel() -> Referentiel:
 @pytest.fixture
 def notation(referentiel) -> Notation:
     return Notation(referentiel)
+
+
+def test_sanity(referentiel):
+    """Test fake referentiel sanity"""
+    referentiel_sanity(referentiel)
 
 
 def test_notation_with_two_actions_default_status(notation):
@@ -148,7 +155,7 @@ def test_notation_with_two_orientations_amongst_which_one_is_non_concernee(notat
         "",
         points=0.0,
         percentage=0.0,
-        potentiel=500,
+        potentiel=470,
         referentiel_points=500,
         referentiel_percentage=1,
     )
@@ -158,7 +165,7 @@ def test_notation_with_two_orientations_amongst_which_one_is_non_concernee(notat
         "1",
         points=0.0,
         percentage=0.0,
-        potentiel=100,
+        potentiel=70,
         referentiel_points=100,
         referentiel_percentage=0.2,
     )
@@ -298,7 +305,7 @@ def test_percentage_is_100_if_points_is_0_and_status_faite(notation):
         scores,
         "2",
         points=0.0,
-        percentage=1.0,
+        percentage=0.0,
         potentiel=100,
         referentiel_points=100,
         referentiel_percentage=0.2,
@@ -417,3 +424,53 @@ def test_notation_non_concernee_changes_parents_potentiels():
         referentiel_points=470,
         referentiel_percentage=0.94,
     )
+
+
+def test_potentiel_propagation_on_eci():
+    """Set all taches of a niveau as non concernée"""
+    from api.notation.referentiels import referentiel_eci
+
+    notation = Notation(referentiel_eci)
+    niveau = ("1", "1", "1")
+    orientation = ("1", "1")
+    axe = ("1",)
+    root = ()
+    taches = [index for index in notation.referentiel.indices if index[:-1] == niveau]
+    for tache in taches:
+        notation.set_status(tache, Status.non_concernee)
+    notation.compute()
+    assert notation.potentiels[niveau] == 0.0
+    assert (
+        notation.potentiels[orientation]
+        == notation.referentiel.points[orientation]
+        - notation.referentiel.points[niveau]
+    )
+
+    assert (
+        notation.potentiels[axe]
+        == notation.referentiel.points[axe] - notation.referentiel.points[niveau]
+    )
+
+    assert (
+        notation.potentiels[root]
+        == notation.referentiel.points[root] - notation.referentiel.points[niveau]
+    )
+
+
+def test_potentiel_non_propagation_on_eci():
+    """Set some taches of a niveau as non concernée"""
+    from api.notation.referentiels import referentiel_eci
+
+    notation = Notation(referentiel_eci)
+    niveau = ("1", "1", "1")
+    orientation = ("1", "1")
+    axe = ("1",)
+    root = ()
+    taches = [index for index in notation.referentiel.indices if index[:-1] == niveau]
+    for tache in taches[1:]:
+        notation.set_status(tache, Status.non_concernee)
+    notation.compute()
+    assert notation.potentiels[niveau] == notation.referentiel.points[niveau]
+    assert notation.potentiels[orientation] == notation.referentiel.points[orientation]
+    assert notation.potentiels[axe] == notation.referentiel.points[axe]
+    assert notation.potentiels[root] == notation.referentiel.points[root]

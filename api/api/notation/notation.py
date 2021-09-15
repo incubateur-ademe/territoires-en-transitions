@@ -1,11 +1,12 @@
 from __future__ import annotations
+
+from enum import Enum, unique
+from typing import Tuple, Dict, List, Literal
+
 from api.models.generated.action_referentiel_score import (
     ActionReferentielScore,
 )
 from api.notation.referentiel import Referentiel
-
-from enum import Enum, unique
-from typing import Literal, Tuple, Dict, List, Literal
 
 
 @unique
@@ -159,6 +160,7 @@ class Notation:
         the referentiel root points.
         """
         for index in self.referentiel.backward:
+            # take care of children
             children = self.referentiel.children(index)
 
             non_concernee_children = [
@@ -168,7 +170,7 @@ class Notation:
             ]
             if len(non_concernee_children) == 0:
                 # no exclusions, we don't change potentiels.
-                continue
+                pass
             elif len(non_concernee_children) == len(children):
                 # all children are excluded, set their potentiels to 0.
                 for child in children:
@@ -192,8 +194,8 @@ class Notation:
                 for child in non_concernee_children:
                     self.potentiels[child] = 0.0
 
-            if len(index) == 0 and non_concernee_children:
-                # root action, sum potentiels.
+            # sum potentiels
+            if children:
                 self.potentiels[index] = sum(
                     [self.potentiels[child] for child in children]
                 )

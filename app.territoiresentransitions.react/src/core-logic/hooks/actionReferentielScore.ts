@@ -23,14 +23,18 @@ export const useActionReferentielScore = (
     actionReferentielScoreStore
       .retrieveById(actionReferentielScoreStorableId)
       .then(storable => {
-        if (actionReferentielScore !== storable)
+        if (
+          !actionReferentielScore ||
+          !actionReferentielScore.equals(storable)
+        ) {
           setActionReferentielScore(storable);
+        }
       });
     actionReferentielScoreStore.addListener(listener);
     return () => {
       actionReferentielScoreStore.removeListener(listener);
     };
-  });
+  }, [actionReferentielScore]);
 
   return actionReferentielScore;
 };

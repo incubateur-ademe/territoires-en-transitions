@@ -34,4 +34,13 @@ export class IndicateurValue {
     this.year = year;
     this.value = value;
   }
+  equals(other: IndicateurValueInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.epci_id === this.epci_id &&
+      other.indicateur_id === this.indicateur_id &&
+      other.year === this.year &&
+      other.value === this.value
+    );
+  }
 }

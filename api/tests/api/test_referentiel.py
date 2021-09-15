@@ -1,4 +1,3 @@
-from api.notation import referentiels
 import pytest
 
 from api.notation.referentiel import Referentiel, ReferentielValueError

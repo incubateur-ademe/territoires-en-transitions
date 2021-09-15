@@ -34,4 +34,13 @@ export class Epci {
     this.siren = siren;
     this.nom = nom;
   }
+  equals(other: EpciInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.uid === this.uid &&
+      other.insee === this.insee &&
+      other.siren === this.siren &&
+      other.nom === this.nom
+    );
+  }
 }
