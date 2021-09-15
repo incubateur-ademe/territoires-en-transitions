@@ -77,7 +77,7 @@ export const ProgressStatStatic = ({
         className ? className : ''
       } ${positionDependentStyle}`}
     >
-      <TextProgressStatStatic score={score} showPoints={true} />
+      <TextProgressStatStatic score={score} showPoints={showPoints} />
     </div>
   );
 };

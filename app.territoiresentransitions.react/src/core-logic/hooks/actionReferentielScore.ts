@@ -23,11 +23,12 @@ export const useActionReferentielScore = (
     actionReferentielScoreStore
       .retrieveById(actionReferentielScoreStorableId)
       .then(storable => {
-        if (!actionReferentielScore) {
-          return;
-        }
-        if (!actionReferentielScore.equals(storable))
+        if (
+          !actionReferentielScore ||
+          !actionReferentielScore.equals(storable)
+        ) {
           setActionReferentielScore(storable);
+        }
       });
     actionReferentielScoreStore.addListener(listener);
     return () => {

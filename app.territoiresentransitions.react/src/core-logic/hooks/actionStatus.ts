@@ -16,8 +16,8 @@ export const useActionStatus = (actionStorableId: string) => {
     };
 
     actionStatusStore.retrieveById(actionStorableId).then(storable => {
-      if (!actionStatus) return;
-      if (!actionStatus.equals(storable)) setActionStatus(storable);
+      if (!actionStatus || !actionStatus.equals(storable))
+        setActionStatus(storable);
     });
     actionStatusStore.addListener(listener);
     return () => {
