@@ -8,9 +8,9 @@ import {
 } from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
 import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnaliseMetaTypedInterface';
-import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {UiDialogButton} from 'ui/UiDialogButton';
+import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -91,11 +91,20 @@ export const IndicateurPersonnaliseCard = (props: {
         <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
         <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
       </div>
-      <AnyIndicateurValues
+
+      <AnyIndicateurEditableExpandPanel
         storage={{
           indicateurId: props.indicateur.id,
           store: indicateurPersonnaliseValueStore,
         }}
+        title="Objectifs"
+      />
+      <AnyIndicateurEditableExpandPanel
+        storage={{
+          indicateurId: props.indicateur.id,
+          store: indicateurPersonnaliseValueStore,
+        }}
+        title="Résultats"
       />
       <div className="h-5" />
       <IndicateurDescriptionPanel description={props.indicateur.description} />

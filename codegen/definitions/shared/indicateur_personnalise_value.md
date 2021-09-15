@@ -13,5 +13,5 @@ IndicateurPersonnaliseValue:
   year:
       type: num
   value:
-      type: String
+      type: num
 ```

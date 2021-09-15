@@ -3,6 +3,8 @@ import React, {useEffect, useState} from 'react';
 import {useEpciId} from 'core-logic/hooks';
 import {IndicateurValue} from 'generated/models/indicateur_value';
 import {IndicateurPersonnaliseValue} from 'generated/models/indicateur_personnalise_value';
+import {indicateurValueStore} from 'core-logic/api/hybridStores';
+import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
@@ -42,7 +44,7 @@ const AnyIndicateurValueInput = (props: {
   year: number;
   storage: IndicateurValuesStorageInterface;
 }) => {
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = React.useState<number | null>(null);
   const epciId = useEpciId()!;
 
   useEffect(() => {
@@ -54,11 +56,12 @@ const AnyIndicateurValueInput = (props: {
           props.year
         )
       )
-      .then(storable => setValue(storable?.value ?? ''));
+      .then(storable => setValue(storable?.value ?? null));
   }, [value, epciId]);
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
+    const floatValue = parseFloat(inputValue.replace(',', '.'));
 
     props.storage.store
       .store(
@@ -66,18 +69,23 @@ const AnyIndicateurValueInput = (props: {
           epci_id: epciId,
           indicateur_id: props.storage.indicateurId,
           year: props.year,
-          value: inputValue,
+          value: floatValue,
         })
       )
-      .then(storable => setValue(storable.value));
+      .then(storable => {
+        console.log('storable.value', storable);
+
+        return setValue(storable.value);
+      });
   };
   return (
-    <label className="flex flex-col mx-2">
+    <label className="flex flex-col mx-2 ">
       {props.year}
       <input
-        className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500"
-        defaultValue={value}
+        className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500 text-sm font-normal text-gray-500"
+        defaultValue={value || ''}
         onBlur={handleChange}
+        type="number"
       />
     </label>
   );
@@ -86,7 +94,7 @@ const AnyIndicateurValueInput = (props: {
 /**
  * Display a range of inputs for every indicateur yearly values.
  */
-export const AnyIndicateurValues = (props: {
+const AnyIndicateurValues = (props: {
   storage: IndicateurValuesStorageInterface;
 }) => {
   const min = 2008;
@@ -100,33 +108,48 @@ export const AnyIndicateurValues = (props: {
   );
 
   return (
-    <div className="flex flex row items-center">
+    <div className="flex row items-center h-full text-center">
       <button
-        className="fr-btn fr-btn--secondary"
+        className="fr-fi-arrow-left-line fr-btn--icon-left"
         onClick={e => {
           e.preventDefault();
           setIndex(index - 1);
         }}
         disabled={index < 1}
-      >
-        ←
-      </button>
-      {years.map(year => (
-        <AnyIndicateurValueInput
-          year={year}
-          storage={props.storage}
-          key={`${props.storage.indicateurId}-${year}`}
-        />
-      ))}
+      />
+      <div className="flex row items-center">
+        {years.map(year => (
+          <AnyIndicateurValueInput
+            year={year}
+            storage={props.storage}
+            key={`${props.storage.indicateurId}-${year}`}
+          />
+        ))}
+      </div>
       <button
-        className="fr-btn fr-btn--secondary"
+        className="fr-fi-arrow-right-line fr-btn--icon-left pl-4"
         onClick={e => {
           e.preventDefault();
           setIndex(index + 1);
         }}
-      >
-        →
-      </button>
+      />
     </div>
   );
 };
+
+/**
+ * Expand Panel with range of value inputs as details
+ */
+export const AnyIndicateurEditableExpandPanel = (props: {
+  storage: IndicateurValuesStorageInterface;
+  title: string;
+}) => (
+  <div className="CrossExpandPanel editable">
+    <details>
+      <summary className="title">{props.title}</summary>
+      <div>
+        <AnyIndicateurValues storage={props.storage} />
+      </div>
+    </details>
+  </div>
+);

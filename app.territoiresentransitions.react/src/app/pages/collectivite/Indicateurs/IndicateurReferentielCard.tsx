@@ -3,7 +3,7 @@ import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {commands} from 'core-logic/commands';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
-import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
+import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {indicateurValueStore} from 'core-logic/api/hybridStores';
 import {useEpciId} from 'core-logic/hooks';
 
@@ -34,7 +34,7 @@ const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   };
 
   return (
-    <div className="CrossExpandPanel">
+    <div className="CrossExpandPanel editable">
       <details>
         <summary>Commentaire</summary>
         <div>
@@ -55,14 +55,22 @@ export const IndicateurReferentielCard = (props: {
   return (
     <div className="flex flex-col px-5 py-4 bg-beige mb-5">
       <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
-      <AnyIndicateurValues
+
+      <IndicateurDescriptionPanel description={props.indicateur.description} />
+      <AnyIndicateurEditableExpandPanel
         storage={{
           indicateurId: props.indicateur.id,
           store: indicateurValueStore,
         }}
+        title="Objectifs"
       />
-      <div className="h-5" />
-      <IndicateurDescriptionPanel description={props.indicateur.description} />
+      <AnyIndicateurEditableExpandPanel
+        storage={{
+          indicateurId: props.indicateur.id,
+          store: indicateurValueStore,
+        }}
+        title="Résultats"
+      />
       <Commentaire indicateur={props.indicateur} />
     </div>
   );
