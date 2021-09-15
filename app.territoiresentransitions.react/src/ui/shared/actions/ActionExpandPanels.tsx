@@ -1,5 +1,6 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {CrossExpandPanelWithHtmlContent} from 'ui/shared';
+import {addTargetToContentAnchors} from 'utils/content';
 
 const ActionExpandPanelAdemeContent = (props: {
   content?: string;
@@ -11,7 +12,7 @@ const ActionExpandPanelAdemeContent = (props: {
       <div className="border-gray-300">
         <CrossExpandPanelWithHtmlContent
           title={props.title}
-          content={props.content}
+          content={addTargetToContentAnchors(props.content)}
         />
       </div>
     </div>

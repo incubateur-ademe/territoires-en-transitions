@@ -4,6 +4,9 @@ import * as R from 'ramda';
 
 import 'app/pages/collectivite/Referentiels/ArrowExpandable.css';
 import {ActionReferentielTitleCard} from 'ui/referentiels';
+import {LazyDetails} from 'ui/shared/LazyDetails';
+import {Chevron} from 'ui/shared/Chevron';
+import {useState} from 'react';
 
 const ThematiqueSectionCombined = ({
   eciActions,
@@ -14,38 +17,38 @@ const ThematiqueSectionCombined = ({
   caeActions: ActionReferentiel[];
   thematiqueName: string;
 }) => {
+  const [opened, setOpened] = useState(false);
   return (
-    <div className="mb-2 ml-4 ArrowExpandable">
-      <details>
-        <summary className="flex items-center">
-          <div>
-            <h3>
-              {thematiqueName}
-              <span
-                className="fr-fi-arrow-right-s-line ml-10 text-xl"
-                aria-hidden={true}
-              ></span>
-            </h3>
+    <LazyDetails
+      summary={
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <h3 className="flex items-center mr-6">{thematiqueName}</h3>
+            <Chevron direction={opened ? 'down' : 'left'} />
           </div>
-        </summary>
-        <div className="mt-8 ml-4 mb-6">
-          {eciActions.map(action => (
-            <ActionReferentielTitleCard
-              key={action.id}
-              action={action}
-              referentiel="eci"
-            />
-          ))}
-          {caeActions.map(action => (
-            <ActionReferentielTitleCard
-              key={action.id}
-              action={action}
-              referentiel="cae"
-            />
-          ))}
         </div>
-      </details>
-    </div>
+      }
+      onChange={opened => {
+        setOpened(opened);
+      }}
+    >
+      <div className=" ml-8 mb-6">
+        {eciActions.map(action => (
+          <ActionReferentielTitleCard
+            key={action.id}
+            action={action}
+            referentiel="eci"
+          />
+        ))}
+        {caeActions.map(action => (
+          <ActionReferentielTitleCard
+            key={action.id}
+            action={action}
+            referentiel="cae"
+          />
+        ))}
+      </div>
+    </LazyDetails>
   );
 };
 

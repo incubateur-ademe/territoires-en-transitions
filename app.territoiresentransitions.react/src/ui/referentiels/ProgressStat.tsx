@@ -3,57 +3,31 @@ import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreSt
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core';
+import {progressStateColors} from 'app/theme';
+import * as R from 'ramda';
+import {
+  inferStateFromScore,
+  percentageTextFromScore,
+  ProgressState,
+} from 'utils/progressStat';
 
-type ProgressState = 'nc' | 'alert' | 'warning' | 'ok' | 'good' | 'best';
+const useStyle = makeStyles(
+  R.mapObjIndexed(
+    color => ({
+      borderColor: color,
+    }),
+    progressStateColors
+  )
+);
 
-const inferStateFromScore = (
-  score: ActionReferentielScoreStorable | null
-): ProgressState => {
-  const percentage: number = score ? score.percentage * 100 : 0;
-  if (score && score.avancement.includes('non_concernee')) {
-    return 'nc';
-  } else if (percentage < 34) {
-    return 'alert';
-  } else if (percentage < 49) {
-    return 'warning';
-  } else if (percentage < 64) {
-    return 'ok';
-  } else if (percentage < 74) {
-    return 'good';
-  } else {
-    return 'best';
-  }
-};
-
-const useStyle = makeStyles({
-  nc: {
-    borderColor: '#444',
-  },
-  alert: {
-    borderColor: '#DA0505',
-  },
-  warning: {
-    borderColor: '#F59E0B',
-  },
-  ok: {
-    borderColor: '#FCD34D',
-  },
-  good: {
-    borderColor: '#C0D72D',
-  },
-  best: {
-    borderColor: '#059669',
-  },
-});
-
-const ProgressStatText = ({
+const TextProgressStatStatic = ({
   score,
+  showPoints,
 }: {
   score: ActionReferentielScoreStorable | null;
+  showPoints: boolean;
 }) => {
-  const percentageText = score
-    ? `${(score.percentage * 100).toFixed(1)}% `
-    : '0% ';
+  const percentageText = percentageTextFromScore(score);
   const pointsRatioText = score
     ? `(${score.points.toFixed(2)}/${score.potentiel.toFixed(2)})`
     : '(../..)';
@@ -64,19 +38,21 @@ const ProgressStatText = ({
   return (
     <>
       <strong className="font-bold">{percentageText}</strong>
-      {pointsRatioText}
+      {showPoints && pointsRatioText}
     </>
   );
 };
 
-export const ProgressStat = ({
+export const ProgressStatStatic = ({
   action,
   position,
   className,
+  showPoints,
 }: {
   action: ActionReferentiel;
   position: 'left' | 'right';
   className?: string;
+  showPoints: boolean;
 }) => {
   const classes = useStyle();
 
@@ -101,7 +77,47 @@ export const ProgressStat = ({
         className ? className : ''
       } ${positionDependentStyle}`}
     >
-      <ProgressStatText score={score} />
+      <TextProgressStatStatic score={score} showPoints={showPoints} />
     </div>
   );
+};
+
+export const UiGaugeProgressStat = ({
+  score,
+}: {
+  score: ActionReferentielScoreStorable | null;
+}) => {
+  const makeStyle = (score: ActionReferentielScoreStorable | null) => {
+    const state = inferStateFromScore(score);
+    const color = progressStateColors[state];
+    return {
+      width: percentageTextFromScore(score),
+      backgroundColor: color,
+    };
+  };
+  return (
+    <div className="flex items-center justify-between">
+      <div className="font-bold text-xs">{percentageTextFromScore(score)}</div>
+      <div className="w-2"></div>
+      <div className="w-10">
+        <div className="h-2 bg-gray-300 rounded-md">
+          <div
+            className="rounded-md block relative h-2"
+            style={makeStyle(score)}
+          ></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const CurrentEpciGaugeProgressStat = ({
+  action,
+}: {
+  action: ActionReferentiel;
+}) => {
+  const storableId = ActionReferentielScoreStorable.buildId(action.id);
+  const score = useActionReferentielScore(storableId);
+
+  return <UiGaugeProgressStat score={score} />;
 };

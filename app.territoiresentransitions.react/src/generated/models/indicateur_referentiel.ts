@@ -44,4 +44,15 @@ export class IndicateurReferentiel {
     this.thematique_id = thematique_id;
     this.unite = unite;
   }
+  equals(other: IndicateurReferentielInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.id === this.id &&
+      other.action_ids === this.action_ids &&
+      other.nom === this.nom &&
+      other.description === this.description &&
+      other.thematique_id === this.thematique_id &&
+      other.unite === this.unite
+    );
+  }
 }

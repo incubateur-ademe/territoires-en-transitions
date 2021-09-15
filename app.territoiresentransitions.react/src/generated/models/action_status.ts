@@ -47,4 +47,12 @@ export class ActionStatus {
     this.epci_id = epci_id;
     this.avancement = avancement;
   }
+  equals(other: ActionStatusInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.action_id === this.action_id &&
+      other.epci_id === this.epci_id &&
+      other.avancement === this.avancement
+    );
+  }
 }

@@ -44,4 +44,15 @@ export class UtilisateurConnecte {
     this.nom = nom;
     this.prenom = prenom;
   }
+  equals(other: UtilisateurConnecteInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.ademe_user_id === this.ademe_user_id &&
+      other.access_token === this.access_token &&
+      other.refresh_token === this.refresh_token &&
+      other.email === this.email &&
+      other.nom === this.nom &&
+      other.prenom === this.prenom
+    );
+  }
 }

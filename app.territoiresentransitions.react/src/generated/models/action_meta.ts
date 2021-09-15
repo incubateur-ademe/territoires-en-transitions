@@ -29,4 +29,12 @@ export class ActionMeta {
     this.epci_id = epci_id;
     this.meta = meta;
   }
+  equals(other: ActionMetaInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.action_id === this.action_id &&
+      other.epci_id === this.epci_id &&
+      other.meta === this.meta
+    );
+  }
 }

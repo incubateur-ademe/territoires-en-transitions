@@ -4,7 +4,9 @@ import 'app/DesignSystem/buttons.css';
 import 'app/DesignSystem/core.css';
 import 'app/DesignSystem/variables.css';
 import React from 'react';
-import {EpciCard, OwnedEpciCard} from 'app/pages/Epcis/_EpciCard';
+import {OwnedEpciCard} from 'app/pages/Epcis/_OwnedEpciCard';
+import {SimpleEpciCard} from 'app/pages/Epcis/_SimpleEpciCard';
+
 import {allSortedEpcis, currentUserEpcis} from 'core-logic/hooks';
 import {Spacer} from 'ui/shared';
 
@@ -24,7 +26,7 @@ const Epcis = () => {
         <Spacer />
         <h2 className="fr-h2 mb-20 text-center">Vos collectivités</h2>
         <Spacer />
-        <div className="grid grid-cols-3 gap-12">
+        <div className="flex flex-col justify-evenly">
           {usersEpcis.map(epci => (
             <OwnedEpciCard epci={epci} key={epci.id} />
           ))}
@@ -46,7 +48,7 @@ const Epcis = () => {
 
         <div className="grid grid-cols-3 gap-12">
           {allEpcis.map(epci => (
-            <EpciCard epci={epci} key={epci.id} />
+            <SimpleEpciCard epci={epci} key={epci.id} />
           ))}
         </div>
       </section>
