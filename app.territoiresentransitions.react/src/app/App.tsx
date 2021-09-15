@@ -7,7 +7,6 @@ import {
   RouteProps,
   Switch,
 } from 'react-router-dom';
-import React from 'react';
 import {Footer, Header} from 'ui';
 import {FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
@@ -21,38 +20,49 @@ import 'app/DesignSystem/variables.css';
 import 'app/DesignSystem/buttons.css';
 import {Toasters} from 'app/Toasters';
 import {ScrollToTop} from 'app/ScrollToTop';
+import {createTheme, MuiThemeProvider} from '@material-ui/core';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#000091',
+    },
+  },
+});
 
 export const App = () => {
   return (
-    <Router>
-      <ScrollToTop />
-      <Toasters />
-      <Switch>
-        <HomeRoute exact path="/">
-          <Header nav={<Navigation />} />
-          <Home />
-        </HomeRoute>
+    <MuiThemeProvider theme={theme}>
+      <Router>
+        <ScrollToTop />
+        <Toasters />
+        <Switch>
+          <HomeRoute exact path="/">
+            <Header nav={<Navigation />} />
+            <Home />
+          </HomeRoute>
 
-        <Route path={'/auth'}>
-          <Header nav={<Navigation />} />
-          <AuthRoutes />
-        </Route>
+          <Route path={'/auth'}>
+            <Header nav={<Navigation />} />
+            <AuthRoutes />
+          </Route>
 
-        <Route path={'/epcis'}>
-          <Header nav={<Navigation />} />
-          <EpcisPage />
-        </Route>
+          <Route path={'/epcis'}>
+            <Header nav={<Navigation />} />
+            <EpcisPage />
+          </Route>
 
-        <Route path={'/collectivite/:epciId'}>
-          <Header nav={<Navigation />} />
-          <CollectiviteRoutes />
-        </Route>
-      </Switch>
-      <Footer
-        description={<FooterDescription />}
-        navigation={<FooterNavigation />}
-      />
-    </Router>
+          <Route path={'/collectivite/:epciId'}>
+            <Header nav={<Navigation />} />
+            <CollectiviteRoutes />
+          </Route>
+        </Switch>
+        <Footer
+          description={<FooterDescription />}
+          navigation={<FooterNavigation />}
+        />
+      </Router>
+    </MuiThemeProvider>
   );
 };
 

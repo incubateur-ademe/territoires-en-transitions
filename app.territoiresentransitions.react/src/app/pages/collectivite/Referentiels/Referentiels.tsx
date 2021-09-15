@@ -22,12 +22,6 @@ const viewTitles: Record<View, String> = {
   both: 'Vue combinée',
 };
 
-const BlueChip = withStyles({
-  root: {
-    backgroundColor: 'salmon',
-  },
-})(Chip);
-
 const flattenActions = (actions: ActionReferentiel[]): ActionReferentiel[] =>
   R.reduce(
     (acc, action) => [...acc, ...action.actions],
