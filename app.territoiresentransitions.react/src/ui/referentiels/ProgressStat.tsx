@@ -84,8 +84,10 @@ export const ProgressStatStatic = ({
 
 export const UiGaugeProgressStat = ({
   score,
+  size,
 }: {
   score: ActionReferentielScoreStorable | null;
+  size: 'xs' | 'sm';
 }) => {
   const makeStyle = (score: ActionReferentielScoreStorable | null) => {
     const state = inferStateFromScore(score);
@@ -97,7 +99,9 @@ export const UiGaugeProgressStat = ({
   };
   return (
     <div className="flex items-center justify-between">
-      <div className="font-bold text-xs">{percentageTextFromScore(score)}</div>
+      <div className={`font-bold text-${size} w-10`}>
+        {percentageTextFromScore(score)}
+      </div>
       <div className="w-2"></div>
       <div className="w-10">
         <div className="h-2 bg-gray-300 rounded-md">
@@ -119,5 +123,5 @@ export const CurrentEpciGaugeProgressStat = ({
   const storableId = ActionReferentielScoreStorable.buildId(action.id);
   const score = useActionReferentielScore(storableId);
 
-  return <UiGaugeProgressStat score={score} />;
+  return <UiGaugeProgressStat score={score} size="sm" />;
 };

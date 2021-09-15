@@ -505,21 +505,21 @@ h4 {
   font-weight: 700;
   font-size: 1.375rem;
   line-height: 1.75rem;
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
 }
 
 h3 {
   font-weight: 700;
   font-size: 1.5rem;
   line-height: 2rem;
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
 }
 
 h2 {
   font-weight: 700;
   font-size: 1.75rem;
   line-height: 2.25rem;
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
 }
 
 h1 {
@@ -1025,42 +1025,42 @@ details > summary:first-of-type {
   font-weight: 700 !important;
   font-size: 1.125rem !important;
   line-height: 1.5rem !important;
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
 }
 
 .fr-h5 {
   font-weight: 700 !important;
   font-size: 1.25rem !important;
   line-height: 1.75rem !important;
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
 }
 
 .fr-h4 {
   font-weight: 700 !important;
   font-size: 1.375rem !important;
   line-height: 1.75rem !important;
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
 }
 
 .fr-h3 {
   font-weight: 700 !important;
   font-size: 1.5rem !important;
   line-height: 2rem !important;
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
 }
 
 .fr-h2 {
   font-weight: 700 !important;
   font-size: 1.75rem !important;
   line-height: 2.25rem !important;
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
 }
 
 .fr-h1 {
   font-weight: 700 !important;
   font-size: 2rem !important;
   line-height: 2.5rem !important;
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
 }
 
 .fr-display-xs {

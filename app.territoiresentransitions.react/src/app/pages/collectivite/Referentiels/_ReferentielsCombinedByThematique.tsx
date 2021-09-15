@@ -23,7 +23,7 @@ const ThematiqueSectionCombined = ({
       summary={
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <h3 className="flex items-center mr-6">{thematiqueName}</h3>
+            <h3 className="flex items-center mr-6 mb-4">{thematiqueName}</h3>
             <Chevron direction={opened ? 'down' : 'left'} />
           </div>
         </div>

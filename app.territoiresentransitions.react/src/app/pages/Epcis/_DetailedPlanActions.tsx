@@ -32,7 +32,9 @@ export const DetailedPlanActions = ({epciId}: {epciId: string}) => {
         />
       </div>
       <Spacer size={2} />
-      <FicheActionAvancementCountBarAndLegend epciId={epciId} />
+      <div className="flex flex-col items-center">
+        <FicheActionAvancementCountBarAndLegend epciId={epciId} />
+      </div>
     </div>
   );
 };
@@ -80,8 +82,8 @@ const FicheActionAvancementCountBarAndLegend = ({epciId}: {epciId: string}) => {
     100;
 
   return (
-    <div>
-      <div className="">
+    <div className="w-5/6">
+      <div>
         <div className="h-5 bg-gray-300 flex">
           <div
             className=" h-5"

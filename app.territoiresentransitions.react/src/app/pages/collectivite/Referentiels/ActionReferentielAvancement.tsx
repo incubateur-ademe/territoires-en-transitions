@@ -28,7 +28,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
         <OrientationQuickNav action={action} />
         <div className="pt-8 flex justify-between items-center">
           <ActionReferentielTitle
-            className="fr-h1 w-9/12 text-gray-900"
+            className="fr-h1 mb-3 w-9/12 text-gray-900"
             action={action}
           />
           <AddFicheActionButton actionId={action.id} />
