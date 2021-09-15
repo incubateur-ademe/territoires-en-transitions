@@ -4,7 +4,8 @@ import {LazyDetails} from 'ui/shared/LazyDetails';
 import {
   ActionReferentielTitle,
   ActionReferentielTitleCard,
-  ProgressStat,
+  CurrentEpciGaugeProgressStat,
+  ProgressStatStatic,
 } from 'ui/referentiels';
 import {Chevron} from 'ui/shared/Chevron';
 
@@ -21,6 +22,9 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
         summary={
           <div className="flex items-center justify-between">
             <div className="flex items-center">
+              <div className="px-3">
+                <CurrentEpciGaugeProgressStat action={action} />
+              </div>
               <div className="flex items-center mr-6">
                 <ActionReferentielTitle
                   action={action}
@@ -28,14 +32,6 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
                 />
               </div>
               <Chevron direction={opened ? 'down' : 'left'} />
-            </div>
-            <div className="mb-2">
-              <ProgressStat
-                className="w-100"
-                action={action}
-                position="right"
-                showPoints={false}
-              />
             </div>
           </div>
         }

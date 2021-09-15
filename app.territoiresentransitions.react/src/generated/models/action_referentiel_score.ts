@@ -54,4 +54,17 @@ export class ActionReferentielScore {
     this.referentiel_points = referentiel_points;
     this.referentiel_percentage = referentiel_percentage;
   }
+  equals(other: ActionReferentielScoreInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.action_id === this.action_id &&
+      other.action_nomenclature_id === this.action_nomenclature_id &&
+      other.avancement === this.avancement &&
+      other.points === this.points &&
+      other.percentage === this.percentage &&
+      other.potentiel === this.potentiel &&
+      other.referentiel_points === this.referentiel_points &&
+      other.referentiel_percentage === this.referentiel_percentage
+    );
+  }
 }

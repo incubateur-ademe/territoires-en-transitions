@@ -11,6 +11,7 @@ import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryFor
 import {AddFicheActionButton, Spacer} from 'ui/shared';
 import {FicheAction} from 'generated/models/fiche_action';
 import {UiDialogButton} from 'ui/UiDialogButton';
+import {useParams} from 'react-router-dom';
 
 const ModificationDialogButton = (props: {categorie: FicheActionCategorie}) => {
   const [editing, setEditing] = useState<boolean>(false);
@@ -84,7 +85,9 @@ const UncategorizedFichesList = ({fiches}: {fiches: FicheAction[]}) => {
 };
 
 const FichesList = () => {
-  const fiches = useAllFiches();
+  const {epciId} = useParams<{epciId: string}>();
+
+  const fiches = useAllFiches(epciId);
   const categories = useAllStorables<FicheActionCategorieStorable>(
     ficheActionCategorieStore
   );

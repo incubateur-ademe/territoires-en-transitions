@@ -64,4 +64,19 @@ export class ActionReferentiel {
     this.points = points;
     this.actions = actions;
   }
+  equals(other: ActionReferentielInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.id === this.id &&
+      other.id_nomenclature === this.id_nomenclature &&
+      other.nom === this.nom &&
+      other.thematique_id === this.thematique_id &&
+      other.description === this.description &&
+      other.contexte === this.contexte &&
+      other.exemples === this.exemples &&
+      other.ressources === this.ressources &&
+      other.points === this.points &&
+      other.actions === this.actions
+    );
+  }
 }

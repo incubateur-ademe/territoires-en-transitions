@@ -3,7 +3,6 @@ import * as R from 'ramda';
 import {ActionReferentielTitle} from 'ui/referentiels';
 import {compareIndexes} from 'utils';
 import 'app/pages/collectivite/Referentiels/ArrowExpandable.css';
-import React from 'react';
 import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
 
 const AxisSectionClimatAirEnergie = ({axis}: {axis: ActionReferentiel}) => (

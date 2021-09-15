@@ -4,7 +4,7 @@ export const actions: ActionReferentiel[] = [
   new ActionReferentiel({
     id: 'citergie',
     id_nomenclature: '',
-    nom: 'Cit\u0027ergie',
+    nom: 'Climat Air \u00c9nergie',
     description: '',
     contexte: '',
     ressources: '',

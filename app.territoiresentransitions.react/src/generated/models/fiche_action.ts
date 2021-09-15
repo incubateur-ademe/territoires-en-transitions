@@ -104,4 +104,27 @@ export class FicheAction {
     this.date_fin = date_fin;
     this.indicateur_personnalise_ids = indicateur_personnalise_ids;
   }
+  equals(other: FicheActionInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.epci_id === this.epci_id &&
+      other.uid === this.uid &&
+      other.custom_id === this.custom_id &&
+      other.avancement === this.avancement &&
+      other.en_retard === this.en_retard &&
+      other.referentiel_action_ids === this.referentiel_action_ids &&
+      other.referentiel_indicateur_ids === this.referentiel_indicateur_ids &&
+      other.titre === this.titre &&
+      other.description === this.description &&
+      other.budget === this.budget &&
+      other.personne_referente === this.personne_referente &&
+      other.structure_pilote === this.structure_pilote &&
+      other.partenaires === this.partenaires &&
+      other.elu_referent === this.elu_referent &&
+      other.commentaire === this.commentaire &&
+      other.date_debut === this.date_debut &&
+      other.date_fin === this.date_fin &&
+      other.indicateur_personnalise_ids === this.indicateur_personnalise_ids
+    );
+  }
 }
