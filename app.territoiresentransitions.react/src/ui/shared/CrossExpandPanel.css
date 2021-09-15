@@ -10,7 +10,7 @@
 }
 
 .CrossExpandPanel details[open] summary {
-  margin-bottom: 1rem;
+  padding-bottom: 1.5rem;
 }
 
 .CrossExpandPanel details[open] .title {
@@ -24,6 +24,15 @@
 
 .CrossExpandPanel details[open] summary::after {
   content: '-';
+}
+
+.CrossExpandPanel.editable details summary::after {
+  content: '✎';
+  margin-left: auto;
+}
+
+.CrossExpandPanel.editable details[open] summary::after {
+  content: '✎';
 }
 
 .CrossExpandPanel summary::-webkit-details-marker {

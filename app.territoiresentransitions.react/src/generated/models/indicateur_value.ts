@@ -2,7 +2,7 @@ export interface IndicateurValueInterface {
   epci_id: string;
   indicateur_id: string;
   year: number;
-  value: string;
+  value: number;
 }
 
 export class IndicateurValue {
@@ -13,7 +13,7 @@ export class IndicateurValue {
   epci_id: string;
   indicateur_id: string;
   year: number;
-  value: string;
+  value: number;
 
   /**
    * Creates a IndicateurValue instance.
@@ -27,7 +27,7 @@ export class IndicateurValue {
     epci_id: string;
     indicateur_id: string;
     year: number;
-    value: string;
+    value: number;
   }) {
     this.epci_id = epci_id;
     this.indicateur_id = indicateur_id;

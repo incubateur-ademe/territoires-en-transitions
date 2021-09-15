@@ -454,10 +454,10 @@ a[target='_blank' i]::after {
 } */
 
 *,
-*::before,
+/* *::before,
 *::after {
   box-sizing: inherit;
-}
+} */
 
 :root {
   box-sizing: border-box;

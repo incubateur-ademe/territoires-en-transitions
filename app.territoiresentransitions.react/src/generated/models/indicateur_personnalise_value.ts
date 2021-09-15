@@ -2,7 +2,7 @@ export interface IndicateurPersonnaliseValueInterface {
   epci_id: string;
   indicateur_id: string;
   year: number;
-  value: string;
+  value: number;
 }
 
 export class IndicateurPersonnaliseValue {
@@ -13,7 +13,7 @@ export class IndicateurPersonnaliseValue {
   epci_id: string;
   indicateur_id: string;
   year: number;
-  value: string;
+  value: number;
 
   /**
    * Creates a IndicateurPersonnaliseValue instance.
@@ -27,7 +27,7 @@ export class IndicateurPersonnaliseValue {
     epci_id: string;
     indicateur_id: string;
     year: number;
-    value: string;
+    value: number;
   }) {
     this.epci_id = epci_id;
     this.indicateur_id = indicateur_id;

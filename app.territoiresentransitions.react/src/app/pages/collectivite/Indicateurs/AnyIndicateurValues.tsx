@@ -27,23 +27,25 @@ const AnyIndicateurValueInput = (props: {
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
+    const floatValue = parseFloat(inputValue.replace(',', '.'));
 
     props.store.store(
       new AnyIndicateurValueStorable({
         epci_id: epciId,
         indicateur_id: props.indicateurId,
         year: props.year,
-        value: inputValue,
+        value: floatValue,
       })
     );
   };
   return (
-    <label className="flex flex-col mx-2">
+    <label className="flex flex-col mx-2 ">
       {props.year}
       <input
-        className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500"
-        defaultValue={value}
+        className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500 text-sm font-normal text-gray-500"
+        defaultValue={value || ''}
         onBlur={handleChange}
+        type="number"
       />
     </label>
   );
@@ -67,34 +69,48 @@ export const AnyIndicateurValues = (props: {
   );
 
   return (
-    <div className="flex flex row items-center">
+    <div className="flex row items-center h-full text-center">
       <button
-        className="fr-btn fr-btn--secondary"
+        className="fr-fi-arrow-left-line fr-btn--icon-left"
         onClick={e => {
           e.preventDefault();
           setIndex(index - 1);
         }}
         disabled={index < 1}
-      >
-        ←
-      </button>
-      {years.map(year => (
-        <AnyIndicateurValueInput
-          year={year}
-          store={props.store}
-          indicateurId={props.indicateurId}
-          key={`${props.indicateurId}-${year}`}
-        />
-      ))}
+      />
+      <div className="flex row items-center">
+        {years.map(year => (
+          <AnyIndicateurValueInput
+            year={year}
+            storage={props.storage}
+            key={`${props.storage.indicateurId}-${year}`}
+          />
+        ))}
+      </div>
       <button
-        className="fr-btn fr-btn--secondary"
+        className="fr-fi-arrow-right-line fr-btn--icon-left pl-4"
         onClick={e => {
           e.preventDefault();
           setIndex(index + 1);
         }}
-      >
-        →
-      </button>
+      />
     </div>
   );
 };
+
+/**
+ * Expand Panel with range of value inputs as details
+ */
+export const AnyIndicateurEditableExpandPanel = (props: {
+  storage: IndicateurValuesStorageInterface;
+  title: string;
+}) => (
+  <div className="CrossExpandPanel editable">
+    <details>
+      <summary className="title">{props.title}</summary>
+      <div>
+        <AnyIndicateurValues storage={props.storage} />
+      </div>
+    </details>
+  </div>
+);

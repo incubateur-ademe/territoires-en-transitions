@@ -8,7 +8,6 @@ import {
 } from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
 import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnaliseMetaTypedInterface';
-import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
