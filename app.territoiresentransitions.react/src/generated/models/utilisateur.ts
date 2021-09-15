@@ -24,4 +24,11 @@ export class Utilisateur {
     this.ademe_user_id = ademe_user_id;
     this.vie_privee = vie_privee;
   }
+  equals(other: UtilisateurInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.ademe_user_id === this.ademe_user_id &&
+      other.vie_privee === this.vie_privee
+    );
+  }
 }

@@ -34,5 +34,16 @@
         this.{{ field }} = {{ field }};
     {%- endfor %}
     }
-    }
+    equals(other: {{ class }}Interface | null ): boolean {
+    if (!other) return false;
+    return (
+        {%- for field, type in fields.items() %}
+        other.{{ field }} === this.{{ field }} 
+            {% if not loop.last %}
+                && 
+            {% endif %} 
+        {%- endfor %}
+    );
+  }
+}
 {% endfor %}

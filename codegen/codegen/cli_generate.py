@@ -92,7 +92,7 @@ def actions(
 
     relativize_ids(actions_citergie, "citergie")
     citergie = referentiel_from_actions(
-        actions_citergie, id="citergie", name="Cit'ergie"
+        actions_citergie, id="citergie", name="Climat Air Énergie"
     )
 
     # economie circulaire

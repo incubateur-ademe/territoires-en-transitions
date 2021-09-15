@@ -1,19 +1,19 @@
 import 'app/DesignSystem/core.css';
-import {SelectInput} from 'ui';
 
-import React from 'react';
 import {ReferentielEconomieCirculaire} from 'app/pages/collectivite/Referentiels/_ReferentielEconomieCirculaire';
 import {ReferentielClimatAirEnergie} from 'app/pages/collectivite/Referentiels/_ReferentielClimatAirEnergie';
-import {actions} from 'generated/data/referentiels';
-import {Options} from 'types';
 import {ReferentielCombinedByThematique} from 'app/pages/collectivite/Referentiels/_ReferentielsCombinedByThematique';
-import {ActionReferentiel} from 'generated/models/action_referentiel';
-import * as R from 'ramda';
-import {ProgressStat} from 'ui/referentiels';
+
 import {useParams} from 'react-router-dom';
-import {Chip} from '@material-ui/core';
+import {Chip, withStyles} from '@material-ui/core';
 import {useEpciId} from 'core-logic/hooks';
 import {Spacer} from 'ui/shared';
+import * as R from 'ramda';
+import {ActionReferentiel} from 'generated/models/action_referentiel';
+import {actions} from 'generated/data/referentiels';
+import {RootProgressStat} from 'ui/referentiels';
+import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
+import {useActionReferentielScore} from 'core-logic/hooks/actionReferentielScore';
 
 type View = 'cae' | 'eci' | 'both';
 const viewTitles: Record<View, String> = {
@@ -21,6 +21,12 @@ const viewTitles: Record<View, String> = {
   eci: 'Économie Circulaire',
   both: 'Vue combinée',
 };
+
+const BlueChip = withStyles({
+  root: {
+    backgroundColor: 'salmon',
+  },
+})(Chip);
 
 const flattenActions = (actions: ActionReferentiel[]): ActionReferentiel[] =>
   R.reduce(
@@ -73,15 +79,17 @@ function ReferentielNavChip(props: {epciId: string; to: View; current: View}) {
 }
 
 function ReferentielTitle(props: {view: View}) {
+  const referentielId =
+    props.view === 'eci' ? eciReferentiel.id : caeReferentiel.id;
+  const root_score = useActionReferentielScore(
+    ActionReferentielScoreStorable.buildId(referentielId)
+  );
   return (
-    <header className="flex flex-row items-center justify-between mb-6">
+    <header className="flex flex-row items-center mb-6 space-x-10">
       <h2 className="fr-h2">{viewTitles[props.view]}</h2>
-      {props.view === 'eci' && (
-        <ProgressStat position="right" action={eciReferentiel} />
-      )}
-      {props.view === 'cae' && (
-        <ProgressStat position="right" action={caeReferentiel} />
-      )}
+      <div className={`${props.view === 'both' ? 'hidden' : ''}`}>
+        <RootProgressStat score={root_score} />
+      </div>
     </header>
   );
 }
@@ -95,7 +103,7 @@ export const ActionsReferentiels = () => {
 
   return (
     <main className="fr-container mt-9 mb-16">
-      <h1 className="fr-h1 mb-0">Référentiels</h1>
+      <h1 className="fr-h1 mb-3">Référentiels</h1>
       <div className="flex flex-row items-center">
         <ReferentielNavChip epciId={epciId} to="eci" current={current} />
         <ReferentielNavChip epciId={epciId} to="cae" current={current} />

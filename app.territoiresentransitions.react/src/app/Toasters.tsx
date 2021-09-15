@@ -8,12 +8,13 @@ import {
   actionStatusStore,
   epciStore,
   ficheActionCategorieStore,
-  ficheActionStore,
+  getFicheActionStoreForEpci,
   indicateurPersonnaliseStore,
   indicateurPersonnaliseValueStore,
   indicateurReferentielCommentaireStore,
   indicateurValueStore,
 } from 'core-logic/api/hybridStores';
+import {getCurrentEpciId} from 'core-logic/api/currentEpci';
 
 type Composer<T extends Storable> = (
   response: Response | null,
@@ -106,6 +107,7 @@ function makeComposer(messages: {
 }
 
 export function Toasters() {
+  const ficheActionStore = getFicheActionStoreForEpci(getCurrentEpciId()!);
   return (
     <>
       <EndpointToaster

@@ -18,7 +18,7 @@ export const CollectiviteRoutes = () => {
 
   return (
     <>
-      <Route path={`${path}/referentiels/`}>
+      <Route path={`${path}/referentiels`}>
         <ReferentielsPage />
       </Route>
       <Route path={`${path}/referentiel/:referentiel/`}>
