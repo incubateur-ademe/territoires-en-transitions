@@ -10,10 +10,8 @@ class PlanAction(models.Model):
     epci_id = fields.CharField(max_length=36)
     uid = fields.CharField(max_length=36)
     nom = fields.CharField(max_length=300)
-
-    events: fields.ManyToManyRelation[FicheAction]
-    categories: fields.ManyToManyRelation[FicheActionCategorie]
-
+    categories = fields.JSONField()
+    fiches_by_category = fields.JSONField()
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
     latest = fields.BooleanField()

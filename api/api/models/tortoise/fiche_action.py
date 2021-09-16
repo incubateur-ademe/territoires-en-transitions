@@ -6,11 +6,6 @@ class FicheAction(models.Model):
     id = fields.IntField(pk=True)
     epci_id = fields.CharField(max_length=36)
     uid = fields.CharField(max_length=36)
-
-    plans_action: fields.ManyToManyRelation["PlanAction"] = fields.ManyToManyField(
-        "models.PlanAction", related_name="fiches", through="fiche_plan"
-    )
-
     custom_id = fields.CharField(max_length=36)
     avancement = fields.CharField(max_length=36)
     en_retard = fields.BooleanField()
