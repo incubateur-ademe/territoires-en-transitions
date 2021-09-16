@@ -3,10 +3,8 @@ from typing import List
 from fastapi import HTTPException, Depends
 from tortoise.contrib.pydantic.base import PydanticModel
 from tortoise.exceptions import DoesNotExist
+from tortoise.models import Model
 
-from api.models.tortoise.any_indicateur_values import (
-    IndicateurValueGeneric,
-)
 from api.models.tortoise.utilisateur_droits import UtilisateurDroits_Pydantic
 from api.routers.v2.auth import get_utilisateur_droits_from_header, can_write_epci
 
@@ -14,7 +12,7 @@ from api.routers.v2.auth import get_utilisateur_droits_from_header, can_write_ep
 class IndicateurValueGenericAPI:
     def __init__(
         self,
-        TortoiseModel: IndicateurValueGeneric,
+        TortoiseModel: Model,
         PydanticInModel: PydanticModel,
         PydanticOutModel: PydanticModel,
     ) -> None:
@@ -25,7 +23,7 @@ class IndicateurValueGenericAPI:
     async def post_epci_indicateur_value(
         self,
         epci_id: str,
-        indicateur_value: IndicateurValueGeneric,
+        indicateur_value: Model,
         droits: List[UtilisateurDroits_Pydantic] = Depends(
             get_utilisateur_droits_from_header
         ),
