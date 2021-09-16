@@ -7,7 +7,7 @@
   const renderers = {
     link: HeaderLink,
     paragraph: EmptyParagraph
-  }
+  };
 </script>
 
 <div class="fr-header__tools">

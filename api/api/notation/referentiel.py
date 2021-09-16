@@ -9,8 +9,7 @@ class ReferentielValueError(Exception):
     pass
 
 
-defaut_referentiel_root_points_value = 500  # TODO: this should not be hard-coded
-defaut_referentiel_axis_points_value = 100  # TODO: this should not be hard-coded
+defaut_referentiel_root_points_value = 500.0  # TODO: this should not be hard-coded
 
 
 class Referentiel:
@@ -24,11 +23,18 @@ class Referentiel:
     ## Indices
     indices, forward and backward are indices list for iterating either
     in no particular order, forward (from root to tâches) or backward (tâches to root) respectively.
+
+    :argument mesure_depth the depth of mesure defined in the mardown used for potentiel redistribution.
+        ex action 1.1 is a mesure in eci, so mesure_level is 2.
+            - This means that actions 1.1.1, 1.1.2, 1.1.1.1, (...) points are expressed in percentages.
+            - This also means that for actions bellow this depth, the notation should redistribute `potentiel` when some are `non concernee`
+        The sum of all the measure points should be 500.
     """
 
-    def __init__(self, root_action: ActionReferentiel):
+    def __init__(self, root_action: ActionReferentiel, mesure_depth: int):
         self.__sanity_check(root_action)
         self.root_action: ActionReferentiel = root_action
+        self.mesure_depth: int = mesure_depth
         self.points: Dict[Tuple, float] = {}
         self.percentages: Dict[Tuple, float] = {}
         self.actions: Dict[Tuple, ActionReferentiel] = {}
@@ -36,6 +42,7 @@ class Referentiel:
         self.forward: List[Tuple]
         self.backward: List[Tuple]
         self.__build_indices_and_actions()
+        # self.__fix_actions_points()
         self.__build_points()
         self.__build_percentages()
 
@@ -72,22 +79,47 @@ class Referentiel:
         A référentiel is worth 500 points thus if every actions had a been done
         perfectly a collectivité would obtain 500 points.
 
-        Axes and orientations points are hardcoded for now as the markdown is
-        not properly defined for now.
+        If mesure_level is 3, then actions points of 1, 1.1 and 1.1.1 are expressed in points. Hence, should some to 500.
         """
-        for index in self.indices:
-            if len(index) == 0:
-                # référentiel
-                points = defaut_referentiel_root_points_value
-            elif len(index) == 1:
-                # axe
-                points = defaut_referentiel_axis_points_value
-            else:
-                # orientation, niveau, tache
-                points = max(self.actions[index].points, 0) * (
-                    self.points[index[:-1]] / 100
+        # add points from orientations up to root
+        for index in self.backward:
+            if len(index) == self.mesure_depth:
+                self.points[index] = self.actions[index].points
+                assert (
+                    self.actions[index].points > 0.0
+                ), f"Action {index} is a mesure but has no points specified. "
+
+            elif len(index) < self.mesure_depth:
+                self.points[index] = sum(
+                    [self.points[child] for child in self.children(index)]
                 )
-            self.points[index] = points
+        # build points from root down to the smallest action
+        for index in self.forward:
+            if len(index) > self.mesure_depth:
+                # from this depth (mesure children) points from actions are actually percentages
+                percentage = self.actions[index].points
+                self.points[index] = percentage * self.points[index[:-1]] / 100
+
+            if len(index) >= self.mesure_depth:
+                # redistribute PERCENTAGES amongst children without points
+                children = self.children(index)
+                unspecified_children = [
+                    child for child in children if self.actions[child].points == -1
+                ]
+
+                if unspecified_children:
+                    distributed_percentage = sum(
+                        [max(0.0, self.actions[child].points) for child in children]
+                    )
+                    remaining_percentages = 100 - distributed_percentage
+                    assert remaining_percentages >= 0
+                    percentage_per_child = remaining_percentages / len(
+                        unspecified_children
+                    )
+
+                    for child in unspecified_children:
+                        # we set percentage as points until yaml supports percentage
+                        self.actions[child].points = percentage_per_child
 
     def __build_percentages(self):
         """Build percentages
@@ -95,13 +127,22 @@ class Referentiel:
         Percentages are relative to parents. If an action had 4 children, each would be .25 that is 25%"""
         for index in self.points:
             if len(index) > 0:
-                p = self.points[index]
-                if p == 0:
-                    self.percentages[index] = 0
-                else:
-                    self.percentages[index] = (
-                        self.points[index] / self.points[index[:-1]]
-                    )
+                points = self.points[index]
+                parent_points = self.points[index[:-1]]
+                sibling_points = sum(
+                    self.points[child] for child in self.children(index[:-1])
+                )
+                denominator = parent_points or sibling_points
+                self.percentages[index] = (
+                    points / denominator if denominator != 0 else 0
+                )
+
+                # if points == 0:
+                #     self.percentages[index] = 0
+                # else:
+                #     self.percentages[index] = (
+                #             self.points[index] / self.points[index[:-1]]
+                #     )
         self.percentages[tuple()] = 1
 
     @staticmethod
@@ -110,3 +151,4 @@ class Referentiel:
             raise ReferentielValueError(
                 f"Root action should have '' as `id_nomenclature`, received {root_action.id_nomenclature} instead. "
             )
+        # Todo : check it's all 500

@@ -8,7 +8,7 @@ def make_action_referentiel(
     nom: str = "default_nom",
     description: str = "",
     thematique_id: str = "default_thematique_id",
-    points: float = 42,
+    points: float = -1,
     actions: List[ActionReferentiel] = [],
 ):
     return ActionReferentiel(

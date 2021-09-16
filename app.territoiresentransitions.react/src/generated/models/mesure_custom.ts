@@ -34,4 +34,13 @@ export class MesureCustom {
     this.climat_pratic_thematic_id = climat_pratic_thematic_id;
     this.name = name;
   }
+  equals(other: MesureCustomInterface | null): boolean {
+    if (!other) return false;
+    return (
+      other.uid === this.uid &&
+      other.epci_id === this.epci_id &&
+      other.climat_pratic_thematic_id === this.climat_pratic_thematic_id &&
+      other.name === this.name
+    );
+  }
 }

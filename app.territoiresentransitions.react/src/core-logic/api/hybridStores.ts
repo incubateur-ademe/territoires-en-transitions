@@ -40,6 +40,7 @@ import {ActionMetaStorable} from 'storables/ActionMetaStorable';
 import {ActionMeta, ActionMetaInterface} from 'generated/models/action_meta';
 import {ENV} from 'environmentVariables';
 import {getCurrentEpciId} from 'core-logic/api/currentEpci';
+import {Referentiel} from 'types';
 
 const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
 
@@ -61,14 +62,28 @@ export const actionStatusStore = new HybridStore<ActionStatusStorable>({
     new ActionStatusStorable(serialized as ActionStatusInterface),
 });
 
-export const ficheActionStore = new HybridStore<FicheActionStorable>({
-  host: ENV.backendHost,
-  endpoint: () => `v2/${FicheAction.pathname}/${getCurrentEpciId()}`,
-  authorization: defaultAuthorization,
-  serializer: storable => storable,
-  deserializer: serialized =>
-    new FicheActionStorable(serialized as FicheActionInterface),
-});
+const makeFicheActionStoreForEpci = (epciId: string) => {
+  return new HybridStore<FicheActionStorable>({
+    host: ENV.backendHost,
+    endpoint: () => `v2/${FicheAction.pathname}/${epciId}`,
+    authorization: defaultAuthorization,
+    serializer: storable => storable,
+    deserializer: serialized =>
+      new FicheActionStorable(serialized as FicheActionInterface),
+  });
+};
+
+const ficheActionStoreForEpci: Record<
+  string,
+  HybridStore<FicheActionStorable>
+> = {};
+
+export const getFicheActionStoreForEpci = (epciId: string) => {
+  if (!ficheActionStoreForEpci[epciId]) {
+    ficheActionStoreForEpci[epciId] = makeFicheActionStoreForEpci(epciId);
+  }
+  return ficheActionStoreForEpci[epciId];
+};
 
 export const ficheActionCategorieStore =
   new HybridStore<FicheActionCategorieStorable>({
@@ -129,10 +144,13 @@ export const epciStore = new HybridStore<EpciStorable>({
   deserializer: serialized => new EpciStorable(serialized as EpciInterface),
 });
 
-export const actionReferentielScoreStore =
+const makeActionReferentielScoreStoreForReferentielForEpci = (props: {
+  epciId: string;
+  referentiel: Referentiel;
+}) =>
   new HybridStore<ActionReferentielScoreStorable>({
     host: ENV.backendHost,
-    endpoint: () => `v2/notation/eci/${getCurrentEpciId()}`,
+    endpoint: () => `v2/notation/${props.referentiel}/${props.epciId}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -140,6 +158,41 @@ export const actionReferentielScoreStore =
         serialized as ActionReferentielScoreInterface
       ),
   });
+
+const actionReferentielScoreStoreForReferentielForEpci: Record<
+  Referentiel,
+  Record<string, HybridStore<ActionReferentielScoreStorable>>
+> = {eci: {}, cae: {}};
+
+export const getActionReferentielScoreStoreForReferentielForEpci = (props: {
+  epciId: string;
+  referentiel: Referentiel;
+}) => {
+  if (
+    !actionReferentielScoreStoreForReferentielForEpci[props.referentiel][
+      props.epciId
+    ]
+  ) {
+    actionReferentielScoreStoreForReferentielForEpci[props.referentiel][
+      props.epciId
+    ] = makeActionReferentielScoreStoreForReferentielForEpci(props);
+  }
+  return actionReferentielScoreStoreForReferentielForEpci[props.referentiel][
+    props.epciId
+  ];
+};
+
+export const getActionReferentielScoreStoreFromId = (id: string) => {
+  const epciId = getCurrentEpciId()!;
+  const referentiel: Referentiel = id.includes('economie_circulaire')
+    ? 'eci'
+    : 'cae';
+
+  return getActionReferentielScoreStoreForReferentielForEpci({
+    epciId,
+    referentiel,
+  });
+};
 
 export const actionMetaStore = new HybridStore<ActionMetaStorable>({
   host: ENV.backendHost,

@@ -1,12 +1,37 @@
-details > .content ul {
+.htmlContent ul {
   list-style: disc;
   margin-left: 1.5rem;
 }
 
-details > .content li > p {
+.htmlContent li > p {
   display: inline;
 }
 
 details > .content p {
   margin-bottom: 1rem;
+}
+
+.htmlContent p {
+  margin: 0 0 1.5rem;
+}
+
+.htmlContent a:link {
+  text-decoration: underline;
+  font-weight: 100;
+}
+
+.htmlContent a:visited {
+  text-decoration: none;
+}
+
+.htmlContent a:hover {
+  font-weight: 200;
+}
+
+.htmlContent a:active {
+  text-decoration: underline;
+}
+
+.ActionExpandPanelAdemeContent summary.title {
+  font-size: 18px;
 }

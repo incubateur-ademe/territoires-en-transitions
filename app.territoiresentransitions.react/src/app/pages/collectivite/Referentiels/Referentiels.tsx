@@ -1,16 +1,24 @@
 import 'app/DesignSystem/core.css';
-import {SelectInput} from 'ui';
 
-import React from 'react';
 import {ReferentielEconomieCirculaire} from 'app/pages/collectivite/Referentiels/_ReferentielEconomieCirculaire';
 import {ReferentielClimatAirEnergie} from 'app/pages/collectivite/Referentiels/_ReferentielClimatAirEnergie';
-import {actions} from 'generated/data/referentiels';
-import {Options} from 'types';
 import {ReferentielCombinedByThematique} from 'app/pages/collectivite/Referentiels/_ReferentielsCombinedByThematique';
-import {ActionReferentiel} from 'generated/models/action_referentiel';
+
+import {useParams} from 'react-router-dom';
+import {Chip} from '@material-ui/core';
+import {useEpciId} from 'core-logic/hooks';
+import {Spacer} from 'ui/shared';
 import * as R from 'ramda';
+import {ActionReferentiel} from 'generated/models/action_referentiel';
+import {actions} from 'generated/data/referentiels';
+import {CurrentEpciGaugeProgressStat} from 'ui/referentiels';
 
 type View = 'cae' | 'eci' | 'both';
+const viewTitles: Record<View, String> = {
+  cae: 'Climat Air Énergie',
+  eci: 'Économie Circulaire',
+  both: 'Vue combinée',
+};
 
 const flattenActions = (actions: ActionReferentiel[]): ActionReferentiel[] =>
   R.reduce(
@@ -19,54 +27,86 @@ const flattenActions = (actions: ActionReferentiel[]): ActionReferentiel[] =>
     actions
   );
 
+const eciReferentiel = actions.find(
+  action => action.id === 'economie_circulaire'
+)!;
+
+const caeReferentiel = actions.find(action => action.id === 'citergie')!;
+// For ECI, main action is at level #1, here, we flatten the actions twice.
+
 const ConditionnalActionsReferentiels = ({view}: {view: View}) => {
-  const eciReferentiel = actions.find(
-    action => action.id === 'economie_circulaire'
-  );
-  const eciAxes = eciReferentiel ? eciReferentiel.actions : [];
-  // For ECI, main action is at level #1, here, we flatten the actions once.
-  const eciFlattenMainActions = flattenActions(eciAxes);
-
-  const caeReferentiel = actions.find(action => action.id === 'citergie');
-  const caeAxes = caeReferentiel ? caeReferentiel.actions : [];
-  // For ECI, main action is at level #1, here, we flatten the actions twice.
-  const caeFlattenMainActions = flattenActions(flattenActions(caeAxes));
-
-  if (view === 'cae') return <ReferentielClimatAirEnergie caeAxes={caeAxes} />;
-  else if (view === 'both')
+  if (view === 'cae') {
+    const caeAxes = caeReferentiel ? caeReferentiel.actions : [];
+    return <ReferentielClimatAirEnergie caeAxes={caeAxes} />;
+  } else if (view === 'both') {
+    const caeAxes = caeReferentiel ? caeReferentiel.actions : [];
+    const eciAxes = eciReferentiel ? eciReferentiel.actions : [];
+    const caeFlattenMainActions = flattenActions(flattenActions(caeAxes));
+    // For ECI, main action is at level #1, here, we flatten the actions once.
+    const eciFlattenMainActions = flattenActions(eciAxes);
     return (
       <ReferentielCombinedByThematique
         eciActions={eciFlattenMainActions}
         caeActions={caeFlattenMainActions}
       />
     );
-  else return <ReferentielEconomieCirculaire eciAxes={eciAxes} />;
+  } else {
+    const eciAxes = eciReferentiel ? eciReferentiel.actions : [];
+    return <ReferentielEconomieCirculaire eciAxes={eciAxes} />;
+  }
 };
 
-export const ActionsReferentiels = () => {
-  const viewOptions: Options<View> = [
-    {value: 'cae', label: 'Climat Air Énergie'},
-    {value: 'eci', label: 'Économie Circulaire'},
-    {value: 'both', label: 'Vue combinée'},
-  ];
+function ReferentielNavChip(props: {epciId: string; to: View; current: View}) {
+  return (
+    <div className="mr-2">
+      <Chip
+        label={viewTitles[props.to]}
+        component="a"
+        href={`/collectivite/${props.epciId}/referentiel/${props.to}`}
+        color={props.to === props.current ? 'primary' : 'default'}
+        clickable
+      />
+    </div>
+  );
+}
 
-  const [view, setView] = React.useState<View>('eci');
+function ReferentielTitle(props: {view: View}) {
+  const referentiel = props.view === 'eci' ? eciReferentiel : caeReferentiel;
+
+  return (
+    <header className="flex flex-row items-center mb-6 space-x-10">
+      <h2 className="fr-h2">{viewTitles[props.view]}</h2>
+      <div className={`${props.view === 'both' ? 'hidden' : ''}`}>
+        {/* <ProgressStatStatic
+          action={referentiel}
+          position="left"
+          showPoints={true}
+        /> */}
+        <CurrentEpciGaugeProgressStat action={referentiel} size="sm" />
+      </div>
+    </header>
+  );
+}
+
+export const ActionsReferentiels = () => {
+  const {referentiel} = useParams<{
+    referentiel?: View;
+  }>();
+  const current = referentiel ?? 'eci';
+  const epciId = useEpciId()!;
 
   return (
     <main className="fr-container mt-9 mb-16">
-      <div>
-        <h1 className="fr-h1 mb-0">Référentiels</h1>
+      <h1 className="fr-h1 mb-3">Référentiels</h1>
+      <div className="flex flex-row items-center">
+        <ReferentielNavChip epciId={epciId} to="eci" current={current} />
+        <ReferentielNavChip epciId={epciId} to="cae" current={current} />
+        <ReferentielNavChip epciId={epciId} to="both" current={current} />
       </div>
-      <div className="w-1/3">
-        <SelectInput<View>
-          options={viewOptions}
-          label=""
-          onChange={setView}
-          defaultValue="eci"
-        />
-      </div>
-      <div className="pb-5" />
-      <ConditionnalActionsReferentiels view={view} />
+
+      <Spacer />
+      <ReferentielTitle view={current} />
+      <ConditionnalActionsReferentiels view={current} />
     </main>
   );
 };

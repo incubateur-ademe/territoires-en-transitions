@@ -32,6 +32,7 @@ def all(
     actions_mesures_markdown_dir=paths.mesures_markdown_dir,
     actions_client_output_dir=paths.shared_client_data_dir,
     actions_output_typescript=True,
+    actions_output_python=True,
     indicateurs_markdown_dir=paths.indicateurs_markdown_dir,
     indicateurs_output_client_dir=paths.shared_client_data_dir,
     indicateurs_typescript=True,
@@ -50,6 +51,7 @@ def all(
         mesures_markdown_dir=actions_mesures_markdown_dir,
         client_output_dir=actions_client_output_dir,
         output_typescript=actions_output_typescript,
+        output_python=actions_output_python,
     )
     indicateurs(
         indicateurs_markdown_dir=indicateurs_markdown_dir,
@@ -90,7 +92,7 @@ def actions(
 
     relativize_ids(actions_citergie, "citergie")
     citergie = referentiel_from_actions(
-        actions_citergie, id="citergie", name="Cit'ergie"
+        actions_citergie, id="citergie", name="Climat Air Énergie"
     )
 
     # economie circulaire

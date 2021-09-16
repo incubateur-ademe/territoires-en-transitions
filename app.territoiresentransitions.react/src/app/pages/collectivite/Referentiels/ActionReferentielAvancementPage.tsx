@@ -8,20 +8,14 @@ const ActionReferentielAvancement = lazy(
 );
 
 export const ActionReferentielAvancementPage = () => {
-  const {actionId, referentiel} = useParams<{
+  const {actionId} = useParams<{
     epciId: string;
     actionId: string;
-    referentiel: 'cae' | 'eci';
   }>();
-
-  const displayProgressStat = referentiel === 'eci';
 
   return (
     <Suspense fallback={renderLoader()}>
-      <ActionReferentielAvancement
-        actionId={actionId}
-        displayProgressStat={displayProgressStat}
-      />
+      <ActionReferentielAvancement actionId={actionId} />
     </Suspense>
   );
 };

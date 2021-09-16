@@ -1,22 +1,5 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ProgressStat, ActionReferentielTitleCard} from 'ui/referentiels';
-
-const AxisSectionEconomieCirculaire = ({axis}: {axis: ActionReferentiel}) => (
-  <div className="pb-10">
-    <h2 className="fr-h2">
-      {axis.id_nomenclature} - {axis.nom}
-    </h2>
-    <ProgressStat action={axis} position="left" className="w-full" />
-    <div className="h-5" />
-    {axis.actions.map(action => (
-      <ActionReferentielTitleCard
-        action={action}
-        referentiel="eci"
-        key={action.id}
-      />
-    ))}
-  </div>
-);
+import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
 
 export const ReferentielEconomieCirculaire = ({
   eciAxes,
@@ -26,7 +9,7 @@ export const ReferentielEconomieCirculaire = ({
   return (
     <section>
       {eciAxes.map(axis => (
-        <AxisSectionEconomieCirculaire axis={axis} key={axis.id} />
+        <ExpandableAction action={axis} key={axis.id} />
       ))}
     </section>
   );

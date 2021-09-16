@@ -32,7 +32,7 @@ export const ActionCommentaire = (props: {actionId: string}) => {
   }
 
   return (
-    <div className={'border-t border-b border-gray-300'}>
+    <div className={' border-gray-300'}>
       <div className="CrossExpandPanel">
         <details>
           <summary className="title">Commentaire</summary>
@@ -40,7 +40,7 @@ export const ActionCommentaire = (props: {actionId: string}) => {
           <textarea
             defaultValue={value}
             onBlur={handleSave}
-            className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500 mr-5"
+            className="fr-input mt-2 w-full bg-white p-3 mr-5"
           />
         </details>
       </div>

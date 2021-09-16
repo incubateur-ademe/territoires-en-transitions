@@ -3,28 +3,19 @@ import {Link} from 'react-router-dom';
 import {
   ActionReferentielAvancementRecursiveCard,
   ActionReferentielTitle,
-  ProgressStat,
+  ProgressStatStatic,
 } from 'ui/referentiels';
-import {searchById} from 'app/pages/collectivite/Referentiels/searchById';
 import 'app/DesignSystem/buttons.css';
-import {
-  ActionDescription,
-  AddFicheActionButton,
-  RetourButton,
-  Spacer,
-} from 'ui/shared';
+import {AddFicheActionButton, Spacer} from 'ui/shared';
 import {isIndicateurRelatedToAction} from 'utils/indicateurs';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
+import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
+import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
+import {searchActionById} from 'utils/actions';
 
-const ActionReferentielAvancement = ({
-  actionId,
-  displayProgressStat,
-}: {
-  actionId: string;
-  displayProgressStat: boolean;
-}) => {
-  const action = searchById(referentielActions, actionId);
+const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
+  const action = searchActionById(actionId, referentielActions);
   if (!action) {
     return <Link to="./referentiels" />;
   }
@@ -34,21 +25,22 @@ const ActionReferentielAvancement = ({
   return (
     <div className="fr-container">
       <div className="mt-8 mb-16">
-        <RetourButton />
+        <OrientationQuickNav action={action} />
         <div className="pt-8 flex justify-between items-center">
           <ActionReferentielTitle
-            className="fr-h1 w-9/12 text-gray-900"
+            className="fr-h1 mb-3 w-9/12 text-gray-900"
             action={action}
           />
           <AddFicheActionButton actionId={action.id} />
         </div>
-        <ProgressStat
+        <ProgressStatStatic
           action={action}
           position="left"
-          className={` ${displayProgressStat ? 'w-full mb-10' : 'hidden'}`}
+          className="w-full mb-10"
+          showPoints={true}
         />
         <div className="w-2/3">
-          <ActionDescription content={action.description} />
+          <DescriptionContextAndRessourcesDialogButton action={action} />
         </div>
       </div>
 
@@ -58,8 +50,8 @@ const ActionReferentielAvancement = ({
           <ActionReferentielAvancementRecursiveCard
             action={action}
             key={action.id}
-            displayProgressStat={displayProgressStat}
             displayAddFicheActionButton={true}
+            displayProgressStat={true}
           />
         ))}
       </section>
@@ -72,7 +64,10 @@ const ActionReferentielAvancement = ({
         )}
 
         {relatedIndicateurs.map(indicateur => (
-          <IndicateurReferentielCard indicateur={indicateur} />
+          <IndicateurReferentielCard
+            key={indicateur.id}
+            indicateur={indicateur}
+          />
         ))}
       </section>
     </div>

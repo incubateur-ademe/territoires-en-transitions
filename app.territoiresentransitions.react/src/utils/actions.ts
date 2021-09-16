@@ -1,4 +1,5 @@
 import {ActionReferentiel} from 'generated/models/action_referentiel';
+import {Referentiel} from 'types';
 
 export const flattenActions = (
   actions: ActionReferentiel[],
@@ -38,4 +39,82 @@ export const searchActionById = (
       return searchActionById(actionId, action.actions);
   }
   return null;
+};
+
+export const searchActionSiblingsOfId = (
+  actionId: string,
+  actions: ActionReferentiel[]
+): ActionReferentiel[] | null => {
+  for (const action of actions) {
+    if (actionId === action.id) return actions;
+    if (actionId.startsWith(action.id))
+      return searchActionSiblingsOfId(actionId, action.actions);
+  }
+  return null;
+};
+
+/**
+ * Returns a list of parents ordered from top (root) to bottom.
+ *
+ * @param actionId id we search for
+ * @param actions actions tree to search in
+ */
+export const searchParents = (
+  actionId: string,
+  actions: ActionReferentiel[]
+): ActionReferentiel[] => {
+  const parents: ActionReferentiel[] = [];
+
+  const search = (actions: ActionReferentiel[]): void => {
+    for (const action of actions) {
+      if (actionId === action.id) return;
+      if (actionId.startsWith(action.id)) {
+        parents.push(action);
+        return search(action.actions);
+      }
+    }
+  };
+  search(actions);
+  return parents;
+};
+
+export const referentielMesureDepth = (actionId: string): number =>
+  actionId.startsWith('economie_circulaire') ? 2 : 3;
+
+export const actionIdDepth = (actionId: string) => {
+  const [, action] = actionId.split('__');
+  if (action) return action.split('.').length;
+  return 0;
+};
+
+export const parentId = (actionId: string): string | null => {
+  const elements = actionId.split('.');
+  if (elements.length === 1) return null;
+  elements.pop();
+  return elements.join('.');
+};
+
+export const displayName = (action: ActionReferentiel) =>
+  action.id_nomenclature
+    ? `${action.id_nomenclature} - ${action.nom}`
+    : action.nom;
+
+export const referentielId = (actionId: string): Referentiel =>
+  actionId.startsWith('economie_circulaire') ? 'eci' : 'cae';
+
+export const actionPath = (epciId: string, actionId: string): string => {
+  const elements = actionId.split('.');
+  const depth = elements.length;
+  const mesureDepth = referentielMesureDepth(actionId);
+  const epciPath = `/collectivite/${epciId}`;
+
+  if (depth < mesureDepth) {
+    return `${epciPath}/referentiel/${referentielId(actionId)}/#${actionId}`;
+  }
+  if (depth === mesureDepth) {
+    return `${epciPath}/action/${referentielId(actionId)}/${actionId}`;
+  }
+  while (elements.length > mesureDepth) elements.pop();
+  const mesureId = elements.join('.');
+  return `${epciPath}/action/${referentielId(actionId)}/${mesureId}`;
 };

@@ -8,7 +8,7 @@ import {
   ActionStatus,
   ActionStatusInterface,
 } from 'generated/models/action_status';
-import {isStorable, Storable} from './storable';
+import {Storable} from './storable';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
 import type {FicheActionInterface} from 'generated/models/fiche_action';
 import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
