@@ -12,7 +12,7 @@ PlanAction:
     nom:
         type: String
     categories:
-        type: Dict
+        type: List[Dict]
     fiches_by_category:
         type: List[Dict]
 ```

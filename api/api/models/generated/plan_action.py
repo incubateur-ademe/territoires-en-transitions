@@ -9,5 +9,5 @@ class PlanAction(BaseModel):
     epci_id: str
     uid: str
     nom: str
-    categories: dict
+    categories: List[dict]
     fiches_by_category: List[dict]
