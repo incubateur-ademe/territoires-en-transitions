@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from tests.utils.auth import add_ecriture_droit, auth_headers
 from tests.api.test_routers_action_status import status
 
-path = "/v2/indicateur_value"
+path = "/v2/indicateur_resultat"
 
 indicateur_value = {
     "epci_id": "test",

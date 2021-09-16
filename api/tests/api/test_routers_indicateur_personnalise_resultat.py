@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from tests.utils.auth import add_ecriture_droit, auth_headers
 
-path = "/v2/indicateur_personnalise_value"
+path = "/v2/indicateur_personnalise_resultat"
 
 indicateur_personnalise_value = {
     "epci_id": "test",
