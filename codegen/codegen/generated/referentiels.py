@@ -1,6 +1,4 @@
-from api.models.generated.action_referentiel import ActionReferentiel
-
-ActionReferentiel.update_forward_refs()
+from codegen.generated.action_referentiel import ActionReferentiel
 
 actions = [
     ActionReferentiel(
