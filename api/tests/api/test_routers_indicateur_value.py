@@ -13,7 +13,7 @@ indicateur_value = {
     "epci_id": "test",
     "indicateur_id": "29",
     "year": 2016,
-    "value": "1502",
+    "value": 1502.0,
 }
 
 post_path = f"{path}/{indicateur_value['epci_id']}"
@@ -63,7 +63,7 @@ def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
 
 def test_update_indicateur_value(client: TestClient):
     new_data = {
-        "value": "1234",
+        "value": 1234,
     }
 
     existing_indicateur_value = {**indicateur_value, **new_data}
@@ -74,19 +74,21 @@ def test_update_indicateur_value(client: TestClient):
     )
 
     assert response.status_code == 200
-    assert (
-        response.json()["indicateur_id"] == existing_indicateur_value["indicateur_id"]
-    )
-    assert response.json()["value"] == existing_indicateur_value["value"]
+    response_json = response.json()
+
+    assert response_json["indicateur_id"] == existing_indicateur_value["indicateur_id"]
+    assert response_json["value"] == existing_indicateur_value["value"]
 
     response = client.get(list_path)
     assert response.status_code == 200
-    assert len(response.json()) == 1
+    response_json = response.json()
+
+    assert len(response_json) == 1
+
     assert (
-        response.json()[0]["indicateur_id"]
-        == existing_indicateur_value["indicateur_id"]
+        response_json[0]["indicateur_id"] == existing_indicateur_value["indicateur_id"]
     )
-    assert response.json()[0]["value"] == existing_indicateur_value["value"]
+    assert response_json[0]["value"] == existing_indicateur_value["value"]
 
 
 def test_create_mismatched_indicateur_value(client: TestClient):

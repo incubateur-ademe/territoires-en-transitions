@@ -12,7 +12,7 @@ indicateur_personnalise_value = {
     "epci_id": "test",
     "indicateur_id": "4",
     "year": 2019,
-    "value": "5000",
+    "value": 5000.3,
 }
 
 post_path = f"{path}/{indicateur_personnalise_value['epci_id']}"
@@ -74,7 +74,7 @@ def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
 
 def test_update_indicateur_personnalise_value(client: TestClient):
     new_data = {
-        "value": "3",
+        "value": 3,
     }
 
     existing_indicateur_personnalise_value = {
