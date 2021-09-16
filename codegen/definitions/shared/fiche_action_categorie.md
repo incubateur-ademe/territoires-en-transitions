@@ -8,6 +8,8 @@ FicheActionCategorie:
         type: String
     uid:
         type: String
+    plan_action_uids:
+        type: List[String]
     parent_uid:
         type: String
     nom:

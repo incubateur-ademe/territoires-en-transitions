@@ -6,6 +6,11 @@ class FicheActionCategorie(models.Model):
     id = fields.IntField(pk=True)
     epci_id = fields.CharField(max_length=36)
     uid = fields.CharField(max_length=36)
+
+    plans_action: fields.ManyToManyRelation["PlanAction"] = fields.ManyToManyField(
+        "models.PlanAction", related_name="categories", through="categorie_plan"
+    )
+
     parent_uid = fields.CharField(max_length=36)
     nom = fields.CharField(max_length=300)
     fiche_actions_uids = fields.JSONField()
