@@ -8,7 +8,6 @@ from pydantic import BaseModel
 class FicheAction(BaseModel):
     epci_id: str
     uid: str
-    plan_action_uids: List[str]
     custom_id: str
     avancement: str
     en_retard: bool

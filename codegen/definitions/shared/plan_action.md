@@ -11,4 +11,8 @@ PlanAction:
         type: String
     nom:
         type: String
+    categories:
+        type: Dict
+    fiches_by_category:
+        type: List[Dict]
 ```

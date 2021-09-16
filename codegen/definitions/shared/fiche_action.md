@@ -9,8 +9,6 @@ FicheAction:
         type: String
     uid:
         type: String
-    plan_action_uids:
-        type: List[String]
     custom_id:
         type: String
     avancement:
