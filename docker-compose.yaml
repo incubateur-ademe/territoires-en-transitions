@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  api:
+    build:
+      context: ./api
+      # dockerfile: Dockerfile.api
+    # environment:
+    # env variables
+    depends_on:
+      - postgres
+    command: ["python", "-u", "server.py"]
+
+  client:
+    build:
+      context: ./app.territoiresentransitions.react
+
+  nginx:
+    restart: unless-stopped
+    depends_on:
+      - api
+      - client
+    build:
+      context: ./nginx
+    ports:
+      - 3000:80
+
+  postgres:
+    image: postgres:12
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: dev-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./docker-data/postgresql:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    ports:
+      - 8090:8080
