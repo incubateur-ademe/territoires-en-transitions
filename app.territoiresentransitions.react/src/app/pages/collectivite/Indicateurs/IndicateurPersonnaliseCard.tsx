@@ -11,6 +11,7 @@ import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnalise
 import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {UiDialogButton} from 'ui/UiDialogButton';
+import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -92,14 +93,16 @@ export const IndicateurPersonnaliseCard = (props: {
         <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
       </div>
       <AnyIndicateurValues
-        storage={{
-          indicateurId: props.indicateur.id,
-          store: indicateurPersonnaliseValueStore,
-        }}
+        indicateurId={props.indicateur.id}
+        store={indicateurPersonnaliseValueStore}
       />
       <div className="h-5" />
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
+      <AnyIndicateurLineChartExpandable
+        indicateur={props.indicateur}
+        resultatStore={indicateurPersonnaliseValueStore}
+      />
     </div>
   );
 };

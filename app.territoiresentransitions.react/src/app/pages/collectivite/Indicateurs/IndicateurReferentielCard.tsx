@@ -6,6 +6,7 @@ import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/Ind
 import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {indicateurValueStore} from 'core-logic/api/hybridStores';
 import {useEpciId} from 'core-logic/hooks';
+import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   const [value, setValue] = React.useState('');
@@ -56,14 +57,16 @@ export const IndicateurReferentielCard = (props: {
     <div className="flex flex-col px-5 py-4 bg-beige mb-5">
       <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
       <AnyIndicateurValues
-        storage={{
-          indicateurId: props.indicateur.id,
-          store: indicateurValueStore,
-        }}
+        indicateurId={props.indicateur.id}
+        store={indicateurValueStore}
       />
       <div className="h-5" />
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <Commentaire indicateur={props.indicateur} />
+      <AnyIndicateurLineChartExpandable
+        indicateur={props.indicateur}
+        resultatStore={indicateurValueStore}
+      />
     </div>
   );
 };
