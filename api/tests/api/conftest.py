@@ -11,8 +11,8 @@ from api.config.database import DB_MODELS
 @pytest.fixture(scope="module", autouse=True)
 def client() -> Generator:
     initializer(DB_MODELS)
-    with TestClient(app) as c:
-        yield c
+    with TestClient(app) as test_client:
+        yield test_client
     finalizer()
 
 
