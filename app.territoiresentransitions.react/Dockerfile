@@ -7,6 +7,6 @@ COPY . .
 RUN npm run build -- --prod
 
 FROM nginx
-EXPOSE 4200
+EXPOSE 3000
 COPY ./default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/build /usr/share/nginx/html
