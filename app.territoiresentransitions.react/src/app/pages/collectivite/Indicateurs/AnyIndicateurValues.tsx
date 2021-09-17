@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useEpciId} from 'core-logic/hooks';
 import {AnyIndicateurValueStorable} from 'storables';
 import {HybridStore} from 'core-logic/api/hybridStore';
@@ -82,8 +82,9 @@ export const AnyIndicateurValues = (props: {
         {years.map(year => (
           <AnyIndicateurValueInput
             year={year}
-            storage={props.storage}
-            key={`${props.storage.indicateurId}-${year}`}
+            store={props.store}
+            indicateurId={props.indicateurId}
+            key={`${props.indicateurId}-${year}`}
           />
         ))}
       </div>
@@ -102,14 +103,18 @@ export const AnyIndicateurValues = (props: {
  * Expand Panel with range of value inputs as details
  */
 export const AnyIndicateurEditableExpandPanel = (props: {
-  storage: IndicateurValuesStorageInterface;
+  indicateurId: string;
+  store: HybridStore<AnyIndicateurValueStorable>;
   title: string;
 }) => (
   <div className="CrossExpandPanel editable">
     <details>
       <summary className="title">{props.title}</summary>
       <div>
-        <AnyIndicateurValues storage={props.storage} />
+        <AnyIndicateurValues
+          store={props.store}
+          indicateurId={props.indicateurId}
+        />
       </div>
     </details>
   </div>

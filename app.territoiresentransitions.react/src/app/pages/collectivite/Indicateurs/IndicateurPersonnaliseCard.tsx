@@ -11,6 +11,7 @@ import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnalise
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
+import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;

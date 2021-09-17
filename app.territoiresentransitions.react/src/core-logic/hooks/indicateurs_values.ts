@@ -1,5 +1,4 @@
 import {HybridStore} from 'core-logic/api/hybridStore';
-import {getFicheActionStoreForEpci} from 'core-logic/api/hybridStores';
 import * as R from 'ramda';
 import {useEffect, useState} from 'react';
 import {AnyIndicateurValueStorable} from 'storables';
