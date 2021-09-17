@@ -1,3 +1,4 @@
+from api.utils.on_publish_check_epci import on_publish_check_epci
 from typing import List
 
 from fastapi import HTTPException, Depends
@@ -28,13 +29,7 @@ class IndicateurValueGenericAPI:
             get_utilisateur_droits_from_header
         ),
     ):
-        if epci_id != indicateur_value.epci_id:
-            raise HTTPException(status_code=400, detail="epci_id mismatch")
-
-        if not can_write_epci(epci_id, droits):
-            raise HTTPException(
-                status_code=401, detail=f"droits not found for epci {epci_id}"
-            )
+        on_publish_check_epci(epci_id, indicateur_value.epci_id, droits)
 
         query = self.TortoiseModel.filter(
             epci_id=epci_id,

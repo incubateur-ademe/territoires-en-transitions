@@ -6,10 +6,12 @@ from api.config import openapi_config, tortoise_config
 from api.routers.v2 import (
     auth,
     epci,
+    indicateur_personnalise_objectif,
     utilisateur_droits,
     indicateur_personnalise_resultat,
     indicateur_personnalise,
     indicateur_resultat,
+    indicateur_objectif,
     fiche_action,
     indicateur_referentiel_commentaire,
     action_status,
@@ -32,8 +34,10 @@ app.include_router(auth.router)
 app.include_router(utilisateur_droits.router)
 app.include_router(epci.router)
 app.include_router(indicateur_personnalise_resultat.router)
+app.include_router(indicateur_personnalise_objectif.router)
 app.include_router(indicateur_personnalise.router)
 app.include_router(indicateur_resultat.router)
+app.include_router(indicateur_objectif.router)
 app.include_router(action_meta.router)
 app.include_router(notation.router)
 app.include_router(admin.router)

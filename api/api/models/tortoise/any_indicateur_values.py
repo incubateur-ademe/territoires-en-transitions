@@ -6,13 +6,13 @@ class IndicateurResultat(IndicateurValueMixin, Model):
     pass
 
 
-# class IndicateurObjectif(IndicateurValueGeneric):
-#     pass
+class IndicateurObjectif(IndicateurValueMixin, Model):
+    pass
 
 
 class IndicateurPersonnaliseResultat(IndicateurValueMixin, Model):
     pass
 
 
-# class IndicateurPersonnaliseObjectif(IndicateurValueGeneric):
-#     pass
+class IndicateurPersonnaliseObjectif(IndicateurValueMixin, Model):
+    pass

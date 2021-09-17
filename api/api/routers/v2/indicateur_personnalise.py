@@ -17,7 +17,7 @@ router = APIRouter(prefix="/v2/indicateur_personnalise")
 
 
 @router.post("/{epci_id}", response_model=IndicateurPersonnalise_Pydantic)
-async def write_epci_indicateur_personnalise(
+async def post_epci_indicateur_value(
     epci_id: str,
     indicateur_personnalise: IndicateurPersonnaliseIn_Pydantic,
     droits: List[UtilisateurDroits_Pydantic] = Depends(
