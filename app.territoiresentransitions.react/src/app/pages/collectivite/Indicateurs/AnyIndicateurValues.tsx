@@ -1,75 +1,41 @@
-import {HybridStore} from 'core-logic/api/hybridStore';
 import React, {useEffect, useState} from 'react';
 import {useEpciId} from 'core-logic/hooks';
-import {IndicateurValue} from 'generated/models/indicateur_value';
-import {IndicateurPersonnaliseValue} from 'generated/models/indicateur_personnalise_value';
+import {AnyIndicateurValueStorable} from 'storables';
+import {HybridStore} from 'core-logic/api/hybridStore';
+import {useAnyIndicateurValueForYear} from 'core-logic/hooks/indicateurs_values';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
-
-/**
- * AnyIndicateurValues requirement.
- */
-interface IndicateurValuesStorageInterface {
-  indicateurId: string;
-  store: HybridStore<AnyIndicateurValueStorable>;
-}
-
-/**
- * Join IndicateurValue and IndicateurPersonnaliseValue in a concrete class.
- */
-export class AnyIndicateurValueStorable
-  extends IndicateurValue
-  implements IndicateurPersonnaliseValue
-{
-  static buildId(epci_id: string, indicateur_id: string, year: number): string {
-    return `${epci_id}/${indicateur_id}/${year}`;
-  }
-
-  get id(): string {
-    return AnyIndicateurValueStorable.buildId(
-      this.epci_id,
-      this.indicateur_id,
-      this.year
-    );
-  }
-}
 
 /**
  * Use IndicateurValuesStorageInterface + year to read/write an indicateur value
  */
 const AnyIndicateurValueInput = (props: {
   year: number;
-  storage: IndicateurValuesStorageInterface;
+  indicateurId: string;
+  store: HybridStore<AnyIndicateurValueStorable>;
 }) => {
-  const [value, setValue] = React.useState('');
   const epciId = useEpciId()!;
 
-  useEffect(() => {
-    props.storage.store
-      .retrieveById(
-        AnyIndicateurValueStorable.buildId(
-          epciId,
-          props.storage.indicateurId,
-          props.year
-        )
-      )
-      .then(storable => setValue(storable?.value ?? ''));
-  }, [value, epciId]);
+  const value =
+    useAnyIndicateurValueForYear(
+      props.indicateurId,
+      epciId,
+      props.year,
+      props.store
+    )?.value ?? '';
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
 
-    props.storage.store
-      .store(
-        new AnyIndicateurValueStorable({
-          epci_id: epciId,
-          indicateur_id: props.storage.indicateurId,
-          year: props.year,
-          value: inputValue,
-        })
-      )
-      .then(storable => setValue(storable.value));
+    props.store.store(
+      new AnyIndicateurValueStorable({
+        epci_id: epciId,
+        indicateur_id: props.indicateurId,
+        year: props.year,
+        value: inputValue,
+      })
+    );
   };
   return (
     <label className="flex flex-col mx-2">
@@ -87,7 +53,8 @@ const AnyIndicateurValueInput = (props: {
  * Display a range of inputs for every indicateur yearly values.
  */
 export const AnyIndicateurValues = (props: {
-  storage: IndicateurValuesStorageInterface;
+  indicateurId: string;
+  store: HybridStore<AnyIndicateurValueStorable>;
 }) => {
   const min = 2008;
   const stride = 2;
@@ -114,8 +81,9 @@ export const AnyIndicateurValues = (props: {
       {years.map(year => (
         <AnyIndicateurValueInput
           year={year}
-          storage={props.storage}
-          key={`${props.storage.indicateurId}-${year}`}
+          store={props.store}
+          indicateurId={props.indicateurId}
+          key={`${props.indicateurId}-${year}`}
         />
       ))}
       <button
