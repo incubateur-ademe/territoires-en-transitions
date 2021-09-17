@@ -59,17 +59,13 @@ export const IndicateurReferentielCard = (props: {
 
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <AnyIndicateurEditableExpandPanel
-        storage={{
-          indicateurId: props.indicateur.id,
-          store: indicateurValueStore,
-        }}
+        store={indicateurValueStore}
+        indicateurId={props.indicateur.id}
         title="Objectifs"
       />
       <AnyIndicateurEditableExpandPanel
-        storage={{
-          indicateurId: props.indicateur.id,
-          store: indicateurValueStore,
-        }}
+        store={indicateurValueStore}
+        indicateurId={props.indicateur.id}
         title="Résultats"
       />
       <Commentaire indicateur={props.indicateur} />

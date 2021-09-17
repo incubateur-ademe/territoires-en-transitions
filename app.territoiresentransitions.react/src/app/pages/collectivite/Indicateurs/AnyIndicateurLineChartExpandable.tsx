@@ -33,7 +33,7 @@ const AnyIndicateurLineChart = (props: {
     const storableForYear = resultatValueStorables.find(
       storable => storable.year === year
     );
-    return storableForYear ? parseFloat(storableForYear.value) : null;
+    return storableForYear ? storableForYear.value : null;
   }); // TODO : not needed if field type is float
 
   const data = {
