@@ -144,6 +144,7 @@ const AnyIndicateurLineChart = (props: {
 
 export const AnyIndicateurLineChartExpandable = (props: {
   indicateur: IndicateurPersonnaliseStorable | IndicateurReferentiel;
+  indicateurId: string; // TODO : this should be infered by props.indicateur but there's a mikmak with uid (for indic perso) and id (for indic ref) ...
   resultatStore: HybridStore<AnyIndicateurValueStorable>;
   objectifStore: HybridStore<AnyIndicateurValueStorable>;
 }) => (
