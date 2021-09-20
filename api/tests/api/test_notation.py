@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+import math
 import pytest
 
 from api.models.generated.action_referentiel_score import ActionReferentielScore
@@ -463,9 +464,10 @@ def test_potentiel_redistribution_on_eci():
     assert notation.potentiels[niveau] == 0.0
     siblings = [n for n in notation.referentiel.children(orientation) if n != niveau]
     for sibling in siblings:
-        assert notation.potentiels[sibling] == notation.referentiel.points[
-            orientation
-        ] / len(siblings)
+        assert math.isclose(
+            notation.potentiels[sibling],
+            notation.referentiel.points[orientation] / len(siblings),
+        )
     assert notation.potentiels[orientation] == notation.referentiel.points[orientation]
     assert notation.potentiels[axe] == notation.referentiel.points[axe]
     assert notation.potentiels[root] == notation.referentiel.points[root]
@@ -473,7 +475,7 @@ def test_potentiel_redistribution_on_eci():
 
 def test_potentiel_non_redistribution_on_eci():
     """Set all taches of every niveaux of an orientation as non concernée
-    test it change the orientation potentiel to 0 and change ancestors potentiel."""
+    test it change the orientation potentiel to 0 and remove orientation points from ancestors potentiels."""
     from api.notation.referentiels import referentiel_eci
 
     notation = Notation(referentiel_eci)

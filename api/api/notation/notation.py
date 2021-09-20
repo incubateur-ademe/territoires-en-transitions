@@ -175,7 +175,7 @@ class Notation:
                 # all children are excluded, set their potentiels to 0.
                 for child in children:
                     self.potentiels[child] = 0.0
-            elif len(index) > self.referentiel.mesure_depth:
+            elif len(index) >= self.referentiel.mesure_depth:
                 # smaller action than mesure, we redistribute potentiels equally amongst remaining children.
                 sum_points_of_non_concernee_children = sum(
                     [self.referentiel.points[child] for child in non_concernee_children]
@@ -190,15 +190,22 @@ class Notation:
                     else:
                         self.potentiels[child] += redistribution
             else:
-                # mesure or larger, update potentiels without redistribution.
+                # larger than mesure, update potentiels without redistribution.
                 for child in non_concernee_children:
                     self.potentiels[child] = 0.0
 
             # sum potentiels
             if children:
-                self.potentiels[index] = sum(
-                    [self.potentiels[child] for child in children]
-                )
+                if len(index) == self.referentiel.mesure_depth and len(
+                    non_concernee_children
+                ) != len(children):
+                    # do not change the potentiels at the mesure level
+                    # when not all children are non-concernés
+                    pass
+                else:
+                    self.potentiels[index] = sum(
+                        [self.potentiels[child] for child in children]
+                    )
 
     def __compute_points(self):
         """Compute points from potentiels the propagate the sums"""
