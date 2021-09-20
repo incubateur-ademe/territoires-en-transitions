@@ -23,6 +23,7 @@ export const IndicateurReferentielList = () => {
         {[...byThematique.keys()].map(thematique => {
           return (
             <LazyDetails
+              key={thematique.id}
               summary={
                 <div className="flex items-center mb-5">
                   <h2 className="mb-0">{thematique.name}</h2>

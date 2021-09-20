@@ -61,6 +61,7 @@ export const IndicateurReferentielCard = (props: {
       <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
 
       <IndicateurDescriptionPanel description={props.indicateur.description} />
+      <Commentaire indicateur={props.indicateur} />
       <AnyIndicateurEditableExpandPanel
         store={indicateurObjectifStore}
         indicateurId={props.indicateur.id}
@@ -71,9 +72,10 @@ export const IndicateurReferentielCard = (props: {
         indicateurId={props.indicateur.id}
         title="Résultats"
       />
-      <Commentaire indicateur={props.indicateur} />
+
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
+        indicateurId={props.indicateur.id}
         resultatStore={indicateurResultatStore}
         objectifStore={indicateurObjectifStore}
       />

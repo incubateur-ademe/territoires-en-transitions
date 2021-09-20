@@ -1,11 +1,10 @@
 import {ActionReferentiel} from 'generated/models/action_referentiel';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {LazyDetails} from 'ui/shared/LazyDetails';
 import {
   ActionReferentielTitle,
   ActionReferentielTitleCard,
   CurrentEpciGaugeProgressStat,
-  ProgressStatStatic,
 } from 'ui/referentiels';
 import {Chevron} from 'ui/shared/Chevron';
 

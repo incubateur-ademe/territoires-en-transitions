@@ -93,21 +93,23 @@ export const IndicateurPersonnaliseCard = (props: {
         <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
         <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
       </div>
+      <IndicateurDescriptionPanel description={props.indicateur.description} />
+      <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
+
       <AnyIndicateurEditableExpandPanel
         store={indicateurPersonnaliseObjectifStore}
-        indicateurId={props.indicateur.id}
+        indicateurId={props.indicateur.uid}
         title="Objectifs"
       />
       <AnyIndicateurEditableExpandPanel
         store={indicateurPersonnaliseResultatStore}
-        indicateurId={props.indicateur.id}
+        indicateurId={props.indicateur.uid}
         title="Résultats"
       />
-      <div className="h-5" />
-      <IndicateurDescriptionPanel description={props.indicateur.description} />
-      <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
+
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
+        indicateurId={props.indicateur.uid}
         resultatStore={indicateurPersonnaliseResultatStore}
         objectifStore={indicateurPersonnaliseObjectifStore}
       />
