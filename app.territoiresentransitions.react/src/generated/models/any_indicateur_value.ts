@@ -1,14 +1,14 @@
-export interface IndicateurValueInterface {
+export interface AnyIndicateurValueInterface {
   epci_id: string;
   indicateur_id: string;
   year: number;
   value: number;
 }
 
-export class IndicateurValue {
-  public static pathname = 'indicateur_value';
+export class AnyIndicateurValue {
+  public static pathname = 'any_indicateur_value';
   get pathname(): string {
-    return IndicateurValue.pathname;
+    return AnyIndicateurValue.pathname;
   }
   epci_id: string;
   indicateur_id: string;
@@ -16,7 +16,7 @@ export class IndicateurValue {
   value: number;
 
   /**
-   * Creates a IndicateurValue instance.
+   * Creates a AnyIndicateurValue instance.
    */
   constructor({
     epci_id,
@@ -34,7 +34,7 @@ export class IndicateurValue {
     this.year = year;
     this.value = value;
   }
-  equals(other: IndicateurValueInterface | null): boolean {
+  equals(other: AnyIndicateurValueInterface | null): boolean {
     if (!other) return false;
     return (
       other.epci_id === this.epci_id &&

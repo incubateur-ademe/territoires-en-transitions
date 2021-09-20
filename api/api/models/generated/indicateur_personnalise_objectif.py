@@ -5,7 +5,7 @@ from typing import List, Literal, Optional
 from pydantic import BaseModel
 
 
-class IndicateurPersonnaliseValue(BaseModel):
+class IndicateurPersonnaliseObjectif(BaseModel):
     epci_id: str
     indicateur_id: str
     year: float

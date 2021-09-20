@@ -4,14 +4,15 @@ import {commands} from 'core-logic/commands';
 import {IndicateurPersonnaliseInterface} from 'generated/models/indicateur_personnalise';
 import {
   indicateurPersonnaliseStore,
-  indicateurPersonnaliseValueStore,
+  indicateurPersonnaliseResultatStore,
+  indicateurPersonnaliseObjectifStore,
 } from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
 import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnaliseMetaTypedInterface';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
-import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
+import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -92,16 +93,23 @@ export const IndicateurPersonnaliseCard = (props: {
         <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
         <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
       </div>
-      <AnyIndicateurValues
+      <AnyIndicateurEditableExpandPanel
+        store={indicateurPersonnaliseObjectifStore}
         indicateurId={props.indicateur.id}
-        store={indicateurPersonnaliseValueStore}
+        title="Objectifs"
+      />
+      <AnyIndicateurEditableExpandPanel
+        store={indicateurPersonnaliseResultatStore}
+        indicateurId={props.indicateur.id}
+        title="Résultats"
       />
       <div className="h-5" />
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
-        resultatStore={indicateurPersonnaliseValueStore}
+        resultatStore={indicateurPersonnaliseResultatStore}
+        objectifStore={indicateurPersonnaliseObjectifStore}
       />
     </div>
   );

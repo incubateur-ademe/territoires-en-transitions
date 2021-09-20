@@ -76,7 +76,7 @@ def assert_lists_equal(l1: list, l2: list):
 # ------------------------
 
 
-async def prepare_retrieving_tests(client: TestClient):
+def prepare_retrieving_tests(client: TestClient):
     # TODO : FLUSH DB BEFORE
     # await IndicateurPersonnaliseResultat.filter({}).delete()
     post_with_droits(client, epci_id, post_json=indicateur_X_2019, post_path=post_path)

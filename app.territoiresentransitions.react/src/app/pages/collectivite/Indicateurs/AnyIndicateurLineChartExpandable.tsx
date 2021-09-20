@@ -5,10 +5,42 @@ import {HybridStore} from 'core-logic/api/hybridStore';
 import {AnyIndicateurValueStorable} from 'storables';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
+import type {ChartData, ChartDataset} from 'chart.js';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
   return Array.from({length}, (_, i) => start + i);
+};
+
+const getDataset = (
+  yearRange: number[],
+  indicateurValues: AnyIndicateurValueStorable[],
+  label: string,
+  color: string,
+  kwargs?: Partial<ChartDataset>
+): ChartDataset => {
+  const data = yearRange.map(year => {
+    const storableForYear = indicateurValues.find(
+      storable => storable.year === year
+    );
+    return storableForYear ? storableForYear.value : NaN;
+  });
+  const datastet = {
+    label,
+    data,
+    fill: false,
+    backgroundColor: color,
+    borderColor: color,
+    strokeColor: color,
+    borderWidth: 2,
+    pointRadius: 2,
+    pointHoverRadius: 3,
+    tension: 0.2,
+    spanGaps: true,
+    ...kwargs,
+  };
+
+  return datastet;
 };
 
 const AnyIndicateurLineChart = (props: {
@@ -16,6 +48,7 @@ const AnyIndicateurLineChart = (props: {
   unit: string;
   title: string;
   resultatStore: HybridStore<AnyIndicateurValueStorable>;
+  objectifStore: HybridStore<AnyIndicateurValueStorable>;
 }) => {
   const epciId = useEpciId()!;
   const resultatValueStorables = useAnyIndicateurValueForAllYears(
@@ -23,34 +56,38 @@ const AnyIndicateurLineChart = (props: {
     epciId,
     props.resultatStore
   );
-
-  const yearsWithValue = resultatValueStorables.map(storable => storable.year);
-  const yearRange = range(
-    yearsWithValue[0],
-    yearsWithValue[yearsWithValue.length - 1]
+  const objectifValueStorables = useAnyIndicateurValueForAllYears(
+    props.indicateurId,
+    epciId,
+    props.objectifStore
   );
-  const values = yearRange.map(year => {
-    const storableForYear = resultatValueStorables.find(
-      storable => storable.year === year
-    );
-    return storableForYear ? storableForYear.value : null;
-  }); // TODO : not needed if field type is float
 
-  const data = {
-    labels: yearRange,
+  if (!resultatValueStorables.length && !objectifValueStorables.length)
+    return <>Aucune donnée n'est renseignée.</>;
+
+  const firstYear = Math.min(
+    resultatValueStorables.length ? resultatValueStorables[0].year : Infinity,
+    objectifValueStorables.length ? objectifValueStorables[0].year : Infinity
+  );
+  const lastYear = Math.max(
+    resultatValueStorables.length
+      ? resultatValueStorables[resultatValueStorables.length - 1].year
+      : -1,
+    objectifValueStorables.length
+      ? objectifValueStorables[objectifValueStorables.length - 1].year
+      : -1
+  );
+
+  const yearRange = range(firstYear, lastYear);
+  const labels = yearRange.map(year => year.toString());
+
+  const data: ChartData = {
+    labels,
     datasets: [
-      {
-        label: 'résultats',
-        data: values,
-        fill: false,
-        backgroundColor: '#000091',
-        borderColor: '#000091',
-        borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 3,
-        tension: 0.2,
-        spanGaps: true,
-      },
+      getDataset(yearRange, resultatValueStorables, 'Résultats', '#000091'),
+      getDataset(yearRange, objectifValueStorables, 'Objectifs', '#6a6a6a', {
+        borderDash: [2, 3],
+      }),
     ],
   };
   return (
@@ -61,7 +98,15 @@ const AnyIndicateurLineChart = (props: {
         options={{
           responsive: true,
           maintainAspectRatio: false,
-          plugins: {legend: {display: false}},
+          plugins: {
+            legend: {
+              position: 'right',
+              display: true,
+              labels: {
+                boxHeight: 0,
+              },
+            },
+          },
           scales: {
             y: {
               title: {
@@ -79,6 +124,7 @@ const AnyIndicateurLineChart = (props: {
 export const AnyIndicateurLineChartExpandable = (props: {
   indicateur: IndicateurPersonnaliseStorable | IndicateurReferentiel;
   resultatStore: HybridStore<AnyIndicateurValueStorable>;
+  objectifStore: HybridStore<AnyIndicateurValueStorable>;
 }) => (
   <div className="CrossExpandPanel">
     <details>
@@ -88,6 +134,7 @@ export const AnyIndicateurLineChartExpandable = (props: {
         unit={props.indicateur.unite}
         title={props.indicateur.nom}
         resultatStore={props.resultatStore}
+        objectifStore={props.objectifStore}
       />
     </details>
   </div>

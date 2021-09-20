@@ -1,4 +1,4 @@
-from .indicateur_value_mixin import IndicateurValueMixin
+from .any_indicateur_value_mixin import IndicateurValueMixin
 from tortoise.models import Model
 
 
