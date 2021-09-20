@@ -156,7 +156,7 @@ def test_notation_with_two_orientations_amongst_which_one_is_non_concernee(notat
         "",
         points=0.0,
         percentage=0.0,
-        potentiel=470,
+        potentiel=500,
         referentiel_points=500,
         referentiel_percentage=1,
     )
@@ -166,7 +166,7 @@ def test_notation_with_two_orientations_amongst_which_one_is_non_concernee(notat
         "1",
         points=0.0,
         percentage=0.0,
-        potentiel=70,
+        potentiel=100,
         referentiel_points=100,
         referentiel_percentage=0.2,
     )
@@ -186,7 +186,7 @@ def test_notation_with_two_orientations_amongst_which_one_is_non_concernee(notat
         "1.2",
         points=0.0,
         percentage=0.0,
-        potentiel=70,  # points are not redistributed amongst orientations
+        potentiel=100,  # points are redistributed since mesure depth is 1 for the fake referentiel
         referentiel_points=70,
         referentiel_percentage=0.7,
     )
