@@ -6,6 +6,7 @@ import {AnyIndicateurValueStorable} from 'storables';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import type {ChartData, ChartDataset} from 'chart.js';
+import {Spacer} from 'ui/shared';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
@@ -90,33 +91,53 @@ const AnyIndicateurLineChart = (props: {
       }),
     ],
   };
+  const canvasId = `chart-${props.indicateurId}`;
   return (
-    <div className="w-2/3 h-60">
-      <div className="sm text-center font-bold">{props.title}</div>
-      <Line
-        data={data}
-        options={{
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'right',
-              display: true,
-              labels: {
-                boxHeight: 0,
-              },
-            },
-          },
-          scales: {
-            y: {
-              title: {
+    <div>
+      <div className="w-2/3 h-60">
+        <div className="sm text-center font-bold">{props.title}</div>
+        <Line
+          id={canvasId}
+          data={data}
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
                 display: true,
-                text: props.unit,
+                labels: {
+                  boxHeight: 0,
+                },
               },
             },
-          },
+            scales: {
+              y: {
+                title: {
+                  display: true,
+                  text: props.unit,
+                },
+              },
+            },
+          }}
+        />
+      </div>
+      <Spacer />
+      <a
+        className="fr-btn fr-btn--secondary ml-7"
+        id="download"
+        download={`${props.title}.png`}
+        href=""
+        onClick={() => {
+          const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+          if (canvas) {
+            (document.getElementById('download') as HTMLLinkElement).href =
+              canvas.toDataURL();
+          }
         }}
-      />
+      >
+        Télécharger le graphique en .png
+      </a>
     </div>
   );
 };
@@ -137,6 +158,7 @@ export const AnyIndicateurLineChartExpandable = (props: {
         resultatStore={props.resultatStore}
         objectifStore={props.objectifStore}
       />
+      <Spacer />
     </details>
   </div>
 );
