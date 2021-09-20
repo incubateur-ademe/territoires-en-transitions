@@ -10,10 +10,13 @@ path = "/v2/plan_action"
 
 plan = {
     "epci_id": "test",
-    "nom": "Plan B",
+    "nom": "Mon plan",
     "uid": "59fcc45b-ff19-4723-9c18-9a972f4440f3",
-    "categories": [{"nom": "yolo", "uid": "dodo"}],
-    "fiches_by_category": [{"category_uid": "dodo", "fiche_uid": "dada"}],
+    "categories": [
+        {"nom": "A", "uid": "a", "children": ["b"]},
+        {"nom": "B", "uid": "b", "children": []},
+    ],
+    "fiches_by_category": [{"category_uid": "b", "fiche_uid": "yolo"}],
 }
 
 list_path = f"{path}/{plan['epci_id']}/all"
