@@ -73,6 +73,7 @@ export const IndicateurReferentielCardContent = (props: {
 
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
+        indicateurId={props.indicateur.id}
         resultatStore={indicateurResultatStore}
         objectifStore={indicateurObjectifStore}
       />
