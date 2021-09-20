@@ -59,7 +59,7 @@ export const indicateurObjectifStore =
 export const indicateurPersonnaliseResultatStore =
   new HybridStore<AnyIndicateurValueStorable>({
     host: ENV.backendHost,
-    endpoint: () => `v2/indicateur_personnalise_resutat/${getCurrentEpciId()}`,
+    endpoint: () => `v2/indicateur_personnalise_resultat/${getCurrentEpciId()}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>

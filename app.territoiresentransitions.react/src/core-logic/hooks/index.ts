@@ -7,3 +7,4 @@ export * from './epcis';
 export * from 'core-logic/hooks/authentication';
 export * from './epciAxisReferentielScores';
 export * from './epciPlanActionAvancementSummmary';
+export * from './indicateurReferentielCommentaire';

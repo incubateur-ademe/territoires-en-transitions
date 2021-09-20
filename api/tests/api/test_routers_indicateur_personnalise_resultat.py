@@ -33,7 +33,6 @@ indicateur_Z_2020 = {
 }
 
 post_path = f"{path}/{epci_id}"
-# get_item_path = f"{path}/{epci_id}/{indicateur_id}/{indicateur_year}"
 
 
 def test_droits(client: TestClient):
@@ -41,7 +40,7 @@ def test_droits(client: TestClient):
     # POST /v2/indicateur_personnalise_value/epci_id
     response = client.post(
         post_path,
-        # headers=auth_headers(),
+        headers=auth_headers(),
         json=indicateur_X_2019,
     )
     assert response.status_code == 401
