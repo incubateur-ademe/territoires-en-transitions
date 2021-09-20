@@ -1,11 +1,10 @@
 import {
   indicateurPersonnaliseStore,
-  indicateurPersonnaliseValueStore,
+  indicateurPersonnaliseResultatStore,
   indicateurReferentielCommentaireStore,
-  indicateurValueStore,
+  indicateurResultatStore,
 } from 'core-logic/api/hybridStores';
-import {IndicateurPersonnaliseValueStorable} from 'storables/IndicateurPersonnaliseValueStorable';
-import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
+import {AnyIndicateurValueStorable} from 'storables';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 
@@ -13,24 +12,25 @@ import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseSt
  * todo remove getters and use hooks instead.
  */
 
-const getIndicateurReferentielValue = (indicateurId: string) =>
-  indicateurValueStore.retrieveById(indicateurId);
+const getIndicateurReferentielResultat = (indicateurId: string) =>
+  indicateurResultatStore.retrieveById(indicateurId);
 
-const storeIndicateurReferentielValue = (storable: IndicateurValueStorable) =>
-  indicateurValueStore.store(storable);
+const storeIndicateurReferentielResultat = (
+  storable: AnyIndicateurValueStorable
+) => indicateurResultatStore.store(storable);
 
 const getAllIndicateursPersonnalises = () =>
   indicateurPersonnaliseStore.retrieveAll();
 
-export const getIndicateurPersonnaliseValue = (indicateurId: string) =>
-  indicateurPersonnaliseValueStore.retrieveById(indicateurId);
+export const getIndicateurPersonnaliseResultat = (indicateurId: string) =>
+  indicateurPersonnaliseResultatStore.retrieveById(indicateurId);
 const storeIndicateurPersonnalise = (
   storable: IndicateurPersonnaliseStorable
 ) => indicateurPersonnaliseStore.store(storable);
 
-const storeIndicateurPersonnaliseValue = (
-  storable: IndicateurPersonnaliseValueStorable
-) => indicateurPersonnaliseValueStore.store(storable);
+const storeIndicateurPersonnaliseResultat = (
+  storable: AnyIndicateurValueStorable
+) => indicateurPersonnaliseResultatStore.store(storable);
 
 const getIndicateurReferentielCommentaire = (id: string) =>
   indicateurReferentielCommentaireStore.retrieveById(id);
@@ -40,14 +40,14 @@ const storeIndicateurReferentielCommentaire = (
 ) => indicateurReferentielCommentaireStore.store(storable);
 
 export const indicateurs = {
-  getIndicateurReferentielValue,
-  storeIndicateurReferentielValue,
+  getIndicateurReferentielResultat,
+  storeIndicateurReferentielResultat,
 
   getAllIndicateursPersonnalises,
   storeIndicateurPersonnalise,
 
-  getIndicateurPersonnaliseValue,
-  storeIndicateurPersonnaliseValue,
+  getIndicateurPersonnaliseResultat,
+  storeIndicateurPersonnaliseResultat,
 
   getIndicateurReferentielCommentaire,
   storeIndicateurReferentielCommentaire,

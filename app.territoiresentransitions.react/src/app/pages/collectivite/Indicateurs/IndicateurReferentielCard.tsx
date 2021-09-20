@@ -4,7 +4,10 @@ import {commands} from 'core-logic/commands';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
-import {indicateurValueStore} from 'core-logic/api/hybridStores';
+import {
+  indicateurObjectifStore,
+  indicateurResultatStore,
+} from 'core-logic/api/hybridStores';
 import {useEpciId} from 'core-logic/hooks';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 
@@ -59,19 +62,20 @@ export const IndicateurReferentielCard = (props: {
 
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <AnyIndicateurEditableExpandPanel
-        store={indicateurValueStore}
+        store={indicateurObjectifStore}
         indicateurId={props.indicateur.id}
         title="Objectifs"
       />
       <AnyIndicateurEditableExpandPanel
-        store={indicateurValueStore}
+        store={indicateurResultatStore}
         indicateurId={props.indicateur.id}
         title="Résultats"
       />
       <Commentaire indicateur={props.indicateur} />
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
-        resultatStore={indicateurValueStore}
+        resultatStore={indicateurResultatStore}
+        objectifStore={indicateurObjectifStore}
       />
     </div>
   );
