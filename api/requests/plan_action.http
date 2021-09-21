@@ -1,0 +1,39 @@
+
+### Add a plan
+POST {{host}}/v2/plan_action/test
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "epci_id": "test",
+  "nom": "Mon plan",
+  "uid": "59fcc45b-ff19-4723-9c18-9a972f4440f3",
+  "categories": [
+    {
+      "nom": "A",
+      "uid": "a",
+      "children": [
+        "b"
+      ]
+    },
+    {
+      "nom": "B",
+      "uid": "b",
+      "children": []
+    }
+  ],
+  "fiches_by_category": [
+    {
+      "category_uid": "b",
+      "fiche_uid": "yolo"
+    }
+  ]
+}
+
+### Get all plans
+GET {{host}}/v2/plan_action/test/all
+
+
+### Get a plan by its path
+GET {{host}}/v2/plan_action/test/59fcc45b-ff19-4723-9c18-9a972f4440f3
+
