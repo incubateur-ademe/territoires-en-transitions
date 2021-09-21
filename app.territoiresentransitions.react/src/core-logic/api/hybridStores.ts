@@ -41,6 +41,8 @@ import {ActionMeta, ActionMetaInterface} from 'generated/models/action_meta';
 import {ENV} from 'environmentVariables';
 import {getCurrentEpciId} from 'core-logic/api/currentEpci';
 import {Referentiel} from 'types';
+import {PlanActionStorable} from 'storables/PlanActionStorable';
+import {PlanAction, PlanActionInterface} from 'generated/models/plan_action';
 
 const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
 
@@ -162,7 +164,10 @@ const makeActionReferentielScoreStoreForReferentielForEpci = (props: {
 const actionReferentielScoreStoreForReferentielForEpci: Record<
   Referentiel,
   Record<string, HybridStore<ActionReferentielScoreStorable>>
-> = {eci: {}, cae: {}};
+> = {
+  eci: {},
+  cae: {},
+};
 
 export const getActionReferentielScoreStoreForReferentielForEpci = (props: {
   epciId: string;
@@ -201,4 +206,13 @@ export const actionMetaStore = new HybridStore<ActionMetaStorable>({
   serializer: storable => storable,
   deserializer: serialized =>
     new ActionMetaStorable(serialized as ActionMetaInterface),
+});
+
+export const planActionStore = new HybridStore<PlanActionStorable>({
+  host: ENV.backendHost,
+  endpoint: () => `v2/${PlanAction.pathname}/${getCurrentEpciId()}`,
+  authorization: defaultAuthorization,
+  serializer: storable => storable,
+  deserializer: serialized =>
+    new PlanActionStorable(serialized as PlanActionInterface),
 });

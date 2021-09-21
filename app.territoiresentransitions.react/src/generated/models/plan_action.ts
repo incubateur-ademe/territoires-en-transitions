@@ -2,7 +2,7 @@ export interface PlanActionInterface {
   epci_id: string;
   uid: string;
   nom: string;
-  categories: object;
+  categories: object[];
   fiches_by_category: object[];
 }
 
@@ -14,7 +14,7 @@ export class PlanAction {
   epci_id: string;
   uid: string;
   nom: string;
-  categories: object;
+  categories: object[];
   fiches_by_category: object[];
 
   /**
@@ -30,7 +30,7 @@ export class PlanAction {
     epci_id: string;
     uid: string;
     nom: string;
-    categories: object;
+    categories: object[];
     fiches_by_category: object[];
   }) {
     this.epci_id = epci_id;

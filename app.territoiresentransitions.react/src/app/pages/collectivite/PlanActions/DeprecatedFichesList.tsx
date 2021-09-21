@@ -84,7 +84,7 @@ const UncategorizedFichesList = ({fiches}: {fiches: FicheAction[]}) => {
   );
 };
 
-const FichesList = () => {
+const DeprecatedFichesList = () => {
   const {epciId} = useParams<{epciId: string}>();
 
   const fiches = useAllFiches(epciId);
@@ -118,4 +118,4 @@ const FichesList = () => {
   );
 };
 
-export default FichesList;
+export default DeprecatedFichesList;
