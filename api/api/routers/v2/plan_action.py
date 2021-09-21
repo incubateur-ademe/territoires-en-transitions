@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from tortoise.contrib.fastapi import HTTPNotFoundError
 from tortoise.exceptions import DoesNotExist
 
+from api.models.generated.plan_action_default import planActionDefault
 from api.models.pydantic.status import Status
 from api.models.tortoise.plan_action import (
     PlanAction_Pydantic,
@@ -48,7 +49,21 @@ async def write_epci_plan_action(
 @router.get("/{epci_id}/all", response_model=List[PlanAction_Pydantic])
 async def get_all_epci_plan_action(epci_id: str):
     query = PlanAction.filter(epci_id=epci_id, latest=True, deleted=False)
-    return await PlanAction_Pydantic.from_queryset(query)
+    results = await PlanAction_Pydantic.from_queryset(query)
+    if not results:
+        plan = await PlanAction.create(
+            epci_id=epci_id,
+            uid=planActionDefault["uid"],
+            nom=planActionDefault["nom"],
+            categories=[],
+            fiches_by_category=[],
+            latest=True,
+            deleted=False,
+        )
+        inserted = await PlanAction_Pydantic.from_tortoise_orm(plan)
+        return [inserted]
+
+    return results
 
 
 @router.get(

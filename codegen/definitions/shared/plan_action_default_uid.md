@@ -6,4 +6,5 @@ Représente un plan d'action.
 ```yaml
 planActionDefault:
     uid: 'plan_collectivite'
+    nom: "Plans d'actions"
 ```

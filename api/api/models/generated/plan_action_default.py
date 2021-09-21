@@ -1,1 +1,1 @@
-planActionDefault = {"uid": "plan_collectivite"}
+planActionDefault = {"uid": "plan_collectivite", "nom": "Plans d'actions"}

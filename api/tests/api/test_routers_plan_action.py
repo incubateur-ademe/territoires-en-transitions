@@ -4,6 +4,7 @@ import asyncio
 
 from fastapi.testclient import TestClient
 
+from api.models.generated.plan_action_default import planActionDefault
 from tests.utils.auth import add_ecriture_droit, auth_headers
 
 path = "/v2/plan_action"
@@ -29,6 +30,14 @@ def test_droits(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     # POST /v2/fiche_action_categorie/epci_id
     response = client.post(post_path, json=plan, headers=auth_headers())
     assert response.status_code == 401
+
+
+def test_default_plan_in_all(client: TestClient, event_loop: asyncio.AbstractEventLoop):
+    # GET /v2/fiche_action_categorie/epci_id/all
+    response = client.get(list_path)
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+    assert response.json()[0]["uid"] == planActionDefault["uid"]
 
 
 def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
