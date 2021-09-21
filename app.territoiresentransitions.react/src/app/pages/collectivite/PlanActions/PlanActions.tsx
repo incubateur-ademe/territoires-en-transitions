@@ -8,7 +8,11 @@ import {PlanActionStorable} from 'storables/PlanActionStorable';
 import {planActionStore} from 'core-logic/api/hybridStores';
 import {useParams} from 'react-router-dom';
 import {Chip} from '@material-ui/core';
-import {Categorie, PlanActionTyped} from 'types/PlanActionTypedInterface';
+import {
+  Categorie,
+  PlanActionStructure,
+  PlanActionTyped,
+} from 'types/PlanActionTypedInterface';
 import {FicheAction} from 'generated/models/fiche_action';
 import {compareIndexes} from 'utils';
 import {FicheCard} from 'app/pages/collectivite/PlanActions/FicheCard';
@@ -26,9 +30,10 @@ function categorizeAndSortFiches(
   const categories = [...plan.categories];
   categories.sort((a, b) => compareIndexes(a.nom, b.nom));
   return plan.categories.map((categorie: Categorie) => {
-    // step 2: find fiches
-    const fiches = categorie.children
-      .map(ficheId => allFiches.find(f => f.uid === ficheId))
+    // step 2: find fiches - fixme cast
+    const fiches = (plan as PlanActionStructure).fiches_by_category
+      .filter(fc => fc.category_uid === categorie.uid)
+      .map(fc => allFiches.find(f => f.uid === fc.fiche_uid))
       .filter(fiche => fiche !== undefined) as FicheAction[];
     // step 3: sort fiches
     fiches.sort((a, b) => compareIndexes(a.titre, b.titre));

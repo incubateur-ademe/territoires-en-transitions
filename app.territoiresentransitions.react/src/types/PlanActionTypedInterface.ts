@@ -6,12 +6,9 @@ export interface Categorie {
   children: string[];
 }
 
-export interface Categories {
+export interface PlanActionStructure {
   categories: Categorie[];
-}
-
-export interface FicheByCategory {
   fiches_by_category: {category_uid: string; fiche_uid: string}[];
 }
 
-export type PlanActionTyped = PlanAction & FicheByCategory & Categories;
+export type PlanActionTyped = PlanAction & PlanActionStructure;
