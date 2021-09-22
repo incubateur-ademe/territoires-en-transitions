@@ -55,7 +55,7 @@ const AnyIndicateurValueInput = (props: {
  * Display a range of inputs for every indicateur yearly values.
  */
 export const AnyIndicateurValues = (props: {
-  indicateurId: string;
+  indicateurUid: string;
   store: HybridStore<AnyIndicateurValueStorable>;
 }) => {
   const min = 2008;
@@ -83,8 +83,8 @@ export const AnyIndicateurValues = (props: {
           <AnyIndicateurValueInput
             year={year}
             store={props.store}
-            indicateurId={props.indicateurId}
-            key={`${props.indicateurId}-${year}`}
+            indicateurId={props.indicateurUid}
+            key={`${props.indicateurUid}-${year}`}
           />
         ))}
       </div>
@@ -103,7 +103,7 @@ export const AnyIndicateurValues = (props: {
  * Expand Panel with range of value inputs as details
  */
 export const AnyIndicateurEditableExpandPanel = (props: {
-  indicateurId: string;
+  indicateurUid: string;
   store: HybridStore<AnyIndicateurValueStorable>;
   title: string;
 }) => (
@@ -113,7 +113,7 @@ export const AnyIndicateurEditableExpandPanel = (props: {
       <div>
         <AnyIndicateurValues
           store={props.store}
-          indicateurId={props.indicateurId}
+          indicateurUid={props.indicateurUid}
         />
       </div>
     </details>

@@ -45,7 +45,7 @@ const getDataset = (
 };
 
 const AnyIndicateurLineChart = (props: {
-  indicateurId: string;
+  indicateurUid: string;
   unit: string;
   title: string;
   resultatStore: HybridStore<AnyIndicateurValueStorable>;
@@ -53,12 +53,12 @@ const AnyIndicateurLineChart = (props: {
 }) => {
   const epciId = useEpciId()!;
   const resultatValueStorables = useAnyIndicateurValueForAllYears(
-    props.indicateurId,
+    props.indicateurUid,
     epciId,
     props.resultatStore
   );
   const objectifValueStorables = useAnyIndicateurValueForAllYears(
-    props.indicateurId,
+    props.indicateurUid,
     epciId,
     props.objectifStore
   );
@@ -91,11 +91,11 @@ const AnyIndicateurLineChart = (props: {
       }),
     ],
   };
-  const canvasId = `chart-${props.indicateurId}`;
+  const canvasId = `chart-${props.indicateurUid}`;
   return (
     <div>
       <div className="w-2/3 h-60">
-        <div className="sm text-center font-bold">{props.title}</div>
+        <div className="sm text-center font-bold ">{props.title}</div>
         <Line
           id={canvasId}
           data={data}
@@ -144,7 +144,6 @@ const AnyIndicateurLineChart = (props: {
 
 export const AnyIndicateurLineChartExpandable = (props: {
   indicateur: IndicateurPersonnaliseStorable | IndicateurReferentiel;
-  indicateurId: string; // TODO : this should be infered by props.indicateur but there's a mikmak with uid (for indic perso) and id (for indic ref) ...
   resultatStore: HybridStore<AnyIndicateurValueStorable>;
   objectifStore: HybridStore<AnyIndicateurValueStorable>;
 }) => (
@@ -152,7 +151,7 @@ export const AnyIndicateurLineChartExpandable = (props: {
     <details>
       <summary className="title">Graphique</summary>
       <AnyIndicateurLineChart
-        indicateurId={props.indicateur.id}
+        indicateurUid={props.indicateur.uid}
         unit={props.indicateur.unite}
         title={props.indicateur.nom}
         resultatStore={props.resultatStore}
