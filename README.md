@@ -27,3 +27,9 @@ Chaque dossier à la racine contient son propre `README.md` et peut fonctionner
 de manière autonome.
 
 Vous pouvez contribuer à notre projet [en suivant cette documentation](docs/workflows/contribuer-au-projet.md).
+
+## Pour lancer l'application en développement avec docker-compose  :
+```
+docker-compose up --build 
+```
+
