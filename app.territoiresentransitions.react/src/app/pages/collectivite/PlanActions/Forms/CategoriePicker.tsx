@@ -2,7 +2,7 @@ import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorab
 import {ficheActionCategorieStore} from 'core-logic/api/hybridStores';
 import {useAllStorables, useEpciId} from 'core-logic/hooks';
 import {useEffect, useState} from 'react';
-import {defaultCategorie} from 'app/pages/collectivite/PlanActions/defaultCategorie';
+import {deprecatedDefaultCategorie} from 'app/pages/collectivite/PlanActions/deprecatedDefaultCategorie';
 import {FicheActionCategorieInterface} from 'generated/models/fiche_action_categorie';
 import {v4 as uuid} from 'uuid';
 import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
@@ -31,11 +31,12 @@ export function CategoriePicker(props: {ficheUid: string}) {
   const storedCategories = useAllStorables<FicheActionCategorieStorable>(
     ficheActionCategorieStore
   );
-  const categories = [...storedCategories, defaultCategorie];
+  const categories = [...storedCategories, deprecatedDefaultCategorie];
 
   const [creating, setCreating] = useState<boolean>(false);
-  const [active, setActive] =
-    useState<FicheActionCategorieStorable>(defaultCategorie);
+  const [active, setActive] = useState<FicheActionCategorieStorable>(
+    deprecatedDefaultCategorie
+  );
 
   const ficheActionUid = props.ficheUid;
 
@@ -43,7 +44,7 @@ export function CategoriePicker(props: {ficheUid: string}) {
     setActive(
       categories.find(cat =>
         cat.fiche_actions_uids?.includes(props.ficheUid)
-      ) ?? defaultCategorie
+      ) ?? deprecatedDefaultCategorie
     );
   }, [active, storedCategories]);
 

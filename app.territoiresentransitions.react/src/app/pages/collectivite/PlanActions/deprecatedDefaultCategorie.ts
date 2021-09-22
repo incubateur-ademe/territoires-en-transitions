@@ -1,6 +1,6 @@
 import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
 
-export const defaultCategorie = new FicheActionCategorieStorable({
+export const deprecatedDefaultCategorie = new FicheActionCategorieStorable({
   uid: 'default',
   epci_id: '',
   nom: 'Sans catégorie',

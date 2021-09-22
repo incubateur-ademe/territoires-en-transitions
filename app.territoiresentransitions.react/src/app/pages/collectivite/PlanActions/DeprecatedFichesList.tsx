@@ -6,7 +6,7 @@ import {categorizeAndSortFiches, CategorizedFiche} from 'ui/fiches/sortFiches';
 import {FicheCard} from 'app/pages/collectivite/PlanActions/FicheCard';
 import {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
 import {useState} from 'react';
-import {defaultCategorie} from 'app/pages/collectivite/PlanActions/defaultCategorie';
+import {deprecatedDefaultCategorie} from 'app/pages/collectivite/PlanActions/deprecatedDefaultCategorie';
 import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
 import {AddFicheActionButton, Spacer} from 'ui/shared';
 import {FicheAction} from 'generated/models/fiche_action';
@@ -94,14 +94,16 @@ const DeprecatedFichesList = () => {
   const categorized = categorizeAndSortFiches(
     fiches,
     categories,
-    defaultCategorie
+    deprecatedDefaultCategorie
   );
   const categorizedFichesWithCategorie = categorized.filter(
-    categorizedFiche => categorizedFiche.categorie !== defaultCategorie
+    categorizedFiche =>
+      categorizedFiche.categorie !== deprecatedDefaultCategorie
   );
   const uncategorizedFiches =
     categorized.find(
-      categorizedFiche => categorizedFiche.categorie === defaultCategorie
+      categorizedFiche =>
+        categorizedFiche.categorie === deprecatedDefaultCategorie
     )?.fiches || [];
 
   return (
