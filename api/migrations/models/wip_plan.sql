@@ -19,8 +19,7 @@ group by epci_id;
 
 -- second pass make plans
 insert into planaction (epci_id, uid, nom, categories, fiches_by_category, latest, deleted)
-
-select epci_id,
+select step1.epci_id,
        'plan_collectivite' uid,
        'Plan d''actions'   nom,
        categories,
@@ -30,24 +29,26 @@ select epci_id,
 from (
          select epci_id,
                 json_agg(
-                        json_build_object('nom', nom, 'uid', uid)
-                    ) categories,
-                json_agg(
-                        json_build_object('fiche_uid', fiche_uids, 'category_uid', uid)
+                        json_build_object('fiche_uid', fiche_uid, 'category_uid', uid)
                     ) fiches_by_category
 
          from (
                   select epci_id,
                          uid,
-                         nom,
-                         fiche_uids
+                         jsonb_array_elements_text(fiche_actions_uids) fiche_uid
                   from ficheactioncategorie
-                           cross join lateral (
-                      select array_agg(d.elem::text) as fiche_uids
-                      from jsonb_array_elements_text(fiche_actions_uids) as d(elem)
-                      ) expanded
                   where latest
                     and not deleted
               ) epci_cats
          group by epci_id
-     ) results;
+     ) step1
+         join (
+    select epci_id,
+           json_agg(cat) categories
+    from (
+             select epci_id, jsonb_build_object('nom', nom, 'uid', uid) cat
+             from ficheactioncategorie
+             group by epci_id, nom, uid
+         ) dd
+    group by epci_id
+) results on step1.epci_id = results.epci_id;

@@ -1,3 +1,37 @@
+  ### Add default plan
+POST {{host}}/v2/plan_action/test
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "epci_id": "test",
+  "nom": "Mon plan par défaut c'est yolo",
+  "uid": "plan_collectivite",
+  "categories": [
+    {
+      "nom": "A",
+      "uid": "a",
+      "children": [
+        "b"
+      ]
+    },
+    {
+      "nom": "B",
+      "uid": "b",
+      "children": []
+    }
+  ],
+  "fiches_by_category": [
+    {
+      "category_uid": "a",
+      "fiche_uid": "600a43a3-4fce-4b15-ad92-a57cbbe8719e"
+    },
+    {
+      "category_uid": "b",
+      "fiche_uid": "822c74b7-d32f-4209-a759-5c104098c4ee"
+    }
+  ]
+}
 
 ### Add a plan
 POST {{host}}/v2/plan_action/test
