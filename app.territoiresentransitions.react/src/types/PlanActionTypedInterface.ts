@@ -8,7 +8,7 @@ export interface Categorie {
 
 export interface PlanActionStructure {
   categories: Categorie[];
-  fiches_by_category: {category_uid: string; fiche_uid: string}[];
+  fiches_by_category: {category_uid?: string; fiche_uid: string}[];
 }
 
 export type PlanActionTyped = PlanAction & PlanActionStructure;

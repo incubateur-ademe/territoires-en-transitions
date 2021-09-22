@@ -22,18 +22,24 @@ interface CategorizedFiches {
   categorie: Categorie;
 }
 
+const defaultCategorie: Categorie = {
+  nom: 'Sans catégorie',
+  uid: '',
+  children: [],
+};
+
 function categorizeAndSortFiches(
   allFiches: FicheAction[],
   plan: PlanActionTyped
 ): CategorizedFiches[] {
-  // step 1: sort categories - todo should have a default category.
-  const categories = [...plan.categories];
+  // step 1: sort categories
+  const categories: Categorie[] = [...plan.categories, defaultCategorie];
   categories.sort((a, b) => compareIndexes(a.nom, b.nom));
-  return plan.categories.map((categorie: Categorie) => {
+  return categories.map((categorie: Categorie) => {
     // step 2: find fiches - fixme cast
     const fiches = (plan as PlanActionStructure).fiches_by_category
       .filter(fc => fc.category_uid === categorie.uid)
-      .map(fc => allFiches.find(f => f.uid === fc.fiche_uid))
+      .map(fc => allFiches.find(f => f.uid ?? '' === fc.fiche_uid))
       .filter(fiche => fiche !== undefined) as FicheAction[];
     // step 3: sort fiches
     fiches.sort((a, b) => compareIndexes(a.titre, b.titre));
