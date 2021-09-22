@@ -1,10 +1,11 @@
 import {IndicateurPersonnaliseList} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseList';
 import {ConditionnalIndicateurReferentielList} from './ConditionnalIndicateurReferentielList';
 
-import {Chip} from '@material-ui/core';
+import {Chip, Switch} from '@material-ui/core';
 import {useEpciId} from 'core-logic/hooks';
 import {Spacer} from 'ui/shared';
 import {useParams} from 'react-router-dom';
+import {useState} from 'react';
 
 type View = 'cae' | 'eci' | 'perso';
 
@@ -35,9 +36,22 @@ const IndicateursNavChip = (props: {
 /**
  * Display the list of indicateurs for a given view
  */
-const ConditionnalIndicateurList = (props: {view: View}) => {
-  if (props.view === 'perso') return <IndicateurPersonnaliseList />;
-  return <ConditionnalIndicateurReferentielList referentiel={props.view} />;
+const ConditionnalIndicateurList = (props: {
+  view: View;
+  showOnlyIndicateurWithData: boolean;
+}) => {
+  if (props.view === 'perso')
+    return (
+      <IndicateurPersonnaliseList
+        showOnlyIndicateurWithData={props.showOnlyIndicateurWithData}
+      />
+    );
+  return (
+    <ConditionnalIndicateurReferentielList
+      referentiel={props.view}
+      showOnlyIndicateurWithData={props.showOnlyIndicateurWithData}
+    />
+  );
 };
 
 /**
@@ -50,16 +64,39 @@ const Indicateurs = () => {
   const current = view ?? 'eci';
   const epciId = useEpciId()!;
 
+  const [showOnlyIndicateurWithData, setShowOnlyIndicateurWithData] =
+    useState(false);
+
   return (
     <>
-      <div className="flex flex-row items-center">
-        <IndicateursNavChip epciId={epciId} to="perso" current={current} />
-        <IndicateursNavChip epciId={epciId} to="eci" current={current} />
-        <IndicateursNavChip epciId={epciId} to="cae" current={current} />
+      <div className="flex  justify-between">
+        <div className="flex flex-row items-center">
+          <IndicateursNavChip epciId={epciId} to="perso" current={current} />
+          <IndicateursNavChip epciId={epciId} to="eci" current={current} />
+          <IndicateursNavChip epciId={epciId} to="cae" current={current} />
+        </div>
+        <div className="flex items-center mr-10">
+          <div className="font-light">
+            {showOnlyIndicateurWithData
+              ? 'Afficher tous les indicateurs'
+              : 'Afficher uniquement les indicateurs renseignés'}
+          </div>
+          <Switch
+            color="primary"
+            value={showOnlyIndicateurWithData}
+            inputProps={{'aria-label': 'Switch A'}}
+            onClick={event =>
+              setShowOnlyIndicateurWithData(!showOnlyIndicateurWithData)
+            }
+          />
+        </div>
       </div>
       <Spacer />
       <h2 className="fr-h2">{viewTitles[current]}</h2>
-      <ConditionnalIndicateurList view={current} />
+      <ConditionnalIndicateurList
+        view={current}
+        showOnlyIndicateurWithData={showOnlyIndicateurWithData}
+      />
     </>
   );
 };

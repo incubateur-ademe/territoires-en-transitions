@@ -6,6 +6,14 @@ import {IndicateurReferentiel} from 'generated/models';
 import {IndicateurPersonnaliseCardContent} from './IndicateurPersonnaliseCardContent';
 import {IndicateurReferentielCardContent} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCardContent';
 import {IndicateurPersonnaliseStorable} from 'storables';
+import {useEpciId} from 'core-logic/hooks';
+import {
+  indicateurObjectifStore,
+  indicateurPersonnaliseObjectifStore,
+  indicateurPersonnaliseResultatStore,
+  indicateurResultatStore,
+} from 'core-logic/api/hybridStores';
+import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 
 export const AnyIndicateurCard = ({
   startOpen = true,
@@ -38,23 +46,68 @@ export const AnyIndicateurCard = ({
 export const IndicateurReferentielCard = ({
   indicateur,
   startOpen = true,
+  hideIfNoValues = false,
 }: {
   indicateur: IndicateurReferentiel;
   startOpen?: boolean;
-}) => (
-  <AnyIndicateurCard title={indicateur.nom} startOpen={startOpen}>
-    <IndicateurReferentielCardContent indicateur={indicateur} />
-  </AnyIndicateurCard>
-);
+  hideIfNoValues?: boolean;
+}) => {
+  const epciId = useEpciId()!;
+  const resultatValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurResultatStore
+  );
+  const objectifValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurObjectifStore
+  );
+
+  if (
+    hideIfNoValues &&
+    !resultatValueStorables.length &&
+    !objectifValueStorables.length
+  )
+    return null;
+
+  return (
+    <AnyIndicateurCard title={indicateur.nom} startOpen={startOpen}>
+      <IndicateurReferentielCardContent indicateur={indicateur} />
+    </AnyIndicateurCard>
+  );
+};
 
 export const IndicateurPersonnaliseCard = ({
   indicateur,
   startOpen = true,
+  hideIfNoValues = false,
 }: {
   indicateur: IndicateurPersonnaliseStorable;
   startOpen?: boolean;
-}) => (
-  <AnyIndicateurCard title={indicateur.nom} startOpen={startOpen}>
-    <IndicateurPersonnaliseCardContent indicateur={indicateur} />
-  </AnyIndicateurCard>
-);
+  hideIfNoValues?: boolean;
+}) => {
+  const epciId = useEpciId()!;
+  const resultatValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurPersonnaliseResultatStore
+  );
+  const objectifValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurPersonnaliseObjectifStore
+  );
+
+  if (
+    hideIfNoValues &&
+    !resultatValueStorables.length &&
+    !objectifValueStorables.length
+  )
+    return null;
+  return (
+    <AnyIndicateurCard title={indicateur.nom} startOpen={startOpen}>
+      <IndicateurPersonnaliseCardContent indicateur={indicateur} />
+    </AnyIndicateurCard>
+  );
+};
