@@ -5,10 +5,11 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
-import {refToEmoji, shortenLabel} from './utils';
-
-const indicateurIdRegexp =
-  '(?<ref>eci|cae)-(?<number>[0-9]{1,3})(?<literal>.+)?';
+import {shortenLabel} from './utils';
+import {
+  indicateurIdRegexp,
+  inferIndicateurReferentielAndTitle,
+} from 'utils/indicateurs';
 
 const indicateursById = () => {
   const results = new Map<string, IndicateurReferentiel>();
@@ -45,13 +46,7 @@ const allSortedIndicateurIds = [
 
 const renderIndicateurOption = (id: string) => {
   const indicateur = allIndicateurs.get(id)!;
-  const id_groups = id.match(indicateurIdRegexp)?.groups;
-  if (!id_groups) return id;
-  const ref = id_groups['ref'] as 'eci' | 'cae';
-
-  return `${refToEmoji[ref]} ${Number(id_groups['number'])}${
-    id_groups['literal'] ? '.' + id_groups['literal'] : ''
-  } - ${indicateur.nom}`;
+  return inferIndicateurReferentielAndTitle(indicateur);
 };
 
 type IndicateursFieldProps = {
