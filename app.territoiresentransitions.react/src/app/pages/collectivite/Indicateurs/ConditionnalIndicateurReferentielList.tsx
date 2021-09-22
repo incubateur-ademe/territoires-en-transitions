@@ -7,10 +7,12 @@ import {Referentiel} from 'types';
  */
 export const ConditionnalIndicateurReferentielList = (props: {
   referentiel: Referentiel;
+  showOnlyIndicateurWithData: boolean;
 }) => {
-  const filtered = indicateurs.filter(indicateur =>
-    indicateur.id.startsWith(props.referentiel)
-  );
+  const filtered = indicateurs.filter(indicateur => {
+    return indicateur.id.startsWith(props.referentiel);
+  });
+
   return (
     <div className="app mx-5 mt-5">
       <section className="flex flex-col">
@@ -19,6 +21,7 @@ export const ConditionnalIndicateurReferentielList = (props: {
             <IndicateurReferentielCard
               indicateur={indicateur}
               key={indicateur.uid}
+              hideIfNoValues={props.showOnlyIndicateurWithData}
             />
           );
         })}

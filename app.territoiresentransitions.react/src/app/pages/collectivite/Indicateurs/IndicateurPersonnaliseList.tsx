@@ -4,7 +4,9 @@ import {useAllStorables} from 'core-logic/hooks';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 
-export const IndicateurPersonnaliseList = () => {
+export const IndicateurPersonnaliseList = ({
+  showOnlyIndicateurWithData = false,
+}) => {
   const indicateurs = useAllStorables<IndicateurPersonnaliseStorable>(
     indicateurPersonnaliseStore
   );
@@ -21,6 +23,7 @@ export const IndicateurPersonnaliseList = () => {
           <IndicateurPersonnaliseCard
             indicateur={indicateur}
             key={indicateur.uid}
+            hideIfNoValues={showOnlyIndicateurWithData}
           />
         ))}
       </section>
