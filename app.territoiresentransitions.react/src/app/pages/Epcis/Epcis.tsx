@@ -22,10 +22,10 @@ const Epcis = () => {
   return (
     <div className="app fr-container m-5">
       <section>
-        <h1 className="fr-h1 mb-16 text-center">Bienvenue !</h1>
-        <Spacer />
-        <h2 className="fr-h2 mb-20 text-center">Vos collectivités</h2>
-        <Spacer />
+        <h1 className="fr-h1 text-center">Bienvenue !</h1>
+        <Spacer size={3} />
+        <h2 className="fr-h2 mb-4 text-center">Vos collectivités</h2>
+
         <div className="flex flex-col justify-evenly">
           {usersEpcis.map(epci => (
             <OwnedEpciCard epci={epci} key={epci.id} />
@@ -42,10 +42,11 @@ const Epcis = () => {
       </section>
 
       <section>
-        <h2 className="fr-h2 pt-20 pb-10 text-center">
+        <Spacer size={8} />
+        <h2 className="fr-h2 text-center">
           Consulter toutes les collectivités
         </h2>
-
+        <Spacer size={3} />
         <div className="grid grid-cols-3 gap-12">
           {allEpcis.map(epci => (
             <SimpleEpciCard epci={epci} key={epci.id} />
