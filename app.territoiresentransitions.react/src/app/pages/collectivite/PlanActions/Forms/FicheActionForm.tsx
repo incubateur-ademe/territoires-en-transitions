@@ -9,9 +9,7 @@ import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/
 import {CategoriePicker} from 'app/pages/collectivite/PlanActions/Forms/CategoriePicker';
 import {ActionReferentielAvancementCard} from 'ui/referentiels';
 import {actions} from 'generated/data/referentiels';
-import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
-import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {useAllStorables} from 'core-logic/hooks';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
@@ -19,6 +17,10 @@ import {Spacer} from 'ui/shared';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
 import {searchActionById} from 'utils/actions';
+import {
+  IndicateurPersonnaliseCard,
+  IndicateurReferentielCard,
+} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -65,7 +67,11 @@ const LinkedIndicateurCards = () => {
   return (
     <div>
       {linkedIndicateurs.map(indicateur => (
-        <IndicateurReferentielCard indicateur={indicateur} />
+        <IndicateurReferentielCard
+          indicateur={indicateur}
+          startOpen={false}
+          key={indicateur.uid}
+        />
       ))}
     </div>
   );
@@ -90,7 +96,8 @@ const LinkedIndicateurPersonnaliseCards = () => {
           return (
             <IndicateurPersonnaliseCard
               indicateur={indicateur}
-              key={indicateur.id}
+              startOpen={false}
+              key={indicateur.uid}
             />
           );
         return <></>;

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 import Autocomplete from '@material-ui/lab/Autocomplete';

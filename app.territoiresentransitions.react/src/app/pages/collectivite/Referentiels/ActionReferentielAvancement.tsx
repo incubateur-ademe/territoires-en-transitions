@@ -9,10 +9,10 @@ import 'app/DesignSystem/buttons.css';
 import {AddFicheActionButton, Spacer} from 'ui/shared';
 import {isIndicateurRelatedToAction} from 'utils/indicateurs';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
-import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 import {searchActionById} from 'utils/actions';
+import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 
 const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   const action = searchActionById(actionId, referentielActions);
