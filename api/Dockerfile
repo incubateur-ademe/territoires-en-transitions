@@ -12,8 +12,7 @@ RUN pip install -U pipenv
 RUN pipenv install
 RUN pipenv install --dev
 
-
-WORKDIR /code
+# WORKDIR /code
 
 CMD ["pipenv", "run", "serve"]
 
