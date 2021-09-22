@@ -9,7 +9,6 @@ import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnalise
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
-import {IndicateurPersonnaliseEditionDialog} from './IndicateurPersonnaliseEditionDialog';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -59,11 +58,7 @@ export const IndicateurPersonnaliseCardContent = (props: {
   indicateur: IndicateurPersonnaliseStorable;
 }) => {
   return (
-    <div className="flex flex-col px-5 py-4 bg-beige mb-5">
-      <div className="flex flex-row justify-between items-center">
-        <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
-        <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
-      </div>
+    <div>
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
 
