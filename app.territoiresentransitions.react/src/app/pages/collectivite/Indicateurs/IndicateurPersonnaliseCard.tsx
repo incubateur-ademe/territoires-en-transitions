@@ -98,18 +98,17 @@ export const IndicateurPersonnaliseCard = (props: {
 
       <AnyIndicateurEditableExpandPanel
         store={indicateurPersonnaliseObjectifStore}
-        indicateurId={props.indicateur.uid}
+        indicateurUid={props.indicateur.uid}
         title="Objectifs"
       />
       <AnyIndicateurEditableExpandPanel
         store={indicateurPersonnaliseResultatStore}
-        indicateurId={props.indicateur.uid}
+        indicateurUid={props.indicateur.uid}
         title="Résultats"
       />
 
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
-        indicateurId={props.indicateur.uid}
         resultatStore={indicateurPersonnaliseResultatStore}
         objectifStore={indicateurPersonnaliseObjectifStore}
       />

@@ -64,18 +64,17 @@ export const IndicateurReferentielCard = (props: {
       <Commentaire indicateur={props.indicateur} />
       <AnyIndicateurEditableExpandPanel
         store={indicateurObjectifStore}
-        indicateurId={props.indicateur.id}
+        indicateurUid={props.indicateur.uid}
         title="Objectifs"
       />
       <AnyIndicateurEditableExpandPanel
         store={indicateurResultatStore}
-        indicateurId={props.indicateur.id}
+        indicateurUid={props.indicateur.uid}
         title="Résultats"
       />
 
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
-        indicateurId={props.indicateur.id}
         resultatStore={indicateurResultatStore}
         objectifStore={indicateurObjectifStore}
       />
