@@ -79,3 +79,9 @@ Production dependencies, which will actually send requests, are injected when th
 Selectors are used to access data from the store. We are using the [reselect](https://github.com/reduxjs/reselect) library, which comes with redux-toolkit.
 
 `Reselect` is very efficient to minimize the computation cost. This is why we do our best to make efficient selectors chain. Best practice is to always use selectors when accessing the state.
+
+
+## Using docker :
+```
+docker-compose up --build 
+```
