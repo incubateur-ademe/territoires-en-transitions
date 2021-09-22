@@ -45,6 +45,5 @@ export const IndicateurPersonnaliseList = ({
         ))}
       </section>
     </div>
-    // </div>
   );
 };
