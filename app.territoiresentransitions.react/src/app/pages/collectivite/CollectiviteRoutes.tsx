@@ -27,7 +27,7 @@ export const CollectiviteRoutes = () => {
       <Route path={`${path}/action/:referentiel/:actionId`}>
         <ActionReferentielAvancementPage />
       </Route>
-      <Route path={`${path}/indicateurs/`}>
+      <Route path={`${path}/indicateurs/:view?`}>
         <IndicateursPage />
       </Route>
       <Route path={`${path}/plan_actions/`}>
