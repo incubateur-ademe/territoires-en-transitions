@@ -8,12 +8,16 @@ services:
       - postgres
     environment:
       DATABASE_URL: postgres://postgres:password@postgres:5432/lala
+    # volumes:
+    #   - ./api/api:/api/api
 
   client:
     build:
       context: ./app.territoiresentransitions.react
     ports:
       - 3001:3000
+    volumes:
+      - ./app.territoiresentransitions.react/src:/app/src
 
   postgres:
     image: postgres:12

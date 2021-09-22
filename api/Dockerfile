@@ -4,15 +4,12 @@
 
 FROM python:3.9
 
-RUN mkdir -p /code/api
-WORKDIR /code
+WORKDIR /api
 
 COPY . .
 RUN pip install -U pipenv
 RUN pipenv install
 RUN pipenv install --dev
-
-# WORKDIR /code
 
 CMD ["pipenv", "run", "serve"]
 
