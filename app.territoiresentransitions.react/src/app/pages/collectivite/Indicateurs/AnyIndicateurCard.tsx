@@ -2,7 +2,10 @@ import React, {useState} from 'react';
 
 import {LazyDetails} from 'ui/shared/LazyDetails';
 import {Chevron} from 'ui/shared/Chevron';
-import {IndicateurReferentiel} from 'generated/models';
+import {
+  IndicateurPersonnaliseInterface,
+  IndicateurReferentiel,
+} from 'generated/models';
 import {IndicateurPersonnaliseCardContent} from './IndicateurPersonnaliseCardContent';
 import {IndicateurReferentielCardContent} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCardContent';
 import {IndicateurPersonnaliseStorable} from 'storables';
@@ -11,9 +14,13 @@ import {
   indicateurObjectifStore,
   indicateurPersonnaliseObjectifStore,
   indicateurPersonnaliseResultatStore,
+  indicateurPersonnaliseStore,
   indicateurResultatStore,
 } from 'core-logic/api/hybridStores';
 import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
+import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
+import {UiDialogButton} from 'ui';
+import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
 
 export const AnyIndicateurCard = ({
   startOpen = true,
@@ -72,9 +79,38 @@ export const IndicateurReferentielCard = ({
     return null;
 
   return (
-    <AnyIndicateurCard title={indicateur.nom} startOpen={startOpen}>
+    <AnyIndicateurCard
+      title={inferIndicateurReferentielAndTitle(indicateur)}
+      startOpen={startOpen}
+    >
       <IndicateurReferentielCardContent indicateur={indicateur} />
     </AnyIndicateurCard>
+  );
+};
+
+const IndicateurPersonnaliseEditionDialog = ({
+  indicateur,
+}: {
+  indicateur: IndicateurPersonnaliseStorable;
+}) => {
+  const [editing, setEditing] = React.useState<boolean>(false);
+  const onSave = (indicateur: IndicateurPersonnaliseInterface) => {
+    indicateurPersonnaliseStore.store(
+      new IndicateurPersonnaliseStorable(indicateur)
+    );
+    setEditing(false);
+  };
+  return (
+    <div>
+      <UiDialogButton
+        buttonClasses="fr-btn--secondary"
+        title="Modifier l'indicateur"
+        opened={editing}
+        setOpened={setEditing}
+      >
+        <IndicateurPersonnaliseForm indicateur={indicateur} onSave={onSave} />
+      </UiDialogButton>
+    </div>
   );
 };
 
@@ -106,8 +142,18 @@ export const IndicateurPersonnaliseCard = ({
   )
     return null;
   return (
-    <AnyIndicateurCard title={indicateur.nom} startOpen={startOpen}>
-      <IndicateurPersonnaliseCardContent indicateur={indicateur} />
+    <AnyIndicateurCard
+      title={`${indicateur.custom_id ? `${indicateur.custom_id} - ` : ''}${
+        indicateur.nom
+      }`}
+      startOpen={startOpen}
+    >
+      <div>
+        <div className="float-right -mt-14 mr-8">
+          <IndicateurPersonnaliseEditionDialog indicateur={indicateur} />
+        </div>
+        <IndicateurPersonnaliseCardContent indicateur={indicateur} />
+      </div>
     </AnyIndicateurCard>
   );
 };
