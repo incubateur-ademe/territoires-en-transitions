@@ -58,7 +58,7 @@ function categorizeAndSortFiches(
 
 function PlanNavChip(props: {
   epciId: string;
-  planId: string;
+  planUid: string;
   planNom: string;
   active: boolean;
 }) {
@@ -67,7 +67,7 @@ function PlanNavChip(props: {
       <Chip
         label={props.planNom}
         component="a"
-        href={`/collectivite/${props.epciId}/referentiel/${props.planId}`}
+        href={`/collectivite/${props.epciId}/plan_action/${props.planUid}`}
         color={props.active ? 'primary' : 'default'}
         clickable
       />
@@ -85,7 +85,7 @@ function PlanNav() {
       {plans.map(plan => (
         <PlanNavChip
           epciId={epciId}
-          planId={plan.id}
+          planUid={plan.uid}
           planNom={plan.nom}
           active={plan.uid === planUid}
           key={plan.uid}
