@@ -17,18 +17,15 @@ const DetailedEpciCard = ({epci}: {epci: EpciStorable}) => {
   });
 
   return (
-    <div className="flex flex-col items-center justify- p-8 pt-2 bg-beige">
-      <div className="flex flex-row items-center w-full justify-between">
-        <div></div>
-        <div>
-          <h3 className="fr-h3 mb-5">{epci.nom}</h3>
-        </div>
-        <div className="pb-4">
-          <DetailedEpciCardPropsLink
-            label="Voir les indicateurs"
-            linkTo={`/collectivite/${epci.id}/indicateurs`}
-          />
-        </div>
+    <div className="flex flex-col p-8 pt-2 bg-beige">
+      <div className="flex flex-row items-center w-full justify-center">
+        <h3 className="fr-h3 mb-5">{epci.nom}</h3>
+      </div>
+      <div className="flex justify-end items-end mb-6 -mt-11">
+        <DetailedEpciCardPropsLink
+          label="Voir les indicateurs"
+          linkTo={`/collectivite/${epci.id}/indicateurs`}
+        />
       </div>
       <div className="grid grid-cols-3 gap-6 col-end-auto">
         <div className="bg-white p-3">
