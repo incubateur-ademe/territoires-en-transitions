@@ -1,4 +1,4 @@
 export const planActionDefault = {
   uid: 'plan_collectivite',
-  nom: "Plans d'actions",
+  nom: "Plan d'actions de la collectivit\u00e9",
 };

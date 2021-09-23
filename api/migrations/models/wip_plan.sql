@@ -20,12 +20,12 @@ group by epci_id;
 -- second pass make plans
 insert into planaction (epci_id, uid, nom, categories, fiches_by_category, latest, deleted)
 select step1.epci_id,
-       'plan_collectivite' uid,
-       'Plan d''actions'   nom,
+       'plan_collectivite'                  uid,
+       'Plan d''actions de la collectivité' nom,
        categories,
        fiches_by_category,
-       true                latest,
-       false               deleted
+       true                                 latest,
+       false                                deleted
 from (
          select epci_id,
                 json_agg(
