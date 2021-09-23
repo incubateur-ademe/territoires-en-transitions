@@ -69,14 +69,17 @@ export const ReferentielCombinedByThematique = ({
   );
   return (
     <section>
-      {thematiques.map(thematique => (
-        <ThematiqueSectionCombined
-          key={thematique.id}
-          thematiqueName={thematique.name}
-          eciActions={eciActionsGroupedByThematique[thematique.id] ?? []}
-          caeActions={caeActionsGroupedByThematique[thematique.id] ?? []}
-        />
-      ))}
+      {thematiques.map(thematique => {
+        if (thematique.id === 'eci') return null;
+        return (
+          <ThematiqueSectionCombined
+            key={thematique.id}
+            thematiqueName={thematique.name}
+            eciActions={eciActionsGroupedByThematique[thematique.id] ?? []}
+            caeActions={caeActionsGroupedByThematique[thematique.id] ?? []}
+          />
+        );
+      })}
     </section>
   );
 };
