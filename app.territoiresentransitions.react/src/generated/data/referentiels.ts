@@ -23197,9 +23197,9 @@ export const actions: ActionReferentiel[] = [
           new ActionReferentiel({
             id: 'economie_circulaire__3.6',
             id_nomenclature: '3.6',
-            nom: 'Soutenir et accompagner l\u0027\u00e9conomie de la fonctionnalit\u00e9',
+            nom: 'Soutenir et accompagner l\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration',
             description:
-              '\u003cp\u003eL\u2019\u00e9conomie de la fonctionnalit\u00e9 \u00e9tablit une nouvelle relation entre l\u2019offre et la demande qui n\u2019est plus uniquement bas\u00e9e sur la simple vente de biens ou de services. La contractualisation repose sur les effets utiles (b\u00e9n\u00e9fices) et l\u2019offre s\u2019adapte aux besoins r\u00e9els des personnes, des entreprises et des collectivit\u00e9s ainsi qu\u2019aux enjeux relatifs au d\u00e9veloppement durable. Ce mod\u00e8le \u00e9conomique induit plus largement des transformations profondes dans les modes de production et de consommation. Les solutions doivent permettre une moindre consommation des ressources naturelles dans une perspective d\u2019\u00e9conomie circulaire, un accroissement du bien-\u00eatre des personnes et un d\u00e9veloppement \u00e9conomique.\u003c/p\u003e\n',
+              '\u003cp\u003eL\u2019\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration \u00e9tablit une nouvelle relation entre l\u2019offre et la demande qui n\u2019est plus uniquement bas\u00e9e sur la simple vente de biens ou de services. La contractualisation repose sur les effets utiles (b\u00e9n\u00e9fices) et l\u2019offre s\u2019adapte aux besoins r\u00e9els des personnes, des entreprises et des collectivit\u00e9s ainsi qu\u2019aux enjeux relatifs au d\u00e9veloppement durable. Ce mod\u00e8le \u00e9conomique induit plus largement des transformations profondes dans les modes de production et de consommation. Les solutions doivent permettre une moindre consommation des ressources naturelles dans une perspective d\u2019\u00e9conomie circulaire, un accroissement du bien-\u00eatre des personnes et un d\u00e9veloppement \u00e9conomique.\u003c/p\u003e\n\u003cp\u003eL\u2019\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration propose un mode de d\u00e9veloppement \u00e9conomique bas\u00e9 sur la coop\u00e9ration entre les entreprises, les b\u00e9n\u00e9ficiaires des offres, voire les collectivit\u00e9s territoriales pour proposer des services adapt\u00e9s aux diff\u00e9rents usages. Elle induite des transformations profondes des modes de productions et des modes de vie. Elle vise \u00e0 accro\u00eetre les effets positifs sur la soci\u00e9t\u00e9 tout en \u00e9vitant la surproduction et la surconsommation.\u003c/p\u003e\n',
             contexte:
               '\u003cp\u003e\u003cstrong\u003eD\u00e9finition\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e\u003ca href="https://www.ecologique-solidaire.gouv.fr/leconomie-fonctionnalite"\u003eD\u00e9finition du Minist\u00e8re de la transition \u00e9cologique et solidaire\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u003ca href="http://multimedia.ademe.fr/catalogues/economie-fonctionnalite/"\u003eInfographie ADEME\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u003ca href="https://www.ademe.fr/sites/default/files/assets/documents/economie_fonctionnalite_definition_201705_note.pdf"\u003eD\u00e9finition de l\u2019ADEME\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eContexte\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e\u003ca href="https://www.ademe.fr/sites/default/files/assets/documents/developpement-territoires-efc_201901-note.pdf"\u003eNote ADEME\u00a0: D\u00e9veloppement durable des territoires\u00a0: la voie de l\u2019\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u003ca href="https://www.ademe.fr/expertises/produire-autrement/production-industrielle-services/passer-a-laction/nouveaux-modeles-economiqueshttps:/www.ademe.fr/expertises/produire-autrement/production-industrielle-services/passer-a-laction/nouveaux-modeles-economiques"\u003eLes nouveaux mod\u00e8les \u00e9conomiques\u003c/a\u003e\u003c/p\u003e\n',
             ressources:
@@ -23214,7 +23214,7 @@ export const actions: ActionReferentiel[] = [
                 id_nomenclature: '3.6.1',
                 nom: 'Sensibiliser et former',
                 description:
-                  '\u003cp\u003eLa collectivit\u00e9 forme les \u00e9lus et son personnel aux nouveaux mod\u00e8les \u00e9conomiques en lien avec la transition \u00e9cologique et sociale des territoires.\u003c/p\u003e\n\u003cp\u003eElle sensibilise les acteurs \u00e9conomiques de son territoire \u00e0 l\u2019\u00e9conomie de la fonctionnalit\u00e9 (entreprises, associations, collectivit\u00e9s, etc.).\u003c/p\u003e\n',
+                  '\u003cp\u003eLa collectivit\u00e9 forme les \u00e9lus et son personnel \u00e0 l\u2019\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration en lien avec la transition \u00e9cologique et sociale de son territoire.\u003c/p\u003e\n\u003cp\u003eElle sensibilise les acteurs de son territoire \u00e0 ce nouveau mod\u00e8le \u00e9conomique (entreprises, associations, collectivit\u00e9s, etc.).\u003c/p\u003e\n',
                 contexte: '',
                 ressources: '',
                 exemples:
@@ -23225,7 +23225,7 @@ export const actions: ActionReferentiel[] = [
                   new ActionReferentiel({
                     id: 'economie_circulaire__3.6.1.1',
                     id_nomenclature: '3.6.1.1',
-                    nom: 'D\u00e9cider d\u0027engager une formation du personnel de la collectivit\u00e9',
+                    nom: 'Engager une formation du personnel de la collectivit\u00e9',
                     description: '',
                     contexte: '',
                     ressources: '',
@@ -23238,7 +23238,7 @@ export const actions: ActionReferentiel[] = [
                   new ActionReferentiel({
                     id: 'economie_circulaire__3.6.1.2',
                     id_nomenclature: '3.6.1.2',
-                    nom: 'Disposer d\u0027un personnel de la collectivit\u00e9 form\u00e9',
+                    nom: 'Avoir form\u00e9 des personnes de la collectivit\u00e9',
                     description: '',
                     contexte: '',
                     ressources: '',
@@ -23251,7 +23251,7 @@ export const actions: ActionReferentiel[] = [
                   new ActionReferentiel({
                     id: 'economie_circulaire__3.6.1.3',
                     id_nomenclature: '3.6.1.3',
-                    nom: 'D\u00e9cider d\u0027engager une sensibilisation des acteurs du territoire',
+                    nom: 'Engager une sensibilisation des acteurs du territoire',
                     description: '',
                     contexte: '',
                     ressources: '',
@@ -23279,46 +23279,59 @@ export const actions: ActionReferentiel[] = [
               new ActionReferentiel({
                 id: 'economie_circulaire__3.6.2',
                 id_nomenclature: '3.6.2',
-                nom: 'Soutenir des structures d\u0027animation territoriale et int\u00e9grer des pratiques d\u0027\u00e9conomie de la fonctionnalit\u00e9 dans la commande publique',
+                nom: 'Soutenir les entreprises du territoire et construire des r\u00e9ponses aux enjeux de politique publique adapt\u00e9es aux diff\u00e9rents usages',
                 description:
-                  '\u003cp\u003eLa collectivit\u00e9 soutient des structures d\u0027animation territoriale qui portent des actions d\u2019\u00e9conomie de la fonctionnalit\u00e9 vers les entreprises ou les collectivit\u00e9s territoriales. Elle adh\u00e8re \u00e0 une telle structure et participe \u00e0 la promotion de cette structure et finance des actions sp\u00e9cifiques.\u003c/p\u003e\n\u003cp\u003eLa collectivit\u00e9 int\u00e8gre elle-m\u00eame des crit\u00e8res d\u0027\u00e9conomie de la fonctionnalit\u00e9 dans sa politique d\u0027achats publics pour r\u00e9pondre \u00e0 ses besoins internes.\u003c/p\u003e\n',
+                  '\u003cp\u003eLa collectivit\u00e9 soutient les acteurs \u00e9conomiques du territoire :\u003c/p\u003e\n\u003cp\u003e\u2022 engagement dans des structures d\u0027animation territoriale qui portent des actions d\u2019\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration vers les entreprises\u003c/p\u003e\n\u003cp\u003e\u2022 portage d\u2019actions collectives et individuelles d\u2019entreprises, int\u00e9gration de l\u2019\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration dans les documents strat\u00e9giques.\u003c/p\u003e\n\u003cp\u003eLa collectivit\u00e9 construit des r\u00e9ponses aux enjeux de politique publique adapt\u00e9es aux diff\u00e9rents usages (alimentation, h\u00e2bitat et autres espaces de vie, mobilit\u00e9, loisirs, etc.).\u003c/p\u003e\n\u003cp\u003eElle int\u00e8gre ainsi des crit\u00e8res d\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration dans sa politique d\u0027achats publics et r\u00e9interroge ses besoins en interne en coop\u00e9rant entre les diff\u00e9rents services.\u003c/p\u003e\n',
                 contexte: '',
                 ressources: '',
                 exemples:
-                  '\u003cp\u003eLes structure d\u0027animation territoriale peuvent \u00eatre des r\u00e9seaux professionnels, des r\u00e9seaux consulaires, des agences de l\u2019innovation ou encore des structures d\u2019animation territoriale sp\u00e9cialis\u00e9es.\u003c/p\u003e\n\u003cp\u003eExemples d\u0027action de soutien \u00e0 l\u0027animation : actions collectives ciblant les dirigeants d\u0027entreprises et les collectivit\u00e9s du territoire.\u003c/p\u003e\n\u003cp\u003eExemples d\u0027action en mati\u00e8re de commande publique\u00a0: photocopiage, d\u00e9placements des salari\u00e9s de la collectivit\u00e9, confort thermique de ses locaux.\u003c/p\u003e\n',
+                  '\u003cp\u003eLes structure d\u0027animation territoriale peuvent \u00eatre des r\u00e9seaux professionnels, des r\u00e9seaux consulaires, des agences de l\u2019innovation ou encore des structures d\u2019animation territoriale sp\u00e9cialis\u00e9es (ex. des clubs). Par ses actions, ses structures peuvent mettre en place une dynamique de coop\u00e9ration sur le terriotire qui d\u00e9passe la mutualisation d\u0027\u00e9quipements et travaille \u00e0 la meilleure repartition de valeur.\u003c/p\u003e\n\u003cp\u003eLes actions : actions de sencibilisation, les projets coop\u00e9ratifs, actions collectives ciblant les dirigeants d\u0027entreprises et les collectivit\u00e9s du territoire.\u003c/p\u003e\n\u003cp\u003eExemples d\u0027action en mati\u00e8re de commande publique\u00a0: photocopiage, d\u00e9placements des salari\u00e9s de la collectivit\u00e9, confort thermique de ses locaux.\u003c/p\u003e\n',
                 thematique_id: 'dev_eco',
                 points: 35,
                 actions: [
                   new ActionReferentiel({
                     id: 'economie_circulaire__3.6.2.1',
                     id_nomenclature: '3.6.2.1',
-                    nom: 'Participer \u00e0 des actions d\u0027animation',
+                    nom: 'Participer \u00e0 des actions d\u0027animation des entreprises',
                     description: '',
                     contexte: '',
                     ressources: '',
                     exemples: '',
                     thematique_id: 'dev_eco',
-                    points: 25,
+                    points: 20,
                     actions: [],
                   }),
 
                   new ActionReferentiel({
                     id: 'economie_circulaire__3.6.2.2',
                     id_nomenclature: '3.6.2.2',
-                    nom: 'Adh\u00e9rer \u00e0 une structure d\u0027animation',
+                    nom: 'Adh\u00e9rer \u00e0 une structure d\u0027animation des acteurs du territoire',
                     description: '',
                     contexte: '',
                     ressources: '',
                     exemples: '',
                     thematique_id: 'dev_eco',
-                    points: 25,
+                    points: 10,
                     actions: [],
                   }),
 
                   new ActionReferentiel({
                     id: 'economie_circulaire__3.6.2.3',
                     id_nomenclature: '3.6.2.3',
-                    nom: 'Int\u00e9grer des crit\u00e8res d\u0027\u00e9conomie de la fonctionnalit\u00e9',
+                    nom: 'Soutenir financi\u00e8rement une structure d\u2019animation des acteurs du territoire',
+                    description: '',
+                    contexte: '',
+                    ressources: '',
+                    exemples: '',
+                    thematique_id: 'dev_eco',
+                    points: 20,
+                    actions: [],
+                  }),
+
+                  new ActionReferentiel({
+                    id: 'economie_circulaire__3.6.2.4',
+                    id_nomenclature: '3.6.2.4',
+                    nom: 'Int\u00e9grer des crit\u00e8res d\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration dans la commande publique',
                     description: '',
                     contexte: '',
                     ressources: '',
@@ -23333,9 +23346,9 @@ export const actions: ActionReferentiel[] = [
               new ActionReferentiel({
                 id: 'economie_circulaire__3.6.3',
                 id_nomenclature: '3.6.3',
-                nom: 'Initier ou participer \u00e0 des projets coop\u00e9ratifs territoriaux',
+                nom: 'Apprendre \u00e0 coop\u00e9rer dans une dynamique d\u2019\u00e9cosyst\u00e8mes entre acteurs publics et priv\u00e9s dans le cadre des projets coop\u00e9ratifs territoriaux',
                 description:
-                  '\u003cp\u003eLa collectivit\u00e9 initie ou participe \u00e0 des projets coop\u00e9ratifs territoriaux d\u0027\u00e9conomie de la fonctionnalit\u00e9 pour r\u00e9pondre \u00e0 ses missions de service public ou pour r\u00e9pondre plus largement aux enjeux de d\u00e9veloppement durable (DD) sur son territoire.\u003c/p\u003e\n',
+                  '\u003cp\u003eLa collectivit\u00e9 initie ou participe \u00e0 des projets coop\u00e9ratifs territoriaux d\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration pour r\u00e9pondre \u00e0 ses missions de service public ou pour r\u00e9pondre plus largement aux enjeux de d\u00e9veloppement durable sur son territoire. Ces projets peuvent concerner l\u2019alimentation, la mobilit\u00e9, l\u2019habitat, le tourisme, etc. L\u2019attention aux usages et la coop\u00e9ration sont au centre de la d\u00e9marche.\u003c/p\u003e\n',
                 contexte: '',
                 ressources: '',
                 exemples:
@@ -23346,7 +23359,7 @@ export const actions: ActionReferentiel[] = [
                   new ActionReferentiel({
                     id: 'economie_circulaire__3.6.3.1',
                     id_nomenclature: '3.6.3.1',
-                    nom: 'Commencer \u00e0 \u00e9laborer un projet coop\u00e9ratif territorial d\u0027\u00e9conomie de la fonctionnalit\u00e9',
+                    nom: 'Faire \u00e9merger un projet coop\u00e9ratif territorial d\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration ou participer \u00e0 un projet',
                     description: '',
                     contexte: '',
                     ressources: '',
@@ -23359,7 +23372,7 @@ export const actions: ActionReferentiel[] = [
                   new ActionReferentiel({
                     id: 'economie_circulaire__3.6.3.2',
                     id_nomenclature: '3.6.3.2',
-                    nom: 'Constituer et stabiliser un groupe projet  coop\u00e9ratif territorial d\u0027\u00e9conomie de la fonctionnalit\u00e9',
+                    nom: 'Piloter et stabiliser un \u00e9cosyst\u00e8me coop\u00e9ratif territorial d\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration',
                     description: '',
                     contexte: '',
                     ressources: '',
@@ -23376,11 +23389,11 @@ export const actions: ActionReferentiel[] = [
                 id_nomenclature: '3.6.4',
                 nom: 'Evaluer les effets',
                 description:
-                  '\u003cp\u003eLa collectivit\u00e9 \u00e9value les effets utiles de la mise en place d\u0027actions de l\u0027\u00e9conomie de la fonctionnalit\u00e9 pour les parties prenantes et pour le territoire. Elle tient compte des retours d\u0027exp\u00e9rience pour ses futures actions.\u003c/p\u003e\n',
+                  '\u003cp\u003eLa collectivit\u00e9 \u00e9value le d\u00e9veloppement des effets utiles positifs et de la r\u00e9duction des effets n\u00e9gatifs de la mise en place d\u0027actions de l\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration pour les parties prenantes et pour le territoire. Elle tient compte des retours d\u0027exp\u00e9rience pour ses futures actions.\u003c/p\u003e\n',
                 contexte: '',
                 ressources: '',
                 exemples:
-                  '\u003cp\u003eExemples d\u0027effets \u00e0 \u00e9valuer:\u003c/p\u003e\n\u003cp\u003eB\u00e9n\u00e9fices sociaux, \u00e9conomiques et environnementaux sur des aspects pertinents pour le territoire\u003c/p\u003e\n\u003cp\u003eNouvelles dynamiques entrepreunariales cr\u00e9\u00e9es\u003c/p\u003e\n',
+                  '\u003cp\u003eExemples d\u0027effets \u00e0 \u00e9valuer:\u003c/p\u003e\n\u003cp\u003eB\u00e9n\u00e9fices sociaux, \u00e9conomiques et environnementaux sur des aspects pertinents pour le territoire\u003c/p\u003e\n\u003cp\u003eNouvelles dynamiques entrepreunatiales cr\u00e9\u00e9es : nouvelles entreprises, nouvelles co-entreprises ou entreprises communes, nouvelles associations, nouveaux produits et services, etc.\u003c/p\u003e\n',
                 thematique_id: 'dev_eco',
                 points: 20,
                 actions: [
