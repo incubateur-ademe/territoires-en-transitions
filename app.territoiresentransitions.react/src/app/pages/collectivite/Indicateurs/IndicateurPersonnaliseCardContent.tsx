@@ -44,7 +44,7 @@ const IndicateurPersonnaliseCommentaire = (props: {
   }
 
   return (
-    <div className="CrossExpandPanel">
+    <div className="CrossExpandPanel editable">
       <details>
         <summary>Commentaire</summary>
         <textarea
