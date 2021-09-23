@@ -75,20 +75,22 @@ const Indicateurs = () => {
           <IndicateursNavChip epciId={epciId} to="eci" current={current} />
           <IndicateursNavChip epciId={epciId} to="cae" current={current} />
         </div>
-        <div className="flex items-center mr-10">
-          <div className="font-light">
-            {showOnlyIndicateurWithData
-              ? 'Afficher tous les indicateurs'
-              : 'Afficher uniquement les indicateurs renseignés'}
+        <div className="mr-2 font-light -mt-16">
+          <div className="flex justify-end ">
+            <div className="flex items-center">
+              {showOnlyIndicateurWithData
+                ? 'Afficher tous les indicateurs'
+                : 'Afficher uniquement les indicateurs renseignés'}
+              <Switch
+                color="primary"
+                value={showOnlyIndicateurWithData}
+                inputProps={{'aria-label': 'Switch A'}}
+                onClick={event =>
+                  setShowOnlyIndicateurWithData(!showOnlyIndicateurWithData)
+                }
+              />
+            </div>
           </div>
-          <Switch
-            color="primary"
-            value={showOnlyIndicateurWithData}
-            inputProps={{'aria-label': 'Switch A'}}
-            onClick={event =>
-              setShowOnlyIndicateurWithData(!showOnlyIndicateurWithData)
-            }
-          />
         </div>
       </div>
       <Spacer />
