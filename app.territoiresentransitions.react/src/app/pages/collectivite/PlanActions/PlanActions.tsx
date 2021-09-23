@@ -18,7 +18,7 @@ import {compareIndexes} from 'utils';
 import {FicheCard} from 'app/pages/collectivite/PlanActions/FicheCard';
 import {Spacer} from 'ui/shared';
 
-interface CategorizedFiches {
+interface Categorized {
   fiches: FicheAction[];
   categorie: Categorie;
 }
@@ -26,13 +26,12 @@ interface CategorizedFiches {
 const defaultCategorie: Categorie = {
   nom: 'Sans catégorie',
   uid: '',
-  children: [],
 };
 
 function categorizeAndSortFiches(
   allFiches: FicheAction[],
   plan: PlanActionTyped
-): CategorizedFiches[] {
+): Categorized[] {
   // step 1: sort categories
   const categories: Categorie[] = [...plan.categories, defaultCategorie];
   const fichesByCategory = (plan as PlanActionStructure).fiches_by_category;
@@ -54,6 +53,50 @@ function categorizeAndSortFiches(
       fiches: fiches,
     };
   });
+}
+
+interface CategorizedNode {
+  fiches: FicheAction[];
+  categorie: Categorie;
+  children: CategorizedNode[];
+}
+
+function nestCategorized(categorized: Categorized[]): CategorizedNode[] {
+  // Tree
+  const root: CategorizedNode[] = categorized
+    .filter(c => !c.categorie.parent)
+    .map(c => {
+      return {
+        fiches: c.fiches,
+        categorie: c.categorie,
+        children: [],
+      };
+    });
+
+  function search(
+    nodes: CategorizedNode[],
+    uid: string
+  ): CategorizedNode | null {
+    for (const node of nodes) {
+      if (node.categorie.uid === uid) return node;
+      const found = search(node.children, uid);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  // Consume categorized to put them in the tree.
+  for (const c of categorized) {
+    if (!c.categorie.parent) continue;
+    const node = {
+      fiches: c.fiches,
+      categorie: c.categorie,
+      children: [],
+    };
+    const parent = search(root, node.categorie.parent!);
+    if (parent) parent.children.push(node);
+  }
+  return root;
 }
 
 function PlanNavChip(props: {
@@ -115,29 +158,42 @@ function CategoryTitle(props: {categorie: Categorie; editable: boolean}) {
   );
 }
 
-function Plan(props: {plan: PlanActionTyped}) {
-  const epciId = useEpciId()!;
-  const fiches = useAllFiches(epciId);
-  const sorted = categorizeAndSortFiches(fiches, props.plan);
-
+function NestedCategory(props: {nodes: CategorizedNode[]}) {
   return (
     <>
-      {sorted.map(categorized => {
+      {props.nodes.map(node => {
+        const isDefault = node.categorie.uid === defaultCategorie.uid;
         return (
-          <div key={categorized.categorie.uid}>
-            <CategoryTitle categorie={categorized.categorie} editable={true} />
-            {categorized.fiches.map(fiche => {
+          <div key={node.categorie.uid}>
+            {(node.fiches.length > 0 || !isDefault) && (
+              <CategoryTitle categorie={node.categorie} editable={isDefault} />
+            )}
+            {node.fiches.map(fiche => {
               return (
                 <div className="ml-5 mt-3" key={fiche.uid}>
                   <FicheCard fiche={fiche} />
                 </div>
               );
             })}
+            {node.children && (
+              <div className="ml-5">
+                <NestedCategory nodes={node.children} />
+              </div>
+            )}
           </div>
         );
       })}
     </>
   );
+}
+
+function Plan(props: {plan: PlanActionTyped}) {
+  const epciId = useEpciId()!;
+  const fiches = useAllFiches(epciId);
+  const sorted = categorizeAndSortFiches(fiches, props.plan);
+  const nested = nestCategorized(sorted);
+
+  return <NestedCategory nodes={nested} />;
 }
 
 const PlanActions = function () {
