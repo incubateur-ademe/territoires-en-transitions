@@ -4,16 +4,15 @@ import {ProgressStatStatic} from 'ui/referentiels';
 import {ActionDescriptionExpandPanel} from 'ui/shared';
 import {ActionReferentielTitle} from './ActionReferentielTitle';
 import {referentielToName} from 'app/labels';
-import {Referentiel} from 'types';
 import {getCurrentEpciId} from 'core-logic/api/currentEpci';
+import {referentielId} from 'utils/actions';
 
 export const ActionReferentielTitleCard = ({
   action,
-  referentiel,
 }: {
   action: ActionReferentiel;
-  referentiel: Referentiel;
 }) => {
+  const referentiel = referentielId(action.id);
   return (
     <article className="bg-beige my-4">
       <Link

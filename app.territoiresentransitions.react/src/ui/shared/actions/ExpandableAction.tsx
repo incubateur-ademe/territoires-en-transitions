@@ -38,11 +38,7 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
       >
         <div className=" ml-8 mb-6">
           {action.actions.map(action => (
-            <ActionReferentielTitleCard
-              key={action.id}
-              action={action}
-              referentiel="cae"
-            />
+            <ActionReferentielTitleCard key={action.id} action={action} />
           ))}
         </div>
       </LazyDetails>

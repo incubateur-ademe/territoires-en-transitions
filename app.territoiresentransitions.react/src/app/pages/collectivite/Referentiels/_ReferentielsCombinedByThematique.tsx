@@ -33,19 +33,8 @@ const ThematiqueSectionCombined = ({
       }}
     >
       <div className=" ml-8 mb-6">
-        {eciActions.map(action => (
-          <ActionReferentielTitleCard
-            key={action.id}
-            action={action}
-            referentiel="eci"
-          />
-        ))}
-        {caeActions.map(action => (
-          <ActionReferentielTitleCard
-            key={action.id}
-            action={action}
-            referentiel="cae"
-          />
+        {[...eciActions, ...caeActions].map(action => (
+          <ActionReferentielTitleCard key={action.id} action={action} />
         ))}
       </div>
     </LazyDetails>
