@@ -1,6 +1,6 @@
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {IndicateurReferentielCard} from './AnyIndicateurCard';
-import {Referentiel} from 'types';
+import {ReferentielOfIndicateur} from 'types';
 import {UiSearchBar} from 'ui/UiSearchBar';
 import {useState} from 'react';
 import FuzzySearch from 'fuzzy-search';
@@ -9,7 +9,7 @@ import FuzzySearch from 'fuzzy-search';
  * Display the list of indicateurs for a given referentiel
  */
 export const ConditionnalIndicateurReferentielList = (props: {
-  referentiel: Referentiel;
+  referentiel: ReferentielOfIndicateur;
   showOnlyIndicateurWithData: boolean;
 }) => {
   const referentielIndicateurs = indicateurs.filter(indicateur => {

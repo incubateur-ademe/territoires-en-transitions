@@ -1,37 +1,23 @@
+import {HybridStore} from 'core-logic/api/hybridStore';
 import {
   indicateurPersonnaliseStore,
-  indicateurPersonnaliseResultatStore,
   indicateurReferentielCommentaireStore,
-  indicateurResultatStore,
 } from 'core-logic/api/hybridStores';
-import {AnyIndicateurValueStorable} from 'storables';
+import {AnyIndicateurValueInterface} from 'generated/models';
+import {
+  AnyIndicateurValueStorable,
+  IndicateurPersonnaliseStorable,
+} from 'storables';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
-import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
+import {inferValueIndicateurUid} from 'utils/referentiels';
 
 /**
  * todo remove getters and use hooks instead.
  */
 
-const getIndicateurReferentielResultat = (indicateurId: string) =>
-  indicateurResultatStore.retrieveById(indicateurId);
-
-const storeIndicateurReferentielResultat = (
-  storable: AnyIndicateurValueStorable
-) => indicateurResultatStore.store(storable);
-
-const getAllIndicateursPersonnalises = () =>
-  indicateurPersonnaliseStore.retrieveAll();
-
-export const getIndicateurPersonnaliseResultat = (indicateurId: string) =>
-  indicateurPersonnaliseResultatStore.retrieveById(indicateurId);
 const storeIndicateurPersonnalise = (
   storable: IndicateurPersonnaliseStorable
 ) => indicateurPersonnaliseStore.store(storable);
-
-const storeIndicateurPersonnaliseResultat = (
-  storable: AnyIndicateurValueStorable
-) => indicateurPersonnaliseResultatStore.store(storable);
-
 const getIndicateurReferentielCommentaire = (id: string) =>
   indicateurReferentielCommentaireStore.retrieveById(id);
 
@@ -39,16 +25,20 @@ const storeIndicateurReferentielCommentaire = (
   storable: IndicateurReferentielCommentaireStorable
 ) => indicateurReferentielCommentaireStore.store(storable);
 
+const storeAnyIndicateurValue = (props: {
+  store: HybridStore<AnyIndicateurValueStorable>;
+  interface: AnyIndicateurValueInterface;
+}) => {
+  props.store.store(
+    new AnyIndicateurValueStorable({
+      ...props.interface,
+      indicateur_id: inferValueIndicateurUid(props.interface.indicateur_id),
+    })
+  );
+};
 export const indicateurs = {
-  getIndicateurReferentielResultat,
-  storeIndicateurReferentielResultat,
-
-  getAllIndicateursPersonnalises,
+  getIndicateurReferentielCommentaire, // TODO: This should be a hook.
   storeIndicateurPersonnalise,
-
-  getIndicateurPersonnaliseResultat,
-  storeIndicateurPersonnaliseResultat,
-
-  getIndicateurReferentielCommentaire,
   storeIndicateurReferentielCommentaire,
+  storeAnyIndicateurValue,
 };

@@ -1,10 +1,15 @@
 import * as R from 'ramda';
-import type {Avancement, FicheActionAvancement, Referentiel} from 'types';
+import type {
+  Avancement,
+  FicheActionAvancement,
+  ReferentielOfIndicateur,
+} from 'types';
 
 // Define all labels from app
-export const referentielToName: Record<Referentiel, string> = {
+export const referentielToName: Record<ReferentielOfIndicateur, string> = {
   cae: 'Climat Air Énergie',
   eci: 'Économie Circulaire',
+  crte: 'Contrat Relance Transition Écologique',
 };
 
 export const avancementLabels: Omit<Record<Avancement, string>, ''> = {

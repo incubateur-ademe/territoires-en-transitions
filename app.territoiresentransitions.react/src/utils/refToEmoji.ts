@@ -1,1 +1,1 @@
-export const refToEmoji = {eci: '♻', cae: '🌍'};
+export const refToEmoji = {eci: '♻', cae: '🌍', crte: ''};

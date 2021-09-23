@@ -3,6 +3,7 @@ import {useEpciId} from 'core-logic/hooks';
 import {AnyIndicateurValueStorable} from 'storables';
 import {HybridStore} from 'core-logic/api/hybridStore';
 import {useAnyIndicateurValueForYear} from 'core-logic/hooks/indicateurs_values';
+import {commands} from 'core-logic/commands';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
@@ -12,14 +13,14 @@ import {useAnyIndicateurValueForYear} from 'core-logic/hooks/indicateurs_values'
  */
 const AnyIndicateurValueInput = (props: {
   year: number;
-  indicateurId: string;
+  indicateurUid: string;
   store: HybridStore<AnyIndicateurValueStorable>;
 }) => {
   const epciId = useEpciId()!;
 
   const value =
     useAnyIndicateurValueForYear(
-      props.indicateurId,
+      props.indicateurUid,
       epciId,
       props.year,
       props.store
@@ -28,15 +29,15 @@ const AnyIndicateurValueInput = (props: {
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
     const floatValue = parseFloat(inputValue.replace(',', '.'));
-
-    props.store.store(
-      new AnyIndicateurValueStorable({
+    commands.indicateurCommands.storeAnyIndicateurValue({
+      store: props.store,
+      interface: {
         epci_id: epciId,
-        indicateur_id: props.indicateurId,
+        indicateur_id: props.indicateurUid,
         year: props.year,
         value: floatValue,
-      })
-    );
+      },
+    });
   };
   return (
     <label className="flex flex-col mx-2 ">
@@ -83,7 +84,7 @@ export const AnyIndicateurValues = (props: {
           <AnyIndicateurValueInput
             year={year}
             store={props.store}
-            indicateurId={props.indicateurUid}
+            indicateurUid={props.indicateurUid}
             key={`${props.indicateurUid}-${year}`}
           />
         ))}
