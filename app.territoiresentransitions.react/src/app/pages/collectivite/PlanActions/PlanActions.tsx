@@ -34,13 +34,17 @@ function categorizeAndSortFiches(
 ): CategorizedFiches[] {
   // step 1: sort categories
   const categories: Categorie[] = [...plan.categories, defaultCategorie];
+  const fichesByCategory = (plan as PlanActionStructure).fiches_by_category;
   categories.sort((a, b) => compareIndexes(a.nom, b.nom));
   return categories.map((categorie: Categorie) => {
-    // step 2: find fiches - fixme cast
-    const fiches = (plan as PlanActionStructure).fiches_by_category
-      .filter(fc => fc.category_uid === categorie.uid)
-      .map(fc => allFiches.find(f => f.uid ?? '' === fc.fiche_uid))
-      .filter(fiche => fiche !== undefined) as FicheAction[];
+    // step 2: find fiches
+    const fiches: FicheAction[] = [];
+    for (const {fiche_uid} of fichesByCategory.filter(
+      fc => fc.category_uid === categorie.uid
+    )) {
+      const fiche = allFiches.find(f => f.uid === fiche_uid);
+      if (fiche) fiches.push(fiche);
+    }
     // step 3: sort fiches
     fiches.sort((a, b) => compareIndexes(a.titre, b.titre));
     fiches.sort((a, b) => compareIndexes(a.custom_id, b.custom_id));
