@@ -42,6 +42,9 @@ const allSortedIndicateurIds = [
   ...sortIndicateurIds(
     allIndicateurIds.filter(indicateurId => indicateurId.startsWith('eci'))
   ),
+  ...sortIndicateurIds(
+    allIndicateurIds.filter(indicateurId => indicateurId.startsWith('crte'))
+  ),
 ];
 
 const renderIndicateurOption = (id: string) => {
