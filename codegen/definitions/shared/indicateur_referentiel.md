@@ -13,6 +13,8 @@ IndicateurReferentiel:
         type: String
     uid:
         type: String
+    valeur:
+        type: String
     action_ids:
         type: List[String]
     nom:

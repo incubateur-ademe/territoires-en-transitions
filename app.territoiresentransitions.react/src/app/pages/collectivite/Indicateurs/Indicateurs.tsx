@@ -6,13 +6,15 @@ import {useEpciId} from 'core-logic/hooks';
 import {Spacer} from 'ui/shared';
 import {useParams} from 'react-router-dom';
 import {useState} from 'react';
+import {referentielToName} from 'app/labels';
 
-type View = 'cae' | 'eci' | 'perso';
+type View = 'cae' | 'eci' | 'crte' | 'perso';
 
 const viewTitles: Record<View, string> = {
   perso: 'Mes indicateurs',
-  cae: 'Climat Air Énergie',
-  eci: 'Économie Circulaire',
+  cae: referentielToName.cae,
+  eci: referentielToName.eci,
+  crte: referentielToName.crte,
 };
 
 const IndicateursNavChip = (props: {
@@ -74,6 +76,7 @@ const Indicateurs = () => {
           <IndicateursNavChip epciId={epciId} to="perso" current={current} />
           <IndicateursNavChip epciId={epciId} to="eci" current={current} />
           <IndicateursNavChip epciId={epciId} to="cae" current={current} />
+          <IndicateursNavChip epciId={epciId} to="crte" current={current} />
         </div>
         <div className="mr-2 font-light -mt-16">
           <div className="flex justify-end ">
