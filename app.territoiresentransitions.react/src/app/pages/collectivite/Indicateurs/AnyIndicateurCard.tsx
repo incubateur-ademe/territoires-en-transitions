@@ -2,10 +2,7 @@ import React, {useState} from 'react';
 
 import {LazyDetails} from 'ui/shared/LazyDetails';
 import {Chevron} from 'ui/shared/Chevron';
-import {
-  IndicateurPersonnaliseInterface,
-  IndicateurReferentiel,
-} from 'generated/models';
+import {IndicateurReferentiel} from 'generated/models';
 import {IndicateurPersonnaliseCardContent} from './IndicateurPersonnaliseCardContent';
 import {IndicateurReferentielCardContent} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCardContent';
 import {IndicateurPersonnaliseStorable} from 'storables';
@@ -14,13 +11,11 @@ import {
   indicateurObjectifStore,
   indicateurPersonnaliseObjectifStore,
   indicateurPersonnaliseResultatStore,
-  indicateurPersonnaliseStore,
   indicateurResultatStore,
 } from 'core-logic/api/hybridStores';
 import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
-import {UiDialogButton} from 'ui';
-import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
+import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
 
 export const AnyIndicateurCard = ({
   startOpen = true,
@@ -85,32 +80,6 @@ export const IndicateurReferentielCard = ({
     >
       <IndicateurReferentielCardContent indicateur={indicateur} />
     </AnyIndicateurCard>
-  );
-};
-
-const IndicateurPersonnaliseEditionDialog = ({
-  indicateur,
-}: {
-  indicateur: IndicateurPersonnaliseStorable;
-}) => {
-  const [editing, setEditing] = React.useState<boolean>(false);
-  const onSave = (indicateur: IndicateurPersonnaliseInterface) => {
-    indicateurPersonnaliseStore.store(
-      new IndicateurPersonnaliseStorable(indicateur)
-    );
-    setEditing(false);
-  };
-  return (
-    <div>
-      <UiDialogButton
-        buttonClasses="fr-btn--secondary"
-        title="Modifier l'indicateur"
-        opened={editing}
-        setOpened={setEditing}
-      >
-        <IndicateurPersonnaliseForm indicateur={indicateur} onSave={onSave} />
-      </UiDialogButton>
-    </div>
   );
 };
 
