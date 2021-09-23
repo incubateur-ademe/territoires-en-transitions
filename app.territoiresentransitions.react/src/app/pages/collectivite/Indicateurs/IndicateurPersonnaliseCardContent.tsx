@@ -1,18 +1,14 @@
 import React from 'react';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import {commands} from 'core-logic/commands';
-import {IndicateurPersonnaliseInterface} from 'generated/models/indicateur_personnalise';
 import {
-  indicateurPersonnaliseStore,
   indicateurPersonnaliseResultatStore,
   indicateurPersonnaliseObjectifStore,
 } from 'core-logic/api/hybridStores';
-import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
 import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnaliseMetaTypedInterface';
-import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
-import {UiDialogButton} from 'ui/UiDialogButton';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
+import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -44,7 +40,7 @@ const IndicateurPersonnaliseCommentaire = (props: {
   }
 
   return (
-    <div className="CrossExpandPanel editable">
+    <div className="CrossExpandPanel">
       <details>
         <summary>Commentaire</summary>
         <textarea
@@ -54,32 +50,6 @@ const IndicateurPersonnaliseCommentaire = (props: {
           className="fr-input mt-2 w-4/5 bg-white p-3 border-b-2 border-gray-500 mr-5"
         />
       </details>
-    </div>
-  );
-};
-
-const IndicateurPersonnaliseEditionDialog = ({
-  indicateur,
-}: {
-  indicateur: IndicateurPersonnaliseStorable;
-}) => {
-  const [editing, setEditing] = React.useState<boolean>(false);
-  const onSave = (indicateur: IndicateurPersonnaliseInterface) => {
-    indicateurPersonnaliseStore.store(
-      new IndicateurPersonnaliseStorable(indicateur)
-    );
-    setEditing(false);
-  };
-  return (
-    <div>
-      <UiDialogButton
-        buttonClasses="fr-btn--secondary"
-        title="Modifier l'indicateur"
-        opened={editing}
-        setOpened={setEditing}
-      >
-        <IndicateurPersonnaliseForm indicateur={indicateur} onSave={onSave} />
-      </UiDialogButton>
     </div>
   );
 };
