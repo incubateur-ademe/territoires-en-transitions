@@ -16,10 +16,11 @@ const AxisSummary = (props: {
     <div className="w-3/5">{props.title}</div>
     <div className="flex">
       <UiGaugeProgressStat score={props.score} size="xs" showPoints={false} />
-      <DetailedEpciCardPropsLink
+      {/* TODO : this is commented until we have an ancor system to link to the axis */}
+      {/* <DetailedEpciCardPropsLink
         label=""
         linkTo={`/collectivite/${props.epciId}/action/${props.referentiel}/${props.score?.action_id}`} // TODO link to ECI ref
-      />
+      /> */}
     </div>
   </div>
 );
