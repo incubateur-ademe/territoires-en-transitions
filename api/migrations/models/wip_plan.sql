@@ -48,6 +48,8 @@ from (
     from (
              select epci_id, jsonb_build_object('nom', nom, 'uid', uid) cat
              from ficheactioncategorie
+             where latest
+               and not deleted
              group by epci_id, nom, uid
          ) dd
     group by epci_id
