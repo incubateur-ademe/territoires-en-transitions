@@ -10,6 +10,9 @@ import {UiSearchBar} from 'ui/UiSearchBar';
 export const IndicateurPersonnaliseList = ({
   showOnlyIndicateurWithData = false,
 }) => {
+  const [filteredIndicateurs, setFilteredIndicateurs] =
+    useState<IndicateurPersonnaliseStorable[]>();
+
   const indicateurs = useAllStorables<IndicateurPersonnaliseStorable>(
     indicateurPersonnaliseStore
   );
@@ -19,10 +22,8 @@ export const IndicateurPersonnaliseList = ({
     sort: true,
   });
 
-  const [filteredIndicateurs, setFilteredIndicateurs] = useState(indicateurs);
-
   const search = (query: string) => {
-    if (query === '') return setFilteredIndicateurs(indicateurs);
+    if (query === '') return setFilteredIndicateurs(undefined);
     return setFilteredIndicateurs(nomSearcher.search(query));
   };
 
@@ -35,7 +36,7 @@ export const IndicateurPersonnaliseList = ({
         <IndicateurPersonnaliseCreationDialog />
       </div>
       <section className="flex flex-col">
-        {filteredIndicateurs.map(indicateur => (
+        {(filteredIndicateurs || indicateurs).map(indicateur => (
           <IndicateurPersonnaliseCard
             indicateur={indicateur}
             key={indicateur.uid}

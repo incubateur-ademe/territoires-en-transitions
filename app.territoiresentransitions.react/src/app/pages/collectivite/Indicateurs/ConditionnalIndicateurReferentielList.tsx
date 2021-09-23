@@ -20,7 +20,7 @@ export const ConditionnalIndicateurReferentielList = (props: {
     sort: true,
   });
   const idSearcher = new FuzzySearch(referentielIndicateurs, ['id'], {
-    sort: true,
+    sort: false,
   });
 
   const [filteredIndicateurs, setFilteredIndicateurs] = useState(
