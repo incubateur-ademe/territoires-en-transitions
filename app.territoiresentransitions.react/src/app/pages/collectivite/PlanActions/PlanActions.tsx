@@ -16,6 +16,7 @@ import {
 import {FicheAction} from 'generated/models/fiche_action';
 import {compareIndexes} from 'utils';
 import {FicheCard} from 'app/pages/collectivite/PlanActions/FicheCard';
+import {Spacer} from 'ui/shared';
 
 interface CategorizedFiches {
   fiches: FicheAction[];
@@ -80,13 +81,14 @@ function PlanNav() {
   plans.sort((a, b) => a.nom.localeCompare(b.nom));
 
   return (
-    <nav>
+    <nav className="flex flex-row">
       {plans.map(plan => (
         <PlanNavChip
           epciId={epciId}
           planId={plan.id}
           planNom={plan.nom}
           active={plan.uid === planUid}
+          key={plan.uid}
         />
       ))}
     </nav>
@@ -126,7 +128,7 @@ function Plan(props: {plan: PlanActionTyped}) {
             <CategoryTitle categorie={categorized.categorie} editable={true} />
             {categorized.fiches.map(fiche => {
               return (
-                <div className="ml-5 mt-3">
+                <div className="ml-5 mt-3" key={fiche.uid}>
                   <FicheCard fiche={fiche} />
                 </div>
               );
@@ -147,6 +149,7 @@ const PlanActions = function () {
     <main className="fr-container mt-9 mb-16">
       <h1 className="fr-h1 mb-3">Plans d'action</h1>
       <PlanNav />
+      <Spacer />
       {plan && <Plan plan={plan as PlanActionTyped} />}
     </main>
   );
