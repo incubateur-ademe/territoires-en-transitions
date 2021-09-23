@@ -12,10 +12,40 @@ import {
   defaultCategorie,
   nestCategorized,
 } from 'app/pages/collectivite/PlanActions/sorting';
+import {useState} from 'react';
+import {UiDialogButton} from 'ui';
+import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
+import React from 'react';
 
-function ModificationDialogButton(props: {categorie: Categorie}) {
-  return <div>todo modif</div>;
+interface CurrentPlan {
+  plan?: PlanActionTyped;
 }
+
+const CurrentPlanContext = React.createContext<CurrentPlan>({});
+
+const CategoryEditButton = (props: {categorie: Categorie}) => {
+  const [editing, setEditing] = useState<boolean>(false);
+  return (
+    <UiDialogButton
+      title="Modifier la catégorie"
+      opened={editing}
+      setOpened={setEditing}
+      buttonClasses="fr-btn--secondary"
+    >
+      <CurrentPlanContext.Consumer
+        children={current => {
+          return (
+            <CategoryForm
+              categorie={props.categorie}
+              plan={current.plan!}
+              onSave={() => setEditing(false)}
+            />
+          );
+        }}
+      />
+    </UiDialogButton>
+  );
+};
 
 function CategoryTitle(props: {categorie: Categorie; editable: boolean}) {
   return (
@@ -25,9 +55,7 @@ function CategoryTitle(props: {categorie: Categorie; editable: boolean}) {
           {props.categorie.nom}
           <span className="fr-fi-arrow-right-s-line ml-10" aria-hidden={true} />
         </h3>
-        {props.editable && (
-          <ModificationDialogButton categorie={props.categorie} />
-        )}
+        {props.editable && <CategoryEditButton categorie={props.categorie} />}
       </div>
     </div>
   );
@@ -41,7 +69,7 @@ function CategoryLevel(props: {nodes: CategorizedNode[]}) {
         return (
           <div key={node.categorie.uid}>
             {(node.fiches.length > 0 || !isDefault) && (
-              <CategoryTitle categorie={node.categorie} editable={isDefault} />
+              <CategoryTitle categorie={node.categorie} editable={!isDefault} />
             )}
             {node.fiches.map(fiche => {
               return (
@@ -68,7 +96,11 @@ function Plan(props: {plan: PlanActionTyped}) {
   const sorted = categorizeAndSortFiches(fiches, props.plan);
   const nested = nestCategorized(sorted);
 
-  return <CategoryLevel nodes={nested} />;
+  return (
+    <CurrentPlanContext.Provider value={{plan: props.plan}}>
+      <CategoryLevel nodes={nested} />
+    </CurrentPlanContext.Provider>
+  );
 }
 
 const PlanActions = function () {

@@ -1,11 +1,10 @@
-import {FicheActionCategorieInterface} from 'generated/models/fiche_action_categorie';
-import React, {useState} from 'react';
-import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
-import {ficheActionCategorieStore} from 'core-logic/api/hybridStores';
+import {Categorie, PlanActionTyped} from 'types/PlanActionTypedInterface';
 import {LabeledTextInput} from 'ui';
+import React, {useState} from 'react';
 
 export function CategoryForm(props: {
-  categorie: FicheActionCategorieInterface;
+  plan: PlanActionTyped;
+  categorie: Categorie;
   onSave: () => void;
 }) {
   const categorie = props.categorie;
@@ -13,9 +12,7 @@ export function CategoryForm(props: {
 
   const handleSave = async () => {
     if (!nom) return;
-    const storable = new FicheActionCategorieStorable({...categorie, nom: nom});
-    await ficheActionCategorieStore.store(storable);
-    props.onSave();
+    // todo
   };
 
   return (
