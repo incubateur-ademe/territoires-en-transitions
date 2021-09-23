@@ -5,20 +5,17 @@ Content-Type: application/json
 
 {
   "epci_id": "test",
-  "nom": "Mon plan par défaut c'est yolo",
-  "uid": "plan_collectivite",
+  "nom": "Mon plan c'est yolo",
+  "uid": "59fcc45b-ff19-4723-9c18-9a972f4440f3",
   "categories": [
     {
       "nom": "A",
-      "uid": "a",
-      "children": [
-        "b"
-      ]
+      "uid": "a"
     },
     {
       "nom": "B",
       "uid": "b",
-      "children": []
+      "parent": "a"
     }
   ],
   "fiches_by_category": [
@@ -29,37 +26,6 @@ Content-Type: application/json
     {
       "category_uid": "b",
       "fiche_uid": "822c74b7-d32f-4209-a759-5c104098c4ee"
-    }
-  ]
-}
-
-### Add a plan
-POST {{host}}/v2/plan_action/test
-Authorization: Bearer {{access_token}}
-Content-Type: application/json
-
-{
-  "epci_id": "test",
-  "nom": "Mon plan",
-  "uid": "59fcc45b-ff19-4723-9c18-9a972f4440f3",
-  "categories": [
-    {
-      "nom": "A",
-      "uid": "a",
-      "children": [
-        "b"
-      ]
-    },
-    {
-      "nom": "B",
-      "uid": "b",
-      "children": []
-    }
-  ],
-  "fiches_by_category": [
-    {
-      "category_uid": "b",
-      "fiche_uid": "yolo"
     }
   ]
 }

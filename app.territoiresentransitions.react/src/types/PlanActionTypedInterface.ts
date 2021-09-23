@@ -3,7 +3,7 @@ import {PlanAction} from 'generated/models/plan_action';
 export interface Categorie {
   nom: string;
   uid: string;
-  children: string[];
+  parent: string;
 }
 
 export interface PlanActionStructure {
