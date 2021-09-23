@@ -7,7 +7,7 @@ import {FicheCard} from 'app/pages/collectivite/PlanActions/FicheCard';
 import {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
 import {useState} from 'react';
 import {deprecatedDefaultCategorie} from 'app/pages/collectivite/PlanActions/deprecatedDefaultCategorie';
-import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
+import {DeprecatedCategoryForm} from 'app/pages/collectivite/PlanActions/Forms/DeprecatedCategoryForm';
 import {AddFicheActionButton, Spacer} from 'ui/shared';
 import {FicheAction} from 'generated/models/fiche_action';
 import {UiDialogButton} from 'ui/UiDialogButton';
@@ -22,7 +22,7 @@ const ModificationDialogButton = (props: {categorie: FicheActionCategorie}) => {
       setOpened={setEditing}
       buttonClasses="fr-btn--secondary"
     >
-      <CategoryForm
+      <DeprecatedCategoryForm
         categorie={props.categorie}
         onSave={() => setEditing(false)}
       />

@@ -5,7 +5,7 @@ import {useEffect, useState} from 'react';
 import {deprecatedDefaultCategorie} from 'app/pages/collectivite/PlanActions/deprecatedDefaultCategorie';
 import {FicheActionCategorieInterface} from 'generated/models/fiche_action_categorie';
 import {v4 as uuid} from 'uuid';
-import {CategoryForm} from 'app/pages/collectivite/PlanActions/Forms/CategoryForm';
+import {DeprecatedCategoryForm} from 'app/pages/collectivite/PlanActions/Forms/DeprecatedCategoryForm';
 import {SelectInput, UiDialogButton} from 'ui';
 
 const CategorieCreation = (props: {ficheUid: string; onSave: () => void}) => {
@@ -17,7 +17,7 @@ const CategorieCreation = (props: {ficheUid: string; onSave: () => void}) => {
     nom: '',
     fiche_actions_uids: [props.ficheUid],
   };
-  return <CategoryForm categorie={categorie} onSave={props.onSave} />;
+  return <DeprecatedCategoryForm categorie={categorie} onSave={props.onSave} />;
 };
 
 /**
@@ -27,7 +27,7 @@ const CategorieCreation = (props: {ficheUid: string; onSave: () => void}) => {
  * is added to the catégorie as fiche is unaware of the categories it
  * belongs to.
  */
-export function CategoriePicker(props: {ficheUid: string}) {
+export function DeprecatedCategoriePicker(props: {ficheUid: string}) {
   const storedCategories = useAllStorables<FicheActionCategorieStorable>(
     ficheActionCategorieStore
   );

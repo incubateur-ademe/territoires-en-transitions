@@ -6,7 +6,7 @@ import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ActionsField} from 'app/pages/collectivite/PlanActions/Forms/ActionsField';
 import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursField';
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
-import {CategoriePicker} from 'app/pages/collectivite/PlanActions/Forms/CategoriePicker';
+import {DeprecatedCategoriePicker} from 'app/pages/collectivite/PlanActions/Forms/DeprecatedCategoriePicker';
 import {ActionReferentielAvancementCard} from 'ui/referentiels';
 import {actions} from 'generated/data/referentiels';
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
@@ -181,7 +181,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             />
             <Spacer />
 
-            <CategoriePicker ficheUid={props.fiche.uid} />
+            <DeprecatedCategoriePicker ficheUid={props.fiche.uid} />
             <Spacer />
 
             <Field
