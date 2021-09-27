@@ -26,8 +26,11 @@ const AnyIndicateurValueInput = (props: {
       props.store
     )?.value ?? '';
 
+  const [inputValue, setInputValue] = useState<string | number>(value);
+
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
+
     const floatValue = parseFloat(inputValue.replace(',', '.'));
     commands.indicateurCommands.storeAnyIndicateurValue({
       store: props.store,
@@ -39,14 +42,14 @@ const AnyIndicateurValueInput = (props: {
       },
     });
   };
+  setInputValue(inputValue || '');
   return (
     <label className="flex flex-col mx-2 ">
       {props.year}
       <input
         className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500 text-sm font-normal text-gray-500"
-        defaultValue={value || ''}
-        onBlur={handleChange}
-        type="number"
+        value={inputValue}
+        onChange={handleChange}
       />
     </label>
   );
