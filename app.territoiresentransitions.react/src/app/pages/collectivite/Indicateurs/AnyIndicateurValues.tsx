@@ -41,14 +41,16 @@ const AnyIndicateurValueInput = (props: {
         value: floatValue,
       },
     });
+    setInputValue(inputValue || '');
   };
-  setInputValue(inputValue || '');
+
   return (
     <label className="flex flex-col mx-2 ">
       {props.year}
       <input
         className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500 text-sm font-normal text-gray-500"
         value={inputValue}
+        defaultValue={inputValue}
         onChange={handleChange}
       />
     </label>
