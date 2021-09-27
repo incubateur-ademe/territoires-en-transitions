@@ -22,11 +22,16 @@ interface CurrentPlan {
 
 const CurrentPlanContext = React.createContext<CurrentPlan>({});
 
-function CategoryTitle(props: {categorie: Categorie}) {
+/**
+ * The title of a category
+ */
+function CategoryTitle(props: {categorie: Categorie; level: number}) {
+  const textClasses = ['text-2xl', 'text-xl', 'text-lg'];
+  const textClass = textClasses[Math.min(textClasses.length - 1, props.level)];
   return (
     <div className="flex flex-col w-full ">
       <div className="flex flex-row justify-between">
-        <h3 className="text-2xl">
+        <h3 className={textClass}>
           {props.categorie.nom}
           <span className="fr-fi-arrow-right-s-line ml-10" aria-hidden={true} />
         </h3>
@@ -35,14 +40,22 @@ function CategoryTitle(props: {categorie: Categorie}) {
   );
 }
 
-function CategoryLevel(props: {nodes: CategorizedNode[]}) {
+/**
+ * Display a categorie with its fiche list, as well as its sub categories
+ *
+ * This Component is recursive.
+ */
+function CategoryLevel(props: {nodes: CategorizedNode[]; level?: number}) {
+  const level = props.level ?? 0;
   return (
     <>
       {props.nodes.map(node => {
         const isDefault = node.categorie.uid === defaultCategorie.uid;
         return (
           <div key={node.categorie.uid}>
-            {!isDefault && <CategoryTitle categorie={node.categorie} />}
+            {!isDefault && (
+              <CategoryTitle categorie={node.categorie} level={level} />
+            )}
             {node.fiches &&
               node.fiches.map(fiche => {
                 return (
@@ -53,7 +66,7 @@ function CategoryLevel(props: {nodes: CategorizedNode[]}) {
               })}
             {node.children && (
               <div className="ml-5">
-                <CategoryLevel nodes={node.children} />
+                <CategoryLevel nodes={node.children} level={level + 1} />
               </div>
             )}
           </div>
@@ -63,6 +76,9 @@ function CategoryLevel(props: {nodes: CategorizedNode[]}) {
   );
 }
 
+/**
+ * Displays plan categories.
+ */
 function Plan(props: {plan: PlanActionTyped}) {
   const epciId = useEpciId()!;
   const fiches = useAllFiches(epciId);
@@ -76,6 +92,9 @@ function Plan(props: {plan: PlanActionTyped}) {
   );
 }
 
+/**
+ * Button row next to plan title.
+ */
 function PlanButtons(props: {plan: PlanActionTyped}) {
   const [editing, setEditing] = useState<boolean>(false);
   const epciId = useEpciId();
@@ -101,6 +120,9 @@ function PlanButtons(props: {plan: PlanActionTyped}) {
   );
 }
 
+/**
+ * Plans d'action page contents
+ */
 const PlanActions = function () {
   const {epciId, planUid} = useParams<{epciId: string; planUid: string}>();
   const planId = PlanActionStorable.buildId(epciId, planUid);
