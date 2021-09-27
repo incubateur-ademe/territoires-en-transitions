@@ -6,9 +6,29 @@ import {
 import {FicheAction} from 'generated/models/fiche_action';
 import {compareIndexes} from 'utils';
 
+/**
+ * Used to attach fiches to a category.
+ */
 interface Categorized {
   fiches: FicheAction[];
   categorie: Categorie;
+}
+
+/**
+ * Used to display fiches in a category tree.
+ */
+export interface CategorizedNode {
+  fiches?: FicheAction[];
+  categorie: Categorie;
+  children: CategorizedNode[];
+}
+
+/**
+ * Used to display categories in a tree.
+ */
+export interface CategoryNode {
+  categorie: Categorie;
+  children: CategoryNode[];
 }
 
 export const defaultCategorie: Categorie = {
@@ -16,6 +36,9 @@ export const defaultCategorie: Categorie = {
   uid: '',
 };
 
+/**
+ * Sort categories then attach sorted fiches to categories.
+ */
 export function categorizeAndSortFiches(
   allFiches: FicheAction[],
   plan: PlanActionTyped
@@ -43,41 +66,26 @@ export function categorizeAndSortFiches(
   });
 }
 
-export interface CategorizedNode {
-  fiches: FicheAction[];
-  categorie: Categorie;
-  children: CategorizedNode[];
+/**
+ * Search into nodes.
+ */
+function search(nodes: CategoryNode[], uid: string): CategoryNode | null {
+  for (const node of nodes) {
+    if (node.categorie.uid === uid) return node;
+    const found = search(node.children, uid);
+    if (found) return found;
+  }
+  return null;
 }
 
-export function nestCategorized(categorized: Categorized[]): CategorizedNode[] {
-  // Tree
-  const root: CategorizedNode[] = categorized
-    .filter(c => !c.categorie.parent)
-    .map(c => {
-      return {
-        fiches: c.fiches,
-        categorie: c.categorie,
-        children: [],
-      };
-    });
-
-  function search(
-    nodes: CategorizedNode[],
-    uid: string
-  ): CategorizedNode | null {
-    for (const node of nodes) {
-      if (node.categorie.uid === uid) return node;
-      const found = search(node.children, uid);
-      if (found) return found;
-    }
-    return null;
-  }
-
-  // Consume categorized to put them in the tree.
-  for (const c of categorized) {
+/**
+ * Nest a list nodes
+ */
+function nest(nodes: CategoryNode[]): CategoryNode[] {
+  const root: CategoryNode[] = nodes.filter(c => !c.categorie.parent);
+  for (const c of nodes) {
     if (!c.categorie.parent) continue;
     const node = {
-      fiches: c.fiches,
       categorie: c.categorie,
       children: [],
     };
@@ -85,4 +93,36 @@ export function nestCategorized(categorized: Categorized[]): CategorizedNode[] {
     if (parent) parent.children.push(node);
   }
   return root;
+}
+
+/**
+ * Organize Categorized into a tree, used to display fiches on plan page.
+ */
+export function nestCategorized(categorized: Categorized[]): CategorizedNode[] {
+  // Tree base
+  const nodes: CategorizedNode[] = categorized.map(c => {
+    return {
+      fiches: c.fiches,
+      categorie: c.categorie,
+      children: [],
+    };
+  });
+
+  return nest(nodes) as CategorizedNode[];
+}
+
+/**
+ * Organize categories into a tree, used to display categories in structure
+ * dialog.
+ */
+export function nestPlanCategories(categories: Categorie[]) {
+  const sorted = [...categories];
+  sorted.sort((a, b) => compareIndexes(a.nom, b.nom));
+  const nodes: CategoryNode[] = sorted.map((categorie: Categorie) => {
+    return {
+      categorie: categorie,
+      children: [],
+    };
+  });
+  return nest(nodes);
 }
