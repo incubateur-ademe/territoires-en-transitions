@@ -95,7 +95,7 @@ function Plan(props: {plan: PlanActionTyped}) {
 /**
  * Button row next to plan title.
  */
-function PlanButtons(props: {plan: PlanActionTyped}) {
+function PlanButtons(props: {plan: PlanActionStorable & PlanActionTyped}) {
   const [editing, setEditing] = useState<boolean>(false);
   const epciId = useEpciId();
   return (
@@ -133,7 +133,9 @@ const PlanActions = function () {
       <div className="flex flex-row justify-between">
         <h1 className="fr-h1 mb-3">Plans d'action</h1>
         <div className="flex flex-row">
-          {plan && <PlanButtons plan={plan as PlanActionTyped} />}
+          {plan && (
+            <PlanButtons plan={plan as PlanActionStorable & PlanActionTyped} />
+          )}
         </div>
       </div>
 
