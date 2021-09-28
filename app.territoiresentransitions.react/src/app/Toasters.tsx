@@ -13,6 +13,7 @@ import {
   indicateurPersonnaliseValueStore,
   indicateurReferentielCommentaireStore,
   indicateurValueStore,
+  planActionStore,
 } from 'core-logic/api/hybridStores';
 import {getCurrentEpciId} from 'core-logic/api/currentEpci';
 
@@ -174,6 +175,14 @@ export function Toasters() {
         composer={makeComposer({
           storeSuccess: 'Le commentaire est enregistré',
           storeError: "Le commentaire n'a pas été enregistré",
+        })}
+      />
+
+      <EndpointToaster
+        endpoint={planActionStore.api}
+        composer={makeComposer({
+          storeSuccess: "Le plan d' action est enregistré",
+          storeError: "Le plan d' action n'a pas été enregistré",
         })}
       />
     </>

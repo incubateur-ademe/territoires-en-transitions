@@ -106,7 +106,7 @@ function PlanButtons(props: {plan: PlanActionStorable & PlanActionTyped}) {
         setOpened={setEditing}
         buttonClasses="fr-btn--secondary"
       >
-        <PlanForm plan={props.plan} onSave={() => setEditing(false)} />
+        <PlanForm plan={props.plan} />
       </UiDialogButton>
       <div className="mr-2" />
 
