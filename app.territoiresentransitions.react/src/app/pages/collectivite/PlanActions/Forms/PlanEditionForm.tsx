@@ -14,24 +14,24 @@ import {v4 as uuid} from 'uuid';
  * A title that is editable in place, as the title display is replaced with an
  * input.
  */
-function InlineEditableTitle(props: {
+const InlineEditableTitle = (props: {
   text: string;
   onSave: (text: string) => void;
-  textClass?: string;
+  // textClass?: string;
   onStateChange?: (editing: boolean) => void;
   initialEditingState?: boolean;
-}) {
+}) => {
   const [editing, setEditing] = useState<boolean>(
     props.initialEditingState ?? false
   );
   const [text, setText] = useState<string>(props.text);
   const onStateChange = props.onStateChange ?? (editing => {});
-  const textClass = props.textClass ?? '';
+  // const textClass = props.textClass ?? '';
   return (
     <div className="flex flex-row items-center">
       {!editing && (
         <>
-          <h3 className={textClass}>{props.text}</h3>
+          <div className="text-2xl font-bold">{props.text}</div>
           <IconButton
             aria-label="renommer"
             onClick={e => {
@@ -69,7 +69,7 @@ function InlineEditableTitle(props: {
       )}
     </div>
   );
-}
+};
 
 /**
  * Shows the categorie title as an editable title as well as a button to add a
@@ -98,7 +98,7 @@ function EditableCategoryTitle(props: {
         </div>
         {!(editing || adding || !props.add) && (
           <button
-            className="fr-btn fr-btn--secondary"
+            className="fr-btn fr-btn--secondary fr-btn--xs"
             onClick={() => setAdding(true)}
           >
             Ajouter un sous axe
@@ -170,24 +170,26 @@ function EditableCategoryLevel(props: {
  *
  * @param props A plans storable, mutated in place and saved on user input.
  */
-export function PlanForm(props: {plan: PlanActionStorable & PlanActionTyped}) {
+export const PlanEditionForm = (props: {
+  plan: PlanActionStorable & PlanActionTyped;
+}) => {
   const categories = nestPlanCategories(props.plan.categories);
   const [editing, setEditing] = useState<boolean>(false);
   const [adding, setAdding] = useState<boolean>(false);
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between mb-4">
         <InlineEditableTitle
           onSave={text => {
             props.plan.nom = text;
             planActionStore.store(props.plan);
           }}
           text={props.plan.nom}
-          textClass="text-4xl"
+          // textClass="text-4xl"
           onStateChange={setEditing}
         />
         {!(editing || adding) && (
-          <button className="fr-btn" onClick={() => setAdding(true)}>
+          <button className="fr-btn fr-btn--xs" onClick={() => setAdding(true)}>
             Ajouter un axe
           </button>
         )}
@@ -208,23 +210,24 @@ export function PlanForm(props: {plan: PlanActionStorable & PlanActionTyped}) {
           initialEditingState={true}
         />
       )}
-
-      <EditableCategoryLevel
-        nodes={categories}
-        update={(categorie: Categorie) => {
-          const plan = props.plan;
-          const existing: Categorie = plan.categories.find((c: Categorie) => {
-            return c.uid === categorie.uid;
-          })!;
-          existing.nom = categorie.nom;
-          planActionStore.store(plan);
-        }}
-        add={(categorie: Categorie) => {
-          const plan = props.plan;
-          plan.categories.push(categorie);
-          planActionStore.store(plan);
-        }}
-      />
+      <div className="ml-6">
+        <EditableCategoryLevel
+          nodes={categories}
+          update={(categorie: Categorie) => {
+            const plan = props.plan;
+            const existing: Categorie = plan.categories.find((c: Categorie) => {
+              return c.uid === categorie.uid;
+            })!;
+            existing.nom = categorie.nom;
+            planActionStore.store(plan);
+          }}
+          add={(categorie: Categorie) => {
+            const plan = props.plan;
+            plan.categories.push(categorie);
+            planActionStore.store(plan);
+          }}
+        />
+      </div>
     </div>
   );
-}
+};

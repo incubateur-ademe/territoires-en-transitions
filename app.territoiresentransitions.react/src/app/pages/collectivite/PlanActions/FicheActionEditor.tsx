@@ -23,7 +23,13 @@ const FicheActionEditor = () => {
   return (
     <main className="fr-container pt-8">
       <h1>Ma fiche action</h1>
-      {fiche && <FicheActionForm fiche={fiche} onSave={save} />}
+      {fiche && (
+        <FicheActionForm
+          fiche={fiche}
+          linkedPlanCategories={[]} // TODO : Linked categories here
+          onSave={save}
+        />
+      )}
       {!fiche && <h2>Aucune fiche trouvée</h2>}
     </main>
   );

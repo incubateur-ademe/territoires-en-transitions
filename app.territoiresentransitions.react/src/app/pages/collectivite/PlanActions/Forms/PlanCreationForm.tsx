@@ -1,24 +1,22 @@
-import {Categorie, PlanActionTyped} from 'types/PlanActionTypedInterface';
 import {LabeledTextInput} from 'ui';
-import React, {useState} from 'react';
+import {useState} from 'react';
+import {commands} from 'core-logic/commands';
+import {useEpciId} from 'core-logic/hooks';
 
-export function CategoryForm(props: {
-  plan: PlanActionTyped;
-  categorie: Categorie;
-  onSave: () => void;
-}) {
-  const categorie = props.categorie;
-  const [nom, setNom] = useState<string>(categorie.nom);
+export const PlanCreationForm = (props: {onSave: () => void}) => {
+  const [nom, setNom] = useState<string>('');
+  const epciId = useEpciId()!;
 
   const handleSave = async () => {
     if (!nom) return;
-    // todo
+    await commands.plansCommands.createPlanAction(epciId, nom);
+    props.onSave();
   };
 
   return (
     <div>
       <LabeledTextInput
-        label="Nom de la catégorie"
+        label="Nom du plan d'action"
         maxLength={100}
         value={nom}
         onChange={event => {
@@ -38,4 +36,4 @@ export function CategoryForm(props: {
       </div>
     </div>
   );
-}
+};

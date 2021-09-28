@@ -62,7 +62,7 @@ const FicheActionCreator = () => {
     <main className="fr-container pt-8">
       <RetourButton />
       <h1 className="fr-h1 pt-5">Ajouter une fiche action</h1>
-      <FicheActionForm fiche={fiche} onSave={save} />
+      <FicheActionForm fiche={fiche} linkedPlanCategories={[]} onSave={save} />
     </main>
   );
 };

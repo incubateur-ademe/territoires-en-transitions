@@ -19,8 +19,19 @@ import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indic
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
 import {searchActionById} from 'utils/actions';
 
+interface PlanCategorie {
+  categorieUid: string;
+  planUid: string;
+}
+interface LinkedPlanCategoriesInterface {
+  linkedPlanCategories: PlanCategorie[];
+}
+
+type FicheActionFormData = LinkedPlanCategoriesInterface & FicheActionInterface;
+
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
+  linkedPlanCategories: PlanCategorie[];
   onSave: (fiche: FicheActionInterface) => void;
 };
 
@@ -156,8 +167,11 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
   };
 
   return (
-    <Formik<FicheActionInterface>
-      initialValues={props.fiche}
+    <Formik<FicheActionFormData>
+      initialValues={{
+        ...props.fiche,
+        linkedPlanCategories: props.linkedPlanCategories,
+      }}
       validationSchema={validation}
       onSubmit={save}
     >
@@ -180,7 +194,13 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             />
             <Spacer />
 
-            <div>todo plan/categorie picker</div>
+            <Field
+              name="linkedPlanCategories"
+              label="Plans d'actions liés"
+              component={LinkedPlanCategoriesField}
+            />
+
+
             <Spacer />
 
             <Field

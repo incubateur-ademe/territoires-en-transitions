@@ -3,29 +3,24 @@ import {PlanActionStorable} from 'storables/PlanActionStorable';
 import {planActionStore} from 'core-logic/api/hybridStores';
 import {Link, useParams} from 'react-router-dom';
 import {Categorie, PlanActionTyped} from 'types/PlanActionTypedInterface';
-import {FicheCard} from 'app/pages/collectivite/PlanActions/FicheCard';
+import {FicheCard} from './FicheCard';
 import {Spacer} from 'ui/shared';
-import {PlanNav} from 'app/pages/collectivite/PlanActions/PlanNav';
+import {PlanNav} from './PlanNav';
 import {
   categorizeAndSortFiches,
   CategorizedNode,
   defaultCategorie,
   nestCategorized,
-} from 'app/pages/collectivite/PlanActions/sorting';
+} from './sorting';
 import React, {useState} from 'react';
 import {UiDialogButton} from 'ui';
-import {PlanForm} from 'app/pages/collectivite/PlanActions/Forms/PlanForm';
-
-interface CurrentPlan {
-  plan?: PlanActionTyped;
-}
-
-const CurrentPlanContext = React.createContext<CurrentPlan>({});
+import {PlanEditionForm} from './Forms/PlanEditionForm';
+import {PlanCreationForm} from './Forms/PlanCreationForm';
 
 /**
  * The title of a category
  */
-function CategoryTitle(props: {categorie: Categorie; level: number}) {
+const CategoryTitle = (props: {categorie: Categorie; level: number}) => {
   const textClasses = ['text-2xl', 'text-xl', 'text-lg'];
   const textClass = textClasses[Math.min(textClasses.length - 1, props.level)];
   return (
@@ -38,14 +33,14 @@ function CategoryTitle(props: {categorie: Categorie; level: number}) {
       </div>
     </div>
   );
-}
+};
 
 /**
  * Display a categorie with its fiche list, as well as its sub categories
  *
  * This Component is recursive.
  */
-function CategoryLevel(props: {nodes: CategorizedNode[]; level?: number}) {
+const CategoryLevel = (props: {nodes: CategorizedNode[]; level?: number}) => {
   const level = props.level ?? 0;
   return (
     <>
@@ -74,40 +69,38 @@ function CategoryLevel(props: {nodes: CategorizedNode[]; level?: number}) {
       })}
     </>
   );
-}
+};
 
 /**
  * Displays plan categories.
  */
-function Plan(props: {plan: PlanActionTyped}) {
+const Plan = (props: {plan: PlanActionTyped}) => {
   const epciId = useEpciId()!;
   const fiches = useAllFiches(epciId);
   const sorted = categorizeAndSortFiches(fiches, props.plan);
   const nested = nestCategorized(sorted);
 
-  return (
-    <CurrentPlanContext.Provider value={{plan: props.plan}}>
-      <CategoryLevel nodes={nested} />
-    </CurrentPlanContext.Provider>
-  );
-}
+  return <CategoryLevel nodes={nested} />;
+};
 
 /**
  * Button row next to plan title.
  */
-function PlanButtons(props: {plan: PlanActionStorable & PlanActionTyped}) {
+const PlanButtons = (props: {plan: PlanActionStorable & PlanActionTyped}) => {
   const [editing, setEditing] = useState<boolean>(false);
   const [creating, setCreating] = useState<boolean>(false);
-  const epciId = useEpciId();
+  const epciId = useEpciId()!;
+
   return (
     <div className="flex flex-row justify-between w-full">
       <UiDialogButton
-        title="Ajouter un plan d'action"
+        title="Créer un plan d'action"
         opened={creating}
         setOpened={setCreating}
         buttonClasses="fr-btn--secondary"
       >
-        <PlanForm plan={props.plan} />
+        <Spacer />
+        <PlanCreationForm onSave={() => setCreating(false)} />
       </UiDialogButton>
 
       <div className="flex flex-row ">
@@ -117,7 +110,8 @@ function PlanButtons(props: {plan: PlanActionStorable & PlanActionTyped}) {
           setOpened={setEditing}
           buttonClasses="fr-btn--secondary"
         >
-          <PlanForm plan={props.plan} />
+          <Spacer />
+          <PlanEditionForm plan={props.plan} />
         </UiDialogButton>
         <div className="mr-2" />
 
@@ -130,7 +124,7 @@ function PlanButtons(props: {plan: PlanActionStorable & PlanActionTyped}) {
       </div>
     </div>
   );
-}
+};
 
 /**
  * Plans d'action page contents

@@ -3,9 +3,7 @@ import {useParams} from 'react-router-dom';
 import {useAllStorables} from 'core-logic/hooks';
 import {PlanActionStorable} from 'storables/PlanActionStorable';
 import {planActionStore} from 'core-logic/api/hybridStores';
-import {UiDialogButton} from 'ui';
-import {PlanForm} from 'app/pages/collectivite/PlanActions/Forms/PlanForm';
-import React, {useState} from 'react';
+import {useState} from 'react';
 
 function PlanNavChip(props: {
   epciId: string;
@@ -29,7 +27,7 @@ function PlanNavChip(props: {
 export function PlanNav() {
   const {epciId, planUid} = useParams<{epciId: string; planUid: string}>();
   const plans = useAllStorables<PlanActionStorable>(planActionStore);
-  const [editing, setEditing] = useState<boolean>(false);
+  // const [editing, setEditing] = useState<boolean>(false);
   plans.sort((a, b) => a.nom.localeCompare(b.nom));
 
   return (
