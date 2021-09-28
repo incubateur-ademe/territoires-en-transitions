@@ -97,25 +97,37 @@ function Plan(props: {plan: PlanActionTyped}) {
  */
 function PlanButtons(props: {plan: PlanActionStorable & PlanActionTyped}) {
   const [editing, setEditing] = useState<boolean>(false);
+  const [creating, setCreating] = useState<boolean>(false);
   const epciId = useEpciId();
   return (
-    <div className="flex flex-row ">
+    <div className="flex flex-row justify-between w-full">
       <UiDialogButton
-        title="Modifier la structure"
-        opened={editing}
-        setOpened={setEditing}
+        title="Ajouter un plan d'action"
+        opened={creating}
+        setOpened={setCreating}
         buttonClasses="fr-btn--secondary"
       >
         <PlanForm plan={props.plan} />
       </UiDialogButton>
-      <div className="mr-2" />
 
-      <Link
-        className="fr-btn h-8"
-        to={`/collectivite/${epciId}/nouvelle_fiche`}
-      >
-        Ajouter une fiche action
-      </Link>
+      <div className="flex flex-row ">
+        <UiDialogButton
+          title="Modifier la structure"
+          opened={editing}
+          setOpened={setEditing}
+          buttonClasses="fr-btn--secondary"
+        >
+          <PlanForm plan={props.plan} />
+        </UiDialogButton>
+        <div className="mr-2" />
+
+        <Link
+          className="fr-btn h-8"
+          to={`/collectivite/${epciId}/nouvelle_fiche`}
+        >
+          Ajouter une fiche action
+        </Link>
+      </div>
     </div>
   );
 }
@@ -130,13 +142,11 @@ const PlanActions = function () {
 
   return (
     <main className="fr-container mt-9 mb-16">
-      <div className="flex flex-row justify-between">
-        <h1 className="fr-h1 mb-3">Plans d'action</h1>
-        <div className="flex flex-row">
-          {plan && (
-            <PlanButtons plan={plan as PlanActionStorable & PlanActionTyped} />
-          )}
-        </div>
+      <div className="flex flex-row items-center">
+        <h1 className="fr-h1 mb-3 whitespace-nowrap mr-10">Plans d'action</h1>
+        {plan && (
+          <PlanButtons plan={plan as PlanActionStorable & PlanActionTyped} />
+        )}
       </div>
 
       <PlanNav />

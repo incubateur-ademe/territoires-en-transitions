@@ -40,7 +40,7 @@ function InlineEditableTitle(props: {
               onStateChange(true);
             }}
           >
-            🖊
+            <div className="fr-fi-edit-fill" />
           </IconButton>
         </>
       )}
@@ -63,7 +63,7 @@ function InlineEditableTitle(props: {
               props.onSave(text);
             }}
           >
-            💾
+            <div className="fr-fi-save-fill" />
           </IconButton>
         </div>
       )}
