@@ -10,14 +10,20 @@ import {planActionStore} from 'core-logic/api/hybridStores';
 import {PlanActionStorable} from 'storables/PlanActionStorable';
 import {v4 as uuid} from 'uuid';
 
+/**
+ * A title that is editable in place, as the title display is replaced with an
+ * input.
+ */
 function InlineEditableTitle(props: {
   text: string;
   onSave: (text: string) => void;
   textClass?: string;
   onStateChange?: (editing: boolean) => void;
-  initialState?: boolean;
+  initialEditingState?: boolean;
 }) {
-  const [editing, setEditing] = useState<boolean>(props.initialState ?? false);
+  const [editing, setEditing] = useState<boolean>(
+    props.initialEditingState ?? false
+  );
   const [text, setText] = useState<string>(props.text);
   const onStateChange = props.onStateChange ?? (editing => {});
   const textClass = props.textClass ?? '';
@@ -65,6 +71,10 @@ function InlineEditableTitle(props: {
   );
 }
 
+/**
+ * Shows the categorie title as an editable title as well as a button to add a
+ * sous-categorie if the add prop is present.
+ */
 function EditableCategoryTitle(props: {
   categorie: Categorie;
   update: (categorie: Categorie) => void;
@@ -110,13 +120,16 @@ function EditableCategoryTitle(props: {
           }}
           text="sous axe"
           onStateChange={setEditing}
-          initialState={true}
+          initialEditingState={true}
         />
       )}
     </div>
   );
 }
 
+/**
+ * Display the categorie with its children as editable titles.
+ */
 function EditableCategoryLevel(props: {
   nodes: CategoryNode[];
   update: (categorie: Categorie) => void;
@@ -152,18 +165,50 @@ function EditableCategoryLevel(props: {
   );
 }
 
+/**
+ * A form that handles the editing of plans and categories.
+ *
+ * @param props A plans storable, mutated in place and saved on user input.
+ */
 export function PlanForm(props: {plan: PlanActionStorable & PlanActionTyped}) {
   const categories = nestPlanCategories(props.plan.categories);
+  const [editing, setEditing] = useState<boolean>(false);
+  const [adding, setAdding] = useState<boolean>(false);
   return (
-    <div>
-      <InlineEditableTitle
-        onSave={text => {
-          props.plan.nom = text;
-          planActionStore.store(props.plan);
-        }}
-        text={props.plan.nom}
-        textClass="text-4xl"
-      />
+    <div className="flex flex-col">
+      <div className="flex flex-row justify-between">
+        <InlineEditableTitle
+          onSave={text => {
+            props.plan.nom = text;
+            planActionStore.store(props.plan);
+          }}
+          text={props.plan.nom}
+          textClass="text-4xl"
+          onStateChange={setEditing}
+        />
+        {!(editing || adding) && (
+          <button className="fr-btn" onClick={() => setAdding(true)}>
+            Ajouter un axe
+          </button>
+        )}
+      </div>
+      {adding && (
+        <InlineEditableTitle
+          onSave={text => {
+            const category = {
+              nom: text,
+              uid: uuid(),
+            };
+            setAdding(false);
+            props.plan.categories.push(category);
+            planActionStore.store(props.plan);
+          }}
+          text="Axe"
+          onStateChange={setEditing}
+          initialEditingState={true}
+        />
+      )}
+
       <EditableCategoryLevel
         nodes={categories}
         update={(categorie: Categorie) => {
