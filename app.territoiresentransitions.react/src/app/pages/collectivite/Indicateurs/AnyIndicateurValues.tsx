@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useEpciId} from 'core-logic/hooks';
 import {AnyIndicateurValueStorable} from 'storables';
 import {HybridStore} from 'core-logic/api/hybridStore';
 import {useAnyIndicateurValueForYear} from 'core-logic/hooks/indicateurs_values';
 import {commands} from 'core-logic/commands';
+import {Editable} from 'ui/shared';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
@@ -24,11 +25,14 @@ const AnyIndicateurValueInput = ({
 }) => {
   const epciId = useEpciId()!;
 
-  const value =
+  const [inputValue, setInputValue] = useState<string | number>('');
+  const stateValue =
     useAnyIndicateurValueForYear(indicateurUid, epciId, year, store)?.value ??
     '';
 
-  const [inputValue, setInputValue] = useState<string | number>(value);
+  useEffect(() => {
+    setInputValue(stateValue);
+  });
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
@@ -43,12 +47,12 @@ const AnyIndicateurValueInput = ({
         value: floatValue,
       },
     });
-    setInputValue(inputValue || '');
+    if (inputValue) setInputValue(inputValue);
   };
 
   return (
-    <label className="flex flex-col mx-2 ">
-      {year}
+    <label className="flex flex-col mx-2">
+      <div className="flex pl-2">{year}</div>
       <input
         className={`fr-input mt-2 w-full bg-white p-3 border-b-2 text-sm font-normal text-gray-500 ${
           borderColor === 'blue' ? 'border-bf500' : 'border-gray-500'
@@ -117,11 +121,18 @@ export const AnyIndicateurEditableExpandPanel = (props: {
   indicateurUid: string;
   store: HybridStore<AnyIndicateurValueStorable>;
   title: string;
+  editable?: boolean;
   borderColor?: 'blue' | 'gray';
 }) => (
-  <div className="CrossExpandPanel editable">
+  <div className="CrossExpandPanel">
     <details>
-      <summary className="title">{props.title}</summary>
+      <summary className="title">
+        {props.editable ? (
+          <Editable text={props.title} />
+        ) : (
+          <div>{props.title}</div>
+        )}
+      </summary>{' '}
       <div>
         <AnyIndicateurValues
           borderColor={props.borderColor}

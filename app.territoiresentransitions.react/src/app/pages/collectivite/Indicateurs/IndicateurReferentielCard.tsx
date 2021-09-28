@@ -13,6 +13,7 @@ import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandab
 import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
+import {Editable, Spacer} from 'ui/shared';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   const [value, setValue] = React.useState('');
@@ -41,9 +42,11 @@ const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   };
 
   return (
-    <div className="CrossExpandPanel editable">
+    <div className="CrossExpandPanel">
       <details>
-        <summary>Commentaire</summary>
+        <summary>
+          <Editable text="Commentaire" />
+        </summary>
         <div>
           <textarea
             defaultValue={value}
@@ -67,7 +70,9 @@ export const IndicateurReferentielCardContent = (props: {
         store={indicateurObjectifStore}
         indicateurUid={props.indicateur.uid}
         title="Objectifs"
+        editable={true}
       />
+
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
         indicateurId={props.indicateur.id}
@@ -84,7 +89,6 @@ const IndicateurReferentielCardHeaderTitle = (props: {
 
 export const IndicateurReferentielCard = ({
   indicateur,
-  startOpen = false,
   hideIfNoValues = false,
 }: {
   indicateur: IndicateurReferentiel;

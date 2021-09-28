@@ -26,15 +26,6 @@
   content: '-';
 }
 
-.CrossExpandPanel.editable details summary::after {
-  content: '+';
-  margin-left: auto;
-}
-
-.CrossExpandPanel.editable details[open] summary::after {
-  content: '✎';
-}
-
 .CrossExpandPanel summary::-webkit-details-marker {
   display: none;
 }

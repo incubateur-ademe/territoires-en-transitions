@@ -14,6 +14,7 @@ import {useEpciId} from 'core-logic/hooks';
 import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
+import {Editable, Spacer} from 'ui/shared';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -47,7 +48,9 @@ const IndicateurPersonnaliseCommentaire = (props: {
   return (
     <div className="CrossExpandPanel">
       <details>
-        <summary>Commentaire</summary>
+        <summary>
+          <Editable text="Commentaire" />
+        </summary>
         <textarea
           value={value}
           onChange={handleChange}
@@ -68,11 +71,12 @@ const IndicateurPersonnaliseCardContent = (props: {
       <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
 
       <AnyIndicateurEditableExpandPanel
-        store={indicateurPersonnaliseResultatStore}
+        store={indicateurPersonnaliseObjectifStore}
         indicateurUid={props.indicateur.uid}
-        title="Résultats"
+        title="Objectifs"
+        editable={true}
       />
-
+      <Spacer />
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
         indicateurId={props.indicateur.uid}
