@@ -54,7 +54,10 @@ class EndpointToaster<T extends Storable> extends React.Component<
       this.close
     );
 
-    const handleClose = (event: any, reason: SnackbarCloseReason) => {
+    const handleClose = (
+      event: React.SyntheticEvent,
+      reason: SnackbarCloseReason
+    ) => {
       if (reason !== 'clickaway') this.close();
     };
 
@@ -83,7 +86,7 @@ class EndpointToaster<T extends Storable> extends React.Component<
 function makeComposer(messages: {
   storeSuccess: string;
   storeError: string;
-}): Composer<any> {
+}): Composer<Storable> {
   return (response, event, onClose) => {
     if (event?.intent === 'store')
       return (
