@@ -10,6 +10,9 @@ import {
 } from 'core-logic/api/hybridStores';
 import {useEpciId} from 'core-logic/hooks';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
+import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
+import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
+import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   const [value, setValue] = React.useState('');
@@ -65,12 +68,6 @@ export const IndicateurReferentielCardContent = (props: {
         indicateurUid={props.indicateur.uid}
         title="Objectifs"
       />
-      <AnyIndicateurEditableExpandPanel
-        store={indicateurResultatStore}
-        indicateurUid={props.indicateur.uid}
-        title="Résultats"
-      />
-
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
         indicateurId={props.indicateur.id}
@@ -78,5 +75,50 @@ export const IndicateurReferentielCardContent = (props: {
         objectifStore={indicateurObjectifStore}
       />
     </div>
+  );
+};
+
+const IndicateurReferentielCardHeaderTitle = (props: {
+  indicateur: IndicateurReferentiel;
+}) => <div>{inferIndicateurReferentielAndTitle(props.indicateur)}</div>;
+
+export const IndicateurReferentielCard = ({
+  indicateur,
+  startOpen = false,
+  hideIfNoValues = false,
+}: {
+  indicateur: IndicateurReferentiel;
+  startOpen?: boolean;
+  hideIfNoValues?: boolean;
+}) => {
+  const epciId = useEpciId()!;
+  const resultatValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurResultatStore
+  );
+  const objectifValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurObjectifStore
+  );
+
+  if (
+    hideIfNoValues &&
+    !resultatValueStorables.length &&
+    !objectifValueStorables.length
+  )
+    return null;
+
+  return (
+    <AnyIndicateurCard
+      headerTitle={
+        <IndicateurReferentielCardHeaderTitle indicateur={indicateur} />
+      }
+      indicateurUid={indicateur.uid}
+      indicateurResultatStore={indicateurResultatStore}
+    >
+      <IndicateurReferentielCardContent indicateur={indicateur} />
+    </AnyIndicateurCard>
   );
 };

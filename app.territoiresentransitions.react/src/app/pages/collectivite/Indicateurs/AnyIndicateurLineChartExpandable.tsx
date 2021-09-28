@@ -149,7 +149,7 @@ export const AnyIndicateurLineChartExpandable = (props: {
   objectifStore: HybridStore<AnyIndicateurValueStorable>;
 }) => (
   <div className="CrossExpandPanel">
-    <details>
+    <details open>
       <summary className="title">Graphique</summary>
       <AnyIndicateurLineChart
         indicateurUid={props.indicateur.uid}
@@ -158,7 +158,6 @@ export const AnyIndicateurLineChartExpandable = (props: {
         resultatStore={props.resultatStore}
         objectifStore={props.objectifStore}
       />
-      <Spacer />
     </details>
   </div>
 );

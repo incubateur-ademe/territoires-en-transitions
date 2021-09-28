@@ -78,7 +78,7 @@ const Indicateurs = () => {
           <IndicateursNavChip epciId={epciId} to="cae" current={current} />
           <IndicateursNavChip epciId={epciId} to="crte" current={current} />
         </div>
-        <div className="mr-2 font-light -mt-16">
+        <div className="mr-2 font-light">
           <div className="flex justify-end ">
             <div className="flex items-center">
               {showOnlyIndicateurWithData

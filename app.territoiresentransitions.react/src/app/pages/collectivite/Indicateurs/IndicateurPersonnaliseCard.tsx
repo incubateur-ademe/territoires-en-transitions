@@ -4,11 +4,16 @@ import {commands} from 'core-logic/commands';
 import {
   indicateurPersonnaliseResultatStore,
   indicateurPersonnaliseObjectifStore,
+  indicateurResultatStore,
 } from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnaliseMetaTypedInterface';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
+import {useEpciId} from 'core-logic/hooks';
+import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
+import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
+import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -54,7 +59,7 @@ const IndicateurPersonnaliseCommentaire = (props: {
   );
 };
 
-export const IndicateurPersonnaliseCardContent = (props: {
+const IndicateurPersonnaliseCardContent = (props: {
   indicateur: IndicateurPersonnaliseStorable;
 }) => {
   return (
@@ -75,5 +80,59 @@ export const IndicateurPersonnaliseCardContent = (props: {
         objectifStore={indicateurPersonnaliseObjectifStore}
       />
     </div>
+  );
+};
+
+const IndicateurPersonnaliseHeaderTitle = (props: {
+  indicateur: IndicateurPersonnaliseStorable;
+}) => (
+  <div className="flex justify-between w-full">
+    <div>
+      {' '}
+      {`${
+        props.indicateur.custom_id ? `${props.indicateur.custom_id} - ` : ''
+      }${props.indicateur.nom}`}
+    </div>
+    <div className="mr-4">
+      <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
+    </div>
+  </div>
+);
+
+export const IndicateurPersonnaliseCard = ({
+  indicateur,
+  hideIfNoValues = false,
+}: {
+  indicateur: IndicateurPersonnaliseStorable;
+  hideIfNoValues?: boolean;
+}) => {
+  const epciId = useEpciId()!;
+  const resultatValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurPersonnaliseResultatStore
+  );
+  const objectifValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurPersonnaliseObjectifStore
+  );
+
+  if (
+    hideIfNoValues &&
+    !resultatValueStorables.length &&
+    !objectifValueStorables.length
+  )
+    return null;
+  return (
+    <AnyIndicateurCard
+      headerTitle={
+        <IndicateurPersonnaliseHeaderTitle indicateur={indicateur} />
+      }
+      indicateurUid={indicateur.uid}
+      indicateurResultatStore={indicateurResultatStore}
+    >
+      <IndicateurPersonnaliseCardContent indicateur={indicateur} />
+    </AnyIndicateurCard>
   );
 };

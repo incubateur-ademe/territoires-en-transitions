@@ -27,7 +27,7 @@
 }
 
 .CrossExpandPanel.editable details summary::after {
-  content: '✎';
+  content: '+';
   margin-left: auto;
 }
 

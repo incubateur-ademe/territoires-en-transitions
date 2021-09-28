@@ -11,20 +11,22 @@ import {commands} from 'core-logic/commands';
 /**
  * Use IndicateurValuesStorageInterface + year to read/write an indicateur value
  */
-const AnyIndicateurValueInput = (props: {
+const AnyIndicateurValueInput = ({
+  year,
+  indicateurUid,
+  store,
+  borderColor = 'gray',
+}: {
   year: number;
   indicateurUid: string;
   store: HybridStore<AnyIndicateurValueStorable>;
+  borderColor?: 'blue' | 'gray';
 }) => {
   const epciId = useEpciId()!;
 
   const value =
-    useAnyIndicateurValueForYear(
-      props.indicateurUid,
-      epciId,
-      props.year,
-      props.store
-    )?.value ?? '';
+    useAnyIndicateurValueForYear(indicateurUid, epciId, year, store)?.value ??
+    '';
 
   const [inputValue, setInputValue] = useState<string | number>(value);
 
@@ -33,11 +35,11 @@ const AnyIndicateurValueInput = (props: {
 
     const floatValue = parseFloat(inputValue.replace(',', '.'));
     commands.indicateurCommands.storeAnyIndicateurValue({
-      store: props.store,
+      store: store,
       interface: {
         epci_id: epciId,
-        indicateur_id: props.indicateurUid,
-        year: props.year,
+        indicateur_id: indicateurUid,
+        year: year,
         value: floatValue,
       },
     });
@@ -46,11 +48,12 @@ const AnyIndicateurValueInput = (props: {
 
   return (
     <label className="flex flex-col mx-2 ">
-      {props.year}
+      {year}
       <input
-        className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500 text-sm font-normal text-gray-500"
+        className={`fr-input mt-2 w-full bg-white p-3 border-b-2 text-sm font-normal text-gray-500 ${
+          borderColor === 'blue' ? 'border-bf500' : 'border-gray-500'
+        }`}
         value={inputValue}
-        defaultValue={inputValue}
         onChange={handleChange}
       />
     </label>
@@ -63,6 +66,7 @@ const AnyIndicateurValueInput = (props: {
 export const AnyIndicateurValues = (props: {
   indicateurUid: string;
   store: HybridStore<AnyIndicateurValueStorable>;
+  borderColor?: 'blue' | 'gray';
 }) => {
   const min = 2008;
   const stride = 2;
@@ -91,6 +95,7 @@ export const AnyIndicateurValues = (props: {
             store={props.store}
             indicateurUid={props.indicateurUid}
             key={`${props.indicateurUid}-${year}`}
+            borderColor={props.borderColor}
           />
         ))}
       </div>
@@ -112,12 +117,14 @@ export const AnyIndicateurEditableExpandPanel = (props: {
   indicateurUid: string;
   store: HybridStore<AnyIndicateurValueStorable>;
   title: string;
+  borderColor?: 'blue' | 'gray';
 }) => (
   <div className="CrossExpandPanel editable">
     <details>
       <summary className="title">{props.title}</summary>
       <div>
         <AnyIndicateurValues
+          borderColor={props.borderColor}
           store={props.store}
           indicateurUid={props.indicateurUid}
         />

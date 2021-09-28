@@ -1,5 +1,5 @@
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
-import {IndicateurReferentielCard} from './AnyIndicateurCard';
+import {IndicateurReferentielCard} from './IndicateurReferentielCard';
 import {ReferentielOfIndicateur} from 'types';
 import {UiSearchBar} from 'ui/UiSearchBar';
 import {useState} from 'react';
@@ -37,7 +37,7 @@ export const ConditionnalIndicateurReferentielList = (props: {
 
   return (
     <div className="app mx-5 mt-5">
-      <div className="float-right -mt-36">
+      <div className="float-right -mt-48">
         <UiSearchBar search={search} />
       </div>
       <section className="flex flex-col">
