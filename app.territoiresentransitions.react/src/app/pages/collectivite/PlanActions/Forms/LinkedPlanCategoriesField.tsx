@@ -136,6 +136,7 @@ export const LinkedPlanCategoriesField: FC<
 
   const handleCategorySelection = (categorieUid: string, planUid: string) => {
     const selected: PlanCategorie = {planUid, categorieUid};
+
     if (isPlanInFieldValue(planUid)) {
       setFieldValue(
         field.name,
