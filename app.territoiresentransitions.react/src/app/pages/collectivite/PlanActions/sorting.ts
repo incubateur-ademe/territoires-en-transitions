@@ -81,11 +81,12 @@ function search(nodes: CategoryNode[], uid: string): CategoryNode | null {
 /**
  * Nest a list nodes
  */
-function nest(nodes: CategoryNode[]): CategoryNode[] {
-  const root: CategoryNode[] = nodes.filter(c => !c.categorie.parent);
+function nest(nodes: CategorizedNode[]): CategorizedNode[] {
+  const root: CategorizedNode[] = nodes.filter(c => !c.categorie.parent);
   for (const c of nodes) {
     if (!c.categorie.parent) continue;
     const node = {
+      fiches: c.fiches,
       categorie: c.categorie,
       children: [],
     };
