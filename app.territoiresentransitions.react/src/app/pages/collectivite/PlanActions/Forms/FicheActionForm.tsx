@@ -46,7 +46,7 @@ export type FicheActionFormData = planCategorieSelections &
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
-  linkedPlanCategories: PlanCategorieSelection[];
+  planCategories: PlanCategorieSelection[];
   onSave: (data: FicheActionFormData) => void;
 };
 
@@ -187,7 +187,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
     <Formik<FicheActionFormData>
       initialValues={{
         ...props.fiche,
-        planCategories: props.linkedPlanCategories,
+        planCategories: props.planCategories,
       }}
       validationSchema={validation}
       onSubmit={save}
@@ -212,7 +212,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             <Spacer />
 
             <Field
-              name="linkedPlanCategories"
+              name="planCategories"
               label="Plans d'actions liés"
               component={PlanCategoriesSelectionField}
             />

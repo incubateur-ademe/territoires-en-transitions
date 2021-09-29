@@ -5,16 +5,13 @@ import {
 } from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {FicheActionInterface} from 'generated/models/fiche_action';
 import {v4 as uuid} from 'uuid';
-import {
-  getFicheActionStoreForEpci,
-  planActionStore,
-} from 'core-logic/api/hybridStores';
+import {getFicheActionStoreForEpci} from 'core-logic/api/hybridStores';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
 import {searchActionById} from 'utils/actions';
 import {useQuery} from 'core-logic/hooks/query';
 import {actions} from 'generated/data/referentiels';
 import {RetourButton} from 'ui/shared';
-import {PlanActionStructure} from 'types/PlanActionTypedInterface';
+import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
 
 /**
  * Used to create a fiche, shows FicheActionForm.
@@ -64,27 +61,9 @@ const FicheActionCreator = () => {
     await ficheActionStore.store(new FicheActionStorable(fiche));
   };
 
-  const updatePlans = async (data: FicheActionFormData) => {
-    const plans = await planActionStore.retrieveAll();
-    const ficheUid = data.uid;
-    const planCategories = data.planCategories;
-
-    // For every plan, if a plan/categorie is attached: update then save plan.
-    for (const plan of plans) {
-      const planCategorie = planCategories.find(c => c.planUid === plan.uid);
-      if (planCategorie !== undefined) {
-        (plan as PlanActionStructure).fiches_by_category.push({
-          category_uid: planCategorie.categorieUid,
-          fiche_uid: ficheUid,
-        });
-        await planActionStore.store(plan);
-      }
-    }
-  };
-
   const save = async (data: FicheActionFormData) => {
     await saveFiche(data);
-    await updatePlans(data);
+    await updatePlansOnFicheSave(data);
     history.push(`/collectivite/${epciId}/plan_actions`);
   };
 
@@ -92,7 +71,7 @@ const FicheActionCreator = () => {
     <main className="fr-container pt-8">
       <RetourButton />
       <h1 className="fr-h1 pt-5">Ajouter une fiche action</h1>
-      <FicheActionForm fiche={fiche} linkedPlanCategories={[]} onSave={save} />
+      <FicheActionForm fiche={fiche} planCategories={[]} onSave={save} />
     </main>
   );
 };
