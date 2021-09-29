@@ -8,13 +8,18 @@ import {
   CategoryNode,
   nestPlanCategories,
 } from 'app/pages/collectivite/PlanActions/sorting';
-import {PlanActionTyped} from 'types/PlanActionTypedInterface';
+import {
+  PlanActionStructure,
+  PlanActionTyped,
+} from 'types/PlanActionTypedInterface';
 import {Menu, MenuItem, Select} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
-import {PlanCategorie} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
+import {PlanCategorieSelection} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import * as R from 'ramda';
+
+type PlanActionStorableTyped = PlanActionStorable & PlanActionStructure;
 
 type LinkedPlanCategoriesFieldProps = {
   label: string;
@@ -35,26 +40,18 @@ const categoriesToItems = (
         <NestedMenuItem
           key={node.categorie.uid}
           parentMenuOpen={true}
-          label={
-            <div
-              className="truncate max-w-sm"
-              onClick={() => onSelect(node.categorie.uid)}
-            >
-              {node.categorie.nom}
-            </div>
-          }
+          onClick={() => onSelect(node.categorie.uid)}
+          label={<div className="truncate max-w-sm">{node.categorie.nom}</div>}
         >
           {categoriesToItems(node.children, onSelect)}
         </NestedMenuItem>
       );
     return (
-      <MenuItem key={node.categorie.uid}>
-        <div
-          className="truncate max-w-sm"
-          onClick={() => onSelect(node.categorie.uid)}
-        >
-          {node.categorie.nom}
-        </div>
+      <MenuItem
+        key={node.categorie.uid}
+        onClick={() => onSelect(node.categorie.uid)}
+      >
+        <div className="truncate max-w-sm">{node.categorie.nom}</div>
       </MenuItem>
     );
   });
@@ -62,6 +59,8 @@ const categoriesToItems = (
 
 /**
  * Displays a dropdown to pick plan categories when its children are clicked.
+ *
+ * We use a custom element as mui "Select" does not work with nested components.
  */
 const PlanDropdown = (props: {
   plan: PlanActionStorable;
@@ -106,27 +105,29 @@ const PlanDropdown = (props: {
   );
 };
 
-type PlanActionStorableTyped = PlanActionStorable & PlanActionTyped;
 /**
- * A plan category picker.
+ * A plan category selector.
  *
  * Retrieve plans and allows user to select a category in a dropdown for
  * each plan.
  */
-export const LinkedPlanCategoriesField: FC<
+export const PlanCategoriesSelectionField: FC<
   LinkedPlanCategoriesFieldProps & FieldProps
 > = ({
   field, // { name, value, onChange, onBlur }
   form: {touched, errors, setFieldValue},
   ...props
 }) => {
+  // The field value, typed.
+  const value = field.value as PlanCategorieSelection[];
+
   const plans = useAllStorables<PlanActionStorable>(
     planActionStore
   ) as PlanActionStorableTyped[];
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
   const isTouched = touched[field.name];
-  const value = field.value as PlanCategorie[];
+
   const selectedPlans = R.filter(
     plan => !!value.find(categorie => categorie.planUid === plan.uid),
     plans
@@ -134,13 +135,14 @@ export const LinkedPlanCategoriesField: FC<
   const isPlanInFieldValue = (planUid: string): boolean =>
     R.any(planCategorie => planCategorie.planUid === planUid, value);
 
+  // When category is picked we update the input value.
   const handleCategorySelection = (categorieUid: string, planUid: string) => {
-    const selected: PlanCategorie = {planUid, categorieUid};
+    const selected: PlanCategorieSelection = {planUid, categorieUid};
 
     if (isPlanInFieldValue(planUid)) {
       setFieldValue(
         field.name,
-        value.map((categorie: PlanCategorie) => {
+        value.map((categorie: PlanCategorieSelection) => {
           return categorie.planUid === planUid ? selected : categorie;
         })
       );
@@ -150,8 +152,9 @@ export const LinkedPlanCategoriesField: FC<
     console.log(value);
   };
 
+  // When plan is picked we update the input value.
   const handlePlanSelection = (selectedPlans: PlanActionTyped[]) => {
-    const newValue: PlanCategorie[] = selectedPlans.map(plan => {
+    const newValue: PlanCategorieSelection[] = selectedPlans.map(plan => {
       const matchingPlanCategorieInValue = value.find(
         planCategorie => planCategorie.planUid === plan.uid
       );
@@ -185,8 +188,6 @@ export const LinkedPlanCategoriesField: FC<
           />
         )}
       />
-      {!errorMessage && props.hint && <div className="hint">{props.hint}</div>}
-      {errorMessage && isTouched && <div className="hint">{errorMessage}</div>}
 
       {selectedPlans.map(plan => {
         const selected = value.find(cat => cat.planUid === plan.uid);

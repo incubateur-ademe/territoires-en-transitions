@@ -18,23 +18,36 @@ import {Spacer} from 'ui/shared';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
 import {searchActionById} from 'utils/actions';
-import {LinkedPlanCategoriesField} from 'app/pages/collectivite/PlanActions/Forms/LinkedPlanCategoriesField';
+import {PlanCategoriesSelectionField} from 'app/pages/collectivite/PlanActions/Forms/PlanCategoriesSelectionField';
 
-export interface PlanCategorie {
+/**
+ * Stores both plan and category uid, represents the user's selection of a
+ * category in a plan. The category is optional as a fiche can be
+ * uncategorized inside a plan.
+ */
+export interface PlanCategorieSelection {
   categorieUid?: string;
   planUid: string;
 }
 
-interface LinkedPlanCategoriesInterface {
-  linkedPlanCategories: PlanCategorie[];
+/**
+ * Represent the user's categories selection as a fiche can belong to many
+ * plans.
+ */
+export interface planCategorieSelections {
+  planCategories: PlanCategorieSelection[];
 }
 
-type FicheActionFormData = LinkedPlanCategoriesInterface & FicheActionInterface;
+/**
+ * Join categories data with fiche data as the form data that will be saved.
+ */
+export type FicheActionFormData = planCategorieSelections &
+  FicheActionInterface;
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
-  linkedPlanCategories: PlanCategorie[];
-  onSave: (fiche: FicheActionInterface) => void;
+  linkedPlanCategories: PlanCategorieSelection[];
+  onSave: (data: FicheActionFormData) => void;
 };
 
 type FormState = 'ready' | 'saving';
@@ -166,7 +179,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
     if (state !== 'ready') return;
     setState('saving');
 
-    console.log('categories', data.linkedPlanCategories);
+    console.log('categories', data.planCategories);
     props.onSave(data);
   };
 
@@ -174,7 +187,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
     <Formik<FicheActionFormData>
       initialValues={{
         ...props.fiche,
-        linkedPlanCategories: props.linkedPlanCategories,
+        planCategories: props.linkedPlanCategories,
       }}
       validationSchema={validation}
       onSubmit={save}
@@ -201,7 +214,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             <Field
               name="linkedPlanCategories"
               label="Plans d'actions liés"
-              component={LinkedPlanCategoriesField}
+              component={PlanCategoriesSelectionField}
             />
 
             <Spacer />

@@ -1,16 +1,23 @@
 import {useHistory, useParams} from 'react-router-dom';
-import {FicheActionForm} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
+import {
+  FicheActionForm,
+  FicheActionFormData,
+} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {FicheActionInterface} from 'generated/models/fiche_action';
 import {v4 as uuid} from 'uuid';
-import {getFicheActionStoreForEpci} from 'core-logic/api/hybridStores';
+import {
+  getFicheActionStoreForEpci,
+  planActionStore,
+} from 'core-logic/api/hybridStores';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
 import {searchActionById} from 'utils/actions';
 import {useQuery} from 'core-logic/hooks/query';
 import {actions} from 'generated/data/referentiels';
 import {RetourButton} from 'ui/shared';
+import {PlanActionStructure} from 'types/PlanActionTypedInterface';
 
 /**
- * This is the main component of FicheActionPage, use to show a fiche.
+ * Used to create a fiche, shows FicheActionForm.
  */
 const FicheActionCreator = () => {
   const {epciId} = useParams<{epciId: string}>();
@@ -53,8 +60,31 @@ const FicheActionCreator = () => {
     en_retard: false,
   };
 
-  const save = async (fiche: FicheActionInterface) => {
+  const saveFiche = async (fiche: FicheActionInterface) => {
     await ficheActionStore.store(new FicheActionStorable(fiche));
+  };
+
+  const updatePlans = async (data: FicheActionFormData) => {
+    const plans = await planActionStore.retrieveAll();
+    const ficheUid = data.uid;
+    const planCategories = data.planCategories;
+
+    // For every plan, if a plan/categorie is attached: update then save plan.
+    for (const plan of plans) {
+      const planCategorie = planCategories.find(c => c.planUid === plan.uid);
+      if (planCategorie !== undefined) {
+        (plan as PlanActionStructure).fiches_by_category.push({
+          category_uid: planCategorie.categorieUid,
+          fiche_uid: ficheUid,
+        });
+        await planActionStore.store(plan);
+      }
+    }
+  };
+
+  const save = async (data: FicheActionFormData) => {
+    await saveFiche(data);
+    await updatePlans(data);
     history.push(`/collectivite/${epciId}/plan_actions`);
   };
 
