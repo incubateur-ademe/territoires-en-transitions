@@ -186,10 +186,9 @@ export const LinkedPlanCategoriesField: FC<
 
       {selectedPlans.map(plan => {
         const selected = value.find(cat => cat.planUid === plan.uid);
-        const categories = plan.categories as Categorie[];
-        const categorie = categories.find(categorie => {
+        const categorie = R.find(categorie => {
           return categorie.uid === selected?.categorieUid;
-        });
+        }, plan.categories);
         return (
           <PlanDropdown
             plan={plan}
