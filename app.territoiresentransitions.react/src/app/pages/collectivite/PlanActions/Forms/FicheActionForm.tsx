@@ -202,7 +202,6 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
               component={LinkedPlanCategoriesField}
             />
 
-
             <Spacer />
 
             <Field
