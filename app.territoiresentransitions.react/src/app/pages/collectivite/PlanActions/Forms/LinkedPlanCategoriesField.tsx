@@ -8,8 +8,8 @@ import {
   CategoryNode,
   nestPlanCategories,
 } from 'app/pages/collectivite/PlanActions/sorting';
-import {Categorie, PlanActionTyped} from 'types/PlanActionTypedInterface';
-import {Menu, MenuItem} from '@material-ui/core';
+import {PlanActionTyped} from 'types/PlanActionTypedInterface';
+import {Menu, MenuItem, Select} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
 import {PlanCategorie} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -30,7 +30,7 @@ const categoriesToItems = (
   onSelect: (categoryUid: string) => void
 ): React.ReactNode[] => {
   return categories.map((node: CategoryNode): React.ReactNode => {
-    if (node.children)
+    if (node.children.length)
       return (
         <NestedMenuItem
           key={node.categorie.uid}
@@ -79,7 +79,7 @@ const PlanDropdown = (props: {
   return (
     <>
       <div
-        className="truncate max-w-lg cursor-pointer"
+        className="cursor-pointer w-1/3"
         aria-controls={menuId}
         aria-haspopup="true"
         onClick={e => {
@@ -137,13 +137,16 @@ export const LinkedPlanCategoriesField: FC<
   const handleCategorySelection = (categorieUid: string, planUid: string) => {
     const selected: PlanCategorie = {planUid, categorieUid};
     if (isPlanInFieldValue(planUid)) {
-      value.map((categorie: PlanCategorie) => {
-        return categorie.planUid === planUid ? selected : categorie;
-      });
+      setFieldValue(
+        field.name,
+        value.map((categorie: PlanCategorie) => {
+          return categorie.planUid === planUid ? selected : categorie;
+        })
+      );
     } else {
-      value.push(selected);
+      setFieldValue(field.name, [...value, selected]);
     }
-    setFieldValue(field.name, value);
+    console.log(value);
   };
 
   const handlePlanSelection = (selectedPlans: PlanActionTyped[]) => {
@@ -190,16 +193,24 @@ export const LinkedPlanCategoriesField: FC<
           return categorie.uid === selected?.categorieUid;
         }, plan.categories);
         return (
-          <PlanDropdown
-            plan={plan}
-            onSelect={handleCategorySelection}
+          <div
+            className="flex flex-row items-center gap-2 ml-4 my-4 w-full"
             key={plan.uid}
           >
-            <div className="">
-              {!categorie && <span>Selectioner un axe de {plan.nom}</span>}
-              {categorie && <span>{categorie.nom}</span>}
-            </div>
-          </PlanDropdown>
+            <div>{plan.nom} :</div>
+            <PlanDropdown
+              plan={plan}
+              onSelect={(categorieUid: string) =>
+                handleCategorySelection(categorieUid, plan.uid)
+              }
+              key={plan.uid}
+            >
+              <div className="border-gray-500 border-b-2 py-2 w-full">
+                {!categorie && <span>Selectionner un axe</span>}
+                {categorie && <span>{categorie.nom}</span>}
+              </div>
+            </PlanDropdown>
+          </div>
         );
       })}
     </fieldset>
