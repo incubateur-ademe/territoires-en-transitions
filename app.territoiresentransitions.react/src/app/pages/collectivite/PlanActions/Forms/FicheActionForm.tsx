@@ -21,7 +21,7 @@ import {searchActionById} from 'utils/actions';
 import {LinkedPlanCategoriesField} from 'app/pages/collectivite/PlanActions/Forms/LinkedPlanCategoriesField';
 
 export interface PlanCategorie {
-  categorieUid: string;
+  categorieUid?: string;
   planUid: string;
 }
 
@@ -162,9 +162,11 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
     indicateur_personnalise_ids: Yup.array(),
   });
 
-  const save = (data: FicheActionInterface) => {
+  const save = (data: FicheActionFormData) => {
     if (state !== 'ready') return;
     setState('saving');
+
+    console.log('categories', data.linkedPlanCategories);
     props.onSave(data);
   };
 

@@ -90,6 +90,8 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
         }}
         value={field.value}
         onChange={(e, value) => {
+          // compare prev value
+          // find existing plans with
           setFieldValue(field.name, value);
         }}
         renderInput={params => (

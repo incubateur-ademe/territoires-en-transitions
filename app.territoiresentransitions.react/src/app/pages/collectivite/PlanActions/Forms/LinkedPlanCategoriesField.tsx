@@ -9,9 +9,12 @@ import {
   nestPlanCategories,
 } from 'app/pages/collectivite/PlanActions/sorting';
 import {Categorie, PlanActionTyped} from 'types/PlanActionTypedInterface';
-import {Menu} from '@material-ui/core';
+import {Menu, MenuItem} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
 import {PlanCategorie} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
+import * as R from 'ramda';
 
 type LinkedPlanCategoriesFieldProps = {
   label: string;
@@ -19,30 +22,47 @@ type LinkedPlanCategoriesFieldProps = {
   hint?: string;
 };
 
+/**
+ * Transform category nodes into a menu of nested items.
+ */
 const categoriesToItems = (
   categories: CategoryNode[],
   onSelect: (categoryUid: string) => void
 ): React.ReactNode[] => {
   return categories.map((node: CategoryNode): React.ReactNode => {
+    if (node.children)
+      return (
+        <NestedMenuItem
+          key={node.categorie.uid}
+          parentMenuOpen={true}
+          label={
+            <div
+              className="truncate max-w-sm"
+              onClick={() => onSelect(node.categorie.uid)}
+            >
+              {node.categorie.nom}
+            </div>
+          }
+        >
+          {categoriesToItems(node.children, onSelect)}
+        </NestedMenuItem>
+      );
     return (
-      <NestedMenuItem
-        key={node.categorie.uid}
-        parentMenuOpen={true}
-        label={
-          <div
-            className="truncate max-w-sm"
-            onClick={() => onSelect(node.categorie.uid)}
-          >
-            {node.categorie.nom}
-          </div>
-        }
-      >
-        {categoriesToItems(node.children, onSelect)}
-      </NestedMenuItem>
+      <MenuItem key={node.categorie.uid}>
+        <div
+          className="truncate max-w-sm"
+          onClick={() => onSelect(node.categorie.uid)}
+        >
+          {node.categorie.nom}
+        </div>
+      </MenuItem>
     );
   });
 };
 
+/**
+ * Displays a dropdown to pick plan categories when its children are clicked.
+ */
 const PlanDropdown = (props: {
   plan: PlanActionStorable;
   onSelect: (categorieUid: string, planUid: string) => void;
@@ -86,10 +106,12 @@ const PlanDropdown = (props: {
   );
 };
 
+type PlanActionStorableTyped = PlanActionStorable & PlanActionTyped;
 /**
- * A material UI tags field (multi picker) for action ids.
+ * A plan category picker.
  *
- * Could use generics.
+ * Retrieve plans and allows user to select a category in a dropdown for
+ * each plan.
  */
 export const LinkedPlanCategoriesField: FC<
   LinkedPlanCategoriesFieldProps & FieldProps
@@ -100,67 +122,55 @@ export const LinkedPlanCategoriesField: FC<
 }) => {
   const plans = useAllStorables<PlanActionStorable>(
     planActionStore
-  ) as PlanActionStorable[] & PlanActionTyped[];
+  ) as PlanActionStorableTyped[];
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
   const isTouched = touched[field.name];
   const value = field.value as PlanCategorie[];
+  const selectedPlans = R.filter(
+    plan => !!value.find(categorie => categorie.planUid === plan.uid),
+    plans
+  );
+  const isPlanInFieldValue = (planUid: string): boolean =>
+    R.any(planCategorie => planCategorie.planUid === planUid, value);
 
-  const onSelectCategorie = (categorieUid: string, planUid: string) => {
-    const newPlanCategorie = {planUid, categorieUid};
-    const previouslySelectedPlanCategorie = value.find(planCategorie => {
-      return planCategorie.planUid === planUid;
-    });
-    if (previouslySelectedPlanCategorie) {
-      value.map(linkPlanActionCategory => {
-        return linkPlanActionCategory.planUid === planUid
-          ? newPlanCategorie
-          : linkPlanActionCategory;
+  const handleCategorySelection = (categorieUid: string, planUid: string) => {
+    const selected: PlanCategorie = {planUid, categorieUid};
+    if (isPlanInFieldValue(planUid)) {
+      value.map((categorie: PlanCategorie) => {
+        return categorie.planUid === planUid ? selected : categorie;
       });
     } else {
-      value.push(newPlanCategorie);
+      value.push(selected);
     }
     setFieldValue(field.name, value);
   };
 
+  const handlePlanSelection = (selectedPlans: PlanActionTyped[]) => {
+    const newValue: PlanCategorie[] = selectedPlans.map(plan => {
+      const matchingPlanCategorieInValue = value.find(
+        planCategorie => planCategorie.planUid === plan.uid
+      );
+      return matchingPlanCategorieInValue ?? {planUid: plan.uid};
+    });
+    setFieldValue(field.name, newValue);
+  };
+
   return (
     <fieldset className="block">
-      <h1>yo {plans.length}</h1>
       {!errorMessage && props.hint && <div className="hint">{props.hint}</div>}
       {errorMessage && isTouched && <div className="hint">{errorMessage}</div>}
 
-      {plans.map(plan => {
-        const selected = value.find(cat => cat.planUid === plan.uid);
-        const categories = plan.categories as Categorie[];
-        const categorie = categories.find(categorie => {
-          return categorie.uid === selected?.categorieUid;
-        });
-        return (
-          <PlanDropdown plan={plan} onSelect={onSelectCategorie} key={plan.uid}>
-            <div className="flex flex-row gap-2">
-              <span>{plan.nom}</span>
-              {selected && (
-                <span>
-                  {categorie && categorie.nom}
-                  <button className="fr-fi-delete-line" />
-                </span>
-              )}
-            </div>
-          </PlanDropdown>
-        );
-      })}
-      {/* <Autocomplete
+      <Autocomplete
         multiple
         id={htmlId}
-        options=;{allSortedIndicateurIds}
+        options={plans}
         className="bg-beige list-none"
-        renderOption={renderIndicateurOption}
-        getOptionLabel={id => {
-          return shortenLabel(renderIndicateurOption(id));
-        }}
-        value={field.value}
+        renderOption={plan => plan.nom}
+        getOptionLabel={plan => plan.nom}
+        value={selectedPlans}
         onChange={(e, value) => {
-          setFieldValue(field.name, value);
+          handlePlanSelection(value);
         }}
         renderInput={params => (
           <TextField
@@ -170,7 +180,29 @@ export const LinkedPlanCategoriesField: FC<
             placeholder={props.label}
           />
         )}
-      /> */}
+      />
+      {!errorMessage && props.hint && <div className="hint">{props.hint}</div>}
+      {errorMessage && isTouched && <div className="hint">{errorMessage}</div>}
+
+      {selectedPlans.map(plan => {
+        const selected = value.find(cat => cat.planUid === plan.uid);
+        const categories = plan.categories as Categorie[];
+        const categorie = categories.find(categorie => {
+          return categorie.uid === selected?.categorieUid;
+        });
+        return (
+          <PlanDropdown
+            plan={plan}
+            onSelect={handleCategorySelection}
+            key={plan.uid}
+          >
+            <div className="">
+              {!categorie && <span>Selectioner un axe de {plan.nom}</span>}
+              {categorie && <span>{categorie.nom}</span>}
+            </div>
+          </PlanDropdown>
+        );
+      })}
     </fieldset>
   );
 };
