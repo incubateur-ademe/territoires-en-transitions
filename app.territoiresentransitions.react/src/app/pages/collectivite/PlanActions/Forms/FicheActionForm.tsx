@@ -18,11 +18,13 @@ import {Spacer} from 'ui/shared';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
 import {searchActionById} from 'utils/actions';
+import {LinkedPlanCategoriesField} from 'app/pages/collectivite/PlanActions/Forms/LinkedPlanCategoriesField';
 
-interface PlanCategorie {
+export interface PlanCategorie {
   categorieUid: string;
   planUid: string;
 }
+
 interface LinkedPlanCategoriesInterface {
   linkedPlanCategories: PlanCategorie[];
 }
