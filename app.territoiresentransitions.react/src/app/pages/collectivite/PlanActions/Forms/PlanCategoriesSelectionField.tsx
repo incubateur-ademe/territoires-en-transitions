@@ -154,27 +154,27 @@ export const PlanCategoriesSelectionField: FC<
   const isTouched = touched[field.name];
 
   const selectedPlans = R.filter(
-    plan => !!value.find(categorie => categorie.planUid === plan.uid),
+    plan => !!planCategories.find(categorie => categorie.planUid === plan.uid),
     plans
   );
   const isPlanInFieldValue = (planUid: string): boolean =>
-    R.any(planCategorie => planCategorie.planUid === planUid, value);
+    R.any(planCategorie => planCategorie.planUid === planUid, planCategories);
 
   // When category is picked we update the input value.
   const handleCategorySelection = (categorieUid: string, planUid: string) => {
     const selected: PlanCategorieSelection = {planUid, categorieUid};
 
     if (isPlanInFieldValue(planUid)) {
-      setFieldValue(
-        field.name,
-        value.map((categorie: PlanCategorieSelection) => {
+      setPlanCategories(
+        planCategories.map((categorie: PlanCategorieSelection) => {
           return categorie.planUid === planUid ? selected : categorie;
         })
       );
     } else {
-      setFieldValue(field.name, [...value, selected]);
+      setPlanCategories([...planCategories, selected]);
+      // setFieldValue(field.name,  [...planCategories, selected]);
     }
-    console.log(value);
+    setValueUpToDate(false);
   };
 
   // When plan is picked we update the input value.
@@ -185,8 +185,16 @@ export const PlanCategoriesSelectionField: FC<
       );
       return matchingPlanCategorieInValue ?? {planUid: plan.uid};
     });
-    setFieldValue(field.name, newValue);
+    setPlanCategories(newValue);
+
+    setValueUpToDate(false);
+    // setFieldValue(field.name, newValue);
   };
+
+  useEffect(() => {
+    setFieldValue(field.name, planCategories);
+    setValueUpToDate(true);
+  }, [valueUpToDate]);
 
   return (
     <fieldset className="block">
