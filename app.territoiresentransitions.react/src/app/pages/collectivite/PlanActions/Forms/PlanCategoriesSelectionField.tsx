@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 import {useAllStorables} from 'core-logic/hooks';
@@ -22,6 +22,7 @@ import * as R from 'ramda';
 type PlanActionStorableTyped = PlanActionStorable & PlanActionStructure;
 
 type LinkedPlanCategoriesFieldProps = {
+  ficheUid: string;
   label: string;
   id?: string;
   hint?: string;
@@ -118,12 +119,36 @@ export const PlanCategoriesSelectionField: FC<
   form: {touched, errors, setFieldValue},
   ...props
 }) => {
-  // The field value, typed.
-  const value = field.value as PlanCategorieSelection[];
-
   const plans = useAllStorables<PlanActionStorable>(
     planActionStore
   ) as PlanActionStorableTyped[];
+
+  const [planCategories, setPlanCategories] = useState<
+    PlanCategorieSelection[]
+  >(field.value as PlanCategorieSelection[]);
+
+  const [valueUpToDate, setValueUpToDate] = useState(false);
+
+  useEffect(() => {
+    // Iterate over existing plan to find plan categories.
+    const selection: PlanCategorieSelection[] = [];
+    for (const plan of plans) {
+      for (const fc of (plan as PlanActionStructure).fiches_by_category) {
+        if (fc.fiche_uid === props.ficheUid) {
+          selection.push({
+            categorieUid: fc.category_uid,
+            planUid: plan.uid,
+          });
+        }
+      }
+    }
+    setPlanCategories(selection);
+  }, [plans.length]);
+
+  // The field value, typed.
+  // const value = field.value as PlanCategorieSelection[];
+  // console.log('field cats value', value);
+
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
   const isTouched = touched[field.name];
@@ -155,7 +180,7 @@ export const PlanCategoriesSelectionField: FC<
   // When plan is picked we update the input value.
   const handlePlanSelection = (selectedPlans: PlanActionTyped[]) => {
     const newValue: PlanCategorieSelection[] = selectedPlans.map(plan => {
-      const matchingPlanCategorieInValue = value.find(
+      const matchingPlanCategorieInValue = planCategories.find(
         planCategorie => planCategorie.planUid === plan.uid
       );
       return matchingPlanCategorieInValue ?? {planUid: plan.uid};
@@ -166,7 +191,11 @@ export const PlanCategoriesSelectionField: FC<
   return (
     <fieldset className="block">
       {!errorMessage && props.hint && <div className="hint">{props.hint}</div>}
-      {errorMessage && isTouched && <div className="hint">{errorMessage}</div>}
+      {errorMessage && isTouched && (
+        <div className="mt-2 text-sm opacity-80 text-red-500 pb-2">
+          {errorMessage}
+        </div>
+      )}
 
       <Autocomplete
         multiple
@@ -190,7 +219,7 @@ export const PlanCategoriesSelectionField: FC<
       />
 
       {selectedPlans.map(plan => {
-        const selected = value.find(cat => cat.planUid === plan.uid);
+        const selected = planCategories.find(cat => cat.planUid === plan.uid);
         const categorie = R.find(categorie => {
           return categorie.uid === selected?.categorieUid;
         }, plan.categories);

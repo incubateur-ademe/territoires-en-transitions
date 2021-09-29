@@ -173,13 +173,15 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
     date_debut: Yup.date(),
     date_fin: Yup.date(),
     indicateur_personnalise_ids: Yup.array(),
+    planCategories: Yup.array().min(
+      1,
+      "Une fiche doit être rattachée à au moins un plan d'action."
+    ),
   });
 
   const save = (data: FicheActionFormData) => {
     if (state !== 'ready') return;
     setState('saving');
-
-    console.log('categories', data.planCategories);
     props.onSave(data);
   };
 
@@ -213,7 +215,8 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
             <Field
               name="planCategories"
-              label="Plans d'actions liés"
+              label="Plans d'actions"
+              ficheUid={props.fiche.uid}
               component={PlanCategoriesSelectionField}
             />
 

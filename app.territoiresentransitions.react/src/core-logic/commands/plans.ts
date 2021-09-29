@@ -30,19 +30,19 @@ export const updatePlansOnFicheSave = async (data: FicheActionFormData) => {
   const ficheUid = data.uid;
   const planCategories = data.planCategories;
 
-  // For every plan, if a plan/categorie is attached: update then save plan.
+  // For each plan, update the attached fiches
   for (const plan of plans) {
     const planCategorie = planCategories.find(c => c.planUid === plan.uid);
-    if (planCategorie !== undefined) {
-      const fichesByCategories = (
-        plan as PlanActionStructure
-      ).fiches_by_category.filter(fc => fc.fiche_uid !== ficheUid);
+    const fichesByCategories = (
+      plan as PlanActionStructure
+    ).fiches_by_category.filter(fc => fc.fiche_uid !== ficheUid);
+    if (planCategorie) {
       fichesByCategories.push({
         category_uid: planCategorie.categorieUid,
         fiche_uid: ficheUid,
       });
-      plan.fiches_by_category = fichesByCategories;
-      await planActionStore.store(plan);
     }
+    plan.fiches_by_category = fichesByCategories;
+    await planActionStore.store(plan);
   }
 };

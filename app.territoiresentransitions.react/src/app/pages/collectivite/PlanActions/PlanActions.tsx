@@ -60,7 +60,7 @@ const CategoryLevel = (props: {nodes: CategorizedNode[]; level?: number}) => {
                 );
               })}
             {node.children && (
-              <div className="ml-5">
+              <div className="ml-10">
                 <CategoryLevel nodes={node.children} level={level + 1} />
               </div>
             )}
