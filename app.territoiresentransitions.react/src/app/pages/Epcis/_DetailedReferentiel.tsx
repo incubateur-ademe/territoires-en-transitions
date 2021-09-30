@@ -3,7 +3,6 @@ import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreSt
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 
 import {DetailedEpciCardPropsLink} from './_DetailedEpciCardPropsLink';
-import {displayName} from 'utils/actions';
 import {Referentiel} from 'types';
 import {epciCard_AxisShortLabel} from 'app/labels';
 
@@ -16,11 +15,12 @@ const AxisSummary = (props: {
   <div className="flex items-center justify-between text-xs">
     <div className="w-3/5">{props.title}</div>
     <div className="flex">
-      <UiGaugeProgressStat score={props.score} size="xs" />
-      <DetailedEpciCardPropsLink
+      <UiGaugeProgressStat score={props.score} size="xs" showPoints={false} />
+      {/* TODO : this is commented until we have an ancor system to link to the axis */}
+      {/* <DetailedEpciCardPropsLink
         label=""
         linkTo={`/collectivite/${props.epciId}/action/${props.referentiel}/${props.score?.action_id}`} // TODO link to ECI ref
-      />
+      /> */}
     </div>
   </div>
 );

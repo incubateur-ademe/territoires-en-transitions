@@ -1,11 +1,10 @@
 import {ActionReferentiel} from 'generated/models/action_referentiel';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {LazyDetails} from 'ui/shared/LazyDetails';
 import {
   ActionReferentielTitle,
   ActionReferentielTitleCard,
   CurrentEpciGaugeProgressStat,
-  ProgressStatStatic,
 } from 'ui/referentiels';
 import {Chevron} from 'ui/shared/Chevron';
 
@@ -20,15 +19,15 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
     <div className="mt-2">
       <LazyDetails
         summary={
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="px-3">
-                <CurrentEpciGaugeProgressStat action={action} />
+          <div className="flex items-center justify-between mt-3">
+            <div className="flex items-center w-full">
+              <div className="px-3 w-1/12 ">
+                <CurrentEpciGaugeProgressStat action={action} size="xs" />
               </div>
               <div className="flex items-center mr-6">
                 <ActionReferentielTitle
                   action={action}
-                  className="fr-h6 mb-0"
+                  className="fr-h6 mb-0 -mt-3"
                 />
               </div>
               <Chevron direction={opened ? 'down' : 'left'} />
@@ -39,11 +38,7 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
       >
         <div className=" ml-8 mb-6">
           {action.actions.map(action => (
-            <ActionReferentielTitleCard
-              key={action.id}
-              action={action}
-              referentiel="cae"
-            />
+            <ActionReferentielTitleCard key={action.id} action={action} />
           ))}
         </div>
       </LazyDetails>

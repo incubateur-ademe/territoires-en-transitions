@@ -7,6 +7,8 @@ from pydantic import BaseModel
 
 class IndicateurReferentiel(BaseModel):
     id: str
+    uid: str
+    valeur: str
     action_ids: List[str]
     nom: str
     description: str
