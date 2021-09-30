@@ -13,7 +13,6 @@ import {
   indicateurResultatStore,
   indicateurObjectifStore,
   indicateurReferentielCommentaireStore,
-  indicateurValueStore,
   planActionStore,
   indicateurPersonnaliseObjectifStore,
   indicateurPersonnaliseResultatStore,

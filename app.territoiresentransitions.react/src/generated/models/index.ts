@@ -11,3 +11,4 @@ export * from './fiche_action';
 export * from './fiche_action_categorie';
 export * from './utilisateur_connecte';
 export * from './action_custom';
+export * from './plan_action';

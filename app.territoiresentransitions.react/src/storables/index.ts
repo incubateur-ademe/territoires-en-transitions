@@ -9,3 +9,4 @@ export * from './EpciStorable';
 export * from './IndicateurPersonnaliseStorable';
 export * from './UtilisateurConnecteStorable';
 export * from './ActionCustomStorable';
+export * from './PlanActionStorable';

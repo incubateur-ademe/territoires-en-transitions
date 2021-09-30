@@ -21,6 +21,8 @@ import {
   IndicateurReferentielCommentaire,
   IndicateurReferentielCommentaireInterface,
   AnyIndicateurValueInterface,
+  PlanAction,
+  PlanActionInterface,
 } from 'generated/models';
 import {
   ActionStatusStorable,
@@ -32,6 +34,7 @@ import {
   FicheActionCategorieStorable,
   IndicateurPersonnaliseStorable,
   IndicateurReferentielCommentaireStorable,
+  PlanActionStorable,
 } from 'storables';
 
 const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
