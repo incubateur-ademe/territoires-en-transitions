@@ -51,8 +51,8 @@ def test_crud_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     # GET /v2/fiche_action_categorie/epci_id/all
     response = client.get(list_path)
     assert response.status_code == 200
-    assert len(response.json()) == 1
-    assert response.json()[0]["uid"] == plan["uid"]
+    assert len(response.json()) == 2
+    assert response.json()[1]["uid"] == plan["uid"]
 
     # GET /v2/fiche_action_categorie/epci_id/uid
     response = client.get(item_path)
@@ -91,9 +91,9 @@ def test_update_fiche_action_categorie(client: TestClient):
 
     response = client.get(list_path)
     assert response.status_code == 200
-    assert len(response.json()) == 1
-    assert response.json()[0]["uid"] == existing_fiche_action_categorie["uid"]
-    assert response.json()[0]["nom"] == existing_fiche_action_categorie["nom"]
+    assert len(response.json()) == 2
+    assert response.json()[1]["uid"] == existing_fiche_action_categorie["uid"]
+    assert response.json()[1]["nom"] == existing_fiche_action_categorie["nom"]
 
 
 def test_create_mismatched_fiche_action(client: TestClient):
