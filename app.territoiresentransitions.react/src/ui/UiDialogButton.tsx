@@ -1,13 +1,15 @@
 import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 
-export const UiDialogButton = (props: {
+interface UiDialogButtonProps {
   buttonClasses?: string;
   title: string;
   children: React.ReactNode;
   opened: boolean;
   setOpened: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+}
+
+export function UiDialogButton(props: UiDialogButtonProps) {
   return (
     <div>
       <button
@@ -32,4 +34,4 @@ export const UiDialogButton = (props: {
       </Dialog>
     </div>
   );
-};
+}
