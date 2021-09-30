@@ -1,16 +1,17 @@
-from tortoise import fields, models
-from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise import models
+from tortoise.contrib.pydantic.creator import pydantic_model_creator
+from tortoise.fields.data import IntField, CharField, BooleanField, DatetimeField
 
 
 class Epci(models.Model):
-    id = fields.IntField(pk=True)
-    uid = fields.CharField(max_length=36)
-    insee = fields.CharField(max_length=5)
-    siren = fields.CharField(max_length=9)
-    nom = fields.CharField(max_length=300)
-    created_at = fields.DatetimeField(auto_now_add=True)
-    modified_at = fields.DatetimeField(auto_now=True)
-    latest = fields.BooleanField()
+    id = IntField(pk=True)
+    uid = CharField(max_length=36)
+    insee = CharField(max_length=5)
+    siren = CharField(max_length=9)
+    nom = CharField(max_length=300)
+    created_at = DatetimeField(auto_now_add=True)
+    modified_at = DatetimeField(auto_now=True)
+    latest = BooleanField()
 
 
 Epci_Pydantic = pydantic_model_creator(Epci, name="Epci")

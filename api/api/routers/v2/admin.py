@@ -7,7 +7,8 @@ from pydantic import BaseModel
 from tortoise.contrib.fastapi import HTTPNotFoundError
 
 from api.config.configuration import AUTH_ADMIN_USER, AUTH_ADMIN_PASSWORD
-from api.routers.v2.auth import users_endpoint, get_service_token
+from api.utils.endpoints import *
+from api.utils.connection_api import get_authorization_header
 
 router = APIRouter(prefix="/v2/admin")
 security = HTTPBasic()
@@ -48,10 +49,8 @@ async def get_user(
         )
 
     # retrieve a service token to call ADEME users API
-    service_token = await get_service_token()
+    headers = await get_authorization_header()
 
-    # use the ADEME user API using our token
-    headers = {"Authorization": "Bearer " + service_token}
     users_response = requests.get(
         f"{users_endpoint}/{ademe_user_id}",
         headers=headers,

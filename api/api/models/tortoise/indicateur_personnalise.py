@@ -1,20 +1,21 @@
-from tortoise import fields, models
-from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise import models
+from tortoise.contrib.pydantic.creator import pydantic_model_creator
+from tortoise.fields.data import IntField, CharField, BooleanField, DatetimeField, JSONField, TextField
 
 
 class IndicateurPersonnalise(models.Model):
-    id = fields.IntField(pk=True)
-    epci_id = fields.CharField(max_length=36)
-    uid = fields.CharField(max_length=36)
-    custom_id = fields.CharField(max_length=36)
-    nom = fields.CharField(max_length=300)
-    description = fields.TextField()
-    unite = fields.CharField(max_length=36)
-    meta = fields.JSONField()
-    created_at = fields.DatetimeField(auto_now_add=True)
-    modified_at = fields.DatetimeField(auto_now=True)
-    latest = fields.BooleanField()
-    deleted = fields.BooleanField()
+    id = IntField(pk=True)
+    epci_id = CharField(max_length=36)
+    uid = CharField(max_length=36)
+    custom_id = CharField(max_length=36)
+    nom = CharField(max_length=300)
+    description = TextField()
+    unite = CharField(max_length=36)
+    meta = JSONField()
+    created_at = DatetimeField(auto_now_add=True)
+    modified_at = DatetimeField(auto_now=True)
+    latest = BooleanField()
+    deleted = BooleanField()
 
 
 IndicateurPersonnalise_Pydantic = pydantic_model_creator(

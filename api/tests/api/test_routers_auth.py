@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from api.config.configuration import AUTH_DISABLED_DUMMY_USER
 from tests.utils.auth import auth_headers
+from api.models.tortoise.utilisateur_connecte import UtilisateurConnecte
 
 path = "/v2/auth"
 
@@ -37,3 +38,8 @@ def test_identity(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     response = client.get(identity_path, headers=auth_headers())
     assert response.status_code == 200
     assert response.json()["ademe_user_id"] == "dummy"
+    query = UtilisateurConnecte.filter(
+        ademe_user_id="dummy",
+    )
+    # query_exists = query.exists()
+    breakpoint()
