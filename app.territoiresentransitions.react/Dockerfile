@@ -4,9 +4,5 @@ COPY ./package.json ./
 COPY ./package-lock.json ./
 RUN npm install
 COPY . .
-RUN npm run build -- --prod
-
-FROM nginx
-EXPOSE 4200
-COPY ./default.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/build /usr/share/nginx/html
+EXPOSE 3000
+CMD ["npm", "run", "dev"]

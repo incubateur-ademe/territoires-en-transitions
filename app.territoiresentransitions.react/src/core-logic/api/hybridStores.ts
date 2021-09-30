@@ -1,57 +1,80 @@
-import {IndicateurValueStorable} from 'storables/IndicateurValueStorable';
-import {
-  IndicateurValue,
-  IndicateurValueInterface,
-} from 'generated/models/indicateur_value';
-import {
-  ActionStatus,
-  ActionStatusInterface,
-} from 'generated/models/action_status';
-import {ActionStatusStorable} from 'storables/ActionStatusStorable';
 import {HybridStore} from './hybridStore';
-import {FicheActionStorable} from 'storables/FicheActionStorable';
-import {FicheAction, FicheActionInterface} from 'generated/models/fiche_action';
-import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
-import {
-  FicheActionCategorie,
-  FicheActionCategorieInterface,
-} from 'generated/models/fiche_action_categorie';
-import {IndicateurPersonnaliseValueStorable} from 'storables/IndicateurPersonnaliseValueStorable';
-import {
-  IndicateurPersonnaliseValue,
-  IndicateurPersonnaliseValueInterface,
-} from 'generated/models/indicateur_personnalise_value';
-import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
-import {
-  IndicateurPersonnalise,
-  IndicateurPersonnaliseInterface,
-} from 'generated/models/indicateur_personnalise';
-import {
-  IndicateurReferentielCommentaire,
-  IndicateurReferentielCommentaireInterface,
-} from 'generated/models/indicateur_referentiel_commentaire';
-import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
-import {EpciStorable} from 'storables/EpciStorable';
-import {Epci, EpciInterface} from 'generated/models/epci';
 import {currentAccessToken} from './authentication';
-import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
-import type {ActionReferentielScoreInterface} from 'generated/models/action_referentiel_score';
-import {ActionMetaStorable} from 'storables/ActionMetaStorable';
-import {ActionMeta, ActionMetaInterface} from 'generated/models/action_meta';
 import {ENV} from 'environmentVariables';
 import {getCurrentEpciId} from 'core-logic/api/currentEpci';
 import {Referentiel} from 'types';
 
+import {
+  ActionMeta,
+  ActionMetaInterface,
+  ActionReferentielScoreInterface,
+  ActionStatus,
+  ActionStatusInterface,
+  Epci,
+  EpciInterface,
+  FicheActionCategorie,
+  FicheActionCategorieInterface,
+  FicheAction,
+  FicheActionInterface,
+  IndicateurPersonnalise,
+  IndicateurPersonnaliseInterface,
+  IndicateurReferentielCommentaire,
+  IndicateurReferentielCommentaireInterface,
+  AnyIndicateurValueInterface,
+} from 'generated/models';
+import {
+  ActionStatusStorable,
+  ActionMetaStorable,
+  ActionReferentielScoreStorable,
+  AnyIndicateurValueStorable,
+  EpciStorable,
+  FicheActionStorable,
+  FicheActionCategorieStorable,
+  IndicateurPersonnaliseStorable,
+  IndicateurReferentielCommentaireStorable,
+} from 'storables';
+
 const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
 
-export const indicateurValueStore = new HybridStore<IndicateurValueStorable>({
-  host: ENV.backendHost,
-  endpoint: () => `v2/${IndicateurValue.pathname}/${getCurrentEpciId()}`,
-  authorization: defaultAuthorization,
-  serializer: storable => storable,
-  deserializer: serialized =>
-    new IndicateurValueStorable(serialized as IndicateurValueInterface),
-});
+export const indicateurResultatStore =
+  new HybridStore<AnyIndicateurValueStorable>({
+    host: ENV.backendHost,
+    endpoint: () => `v2/indicateur_resultat/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
+    serializer: storable => storable,
+    deserializer: serialized =>
+      new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
+  });
+
+export const indicateurObjectifStore =
+  new HybridStore<AnyIndicateurValueStorable>({
+    host: ENV.backendHost,
+    endpoint: () => `v2/indicateur_objectif/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
+    serializer: storable => storable,
+    deserializer: serialized =>
+      new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
+  });
+
+export const indicateurPersonnaliseResultatStore =
+  new HybridStore<AnyIndicateurValueStorable>({
+    host: ENV.backendHost,
+    endpoint: () => `v2/indicateur_personnalise_resultat/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
+    serializer: storable => storable,
+    deserializer: serialized =>
+      new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
+  });
+
+export const indicateurPersonnaliseObjectifStore =
+  new HybridStore<AnyIndicateurValueStorable>({
+    host: ENV.backendHost,
+    endpoint: () => `v2/indicateur_personnalise_objectif/${getCurrentEpciId()}`,
+    authorization: defaultAuthorization,
+    serializer: storable => storable,
+    deserializer: serialized =>
+      new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
+  });
 
 export const actionStatusStore = new HybridStore<ActionStatusStorable>({
   host: ENV.backendHost,
@@ -107,19 +130,6 @@ export const indicateurPersonnaliseStore =
     deserializer: serialized =>
       new IndicateurPersonnaliseStorable(
         serialized as IndicateurPersonnaliseInterface
-      ),
-  });
-
-export const indicateurPersonnaliseValueStore =
-  new HybridStore<IndicateurPersonnaliseValueStorable>({
-    host: ENV.backendHost,
-    endpoint: () =>
-      `v2/${IndicateurPersonnaliseValue.pathname}/${getCurrentEpciId()}`,
-    authorization: defaultAuthorization,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new IndicateurPersonnaliseValueStorable(
-        serialized as IndicateurPersonnaliseValueInterface
       ),
   });
 

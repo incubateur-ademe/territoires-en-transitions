@@ -10,9 +10,11 @@ import {
   ficheActionCategorieStore,
   getFicheActionStoreForEpci,
   indicateurPersonnaliseStore,
-  indicateurPersonnaliseValueStore,
+  indicateurResultatStore,
+  indicateurObjectifStore,
   indicateurReferentielCommentaireStore,
-  indicateurValueStore,
+  indicateurPersonnaliseObjectifStore,
+  indicateurPersonnaliseResultatStore,
 } from 'core-logic/api/hybridStores';
 import {getCurrentEpciId} from 'core-logic/api/currentEpci';
 
@@ -111,7 +113,7 @@ export function Toasters() {
   return (
     <>
       <EndpointToaster
-        endpoint={indicateurValueStore.api}
+        endpoint={indicateurResultatStore.api}
         composer={makeComposer({
           storeSuccess: "La valeur de l'indicateur est enregistrée",
           storeError: "La valeur de l'indicateur n'a pas été enregistrée",
@@ -147,10 +149,31 @@ export function Toasters() {
         })}
       />
       <EndpointToaster
-        endpoint={indicateurPersonnaliseValueStore.api}
+        endpoint={indicateurResultatStore.api}
         composer={makeComposer({
           storeSuccess: "La valeur de l'indicateur est enregistrée",
           storeError: "La valeur de l'indicateur n'a pas été enregistrée",
+        })}
+      />
+      <EndpointToaster
+        endpoint={indicateurObjectifStore.api}
+        composer={makeComposer({
+          storeSuccess: "La valeur de l'objectif est enregistrée",
+          storeError: "La valeur de l'objectif n'a pas été enregistrée",
+        })}
+      />
+      <EndpointToaster
+        endpoint={indicateurPersonnaliseResultatStore.api}
+        composer={makeComposer({
+          storeSuccess: "La valeur de l'indicateur est enregistrée",
+          storeError: "La valeur de l'indicateur n'a pas été enregistrée",
+        })}
+      />
+      <EndpointToaster
+        endpoint={indicateurPersonnaliseObjectifStore.api}
+        composer={makeComposer({
+          storeSuccess: "La valeur de l'objectif est enregistrée",
+          storeError: "La valeur de l'objectif n'a pas été enregistrée",
         })}
       />
       <EndpointToaster

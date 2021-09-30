@@ -1,83 +1,51 @@
-import {HybridStore} from 'core-logic/api/hybridStore';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useEpciId} from 'core-logic/hooks';
-import {IndicateurValue} from 'generated/models/indicateur_value';
-import {IndicateurPersonnaliseValue} from 'generated/models/indicateur_personnalise_value';
+import {AnyIndicateurValueStorable} from 'storables';
+import {HybridStore} from 'core-logic/api/hybridStore';
+import {useAnyIndicateurValueForYear} from 'core-logic/hooks/indicateurs_values';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
-
-/**
- * AnyIndicateurValues requirement.
- */
-interface IndicateurValuesStorageInterface {
-  indicateurId: string;
-  store: HybridStore<AnyIndicateurValueStorable>;
-}
-
-/**
- * Join IndicateurValue and IndicateurPersonnaliseValue in a concrete class.
- */
-export class AnyIndicateurValueStorable
-  extends IndicateurValue
-  implements IndicateurPersonnaliseValue
-{
-  static buildId(epci_id: string, indicateur_id: string, year: number): string {
-    return `${epci_id}/${indicateur_id}/${year}`;
-  }
-
-  get id(): string {
-    return AnyIndicateurValueStorable.buildId(
-      this.epci_id,
-      this.indicateur_id,
-      this.year
-    );
-  }
-}
 
 /**
  * Use IndicateurValuesStorageInterface + year to read/write an indicateur value
  */
 const AnyIndicateurValueInput = (props: {
   year: number;
-  storage: IndicateurValuesStorageInterface;
+  indicateurId: string;
+  store: HybridStore<AnyIndicateurValueStorable>;
 }) => {
-  const [value, setValue] = React.useState('');
   const epciId = useEpciId()!;
 
-  useEffect(() => {
-    props.storage.store
-      .retrieveById(
-        AnyIndicateurValueStorable.buildId(
-          epciId,
-          props.storage.indicateurId,
-          props.year
-        )
-      )
-      .then(storable => setValue(storable?.value ?? ''));
-  }, [value, epciId]);
+  const value =
+    useAnyIndicateurValueForYear(
+      props.indicateurId,
+      epciId,
+      props.year,
+      props.store
+    )?.value ?? '';
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
+    const floatValue = parseFloat(inputValue.replace(',', '.'));
 
-    props.storage.store
-      .store(
-        new AnyIndicateurValueStorable({
-          epci_id: epciId,
-          indicateur_id: props.storage.indicateurId,
-          year: props.year,
-          value: inputValue,
-        })
-      )
-      .then(storable => setValue(storable.value));
+    props.store.store(
+      new AnyIndicateurValueStorable({
+        epci_id: epciId,
+        indicateur_id: props.indicateurId,
+        year: props.year,
+        value: floatValue,
+      })
+    );
   };
   return (
-    <label className="flex flex-col mx-2">
+    <label className="flex flex-col mx-2 ">
       {props.year}
       <input
-        className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500"
-        defaultValue={value}
+        className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500 text-sm font-normal text-gray-500"
+        defaultValue={value || ''}
         onBlur={handleChange}
+        type="number"
       />
     </label>
   );
@@ -87,7 +55,8 @@ const AnyIndicateurValueInput = (props: {
  * Display a range of inputs for every indicateur yearly values.
  */
 export const AnyIndicateurValues = (props: {
-  storage: IndicateurValuesStorageInterface;
+  indicateurUid: string;
+  store: HybridStore<AnyIndicateurValueStorable>;
 }) => {
   const min = 2008;
   const stride = 2;
@@ -100,33 +69,53 @@ export const AnyIndicateurValues = (props: {
   );
 
   return (
-    <div className="flex flex row items-center">
+    <div className="flex row items-center h-full text-center">
       <button
-        className="fr-btn fr-btn--secondary"
+        className="fr-fi-arrow-left-line fr-btn--icon-left"
         onClick={e => {
           e.preventDefault();
           setIndex(index - 1);
         }}
         disabled={index < 1}
-      >
-        ←
-      </button>
-      {years.map(year => (
-        <AnyIndicateurValueInput
-          year={year}
-          storage={props.storage}
-          key={`${props.storage.indicateurId}-${year}`}
-        />
-      ))}
+      />
+      <div className="flex row items-center">
+        {years.map(year => (
+          <AnyIndicateurValueInput
+            year={year}
+            store={props.store}
+            indicateurId={props.indicateurUid}
+            key={`${props.indicateurUid}-${year}`}
+          />
+        ))}
+      </div>
       <button
-        className="fr-btn fr-btn--secondary"
+        className="fr-fi-arrow-right-line fr-btn--icon-left pl-4"
         onClick={e => {
           e.preventDefault();
           setIndex(index + 1);
         }}
-      >
-        →
-      </button>
+      />
     </div>
   );
 };
+
+/**
+ * Expand Panel with range of value inputs as details
+ */
+export const AnyIndicateurEditableExpandPanel = (props: {
+  indicateurUid: string;
+  store: HybridStore<AnyIndicateurValueStorable>;
+  title: string;
+}) => (
+  <div className="CrossExpandPanel editable">
+    <details>
+      <summary className="title">{props.title}</summary>
+      <div>
+        <AnyIndicateurValues
+          store={props.store}
+          indicateurUid={props.indicateurUid}
+        />
+      </div>
+    </details>
+  </div>
+);
