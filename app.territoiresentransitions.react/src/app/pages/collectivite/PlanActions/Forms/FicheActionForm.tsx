@@ -189,7 +189,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
     <Formik<FicheActionFormData>
       initialValues={{
         ...props.fiche,
-        planCategories: [],
+        planCategories: props.planCategories,
       }}
       validationSchema={validation}
       onSubmit={save}

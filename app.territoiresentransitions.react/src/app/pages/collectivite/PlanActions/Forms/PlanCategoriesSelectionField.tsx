@@ -122,7 +122,6 @@ export const PlanCategoriesSelectionField: FC<
   const plans = useAllStorables<PlanActionStorable>(
     planActionStore
   ) as PlanActionStorableTyped[];
-
   const [planCategories, setPlanCategories] = useState<
     PlanCategorieSelection[]
   >(field.value as PlanCategorieSelection[]);
@@ -142,12 +141,8 @@ export const PlanCategoriesSelectionField: FC<
         }
       }
     }
-    setPlanCategories(selection);
+    if (!planCategories.length) setPlanCategories(selection);
   }, [plans.length]);
-
-  // The field value, typed.
-  // const value = field.value as PlanCategorieSelection[];
-  // console.log('field cats value', value);
 
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];

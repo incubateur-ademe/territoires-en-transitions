@@ -2,6 +2,7 @@ import {useHistory, useParams} from 'react-router-dom';
 import {
   FicheActionForm,
   FicheActionFormData,
+  PlanCategorieSelection,
 } from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {FicheActionInterface} from 'generated/models/fiche_action';
 import {v4 as uuid} from 'uuid';
@@ -25,15 +26,25 @@ const FicheActionCreator = () => {
 
   const query = useQuery();
 
+  // handle action_id query parameter, used when the fiche is created from
+  // an action.
   let titre = '';
   let referentiel_action_ids: string[] = [];
-
   if (query.get('action_id')) {
     const action = searchActionById(query.get('action_id')!, actions);
     if (action) {
       titre = action.nom;
       referentiel_action_ids = [action.id];
     }
+  }
+
+  // handle plan_id query parameter, used when the fiche is created from
+  // a plan.
+  const planCategories: PlanCategorieSelection[] = [];
+  if (query.get('plan_uid')) {
+    planCategories.push({
+      planUid: query.get('plan_uid')!,
+    });
   }
 
   const fiche: FicheActionInterface = {
@@ -71,7 +82,11 @@ const FicheActionCreator = () => {
     <main className="fr-container pt-8">
       <RetourButton />
       <h1 className="fr-h1 pt-5">Ajouter une fiche action</h1>
-      <FicheActionForm fiche={fiche} planCategories={[]} onSave={save} />
+      <FicheActionForm
+        fiche={fiche}
+        planCategories={planCategories}
+        onSave={save}
+      />
     </main>
   );
 };
