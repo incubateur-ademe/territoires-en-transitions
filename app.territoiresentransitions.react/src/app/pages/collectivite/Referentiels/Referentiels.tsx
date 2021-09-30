@@ -11,9 +11,7 @@ import {Spacer} from 'ui/shared';
 import * as R from 'ramda';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {actions} from 'generated/data/referentiels';
-import {RootProgressStat} from 'ui/referentiels';
-import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
-import {useActionReferentielScore} from 'core-logic/hooks/actionReferentielScore';
+import {CurrentEpciGaugeProgressStat} from 'ui/referentiels';
 
 type View = 'cae' | 'eci' | 'both';
 const viewTitles: Record<View, string> = {
@@ -77,16 +75,17 @@ const ReferentielNavChip = (props: {
 };
 
 const ReferentielTitle = (props: {view: View}) => {
-  const referentielId =
-    props.view === 'eci' ? eciReferentiel.id : caeReferentiel.id;
-  const root_score = useActionReferentielScore(
-    ActionReferentielScoreStorable.buildId(referentielId)
-  );
+  const referentiel = props.view === 'eci' ? eciReferentiel : caeReferentiel;
   return (
     <header className="flex flex-row items-center mb-6 space-x-10">
       <h2 className="fr-h2">{viewTitles[props.view]}</h2>
       <div className={`${props.view === 'both' ? 'hidden' : ''}`}>
-        <RootProgressStat score={root_score} />
+        {/* <ProgressStatStatic
+          action={referentiel}
+          position="left"
+          showPoints={true}
+        /> */}
+        <CurrentEpciGaugeProgressStat action={referentiel} size="sm" />
       </div>
     </header>
   );

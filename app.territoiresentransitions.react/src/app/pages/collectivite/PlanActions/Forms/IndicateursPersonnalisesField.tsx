@@ -34,10 +34,12 @@ export const IndicateursPersonnalisesField: FC<
     .map(entry => entry[0]);
 
   const renderIndicateurOption = (id: string) => {
-    const indicateur = indicateurs.get(id)!;
-    return `${indicateur.custom_id ? '(' + indicateur.custom_id + ') ' : ''} ${
-      indicateur.nom
-    }`;
+    const indicateur = indicateurs.get(id);
+    return indicateur
+      ? `${indicateur.custom_id ? '(' + indicateur.custom_id + ') ' : ''} ${
+          indicateur.nom
+        }`
+      : '...';
   };
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];

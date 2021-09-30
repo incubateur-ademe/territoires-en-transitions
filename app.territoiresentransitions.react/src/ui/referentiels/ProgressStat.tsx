@@ -8,6 +8,7 @@ import * as R from 'ramda';
 import {
   inferStateFromScore,
   percentageTextFromScore,
+  pointsTextFromScore,
   ProgressState,
 } from 'utils/progressStat';
 
@@ -28,17 +29,18 @@ const TextProgressStatStatic = ({
   showPoints: boolean;
 }) => {
   const percentageText = percentageTextFromScore(score);
-  const pointsRatioText = score
-    ? `(${score.points.toFixed(2)}/${score.potentiel.toFixed(2)})`
-    : '(../..)';
 
   if (score?.avancement === 'non_concernee') {
     return <span className="text-gray-700"> non concernée</span>;
   }
-  return (
+  return showPoints ? (
     <>
       <strong className="font-bold">{percentageText}</strong>
-      {showPoints && pointsRatioText}
+      {pointsTextFromScore(score)}
+    </>
+  ) : (
+    <>
+      <strong className="font-bold">{percentageText}</strong>
     </>
   );
 };
@@ -82,13 +84,7 @@ export const ProgressStatStatic = ({
   );
 };
 
-export const UiGaugeProgressStat = ({
-  score,
-  size,
-}: {
-  score: ActionReferentielScoreStorable | null;
-  size: 'xs' | 'sm';
-}) => {
+const Gauge = (props: {score: ActionReferentielScoreStorable | null}) => {
   const makeStyle = (score: ActionReferentielScoreStorable | null) => {
     const state = inferStateFromScore(score);
     const color = progressStateColors[state];
@@ -98,18 +94,38 @@ export const UiGaugeProgressStat = ({
     };
   };
   return (
-    <div className="flex items-center justify-between">
-      <div className={`font-bold text-${size} w-10`}>
-        {percentageTextFromScore(score)}
+    <div className="w-9">
+      <div className="h-2 bg-gray-300 rounded-md">
+        <div
+          className="rounded-md block relative h-2"
+          style={makeStyle(props.score)}
+        ></div>
       </div>
-      <div className="w-2"></div>
-      <div className="w-10">
-        <div className="h-2 bg-gray-300 rounded-md">
-          <div
-            className="rounded-md block relative h-2"
-            style={makeStyle(score)}
-          ></div>
+    </div>
+  );
+};
+
+export const UiGaugeProgressStat = ({
+  score,
+  size,
+  showPoints,
+}: {
+  score: ActionReferentielScoreStorable | null;
+  size: 'xs' | 'sm';
+  showPoints: boolean;
+}) => {
+  return (
+    <div className="flex flex-col text-xs justify-items-end">
+      <div className="flex items-center w-full justify-end space-x-1">
+        <div className={`font-bold text-${size}`}>
+          {percentageTextFromScore(score)}
         </div>
+        <div className="w-10">
+          <Gauge score={score} />
+        </div>
+      </div>
+      <div className={`${showPoints ? 'flex justify-end pr-2' : 'hidden'}`}>
+        {pointsTextFromScore(score)}
       </div>
     </div>
   );
@@ -117,11 +133,13 @@ export const UiGaugeProgressStat = ({
 
 export const CurrentEpciGaugeProgressStat = ({
   action,
+  size,
 }: {
   action: ActionReferentiel;
+  size: 'sm' | 'xs';
 }) => {
   const storableId = ActionReferentielScoreStorable.buildId(action.id);
   const score = useActionReferentielScore(storableId);
 
-  return <UiGaugeProgressStat score={score} size="sm" />;
+  return <UiGaugeProgressStat score={score} size={size} showPoints={true} />;
 };
