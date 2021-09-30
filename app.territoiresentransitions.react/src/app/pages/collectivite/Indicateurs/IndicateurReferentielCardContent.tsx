@@ -53,13 +53,11 @@ const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   );
 };
 
-export const IndicateurReferentielCard = (props: {
+export const IndicateurReferentielCardContent = (props: {
   indicateur: IndicateurReferentiel;
 }) => {
   return (
-    <div className="flex flex-col px-5 py-4 bg-beige mb-5">
-      <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
-
+    <div>
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <Commentaire indicateur={props.indicateur} />
       <AnyIndicateurEditableExpandPanel

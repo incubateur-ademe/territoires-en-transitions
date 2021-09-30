@@ -7,7 +7,6 @@ import {
   RouteProps,
   Switch,
 } from 'react-router-dom';
-import React from 'react';
 import {Footer, Header} from 'ui';
 import {FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
