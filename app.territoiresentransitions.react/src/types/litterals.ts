@@ -13,3 +13,4 @@ export type FicheActionAvancement = Exclude<
 >;
 
 export type Referentiel = 'eci' | 'cae';
+export type ReferentielOfIndicateur = 'eci' | 'cae' | 'crte';

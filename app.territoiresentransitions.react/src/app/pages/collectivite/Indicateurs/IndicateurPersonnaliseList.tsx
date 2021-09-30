@@ -2,7 +2,7 @@ import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseSt
 import {IndicateurPersonnaliseCreationDialog} from './IndicateurPersonnaliseCreationDialog';
 import {useAllStorables} from 'core-logic/hooks';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
-import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
+import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
 import FuzzySearch from 'fuzzy-search';
 import {useState} from 'react';
 import {UiSearchBar} from 'ui/UiSearchBar';
@@ -29,7 +29,7 @@ export const IndicateurPersonnaliseList = ({
 
   return (
     <div className="app mx-5 mt-5">
-      <div className="float-right -mt-36">
+      <div className="float-right -mt-48">
         <UiSearchBar search={search} />
       </div>
       <div className="float-right -mt-12">
@@ -45,6 +45,5 @@ export const IndicateurPersonnaliseList = ({
         ))}
       </section>
     </div>
-    // </div>
   );
 };

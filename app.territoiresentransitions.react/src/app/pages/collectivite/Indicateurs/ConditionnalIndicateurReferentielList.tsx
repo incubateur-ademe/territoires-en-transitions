@@ -1,6 +1,6 @@
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
-import {IndicateurReferentielCard} from './AnyIndicateurCard';
-import {Referentiel} from 'types';
+import {IndicateurReferentielCard} from './IndicateurReferentielCard';
+import {ReferentielOfIndicateur} from 'types';
 import {UiSearchBar} from 'ui/UiSearchBar';
 import {useState} from 'react';
 import FuzzySearch from 'fuzzy-search';
@@ -9,7 +9,7 @@ import FuzzySearch from 'fuzzy-search';
  * Display the list of indicateurs for a given referentiel
  */
 export const ConditionnalIndicateurReferentielList = (props: {
-  referentiel: Referentiel;
+  referentiel: ReferentielOfIndicateur;
   showOnlyIndicateurWithData: boolean;
 }) => {
   const referentielIndicateurs = indicateurs.filter(indicateur => {
@@ -37,7 +37,7 @@ export const ConditionnalIndicateurReferentielList = (props: {
 
   return (
     <div className="app mx-5 mt-5">
-      <div className="float-right -mt-36">
+      <div className="float-right -mt-48">
         <UiSearchBar search={search} />
       </div>
       <section className="flex flex-col">

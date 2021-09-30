@@ -7,6 +7,7 @@ export const IndicateurDescriptionPanel = (props: {description: string}) => {
       <CrossExpandPanelWithHtmlContent
         title="Description"
         content={props.description}
+        editable={true}
       />
     </div>
   );

@@ -1,128 +1,47 @@
 import React, {useState} from 'react';
+import {AnyIndicateurValueStorable} from 'storables';
 
-import {LazyDetails} from 'ui/shared/LazyDetails';
+import {HybridStore} from 'core-logic/api/hybridStore';
+import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {Chevron} from 'ui/shared/Chevron';
-import {IndicateurReferentiel} from 'generated/models';
-import {IndicateurPersonnaliseCardContent} from './IndicateurPersonnaliseCardContent';
-import {IndicateurReferentielCardContent} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCardContent';
-import {IndicateurPersonnaliseStorable} from 'storables';
-import {useEpciId} from 'core-logic/hooks';
-import {
-  indicateurObjectifStore,
-  indicateurPersonnaliseObjectifStore,
-  indicateurPersonnaliseResultatStore,
-  indicateurResultatStore,
-} from 'core-logic/api/hybridStores';
-import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
-import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
-import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
+import {Editable} from 'ui/shared';
 
 export const AnyIndicateurCard = ({
-  startOpen = true,
   children,
-  title,
+  headerTitle,
+  indicateurUid,
+  indicateurResultatStore,
 }: {
+  headerTitle: React.ReactElement;
   children: React.ReactElement;
-  startOpen?: boolean;
-  title: string;
+  indicateurUid: string;
+  indicateurResultatStore: HybridStore<AnyIndicateurValueStorable>;
 }) => {
-  const [opened, setOpened] = useState(startOpen);
+  const [opened, setOpened] = useState(false);
   return (
-    <div className="mt-2  px-5 py-4 bg-beige mb-5">
-      <LazyDetails
-        startOpen={startOpen}
-        summary={
-          <div className="flex items-center justify-between">
-            <h3 className="fr-h3 mb-6">{title}</h3>
+    <div className="mt-2  px-5 py-4 bg-beige mb-5 ">
+      <section className="flex flex-col">
+        <header className="w-full cursor-pointer mb-5">
+          <div
+            onClick={e => {
+              e.preventDefault();
+              setOpened(!opened);
+            }}
+            className="flex items-center justify-between font-bold text-lg"
+          >
+            {headerTitle}
             <Chevron direction={opened ? 'down' : 'left'} />
           </div>
-        }
-        onChange={setOpened}
-      >
-        <div className=" ml-8 mb-6">{children}</div>
-      </LazyDetails>
+
+          <div className="text-lg ml-7 mb-2">Résultats</div>
+          <AnyIndicateurValues
+            store={indicateurResultatStore}
+            indicateurUid={indicateurUid}
+            borderColor="blue"
+          />
+        </header>
+        {opened && children}
+      </section>
     </div>
-  );
-};
-
-export const IndicateurReferentielCard = ({
-  indicateur,
-  startOpen = true,
-  hideIfNoValues = false,
-}: {
-  indicateur: IndicateurReferentiel;
-  startOpen?: boolean;
-  hideIfNoValues?: boolean;
-}) => {
-  const epciId = useEpciId()!;
-  const resultatValueStorables = useAnyIndicateurValueForAllYears(
-    indicateur.uid,
-    epciId,
-    indicateurResultatStore
-  );
-  const objectifValueStorables = useAnyIndicateurValueForAllYears(
-    indicateur.uid,
-    epciId,
-    indicateurObjectifStore
-  );
-
-  if (
-    hideIfNoValues &&
-    !resultatValueStorables.length &&
-    !objectifValueStorables.length
-  )
-    return null;
-
-  return (
-    <AnyIndicateurCard
-      title={inferIndicateurReferentielAndTitle(indicateur)}
-      startOpen={startOpen}
-    >
-      <IndicateurReferentielCardContent indicateur={indicateur} />
-    </AnyIndicateurCard>
-  );
-};
-
-export const IndicateurPersonnaliseCard = ({
-  indicateur,
-  startOpen = true,
-  hideIfNoValues = false,
-}: {
-  indicateur: IndicateurPersonnaliseStorable;
-  startOpen?: boolean;
-  hideIfNoValues?: boolean;
-}) => {
-  const epciId = useEpciId()!;
-  const resultatValueStorables = useAnyIndicateurValueForAllYears(
-    indicateur.uid,
-    epciId,
-    indicateurPersonnaliseResultatStore
-  );
-  const objectifValueStorables = useAnyIndicateurValueForAllYears(
-    indicateur.uid,
-    epciId,
-    indicateurPersonnaliseObjectifStore
-  );
-
-  if (
-    hideIfNoValues &&
-    !resultatValueStorables.length &&
-    !objectifValueStorables.length
-  )
-    return null;
-  return (
-    <AnyIndicateurCard
-      title={`${indicateur.custom_id ? `${indicateur.custom_id} - ` : ''}${
-        indicateur.nom
-      }`}
-      startOpen={startOpen}
-    >
-      <div>
-        <div className="float-right -mt-14 mr-8">
-          <IndicateurPersonnaliseEditionDialog indicateur={indicateur} />
-        </div>
-        <IndicateurPersonnaliseCardContent indicateur={indicateur} />
-      </div>
-    </AnyIndicateurCard>
   );
 };

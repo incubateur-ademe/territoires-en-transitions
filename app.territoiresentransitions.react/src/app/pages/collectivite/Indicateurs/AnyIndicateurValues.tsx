@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useEpciId} from 'core-logic/hooks';
 import {AnyIndicateurValueStorable} from 'storables';
 import {HybridStore} from 'core-logic/api/hybridStore';
 import {useAnyIndicateurValueForYear} from 'core-logic/hooks/indicateurs_values';
+import {commands} from 'core-logic/commands';
+import {Editable} from 'ui/shared';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
@@ -10,42 +12,53 @@ import {useAnyIndicateurValueForYear} from 'core-logic/hooks/indicateurs_values'
 /**
  * Use IndicateurValuesStorageInterface + year to read/write an indicateur value
  */
-const AnyIndicateurValueInput = (props: {
+const AnyIndicateurValueInput = ({
+  year,
+  indicateurUid,
+  store,
+  borderColor = 'gray',
+}: {
   year: number;
-  indicateurId: string;
+  indicateurUid: string;
   store: HybridStore<AnyIndicateurValueStorable>;
+  borderColor?: 'blue' | 'gray';
 }) => {
   const epciId = useEpciId()!;
 
-  const value =
-    useAnyIndicateurValueForYear(
-      props.indicateurId,
-      epciId,
-      props.year,
-      props.store
-    )?.value ?? '';
+  const [inputValue, setInputValue] = useState<string | number>('');
+  const stateValue =
+    useAnyIndicateurValueForYear(indicateurUid, epciId, year, store)?.value ??
+    '';
+
+  useEffect(() => {
+    setInputValue(stateValue);
+  });
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
-    const floatValue = parseFloat(inputValue.replace(',', '.'));
 
-    props.store.store(
-      new AnyIndicateurValueStorable({
+    const floatValue = parseFloat(inputValue.replace(',', '.'));
+    commands.indicateurCommands.storeAnyIndicateurValue({
+      store: store,
+      interface: {
         epci_id: epciId,
-        indicateur_id: props.indicateurId,
-        year: props.year,
+        indicateur_id: indicateurUid,
+        year: year,
         value: floatValue,
-      })
-    );
+      },
+    });
+    if (inputValue) setInputValue(inputValue);
   };
+
   return (
-    <label className="flex flex-col mx-2 ">
-      {props.year}
+    <label className="flex flex-col mx-2">
+      <div className="flex pl-2">{year}</div>
       <input
-        className="fr-input mt-2 w-full bg-white p-3 border-b-2 border-gray-500 text-sm font-normal text-gray-500"
-        defaultValue={value || ''}
-        onBlur={handleChange}
-        type="number"
+        className={`fr-input mt-2 w-full bg-white p-3 border-b-2 text-sm font-normal text-gray-500 ${
+          borderColor === 'blue' ? 'border-bf500' : 'border-gray-500'
+        }`}
+        value={inputValue}
+        onChange={handleChange}
       />
     </label>
   );
@@ -57,6 +70,7 @@ const AnyIndicateurValueInput = (props: {
 export const AnyIndicateurValues = (props: {
   indicateurUid: string;
   store: HybridStore<AnyIndicateurValueStorable>;
+  borderColor?: 'blue' | 'gray';
 }) => {
   const min = 2008;
   const stride = 2;
@@ -83,8 +97,9 @@ export const AnyIndicateurValues = (props: {
           <AnyIndicateurValueInput
             year={year}
             store={props.store}
-            indicateurId={props.indicateurUid}
+            indicateurUid={props.indicateurUid}
             key={`${props.indicateurUid}-${year}`}
+            borderColor={props.borderColor}
           />
         ))}
       </div>
@@ -106,12 +121,21 @@ export const AnyIndicateurEditableExpandPanel = (props: {
   indicateurUid: string;
   store: HybridStore<AnyIndicateurValueStorable>;
   title: string;
+  editable?: boolean;
+  borderColor?: 'blue' | 'gray';
 }) => (
-  <div className="CrossExpandPanel editable">
+  <div className="CrossExpandPanel">
     <details>
-      <summary className="title">{props.title}</summary>
+      <summary className="title">
+        {props.editable ? (
+          <Editable text={props.title} />
+        ) : (
+          <div>{props.title}</div>
+        )}
+      </summary>{' '}
       <div>
         <AnyIndicateurValues
+          borderColor={props.borderColor}
           store={props.store}
           indicateurUid={props.indicateurUid}
         />

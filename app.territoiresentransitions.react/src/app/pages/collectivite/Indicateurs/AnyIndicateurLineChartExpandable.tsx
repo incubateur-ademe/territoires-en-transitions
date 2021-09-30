@@ -94,7 +94,7 @@ const AnyIndicateurLineChart = (props: {
   const canvasId = `chart-${props.indicateurUid}`;
   return (
     <div>
-      <div className="w-2/3 h-60">
+      <div className="w-2/3 h-64">
         <div className="sm text-center font-bold ">{props.title}</div>
         <Line
           id={canvasId}
@@ -122,7 +122,7 @@ const AnyIndicateurLineChart = (props: {
           }}
         />
       </div>
-      <Spacer />
+      <Spacer size={9} />
       <a
         className="fr-btn fr-btn--secondary ml-7"
         id="download"
@@ -144,11 +144,12 @@ const AnyIndicateurLineChart = (props: {
 
 export const AnyIndicateurLineChartExpandable = (props: {
   indicateur: IndicateurPersonnaliseStorable | IndicateurReferentiel;
+  indicateurId: string; // TODO : this should be infered by props.indicateur but there's a mikmak with uid (for indic perso) and id (for indic ref) ...
   resultatStore: HybridStore<AnyIndicateurValueStorable>;
   objectifStore: HybridStore<AnyIndicateurValueStorable>;
 }) => (
   <div className="CrossExpandPanel">
-    <details>
+    <details open>
       <summary className="title">Graphique</summary>
       <AnyIndicateurLineChart
         indicateurUid={props.indicateur.uid}
@@ -157,7 +158,6 @@ export const AnyIndicateurLineChartExpandable = (props: {
         resultatStore={props.resultatStore}
         objectifStore={props.objectifStore}
       />
-      <Spacer />
     </details>
   </div>
 );

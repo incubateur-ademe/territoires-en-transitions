@@ -17,10 +17,8 @@ import {Spacer} from 'ui/shared';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
 import {searchActionById} from 'utils/actions';
-import {
-  IndicateurPersonnaliseCard,
-  IndicateurReferentielCard,
-} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
+import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
+import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
@@ -69,7 +67,6 @@ const LinkedIndicateurCards = () => {
       {linkedIndicateurs.map(indicateur => (
         <IndicateurReferentielCard
           indicateur={indicateur}
-          startOpen={false}
           key={indicateur.uid}
         />
       ))}
@@ -96,7 +93,6 @@ const LinkedIndicateurPersonnaliseCards = () => {
           return (
             <IndicateurPersonnaliseCard
               indicateur={indicateur}
-              startOpen={false}
               key={indicateur.uid}
             />
           );
