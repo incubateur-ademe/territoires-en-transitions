@@ -53,9 +53,7 @@ verified_token_cache = deque(
 )  # cache verified tokens to limit calls to ADEME keycloak
 
 
-async def get_user_from_header(
-    token: str = Depends(oauth2_scheme),
-) -> UtilisateurConnecte:
+async def get_user_from_token(token: str) -> UtilisateurConnecte:
     """Retrieve user info from the token."""
     if AUTH_DISABLED_DUMMY_USER:
         return UtilisateurConnecte(
@@ -89,6 +87,13 @@ async def get_user_from_header(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user
+
+
+async def get_user_from_header(
+    token: str = Depends(oauth2_scheme),
+) -> UtilisateurConnecte:
+    """Retrieve user info from header."""
+    return get_user_from_token(token)
 
 
 async def get_utilisateur_droits_from_header(
@@ -149,9 +154,16 @@ async def register(inscription: UtilisateurInscription, response: Response):
         print(
             f"{users_response.status_code} {users_response.reason} {users_response.text}"
         )
-        try:
-            raise HTTPException(status_code=503, detail=users_response.json())
-        except:
+        if users_response.status_code == 409:
+            raise HTTPException(
+                status_code=503,
+                detail={
+                    "reason": "User already exists.",
+                    "message": "L'adresse Email que vous avez renseigné dispose déjà d'un compte utilisateur.\n \
+            Vous pouvez vous rendre directement à la page de connexion pour accéder à votre compte.",
+                },
+            )
+        else:
             raise HTTPException(
                 status_code=503,
                 detail={
@@ -192,6 +204,7 @@ async def token(code: str, redirect_uri: str, response: Response):
     token_response = requests.post(token_endpoint, parameters)
 
     if token_response.ok:
+        # Todo : update user infos in base
         return token_response.json()
 
     raise HTTPException(status_code=400, detail={"content": token_response.content})
