@@ -13,8 +13,8 @@
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^4.0.3",
     "@gouvfr/dsfr": "^1.0.0-rc1.0",
-    "@sveltejs/adapter-static": "^1.0.0-next.13",
-    "@sveltejs/kit": "next",
+    "@sveltejs/adapter-static": "^1.0.0-next.20",
+    "@sveltejs/kit": "^1.0.0-next.179",
     "@typescript-eslint/eslint-plugin": "^4.19.0",
     "@typescript-eslint/parser": "^4.19.0",
     "eslint": "^7.22.0",
