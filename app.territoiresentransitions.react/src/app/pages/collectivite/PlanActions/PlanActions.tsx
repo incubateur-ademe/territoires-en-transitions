@@ -9,13 +9,13 @@ import {PlanNav} from './PlanNav';
 import {
   categorizeAndSortFiches,
   CategorizedNode,
-  defaultCategorie,
   nestCategorized,
 } from './sorting';
 import React, {useState} from 'react';
 import {UiDialogButton} from 'ui';
 import {PlanEditionForm} from './Forms/PlanEditionForm';
 import {PlanCreationForm} from './Forms/PlanCreationForm';
+import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaultDisplayCategorie';
 
 /**
  * The title of a category
@@ -45,7 +45,7 @@ const CategoryLevel = (props: {nodes: CategorizedNode[]; level?: number}) => {
   return (
     <>
       {props.nodes.map(node => {
-        const isDefault = node.categorie.uid === defaultCategorie.uid;
+        const isDefault = node.categorie.uid === defaultDisplayCategorie.uid;
         return (
           <div key={node.categorie.uid}>
             {!isDefault && (

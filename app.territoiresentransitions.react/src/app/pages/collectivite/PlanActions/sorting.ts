@@ -5,6 +5,7 @@ import {
 } from 'types/PlanActionTypedInterface';
 import {FicheAction} from 'generated/models/fiche_action';
 import {compareIndexes} from 'utils';
+import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaultDisplayCategorie';
 
 /**
  * Used to attach fiches to a category.
@@ -31,11 +32,6 @@ export interface CategoryNode {
   children: CategoryNode[];
 }
 
-export const defaultCategorie: Categorie = {
-  nom: 'Sans catégorie',
-  uid: '',
-};
-
 /**
  * Sort categories then attach sorted fiches to categories.
  */
@@ -44,7 +40,7 @@ export function categorizeAndSortFiches(
   plan: PlanActionTyped
 ): Categorized[] {
   // step 1: sort categories
-  const categories: Categorie[] = [...plan.categories, defaultCategorie];
+  const categories: Categorie[] = [...plan.categories, defaultDisplayCategorie];
   const fichesByCategory = (plan as PlanActionStructure).fiches_by_category;
   categories.sort((a, b) => compareIndexes(a.nom, b.nom));
   return categories.map((categorie: Categorie) => {
