@@ -16,6 +16,7 @@ import {UiDialogButton} from 'ui';
 import {PlanEditionForm} from './Forms/PlanEditionForm';
 import {PlanCreationForm} from './Forms/PlanCreationForm';
 import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaultDisplayCategorie';
+import {LazyDetails} from 'ui/shared/LazyDetails';
 
 /**
  * The title of a category
@@ -48,22 +49,28 @@ const CategoryLevel = (props: {nodes: CategorizedNode[]; level?: number}) => {
         const isDefault = node.categorie.uid === defaultDisplayCategorie.uid;
         return (
           <div key={node.categorie.uid}>
-            {!isDefault && (
-              <CategoryTitle categorie={node.categorie} level={level} />
-            )}
-            {node.fiches &&
-              node.fiches.map(fiche => {
-                return (
-                  <div className="ml-5 mt-3" key={fiche.uid}>
-                    <FicheCard fiche={fiche} />
-                  </div>
-                );
-              })}
-            {node.children && (
-              <div className="ml-10">
-                <CategoryLevel nodes={node.children} level={level + 1} />
-              </div>
-            )}
+            <LazyDetails
+              startOpen
+              summary={
+                !isDefault && (
+                  <CategoryTitle categorie={node.categorie} level={level} />
+                )
+              }
+            >
+              {node.fiches &&
+                node.fiches.map(fiche => {
+                  return (
+                    <div className="ml-5 mt-3" key={fiche.uid}>
+                      <FicheCard fiche={fiche} />
+                    </div>
+                  );
+                })}
+              {node.children && (
+                <div className="ml-10">
+                  <CategoryLevel nodes={node.children} level={level + 1} />
+                </div>
+              )}
+            </LazyDetails>
           </div>
         );
       })}
