@@ -51,10 +51,10 @@ const AnyIndicateurValueInput = ({
   };
 
   return (
-    <label className="flex flex-col mx-2">
-      <div className="flex pl-2">{year}</div>
+    <label className="flex flex-col mx-2 j">
+      <div className="flex pl-2 justify-center">{year}</div>
       <input
-        className={`fr-input mt-2 w-full bg-white p-3 border-b-2 text-sm font-normal text-gray-500 ${
+        className={`text-center fr-input mt-2 w-full bg-white p-3 border-b-2 text-sm font-normal text-gray-500 ${
           borderColor === 'blue' ? 'border-bf500' : 'border-gray-500'
         }`}
         value={inputValue}
