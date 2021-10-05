@@ -28,7 +28,7 @@ const InlineEditableTitle = (props: {
   const onStateChange = props.onStateChange ?? (editing => {});
   // const textClass = props.textClass ?? '';
   return (
-    <div className="flex flex-row items-center">
+    <div className="flex flex-row items-center w-full">
       {!editing && (
         <>
           <div className="text-2xl font-bold">{props.text}</div>
@@ -45,7 +45,7 @@ const InlineEditableTitle = (props: {
         </>
       )}
       {editing && (
-        <div className="flex flex-row">
+        <div className="flex flex-row w-full">
           <LabeledTextInput
             label=""
             value={text}
@@ -84,9 +84,11 @@ function EditableCategoryTitle(props: {
   const [adding, setAdding] = useState<boolean>(false);
 
   return (
-    <div className="flex flex-col w-full ">
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-row items-center">
+    <div className="flex flex-col w-full mt-2">
+      <div className="flex flex-row justify-between ">
+        <div
+          className={'flex flex-row items-center ' + (editing ? 'w-full' : '')}
+        >
           <InlineEditableTitle
             onSave={text => {
               props.categorie.nom = text;
@@ -97,12 +99,14 @@ function EditableCategoryTitle(props: {
           />
         </div>
         {!(editing || adding || !props.add) && (
-          <button
-            className="fr-btn fr-btn--secondary fr-btn--xs"
-            onClick={() => setAdding(true)}
-          >
-            Ajouter un sous axe
-          </button>
+          <div>
+            <button
+              className="fr-btn fr-btn--secondary fr-btn--xs whitespace-nowrap"
+              onClick={() => setAdding(true)}
+            >
+              Ajouter un sous axe
+            </button>
+          </div>
         )}
       </div>
       {adding && (
@@ -178,7 +182,7 @@ export const PlanEditionForm = (props: {
   const [adding, setAdding] = useState<boolean>(false);
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row justify-between mb-4">
+      <div className="flex flex-row justify-between items-center mb-4">
         <InlineEditableTitle
           onSave={text => {
             props.plan.nom = text;
@@ -189,9 +193,14 @@ export const PlanEditionForm = (props: {
           onStateChange={setEditing}
         />
         {!(editing || adding) && (
-          <button className="fr-btn fr-btn--xs" onClick={() => setAdding(true)}>
-            Ajouter un axe
-          </button>
+          <div>
+            <button
+              className="fr-btn fr-btn--xs whitespace-nowrap"
+              onClick={() => setAdding(true)}
+            >
+              Ajouter un axe
+            </button>
+          </div>
         )}
       </div>
       {adding && (
@@ -210,7 +219,7 @@ export const PlanEditionForm = (props: {
           initialEditingState={true}
         />
       )}
-      <div className="ml-6">
+      <div className="ml-6 mt-2">
         <EditableCategoryLevel
           nodes={categories}
           update={(categorie: Categorie) => {
