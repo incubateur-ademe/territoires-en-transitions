@@ -94,7 +94,7 @@ const PlanButtons = (props: {plan: PlanActionStorable & PlanActionTyped}) => {
   return (
     <div className="flex flex-row items-center justify-end w-full">
       <UiDialogButton
-        title="Modifier la structure"
+        title="Modifier l'arborescence"
         opened={editing}
         setOpened={setEditing}
         buttonClasses="fr-btn--secondary"
