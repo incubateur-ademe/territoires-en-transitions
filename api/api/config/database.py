@@ -14,6 +14,7 @@ DB_MODELS = [
     "api.models.tortoise.indicateur_personnalise",
     "api.models.tortoise.indicateur_referentiel_commentaire",
     "api.models.tortoise.utilisateur",
+    "api.models.tortoise.plan_action",
     "api.models.tortoise.utilisateur_droits",
     "api.models.tortoise.epci",
     "api.models.tortoise.action_meta",

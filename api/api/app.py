@@ -18,6 +18,7 @@ from api.routers.v2 import (
     fiche_action_categorie,
     action_meta,
     notation,
+    plan_action,
     admin,
 )
 
@@ -40,6 +41,7 @@ app.include_router(indicateur_resultat.router)
 app.include_router(indicateur_objectif.router)
 app.include_router(action_meta.router)
 app.include_router(notation.router)
+app.include_router(plan_action.router)
 app.include_router(admin.router)
 
 register_tortoise(

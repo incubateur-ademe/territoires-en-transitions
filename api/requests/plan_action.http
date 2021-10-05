@@ -1,0 +1,39 @@
+  ### Add default plan
+POST {{host}}/v2/plan_action/test
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "epci_id": "test",
+  "nom": "Mon plan c'est yolo",
+  "uid": "59fcc45b-ff19-4723-9c18-9a972f4440f3",
+  "categories": [
+    {
+      "nom": "A",
+      "uid": "a"
+    },
+    {
+      "nom": "B",
+      "uid": "b",
+      "parent": "a"
+    }
+  ],
+  "fiches_by_category": [
+    {
+      "category_uid": "a",
+      "fiche_uid": "600a43a3-4fce-4b15-ad92-a57cbbe8719e"
+    },
+    {
+      "category_uid": "b",
+      "fiche_uid": "822c74b7-d32f-4209-a759-5c104098c4ee"
+    }
+  ]
+}
+
+### Get all plans
+GET {{host}}/v2/plan_action/test/all
+
+
+### Get a plan by its path
+GET {{host}}/v2/plan_action/test/59fcc45b-ff19-4723-9c18-9a972f4440f3
+

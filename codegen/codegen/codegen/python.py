@@ -1,4 +1,5 @@
 """Fonctions pour générer les classes et les objets python"""
+import json
 from typing import Any, List, Optional
 
 from black import format_str, FileMode
@@ -55,6 +56,19 @@ def render_template(template_file: str, data: dict) -> str:
     return format_str(rendered, mode=FileMode())
 
 
+def objects_py(yaml_data: dict) -> dict:
+    """Transform yaml object declaration into template data."""
+    return {name: json.dumps(obj, indent=4) for name, obj in yaml_data.items()}
+
+
+def render_object(definition: dict, template_file="shared/python/objects.j2") -> str:
+    env = build_jinja_environment()
+    template = env.get_template(template_file)
+    objects = objects_py(definition["yaml"])
+    rendered = template.render(objects=objects, comments=definition["comments"])
+    return format_str(rendered, mode=FileMode())
+
+
 def yaml_to_python(definition: dict) -> tuple[str, str]:
     rendered = ""
     filename = ""
@@ -63,10 +77,15 @@ def yaml_to_python(definition: dict) -> tuple[str, str]:
 
     if data:
         name = list(data.keys())[0]
+        filename = camel_to_snake(name)
 
+        # this a class
         if name[0].isupper():
-            filename = camel_to_snake(name)
             rendered = render_template(template_file, data)
+
+        # this is an object.
+        else:
+            rendered = render_object(definition)
 
     return f"{filename}.py", rendered
 

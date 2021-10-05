@@ -13,6 +13,7 @@ import {
   indicateurResultatStore,
   indicateurObjectifStore,
   indicateurReferentielCommentaireStore,
+  planActionStore,
   indicateurPersonnaliseObjectifStore,
   indicateurPersonnaliseResultatStore,
 } from 'core-logic/api/hybridStores';
@@ -55,7 +56,10 @@ class EndpointToaster<T extends Storable> extends React.Component<
       this.close
     );
 
-    const handleClose = (event: any, reason: SnackbarCloseReason) => {
+    const handleClose = (
+      event: React.SyntheticEvent,
+      reason: SnackbarCloseReason
+    ) => {
       if (reason !== 'clickaway') this.close();
     };
 
@@ -84,7 +88,7 @@ class EndpointToaster<T extends Storable> extends React.Component<
 function makeComposer(messages: {
   storeSuccess: string;
   storeError: string;
-}): Composer<any> {
+}): Composer<Storable> {
   return (response, event, onClose) => {
     if (event?.intent === 'store')
       return (
@@ -197,6 +201,14 @@ export function Toasters() {
         composer={makeComposer({
           storeSuccess: 'Le commentaire est enregistré',
           storeError: "Le commentaire n'a pas été enregistré",
+        })}
+      />
+
+      <EndpointToaster
+        endpoint={planActionStore.api}
+        composer={makeComposer({
+          storeSuccess: "Le plan d' action est enregistré",
+          storeError: "Le plan d' action n'a pas été enregistré",
         })}
       />
     </>

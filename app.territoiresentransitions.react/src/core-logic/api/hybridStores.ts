@@ -21,6 +21,8 @@ import {
   IndicateurReferentielCommentaire,
   IndicateurReferentielCommentaireInterface,
   AnyIndicateurValueInterface,
+  PlanAction,
+  PlanActionInterface,
 } from 'generated/models';
 import {
   ActionStatusStorable,
@@ -32,6 +34,7 @@ import {
   FicheActionCategorieStorable,
   IndicateurPersonnaliseStorable,
   IndicateurReferentielCommentaireStorable,
+  PlanActionStorable,
 } from 'storables';
 
 const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
@@ -211,4 +214,13 @@ export const actionMetaStore = new HybridStore<ActionMetaStorable>({
   serializer: storable => storable,
   deserializer: serialized =>
     new ActionMetaStorable(serialized as ActionMetaInterface),
+});
+
+export const planActionStore = new HybridStore<PlanActionStorable>({
+  host: ENV.backendHost,
+  endpoint: () => `v2/${PlanAction.pathname}/${getCurrentEpciId()}`,
+  authorization: defaultAuthorization,
+  serializer: storable => storable,
+  deserializer: serialized =>
+    new PlanActionStorable(serialized as PlanActionInterface),
 });

@@ -1,8 +1,8 @@
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
 
-const FichesList = lazy(
-  () => import('app/pages/collectivite/PlanActions/FichesList')
+const PlanActions = lazy(
+  () => import('app/pages/collectivite/PlanActions/PlanActions')
 );
 
 /**
@@ -12,7 +12,7 @@ export const PlanActionPage = () => {
   return (
     <div className="my-5 flex flex-col">
       <Suspense fallback={renderLoader()}>
-        <FichesList />
+        <PlanActions />
       </Suspense>
     </div>
   );
