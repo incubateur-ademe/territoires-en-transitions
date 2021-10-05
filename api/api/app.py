@@ -20,6 +20,7 @@ from api.routers.v2 import (
     notation,
     plan_action,
     admin,
+    reports,
 )
 
 app = FastAPI(
@@ -43,6 +44,7 @@ app.include_router(action_meta.router)
 app.include_router(notation.router)
 app.include_router(plan_action.router)
 app.include_router(admin.router)
+app.include_router(reports.router)
 
 register_tortoise(
     app,
