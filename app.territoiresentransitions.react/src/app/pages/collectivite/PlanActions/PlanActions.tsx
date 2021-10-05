@@ -24,7 +24,7 @@ const CategoryTitle = (props: {categorie: Categorie; level: number}) => {
   const textClasses = ['text-2xl', 'text-xl', 'text-lg'];
   const textClass = textClasses[Math.min(textClasses.length - 1, props.level)];
   return (
-    <div className="flex flex-col w-full ">
+    <div className="flex flex-col w-full mt-5">
       <div className="flex flex-row justify-between">
         <h3 className={textClass}>
           {props.categorie.nom}
