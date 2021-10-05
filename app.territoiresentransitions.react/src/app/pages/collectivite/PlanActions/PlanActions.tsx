@@ -16,7 +16,7 @@ import {UiDialogButton} from 'ui';
 import {PlanEditionForm} from './Forms/PlanEditionForm';
 import {PlanCreationForm} from './Forms/PlanCreationForm';
 import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaultDisplayCategorie';
-import {LazyDetails} from 'ui/shared/LazyDetails';
+import {LazyDetailsWithChevron} from 'ui/shared/LazyDetails';
 
 /**
  * The title of a category
@@ -24,16 +24,7 @@ import {LazyDetails} from 'ui/shared/LazyDetails';
 const CategoryTitle = (props: {categorie: Categorie; level: number}) => {
   const textClasses = ['text-2xl', 'text-xl', 'text-lg'];
   const textClass = textClasses[Math.min(textClasses.length - 1, props.level)];
-  return (
-    <div className="flex flex-col w-full mt-5">
-      <div className="flex flex-row justify-between">
-        <h3 className={textClass}>
-          {props.categorie.nom}
-          <span className="fr-fi-arrow-right-s-line ml-10" aria-hidden={true} />
-        </h3>
-      </div>
-    </div>
-  );
+  return <h3 className={textClass}>{props.categorie.nom}</h3>;
 };
 
 /**
@@ -47,14 +38,15 @@ const CategoryLevel = (props: {nodes: CategorizedNode[]; level?: number}) => {
     <>
       {props.nodes.map(node => {
         const isDefault = node.categorie.uid === defaultDisplayCategorie.uid;
+        if (isDefault && !node.fiches?.length) {
+          return null;
+        }
         return (
           <div key={node.categorie.uid}>
-            <LazyDetails
+            <LazyDetailsWithChevron
               startOpen
               summary={
-                !isDefault && (
-                  <CategoryTitle categorie={node.categorie} level={level} />
-                )
+                <CategoryTitle categorie={node.categorie} level={level} />
               }
             >
               {node.fiches &&
@@ -70,7 +62,7 @@ const CategoryLevel = (props: {nodes: CategorizedNode[]; level?: number}) => {
                   <CategoryLevel nodes={node.children} level={level + 1} />
                 </div>
               )}
-            </LazyDetails>
+            </LazyDetailsWithChevron>
           </div>
         );
       })}

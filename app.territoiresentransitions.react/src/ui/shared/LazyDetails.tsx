@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Chevron} from 'ui/shared/Chevron';
 
 interface LazyDetailsProps {
   summary: React.ReactNode;
@@ -18,7 +19,6 @@ export function LazyDetails(props: LazyDetailsProps) {
         className="w-full cursor-pointer"
         onClick={e => {
           e.preventDefault();
-
           props.onChange(!open);
           setOpen(!open);
         }}
@@ -32,5 +32,42 @@ export function LazyDetails(props: LazyDetailsProps) {
 
 LazyDetails.defaultProps = {
   startOpen: false,
+  onChange: () => undefined,
+};
+
+interface WithChevronProps {
+  headerClassName: string;
+  summaryClassName: string;
+}
+
+/**
+ * A details like component that attaches children on open.
+ */
+export function LazyDetailsWithChevron(
+  props: LazyDetailsProps & WithChevronProps
+) {
+  const [open, setOpen] = useState(props.startOpen);
+  return (
+    <section className="flex flex-col">
+      <header
+        className={props.headerClassName}
+        onClick={e => {
+          e.preventDefault();
+          props.onChange(!open);
+          setOpen(!open);
+        }}
+      >
+        <div className={props.summaryClassName}>{props.summary}</div>
+        <Chevron direction={open ? 'down' : 'left'} />
+      </header>
+      {open && props.children}
+    </section>
+  );
+}
+
+LazyDetailsWithChevron.defaultProps = {
+  startOpen: false,
+  headerClassName: 'w-full cursor-pointer flex flex-row items-bottom',
+  summaryClassName: '',
   onChange: () => undefined,
 };
