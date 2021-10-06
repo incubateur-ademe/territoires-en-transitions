@@ -509,3 +509,48 @@ def test_potentiel_non_redistribution_on_eci():
         notation.potentiels[root]
         == notation.referentiel.points[root] - notation.referentiel.points[orientation]
     )
+
+
+def test_redistribution_on_eci():
+    """Set all taches of a niveaux of an orientation as non concernée
+    test it changes the niveaux sibling potentiel up."""
+    from api.notation.referentiels import referentiel_eci
+
+    notation = Notation(referentiel_eci)
+    niveau_nc = ("1", "1", "1")
+    orientation = ("1", "1")
+
+    niveaux_faits = [
+        index
+        for index in notation.referentiel.indices
+        if index[:-1] == orientation and index != niveau_nc
+    ]
+
+    for niveau in niveaux_faits:
+        taches = [
+            index for index in notation.referentiel.indices if index[:-1] == niveau
+        ]
+        for tache in taches:
+            notation.set_status(tache, Status.faite)
+
+    taches_nc = [
+        index for index in notation.referentiel.indices if index[:-1] == niveau_nc
+    ]
+    for tache_nc in taches_nc:
+        notation.set_status(tache_nc, Status.non_concernee)
+
+    notation.compute()
+
+    # assert that niveau non concerné  is worth 0
+    assert notation.potentiels[niveau_nc] == 0
+    for tache_nc in taches_nc:
+        assert notation.potentiels[tache_nc] == 0
+
+    # assert the niveaux faits are worth more because 1.1.1 is non concerné
+    for niveau in niveaux_faits:
+        assert notation.potentiels[niveau] > notation.referentiel.points[niveau]
+        taches = [
+            index for index in notation.referentiel.indices if index[:-1] == niveau
+        ]
+        for tache in taches:
+            assert notation.potentiels[tache] > notation.referentiel.points[tache]
