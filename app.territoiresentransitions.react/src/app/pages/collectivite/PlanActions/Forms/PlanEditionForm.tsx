@@ -17,6 +17,7 @@ import {v4 as uuid} from 'uuid';
 const InlineEditableTitle = (props: {
   text: string;
   onSave: (text: string) => void;
+  level: number;
   // textClass?: string;
   onStateChange?: (editing: boolean) => void;
   initialEditingState?: boolean;
@@ -26,12 +27,13 @@ const InlineEditableTitle = (props: {
   );
   const [text, setText] = useState<string>(props.text);
   const onStateChange = props.onStateChange ?? (editing => {});
-  // const textClass = props.textClass ?? '';
+  const textClasses = ['text-2xl', 'text-xl', 'text-lg'];
+  const textClass = textClasses[Math.min(textClasses.length - 1, props.level)];
   return (
     <div className="flex flex-row items-center w-full">
       {!editing && (
         <>
-          <div className="text-2xl font-bold">{props.text}</div>
+          <div className={textClass + ' font-bold'}>{props.text}</div>
           <IconButton
             aria-label="renommer"
             onClick={e => {
@@ -77,6 +79,7 @@ const InlineEditableTitle = (props: {
  */
 function EditableCategoryTitle(props: {
   categorie: Categorie;
+  level: number;
   update: (categorie: Categorie) => void;
   add?: (categorie: Categorie) => void;
 }) {
@@ -84,7 +87,7 @@ function EditableCategoryTitle(props: {
   const [adding, setAdding] = useState<boolean>(false);
 
   return (
-    <div className="flex flex-col w-full mt-2">
+    <div className="flex flex-col w-full mt-1">
       <div className="flex flex-row justify-between ">
         <div
           className={'flex flex-row items-center ' + (editing ? 'w-full' : '')}
@@ -96,6 +99,7 @@ function EditableCategoryTitle(props: {
             }}
             text={props.categorie.nom}
             onStateChange={setEditing}
+            level={props.level}
           />
         </div>
         {!(editing || adding || !props.add) && (
@@ -125,6 +129,7 @@ function EditableCategoryTitle(props: {
           text="sous axe"
           onStateChange={setEditing}
           initialEditingState={true}
+          level={props.level}
         />
       )}
     </div>
@@ -150,6 +155,7 @@ function EditableCategoryLevel(props: {
               categorie={node.categorie}
               update={props.update}
               add={level < 1 ? props.add : undefined}
+              level={level}
             />
 
             {node.children && (
@@ -191,6 +197,7 @@ export const PlanEditionForm = (props: {
           text={props.plan.nom}
           // textClass="text-4xl"
           onStateChange={setEditing}
+          level={0}
         />
         {!(editing || adding) && (
           <div>
@@ -217,6 +224,7 @@ export const PlanEditionForm = (props: {
           text="Axe"
           onStateChange={setEditing}
           initialEditingState={true}
+          level={1}
         />
       )}
       <div className="ml-6 mt-2">
@@ -235,6 +243,7 @@ export const PlanEditionForm = (props: {
             plan.categories.push(categorie);
             planActionStore.store(plan);
           }}
+          level={1}
         />
       </div>
     </div>
