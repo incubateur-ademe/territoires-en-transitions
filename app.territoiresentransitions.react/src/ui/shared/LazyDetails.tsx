@@ -68,6 +68,6 @@ export function LazyDetailsWithChevron(
 LazyDetailsWithChevron.defaultProps = {
   startOpen: false,
   headerClassName: 'w-full cursor-pointer flex flex-row items-bottom',
-  summaryClassName: '',
+  summaryClassName: '-mt-1',
   onChange: () => undefined,
 };
