@@ -104,6 +104,7 @@ async def token(code: str, redirect_uri: str, response: Response):
 async def get_current_user():
     """Return the identity of the currently authenticated user"""
     connected_user = await connection_api.get_connected_user()
+    await update_connected_user_in_db(connected_user)
     return connected_user
 
 
@@ -112,7 +113,7 @@ async def update_connected_user_in_db(utilisateur_connecte: UtilisateurConnecteM
         ademe_user_id=utilisateur_connecte.ademe_user_id,
     )
 
-    utilisateur_connecte_kwargs = asdict(utilisateur_connecte)
+    utilisateur_connecte_kwargs = utilisateur_connecte.dict()
     if await query.exists():
         connected_user_tortoise = await query.update(**utilisateur_connecte_kwargs)
     else:
@@ -133,7 +134,6 @@ async def supervision_count():
 async def get_user_from_header() -> UtilisateurConnecteModel:  # token: str = Depends(oauth2_scheme)
     """Retrieve user info from header."""
     connected_user = await connection_api.get_connected_user()
-    await update_connected_user_in_db(connected_user)
     return connected_user
 
 

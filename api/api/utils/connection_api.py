@@ -81,7 +81,7 @@ class DummyConnectionApi(AbstractConnectionApi):
             access_token="lala",
             refresh_token="lala",
             email="lala",
-            nom="lala",
+            nom="dummy",
             prenom="lala",
         )
 
@@ -100,6 +100,17 @@ class DummyConnectionApi(AbstractConnectionApi):
     async def get_connected_user(self) -> UtilisateurConnecte:
         """Get connected user"""
         return self.user
+
+    # For test purpose only
+    def set_user_name(self, nom: str):
+        self.user = UtilisateurConnecte(
+            ademe_user_id=self.user_uid,
+            access_token="lala",
+            refresh_token="lala",
+            email="lala",
+            nom=nom,
+            prenom="lala",
+        )
 
 
 # Ademe
@@ -133,9 +144,6 @@ async def get_authorization_header() -> dict:
     return {"Authorization": "Bearer " + token_json["access_token"]}
 
 
-#
-
-
 class AdemeConnectionApi(AbstractConnectionApi):
     def __init__(self) -> None:
         super().__init__()
@@ -150,7 +158,7 @@ class AdemeConnectionApi(AbstractConnectionApi):
         try:
             payload = jwt.decode(token, options={"verify_signature": False})
             self.verified_token_cache.append(token)
-
+            # TODO : sanity check on payload !
             user = UtilisateurConnecte(
                 ademe_user_id=payload.get("sub", ""),
                 prenom=payload.get("given_name", ""),

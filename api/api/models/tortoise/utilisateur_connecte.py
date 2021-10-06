@@ -13,7 +13,6 @@ class UtilisateurConnecte(models.Model):
     prenom = CharField(max_length=300)
     created_at = DatetimeField(auto_now_add=True)
     modified_at = DatetimeField(auto_now=True)
-    latest = BooleanField()
 
 
 UtilisateurConnecte_Pydantic = pydantic_model_creator(
