@@ -111,6 +111,29 @@ export const getFicheActionStoreForEpci = (epciId: string) => {
   return ficheActionStoreForEpci[epciId];
 };
 
+const makePlanActionStoreForEpci = (epciId: string) => {
+  return new HybridStore<PlanActionStorable>({
+    host: ENV.backendHost,
+    endpoint: () => `v2/${PlanAction.pathname}/${epciId}`,
+    authorization: defaultAuthorization,
+    serializer: storable => storable,
+    deserializer: serialized =>
+      new PlanActionStorable(serialized as PlanActionInterface),
+  });
+};
+
+const planActionStoreForEpci: Record<
+  string,
+  HybridStore<PlanActionStorable>
+> = {};
+
+export const getPlanActionStoreForEpci = (epciId: string) => {
+  if (!planActionStoreForEpci[epciId]) {
+    planActionStoreForEpci[epciId] = makePlanActionStoreForEpci(epciId);
+  }
+  return planActionStoreForEpci[epciId];
+};
+
 export const ficheActionCategorieStore =
   new HybridStore<FicheActionCategorieStorable>({
     host: ENV.backendHost,
