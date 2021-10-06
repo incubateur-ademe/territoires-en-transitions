@@ -511,7 +511,7 @@ def test_potentiel_non_redistribution_on_eci():
     )
 
 
-def test_redistribution_on_eci():
+def test_redistribution_amongst_niveaux_on_eci():
     """Set all taches of a niveaux of an orientation as non concernée
     test it changes the niveaux sibling potentiel up."""
     from api.notation.referentiels import referentiel_eci
@@ -554,3 +554,15 @@ def test_redistribution_on_eci():
         ]
         for tache in taches:
             assert notation.potentiels[tache] > notation.referentiel.points[tache]
+
+    # check totals
+    orientation_taches_potentiel = sum(
+        [
+            notation.potentiels[index]
+            for index in notation.referentiel.indices
+            if index[:-2] == orientation
+        ]
+    )
+    assert math.isclose(
+        orientation_taches_potentiel, notation.referentiel.points[orientation]
+    )
