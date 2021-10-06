@@ -42,11 +42,13 @@ const CategoryLevel = (props: {nodes: CategorizedNode[]; level?: number}) => {
           return null;
         }
         return (
-          <div key={node.categorie.uid}>
+          <div key={node.categorie.uid} className="mt-4">
             <LazyDetailsWithChevron
               startOpen
               summary={
-                <CategoryTitle categorie={node.categorie} level={level} />
+                <div className="mr-4">
+                  <CategoryTitle categorie={node.categorie} level={level} />
+                </div>
               }
             >
               {node.fiches &&
