@@ -1,6 +1,13 @@
 from tortoise import models
 from tortoise.contrib.pydantic.creator import pydantic_model_creator
-from tortoise.fields.data import IntField, CharField, BooleanField, DatetimeField, JSONField, TextField
+from tortoise.fields.data import (
+    IntField,
+    CharField,
+    BooleanField,
+    DatetimeField,
+    JSONField,
+    TextField,
+)
 
 
 class IndicateurPersonnalise(models.Model):
