@@ -12,5 +12,6 @@ class ActionReferentielScore(BaseModel):
     points: float
     percentage: float
     potentiel: float
+    completion: float
     referentiel_points: float
     referentiel_percentage: float

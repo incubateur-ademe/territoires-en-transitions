@@ -65,6 +65,7 @@ class Notation:
         self.points: Dict[Tuple, float] = {}
         self.percentages: Dict[Tuple, float] = {}
         self.statuses: Dict[Tuple, Status] = {}
+        self.completion: Dict[Tuple, float] = {}
         self.reset()
 
     def reset(self):
@@ -78,6 +79,9 @@ class Notation:
         self.percentages: Dict[Tuple, float] = {
             index: 0.0 for index in self.referentiel.indices
         }
+        self.completion: Dict[Tuple, float] = {
+            index: 0.0 for index in self.referentiel.indices
+        }
 
     def set_status(self, index: Tuple, status: Status):
         """Set the status of an action"""
@@ -88,6 +92,7 @@ class Notation:
         self.statuses[index] = status
 
     def compute(self):
+        self.__compute_completion()
         self.__propagate_statuses()
         self.__compute_potentiels()
         self.__compute_points()
@@ -103,6 +108,7 @@ class Notation:
                 points=self.points[index],
                 potentiel=self.potentiels[index],
                 percentage=self.percentages[index],
+                completion=self.completion[index],
                 referentiel_points=self.referentiel.points[index],
                 referentiel_percentage=self.referentiel.percentages[index],
             )
@@ -252,3 +258,14 @@ class Notation:
                 self.percentages[index] = self.points[index] / self.potentiels[index]
             if self.points[index] == 0 and self.statuses[index] == Status.faite:
                 self.percentages[index] = 1.0
+
+    def __compute_completion(self):
+        """Compute percentage for display purposes see ActionReferentielScore"""
+        for index in self.referentiel.backward:
+            children = self.referentiel.children(index)
+            if not children:
+                self.completion[index] = 1 if self.statuses[index] != Status.vide else 0
+            else:
+                self.completion[index] = sum(
+                    [self.completion[child] for child in children]
+                ) / len(children)
