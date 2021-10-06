@@ -1,6 +1,7 @@
 import 'app/DesignSystem/footer.css';
 import 'app/DesignSystem/logo.css';
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 export type FooterProps = {
   description: React.ReactElement;
@@ -28,6 +29,12 @@ export const FooterNavigation = () => (
         >
           Protection des données
         </a>
+      </li>
+      <li className="fr-footer__bottom-item">
+        <Link className="fr-footer__bottom-link" to="./statistics">
+          {' '}
+          Statistiques{' '}
+        </Link>
       </li>
     </ul>
   </div>

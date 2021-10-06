@@ -11,6 +11,8 @@ import {Footer, Header} from 'ui';
 import {FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
+import StatisticsPage from 'app/pages/statistics/StatisticsPage';
+
 import Home from 'app/pages/Home';
 import {useConnected} from 'core-logic/hooks';
 
@@ -64,6 +66,9 @@ export const App = () => {
             description={<FooterDescription />}
             navigation={<FooterNavigation />}
           />
+          <Route path={'/statistics'}>
+            <StatisticsPage />
+          </Route>
         </Router>
       </MuiThemeProvider>
     </MatomoProvider>
