@@ -25,7 +25,7 @@ export const DetailedPlanActions = ({epciId}: {epciId: string}) => {
       </div>
       <Spacer size={1} />
       <div className="flex justify-between items-center">
-        <div className="text-sm font-bold">Mon plan d'action</div>
+        <div className="text-sm font-bold">Mon plan d'actions</div>
         <DetailedEpciCardPropsLink
           label="Voir"
           linkTo={`/collectivite/${epciId}/plan_actions`} // TODO link to specific plan d'action
