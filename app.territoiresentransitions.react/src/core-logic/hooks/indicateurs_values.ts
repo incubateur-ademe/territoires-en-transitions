@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 import {AnyIndicateurValueStorable} from 'storables';
 import {inferValueIndicateurUid} from 'utils/referentiels';
 
-export const useAnyIndicateurValueForYear = (
+export const useAnyIndicateurValueForYearOnce = (
   indicateurUid: string,
   epciId: string,
   year: number,
@@ -19,18 +19,9 @@ export const useAnyIndicateurValueForYear = (
     year
   );
   useEffect(() => {
-    const listener = async () => {
-      const value = await store.retrieveById(storableId);
-      setValue(value);
-    };
-
     store.retrieveById(storableId).then(storable => {
       if (!value || !value.equals(storable)) setValue(storable);
     });
-    store.addListener(listener);
-    return () => {
-      store.removeListener(listener);
-    };
   });
 
   return value;

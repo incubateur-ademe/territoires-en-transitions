@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useEpciId} from 'core-logic/hooks';
 import {AnyIndicateurValueStorable} from 'storables';
 import {HybridStore} from 'core-logic/api/hybridStore';
-import {useAnyIndicateurValueForYear} from 'core-logic/hooks/indicateurs_values';
+import {useAnyIndicateurValueForYearOnce} from 'core-logic/hooks/indicateurs_values';
 import {commands} from 'core-logic/commands';
 import {Editable} from 'ui/shared';
 
@@ -27,8 +27,8 @@ const AnyIndicateurValueInput = ({
 
   const [inputValue, setInputValue] = useState<string | number>('');
   const stateValue =
-    useAnyIndicateurValueForYear(indicateurUid, epciId, year, store)?.value ??
-    '';
+    useAnyIndicateurValueForYearOnce(indicateurUid, epciId, year, store)
+      ?.value ?? '';
 
   useEffect(() => {
     setInputValue(stateValue);
