@@ -142,7 +142,7 @@ export const PlanCategoriesSelectionField: FC<
       }
     }
     if (!planCategories.length) setPlanCategories(selection);
-  }, [plans.length]);
+  }, [plans.length, valueUpToDate]);
 
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
@@ -167,7 +167,6 @@ export const PlanCategoriesSelectionField: FC<
       );
     } else {
       setPlanCategories([...planCategories, selected]);
-      // setFieldValue(field.name,  [...planCategories, selected]);
     }
     setValueUpToDate(false);
   };
@@ -181,15 +180,15 @@ export const PlanCategoriesSelectionField: FC<
       return matchingPlanCategorieInValue ?? {planUid: plan.uid};
     });
     setPlanCategories(newValue);
-
     setValueUpToDate(false);
-    // setFieldValue(field.name, newValue);
   };
 
   useEffect(() => {
-    setFieldValue(field.name, planCategories);
-    setValueUpToDate(true);
-  }, [valueUpToDate]);
+    if (plans.length && planCategories.length) {
+      setFieldValue(field.name, planCategories);
+      setValueUpToDate(true);
+    }
+  }, [plans.length, planCategories.length]);
 
   return (
     <fieldset className="block">
