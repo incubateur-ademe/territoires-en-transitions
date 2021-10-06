@@ -4,29 +4,6 @@ import {useEffect, useState} from 'react';
 import {AnyIndicateurValueStorable} from 'storables';
 import {inferValueIndicateurUid} from 'utils/referentiels';
 
-export const useAnyIndicateurValueForYearOnce = (
-  indicateurUid: string,
-  epciId: string,
-  year: number,
-  store: HybridStore<AnyIndicateurValueStorable>
-) => {
-  const [value, setValue] = useState<AnyIndicateurValueStorable | null>(null);
-  const valueIndicateurUid = inferValueIndicateurUid(indicateurUid);
-
-  const storableId = AnyIndicateurValueStorable.buildId(
-    epciId,
-    valueIndicateurUid,
-    year
-  );
-  useEffect(() => {
-    store.retrieveById(storableId).then(storable => {
-      if (!value || !value.equals(storable)) setValue(storable);
-    });
-  });
-
-  return value;
-};
-
 export const useAnyIndicateurValueForAllYears = (
   indicateurUid: string,
   epciId: string,
