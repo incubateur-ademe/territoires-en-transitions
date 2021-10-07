@@ -134,7 +134,7 @@ export const IndicateurPersonnaliseCard = ({
         <IndicateurPersonnaliseHeaderTitle indicateur={indicateur} />
       }
       indicateurUid={indicateur.uid}
-      indicateurResultatStore={indicateurResultatStore}
+      indicateurResultatStore={indicateurPersonnaliseResultatStore}
     >
       <IndicateurPersonnaliseCardContent indicateur={indicateur} />
     </AnyIndicateurCard>
