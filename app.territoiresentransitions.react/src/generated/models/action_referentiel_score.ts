@@ -2,6 +2,7 @@ export interface ActionReferentielScoreInterface {
   action_id: string;
   action_nomenclature_id: string;
   avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | '';
+  completion: number;
   points: number;
   percentage: number;
   potentiel: number;
@@ -17,6 +18,7 @@ export class ActionReferentielScore {
   action_id: string;
   action_nomenclature_id: string;
   avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | '';
+  completion: number;
   points: number;
   percentage: number;
   potentiel: number;
@@ -30,6 +32,7 @@ export class ActionReferentielScore {
     action_id,
     action_nomenclature_id,
     avancement,
+    completion,
     points,
     percentage,
     potentiel,
@@ -39,6 +42,7 @@ export class ActionReferentielScore {
     action_id: string;
     action_nomenclature_id: string;
     avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | '';
+    completion: number;
     points: number;
     percentage: number;
     potentiel: number;
@@ -48,6 +52,7 @@ export class ActionReferentielScore {
     this.action_id = action_id;
     this.action_nomenclature_id = action_nomenclature_id;
     this.avancement = avancement;
+    this.completion = completion;
     this.points = points;
     this.percentage = percentage;
     this.potentiel = potentiel;
@@ -60,6 +65,7 @@ export class ActionReferentielScore {
       other.action_id === this.action_id &&
       other.action_nomenclature_id === this.action_nomenclature_id &&
       other.avancement === this.avancement &&
+      other.completion === this.completion &&
       other.points === this.points &&
       other.percentage === this.percentage &&
       other.potentiel === this.potentiel &&
