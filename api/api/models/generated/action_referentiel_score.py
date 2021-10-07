@@ -9,9 +9,9 @@ class ActionReferentielScore(BaseModel):
     action_id: str
     action_nomenclature_id: str
     avancement: Literal["faite", "programmee", "pas_faite", "non_concernee", ""]
+    completion: float
     points: float
     percentage: float
     potentiel: float
-    completion: float
     referentiel_points: float
     referentiel_percentage: float
