@@ -26,7 +26,7 @@ const InlineEditableTitle = (props: {
     props.initialEditingState ?? false
   );
   const [text, setText] = useState<string>(props.text);
-  const onStateChange = props.onStateChange ?? (editing => {});
+  const onStateChange = props.onStateChange ?? (() => {});
   const textClasses = ['text-2xl', 'text-xl', 'text-lg'];
   const textClass = textClasses[Math.min(textClasses.length - 1, props.level)];
   return (
@@ -154,7 +154,7 @@ function EditableCategoryLevel(props: {
             <EditableCategoryTitle
               categorie={node.categorie}
               update={props.update}
-              add={level < 1 ? props.add : undefined}
+              add={level < 2 ? props.add : undefined}
               level={level}
             />
 
