@@ -12,6 +12,7 @@ import * as R from 'ramda';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {actions} from 'generated/data/referentiels';
 import {CurrentEpciGaugeProgressStat} from 'ui/referentiels';
+import {CurrentEpciCompletionStar} from 'ui/referentiels/CurrentEpciCompletionStar';
 
 type View = 'cae' | 'eci' | 'both';
 const viewTitles: Record<View, string> = {
@@ -86,6 +87,7 @@ const ReferentielTitle = (props: {view: View}) => {
           showPoints={true}
         /> */}
         <CurrentEpciGaugeProgressStat action={referentiel} size="sm" />
+        <CurrentEpciCompletionStar action={referentiel} />
       </div>
     </header>
   );
