@@ -43,18 +43,19 @@ const AnyIndicateurValueInput = ({
     const inputValue = event.currentTarget.value;
 
     const floatValue = parseFloat(inputValue.replace(',', '.'));
-    console.log(inputValue, floatValue);
-    if (inputValue) setInputValue(inputValue);
 
-    commands.indicateurCommands.storeAnyIndicateurValue({
-      store: store,
-      interface: {
-        epci_id: epciId,
-        indicateur_id: indicateurUid,
-        year: year,
-        value: floatValue,
-      },
-    });
+    if (floatValue) {
+      commands.indicateurCommands.storeAnyIndicateurValue({
+        store: store,
+        interface: {
+          epci_id: epciId,
+          indicateur_id: indicateurUid,
+          year: year,
+          value: floatValue,
+        },
+      });
+      setInputValue(inputValue);
+    }
   };
 
   return (
