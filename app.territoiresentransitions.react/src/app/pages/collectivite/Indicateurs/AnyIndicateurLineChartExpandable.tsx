@@ -94,7 +94,7 @@ const AnyIndicateurLineChart = (props: {
   const canvasId = `chart-${props.indicateurUid}`;
   return (
     <div>
-      <div className="w-2/3 h-64">
+      <div className="w-2/3 h-72 pb-7">
         <div className="sm text-center font-bold ">{props.title}</div>
         <Line
           id={canvasId}
@@ -122,7 +122,7 @@ const AnyIndicateurLineChart = (props: {
           }}
         />
       </div>
-      <Spacer size={9} />
+      <Spacer />
       <a
         className="fr-btn fr-btn--secondary ml-7"
         id="download"
