@@ -1,6 +1,6 @@
 import abc
 import datetime
-from typing import List, Dict
+from typing import List, Dict, Literal
 
 from urllib.parse import urlparse
 from pydantic import BaseModel
@@ -39,6 +39,26 @@ class AbstractQuery(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def get_daily_action_referentiel_status_count(
+        self, referentiel: Literal["cae", "eci"]
+    ) -> List[DailyCount]:
+        pass
+
+    @abc.abstractmethod
+    def get_daily_indicateur_referentiel_count(
+        self, referentiel: Literal["cae", "eci"]
+    ) -> List[DailyCount]:
+        pass
+
+    @abc.abstractmethod
+    def get_daily_fiche_action_created_count(self) -> List[DailyCount]:
+        pass
+
+    @abc.abstractmethod
+    def get_daily_indicateur_personnalise_count(self) -> List[DailyCount]:
+        pass
+
+    @abc.abstractmethod
     def get_functionnalities_usage_proportion(
         self,
     ) -> FunctionnalitiesUsageProportion:
@@ -46,22 +66,37 @@ class AbstractQuery(abc.ABC):
 
 
 # Adapters (actual implementation)
+
+exampleDailyCounts = [
+    DailyCount(date=datetime.date(2020, 1, 1), count=1, cumulated_count=1),
+    DailyCount(date=datetime.date(2020, 1, 3), count=3, cumulated_count=13),
+    DailyCount(date=datetime.date(2020, 2, 3), count=6, cumulated_count=29),
+    DailyCount(date=datetime.date(2020, 2, 8), count=5, cumulated_count=34),
+]
+
+
 class InMemoryQuery(AbstractQuery):
     def get_daily_user_count(self) -> List[DailyCount]:
-        return [
-            DailyCount(date="2020-01-01", count=10, cumulated_count=16),
-            DailyCount(date="2020-01-02", count=3, cumulated_count=33),
-            DailyCount(date="2020-01-04", count=6, cumulated_count=39),
-            DailyCount(date="2020-02-08", count=5, cumulated_count=44),
-        ]
+        return exampleDailyCounts
 
     def get_daily_collectivite_count(self) -> List[DailyCount]:
-        return [
-            DailyCount(date="2020-01-01", count=10, cumulated_count=10),
-            DailyCount(date="2020-01-02", count=3, cumulated_count=13),
-            DailyCount(date="2020-01-04", count=6, cumulated_count=19),
-            DailyCount(date="2020-02-08", count=5, cumulated_count=24),
-        ]
+        return exampleDailyCounts
+
+    def get_daily_action_referentiel_status_count(
+        self, referentiel: Literal["cae", "eci"]
+    ) -> List[DailyCount]:
+        return exampleDailyCounts
+
+    def get_daily_indicateur_referentiel_count(
+        self, referentiel: Literal["cae", "eci"]
+    ) -> List[DailyCount]:
+        return exampleDailyCounts
+
+    def get_daily_fiche_action_created_count(self) -> List[DailyCount]:
+        return exampleDailyCounts
+
+    def get_daily_indicateur_personnalise_count(self) -> List[DailyCount]:
+        return exampleDailyCounts
 
     def get_functionnalities_usage_proportion(
         self,
@@ -73,6 +108,19 @@ class InMemoryQuery(AbstractQuery):
             indicateur_personnalise=0.01,
             indicateur_referentiel=0.09,
         )
+
+
+# PG
+# --
+def rows_to_daily_counts(rows: List[Dict]) -> List[DailyCount]:
+    return [
+        DailyCount(
+            date=row["date"],
+            count=row["count"],
+            cumulated_count=row["cumulated_count"],
+        )
+        for row in rows
+    ]
 
 
 class PostgresQuery(AbstractQuery):
@@ -87,9 +135,9 @@ class PostgresQuery(AbstractQuery):
             port=db_params.port,
         )
 
-    def execute_query(self, sql_file_path: str) -> List[Dict]:
+    def execute_query(self, query: str) -> List[Dict]:
         with self.psycopg_connection.cursor() as cursor:
-            cursor.execute(open(sql_file_path, "r").read())
+            cursor.execute(query)  # format_args or ()
             fieldsValues = cursor.fetchall()
             description = cursor.description
             return [
@@ -101,31 +149,52 @@ class PostgresQuery(AbstractQuery):
             ]
 
     def get_daily_user_count(self) -> List[DailyCount]:
-        rows = self.execute_query("./sql_reports/daily_user_count.sql")
-        return [
-            DailyCount(
-                date=row["date"],
-                count=row["count"],
-                cumulated_count=row["cumulated_count"],
-            )
-            for row in rows
-        ]
+        query = open("./sql_reports/daily_user_count.sql", "r").read()
+        rows = self.execute_query(query)
+        return rows_to_daily_counts(rows)
 
     def get_daily_collectivite_count(self) -> List[DailyCount]:
-        rows = self.execute_query("./sql_reports/daily_active_collectivite_count.sql")
-        return [
-            DailyCount(
-                date=row["date"],
-                count=row["count"],
-                cumulated_count=row["cumulated_count"],
-            )
-            for row in rows
-        ]
+        query = open("./sql_reports/daily_active_collectivite_count.sql", "r").read()
+        rows = self.execute_query(query)
+        return rows_to_daily_counts(rows)
+
+    def get_daily_action_referentiel_status_count(
+        self, referentiel: Literal["cae", "eci"]
+    ) -> List[DailyCount]:
+        action_id_regex = "economie%" if referentiel == "eci" else "citergie%"
+        query = open("./sql_reports/daily_created_action_referentiel_status_count.sql", "r").read().replace('%action_id_regex', action_id_regex)
+        rows = self.execute_query(
+            query,
+        )
+        return rows_to_daily_counts(rows)
+
+    def get_daily_indicateur_referentiel_count(
+        self, referentiel: Literal["cae", "eci"]
+    ) -> List[DailyCount]:
+        indicateur_id_regex = "eci%" if referentiel == "eci" else "cae%"
+        query = open("./sql_reports/daily_created_indicateur_referentiel_resultat_count.sql", "r").read().replace('%indicateur_id_regex', indicateur_id_regex)
+        rows = self.execute_query(
+            query,
+         )
+        return rows_to_daily_counts(rows)
+
+    def get_daily_fiche_action_created_count(self) -> List[DailyCount]:
+        query = open("./sql_reports/daily_created_fiche_action_count.sql", "r").read()
+        rows = self.execute_query(query)
+        return rows_to_daily_counts(rows)
+
+    def get_daily_indicateur_personnalise_count(self) -> List[DailyCount]:
+        query = open("./sql_reports/daily_created_indicateur_personnalise_count.sql", "r").read()
+        rows = self.execute_query(
+            query
+        )
+        return rows_to_daily_counts(rows)
 
     def get_functionnalities_usage_proportion(
         self,
     ) -> FunctionnalitiesUsageProportion:
-        row = self.execute_query("./sql_reports/functionnalities_usage_proportion.sql")[
+        query = open("./sql_reports/functionnalities_usage_proportion.sql", "r").read()
+        row = self.execute_query(query)[
             0
         ]
         return FunctionnalitiesUsageProportion(
@@ -152,26 +221,41 @@ async def get_daily_collectivite_count():
 
 
 @router.get(
+    "/daily_action_referentiel_status_count/eci", response_model=List[DailyCount]
+)
+async def get_daily_action_referentiel_status_count_eci():
+    return query.get_daily_action_referentiel_status_count("eci")
+
+
+@router.get("/daily_indicateur_referentiel_count/eci", response_model=List[DailyCount])
+async def get_daily_indicateur_referentiel_count_eci():
+    return query.get_daily_indicateur_referentiel_count("eci")
+
+
+@router.get(
+    "/daily_action_referentiel_status_count/cae", response_model=List[DailyCount]
+)
+async def get_daily_action_referentiel_status_count_cae():
+    return query.get_daily_action_referentiel_status_count("cae")
+
+
+@router.get("/daily_indicateur_referentiel_count/cae", response_model=List[DailyCount])
+async def get_daily_indicateur_referentiel_count_cae():
+    return query.get_daily_indicateur_referentiel_count("cae")
+
+
+@router.get("/daily_indicateur_personnalise_count", response_model=List[DailyCount])
+async def get_daily_indicateur_personnalise_count():
+    return query.get_daily_indicateur_personnalise_count()
+
+
+@router.get("/daily_fiche_action_created_count", response_model=List[DailyCount])
+async def get_daily_fiche_action_created_count():
+    return query.get_daily_fiche_action_created_count()
+
+
+@router.get(
     "/functionnalities_usage_proportion", response_model=FunctionnalitiesUsageProportion
 )
 async def get_functionnalities_usage_proportion():
     return query.get_functionnalities_usage_proportion()
-
-    # with psycopg_connection.cursor() as cursor:
-    #     cursor.execute(open("./sql_reports/user_count.sql", "r").read())
-    #     rows = cursor.fetchall()
-    # return [
-    #     DailyUserCount(date=row[0], count=row[1], cumulated_count=row[2])
-    #     for row in rows
-    # ]
-
-
-# @router.get("/user_count", response_model=List[DailyUserCount])
-# async def get_all_epci_plan_action():
-#     with psycopg_connection.cursor() as cursor:
-#         cursor.execute(open("./sql_reports/user_count.sql", "r").read())
-#         rows = cursor.fetchall()
-#     return [
-#         DailyUserCount(date=row[0], count=row[1], cumulated_count=row[2])
-#         for row in rows
-#     ]

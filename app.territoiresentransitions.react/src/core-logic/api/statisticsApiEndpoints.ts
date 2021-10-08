@@ -47,3 +47,27 @@ export const getFunctionnalitiesUsageProportion =
   makeGetStatistics<FunctionnalitiesUsageProportion>(
     'functionnalities_usage_proportion'
   );
+
+export const getDailyCAEIndicateurReferentielValueCount = makeGetStatistics<
+  DailyCount[]
+>('daily_indicateur_referentiel_count/cae');
+
+export const getDailyECIIndicateurReferentielValueCount = makeGetStatistics<
+  DailyCount[]
+>('daily_indicateur_referentiel_count/eci');
+
+export const getDailyIndicateurPersonnaliseValueCount = makeGetStatistics<
+  DailyCount[]
+>('daily_indicateur_personnalise_count');
+
+export const getDailyFicheActionCreatedCount = makeGetStatistics<DailyCount[]>(
+  'daily_fiche_action_created_count'
+);
+
+export const getDailyCAEActionStatusCreatedCount = makeGetStatistics<
+  DailyCount[]
+>('daily_action_referentiel_status_count/cae');
+
+export const getDailyECIActionStatusCreatedCount = makeGetStatistics<
+  DailyCount[]
+>('daily_action_referentiel_status_count/eci');

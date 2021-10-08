@@ -61,14 +61,15 @@ export const App = () => {
               <Header nav={<Navigation />} />
               <CollectiviteRoutes />
             </Route>
+            <Route path={'/statistics'}>
+              <Header nav={<Navigation />} />
+              <StatisticsPage />
+            </Route>
           </Switch>
           <Footer
             description={<FooterDescription />}
             navigation={<FooterNavigation />}
           />
-          <Route path={'/statistics'}>
-            <StatisticsPage />
-          </Route>
         </Router>
       </MuiThemeProvider>
     </MatomoProvider>

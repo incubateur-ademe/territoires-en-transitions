@@ -61,13 +61,12 @@ export const DailyCountLineChart = (props: {
 
   return (
     <div>
-      <div className="w-full h-64 my-6">
-        <div className="sm text-left font-bold text-bf500 ml-12">
+      <div className="h-64 w-96 my-6">
+        <div className="xs text-left font-bold text-bf500">
           {props.chartTitle}
         </div>
         <Line
-          className="p-5"
-          // id={canvasId}
+          className="py-5"
           data={chartData}
           options={{
             responsive: true,

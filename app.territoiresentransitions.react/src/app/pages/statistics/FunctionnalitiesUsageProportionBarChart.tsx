@@ -42,7 +42,7 @@ export const FunctionnalitiesUsageProportionBarChart = (props: {
 
   return (
     <div>
-      <div className="w-full h-64 my-6">
+      <div className="w-2/3 h-64 my-6">
         <div className="sm text-left font-bold text-bf500 ml-12">
           {props.chartTitle}
         </div>
