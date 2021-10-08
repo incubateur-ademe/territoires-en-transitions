@@ -31,7 +31,7 @@ export const FooterNavigation = () => (
         </a>
       </li>
       <li className="fr-footer__bottom-item">
-        <Link className="fr-footer__bottom-link" to="./statistics">
+        <Link className="fr-footer__bottom-link" to="/statistics">
           {' '}
           Statistiques{' '}
         </Link>
