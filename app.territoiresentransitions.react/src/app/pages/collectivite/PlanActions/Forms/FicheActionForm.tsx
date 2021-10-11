@@ -6,12 +6,9 @@ import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ActionsField} from 'app/pages/collectivite/PlanActions/Forms/ActionsField';
 import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursField';
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
-import {CategoriePicker} from 'app/pages/collectivite/PlanActions/Forms/CategoriePicker';
 import {ActionReferentielAvancementCard} from 'ui/referentiels';
 import {actions} from 'generated/data/referentiels';
-import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
-import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {useAllStorables} from 'core-logic/hooks';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
@@ -19,10 +16,38 @@ import {Spacer} from 'ui/shared';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
 import {searchActionById} from 'utils/actions';
+import {PlanCategoriesSelectionField} from 'app/pages/collectivite/PlanActions/Forms/PlanCategoriesSelectionField';
+
+/**
+ * Stores both plan and category uid, represents the user's selection of a
+ * category in a plan. The category is optional as a fiche can be
+ * uncategorized inside a plan.
+ */
+export interface PlanCategorieSelection {
+  categorieUid?: string;
+  planUid: string;
+}
+
+/**
+ * Represent the user's categories selection as a fiche can belong to many
+ * plans.
+ */
+export interface planCategorieSelections {
+  planCategories: PlanCategorieSelection[];
+}
+
+/**
+ * Join categories data with fiche data as the form data that will be saved.
+ */
+export type FicheActionFormData = planCategorieSelections &
+  FicheActionInterface;
+import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
+import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 
 type FicheActionFormProps = {
   fiche: FicheActionInterface;
-  onSave: (fiche: FicheActionInterface) => void;
+  planCategories: PlanCategorieSelection[];
+  onSave: (data: FicheActionFormData) => void;
 };
 
 type FormState = 'ready' | 'saving';
@@ -65,7 +90,10 @@ const LinkedIndicateurCards = () => {
   return (
     <div>
       {linkedIndicateurs.map(indicateur => (
-        <IndicateurReferentielCard indicateur={indicateur} />
+        <IndicateurReferentielCard
+          indicateur={indicateur}
+          key={indicateur.uid}
+        />
       ))}
     </div>
   );
@@ -90,7 +118,7 @@ const LinkedIndicateurPersonnaliseCards = () => {
           return (
             <IndicateurPersonnaliseCard
               indicateur={indicateur}
-              key={indicateur.id}
+              key={indicateur.uid}
             />
           );
         return <></>;
@@ -148,17 +176,24 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
     date_debut: Yup.date(),
     date_fin: Yup.date(),
     indicateur_personnalise_ids: Yup.array(),
+    planCategories: Yup.array().min(
+      1,
+      "Une fiche doit être rattachée à au moins un plan d'action."
+    ),
   });
 
-  const save = (data: FicheActionInterface) => {
+  const save = (data: FicheActionFormData) => {
     if (state !== 'ready') return;
     setState('saving');
     props.onSave(data);
   };
 
   return (
-    <Formik<FicheActionInterface>
-      initialValues={props.fiche}
+    <Formik<FicheActionFormData>
+      initialValues={{
+        ...props.fiche,
+        planCategories: props.planCategories,
+      }}
       validationSchema={validation}
       onSubmit={save}
     >
@@ -181,7 +216,13 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             />
             <Spacer />
 
-            <CategoriePicker ficheUid={props.fiche.uid} />
+            <Field
+              name="planCategories"
+              label="Plans d'actions"
+              ficheUid={props.fiche.uid}
+              component={PlanCategoriesSelectionField}
+            />
+
             <Spacer />
 
             <Field

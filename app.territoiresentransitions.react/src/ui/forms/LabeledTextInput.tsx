@@ -25,7 +25,7 @@ export const LabeledTextInput = (props: LabeledTextInputProps) => {
   const htmlId = props.id ?? uuid();
 
   return (
-    <div>
+    <div className="w-full">
       <label className="fr-label" htmlFor={htmlId}>
         {props.label}
         <slot />

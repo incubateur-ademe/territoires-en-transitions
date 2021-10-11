@@ -3,6 +3,11 @@ import * as R from 'ramda';
 import {useEffect, useState} from 'react';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
 import {Avancement, FicheActionAvancement} from 'types';
+import {
+  PlanActionStructure,
+  PlanActionTyped,
+} from 'types/PlanActionTypedInterface';
+import {FicheAction} from 'generated/models';
 
 export type PlanActionAvancementSummmary = {
   avancementsCount?: Partial<Record<FicheActionAvancement, number>>;
@@ -26,22 +31,29 @@ const storablesToState = (
 };
 
 export const useEpciPlanActionAvancementSummmary = (
-  epciId: string
+  plan: PlanActionTyped
 ): PlanActionAvancementSummmary => {
   const [
     epciPlanActionAvancementSummmary,
     setEpciPlanActionAvancementSummmary,
   ] = useState<PlanActionAvancementSummmary>({enRetardCount: 0, total: 0});
+  const planFicheUids = (plan as PlanActionStructure).fiches_by_category.map(
+    fc => fc.fiche_uid
+  );
+  const fichesOfPlan = (fiches: FicheActionStorable[]) =>
+    fiches.filter(fiche => planFicheUids.includes(fiche.uid));
 
   useEffect(() => {
-    const store = getFicheActionStoreForEpci(epciId);
+    const store = getFicheActionStoreForEpci(plan.epci_id);
     const listener = async () => {
-      const ficheActions = await store.retrieveAll();
-      setEpciPlanActionAvancementSummmary(storablesToState(ficheActions));
+      const fiches = await store.retrieveAll();
+      const planFiches = fichesOfPlan(fiches);
+      setEpciPlanActionAvancementSummmary(storablesToState(planFiches));
     };
 
-    store.retrieveAll().then(storables => {
-      const newState = storablesToState(storables);
+    store.retrieveAll().then(fiches => {
+      const planFiches = fichesOfPlan(fiches);
+      const newState = storablesToState(planFiches);
       if (
         JSON.stringify(newState) !==
         JSON.stringify(epciPlanActionAvancementSummmary)

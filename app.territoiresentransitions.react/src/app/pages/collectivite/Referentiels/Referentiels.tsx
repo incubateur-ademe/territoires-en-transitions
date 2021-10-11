@@ -14,7 +14,7 @@ import {actions} from 'generated/data/referentiels';
 import {CurrentEpciGaugeProgressStat} from 'ui/referentiels';
 
 type View = 'cae' | 'eci' | 'both';
-const viewTitles: Record<View, String> = {
+const viewTitles: Record<View, string> = {
   cae: 'Climat Air Énergie',
   eci: 'Économie Circulaire',
   both: 'Vue combinée',
@@ -56,7 +56,11 @@ const ConditionnalActionsReferentiels = ({view}: {view: View}) => {
   }
 };
 
-function ReferentielNavChip(props: {epciId: string; to: View; current: View}) {
+const ReferentielNavChip = (props: {
+  epciId: string;
+  to: View;
+  current: View;
+}) => {
   return (
     <div className="mr-2">
       <Chip
@@ -68,11 +72,10 @@ function ReferentielNavChip(props: {epciId: string; to: View; current: View}) {
       />
     </div>
   );
-}
+};
 
-function ReferentielTitle(props: {view: View}) {
+const ReferentielTitle = (props: {view: View}) => {
   const referentiel = props.view === 'eci' ? eciReferentiel : caeReferentiel;
-
   return (
     <header className="flex flex-row items-center mb-6 space-x-10">
       <h2 className="fr-h2">{viewTitles[props.view]}</h2>
@@ -86,7 +89,7 @@ function ReferentielTitle(props: {view: View}) {
       </div>
     </header>
   );
-}
+};
 
 export const ActionsReferentiels = () => {
   const {referentiel} = useParams<{

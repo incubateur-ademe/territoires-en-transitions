@@ -48,6 +48,7 @@ def render_indicators_as_typescript(
         indicateur["action_ids"] = extract_action_ids(indicateur)
         indicateur["description"] = extract_description(indicateur)
         indicateur["unite"] = extract_unite(indicateur)
+        indicateur["uid"] = indicateur["id"]
 
     rendered = template.render(indicateurs=indicateurs)
     return jsbeautifier.beautify(rendered)

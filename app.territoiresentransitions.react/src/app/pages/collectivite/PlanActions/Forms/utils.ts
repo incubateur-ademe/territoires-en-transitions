@@ -1,7 +1,6 @@
 import type {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-
-export const refToEmoji = {eci: '♻', cae: '🌍'};
+import {refToEmoji} from 'utils/refToEmoji';
 
 export const actionToEmoji = (action: ActionReferentiel) =>
   action.id.startsWith('eco') ? refToEmoji['eci'] : refToEmoji['cae'];

@@ -1,5 +1,7 @@
 export interface IndicateurReferentielInterface {
   id: string;
+  uid: string;
+  valeur: string;
   action_ids: string[];
   nom: string;
   description: string;
@@ -13,6 +15,8 @@ export class IndicateurReferentiel {
     return IndicateurReferentiel.pathname;
   }
   id: string;
+  uid: string;
+  valeur: string;
   action_ids: string[];
   nom: string;
   description: string;
@@ -24,6 +28,8 @@ export class IndicateurReferentiel {
    */
   constructor({
     id,
+    uid,
+    valeur,
     action_ids,
     nom,
     description,
@@ -31,6 +37,8 @@ export class IndicateurReferentiel {
     unite,
   }: {
     id: string;
+    uid: string;
+    valeur: string;
     action_ids: string[];
     nom: string;
     description: string;
@@ -38,6 +46,8 @@ export class IndicateurReferentiel {
     unite: string;
   }) {
     this.id = id;
+    this.uid = uid;
+    this.valeur = valeur;
     this.action_ids = action_ids;
     this.nom = nom;
     this.description = description;
@@ -48,6 +58,8 @@ export class IndicateurReferentiel {
     if (!other) return false;
     return (
       other.id === this.id &&
+      other.uid === this.uid &&
+      other.valeur === this.valeur &&
       other.action_ids === this.action_ids &&
       other.nom === this.nom &&
       other.description === this.description &&

@@ -32,7 +32,6 @@
   import Link from '../components/Markdown/Link.svelte';
   import LinkBtn from '../components/Markdown/LinkBtn.svelte';
   import HomeParagraph from '../components/Markdown/HomeParagraph.svelte';
-  import Contact from '../components/Contact.svelte';
   import Container from '../components/Layout/Container.svelte';
 
   export let description;
@@ -93,9 +92,6 @@
     <Container classNames="fr-mt-10w">
       <div class="fr-grid-row fr-grid-row--gutters">
         <SvelteMarkdown source={contactUs} {renderers} />
-      </div>
-      <div class="fr-grid-row fr-grid-row--gutters">
-        <Contact />
       </div>
     </Container>
   </div>

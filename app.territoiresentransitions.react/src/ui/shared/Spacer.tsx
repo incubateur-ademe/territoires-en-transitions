@@ -1,3 +1,3 @@
-export const Spacer = (props: {size?: number}) => (
-  <div className={`p-${props.size ?? 5}`} />
+export const Spacer = ({size = 5}: {size?: number}) => (
+  <div className={`p-${size}`} />
 );
