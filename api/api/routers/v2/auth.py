@@ -61,7 +61,6 @@ async def register(inscription: UtilisateurInscription, response: Response):
         await Utilisateur.create(
             ademe_user_id=user_id,
             vie_privee_conditions=inscription.vie_privee_conditions,
-            latest=True,
         )
         return asdict(register_response_data)
 
