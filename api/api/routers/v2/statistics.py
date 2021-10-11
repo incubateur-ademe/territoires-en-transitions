@@ -5,6 +5,7 @@ from typing import List, Dict, Literal
 from urllib.parse import urlparse
 from pydantic import BaseModel
 import psycopg2
+from psycopg2 import OperationalError
 from fastapi import APIRouter
 
 
@@ -127,17 +128,31 @@ class PostgresQuery(AbstractQuery):
     def __init__(self) -> None:
         super().__init__()
         db_params = urlparse(DATABASE_URL)
-        self.psycopg_connection = psycopg2.connect(
+
+        self._connection_kwargs = dict(
             database=db_params.path[1:],
             user=db_params.username,
             password=db_params.password,
             host=db_params.hostname,
             port=db_params.port,
         )
+        self._connection = self.get_new_connection()
+
+    def get_new_connection(self):
+        return psycopg2.connect(**self._connection_kwargs)
+
+    @property
+    def connection(self) :
+        try:
+            self._connection.isolation_level
+        except OperationalError as oe:
+            print("PG Connexion has expired, getting new one.")
+            self._connection = self.get_new_connection()
+        return self._connection
 
     def execute_query(self, query: str) -> List[Dict]:
-        with self.psycopg_connection.cursor() as cursor:
-            cursor.execute(query)  # format_args or ()
+        with self.connection.cursor() as cursor:
+            cursor.execute(query)
             fieldsValues = cursor.fetchall()
             description = cursor.description
             return [
@@ -162,7 +177,11 @@ class PostgresQuery(AbstractQuery):
         self, referentiel: Literal["cae", "eci"]
     ) -> List[DailyCount]:
         action_id_regex = "economie%" if referentiel == "eci" else "citergie%"
-        query = open("./sql_reports/daily_created_action_referentiel_status_count.sql", "r").read().replace('%action_id_regex', action_id_regex)
+        query = (
+            open("./sql_reports/daily_created_action_referentiel_status_count.sql", "r")
+            .read()
+            .replace("%action_id_regex", action_id_regex)
+        )
         rows = self.execute_query(
             query,
         )
@@ -172,10 +191,17 @@ class PostgresQuery(AbstractQuery):
         self, referentiel: Literal["cae", "eci"]
     ) -> List[DailyCount]:
         indicateur_id_regex = "eci%" if referentiel == "eci" else "cae%"
-        query = open("./sql_reports/daily_created_indicateur_referentiel_resultat_count.sql", "r").read().replace('%indicateur_id_regex', indicateur_id_regex)
+        query = (
+            open(
+                "./sql_reports/daily_created_indicateur_referentiel_resultat_count.sql",
+                "r",
+            )
+            .read()
+            .replace("%indicateur_id_regex", indicateur_id_regex)
+        )
         rows = self.execute_query(
             query,
-         )
+        )
         return rows_to_daily_counts(rows)
 
     def get_daily_fiche_action_created_count(self) -> List[DailyCount]:
@@ -184,19 +210,17 @@ class PostgresQuery(AbstractQuery):
         return rows_to_daily_counts(rows)
 
     def get_daily_indicateur_personnalise_count(self) -> List[DailyCount]:
-        query = open("./sql_reports/daily_created_indicateur_personnalise_count.sql", "r").read()
-        rows = self.execute_query(
-            query
-        )
+        query = open(
+            "./sql_reports/daily_created_indicateur_personnalise_count.sql", "r"
+        ).read()
+        rows = self.execute_query(query)
         return rows_to_daily_counts(rows)
 
     def get_functionnalities_usage_proportion(
         self,
     ) -> FunctionnalitiesUsageProportion:
         query = open("./sql_reports/functionnalities_usage_proportion.sql", "r").read()
-        row = self.execute_query(query)[
-            0
-        ]
+        row = self.execute_query(query)[0]
         return FunctionnalitiesUsageProportion(
             fiche_action=row["fiche_action_avg"],
             cae_referentiel=row["cae_statuses_avg"],
