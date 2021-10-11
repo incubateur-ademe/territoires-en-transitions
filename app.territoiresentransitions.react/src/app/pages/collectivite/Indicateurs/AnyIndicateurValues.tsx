@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {useEpciId} from 'core-logic/hooks';
 import {AnyIndicateurValueStorable} from 'storables';
 import {HybridStore} from 'core-logic/api/hybridStore';
-import {useAnyIndicateurValueForYearOnce} from 'core-logic/hooks/indicateurs_values';
 import {commands} from 'core-logic/commands';
 import {Editable} from 'ui/shared';
+import {inferValueIndicateurUid} from 'utils/referentiels';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
@@ -24,37 +24,45 @@ const AnyIndicateurValueInput = ({
   borderColor?: 'blue' | 'gray';
 }) => {
   const epciId = useEpciId()!;
-
   const [inputValue, setInputValue] = useState<string | number>('');
-  const stateValue =
-    useAnyIndicateurValueForYearOnce(indicateurUid, epciId, year, store)
-      ?.value ?? '';
+  const valueIndicateurUid = inferValueIndicateurUid(indicateurUid);
+
+  const storableId = AnyIndicateurValueStorable.buildId(
+    epciId,
+    valueIndicateurUid,
+    year
+  );
 
   useEffect(() => {
-    setInputValue(stateValue);
-  });
+    store.retrieveById(storableId).then(storable => {
+      setInputValue(storable?.value || '');
+    });
+  }, []);
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
 
     const floatValue = parseFloat(inputValue.replace(',', '.'));
-    commands.indicateurCommands.storeAnyIndicateurValue({
-      store: store,
-      interface: {
-        epci_id: epciId,
-        indicateur_id: indicateurUid,
-        year: year,
-        value: floatValue,
-      },
-    });
-    if (inputValue) setInputValue(inputValue);
+
+    if (floatValue) {
+      commands.indicateurCommands.storeAnyIndicateurValue({
+        store: store,
+        interface: {
+          epci_id: epciId,
+          indicateur_id: indicateurUid,
+          year: year,
+          value: floatValue,
+        },
+      });
+      setInputValue(inputValue);
+    }
   };
 
   return (
     <label className="flex flex-col mx-2 j">
       <div className="flex pl-2 justify-center">{year}</div>
       <input
-        className={`text-center fr-input mt-2 w-full bg-white p-3 border-b-2 text-sm font-normal text-gray-500 ${
+        className={`text-right fr-input mt-2 w-full bg-white p-3 border-b-2 text-sm font-normal text-gray-500 ${
           borderColor === 'blue' ? 'border-bf500' : 'border-gray-500'
         }`}
         value={inputValue}
