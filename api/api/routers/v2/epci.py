@@ -16,6 +16,7 @@ from api.routers.v2.auth import (
     get_user_from_header,
     get_utilisateur_droits_from_header,
 )
+from api.utils.connection_api import get_authorization_header
 
 router = APIRouter(prefix="/v2/epci")
 

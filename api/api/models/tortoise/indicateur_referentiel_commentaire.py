@@ -1,15 +1,22 @@
 from tortoise import fields, models
-from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise.contrib.pydantic.creator import pydantic_model_creator
+from tortoise.fields.data import (
+    IntField,
+    CharField,
+    BooleanField,
+    DatetimeField,
+    TextField,
+)
 
 
 class IndicateurReferentielCommentaire(models.Model):
-    id = fields.IntField(pk=True)
-    epci_id = fields.CharField(max_length=36)
-    indicateur_id = fields.CharField(max_length=136)
-    value = fields.TextField()
-    created_at = fields.DatetimeField(auto_now_add=True)
-    modified_at = fields.DatetimeField(auto_now=True)
-    latest = fields.BooleanField()
+    id = IntField(pk=True)
+    epci_id = CharField(max_length=36)
+    indicateur_id = CharField(max_length=136)
+    value = TextField()
+    created_at = DatetimeField(auto_now_add=True)
+    modified_at = DatetimeField(auto_now=True)
+    latest = BooleanField()
 
 
 IndicateurReferentielCommentaire_Pydantic = pydantic_model_creator(

@@ -6,7 +6,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from api.config.configuration import AUTH_DISABLED_DUMMY_USER
+from api.utils.connection_api import DummyConnectionApi
 from tests.utils.auth import auth_headers
+from api.models.tortoise.utilisateur_connecte import UtilisateurConnecte
+from api.routers.v2.auth import connection_api
 
 path = "/v2/auth"
 
@@ -30,10 +33,31 @@ def test_register(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     assert response.status_code == 200
 
 
-def test_identity(client: TestClient, event_loop: asyncio.AbstractEventLoop):
+def test_identity_infos_is_saved(
+    client: TestClient, event_loop: asyncio.AbstractEventLoop
+):
     assert AUTH_DISABLED_DUMMY_USER
 
-    # POST /v2/auth/identity
+    # Fred connects
+    connection_api.set_user_name(nom="Fred")  # type: ignore
     response = client.get(identity_path, headers=auth_headers())
+
     assert response.status_code == 200
     assert response.json()["ademe_user_id"] == "dummy"
+
+    query = event_loop.run_until_complete(
+        UtilisateurConnecte.filter(
+            ademe_user_id="dummy",
+        )
+    )
+    assert query[0].nom == "Fred"
+
+    # Fred connects with new name Frederic
+    connection_api.set_user_name(nom="Frederic")  # type: ignore
+    response = client.get(identity_path, headers=auth_headers())
+    query = event_loop.run_until_complete(
+        UtilisateurConnecte.filter(
+            ademe_user_id="dummy",
+        )
+    )
+    assert query[0].nom == "Frederic"

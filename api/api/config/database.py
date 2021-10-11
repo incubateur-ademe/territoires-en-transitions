@@ -16,6 +16,7 @@ DB_MODELS = [
     "api.models.tortoise.utilisateur",
     "api.models.tortoise.plan_action",
     "api.models.tortoise.utilisateur_droits",
+    "api.models.tortoise.utilisateur_connecte",
     "api.models.tortoise.epci",
     "api.models.tortoise.action_meta",
 ]

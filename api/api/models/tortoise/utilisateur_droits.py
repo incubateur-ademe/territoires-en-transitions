@@ -1,15 +1,16 @@
-from tortoise import fields, models
-from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise import models
+from tortoise.contrib.pydantic.creator import pydantic_model_creator
+from tortoise.fields.data import IntField, CharField, BooleanField, DatetimeField
 
 
 class UtilisateurDroits(models.Model):
-    id = fields.IntField(pk=True)
-    ademe_user_id = fields.CharField(max_length=300)
-    epci_id = fields.CharField(max_length=36)
-    ecriture = fields.BooleanField()
-    created_at = fields.DatetimeField(auto_now_add=True)
-    modified_at = fields.DatetimeField(auto_now=True)
-    latest = fields.BooleanField()
+    id = IntField(pk=True)
+    ademe_user_id = CharField(max_length=300)
+    epci_id = CharField(max_length=36)
+    ecriture = BooleanField()
+    created_at = DatetimeField(auto_now_add=True)
+    modified_at = DatetimeField(auto_now=True)
+    latest = BooleanField()
 
 
 UtilisateurDroits_Pydantic = pydantic_model_creator(
