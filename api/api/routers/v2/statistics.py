@@ -142,7 +142,7 @@ class PostgresQuery(AbstractQuery):
         return psycopg2.connect(**self._connection_kwargs)
 
     @property
-    def connection(self) :
+    def connection(self):
         try:
             self._connection.isolation_level
         except OperationalError as oe:
@@ -245,27 +245,22 @@ async def get_daily_collectivite_count():
 
 
 @router.get(
-    "/daily_action_referentiel_status_count/eci", response_model=List[DailyCount]
+    "/daily_indicateur_referentiel_count/{referentiel}", response_model=List[DailyCount]
 )
-async def get_daily_action_referentiel_status_count_eci():
-    return query.get_daily_action_referentiel_status_count("eci")
-
-
-@router.get("/daily_indicateur_referentiel_count/eci", response_model=List[DailyCount])
-async def get_daily_indicateur_referentiel_count_eci():
+async def get_daily_indicateur_referentiel_count_eci(
+    referentiel: Literal["cae", "eci"]
+):
     return query.get_daily_indicateur_referentiel_count("eci")
 
 
 @router.get(
-    "/daily_action_referentiel_status_count/cae", response_model=List[DailyCount]
+    "/daily_action_referentiel_status_count/{referentiel}",
+    response_model=List[DailyCount],
 )
-async def get_daily_action_referentiel_status_count_cae():
-    return query.get_daily_action_referentiel_status_count("cae")
-
-
-@router.get("/daily_indicateur_referentiel_count/cae", response_model=List[DailyCount])
-async def get_daily_indicateur_referentiel_count_cae():
-    return query.get_daily_indicateur_referentiel_count("cae")
+async def get_daily_action_referentiel_status_count_cae(
+    referentiel: Literal["cae", "eci"]
+):
+    return query.get_daily_action_referentiel_status_count(referentiel)
 
 
 @router.get("/daily_indicateur_personnalise_count", response_model=List[DailyCount])
