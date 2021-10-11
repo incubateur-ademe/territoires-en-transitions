@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+import math
 import pytest
 
 from api.models.generated.action_referentiel_score import ActionReferentielScore
@@ -155,7 +156,7 @@ def test_notation_with_two_orientations_amongst_which_one_is_non_concernee(notat
         "",
         points=0.0,
         percentage=0.0,
-        potentiel=470,
+        potentiel=500,
         referentiel_points=500,
         referentiel_percentage=1,
     )
@@ -165,7 +166,7 @@ def test_notation_with_two_orientations_amongst_which_one_is_non_concernee(notat
         "1",
         points=0.0,
         percentage=0.0,
-        potentiel=70,
+        potentiel=100,
         referentiel_points=100,
         referentiel_percentage=0.2,
     )
@@ -185,7 +186,7 @@ def test_notation_with_two_orientations_amongst_which_one_is_non_concernee(notat
         "1.2",
         points=0.0,
         percentage=0.0,
-        potentiel=70,  # points are not redistributed amongst orientations
+        potentiel=100,  # points are redistributed since mesure depth is 1 for the fake referentiel
         referentiel_points=70,
         referentiel_percentage=0.7,
     )
@@ -426,39 +427,8 @@ def test_notation_non_concernee_changes_parents_potentiels():
     )
 
 
-def test_potentiel_propagation_on_eci():
-    """Set all taches of a niveau as non concernée"""
-    from api.notation.referentiels import referentiel_eci
-
-    notation = Notation(referentiel_eci)
-    niveau = ("1", "1", "1")
-    orientation = ("1", "1")
-    axe = ("1",)
-    root = ()
-    taches = [index for index in notation.referentiel.indices if index[:-1] == niveau]
-    for tache in taches:
-        notation.set_status(tache, Status.non_concernee)
-    notation.compute()
-    assert notation.potentiels[niveau] == 0.0
-    assert (
-        notation.potentiels[orientation]
-        == notation.referentiel.points[orientation]
-        - notation.referentiel.points[niveau]
-    )
-
-    assert (
-        notation.potentiels[axe]
-        == notation.referentiel.points[axe] - notation.referentiel.points[niveau]
-    )
-
-    assert (
-        notation.potentiels[root]
-        == notation.referentiel.points[root] - notation.referentiel.points[niveau]
-    )
-
-
 def test_potentiel_non_propagation_on_eci():
-    """Set some taches of a niveau as non concernée"""
+    """Set some taches of a niveau as non concernée test it doesn't change potentiels of ancestors"""
     from api.notation.referentiels import referentiel_eci
 
     notation = Notation(referentiel_eci)
@@ -474,3 +444,125 @@ def test_potentiel_non_propagation_on_eci():
     assert notation.potentiels[orientation] == notation.referentiel.points[orientation]
     assert notation.potentiels[axe] == notation.referentiel.points[axe]
     assert notation.potentiels[root] == notation.referentiel.points[root]
+
+
+def test_potentiel_redistribution_on_eci():
+    """Set all taches of a niveau as non concernée,
+    test it doesn't change potentiels of orientation but redistribute potentiel amongst niveaux"""
+    from api.notation.referentiels import referentiel_eci
+
+    notation = Notation(referentiel_eci)
+    niveau = ("1", "1", "1")
+    orientation = ("1", "1")
+    axe = ("1",)
+    root = ()
+    taches = [index for index in notation.referentiel.indices if index[:-1] == niveau]
+    for tache in taches:
+        notation.set_status(tache, Status.non_concernee)
+    notation.compute()
+
+    assert notation.potentiels[niveau] == 0.0
+    siblings = [n for n in notation.referentiel.children(orientation) if n != niveau]
+    for sibling in siblings:
+        assert math.isclose(
+            notation.potentiels[sibling],
+            notation.referentiel.points[orientation] / len(siblings),
+        )
+    assert notation.potentiels[orientation] == notation.referentiel.points[orientation]
+    assert notation.potentiels[axe] == notation.referentiel.points[axe]
+    assert notation.potentiels[root] == notation.referentiel.points[root]
+
+
+def test_potentiel_non_redistribution_on_eci():
+    """Set all taches of every niveaux of an orientation as non concernée
+    test it change the orientation potentiel to 0 and remove orientation points from ancestors potentiels."""
+    from api.notation.referentiels import referentiel_eci
+
+    notation = Notation(referentiel_eci)
+    orientation = ("1", "1")
+    axe = ("1",)
+    root = ()
+
+    niveaux = [
+        index for index in notation.referentiel.indices if index[:-1] == orientation
+    ]
+
+    for niveau in niveaux:
+        taches = [
+            index for index in notation.referentiel.indices if index[:-1] == niveau
+        ]
+        for tache in taches:
+            notation.set_status(tache, Status.non_concernee)
+
+    notation.compute()
+
+    for niveau in niveaux:
+        assert notation.potentiels[niveau] == 0.0
+    assert notation.potentiels[orientation] == 0.0
+
+    assert (
+        notation.potentiels[axe]
+        == notation.referentiel.points[axe] - notation.referentiel.points[orientation]
+    )
+
+    assert (
+        notation.potentiels[root]
+        == notation.referentiel.points[root] - notation.referentiel.points[orientation]
+    )
+
+
+def test_redistribution_amongst_niveaux_on_eci():
+    """Set all taches of a niveaux of an orientation as non concernée
+    test it changes the niveaux sibling potentiel up."""
+    from api.notation.referentiels import referentiel_eci
+
+    notation = Notation(referentiel_eci)
+    niveau_nc = ("1", "1", "1")
+    orientation = ("1", "1")
+
+    niveaux_faits = [
+        index
+        for index in notation.referentiel.indices
+        if index[:-1] == orientation and index != niveau_nc
+    ]
+
+    for niveau in niveaux_faits:
+        taches = [
+            index for index in notation.referentiel.indices if index[:-1] == niveau
+        ]
+        for tache in taches:
+            notation.set_status(tache, Status.faite)
+
+    taches_nc = [
+        index for index in notation.referentiel.indices if index[:-1] == niveau_nc
+    ]
+    for tache_nc in taches_nc:
+        notation.set_status(tache_nc, Status.non_concernee)
+
+    notation.compute()
+
+    # assert that niveau non concerné  is worth 0
+    assert notation.potentiels[niveau_nc] == 0
+    for tache_nc in taches_nc:
+        assert notation.potentiels[tache_nc] == 0
+
+    # assert the niveaux faits are worth more because 1.1.1 is non concerné
+    for niveau in niveaux_faits:
+        assert notation.potentiels[niveau] > notation.referentiel.points[niveau]
+        taches = [
+            index for index in notation.referentiel.indices if index[:-1] == niveau
+        ]
+        for tache in taches:
+            assert notation.potentiels[tache] > notation.referentiel.points[tache]
+
+    # check totals
+    orientation_taches_potentiel = sum(
+        [
+            notation.potentiels[index]
+            for index in notation.referentiel.indices
+            if index[:-2] == orientation
+        ]
+    )
+    assert math.isclose(
+        orientation_taches_potentiel, notation.referentiel.points[orientation]
+    )

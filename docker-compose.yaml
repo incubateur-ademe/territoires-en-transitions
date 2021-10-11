@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  api:
+    build:
+      context: ./api
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://postgres:password@postgres:5432/lala
+    # volumes:
+    #   - ./api/api:/api/api
+
+  client:
+    build:
+      context: ./app.territoiresentransitions.react
+    ports:
+      - 3001:3000
+    volumes:
+      - ./app.territoiresentransitions.react/src:/app/src
+
+  postgres:
+    image: postgres:12
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: lala
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./docker-data/postgresql:/var/lib/postgresql/data
+    # ports:
+    #   - 5432:5432
+
+  adminer:
+    image: adminer
+    ports:
+      - 8090:8080
+
+  # nginx:
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - api
+  #     - client
+  #   build:
+  #     context: ./nginx
+  #   ports:
+  #     - 3000:80

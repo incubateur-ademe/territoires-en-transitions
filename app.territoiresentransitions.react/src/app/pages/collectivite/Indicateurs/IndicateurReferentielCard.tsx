@@ -3,9 +3,17 @@ import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {commands} from 'core-logic/commands';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
-import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
-import {indicateurValueStore} from 'core-logic/api/hybridStores';
+import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
+import {
+  indicateurObjectifStore,
+  indicateurResultatStore,
+} from 'core-logic/api/hybridStores';
 import {useEpciId} from 'core-logic/hooks';
+import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
+import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
+import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
+import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
+import {Editable, Spacer} from 'ui/shared';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   const [value, setValue] = React.useState('');
@@ -36,7 +44,9 @@ const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   return (
     <div className="CrossExpandPanel">
       <details>
-        <summary>Commentaire</summary>
+        <summary>
+          <Editable text="Commentaire" />
+        </summary>
         <div>
           <textarea
             defaultValue={value}
@@ -49,21 +59,70 @@ const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   );
 };
 
-export const IndicateurReferentielCard = (props: {
+export const IndicateurReferentielCardContent = (props: {
   indicateur: IndicateurReferentiel;
 }) => {
   return (
-    <div className="flex flex-col px-5 py-4 bg-beige mb-5">
-      <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
-      <AnyIndicateurValues
-        storage={{
-          indicateurId: props.indicateur.id,
-          store: indicateurValueStore,
-        }}
-      />
-      <div className="h-5" />
+    <div>
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <Commentaire indicateur={props.indicateur} />
+      <AnyIndicateurEditableExpandPanel
+        store={indicateurObjectifStore}
+        indicateurUid={props.indicateur.uid}
+        title="Objectifs"
+        editable={true}
+      />
+
+      <AnyIndicateurLineChartExpandable
+        indicateur={props.indicateur}
+        indicateurId={props.indicateur.id}
+        resultatStore={indicateurResultatStore}
+        objectifStore={indicateurObjectifStore}
+      />
     </div>
+  );
+};
+
+const IndicateurReferentielCardHeaderTitle = (props: {
+  indicateur: IndicateurReferentiel;
+}) => <div>{inferIndicateurReferentielAndTitle(props.indicateur)}</div>;
+
+export const IndicateurReferentielCard = ({
+  indicateur,
+  hideIfNoValues = false,
+}: {
+  indicateur: IndicateurReferentiel;
+  startOpen?: boolean;
+  hideIfNoValues?: boolean;
+}) => {
+  const epciId = useEpciId()!;
+  const resultatValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurResultatStore
+  );
+  const objectifValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurObjectifStore
+  );
+
+  if (
+    hideIfNoValues &&
+    !resultatValueStorables.length &&
+    !objectifValueStorables.length
+  )
+    return null;
+
+  return (
+    <AnyIndicateurCard
+      headerTitle={
+        <IndicateurReferentielCardHeaderTitle indicateur={indicateur} />
+      }
+      indicateurUid={indicateur.uid}
+      indicateurResultatStore={indicateurResultatStore}
+    >
+      <IndicateurReferentielCardContent indicateur={indicateur} />
+    </AnyIndicateurCard>
   );
 };
