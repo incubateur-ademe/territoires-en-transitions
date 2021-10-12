@@ -3,10 +3,10 @@ from api.utils.connection_api import (
     AddressAlreadyExists,
     AdemeConnectionApi,
     DummyConnectionApi,
+    GetTokenError,
 )
 from typing import List
 
-import requests
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 from fastapi import Response
@@ -86,28 +86,14 @@ async def register(inscription: UtilisateurInscription, response: Response):
 @router.get("/token", response_class=JSONResponse)
 async def token(code: str, redirect_uri: str, response: Response):
     """Returns a token from a code"""
-    parameters = {
-        "client_id": AUTH_CLIENT_ID,
-        "client_secret": AUTH_SECRET,
-        "grant_type": "authorization_code",
-        "redirect_uri": redirect_uri,
-        "code": code,
-    }
-    token_response = requests.post(token_endpoint, parameters)
-
-    if token_response.ok:
-        # Todo : update user infos in base
-        return token_response.json()
-
-    raise HTTPException(status_code=400, detail={"content": token_response.content})
-
-
-@router.get("/identity", response_model=UtilisateurConnecteModel)
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    """Return the identity of the currently authenticated user"""
-    connected_user = await connection_api.get_connected_user(token)
-    await update_connected_user_in_db(connected_user)
-    return connected_user
+    try:
+        tokens = connection_api.get_tokens(code, redirect_uri)
+        access_token = tokens.access_token
+        connected_user = await connection_api.get_connected_user(access_token)
+        await update_connected_user_in_db(connected_user)
+        return asdict(tokens)
+    except GetTokenError as e:
+        raise HTTPException(status_code=400, detail={"content": str(e)})
 
 
 async def update_connected_user_in_db(utilisateur_connecte: UtilisateurConnecteModel):
@@ -145,10 +131,10 @@ async def get_utilisateur_droits_from_header(
     token: str = Depends(oauth2_scheme),
 ) -> List[UtilisateurDroits_Pydantic,]:
     """Retrieve the token bearer list of droits"""
-    utilisateur = await connection_api.get_connected_user(token)
-    if not utilisateur:
+    connected_user = await connection_api.get_connected_user(token)
+    if not connected_user:
         raise HTTPException(status_code=401, detail="user not connected")
-    ademe_user_id = utilisateur.ademe_user_id
+    ademe_user_id = connected_user.ademe_user_id
     query = UtilisateurDroits.filter(ademe_user_id=ademe_user_id)
     try:
         return await UtilisateurDroits_Pydantic.from_queryset(query)

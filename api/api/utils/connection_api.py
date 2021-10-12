@@ -4,7 +4,7 @@ import logging
 
 from collections import deque
 from datetime import timedelta
-from typing import Optional
+from typing import Dict, Optional
 
 from fastapi import HTTPException
 import jwt
@@ -23,6 +23,14 @@ from api.models.pydantic.utilisateur_inscription import UtilisateurInscription
 
 
 logger = logging.getLogger()
+
+
+# Data Transfert Object / Entities : defines types/interface. Some of them should be shared with client.
+# =================================
+@dataclass
+class Tokens:
+    access_token: str
+    refresh_token: str
 
 
 # Ports : API specification
@@ -46,6 +54,10 @@ class SupervisionCountError(Exception):
     pass
 
 
+class GetTokenError(Exception):
+    pass
+
+
 class AbstractConnectionApi(abc.ABC):
     @abc.abstractmethod
     async def register(
@@ -62,6 +74,10 @@ class AbstractConnectionApi(abc.ABC):
     @abc.abstractmethod
     async def get_connected_user(self, token: str) -> UtilisateurConnecte:
         """Get connected user"""
+        pass
+
+    @abc.abstractmethod
+    def get_tokens(self, code: str, redirect_uri: str) -> Tokens:
         pass
 
 
@@ -109,6 +125,9 @@ class DummyConnectionApi(AbstractConnectionApi):
             nom=nom,
             prenom="lala",
         )
+
+    def get_tokens(self, code: str, redirect_uri: str) -> Tokens:
+        return Tokens("dummy_access_token", "dummy_refresh_token")
 
 
 # Ademe
@@ -213,3 +232,21 @@ class AdemeConnectionApi(AbstractConnectionApi):
             raise SupervisionCountError(error_message)
 
         return count_response.text
+
+    def get_tokens(self, code: str, redirect_uri: str) -> Tokens:
+        parameters = {
+            "client_id": AUTH_CLIENT_ID,
+            "client_secret": AUTH_SECRET,
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri,
+            "code": code,
+        }
+
+        token_response = requests.post(token_endpoint, parameters)
+        if token_response.ok:
+            token_response_json = token_response.json()
+            access_token = token_response_json.get("access_token")
+            refresh_token = token_response_json.get("refresh_token")
+            if access_token and refresh_token:
+                return Tokens(access_token, refresh_token)
+        raise GetTokenError(token_response.content)
