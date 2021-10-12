@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 
 from api.config.configuration import AUTH_DISABLED_DUMMY_USER
 from tests.utils.auth import auth_headers
-from api.models.tortoise.utilisateur_connecte import UtilisateurConnecte
+from api.models.tortoise.ademe_utilisateur import AdemeUtilisateur
 from api.routers.v2.auth import connection_api
 
 path = "/v2/auth"
@@ -50,7 +50,7 @@ def test_user_infos_is_saved_on_token_call(
     assert response.status_code == 200
 
     query = event_loop.run_until_complete(
-        UtilisateurConnecte.filter(
+        AdemeUtilisateur.filter(
             ademe_user_id="dummy",
         )
     )
@@ -62,7 +62,7 @@ def test_user_infos_is_saved_on_token_call(
         token_path, params=token_route_dummy_params, headers=auth_headers()
     )
     query = event_loop.run_until_complete(
-        UtilisateurConnecte.filter(
+        AdemeUtilisateur.filter(
             ademe_user_id="dummy",
         )
     )

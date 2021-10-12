@@ -17,12 +17,10 @@ from api.config.configuration import AUTH_DISABLED_DUMMY_USER
 from api.config.configuration import (
     AUTH_KEYCLOAK,
     AUTH_REALM,
-    AUTH_CLIENT_ID,
-    AUTH_SECRET,
 )
 from fastapi.security import OAuth2PasswordBearer
-from api.models.pydantic.utilisateur_connecte import (
-    UtilisateurConnecte as UtilisateurConnecteModel,
+from api.models.pydantic.ademe_utilisateur import (
+    AdemeUtilisateur as AdemeUtilisateurModel,
 )
 from api.models.pydantic.utilisateur_inscription import UtilisateurInscription
 from api.models.tortoise.utilisateur import Utilisateur
@@ -30,8 +28,8 @@ from api.models.tortoise.utilisateur_droits import (
     UtilisateurDroits_Pydantic,
     UtilisateurDroits,
 )
-from api.models.tortoise.utilisateur_connecte import (
-    UtilisateurConnecte as UtilisateurConnecteTortoise,
+from api.models.tortoise.ademe_utilisateur import (
+    AdemeUtilisateur as AdemeUtilisateurTortoise,
 )
 
 router = APIRouter(prefix="/v2/auth")
@@ -89,26 +87,26 @@ async def token(code: str, redirect_uri: str, response: Response):
     try:
         tokens = connection_api.get_tokens(code, redirect_uri)
         access_token = tokens.access_token
-        connected_user = await connection_api.get_connected_user(access_token)
-        await update_connected_user_in_db(connected_user)
-        return JSONResponse(tokens.dict())
+        ademe_user = await connection_api.get_ademe_user(access_token)
+        await update_ademe_user_in_db(ademe_user)
+        return tokens.dict()
     except GetTokenError as e:
         raise HTTPException(status_code=400, detail={"content": str(e)})
 
 
-async def update_connected_user_in_db(utilisateur_connecte: UtilisateurConnecteModel):
-    query = UtilisateurConnecteTortoise.filter(
-        ademe_user_id=utilisateur_connecte.ademe_user_id,
+async def update_ademe_user_in_db(ademe_user: AdemeUtilisateurModel):
+    query = AdemeUtilisateurTortoise.filter(
+        ademe_user_id=ademe_user.ademe_user_id,
     )
 
-    utilisateur_connecte_kwargs = utilisateur_connecte.dict()
+    ademe_user_kwargs = ademe_user.dict()
     if await query.exists():
-        connected_user_tortoise = await query.update(**utilisateur_connecte_kwargs)
+        ademe_user_tortoise = await query.update(**ademe_user_kwargs)
     else:
-        connected_user_tortoise = await UtilisateurConnecteTortoise.create(
-            **utilisateur_connecte_kwargs,
+        ademe_user_tortoise = await AdemeUtilisateurTortoise.create(
+            **ademe_user_kwargs,
         )
-    return connected_user_tortoise
+    return ademe_user_tortoise
 
 
 @router.get("/supervision/count", response_class=JSONResponse)
@@ -121,20 +119,20 @@ async def supervision_count():
 
 async def get_user_from_header(
     token: str = Depends(oauth2_scheme),
-) -> UtilisateurConnecteModel:
+) -> AdemeUtilisateurModel:
     """Retrieve user info from header."""
-    connected_user = await connection_api.get_connected_user(token)
-    return connected_user
+    ademe_user = await connection_api.get_ademe_user(token)
+    return ademe_user
 
 
 async def get_utilisateur_droits_from_header(
     token: str = Depends(oauth2_scheme),
 ) -> List[UtilisateurDroits_Pydantic,]:
     """Retrieve the token bearer list of droits"""
-    connected_user = await connection_api.get_connected_user(token)
-    if not connected_user:
+    ademe_user = await connection_api.get_ademe_user(token)
+    if not ademe_user:
         raise HTTPException(status_code=401, detail="user not connected")
-    ademe_user_id = connected_user.ademe_user_id
+    ademe_user_id = ademe_user.ademe_user_id
     query = UtilisateurDroits.filter(ademe_user_id=ademe_user_id)
     try:
         return await UtilisateurDroits_Pydantic.from_queryset(query)

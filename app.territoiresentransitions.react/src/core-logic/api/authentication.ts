@@ -1,5 +1,5 @@
 import jwt_decode, {JwtPayload} from 'jwt-decode';
-import {UtilisateurConnecteStorable} from 'storables/UtilisateurConnecteStorable';
+import {UtilisateurConnecteLocalStorable} from 'storables/UtilisateurConnecteStorable';
 import {utilisateurConnecteStore} from './localStore';
 import type {UtilisateurDroitsInterface} from 'generated/models/utilisateur_droits';
 import {UtilisateurDroits} from 'generated/models/utilisateur_droits';
@@ -37,7 +37,7 @@ utilisateurConnecteStore.addListener(() => {
  * Save fake tokens, the user will be connected until replaced.
  */
 export const saveDummyTokens = () => {
-  const storable = new UtilisateurConnecteStorable({
+  const storable = new UtilisateurConnecteLocalStorable({
     ademe_user_id: 'dummy',
     access_token: _dummyToken,
     refresh_token: _dummyToken,
@@ -53,7 +53,7 @@ export const saveDummyTokens = () => {
  */
 export const saveTokens = (accessToken: string, refreshToken: string) => {
   const decoded = jwt_decode<JwtPayload>(accessToken);
-  const storable = new UtilisateurConnecteStorable({
+  const storable = new UtilisateurConnecteLocalStorable({
     ademe_user_id: decoded['sub'] || '',
     access_token: accessToken,
     refresh_token: refreshToken,
@@ -68,11 +68,11 @@ export const saveTokens = (accessToken: string, refreshToken: string) => {
  * Returns true if the user have a valid token.
  */
 export const connected = (): boolean => {
-  let utilisateur: UtilisateurConnecteStorable;
+  let utilisateur: UtilisateurConnecteLocalStorable;
 
   try {
     utilisateur = utilisateurConnecteStore.retrieveById(
-      UtilisateurConnecteStorable.id
+      UtilisateurConnecteLocalStorable.id
     );
   } catch (e) {
     return false;
@@ -90,10 +90,10 @@ export const connected = (): boolean => {
 /**
  * Retrieve current user, returns an UtilisateurConnecte if the user is connected otherwise returns null.
  */
-export const currentUser = (): UtilisateurConnecteStorable | null => {
+export const currentUser = (): UtilisateurConnecteLocalStorable | null => {
   if (connected())
     return utilisateurConnecteStore.retrieveById(
-      UtilisateurConnecteStorable.id
+      UtilisateurConnecteLocalStorable.id
     );
   return null;
 };
@@ -120,7 +120,9 @@ export const currentRefreshToken = (): string | null => {
  * Sign the current user out. Return true on success, false otherwise.
  */
 export const signOut = (): boolean => {
-  return utilisateurConnecteStore.deleteById(UtilisateurConnecteStorable.id);
+  return utilisateurConnecteStore.deleteById(
+    UtilisateurConnecteLocalStorable.id
+  );
 };
 
 /**

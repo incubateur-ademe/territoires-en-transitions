@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class UtilisateurConnecte(BaseModel):
+class AdemeUtilisateur(BaseModel):
     """
     Represent a connected user.
 
@@ -10,8 +10,6 @@ class UtilisateurConnecte(BaseModel):
     """
 
     ademe_user_id: str
-    access_token: str
-    refresh_token: str
     email: str
     nom: str
     prenom: str

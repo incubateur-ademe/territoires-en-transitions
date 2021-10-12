@@ -18,7 +18,7 @@ from api.config.configuration import (
     AUTH_CLIENT_ID,
     AUTH_SECRET,
 )
-from api.models.pydantic.utilisateur_connecte import UtilisateurConnecte
+from api.models.pydantic.ademe_utilisateur import AdemeUtilisateur
 from api.models.pydantic.utilisateur_inscription import UtilisateurInscription
 
 
@@ -70,7 +70,7 @@ class AbstractConnectionApi(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def get_connected_user(self, token: str) -> UtilisateurConnecte:
+    async def get_ademe_user(self, token: str) -> AdemeUtilisateur:
         """Get connected user"""
         pass
 
@@ -88,10 +88,8 @@ class DummyConnectionApi(AbstractConnectionApi):
         self._api_down = False
         self._register_error = None
         self.user_uid = user_uid
-        self.user = UtilisateurConnecte(
+        self.user = AdemeUtilisateur(
             ademe_user_id=user_uid,
-            access_token="lala",
-            refresh_token="lala",
             email="lala",
             nom="dummy",
             prenom="lala",
@@ -109,16 +107,14 @@ class DummyConnectionApi(AbstractConnectionApi):
             return "42"
         raise SupervisionCountError()
 
-    async def get_connected_user(self, token: str) -> UtilisateurConnecte:
+    async def get_ademe_user(self, token: str) -> AdemeUtilisateur:
         """Get connected user"""
         return self.user
 
     # For test purpose only
     def set_user_name(self, nom: str):
-        self.user = UtilisateurConnecte(
+        self.user = AdemeUtilisateur(
             ademe_user_id=self.user_uid,
-            access_token="lala",
-            refresh_token="lala",
             email="lala",
             nom=nom,
             prenom="lala",
@@ -168,18 +164,16 @@ class AdemeConnectionApi(AbstractConnectionApi):
 
     async def set_connected_user_from_token(
         self, token: str
-    ) -> Optional[UtilisateurConnecte]:
+    ) -> Optional[AdemeUtilisateur]:
         try:
             payload = jwt.decode(token, options={"verify_signature": False})
             self.verified_token_cache.append(token)
             # TODO : sanity check on payload !
-            user = UtilisateurConnecte(
+            user = AdemeUtilisateur(
                 ademe_user_id=payload.get("sub", ""),
                 prenom=payload.get("given_name", ""),
                 nom=payload.get("family_name", ""),
                 email=payload.get("email", ""),
-                access_token=token,
-                refresh_token="",
             )
         except JWTError:
             if token in self.verified_token_cache:
@@ -189,7 +183,7 @@ class AdemeConnectionApi(AbstractConnectionApi):
         self.user = user
         return user
 
-    async def get_connected_user(self, token: str):
+    async def get_ademe_user(self, token: str):
         await self.set_connected_user_from_token(token)
         return self.user
 

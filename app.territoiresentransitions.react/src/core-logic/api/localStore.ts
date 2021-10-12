@@ -8,8 +8,6 @@ import {
   FicheActionCategorieInterface,
   FicheActionInterface,
   IndicateurPersonnaliseInterface,
-  UtilisateurConnecte,
-  UtilisateurConnecteInterface,
 } from 'generated/models';
 import {
   ActionStatusStorable,
@@ -17,8 +15,10 @@ import {
   ActionCustomStorable,
   FicheActionStorable,
   FicheActionCategorieStorable,
-  UtilisateurConnecteStorable,
+  UtilisateurConnecteLocalStorable,
   IndicateurPersonnaliseStorable,
+  UtilisateurConnecteInterface,
+  UtilisateurConnecte,
 } from 'storables';
 import {ChangeNotifier} from 'core-logic/api/reactivity';
 
@@ -196,11 +196,11 @@ export const indicateurPersonnaliseResultatStore =
   });
 
 export const utilisateurConnecteStore =
-  new LocalStore<UtilisateurConnecteStorable>({
+  new LocalStore<UtilisateurConnecteLocalStorable>({
     pathname: UtilisateurConnecte.pathname,
     serializer: storable => storable,
     deserializer: serialized =>
-      new UtilisateurConnecteStorable(
+      new UtilisateurConnecteLocalStorable(
         serialized as UtilisateurConnecteInterface
       ),
   });
