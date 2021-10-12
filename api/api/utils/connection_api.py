@@ -147,7 +147,6 @@ async def get_authorization_header() -> dict:
 class AdemeConnectionApi(AbstractConnectionApi):
     def __init__(self) -> None:
         super().__init__()
-        self.oauth2_scheme = OAuth2PasswordBearer(tokenUrl=token_endpoint)
         self.verified_token_cache = deque(
             maxlen=1000
         )  # cache verified tokens to limit calls to ADEME keycloak
@@ -156,6 +155,7 @@ class AdemeConnectionApi(AbstractConnectionApi):
         self, token: str = Depends(oauth2_scheme)
     ) -> Optional[UtilisateurConnecte]:
         try:
+            print("token ", token)
             payload = jwt.decode(token, options={"verify_signature": False})
             self.verified_token_cache.append(token)
             # TODO : sanity check on payload !
