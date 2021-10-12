@@ -6,7 +6,6 @@ import pytest
 from fastapi.testclient import TestClient
 
 from api.config.configuration import AUTH_DISABLED_DUMMY_USER
-from api.utils.connection_api import DummyConnectionApi
 from tests.utils.auth import auth_headers
 from api.models.tortoise.utilisateur_connecte import UtilisateurConnecte
 from api.routers.v2.auth import connection_api

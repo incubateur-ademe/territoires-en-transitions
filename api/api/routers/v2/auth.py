@@ -20,6 +20,7 @@ from api.config.configuration import (
     AUTH_CLIENT_ID,
     AUTH_SECRET,
 )
+from fastapi.security import OAuth2PasswordBearer
 from api.models.pydantic.utilisateur_connecte import (
     UtilisateurConnecte as UtilisateurConnecteModel,
 )
@@ -38,6 +39,8 @@ router = APIRouter(prefix="/v2/auth")
 token_endpoint = (
     f"{AUTH_KEYCLOAK}/auth/realms/{AUTH_REALM}/protocol/openid-connect/token"
 )
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=token_endpoint)
 
 
 connection_api = (
@@ -100,9 +103,9 @@ async def token(code: str, redirect_uri: str, response: Response):
 
 
 @router.get("/identity", response_model=UtilisateurConnecteModel)
-async def get_current_user():
+async def get_current_user(token: str = Depends(oauth2_scheme)):
     """Return the identity of the currently authenticated user"""
-    connected_user = await connection_api.get_connected_user()
+    connected_user = await connection_api.get_connected_user(token)
     await update_connected_user_in_db(connected_user)
     return connected_user
 
@@ -130,17 +133,19 @@ async def supervision_count():
         raise HTTPException(status_code=503)
 
 
-async def get_user_from_header() -> UtilisateurConnecteModel:  # token: str = Depends(oauth2_scheme)
+async def get_user_from_header(
+    token: str = Depends(oauth2_scheme),
+) -> UtilisateurConnecteModel:
     """Retrieve user info from header."""
-    connected_user = await connection_api.get_connected_user()
+    connected_user = await connection_api.get_connected_user(token)
     return connected_user
 
 
-async def get_utilisateur_droits_from_header() -> List[
-    UtilisateurDroits_Pydantic,
-]:
+async def get_utilisateur_droits_from_header(
+    token: str = Depends(oauth2_scheme),
+) -> List[UtilisateurDroits_Pydantic,]:
     """Retrieve the token bearer list of droits"""
-    utilisateur = await connection_api.get_connected_user()
+    utilisateur = await connection_api.get_connected_user(token)
     if not utilisateur:
         raise HTTPException(status_code=401, detail="user not connected")
     ademe_user_id = utilisateur.ademe_user_id

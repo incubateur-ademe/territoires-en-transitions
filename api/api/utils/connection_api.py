@@ -6,9 +6,7 @@ from collections import deque
 from datetime import timedelta
 from typing import Optional
 
-from fastapi.param_functions import Depends
 from fastapi import HTTPException
-from fastapi.security import OAuth2PasswordBearer
 import jwt
 from jose import JWTError
 from memoize.configuration import DefaultInMemoryCacheConfiguration
@@ -62,7 +60,7 @@ class AbstractConnectionApi(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def get_connected_user(self) -> UtilisateurConnecte:
+    async def get_connected_user(self, token: str) -> UtilisateurConnecte:
         """Get connected user"""
         pass
 
@@ -97,7 +95,7 @@ class DummyConnectionApi(AbstractConnectionApi):
             return "42"
         raise SupervisionCountError()
 
-    async def get_connected_user(self) -> UtilisateurConnecte:
+    async def get_connected_user(self, token: str) -> UtilisateurConnecte:
         """Get connected user"""
         return self.user
 
@@ -117,8 +115,6 @@ class DummyConnectionApi(AbstractConnectionApi):
 # ------
 
 from api.utils.endpoints import *
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=token_endpoint)
 
 
 @memoize(
@@ -152,10 +148,9 @@ class AdemeConnectionApi(AbstractConnectionApi):
         )  # cache verified tokens to limit calls to ADEME keycloak
 
     async def set_connected_user_from_token(
-        self, token: str = Depends(oauth2_scheme)
+        self, token: str
     ) -> Optional[UtilisateurConnecte]:
         try:
-            print("token ", token)
             payload = jwt.decode(token, options={"verify_signature": False})
             self.verified_token_cache.append(token)
             # TODO : sanity check on payload !
@@ -175,8 +170,8 @@ class AdemeConnectionApi(AbstractConnectionApi):
         self.user = user
         return user
 
-    async def get_connected_user(self):
-        await self.set_connected_user_from_token()
+    async def get_connected_user(self, token: str):
+        await self.set_connected_user_from_token(token)
         return self.user
 
     async def register(
