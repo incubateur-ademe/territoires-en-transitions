@@ -1,5 +1,4 @@
 import abc
-from dataclasses import dataclass
 import logging
 
 from collections import deque
@@ -11,6 +10,7 @@ import jwt
 from jose import JWTError
 from memoize.configuration import DefaultInMemoryCacheConfiguration
 from memoize.wrapper import memoize
+from pydantic import BaseModel
 import requests
 
 
@@ -27,8 +27,7 @@ logger = logging.getLogger()
 
 # Data Transfert Object / Entities : defines types/interface. Some of them should be shared with client.
 # =================================
-@dataclass
-class Tokens:
+class Tokens(BaseModel):
     access_token: str
     refresh_token: str
 
@@ -37,8 +36,7 @@ class Tokens:
 # ======
 
 
-@dataclass
-class RegisterResponseData:
+class RegisterResponseData(BaseModel):
     user_id: str
 
 
@@ -67,7 +65,7 @@ class AbstractConnectionApi(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def get_supervision_count(self) -> str:
+    def get_supervision_count(self) -> str:
         """Count nb of connection in base. Raises SupervisionCountError if any error."""
         pass
 
@@ -103,10 +101,10 @@ class DummyConnectionApi(AbstractConnectionApi):
         self, inscription: UtilisateurInscription
     ) -> RegisterResponseData:
         if self._register_error is None:
-            return RegisterResponseData(self.user_uid)
+            return RegisterResponseData(user_id=self.user_uid)
         raise Exception(self._register_error)
 
-    async def get_supervision_count(self) -> str:
+    def get_supervision_count(self) -> str:
         if not self._api_down:
             return "42"
         raise SupervisionCountError()
@@ -127,7 +125,9 @@ class DummyConnectionApi(AbstractConnectionApi):
         )
 
     def get_tokens(self, code: str, redirect_uri: str) -> Tokens:
-        return Tokens("dummy_access_token", "dummy_refresh_token")
+        return Tokens(
+            access_token="dummy_access_token", refresh_token="dummy_refresh_token"
+        )
 
 
 # Ademe
@@ -212,7 +212,7 @@ class AdemeConnectionApi(AbstractConnectionApi):
                 # there is no consequence of enableCGU failing, we are just being nice.
                 logger.warn(f"Could not enable CGU for user {user_id}: {str(e)}")
 
-            return RegisterResponseData(user_id)
+            return RegisterResponseData(user_id=user_id)
 
         if users_response.status_code == 409:
             raise AddressAlreadyExists()
@@ -222,7 +222,7 @@ class AdemeConnectionApi(AbstractConnectionApi):
         logger.warn(error_message)
         raise Exception(error_message)
 
-    async def get_supervision_count(self) -> Optional[str]:
+    def get_supervision_count(self) -> Optional[str]:
         count_response = requests.get(count_endpoint)
         if not count_response.ok:
             error_message = (
@@ -248,5 +248,5 @@ class AdemeConnectionApi(AbstractConnectionApi):
             access_token = token_response_json.get("access_token")
             refresh_token = token_response_json.get("refresh_token")
             if access_token and refresh_token:
-                return Tokens(access_token, refresh_token)
+                return Tokens(access_token=access_token, refresh_token=refresh_token)
         raise GetTokenError(token_response.content)

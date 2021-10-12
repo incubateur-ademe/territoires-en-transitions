@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from tortoise.contrib.fastapi import HTTPNotFoundError
-from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise.contrib.pydantic.creator import pydantic_model_creator
 from api.models.tortoise.any_indicateur_values import (
     IndicateurPersonnaliseObjectif,
 )

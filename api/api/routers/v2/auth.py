@@ -91,7 +91,7 @@ async def token(code: str, redirect_uri: str, response: Response):
         access_token = tokens.access_token
         connected_user = await connection_api.get_connected_user(access_token)
         await update_connected_user_in_db(connected_user)
-        return asdict(tokens)
+        return JSONResponse(tokens.dict())
     except GetTokenError as e:
         raise HTTPException(status_code=400, detail={"content": str(e)})
 
