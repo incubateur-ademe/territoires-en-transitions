@@ -261,11 +261,18 @@ class Notation:
 
     def __compute_completion(self):
         """Compute percentage for display purposes see ActionReferentielScore"""
+        nb_of_childless_descendant_completed = {}
         for index in self.referentiel.backward:
             children = self.referentiel.children(index)
             if not children:
-                self.completion[index] = 1 if self.statuses[index] != Status.vide else 0
+                self.completion[index] = nb_of_childless_descendant_completed[index] = (
+                    1 if self.statuses[index] != Status.vide else 0
+                )
             else:
-                self.completion[index] = sum(
-                    [self.completion[child] for child in children]
-                ) / len(children)
+                nb_of_childless_descendant_completed[index] = sum(
+                    [nb_of_childless_descendant_completed[child] for child in children]
+                )
+                self.completion[index] = (
+                    nb_of_childless_descendant_completed[index]
+                    / self.referentiel.childless_descendant[index]
+                )
