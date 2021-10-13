@@ -82,7 +82,13 @@ jobs:
           pipenv install --dev
         working-directory: ${{env.working-directory}}
 
+
+      # Run domain tests
+      - name: Run domain tests
+        run: pipenv run pytest tests/domain
+        working-directory: ${{env.working-directory}}
+
       # Run tests
-      - name: Run tests
+      - name: Run API tests
         run: pipenv run pytest tests/api
         working-directory: ${{env.working-directory}}
