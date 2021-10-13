@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from tortoise.contrib.fastapi import HTTPNotFoundError
 from tortoise.exceptions import DoesNotExist
 
-from api.models.pydantic.utilisateur_connecte import UtilisateurConnecte
+from api.models.pydantic.ademe_utilisateur import AdemeUtilisateur
 from api.models.tortoise.utilisateur_droits import (
     UtilisateurDroits_Pydantic,
     UtilisateurDroits,
@@ -18,7 +18,7 @@ router = APIRouter(prefix="/v2/utilisateur_droits")
 @router.post("", response_model=UtilisateurDroits_Pydantic)
 async def write_droits(
     droits: UtilisateurDroitsIn_Pydantic,
-    utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
+    utilisateur: AdemeUtilisateur = Depends(get_user_from_header),
 ):
     if utilisateur.ademe_user_id != droits.ademe_user_id:
         raise HTTPException(status_code=401, detail="ademe_user_id mismatch")

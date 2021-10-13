@@ -7,6 +7,8 @@ from fastapi.testclient import TestClient
 
 from api.config.configuration import AUTH_DISABLED_DUMMY_USER
 from tests.utils.auth import auth_headers
+from api.models.tortoise.ademe_utilisateur import AdemeUtilisateur
+from api.routers.v2.auth import connection_api
 
 path = "/v2/auth"
 
@@ -18,7 +20,7 @@ registration = {
 }
 
 register_path = f"{path}/register"
-identity_path = f"{path}/identity"
+token_path = f"{path}/token"
 
 
 @pytest.mark.skip(
@@ -30,10 +32,38 @@ def test_register(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     assert response.status_code == 200
 
 
-def test_identity(client: TestClient, event_loop: asyncio.AbstractEventLoop):
+def test_user_infos_is_saved_on_token_call(
+    client: TestClient, event_loop: asyncio.AbstractEventLoop
+):
     assert AUTH_DISABLED_DUMMY_USER
 
-    # POST /v2/auth/identity
-    response = client.get(identity_path, headers=auth_headers())
+    token_route_dummy_params = dict(code="some_code", redirect_uri="redirect_uri")
+
+    # Fred connects
+    connection_api.set_user_name(nom="Fred")  # type: ignore
+    response = client.get(
+        token_path,
+        params=token_route_dummy_params,
+        headers=auth_headers(),
+    )
+
     assert response.status_code == 200
-    assert response.json()["ademe_user_id"] == "dummy"
+
+    query = event_loop.run_until_complete(
+        AdemeUtilisateur.filter(
+            ademe_user_id="dummy",
+        )
+    )
+    assert query[0].nom == "Fred"
+
+    # Fred connects with new name Frederic
+    connection_api.set_user_name(nom="Frederic")  # type: ignore
+    response = client.get(
+        token_path, params=token_route_dummy_params, headers=auth_headers()
+    )
+    query = event_loop.run_until_complete(
+        AdemeUtilisateur.filter(
+            ademe_user_id="dummy",
+        )
+    )
+    assert query[0].nom == "Frederic"

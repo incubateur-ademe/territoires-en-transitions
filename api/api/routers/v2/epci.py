@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException
 from tortoise.contrib.fastapi import HTTPNotFoundError
 from tortoise.exceptions import DoesNotExist
 
-from api.models.pydantic.utilisateur_connecte import UtilisateurConnecte
+from api.models.pydantic.ademe_utilisateur import AdemeUtilisateur
 from api.models.tortoise.epci import Epci_Pydantic, Epci, EpciIn_Pydantic
 from api.models.tortoise.utilisateur_droits import (
     UtilisateurDroits_Pydantic,
@@ -16,6 +16,7 @@ from api.routers.v2.auth import (
     get_user_from_header,
     get_utilisateur_droits_from_header,
 )
+from api.utils.connection_api import get_authorization_header
 
 router = APIRouter(prefix="/v2/epci")
 
@@ -23,7 +24,7 @@ router = APIRouter(prefix="/v2/epci")
 @router.post("", response_model=Epci_Pydantic)
 async def write_epci(
     epci: EpciIn_Pydantic,
-    utilisateur: UtilisateurConnecte = Depends(get_user_from_header),
+    utilisateur: AdemeUtilisateur = Depends(get_user_from_header),
     droits: List[UtilisateurDroits_Pydantic] = Depends(
         get_utilisateur_droits_from_header
     ),

@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {UtilisateurDroits} from 'generated/models/utilisateur_droits';
 import {auth, currentUtilisateurDroits} from 'core-logic/api/authentication';
-import {UtilisateurConnecteStorable} from 'storables/UtilisateurConnecteStorable';
+import {UtilisateurConnecteLocalStorable} from 'storables/UtilisateurConnecteStorable';
 import {utilisateurConnecteStore} from 'core-logic/api/localStore';
 
 export const useDroits = (): UtilisateurDroits[] => {
@@ -28,20 +28,22 @@ export const useDroits = (): UtilisateurDroits[] => {
   return droits;
 };
 
-export const useUser = (): UtilisateurConnecteStorable | null => {
-  const [user, setUser] = useState<UtilisateurConnecteStorable | null>(null);
+export const useUser = (): UtilisateurConnecteLocalStorable | null => {
+  const [user, setUser] = useState<UtilisateurConnecteLocalStorable | null>(
+    null
+  );
 
   useEffect(() => {
     const listener = async () => {
       const storable = await utilisateurConnecteStore.retrieveById(
-        UtilisateurConnecteStorable.id
+        UtilisateurConnecteLocalStorable.id
       );
       setUser(storable);
     };
 
     try {
       const retrieved = utilisateurConnecteStore.retrieveById(
-        UtilisateurConnecteStorable.id
+        UtilisateurConnecteLocalStorable.id
       );
       if (retrieved.ademe_user_id !== user?.ademe_user_id) setUser(retrieved);
     } catch (_) {
