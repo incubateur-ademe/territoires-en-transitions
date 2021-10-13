@@ -1,16 +1,16 @@
 import abc
-from dataclasses import dataclass
 import logging
 
 from collections import deque
 from datetime import timedelta
-from typing import Optional
+from typing import Dict, Optional
 
 from fastapi import HTTPException
 import jwt
 from jose import JWTError
 from memoize.configuration import DefaultInMemoryCacheConfiguration
 from memoize.wrapper import memoize
+from pydantic import BaseModel
 import requests
 
 
@@ -18,19 +18,25 @@ from api.config.configuration import (
     AUTH_CLIENT_ID,
     AUTH_SECRET,
 )
-from api.models.pydantic.utilisateur_connecte import UtilisateurConnecte
+from api.models.pydantic.ademe_utilisateur import AdemeUtilisateur
 from api.models.pydantic.utilisateur_inscription import UtilisateurInscription
 
 
 logger = logging.getLogger()
 
 
+# Data Transfert Object / Entities : defines types/interface. Some of them should be shared with client.
+# =================================
+class Tokens(BaseModel):
+    access_token: str
+    refresh_token: str
+
+
 # Ports : API specification
 # ======
 
 
-@dataclass
-class RegisterResponseData:
+class RegisterResponseData(BaseModel):
     user_id: str
 
 
@@ -46,6 +52,10 @@ class SupervisionCountError(Exception):
     pass
 
 
+class GetTokenError(Exception):
+    pass
+
+
 class AbstractConnectionApi(abc.ABC):
     @abc.abstractmethod
     async def register(
@@ -55,13 +65,17 @@ class AbstractConnectionApi(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def get_supervision_count(self) -> str:
+    def get_supervision_count(self) -> str:
         """Count nb of connection in base. Raises SupervisionCountError if any error."""
         pass
 
     @abc.abstractmethod
-    async def get_connected_user(self, token: str) -> UtilisateurConnecte:
+    async def get_ademe_user(self, token: str) -> AdemeUtilisateur:
         """Get connected user"""
+        pass
+
+    @abc.abstractmethod
+    def get_tokens(self, code: str, redirect_uri: str) -> Tokens:
         pass
 
 
@@ -74,10 +88,8 @@ class DummyConnectionApi(AbstractConnectionApi):
         self._api_down = False
         self._register_error = None
         self.user_uid = user_uid
-        self.user = UtilisateurConnecte(
+        self.user = AdemeUtilisateur(
             ademe_user_id=user_uid,
-            access_token="lala",
-            refresh_token="lala",
             email="lala",
             nom="dummy",
             prenom="lala",
@@ -87,27 +99,30 @@ class DummyConnectionApi(AbstractConnectionApi):
         self, inscription: UtilisateurInscription
     ) -> RegisterResponseData:
         if self._register_error is None:
-            return RegisterResponseData(self.user_uid)
+            return RegisterResponseData(user_id=self.user_uid)
         raise Exception(self._register_error)
 
-    async def get_supervision_count(self) -> str:
+    def get_supervision_count(self) -> str:
         if not self._api_down:
             return "42"
         raise SupervisionCountError()
 
-    async def get_connected_user(self, token: str) -> UtilisateurConnecte:
+    async def get_ademe_user(self, token: str) -> AdemeUtilisateur:
         """Get connected user"""
         return self.user
 
     # For test purpose only
     def set_user_name(self, nom: str):
-        self.user = UtilisateurConnecte(
+        self.user = AdemeUtilisateur(
             ademe_user_id=self.user_uid,
-            access_token="lala",
-            refresh_token="lala",
             email="lala",
             nom=nom,
             prenom="lala",
+        )
+
+    def get_tokens(self, code: str, redirect_uri: str) -> Tokens:
+        return Tokens(
+            access_token="dummy_access_token", refresh_token="dummy_refresh_token"
         )
 
 
@@ -149,18 +164,16 @@ class AdemeConnectionApi(AbstractConnectionApi):
 
     async def set_connected_user_from_token(
         self, token: str
-    ) -> Optional[UtilisateurConnecte]:
+    ) -> Optional[AdemeUtilisateur]:
         try:
             payload = jwt.decode(token, options={"verify_signature": False})
             self.verified_token_cache.append(token)
             # TODO : sanity check on payload !
-            user = UtilisateurConnecte(
+            user = AdemeUtilisateur(
                 ademe_user_id=payload.get("sub", ""),
                 prenom=payload.get("given_name", ""),
                 nom=payload.get("family_name", ""),
                 email=payload.get("email", ""),
-                access_token=token,
-                refresh_token="",
             )
         except JWTError:
             if token in self.verified_token_cache:
@@ -170,7 +183,7 @@ class AdemeConnectionApi(AbstractConnectionApi):
         self.user = user
         return user
 
-    async def get_connected_user(self, token: str):
+    async def get_ademe_user(self, token: str):
         await self.set_connected_user_from_token(token)
         return self.user
 
@@ -193,7 +206,7 @@ class AdemeConnectionApi(AbstractConnectionApi):
                 # there is no consequence of enableCGU failing, we are just being nice.
                 logger.warn(f"Could not enable CGU for user {user_id}: {str(e)}")
 
-            return RegisterResponseData(user_id)
+            return RegisterResponseData(user_id=user_id)
 
         if users_response.status_code == 409:
             raise AddressAlreadyExists()
@@ -203,7 +216,7 @@ class AdemeConnectionApi(AbstractConnectionApi):
         logger.warn(error_message)
         raise Exception(error_message)
 
-    async def get_supervision_count(self) -> Optional[str]:
+    def get_supervision_count(self) -> Optional[str]:
         count_response = requests.get(count_endpoint)
         if not count_response.ok:
             error_message = (
@@ -213,3 +226,21 @@ class AdemeConnectionApi(AbstractConnectionApi):
             raise SupervisionCountError(error_message)
 
         return count_response.text
+
+    def get_tokens(self, code: str, redirect_uri: str) -> Tokens:
+        parameters = {
+            "client_id": AUTH_CLIENT_ID,
+            "client_secret": AUTH_SECRET,
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri,
+            "code": code,
+        }
+
+        token_response = requests.post(token_endpoint, parameters)
+        if token_response.ok:
+            token_response_json = token_response.json()
+            access_token = token_response_json.get("access_token")
+            refresh_token = token_response_json.get("refresh_token")
+            if access_token and refresh_token:
+                return Tokens(access_token=access_token, refresh_token=refresh_token)
+        raise GetTokenError(token_response.content)
