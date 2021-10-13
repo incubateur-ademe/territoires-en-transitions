@@ -326,7 +326,8 @@ def test_notation_completion(notation):
     )
     notation.compute()
     assert notation.completion[("1",)] == 1 / 2
-    assert notation.completion[()] == 1 / 2 / 3
+    assert notation.completion[("0",)] == 0
+    assert notation.completion[()] == 1 / 4
 
 
 def test_notation_non_concernee_changes_parents_potentiels():
