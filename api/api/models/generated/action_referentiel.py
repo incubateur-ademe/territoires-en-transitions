@@ -16,3 +16,6 @@ class ActionReferentiel(BaseModel):
     ressources: Optional[str]
     points: float
     actions: List[ActionReferentiel]
+
+
+ActionReferentiel.update_forward_refs()

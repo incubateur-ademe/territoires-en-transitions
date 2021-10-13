@@ -18,7 +18,7 @@ class Referentiel:
     Takes the root action of a referentiel and compute tables and indices.
     - points are used by Notation to compute scores.
     - percentages are used to display/test computation
-    - actions allows for index to
+    - childless_descendant are used to compute completude
 
     ## Indices
     indices, forward and backward are indices list for iterating either
@@ -37,14 +37,15 @@ class Referentiel:
         self.mesure_depth: int = mesure_depth
         self.points: Dict[Tuple, float] = {}
         self.percentages: Dict[Tuple, float] = {}
+        self.childless_descendant: Dict[Tuple, int] = {}
         self.actions: Dict[Tuple, ActionReferentiel] = {}
         self.indices: List[Tuple]
         self.forward: List[Tuple]
         self.backward: List[Tuple]
         self.__build_indices_and_actions()
-        # self.__fix_actions_points()
         self.__build_points()
         self.__build_percentages()
+        self.__build_childless_descendant()
 
     def children(self, parent: tuple) -> List[tuple]:
         """Returns the children indices"""
@@ -136,14 +137,21 @@ class Referentiel:
                 self.percentages[index] = (
                     points / denominator if denominator != 0 else 0
                 )
-
-                # if points == 0:
-                #     self.percentages[index] = 0
-                # else:
-                #     self.percentages[index] = (
-                #             self.points[index] / self.points[index[:-1]]
-                #     )
         self.percentages[tuple()] = 1
+
+    def __build_childless_descendant(self):
+        """Build childless descendant recursively"""
+        for action_index in self.backward:
+            action_children_indexes = self.children(action_index)
+            if not action_children_indexes:
+                self.childless_descendant[action_index] = 0
+            else:
+                self.childless_descendant[action_index] = sum(
+                    [
+                        self.childless_descendant[action_child_index] or 1
+                        for action_child_index in action_children_indexes
+                    ]
+                )
 
     @staticmethod
     def __sanity_check(root_action: ActionReferentiel):
