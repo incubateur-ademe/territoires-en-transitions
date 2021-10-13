@@ -124,7 +124,7 @@ const AnyIndicateurLineChart = (props: {
       </div>
       <Spacer />
       <a
-        className="fr-btn fr-btn--secondary ml-7"
+        className="fr-btn fr-btn--secondary ml-7 mt-7"
         id="download"
         download={`${props.title}.png`}
         href=""

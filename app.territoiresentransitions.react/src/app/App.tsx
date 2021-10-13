@@ -11,6 +11,8 @@ import {Footer, Header} from 'ui';
 import {FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
+import StatisticsPage from 'app/pages/statistics/StatisticsPage';
+
 import Home from 'app/pages/Home';
 import {useConnected} from 'core-logic/hooks';
 
@@ -58,6 +60,10 @@ export const App = () => {
             <Route path={'/collectivite/:epciId'}>
               <Header nav={<Navigation />} />
               <CollectiviteRoutes />
+            </Route>
+            <Route path={'/statistics'}>
+              <Header nav={<Navigation />} />
+              <StatisticsPage />
             </Route>
           </Switch>
           <Footer
