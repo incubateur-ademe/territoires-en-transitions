@@ -80,14 +80,9 @@ const ReferentielTitle = (props: {view: View}) => {
   return (
     <header className="flex flex-row items-center mb-6 space-x-10">
       <h2 className="fr-h2">{viewTitles[props.view]}</h2>
-      <div className={`${props.view === 'both' ? 'hidden' : ''}`}>
-        {/* <ProgressStatStatic
-          action={referentiel}
-          position="left"
-          showPoints={true}
-        /> */}
-        <CurrentEpciGaugeProgressStat action={referentiel} size="sm" />
+      <div className={`${props.view === 'both' ? 'hidden' : ''} flex gap-5`}>
         <CurrentEpciCompletionStar action={referentiel} />
+        <CurrentEpciGaugeProgressStat action={referentiel} size="sm" />
       </div>
     </header>
   );

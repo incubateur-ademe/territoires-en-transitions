@@ -6,6 +6,7 @@ import {ActionReferentielTitle} from './ActionReferentielTitle';
 import {referentielToName} from 'app/labels';
 import {getCurrentEpciId} from 'core-logic/api/currentEpci';
 import {referentielId} from 'utils/actions';
+import {CurrentEpciCompletionStar} from 'ui/referentiels/CurrentEpciCompletionStar';
 
 export const ActionReferentielTitleCard = ({
   action,
@@ -27,12 +28,15 @@ export const ActionReferentielTitleCard = ({
               {referentielToName[referentiel]}
             </span>
           </div>
-          <ProgressStatStatic
-            className="w-100"
-            action={action}
-            position="right"
-            showPoints={true}
-          />
+          <div className="flex gap-3">
+            <CurrentEpciCompletionStar action={action} />
+            <ProgressStatStatic
+              className="w-100"
+              action={action}
+              position="right"
+              showPoints={true}
+            />
+          </div>
         </div>
         <div className="p-4 flex justify-between">
           <ActionReferentielTitle action={action} />

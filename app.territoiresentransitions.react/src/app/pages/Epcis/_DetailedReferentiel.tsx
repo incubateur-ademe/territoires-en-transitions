@@ -5,25 +5,29 @@ import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {DetailedEpciCardPropsLink} from './_DetailedEpciCardPropsLink';
 import {Referentiel} from 'types';
 import {epciCard_AxisShortLabel} from 'app/labels';
+import {CompletionStar} from 'ui/referentiels/CurrentEpciCompletionStar';
 
 const AxisSummary = (props: {
   title: string;
   epciId: string;
   score: ActionReferentielScoreStorable | null;
   referentiel: Referentiel;
-}) => (
-  <div className="flex items-center justify-between text-xs">
-    <div className="w-3/5">{props.title}</div>
-    <div className="flex">
-      <UiGaugeProgressStat score={props.score} size="xs" showPoints={false} />
-      {/* TODO : this is commented until we have an ancor system to link to the axis */}
-      {/* <DetailedEpciCardPropsLink
-        label=""
-        linkTo={`/collectivite/${props.epciId}/action/${props.referentiel}/${props.score?.action_id}`} // TODO link to ECI ref
-      /> */}
+}) => {
+  return (
+    <div className="flex items-center justify-between text-xs">
+      <div className="w-3/5">{props.title}</div>
+      <div className="flex">
+        <UiGaugeProgressStat score={props.score} size="xs" showPoints={false} />
+
+        {/* TODO : this is commented until we have an ancor system to link to the axis */}
+        {/* <DetailedEpciCardPropsLink
+              label=""
+              linkTo={`/collectivite/${props.epciId}/action/${props.referentiel}/${props.score?.action_id}`} // TODO link to ECI ref
+            /> */}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const DetailedReferentiel = ({
   title,
@@ -46,7 +50,12 @@ export const DetailedReferentiel = ({
       <div>
         <div className="flex justify-between items-center">
           <div className="text-lg font-bold">{title}</div>
-          <RootProgressStat score={root_score} />
+          <div className="flex gap-3">
+            <div className="mt-2">
+              <CompletionStar score={root_score} />
+            </div>
+            <RootProgressStat score={root_score} />
+          </div>
         </div>
         <div className="flex flex-col justify-evenly py-4 space-y-3">
           {axes.map(axis => {
