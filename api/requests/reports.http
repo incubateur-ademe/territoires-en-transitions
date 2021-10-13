@@ -1,0 +1,1 @@
+GET {{host}}/v2/reports/daily_user_count

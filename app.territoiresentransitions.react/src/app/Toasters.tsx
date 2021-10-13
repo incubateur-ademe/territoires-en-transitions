@@ -119,8 +119,35 @@ export function Toasters() {
       <EndpointToaster
         endpoint={indicateurResultatStore.api}
         composer={makeComposer({
-          storeSuccess: "La valeur de l'indicateur est enregistrée",
-          storeError: "La valeur de l'indicateur n'a pas été enregistrée",
+          storeSuccess: "La valeur résultat de l'indicateur est enregistrée",
+          storeError:
+            "La valeur résultat de l'indicateur n'a pas été enregistrée",
+        })}
+      />
+      <EndpointToaster
+        endpoint={indicateurPersonnaliseResultatStore.api}
+        composer={makeComposer({
+          storeSuccess:
+            "La valeur résultat de l'indicateur personnalisé est enregistrée",
+          storeError:
+            "La valeur résultat de l'indicateur personnalisé n'a pas été enregistrée",
+        })}
+      />
+      <EndpointToaster
+        endpoint={indicateurObjectifStore.api}
+        composer={makeComposer({
+          storeSuccess: "La valeur objectif de l'indicateur est enregistrée",
+          storeError:
+            "La valeur objectif de l'indicateur n'a pas été enregistrée",
+        })}
+      />
+      <EndpointToaster
+        endpoint={indicateurPersonnaliseObjectifStore.api}
+        composer={makeComposer({
+          storeSuccess:
+            "La valeur objectif de l'indicateur personnalisé est enregistrée",
+          storeError:
+            "La valeur objectif de l'indicateur personnalisé n'a pas été enregistrée",
         })}
       />
       <EndpointToaster
@@ -166,13 +193,7 @@ export function Toasters() {
           storeError: "La valeur de l'objectif n'a pas été enregistrée",
         })}
       />
-      <EndpointToaster
-        endpoint={indicateurPersonnaliseResultatStore.api}
-        composer={makeComposer({
-          storeSuccess: "La valeur de l'indicateur est enregistrée",
-          storeError: "La valeur de l'indicateur n'a pas été enregistrée",
-        })}
-      />
+
       <EndpointToaster
         endpoint={indicateurPersonnaliseObjectifStore.api}
         composer={makeComposer({

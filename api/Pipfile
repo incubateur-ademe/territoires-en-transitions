@@ -17,6 +17,7 @@ python-jose = "*"
 pyjwt = "*"
 py-memoize = "*"
 setuptools = "*"
+psycopg2 = "*"
 
 [dev-packages]
 flake8 = "*"
