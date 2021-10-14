@@ -195,7 +195,7 @@ export const indicateurPersonnaliseResultatStore =
       new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
   });
 
-export const utilisateurConnecteStore =
+export const utilisateurConnecteLocalStore =
   new LocalStore<UtilisateurConnecteLocalStorable>({
     pathname: UtilisateurConnecte.pathname,
     serializer: storable => storable,

@@ -1,12 +1,13 @@
 import jwt_decode, {JwtPayload} from 'jwt-decode';
 import {UtilisateurConnecteLocalStorable} from 'storables/UtilisateurConnecteStorable';
-import {utilisateurConnecteStore} from './localStore';
+import {utilisateurConnecteLocalStore} from './localStore';
 import type {UtilisateurDroitsInterface} from 'generated/models/utilisateur_droits';
 import {UtilisateurDroits} from 'generated/models/utilisateur_droits';
 import {ENV} from 'environmentVariables';
 import {ChangeNotifier} from 'core-logic/api/reactivity';
 
-const _dummyToken = 'xx';
+const _dummyToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkdW1teSIsImdpdmVuX25hbWUiOiJGcmVkIiwiZmFtaWx5X25hbWUiOiJEdXBvbnQiLCJlbWFpbCI6ImR1bW15QHRlcnJpdG9pcmVzZW50cmFuc2l0aW9ucy5mciJ9.u42Ygg2_TtgjjuVBakqHpIotwOZMlRFHIYdvAnLhj9c';
 
 /**
  * Authentication, only manage rights for now.
@@ -29,7 +30,7 @@ class Authentication extends ChangeNotifier {
  */
 export const auth = new Authentication();
 
-utilisateurConnecteStore.addListener(() => {
+utilisateurConnecteLocalStore.addListener(() => {
   auth.currentUtilisateurDroits = null;
 });
 
@@ -37,15 +38,7 @@ utilisateurConnecteStore.addListener(() => {
  * Save fake tokens, the user will be connected until replaced.
  */
 export const saveDummyTokens = () => {
-  const storable = new UtilisateurConnecteLocalStorable({
-    ademe_user_id: 'dummy',
-    access_token: _dummyToken,
-    refresh_token: _dummyToken,
-    email: 'dummy@territoiresentransitions.fr',
-    nom: 'Territoires en Transitions',
-    prenom: 'Dummy',
-  });
-  utilisateurConnecteStore.store(storable);
+  saveTokens(_dummyToken, _dummyToken);
 };
 
 /**
@@ -57,11 +50,8 @@ export const saveTokens = (accessToken: string, refreshToken: string) => {
     ademe_user_id: decoded['sub'] || '',
     access_token: accessToken,
     refresh_token: refreshToken,
-    email: '', // decoded["email"] ||
-    nom: '', // decoded["family_name"] ||
-    prenom: '', // decoded["given_name"] ||
   });
-  utilisateurConnecteStore.store(storable);
+  utilisateurConnecteLocalStore.store(storable);
 };
 
 /**
@@ -69,9 +59,8 @@ export const saveTokens = (accessToken: string, refreshToken: string) => {
  */
 export const connected = (): boolean => {
   let utilisateur: UtilisateurConnecteLocalStorable;
-
   try {
-    utilisateur = utilisateurConnecteStore.retrieveById(
+    utilisateur = utilisateurConnecteLocalStore.retrieveById(
       UtilisateurConnecteLocalStorable.id
     );
   } catch (e) {
@@ -92,7 +81,7 @@ export const connected = (): boolean => {
  */
 export const currentUser = (): UtilisateurConnecteLocalStorable | null => {
   if (connected())
-    return utilisateurConnecteStore.retrieveById(
+    return utilisateurConnecteLocalStore.retrieveById(
       UtilisateurConnecteLocalStorable.id
     );
   return null;
@@ -120,7 +109,7 @@ export const currentRefreshToken = (): string | null => {
  * Sign the current user out. Return true on success, false otherwise.
  */
 export const signOut = (): boolean => {
-  return utilisateurConnecteStore.deleteById(
+  return utilisateurConnecteLocalStore.deleteById(
     UtilisateurConnecteLocalStorable.id
   );
 };

@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {UtilisateurDroits} from 'generated/models/utilisateur_droits';
 import {auth, currentUtilisateurDroits} from 'core-logic/api/authentication';
 import {UtilisateurConnecteLocalStorable} from 'storables/UtilisateurConnecteStorable';
-import {utilisateurConnecteStore} from 'core-logic/api/localStore';
+import {utilisateurConnecteLocalStore} from 'core-logic/api/localStore';
 
 export const useDroits = (): UtilisateurDroits[] => {
   const [droits, setDroits] = useState<UtilisateurDroits[]>([]);
@@ -35,14 +35,14 @@ export const useUser = (): UtilisateurConnecteLocalStorable | null => {
 
   useEffect(() => {
     const listener = async () => {
-      const storable = await utilisateurConnecteStore.retrieveById(
+      const storable = await utilisateurConnecteLocalStore.retrieveById(
         UtilisateurConnecteLocalStorable.id
       );
       setUser(storable);
     };
 
     try {
-      const retrieved = utilisateurConnecteStore.retrieveById(
+      const retrieved = utilisateurConnecteLocalStore.retrieveById(
         UtilisateurConnecteLocalStorable.id
       );
       if (retrieved.ademe_user_id !== user?.ademe_user_id) setUser(retrieved);
@@ -50,9 +50,9 @@ export const useUser = (): UtilisateurConnecteLocalStorable | null => {
       setUser(null);
     }
 
-    utilisateurConnecteStore.addListener(listener);
+    utilisateurConnecteLocalStore.addListener(listener);
     return () => {
-      utilisateurConnecteStore.removeListener(listener);
+      utilisateurConnecteLocalStore.removeListener(listener);
     };
   }, [user]);
 

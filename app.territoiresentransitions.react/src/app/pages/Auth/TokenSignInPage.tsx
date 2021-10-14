@@ -59,11 +59,7 @@ export const TokenSignInPage = () => {
           {isConnected && (
             <>
               <h6>Connecté </h6>
-              {user && (
-                <p>
-                  en tant que {user.prenom} {user.nom} ({user.email})
-                </p>
-              )}
+
               <button className="fr-btn" onClick={disconnect}>
                 Se déconnecter
               </button>
