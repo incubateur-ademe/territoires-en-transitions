@@ -19,8 +19,6 @@ def test_add_item(client: TestClient, event_loop: asyncio.AbstractEventLoop):
     assert AUTH_DISABLED_DUMMY_USER
 
     # POST /v2/utilisateur_droits
-    response = add_ecriture_droit(
-        client, droits["ademe_user_id"], droits["epci_id"], droits["ecriture"]
-    )
+    response = add_ecriture_droit(client, droits["epci_id"], droits["ecriture"])
     assert response.status_code == 200
     assert response.json()["epci_id"] == droits["epci_id"]
