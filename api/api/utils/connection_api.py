@@ -3,7 +3,7 @@ import logging
 
 from collections import deque
 from datetime import timedelta
-from typing import Dict, Optional
+from typing import Optional
 
 from fastapi import HTTPException
 import jwt
@@ -34,8 +34,6 @@ class Tokens(BaseModel):
 
 # Ports : API specification
 # ======
-
-
 class RegisterResponseData(BaseModel):
     user_id: str
 
@@ -57,6 +55,11 @@ class GetTokenError(Exception):
 
 
 class AbstractConnectionApi(abc.ABC):
+    def __init__(self) -> None:
+        self.verified_token_cache = deque(
+            maxlen=1000
+        )  # cache verified tokens to limit calls to ADEME keycloak
+
     @abc.abstractmethod
     async def register(
         self, inscription: UtilisateurInscription
@@ -64,18 +67,44 @@ class AbstractConnectionApi(abc.ABC):
         """Register a new user. Raises AddressAlreadyExists if so."""
         pass
 
-    @abc.abstractmethod
-    def get_supervision_count(self) -> str:
-        """Count nb of connection in base. Raises SupervisionCountError if any error."""
-        pass
+    async def set_connected_user_from_token(
+        self, token: str
+    ) -> Optional[AdemeUtilisateur]:
+        try:
+            payload = jwt.decode(token, options={"verify_signature": False})
+            self.verified_token_cache.append(token)
+            # TODO : sanity check on payload !
+            if not all(
+                k in payload for k in ("sub", "given_name", "family_name", "email")
+            ):
+                raise InvalidToken(
+                    "Could not get user from decoded token payload ",
+                    payload,
+                )
+            user = AdemeUtilisateur(
+                ademe_user_id=payload["sub"],
+                prenom=payload["given_name"],
+                nom=payload["family_name"],
+                email=payload["email"],
+            )
+            self.user = user
+            return user
 
-    @abc.abstractmethod
-    async def get_ademe_user(self, token: str) -> AdemeUtilisateur:
-        """Get connected user"""
-        pass
+        except JWTError:
+            if token in self.verified_token_cache:
+                self.verified_token_cache.remove(token)
+            raise InvalidToken("Could not decode token ", token)
+
+    async def get_ademe_user(self, token: str):
+        await self.set_connected_user_from_token(token)
+        return self.user
 
     @abc.abstractmethod
     def get_tokens(self, code: str, redirect_uri: str) -> Tokens:
+        pass
+
+    @abc.abstractmethod
+    def get_supervision_count(self) -> str:
         pass
 
 
@@ -83,23 +112,25 @@ class AbstractConnectionApi(abc.ABC):
 # ========
 # Dummy
 # -----
+
+
 class DummyConnectionApi(AbstractConnectionApi):
-    def __init__(self, user_uid: str = "dummy"):
+    def __init__(self, ademe_user_id="dummy", prenom="Fred", nom="Dupont"):
+        super().__init__()
         self._api_down = False
         self._register_error = None
-        self.user_uid = user_uid
         self.user = AdemeUtilisateur(
-            ademe_user_id=user_uid,
-            email="lala",
-            nom="dummy",
-            prenom="lala",
+            ademe_user_id=ademe_user_id,
+            email=nom,
+            nom="Dupont",
+            prenom=prenom,
         )
 
     async def register(
         self, inscription: UtilisateurInscription
     ) -> RegisterResponseData:
         if self._register_error is None:
-            return RegisterResponseData(user_id=self.user_uid)
+            return RegisterResponseData(user_id=self.user.ademe_user_id)
         raise Exception(self._register_error)
 
     def get_supervision_count(self) -> str:
@@ -107,22 +138,25 @@ class DummyConnectionApi(AbstractConnectionApi):
             return "42"
         raise SupervisionCountError()
 
-    async def get_ademe_user(self, token: str) -> AdemeUtilisateur:
-        """Get connected user"""
-        return self.user
-
-    # For test purpose only
-    def set_user_name(self, nom: str):
-        self.user = AdemeUtilisateur(
-            ademe_user_id=self.user_uid,
-            email="lala",
-            nom=nom,
-            prenom="lala",
-        )
-
     def get_tokens(self, code: str, redirect_uri: str) -> Tokens:
         return Tokens(
-            access_token="dummy_access_token", refresh_token="dummy_refresh_token"
+            access_token=self._encode_user("access"),
+            refresh_token=self._encode_user("refresh"),
+        )
+
+    # For test purpose only
+    def set_user_name(self, prenom: str):
+        self.user.prenom = prenom
+
+    def _encode_user(self, key: str) -> str:
+        return jwt.encode(
+            {
+                "sub": self.user.ademe_user_id,
+                "given_name": self.user.prenom,
+                "family_name": self.user.nom,
+                "email": self.user.email,
+            },
+            key,
         )
 
 
@@ -156,37 +190,6 @@ async def get_authorization_header() -> dict:
 
 
 class AdemeConnectionApi(AbstractConnectionApi):
-    def __init__(self) -> None:
-        super().__init__()
-        self.verified_token_cache = deque(
-            maxlen=1000
-        )  # cache verified tokens to limit calls to ADEME keycloak
-
-    async def set_connected_user_from_token(
-        self, token: str
-    ) -> Optional[AdemeUtilisateur]:
-        try:
-            payload = jwt.decode(token, options={"verify_signature": False})
-            self.verified_token_cache.append(token)
-            # TODO : sanity check on payload !
-            user = AdemeUtilisateur(
-                ademe_user_id=payload.get("sub", ""),
-                prenom=payload.get("given_name", ""),
-                nom=payload.get("family_name", ""),
-                email=payload.get("email", ""),
-            )
-        except JWTError:
-            if token in self.verified_token_cache:
-                self.verified_token_cache.remove(token)
-            logger.warn("Could not get user from token ", token)
-            raise InvalidToken()
-        self.user = user
-        return user
-
-    async def get_ademe_user(self, token: str):
-        await self.set_connected_user_from_token(token)
-        return self.user
-
     async def register(
         self, inscription: UtilisateurInscription
     ) -> RegisterResponseData:

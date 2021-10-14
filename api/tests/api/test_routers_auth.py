@@ -40,7 +40,8 @@ def test_user_infos_is_saved_on_token_call(
     token_route_dummy_params = dict(code="some_code", redirect_uri="redirect_uri")
 
     # Fred connects
-    connection_api.set_user_name(nom="Fred")  # type: ignore
+    dummy_ademe_user_id = connection_api.user.ademe_user_id
+    connection_api.set_user_name(prenom="Fred")  # type: ignore
     response = client.get(
         token_path,
         params=token_route_dummy_params,
@@ -51,19 +52,19 @@ def test_user_infos_is_saved_on_token_call(
 
     query = event_loop.run_until_complete(
         AdemeUtilisateur.filter(
-            ademe_user_id="dummy",
+            ademe_user_id=dummy_ademe_user_id,
         )
     )
-    assert query[0].nom == "Fred"
+    assert query[0].prenom == "Fred"
 
     # Fred connects with new name Frederic
-    connection_api.set_user_name(nom="Frederic")  # type: ignore
+    connection_api.set_user_name(prenom="Frederic")  # type: ignore
     response = client.get(
         token_path, params=token_route_dummy_params, headers=auth_headers()
     )
     query = event_loop.run_until_complete(
         AdemeUtilisateur.filter(
-            ademe_user_id="dummy",
+            ademe_user_id=dummy_ademe_user_id,
         )
     )
-    assert query[0].nom == "Frederic"
+    assert query[0].prenom == "Frederic"
