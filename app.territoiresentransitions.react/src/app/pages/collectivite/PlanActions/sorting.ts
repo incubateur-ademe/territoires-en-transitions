@@ -47,7 +47,7 @@ export function categorizeAndSortFiches(
     // step 2: find fiches
     const fiches: FicheAction[] = [];
     for (const {fiche_uid} of fichesByCategory.filter(
-      fc => fc.category_uid === categorie.uid
+      fc => (fc.category_uid ?? '') === categorie.uid
     )) {
       const fiche = allFiches.find(f => f.uid === fiche_uid);
       if (fiche) fiches.push(fiche);
