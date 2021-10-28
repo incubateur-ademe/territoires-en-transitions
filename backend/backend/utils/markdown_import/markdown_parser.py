@@ -1,115 +1,130 @@
+from __future__ import annotations
+
 from typing import Callable, List
 
+import yaml
 from mistletoe import Document
 from mistletoe.block_token import BlockToken, Heading, CodeFence
 
 from .markdown_utils import (
-    update_with_yaml,
     is_keyword,
     token_to_string,
     is_heading,
+    is_yaml,
 )
 
+NodeWriter = Callable[[BlockToken, dict], None]
 
-def writer(
-    name_level: int,
-    node_builder: Callable,
-    children_key: str = "",
-) -> Callable:
-    """Returns a closure to keep track of current writer function. Also scope actions related functions."""
 
-    def head(token: BlockToken, action: dict) -> None:
+def yaml_writer(token: BlockToken, node: dict) -> None:
+    """Update a node with the content of a parsed yaml"""
+    if is_yaml(token):
+        parsed = yaml.safe_load(token.children[0].content)
+        node.update(parsed)
+
+
+def make_head_writer(title_key: str, name_level: int) -> NodeWriter:
+    def head_writer(token: BlockToken, node: dict) -> None:
         """Save leaf header"""
         if isinstance(token, Heading) and token.level == name_level:
-            action["nom"] = (
+            node[title_key] = (
                 token.children[0].content if token.children else "pas de nom"
             )
 
-    def section(title: str) -> Callable:
-        def description(token: BlockToken, action: dict) -> None:
-            """Save leaf description as an HTML string"""
-            if is_keyword(token, title):
-                return
-            if title.lower() in action.keys():
-                action[title.lower()] += token_to_string(token)
+    return head_writer
 
-        return description
 
-    current: Callable = head
-
-    def node_writer(token: BlockToken, mesure: dict) -> None:
-        """Save actions"""
-        if is_keyword(
-            token, children_key
-        ):  # children_key keyword is handled in the top parser
+def make_section_writer(title: str) -> NodeWriter:
+    def section_writer(token: BlockToken, node: dict) -> None:
+        """Save leaf description as an HTML string"""
+        if is_keyword(token, title):
             return
+        if title.lower() in node.keys():
+            node[title.lower()] += token_to_string(token)
 
-        nest_level = name_level // 2
-        leaf = parent = mesure
-
-        for level in range(nest_level):
-            # Build the tree.
-            if not leaf[children_key]:
-                leaf[children_key].append(node_builder())
-            parent = leaf
-            # Select the last leaf of the last branch.
-            leaf = leaf[children_key][-1]
-
-        nonlocal current
-        if is_heading(token, name_level):  # Got a title
-            if leaf["nom"]:  # leaf is already named
-                leaf = node_builder()
-                parent[children_key].append(leaf)
-            current = head
-        elif isinstance(token, CodeFence):
-            current = update_with_yaml
-        elif current == update_with_yaml:
-            current = section("description")
-        elif is_heading(token, name_level + 1):
-            title = token.children[0].content.strip()
-            current = section(title)
-
-        current(token, leaf)
-
-    return node_writer
+    return section_writer
 
 
-def markdown_parser(
-    doc: Document, node_builder: Callable, children_key: str = ""
-) -> List[dict]:
-    """Extract a elements from a markdown AST"""
-    elements = [node_builder()]
-    name_level = 1  # the current level element names.
-    current = writer(
-        name_level=name_level, node_builder=node_builder, children_key=children_key
-    )
+def build_markdown_parser(
+    title_key: str, description_key: str, children_key: str
+) -> Callable[[Document], List[dict]]:
+    def node_builder() -> dict:
+        return {title_key: "", children_key: []}
 
-    for token in doc.children:
-        if is_keyword(token, children_key):
-            name_level = token.level + 1
-            current = writer(
-                name_level=name_level,
-                node_builder=node_builder,
-                children_key=children_key,
-            )
+    def node_writer_builder(
+        name_level: int,
+    ) -> Callable:
+        """Returns a closure to keep track of current writer function. Also scope actions related functions."""
 
-        elif is_heading(token, level=name_level - 2):
-            name_level -= 2
-            current = writer(
-                name_level=name_level,
-                node_builder=node_builder,
-                children_key=children_key,
-            )
+        head_writer = make_head_writer(title_key, name_level)
 
-        elif is_heading(token, level=1):
-            if elements[-1]["nom"]:
-                elements.append(node_builder())
-            current = writer(
-                name_level=name_level,
-                node_builder=node_builder,
-                children_key=children_key,
-            )
+        # the current update function: update dict using BlockToken
+        current_writer: NodeWriter = head_writer
 
-        current(token, elements[-1])
+        def node_writer(token: BlockToken, node: dict) -> None:
+            """Save actions"""
+            if is_keyword(
+                token, children_key
+            ):  # children_key keyword is handled in the top parser
+                return
 
-    return elements
+            nest_level = name_level // 2
+            leaf = parent = node
+
+            for level in range(nest_level):
+                # Build the tree.
+                if not leaf[children_key]:
+                    leaf[children_key].append(node_builder())
+                parent = leaf
+                # Select the last leaf of the last branch.
+                leaf = leaf[children_key][-1]
+
+            nonlocal current_writer
+            if is_heading(token, name_level):  # Got a title
+                if leaf[title_key]:  # leaf is already named
+                    leaf = node_builder()
+                    parent[children_key].append(leaf)
+                current_writer = head_writer
+            elif isinstance(token, CodeFence):
+                current_writer = yaml_writer
+            elif current_writer == yaml_writer:
+                current_writer = make_section_writer(description_key)
+            elif is_heading(token, name_level + 1):
+                title = token.children[0].content.strip()
+                current_writer = make_section_writer(title)
+
+            current_writer(token, leaf)
+
+        return node_writer
+
+    def parser(doc: Document) -> List[dict]:
+        """Extract a elements from a markdown AST"""
+        nodes = [node_builder()]
+        name_level = 1  # the current level element names.
+        current_writer = node_writer_builder(name_level=name_level)
+
+        for token in doc.children:
+            if is_keyword(token, children_key):
+                name_level = token.level + 1
+                current_writer = node_writer_builder(
+                    name_level=name_level,
+                )
+
+            elif is_heading(token, level=name_level - 2):
+                name_level -= 2
+                current_writer = node_writer_builder(
+                    name_level=name_level,
+                )
+
+            elif is_heading(token, level=1):
+                if nodes[-1][title_key]:
+                    nodes.append(node_builder())
+                current_writer = node_writer_builder(
+                    name_level=name_level,
+                )
+
+            current_writer(token, nodes[-1])
+
+        return nodes
+
+    return parser

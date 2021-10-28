@@ -5,7 +5,7 @@ from glob import glob
 from typing import List, Callable
 
 from backend.utils.markdown_import.markdown_action_node import MarkdownActionNode
-from backend.utils.markdown_import.markdown_parser import markdown_parser
+from backend.utils.markdown_import.markdown_parser import build_markdown_parser
 from backend.utils.markdown_import.markdown_utils import load_md
 
 
@@ -72,16 +72,10 @@ def _build_action_from_md(path: str) -> MarkdownActionNode:
     """Extract an action from a markdown document"""
 
     markdown = load_md(path)
-
-    def builder():
-        return {
-            "nom": "",
-            "actions": [],
-        }  # TODO : rewrite this markdown_parser in a more generic way.
-
-    action_as_dict = markdown_parser(
-        markdown, node_builder=builder, children_key="actions"
-    )[-1]
+    parser = build_markdown_parser(
+        title_key="nom", children_key="actions", description_key="description"
+    )
+    actions_as_dict = parser(markdown)
 
     return MarkdownActionNode(**action_as_dict)
 
