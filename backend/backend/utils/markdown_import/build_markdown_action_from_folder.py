@@ -68,7 +68,7 @@ def _referentiel_from_actions(
     return root_action
 
 
-def _build_action_from_md(path: str) -> MarkdownActionNode:
+def _build_actions_from_md(path: str) -> List[MarkdownActionNode]:
     """Extract an action from a markdown document"""
 
     markdown = load_md(path)
@@ -77,12 +77,17 @@ def _build_action_from_md(path: str) -> MarkdownActionNode:
     )
     actions_as_dict = parser(markdown)
 
-    return MarkdownActionNode(**action_as_dict)
+    return [MarkdownActionNode(**action_as_dict) for action_as_dict in actions_as_dict]
 
 
 def build_markdown_action_from_folder(
     path: str,
 ) -> MarkdownActionNode:
     md_files = glob(os.path.join(path, "*.md"))
-    actions = [_build_action_from_md(md_file) for md_file in md_files]
+
+    actions = []
+    for md_file in md_files:
+        md_file_actions = _build_actions_from_md(md_file)
+        actions += md_file_actions
+
     return _referentiel_from_actions(actions)
