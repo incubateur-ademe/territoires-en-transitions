@@ -11,7 +11,7 @@ def test_build_markdown_action_node_from_folder():
 
     assert md_action == MarkdownActionNode(
         identifiant="",
-        nom="Titre du referentiel",
+        nom="Titre du référentiel",
         thematique_id="",
         description="",
         contexte="",
