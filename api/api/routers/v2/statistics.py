@@ -143,10 +143,7 @@ class PostgresQuery(AbstractQuery):
 
     @property
     def connection(self):
-        try:
-            self._connection.isolation_level
-        except OperationalError as oe:
-            print("PG Connexion has expired, getting new one.")
+        if self._connection.closed == 0:
             self._connection = self.get_new_connection()
         return self._connection
 
@@ -250,7 +247,7 @@ async def get_daily_collectivite_count():
 async def get_daily_indicateur_referentiel_count_eci(
     referentiel: Literal["cae", "eci"]
 ):
-    return query.get_daily_indicateur_referentiel_count("eci")
+    return query.get_daily_indicateur_referentiel_count(referentiel)
 
 
 @router.get(
