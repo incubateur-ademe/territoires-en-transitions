@@ -17,12 +17,14 @@ class Status(Enum):
     faite = 1
     non_concernee = 2
     vide = 3
+    programmee = 4
+    en_cours = 5
 
     @classmethod
     def from_action_status_avancement(
         cls,
         action_status_avancement: Literal[
-            "faite", "programmee", "pas_faite", "non_concernee"
+            "faite", "programmee", "en_cours", "pas_faite", "non_concernee"
         ],  # Should be generated
     ) -> Status:
         """Returns a Status from the avancement of ActionStatus
@@ -35,6 +37,10 @@ class Status(Enum):
             return Status.pas_faite
         elif action_status_avancement == "faite":
             return Status.faite
+        elif action_status_avancement == "programmee":
+            return Status.programmee
+        elif action_status_avancement == "en_cours":
+            return Status.en_cours
         return Status.vide
 
     def to_action_status_selected_value(
@@ -46,6 +52,10 @@ class Status(Enum):
             return "faite"
         elif self == Status.non_concernee:
             return "non_concernee"
+        elif self == Status.programmee:
+            return "programmee"
+        elif self == Status.en_cours:
+            return "en_cours"
         return ""
 
 
