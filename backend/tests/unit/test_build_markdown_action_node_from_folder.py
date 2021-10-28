@@ -7,13 +7,9 @@ from backend.utils.markdown_import.markdown_action_node import MarkdownActionNod
 def test_build_markdown_action_node_from_folder():
     md_action = build_markdown_action_from_folder(
         "./tests/data",
-        root_action_name="Titre du referentiel",
-        referentiel_id="eci",
-        root_action_points=100,
     )
 
     assert md_action == MarkdownActionNode(
-        referentiel_id="eci",
         identifiant="",
         nom="Titre du referentiel",
         thematique_id="",
@@ -24,7 +20,6 @@ def test_build_markdown_action_node_from_folder():
         points=100,
         actions=[
             MarkdownActionNode(
-                referentiel_id="eci",
                 identifiant="1",
                 nom="Titre de l'action 1",
                 thematique_id="",
@@ -36,7 +31,6 @@ def test_build_markdown_action_node_from_folder():
                 percentage=None,
                 actions=[
                     MarkdownActionNode(
-                        referentiel_id="eci",
                         identifiant="1.1",
                         nom="Titre de l'action 1.1",
                         thematique_id="",
@@ -48,7 +42,6 @@ def test_build_markdown_action_node_from_folder():
                         percentage=None,
                         actions=[
                             MarkdownActionNode(
-                                referentiel_id="eci",
                                 identifiant="1.1.1",
                                 nom="Titre de l'action 1.1.1",
                                 thematique_id="",
@@ -60,7 +53,6 @@ def test_build_markdown_action_node_from_folder():
                                 percentage=None,
                                 actions=[
                                     MarkdownActionNode(
-                                        referentiel_id="eci",
                                         identifiant="1.1.1.1",
                                         nom="Titre de l'action 1.1.1.1",
                                         thematique_id="",
@@ -73,7 +65,6 @@ def test_build_markdown_action_node_from_folder():
                                         actions=[],
                                     ),
                                     MarkdownActionNode(
-                                        referentiel_id="eci",
                                         identifiant="1.1.1.2",
                                         nom="Titre de l'action 1.1.1.2",
                                         thematique_id="",
@@ -86,7 +77,6 @@ def test_build_markdown_action_node_from_folder():
                                         actions=[],
                                     ),
                                     MarkdownActionNode(
-                                        referentiel_id="eci",
                                         identifiant="1.1.1.3",
                                         nom="Titre de l'action 1.1.1.3",
                                         thematique_id="",

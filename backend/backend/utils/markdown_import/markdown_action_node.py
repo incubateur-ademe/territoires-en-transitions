@@ -7,7 +7,6 @@ from backend.domain.models.litterals import ReferentielId
 
 
 class MarkdownActionNode(BaseModel):
-    referentiel_id: ReferentielId
     identifiant: str  # TODO? Should it be a tuple?
     nom: str
     thematique_id: str = ""
@@ -19,9 +18,9 @@ class MarkdownActionNode(BaseModel):
     percentage: Optional[float] = None
     actions: List[MarkdownActionNode] = []
 
-    @property
-    def action_id(self):
-        return ActionId(f"{self.referentiel_id}_{self.identifiant}")
+    # @property
+    # def action_id(self):
+    #     return ActionId(f"{self.referentiel_id}_{self.identifiant}")
 
 
 MarkdownActionNode.update_forward_refs()

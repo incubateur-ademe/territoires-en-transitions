@@ -1,57 +1,74 @@
 from __future__ import annotations
-from glob import glob
-import os
-from typing import List
 
-from backend.domain.models.litterals import ReferentielId
+import os
+from glob import glob
+from typing import List, Callable
+
+from backend.utils.markdown_import.markdown_action_node import MarkdownActionNode
 from backend.utils.markdown_import.markdown_parser import markdown_parser
 from backend.utils.markdown_import.markdown_utils import load_md
-from backend.utils.markdown_import.markdown_action_node import MarkdownActionNode
+
+
+class MarkdownImportError(Exception):
+    pass
+
+
+def is_parent_of(child: MarkdownActionNode) -> Callable[[MarkdownActionNode], bool]:
+    return (
+        lambda action: child.identifiant.startswith(action.identifiant)
+        and action.identifiant != child.identifiant
+    )
+
+
+def is_root(action: MarkdownActionNode) -> bool:
+    return action.identifiant == ""
 
 
 def _referentiel_from_actions(
     actions: List[MarkdownActionNode],
-    root_action_name: str,
-    referentiel_id: ReferentielId,
-    root_action_points: float,
 ) -> MarkdownActionNode:
     """
     Nest actions into a root referentiel action.
 
     This function is tightly coupled with the way markdowns are organized in each referentiels directories
     """
+    root_action = list(filter(is_root, actions))[0]  # TODO raise if no root
+    regular_actions = list(filter(lambda action: not is_root(action), actions))
 
-    def attach_children(parent: MarkdownActionNode) -> None:
-        for action in actions:
-            if (
-                action.identifiant.startswith(parent.identifiant)
-                and action.identifiant != parent.identifiant
-            ):
-                parent.actions.append(action)
-
-    level_1_actions = []
-    for action in actions:
-        if "." not in action.identifiant:
-            level_1 = action
-            if level_1.actions:
-                for level_2 in level_1.actions:
-                    attach_children(level_2)
-
-            else:
-                attach_children(level_1)
-
-            level_1_actions.append(level_1)
-
-    return MarkdownActionNode(
-        referentiel_id=referentiel_id,
-        nom=root_action_name,
-        identifiant="",
-        children=level_1_actions,
-        points=root_action_points,
+    sorted_actions = list(
+        reversed(
+            sorted(
+                regular_actions,
+                key=lambda action: len(action.identifiant.split(".")),
+            )
+        )
     )
 
+    def level(node: MarkdownActionNode) -> int:
+        return len(node.identifiant.split("."))
 
-def _build_action_from_md(path: str, referentiel_id: str) -> MarkdownActionNode:
+    for orphan in sorted_actions:
+        if level(orphan) == 1:  # Axes
+            root_action.actions.append(orphan)
+        else:
+            parents = list(
+                filter(
+                    is_parent_of(orphan),
+                    sorted_actions,
+                )
+            )
+            if len(parents) == 0:
+                raise MarkdownImportError(
+                    f"L'action {orphan.identifiant} est orpheline ! "
+                )
+            # TODO : Test that orphan depth is indeed parent depth + 1. Else raise.
+
+            parents[0].actions.append(orphan)
+
+    return root_action
+
+
+def _build_action_from_md(path: str) -> MarkdownActionNode:
     """Extract an action from a markdown document"""
 
     markdown = load_md(path)
@@ -60,7 +77,6 @@ def _build_action_from_md(path: str, referentiel_id: str) -> MarkdownActionNode:
         return {
             "nom": "",
             "actions": [],
-            "referentiel_id": referentiel_id,
         }  # TODO : rewrite this markdown_parser in a more generic way.
 
     action_as_dict = markdown_parser(
@@ -72,12 +88,7 @@ def _build_action_from_md(path: str, referentiel_id: str) -> MarkdownActionNode:
 
 def build_markdown_action_from_folder(
     path: str,
-    root_action_name: str,
-    referentiel_id: ReferentielId,
-    root_action_points: float,
 ) -> MarkdownActionNode:
     md_files = glob(os.path.join(path, "*.md"))
-    actions = [_build_action_from_md(md_file, referentiel_id) for md_file in md_files]
-    return _referentiel_from_actions(
-        actions, root_action_name, referentiel_id, root_action_points
-    )
+    actions = [_build_action_from_md(md_file) for md_file in md_files]
+    return _referentiel_from_actions(actions)
