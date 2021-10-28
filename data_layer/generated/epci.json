@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "siren": {
+      "type": "string"
+    },
+    "nom": {
+      "type": "string"
+    }
+  }
+}
