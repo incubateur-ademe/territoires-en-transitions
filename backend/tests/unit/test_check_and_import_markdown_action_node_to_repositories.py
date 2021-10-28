@@ -1,17 +1,16 @@
 from typing import Tuple
 import pytest
 
+from backend.domain.models.markdown_action_node import MarkdownActionNode
 from backend.domain.ports.action_children_repo import InMemoryActionChildrenRepository
 from backend.domain.ports.action_definition_repo import (
     InMemoryActionDefinitionRepository,
 )
 from backend.domain.ports.action_points_repo import InMemoryActionPointsRepository
-
 from backend.domain.use_cases.check_and_import_markdown_action_node_to_repositories import (
     ReferentielQuotationsError,
-    CheckAndImportMarkdownActionNodeToRepositories,
+    CheckExtractEntitiesFromMarkdownActionNode,
 )
-from backend.utils.markdown_import.markdown_action_node import MarkdownActionNode
 from tests.utils.referentiel_factory import (
     make_markdown_action_node,
     set_markdown_action_node_children_with_points,
@@ -21,7 +20,7 @@ from tests.utils.referentiel_factory import (
 def prepare_use_case(
     markdown_root_action_node: MarkdownActionNode,
 ) -> Tuple[
-    CheckAndImportMarkdownActionNodeToRepositories,
+    CheckExtractEntitiesFromMarkdownActionNode,
     InMemoryActionDefinitionRepository,
     InMemoryActionChildrenRepository,
     InMemoryActionPointsRepository,
@@ -29,7 +28,8 @@ def prepare_use_case(
     action_def_repo = InMemoryActionDefinitionRepository()
     action_children_repo = InMemoryActionChildrenRepository()
     action_points_repo = InMemoryActionPointsRepository()
-    check_referentiel_points = CheckAndImportMarkdownActionNodeToRepositories(
+    check_referentiel_points = CheckExtractEntitiesFromMarkdownActionNode(
+        "eci",
         markdown_root_action_node,
         action_def_repo,
         action_children_repo,

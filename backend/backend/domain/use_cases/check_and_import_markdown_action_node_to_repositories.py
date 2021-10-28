@@ -4,18 +4,12 @@ from typing import Dict, List, Optional
 from backend.domain.models.action_children import ActionChildren
 from backend.domain.models.action_definition import ActionDefinition
 from backend.domain.models.action_points import ActionPoints
-from backend.domain.models.litterals import ActionId
+from backend.domain.models.litterals import ActionId, ReferentielId
+from backend.domain.models.markdown_action_node import MarkdownActionNode
 from backend.domain.ports.action_children_repo import AbstractActionChildrenRepository
 from backend.domain.ports.action_points_repo import AbstractActionPointsRepository
 from backend.domain.ports.action_definition_repo import (
     AbstractActionDefinitionRepository,
-)
-from backend.utils.markdown_import.markdown_action_node import (
-    MarkdownActionNode,
-)
-from backend.utils.markdown_import.infer_from_markdown_action_node import (
-    infer_action_children_entities_from_markdown_action_node,
-    infer_action_definition_entities_from_markdown_action_node,
 )
 
 
@@ -23,14 +17,16 @@ class ReferentielQuotationsError(Exception):
     pass
 
 
-class CheckAndImportMarkdownActionNodeToRepositories:
+class CheckExtractEntitiesFromMarkdownActionNode:
     def __init__(
         self,
+        referentiel_id: ReferentielId,
         markdown_action_referentiel: MarkdownActionNode,
         action_definition_repo: AbstractActionDefinitionRepository,
         action_chidren_repo: AbstractActionChildrenRepository,
         action_points_repo: AbstractActionPointsRepository,
     ) -> None:
+        self.referentiel_id: ReferentielId = referentiel_id
         self.markdown_action_referentiel = markdown_action_referentiel
         self.action_definition_repo = action_definition_repo
         self.action_chidren_repo = action_chidren_repo
@@ -44,15 +40,17 @@ class CheckAndImportMarkdownActionNodeToRepositories:
         )
 
         definition_entities = (
-            infer_action_definition_entities_from_markdown_action_node(
+            self.infer_action_definition_entities_from_markdown_action_node(
                 self.markdown_action_referentiel
             )
         )
-        children_entities = infer_action_children_entities_from_markdown_action_node(
-            self.markdown_action_referentiel
+        children_entities = (
+            self.infer_action_children_entities_from_markdown_action_node(
+                self.markdown_action_referentiel
+            )
         )
 
-        points_by_action_id = self.infer_points_by_action_id_from_markdown_action_node(
+        points_by_action_id = self.infer_points_by_id_from_markdown_action_node(
             definition_entities
         )
 
@@ -62,8 +60,11 @@ class CheckAndImportMarkdownActionNodeToRepositories:
         )
 
         points_entities = [
-            ActionPoints(action_id=action_id, value=points_value or math.nan)
-            for action_id, points_value in points_by_action_id.items()
+            ActionPoints(
+                action_id=self.build_action_id(action_identifiant),
+                value=points_value or math.nan,
+            )
+            for action_identifiant, points_value in points_by_action_id.items()
         ]
 
         # At this point, the referentiel is coherent, we add it to the repositories !
@@ -71,6 +72,9 @@ class CheckAndImportMarkdownActionNodeToRepositories:
         self.action_definition_repo.add_entities(definition_entities)
         self.action_chidren_repo.add_entities(children_entities)
         self.action_points_repo.add_entities(points_entities)
+
+    def build_action_id(self, identifiant: str) -> ActionId:
+        return ActionId(f"{self.referentiel_id}_{identifiant}")
 
     @staticmethod
     def check_all_identifiant_are_unique(
@@ -129,15 +133,15 @@ class CheckAndImportMarkdownActionNodeToRepositories:
                     )
 
     def check_action_points_values_are_not_nan(
-        self, points_by_action_id: Dict[ActionId, float]
+        self, points_by_identifiant: Dict[ActionId, float]
     ):
-        for action_id, point_value in points_by_action_id.items():
+        for action_id, point_value in points_by_identifiant.items():
             if math.isnan(point_value):
                 raise ReferentielQuotationsError(
                     f"Les points de l'action {action_id} n'ont pas pu être inférés. "
                 )
 
-    def infer_points_by_action_id_from_markdown_action_node(
+    def infer_points_by_id_from_markdown_action_node(
         self, definitions: List[ActionDefinition]
     ) -> Dict[ActionId, float]:
         """Infer points of all actions given definitions
@@ -147,23 +151,26 @@ class CheckAndImportMarkdownActionNodeToRepositories:
         Finaly, propagate the points forward (from parents to children) using percentage or equi-distribution
         """
         # First, report points that are written in the definitions
-        points_by_id = {
-            definition.action_id: definition.points
+        points_by_identifiant = {
+            definition.identifiant: definition.points
             for definition in definitions
             if definition.points is not None
         }
 
         # Then, fill parent points from children
-        self._infer_points_from_descendants(points_by_id)
+        self._infer_points_from_descendants(points_by_identifiant)
 
         # Then, replace percentages by points
-        self._infer_points_given_in_percentages_from_parent(points_by_id)
+        self._infer_points_given_in_percentages_from_parent(points_by_identifiant)
 
-        return points_by_id
+        return {
+            self.build_action_id(identifiant): points
+            for (identifiant, points) in points_by_identifiant.items()
+        }
 
     def _infer_points_from_descendants(
         self,
-        points_by_action_id: Dict[ActionId, float],
+        points_by_identifiant: Dict[str, float],
     ):
         """Add points infered from descendants
 
@@ -175,7 +182,7 @@ class CheckAndImportMarkdownActionNodeToRepositories:
 
         action_without_points_and_children_with = (
             self._search_next_parent_action_without_points_and_chidren_with(
-                markdown_action, points_by_action_id
+                markdown_action, points_by_identifiant
             )
         )
         if action_without_points_and_children_with:
@@ -186,14 +193,14 @@ class CheckAndImportMarkdownActionNodeToRepositories:
                     for action_child in action_without_points_and_children_with.actions
                 ]
             )
-            points_by_action_id[
-                action_without_points_and_children_with.action_id
+            points_by_identifiant[
+                action_without_points_and_children_with.identifiant
             ] = children_points_sum
-            self._infer_points_from_descendants(points_by_action_id)
+            self._infer_points_from_descendants(points_by_identifiant)
 
     def _infer_points_given_in_percentages_from_parent(
         self,
-        points_by_action_id: Dict[ActionId, float],
+        points_by_identifiant: Dict[str, float],
     ):
         """Add points infered from percentages
 
@@ -206,7 +213,9 @@ class CheckAndImportMarkdownActionNodeToRepositories:
             action_points = action.points
             if not action_children or not action_points:
                 return
-            children_have_points = action_children[0].action_id in points_by_action_id
+            children_have_points = (
+                action_children[0].identifiant in points_by_identifiant
+            )
             if children_have_points:
                 return
 
@@ -216,19 +225,21 @@ class CheckAndImportMarkdownActionNodeToRepositories:
                         action_children
                     )  # if percentage is not specified, then points are equi-distributed within siblings
                     action_child_points = (percentage / 100) * action_points
-                    points_by_action_id[action_child.action_id] = action_child_points
+                    points_by_identifiant[
+                        action_child.identifiant
+                    ] = action_child_points
             list(map(_infer_for_action, action_children))
-            return points_by_action_id
+            return points_by_identifiant
 
         _infer_for_action(self.markdown_action_referentiel)
 
     def _search_next_parent_action_without_points_and_chidren_with(
         self,
         markdown_action: MarkdownActionNode,
-        already_known_points_by_id: Dict[ActionId, float],
+        already_known_points_by_identifiant: Dict[str, float],
     ) -> Optional[MarkdownActionNode]:
         if (
-            markdown_action.action_id not in already_known_points_by_id
+            markdown_action.identifiant not in already_known_points_by_identifiant
             and markdown_action.points is None
             and markdown_action.percentage is None
             and markdown_action.actions
@@ -237,7 +248,62 @@ class CheckAndImportMarkdownActionNodeToRepositories:
             return markdown_action
         for child in markdown_action.actions:
             next = self._search_next_parent_action_without_points_and_chidren_with(
-                child, already_known_points_by_id
+                child, already_known_points_by_identifiant
             )
             if next:
                 return next
+
+    def infer_action_definition_entities_from_markdown_action_node(
+        self, markdown_action_node: MarkdownActionNode
+    ) -> List[ActionDefinition]:
+        """Convert a MarkdownActionNode to a list of ActionDefinition"""
+        action_definition_entities: List[ActionDefinition] = []
+
+        def _increment_list(
+            markdown_action_node: MarkdownActionNode,
+        ) -> List[ActionDefinition]:
+            action_definition_entity = ActionDefinition(
+                referentiel_id=self.referentiel_id,
+                thematique_id=markdown_action_node.thematique_id,
+                action_id=self.build_action_id(markdown_action_node.identifiant),
+                identifiant=markdown_action_node.identifiant,
+                nom=markdown_action_node.nom,
+                contexte=markdown_action_node.contexte,
+                description=markdown_action_node.description,
+                exemples=markdown_action_node.exemples,
+                ressources=markdown_action_node.ressources,
+                points=markdown_action_node.points,
+                percentage=markdown_action_node.percentage,
+            )
+            action_definition_entities.append(action_definition_entity)
+            children_nodes = markdown_action_node.actions
+            if children_nodes:
+                list(map(_increment_list, children_nodes))
+            return action_definition_entities
+
+        return _increment_list(markdown_action_node)
+
+    def infer_action_children_entities_from_markdown_action_node(
+        self,
+        markdown_action_node: MarkdownActionNode,
+    ) -> List[ActionChildren]:
+        """Convert a MarkdownActionNode to a list of ActionDefinition"""
+        action_children_entities: List[ActionChildren] = []
+
+        def _increment_list(
+            markdown_action_node: MarkdownActionNode,
+        ) -> List[ActionChildren]:
+            action_children_entity = ActionChildren(
+                action_id=self.build_action_id(markdown_action_node.identifiant),
+                children_ids=[
+                    self.build_action_id(child.identifiant)
+                    for child in markdown_action_node.actions
+                ],
+            )
+            action_children_entities.append(action_children_entity)
+            children_nodes = markdown_action_node.actions
+            if children_nodes:
+                list(map(_increment_list, children_nodes))
+            return action_children_entities
+
+        return _increment_list(markdown_action_node)
