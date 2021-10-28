@@ -30,7 +30,6 @@ const makeGetStatistics = <T>(endpoint: string) => {
       }
     ).then(response => response.json());
 
-    console.log(response_json);
     return response_json as T;
   };
   return getStatistics;

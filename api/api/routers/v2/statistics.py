@@ -247,7 +247,7 @@ async def get_daily_collectivite_count():
 async def get_daily_indicateur_referentiel_count_eci(
     referentiel: Literal["cae", "eci"]
 ):
-    return query.get_daily_indicateur_referentiel_count("eci")
+    return query.get_daily_indicateur_referentiel_count(referentiel)
 
 
 @router.get(
