@@ -10,7 +10,7 @@ from tests.utils.spy_on_event import spy_on_event
 
 def test_build_markdown_action_node_from_folder():
     test_command = commands.ParseMarkdownReferentielFolder(
-        folder_path="./tests/data", referentiel_id="eci"
+        folder_path="./tests/data/md_referentiel_example", referentiel_id="eci"
     )
     bus = InMemoryDomainMessageBus()
     use_case = ParseMarkdownReferentielFolder(bus=bus)
