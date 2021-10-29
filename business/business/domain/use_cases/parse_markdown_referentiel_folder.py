@@ -48,7 +48,7 @@ class ParseMarkdownReferentielFolder:
             return events.ParseMarkdownReferentielFolderFailed(f"Le dossier de markdowns doit contenir une unique action racine (dont l'identifiant est ''). {len(root_actions)} trouvé(s).")
 
         root_action = root_actions[0]
-        
+
         regular_actions = list(filter(lambda action: not self.is_root(action), actions))
 
         sorted_actions = list(

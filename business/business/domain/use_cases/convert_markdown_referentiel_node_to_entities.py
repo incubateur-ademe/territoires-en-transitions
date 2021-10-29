@@ -4,15 +4,15 @@ from typing import Dict, List, Optional
 from business.domain.models import events
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_definition import ActionDefinition
+from business.domain.models.litterals import ActionId
 from business.domain.models.markdown_action_node import MarkdownActionNode
 from business.domain.models import commands
-from business.domain.models.markdown_action_node import 
+from business.domain.models.action_points import ActionPoints
 from business.domain.ports.domain_message_bus import (
     AbstractDomainMessageBus,
 )
 
-
-class CheckingMarkdownReferentielNodeFailed(events.DomainFailureEvent):
+class MarkdownReferentielNodeInconsistent(Exception):
     pass
 
 
@@ -21,19 +21,29 @@ class ConvertMarkdownReferentielNodeToEntities:
         self.bus = bus
 
     def execute(self, command: commands.ConvertMarkdownReferentielNodeToEntities):
-        referentiel_node = command.referentiel_node
-        
-        self.check_all_identifiant_are_unique(referentiel_node)
-        self.check_actions_children_percentages_sum_to_100(referentiel_node)
+        self.referentiel_node = command.referentiel_node
+
+        if self.referentiel_node.referentiel_id is None: 
+            self.bus.publish_event(events.FoundMarkdownReferentielNodeInconsistency(f"L'action racine (dont l'identifiant est '') doit avoir un `referentiel_id` renseigné.'"))
+            return 
+
+        self.referentiel_id = self.referentiel_node.referentiel_id
+
+        try: 
+            self.check_all_identifiant_are_unique(self.referentiel_node)
+            self.check_actions_children_percentages_sum_to_100(self.referentiel_node)
+        except MarkdownReferentielNodeInconsistent as inconsistency:
+            self.bus.publish_event(events.FoundMarkdownReferentielNodeInconsistency(str(inconsistency)))
+            return
 
         definition_entities = (
             self.infer_action_definition_entities_from_markdown_action_node(
-                referentiel_node
+                self.referentiel_node
             )
         )
         children_entities = (
             self.infer_action_children_entities_from_markdown_action_node(
-                referentiel_node
+                self.referentiel_node
             )
         )
 
@@ -41,10 +51,15 @@ class ConvertMarkdownReferentielNodeToEntities:
             definition_entities
         )
 
-        self.check_action_points_values_are_not_nan(points_by_action_id)
-        self.check_actions_children_points_sum_to_parent_points(
-            points_by_action_id, children_entities
-        )
+        try:
+            self.check_action_points_values_are_not_nan(points_by_action_id)
+            self.check_actions_children_points_sum_to_parent_points(
+                points_by_action_id, children_entities
+            )
+        except MarkdownReferentielNodeInconsistent as inconsistency:
+            self.bus.publish_event(events.FoundMarkdownReferentielNodeInconsistency(str(inconsistency)))
+            breakpoint()
+            return 
 
         points_entities = [
             ActionPoints(
@@ -53,6 +68,7 @@ class ConvertMarkdownReferentielNodeToEntities:
             )
             for action_identifiant, points_value in points_by_action_id.items()
         ]
+        self.bus.publish_event(events.MarkdownReferentielNodeConvertedToEntities(points=points_entities, definitions=definition_entities, children=children_entities))
 
     def build_action_id(self, identifiant: str) -> ActionId:
         return ActionId(f"{self.referentiel_id}_{identifiant}")
@@ -70,7 +86,7 @@ class ConvertMarkdownReferentielNodeToEntities:
 
         _append_action_identifiant(markdown_action_referentiel)
         if len(all_identifiants) != len(set(all_identifiants)):
-            raise CheckingMarkdownReferentielNodeFailed(
+            raise MarkdownReferentielNodeInconsistent(
                 f"Tous les identifiants devraient être uniques. Doublons: "
             )
 
@@ -84,13 +100,13 @@ class ConvertMarkdownReferentielNodeToEntities:
         if action_children[0].percentage is not None:
             children_percentages = [action.percentage for action in action_children]
             if None in children_percentages:
-                raise CheckingMarkdownReferentielNodeFailed(
+                raise MarkdownReferentielNodeInconsistent(
                     f"Les valeurs des actions de l'action {action.identifiant} n'ont pas tous un pourcentage de renseigné"
                 )
             sum_children_percentages = sum(children_percentages)
             if sum_children_percentages != 100:
-                raise CheckingMarkdownReferentielNodeFailed(
-                    f"Les valeurs des actions de l'action {action.identifiant} sont renseignées en pourcentage, mais leur somme fait {sum_children_percentages} au lieu de 100."
+                raise MarkdownReferentielNodeInconsistent(
+                    f"Les valeurs des actions {', '.join([child.identifiant for child in action_children])} sont renseignées en pourcentage, mais leur somme fait {sum_children_percentages} au lieu de 100."
                 )
         return list(
             map(self.check_actions_children_percentages_sum_to_100, action_children)
@@ -109,7 +125,7 @@ class ConvertMarkdownReferentielNodeToEntities:
                     [points_by_action_id[child_id] for child_id in children_ids]
                 )
                 if parent_point != children_point_sum:
-                    raise CheckingMarkdownReferentielNodeFailed(
+                    raise MarkdownReferentielNodeInconsistent(
                         f"Les valeurs des actions de l'action {children_entity.action_id} sont renseignées en points, mais leur somme fait {children_point_sum} au lieu de {parent_point}."
                     )
 
@@ -118,7 +134,7 @@ class ConvertMarkdownReferentielNodeToEntities:
     ):
         for action_id, point_value in points_by_identifiant.items():
             if math.isnan(point_value):
-                raise CheckingMarkdownReferentielNodeFailed(
+                raise MarkdownReferentielNodeInconsistent(
                     f"Les points de l'action {action_id} n'ont pas pu être inférés. "
                 )
 
@@ -159,11 +175,10 @@ class ConvertMarkdownReferentielNodeToEntities:
         Note that this method mutates its input argument `points_by_action_id` by adding points of action that can be infered from their children
         """
 
-        markdown_action = referentiel_node
 
         action_without_points_and_children_with = (
             self._search_next_parent_action_without_points_and_chidren_with(
-                markdown_action, points_by_identifiant
+                self.referentiel_node, points_by_identifiant
             )
         )
         if action_without_points_and_children_with:
@@ -178,12 +193,13 @@ class ConvertMarkdownReferentielNodeToEntities:
                 action_without_points_and_children_with.identifiant
             ] = children_points_sum
             self._infer_points_from_descendants(points_by_identifiant)
-
+   
+   
     def _infer_points_given_in_percentages_from_parent(
         self,
         points_by_identifiant: Dict[str, float],
     ):
-        """Add points infered from percentages
+        """Add points infered from percentages or from siblings points
 
         If action children are given in percentage, then distribute the action points according to the percentage
         Note that this method mutates its input argument `points_by_action_id` by adding points of action that can be infered from their children
@@ -194,25 +210,29 @@ class ConvertMarkdownReferentielNodeToEntities:
             action_points = action.points
             if not action_children or not action_points:
                 return
-            children_have_points = (
-                action_children[0].identifiant in points_by_identifiant
-            )
-            if children_have_points:
-                return
 
-            if action_children[0].points is None:
-                for action_child in action_children:
-                    percentage = action_child.percentage or action_points / len(
-                        action_children
-                    )  # if percentage is not specified, then points are equi-distributed within siblings
-                    action_child_points = (percentage / 100) * action_points
-                    points_by_identifiant[
-                        action_child.identifiant
-                    ] = action_child_points
+            children_without_points = [child for child in action_children if child.identifiant not in points_by_identifiant]
+            
+            if children_without_points:
+                children_are_defined_in_points = any([points_by_identifiant.get(child.identifiant) for child in action_children])
+                
+                if children_are_defined_in_points:
+                    sibling_points = sum([points_by_identifiant.get(child.identifiant, 0) for child in action_children])
+                    for child_without_points in children_without_points: 
+                        points_by_identifiant[child_without_points.identifiant] = (action_points - sibling_points) / len(children_without_points)
+                else: # children are defined in percentages
+                    for action_child in action_children:
+                        percentage = action_child.percentage or 100 / len(
+                            action_children
+                        )  # if percentage is not specified, then points are equi-distributed within siblings
+                        action_child_points = round((percentage / 100) * action_points, 1) 
+                        points_by_identifiant[
+                            action_child.identifiant
+                        ] = action_child_points
             list(map(_infer_for_action, action_children))
             return points_by_identifiant
 
-        _infer_for_action(referentiel_node)
+        _infer_for_action(self.referentiel_node)
 
     def _search_next_parent_action_without_points_and_chidren_with(
         self,

@@ -39,9 +39,7 @@ class ParseMarkdownReferentielFolderFailed(DomainFailureEvent):  # FAILURE
     pass
 
 
-@dataclass
-class ConvertMarkdownReferentielNodeToEntitiesFailed(DomainFailureEvent):  # FAILURE
-    pass
+
 
 
 @dataclass
@@ -49,3 +47,7 @@ class MarkdownReferentielNodeConvertedToEntities(DomainEvent):
     definitions: List[ActionDefinition]
     points: List[ActionPoints]
     children: List[ActionChildren]
+
+@dataclass
+class FoundMarkdownReferentielNodeInconsistency(DomainFailureEvent):  # FAILURE
+    pass
