@@ -143,7 +143,7 @@ class PostgresQuery(AbstractQuery):
 
     @property
     def connection(self):
-        if self._connection.closed == 0:
+        if self._connection.closed != 0:
             self._connection = self.get_new_connection()
         return self._connection
 
