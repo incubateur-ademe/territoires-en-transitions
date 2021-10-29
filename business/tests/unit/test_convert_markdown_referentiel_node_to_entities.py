@@ -1,8 +1,9 @@
 from typing import List, Tuple
-import pytest
-from business.domain.models import commands, events
-from business.domain.models.action_points import ActionPoints
 
+from business.domain.models import commands, events
+from business.domain.models.action_children import ActionChildren
+from business.domain.models.action_points import ActionPoints
+from business.domain.models.litterals import ActionId
 from business.domain.models.markdown_action_node import MarkdownActionNode
 from business.domain.ports.domain_message_bus import InMemoryDomainMessageBus
 from business.domain.use_cases.convert_markdown_referentiel_node_to_entities import (
@@ -48,10 +49,39 @@ def test_import_referentiel_succeeds_when_all_is_good():
     assert len(node_converted_events) == 1
     assert len(conversion_failed_events) == 0
 
-    breakpoint()
-    # assert node_converted_events[0].points == 
-    # assert node_converted_events[0].definitions == 
-    # assert node_converted_events[0].children == 
+    assert node_converted_events[0].points == [ActionPoints(action_id=ActionId('eci'), value=100.0), 
+                                                    ActionPoints(action_id=ActionId('eci_1'), value=30.0), 
+                                                    ActionPoints(action_id=ActionId('eci_2'), value=70.0), 
+                                                        ActionPoints(action_id=ActionId('eci_1.1'), value=10.0), 
+                                                        ActionPoints(action_id=ActionId('eci_1.2'), value=10.0), 
+                                                        ActionPoints(action_id=ActionId('eci_1.3'), value=10.0), 
+                                                        ActionPoints(action_id=ActionId('eci_2.1'), value=35.0), 
+                                                        ActionPoints(action_id=ActionId('eci_2.2'), value=35.0)]
+    assert node_converted_events[0].children == [ActionChildren(action_id=ActionId('eci'), children_ids=[ActionId('eci_1'), ActionId('eci_2')]), ActionChildren(action_id=ActionId('eci_1'), children_ids=[ActionId('eci_1.1'), ActionId('eci_1.2'), ActionId('eci_1.3')]), ActionChildren(action_id=ActionId('eci_1.1'), children_ids=[]), ActionChildren(action_id=ActionId('eci_1.2'), children_ids=[]), ActionChildren(action_id=ActionId('eci_1.3'), children_ids=[]), ActionChildren(action_id=ActionId('eci_2'), children_ids=[ActionId('eci_2.1'), ActionId('eci_2.2')]), ActionChildren(action_id=ActionId('eci_2.1'), children_ids=[]), ActionChildren(action_id=ActionId('eci_2.2'), children_ids=[])]
+    assert len(node_converted_events[0].definitions) == 8
+
+def test_import_referentiel_succeeds_when_action_has_0_point():
+    markdown_root_action_node = make_markdown_action_node(
+        identifiant="", points=100, referentiel_id="eci"
+    )
+    markdown_root_action_node.actions = [
+        make_markdown_action_node(identifiant="0"
+
+        ),
+        make_markdown_action_node(identifiant="1", points=100
+
+        )]
+    (
+       node_converted_events, conversion_failed_events
+
+    ) = prepare_use_case(markdown_root_action_node)
+
+    assert len(node_converted_events) == 1
+    assert len(conversion_failed_events) == 0
+    
+    assert node_converted_events[0].points == [ActionPoints(action_id=ActionId('eci'), value=100.0), ActionPoints(action_id=ActionId('eci_1'), value=100.0), ActionPoints(action_id=ActionId('eci_0'), value=0.0)] 
+
+
 
 def test_import_referentiel_fails_when_identifiants_are_not_unique():
 

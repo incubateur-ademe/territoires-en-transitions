@@ -1,6 +1,6 @@
-# Titre du référentiel
+# Économie Circulaire
 ```yaml
 identifiant: ""
-percentage:  100
+points:  500
 referentiel_id: "eci"
 ```

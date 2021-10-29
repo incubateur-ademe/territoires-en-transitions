@@ -1,7 +1,7 @@
 # Titre de l'action 1.1.1
 ```yaml
 identifiant: 1.1.1
-points: 30
+percentage:  30
 climat_pratic_id: strategie
 ```
 ## Description
@@ -20,7 +20,7 @@ Ressources de l'action 1.1.1
 ### Titre de l'action 1.1.1.1
 ```yaml
 identifiant: 1.1.1.1
-points: 20
+percentage:  20
 ```
 ## Description
 Description de l'action 1.1.1.1

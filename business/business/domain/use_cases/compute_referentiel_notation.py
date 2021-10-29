@@ -8,8 +8,6 @@ from business.domain.models.action_status import (
 )
 from business.domain.models.action_notation import ActionNotation
 from business.domain.models.litterals import ReferentielId
-from business.domain.ports.action_children_repo import AbstractActionChildrenRepository
-from business.domain.ports.action_points_repo import AbstractActionPointsRepository
 from business.domain.ports.action_status_repo import AbstractActionStatusRepository
 from business.utils.action_points_tree import ActionPointsNode, ActionsPointsTree
 

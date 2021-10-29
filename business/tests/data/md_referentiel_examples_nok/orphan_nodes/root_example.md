@@ -1,6 +1,6 @@
 # Titre du référentiel
 ```yaml
 identifiant: ""
-points: 100
+percentage:  100
 referentiel_id: "eci"
 ```
