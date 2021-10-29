@@ -1,7 +1,7 @@
 import abc
 from typing import List
 
-from backend.domain.models.action_status import ActionStatus
+from business.domain.models.action_status import ActionStatus
 
 
 class AbstractActionStatusRepository(abc.ABC):

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from backend.domain.models.litterals import ReferentielId
-from backend.domain.models.markdown_action_node import MarkdownActionNode
+from business.domain.models.litterals import ReferentielId
+from business.domain.models.markdown_action_node import MarkdownActionNode
 
 
 class DomainCommand:

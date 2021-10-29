@@ -1,13 +1,13 @@
 from typing import Tuple
 import pytest
 
-from backend.domain.models.markdown_action_node import MarkdownActionNode
-from backend.domain.ports.action_children_repo import InMemoryActionChildrenRepository
-from backend.domain.ports.action_definition_repo import (
+from business.domain.models.markdown_action_node import MarkdownActionNode
+from business.domain.ports.action_children_repo import InMemoryActionChildrenRepository
+from business.domain.ports.action_definition_repo import (
     InMemoryActionDefinitionRepository,
 )
-from backend.domain.ports.action_points_repo import InMemoryActionPointsRepository
-from backend.domain.use_cases.check_and_import_markdown_action_node_to_repositories import (
+from business.domain.ports.action_points_repo import InMemoryActionPointsRepository
+from business.domain.use_cases.check_and_import_markdown_action_node_to_repositories import (
     ReferentielQuotationsError,
     CheckExtractEntitiesFromMarkdownActionNode,
 )

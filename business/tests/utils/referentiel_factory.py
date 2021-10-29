@@ -1,10 +1,10 @@
 from typing import List, Optional
 
-from backend.domain.models.action_children import ActionChildren
-from backend.domain.models.action_definition import ActionId
-from backend.domain.models.action_points import ActionPoints
-from backend.domain.models.litterals import ReferentielId
-from backend.domain.models.markdown_action_node import MarkdownActionNode
+from business.domain.models.action_children import ActionChildren
+from business.domain.models.action_definition import ActionId
+from business.domain.models.action_points import ActionPoints
+from business.domain.models.litterals import ReferentielId
+from business.domain.models.markdown_action_node import MarkdownActionNode
 
 
 def make_action_points(action_id: str, points: float):

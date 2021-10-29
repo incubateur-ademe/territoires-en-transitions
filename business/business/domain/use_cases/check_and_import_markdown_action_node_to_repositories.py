@@ -1,14 +1,14 @@
 import math
 from typing import Dict, List, Optional
 
-from backend.domain.models.action_children import ActionChildren
-from backend.domain.models.action_definition import ActionDefinition
-from backend.domain.models.action_points import ActionPoints
-from backend.domain.models.litterals import ActionId, ReferentielId
-from backend.domain.models.markdown_action_node import MarkdownActionNode
-from backend.domain.ports.action_children_repo import AbstractActionChildrenRepository
-from backend.domain.ports.action_points_repo import AbstractActionPointsRepository
-from backend.domain.ports.action_definition_repo import (
+from business.domain.models.action_children import ActionChildren
+from business.domain.models.action_definition import ActionDefinition
+from business.domain.models.action_points import ActionPoints
+from business.domain.models.litterals import ActionId, ReferentielId
+from business.domain.models.markdown_action_node import MarkdownActionNode
+from business.domain.ports.action_children_repo import AbstractActionChildrenRepository
+from business.domain.ports.action_points_repo import AbstractActionPointsRepository
+from business.domain.ports.action_definition_repo import (
     AbstractActionDefinitionRepository,
 )
 

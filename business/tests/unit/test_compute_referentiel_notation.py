@@ -1,10 +1,10 @@
 from typing import Dict, List
-from backend.domain.models.action_notation import ActionNotation
-from backend.domain.models.action_status import ActionStatus
-from backend.domain.models.litterals import ActionId
-from backend.domain.ports.action_children_repo import InMemoryActionChildrenRepository
-from backend.domain.ports.action_points_repo import InMemoryActionPointsRepository
-from backend.domain.use_cases.compute_referentiel_notation import (
+from business.domain.models.action_notation import ActionNotation
+from business.domain.models.action_status import ActionStatus
+from business.domain.models.litterals import ActionId
+from business.domain.ports.action_children_repo import InMemoryActionChildrenRepository
+from business.domain.ports.action_points_repo import InMemoryActionPointsRepository
+from business.domain.use_cases.compute_referentiel_notation import (
     ComputeReferentielNotation,
 )
 from tests.utils.referentiel_factory import (

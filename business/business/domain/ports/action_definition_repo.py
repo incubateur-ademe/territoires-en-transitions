@@ -1,7 +1,7 @@
 import abc
 from typing import List
 
-from backend.domain.models.action_definition import ActionDefinition
+from business.domain.models.action_definition import ActionDefinition
 
 
 class AbstractActionDefinitionRepository(abc.ABC):

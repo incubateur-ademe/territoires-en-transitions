@@ -2,7 +2,7 @@ from typing import Literal
 
 from dataclasses import dataclass
 
-from backend.domain.models.action_definition import ActionId
+from business.domain.models.action_definition import ActionId
 
 
 Avancement = Literal["faite", "pas_faite", "programmee", "en_cours", "non_renseignee"]

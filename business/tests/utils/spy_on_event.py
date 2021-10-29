@@ -1,9 +1,9 @@
 from typing import Any, Type, List
 
-from backend.domain.ports.domain_message_bus import (
+from business.domain.ports.domain_message_bus import (
     AbstractDomainMessageBus,
 )
-from backend.domain.models import events
+from business.domain.models import events
 
 
 def spy_on_event(

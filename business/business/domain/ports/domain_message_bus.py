@@ -3,7 +3,7 @@ import asyncio
 from collections import defaultdict
 from typing import Any, Callable, Coroutine, Dict, List, Optional, Type
 
-from backend.domain.models import commands, events
+from business.domain.models import commands, events
 
 # EventCallback = Callable[[Any], Coroutine[Any, Any, Any]]
 EventCallback = Callable[[Any], Any]

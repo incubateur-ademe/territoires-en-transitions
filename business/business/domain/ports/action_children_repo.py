@@ -1,7 +1,7 @@
 import abc
 from typing import List
 
-from backend.domain.models.action_children import ActionChildren
+from business.domain.models.action_children import ActionChildren
 
 
 class AbstractActionChildrenRepository(abc.ABC):

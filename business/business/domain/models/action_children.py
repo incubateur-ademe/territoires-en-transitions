@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from dataclasses import dataclass
 
-from backend.domain.models.litterals import ActionId
+from business.domain.models.litterals import ActionId
 
 
 @dataclass

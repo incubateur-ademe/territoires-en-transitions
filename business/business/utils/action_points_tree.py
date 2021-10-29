@@ -1,11 +1,11 @@
 from __future__ import annotations
 from typing import Callable, Dict, List
-from backend.domain.models.action_children import ActionChildren
+from business.domain.models.action_children import ActionChildren
 
-from backend.domain.models.action_points import ActionPoints
+from business.domain.models.action_points import ActionPoints
 from pydantic import BaseModel
 
-from backend.domain.models.action_definition import ActionId
+from business.domain.models.action_definition import ActionId
 
 # TODO: can it inherit also from ActionPoints model ?
 class ActionPointsNode(BaseModel):

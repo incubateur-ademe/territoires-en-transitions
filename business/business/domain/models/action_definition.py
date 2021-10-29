@@ -2,7 +2,7 @@ from typing import Optional
 
 from dataclasses import dataclass
 
-from backend.domain.models.litterals import ReferentielId, ActionId
+from business.domain.models.litterals import ReferentielId, ActionId
 
 
 @dataclass

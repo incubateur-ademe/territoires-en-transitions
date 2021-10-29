@@ -2,11 +2,11 @@ from glob import glob
 import os
 from typing import Callable, List
 
-from backend.domain.ports.domain_message_bus import AbstractDomainMessageBus
-from backend.domain.models import commands, events
-from backend.domain.models.markdown_action_node import MarkdownActionNode
-from backend.utils.markdown_import.markdown_parser import build_markdown_parser
-from backend.utils.markdown_import.markdown_utils import load_md
+from business.domain.ports.domain_message_bus import AbstractDomainMessageBus
+from business.domain.models import commands, events
+from business.domain.models.markdown_action_node import MarkdownActionNode
+from business.utils.markdown_import.markdown_parser import build_markdown_parser
+from business.utils.markdown_import.markdown_utils import load_md
 
 
 class ParseMarkdownReferentielFolder:

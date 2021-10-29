@@ -1,10 +1,10 @@
-from backend.domain import use_cases
-from backend.domain.models.markdown_action_node import MarkdownActionNode
-from backend.domain.ports.domain_message_bus import InMemoryDomainMessageBus
-from backend.domain.use_cases.parse_markdown_referentiel_folder import (
+from business.domain import use_cases
+from business.domain.models.markdown_action_node import MarkdownActionNode
+from business.domain.ports.domain_message_bus import InMemoryDomainMessageBus
+from business.domain.use_cases.parse_markdown_referentiel_folder import (
     ParseMarkdownReferentielFolder,
 )
-from backend.domain.models import commands, events
+from business.domain.models import commands, events
 from tests.utils.spy_on_event import spy_on_event
 
 
