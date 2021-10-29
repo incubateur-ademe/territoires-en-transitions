@@ -29,8 +29,9 @@ Créer un nouvel environnement virtuel, et y installer les paquets et la source.
 ```
 python3 -m venv venv 
 source venv/bin/activate 
-pip install -r requirements.txt
-pip install -e ./business
+pip install pipenv
+pipenv install 
+pip install -e .
 ```
 
 ### Lancer les tests
@@ -47,7 +48,9 @@ python business/entrypoints/server.py
 TODO ! 
 
 ## Flux évenementiel 
-Une ébauche d'event stormming a été entrepris sur Miro, disponible [ici](https://miro.com/app/board/o9J_lnl6wNw=/)
+Une ébauche d'event stormming a été entrepris sur Miro, disponible [ici](https://miro.com/app/board/o9J_lnl6wNw=/). 
+
+À noter que la logique adoptée est un maximum évènementielle. Par exemple, on ne lève pas d'Exception en cas d'erreur, on publie un évènement d'échec, qui sera traité de façon à part entière. 
 
 ## Cas d'usages (eg. Services / Fonctionnalités)
 
@@ -64,7 +67,7 @@ Un référentiel est un arbre à plusieurs niveaux, par exemple :
         1.1.1.1.1 Tâche 
 ```
 #### Besoins
-- Les outils de la T.E ont besoin **d'une unique source de vérité pour les référentiels**
+- Les outils de la transition écologique ont besoin **d'une unique source de vérité pour les référentiels**
 - L'ADEME a besoin de **pouvoir mettre à jour les référentiels**
 
 #### Solution proposée

@@ -1,4 +1,4 @@
-from typing import Literal, NewType
+from typing import List, Literal, NewType
 
 
 ReferentielId = Literal["eci", "cae"]

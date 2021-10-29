@@ -1,6 +1,7 @@
 import math
 from typing import Dict, List, Optional
 
+from business.domain.models import events
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_definition import ActionDefinition
 from business.domain.models.action_points import ActionPoints
@@ -13,11 +14,11 @@ from business.domain.ports.action_definition_repo import (
 )
 
 
-class ReferentielQuotationsError(Exception):
+class CheckingMarkdownReferentielNodeFailed(events.DomainFailureEvent):
     pass
 
 
-class CheckExtractEntitiesFromMarkdownActionNode:
+class ConvertMarkdownReferentielNodeToEntities:
     def __init__(
         self,
         referentiel_id: ReferentielId,
@@ -89,7 +90,7 @@ class CheckExtractEntitiesFromMarkdownActionNode:
 
         _append_action_identifiant(markdown_action_referentiel)
         if len(all_identifiants) != len(set(all_identifiants)):
-            raise ReferentielQuotationsError(
+            raise CheckingMarkdownReferentielNodeFailed(
                 f"Tous les identifiants devraient être uniques. Doublons: "
             )
 
@@ -103,12 +104,12 @@ class CheckExtractEntitiesFromMarkdownActionNode:
         if action_children[0].percentage is not None:
             children_percentages = [action.percentage for action in action_children]
             if None in children_percentages:
-                raise ReferentielQuotationsError(
+                raise CheckingMarkdownReferentielNodeFailed(
                     f"Les valeurs des actions de l'action {action.identifiant} n'ont pas tous un pourcentage de renseigné"
                 )
             sum_children_percentages = sum(children_percentages)
             if sum_children_percentages != 100:
-                raise ReferentielQuotationsError(
+                raise CheckingMarkdownReferentielNodeFailed(
                     f"Les valeurs des actions de l'action {action.identifiant} sont renseignées en pourcentage, mais leur somme fait {sum_children_percentages} au lieu de 100."
                 )
         return list(
@@ -128,7 +129,7 @@ class CheckExtractEntitiesFromMarkdownActionNode:
                     [points_by_action_id[child_id] for child_id in children_ids]
                 )
                 if parent_point != children_point_sum:
-                    raise ReferentielQuotationsError(
+                    raise CheckingMarkdownReferentielNodeFailed(
                         f"Les valeurs des actions de l'action {children_entity.action_id} sont renseignées en points, mais leur somme fait {children_point_sum} au lieu de {parent_point}."
                     )
 
@@ -137,7 +138,7 @@ class CheckExtractEntitiesFromMarkdownActionNode:
     ):
         for action_id, point_value in points_by_identifiant.items():
             if math.isnan(point_value):
-                raise ReferentielQuotationsError(
+                raise CheckingMarkdownReferentielNodeFailed(
                     f"Les points de l'action {action_id} n'ont pas pu être inférés. "
                 )
 

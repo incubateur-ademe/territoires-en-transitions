@@ -8,7 +8,7 @@ from business.domain.ports.action_definition_repo import (
 )
 from business.domain.ports.action_points_repo import InMemoryActionPointsRepository
 from business.domain.use_cases.check_and_import_markdown_action_node_to_repositories import (
-    ReferentielQuotationsError,
+    CheckingMarkdownReferentielNodeFailed,
     CheckExtractEntitiesFromMarkdownActionNode,
 )
 from tests.utils.referentiel_factory import (
@@ -59,7 +59,7 @@ def test_import_referentiel_fails_when_identifiants_are_not_unique():
         action_points_repo,
     ) = prepare_use_case(markdown_root_action_node)
 
-    with pytest.raises(ReferentielQuotationsError) as error_message:
+    with pytest.raises(CheckingMarkdownReferentielNodeFailed) as error_message:
         check_referentiel_points.execute()
     assert (
         str(error_message.value)
@@ -88,7 +88,7 @@ def test_check_referentiel_quotations_fails_when_percentage_level_isnt_100():
         action_points_repo,
     ) = prepare_use_case(markdown_root_action_node)
 
-    with pytest.raises(ReferentielQuotationsError) as error_message:
+    with pytest.raises(CheckingMarkdownReferentielNodeFailed) as error_message:
         check_referentiel_points.execute()
 
     assert (
@@ -116,7 +116,7 @@ def test_check_referentiel_quotations_fails_when_children_points_doesnt_sum_to_p
         action_points_repo,
     ) = prepare_use_case(markdown_root_action_node)
 
-    with pytest.raises(ReferentielQuotationsError) as error_message:
+    with pytest.raises(CheckingMarkdownReferentielNodeFailed) as error_message:
         check_referentiel_points.execute()
 
     assert (
@@ -156,7 +156,7 @@ def test_check_referentiel_quotations_handles_points_parent_propagation_when_nec
         action_points_repo,
     ) = prepare_use_case(root_action)
 
-    with pytest.raises(ReferentielQuotationsError) as error_message:
+    with pytest.raises(CheckingMarkdownReferentielNodeFailed) as error_message:
         check_referentiel_points.execute()
 
     assert (
@@ -192,7 +192,7 @@ def test_check_referentiel_quotations_handles_children_propagation_when_necessar
         action_points_repo,
     ) = prepare_use_case(root_action)
 
-    with pytest.raises(ReferentielQuotationsError) as error_message:
+    with pytest.raises(CheckingMarkdownReferentielNodeFailed) as error_message:
         check_referentiel_points.execute()
 
     assert (

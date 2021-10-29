@@ -8,7 +8,7 @@ packages = find_packages(exclude=[])
 HERE = pathlib.Path(__file__).parent
 
 setup(
-    name="backend",
+    name="business",
     version="0.1",
     packages=packages,
 )

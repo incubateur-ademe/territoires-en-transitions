@@ -8,6 +8,7 @@ mistletoe = "*"
 pydantic = "*"
 pytest = "*"
 pyyaml = "*"
+business = {editable = true, path = "."}
 
 [dev-packages]
 
