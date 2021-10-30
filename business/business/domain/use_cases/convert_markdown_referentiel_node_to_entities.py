@@ -29,11 +29,11 @@ class ConvertMarkdownReferentielNodeToEntities:
 
 
         self.forward_nodes = self._build_forward_nodes(self.referentiel_node)
-        self.backward_nodes = reversed(self.forward_nodes)
+        self.backward_nodes = self.forward_nodes[::-1]
 
 
         if self.referentiel_node.referentiel_id is None: 
-            self.bus.publish_event(events.FoundMarkdownReferentielNodeInconsistency(f"L'action racine (dont l'identifiant est '') doit avoir un `referentiel_id` renseigné.'"))
+            self.bus.publish_event(events.MarkdownReferentielNodeInconsistencyFound(f"L'action racine (dont l'identifiant est '') doit avoir un `referentiel_id` renseigné.'"))
             return 
 
         self.referentiel_id: ReferentielId = self.referentiel_node.referentiel_id
@@ -42,7 +42,7 @@ class ConvertMarkdownReferentielNodeToEntities:
             self.check_all_identifiant_are_unique()
             self.check_actions_children_percentages_sum_to_100()
         except MarkdownReferentielNodeInconsistent as inconsistency:
-            self.bus.publish_event(events.FoundMarkdownReferentielNodeInconsistency(str(inconsistency)))
+            self.bus.publish_event(events.MarkdownReferentielNodeInconsistencyFound(str(inconsistency)))
             return
 
         definition_entities = (
@@ -64,7 +64,7 @@ class ConvertMarkdownReferentielNodeToEntities:
                 points_by_action_id, children_entities
             )
         except MarkdownReferentielNodeInconsistent as inconsistency:
-            self.bus.publish_event(events.FoundMarkdownReferentielNodeInconsistency(str(inconsistency)))
+            self.bus.publish_event(events.MarkdownReferentielNodeInconsistencyFound(str(inconsistency)))
             return 
 
         points_entities = [

@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import Dict, List
 from business.domain.models import commands, events
 
 from business.domain.models.action_status import (
@@ -16,7 +15,6 @@ from business.utils.action_points_tree import ActionPointsNode, ActionsPointsTre
 
 class ComputeReferentielscoresError(Exception):
     pass
-
 
 
 class ComputeReferentielScoresForEpci:
@@ -42,7 +40,7 @@ class ComputeReferentielScoresForEpci:
                 point_tree = self.build_points_tree(command.referentiel_id)
                 self.points_trees[command.referentiel_id] = point_tree
             except ActionsPointsTreeError:
-                # bus.publish() # TODO 
+                self.bus.publish_event(events.ReferentielScoresForEpciComputationFailed(f"Refentiel tree could not be compputed for refentiel {command.referentiel_id}")) # TODO 
                 return 
         statuses = self.statuses_repo.get_all_for_epci(command.epci_id)
 
@@ -65,7 +63,7 @@ class ComputeReferentielScoresForEpci:
                 scores, tache, status_by_action_id, actions_non_concernees_ids
             )
         )
-
+        
         point_tree.map_from_sous_actions_to_root(
             lambda action: self.update_scores_for_action_given_children_scores(
                 scores, action

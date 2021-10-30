@@ -18,11 +18,11 @@ from tests.utils.spy_on_event import spy_on_event
 
 def prepare_use_case(
     markdown_root_action_node: MarkdownActionNode,
-) -> Tuple[List[events.MarkdownReferentielNodeConvertedToEntities], List[events.FoundMarkdownReferentielNodeInconsistency]]:
+) -> Tuple[List[events.MarkdownReferentielNodeConvertedToEntities], List[events.MarkdownReferentielNodeInconsistencyFound]]:
     bus = InMemoryDomainMessageBus()
     command = commands.ConvertMarkdownReferentielNodeToEntities(markdown_root_action_node)
     node_converted_events = spy_on_event(bus, events.MarkdownReferentielNodeConvertedToEntities)
-    conversion_failed_events = spy_on_event(bus, events.FoundMarkdownReferentielNodeInconsistency)
+    conversion_failed_events = spy_on_event(bus, events.MarkdownReferentielNodeInconsistencyFound)
 
     use_case = ConvertMarkdownReferentielNodeToEntities(bus)
     use_case.execute(command)

@@ -19,7 +19,7 @@ class DomainFailureEvent(DomainEvent):
 
 
 @dataclass
-class ActionStatusUpdated(DomainEvent):
+class ActionStatusUpdatedForEpci(DomainEvent):
     epci_id: str
     referentiel_id: ReferentielId
 
@@ -47,7 +47,7 @@ class MarkdownReferentielNodeConvertedToEntities(DomainEvent):
     children: List[ActionChildren]
 
 @dataclass
-class FoundMarkdownReferentielNodeInconsistency(DomainFailureEvent):  # FAILURE
+class MarkdownReferentielNodeInconsistencyFound(DomainFailureEvent):  # FAILURE
     pass
 
 
@@ -56,3 +56,8 @@ class ReferentielScoresForEpciComputed(DomainEvent):
     epci_id: str
     referentiel_id: ReferentielId
     scores: List[ActionScore]
+
+
+@dataclass
+class ReferentielScoresForEpciComputationFailed(DomainFailureEvent):
+    pass

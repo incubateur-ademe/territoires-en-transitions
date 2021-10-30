@@ -1,4 +1,4 @@
-from typing import  List
+from typing import  List, Optional, Tuple
 from business.domain.models import events, commands
 
 from business.domain.models.action_score import ActionScore
@@ -35,41 +35,39 @@ action_points = [
     make_action_points(action_id=f"eci_2.0", points=0),
     make_action_points(action_id=f"eci_2.1", points=70),
 ]
-# eci_action = make_action_points(action_id="eci", points=100)
-# action_1 = make_action_points(action_id="eci_1", points=30)
-# action_2 = make_action_points(action_id="eci_2", points=70)
-# tache_1_1 = make_action_points(action_id="eci_1.1", points=10)
-# tache_1_2 = make_action_points(action_id="eci_1.2", points=20)
-# tache_2_0 = make_action_points(action_id="2.0", points=0)
-# tache_2_1 = make_action_points(action_id="2.1", points=70)
-# eci_action.actions_ids = [ActionId("eci_1"), ActionId("eci_2")]
-# action_1.actions_ids = [ActionId("eci_1.1"), ActionId("eci_1.2")]
-# action_2.actions_ids = [tache_2_0.action_id, tache_2_1.action_id]
 
 
 points_repo = InMemoryActionPointsRepository(action_points)
 children_repo = InMemoryActionChildrenRepository(action_childrens)
 
 
-def prepare_use_case(statuses: List[ActionStatus] ) -> List[events.ReferentielScoresForEpciComputed]:
+def prepare_use_case(statuses: List[ActionStatus], command: Optional[commands.ComputeReferentielScoresForEpci]=None) -> Tuple[List[events.ReferentielScoresForEpciComputed], List[events.ReferentielScoresForEpciComputationFailed]]:
     bus = InMemoryDomainMessageBus()
     statuses_repo = InMemoryActionStatusRepository(statuses)
     use_case = ComputeReferentielScoresForEpci(bus, 
         points_repo, children_repo, statuses_repo
     )
     score_computed_events = spy_on_event(bus,  events.ReferentielScoresForEpciComputed)
-    
-    command = commands.ComputeReferentielScoresForEpci(epci_id="foo", referentiel_id=test_referentiel_id)
+    failure_events = spy_on_event(bus, events.ReferentielScoresForEpciComputationFailed)
+    command = command or commands.ComputeReferentielScoresForEpci(epci_id="foo", referentiel_id=test_referentiel_id)
     use_case.execute(command)
 
-    return score_computed_events
+    return score_computed_events, failure_events
+
+def test_notation_fails_when_referentiel_is_empty():
+    command =  commands.ComputeReferentielScoresForEpci(epci_id="foo", referentiel_id="cae")
+    statuses = []
+    converted_events, failure_events = prepare_use_case(statuses, command)
+    assert len(converted_events) == 0
+    assert len(failure_events) == 1
 
 def test_notation_when_one_tache_is_faite():
     statuses: List[ActionStatus] = [
         ActionStatus(action_id=ActionId("eci_1.1"), avancement="faite", concernee=True)
     ]
-    converted_events = prepare_use_case(statuses)
+    converted_events, failure_events = prepare_use_case(statuses)
     assert len(converted_events) == 1
+    assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
     assert len(actual_scores) == 4
@@ -120,8 +118,9 @@ def test_notation_when_one_tache_is_programmee():
     statuses: List[ActionStatus] = [
         ActionStatus(action_id=ActionId("eci_1.1"), avancement="programmee", concernee=True)
     ]
-    converted_events = prepare_use_case(statuses)
+    converted_events, failure_events = prepare_use_case(statuses)
     assert len(converted_events) == 1
+    assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
     assert len(actual_scores) == 4
@@ -173,8 +172,9 @@ def test_notation_when_one_tache_is_pas_faite():
     statuses: List[ActionStatus] = [
         ActionStatus(action_id=ActionId("eci_1.1"), avancement="pas_faite", concernee=True)
     ]
-    converted_events = prepare_use_case(statuses)
+    converted_events, failure_events = prepare_use_case(statuses)
     assert len(converted_events) == 1
+    assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
     assert len(actual_scores) == 4
@@ -227,8 +227,9 @@ def test_notation_when_one_tache_non_concernee():
             action_id=ActionId("eci_1.1"), avancement="non_renseignee", concernee=False
         )
     ]
-    converted_events = prepare_use_case(statuses)
+    converted_events, failure_events = prepare_use_case(statuses)
     assert len(converted_events) == 1
+    assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
     assert len(actual_scores) == 4
@@ -284,8 +285,9 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
             action_id=ActionId("eci_1.2"), avancement="non_renseignee", concernee=False
         ),
     ]
-    converted_events = prepare_use_case(statuses)
+    converted_events, failure_events = prepare_use_case(statuses)
     assert len(converted_events) == 1
+    assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
     assert len(actual_scores) == 5
