@@ -1,6 +1,7 @@
 import os
+import difflib
 from glob import glob
-from typing import Callable, List 
+from typing import Callable, List, Optional 
 
 from business.domain.models import commands, events
 from business.domain.models.markdown_action_node import MarkdownActionNode
@@ -60,29 +61,37 @@ class ParseMarkdownReferentielFolder:
             )
         )
 
-        def level(node: MarkdownActionNode) -> int:
-            return len(node.identifiant.split("."))
 
         for orphan in sorted_actions:
-            if level(orphan) == 1:  # Axes
+            if self.level(orphan) == 1:  # Axes
                 root_action.actions.append(orphan)
             else:
-                parents = list(
+                closest_parents = list(
                     filter(
-                        self.is_parent_of(orphan),
+                        self.is_ancestor_of(orphan),
                         sorted_actions,
                     )
                 )
-                if len(parents) == 0:
+                if len(closest_parents) == 0:
                     return  events.ParseMarkdownReferentielFolderFailed(
                             f"L'action {orphan.identifiant} est orpheline ! "
                         )
-                    
+                
+                closest_parent = closest_parents[0]
+   
+                parent = self.find_parent_within_tree(orphan, closest_parent)
+                    # parent = None
+                    # while parent_candidates: 
+                    #     for candidate in parent_candidates:
+                    #         if self.is_ancestor_of(orphan)(candidate):
+                    #             if self.is_parent_of(orphan)(candidate):
+                    #                 parent = candidate
+                    #             parent_candidates = candidate.actions
 
-                parent = parents[0]
-                if level(orphan) != level(parent) + 1 :
+                if parent is None :
+                    breakpoint()
                     return events.ParseMarkdownReferentielFolderFailed(
-                            f"Il manque un niveau entre l'action {parent.identifiant} et son enfant {orphan.identifiant}"
+                            f"Il manque un niveau entre l'action {closest_parent.identifiant} et son enfant {orphan.identifiant}"
                         )
                                 
                 parent.actions.append(orphan)
@@ -101,12 +110,40 @@ class ParseMarkdownReferentielFolder:
         return actions_as_dict
         
     @staticmethod
-    def is_parent_of(child: MarkdownActionNode) -> Callable[[MarkdownActionNode], bool]:
+    def is_ancestor_of(child: MarkdownActionNode) -> Callable[[MarkdownActionNode], bool]:
         return (
             lambda action: child.identifiant.startswith(action.identifiant)
             and action.identifiant != child.identifiant
         )
 
+    def is_parent_of(self, child: MarkdownActionNode) -> Callable[[MarkdownActionNode], bool]:
+        return lambda action: self.is_ancestor_of(child)(action) and self.level(child) == self.level(action) + 1
+
     @staticmethod
     def is_root(action: MarkdownActionNode) -> bool:
         return action.identifiant == ""
+
+    @staticmethod
+    def get_leaves(action: MarkdownActionNode) -> List[MarkdownActionNode]:
+        leaves: List[MarkdownActionNode] = []
+        def _add_leaf(action: MarkdownActionNode):
+            if not action.actions: 
+                leaves.append(action)
+            else: 
+                list(map(_add_leaf, action.actions))
+            return leaves
+        return _add_leaf(action)
+    
+    @staticmethod
+    def level(node: MarkdownActionNode) -> int:
+        return len(node.identifiant.split("."))
+    
+    def find_parent_within_tree(self, child: MarkdownActionNode, tree: MarkdownActionNode) -> Optional[MarkdownActionNode]:
+        if not self.is_ancestor_of(child)(tree):
+            return
+        if self.is_parent_of(child)(tree): 
+            return tree
+        
+        ancestor_branch = list(filter(self.is_ancestor_of(child), tree.actions))
+        if ancestor_branch:
+            return self.find_parent_within_tree(child, ancestor_branch[0])
