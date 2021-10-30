@@ -4,6 +4,7 @@ from typing import List
 from business.domain.models.action_definition import ActionDefinition
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_points import ActionPoints
+from business.domain.models.action_score import ActionScore
 from business.domain.models.litterals import ReferentielId
 from business.domain.models.markdown_action_node import MarkdownActionNode
 
@@ -39,9 +40,6 @@ class ParseMarkdownReferentielFolderFailed(DomainFailureEvent):  # FAILURE
     pass
 
 
-
-
-
 @dataclass
 class MarkdownReferentielNodeConvertedToEntities(DomainEvent):
     definitions: List[ActionDefinition]
@@ -51,3 +49,10 @@ class MarkdownReferentielNodeConvertedToEntities(DomainEvent):
 @dataclass
 class FoundMarkdownReferentielNodeInconsistency(DomainFailureEvent):  # FAILURE
     pass
+
+
+@dataclass
+class ReferentielScoresForEpciComputed(DomainEvent):
+    epci_id: str
+    referentiel_id: ReferentielId
+    scores: List[ActionScore]

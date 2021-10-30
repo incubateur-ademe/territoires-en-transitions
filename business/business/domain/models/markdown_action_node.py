@@ -15,7 +15,7 @@ class MarkdownActionNode(BaseModel):
     ressources: str = ""
     referentiel_id: Optional[ReferentielId] = None
     points: Optional[float] = None
-    percentage: Optional[float] = None
+    pourcentage: Optional[float] = None
     actions: List[MarkdownActionNode] = []
 
 

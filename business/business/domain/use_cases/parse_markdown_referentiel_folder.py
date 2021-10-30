@@ -1,5 +1,4 @@
 import os
-import difflib
 from glob import glob
 from typing import Callable, List, Optional 
 
@@ -78,18 +77,10 @@ class ParseMarkdownReferentielFolder:
                         )
                 
                 closest_parent = closest_parents[0]
-   
+
                 parent = self.find_parent_within_tree(orphan, closest_parent)
-                    # parent = None
-                    # while parent_candidates: 
-                    #     for candidate in parent_candidates:
-                    #         if self.is_ancestor_of(orphan)(candidate):
-                    #             if self.is_parent_of(orphan)(candidate):
-                    #                 parent = candidate
-                    #             parent_candidates = candidate.actions
 
                 if parent is None :
-                    breakpoint()
                     return events.ParseMarkdownReferentielFolderFailed(
                             f"Il manque un niveau entre l'action {closest_parent.identifiant} et son enfant {orphan.identifiant}"
                         )

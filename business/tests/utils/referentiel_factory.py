@@ -21,7 +21,7 @@ def make_action_children(action_id: str, children_ids: List[str]):
 def make_markdown_action_node(
     identifiant: str,
     points: Optional[float] = None,
-    percentage: Optional[float] = None,
+    pourcentage: Optional[float] = None,
     actions: List[MarkdownActionNode] = [],
     referentiel_id: ReferentielId = "eci",
 ):
@@ -29,7 +29,7 @@ def make_markdown_action_node(
         identifiant=identifiant,
         referentiel_id=referentiel_id,
         points=points,
-        percentage=percentage,
+        pourcentage=pourcentage,
         actions=actions,
         ressources="",
         exemples="",

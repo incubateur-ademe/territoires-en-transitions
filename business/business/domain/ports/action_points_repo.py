@@ -2,7 +2,8 @@ import abc
 from typing import List
 
 from business.domain.models.action_points import ActionPoints
-
+from business.domain.models.litterals import ReferentielId
+from business.utils.action_id import retrieve_referentiel_id
 
 class AbstractActionPointsRepository(abc.ABC):
     def __init__(self) -> None:
@@ -13,7 +14,7 @@ class AbstractActionPointsRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_all(self) -> List[ActionPoints]:
+    def get_all_from_referentiel(self, referentiel_id: ReferentielId) -> List[ActionPoints]:
         raise NotImplementedError
 
 
@@ -24,8 +25,8 @@ class InMemoryActionPointsRepository(AbstractActionPointsRepository):
     def add_entities(self, entities=List[ActionPoints]):
         self._entities += entities
 
-    def get_all(self) -> List[ActionPoints]:
-        return self._entities
+    def get_all_from_referentiel(self, referentiel_id: ReferentielId) -> List[ActionPoints]:
+        return [entity for entity in self._entities if retrieve_referentiel_id(entity.action_id) == referentiel_id]
 
     # For test purposes only
     @property

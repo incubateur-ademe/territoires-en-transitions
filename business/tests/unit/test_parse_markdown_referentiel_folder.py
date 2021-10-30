@@ -15,12 +15,12 @@ def test_build_markdown_action_node_from_ok_folder():
     use_case = ParseMarkdownReferentielFolder(bus=bus)
 
     failure_events = spy_on_event(bus, events.ParseMarkdownReferentielFolderFailed)
-    expected_events = spy_on_event(bus, events.MarkdownReferentielFolderParsed)
+    parsed_events = spy_on_event(bus, events.MarkdownReferentielFolderParsed)
 
     use_case.execute(test_command)
 
     assert len(failure_events) == 0
-    assert len(expected_events) == 1
+    assert len(parsed_events) == 1
 
     expected_event = events.MarkdownReferentielFolderParsed(
         referentiel_node=MarkdownActionNode(
@@ -32,7 +32,8 @@ def test_build_markdown_action_node_from_ok_folder():
             contexte="",
             exemples="",
             ressources="",
-            points=100,
+            points=100.,
+            pourcentage=None,
             actions=[
                 MarkdownActionNode(
                     referentiel_id=None,
@@ -44,7 +45,7 @@ def test_build_markdown_action_node_from_ok_folder():
                     exemples="",
                     ressources="",
                     points=100,
-                    percentage=None,
+                    pourcentage=None,
                     actions=[
                         MarkdownActionNode(
                             referentiel_id=None,
@@ -56,7 +57,7 @@ def test_build_markdown_action_node_from_ok_folder():
                             exemples="",
                             ressources="",
                             points=30.0,
-                            percentage=None,
+                            pourcentage=None,
                             actions=[
                                 MarkdownActionNode(
                                     referentiel_id=None,
@@ -68,7 +69,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                     exemples="",
                                     ressources="",
                                     points=20.0,
-                                    percentage=None,
+                                    pourcentage=None,
                                     actions=[
                                         MarkdownActionNode(
                                             referentiel_id=None,
@@ -80,7 +81,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                             exemples="",
                                             ressources="",
                                             points=None,
-                                            percentage=20.0,
+                                            pourcentage=20.0,
                                             actions=[],
                                         ),
                                         MarkdownActionNode(
@@ -93,7 +94,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                             exemples="",
                                             ressources="",
                                             points=None,
-                                            percentage=30.0,
+                                            pourcentage=30.0,
                                             actions=[],
                                         ),
                                         MarkdownActionNode(
@@ -106,7 +107,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                             exemples="",
                                             ressources="",
                                             points=None,
-                                            percentage=50.0,
+                                            pourcentage=50.0,
                                             actions=[],
                                         ),
                                     ],
@@ -118,7 +119,7 @@ def test_build_markdown_action_node_from_ok_folder():
             ],
         )
     )
-    assert expected_events[0] == expected_event
+    assert parsed_events[0] == expected_event
 
 
 def test_build_markdown_action_node_when_referentiel_id_is_unknown():

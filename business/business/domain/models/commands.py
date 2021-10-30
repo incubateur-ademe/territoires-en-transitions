@@ -17,3 +17,8 @@ class ParseMarkdownReferentielFolder(DomainCommand):
 @dataclass
 class ConvertMarkdownReferentielNodeToEntities(DomainCommand):
     referentiel_node: MarkdownActionNode
+
+@dataclass
+class ComputeReferentielScoresForEpci(DomainCommand):
+    epci_id: str
+    referentiel_id: ReferentielId

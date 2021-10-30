@@ -1,8 +1,8 @@
-from typing import List, Optional
+from typing import List
 
 from dataclasses import dataclass
 
-from business.domain.models.litterals import ActionId
+from business.utils.action_id import ActionId
 
 
 @dataclass

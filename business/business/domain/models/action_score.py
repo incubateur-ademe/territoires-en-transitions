@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ActionNotation: # TODO rename ActionScore
+class ActionScore: # TODO rename ActionScore
     action_id: str
     points: float
     potentiel: float

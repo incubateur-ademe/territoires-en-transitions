@@ -3,12 +3,13 @@ from typing import List, Tuple
 from business.domain.models import commands, events
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_points import ActionPoints
-from business.domain.models.litterals import ActionId
 from business.domain.models.markdown_action_node import MarkdownActionNode
 from business.domain.ports.domain_message_bus import InMemoryDomainMessageBus
 from business.domain.use_cases.convert_markdown_referentiel_node_to_entities import (
     ConvertMarkdownReferentielNodeToEntities,
 )
+from business.utils.action_id import ActionId
+
 from tests.utils.referentiel_factory import (
     make_markdown_action_node,
     set_markdown_action_node_children_with_points,
@@ -108,8 +109,8 @@ def test_check_referentiel_quotations_fails_when_percentage_level_isnt_100():
 
     markdown_root_action_node = make_markdown_action_node(identifiant="root", points=500)
     markdown_root_action_node.actions = [
-        make_markdown_action_node(identifiant="1", percentage=10),
-        make_markdown_action_node(identifiant="2", percentage=80),
+        make_markdown_action_node(identifiant="1", pourcentage=10),
+        make_markdown_action_node(identifiant="2", pourcentage=80),
     ]
     (
        node_converted_events, conversion_failed_events
@@ -140,10 +141,10 @@ def test_check_referentiel_quotations_fails_when_children_points_doesnt_sum_to_p
 def test_check_referentiel_quotations_handles_points_parent_propagation_when_necessary_and_fails_if_incoherent():
     root_action = make_markdown_action_node(identifiant="", points=20)
     action_1 = make_markdown_action_node(
-        identifiant="1", percentage=50
+        identifiant="1", pourcentage=50
     )  # hence worth 10 points
     action_2 = make_markdown_action_node(
-        identifiant="2", percentage=50
+        identifiant="2", pourcentage=50
     )  # hence worth 10 points
     root_action.actions = [action_1, action_2]
     action_1.actions = [  # All good : it sums to 10

@@ -1,6 +1,5 @@
-from typing import List, Literal, NewType
+from typing import  Literal
 
 
 ReferentielId = Literal["eci", "cae"]
 
-ActionId = NewType("ActionId", str)

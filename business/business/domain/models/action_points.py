@@ -1,6 +1,4 @@
-from typing import List, Literal, Optional
-
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from business.domain.models.action_definition import ActionId
 

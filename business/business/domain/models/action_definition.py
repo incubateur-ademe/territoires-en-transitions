@@ -2,8 +2,8 @@ from typing import Optional
 
 from dataclasses import dataclass
 
-from business.domain.models.litterals import ReferentielId, ActionId
-
+from business.domain.models.litterals import ReferentielId
+from business.utils.action_id import ActionId
 
 @dataclass
 class ActionDefinition:
@@ -17,4 +17,4 @@ class ActionDefinition:
     exemples: str
     ressources: str
     points: Optional[float]
-    percentage: Optional[float]
+    pourcentage: Optional[float]

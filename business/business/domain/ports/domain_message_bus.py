@@ -1,7 +1,6 @@
 import abc
-import asyncio
 from collections import defaultdict
-from typing import Any, Callable, Coroutine, Dict, List, Optional, Type
+from typing import Any, Callable,  Dict, List, Optional, Type
 
 from business.domain.models import commands, events
 
