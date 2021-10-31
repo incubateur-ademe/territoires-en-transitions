@@ -27,7 +27,7 @@ def test_build_economie_circulaire():
 
 
     markdown_converted_events: List[events.MarkdownReferentielNodeConvertedToEntities] = spy_on_event(bus, events.MarkdownReferentielNodeConvertedToEntities)
-    inconsistency_found_events: List[events.FoundMarkdownReferentielNodeInconsistency] = spy_on_event(bus, events.FoundMarkdownReferentielNodeInconsistency)
+    inconsistency_found_events: List[events.MarkdownReferentielNodeInconsistencyFound] = spy_on_event(bus, events.MarkdownReferentielNodeInconsistencyFound)
 
     use_case.execute(command)
 
@@ -58,7 +58,7 @@ def test_build_climat_air_energie():
 
 
     markdown_converted_events: List[events.MarkdownReferentielNodeConvertedToEntities] = spy_on_event(bus, events.MarkdownReferentielNodeConvertedToEntities)
-    inconsistency_found_events: List[events.FoundMarkdownReferentielNodeInconsistency] = spy_on_event(bus, events.FoundMarkdownReferentielNodeInconsistency)
+    inconsistency_found_events: List[events.MarkdownReferentielNodeInconsistencyFound] = spy_on_event(bus, events.MarkdownReferentielNodeInconsistencyFound)
 
     use_case.execute(command)
 

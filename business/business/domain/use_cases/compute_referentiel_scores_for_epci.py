@@ -1,6 +1,6 @@
 from typing import Dict, List
-from business.domain.models import commands, events
 
+from business.domain.models import commands, events
 from business.domain.models.action_status import (
     ActionStatus,
 )

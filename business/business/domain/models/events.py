@@ -8,7 +8,6 @@ from business.domain.models.action_score import ActionScore
 from business.domain.models.litterals import ReferentielId
 from business.domain.models.markdown_action_node import MarkdownActionNode
 
-
 class DomainEvent:
     pass
 
@@ -60,4 +59,21 @@ class ReferentielScoresForEpciComputed(DomainEvent):
 
 @dataclass
 class ReferentielScoresForEpciComputationFailed(DomainFailureEvent):
+    pass
+
+
+@dataclass
+class ReferentielStored(DomainEvent):
+    referentiel_id: ReferentielId
+
+@dataclass
+class ReferentielStorageFailed(DomainFailureEvent):
+    pass
+
+@dataclass
+class ScoresForEpciStored(DomainEvent):
+    epci_id: str
+
+@dataclass
+class ScoresStorageForEpciFailed(DomainFailureEvent):
     pass
