@@ -313,6 +313,24 @@ def test_percentage_is_100_if_points_is_0_and_status_faite(notation):
     )
 
 
+def test_notation_completion(notation):
+    notation.compute()
+    assert notation.completion[()] == 0
+
+    notation.set_status(
+        index=(
+            "1",
+            "1",
+        ),
+        status=Status.faite,
+    )
+    notation.compute()
+    assert notation.completion[("1",)] == 1 / 2
+    assert notation.completion[("2",)] == 0
+    assert notation.completion[("3",)] == 0
+    assert notation.completion[()] == 1 / 5
+
+
 def test_notation_non_concernee_changes_parents_potentiels():
     """
     A l'intérieur d'une mesure/orientation :

@@ -188,7 +188,7 @@ export const PlanCategoriesSelectionField: FC<
       setFieldValue(field.name, planCategories);
       setValueUpToDate(true);
     }
-  }, [plans.length, planCategories.length]);
+  }, [plans.length, planCategories.length, valueUpToDate]);
 
   return (
     <fieldset className="block">
