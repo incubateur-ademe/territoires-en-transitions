@@ -1,5 +1,6 @@
 import abc
-from typing import List
+from dataclasses import dataclass
+from typing import Dict, List
 
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_definition import ActionDefinition
@@ -34,23 +35,43 @@ class AbstractReferentielRepository(abc.ABC):
         raise NotImplementedError
 
 
+@dataclass
+class ReferentielEntities:
+    definitions: List[ActionDefinition]
+    children: List[ActionChildren]
+    points: List[ActionPoints]
+
+
 class InMemoryReferentielRepository(AbstractReferentielRepository):
     def __init__(self, entities: List[ActionChildren] = None) -> None:
-        self._entities = entities or []
+        self.referentiels: Dict[ReferentielId, ReferentielEntities] = {}
+        self._children_entities = entities or []
 
-    def add_referentiel(self, entities=List[ActionChildren]):
-        self._entities += entities
+    def add_referentiel(
+        self,
+        definitions: List[ActionDefinition],
+        children: List[ActionChildren],
+        points: List[ActionPoints],
+    ):
+        if not definitions:  # No entity to add
+            return
+        referentiel_id = definitions[0].referentiel_id
+        if referentiel_id not in self.referentiels:
+            self.referentiels[referentiel_id] = ReferentielEntities([], [], [])
+        self.referentiels[referentiel_id].definitions += definitions
+        self.referentiels[referentiel_id].children += children
+        self.referentiels[referentiel_id].points += points
 
-    def get_all_from_referentiel(
+    def get_all_points_from_referentiel(
+        self, referentiel_id: ReferentielId
+    ) -> List[ActionPoints]:
+        if referentiel_id not in self.referentiels:
+            return []
+        return self.referentiels[referentiel_id].points
+
+    def get_all_children_from_referentiel(
         self, referentiel_id: ReferentielId
     ) -> List[ActionChildren]:
-        return [
-            entity
-            for entity in self._entities
-            if retrieve_referentiel_id(entity.action_id) == referentiel_id
-        ]
-
-    # For test purposes only
-    @property
-    def entities(self) -> List[ActionChildren]:
-        return self._entities
+        if referentiel_id not in self.referentiels:
+            return []
+        return self.referentiels[referentiel_id].children

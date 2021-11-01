@@ -1,5 +1,3 @@
-import yaml
-
 from mistletoe import Document
 from mistletoe.block_token import BlockToken, Heading, CodeFence, Paragraph
 from mistletoe.span_token import Strong
@@ -47,10 +45,3 @@ def is_yaml(token: BlockToken) -> bool:
 def is_heading(token: BlockToken, level: int) -> bool:
     """Returns True if token is a reserved keyword."""
     return isinstance(token, Heading) and token.level == level
-
-
-def update_with_yaml(token: BlockToken, dictionary: dict) -> None:
-    """Update a dictionary with the content of a parsed yaml"""
-    if is_yaml(token):
-        parsed = yaml.safe_load(token.children[0].content)
-        dictionary.update(parsed)
