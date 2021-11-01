@@ -3,9 +3,10 @@ from business.domain.ports.domain_message_bus import (
     AbstractDomainMessageBus,
 )
 from business.domain.ports.action_score_repo import AbstractActionScoreRepository
+from .use_case import UseCase
 
 
-class StoreScoresForEpci:
+class StoreScoresForEpci(UseCase):
     def __init__(
         self,
         bus: AbstractDomainMessageBus,

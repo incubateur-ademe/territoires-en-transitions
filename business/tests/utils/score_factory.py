@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from business.utils.action_id import ActionId
+from business.utils.action_id import ActionId, retrieve_referentiel_id
 from business.domain.models.action_score import ActionScore
 
 
@@ -14,6 +14,7 @@ def make_action_score(
     completude_ratio: Tuple[int, int] = (0, 0),
 ):
     return ActionScore(
+        referentiel_id=retrieve_referentiel_id(ActionId(action_id)),
         action_id=ActionId(action_id),
         points=points,
         potentiel=potentiel,

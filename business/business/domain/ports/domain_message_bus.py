@@ -1,37 +1,49 @@
 import abc
 from collections import defaultdict
-from typing import Any, Callable,  Dict, List, Optional, Type
+from dataclasses import asdict
+from typing import Any, Callable, Dict, List, Optional, Type
 
 from business.domain.models import commands, events
 
-# EventCallback = Callable[[Any], Coroutine[Any, Any, Any]]
-EventCallback = Callable[[Any], Any]
+EventCallback = Callable[[events.DomainEvent], Any]
+CommandCallback = Callable[[commands.DomainCommand], Any]
 
 
 class AbstractDomainMessageBus(abc.ABC):
-    _event_handlers: Dict[Type[events.DomainEvent], List[Callable]]
-    _command_handlers: Dict[Type[commands.DomainCommand], Callable]
-
     @abc.abstractclassmethod
     def subscribe_to_event(
-        self, event_type: Type[events.DomainEvent], callback: Callable
+        self,
+        event_type: Type[events.DomainEvent],
+        callback: EventCallback,
     ) -> None:
         raise NotImplementedError()
 
     @abc.abstractclassmethod
+    def subscribe_to_command(
+        self,
+        command_type: Type[commands.DomainCommand],
+        callback: CommandCallback,
+    ) -> None:
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def publish_event(self, event: events.DomainEvent) -> None:
         raise NotImplementedError()
 
-    @abc.abstractclassmethod
-    async def publish_command(self, command: commands.DomainCommand) -> None:
+    @abc.abstractmethod
+    def publish_command(self, command: commands.DomainCommand) -> None:
         raise NotImplementedError()
 
 
 class InMemoryDomainMessageBus(AbstractDomainMessageBus):
     def __init__(
         self,
-        event_handlers: Optional[Dict[Type[events.DomainEvent], List[Callable]]] = None,
-        command_handlers: Optional[Dict[Type[commands.DomainCommand], Callable]] = None,
+        event_handlers: Optional[
+            Dict[Type[events.DomainEvent], List[EventCallback]]
+        ] = None,
+        command_handlers: Optional[
+            Dict[Type[commands.DomainCommand], CommandCallback]
+        ] = None,
     ) -> None:
         self._event_handlers = event_handlers or defaultdict(lambda: [])
         self._command_handlers = command_handlers or {}
@@ -43,6 +55,11 @@ class InMemoryDomainMessageBus(AbstractDomainMessageBus):
             self._event_handlers[event_type].append(callback)
         else:
             self._event_handlers[event_type] = [callback]
+
+    def subscribe_to_command(
+        self, command_type: Type[commands.DomainCommand], callback: CommandCallback
+    ) -> None:
+        self._command_handlers[command_type] = callback
 
     def publish_event(self, event: events.DomainEvent) -> None:
         handlers = self._event_handlers.get(type(event))
