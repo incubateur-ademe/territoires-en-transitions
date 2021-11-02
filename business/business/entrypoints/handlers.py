@@ -21,6 +21,7 @@ COMMAND_HANDLERS: Dict[Type[commands.DomainCommand], Type[UseCase]] = {
     # Referentiel
     commands.ParseMarkdownReferentielFolder: ParseMarkdownReferentielFolder,
     commands.ConvertMarkdownReferentielNodeToEntities: ConvertMarkdownReferentielNodeToEntities,
+    commands.StoreReferentielEntities: StoreReferentiel,
     # Notation
     commands.ComputeReferentielScoresForEpci: ComputeReferentielScoresForEpci,
     commands.StoreScoresForEpci: StoreScoresForEpci,

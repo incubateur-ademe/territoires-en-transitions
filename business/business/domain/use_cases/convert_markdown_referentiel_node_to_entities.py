@@ -86,6 +86,7 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
                 points=points_entities,
                 definitions=definition_entities,
                 children=children_entities,
+                referentiel_id=self.referentiel_id,
             )
         )
 

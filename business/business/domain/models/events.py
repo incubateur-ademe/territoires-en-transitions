@@ -8,6 +8,7 @@ from business.domain.models.action_score import ActionScore
 from business.domain.models.litterals import ReferentielId
 from business.domain.models.markdown_action_node import MarkdownActionNode
 
+
 class DomainEvent:
     pass
 
@@ -44,6 +45,8 @@ class MarkdownReferentielNodeConvertedToEntities(DomainEvent):
     definitions: List[ActionDefinition]
     points: List[ActionPoints]
     children: List[ActionChildren]
+    referentiel_id: ReferentielId
+
 
 @dataclass
 class MarkdownReferentielNodeInconsistencyFound(DomainFailureEvent):  # FAILURE
@@ -66,13 +69,16 @@ class ReferentielScoresForEpciComputationFailed(DomainFailureEvent):
 class ReferentielStored(DomainEvent):
     referentiel_id: ReferentielId
 
+
 @dataclass
 class ReferentielStorageFailed(DomainFailureEvent):
     pass
 
+
 @dataclass
 class ScoresForEpciStored(DomainEvent):
     epci_id: str
+
 
 @dataclass
 class ScoresStorageForEpciFailed(DomainFailureEvent):

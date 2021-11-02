@@ -17,7 +17,7 @@ class ParseMarkdownReferentielFolder(UseCase):
 
     def execute(self, command: commands.ParseMarkdownReferentielFolder):
         md_files = glob(os.path.join(command.folder_path, "*.md"))
-
+        print(f"Parsing {len(md_files)} files to build referentiel node.")
         action_nodes = []
         for md_file in md_files:
             actions_as_dict = self._build_actions_as_dict_from_md(md_file)

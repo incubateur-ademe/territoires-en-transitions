@@ -43,9 +43,16 @@ class ReferentielEntities:
 
 
 class InMemoryReferentielRepository(AbstractReferentielRepository):
-    def __init__(self, entities: List[ActionChildren] = None) -> None:
+    def __init__(
+        self,
+        children_entities: List[ActionChildren] = None,
+        definition_entities: List[ActionDefinition] = None,
+        points_entities: List[ActionPoints] = None,
+    ) -> None:
         self.referentiels: Dict[ReferentielId, ReferentielEntities] = {}
-        self._children_entities = entities or []
+        self._children_entities = children_entities or []
+        self._definition_entities = definition_entities or []
+        self._points_entities = points_entities or []
 
     def add_referentiel(
         self,
