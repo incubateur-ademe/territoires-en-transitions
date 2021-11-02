@@ -99,9 +99,11 @@ class ActionsPointsTree:
     @staticmethod
     def _build_forward_nodes(node: ActionPointsNode) -> List[ActionPointsNode]:
         forward_nodes: List[ActionPointsNode] = []
+
         def _append_node(node: ActionPointsNode):
             forward_nodes.append(node)
             if node.children:
                 list(map(_append_node, node.children))
+
         _append_node(node)
         return forward_nodes

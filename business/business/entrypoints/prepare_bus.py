@@ -1,12 +1,11 @@
 from dataclasses import asdict
-import inspect
+
 from typing import Type
 from business.domain.models import events
 from business.domain.models.commands import DomainCommand
 
 from business.domain.ports.domain_message_bus import (
     AbstractDomainMessageBus,
-    CommandCallback,
     EventCallback,
 )
 from business.domain.use_cases import *
@@ -21,13 +20,15 @@ class PrepareBusError(Exception):
 def make_on_event_publish_command(
     bus: AbstractDomainMessageBus, command_type: Type[DomainCommand]
 ) -> EventCallback:
-    def on_event_publish_command(event: Type[events.DomainEvent]):
-        command = command_type(**asdict(event))
+    def on_event_publish_command(event: events.DomainEvent):
+        command = command_type.from_dict(asdict(event))
+        # command = command_from_dict(command_type, asdict(event))
         bus.publish_command(command)
 
     return on_event_publish_command
 
 
+# TODO : simplify handlers by removing "command" level
 def prepare_bus(config: Config) -> AbstractDomainMessageBus:
 
     bus = config.domain_message_bus

@@ -62,6 +62,7 @@ class InMemoryDomainMessageBus(AbstractDomainMessageBus):
         self._command_handlers[command_type] = callback
 
     def publish_event(self, event: events.DomainEvent) -> None:
+        print("Published event :", type(event))
         handlers = self._event_handlers.get(type(event))
         if handlers:
             print("Handle event ", type(event))

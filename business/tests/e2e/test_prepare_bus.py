@@ -35,19 +35,19 @@ def config() -> Config:
 def test_action_status_updated(config: Config):
     bus = prepare_bus(config)
 
+    referentiel_stored_events = spy_on_event(bus, events.ReferentielStored)
     score_computed_events = spy_on_event(bus, events.ReferentielScoresForEpciComputed)
     score_stored_events = spy_on_event(bus, events.ScoresForEpciStored)
 
     config.domain_message_bus.publish_command(
         commands.ParseMarkdownReferentielFolder(
-            folder_path="./tests/data/md_referentiel_example_ok", referentiel_id="eci"
+            folder_path="./data/referentiels/eci", referentiel_id="eci"
         )
     )
 
     config.domain_message_bus.publish_command(
         commands.ComputeReferentielScoresForEpci(epci_id="lyon", referentiel_id="eci")
     )
-
-    sleep(3)
+    assert len(referentiel_stored_events) == 1
     assert len(score_computed_events) == 1
     assert len(score_stored_events) == 1

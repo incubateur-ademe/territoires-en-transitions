@@ -43,7 +43,7 @@ class ComputeReferentielScoresForEpci(UseCase):
             except ActionsPointsTreeError:
                 self.bus.publish_event(
                     events.ReferentielScoresForEpciComputationFailed(
-                        f"Refentiel tree could not be compputed for refentiel {command.referentiel_id}"
+                        f"Referentiel tree could not be compputed for refentiel {command.referentiel_id}"
                     )
                 )  # TODO
                 return
