@@ -10,6 +10,7 @@ pytest = "*"
 pytest-asyncio = "*"
 rx = "*"
 results = "*"
+realtime = {editable = true, path = "."}
 
 [dev-packages]
 

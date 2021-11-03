@@ -3,7 +3,7 @@ import json
 import rx
 from rx import operators as op
 
-from realtime.realtime.realtime import Realtime
+from realtime import Realtime
 from realtime.models.events import EpciActionStatusUpdateEvent
 
 RAW_EVENTS_DIR = "tests/supabase_realtime_events"

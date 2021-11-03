@@ -1,0 +1,16 @@
+pyproject.toml
+setup.py
+realtime/__init__.py
+realtime/abstract_controller.py
+realtime/converters.py
+realtime/realtime.py
+realtime/supabase_controller.py
+realtime.egg-info/PKG-INFO
+realtime.egg-info/SOURCES.txt
+realtime.egg-info/dependency_links.txt
+realtime.egg-info/top_level.txt
+realtime/models/__init__.py
+realtime/models/events.py
+realtime/models/sources.py
+tests/__init__.py
+tests/test_realtime.py

@@ -1,7 +1,7 @@
 from realtime_py import Socket
 
 from realtime.abstract_controller import AbstractRealtimeController
-from .realtime import Realtime
+from realtime import Realtime
 
 
 class SupabaseRealtimeController(AbstractRealtimeController):
