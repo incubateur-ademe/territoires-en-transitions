@@ -4,14 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-mistletoe = "*"
+supabase = "*"
 pydantic = "*"
 pytest = "*"
-pyyaml = "*"
-business = {editable = true, path = "."}
-realtime = {editable = true, path = "../realtime"}
-supabase = "*"
+pytest-asyncio = "*"
 rx = "*"
+results = "*"
+realtime = {editable = true, path = "."}
 
 [dev-packages]
 

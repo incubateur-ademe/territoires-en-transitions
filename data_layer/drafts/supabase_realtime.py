@@ -1,7 +1,7 @@
 from realtime_py.connection import Socket
 
-SUPABASE_ID = "dmsgonehoayxxzswrwhc"
-API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNTI2MDQ1MSwiZXhwIjoxOTUwODM2NDUxfQ.IByfUKbPzNXWifvU3o23fmigjVXbhNWgarXVBNHrVZ0"
+SUPABASE_ID = ""
+API_KEY = ""
 
 
 def insert_root_handler(payload):
