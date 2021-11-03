@@ -1,6 +1,5 @@
 import abc
 from collections import defaultdict
-from dataclasses import asdict
 from typing import Any, Callable, Dict, List, Optional, Type
 
 from business.domain.models import commands, events
@@ -62,6 +61,9 @@ class InMemoryDomainMessageBus(AbstractDomainMessageBus):
         self._command_handlers[command_type] = callback
 
     def publish_event(self, event: events.DomainEvent) -> None:
+        if isinstance(event, events.DomainFailureEvent):
+            print("Domain failure : ", event.reason)
+
         print("Published event :", type(event))
         handlers = self._event_handlers.get(type(event))
         if handlers:

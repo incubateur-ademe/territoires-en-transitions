@@ -21,7 +21,6 @@ class DomainCommand:  # TODO : consider removing command, that seems to rather c
 @dataclass
 class ParseMarkdownReferentielFolder(DomainCommand):
     folder_path: str
-    referentiel_id: ReferentielId
 
 
 @dataclass

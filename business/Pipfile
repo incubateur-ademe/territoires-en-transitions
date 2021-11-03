@@ -9,6 +9,7 @@ pydantic = "*"
 pytest = "*"
 pyyaml = "*"
 business = {editable = true, path = "."}
+python-dotenv = "*"
 
 [dev-packages]
 
