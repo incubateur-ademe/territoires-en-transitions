@@ -3,8 +3,8 @@ from rx.subject import Subject
 
 from data_layer.realtime import Realtime
 
-SUPABASE_ID = "dmsgonehoayxxzswrwhc"
-API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNTI2MDQ1MSwiZXhwIjoxOTUwODM2NDUxfQ.IByfUKbPzNXWifvU3o23fmigjVXbhNWgarXVBNHrVZ0"
+SUPABASE_ID = ""
+API_KEY = ""
 
 if __name__ == "__main__":
     raw_source = Subject()

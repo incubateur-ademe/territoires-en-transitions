@@ -32,6 +32,7 @@ source venv/bin/activate
 pip install pipenv
 pipenv install 
 pip install -e .
+pip install ../../realtime
 ```
 
 ### Lancer les tests
