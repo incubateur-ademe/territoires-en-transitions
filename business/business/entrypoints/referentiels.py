@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Dict, List, Literal, Type
 
 import click
@@ -10,11 +11,11 @@ from business.domain.ports.domain_message_bus import (
 )
 from business.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
-    InMemoryReferentielRepository,
 )
 from business.domain.use_cases import *
 from business.entrypoints.prepare_bus import prepare_bus
 from business.entrypoints.config import Config
+from business.adapters.json_referentiel_repo import JsonReferentielRepository
 
 # 1. Define message handlers (orchestration)
 
@@ -59,17 +60,18 @@ class ReferentielConfig(Config):
 @click.option(
     "--repo-option",
     prompt="Referentiel repository option",
-    # option=["SUPABASE", "IN_MEMORY"],
 )
 @click.option(
     "--markdown-folder",
     prompt="Path to folder containing referentiel definitions in markdowns",
 )
-def update(repo_option: Literal["SUPABASE", "IN_MEMORY"], markdown_folder: str):
+def update(repo_option: Literal["SUPABASE", "JSON"], markdown_folder: str):
     """Simple program that greets NAME for a total of COUNT times."""
     domain_message_bus = InMemoryDomainMessageBus()
-    if repo_option == "IN_MEMORY":
-        referentiel_repo = InMemoryReferentielRepository()
+    if repo_option == "JSON":
+        referentiel_repo = JsonReferentielRepository(
+            Path("./data/referentiel_repository.json")  # TODO variabilize this one
+        )
     else:
         raise NotImplementedError
     config = ReferentielConfig(referentiel_repo, domain_message_bus)
@@ -86,5 +88,5 @@ if __name__ == "__main__":
 
 # Command lines
 # --------------
-# python business/entrypoints/referentiels.py --repo-option IN_MEMORY --markdown-folder "./data/referentiels/eci"
-# python business/entrypoints/referentiels.py --repo-option IN_MEMORY --markdown-folder "./data/referentiels/cae"
+# python business/entrypoints/referentiels.py --repo-option JSON --markdown-folder "./data/referentiels/eci"
+# python business/entrypoints/referentiels.py --repo-option JSON --markdown-folder "./data/referentiels/cae"

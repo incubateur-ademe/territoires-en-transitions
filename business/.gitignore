@@ -15,3 +15,6 @@ venv/
 */*/*/__pycache__/*
 
 backend.egg-info/*
+
+# tests data
+tests/data/tmp

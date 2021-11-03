@@ -1,0 +1,44 @@
+{
+  "eci": {
+    "definitions": [
+      {
+        "action_id": "eci",
+        "referentiel_id": "eci",
+        "identifiant": "",
+        "nom": "",
+        "thematique_id": "",
+        "description": "",
+        "contexte": "",
+        "exemples": "",
+        "ressources": "",
+        "points": null,
+        "pourcentage": null
+      },
+      {
+        "action_id": "eci_1",
+        "referentiel_id": "eci",
+        "identifiant": "",
+        "nom": "",
+        "thematique_id": "",
+        "description": "",
+        "contexte": "",
+        "exemples": "",
+        "ressources": "",
+        "points": null,
+        "pourcentage": null
+      }
+    ],
+    "points": [
+      { "referentiel_id": "eci", "action_id": "eci", "value": 10 },
+      { "referentiel_id": "eci", "action_id": "eci_1", "value": 10 }
+    ],
+    "children": [
+      {
+        "referentiel_id": "eci",
+        "action_id": "eci",
+        "children_ids": ["eci_1"]
+      },
+      { "referentiel_id": "eci", "action_id": "eci_1", "children_ids": [] }
+    ]
+  }
+}
