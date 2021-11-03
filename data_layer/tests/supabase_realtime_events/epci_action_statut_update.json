@@ -1,0 +1,26 @@
+[
+  {
+    "columns": [
+      {
+        "flags": [],
+        "name": "epci_id",
+        "type": "int4",
+        "type_modifier": 4294967295
+      },
+      {
+        "flags": [],
+        "name": "created_at",
+        "type": "timestamptz",
+        "type_modifier": 4294967295
+      }
+    ],
+    "commit_timestamp": "2021-10-28T16:47:28Z",
+    "record": {
+      "created_at": "2021-10-28T16:47:28.114708Z",
+      "epci_id": "1"
+    },
+    "schema": "public",
+    "table": "epci_action_statut_update",
+    "type": "INSERT"
+  }
+]
