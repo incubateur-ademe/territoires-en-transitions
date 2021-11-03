@@ -88,5 +88,5 @@ if __name__ == "__main__":
 
 # Command lines
 # --------------
-# python business/entrypoints/referentiels.py --repo-option JSON --markdown-folder "./data/referentiels/eci"
-# python business/entrypoints/referentiels.py --repo-option JSON --markdown-folder "./data/referentiels/cae"
+# python business/entrypoints/referentiels.py --repo-option JSON --markdown-folder "../markdown/referentiels/eci"
+# python business/entrypoints/referentiels.py --repo-option JSON --markdown-folder "../markdown/referentiels/cae"
