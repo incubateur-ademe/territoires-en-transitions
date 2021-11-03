@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import Callable, Dict, List
 
 from pydantic import BaseModel
-from pydantic.types import BYTE_SIZES
 
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_points import ActionPoints
