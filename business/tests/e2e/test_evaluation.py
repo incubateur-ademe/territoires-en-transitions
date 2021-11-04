@@ -55,7 +55,6 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
             {
                 "record": {
                     "referentiel_id": "eci",
-                    "created_at": "2021-10-28T16:47:28.114708Z",
                     "epci_id": "1",
                 },
                 "table": "epci_action_statut_update",
@@ -76,63 +75,4 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
         score_computed_events[0].referentiel_id
         == score_computed_events[0].referentiel_id
         == "eci"
-    )
-
-
-def test_failure_published_when_realtime_event_has_unknown_referentiel(
-    bus: InMemoryDomainMessageBus, realtime: ReplayRealtime
-):
-    prepare_config_and_bus(bus, realtime)
-
-    realtime.set_events_to_emit(
-        [
-            {
-                "record": {
-                    "referentiel_id": "toto",
-                    "created_at": "2021-10-28T16:47:28.114708Z",
-                    "epci_id": "1",
-                },
-                "table": "epci_action_statut_update",
-            }
-        ]
-    )
-    failure_events = spy_on_event(bus, events.ReferentielScoresForEpciComputationFailed)
-
-    realtime.start()
-
-    assert len(failure_events) == 1
-
-    assert (
-        failure_events[0].reason
-        == "Referentiel tree could not be compputed for refentiel toto"
-    )
-
-
-def test_realtime_event_has_wrong_record_format(
-    bus: InMemoryDomainMessageBus, realtime: ReplayRealtime
-):
-    prepare_config_and_bus(bus, realtime)
-
-    realtime.set_events_to_emit(
-        [
-            {
-                "record": {
-                    "referentiel_id": "toto",
-                    "created_at": "2021-10-28T16:47:28.114708Z",
-                    # "epci_id": "1",
-                },
-                "table": "epci_action_statut_update",
-            }
-        ]
-    )
-
-    failure_events = spy_on_event(bus, events.RealtimeEventWithWrongFormatObserved)
-
-    realtime.start()
-
-    assert len(failure_events) == 1
-
-    assert (
-        failure_events[0].reason
-        == "Realtime event with wrong format: 'epci_id' missing in record of table epci_action_statut_update.\nObserved: {'record': {'referentiel_id': 'toto', 'created_at': '2021-10-28T16:47:28.114708Z'}, 'table': 'epci_action_statut_update'}"
     )

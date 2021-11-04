@@ -1,7 +1,8 @@
 import abc
 from typing import Literal
 
-
+import marshmallow_dataclass
+from marshmallow import ValidationError
 import rx.operators as op
 from rx.subject.subject import Subject
 
@@ -21,7 +22,6 @@ class AbstractRealtime(abc.ABC):  # Possible name ? DataLayerObserver ?
 
     def __init__(self, domain_message_bus: AbstractDomainMessageBus):
         self.external_observable = Subject()
-        # self._domain_observable = Subject()
         self.domain_message_bus = domain_message_bus
         self.external_observable.pipe(op.filter(self.table_filter)).subscribe(
             self.publish_to_domain
@@ -39,16 +39,14 @@ class AbstractRealtime(abc.ABC):  # Possible name ? DataLayerObserver ?
         ):  # todo import epci_action_statut_update
             record = realtime_observable["record"]
             try:
-                self.domain_message_bus.publish_event(
-                    events.ActionStatusUpdatedForEpci(  # todo : schema validation here !
-                        epci_id=record["epci_id"],
-                        referentiel_id=record["referentiel_id"],
-                    )
-                )
-            except KeyError as missing_key:
+                schema = marshmallow_dataclass.class_schema(
+                    events.ActionStatusUpdatedForEpci
+                )()
+                self.domain_message_bus.publish_event(schema.load(record))
+            except ValidationError as marshmallow_validation_error:
                 self.domain_message_bus.publish_event(
                     events.RealtimeEventWithWrongFormatObserved(
-                        f"Realtime event with wrong format: {missing_key} missing in record of table {observable_table}.\nObserved: {realtime_observable}"
+                        f"Realtime event with wrong format: {marshmallow_validation_error}"
                     )
                 )
         else:
