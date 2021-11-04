@@ -9,7 +9,9 @@ pydantic = "*"
 pytest = "*"
 pyyaml = "*"
 business = {editable = true, path = "."}
-python-dotenv = "*"
+realtime = {editable = true, path = "../realtime"}
+supabase = "*"
+rx = "*"
 
 [dev-packages]
 
