@@ -12,6 +12,7 @@ business = {editable = true, path = "."}
 realtime = {editable = true, path = "../realtime"}
 supabase = "*"
 rx = "*"
+marshmallow-dataclass = "*"
 
 [dev-packages]
 
