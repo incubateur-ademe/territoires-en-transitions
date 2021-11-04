@@ -34,7 +34,7 @@ EventHandlers = Dict[Type[events.DomainEvent], List[Type[commands.DomainCommand]
 # TODO : simplify handlers by removing "command" level
 def prepare_bus(
     config: Config, event_handlers: EventHandlers, command_handlers: CommandHandlers
-) -> AbstractDomainMessageBus:
+):
 
     bus = config.domain_message_bus
     use_cases = config.prepare_use_cases()
