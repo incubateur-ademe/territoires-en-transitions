@@ -14,3 +14,4 @@ from .compute_referentiel_scores_for_epci import (
     ComputeReferentielScoresForEpci,
 )
 from .store_scores_for_epci import StoreScoresForEpci
+from .tranfer_data_layer_event_to_domain import TransferRealtimeEventToDomain

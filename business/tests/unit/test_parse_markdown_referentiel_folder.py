@@ -9,7 +9,7 @@ from tests.utils.spy_on_event import spy_on_event
 
 def test_build_markdown_action_node_from_ok_folder():
     test_command = commands.ParseMarkdownReferentielFolder(
-        folder_path="./tests/data/md_referentiel_example_ok", referentiel_id="eci"
+        folder_path="./tests/data/md_referentiel_example_ok"
     )
     bus = InMemoryDomainMessageBus()
     use_case = ParseMarkdownReferentielFolder(bus=bus)
@@ -24,7 +24,7 @@ def test_build_markdown_action_node_from_ok_folder():
 
     expected_event = events.MarkdownReferentielFolderParsed(
         referentiel_node=MarkdownActionNode(
-            referentiel_id= "eci",
+            referentiel_id="eci",
             identifiant="",
             nom="Titre du référentiel",
             thematique_id="",
@@ -32,7 +32,7 @@ def test_build_markdown_action_node_from_ok_folder():
             contexte="",
             exemples="",
             ressources="",
-            points=100.,
+            points=100.0,
             pourcentage=None,
             actions=[
                 MarkdownActionNode(
@@ -124,7 +124,7 @@ def test_build_markdown_action_node_from_ok_folder():
 
 def test_build_markdown_action_node_when_referentiel_id_is_unknown():
     test_command = commands.ParseMarkdownReferentielFolder(
-        folder_path="./tests/data/md_referentiel_examples_nok/unknown_referentiel_id", referentiel_id="eci"
+        folder_path="./tests/data/md_referentiel_examples_nok/unknown_referentiel_id",
     )
     bus = InMemoryDomainMessageBus()
     use_case = ParseMarkdownReferentielFolder(bus=bus)
@@ -137,11 +137,15 @@ def test_build_markdown_action_node_when_referentiel_id_is_unknown():
     assert len(failure_events) == 1
     assert len(success_events) == 0
 
-    assert failure_events[0].reason == "1 validation error for MarkdownActionNode\nreferentiel_id\n  unexpected value; permitted: 'eci', 'cae' (type=value_error.const; given=some_new_fancy_referentiel_id; permitted=('eci', 'cae'))"
+    assert (
+        failure_events[0].reason
+        == "1 validation error for MarkdownActionNode\nreferentiel_id\n  unexpected value; permitted: 'eci', 'cae' (type=value_error.const; given=some_new_fancy_referentiel_id; permitted=('eci', 'cae'))"
+    )
+
 
 def test_build_markdown_action_node_when_no_action_root():
     test_command = commands.ParseMarkdownReferentielFolder(
-        folder_path="./tests/data/md_referentiel_examples_nok/no_root", referentiel_id="eci"
+        folder_path="./tests/data/md_referentiel_examples_nok/no_root",
     )
     bus = InMemoryDomainMessageBus()
     use_case = ParseMarkdownReferentielFolder(bus=bus)
@@ -154,11 +158,15 @@ def test_build_markdown_action_node_when_no_action_root():
     assert len(failure_events) == 1
     assert len(success_events) == 0
 
-    assert failure_events[0].reason == "Le dossier de markdowns doit contenir une unique action racine (dont l'identifiant est ''). 0 trouvé(s)."
+    assert (
+        failure_events[0].reason
+        == "Le dossier de markdowns doit contenir une unique action racine (dont l'identifiant est ''). 0 trouvé(s)."
+    )
+
 
 def test_build_markdown_action_node_when_orphan_nodes():
     test_command = commands.ParseMarkdownReferentielFolder(
-        folder_path="./tests/data/md_referentiel_examples_nok/orphan_nodes", referentiel_id="eci"
+        folder_path="./tests/data/md_referentiel_examples_nok/orphan_nodes"
     )
     bus = InMemoryDomainMessageBus()
     use_case = ParseMarkdownReferentielFolder(bus=bus)
@@ -171,4 +179,7 @@ def test_build_markdown_action_node_when_orphan_nodes():
     assert len(failure_events) == 1
     assert len(success_events) == 0
 
-    assert failure_events[0].reason == "Il manque un niveau entre l'action 1 et son enfant 1.1.1"
+    assert (
+        failure_events[0].reason
+        == "Il manque un niveau entre l'action 1 et son enfant 1.1.1"
+    )

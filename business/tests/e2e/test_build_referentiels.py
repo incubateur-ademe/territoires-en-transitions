@@ -14,7 +14,7 @@ from tests.utils.spy_on_event import spy_on_event
 # TODO : test CLI !
 def test_build_economie_circulaire():
     test_command = commands.ParseMarkdownReferentielFolder(
-        folder_path="./data/referentiels/eci"
+        folder_path="../markdown/referentiels/eci"
     )
     bus = InMemoryDomainMessageBus()
     use_case = ParseMarkdownReferentielFolder(bus=bus)
@@ -57,7 +57,7 @@ def test_build_economie_circulaire():
 
 def test_build_climat_air_energie():
     test_command = commands.ParseMarkdownReferentielFolder(
-        folder_path="./data/referentiels/cae"
+        folder_path="../markdown/referentiels/cae"
     )
     bus = InMemoryDomainMessageBus()
     use_case = ParseMarkdownReferentielFolder(bus=bus)

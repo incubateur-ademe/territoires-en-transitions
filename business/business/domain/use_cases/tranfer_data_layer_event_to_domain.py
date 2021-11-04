@@ -1,23 +1,25 @@
 from business.domain.ports.domain_message_bus import AbstractDomainMessageBus
-from business.domain.models import commands, data_layer_events, events
+from business.domain.models import commands, events
 from .use_case import UseCase
 
 
-class TransferDataLayerEventToDomain(UseCase):
+class TransferRealtimeEventToDomain(UseCase):
     def __init__(
         self,
         domain_message_bus: AbstractDomainMessageBus,
     ) -> None:
         self.domain_message_bus = domain_message_bus
 
-    def execute(self, command: commands.TransferDataLayerEventToDomain):
+    def execute(self, command):
         data_layer_event = command.event
-        if isinstance(
-            data_layer_event, data_layer_events.UserUpdatedActionStatusForEpci
-        ):
+        breakpoint()
+        if (
+            data_layer_event.topic == "epci_action_statut_update"
+        ):  # todo import epci_action_statut_update
+            record = data_layer_event.record
             self.domain_message_bus.publish_event(
-                events.ActionStatusUpdatedForEpci(
-                    epci_id=data_layer_event.epci_id,
-                    referentiel_id=data_layer_event.referentiel_id,
+                events.ActionStatusUpdatedForEpci(  # todo : schema validation here !
+                    epci_id=record["epci_id"],
+                    referentiel_id=record["referentiel_id"],
                 )
             )
