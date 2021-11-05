@@ -35,15 +35,15 @@ class ComputeReferentielScoresForEpci(UseCase):
 
     def execute(self, command: commands.ComputeReferentielScoresForEpci):
 
-        point_tree = self.points_trees.get(command.referentiel_id)
+        point_tree = self.points_trees.get(command.referentiel)
         if point_tree is None:
             try:
-                point_tree = self.build_points_tree(command.referentiel_id)
-                self.points_trees[command.referentiel_id] = point_tree
+                point_tree = self.build_points_tree(command.referentiel)
+                self.points_trees[command.referentiel] = point_tree
             except ActionsPointsTreeError:
                 self.bus.publish_event(
                     events.ReferentielScoresForEpciComputationFailed(
-                        f"Referentiel tree could not be compputed for refentiel {command.referentiel_id}"
+                        f"Referentiel tree could not be computed for referentiel {command.referentiel}"
                     )
                 )  # TODO
                 return
@@ -69,19 +69,19 @@ class ComputeReferentielScoresForEpci(UseCase):
                 tache,
                 status_by_action_id,
                 actions_non_concernees_ids,
-                referentiel_id=command.referentiel_id,
+                referentiel_id=command.referentiel,
             )
         )
 
         point_tree.map_from_sous_actions_to_root(
             lambda action: self.update_scores_for_action_given_children_scores(
-                scores, action, command.referentiel_id
+                scores, action, command.referentiel
             )
         )
         self.bus.publish_event(
             events.ReferentielScoresForEpciComputed(
                 epci_id=command.epci_id,
-                referentiel_id=command.referentiel_id,
+                referentiel_id=command.referentiel,
                 scores=list(scores.values()),
             )
         )

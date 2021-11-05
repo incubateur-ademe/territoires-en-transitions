@@ -23,7 +23,6 @@ as
 select siren, nom
 from epci;
 
-
 --------------------------------
 -------- REFERENTIEL -----------
 --------------------------------
@@ -126,10 +125,13 @@ create table epci_action_statut_update_event
 );
 
 
-create function after_action_statut_insert_write_event() returns trigger as
+create or replace function after_action_statut_insert_write_event() returns trigger as
 $$
+declare
+    relation action_relation%ROWTYPE;
 begin
-    insert into epci_action_statut_update_event values (NEW.epci_id, default);
+    select * into relation from action_relation where id = NEW.action_id limit 1;
+    insert into epci_action_statut_update_event values (NEW.epci_id, relation.referentiel, default);
     return null;
 end;
 $$ language 'plpgsql';
@@ -187,3 +189,21 @@ create trigger before_action_statut_update
     on action_statut
     for each row
 execute procedure before_action_statut_update_write_log();
+
+
+-- test
+create or replace function after_action_statut_insert_write_event_test(test_id action_id, test_epci_id int) returns
+    text as
+$$
+declare
+    relation action_relation%ROWTYPE;
+begin
+    select * into relation from action_relation where id = test_id limit 1;
+    -- insert into epci_action_statut_update_event values (test_epci_id, relation.referentiel, default);
+    return  (test_epci_id, relation.referentiel);
+end;
+$$ language 'plpgsql';
+
+select after_action_statut_insert_write_event_test('cae', 1);
+
+--- Error: insert or update on table "action_statut" violates foreign key constraint "action_statut_action_id_fkey"

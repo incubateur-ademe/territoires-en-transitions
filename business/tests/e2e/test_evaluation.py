@@ -78,7 +78,7 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
 
     assert score_computed_events[0].epci_id == score_computed_events[0].epci_id == "1"
     assert (
-        score_computed_events[0].referentiel_id
-        == score_computed_events[0].referentiel_id
+        score_computed_events[0].referentiel
+        == score_computed_events[0].referentiel
         == "eci"
     )

@@ -24,8 +24,8 @@ class AbstractConverter(abc.ABC):
         pass
 
 
-DataLayerTable = Literal["epci_action_statut_update"]
-epci_action_statut_update_table: DataLayerTable = "epci_action_statut_update"
+DataLayerTable = Literal["epci_action_statut_update_event"]
+epci_action_statut_update_table: DataLayerTable = "epci_action_statut_update_event"
 
 
 class EpciActionStatutUpdateConverter(AbstractConverter):
