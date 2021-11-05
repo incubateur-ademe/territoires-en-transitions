@@ -53,7 +53,6 @@ class ConvertMarkdownIndicateursToEntities(UseCase):
                     md_indicateur_as_dict
                 )
                 md_indicateurs.append(md_indicateur)
-        breakpoint()
 
     @staticmethod
     def _build_md_indicateur_as_dict_from_md(path: str) -> List[dict]:

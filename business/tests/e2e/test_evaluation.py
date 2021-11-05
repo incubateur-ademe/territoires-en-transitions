@@ -1,4 +1,9 @@
 from pathlib import Path
+from typing import List
+from business.domain.ports.realtime import (
+    AbstractConverter,
+    EpciActionStatutUpdateConverter,
+)
 import pytest
 
 from business.domain.ports.domain_message_bus import (
@@ -29,7 +34,8 @@ def bus() -> InMemoryDomainMessageBus:
 
 @pytest.fixture
 def realtime(bus) -> ReplayRealtime:
-    return ReplayRealtime(bus)
+    converters: List[AbstractConverter] = [EpciActionStatutUpdateConverter()]
+    return ReplayRealtime(bus, converters=converters)
 
 
 def prepare_config_and_bus(bus: InMemoryDomainMessageBus, realtime: ReplayRealtime):
