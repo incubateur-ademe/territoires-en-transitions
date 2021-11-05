@@ -1,4 +1,4 @@
-name: Test API
+name: Test Business
 
 on:
   push:
@@ -20,12 +20,12 @@ jobs:
       - name: Black Code Formatter
         uses: psf/black@21.5b1
 
-  test-api:
+  test-business:
     runs-on: ubuntu-latest
 
     env:
       AUTH_DISABLED_DUMMY_USER: YES
-      working-directory: ./api
+      working-directory: ./business
 
     steps:
       # cf. https://github.com/actions/checkout
@@ -84,5 +84,5 @@ jobs:
 
       # Run tests
       - name: Run tests
-        run: pipenv run pytest tests/api
+        run: pipenv run pytest tests
         working-directory: ${{env.working-directory}}
