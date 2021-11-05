@@ -9,10 +9,10 @@ pydantic = "*"
 pytest = "*"
 pyyaml = "*"
 business = {editable = true, path = "."}
-realtime = {editable = true, path = "../realtime"}
 supabase = "*"
 rx = "*"
 marshmallow-dataclass = "*"
+black = "==21.5b1"
 
 [dev-packages]
 

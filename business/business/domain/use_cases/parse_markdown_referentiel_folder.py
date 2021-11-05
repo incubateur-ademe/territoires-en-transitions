@@ -7,8 +7,9 @@ from business.domain.models.markdown_action_node import MarkdownActionNode
 from business.domain.ports.domain_message_bus import AbstractDomainMessageBus
 from business.utils.markdown_import.markdown_parser import build_markdown_parser
 from business.utils.markdown_import.markdown_utils import load_md
-from pydantic import ValidationError
 from .use_case import UseCase
+
+from pydantic import ValidationError
 
 
 class ParseMarkdownReferentielFolder(UseCase):
