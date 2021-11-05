@@ -33,4 +33,5 @@ class BusinessComputedScore(BaseModel):
     percentage: float
     potentiel: float
 
+
 BusinessComputedScore.update_forward_refs()

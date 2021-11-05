@@ -59,3 +59,8 @@ class StoreScoresForEpci(DomainCommand):
     scores: List[ActionScore]
     referentiel_id: ReferentielId
     epci_id: str
+
+
+@dataclass
+class ConvertMarkdownIndicateursToEntities(DomainCommand):
+    folder_path: str

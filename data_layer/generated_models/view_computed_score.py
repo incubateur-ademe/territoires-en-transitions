@@ -29,4 +29,5 @@ class ViewComputedScore(BaseModel):
     percentage: Optional[float] = None
     potentiel: Optional[float] = None
 
+
 ViewComputedScore.update_forward_refs()
