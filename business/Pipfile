@@ -13,6 +13,7 @@ supabase = "*"
 rx = "*"
 marshmallow-dataclass = "*"
 black = "==21.5b1"
+psycopg = "*"
 
 [dev-packages]
 

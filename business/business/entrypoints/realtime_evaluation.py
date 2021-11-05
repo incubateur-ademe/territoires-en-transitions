@@ -113,7 +113,8 @@ def get_connected_socket() -> Optional[Socket]:
     # SUPABASE_WS_URL = os.getenv("SUPABASE_WS_URL")
     SUPABASE_WS_URL = (
         "wss://kpgbvabtmaarclkhqipm.supabase.co/realtime/v1/websocket?apikey"
-        "=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNjEyMjE2NywiZXhwIjoxOTUxNjk4MTY3fQ.KKOP_X13eEZRn0_BDG2CswGgN6GXDt1f9J7aWlX5yPI&vsn=1.0.0"
+        "nope"
+        "&vsn=1.0.0"
     )
     if not SUPABASE_WS_URL:
         return None
