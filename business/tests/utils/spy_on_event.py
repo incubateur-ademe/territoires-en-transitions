@@ -10,7 +10,7 @@ def spy_on_event(
     event_bus: AbstractDomainMessageBus, event_type: Type[events.DomainEvent]
 ) -> List[Any]:
     published_events = []
-    
+
     def spy(e):
         published_events.append(e)
 
