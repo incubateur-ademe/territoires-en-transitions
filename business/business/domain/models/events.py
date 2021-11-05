@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import Dict, List
 
 from business.domain.models.action_definition import ActionDefinition
 from business.domain.models.action_children import ActionChildren
@@ -82,4 +82,9 @@ class ScoresForEpciStored(DomainEvent):
 
 @dataclass
 class ScoresStorageForEpciFailed(DomainFailureEvent):
+    pass
+
+
+@dataclass
+class RealtimeEventWithWrongFormatObserved(DomainFailureEvent):
     pass

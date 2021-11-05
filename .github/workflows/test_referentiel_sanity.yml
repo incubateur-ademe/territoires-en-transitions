@@ -1,156 +1,156 @@
-name: Référentiel - Génération et test de cohérence
+# name: Référentiel - Génération et test de cohérence
 
-on: [ push, pull_request ]
+# on: [ push, pull_request ]
 
-jobs:
-  codegen-generate-actions:
-    name: Generate referentiel actions using Codegen
-    runs-on: ubuntu-latest
-    env:
-      python-version: 3.9.1
-      working-directory: ./codegen
+# jobs:
+#   codegen-generate-actions:
+#     name: Generate referentiel actions using Codegen
+#     runs-on: ubuntu-latest
+#     env:
+#       python-version: 3.9.1
+#       working-directory: ./codegen
 
-    steps:
-      # cf. https://github.com/actions/checkout
-      - uses: actions/checkout@v2
+#     steps:
+#       # cf. https://github.com/actions/checkout
+#       - uses: actions/checkout@v2
 
-      # Restore cache or create a new one for all dependencies installed with
-      # Python.
-      - name: Set up Python cache
-        uses: actions/cache@v2
-        env:
-          python-tools-cache-name: python-tools-cache
-        with:
-          path: /opt/hostedtoolcache/Python
-          key: ${{ runner.os }}-${{ env.python-tools-cache-name }}-${{ env.python-version }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.python-tools-cache-name }}
-            ${{ runner.os }}-
-      # Restore cache or create a new one for the binary for Poetry, as Poetry
-      # will check if it is already installed before installing itself.
-      - name: Set up poetry binary cache
-        uses: actions/cache@v2
-        env:
-          poetry-bin-cache-name: poetry-bin
-        with:
-          path: ~/poetry
-          key: ${{ runner.os }}-${{ env.poetry-bin-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.poetry-bin-cache-name }}
-            ${{ runner.os }}-
-      # Restore cache or create a new one for all dependecies installed by
-      # Poetry.
-      - name: Set up dependencies cache
-        uses: actions/cache@v2
-        env:
-          poetry-cache-name: poetry-dependencies-cache
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.poetry-cache-name }}-
-            ${{ runner.os }}-
-      # cf. https://github.com/actions/setup-python
-      - name: Set up Python 3.9.1
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9.1'
+#       # Restore cache or create a new one for all dependencies installed with
+#       # Python.
+#       - name: Set up Python cache
+#         uses: actions/cache@v2
+#         env:
+#           python-tools-cache-name: python-tools-cache
+#         with:
+#           path: /opt/hostedtoolcache/Python
+#           key: ${{ runner.os }}-${{ env.python-tools-cache-name }}-${{ env.python-version }}
+#           restore-keys: |
+#             ${{ runner.os }}-${{ env.python-tools-cache-name }}
+#             ${{ runner.os }}-
+#       # Restore cache or create a new one for the binary for Poetry, as Poetry
+#       # will check if it is already installed before installing itself.
+#       - name: Set up poetry binary cache
+#         uses: actions/cache@v2
+#         env:
+#           poetry-bin-cache-name: poetry-bin
+#         with:
+#           path: ~/poetry
+#           key: ${{ runner.os }}-${{ env.poetry-bin-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
+#           restore-keys: |
+#             ${{ runner.os }}-${{ env.poetry-bin-cache-name }}
+#             ${{ runner.os }}-
+#       # Restore cache or create a new one for all dependecies installed by
+#       # Poetry.
+#       - name: Set up dependencies cache
+#         uses: actions/cache@v2
+#         env:
+#           poetry-cache-name: poetry-dependencies-cache
+#         with:
+#           path: ~/.cache/pypoetry
+#           key: ${{ runner.os }}-${{ env.poetry-cache-name }}-${{ hashFiles('codegen/poetry.lock') }}
+#           restore-keys: |
+#             ${{ runner.os }}-${{ env.poetry-cache-name }}-
+#             ${{ runner.os }}-
+#       # cf. https://github.com/actions/setup-python
+#       - name: Set up Python 3.9.1
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: '3.9.1'
 
-      # Install the dependencies manager for codegen.
-      - name: Install Poetry
-        run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=~/poetry python -
-          echo "$HOME/poetry/bin" >> $GITHUB_PATH
-      # Install the dependencies of codegen.
-      - name: Install dependencies
-        run: poetry install
-        working-directory: ${{env.working-directory}}
+#       # Install the dependencies manager for codegen.
+#       - name: Install Poetry
+#         run: |
+#           curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=~/poetry python -
+#           echo "$HOME/poetry/bin" >> $GITHUB_PATH
+#       # Install the dependencies of codegen.
+#       - name: Install dependencies
+#         run: poetry install
+#         working-directory: ${{env.working-directory}}
 
-      # Generate Python shared actions data with codegen.
-      - name: Generate actions
-        run: |
-          poetry run generate actions
-          pwd
-        working-directory: ${{ env.working-directory }}
+#       # Generate Python shared actions data with codegen.
+#       - name: Generate actions
+#         run: |
+#           poetry run generate actions
+#           pwd
+#         working-directory: ${{ env.working-directory }}
 
-      # Upload the generated files as an artefact, so they can be downloaded in the next job.
-      - name: Upload generated files
-        uses: actions/upload-artifact@v2
-        with:
-          name: generated-actions-file
-          path: ${{ github.workspace }}/api/api/data/generated/referentiels.py
+#       # Upload the generated files as an artefact, so they can be downloaded in the next job.
+#       - name: Upload generated files
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: generated-actions-file
+#           path: ${{ github.workspace }}/api/api/data/generated/referentiels.py
 
 
-  check-referentiels:
-    name: Test referentiels sanity then commit changes
-    runs-on: ubuntu-latest
-    needs: codegen-generate-actions
+#   check-referentiels:
+#     name: Test referentiels sanity then commit changes
+#     runs-on: ubuntu-latest
+#     needs: codegen-generate-actions
 
-    env:
-      AUTH_DISABLED_DUMMY_USER: YES
-      working-directory: ./api
+#     env:
+#       AUTH_DISABLED_DUMMY_USER: YES
+#       working-directory: ./api
 
-    steps:
-      # cf. https://github.com/actions/checkout
-      - uses: actions/checkout@v2
+#     steps:
+#       # cf. https://github.com/actions/checkout
+#       - uses: actions/checkout@v2
 
-      # Download python models and data generated previously by codegen.
-      - name: Download generated files
-        uses: actions/download-artifact@v2
-        with:
-          name: generated-actions-file
-          path: ${{ github.workspace }}/api/api/data/generated/
+#       # Download python models and data generated previously by codegen.
+#       - name: Download generated files
+#         uses: actions/download-artifact@v2
+#         with:
+#           name: generated-actions-file
+#           path: ${{ github.workspace }}/api/api/data/generated/
 
-      # Restore cache or create a new one for all dependencies installed with
-      # Python.
-      - name: Set up Python cache
-        uses: actions/cache@v2
-        env:
-          python-tools-cache-name: python-tools-cache
-        with:
-          path: /opt/hostedtoolcache/Python
-          key: ${{ runner.os }}-${{ env.python-tools-cache-name }}-${{ env.python-version }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.python-tools-cache-name }}
-            ${{ runner.os }}-
-      # Pipenv
-      - name: Set up Pipenv cache
-        uses: actions/cache@v2
-        env:
-          pipenv-cache-name: pipenv-cache
-        with:
-          path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-${{ env.pipenv-cache-name }}-${{ hashFiles('Pipfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.pipenv-cache-name }}
-            ${{ runner.os }}-
-      # cf. https://github.com/actions/setup-python
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9.1'
+#       # Restore cache or create a new one for all dependencies installed with
+#       # Python.
+#       - name: Set up Python cache
+#         uses: actions/cache@v2
+#         env:
+#           python-tools-cache-name: python-tools-cache
+#         with:
+#           path: /opt/hostedtoolcache/Python
+#           key: ${{ runner.os }}-${{ env.python-tools-cache-name }}-${{ env.python-version }}
+#           restore-keys: |
+#             ${{ runner.os }}-${{ env.python-tools-cache-name }}
+#             ${{ runner.os }}-
+#       # Pipenv
+#       - name: Set up Pipenv cache
+#         uses: actions/cache@v2
+#         env:
+#           pipenv-cache-name: pipenv-cache
+#         with:
+#           path: ~/.local/share/virtualenvs
+#           key: ${{ runner.os }}-${{ env.pipenv-cache-name }}-${{ hashFiles('Pipfile.lock') }}
+#           restore-keys: |
+#             ${{ runner.os }}-${{ env.pipenv-cache-name }}
+#             ${{ runner.os }}-
+#       # cf. https://github.com/actions/setup-python
+#       - name: Set up Python 3.x
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: '3.9.1'
 
-      # Install the dependencies manager.
-      - name: Install pipenv
-        run: |
-          python -m pip install --upgrade pipenv wheel
-        working-directory: ${{env.working-directory}}
+#       # Install the dependencies manager.
+#       - name: Install pipenv
+#         run: |
+#           python -m pip install --upgrade pipenv wheel
+#         working-directory: ${{env.working-directory}}
 
-      # Install the project's dependencies.
-      - name: Install dependencies
-        run: |
-          pipenv install
-          pipenv install --dev
-        working-directory: ${{env.working-directory}}
+#       # Install the project's dependencies.
+#       - name: Install dependencies
+#         run: |
+#           pipenv install
+#           pipenv install --dev
+#         working-directory: ${{env.working-directory}}
 
-      # Run tests
-      - name: Run tests
-        run: pipenv run pytest tests/test_referentiel_sanity.py
-        working-directory: ${{env.working-directory}}
+#       # Run tests
+#       - name: Run tests
+#         run: pipenv run pytest tests/test_referentiel_sanity.py
+#         working-directory: ${{env.working-directory}}
 
-      # Commit changes
-      - name: Commit generated referentiel
-        uses: EndBug/add-and-commit@v7
-        with:
-          default_author: github_actions
-          message: Generated referentiel from updated markdowns.
+#       # Commit changes
+#       - name: Commit generated referentiel
+#         uses: EndBug/add-and-commit@v7
+#         with:
+#           default_author: github_actions
+#           message: Generated referentiel from updated markdowns.

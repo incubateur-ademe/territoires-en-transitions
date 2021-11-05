@@ -22,15 +22,16 @@ class ConvertErrorEvent(Event):
 
 
 class EpciActionStatusUpdateConverter(Converter):
-
     @staticmethod
     def filter(raw: dict) -> bool:
-        return raw['table'] == 'epci_action_statut_update' and raw['type'] == 'INSERT'
+        return raw["table"] == "epci_action_statut_update" and raw["type"] == "INSERT"
 
     @staticmethod
     def convert(raw: dict) -> Event:
-        record: dict = raw['record']
+        record: dict = raw["record"]
         try:
-            return EpciActionStatusUpdateEvent(epci_id=record['epci_id'], created_at=record['created_at'])
+            return EpciActionStatusUpdateEvent(
+                epci_id=record["epci_id"], created_at=record["created_at"]
+            )
         except:
             return ConvertErrorEvent(raw=raw)

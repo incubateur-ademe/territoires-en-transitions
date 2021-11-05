@@ -58,4 +58,3 @@ def test_referentiel_should_update_table_and_view(initialized_cursor):
     assert len(children) == len(relations)
     for child in children:
         print(child)
-

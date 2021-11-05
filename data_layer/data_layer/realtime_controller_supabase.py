@@ -11,4 +11,3 @@ class RealtimeSupabaseController(RealtimeController):
     def start(self, realtime: Realtime) -> None:
         channel = self.socket.set_channel("realtime:public:epci_action_statut_update")
         channel.join().on("INSERT", realtime.raw_source.on_next)
-

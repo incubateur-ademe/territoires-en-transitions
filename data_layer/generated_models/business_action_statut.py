@@ -29,4 +29,5 @@ class BusinessActionStatut(BaseModel):
     avancement: Optional[str] = None
     concerne: Optional[bool] = None
 
+
 BusinessActionStatut.update_forward_refs()

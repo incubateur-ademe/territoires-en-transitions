@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Dict, List
-from business.domain.models.data_layer_events import DataLayerEvent
 
 from business.domain.models.markdown_action_node import MarkdownActionNode
 from business.domain.models.litterals import ReferentielId
@@ -63,5 +62,5 @@ class StoreScoresForEpci(DomainCommand):
 
 
 @dataclass
-class TransferDataLayerEventToDomain(DomainCommand):
-    event: DataLayerEvent
+class ConvertMarkdownIndicateursToEntities(DomainCommand):
+    folder_path: str
