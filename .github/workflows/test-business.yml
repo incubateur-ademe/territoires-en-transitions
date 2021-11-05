@@ -10,13 +10,14 @@ jobs:
   check-black-format:
     runs-on: ubuntu-latest
     env:
-      working-directory: ./api
+      working-directory: ./business
 
     steps:
       - uses: actions/checkout@v2-beta
       - uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
+          path: ./business
+          python-version: "3.9"
       - name: Black Code Formatter
         uses: psf/black@21.5b1
 
