@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 import yaml
 from mistletoe import Document
@@ -46,10 +46,15 @@ def make_section_writer(title: str) -> NodeWriter:
 
 
 def build_markdown_parser(
-    title_key: str, description_key: str, children_key: str
+    title_key: str, description_key: str, children_key: Optional[str]
 ) -> Callable[[Document], List[dict]]:
     def node_builder() -> dict:
-        return {title_key: "", children_key: []}
+        if children_key:
+            return {title_key: "", children_key: []}
+        else:
+            return {
+                title_key: "",
+            }
 
     def node_writer_builder(
         name_level: int,
@@ -63,7 +68,7 @@ def build_markdown_parser(
 
         def node_writer(token: BlockToken, node: dict) -> None:
             """Save actions"""
-            if is_keyword(
+            if children_key and is_keyword(
                 token, children_key
             ):  # children_key keyword is handled in the top parser
                 return
@@ -104,7 +109,7 @@ def build_markdown_parser(
         current_writer = node_writer_builder(name_level=name_level)
 
         for token in doc.children:
-            if is_keyword(token, children_key):
+            if children_key and is_keyword(token, children_key):
                 name_level = token.level + 1
                 current_writer = node_writer_builder(
                     name_level=name_level,

@@ -31,4 +31,5 @@ class ViewActionStatut(BaseModel):
     avancement: Optional[str] = None
     concerne: Optional[bool] = None
 
+
 ViewActionStatut.update_forward_refs()

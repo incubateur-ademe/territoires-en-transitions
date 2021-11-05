@@ -35,4 +35,5 @@ class StoreActionStatut(BaseModel):
     concerne: bool
     # should be skipped by code generation modified_at: str
 
+
 StoreActionStatut.update_forward_refs()
