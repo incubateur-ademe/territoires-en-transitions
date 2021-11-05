@@ -110,24 +110,21 @@ def get_config(socket: Optional[Socket]):  # TODO variabilize all instantiations
 
 # SUPABASE_ID = ""
 # API_KEY = ""
+def get_connected_socket() -> Optional[Socket]:
+    # SUPABASE_WS_URL = os.getenv("SUPABASE_WS_URL")
+    SUPABASE_WS_URL = (
+        "wss://kpgbvabtmaarclkhqipm.supabase.co/realtime/v1/websocket?apikey"
+        "=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNjEyMjE2NywiZXhwIjoxOTUxNjk4MTY3fQ.KKOP_X13eEZRn0_BDG2CswGgN6GXDt1f9J7aWlX5yPI&vsn=1.0.0"
+    )
+    if not SUPABASE_WS_URL:
+        return None
+    socket = Socket(SUPABASE_WS_URL)
+    socket.connect()
+    return socket
 
 
 if __name__ == "__main__":
-    # URL = f"ws://{SUPABASE_ID}.supabase.co/realtime/v1/websocket?apikey={API_KEY}&vsn=1.0.0"
-    # socket = Socket(URL)
-    # socket.connect()
-
-    # controller = SupabaseRealtimeController(socket)
-    # realtime = Realtime(controller=controller)
-
-    config = get_config()
-
-    # realtime.observe(topic="epci_action_statut_update", callback=lambda e: print(e))
-
-    # realtime.observe(
-    #     topic="epci_action_statut_update", callback=lambda e: config.domain_message_bus
-    # )
-
+    socket = get_connected_socket()
+    config = get_config(socket)
     config.realtime.start()
-
-    # socket.listen()
+    socket.listen()

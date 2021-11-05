@@ -24,9 +24,13 @@ class AbstractConverter(abc.ABC):
         pass
 
 
+DataLayerTable = Literal["epci_action_statut_update"]
+epci_action_statut_update_table: DataLayerTable = "epci_action_statut_update"
+
+
 class EpciActionStatutUpdateConverter(AbstractConverter):
     def __init__(self) -> None:
-        self.table = "epci_action_statut_update"
+        self.table = epci_action_statut_update_table
         self.schema = marshmallow_dataclass.class_schema(
             events.ActionStatusUpdatedForEpci
         )()

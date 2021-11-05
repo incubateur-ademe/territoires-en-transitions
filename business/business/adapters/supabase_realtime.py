@@ -7,8 +7,8 @@ from realtime_py import Socket
 import rx
 
 from business.domain.ports.realtime import AbstractConverter
-from domain.ports.realtime import AbstractRealtime
-from domain.ports.domain_message_bus import AbstractDomainMessageBus
+from business.domain.ports.realtime import AbstractRealtime
+from business.domain.ports.domain_message_bus import AbstractDomainMessageBus
 
 
 class ReplayRealtime(AbstractRealtime):
