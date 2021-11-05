@@ -61,7 +61,6 @@ class EvaluationConfig(Config):
 
     def prepare_use_cases(self) -> List[UseCase]:
         return [
-            # TransferRealtimeEventToDomain(self.domain_message_bus),
             ComputeReferentielScoresForEpci(
                 self.domain_message_bus, self.referentiel_repo, self.statuses_repo
             ),
