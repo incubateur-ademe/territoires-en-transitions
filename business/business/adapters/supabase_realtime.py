@@ -43,7 +43,7 @@ class SupabaseRealtimeController:
         self.observer = observer
 
     def start(self) -> None:
-        channel = self.socket.set_channel("realtime:public:epci_action_statut_update")
+        channel = self.socket.set_channel("realtime:*")
         channel.join().on("INSERT", self.observer.on_next)
 
 

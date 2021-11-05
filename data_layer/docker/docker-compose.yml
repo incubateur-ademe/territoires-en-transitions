@@ -1,6 +1,6 @@
 services:
   kong:
-    container_name: supabase-kong
+    container_name: tet-test-supabase-kong
     image: kong:2.1
     restart: unless-stopped
     ports:
@@ -15,7 +15,7 @@ services:
       KONG_DNS_ORDER: LAST,A,CNAME
       KONG_PLUGINS: request-transformer,cors,key-auth
   auth:
-    container_name: supabase-auth
+    container_name: tet-test-supabase-auth
     image: supabase/gotrue:v2.1.8
     depends_on:
       - db
@@ -51,7 +51,7 @@ services:
       GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
       GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
   rest:
-    container_name: supabase-rest
+    container_name: tet-test-supabase-rest
     image: postgrest/postgrest:v8.0.0
     depends_on:
       - db
@@ -62,7 +62,7 @@ services:
       PGRST_DB_ANON_ROLE: anon
       PGRST_JWT_SECRET: ${JWT_SECRET}
   realtime:
-    container_name: supabase-realtime
+    container_name: tet-test-supabase-realtime
     image: supabase/realtime:v0.15.0
     depends_on:
       - db
@@ -78,7 +78,7 @@ services:
       SECURE_CHANNELS: "true"
       JWT_SECRET: ${JWT_SECRET}
   storage:
-    container_name: supabase-storage
+    container_name: tet-test-supabase-storage
     image: supabase/storage-api:v0.9.3
     depends_on:
       - db
@@ -102,13 +102,13 @@ services:
       REGION: stub
       GLOBAL_S3_BUCKET: stub
   db:
-    container_name: supabase-db
+    container_name: tet-test-supabase-db
     image: supabase/postgres:13.3.0
     restart: unless-stopped
     ports:
       - ${POSTGRES_PORT}:5432
     volumes:
-      - ./volumes/db/data:/var/lib/postgresql/data
+      # - ./volumes/db/data:/var/lib/postgresql/data
       - ./volumes/db/init:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

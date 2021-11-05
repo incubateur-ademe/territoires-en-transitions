@@ -1,15 +1,12 @@
-from typing import List, Dict, Type
+import os
 from pathlib import Path
+from typing import List, Dict, Type, Optional
 
-from business.domain.ports.realtime import AbstractRealtime
-from business.domain.ports.domain_message_bus import (
-    AbstractDomainMessageBus,
-    InMemoryDomainMessageBus,
-)
+from realtime_py import Socket
 
-from business.domain.ports.referentiel_repo import (
-    AbstractReferentielRepository,
-)
+from business.adapters.json_referentiel_repo import JsonReferentielRepository
+from business.adapters.supabase_realtime import SupabaseRealtime
+from business.domain.models import events, commands
 from business.domain.ports.action_score_repo import (
     AbstractActionScoreRepository,
     InMemoryActionScoreRepository,
@@ -18,12 +15,21 @@ from business.domain.ports.action_status_repo import (
     AbstractActionStatusRepository,
     InMemoryActionStatusRepository,
 )
-from business.entrypoints.prepare_bus import prepare_bus
+from business.domain.ports.domain_message_bus import (
+    AbstractDomainMessageBus,
+    InMemoryDomainMessageBus,
+)
+from business.domain.ports.realtime import (
+    AbstractRealtime,
+    EpciActionStatutUpdateConverter,
+    AbstractConverter,
+)
+from business.domain.ports.referentiel_repo import (
+    AbstractReferentielRepository,
+)
 from business.domain.use_cases import *
-from business.domain.models import events, commands
 from business.entrypoints.config import Config
-from business.adapters.json_referentiel_repo import JsonReferentielRepository
-from business.adapters.replay_realtime import ReplayRealtime
+from business.entrypoints.prepare_bus import prepare_bus
 
 # 1. Define Handlers
 EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[commands.DomainCommand]]] = {
@@ -35,6 +41,7 @@ COMMAND_HANDLERS: Dict[Type[commands.DomainCommand], Type[UseCase]] = {
     commands.ComputeReferentielScoresForEpci: ComputeReferentielScoresForEpci,
     commands.StoreScoresForEpci: StoreScoresForEpci,
 }
+
 
 # 2. Define Config
 class EvaluationConfig(Config):
@@ -53,7 +60,6 @@ class EvaluationConfig(Config):
         self.realtime = realtime
 
     def prepare_use_cases(self) -> List[UseCase]:
-
         return [
             # TransferRealtimeEventToDomain(self.domain_message_bus),
             ComputeReferentielScoresForEpci(
@@ -65,19 +71,30 @@ class EvaluationConfig(Config):
     # 3. Prepare domain bus
 
 
-def get_config():  # TODO variabilize all instantiations !
+def get_config(socket: Optional[Socket]):  # TODO variabilize all instantiations !
     domain_message_bus = InMemoryDomainMessageBus()
+
     referentiel_repo = JsonReferentielRepository(
         Path("./data/referentiel_repository.json")
     )
     statuses_repo = InMemoryActionStatusRepository()
     scores_repo = InMemoryActionScoreRepository()
 
-    realtime = realtime = ReplayRealtime(
-        domain_message_bus,
-        json_path=Path("business/adapters/data/epci_action_statut_update.json"),
-    )
+    # If REALTIME == "REPLAY"
+    # realtime = ReplayRealtime(
+    # domain_message_bus,
+    # json_path=Path("business/adapters/data/epci_action_statut_update.json"),
+    # )
 
+    # IF REALIME == "SUPABASE" and socket
+    if not socket:
+        raise ValueError(
+            "In SUPABASE realtime mode, you should specify SUPABASE_WS_URL."
+        )
+    converters: List[AbstractConverter] = [EpciActionStatutUpdateConverter()]
+    realtime = SupabaseRealtime(
+        domain_message_bus=domain_message_bus, socket=socket, converters=converters
+    )
     config = EvaluationConfig(
         referentiel_repo,
         scores_repo,
@@ -93,6 +110,7 @@ def get_config():  # TODO variabilize all instantiations !
 
 # SUPABASE_ID = ""
 # API_KEY = ""
+
 
 if __name__ == "__main__":
     # URL = f"ws://{SUPABASE_ID}.supabase.co/realtime/v1/websocket?apikey={API_KEY}&vsn=1.0.0"
