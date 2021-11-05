@@ -4,7 +4,7 @@ from typing import Dict, List
 from business.domain.models import events
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_definition import ActionDefinition
-from business.domain.models.litterals import ReferentielId
+from business.domain.models.litterals import Referentiel
 from business.utils.action_id import ActionId
 from business.domain.models.markdown_action_node import MarkdownActionNode
 from business.domain.models import commands
@@ -32,15 +32,15 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
         self.forward_nodes = self._build_forward_nodes(self.referentiel_node)
         self.backward_nodes = self.forward_nodes[::-1]
 
-        if self.referentiel_node.referentiel_id is None:
+        if self.referentiel_node.referentiel is None:
             self.bus.publish_event(
                 events.MarkdownReferentielNodeInconsistencyFound(
-                    f"L'action racine (dont l'identifiant est '') doit avoir un `referentiel_id` renseigné.'"
+                    f"L'action racine (dont l'identifiant est '') doit avoir un `referentiel` renseigné.'"
                 )
             )
             return
 
-        self.referentiel_id: ReferentielId = self.referentiel_node.referentiel_id
+        self.referentiel: Referentiel = self.referentiel_node.referentiel
 
         try:
             self.check_all_identifiant_are_unique()
@@ -75,7 +75,7 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
 
         points_entities = [
             ActionPoints(
-                referentiel_id=self.referentiel_id,
+                referentiel=self.referentiel,
                 action_id=action_id,
                 value=points_value if points_value is not None else math.nan,
             )
@@ -86,7 +86,7 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
                 points=points_entities,
                 definitions=definition_entities,
                 children=children_entities,
-                referentiel_id=self.referentiel_id,
+                referentiel=self.referentiel,
             )
         )
 
@@ -208,7 +208,7 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
                     points_by_identifiant[child.identifiant] = child_points
 
         return {
-            build_action_id(self.referentiel_id, identifiant): points
+            build_action_id(self.referentiel, identifiant): points
             for (identifiant, points) in points_by_identifiant.items()
         }
 
@@ -219,9 +219,9 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
         action_definition_entities: List[ActionDefinition] = []
         for node in self.forward_nodes:
             action_definition_entity = ActionDefinition(
-                referentiel_id=self.referentiel_id,  # type: ignore
+                referentiel=self.referentiel,  # type: ignore
                 thematique_id=node.thematique_id,
-                action_id=build_action_id(self.referentiel_id, node.identifiant),
+                action_id=build_action_id(self.referentiel, node.identifiant),
                 identifiant=node.identifiant,
                 nom=node.nom,
                 contexte=node.contexte,
@@ -241,10 +241,10 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
         action_children_entities: List[ActionChildren] = []
         for node in self.forward_nodes:
             action_children_entity = ActionChildren(
-                referentiel_id=self.referentiel_id,
-                action_id=build_action_id(self.referentiel_id, node.identifiant),
+                referentiel=self.referentiel,
+                action_id=build_action_id(self.referentiel, node.identifiant),
                 children_ids=[
-                    build_action_id(self.referentiel_id, child.identifiant)
+                    build_action_id(self.referentiel, child.identifiant)
                     for child in node.actions
                 ],
             )

@@ -17,18 +17,22 @@ create table epci
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
     modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
+comment on table epci is 'EPCI information, writable only by postgres user';
 
 create view client_epci
 as
 select siren, nom
 from epci;
-
+comment on view client_epci is 'The necessary EPCI information to display in the client.';
 
 --------------------------------
 -------- REFERENTIEL -----------
 --------------------------------
 create type referentiel as enum ('eci', 'cae');
-create domain action_id as varchar(30); -- eg: eci_1.1.1.1
+comment on type referentiel is 'An enum representing a referentiel';
+
+create domain action_id as varchar(30);
+comment on type action_id is 'A unique action id. ex: eci_1.1.1.1';
 
 
 create table action_relation
@@ -37,6 +41,9 @@ create table action_relation
     referentiel referentiel           not null,
     parent      action_id references action_relation
 );
+comment on table action_relation is
+    'Relation between an action and its parent. '
+        'Parent must be inserted before its child; child must be deleted before its parent.';
 
 create view action_children
 as
@@ -48,6 +55,8 @@ from action_relation
     where id = action_relation.parent
     )
     as children on true;
+comment on view action_children is
+    'Action and its children, computed from action relation';
 
 
 --------------------------------
@@ -99,7 +108,6 @@ create table score
     points                 real                                               not null,
     potentiel              real                                               not null,
     referentiel_points     real                                               not null,
-    percentage             real                                               not null,
     concernee              bool                                               not null,
     previsionnel           real                                               not null,
     total_taches_count     int                                                not null,
@@ -110,7 +118,7 @@ create table score
 
 create view client_score
 as
-select action_id, referentiel, points, percentage, potentiel
+select action_id, referentiel, points, potentiel
 from score
          join action_relation on action_id = action_relation.id;
 
@@ -126,10 +134,13 @@ create table epci_action_statut_update_event
 );
 
 
-create function after_action_statut_insert_write_event() returns trigger as
+create or replace function after_action_statut_insert_write_event() returns trigger as
 $$
+declare
+    relation action_relation%ROWTYPE;
 begin
-    insert into epci_action_statut_update_event values (NEW.epci_id, default);
+    select * into relation from action_relation where id = NEW.action_id limit 1;
+    insert into epci_action_statut_update_event values (NEW.epci_id, relation.referentiel, default);
     return null;
 end;
 $$ language 'plpgsql';
@@ -187,3 +198,52 @@ create trigger before_action_statut_update
     on action_statut
     for each row
 execute procedure before_action_statut_update_write_log();
+
+
+
+--------------------------------
+----------- TYPING -------------
+--------------------------------
+create function udt_name_to_json_type(udt_name text) returns text
+as
+$$
+begin
+    return
+        case
+            when udt_name ~ '^bool' then 'boolean'
+            when udt_name ~ '^int' then 'int32'
+            when udt_name ~ '^float' then 'float64'
+            when udt_name ~ '^timestamp' then 'timestamp'
+            else 'string'
+            end;
+end;
+$$ language plpgsql;
+comment on function udt_name_to_json_type(udt_name text) is
+    'Returns a type as a string compatible with json type definition.';
+
+create view table_as_json_typedef
+as
+with table_columns as (
+    select columns.table_name                            as title,
+           column_name,
+           is_nullable = 'NO' and column_default is null as mandatory,
+
+           udt_name
+
+    from information_schema.columns
+    where table_schema = 'public'
+),
+     json_type_def as (
+         select title,
+                json_object_agg(
+                column_name,
+                json_build_object('type', udt_name_to_json_type(udt_name))
+                    ) filter ( where mandatory ) as properties
+         from table_columns
+         group by title
+     )
+select title,
+       json_build_object('properties', coalesce(properties, '{}')) as json_typedef
+from json_type_def;
+comment on view table_as_json_typedef is
+    'Json type definition for all public tables (including views). Only non nullable/non default fields are listed';

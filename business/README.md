@@ -32,7 +32,6 @@ source venv/bin/activate
 pip install pipenv
 pipenv install 
 pip install -e .
-pip install ../../realtime
 ```
 
 ### Lancer les tests
@@ -81,20 +80,15 @@ Pour chaque référentiel, l'ADEME tient à jour un dossier de fichiers markdown
 
 - Les relations de parentés entre les actions (noeuds) du référentiels peuvent être faite de deux façons : 
     - Grâce à l'identifiant : Ainsi dans le dossier d'exemple, l'action 1.1 est "enfant" de l'action 1 
-    - Grâce au titre clé `Actions` : Ainsi, dans le dossier d'exemple, l'action 1.1.1 est "enfant" de l'action "1.1" car elle est définie "nestée"/"imbriquée" sous le titre `Actions` de cette dernière. 
-#### Flow idéal (sans erreur)
-- [commands.MarkdownFolderUpdate] 
-- [events.MarkdownFolder.updated] 
-- [commands.ParseMarkdownFolder] 
-- [events.MarkdownFolderParsed] 
-- [commands.CheckReferentielAndExtractEntities]
-- [events.ReferentielActionEntitiesExtracted]
-- [commands.StoreReferentielActionEntities]           
-- [events.ReferentielActionEntitiesStored]           
+    - Grâce au titre clé `Actions` : Ainsi, dans le dossier d'exemple, l'action 1.1.1 est "enfant" de l'action "1.1" car elle est définie "nestée"/"imbriquée" sous le titre `Actions` de cette dernière.    
            
 ### Notation
 #### Contexte
-
+Dans l'application, les utilisateurs remplissent les statuts des tâches des référentiels et visualisent les scores des différents niveaux mis à jour en temps réel. 
 #### Solution proposée
-
-#### Flow idéal (sans erreur)
+Lorsqu'un nouveau statut est sélectionné pour une tâche : 
+1. le client écrit dans le data-layer le nouveau statut
+2. au moment de la mise à jour du statut dans le data-layer, un "événement" est émis 
+3. le business observe ces évènements, qui déclenchent le moteur de notation
+4. une fois les scores calculés, le business met à jour les scores dans le data-layer
+5. enfin, les scores sont "poussés" vers le client afin de mettre à jour les composants

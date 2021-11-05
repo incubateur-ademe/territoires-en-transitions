@@ -7,8 +7,8 @@ from realtime_py import Socket
 import rx
 
 from business.domain.ports.realtime import AbstractConverter
-from domain.ports.realtime import AbstractRealtime
-from domain.ports.domain_message_bus import AbstractDomainMessageBus
+from business.domain.ports.realtime import AbstractRealtime
+from business.domain.ports.domain_message_bus import AbstractDomainMessageBus
 
 
 class ReplayRealtime(AbstractRealtime):
@@ -43,7 +43,7 @@ class SupabaseRealtimeController:
         self.observer = observer
 
     def start(self) -> None:
-        channel = self.socket.set_channel("realtime:public:epci_action_statut_update")
+        channel = self.socket.set_channel("realtime:*")
         channel.join().on("INSERT", self.observer.on_next)
 
 
@@ -53,8 +53,9 @@ class SupabaseRealtime(AbstractRealtime):
 
     def __init__(
         self,
-        socket: Socket,
         domain_message_bus: AbstractDomainMessageBus,
+        *,
+        socket: Socket,
         converters=List[AbstractConverter],
     ):
         super().__init__(domain_message_bus, converters=converters)

@@ -7,18 +7,13 @@ from tests.utils.referentiel_factory import (
     make_action_definition,
     make_action_points,
 )
-
-
-def delete_file(path: Path):
-    try:
-        path.unlink()
-    except FileNotFoundError:
-        pass
+from tests.utils.files import remove_file, mkdir
 
 
 def test_can_add_to_repo():
     path = Path("./tests/data/tmp/ref.json")
-    delete_file(path)
+    mkdir(path.parent)
+    remove_file(path)
 
     repo = JsonReferentielRepository(path)
 

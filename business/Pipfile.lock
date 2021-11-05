@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "34be3de07ffa5b834f794c4675375157210e92e3b164a3e6d94157f819535195"
+            "sha256": "4fabefdec9f4664de6f6ebda41f8eb212423bddc76dd3e6f04a9c0ffe9c4ee6c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -201,8 +201,16 @@
                 "sha256:d0741af1de0da54846ec5356ca3145d019ef2996d46cd5015737b415109cce2b",
                 "sha256:fe251d7a27539fe01afa5cb266c2f5c04bb25115e0b19d424f33861a4e31fd89"
             ],
-            "markers": "python_version >= '3.7' and python_full_version < '4.0.0'",
+            "markers": "python_version >= '3.7' and python_version < '4.0'",
             "version": "==0.5.0"
+        },
+        "psycopg": {
+            "hashes": [
+                "sha256:be91c7f793e13df2f314fb372fbae2c29d6dbed5ac14651c69e7b45cb876becf",
+                "sha256:f509c236c7f08b5a46ca19efbe20b5b317876a8ed6823fefd1c3fb4a5d691fe3"
+            ],
+            "index": "pypi",
+            "version": "==3.0.1"
         },
         "py": {
             "hashes": [
@@ -264,6 +272,14 @@
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==2.8.2"
         },
+        "python-dotenv": {
+            "hashes": [
+                "sha256:14f8185cc8d494662683e6914addcb7e95374771e707601dfc70166946b4c4b8",
+                "sha256:bbd3da593fc49c249397cbfbcc449cf36cb02e75afc8157fcc6a81df6fb7750a"
+            ],
+            "index": "pypi",
+            "version": "==0.19.1"
+        },
         "pyyaml": {
             "hashes": [
                 "sha256:0283c35a6a9fbf047493e3a0ce8d79ef5030852c51e9d911a27badfde0605293",
@@ -308,7 +324,7 @@
                 "sha256:218f8516d9a4e56c0feac9fae28c3571cdba74be1cb8616c2be029cb7df434f4",
                 "sha256:4f245094fa3cdf106efe538afbb61b6486369d3210d49af1923d285441315554"
             ],
-            "markers": "python_version >= '3.7' and python_full_version < '4.0.0'",
+            "markers": "python_version >= '3.7' and python_version < '4.0'",
             "version": "==0.1.3"
         },
         "regex": {
@@ -444,7 +460,7 @@
                 "sha256:4987c65554f7a2dbf30c18fd48778ef124af6fab771a377103da0585e2336ece",
                 "sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_full_version < '4.0.0'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.26.7"
         },
         "websockets": {

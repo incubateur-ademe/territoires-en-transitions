@@ -18,9 +18,7 @@ def test_can_store_scores():
         make_action_score("eci_1", points=15),
         make_action_score("eci_2", points=5),
     ]
-    command = commands.StoreScoresForEpci(
-        referentiel_id="eci", epci_id="lyon", scores=scores
-    )
+    command = commands.StoreScoresForEpci(referentiel="eci", epci_id=1, scores=scores)
 
     entity_stored_events = spy_on_event(bus, events.ScoresForEpciStored)
     storage_failed_events = spy_on_event(bus, events.ScoresStorageForEpciFailed)
@@ -29,4 +27,4 @@ def test_can_store_scores():
 
     assert len(storage_failed_events) == 0
     assert len(entity_stored_events) == 1
-    assert len(score_repo.get_entities_for_epci("lyon")) == 3
+    assert len(score_repo.get_entities_for_epci(1)) == 3

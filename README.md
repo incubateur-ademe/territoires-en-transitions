@@ -17,11 +17,12 @@ L'interface a pour objectifs de permettre aux utilisateurs :
       entre collectivités.
 
 Ce dépôt Git contient :
-- un outil pour extraire les données métiers venant de fichiers divers (`.xls`,
-  `.docx`, etc.) sous un format unifié,
-- l'application client de l'interface,
+3 services : 
+  - le "data-layer"
+  - le "business"
+  - l'application 
 - les données des référentiels (fichiers sources et markdown),
-- des outils pour le déploiement.
+- le code du site statique
 
 Chaque dossier à la racine contient son propre `README.md` et peut fonctionner
 de manière autonome.

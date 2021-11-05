@@ -24,7 +24,7 @@ def test_build_markdown_action_node_from_ok_folder():
 
     expected_event = events.MarkdownReferentielFolderParsed(
         referentiel_node=MarkdownActionNode(
-            referentiel_id="eci",
+            referentiel="eci",
             identifiant="",
             nom="Titre du référentiel",
             thematique_id="",
@@ -36,7 +36,7 @@ def test_build_markdown_action_node_from_ok_folder():
             pourcentage=None,
             actions=[
                 MarkdownActionNode(
-                    referentiel_id=None,
+                    referentiel=None,
                     identifiant="1",
                     nom="Titre de l'action 1",
                     thematique_id="",
@@ -48,7 +48,7 @@ def test_build_markdown_action_node_from_ok_folder():
                     pourcentage=None,
                     actions=[
                         MarkdownActionNode(
-                            referentiel_id=None,
+                            referentiel=None,
                             identifiant="1.1",
                             nom="Titre de l'action 1.1",
                             thematique_id="",
@@ -60,7 +60,7 @@ def test_build_markdown_action_node_from_ok_folder():
                             pourcentage=None,
                             actions=[
                                 MarkdownActionNode(
-                                    referentiel_id=None,
+                                    referentiel=None,
                                     identifiant="1.1.1",
                                     nom="Titre de l'action 1.1.1",
                                     thematique_id="",
@@ -72,7 +72,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                     pourcentage=None,
                                     actions=[
                                         MarkdownActionNode(
-                                            referentiel_id=None,
+                                            referentiel=None,
                                             identifiant="1.1.1.1",
                                             nom="Titre de l'action 1.1.1.1",
                                             thematique_id="",
@@ -85,7 +85,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                             actions=[],
                                         ),
                                         MarkdownActionNode(
-                                            referentiel_id=None,
+                                            referentiel=None,
                                             identifiant="1.1.1.2",
                                             nom="Titre de l'action 1.1.1.2",
                                             thematique_id="",
@@ -98,7 +98,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                             actions=[],
                                         ),
                                         MarkdownActionNode(
-                                            referentiel_id=None,
+                                            referentiel=None,
                                             identifiant="1.1.1.3",
                                             nom="Titre de l'action 1.1.1.3",
                                             thematique_id="",
@@ -122,9 +122,9 @@ def test_build_markdown_action_node_from_ok_folder():
     assert parsed_events[0] == expected_event
 
 
-def test_build_markdown_action_node_when_referentiel_id_is_unknown():
+def test_build_markdown_action_node_when_referentiel_is_unknown():
     test_command = commands.ParseMarkdownReferentielFolder(
-        folder_path="./tests/data/md_referentiel_examples_nok/unknown_referentiel_id",
+        folder_path="./tests/data/md_referentiel_examples_nok/unknown_referentiel",
     )
     bus = InMemoryDomainMessageBus()
     use_case = ParseMarkdownReferentielFolder(bus=bus)
@@ -139,7 +139,7 @@ def test_build_markdown_action_node_when_referentiel_id_is_unknown():
 
     assert (
         failure_events[0].reason
-        == "1 validation error for MarkdownActionNode\nreferentiel_id\n  unexpected value; permitted: 'eci', 'cae' (type=value_error.const; given=some_new_fancy_referentiel_id; permitted=('eci', 'cae'))"
+        == "1 validation error for MarkdownActionNode\nreferentiel\n  unexpected value; permitted: 'eci', 'cae' (type=value_error.const; given=some_new_fancy_referentiel; permitted=('eci', 'cae'))"
     )
 
 

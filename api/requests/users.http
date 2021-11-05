@@ -1,3 +1,0 @@
-### get user
-GET {{host}}/v2/admin/users/0d4d4a0d-5825-45c2-be3b-60db7e0bf6bf
-Authorization: Basic xx xx

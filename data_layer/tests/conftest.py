@@ -13,7 +13,7 @@ supabase_project = "dmsgonehoayxxzswrwhc"
 supabase_url = f"https://{supabase_project}.supabase.co"
 supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaWF0IjoxNjM1MjYwNDUxLCJleHAiOjE5NTA4MzY0NTF9.QOwTz3P0aJZhVrF-jRTBy3PiCDhVvIW8byvHvXqR2dc"
 postgres_password = "your-super-secret-and-long-postgres-password"
-postgres_url = f"postgresql://postgres:{postgres_password}@localhost:49153/postgres"
+postgres_url = f"postgresql://postgres:{postgres_password}@localhost:49154/postgres"
 
 
 @pytest.fixture()

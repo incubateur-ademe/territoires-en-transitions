@@ -11,10 +11,10 @@ from tests.utils.referentiel_factory import (
 )
 
 definition_entities = [
-    make_action_definition(action_id="eci", referentiel_id="eci"),
-    make_action_definition(action_id="eci_1", referentiel_id="eci"),
-    make_action_definition(action_id="eci_2", referentiel_id="eci"),
-    make_action_definition(action_id="eci_1.0", referentiel_id="eci"),
+    make_action_definition(action_id="eci", referentiel="eci"),
+    make_action_definition(action_id="eci_1", referentiel="eci"),
+    make_action_definition(action_id="eci_2", referentiel="eci"),
+    make_action_definition(action_id="eci_1.0", referentiel="eci"),
 ]
 children_entities = [
     make_action_children(action_id="eci", children_ids=["eci_1", "eci_2"]),
@@ -37,7 +37,7 @@ def test_can_store_correct_referentiel():
     use_case = StoreReferentiel(bus, referentiel_repo)
 
     command = commands.StoreReferentielEntities(
-        definition_entities, points_entities, children_entities, referentiel_id="eci"
+        definition_entities, points_entities, children_entities, referentiel="eci"
     )
 
     entity_stored_events = spy_on_event(bus, events.ReferentielStored)
@@ -70,7 +70,7 @@ def test_wont_store_if_incoherent_children():
         definition_entities,
         points_entities,
         incoherent_children_entities,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     entity_stored_events = spy_on_event(bus, events.ReferentielStored)

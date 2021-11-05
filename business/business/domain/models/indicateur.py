@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List, Literal
 
 from business.domain.models.action_definition import ReferentielActionId
-from business.domain.models.litterals import ReferentielId
+from business.domain.models.litterals import Referentiel
 from business.utils.action_id import ActionId
 
 ClimatPraticId = Literal[
@@ -31,7 +31,7 @@ Programme = Literal["cae", "pcaet"]
 class Indicateur:
     identifiant: str
     nom: str
-    referentiel: ReferentielId
+    referentiel: Referentiel
     unite: str
     climat_pratic_ids: List[ClimatPraticId]
     action_ids: List[ActionId]

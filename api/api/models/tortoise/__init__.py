@@ -1,3 +1,0 @@
-"""
-Tortoise models.
-"""

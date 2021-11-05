@@ -36,7 +36,7 @@ class StoreReferentiel(UseCase):
             )
 
             self.bus.publish_event(
-                events.ReferentielStored(referentiel_id=command.referentiel_id)
+                events.ReferentielStored(referentiel=command.referentiel)
             )
         except Exception as storing_error:  # TODO : Should be a more precise error
             self.bus.publish_event(events.ReferentielStorageFailed(str(storing_error)))

@@ -2,5 +2,5 @@
 ```yaml
 identifiant: ""
 points:  500
-referentiel_id: "eci"
+referentiel: "eci"
 ```
