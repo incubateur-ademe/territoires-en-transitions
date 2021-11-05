@@ -4,7 +4,7 @@ from typing import List, Dict, Optional
 
 import rx
 
-from business.domain.ports.realtime import AbstractRealtime
+from business.domain.ports.realtime import AbstractConverter, AbstractRealtime
 from business.domain.ports.domain_message_bus import AbstractDomainMessageBus
 
 
@@ -13,6 +13,7 @@ class ReplayRealtime(AbstractRealtime):
         self,
         domain_message_bus: AbstractDomainMessageBus,
         *,
+        converters: List[AbstractConverter],
         events_to_emit: Optional[List[Dict]] = None,
         json_path: Optional[Path] = None,
     ):
@@ -22,7 +23,7 @@ class ReplayRealtime(AbstractRealtime):
             self.events_to_emit = self.load_json(json_path)
         else:
             self.events_to_emit = []
-        super().__init__(domain_message_bus)
+        super().__init__(domain_message_bus, converters)
 
     def start(self) -> None:
         rx.of(*self.events_to_emit).subscribe(self.external_observable)

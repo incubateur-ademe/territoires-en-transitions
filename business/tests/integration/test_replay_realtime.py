@@ -1,10 +1,14 @@
-from pathlib import Path
+from typing import List
 
 from business.domain.ports.domain_message_bus import (
     InMemoryDomainMessageBus,
 )
 
 from business.adapters.replay_realtime import ReplayRealtime
+from business.domain.ports.realtime import (
+    AbstractConverter,
+    EpciActionStatutUpdateConverter,
+)
 from business.domain.models import events
 
 from tests.utils.spy_on_event import spy_on_event
@@ -12,7 +16,8 @@ from tests.utils.spy_on_event import spy_on_event
 
 def test_domain_event_published_on_replay_correct_realtime_status_update_observer():
     bus = InMemoryDomainMessageBus()
-    realtime = ReplayRealtime(bus)
+    converters: List[AbstractConverter] = [EpciActionStatutUpdateConverter()]
+    realtime = ReplayRealtime(bus, converters=converters)
     realtime.set_events_to_emit(
         [
             {
@@ -38,7 +43,8 @@ def test_domain_event_published_on_replay_correct_realtime_status_update_observe
 
 def test_failure_published_when_realtime_event_has_unknown_referentiel():
     bus = InMemoryDomainMessageBus()
-    realtime = ReplayRealtime(bus)
+    converters: List[AbstractConverter] = [EpciActionStatutUpdateConverter()]
+    realtime = ReplayRealtime(bus, converters=converters)
 
     realtime.set_events_to_emit(
         [
@@ -64,7 +70,9 @@ def test_failure_published_when_realtime_event_has_unknown_referentiel():
 
 def test_realtime_event_has_wrong_record_format():
     bus = InMemoryDomainMessageBus()
-    realtime = ReplayRealtime(bus)
+    converters: List[AbstractConverter] = [EpciActionStatutUpdateConverter()]
+    realtime = ReplayRealtime(bus, converters=converters)
+
     realtime.set_events_to_emit(
         [
             {
