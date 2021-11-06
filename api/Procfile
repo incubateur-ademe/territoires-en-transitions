@@ -1,3 +1,0 @@
-web: python server.py
-postdeploy: aerich upgrade
-
