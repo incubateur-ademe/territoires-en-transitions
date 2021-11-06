@@ -61,7 +61,7 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
             {
                 "record": {
                     "referentiel": "eci",
-                    "epci_id": "1",
+                    "epci_id": 1,
                     "created_at": "2020-01-01T12",
                 },
                 "table": "epci_action_statut_update_event",
@@ -77,7 +77,7 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
     assert len(score_computed_events) == 1
     assert len(score_stored_events) == 1
 
-    assert score_computed_events[0].epci_id == score_computed_events[0].epci_id == "1"
+    assert score_computed_events[0].epci_id == score_computed_events[0].epci_id == 1
     assert (
         score_computed_events[0].referentiel
         == score_computed_events[0].referentiel

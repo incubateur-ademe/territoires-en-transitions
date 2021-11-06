@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Literal, Type
+from typing import Dict, List, Literal, Type, Optional
 
 import click
 
@@ -61,16 +61,25 @@ class ReferentielConfig(Config):
     prompt="Referentiel repository option",
 )
 @click.option(
-    "--markdown-folder",
-    prompt="Path to folder containing referentiel definitions in markdowns",
+    "--json-path",
+    prompt="Repo Json path (required if repo-option==JSON) ",
+    default="./data/referentiel_repository.json",
 )
-def update(repo_option: Literal["SUPABASE", "JSON"], markdown_folder: str):
+@click.argument(
+    "markdown-folder",
+)
+def update(
+    repo_option: Literal["SUPABASE", "JSON"],
+    json_path: Optional[str],
+    markdown_folder: str,
+):
     """Simple program that greets NAME for a total of COUNT times."""
+    print("json_path ", json_path)
     domain_message_bus = InMemoryDomainMessageBus()
     if repo_option == "JSON":
-        referentiel_repo = JsonReferentielRepository(
-            Path("./data/referentiel_repository.json")  # TODO variabilize this one
-        )
+        if json_path is None:
+            raise ValueError("Json path should be specified if repo-option == JSON")
+        referentiel_repo = JsonReferentielRepository(Path(json_path))
     else:
         raise NotImplementedError
     config = ReferentielConfig(referentiel_repo, domain_message_bus)
@@ -79,6 +88,7 @@ def update(repo_option: Literal["SUPABASE", "JSON"], markdown_folder: str):
     config.domain_message_bus.publish_command(
         commands.ParseMarkdownReferentielFolder(markdown_folder)
     )
+    return
 
 
 if __name__ == "__main__":
