@@ -11,6 +11,7 @@ pytest-asyncio = "*"
 rx = "*"
 psycopg = "*"
 results = "*"
+jsonschema = "*"
 
 [dev-packages]
 
