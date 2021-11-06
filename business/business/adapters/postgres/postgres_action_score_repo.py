@@ -17,5 +17,5 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
             score_as_dict = asdict(score)
             columns = ",".join(list(score_as_dict.keys()))
             values = ", ".join([str(x) for x in score_as_dict.values()])
-            sql = f"insert into scores({columns}) values ({values});"
+            sql = f"insert into score({columns}) values ({values});"
             self.cursor.execute(sql)
