@@ -5,7 +5,7 @@ from business.domain.models.action_status import (
     ActionStatus,
 )
 from business.domain.models.action_score import ActionScore
-from business.domain.models.litterals import ReferentielId
+from business.domain.models.litterals import Referentiel
 from business.domain.ports.action_status_repo import AbstractActionStatusRepository
 from business.domain.ports.referentiel_repo import AbstractReferentielRepository
 from business.domain.ports.domain_message_bus import AbstractDomainMessageBus
@@ -31,7 +31,7 @@ class ComputeReferentielScoresForEpci(UseCase):
         self.bus = bus
         self.statuses_repo = statuses_repo
         self.referentiel_repo = referentiel_repo
-        self.points_trees: Dict[ReferentielId, ActionsPointsTree] = {}
+        self.points_trees: Dict[Referentiel, ActionsPointsTree] = {}
 
     def execute(self, command: commands.ComputeReferentielScoresForEpci):
 
@@ -69,7 +69,7 @@ class ComputeReferentielScoresForEpci(UseCase):
                 tache,
                 status_by_action_id,
                 actions_non_concernees_ids,
-                referentiel_id=command.referentiel,
+                referentiel=command.referentiel,
             )
         )
 
@@ -81,7 +81,7 @@ class ComputeReferentielScoresForEpci(UseCase):
         self.bus.publish_event(
             events.ReferentielScoresForEpciComputed(
                 epci_id=command.epci_id,
-                referentiel_id=command.referentiel,
+                referentiel=command.referentiel,
                 scores=list(scores.values()),
             )
         )
@@ -92,7 +92,7 @@ class ComputeReferentielScoresForEpci(UseCase):
         tache_points_node: ActionPointsNode,
         status_by_action_id: Dict[str, ActionStatus],
         actions_non_concernees_ids: List[str],
-        referentiel_id: ReferentielId,
+        referentiel: Referentiel,
     ):
         # sibling_taches = sous_action.actions
         # for tache in sibling_taches:
@@ -108,7 +108,7 @@ class ComputeReferentielScoresForEpci(UseCase):
 
         if not tache_concernee:
             scores[tache_points_node.action_id] = ActionScore(
-                referentiel_id=referentiel_id,
+                referentiel=referentiel,
                 action_id=tache_points_node.action_id,
                 points=0,
                 potentiel=0,
@@ -130,7 +130,7 @@ class ComputeReferentielScoresForEpci(UseCase):
                 else 0.0
             )
             scores[tache_points_node.action_id] = ActionScore(
-                referentiel_id=referentiel_id,
+                referentiel=referentiel,
                 action_id=tache_points_node.action_id,
                 points=tache_points,
                 potentiel=tache_potentiel,
@@ -144,7 +144,7 @@ class ComputeReferentielScoresForEpci(UseCase):
         self,
         scores: Dict[str, ActionScore],
         action: ActionPointsNode,
-        referentiel_id: ReferentielId,
+        referentiel: Referentiel,
     ):
         action_children = action.children
         action_referentiel_points = action.value
@@ -194,7 +194,7 @@ class ComputeReferentielScoresForEpci(UseCase):
         )
 
         scores[action.action_id] = ActionScore(
-            referentiel_id=referentiel_id,
+            referentiel=referentiel,
             action_id=action.action_id,
             points=points,
             potentiel=potentiel,
@@ -207,11 +207,11 @@ class ComputeReferentielScoresForEpci(UseCase):
             concernee=concernee,
         )
 
-    def build_points_tree(self, referentiel_id: ReferentielId) -> ActionsPointsTree:
+    def build_points_tree(self, referentiel: Referentiel) -> ActionsPointsTree:
         ref_points = self.referentiel_repo.get_all_points_from_referentiel(
-            referentiel_id=referentiel_id
+            referentiel=referentiel
         )
         ref_children = self.referentiel_repo.get_all_children_from_referentiel(
-            referentiel_id=referentiel_id
+            referentiel=referentiel
         )
         return ActionsPointsTree(ref_points, ref_children)

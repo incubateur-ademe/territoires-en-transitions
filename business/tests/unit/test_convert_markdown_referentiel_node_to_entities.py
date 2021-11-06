@@ -41,7 +41,7 @@ def prepare_use_case(
 
 def test_import_referentiel_succeeds_when_all_is_good():
     markdown_root_action_node = make_markdown_action_node(
-        identifiant="", points=100, referentiel_id="eci"
+        identifiant="", points=100, referentiel="eci"
     )
     markdown_root_action_node.actions = [
         make_markdown_action_node(
@@ -70,20 +70,20 @@ def test_import_referentiel_succeeds_when_all_is_good():
     assert len(conversion_failed_events) == 0
 
     assert node_converted_events[0].points == [
-        ActionPoints(action_id=ActionId("eci"), value=100.0, referentiel_id="eci"),
-        ActionPoints(action_id=ActionId("eci_1"), value=30.0, referentiel_id="eci"),
-        ActionPoints(action_id=ActionId("eci_2"), value=70.0, referentiel_id="eci"),
-        ActionPoints(action_id=ActionId("eci_1.1"), value=10.0, referentiel_id="eci"),
-        ActionPoints(action_id=ActionId("eci_1.2"), value=10.0, referentiel_id="eci"),
-        ActionPoints(action_id=ActionId("eci_1.3"), value=10.0, referentiel_id="eci"),
-        ActionPoints(action_id=ActionId("eci_2.1"), value=35.0, referentiel_id="eci"),
-        ActionPoints(action_id=ActionId("eci_2.2"), value=35.0, referentiel_id="eci"),
+        ActionPoints(action_id=ActionId("eci"), value=100.0, referentiel="eci"),
+        ActionPoints(action_id=ActionId("eci_1"), value=30.0, referentiel="eci"),
+        ActionPoints(action_id=ActionId("eci_2"), value=70.0, referentiel="eci"),
+        ActionPoints(action_id=ActionId("eci_1.1"), value=10.0, referentiel="eci"),
+        ActionPoints(action_id=ActionId("eci_1.2"), value=10.0, referentiel="eci"),
+        ActionPoints(action_id=ActionId("eci_1.3"), value=10.0, referentiel="eci"),
+        ActionPoints(action_id=ActionId("eci_2.1"), value=35.0, referentiel="eci"),
+        ActionPoints(action_id=ActionId("eci_2.2"), value=35.0, referentiel="eci"),
     ]
     assert node_converted_events[0].children == [
         ActionChildren(
             action_id=ActionId("eci"),
             children_ids=[ActionId("eci_1"), ActionId("eci_2")],
-            referentiel_id="eci",
+            referentiel="eci",
         ),
         ActionChildren(
             action_id=ActionId("eci_1"),
@@ -92,27 +92,27 @@ def test_import_referentiel_succeeds_when_all_is_good():
                 ActionId("eci_1.2"),
                 ActionId("eci_1.3"),
             ],
-            referentiel_id="eci",
+            referentiel="eci",
         ),
         ActionChildren(
-            action_id=ActionId("eci_1.1"), children_ids=[], referentiel_id="eci"
+            action_id=ActionId("eci_1.1"), children_ids=[], referentiel="eci"
         ),
         ActionChildren(
-            action_id=ActionId("eci_1.2"), children_ids=[], referentiel_id="eci"
+            action_id=ActionId("eci_1.2"), children_ids=[], referentiel="eci"
         ),
         ActionChildren(
-            action_id=ActionId("eci_1.3"), children_ids=[], referentiel_id="eci"
+            action_id=ActionId("eci_1.3"), children_ids=[], referentiel="eci"
         ),
         ActionChildren(
             action_id=ActionId("eci_2"),
             children_ids=[ActionId("eci_2.1"), ActionId("eci_2.2")],
-            referentiel_id="eci",
+            referentiel="eci",
         ),
         ActionChildren(
-            action_id=ActionId("eci_2.1"), children_ids=[], referentiel_id="eci"
+            action_id=ActionId("eci_2.1"), children_ids=[], referentiel="eci"
         ),
         ActionChildren(
-            action_id=ActionId("eci_2.2"), children_ids=[], referentiel_id="eci"
+            action_id=ActionId("eci_2.2"), children_ids=[], referentiel="eci"
         ),
     ]
     assert len(node_converted_events[0].definitions) == 8
@@ -120,7 +120,7 @@ def test_import_referentiel_succeeds_when_all_is_good():
 
 def test_import_referentiel_succeeds_when_action_has_0_point():
     markdown_root_action_node = make_markdown_action_node(
-        identifiant="", points=100, referentiel_id="eci"
+        identifiant="", points=100, referentiel="eci"
     )
     markdown_root_action_node.actions = [
         make_markdown_action_node(identifiant="0"),
@@ -134,9 +134,9 @@ def test_import_referentiel_succeeds_when_action_has_0_point():
     assert len(conversion_failed_events) == 0
 
     assert node_converted_events[0].points == [
-        ActionPoints(action_id=ActionId("eci"), value=100.0, referentiel_id="eci"),
-        ActionPoints(action_id=ActionId("eci_1"), value=100.0, referentiel_id="eci"),
-        ActionPoints(action_id=ActionId("eci_0"), value=0.0, referentiel_id="eci"),
+        ActionPoints(action_id=ActionId("eci"), value=100.0, referentiel="eci"),
+        ActionPoints(action_id=ActionId("eci_1"), value=100.0, referentiel="eci"),
+        ActionPoints(action_id=ActionId("eci_0"), value=0.0, referentiel="eci"),
     ]
 
 

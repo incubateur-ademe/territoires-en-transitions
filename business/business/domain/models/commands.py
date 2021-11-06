@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 from business.domain.models.markdown_action_node import MarkdownActionNode
-from business.domain.models.litterals import ReferentielId
+from business.domain.models.litterals import Referentiel
 from business.domain.models.action_definition import ActionDefinition
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_points import ActionPoints
@@ -29,8 +29,8 @@ class ConvertMarkdownReferentielNodeToEntities(DomainCommand):
 
 @dataclass
 class ComputeReferentielScoresForEpci(DomainCommand):
-    epci_id: str
-    referentiel: ReferentielId
+    epci_id: int
+    referentiel: Referentiel
     created_at: str
 
 
@@ -39,12 +39,12 @@ class StoreReferentielEntities(DomainCommand):
     definitions: List[ActionDefinition]
     points: List[ActionPoints]
     children: List[ActionChildren]
-    referentiel_id: ReferentielId
+    referentiel: Referentiel
 
     @classmethod
     def from_dict(cls, d: Dict) -> "StoreReferentielEntities":
         return cls(
-            referentiel_id=d["referentiel_id"],
+            referentiel=d["referentiel"],
             definitions=[
                 ActionDefinition(**def_as_dict) for def_as_dict in d["definitions"]
             ],
@@ -58,8 +58,8 @@ class StoreReferentielEntities(DomainCommand):
 @dataclass
 class StoreScoresForEpci(DomainCommand):
     scores: List[ActionScore]
-    referentiel_id: ReferentielId
-    epci_id: str
+    referentiel: Referentiel
+    epci_id: int
 
 
 @dataclass

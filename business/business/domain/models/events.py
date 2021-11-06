@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import List
 
 from business.domain.models.action_definition import ActionDefinition
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_points import ActionPoints
 from business.domain.models.action_score import ActionScore
-from business.domain.models.litterals import ReferentielId
+from business.domain.models.litterals import Referentiel
 from business.domain.models.markdown_action_node import MarkdownActionNode
 
 
@@ -20,15 +20,15 @@ class DomainFailureEvent(DomainEvent):
 
 @dataclass
 class ActionStatusUpdatedForEpci(DomainEvent):
-    epci_id: str
-    referentiel: ReferentielId
+    epci_id: int
+    referentiel: Referentiel
     created_at: str
 
 
 @dataclass
 class MarkdownReferentielFolderUpdated(DomainEvent):
     folder_path: str
-    referentiel_id: ReferentielId
+    referentiel: Referentiel
 
 
 @dataclass
@@ -46,7 +46,7 @@ class MarkdownReferentielNodeConvertedToEntities(DomainEvent):
     definitions: List[ActionDefinition]
     points: List[ActionPoints]
     children: List[ActionChildren]
-    referentiel_id: ReferentielId
+    referentiel: Referentiel
 
 
 @dataclass
@@ -56,8 +56,8 @@ class MarkdownReferentielNodeInconsistencyFound(DomainFailureEvent):  # FAILURE
 
 @dataclass
 class ReferentielScoresForEpciComputed(DomainEvent):
-    epci_id: str
-    referentiel_id: ReferentielId
+    epci_id: int
+    referentiel: Referentiel
     scores: List[ActionScore]
 
 
@@ -68,7 +68,7 @@ class ReferentielScoresForEpciComputationFailed(DomainFailureEvent):
 
 @dataclass
 class ReferentielStored(DomainEvent):
-    referentiel_id: ReferentielId
+    referentiel: Referentiel
 
 
 @dataclass
@@ -78,7 +78,7 @@ class ReferentielStorageFailed(DomainFailureEvent):
 
 @dataclass
 class ScoresForEpciStored(DomainEvent):
-    epci_id: str
+    epci_id: int
 
 
 @dataclass

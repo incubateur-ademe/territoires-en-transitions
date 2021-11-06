@@ -3,14 +3,14 @@ from typing import List, Optional
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_definition import ActionDefinition, ActionId
 from business.domain.models.action_points import ActionPoints
-from business.domain.models.litterals import ReferentielId
+from business.domain.models.litterals import Referentiel
 from business.domain.models.markdown_action_node import MarkdownActionNode
-from business.utils.action_id import retrieve_referentiel_id
+from business.utils.action_id import retrieve_referentiel
 
 
 def make_action_definition(
     action_id: str,
-    referentiel_id: Optional[ReferentielId] = None,
+    referentiel: Optional[Referentiel] = None,
     identifiant: str = "",
     nom: str = "",
     thematique_id: str = "",
@@ -23,7 +23,7 @@ def make_action_definition(
 ):
     return ActionDefinition(
         action_id=ActionId(action_id),
-        referentiel_id=referentiel_id or retrieve_referentiel_id(ActionId(action_id)),
+        referentiel=referentiel or retrieve_referentiel(ActionId(action_id)),
         identifiant=identifiant,
         nom=nom,
         thematique_id=thematique_id,
@@ -40,7 +40,7 @@ def make_action_points(action_id: str, points: float):
     return ActionPoints(
         action_id=ActionId(action_id),
         value=points,
-        referentiel_id=retrieve_referentiel_id(ActionId(action_id)),
+        referentiel=retrieve_referentiel(ActionId(action_id)),
     )
 
 
@@ -48,7 +48,7 @@ def make_action_children(action_id: str, children_ids: List[str]):
     return ActionChildren(
         action_id=ActionId(action_id),
         children_ids=[ActionId(child_id) for child_id in children_ids],
-        referentiel_id=retrieve_referentiel_id(ActionId(action_id)),
+        referentiel=retrieve_referentiel(ActionId(action_id)),
     )
 
 
@@ -57,11 +57,11 @@ def make_markdown_action_node(
     points: Optional[float] = None,
     pourcentage: Optional[float] = None,
     actions: List[MarkdownActionNode] = [],
-    referentiel_id: ReferentielId = "eci",
+    referentiel: Referentiel = "eci",
 ):
     return MarkdownActionNode(
         identifiant=identifiant,
-        referentiel_id=referentiel_id,
+        referentiel=referentiel,
         points=points,
         pourcentage=pourcentage,
         actions=actions,

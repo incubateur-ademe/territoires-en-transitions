@@ -13,7 +13,7 @@ from business.domain.use_cases.compute_referentiel_scores_for_epci import (
     ComputeReferentielScoresForEpci,
 )
 from business.utils.action_id import ActionId
-from business.domain.models.litterals import ReferentielId
+from business.domain.models.litterals import Referentiel
 
 from tests.utils.referentiel_factory import (
     make_action_children,
@@ -22,7 +22,7 @@ from tests.utils.referentiel_factory import (
 )
 from tests.utils.spy_on_event import spy_on_event
 
-test_referentiel_id = ReferentielId = "eci"
+test_referentiel = Referentiel = "eci"
 action_childrens = [
     make_action_children(f"eci", ["eci_1", "eci_2"]),
     make_action_children(f"eci_1", ["eci_1.1", "eci_1.2"]),
@@ -72,7 +72,7 @@ def prepare_use_case(
     score_computed_events = spy_on_event(bus, events.ReferentielScoresForEpciComputed)
     failure_events = spy_on_event(bus, events.ReferentielScoresForEpciComputationFailed)
     command = command or commands.ComputeReferentielScoresForEpci(
-        epci_id="foo", referentiel_id=test_referentiel_id
+        epci_id=1, referentiel=test_referentiel, created_at="2020-01-01T12"
     )
     use_case.execute(command)
 
@@ -81,7 +81,7 @@ def prepare_use_case(
 
 def test_notation_fails_when_referentiel_is_empty():
     command = commands.ComputeReferentielScoresForEpci(
-        epci_id="foo", referentiel_id="cae"
+        epci_id=1, referentiel="cae", created_at="2020-01-01T12"
     )
     statuses = []
     converted_events, failure_events = prepare_use_case(statuses, command)
@@ -110,7 +110,7 @@ def test_notation_when_one_tache_is_faite():
         referentiel_points=10,
         completude_ratio=(1, 1),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -120,7 +120,7 @@ def test_notation_when_one_tache_is_faite():
         referentiel_points=30,
         completude_ratio=(1, 2),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -131,7 +131,7 @@ def test_notation_when_one_tache_is_faite():
         referentiel_points=70,
         completude_ratio=(0, 2),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -142,7 +142,7 @@ def test_notation_when_one_tache_is_faite():
         referentiel_points=100,
         completude_ratio=(1, 4),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
 
@@ -169,7 +169,7 @@ def test_notation_when_one_tache_is_programmee():
         referentiel_points=10,
         completude_ratio=(1, 1),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -179,7 +179,7 @@ def test_notation_when_one_tache_is_programmee():
         referentiel_points=30,
         completude_ratio=(1, 2),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -190,7 +190,7 @@ def test_notation_when_one_tache_is_programmee():
         referentiel_points=70,
         completude_ratio=(0, 2),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -201,7 +201,7 @@ def test_notation_when_one_tache_is_programmee():
         referentiel_points=100,
         completude_ratio=(1, 4),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
 
@@ -228,7 +228,7 @@ def test_notation_when_one_tache_is_pas_faite():
         referentiel_points=10,
         completude_ratio=(1, 1),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -238,7 +238,7 @@ def test_notation_when_one_tache_is_pas_faite():
         referentiel_points=30,
         completude_ratio=(1, 2),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -249,7 +249,7 @@ def test_notation_when_one_tache_is_pas_faite():
         referentiel_points=70,
         completude_ratio=(0, 2),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -260,7 +260,7 @@ def test_notation_when_one_tache_is_pas_faite():
         referentiel_points=100,
         completude_ratio=(1, 4),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
 
@@ -287,7 +287,7 @@ def test_notation_when_one_tache_non_concernee():
         referentiel_points=10,
         completude_ratio=(1, 1),
         concernee=False,
-        referentiel_id="eci",
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -297,7 +297,7 @@ def test_notation_when_one_tache_non_concernee():
         referentiel_points=30,
         completude_ratio=(1, 2),
         concernee=False,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -308,7 +308,7 @@ def test_notation_when_one_tache_non_concernee():
         referentiel_points=70,
         completude_ratio=(0, 2),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -319,7 +319,7 @@ def test_notation_when_one_tache_non_concernee():
         referentiel_points=100,
         completude_ratio=(1, 4),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
 
@@ -349,7 +349,7 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
         referentiel_points=10,
         completude_ratio=(1, 1),
         concernee=False,
-        referentiel_id="eci",
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_1.2")] == ActionScore(
         action_id=ActionId("eci_1.2"),
@@ -359,7 +359,7 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
         referentiel_points=20,
         completude_ratio=(1, 1),
         concernee=False,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
@@ -370,7 +370,7 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
         referentiel_points=30,
         completude_ratio=(2, 2),
         concernee=False,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -381,7 +381,7 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
         referentiel_points=70,
         completude_ratio=(0, 2),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -392,5 +392,5 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
         referentiel_points=100,
         completude_ratio=(2, 4),
         concernee=True,
-        referentiel_id="eci",
+        referentiel="eci",
     )

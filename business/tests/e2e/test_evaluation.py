@@ -60,10 +60,11 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
         [
             {
                 "record": {
-                    "referentiel_id": "eci",
+                    "referentiel": "eci",
                     "epci_id": "1",
+                    "created_at": "2020-01-01T12",
                 },
-                "table": "epci_action_statut_update",
+                "table": "epci_action_statut_update_event",
             }
         ]
     )

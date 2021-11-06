@@ -22,8 +22,9 @@ def test_domain_event_published_on_replay_correct_realtime_status_update_observe
         [
             {
                 "record": {
-                    "referentiel_id": "eci",
-                    "epci_id": "lyon",
+                    "referentiel": "eci",
+                    "epci_id": 1,
+                    "created_at": "2020-01-01",
                 },
                 "table": "epci_action_statut_update",
             }
@@ -36,8 +37,9 @@ def test_domain_event_published_on_replay_correct_realtime_status_update_observe
 
     assert len(failure_events) == 0
     assert len(corresponding_domain_events) == 1
+
     assert corresponding_domain_events[0] == events.ActionStatusUpdatedForEpci(
-        epci_id="lyon", referentiel_id="eci"
+        epci_id=8, referentiel="eci", created_at="2020-01-01T12"
     )
 
 
@@ -50,10 +52,11 @@ def test_failure_published_when_realtime_event_has_unknown_referentiel():
         [
             {
                 "record": {
-                    "referentiel_id": "toto",
-                    "epci_id": "1",
+                    "referentiel": "toto",
+                    "epci_id": 1,
+                    "created_at": "2020-01-01T12",
                 },
-                "table": "epci_action_statut_update",
+                "table": "epci_action_statut_update_event",
             }
         ]
     )
@@ -64,7 +67,7 @@ def test_failure_published_when_realtime_event_has_unknown_referentiel():
     assert len(failure_events) == 1
     assert (
         failure_events[0].reason
-        == "Realtime event with wrong format: {'referentiel_id': ['Must be one of: eci, cae.']}"
+        == "Realtime event with wrong format: {'referentiel': ['Must be one of: eci, cae.']}"
     )
 
 
@@ -77,10 +80,11 @@ def test_realtime_event_has_wrong_record_format():
         [
             {
                 "record": {
-                    "referentiel_id": "eci",
-                    # "epci_id": "1",
+                    "referentiel": "eci",
+                    "created_at": "2020-01-01T12"
+                    # "epci_id": 1,
                 },
-                "table": "epci_action_statut_update",
+                "table": "epci_action_statut_update_event",
             }
         ]
     )

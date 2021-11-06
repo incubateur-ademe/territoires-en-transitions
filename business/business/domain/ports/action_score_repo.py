@@ -23,5 +23,5 @@ class InMemoryActionScoreRepository(AbstractActionScoreRepository):
         self._entities_by_epci[epci_id] += entities
 
     # For test purposes only
-    def get_entities_for_epci(self, epci_id: str) -> List[ActionScore]:
+    def get_entities_for_epci(self, epci_id: int) -> List[ActionScore]:
         return self._entities_by_epci.get(epci_id, [])

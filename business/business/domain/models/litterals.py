@@ -1,4 +1,4 @@
 from typing import Literal
 
 
-ReferentielId = Literal["eci", "cae"]
+Referentiel = Literal["eci", "cae"]

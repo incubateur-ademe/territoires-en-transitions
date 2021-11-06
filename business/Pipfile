@@ -8,12 +8,12 @@ mistletoe = "*"
 pydantic = "*"
 pytest = "*"
 pyyaml = "*"
-business = {editable = true, path = "."}
 supabase = "*"
 rx = "*"
 marshmallow-dataclass = "*"
 black = "==21.5b1"
 psycopg = "*"
+business = {editable = true, path = "."}
 
 [dev-packages]
 
