@@ -189,3 +189,70 @@ create trigger before_action_statut_update
     on action_statut
     for each row
 execute procedure before_action_statut_update_write_log();
+
+
+
+--------------------------------
+----------- TYPING -------------
+--------------------------------
+create function udt_name_to_json_type(in udt_name text) returns text
+as
+$$
+begin
+    return
+        case
+            when udt_name ~ '^bool' then 'boolean'
+            when udt_name ~ '^int' then 'integer'
+            when udt_name ~ '^float' then 'number'
+            else 'string'
+            end;
+end;
+$$ language plpgsql;
+
+create view table_as_json_schema
+as
+with table_columns as (
+    select columns.table_name                            as title,
+           column_name,
+           is_nullable = 'NO' and column_default is null as required,
+           udt_name
+    from information_schema.columns
+    where table_schema = 'public'
+)
+select title,
+       'object'                                        as type,
+       json_agg(column_name) filter ( where required ) as required,
+       json_agg(json_build_object(
+               column_name,
+               json_build_object('type', udt_name_to_json_type(udt_name))
+           ))
+                                                       as properties
+from table_columns
+group by title;
+
+
+create view view_as_json_schema
+as
+with view_columns as (
+    select distinct on (view_schema, view_name, column_name) view_name                                     as title,
+                                                             column_name,
+                                                             is_nullable = 'NO' and column_default is null as required,
+                                                             udt_name
+
+    from information_schema.columns
+             natural full join information_schema.view_table_usage
+
+    where view_schema = 'public'
+      and column_name is not null
+    order by view_name
+)
+select title,
+       'object'                                        as type,
+       json_agg(column_name) filter ( where required ) as required,
+       json_agg(json_build_object(
+               column_name,
+               json_build_object('type', udt_name_to_json_type(udt_name))
+           ))
+                                                       as properties
+from view_columns
+group by title;
