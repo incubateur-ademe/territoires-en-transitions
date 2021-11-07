@@ -98,7 +98,6 @@ create table score
     points                 real                                               not null,
     potentiel              real                                               not null,
     referentiel_points     real                                               not null,
-    percentage             real                                               not null,
     concernee              bool                                               not null,
     previsionnel           real                                               not null,
     total_taches_count     int                                                not null,
@@ -109,7 +108,7 @@ create table score
 
 create view client_score
 as
-select action_id, referentiel, points, percentage, potentiel
+select action_id, referentiel, points, potentiel
 from score
          join action_relation on action_id = action_relation.id;
 
