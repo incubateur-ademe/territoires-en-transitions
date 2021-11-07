@@ -11,15 +11,16 @@ def make_action_score(
     previsionnel: float = 100,
     referentiel_points: float = 100,
     concernee: bool = True,
-    completude_ratio: Tuple[int, int] = (0, 0),
+    total_taches_count: int = 1,
+    completed_taches_count: int = 1,
 ):
     return ActionScore(
-        referentiel=retrieve_referentiel(ActionId(action_id)),
         action_id=ActionId(action_id),
         points=points,
         potentiel=potentiel,
         previsionnel=previsionnel,
         referentiel_points=referentiel_points,
         concernee=concernee,
-        completude_ratio=completude_ratio,
+        total_taches_count=total_taches_count,
+        completed_taches_count=completed_taches_count,
     )

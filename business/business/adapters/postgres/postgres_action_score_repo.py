@@ -15,7 +15,10 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
     def add_entities_for_epci(self, epci_id: int, entities: List[ActionScore]):
         for score in entities:
             score_as_dict = asdict(score)
-            columns = ",".join(list(score_as_dict.keys()))
-            values = ", ".join([str(x) for x in score_as_dict.values()])
-            sql = f"insert into score({columns}) values ({values});"
-            self.cursor.execute(sql)
+
+            columns = " ,".join(list(score_as_dict.keys()))
+            values_to_interpolate = " ,".join(
+                [f"%({column})s" for column in score_as_dict.keys()]
+            )
+            sql = f"insert into score({columns}) values ({values_to_interpolate});"
+            self.cursor.execute(sql, score_as_dict)

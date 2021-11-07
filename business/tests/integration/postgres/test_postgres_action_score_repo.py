@@ -42,11 +42,56 @@ def initialized_cursor(postgres_connection, request):
     return cursor
 
 
+# SQL tests helpers
+# -----------------
+def insert_action_relation(
+    cursor: Cursor,
+    referentiel: Referentiel,
+    action_id: ActionId,
+    parent_id: Optional[ActionId],
+):
+    cursor.execute(
+        "insert into action_relation values (%(action_id)s, %(referentiel)s, %(parent_id)s);",
+        {
+            "action_id": action_id,
+            "referentiel": referentiel,
+            "parent_id": parent_id,
+        },
+    )
+
+
+def insert_first_epci(cursor: Cursor):
+    # cur.execute("""
+    #     INSERT INTO some_table (an_int, a_date, another_date, a_string)
+    #     VALUES (%(int)s, %(date)s, %(date)s, %(str)s);
+    #     """,
+    #             {'int': 10, 'str': "O'Reilly", 'date': datetime.date(2020, 11, 18)})
+
+    sql = f"insert into epci values (1, '12345678901234', 'Yolo', default, default);"
+    cursor.execute(sql)
+
+
+def insert_fake_referentiel(
+    cursor: Cursor,
+    referentiel: Referentiel,
+    parent_by_action_id: Dict[ActionId, Optional[ActionId]],
+):
+    for action_id, parent_action_id in parent_by_action_id.items():
+        insert_action_relation(cursor, referentiel, action_id, parent_action_id)
+
+
 def test_adding_entities_to_repo_should_write_in_postgres(initialized_cursor):
-    insert_referentiel = open(
-        "../data_layer/postgres/tests/insert_fake_referentiel.sql", "r"
-    ).read()
-    initialized_cursor.execute(insert_referentiel)
+    insert_fake_referentiel(
+        initialized_cursor,
+        "cae",
+        {
+            ActionId("cae"): None,
+            ActionId("cae_1"): ActionId("cae"),
+            ActionId("cae_2"): ActionId("cae"),
+        },
+    )
+    insert_first_epci(initialized_cursor)
+
     repo = PostgresActionScoreRepository(initialized_cursor)
     repo.add_entities_for_epci(epci_id=1, entities=[make_action_score("cae")])
 
