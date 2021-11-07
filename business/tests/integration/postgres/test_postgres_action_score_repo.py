@@ -1,12 +1,14 @@
+from typing import Dict, Optional
 from urllib.parse import urlparse
 
 import psycopg
-from psycopg import Connection
+from psycopg import Connection, Cursor
 import pytest
 
 from business.adapters.postgres.postgres_action_score_repo import (
     PostgresActionScoreRepository,
 )
+from business.utils.action_id import ActionId, Referentiel
 from tests.utils.score_factory import make_action_score
 
 postgres_url = f"postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:49154/postgres"
@@ -48,6 +50,6 @@ def test_adding_entities_to_repo_should_write_in_postgres(initialized_cursor):
     repo = PostgresActionScoreRepository(initialized_cursor)
     repo.add_entities_for_epci(epci_id=1, entities=[make_action_score("cae")])
 
-    initialized_cursor.execute("select * from score")
+    initialized_cursor.execute("select * from score;")
     scores = initialized_cursor.fetchall()
     assert len(scores) == 1
