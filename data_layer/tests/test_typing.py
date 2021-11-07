@@ -1,9 +1,7 @@
-from dataclasses import dataclass
+import json
+import os.path
 
 import pytest
-from pydantic import create_model
-from pydantic.main import ModelMetaclass
-from pydantic.schema import schema
 
 
 @pytest.fixture()
@@ -16,86 +14,52 @@ def initialized_cursor(postgres_connection, request):
     return cursor
 
 
-@dataclass
-class RowDefinition:
-    column_name: str
-    ordinal_position: str
-    column_default: str
-    is_nullable: str
-    data_type: str
-    character_maximum_length: str
-    datetime_precision: str
-    domain_name: str
-    udt_name: str
-
-
-def test_from_a_table_we_should_make_a_class(initialized_cursor):
-    def make_class(table_name, classname):
-        table_definition = open("postgres/queries/table_definition.sql", "r").read()
-        table_definition = table_definition.replace(":table_name", "%s")
-
-        initialized_cursor.execute(table_definition, (table_name,))
-        results = initialized_cursor.fetchall()
-        row_definitions = [RowDefinition(*row) for row in results]
-
-        return create_model(
-            classname, **{definition.column_name: str for definition in row_definitions}
-        )
-
-    ActionStatut = make_class("action_statut", "ActionStatut")
-    assert isinstance(ActionStatut, ModelMetaclass)
-    json_schema = schema([ActionStatut])
-    print(json_schema)
-
-
-def test_from_a_table_we_should_make_a_json_schema(initialized_cursor):
-    def make_schema(table_name, classname):
-        table_definition = open("postgres/queries/table_definition.sql", "r").read()
-        table_definition = table_definition.replace(":table_name", "%s")
-
-        initialized_cursor.execute(table_definition, (table_name,))
-        results = initialized_cursor.fetchall()
-        row_definitions = [RowDefinition(*row) for row in results]
-
-        def udt_to_json_type(udt: str):
-            udt_type = {
-                "int": "integer",
-                "bool": "boolean",
-                "float": "number",
-                "uuid": "string",
-                "varchar": "string",
-                "timestamptz": "string",
-            }
-            for udt_part, json_type in udt_type.items():
-                if udt.startswith(udt_part):
-                    return json_type
-            return "string"
-
-        properties = {
-            definition.column_name: {
-                "type": udt_to_json_type(definition.udt_name),
-            }
-            for definition in row_definitions
+def test_table_epci_returns_a_valid_json_schema(initialized_cursor):
+    tables_as_json_schemas = "select * from table_as_json_schema where title = 'epci';"
+    initialized_cursor.execute(tables_as_json_schemas)
+    schemas = initialized_cursor.fetchall()
+    assert len(schemas) == 1
+    assert schemas[0][1] == {
+        "properties": {
+            "siren": {"type": "string"},
+            "nom": {"type": "string"},
         }
+    }
 
-        required = [
-            definition.column_name
-            for definition in row_definitions
-            if definition.is_nullable == "NO" and not definition.column_default
-        ]
 
-        return {
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "title": classname,
-            "type": "object",
-            "properties": properties,
-            "required": required,
+def test_table_action_statut_returns_a_valid_json_schema_with_enum(initialized_cursor):
+    tables_as_json_schemas = (
+        "select * from view_as_json_schema where title = 'business_action_statut';"
+    )
+    initialized_cursor.execute(tables_as_json_schemas)
+    schemas = initialized_cursor.fetchall()
+    assert len(schemas) == 1
+    assert schemas[0][1] == {
+        "properties": {
+            "action_id": {"type": "string"},
+            "avancement": {
+                "enum": [
+                    "faite",
+                    "pas_faite",
+                    "programmee",
+                    "en_cours",
+                    "non_renseignee",
+                ]
+            },
+            "concerne": {"type": "boolean"},
         }
+    }
 
-    schema = make_schema("action_statut", "ActionStatut")
-    assert schema
-    print(schema)
 
-    schema = make_schema("epci", "Epci")
-    assert schema
-    print(schema)
+def test_table_as_json_schema_should_save_schemas(initialized_cursor):
+    tables_as_json_schemas = open(
+        "postgres/queries/get_all_tables_as_json_schemas.sql", "r"
+    ).read()
+    initialized_cursor.execute(tables_as_json_schemas)
+    schemas = initialized_cursor.fetchall()
+
+    for schema in schemas:
+        title = schema[0]
+        json_typedef = schema[1]
+        with open(os.path.join("generated", f"{title}.json"), "w") as file:
+            json.dump(json_typedef, file, indent="  ")

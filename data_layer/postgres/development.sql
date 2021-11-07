@@ -195,15 +195,16 @@ execute procedure before_action_statut_update_write_log();
 --------------------------------
 ----------- TYPING -------------
 --------------------------------
-create function udt_name_to_json_type(in udt_name text) returns text
+create function udt_name_to_json_type(udt_name text) returns text
 as
 $$
 begin
     return
         case
             when udt_name ~ '^bool' then 'boolean'
-            when udt_name ~ '^int' then 'integer'
-            when udt_name ~ '^float' then 'number'
+            when udt_name ~ '^int' then 'int32'
+            when udt_name ~ '^float' then 'float64'
+            when udt_name ~ '^timestamp' then 'timestamp'
             else 'string'
             end;
 end;
@@ -218,18 +219,21 @@ with table_columns as (
            udt_name
     from information_schema.columns
     where table_schema = 'public'
-)
-select title,
-       'object'                                        as type,
-       json_agg(column_name) filter ( where required ) as required,
-       json_agg(json_build_object(
-               column_name,
-               json_build_object('type', udt_name_to_json_type(udt_name))
-           ))
-                                                       as properties
-from table_columns
-group by title;
+),
+     json_type_def as (
+         select title,
 
+                json_object_agg(
+                column_name,
+                json_build_object('type', udt_name_to_json_type(udt_name))
+                    ) filter ( where required ) as properties
+
+         from table_columns
+         group by title
+     )
+select title,
+       json_build_object('properties', coalesce(properties, '{}')) as json_typedef
+from json_type_def;
 
 create view view_as_json_schema
 as
@@ -246,13 +250,14 @@ with view_columns as (
       and column_name is not null
     order by view_name
 )
-select title,
-       'object'                                        as type,
-       json_agg(column_name) filter ( where required ) as required,
-       json_agg(json_build_object(
-               column_name,
-               json_build_object('type', udt_name_to_json_type(udt_name))
-           ))
-                                                       as properties
+select json_build_object(
+               'title', title,
+               'type', 'object',
+               'required', coalesce(json_agg(column_name) filter ( where required ), '[]'),
+               'properties', json_agg(json_build_object(
+                column_name,
+                json_build_object('type', udt_name_to_json_type(udt_name))
+            ))
+           )
 from view_columns
 group by title;

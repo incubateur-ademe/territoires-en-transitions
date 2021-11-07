@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "points": {
+      "type": "float64"
+    },
+    "potentiel": {
+      "type": "float64"
+    },
+    "referentiel_points": {
+      "type": "float64"
+    },
+    "percentage": {
+      "type": "float64"
+    },
+    "concernee": {
+      "type": "boolean"
+    },
+    "previsionnel": {
+      "type": "float64"
+    },
+    "total_taches_count": {
+      "type": "int32"
+    },
+    "completed_taches_count": {
+      "type": "int32"
+    },
+    "action_id": {
+      "type": "string"
+    }
+  }
+}

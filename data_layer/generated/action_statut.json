@@ -1,0 +1,16 @@
+{
+  "properties": {
+    "avancement": {
+      "type": "string"
+    },
+    "concerne": {
+      "type": "boolean"
+    },
+    "modified_by": {
+      "type": "string"
+    },
+    "action_id": {
+      "type": "string"
+    }
+  }
+}

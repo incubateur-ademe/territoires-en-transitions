@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "referentiel": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    }
+  }
+}
