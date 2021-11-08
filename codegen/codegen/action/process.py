@@ -25,7 +25,7 @@ def referentiel_from_actions(actions: List[dict], name: str, id: str) -> dict:
         "ressources": "",
         "exemples": "",
         "contexte": "",
-        "preuve": "",
+        "preuve": ""
     }
 
     def attach_children(parent: dict) -> None:
