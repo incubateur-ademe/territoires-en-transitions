@@ -53,8 +53,9 @@ class SupabaseRealtime(AbstractRealtime):
 
     def __init__(
         self,
-        socket: Socket,
         domain_message_bus: AbstractDomainMessageBus,
+        *,
+        socket: Socket,
         converters=List[AbstractConverter],
     ):
         super().__init__(domain_message_bus, converters=converters)

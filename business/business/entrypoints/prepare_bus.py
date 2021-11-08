@@ -4,7 +4,6 @@ from typing import Dict, List, Type
 from business.domain.models import events
 from business.domain.models import commands
 from business.domain.models.commands import DomainCommand
-
 from business.domain.ports.domain_message_bus import (
     AbstractDomainMessageBus,
     EventCallback,

@@ -27,8 +27,8 @@ def get_env_variable(
     return variable
 
 
-ReferetielRepository = Literal["IN_MEMORY", "SUPABASE"]
-referentiel_repository_options: List[ReferetielRepository] = ["IN_MEMORY", "SUPABASE"]
+ReferetielsRepository = Literal["JSON", "SUPABASE"]
+referentiels_repository_options: List[ReferetielsRepository] = ["JSON", "SUPABASE"]
 
 LabelisationRepositories = Literal["IN_MEMORY", "SUPABASE"]
 labelisation_repositories_options: List[LabelisationRepositories] = [
@@ -36,37 +36,34 @@ labelisation_repositories_options: List[LabelisationRepositories] = [
     "SUPABASE",
 ]
 
-DataLayer = Literal["IN_MEMORY", "SUPABASE"]
-data_layer_options: List[DataLayer] = ["IN_MEMORY", "SUPABASE"]
+Realtime = Literal["REPLAY", "SUPABASE"]
+realtime_options: List[Realtime] = ["REPLAY", "SUPABASE"]
 
 
 @dataclass
 class EnvironmentVariables:
-    referentiel_repository: ReferetielRepository
-    labelisation_repositories: LabelisationRepositories
-    data_layer: DataLayer
+    referentiels_repository: Optional[ReferetielsRepository] = None
+    labelisation_repositories: Optional[LabelisationRepositories] = None
+    realtime: Optional[Realtime] = None
+    referentiels_repo_json: Optional[str] = None
 
     def __str__(self):
         return f"\
-            referentiel_repository: {self.referentiel_repository} \n\
+            referentiels_repository: {self.referentiels_repository} \n\
             labelisation_repositories: {self.labelisation_repositories} \n\
-            data_layer: {self.data_layer} \n\
+            realtime: {self.realtime} \n\
             "
-
-
-REFERENRIELS_REPOSITORY = "IN_MEMORY"  # options: "IN_MEMORY", "SUPABASE", ("CSV" ? )
-LABELISATION_REPOSITORIES = "IN_MEMORY"  # options: "IN_MEMORY", "SUPABASE", ("CSV" ? )
-DATA_LAYER_BUS = "FAKE"  # options: "SUPABASE", "FAKE"
 
 
 def get_env_variables() -> EnvironmentVariables:
 
     return EnvironmentVariables(
-        referentiel_repository=get_env_variable(
-            "REFERENRIELS_REPOSITORY", referentiel_repository_options
+        referentiels_repository=get_env_variable(
+            "REFERENRIELS_REPOSITORY", referentiels_repository_options
         ),
         labelisation_repositories=get_env_variable(
             "LABELISATION_REPOSITORIES", labelisation_repositories_options
         ),
-        data_layer=get_env_variable("DATA_LAYER_BUS", data_layer_options),
+        realtime=get_env_variable("REALTIME", realtime_options),
+        referentiels_repo_json=os.getenv("REFERENTIELS_REPO_JSON"),
     )

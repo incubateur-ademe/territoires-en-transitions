@@ -1,11 +1,11 @@
 import os
+import json
+from typing import Tuple
 
 from pathlib import Path
-from typing import Tuple
 import pytest
 
 from business.entrypoints.referentiels import update
-import json
 from tests.utils.files import remove_file, mkdir
 
 

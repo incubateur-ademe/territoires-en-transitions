@@ -1,5 +1,4 @@
-from pathlib import Path
-from typing import Dict, List, Literal, Type, Optional
+from typing import Dict, List, Type, Optional
 
 import click
 
@@ -8,13 +7,13 @@ from business.domain.ports.domain_message_bus import (
     AbstractDomainMessageBus,
     InMemoryDomainMessageBus,
 )
-from business.domain.ports.referentiel_repo import (
-    AbstractReferentielRepository,
-)
 from business.domain.use_cases import *
 from business.entrypoints.prepare_bus import prepare_bus
 from business.entrypoints.config import Config
-from business.adapters.json_referentiel_repo import JsonReferentielRepository
+from business.entrypoints.environment_variables import (
+    EnvironmentVariables,
+    ReferetielsRepository,
+)
 
 # 1. Define message handlers (orchestration)
 
@@ -37,11 +36,11 @@ COMMAND_HANDLERS: Dict[Type[commands.DomainCommand], Type[UseCase]] = {
 class ReferentielConfig(Config):
     def __init__(
         self,
-        referentiel_repo: AbstractReferentielRepository,
         domain_message_bus: AbstractDomainMessageBus,
+        env_variables: EnvironmentVariables,
     ) -> None:
-        super().__init__(domain_message_bus)
-        self.referentiel_repo = referentiel_repo
+        super().__init__(domain_message_bus, env_variables=env_variables)
+        self.referentiel_repo = self.get_referentiel_repo()
 
     def prepare_use_cases(self) -> List[UseCase]:
 
@@ -69,20 +68,19 @@ class ReferentielConfig(Config):
     "markdown-folder",
 )
 def update(
-    repo_option: Literal["SUPABASE", "JSON"],
+    repo_option: ReferetielsRepository,
     json_path: Optional[str],
     markdown_folder: str,
 ):
     """Simple program that greets NAME for a total of COUNT times."""
     print("json_path ", json_path)
     domain_message_bus = InMemoryDomainMessageBus()
-    if repo_option == "JSON":
-        if json_path is None:
-            raise ValueError("Json path should be specified if repo-option == JSON")
-        referentiel_repo = JsonReferentielRepository(Path(json_path))
-    else:
-        raise NotImplementedError
-    config = ReferentielConfig(referentiel_repo, domain_message_bus)
+    config = ReferentielConfig(
+        domain_message_bus,
+        env_variables=EnvironmentVariables(
+            referentiels_repository=repo_option, referentiels_repo_json=json_path
+        ),
+    )
     prepare_bus(config, EVENT_HANDLERS, COMMAND_HANDLERS)
 
     config.domain_message_bus.publish_command(
