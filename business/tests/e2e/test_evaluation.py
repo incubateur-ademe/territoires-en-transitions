@@ -13,7 +13,7 @@ from business.domain.ports.action_score_repo import (
     InMemoryActionScoreRepository,
 )
 from business.domain.ports.action_status_repo import (
-    InMemoryActionStatusRepository,
+    InMemoryActionStatutRepository,
 )
 from business.adapters.replay_realtime import ReplayRealtime
 from business.adapters.json_referentiel_repo import JsonReferentielRepository
@@ -44,7 +44,7 @@ def prepare_config_and_bus(bus: InMemoryDomainMessageBus, realtime: ReplayRealti
             Path("./data/referentiel_repository.json")
         ),  # Variabilize path !
         score_repo=InMemoryActionScoreRepository(),
-        statuses_repo=InMemoryActionStatusRepository(),
+        statuses_repo=InMemoryActionStatutRepository(),
         domain_message_bus=bus,
         realtime=realtime,
     )

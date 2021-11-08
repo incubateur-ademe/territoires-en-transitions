@@ -12,8 +12,8 @@ from business.domain.ports.action_score_repo import (
     InMemoryActionScoreRepository,
 )
 from business.domain.ports.action_status_repo import (
-    AbstractActionStatusRepository,
-    InMemoryActionStatusRepository,
+    AbstractActionStatutRepository,
+    InMemoryActionStatutRepository,
 )
 from business.domain.ports.domain_message_bus import (
     AbstractDomainMessageBus,
@@ -33,7 +33,7 @@ from business.entrypoints.prepare_bus import prepare_bus
 
 # 1. Define Handlers
 EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[commands.DomainCommand]]] = {
-    events.ActionStatusUpdatedForEpci: [commands.ComputeReferentielScoresForEpci],
+    events.ActionStatutUpdatedForEpci: [commands.ComputeReferentielScoresForEpci],
     events.ReferentielScoresForEpciComputed: [commands.StoreScoresForEpci],
 }
 
@@ -49,7 +49,7 @@ class EvaluationConfig(Config):
         self,
         referentiel_repo: AbstractReferentielRepository,
         score_repo: AbstractActionScoreRepository,
-        statuses_repo: AbstractActionStatusRepository,
+        statuses_repo: AbstractActionStatutRepository,
         domain_message_bus: AbstractDomainMessageBus,
         realtime: AbstractRealtime,
     ) -> None:
@@ -76,7 +76,7 @@ def get_config(socket: Optional[Socket]):  # TODO variabilize all instantiations
     referentiel_repo = JsonReferentielRepository(
         Path("./data/referentiel_repository.json")
     )
-    statuses_repo = InMemoryActionStatusRepository()
+    statuses_repo = InMemoryActionStatutRepository()
     scores_repo = InMemoryActionScoreRepository()
 
     # If REALTIME == "REPLAY"

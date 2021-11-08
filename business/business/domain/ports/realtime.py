@@ -32,7 +32,7 @@ class EpciActionStatutUpdateConverter(AbstractConverter):
     def __init__(self) -> None:
         self.table = epci_action_statut_update_table
         self.schema = marshmallow_dataclass.class_schema(
-            events.ActionStatusUpdatedForEpci
+            events.ActionStatutUpdatedForEpci
         )()
 
     def filter(self, data: dict) -> bool:

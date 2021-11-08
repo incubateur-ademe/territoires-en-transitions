@@ -19,7 +19,7 @@ class DomainFailureEvent(DomainEvent):
 
 
 @dataclass
-class ActionStatusUpdatedForEpci(DomainEvent):
+class ActionStatutUpdatedForEpci(DomainEvent):
     epci_id: int
     referentiel: Referentiel
     created_at: str

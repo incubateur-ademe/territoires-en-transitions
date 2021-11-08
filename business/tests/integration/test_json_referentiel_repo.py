@@ -12,7 +12,7 @@ from tests.utils.files import remove_file, mkdir
 
 def test_can_add_to_repo():
     path = Path("./tests/data/tmp/ref.json")
-    mkdir(path)
+    mkdir(path.parent)
     remove_file(path)
 
     repo = JsonReferentielRepository(path)

@@ -1,12 +1,12 @@
 from typing import Dict, List
 
 from business.domain.models import commands, events
-from business.domain.models.action_status import (
-    ActionStatus,
+from business.domain.models.action_statut import (
+    ActionStatut,
 )
 from business.domain.models.action_score import ActionScore
 from business.domain.models.litterals import Referentiel
-from business.domain.ports.action_status_repo import AbstractActionStatusRepository
+from business.domain.ports.action_status_repo import AbstractActionStatutRepository
 from business.domain.ports.referentiel_repo import AbstractReferentielRepository
 from business.domain.ports.domain_message_bus import AbstractDomainMessageBus
 from .use_case import UseCase
@@ -26,7 +26,7 @@ class ComputeReferentielScoresForEpci(UseCase):
         self,
         bus: AbstractDomainMessageBus,
         referentiel_repo: AbstractReferentielRepository,
-        statuses_repo: AbstractActionStatusRepository,
+        statuses_repo: AbstractActionStatutRepository,
     ) -> None:
         self.bus = bus
         self.statuses_repo = statuses_repo
@@ -49,7 +49,7 @@ class ComputeReferentielScoresForEpci(UseCase):
                 return
         statuses = self.statuses_repo.get_all_for_epci(command.epci_id)
 
-        status_by_action_id: Dict[str, ActionStatus] = {
+        status_by_action_id: Dict[str, ActionStatut] = {
             action_status.action_id: action_status
             for action_status in statuses
             if action_status.is_renseigne
@@ -90,7 +90,7 @@ class ComputeReferentielScoresForEpci(UseCase):
         self,
         scores: Dict[str, ActionScore],
         tache_points_node: ActionPointsNode,
-        status_by_action_id: Dict[str, ActionStatus],
+        status_by_action_id: Dict[str, ActionStatut],
         actions_non_concernees_ids: List[str],
         referentiel: Referentiel,
     ):
@@ -108,12 +108,12 @@ class ComputeReferentielScoresForEpci(UseCase):
 
         if not tache_concernee:
             scores[tache_points_node.action_id] = ActionScore(
-                referentiel=referentiel,
                 action_id=tache_points_node.action_id,
                 points=0,
                 potentiel=0,
                 previsionnel=0,
-                completude_ratio=(1, 1),
+                total_taches_count=1,
+                completed_taches_count=1,
                 referentiel_points=tache_points_node.value,
                 concernee=tache_concernee,
             )
@@ -130,12 +130,12 @@ class ComputeReferentielScoresForEpci(UseCase):
                 else 0.0
             )
             scores[tache_points_node.action_id] = ActionScore(
-                referentiel=referentiel,
                 action_id=tache_points_node.action_id,
                 points=tache_points,
                 potentiel=tache_potentiel,
                 previsionnel=tache_previsionnel,
-                completude_ratio=(1, 1),
+                completed_taches_count=1,
+                total_taches_count=1,
                 referentiel_points=tache_points_node.value,
                 concernee=tache_concernee,
             )
@@ -178,15 +178,15 @@ class ComputeReferentielScoresForEpci(UseCase):
             if action_children_with_scores
             else True
         )  # concernee if any action children is concernee
-        completude_numerator = sum(
+        completed_taches_count = sum(
             [
-                scores[child.action_id].completude_ratio[0]
+                scores[child.action_id].completed_taches_count
                 for child in action_children_with_scores
             ]
         )
-        completude_denominator = sum(
+        total_taches_count = sum(
             [
-                scores[child.action_id].completude_ratio[1]
+                scores[child.action_id].total_taches_count
                 if child.action_id in scores
                 else 1
                 for child in action_children
@@ -194,15 +194,12 @@ class ComputeReferentielScoresForEpci(UseCase):
         )
 
         scores[action.action_id] = ActionScore(
-            referentiel=referentiel,
             action_id=action.action_id,
             points=points,
             potentiel=potentiel,
             previsionnel=previsionnel,
-            completude_ratio=(
-                completude_numerator,
-                completude_denominator,
-            ),
+            completed_taches_count=completed_taches_count,
+            total_taches_count=total_taches_count,
             referentiel_points=action_referentiel_points,
             concernee=concernee,
         )
