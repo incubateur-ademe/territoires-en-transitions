@@ -14,6 +14,7 @@ class ActionReferentiel(BaseModel):
     contexte: Optional[str]
     exemples: Optional[str]
     ressources: Optional[str]
+    preuve: Optional[str]
     points: float
     actions: List[ActionReferentiel]
 

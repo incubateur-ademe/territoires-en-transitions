@@ -12,7 +12,7 @@ import {
   PlanActionStructure,
   PlanActionTyped,
 } from 'types/PlanActionTypedInterface';
-import {Menu, MenuItem, Select} from '@material-ui/core';
+import {Menu, MenuItem} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
 import {PlanCategorieSelection} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import Autocomplete from '@material-ui/lab/Autocomplete';

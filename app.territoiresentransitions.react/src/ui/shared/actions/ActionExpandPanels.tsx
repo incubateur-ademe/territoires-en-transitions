@@ -59,3 +59,9 @@ export const ActionRessourcesExpandPanel = ({
     title="Ressources"
   />
 );
+
+export const ActionPreuveExpandPanel = ({
+  action,
+}: {
+  action: ActionReferentiel;
+}) => <ActionExpandPanelAdemeContent content={action.preuve} title="Preuve" />;

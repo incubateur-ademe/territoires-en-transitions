@@ -7,6 +7,7 @@ export interface ActionReferentielInterface {
   contexte: string | undefined;
   exemples: string | undefined;
   ressources: string | undefined;
+  preuve: string | undefined;
   points: number;
   actions: ActionReferentiel[];
 }
@@ -24,6 +25,7 @@ export class ActionReferentiel {
   contexte: string | undefined;
   exemples: string | undefined;
   ressources: string | undefined;
+  preuve: string | undefined;
   points: number;
   actions: ActionReferentiel[];
 
@@ -39,6 +41,7 @@ export class ActionReferentiel {
     contexte,
     exemples,
     ressources,
+    preuve,
     points,
     actions,
   }: {
@@ -50,6 +53,7 @@ export class ActionReferentiel {
     contexte: string | undefined;
     exemples: string | undefined;
     ressources: string | undefined;
+    preuve: string | undefined;
     points: number;
     actions: ActionReferentiel[];
   }) {
@@ -61,6 +65,7 @@ export class ActionReferentiel {
     this.contexte = contexte;
     this.exemples = exemples;
     this.ressources = ressources;
+    this.preuve = preuve;
     this.points = points;
     this.actions = actions;
   }
@@ -75,6 +80,7 @@ export class ActionReferentiel {
       other.contexte === this.contexte &&
       other.exemples === this.exemples &&
       other.ressources === this.ressources &&
+      other.preuve === this.preuve &&
       other.points === this.points &&
       other.actions === this.actions
     );

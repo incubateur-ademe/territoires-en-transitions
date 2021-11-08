@@ -13,11 +13,20 @@ def test_build_action_with_mesure():
     md = load_md("../referentiels/markdown/mesures_citergie/1.1.1.md")
     mesure = build_action(md)
     assert mesure
+
+    assert set(mesure.keys()) == {
+        "nom",
+        "actions",
+        "description",
+        "exemples",
+        "contexte",
+        "ressources",
+        "preuve",
+        "id",
+        "points",
+        "climat_pratic_id",
+    }
     assert mesure["id"] == "1.1.1"
-    assert (
-        mesure["nom"]
-        == "Définir la vision, les objectifs et la stratégie Climat-Air-Energie"
-    )
     assert len(mesure["description"]) > 10
     assert len(mesure["actions"]) == 7
 
