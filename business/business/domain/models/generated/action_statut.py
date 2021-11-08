@@ -26,8 +26,7 @@ class ActionStatutAvancement(Enum):
 class ActionStatut:
     action_id: "str"
     avancement: "ActionStatutAvancement"
-    concerne: "bool"
-    modified_by: "str"
+    concernee: "bool"
 
     @classmethod
     def from_json_data(cls, data: Any) -> "ActionStatut":
@@ -35,15 +34,13 @@ class ActionStatut:
             _from_json_data(str, data.get("action_id")),
             _from_json_data(ActionStatutAvancement, data.get("avancement")),
             _from_json_data(bool, data.get("concerne")),
-            _from_json_data(str, data.get("modified_by")),
         )
 
     def to_json_data(self) -> Any:
         data: Dict[str, Any] = {}
         data["action_id"] = _to_json_data(self.action_id)
         data["avancement"] = _to_json_data(self.avancement)
-        data["concerne"] = _to_json_data(self.concerne)
-        data["modified_by"] = _to_json_data(self.modified_by)
+        data["concerne"] = _to_json_data(self.concernee)
         return data
 
 

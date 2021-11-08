@@ -13,7 +13,7 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[commands.DomainCommand]
         commands.StoreReferentielEntities
     ],
     # Notation
-    events.ActionStatusUpdatedForEpci: [commands.ComputeReferentielScoresForEpci],
+    events.ActionStatutUpdatedForEpci: [commands.ComputeReferentielScoresForEpci],
     events.ReferentielScoresForEpciComputed: [commands.StoreScoresForEpci],
 }
 

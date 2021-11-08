@@ -11,7 +11,7 @@ from business.adapters.postgres.postgres_action_score_repo import (
 from business.utils.action_id import ActionId, Referentiel
 from tests.utils.score_factory import make_action_score
 
-postgres_url = f"postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:49154/postgres"
+postgres_url = f"postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:50001/postgres"
 
 
 @pytest.fixture()
