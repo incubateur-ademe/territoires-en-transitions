@@ -5404,7 +5404,7 @@ actions = [
                                         ressources=r"",
                                         preuve=r"",
                                         thematique_id="batiments",
-                                        points=10,
+                                        points=15,
                                         actions=[],
                                     ),
                                     ActionReferentiel(
@@ -5963,7 +5963,7 @@ actions = [
                                         ressources=r"",
                                         preuve=r"",
                                         thematique_id="energie",
-                                        points=35,
+                                        points=40,
                                         actions=[
                                             ActionReferentiel(
                                                 id="citergie__2.3.1.3.1",
@@ -6081,7 +6081,7 @@ actions = [
                                         ressources=r"",
                                         preuve=r"",
                                         thematique_id="energie",
-                                        points=20,
+                                        points=25,
                                         actions=[
                                             ActionReferentiel(
                                                 id="citergie__2.3.1.4.1",
