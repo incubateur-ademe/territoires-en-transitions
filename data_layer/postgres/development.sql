@@ -17,17 +17,22 @@ create table epci
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
     modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
+comment on table epci is 'EPCI information, writable only by postgres user';
 
 create view client_epci
 as
 select siren, nom
 from epci;
+comment on view client_epci is 'The necessary EPCI information to display in the client.';
 
 --------------------------------
 -------- REFERENTIEL -----------
 --------------------------------
 create type referentiel as enum ('eci', 'cae');
-create domain action_id as varchar(30); -- eg: eci_1.1.1.1
+comment on type referentiel is 'An enum representing a referentiel';
+
+create domain action_id as varchar(30);
+comment on type action_id is 'A unique action id. ex: eci_1.1.1.1';
 
 
 create table action_relation
@@ -36,6 +41,9 @@ create table action_relation
     referentiel referentiel           not null,
     parent      action_id references action_relation
 );
+comment on table action_relation is
+    'Relation between an action and its parent. '
+        'Parent must be inserted before its child; child must be deleted before its parent.';
 
 create view action_children
 as
@@ -47,6 +55,8 @@ from action_relation
     where id = action_relation.parent
     )
     as children on true;
+comment on view action_children is
+    'Action and its children, computed from action relation';
 
 
 --------------------------------
@@ -208,38 +218,42 @@ begin
             end;
 end;
 $$ language plpgsql;
+comment on function udt_name_to_json_type(udt_name text) is
+    'Returns a type as a string compatible with json type definition.';
 
-create view table_as_json_schema
+create view table_as_json_typedef
 as
 with table_columns as (
     select columns.table_name                            as title,
            column_name,
-           is_nullable = 'NO' and column_default is null as required,
+           is_nullable = 'NO' and column_default is null as mandatory,
            udt_name
     from information_schema.columns
     where table_schema = 'public'
 ),
      json_type_def as (
          select title,
-
                 json_object_agg(
                 column_name,
                 json_build_object('type', udt_name_to_json_type(udt_name))
-                    ) filter ( where required ) as properties
-
+                    ) filter ( where mandatory ) as properties
          from table_columns
          group by title
      )
 select title,
        json_build_object('properties', coalesce(properties, '{}')) as json_typedef
 from json_type_def;
+comment on view table_as_json_typedef is
+    'Json type definition for all public tables. '
+        'Because we use tables for repos, only non nullable/non default fields are listed';
 
-create view view_as_json_schema
+
+create view view_as_json_typedef
 as
 with view_columns as (
     select distinct on (view_schema, view_name, column_name) view_name                                     as title,
                                                              column_name,
-                                                             is_nullable = 'NO' and column_default is null as required,
+                                                             is_nullable = 'NO' and column_default is null as mandatory,
                                                              udt_name
 
     from information_schema.columns
@@ -248,15 +262,27 @@ with view_columns as (
     where view_schema = 'public'
       and column_name is not null
     order by view_name
-)
-select json_build_object(
-               'title', title,
-               'type', 'object',
-               'required', coalesce(json_agg(column_name) filter ( where required ), '[]'),
-               'properties', json_agg(json_build_object(
+),
+     json_type_def as (
+         select title,
+                json_object_agg(
                 column_name,
                 json_build_object('type', udt_name_to_json_type(udt_name))
-            ))
-           )
-from view_columns
-group by title;
+                    ) filter ( where mandatory )     as properties,
+                json_object_agg(
+                column_name,
+                json_build_object('type', udt_name_to_json_type(udt_name))
+                    ) filter ( where not mandatory ) as optional
+
+         from view_columns
+         group by title
+     )
+select title,
+       json_build_object(
+               'properties', coalesce(properties, '{}'),
+               'optionalProperties', coalesce(optional, '{}')
+           ) as json_typedef
+from json_type_def;
+comment on view view_as_json_typedef is
+    'Json type definition for all public views.';
+
