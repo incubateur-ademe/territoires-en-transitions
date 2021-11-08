@@ -81,7 +81,7 @@ const ReferentielNavChip = (props: {
 const ReferentielTitle = (props: {view: View}) => {
   const referentiel = props.view === 'eci' ? eciReferentiel : caeReferentiel;
   return (
-    <header className="flex gap-8">
+    <header className="mb-6 flex gap-8">
       <h2 className="fr-h2">{viewTitles[props.view]}</h2>
       <div className={`font-light ${props.view === 'both' ? 'hidden' : ''} `}>
         <div className="flex gap-2">
