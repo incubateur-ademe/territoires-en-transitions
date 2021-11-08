@@ -17,12 +17,14 @@ class Status(Enum):
     faite = 1
     non_concernee = 2
     vide = 3
+    programmee = 4
+    en_cours = 5
 
     @classmethod
     def from_action_status_avancement(
         cls,
         action_status_avancement: Literal[
-            "faite", "programmee", "pas_faite", "non_concernee"
+            "faite", "programmee", "en_cours", "pas_faite", "non_concernee"
         ],  # Should be generated
     ) -> Status:
         """Returns a Status from the avancement of ActionStatus
@@ -35,6 +37,10 @@ class Status(Enum):
             return Status.pas_faite
         elif action_status_avancement == "faite":
             return Status.faite
+        elif action_status_avancement == "programmee":
+            return Status.programmee
+        elif action_status_avancement == "en_cours":
+            return Status.en_cours
         return Status.vide
 
     def to_action_status_selected_value(
@@ -46,6 +52,10 @@ class Status(Enum):
             return "faite"
         elif self == Status.non_concernee:
             return "non_concernee"
+        elif self == Status.programmee:
+            return "programmee"
+        elif self == Status.en_cours:
+            return "en_cours"
         return ""
 
 
@@ -65,6 +75,7 @@ class Notation:
         self.points: Dict[Tuple, float] = {}
         self.percentages: Dict[Tuple, float] = {}
         self.statuses: Dict[Tuple, Status] = {}
+        self.completion: Dict[Tuple, float] = {}
         self.reset()
 
     def reset(self):
@@ -78,6 +89,9 @@ class Notation:
         self.percentages: Dict[Tuple, float] = {
             index: 0.0 for index in self.referentiel.indices
         }
+        self.completion: Dict[Tuple, float] = {
+            index: 0.0 for index in self.referentiel.indices
+        }
 
     def set_status(self, index: Tuple, status: Status):
         """Set the status of an action"""
@@ -88,6 +102,7 @@ class Notation:
         self.statuses[index] = status
 
     def compute(self):
+        self.__compute_completion()
         self.__propagate_statuses()
         self.__compute_potentiels()
         self.__compute_points()
@@ -103,6 +118,7 @@ class Notation:
                 points=self.points[index],
                 potentiel=self.potentiels[index],
                 percentage=self.percentages[index],
+                completion=self.completion[index],
                 referentiel_points=self.referentiel.points[index],
                 referentiel_percentage=self.referentiel.percentages[index],
             )
@@ -252,3 +268,21 @@ class Notation:
                 self.percentages[index] = self.points[index] / self.potentiels[index]
             if self.points[index] == 0 and self.statuses[index] == Status.faite:
                 self.percentages[index] = 1.0
+
+    def __compute_completion(self):
+        """Compute percentage for display purposes see ActionReferentielScore"""
+        nb_of_childless_descendant_completed = {}
+        for index in self.referentiel.backward:
+            children = self.referentiel.children(index)
+            if not children:
+                self.completion[index] = nb_of_childless_descendant_completed[index] = (
+                    1 if self.statuses[index] != Status.vide else 0
+                )
+            else:
+                nb_of_childless_descendant_completed[index] = sum(
+                    [nb_of_childless_descendant_completed[child] for child in children]
+                )
+                self.completion[index] = (
+                    nb_of_childless_descendant_completed[index]
+                    / self.referentiel.childless_descendant[index]
+                )

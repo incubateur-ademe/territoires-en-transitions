@@ -108,6 +108,19 @@ def test_referentiel_when_root_action_has_one_mesure():
         ("1", "1", "1", "2"): 0.8,
     }
 
+    expected_childless_descendant = {
+        (): 5,
+        ("1",): 5,
+        ("1", "1"): 4,
+        ("1", "2"): 1,
+        ("1", "1", "1"): 3,
+        ("1", "1", "2"): 0,
+        ("1", "2", "1"): 0,
+        ("1", "1", "1", "0"): 0,
+        ("1", "1", "1", "1"): 0,
+        ("1", "1", "1", "2"): 0,
+    }
+
     for action_index in referentiel.forward:
         assert (
             referentiel.points[action_index] == expected_points[action_index]
@@ -116,6 +129,11 @@ def test_referentiel_when_root_action_has_one_mesure():
         assert (
             referentiel.percentages[action_index] == expected_percentages[action_index]
         ), f"Error in percentage at index {action_index}"
+
+        assert (
+            referentiel.childless_descendant[action_index]
+            == expected_childless_descendant[action_index]
+        ), f"Error in childless descendant at index {action_index}"
 
 
 def test_referentiel_when_a_():
