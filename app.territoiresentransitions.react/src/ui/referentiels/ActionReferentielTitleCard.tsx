@@ -29,7 +29,10 @@ export const ActionReferentielTitleCard = ({
             </span>
           </div>
           <div className="flex gap-3">
-            <CurrentEpciCompletionStar action={action} />
+            <CurrentEpciCompletionStar
+              action={action}
+              tooltipPlacement="left"
+            />
             <ProgressStatStatic
               className="w-100"
               action={action}

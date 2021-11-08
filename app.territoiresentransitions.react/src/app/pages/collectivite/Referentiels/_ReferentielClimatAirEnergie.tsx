@@ -8,9 +8,9 @@ import {CurrentEpciCompletionStar} from 'ui/referentiels/CurrentEpciCompletionSt
 
 const AxisSectionClimatAirEnergie = ({axis}: {axis: ActionReferentiel}) => (
   <div className="flex flex-col justify-between  mb-8">
-    <div className="flex  gap-6">
+    <div className="flex  gap-6 items-center">
       <ActionReferentielTitle action={axis} className="fr-h3" />
-      <CurrentEpciCompletionStar action={axis} />
+      <CurrentEpciCompletionStar action={axis} tooltipPlacement="right" />
     </div>
     {axis.actions.map(subAxis => (
       <ExpandableAction action={subAxis} key={subAxis.id} />

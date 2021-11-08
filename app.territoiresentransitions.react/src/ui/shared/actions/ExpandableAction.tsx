@@ -22,9 +22,12 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
         summary={
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center w-full">
-              <div className="flex gap-2 justify-start w-36 ">
+              <div className="flex gap-2 justify-start w-36">
                 <div className="-mt-1">
-                  <CurrentEpciCompletionStar action={action} />
+                  <CurrentEpciCompletionStar
+                    action={action}
+                    tooltipPlacement="left"
+                  />
                 </div>
                 <CurrentEpciGaugeProgressStat action={action} size="xs" />
               </div>

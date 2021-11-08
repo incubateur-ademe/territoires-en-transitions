@@ -52,7 +52,7 @@ export const DetailedReferentiel = ({
           <div className="text-lg font-bold">{title}</div>
           <div className="flex gap-3">
             <div className="mt-2">
-              <CompletionStar score={root_score} />
+              <CompletionStar score={root_score} tooltipPlacement="top" />
             </div>
             <RootProgressStat score={root_score} />
           </div>
