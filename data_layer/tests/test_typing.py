@@ -29,7 +29,7 @@ def test_table_epci_returns_a_valid_json_schema(initialized_cursor):
 
 def test_table_action_statut_returns_a_valid_json_schema_with_enum(initialized_cursor):
     tables_as_json_schemas = (
-        "select * from view_as_json_typedef where title = 'business_action_statut';"
+        "select * from table_as_json_typedef where title = 'business_action_statut';"
     )
     initialized_cursor.execute(tables_as_json_schemas)
     schemas = initialized_cursor.fetchall()

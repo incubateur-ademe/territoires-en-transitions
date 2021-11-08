@@ -227,7 +227,9 @@ with table_columns as (
     select columns.table_name                            as title,
            column_name,
            is_nullable = 'NO' and column_default is null as mandatory,
+
            udt_name
+
     from information_schema.columns
     where table_schema = 'public'
 ),
@@ -244,45 +246,4 @@ select title,
        json_build_object('properties', coalesce(properties, '{}')) as json_typedef
 from json_type_def;
 comment on view table_as_json_typedef is
-    'Json type definition for all public tables. '
-        'Because we use tables for repos, only non nullable/non default fields are listed';
-
-
-create view view_as_json_typedef
-as
-with view_columns as (
-    select distinct on (view_schema, view_name, column_name) view_name                                     as title,
-                                                             column_name,
-                                                             is_nullable = 'NO' and column_default is null as mandatory,
-                                                             udt_name
-
-    from information_schema.columns
-             natural full join information_schema.view_table_usage
-
-    where view_schema = 'public'
-      and column_name is not null
-    order by view_name
-),
-     json_type_def as (
-         select title,
-                json_object_agg(
-                column_name,
-                json_build_object('type', udt_name_to_json_type(udt_name))
-                    ) filter ( where mandatory )     as properties,
-                json_object_agg(
-                column_name,
-                json_build_object('type', udt_name_to_json_type(udt_name))
-                    ) filter ( where not mandatory ) as optional
-
-         from view_columns
-         group by title
-     )
-select title,
-       json_build_object(
-               'properties', coalesce(properties, '{}'),
-               'optionalProperties', coalesce(optional, '{}')
-           ) as json_typedef
-from json_type_def;
-comment on view view_as_json_typedef is
-    'Json type definition for all public views.';
-
+    'Json type definition for all public tables (including views). Only non nullable/non default fields are listed';
