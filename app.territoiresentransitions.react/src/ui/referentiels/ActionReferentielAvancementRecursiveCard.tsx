@@ -6,6 +6,7 @@ import {
   AddFicheActionButton,
   ActionStatusAvancementRadioButton,
   ActionExemplesExpandPanel,
+  ActionPreuveExpandPanel,
 } from 'ui/shared';
 
 /**
@@ -89,6 +90,7 @@ export const ActionReferentielAvancementCard = ({
         <ActionDescriptionExpandPanel action={action} />
         <ActionExemplesExpandPanel action={action} />
         <ActionCommentaire actionId={action.id} />{' '}
+        <ActionPreuveExpandPanel action={action} />
       </div>
     </article>
   );

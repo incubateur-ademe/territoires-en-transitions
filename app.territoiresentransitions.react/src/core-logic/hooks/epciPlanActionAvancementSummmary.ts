@@ -7,7 +7,6 @@ import {
   PlanActionStructure,
   PlanActionTyped,
 } from 'types/PlanActionTypedInterface';
-import {FicheAction} from 'generated/models';
 
 export type PlanActionAvancementSummmary = {
   avancementsCount?: Partial<Record<FicheActionAvancement, number>>;

@@ -29,9 +29,6 @@ def test_all(mock_write: MagicMock):
     mock_write.assert_any_call(
         os.path.join(thematique_client_output_dir, "thematiques.ts"), ANY
     )
-    mock_write.assert_any_call(
-        os.path.join(shared_client_models_dir, "indicateur_value.ts"), ANY
-    )
 
 
 @patch("codegen.cli_generate.write")
