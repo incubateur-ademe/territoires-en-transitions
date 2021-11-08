@@ -34,7 +34,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   const actionStatuses =
     useAllStorables<ActionStatusStorable>(actionStatusStore);
   const idsOfActionWithStatuses = actionStatuses
-    .filter(actionStatus => actionStatus.avancement)
+    .filter(actionStatus => actionStatus.avancement !== '')
     .map(actionStatus => actionStatus.action_id);
 
   return (

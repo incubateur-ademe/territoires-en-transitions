@@ -67,7 +67,9 @@ export const ActionReferentielAvancementCard = ({
       epciId,
       action.id
     );
-    const actionStatusIsRenseigne = !!useActionStatus(actionStatusStorableId);
+    const actionStatus = useActionStatus(actionStatusStorableId);
+    const actionStatusIsRenseigne =
+      actionStatus && actionStatus.avancement !== '';
     if (actionStatusIsRenseigne) {
       return <></>;
     }
