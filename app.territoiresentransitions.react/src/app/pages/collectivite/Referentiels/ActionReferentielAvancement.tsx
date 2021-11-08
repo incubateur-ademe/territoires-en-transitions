@@ -37,7 +37,6 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
     .filter(actionStatus => actionStatus.avancement)
     .map(actionStatus => actionStatus.action_id);
 
-  console.log(idsOfActionWithStatuses);
   return (
     <div className="fr-container">
       <div className="mt-8 mb-16">
@@ -77,10 +76,6 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
 
       <section>
         <h2 className="fr-h2"> Les actions</h2>
-        {action.id}{' '}
-        {action.actions.every(action =>
-          idsOfActionWithStatuses.includes(action.id)
-        )}
         {action.actions.map(action => {
           if (
             hideActionWithStatusRenseignee &&
