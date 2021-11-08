@@ -88,7 +88,7 @@ VALUES  ('20171026211738'),
         ('20180108183307'),
         ('20180119214651'),
         ('20180125194653');
-		
+
 -- Gets the User ID from the request cookie
 create or replace function auth.uid() returns uuid as $$
   select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
