@@ -16,12 +16,12 @@ export const FunctionnalitiesUsageProportionBarChart = (props: {
   yAxisTitle: string;
   xAxisTitle: string;
 }) => {
-  const [chartData, setChartData] = useState({} as ChartData);
+  const [chartData, setChartData] = useState({} as ChartData<'bar'>);
 
   useEffect(() => {
     getFunctionnalitiesUsageProportion().then(
       functionnalitiesUsageProportion => {
-        const data: ChartData = {
+        const data: ChartData<'bar'> = {
           labels: Object.keys(functionnalitiesUsageProportion).map(
             name => functionnalityNameToLabel[name] ?? name
           ),
@@ -30,7 +30,6 @@ export const FunctionnalitiesUsageProportionBarChart = (props: {
               data: Object.values(functionnalitiesUsageProportion).map(
                 ratio => ratio * 100
               ),
-              fill: true,
               backgroundColor: '#000091',
             },
           ],
