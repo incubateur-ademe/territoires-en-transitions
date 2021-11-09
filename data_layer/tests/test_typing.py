@@ -2,6 +2,7 @@ import json
 import os.path
 
 import pytest
+from jtd import Schema
 
 
 @pytest.fixture()
@@ -51,15 +52,38 @@ def test_table_action_statut_returns_a_valid_json_schema_with_enum(initialized_c
     }
 
 
-def test_table_as_json_schema_should_save_schemas(initialized_cursor):
-    tables_as_json_schemas = open(
-        "postgres/queries/get_all_tables_as_json_typedefs.sql", "r"
-    ).read()
-    initialized_cursor.execute(tables_as_json_schemas)
-    schemas = initialized_cursor.fetchall()
+def test_table_as_json_typedef_should_return_parsable_typedef_schemas(
+    initialized_cursor,
+):
+    # todo run on all tables
+    tables_as_json_typedef = "select * from table_as_json_typedef;"
 
-    for schema in schemas:
-        title = schema[0]
-        json_typedef = schema[1]
-        with open(os.path.join("generated", f"{title}.json"), "w") as file:
-            json.dump(json_typedef, file, indent="  ")
+    initialized_cursor.execute(tables_as_json_typedef)
+    schemas = initialized_cursor.fetchall()
+    for schema_row in schemas:
+        read = schema_row[1]
+        write = schema_row[2]
+        read_schema = Schema.from_dict(read)
+        write_schema = Schema.from_dict(write)
+        assert read_schema
+        assert write_schema
+
+
+def test_table_as_json_schema_should_save_schemas(initialized_cursor):
+    args = {"read": ["business_action_statut"], "write": ["score"]}
+
+    tables_as_json_typedef = "select * from table_as_json_typedef"
+    initialized_cursor.execute(tables_as_json_typedef)
+    schemas = initialized_cursor.fetchall()
+    for schema_row in schemas:
+        title = schema_row[0]
+        read = schema_row[1]
+        write = schema_row[2]
+
+        if title in args["read"]:
+            with open(os.path.join("generated", f"{title}-read.json"), "w") as file:
+                json.dump(read, file, indent="  ")
+
+        if title in args["write"]:
+            with open(os.path.join("generated", f"{title}-write.json"), "w") as file:
+                json.dump(write, file, indent="  ")
