@@ -18,8 +18,8 @@ const getDataset = (
   indicateurValues: AnyIndicateurValueStorable[],
   label: string,
   color: string,
-  kwargs?: Partial<ChartDataset>
-): ChartDataset => {
+  kwargs?: Partial<ChartDataset<'line'>>
+): ChartDataset<'line'> => {
   const data = yearRange.map(year => {
     const storableForYear = indicateurValues.find(
       storable => storable.year === year
@@ -82,7 +82,7 @@ const AnyIndicateurLineChart = (props: {
   const yearRange = range(firstYear, lastYear);
   const labels = yearRange.map(year => year.toString());
 
-  const data: ChartData = {
+  const data: ChartData<'line'> = {
     labels,
     datasets: [
       getDataset(yearRange, resultatValueStorables, 'Résultats', '#000091'),
