@@ -35,3 +35,7 @@
   align-items: center;
   padding-right: 0.5rem;
 }
+
+.CrossExpandPanel details summary.title {
+  font-size: 18px;
+}

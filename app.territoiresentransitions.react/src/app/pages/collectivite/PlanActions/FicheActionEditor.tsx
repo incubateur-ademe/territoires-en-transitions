@@ -9,16 +9,14 @@ import {
 import {FicheActionInterface} from 'generated/models/fiche_action';
 import {getFicheActionStoreForEpci} from 'core-logic/api/hybridStores';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
-import {useState} from 'react';
 
 /**
  * This is the main component of FicheActionPage, use to show a fiche.
  */
 const FicheActionEditor = () => {
   const {epciId, ficheUid} = useParams<{epciId: string; ficheUid: string}>();
-  const [planCategories, setPlanCategories] = useState<
-    PlanCategorieSelection[]
-  >([]);
+  const planCategories: PlanCategorieSelection[] = []; // [planCategories, setPlanCategories] = useState<PlanCategorieSelection[]>([]);
+
   const ficheActionStore = getFicheActionStoreForEpci(epciId);
   const ficheStorableId = FicheActionStorable.buildId(epciId, ficheUid);
   const history = useHistory();

@@ -31,7 +31,3 @@ details > .content p {
 .htmlContent a:active {
   text-decoration: underline;
 }
-
-.ActionExpandPanelAdemeContent summary.title {
-  font-size: 18px;
-}

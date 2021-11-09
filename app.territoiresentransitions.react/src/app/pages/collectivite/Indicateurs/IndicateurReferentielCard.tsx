@@ -13,7 +13,7 @@ import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandab
 import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
-import {Editable, Spacer} from 'ui/shared';
+import {Editable} from 'ui/shared';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   const [value, setValue] = React.useState('');

@@ -52,7 +52,7 @@ const AnyIndicateurValueInput = ({
         value: floatValue,
       },
     });
-    setInputValue(floatValue ? floatValue.toString() : '');
+    setInputValue(!isNaN(floatValue) ? floatValue.toString() : '');
   };
 
   return (
