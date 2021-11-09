@@ -4,7 +4,6 @@ import {AnyIndicateurValueStorable} from 'storables';
 import {HybridStore} from 'core-logic/api/hybridStore';
 import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {Chevron} from 'ui/shared/Chevron';
-import {Editable} from 'ui/shared';
 
 export const AnyIndicateurCard = ({
   children,
