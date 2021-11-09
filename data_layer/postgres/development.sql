@@ -103,7 +103,7 @@ from action_statut
 create table score
 (
     id                     serial primary key,
-    epci_id                serial references epci,
+    epci_id                integer references epci                            not null,
     action_id              action_id references action_relation               not null,
     points                 real                                               not null,
     potentiel              real                                               not null,
@@ -128,7 +128,7 @@ from score
 --------------------------------
 create table epci_action_statut_update_event
 (
-    epci_id     serial references epci                             not null,
+    epci_id     integer references epci                             not null,
     referentiel referentiel                                        not null,
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null
 );
@@ -224,10 +224,9 @@ comment on function udt_name_to_json_type(udt_name text) is
 create view table_as_json_typedef
 as
 with table_columns as (
-    select columns.table_name                            as title,
+    select columns.table_name     as title,
            column_name,
-           is_nullable = 'NO' and column_default is null as mandatory,
-
+           column_default is null as mandatory,
            udt_name
 
     from information_schema.columns
@@ -236,14 +235,24 @@ with table_columns as (
      json_type_def as (
          select title,
                 json_object_agg(
+                        column_name,
+                        json_build_object('type', udt_name_to_json_type(udt_name))
+                    )                            as all_properties,
+
+                json_object_agg(
                 column_name,
                 json_build_object('type', udt_name_to_json_type(udt_name))
-                    ) filter ( where mandatory ) as properties
+                    ) filter ( where mandatory ) as writable_properties
+
          from table_columns
          group by title
      )
 select title,
-       json_build_object('properties', coalesce(properties, '{}')) as json_typedef
+       json_build_object('properties', coalesce(all_properties, '{}'))      as read,
+       json_build_object('properties', coalesce(writable_properties, '{}')) as write
 from json_type_def;
 comment on view table_as_json_typedef is
     'Json type definition for all public tables (including views). Only non nullable/non default fields are listed';
+
+select *
+from table_as_json_typedef;

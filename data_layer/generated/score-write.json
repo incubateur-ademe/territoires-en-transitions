@@ -1,31 +1,31 @@
 {
   "properties": {
-    "points": {
-      "type": "float64"
-    },
-    "potentiel": {
-      "type": "float64"
-    },
     "referentiel_points": {
       "type": "float64"
     },
-    "percentage": {
-      "type": "float64"
+    "completed_taches_count": {
+      "type": "int32"
     },
     "concernee": {
       "type": "boolean"
     },
-    "previsionnel": {
+    "points": {
       "type": "float64"
     },
     "total_taches_count": {
       "type": "int32"
     },
-    "completed_taches_count": {
-      "type": "int32"
-    },
     "action_id": {
       "type": "string"
+    },
+    "epci_id": {
+      "type": "int32"
+    },
+    "previsionnel": {
+      "type": "float64"
+    },
+    "potentiel": {
+      "type": "float64"
     }
   }
 }

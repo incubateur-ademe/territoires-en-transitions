@@ -12,6 +12,7 @@ rx = "*"
 psycopg = "*"
 results = "*"
 jsonschema = "*"
+jtd = "*"
 
 [dev-packages]
 
