@@ -21,7 +21,7 @@ const auditCheckListsEci = {
 
 const _UiCheckbox = (props: {label: string}) => (
   <div className="flex gap-2 items-center">
-    <Checkbox color="primary" /> {props.label}
+    <Checkbox color="primary" /> <div>{props.label}</div>
   </div>
 );
 
