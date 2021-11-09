@@ -9,7 +9,10 @@ import 'moment/locale/fr';
 
 moment.locale('fr');
 
-const getDataset = (dates: Date[], dailyCount: DailyCount[]): ChartDataset => {
+const getDataset = (
+  dates: Date[],
+  dailyCount: DailyCount[]
+): ChartDataset<'line'> => {
   const color = '#000091';
   const data = R.map(date => {
     const userCountForDay = R.find(
@@ -43,7 +46,7 @@ export const DailyCountLineChart = (props: {
   yAxisTitle: string;
   yMin: number;
 }) => {
-  const [chartData, setChartData] = useState({} as ChartData);
+  const [chartData, setChartData] = useState({} as ChartData<'line'>);
 
   useEffect(() => {
     props.getDailyCount().then(dailyCounts => {
@@ -51,7 +54,7 @@ export const DailyCountLineChart = (props: {
         dailyUserCount => new Date(dailyUserCount.date)
       );
       const dataset = getDataset(dates, dailyCounts);
-      const data: ChartData = {
+      const data: ChartData<'line'> = {
         labels: dates,
         datasets: [dataset],
       };
