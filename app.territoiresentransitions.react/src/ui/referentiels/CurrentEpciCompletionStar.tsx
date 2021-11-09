@@ -3,6 +3,8 @@ import {ActionReferentielScoreStorable} from 'storables';
 import {useActionReferentielScore} from 'core-logic/hooks/actionReferentielScore';
 import {useEffect, useState} from 'react';
 import star from './star.png';
+import {IconButton, Tooltip} from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const JaugeStar = (props: {fillPercentage: number}) => {
   const cacheStyle = {
@@ -21,8 +23,10 @@ const JaugeStar = (props: {fillPercentage: number}) => {
 
 export const CompletionStar = ({
   score,
+  tooltipPlacement,
 }: {
   score: ActionReferentielScoreStorable | null;
+  tooltipPlacement: 'right' | 'left' | 'top' | 'bottom';
 }) => {
   const [completion, setCompletion] = useState(0);
   useEffect(() => {
@@ -30,22 +34,26 @@ export const CompletionStar = ({
   }, [score]);
 
   return (
-    <div className="">
-      <JaugeStar fillPercentage={completion} />
-      <div className="text-red-600 text-xs flex justify-end">
-        ({completion.toFixed()}%)
+    <Tooltip
+      title={`Taux de remplissage : ${completion.toFixed()}%`}
+      placement={tooltipPlacement}
+    >
+      <div>
+        <JaugeStar fillPercentage={completion} />
       </div>
-    </div>
+    </Tooltip>
   );
 };
 
 export const CurrentEpciCompletionStar = ({
   action,
+  tooltipPlacement = 'right',
 }: {
   action: ActionReferentiel;
+  tooltipPlacement?: 'right' | 'left' | 'top' | 'bottom';
 }) => {
   const storableId = ActionReferentielScoreStorable.buildId(action.id);
   const score = useActionReferentielScore(storableId);
 
-  return <CompletionStar score={score} />;
+  return <CompletionStar score={score} tooltipPlacement={tooltipPlacement} />;
 };

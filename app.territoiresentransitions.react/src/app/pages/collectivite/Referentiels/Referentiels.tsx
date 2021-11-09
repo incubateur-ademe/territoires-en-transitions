@@ -78,11 +78,18 @@ const ReferentielNavChip = (props: {
 const ReferentielTitle = (props: {view: View}) => {
   const referentiel = props.view === 'eci' ? eciReferentiel : caeReferentiel;
   return (
-    <header className="flex flex-row items-center mb-6 space-x-10">
+    <header className="mb-6 flex gap-8">
       <h2 className="fr-h2">{viewTitles[props.view]}</h2>
-      <div className={`${props.view === 'both' ? 'hidden' : ''} flex gap-5`}>
-        <CurrentEpciCompletionStar action={referentiel} />
-        <CurrentEpciGaugeProgressStat action={referentiel} size="sm" />
+      <div className={`font-light ${props.view === 'both' ? 'hidden' : ''} `}>
+        <div className="flex gap-2">
+          {' '}
+          Taux de remplissage :
+          <CurrentEpciCompletionStar action={referentiel} />
+        </div>
+        <div className="flex gap-2">
+          Score :
+          <CurrentEpciGaugeProgressStat action={referentiel} size="sm" />
+        </div>
       </div>
     </header>
   );
