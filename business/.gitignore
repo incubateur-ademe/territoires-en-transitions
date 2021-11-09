@@ -20,4 +20,5 @@ venv/
 tests/data/tmp
 
 # eeg-info
-business.eeg-info/
+business.eeg-info/*
+business.eeg-info

@@ -1,7 +1,7 @@
 # Business
 Ce service est responsable de "l'intelligence" de Territoires En Transitions. Il s'interface avec une couche de stockage de façon évenementielle. Ainsi, les commandes de ce service Business sont déclanchées par des évènements. 
 
-## Organization en mode "clean-archi"
+## Organisation en mode "clean-archi"
 Si vous ouvrez le dossier business, vous remarquerez l'organisation suivante :
 
 - **DOMAIN**

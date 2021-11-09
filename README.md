@@ -1,4 +1,4 @@
-# territoiresentransitions.fr
+# Territoires en Transition
 
 Dans le cadre des programmes d'accompagnement des collectivités dans leurs
 démarches de transition écologique, l'[ADEME (l'Agence de la transition
@@ -16,20 +16,29 @@ L'interface a pour objectifs de permettre aux utilisateurs :
 - de partager la progression des réalisations et des retours d'expériences
       entre collectivités.
 
+## Organisation du dépôt
 Ce dépôt Git contient :
-3 services : 
-  - le "data-layer"
-  - le "business"
-  - l'application 
-- les données des référentiels (fichiers sources et markdown),
-- le code du site statique
+- 3 services : 
+    - le ["data-layer"](./data_layer)
+    - le ["business"](./business)
+    - [l'application]()./app.territoiresentransitions.react)
+- les données des référentiels en [markdown](./markdown) 
+- le [code du site statique](./territoiresentransitions.fr)
 
-Chaque dossier à la racine contient son propre `README.md` et peut fonctionner
+Chaque dossier à la racine contient son propre `README.md` et peut a priori fonctionner
 de manière autonome.
 
 Vous pouvez contribuer à notre projet [en suivant cette documentation](docs/workflows/contribuer-au-projet.md).
 
+## Design et choix tehniques
+
+<div align="center">
+<img src="design.png" alt="architecture design" >
+</div>
+
+TODO : example notation + explication
 ## Pour lancer l'application en développement avec docker-compose  :
+Comin' soon ... 
 ```
 docker-compose up --build 
 ```
