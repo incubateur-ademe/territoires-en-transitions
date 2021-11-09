@@ -1,9 +1,12 @@
 from dataclasses import asdict
 from typing import List
 
-from psycopg import Cursor
+from psycopg import Cursor, errors
 
-from business.adapters.postgres.postgres_repo import PostgresRepository
+from business.adapters.postgres.postgres_repo import (
+    PostgresRepository,
+    PostgresRepositoryError,
+)
 from business.domain.models.action_score import ActionScore
 from business.domain.ports.action_score_repo import AbstractActionScoreRepository
 
@@ -21,4 +24,7 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
                 [f"%({column})s" for column in score_as_dict.keys()]
             )
             sql = f"insert into score({columns}) values ({values_to_interpolate});"
-            self.cursor.execute(sql, score_as_dict)
+            try:
+                self.cursor.execute(sql, score_as_dict)
+            except errors.ForeignKeyViolation as reason:
+                PostgresRepositoryError(str(reason))
