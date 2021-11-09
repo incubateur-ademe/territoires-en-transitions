@@ -46,7 +46,7 @@ export const DailyCountLineChart = (props: {
   yAxisTitle: string;
   yMin: number;
 }) => {
-  const [chartData, setChartData] = useState({} as ChartData<'line'>);
+  const [chartData, setChartData] = useState<ChartData<'line'> | undefined>();
 
   useEffect(() => {
     props.getDailyCount().then(dailyCounts => {
