@@ -4,8 +4,7 @@ with real_epci as (
     where siren != ''
 ),
      statut as (
-         select action_id like 'citergie%' as cae,
-                action_id like 'economie%' as eci,
+         select action_id like '__prefix__%' as referentiel,
                 epci_id,
                 created_at
          from actionstatus
@@ -14,20 +13,14 @@ with real_epci as (
      ),
 
      daily as (
-         select created_at::date  as day,
-                count(case when cae then 1 end) as cae_count,
-                count(case when eci then 1 end) as eci_count
+         select created_at::date                        as day,
+                count(case when referentiel then 1 end) as ref_count
          from statut
          group by day
      )
 select day            as date,
-       cae_count,
-       sum(cae_count) over (
-           order by day rows between unbounded preceding and current row
-           )::integer as cumulated_count,
-
-       eci_count,
-       sum(eci_count) over (
+       ref_count      as count,
+       sum(ref_count) over (
            order by day rows between unbounded preceding and current row
            )::integer as cumulated_count
 
