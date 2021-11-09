@@ -8,6 +8,9 @@ import {
   ActionExemplesExpandPanel,
   ActionPreuveExpandPanel,
 } from 'ui/shared';
+import {useEpciId} from 'core-logic/hooks';
+import {ActionStatusStorable} from 'storables';
+import {useActionStatus} from 'core-logic/hooks/actionStatus';
 
 /**
  * Displays an actions and it's children indented below.
@@ -50,12 +53,28 @@ const ActionReferentielRecursiveCard = ({
 export const ActionReferentielAvancementCard = ({
   displayProgressStat,
   displayAddFicheActionButton,
+  hideIfStatusRenseigne,
   action,
 }: {
   displayProgressStat: boolean;
   displayAddFicheActionButton: boolean;
+  hideIfStatusRenseigne: boolean;
   action: ActionReferentiel;
 }) => {
+  if (hideIfStatusRenseigne) {
+    const epciId = useEpciId()!;
+    const actionStatusStorableId = ActionStatusStorable.buildId(
+      epciId,
+      action.id
+    );
+    const actionStatus = useActionStatus(actionStatusStorableId);
+    const actionStatusIsRenseigne =
+      actionStatus && actionStatus.avancement !== '';
+    if (actionStatusIsRenseigne) {
+      return <></>;
+    }
+  }
+
   const isTache = action.actions.length === 0;
   return (
     <article
@@ -100,10 +119,12 @@ export const ActionReferentielAvancementRecursiveCard = ({
   action,
   displayProgressStat,
   displayAddFicheActionButton,
+  hideIfStatusRenseigne,
 }: {
   action: ActionReferentiel;
   displayProgressStat: boolean;
   displayAddFicheActionButton: boolean;
+  hideIfStatusRenseigne: boolean;
 }) =>
   ActionReferentielRecursiveCard({
     action,
@@ -112,5 +133,6 @@ export const ActionReferentielAvancementRecursiveCard = ({
         action,
         displayProgressStat,
         displayAddFicheActionButton,
+        hideIfStatusRenseigne,
       }),
   });

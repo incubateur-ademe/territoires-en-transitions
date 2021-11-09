@@ -75,6 +75,7 @@ const LinkedActionsReferentielCards = () => {
           action={action}
           displayProgressStat={false}
           displayAddFicheActionButton={false}
+          hideIfStatusRenseigne={false}
         />
       ))}
     </div>
