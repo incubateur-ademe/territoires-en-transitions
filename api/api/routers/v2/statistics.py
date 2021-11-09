@@ -1,18 +1,16 @@
 import abc
 import datetime
 from typing import List, Dict, Literal
-
 from urllib.parse import urlparse
-from pydantic import BaseModel
-import psycopg2
-from psycopg2 import OperationalError
-from fastapi import APIRouter
 
+import psycopg2
+from fastapi import APIRouter
+from pydantic import BaseModel
 
 from api.config.database import DATABASE_URL
 
-
 router = APIRouter(prefix="/v2/statistics")
+
 
 # Models
 class DailyCount(BaseModel):
@@ -187,14 +185,14 @@ class PostgresQuery(AbstractQuery):
     def get_daily_indicateur_referentiel_count(
         self, referentiel: Literal["cae", "eci"]
     ) -> List[DailyCount]:
-        indicateur_id_regex = "eci%" if referentiel == "eci" else "cae%"
+        indicateur_id_prefix = "economie" if referentiel == "eci" else "citergie"
         query = (
             open(
                 "./sql_reports/daily_created_indicateur_referentiel_resultat_count.sql",
                 "r",
             )
             .read()
-            .replace("%indicateur_id_regex", indicateur_id_regex)
+            .replace("__prefix__", indicateur_id_prefix)
         )
         rows = self.execute_query(
             query,

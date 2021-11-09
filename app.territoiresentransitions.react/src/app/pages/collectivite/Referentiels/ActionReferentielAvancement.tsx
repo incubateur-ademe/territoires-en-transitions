@@ -75,7 +75,6 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
       </div>
 
       <section>
-        <h2 className="fr-h2"> Les actions</h2>
         {action.actions.map(action => {
           if (
             hideActionWithStatusRenseignee &&
