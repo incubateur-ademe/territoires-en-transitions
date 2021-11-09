@@ -92,6 +92,7 @@ const AnyIndicateurLineChart = (props: {
     ],
   };
   const canvasId = `chart-${props.indicateurUid}`;
+  console.log(data);
   return (
     <div>
       <div className="w-2/3 h-72 pb-7">
