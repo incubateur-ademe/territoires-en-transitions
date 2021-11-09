@@ -34,7 +34,6 @@ class ComputeReferentielScoresForEpci(UseCase):
         self.points_trees: Dict[Referentiel, ActionsPointsTree] = {}
 
     def execute(self, command: commands.ComputeReferentielScoresForEpci):
-
         point_tree = self.points_trees.get(command.referentiel)
         if point_tree is None:
             try:
@@ -47,7 +46,9 @@ class ComputeReferentielScoresForEpci(UseCase):
                     )
                 )  # TODO
                 return
-        statuses = self.statuses_repo.get_all_for_epci(command.epci_id)
+        statuses = self.statuses_repo.get_all_for_epci(
+            command.epci_id, command.referentiel
+        )
 
         status_by_action_id: Dict[str, ActionStatut] = {
             action_status.action_id: action_status

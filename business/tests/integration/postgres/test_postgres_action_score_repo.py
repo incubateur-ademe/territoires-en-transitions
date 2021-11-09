@@ -1,78 +1,13 @@
-from typing import Dict, Optional
-from urllib.parse import urlparse
-
-import psycopg
-from psycopg import Connection, Cursor
 import pytest
 
 from business.adapters.postgres.postgres_action_score_repo import (
     PostgresActionScoreRepository,
 )
 from business.adapters.postgres.postgres_repo import PostgresRepositoryError
-from business.utils.action_id import ActionId, Referentiel
+from business.utils.action_id import ActionId
 from tests.utils.score_factory import make_action_score
-
-postgres_url = f"postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:50001/postgres"
-
-
-@pytest.fixture()
-def postgres_connection_params() -> dict:
-    db_params = urlparse(postgres_url)
-
-    return dict(
-        dbname=db_params.path[1:],
-        user=db_params.username,
-        password=db_params.password,
-        host=db_params.hostname,
-        port=db_params.port,
-    )
-
-
-@pytest.fixture()
-def postgres_connection(postgres_connection_params) -> Connection:
-    return psycopg.connect(**postgres_connection_params)
-
-
-@pytest.fixture()
-def initialized_cursor(postgres_connection, request):
-    cursor = postgres_connection.cursor()
-    development = open("../data_layer/postgres/development.sql", "r").read()
-    cursor.execute(development)
-    request.addfinalizer(cursor.close)
-    return cursor
-
-
-# SQL tests helpers
-# -----------------
-def insert_action_relation(
-    cursor: Cursor,
-    referentiel: Referentiel,
-    action_id: ActionId,
-    parent_id: Optional[ActionId],
-):
-    cursor.execute(
-        "insert into action_relation values (%(action_id)s, %(referentiel)s, %(parent_id)s);",
-        {
-            "action_id": action_id,
-            "referentiel": referentiel,
-            "parent_id": parent_id,
-        },
-    )
-
-
-def insert_epci(cursor: Cursor, epci_id: int):
-
-    sql = f"insert into epci values ({epci_id}, '12345678901234', 'Yolo', default, default);"
-    cursor.execute(sql)
-
-
-def insert_fake_referentiel(
-    cursor: Cursor,
-    referentiel: Referentiel,
-    parent_by_action_id: Dict[ActionId, Optional[ActionId]],
-):
-    for action_id, parent_action_id in parent_by_action_id.items():
-        insert_action_relation(cursor, referentiel, action_id, parent_action_id)
+from .fixtures import *
+from .helpers import insert_epci, insert_fake_referentiel
 
 
 def test_cannot_write_if_epci_or_action_does_not_exist(initialized_cursor):
