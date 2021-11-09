@@ -1,4 +1,4 @@
-import {Checkbox} from '@material-ui/core';
+import {Checkbox} from 'material-ui';
 import * as R from 'ramda';
 
 const auditCheckListsEci = {
@@ -21,8 +21,7 @@ const auditCheckListsEci = {
 
 const _UiCheckbox = (props: {label: string}) => (
   <div className="flex gap-2 items-center">
-    <Checkbox color="primary" />
-    <div>{props.label}</div>
+    <Checkbox color="primary" /> <div>{props.label}</div>
   </div>
 );
 
@@ -34,14 +33,11 @@ export const AuditDialogEconomieCirculaire = () => (
         Pour pouvoir faire une demande d'audit, il faut :
       </div>
       {R.keys(auditCheckListsEci).map(checkListTitle => (
-        <div key={checkListTitle}>
+        <div>
           <div className="font-semibold text-xl mb-4">{checkListTitle}</div>
           <div className="flex flex-col gap-4">
             {auditCheckListsEci[checkListTitle].map(checkListItem => (
-              <div key={checkListItem}>
-                {' '}
-                <_UiCheckbox label={checkListItem} />
-              </div>
+              <_UiCheckbox label={checkListItem} />
             ))}
           </div>
         </div>
