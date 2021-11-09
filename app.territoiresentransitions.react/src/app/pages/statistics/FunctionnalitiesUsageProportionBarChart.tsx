@@ -16,7 +16,7 @@ export const FunctionnalitiesUsageProportionBarChart = (props: {
   yAxisTitle: string;
   xAxisTitle: string;
 }) => {
-  const [chartData, setChartData] = useState({} as ChartData<'bar'>);
+  const [chartData, setChartData] = useState<ChartData<'bar'> | undefined>();
 
   useEffect(() => {
     getFunctionnalitiesUsageProportion().then(
@@ -39,7 +39,7 @@ export const FunctionnalitiesUsageProportionBarChart = (props: {
     );
   }, []);
 
-  return (
+  return chartData ? (
     <div>
       <div className="w-2/3 h-64 my-6">
         <div className="sm text-left font-bold text-bf500 ml-12">
@@ -70,5 +70,5 @@ export const FunctionnalitiesUsageProportionBarChart = (props: {
         />
       </div>
     </div>
-  );
+  ) : null;
 };
