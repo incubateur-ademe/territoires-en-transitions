@@ -22,16 +22,16 @@ Ressources de l'action 1.1.1
 identifiant: 1.1.1.1
 pourcentage:  20
 ```
-## Description
+#### Description
 Description de l'action 1.1.1.1
 
-## Contexte
+#### Contexte
 Contexte de l'action 1.1.1.1
 
-## Exemples
+#### Exemples
 Examples de l'action 1.1.1.1
 
-## Ressources
+#### Ressources
 Ressources de l'action 1.1.1.1
 
 #### Actions

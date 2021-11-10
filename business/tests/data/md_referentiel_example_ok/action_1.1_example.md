@@ -8,10 +8,11 @@ climat_pratic_id: strategie
 Description de l'action 1.1 
 
 ## Contexte
-Contexte de l'action 1.1 
+Contexte de l'action 1.1.
+Après être allé à la ligne !
 
 ## Exemples
-Examples de l'action 1.1 
+Exemples de l'action 1.1 
 
 ## Ressources
 Ressources de l'action 1.1 
@@ -29,7 +30,7 @@ Description de l'action 1.1.1
 Contexte de l'action 1.1.1 
 
 #### Exemples
-Examples de l'action 1.1.1 
+Exemples de l'action 1.1.1 
 
 #### Ressources
 Ressources de l'action 1.1.1 
