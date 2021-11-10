@@ -48,6 +48,6 @@ pipenv install
 python typedef_cli.py --help
 ```
 
-Génére les modèles client ou business [json typedefs](https://jsontypedef.com/docs/jtd-in-5-minutes/) 
+Génére les modèles client ou business à partir de [json typedefs](https://jsontypedef.com/docs/jtd-in-5-minutes/) 
 pour être utilisés par
 [json typedef codegen](https://jsontypedef.com/docs/jtd-codegen/)

@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "concernee": {
+      "type": "boolean"
+    },
+    "previsionnel": {
+      "type": "float64"
+    },
+    "total_taches_count": {
+      "type": "int32"
+    },
+    "completed_taches_count": {
+      "type": "int32"
+    },
+    "epci_id": {
+      "type": "int32"
+    },
+    "points": {
+      "type": "float64"
+    },
+    "potentiel": {
+      "type": "float64"
+    },
+    "referentiel_points": {
+      "type": "float64"
+    },
+    "action_id": {
+      "type": "string"
+    }
+  }
+}
