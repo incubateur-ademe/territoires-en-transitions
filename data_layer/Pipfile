@@ -13,6 +13,7 @@ psycopg = "*"
 results = "*"
 jsonschema = "*"
 jtd = "*"
+typer = "*"
 
 [dev-packages]
 
