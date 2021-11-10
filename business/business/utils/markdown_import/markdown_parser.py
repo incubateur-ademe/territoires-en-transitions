@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Callable, List, Optional
 
 import yaml
@@ -38,8 +39,8 @@ def make_section_writer(title: str) -> NodeWriter:
     def section_writer(token: BlockToken, node: dict) -> None:
         """Save leaf description as an HTML string"""
         if is_keyword(token, title):
-            return
-        if title.lower() in node.keys():
+            node[title.lower()] = ""
+        elif title.lower() in node.keys():
             node[title.lower()] += token_to_string(token)
 
     return section_writer

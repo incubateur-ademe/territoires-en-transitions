@@ -116,18 +116,6 @@ def test_import_referentiel_succeeds_when_all_is_good():
     ]
     assert len(node_converted_events[0].definitions) == 8
 
-    definition_1_1 = list(
-        [
-            definition
-            for definition in node_converted_events[0].definitions
-            if definition.identifiant == "1.1"
-        ]
-    )[0]
-    assert definition_1_1.description == "Description de l'action 1.1"
-    assert definition_1_1.contexte == "Contexte de l'action 1.1"
-    assert definition_1_1.exemples == "Exemples de l'action 1.1"
-    assert definition_1_1.ressources == "Ressources de l'action 1.1"
-
 
 def test_import_referentiel_succeeds_when_action_has_0_point():
     markdown_root_action_node = make_markdown_action_node(
