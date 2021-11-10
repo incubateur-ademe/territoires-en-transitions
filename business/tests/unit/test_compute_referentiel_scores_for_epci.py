@@ -88,12 +88,12 @@ def test_notation_fails_when_referentiel_is_empty():
     assert len(failure_events) == 1
 
 
-def test_notation_when_one_tache_is_faite():
+def test_notation_when_one_tache_is_fait():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.FAITE,
-            concernee=True,
+            avancement=ActionStatutAvancement.FAIT,
+            concerne=True,
         )
     ]
     converted_events, failure_events = prepare_use_case(statuses)
@@ -113,7 +113,7 @@ def test_notation_when_one_tache_is_faite():
         referentiel_points=10,
         completed_taches_count=1,
         total_taches_count=1,
-        concernee=True,
+        concerne=True,
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -123,7 +123,7 @@ def test_notation_when_one_tache_is_faite():
         referentiel_points=30,
         completed_taches_count=1,
         total_taches_count=2,
-        concernee=True,
+        concerne=True,
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -134,7 +134,7 @@ def test_notation_when_one_tache_is_faite():
         referentiel_points=70,
         completed_taches_count=0,
         total_taches_count=2,
-        concernee=True,
+        concerne=True,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -145,7 +145,7 @@ def test_notation_when_one_tache_is_faite():
         referentiel_points=100,
         completed_taches_count=1,
         total_taches_count=4,
-        concernee=True,
+        concerne=True,
     )
 
 
@@ -153,8 +153,8 @@ def test_notation_when_one_tache_is_programmee():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.PROGRAMMEE,
-            concernee=True,
+            avancement=ActionStatutAvancement.PROGRAMME,
+            concerne=True,
         )
     ]
     converted_events, failure_events = prepare_use_case(statuses)
@@ -174,7 +174,7 @@ def test_notation_when_one_tache_is_programmee():
         referentiel_points=10,
         completed_taches_count=1,
         total_taches_count=1,
-        concernee=True,
+        concerne=True,
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -184,7 +184,7 @@ def test_notation_when_one_tache_is_programmee():
         referentiel_points=30,
         completed_taches_count=1,
         total_taches_count=2,
-        concernee=True,
+        concerne=True,
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -195,7 +195,7 @@ def test_notation_when_one_tache_is_programmee():
         referentiel_points=70,
         completed_taches_count=0,
         total_taches_count=2,
-        concernee=True,
+        concerne=True,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -206,16 +206,16 @@ def test_notation_when_one_tache_is_programmee():
         referentiel_points=100,
         completed_taches_count=1,
         total_taches_count=4,
-        concernee=True,
+        concerne=True,
     )
 
 
-def test_notation_when_one_tache_is_pas_faite():
+def test_notation_when_one_tache_is_pas_fait():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.PAS_FAITE,
-            concernee=True,
+            avancement=ActionStatutAvancement.PAS_FAIT,
+            concerne=True,
         )
     ]
     converted_events, failure_events = prepare_use_case(statuses)
@@ -235,7 +235,7 @@ def test_notation_when_one_tache_is_pas_faite():
         referentiel_points=10,
         completed_taches_count=1,
         total_taches_count=1,
-        concernee=True,
+        concerne=True,
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -245,7 +245,7 @@ def test_notation_when_one_tache_is_pas_faite():
         referentiel_points=30,
         completed_taches_count=1,
         total_taches_count=2,
-        concernee=True,
+        concerne=True,
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -256,7 +256,7 @@ def test_notation_when_one_tache_is_pas_faite():
         referentiel_points=70,
         completed_taches_count=0,
         total_taches_count=2,
-        concernee=True,
+        concerne=True,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -267,16 +267,16 @@ def test_notation_when_one_tache_is_pas_faite():
         referentiel_points=100,
         completed_taches_count=1,
         total_taches_count=4,
-        concernee=True,
+        concerne=True,
     )
 
 
-def test_notation_when_one_tache_non_concernee():
+def test_notation_when_one_tache_non_concerne():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.NON_RENSEIGNEE,
-            concernee=False,
+            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            concerne=False,
         )
     ]
     converted_events, failure_events = prepare_use_case(statuses)
@@ -296,7 +296,7 @@ def test_notation_when_one_tache_non_concernee():
         referentiel_points=10,
         completed_taches_count=1,
         total_taches_count=1,
-        concernee=False,
+        concerne=False,
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -306,7 +306,7 @@ def test_notation_when_one_tache_non_concernee():
         referentiel_points=30,
         completed_taches_count=1,
         total_taches_count=2,
-        concernee=False,
+        concerne=False,
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -317,7 +317,7 @@ def test_notation_when_one_tache_non_concernee():
         referentiel_points=70,
         completed_taches_count=0,
         total_taches_count=2,
-        concernee=True,
+        concerne=True,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -328,21 +328,21 @@ def test_notation_when_one_tache_non_concernee():
         referentiel_points=100,
         completed_taches_count=1,
         total_taches_count=4,
-        concernee=True,
+        concerne=True,
     )
 
 
-def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
+def test_notation_when_all_taches_of_a_sous_action_are_non_concernes():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.NON_RENSEIGNEE,
-            concernee=False,
+            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            concerne=False,
         ),
         ActionStatut(
             action_id=ActionId("eci_1.2"),
-            avancement=ActionStatutAvancement.NON_RENSEIGNEE,
-            concernee=False,
+            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            concerne=False,
         ),
     ]
     converted_events, failure_events = prepare_use_case(statuses)
@@ -362,7 +362,7 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
         referentiel_points=10,
         completed_taches_count=1,
         total_taches_count=1,
-        concernee=False,
+        concerne=False,
     )
     assert scores_by_id[ActionId("eci_1.2")] == ActionScore(
         action_id=ActionId("eci_1.2"),
@@ -372,7 +372,7 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
         referentiel_points=20,
         completed_taches_count=1,
         total_taches_count=1,
-        concernee=False,
+        concerne=False,
     )
 
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
@@ -383,7 +383,7 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
         referentiel_points=30,
         completed_taches_count=2,
         total_taches_count=2,
-        concernee=False,
+        concerne=False,
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -394,7 +394,7 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
         referentiel_points=70,
         completed_taches_count=0,
         total_taches_count=2,
-        concernee=True,
+        concerne=True,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -405,5 +405,5 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernees():
         referentiel_points=100,
         completed_taches_count=2,
         total_taches_count=4,
-        concernee=True,
+        concerne=True,
     )

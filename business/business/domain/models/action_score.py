@@ -1,7 +1,7 @@
 from typing import Tuple
 from dataclasses import dataclass
 from business.domain.models.litterals import Referentiel
-
+from .generated.score_write import ScoreWrite
 from business.utils.action_id import ActionId
 
 
@@ -12,6 +12,6 @@ class ActionScore:
     potentiel: float
     previsionnel: float
     referentiel_points: float
-    concernee: bool
+    concerne: bool
     total_taches_count: int
     completed_taches_count: int

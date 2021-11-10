@@ -1,23 +1,42 @@
 from typing import List
 
-from psycopg import Cursor, errors
+from psycopg import Cursor, Connection
+from psycopg.rows import class_row
 
 from business.adapters.postgres.postgres_repo import (
     PostgresRepository,
-    PostgresRepositoryError,
 )
 from business.domain.models.litterals import Referentiel
 from business.domain.ports.action_status_repo import AbstractActionStatutRepository
-from business.domain.models.action_statut import ActionStatut
+from business.domain.models.action_statut import ActionStatut, ActionId
+from business.domain.models.generated.business_action_statut_read import (
+    BusinessActionStatutRead,
+)
 
 
 class PostgresActionStatutRepository(
     AbstractActionStatutRepository, PostgresRepository
 ):
-    def __init__(self, cursor: Cursor) -> None:
-        PostgresRepository.__init__(self, cursor)
+    def __init__(self, connection: Connection) -> None:
+        PostgresRepository.__init__(self, connection)
+
+    @staticmethod
+    def make_cursor(connection: Connection) -> Cursor:
+        return connection.cursor(row_factory=class_row(BusinessActionStatutRead))
 
     def get_all_for_epci(
         self, epci_id: int, referentiel: Referentiel
     ) -> List[ActionStatut]:
-        return []
+        self.cursor.execute(
+            "select * from business_action_statut where epci_id=%(epci_id)s and referentiel=%(referentiel)s;",
+            {"epci_id": epci_id, "referentiel": referentiel},
+        )
+        readings: List[BusinessActionStatutRead] = self.cursor.fetchall()
+        return [
+            ActionStatut(
+                action_id=ActionId(reading.action_id),
+                avancement=reading.avancement,
+                concerne=reading.concerne,
+            )
+            for reading in readings
+        ]
