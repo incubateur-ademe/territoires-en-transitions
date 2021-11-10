@@ -1,28 +1,31 @@
 from dataclasses import dataclass
 
-from .generated.action_statut import (
-    ActionStatut as GeneratedActionStatut,
+from .generated.business_action_statut_read import (
     ActionStatutAvancement as GeneratedActionStatutAvancement,
 )
+from business.utils.action_id import ActionId
+
 
 ActionStatutAvancement = GeneratedActionStatutAvancement
 
 
 @dataclass
-class ActionStatut(GeneratedActionStatut):
-    pass
+class ActionStatut:
+    action_id: ActionId
+    avancement: "ActionStatutAvancement"
+    concerne: "bool"
 
     @property
     def is_renseigne(self) -> bool:
-        return self.avancement != ActionStatutAvancement.NON_RENSEIGNEE
+        return self.avancement != ActionStatutAvancement.NON_RENSEIGNE
 
     @property
     def is_done(self) -> bool:
-        return self.avancement == ActionStatutAvancement.FAITE
+        return self.avancement == ActionStatutAvancement.FAIT
 
     @property
     def will_be_done(self) -> bool:
         return self.avancement in [
-            ActionStatutAvancement.PROGRAMMEE,
+            ActionStatutAvancement.PROGRAMME,
             ActionStatutAvancement.EN_COURS,
         ]

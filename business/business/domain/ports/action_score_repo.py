@@ -15,7 +15,7 @@ class AbstractActionScoreRepository(abc.ABC):
 
 class InMemoryActionScoreRepository(AbstractActionScoreRepository):
     def __init__(self) -> None:
-        self._entities_by_epci: Dict[str, List[ActionScore]] = {}
+        self._entities_by_epci: Dict[int, List[ActionScore]] = {}
 
     def add_entities_for_epci(self, epci_id: int, entities: List[ActionScore]):
         if epci_id not in self._entities_by_epci:

@@ -10,7 +10,7 @@ def make_action_score(
     potentiel: float = 100,
     previsionnel: float = 100,
     referentiel_points: float = 100,
-    concernee: bool = True,
+    concerne: bool = True,
     total_taches_count: int = 1,
     completed_taches_count: int = 1,
 ):
@@ -20,7 +20,7 @@ def make_action_score(
         potentiel=potentiel,
         previsionnel=previsionnel,
         referentiel_points=referentiel_points,
-        concernee=concernee,
+        concerne=concerne,
         total_taches_count=total_taches_count,
         completed_taches_count=completed_taches_count,
     )

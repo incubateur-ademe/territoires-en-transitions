@@ -9,10 +9,10 @@ from typing import Any, Dict, Optional, Union, get_args, get_origin
 
 class ActionStatutAvancement(Enum):
     EN_COURS = "en_cours"
-    FAITE = "faite"
-    NON_RENSEIGNEE = "non_renseignee"
-    PAS_FAITE = "pas_faite"
-    PROGRAMMEE = "programmee"
+    FAIT = "fait"
+    NON_RENSEIGNE = "non_renseigne"
+    PAS_FAIT = "pas_fait"
+    PROGRAMME = "programme"
 
     @classmethod
     def from_json_data(cls, data: Any) -> "ActionStatutAvancement":
@@ -23,24 +23,30 @@ class ActionStatutAvancement(Enum):
 
 
 @dataclass
-class ActionStatut:
+class BusinessActionStatutRead:
     action_id: "str"
     avancement: "ActionStatutAvancement"
-    concernee: "bool"
+    concerne: "bool"
+    epci_id: "int"
+    referentiel: "str"
 
     @classmethod
-    def from_json_data(cls, data: Any) -> "ActionStatut":
+    def from_json_data(cls, data: Any) -> "BusinessActionStatutRead":
         return cls(
             _from_json_data(str, data.get("action_id")),
             _from_json_data(ActionStatutAvancement, data.get("avancement")),
             _from_json_data(bool, data.get("concerne")),
+            _from_json_data(int, data.get("epci_id")),
+            _from_json_data(str, data.get("referentiel")),
         )
 
     def to_json_data(self) -> Any:
         data: Dict[str, Any] = {}
         data["action_id"] = _to_json_data(self.action_id)
         data["avancement"] = _to_json_data(self.avancement)
-        data["concerne"] = _to_json_data(self.concernee)
+        data["concerne"] = _to_json_data(self.concerne)
+        data["epci_id"] = _to_json_data(self.epci_id)
+        data["referentiel"] = _to_json_data(self.referentiel)
         return data
 
 

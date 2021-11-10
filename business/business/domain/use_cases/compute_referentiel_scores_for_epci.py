@@ -59,7 +59,7 @@ class ComputeReferentielScoresForEpci(UseCase):
         actions_non_concernees_ids: List[str] = [
             action_status.action_id
             for action_status in statuses
-            if not action_status.concernee
+            if not action_status.concerne
         ]
 
         scores: Dict[str, ActionScore] = {}
@@ -76,7 +76,7 @@ class ComputeReferentielScoresForEpci(UseCase):
 
         point_tree.map_from_sous_actions_to_root(
             lambda action: self.update_scores_for_action_given_children_scores(
-                scores, action, command.referentiel
+                scores, action
             )
         )
         self.bus.publish_event(
@@ -116,7 +116,7 @@ class ComputeReferentielScoresForEpci(UseCase):
                 total_taches_count=1,
                 completed_taches_count=1,
                 referentiel_points=tache_points_node.value,
-                concernee=tache_concernee,
+                concerne=tache_concernee,
             )
             return
 
@@ -138,14 +138,13 @@ class ComputeReferentielScoresForEpci(UseCase):
                 completed_taches_count=1,
                 total_taches_count=1,
                 referentiel_points=tache_points_node.value,
-                concernee=tache_concernee,
+                concerne=tache_concernee,
             )
 
     def update_scores_for_action_given_children_scores(
         self,
         scores: Dict[str, ActionScore],
         action: ActionPointsNode,
-        referentiel: Referentiel,
     ):
         action_children = action.children
         action_referentiel_points = action.value
@@ -172,7 +171,7 @@ class ComputeReferentielScoresForEpci(UseCase):
         concernee = (
             any(
                 [
-                    scores[child.action_id].concernee
+                    scores[child.action_id].concerne
                     for child in action_children_with_scores
                 ]
             )
@@ -202,7 +201,7 @@ class ComputeReferentielScoresForEpci(UseCase):
             completed_taches_count=completed_taches_count,
             total_taches_count=total_taches_count,
             referentiel_points=action_referentiel_points,
-            concernee=concernee,
+            concerne=concernee,
         )
 
     def build_points_tree(self, referentiel: Referentiel) -> ActionsPointsTree:
