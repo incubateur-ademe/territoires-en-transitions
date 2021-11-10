@@ -15,7 +15,7 @@ def test_convert_markdown_indicateurs_to_entities_from_ok_folder():
     use_case = ConvertMarkdownIndicateursToEntities(bus=bus)
 
     # failure_events = spy_on_event(bus, events.ParseMarkdownReferentielFolderFailed)
-    # parsed_events = spy_on_event(bus, events.MarkdownIndicateursConvertedToEntities)
+    # parsed_events = spy_on_event(bus, events.Mar)
 
     use_case.execute(test_command)
 
