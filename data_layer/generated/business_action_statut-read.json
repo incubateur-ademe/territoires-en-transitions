@@ -1,10 +1,10 @@
 {
   "properties": {
+    "referentiel": {
+      "type": "string"
+    },
     "epci_id": {
       "type": "int32"
-    },
-    "concerne": {
-      "type": "boolean"
     },
     "avancement": {
       "type": "string"
@@ -12,8 +12,8 @@
     "action_id": {
       "type": "string"
     },
-    "referentiel": {
-      "type": "string"
+    "concerne": {
+      "type": "boolean"
     }
   }
 }
