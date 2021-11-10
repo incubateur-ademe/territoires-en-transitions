@@ -9,7 +9,6 @@ from business.domain.use_cases.convert_markdown_referentiel_node_to_entities imp
     ConvertMarkdownReferentielNodeToEntities,
 )
 from business.utils.action_id import ActionId
-
 from tests.utils.referentiel_factory import (
     make_markdown_action_node,
     set_markdown_action_node_children_with_points,
@@ -117,6 +116,18 @@ def test_import_referentiel_succeeds_when_all_is_good():
     ]
     assert len(node_converted_events[0].definitions) == 8
 
+    definition_1_1 = list(
+        [
+            definition
+            for definition in node_converted_events[0].definitions
+            if definition.identifiant == "1.1"
+        ]
+    )[0]
+    assert definition_1_1.description == "Description de l'action 1.1"
+    assert definition_1_1.contexte == "Contexte de l'action 1.1"
+    assert definition_1_1.exemples == "Exemples de l'action 1.1"
+    assert definition_1_1.ressources == "Ressources de l'action 1.1"
+
 
 def test_import_referentiel_succeeds_when_action_has_0_point():
     markdown_root_action_node = make_markdown_action_node(
@@ -141,7 +152,6 @@ def test_import_referentiel_succeeds_when_action_has_0_point():
 
 
 def test_import_referentiel_fails_when_identifiants_are_not_unique():
-
     markdown_root_action_node = make_markdown_action_node(
         identifiant="root", points=100
     )
@@ -162,7 +172,6 @@ def test_import_referentiel_fails_when_identifiants_are_not_unique():
 
 
 def test_check_referentiel_quotations_fails_when_percentage_level_isnt_100():
-
     markdown_root_action_node = make_markdown_action_node(
         identifiant="root", points=500
     )
@@ -183,7 +192,6 @@ def test_check_referentiel_quotations_fails_when_percentage_level_isnt_100():
 
 
 def test_check_referentiel_quotations_fails_when_children_points_doesnt_sum_to_parent_point():
-
     markdown_root_action_node = make_markdown_action_node(identifiant="root", points=60)
     set_markdown_action_node_children_with_points(markdown_root_action_node, [10, 51])
 
