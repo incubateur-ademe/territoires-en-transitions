@@ -35,10 +35,20 @@ pip install -e .
 ```
 
 ### Lancer les tests
+#### Unitaires
+```
+pytest tests/unit
+```
+#### Intégrations et end-to-end
+Pour certains tests d'intégrations et pour les tests de bout-en-bout, il est nécessaire de lever un service SupaBase : 
+```
+    cp ../data_layer/test_only_docker/.env.sample  ./data_layer/test_only_docker/.env 
+    docker-compose -f ../data_layer/test_only_docker/docker-compose.yml up --build
+```
+Puis :
 ```
 pytest tests 
 ```
-
 ### Lancer l'application
 TODO ! 
 <!-- ```
