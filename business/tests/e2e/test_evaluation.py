@@ -11,7 +11,6 @@ from business.domain.ports.domain_message_bus import (
 )
 
 from business.adapters.replay_realtime import ReplayRealtime
-from business.adapters.json_referentiel_repo import JsonReferentielRepository
 from business.domain.models import events
 from business.entrypoints.environment_variables import EnvironmentVariables
 from business.entrypoints.prepare_bus import prepare_bus
@@ -23,13 +22,16 @@ from business.entrypoints.realtime_evaluation import (
 from tests.utils.spy_on_event import spy_on_event
 
 
+referentiels_repo_json = "./data/referentiel_repository.json"
+
+
 @pytest.fixture
 def env_variables() -> EnvironmentVariables:
     return EnvironmentVariables(
         referentiels_repository="JSON",
         labelisation_repositories="IN_MEMORY",
         realtime="REPLAY",
-        referentiels_repo_json="./data/referentiel_repository.json",  # This implies that CLI has already run and generated referentiels in this file
+        referentiels_repo_json=referentiels_repo_json,  # This implies that CLI has already run and generated referentiels in this file
     )
 
 
@@ -44,6 +46,37 @@ def realtime(bus) -> ReplayRealtime:
     return ReplayRealtime(bus, converters=converters)
 
 
+# Note : for now, I'll commit the JSON referentiel, until we find something better !
+
+# def wip_launch_cli_update_referentiels():  # TODO : Find a better (& lighter) way !
+#     from business.entrypoints.referentiels import store_referentiels
+
+#     store_referentiels(
+#         repo_option="JSON",
+#         to_json=referentiels_repo_json,
+#         referentiel="eci",
+#         actions=True,
+#         indicateurs=True,
+#         markdown_folder="../markdown",
+#     )
+#     store_referentiels(
+#         repo_option="JSON",
+#         to_json=referentiels_repo_json,
+#         referentiel="cae",
+#         actions=True,
+#         indicateurs=True,
+#         markdown_folder="../markdown",
+#     )
+#     store_referentiels(
+#         repo_option="JSON",
+#         to_json=referentiels_repo_json,
+#         referentiel="crte",
+#         actions=False,
+#         indicateurs=True,
+#         markdown_folder="../markdown",
+#     )
+
+
 def prepare_config_and_bus(
     bus: InMemoryDomainMessageBus,
     realtime: ReplayRealtime,
@@ -51,6 +84,9 @@ def prepare_config_and_bus(
 ):
     config = EvaluationConfig(bus, realtime=realtime, env_variables=env_variables)
     prepare_bus(config, EVENT_HANDLERS, COMMAND_HANDLERS)
+
+    # WIP : Prepare referentiel
+    # wip_launch_cli_update_referentiels()
 
 
 def test_action_status_updated_on_realtime_event_with_correct_format(

@@ -67,7 +67,7 @@ def test_failure_published_when_realtime_event_has_unknown_referentiel():
     assert len(failure_events) == 1
     assert (
         failure_events[0].reason
-        == "Realtime event with wrong format: {'referentiel': ['Must be one of: eci, cae.']}"
+        == "Realtime event with wrong format: {'referentiel': ['Must be one of: eci, cae, crte.']}"
     )
 
 
