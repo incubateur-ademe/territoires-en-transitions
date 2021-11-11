@@ -5,7 +5,7 @@ from typing import Tuple
 from pathlib import Path
 import pytest
 
-from business.entrypoints.referentiels import update
+from business.entrypoints.referentiels import store_referentiels_actions
 from tests.utils.files import remove_file, mkdir
 
 
@@ -22,7 +22,7 @@ def test_update_referentiels(referentiel_and_expected_nb_of_actions: Tuple[str, 
     remove_file(json_path)
 
     try:
-        update(
+        store_referentiels_actions(
             [
                 "--repo-option",
                 "JSON",

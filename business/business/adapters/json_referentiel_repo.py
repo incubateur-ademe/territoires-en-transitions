@@ -1,9 +1,11 @@
 from dataclasses import asdict
 import json
+import os
 from pathlib import Path
 from typing import List
-import os
 
+
+from business.domain.models.indicateur import Indicateur, IndicateurId
 from business.domain.ports.referentiel_repo import (
     InMemoryReferentielRepository,
     ReferentielEntities,
@@ -11,6 +13,7 @@ from business.domain.ports.referentiel_repo import (
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_definition import ActionDefinition
 from business.domain.models.action_points import ActionPoints
+from business.utils.dataclass_from_dict import dataclass_from_dict
 
 
 class JsonReferentielRepository(InMemoryReferentielRepository):
@@ -23,18 +26,28 @@ class JsonReferentielRepository(InMemoryReferentielRepository):
         self.path = path
         self.from_json()
 
-    def add_referentiel(
+    def add_referentiel_actions(
         self,
         definitions: List[ActionDefinition],
         children: List[ActionChildren],
         points: List[ActionPoints],
     ):
-        super().add_referentiel(definitions, children, points)
+        super().add_referentiel_actions(definitions, children, points)
+        self.to_json()
+
+    def add_indicateurs(
+        self,
+        indicateurs: List[Indicateur],
+    ):
+        super().add_indicateurs(indicateurs)
         self.to_json()
 
     def to_json(self):
-        serialized_referentiels = {}
-        for referentiel, referentiel_entities in self.referentiels.items():
+        serialized_indicateurs = [
+            asdict(indicateur) for indicateur in self._indicateurs
+        ]
+        serialized_referentiels_actions = {}
+        for referentiel, referentiel_entities in self._actions_by_ref.items():
             serialized_referentiel = {
                 "definitions": [
                     asdict(definition)
@@ -45,33 +58,53 @@ class JsonReferentielRepository(InMemoryReferentielRepository):
                     asdict(children) for children in referentiel_entities.children
                 ],
             }
-            serialized_referentiels[referentiel] = serialized_referentiel
+            serialized_referentiels_actions[referentiel] = serialized_referentiel
 
+        serialized_repo = {
+            "actions": serialized_referentiels_actions,
+            "indicateurs": serialized_indicateurs,
+        }
         with open(self.path, "w") as f:
-            json.dump(serialized_referentiels, f)
+            json.dump(serialized_repo, f)
 
     def from_json(self):
 
-        self.referentiels = {}
+        self._actions_by_ref = {}
+        self._indicateurs: List[Indicateur] = []
+
         if not os.path.isfile(self.path):
             return
 
         with open(self.path, "r") as f:
             serialized_referentiel = json.load(f)
 
-        for referentiel, referentiel_entities in serialized_referentiel.items():
+        # load indicateurs
+        serialized_indicateurs = serialized_referentiel["indicateurs"]
+        self._indicateurs = [
+            dataclass_from_dict(Indicateur, indicateur_as_dict, use_marshmallow=True)
+            for indicateur_as_dict in serialized_indicateurs
+        ]
+        # load actions
+        serialized_actions = serialized_referentiel["actions"]
+        for referentiel, action_entities in serialized_actions.items():
             definition_entities = [
-                ActionDefinition(**serialized_definition)
-                for serialized_definition in referentiel_entities["definitions"]
+                dataclass_from_dict(
+                    ActionDefinition, serialized_definition, use_marshmallow=True
+                )
+                for serialized_definition in action_entities["definitions"]
             ]
             children_entities = [
-                ActionChildren(**serialized_children)
-                for serialized_children in referentiel_entities["children"]
+                dataclass_from_dict(
+                    ActionChildren, serialized_children, use_marshmallow=True
+                )
+                for serialized_children in action_entities["children"]
             ]
             points_entities = [
-                ActionPoints(**serialized_points)
-                for serialized_points in referentiel_entities["points"]
+                dataclass_from_dict(
+                    ActionPoints, serialized_points, use_marshmallow=True
+                )
+                for serialized_points in action_entities["points"]
             ]
-            self.referentiels[referentiel] = ReferentielEntities(
+            self._actions_by_ref[referentiel] = ReferentielEntities(
                 definition_entities, children_entities, points_entities
             )

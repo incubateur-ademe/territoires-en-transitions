@@ -40,7 +40,7 @@ action_points = [
 
 
 referentiel_repo = InMemoryReferentielRepository()
-referentiel_repo.add_referentiel(
+referentiel_repo.add_referentiel_actions(
     definitions=[
         make_action_definition(action_id)
         for action_id in [

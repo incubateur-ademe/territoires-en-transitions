@@ -85,7 +85,12 @@ class MarkdownReferentielNodeInconsistencyFound(DomainFailureEvent):  # FAILURE
 
 
 @dataclass
-class ReferentielStored(DomainEvent):
+class ReferentielActionsStored(DomainEvent):
+    referentiel: Referentiel
+
+
+@dataclass
+class ReferentielIndicateursStored(DomainEvent):
     referentiel: Referentiel
 
 
@@ -102,6 +107,7 @@ class IndicateurStored(DomainEvent):
 @dataclass
 class IndicateurMarkdownConvertedToEntities(DomainEvent):
     indicateurs: List[Indicateur]
+    referentiel: Referentiel
 
 
 @dataclass

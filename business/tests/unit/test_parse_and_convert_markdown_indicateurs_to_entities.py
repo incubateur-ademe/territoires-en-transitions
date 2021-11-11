@@ -31,10 +31,10 @@ def prepare_use_case(
     )
     bus = InMemoryDomainMessageBus()
     referentiel_repo = referentiel_repo or InMemoryReferentielRepository()
-    indicateur_repo = InMemoryIndicateurRepository()
+    # indicateur_repo = InMemoryIndicateurRepository()
 
     use_case = ParseAndConvertMarkdownIndicateursToEntities(
-        bus, referentiel_repo, indicateur_repo
+        bus, referentiel_repo  # indicateur_repo
     )
 
     failure_events = spy_on_event(

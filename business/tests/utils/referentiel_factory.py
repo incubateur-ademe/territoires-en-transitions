@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_definition import ActionDefinition, ActionId
 from business.domain.models.action_points import ActionPoints
+from business.domain.models.indicateur import Indicateur, IndicateurId
 from business.domain.models.litterals import Referentiel
 from business.domain.models.markdown_action_node import MarkdownActionNode
 from business.utils.action_id import retrieve_referentiel
@@ -71,6 +72,32 @@ def make_markdown_action_node(
         thematique_id="",
         contexte="",
         nom="",
+    )
+
+
+def make_indicateur(
+    indicateur_id: str,
+    action_ids: Optional[List[str]] = None,
+    values_refers_to: Optional[str] = None,
+) -> Indicateur:
+    return Indicateur(
+        indicateur_id=IndicateurId(indicateur_id),
+        identifiant="",
+        nom="",
+        unite="",
+        climat_pratic_ids=[],
+        action_ids=[ActionId(action_id) for action_id in action_ids]
+        if action_ids
+        else [],
+        programmes=None,
+        description="",
+        values_refers_to=IndicateurId(values_refers_to)
+        if values_refers_to
+        else None
+        if values_refers_to
+        else None,
+        source=None,
+        obligation_eci=None,
     )
 
 

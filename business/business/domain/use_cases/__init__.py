@@ -7,7 +7,7 @@ from .parse_markdown_referentiel_folder import (
 from .convert_markdown_referentiel_node_to_entities import (
     ConvertMarkdownReferentielNodeToEntities,
 )
-from .store_referentiel import StoreReferentiel
+from .store_referentiel import StoreReferentielIndicateurs, StoreReferentielActions
 
 # Notation
 from .compute_referentiel_scores_for_epci import (
