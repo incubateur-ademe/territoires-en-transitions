@@ -1,7 +1,7 @@
 # Nom de l'indicateur 1.a
 
 ```yaml
-identifiant: 1.a
+id: cae-1a
 unite: CO2
 obligation_cae: true
 actions:
@@ -17,14 +17,13 @@ Description de l'indicateur 1.a
 
 
 
-
 # Nom de l'indicateur 1.b
 
 ```yaml
-identifiant: 1.b
+id: cae-1b
 unite: CO2/hab
 actions:
-  - cae/1.1.1
+  - cae/1.1.3
 programmes:
   - cae
 climat_pratic_ids:

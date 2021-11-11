@@ -63,5 +63,6 @@ class StoreScoresForEpci(DomainCommand):
 
 
 @dataclass
-class ConvertMarkdownIndicateursToEntities(DomainCommand):
+class ParseAndConvertMarkdownIndicateursToEntities(DomainCommand):
     folder_path: str
+    referentiel: Referentiel
