@@ -23,4 +23,4 @@ tests/data/tmp
 business.eeg-info/*
 business.eeg-info
 
- data/referentiel_repository.json
+./data/referentiel_repository.json

@@ -1,11 +1,10 @@
 import os
 import json
-from typing import Tuple
 
 from pathlib import Path
 import pytest
 
-from business.entrypoints.referentiels import store_referentiels_actions
+from business.entrypoints.referentiels import store_referentiels_command
 from tests.utils.files import remove_file, mkdir
 
 
@@ -13,22 +12,27 @@ json_path = Path("./tests/data/tmp/referentiels.json")
 mkdir(json_path.parent)
 
 
+expected_nb_of_actions = {"eci": 367, "cae": 1472}
+expected_nb_of_indicateurs = {"eci": 35, "cae": 108}
+
+
 @pytest.mark.parametrize(
-    "referentiel_and_expected_nb_of_actions",
-    [("eci", 367), ("cae", 1472)],
+    "referentiel",
+    ["eci", "cae"],
 )
-def test_update_referentiels(referentiel_and_expected_nb_of_actions: Tuple[str, int]):
-    referentiel, expected_nb_of_actions = referentiel_and_expected_nb_of_actions
+def test_update_referentiels(referentiel: str):
+
     remove_file(json_path)
 
     try:
-        store_referentiels_actions(
+        store_referentiels_command(
             [
                 "--repo-option",
                 "JSON",
-                "--json-path",
+                "--to-json",
                 json_path,
-                f"../markdown/referentiels/{referentiel}",
+                "--referentiel",
+                referentiel,
             ]
         )
     except SystemExit:
@@ -38,10 +42,15 @@ def test_update_referentiels(referentiel_and_expected_nb_of_actions: Tuple[str, 
     with json_path.open("r") as file:
         data = json.load(file)
 
-    assert referentiel in data
+    actions = data["actions"]
+    assert referentiel in actions
     assert (
-        len(data[referentiel]["definitions"])
-        == len(data[referentiel]["children"])
-        == len(data[referentiel]["points"])
-        == expected_nb_of_actions
+        len(actions[referentiel]["definitions"])
+        == len(actions[referentiel]["children"])
+        == len(actions[referentiel]["points"])
+        == expected_nb_of_actions[referentiel]
     )
+    assert len(data["indicateurs"]) == expected_nb_of_indicateurs[referentiel]
+
+
+# Note : CRTE is not tested here, it requires having previously stored CAE indicateurs

@@ -65,21 +65,6 @@ class ReferentielConfig(Config):
         ]
 
 
-# 3. Prepare domain event bus (dependencies infection)
-@click.command()
-@click.option(
-    "--repo-option",
-    prompt="Referentiel repository option",
-)
-@click.option(
-    "--to-json",
-    prompt="Repo Json path (required if repo-option==JSON) ",
-    default="./data/referentiel_repository.json",
-)
-@click.option("--actions/--no-actions", is_flag=True, default=True)
-@click.option("--indicateurs/--no-indicateurs", is_flag=True, default=True)
-@click.option("--markdown-folder", default="../markdown")
-@click.option("--referentiel")
 def store_referentiels(
     repo_option: ReferetielsRepository,
     to_json: Optional[str],
@@ -114,7 +99,6 @@ def store_referentiels(
     indicateurs_command = commands.ParseAndConvertMarkdownIndicateursToEntities(
         os.path.join(markdown_folder, "indicateurs", referentiel), referentiel
     )
-
     if actions:
         if indicateurs:
             domain_message_bus.subscribe_to_event(
@@ -124,10 +108,47 @@ def store_referentiels(
         domain_message_bus.publish_command(actions_command)
     elif indicateurs:
         domain_message_bus.publish_command(indicateurs_command)
+    return
+
+
+# 3. Prepare domain event bus (dependencies infection)
+@click.command()
+@click.option(
+    "--repo-option",
+    prompt="Referentiel repository option",
+)
+@click.option(
+    "--to-json",
+    prompt="Repo Json path (required if repo-option==JSON) ",
+    default="./data/referentiel_repository.json",
+)
+@click.option("--actions/--no-actions", is_flag=True, default=True)
+@click.option("--indicateurs/--no-indicateurs", is_flag=True, default=True)
+@click.option("--markdown-folder", default="../markdown")
+@click.option("--referentiel")
+def store_referentiels_command(
+    repo_option: ReferetielsRepository,
+    to_json: Optional[str],
+    markdown_folder: str,
+    actions: bool,
+    indicateurs: bool,
+    referentiel: Referentiel,
+):
+    """Parse, convert and store referentiels actions and indicateurs given IN/OUT folders.
+    Note that we consider that the given markdown folder is organized as follow:
+        - it contains 2 folders named "referentiels" and "indicateurs"
+        - within each folder, a folder with the referentiel name
+    Hence, markdown to parse will then be:
+        - f"{markdown_foder}/referentiels/{referentiel}/*md"
+        - f"{markdown_foder}/indicateurs/{referentiel}/*md"
+    """
+    store_referentiels(
+        repo_option, to_json, markdown_folder, actions, indicateurs, referentiel
+    )
 
 
 if __name__ == "__main__":
-    store_referentiels()
+    store_referentiels_command()
 
 
 # Command lines

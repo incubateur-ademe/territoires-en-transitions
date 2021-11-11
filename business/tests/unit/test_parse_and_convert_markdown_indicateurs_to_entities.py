@@ -110,20 +110,3 @@ def test_fails_when_valeur_refers_to_unknown_indicateur_id():
         failure_events[0].reason
         == "Incohérences dans la conversion de 1 indicateurs: \nL'indicateur cae-1a référence dans `valeur` un id d'indicateur qui n'existe pas dans la base de données: unknown_action_id"
     )
-
-
-@pytest.mark.parametrize(
-    "referentiel",
-    ["cae", "eci", "crte"],
-)
-def test_wip_e2e_en_attendant_la_cli(referentiel):
-    referentiel_repo = JsonReferentielRepository(
-        Path("data/referentiel_repository.json")
-    )
-    failure_events, parsed_events = prepare_use_case(
-        f"../markdown/indicateurs/{referentiel}",
-        referentiel_repo=referentiel_repo,
-        referentiel=referentiel,
-    )
-    assert len(failure_events) == 0
-    assert len(parsed_events) == 1
