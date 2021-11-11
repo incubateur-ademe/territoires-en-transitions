@@ -24,6 +24,12 @@ class AbstractReferentielRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def get_all_definitions_from_referentiel(
+        self, referentiel: Referentiel
+    ) -> List[ActionDefinition]:
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_all_points_from_referentiel(
         self, referentiel: Referentiel
     ) -> List[ActionPoints]:
@@ -90,6 +96,13 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         self._actions_by_ref[referentiel].definitions += definitions
         self._actions_by_ref[referentiel].children += children
         self._actions_by_ref[referentiel].points += points
+
+    def get_all_definitions_from_referentiel(
+        self, referentiel: Referentiel
+    ) -> List[ActionDefinition]:
+        if referentiel not in self._actions_by_ref:
+            return []
+        return self._actions_by_ref[referentiel].definitions
 
     def get_all_points_from_referentiel(
         self, referentiel: Referentiel

@@ -113,10 +113,13 @@ def set_markdown_action_node_children_with_points(
 
 
 def make_dummy_referentiel(
-    action_ids: List[str],
+    action_ids: List[str], referentiel: Referentiel = "eci"
 ) -> Tuple[List[ActionChildren], List[ActionDefinition], List[ActionPoints]]:
     definitions = [
-        make_action_definition(action_id=action_id) for action_id in action_ids
+        make_action_definition(
+            action_id=action_id, identifiant=action_id.split(f"{referentiel}")[-1][1:]
+        )
+        for action_id in action_ids
     ]
     chidren = [
         make_action_children(action_id=action_id, children_ids=[])
