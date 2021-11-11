@@ -7,19 +7,38 @@ on:
 
 jobs:
 
-  check-black-format:
+  # Label of the runner job
+  runner-job:
+    # You must use a Linux environment when using service containers or container jobs
     runs-on: ubuntu-latest
-    env:
-      working-directory: ./business
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: your-super-secret-and-long-postgres-password
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 50001:5432
 
-    steps:
-      - uses: actions/checkout@v2-beta
-      - uses: actions/setup-python@v2
-        with:
-          path: ./business
-          python-version: "3.9"
-      - name: Black Code Formatter
-        uses: psf/black@21.5b1
+  # check-black-format:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     working-directory: ./business
+
+  #   steps:
+  #     - uses: actions/checkout@v2-beta
+  #     - uses: actions/setup-python@v2
+  #       with:
+  #         path: ./business
+  #         python-version: "3.9"
+  #     - name: Black Code Formatter
+  #       uses: psf/black@21.5b1
 
   test-business:
     runs-on: ubuntu-latest
@@ -85,5 +104,5 @@ jobs:
 
       # Run tests
       - name: Run tests
-        run: pipenv run pytest tests
+        run: pipenv run pytest tests/integration
         working-directory: ${{env.working-directory}}

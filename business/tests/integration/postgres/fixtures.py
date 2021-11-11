@@ -1,5 +1,4 @@
 import psycopg
-from psycopg import connection
 import pytest
 from urllib.parse import urlparse
 
