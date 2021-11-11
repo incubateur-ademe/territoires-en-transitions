@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 from dataclasses import dataclass
 from business.domain.models.litterals import Referentiel

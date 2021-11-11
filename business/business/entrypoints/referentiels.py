@@ -1,3 +1,4 @@
+import os
 from typing import Dict, List, Type, Optional
 
 import click
@@ -8,6 +9,10 @@ from business.domain.ports.domain_message_bus import (
     InMemoryDomainMessageBus,
 )
 from business.domain.use_cases import *
+from business.domain.use_cases.parse_and_convert_markdown_indicateurs_to_entities import (
+    ParseAndConvertMarkdownIndicateursToEntities,
+    Referentiel,
+)
 from business.entrypoints.prepare_bus import prepare_bus
 from business.entrypoints.config import Config
 from business.entrypoints.environment_variables import (
@@ -22,14 +27,19 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[commands.DomainCommand]
         commands.ConvertMarkdownReferentielNodeToEntities
     ],
     events.MarkdownReferentielNodeConvertedToEntities: [
-        commands.StoreReferentielEntities
+        commands.StoreReferentielActions
+    ],
+    events.IndicateurMarkdownConvertedToEntities: [
+        commands.StoreReferentielIndicateurs
     ],
 }
 
 COMMAND_HANDLERS: Dict[Type[commands.DomainCommand], Type[UseCase]] = {
     commands.ParseMarkdownReferentielFolder: ParseMarkdownReferentielFolder,
     commands.ConvertMarkdownReferentielNodeToEntities: ConvertMarkdownReferentielNodeToEntities,
-    commands.StoreReferentielEntities: StoreReferentiel,
+    commands.StoreReferentielActions: StoreReferentielActions,
+    commands.ParseAndConvertMarkdownIndicateursToEntities: ParseAndConvertMarkdownIndicateursToEntities,
+    commands.StoreReferentielIndicateurs: StoreReferentielIndicateurs,
 }
 
 # 2. Define config (necessary abstraction)
@@ -47,53 +57,81 @@ class ReferentielConfig(Config):
         return [
             ConvertMarkdownReferentielNodeToEntities(self.domain_message_bus),
             ParseMarkdownReferentielFolder(self.domain_message_bus),
-            StoreReferentiel(self.domain_message_bus, self.referentiel_repo),
+            StoreReferentielActions(self.domain_message_bus, self.referentiel_repo),
+            ParseAndConvertMarkdownIndicateursToEntities(
+                self.domain_message_bus, self.referentiel_repo
+            ),
+            StoreReferentielIndicateurs(self.domain_message_bus, self.referentiel_repo),
         ]
 
 
 # 3. Prepare domain event bus (dependencies infection)
-
-
 @click.command()
 @click.option(
     "--repo-option",
     prompt="Referentiel repository option",
 )
 @click.option(
-    "--json-path",
+    "--to-json",
     prompt="Repo Json path (required if repo-option==JSON) ",
     default="./data/referentiel_repository.json",
 )
-@click.argument(
-    "markdown-folder",
-)
-def update(
+@click.option("--actions/--no-actions", is_flag=True, default=True)
+@click.option("--indicateurs/--no-indicateurs", is_flag=True, default=True)
+@click.option("--markdown-folder", default="../markdown")
+@click.option("--referentiel")
+def store_referentiels(
     repo_option: ReferetielsRepository,
-    json_path: Optional[str],
+    to_json: Optional[str],
     markdown_folder: str,
+    actions: bool,
+    indicateurs: bool,
+    referentiel: Referentiel,
 ):
-    """Simple program that greets NAME for a total of COUNT times."""
-    print("json_path ", json_path)
+    """Parse, convert and store referentiels actions and indicateurs given IN/OUT folders.
+    Note that we consider that the given markdown folder is organized as follow:
+        - it contains 2 folders named "referentiels" and "indicateurs"
+        - within each folder, a folder with the referentiel name
+    Hence, markdown to parse will then be:
+        - f"{markdown_foder}/referentiels/{referentiel}/*md"
+        - f"{markdown_foder}/indicateurs/{referentiel}/*md"
+    """
+
+    print("json_path ", to_json)
     domain_message_bus = InMemoryDomainMessageBus()
     config = ReferentielConfig(
         domain_message_bus,
         env_variables=EnvironmentVariables(
-            referentiels_repository=repo_option, referentiels_repo_json=json_path
+            referentiels_repository=repo_option, referentiels_repo_json=to_json
         ),
     )
     prepare_bus(config, EVENT_HANDLERS, COMMAND_HANDLERS)
 
-    config.domain_message_bus.publish_command(
-        commands.ParseMarkdownReferentielFolder(markdown_folder)
+    actions_command = commands.ParseMarkdownReferentielFolder(
+        os.path.join(markdown_folder, "referentiels", referentiel)
     )
-    return
+
+    indicateurs_command = commands.ParseAndConvertMarkdownIndicateursToEntities(
+        os.path.join(markdown_folder, "indicateurs", referentiel), referentiel
+    )
+
+    if actions:
+        if indicateurs:
+            domain_message_bus.subscribe_to_event(
+                events.ReferentielActionsStored,
+                lambda _: domain_message_bus.publish_command(indicateurs_command),
+            )
+        domain_message_bus.publish_command(actions_command)
+    elif indicateurs:
+        domain_message_bus.publish_command(indicateurs_command)
 
 
 if __name__ == "__main__":
-    update()
+    store_referentiels()
 
 
 # Command lines
 # --------------
-# python business/entrypoints/referentiels.py --repo-option JSON --markdown-folder "../markdown/referentiels/eci"
-# python business/entrypoints/referentiels.py --repo-option JSON --markdown-folder "../markdown/referentiels/cae"
+# python business/entrypoints/referentiels.py --repo-option JSON --referentiel "cae"
+# python business/entrypoints/referentiels.py --repo-option JSON --referentiel "eci"
+# python business/entrypoints/referentiels.py --repo-option JSON --referentiel "crte" --no-actions

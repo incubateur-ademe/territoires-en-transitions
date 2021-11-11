@@ -90,7 +90,7 @@ valeur: cae-4c
 ```yaml
 id: crte-11.1
 unite: tonnes
-valeur: 4f
+valeur: cae-4f
 ```
 ## Description
 

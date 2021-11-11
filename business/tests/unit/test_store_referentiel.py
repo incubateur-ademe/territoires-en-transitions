@@ -1,7 +1,7 @@
 from business.domain.models import commands, events
 from business.domain.ports.domain_message_bus import InMemoryDomainMessageBus
 from business.domain.ports.referentiel_repo import InMemoryReferentielRepository
-from business.domain.use_cases.store_referentiel import StoreReferentiel
+from business.domain.use_cases.store_referentiel import StoreReferentielActions
 
 from tests.utils.spy_on_event import spy_on_event
 from tests.utils.referentiel_factory import (
@@ -34,28 +34,28 @@ def test_can_store_correct_referentiel():
     bus = InMemoryDomainMessageBus()
     referentiel_repo = InMemoryReferentielRepository()
 
-    use_case = StoreReferentiel(bus, referentiel_repo)
+    use_case = StoreReferentielActions(bus, referentiel_repo)
 
-    command = commands.StoreReferentielEntities(
+    command = commands.StoreReferentielActions(
         definition_entities, points_entities, children_entities, referentiel="eci"
     )
 
-    entity_stored_events = spy_on_event(bus, events.ReferentielStored)
+    entity_stored_events = spy_on_event(bus, events.ReferentielActionsStored)
     failure_events = spy_on_event(bus, events.ReferentielStorageFailed)
 
     use_case.execute(command)
 
     assert len(entity_stored_events) == 1
     assert len(failure_events) == 0
-    assert len(referentiel_repo.referentiels["eci"].points) == 4
-    assert len(referentiel_repo.referentiels["eci"].children) == 4
-    assert len(referentiel_repo.referentiels["eci"].definitions) == 4
+    assert len(referentiel_repo._actions_by_ref["eci"].points) == 4
+    assert len(referentiel_repo._actions_by_ref["eci"].children) == 4
+    assert len(referentiel_repo._actions_by_ref["eci"].definitions) == 4
 
 
 def test_wont_store_if_incoherent_children():
     bus = InMemoryDomainMessageBus()
     referentiel_repo = InMemoryReferentielRepository()
-    use_case = StoreReferentiel(bus, referentiel_repo)
+    use_case = StoreReferentielActions(bus, referentiel_repo)
 
     incoherent_children_entities = [
         make_action_children(action_id="eci", children_ids=["eci_1", "eci_2"]),
@@ -66,14 +66,14 @@ def test_wont_store_if_incoherent_children():
         make_action_children(action_id="eci_1.0", children_ids=[]),
     ]
 
-    command_with_incoherence = commands.StoreReferentielEntities(
+    command_with_incoherence = commands.StoreReferentielActions(
         definition_entities,
         points_entities,
         incoherent_children_entities,
         referentiel="eci",
     )
 
-    entity_stored_events = spy_on_event(bus, events.ReferentielStored)
+    entity_stored_events = spy_on_event(bus, events.ReferentielActionsStored)
     failure_events = spy_on_event(bus, events.ReferentielStorageFailed)
 
     use_case.execute(command_with_incoherence)
@@ -84,4 +84,4 @@ def test_wont_store_if_incoherent_children():
         == "Inconsistency in action eci_2: some children id are refered but defined."
     )
     assert len(entity_stored_events) == 0
-    assert "eci" not in referentiel_repo.referentiels
+    assert "eci" not in referentiel_repo._actions_by_ref

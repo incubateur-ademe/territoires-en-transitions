@@ -1,5 +1,7 @@
 from dataclasses import dataclass
-from typing import List, Literal, NewType, Optional
+from typing import Dict, List, Literal, NewType, Optional
+
+import marshmallow_dataclass
 
 from business.domain.models.action_definition import ReferentielActionId
 from business.domain.models.litterals import Referentiel
@@ -35,7 +37,7 @@ class Indicateur:
     identifiant: str
     nom: str
     unite: str
-    climat_pratic_ids: List[ClimatPraticId]
+    climat_pratic_ids: Optional[List[ClimatPraticId]]
     action_ids: List[ActionId]
     programmes: Optional[List[Programme]]
     description: str

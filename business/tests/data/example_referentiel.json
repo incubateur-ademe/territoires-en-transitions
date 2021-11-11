@@ -1,44 +1,61 @@
 {
-  "eci": {
-    "definitions": [
-      {
-        "action_id": "eci",
-        "referentiel": "eci",
-        "identifiant": "",
-        "nom": "",
-        "thematique_id": "",
-        "description": "",
-        "contexte": "",
-        "exemples": "",
-        "ressources": "",
-        "points": null,
-        "pourcentage": null
-      },
-      {
-        "action_id": "eci_1",
-        "referentiel": "eci",
-        "identifiant": "",
-        "nom": "",
-        "thematique_id": "",
-        "description": "",
-        "contexte": "",
-        "exemples": "",
-        "ressources": "",
-        "points": null,
-        "pourcentage": null
-      }
-    ],
-    "points": [
-      { "referentiel": "eci", "action_id": "eci", "value": 10 },
-      { "referentiel": "eci", "action_id": "eci_1", "value": 10 }
-    ],
-    "children": [
-      {
-        "referentiel": "eci",
-        "action_id": "eci",
-        "children_ids": ["eci_1"]
-      },
-      { "referentiel": "eci", "action_id": "eci_1", "children_ids": [] }
-    ]
+  "indicateurs": [
+    {
+      "indicateur_id": "eci-12",
+      "identifiant": "",
+      "nom": "",
+      "unite": "",
+      "climat_pratic_ids": [],
+      "action_ids": [],
+      "programmes": null,
+      "description": "",
+      "values_refers_to": null,
+      "source": null,
+      "obligation_eci": null
+    }
+  ],
+  "actions": {
+    "eci": {
+      "definitions": [
+        {
+          "action_id": "eci",
+          "referentiel": "eci",
+          "identifiant": "",
+          "nom": "",
+          "thematique_id": "",
+          "description": "",
+          "contexte": "",
+          "exemples": "",
+          "ressources": "",
+          "points": null,
+          "pourcentage": null
+        },
+        {
+          "action_id": "eci_1",
+          "referentiel": "eci",
+          "identifiant": "",
+          "nom": "",
+          "thematique_id": "",
+          "description": "",
+          "contexte": "",
+          "exemples": "",
+          "ressources": "",
+          "points": null,
+          "pourcentage": null
+        }
+      ],
+      "points": [
+        { "referentiel": "eci", "action_id": "eci", "value": 10 },
+        { "referentiel": "eci", "action_id": "eci_1", "value": 10 }
+      ],
+      "children": [
+        {
+          "referentiel": "eci",
+          "action_id": "eci",
+          "children_ids": ["eci_1"]
+        },
+        { "referentiel": "eci", "action_id": "eci_1", "children_ids": [] }
+      ]
+    }
   }
 }

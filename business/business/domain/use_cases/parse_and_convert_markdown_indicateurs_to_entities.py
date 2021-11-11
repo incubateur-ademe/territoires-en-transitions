@@ -55,11 +55,11 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         self,
         bus: AbstractDomainMessageBus,
         referentiel_repo: AbstractReferentielRepository,
-        indicateur_repo: AbstractIndicateurRepository,
+        # indicateur_repo: AbstractIndicateurRepository,
     ) -> None:
         self.bus = bus
         self.referentiel_repo = referentiel_repo
-        self.indicateur_repo = indicateur_repo
+        # self.indicateur_repo = indicateur_repo
         self._markdown_indicateur_schema = marshmallow_dataclass.class_schema(
             MarkdownIndicateur
         )()
@@ -92,7 +92,9 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
             )
         else:
             self.bus.publish_event(
-                events.IndicateurMarkdownConvertedToEntities(indicateurs=indicateurs)
+                events.IndicateurMarkdownConvertedToEntities(
+                    indicateurs=indicateurs, referentiel=command.referentiel
+                )
             )
 
     def parse(self, md_files: List[str]) -> Tuple[List[MarkdownIndicateur], List[str]]:
@@ -116,7 +118,7 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         repo_action_ids = self.referentiel_repo.get_all_action_ids_from_referentiel(
             referentiel
         )
-        repo_indicateur_ids = self.indicateur_repo.get_all_indicateur_ids()
+        repo_indicateur_ids = self.referentiel_repo.get_all_indicateur_ids()
         indicateurs: List[Indicateur] = []
         errors: List[str] = []
         for md_indicateur in md_indicateurs:

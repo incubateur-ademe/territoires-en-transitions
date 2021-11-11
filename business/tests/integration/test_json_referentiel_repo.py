@@ -6,11 +6,12 @@ from tests.utils.referentiel_factory import (
     make_action_children,
     make_action_definition,
     make_action_points,
+    make_indicateur,
 )
 from tests.utils.files import remove_file, mkdir
 
 
-def test_can_add_to_repo():
+def test_can_add_actions_to_repo():
     path = Path("./tests/data/tmp/ref.json")
     mkdir(path.parent)
     remove_file(path)
@@ -29,21 +30,47 @@ def test_can_add_to_repo():
         make_action_children(action_id="eci", children_ids=["eci_1"]),
         make_action_children(action_id="eci_1", children_ids=[]),
     ]
-    repo.add_referentiel(definition_entities, children_entities, points_entities)
+    repo.add_referentiel_actions(
+        definition_entities, children_entities, points_entities
+    )
 
     with open(path, "r") as f:
-        serialized_referentiel = json.load(f)
+        serialized_repo = json.load(f)
 
-    assert "eci" in serialized_referentiel
-    assert len(serialized_referentiel["eci"]["definitions"]) == 2
-    assert len(serialized_referentiel["eci"]["children"]) == 2
-    assert len(serialized_referentiel["eci"]["points"]) == 2
+    assert "actions" in serialized_repo
+    serialized_actions = serialized_repo["actions"]
+    assert "eci" in serialized_actions
+    assert len(serialized_actions["eci"]["definitions"]) == 2
+    assert len(serialized_actions["eci"]["children"]) == 2
+    assert len(serialized_actions["eci"]["points"]) == 2
+
+
+def test_can_add_indicateurs_to_repo():
+    path = Path("./tests/data/tmp/ref.json")
+    mkdir(path.parent)
+    remove_file(path)
+
+    repo = JsonReferentielRepository(path)
+
+    indicateur_entities = [
+        make_indicateur(indicateur_id="eci-12"),
+    ]
+
+    repo.add_indicateurs(indicateur_entities)
+
+    with open(path, "r") as f:
+        serialized_repo = json.load(f)
+
+    assert "indicateurs" in serialized_repo
+    assert len(serialized_repo["indicateurs"]) == 1
 
 
 def test_retrieve_from_json():
     path = Path("./tests/data/example_referentiel.json")
     repo = JsonReferentielRepository(path)
-    assert "eci" in repo.referentiels
-    assert len(repo.referentiels["eci"].definitions) == 2
-    assert len(repo.referentiels["eci"].children) == 2
-    assert len(repo.referentiels["eci"].points) == 2
+    assert "eci" in repo._actions_by_ref
+    assert len(repo._actions_by_ref["eci"].definitions) == 2
+    assert len(repo._actions_by_ref["eci"].children) == 2
+    assert len(repo._actions_by_ref["eci"].points) == 2
+
+    assert len(repo._indicateurs) == 1

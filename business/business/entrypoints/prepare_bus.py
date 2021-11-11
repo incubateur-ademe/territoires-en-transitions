@@ -10,6 +10,7 @@ from business.domain.ports.domain_message_bus import (
 )
 from business.domain.use_cases import *
 from .config import Config
+from business.utils.dataclass_from_dict import dataclass_from_dict
 
 
 class PrepareBusError(Exception):
@@ -21,7 +22,6 @@ def make_on_event_publish_command(
 ) -> EventCallback:
     def on_event_publish_command(event: events.DomainEvent):
         command = command_type.from_dict(asdict(event))
-        # command = command_from_dict(command_type, asdict(event))
         bus.publish_command(command)
 
     return on_event_publish_command

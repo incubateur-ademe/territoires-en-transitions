@@ -7,7 +7,7 @@ from business.domain.ports.referentiel_repo import AbstractReferentielRepository
 from .use_case import UseCase
 
 
-class StoreReferentiel(UseCase):
+class StoreReferentielActions(UseCase):
     def __init__(
         self,
         bus: AbstractDomainMessageBus,
@@ -16,7 +16,7 @@ class StoreReferentiel(UseCase):
         self.bus = bus
         self.referentiel_repo = referentiel_repo
 
-    def execute(self, command: commands.StoreReferentielEntities):
+    def execute(self, command: commands.StoreReferentielActions):
         self.definition_entities = command.definitions
         self.children_entities = command.children
         self.points_entities = command.points
@@ -31,12 +31,12 @@ class StoreReferentiel(UseCase):
         # TODO : this should be transactionnal !
         # Question : Should it be only one port AbstractReferentielRepo, with a method that takes those three arguments ?
         try:
-            self.referentiel_repo.add_referentiel(
+            self.referentiel_repo.add_referentiel_actions(
                 self.definition_entities, self.children_entities, self.points_entities
             )
 
             self.bus.publish_event(
-                events.ReferentielStored(referentiel=command.referentiel)
+                events.ReferentielActionsStored(referentiel=command.referentiel)
             )
         except Exception as storing_error:  # TODO : Should be a more precise error
             self.bus.publish_event(events.ReferentielStorageFailed(str(storing_error)))
@@ -75,3 +75,17 @@ class StoreReferentiel(UseCase):
                 return events.ReferentielStorageFailed(
                     f"Inconsistency in action {children_entity.action_id}: some children id are refered but defined."
                 )
+
+
+class StoreReferentielIndicateurs(UseCase):
+    def __init__(
+        self,
+        bus: AbstractDomainMessageBus,
+        referentiel_repo: AbstractReferentielRepository,
+    ) -> None:
+        self.bus = bus
+        self.referentiel_repo = referentiel_repo
+
+    def execute(self, command: commands.StoreReferentielIndicateurs):
+        self.referentiel_repo.add_indicateurs(command.indicateurs)
+        self.bus.publish_event(events.ReferentielIndicateursStored(command.referentiel))
