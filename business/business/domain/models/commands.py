@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, List
-from business.domain.models.indicateur import Indicateur
 
+from business.domain.models.indicateur import Indicateur
 from business.domain.models.markdown_action_node import MarkdownActionNode
 from business.domain.models.litterals import Referentiel
 from business.domain.models.action_definition import ActionDefinition
@@ -84,3 +85,9 @@ class StoreScoresForEpci(DomainCommand):
 class ParseAndConvertMarkdownIndicateursToEntities(DomainCommand):
     folder_path: str
     referentiel: Referentiel
+
+
+@dataclass
+class ExtractReferentielActionsToCsv(DomainCommand):
+    referentiel: Referentiel
+    csv_path: Path
