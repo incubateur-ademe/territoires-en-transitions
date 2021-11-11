@@ -6,6 +6,7 @@ from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_definition import ActionDefinition
 from business.domain.models.action_points import ActionPoints
 from business.domain.models.litterals import Referentiel
+from business.utils.action_id import ActionId
 
 
 class AbstractReferentielRepository(abc.ABC):
@@ -33,6 +34,12 @@ class AbstractReferentielRepository(abc.ABC):
     ) -> List[ActionChildren]:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def get_all_action_ids_from_referentiel(
+        self, referentiel: Referentiel
+    ) -> List[ActionId]:
+        raise NotImplementedError
+
 
 @dataclass
 class ReferentielEntities:
@@ -49,9 +56,11 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         points_entities: List[ActionPoints] = None,
     ) -> None:
         self.referentiels: Dict[Referentiel, ReferentielEntities] = {}
-        self._children_entities = children_entities or []
-        self._definition_entities = definition_entities or []
-        self._points_entities = points_entities or []
+
+        if children_entities and definition_entities and points_entities:
+            self.add_referentiel(
+                definition_entities, children_entities, points_entities
+            )
 
     def add_referentiel(
         self,
@@ -81,3 +90,11 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         if referentiel not in self.referentiels:
             return []
         return self.referentiels[referentiel].children
+
+    def get_all_action_ids_from_referentiel(
+        self, referentiel: Referentiel
+    ) -> List[ActionId]:
+        referentiel_entities = self.referentiels.get(referentiel)
+        if referentiel_entities is None:
+            return []
+        return [definition.action_id for definition in referentiel_entities.definitions]

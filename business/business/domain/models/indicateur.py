@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Literal
+from typing import List, Literal, NewType, Optional
 
 from business.domain.models.action_definition import ReferentielActionId
 from business.domain.models.litterals import Referentiel
@@ -26,14 +26,19 @@ ClimatPraticId = Literal[
 
 Programme = Literal["cae", "pcaet"]
 
+IndicateurId = NewType("IndicateurId", str)
+
 
 @dataclass
 class Indicateur:
+    indicateur_id: IndicateurId
     identifiant: str
     nom: str
-    referentiel: Referentiel
     unite: str
     climat_pratic_ids: List[ClimatPraticId]
     action_ids: List[ActionId]
-    programmes: List[Programme]
+    programmes: Optional[List[Programme]]
     description: str
+    values_refers_to: Optional[IndicateurId] = None
+    source: Optional[str] = None  # TODO : keep, or ?
+    obligation_eci: Optional[bool] = None  # TODO : keep, or ?

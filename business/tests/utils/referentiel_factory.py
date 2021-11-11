@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from business.domain.models.action_children import ActionChildren
 from business.domain.models.action_definition import ActionDefinition, ActionId
@@ -83,3 +83,19 @@ def set_markdown_action_node_children_with_points(
         )
         for k, child_points in enumerate(points)
     ]
+
+
+def make_dummy_referentiel(
+    action_ids: List[str],
+) -> Tuple[List[ActionChildren], List[ActionDefinition], List[ActionPoints]]:
+    definitions = [
+        make_action_definition(action_id=action_id) for action_id in action_ids
+    ]
+    chidren = [
+        make_action_children(action_id=action_id, children_ids=[])
+        for action_id in action_ids
+    ]
+    points = [
+        make_action_points(action_id=action_id, points=100) for action_id in action_ids
+    ]
+    return chidren, definitions, points

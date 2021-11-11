@@ -7,6 +7,7 @@ from business.domain.models.action_points import ActionPoints
 from business.domain.models.action_score import ActionScore
 from business.domain.models.litterals import Referentiel
 from business.domain.models.markdown_action_node import MarkdownActionNode
+from business.domain.models.indicateur import Indicateur
 
 
 class DomainEvent:
@@ -18,6 +19,7 @@ class DomainFailureEvent(DomainEvent):
     reason: str
 
 
+# Realtime & Notation
 @dataclass
 class ActionStatutUpdatedForEpci(DomainEvent):
     epci_id: int
@@ -25,6 +27,34 @@ class ActionStatutUpdatedForEpci(DomainEvent):
     created_at: str
 
 
+@dataclass
+class ReferentielScoresForEpciComputed(DomainEvent):
+    epci_id: int
+    referentiel: Referentiel
+    scores: List[ActionScore]
+
+
+@dataclass
+class ReferentielScoresForEpciComputationFailed(DomainFailureEvent):
+    pass
+
+
+@dataclass
+class ScoresForEpciStored(DomainEvent):
+    epci_id: int
+
+
+@dataclass
+class ScoresStorageForEpciFailed(DomainFailureEvent):
+    pass
+
+
+@dataclass
+class RealtimeEventWithWrongFormatObserved(DomainFailureEvent):
+    pass
+
+
+# Referentiel
 @dataclass
 class MarkdownReferentielFolderUpdated(DomainEvent):
     folder_path: str
@@ -55,18 +85,6 @@ class MarkdownReferentielNodeInconsistencyFound(DomainFailureEvent):  # FAILURE
 
 
 @dataclass
-class ReferentielScoresForEpciComputed(DomainEvent):
-    epci_id: int
-    referentiel: Referentiel
-    scores: List[ActionScore]
-
-
-@dataclass
-class ReferentielScoresForEpciComputationFailed(DomainFailureEvent):
-    pass
-
-
-@dataclass
 class ReferentielStored(DomainEvent):
     referentiel: Referentiel
 
@@ -77,15 +95,20 @@ class ReferentielStorageFailed(DomainFailureEvent):
 
 
 @dataclass
-class ScoresForEpciStored(DomainEvent):
-    epci_id: int
+class IndicateurStored(DomainEvent):
+    referentiel: Referentiel
 
 
 @dataclass
-class ScoresStorageForEpciFailed(DomainFailureEvent):
+class IndicateurMarkdownConvertedToEntities(DomainEvent):
+    indicateurs: List[Indicateur]
+
+
+@dataclass
+class IndicateurMarkdownParsingOrConvertionFailed(DomainFailureEvent):
     pass
 
 
 @dataclass
-class RealtimeEventWithWrongFormatObserved(DomainFailureEvent):
+class IndicateurEntitiesStored(DomainEvent):
     pass
