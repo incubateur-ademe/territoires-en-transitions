@@ -19838,7 +19838,7 @@ actions = [
                                     ActionReferentiel(
                                         id="economie_circulaire__1.1.4.1",
                                         id_nomenclature="1.1.4.1",
-                                        nom=r"Int\u00e8grer dans la strat\u00e9gie les enjeux \u00e9conomiques, environnementaux et sociaux",
+                                        nom=r"Int\u00e9grer dans la strat\u00e9gie les enjeux \u00e9conomiques, environnementaux et sociaux",
                                         description=r"",
                                         contexte=r"",
                                         exemples=r"",
