@@ -16,10 +16,6 @@ export abstract class DataLayerReadEndpoint<
   T,
   GetParams
 > extends ChangeNotifier {
-  protected constructor() {
-    super();
-  }
-
   abstract readonly name: string;
   private _lastEvent: DataEvent<T> | null = null;
   private _lastResponse: PostgrestResponse<T> | null = null;
@@ -86,12 +82,7 @@ export abstract class DataLayerReadEndpoint<
  * Data layer write only endpoint
  */
 export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
-  protected constructor({name}: {name: string}) {
-    super();
-    this.name = name;
-  }
-
-  private readonly name: string;
+  abstract readonly name: string;
   private _lastEvent: DataEvent<T> | null = null;
   private _lastResponse: PostgrestResponse<T> | null = null;
 

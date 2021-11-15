@@ -22,8 +22,4 @@ export class ActionStatutReadEndpoint extends DataLayerReadEndpoint<
         .eq('action_id', getParams.action_id);
     return this._table.eq('epci_id', getParams.epci_id);
   }
-
-  constructor() {
-    super();
-  }
 }
