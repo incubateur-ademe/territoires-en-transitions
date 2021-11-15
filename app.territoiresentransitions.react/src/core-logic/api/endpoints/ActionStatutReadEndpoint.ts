@@ -1,18 +1,25 @@
 import {DataLayerReadEndpoint} from 'core-logic/api/dataLayerEndpoint';
-import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
+import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
 
 export interface StatutGetParams {
-  epci_id: string;
+  epci_id: number;
+  action_id?: string;
 }
 
 export class ActionStatutReadEndpoint extends DataLayerReadEndpoint<
-  ActionStatutWrite,
+  ActionStatutRead,
   StatutGetParams
 > {
-  async query(
+  readonly name = 'action_statut';
+
+  async _read(
     getParams: StatutGetParams
   ): Promise<PostgrestResponse<ActionStatutWrite>> {
     return this._table.eq('epci_id', getParams.epci_id);
+  }
+
+  constructor() {
+    super();
   }
 }
