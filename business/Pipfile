@@ -15,6 +15,7 @@ black = "==21.5b1"
 psycopg = "*"
 business = {editable = true, path = "."}
 python-dotenv = "*"
+pandas = "*"
 
 [dev-packages]
 
