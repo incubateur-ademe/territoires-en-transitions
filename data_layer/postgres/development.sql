@@ -68,7 +68,7 @@ create type avancement as enum ('fait', 'pas_fait', 'programme', 'non_renseigne'
 create table action_statut
 (
     id          serial primary key,
-    epci_id     serial references epci                             not null,
+    epci_id     integer references epci                            not null,
     action_id   action_id references action_relation               not null,
     avancement  avancement                                         not null,
     concerne    boolean                                            not null,
@@ -128,7 +128,7 @@ from score
 --------------------------------
 create table epci_action_statut_update_event
 (
-    epci_id     integer references epci                             not null,
+    epci_id     integer references epci                            not null,
     referentiel referentiel                                        not null,
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null
 );
