@@ -15,7 +15,11 @@ export class ActionStatutReadEndpoint extends DataLayerReadEndpoint<
 
   async _read(
     getParams: StatutGetParams
-  ): Promise<PostgrestResponse<ActionStatutWrite>> {
+  ): Promise<PostgrestResponse<ActionStatutRead>> {
+    if (getParams.action_id)
+      return this._table
+        .eq('epci_id', getParams.epci_id)
+        .eq('action_id', getParams.action_id);
     return this._table.eq('epci_id', getParams.epci_id);
   }
 
