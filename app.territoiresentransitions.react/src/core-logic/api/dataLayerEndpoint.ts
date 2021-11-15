@@ -16,12 +16,11 @@ export abstract class DataLayerReadEndpoint<
   T,
   GetParams
 > extends ChangeNotifier {
-  protected constructor({name}: {name: string}) {
+  protected constructor() {
     super();
-    this.name = name;
   }
 
-  private readonly name: string;
+  abstract readonly name: string;
   private _lastEvent: DataEvent<T> | null = null;
   private _lastResponse: PostgrestResponse<T> | null = null;
 
@@ -43,7 +42,7 @@ export abstract class DataLayerReadEndpoint<
    * Uses query.
    */
   async getBy(getParams: GetParams): Promise<T[]> {
-    const queryResponse = await this.query(getParams);
+    const queryResponse = await this._read(getParams);
 
     return this.handleResponse(queryResponse);
   }
@@ -53,7 +52,7 @@ export abstract class DataLayerReadEndpoint<
    *
    * @param getParams
    */
-  abstract query(getParams: GetParams): Promise<PostgrestResponse<T>>;
+  abstract _read(getParams: GetParams): Promise<PostgrestResponse<T>>;
 
   /**
    * Default response handler.
@@ -118,7 +117,7 @@ export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
    * Uses query.
    */
   async save(storable: T): Promise<T | null> {
-    const queryResponse = await this.query(storable);
+    const queryResponse = await this._write(storable);
 
     return this.handleResponse(queryResponse);
   }
@@ -126,7 +125,7 @@ export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
   /**
    * Query our data layer.
    */
-  abstract query(storable: T): Promise<PostgrestResponse<T>>;
+  abstract _write(storable: T): Promise<PostgrestResponse<T>>;
 
   /**
    * Default response handler.
