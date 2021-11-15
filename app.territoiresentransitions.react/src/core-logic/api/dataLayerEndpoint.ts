@@ -1,9 +1,8 @@
-import {Storable} from './storable';
 import {ChangeNotifier} from 'core-logic/api/reactivity';
 import {supabase} from './supabase';
 import {PostgrestResponse} from '@supabase/supabase-js';
 
-export interface DataEvent<T extends Storable> {
+export interface DataEvent<T> {
   outcome: 'error' | 'success';
   intent: 'store' | 'retrieve' | 'delete';
   stored: T | null;
@@ -14,7 +13,7 @@ export interface DataEvent<T extends Storable> {
  * Data layer read only endpoint
  */
 export abstract class DataLayerReadEndpoint<
-  T extends Storable,
+  T,
   GetParams
 > extends ChangeNotifier {
   protected constructor({name}: {name: string}) {
@@ -87,9 +86,7 @@ export abstract class DataLayerReadEndpoint<
 /**
  * Data layer write only endpoint
  */
-export abstract class DataLayerWriteEndpoint<
-  T extends Storable
-> extends ChangeNotifier {
+export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
   protected constructor({name}: {name: string}) {
     super();
     this.name = name;
@@ -108,7 +105,11 @@ export abstract class DataLayerWriteEndpoint<
   }
 
   get _table() {
-    return supabase.from(this.name).select();
+    return supabase.from(this.name);
+  }
+
+  get _select() {
+    return this._table.select();
   }
 
   /**
