@@ -10,7 +10,7 @@ import {actionToEmoji, shortenLabel} from './utils';
 const allActions = actionsById(actions);
 const allActionIds = [...allActions.keys()]
   .sort((a, b) => a.localeCompare(b))
-  .filter(id => !['economie_circulaire', 'citergie'].includes(id)); // filter root actions
+  .filter(id => !['economie_circulaire', 'cae'].includes(id)); // filter root actions
 
 const renderActionOption = (id: string) => {
   const action = allActions.get(id)!;

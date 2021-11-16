@@ -1,17 +1,18 @@
 import {useEpciId} from 'core-logic/hooks';
 import {Link} from 'react-router-dom';
 import {FicheAction} from 'generated/models/fiche_action';
-import {Avancement} from 'types';
+
 import {avancementLabels} from 'app/labels';
+import {Avancement} from 'generated/dataLayer/action_statut_read';
 
 const AvancementTag = ({avancement}: {avancement: Avancement}) => {
-  if (avancement !== '')
-    return (
-      <div className="px-2 py-3 bg-white border-bf500 border-b-4">
-        {avancementLabels[avancement]}
-      </div>
-    );
-  return <></>;
+  // if (avancement !== '')
+  return (
+    <div className="px-2 py-3 bg-white border-bf500 border-b-4">
+      {avancementLabels[avancement]}
+    </div>
+  );
+  // return <></>;
 };
 
 type FicheCardProps = {

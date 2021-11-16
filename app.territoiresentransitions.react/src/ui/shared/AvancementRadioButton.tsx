@@ -1,5 +1,6 @@
 import './AvancementRadioButton.css';
-import type {Avancement, Option} from 'types';
+import type {Option} from 'types';
+import {Avancement} from 'generated/dataLayer/action_statut_read';
 
 // TODO / Question : Fiche action and Ref actions have the same avancement options ?
 export const AvancementRadioButton = (props: {

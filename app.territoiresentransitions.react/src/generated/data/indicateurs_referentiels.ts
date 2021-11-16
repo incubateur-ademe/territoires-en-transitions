@@ -5,7 +5,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-1a',
     uid: 'cae-1a',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: '\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire (teq CO2)',
     description:
       '\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire exprim\u00e9es en tonnes \u00e9quivalent CO2.\u003c/p\u003e\n\u003cp\u003eL\u0027indicateur, issu d\u0027un diagnostic d\u0027\u00e9missions de gaz \u00e0 effet de serre mesure la quantit\u00e9 totale d\u0027\u00e9missions annuelle des diff\u00e9rents secteurs d\u0027activit\u00e9s et des habitants du territoire, selon les exigences r\u00e9glementaires des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial).\u003c/p\u003e\n\u003cp\u003eA savoir : les  \u00e9missions  directes  produites par l\u0027ensemble des secteurs r\u00e9sidentiel, tertiaire, transport routier, autres transports, agriculture, d\u00e9chets, industrie hors branche \u00e9nergie, branche \u00e9nergie (hors production d\u0027\u00e9lectricit\u00e9, de chaleur et de froid pour les \u00e9missions de gaz \u00e0 effet de serre, dont les \u00e9missions correspondantes sont comptabilis\u00e9es au stade de la consommation).\u003c/p\u003e\n\u003cp\u003eIl ne s\u0027agit pas du bilan GES \u0026quot;Patrimoine et comp\u00e9tences\u0026quot;.\u003c/p\u003e\n',
@@ -17,7 +17,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-1b',
     uid: 'cae-1b',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Emissions de gaz \u00e0 effet de serre annuelles du territoire par habitant (teq CO2/hab)',
     description:
       '\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire exprim\u00e9es en tonnes \u00e9quivalent CO2 par habitant.\u003c/p\u003e\n\u003cp\u003ePour faciliter les comparaisons, l\u2019indicateur est ramen\u00e9 au nombre d\u2019habitants (population municipale selon l\u2019INSEE).\u003c/p\u003e\n\u003cp\u003ePour rappel, objectifs nationaux : division par 4 (-75 %) des \u00e9missions de gaz \u00e0 effet de serre d\u2019ici 2050 par rapport \u00e0 1990 (loi POPE) et \u00e9tape interm\u00e9diaire de -40% entre 1990 et 2030 (loi de transition \u00e9nerg\u00e9tique).\u003c/p\u003e\n\u003cp\u003eL\u0027\u00e9valuation est bas\u00e9e sur l\u0027\u00e9volution de l\u0027indicateur.\u003c/p\u003e\n',
@@ -29,7 +29,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-1c',
     uid: 'cae-1c',
     valeur: '',
-    action_ids: ['citergie__1.2.4'],
+    action_ids: ['cae__1.2.4'],
     nom: 'Emissions de gaz \u00e0 effet de serre du r\u00e9sidentiel (teq CO2)',
     description:
       '\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire exprim\u00e9es en tonnes \u00e9quivalent CO2 pour le secteur r\u00e9sidentiel.\u003c/p\u003e\n\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global\u003c/p\u003e\n\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire (teq CO2)\u003c/p\u003e\n',
@@ -41,7 +41,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-1d',
     uid: 'cae-1d',
     valeur: '',
-    action_ids: ['citergie__6.3.1'],
+    action_ids: ['cae__6.3.1'],
     nom: 'Emissions de gaz \u00e0 effet de serre du tertiaire (teq CO2)',
     description:
       '\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire exprim\u00e9es en tonnes \u00e9quivalent CO2 pour le secteur tertiaire.\u003c/p\u003e\n\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global\u003c/p\u003e\n\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire (teq CO2)\u003c/p\u003e\n',
@@ -53,7 +53,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-1e',
     uid: 'cae-1e',
     valeur: '',
-    action_ids: ['citergie__1.2.2'],
+    action_ids: ['cae__1.2.2'],
     nom: 'Emissions de gaz \u00e0 effet de serre du transport routier (teq CO2)',
     description:
       '\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire exprim\u00e9es en tonnes \u00e9quivalent CO2 pour le secteur du transport routier.\u003c/p\u003e\n\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global\u003c/p\u003e\n\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire (teq CO2)\u003c/p\u003e\n',
@@ -65,7 +65,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-1f',
     uid: 'cae-1f',
     valeur: '',
-    action_ids: ['citergie__1.2.2'],
+    action_ids: ['cae__1.2.2'],
     nom: 'Emissions de gaz \u00e0 effet de serre de secteurs "autres transports" (teq CO2)',
     description:
       '\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire exprim\u00e9es en tonnes \u00e9quivalent CO2 pour le secteur des autres transport (hors routier).\u003c/p\u003e\n\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global\u003c/p\u003e\n\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire (teq CO2)\u003c/p\u003e\n',
@@ -77,7 +77,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-1g',
     uid: 'cae-1g',
     valeur: '',
-    action_ids: ['citergie__6.4.1'],
+    action_ids: ['cae__6.4.1'],
     nom: 'Emissions de gaz \u00e0 effet de serre de l\u0027agriculture (teq CO2)',
     description:
       '\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire exprim\u00e9es en tonnes \u00e9quivalent CO2 pour le secteur de l\u0027agriculture.\u003c/p\u003e\n\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global\u003c/p\u003e\n\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire (teq CO2)\u003c/p\u003e\n',
@@ -89,7 +89,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-1h',
     uid: 'cae-1h',
     valeur: '',
-    action_ids: ['citergie__1.2.3'],
+    action_ids: ['cae__1.2.3'],
     nom: 'Emissions de gaz \u00e0 effet de serre des d\u00e9chets (teq CO2)',
     description:
       '\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire exprim\u00e9es en tonnes \u00e9quivalent CO2 pour le secteur des d\u00e9chets.\u003c/p\u003e\n\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global\u003c/p\u003e\n\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire (teq CO2)\u003c/p\u003e\n',
@@ -101,7 +101,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-1i',
     uid: 'cae-1i',
     valeur: '',
-    action_ids: ['citergie__6.3.1'],
+    action_ids: ['cae__6.3.1'],
     nom: 'Emissions de gaz \u00e0 effet de serre de l\u0027industrie hors branche \u00e9nergie (teq CO2)',
     description:
       '\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire exprim\u00e9es en tonnes \u00e9quivalent CO2 pour le secteur de l\u0027industrie hors branche \u00e9nergie.\u003c/p\u003e\n\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global\u003c/p\u003e\n\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire (teq CO2)\u003c/p\u003e\n',
@@ -113,7 +113,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-1j',
     uid: 'cae-1j',
     valeur: '',
-    action_ids: ['citergie__6.3.1'],
+    action_ids: ['cae__6.3.1'],
     nom: 'Emissions de gaz \u00e0 effet de serre de l\u0027industrie branche \u00e9nergie (teq CO2)',
     description:
       '\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire exprim\u00e9es en tonnes \u00e9quivalent CO2 pour le secteur de l\u0027industrie branche \u00e9nergie (hors production d\u0027\u00e9lectricit\u00e9, de chaleur et de froid pour les \u00e9missions de gaz \u00e0 effet de serre, dont les \u00e9missions correspondantes sont comptabilis\u00e9es au stade de la consommation).\u003c/p\u003e\n\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global\u003c/p\u003e\n\u003cp\u003e\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire (teq CO2)\u003c/p\u003e\n',
@@ -125,7 +125,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2a',
     uid: 'cae-2a',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh)',
     description:
       '\u003cp\u003eCet indicateur estime la consommation \u00e9nerg\u00e9tique finale annuelle du territoire, selon les exigences r\u00e9glementaires des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial).\u003c/p\u003e\n',
@@ -137,7 +137,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2b',
     uid: 'cae-2b',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique annuelle du territoire par habitant (MWh/hab.an)',
     description:
       '\u003cp\u003ePour faciliter les comparaisons, l\u2019indicateur est ramen\u00e9 au nombre d\u2019habitants (population municipale selon l\u2019INSEE). Pr\u00e9ciser l\u0027ann\u00e9e de r\u00e9f\u00e9rence en commentaire. L\u0027\u00e9valuation est bas\u00e9e sur l\u0027\u00e9volution de l\u0027indicateur.\u003c/p\u003e\n',
@@ -149,7 +149,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2c',
     uid: 'cae-2c',
     valeur: '',
-    action_ids: ['citergie__3.2.2'],
+    action_ids: ['cae__3.2.2'],
     nom: 'Consommation \u00e9nerg\u00e9tique annuelle du territoire pour la chaleur et le rafra\u00eechissement (GWh)',
     description:
       '\u003cp\u003eD\u00e9composition par usage de l\u0027indicateur 2a:\u003c/p\u003e\n\u003cp\u003eConsommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh)\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eutile aux calculs des taux de production ENR (d\u00e9nominateur).\u003c/li\u003e\n\u003c/ul\u003e\n',
@@ -161,7 +161,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2d',
     uid: 'cae-2d',
     valeur: '',
-    action_ids: ['citergie__3.2.3'],
+    action_ids: ['cae__3.2.3'],
     nom: 'Consommation \u00e9nerg\u00e9tique annuelle du territoire pour l\u0027\u00e9lectricit\u00e9 (GWh)',
     description:
       '\u003cp\u003eD\u00e9composition par usage de l\u0027indicateur 2a:\u003c/p\u003e\n\u003cp\u003eConsommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh)\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eutile aux calculs des taux de production ENR (d\u00e9nominateur).\u003c/li\u003e\n\u003c/ul\u003e\n',
@@ -173,7 +173,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2e',
     uid: 'cae-2e',
     valeur: '',
-    action_ids: ['citergie__1.2.4'],
+    action_ids: ['cae__1.2.4'],
     nom: 'Consommation \u00e9nerg\u00e9tique du r\u00e9sidentiel  (GWh)',
     description:
       '\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global 2a:\u003c/p\u003e\n\u003cp\u003eConsommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh).\u003c/p\u003e\n',
@@ -185,7 +185,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2f',
     uid: 'cae-2f',
     valeur: '',
-    action_ids: ['citergie__6.3.1'],
+    action_ids: ['cae__6.3.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique du tertiaire (GWh)',
     description:
       '\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global 2a:\u003c/p\u003e\n\u003cp\u003eConsommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh).\u003c/p\u003e\n',
@@ -197,7 +197,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2g',
     uid: 'cae-2g',
     valeur: '',
-    action_ids: ['citergie__1.2.2'],
+    action_ids: ['cae__1.2.2'],
     nom: 'Consommation \u00e9nerg\u00e9tique  du transport routier(GWh)',
     description:
       '\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global 2a:\u003c/p\u003e\n\u003cp\u003eConsommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh).\u003c/p\u003e\n',
@@ -209,7 +209,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2h',
     uid: 'cae-2h',
     valeur: '',
-    action_ids: ['citergie__1.2.2'],
+    action_ids: ['cae__1.2.2'],
     nom: 'Consommation \u00e9nerg\u00e9tique du secteur "autres transports" (teq CO2)',
     description:
       '\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global 2a:\u003c/p\u003e\n\u003cp\u003eConsommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh).\u003c/p\u003e\n',
@@ -221,7 +221,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2i',
     uid: 'cae-2i',
     valeur: '',
-    action_ids: ['citergie__6.4.1'],
+    action_ids: ['cae__6.4.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique de l\u0027agriculture (GWh)',
     description:
       '\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global 2a:\u003c/p\u003e\n\u003cp\u003eConsommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh).\u003c/p\u003e\n',
@@ -233,7 +233,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2j',
     uid: 'cae-2j',
     valeur: '',
-    action_ids: ['citergie__1.2.3'],
+    action_ids: ['cae__1.2.3'],
     nom: 'Consommation \u00e9nerg\u00e9tique des d\u00e9chets (GWh)',
     description:
       '\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global 2a:\u003c/p\u003e\n\u003cp\u003eConsommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh).\u003c/p\u003e\n',
@@ -245,7 +245,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-2k',
     uid: 'cae-2k',
     valeur: '',
-    action_ids: ['citergie__6.3.1'],
+    action_ids: ['cae__6.3.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique de l\u0027industrie hors branche \u00e9nergie (GWh)',
     description:
       '\u003cp\u003eD\u00e9composition par secteur r\u00e9glementaire de l\u0027indicateur global 2a:\u003c/p\u003e\n\u003cp\u003eConsommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh).\u003c/p\u003e\n',
@@ -257,7 +257,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-3a',
     uid: 'cae-3a',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Production d\u2019\u00e9nergie renouvelable globale du territoire (MWh)',
     description:
       '\u003cp\u003eCet indicateur mesure la production d\u2019\u00e9nergie renouvelable totale sur le territoire, selon les exigences r\u00e9glementaires des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial), c\u0027est \u00e0 dire incluant les fili\u00e8res de production:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003ed\u2019\u00e9lectricit\u00e9: \u00e9olien  terrestre, solaire  photovolta\u00efque, solaire  thermodynamique,  hydraulique,  biomasse  solide, biogaz, g\u00e9othermie\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ede  chaleur: biomasse  solide,  pompes  \u00e0  chaleur,  g\u00e9othermie,  solaire  thermique,  biogaz\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ede biom\u00e9thane et de biocarburants.\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003ePr\u00e9ciser l\u0027ann\u00e9e de r\u00e9f\u00e9rence en commentaire.\u003c/p\u003e\n',
@@ -269,7 +269,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-3b',
     uid: 'cae-3b',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Production d\u2019\u00e9nergie renouvelable globale du territoire (% de la consommation)',
     description:
       '\u003cp\u003eD\u00e9clinaison en % de la consommation \u00e9nerg\u00e9tique du territoire de l\u0027indicateur 3a:\u003c/p\u003e\n\u003cp\u003eProduction d\u2019\u00e9nergie renouvelable globale du territoire (MWh).\u003c/p\u003e\n',
@@ -281,7 +281,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-4a',
     uid: 'cae-4a',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de Nox (tonnes)',
     description:
       '\u003cp\u003eCes indicateurs estiment les \u00e9missions annuelles des six polluants atmosph\u00e9riques exig\u00e9s dans le contenu r\u00e9glementaire des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial) : oxydes d\u2019azote (NOx), les particules PM 10 et PM 2,5 et les compos\u00e9s organiques volatils (COV), tels que d\u00e9finis au I de l\u2019article R. 221-1 du m\u00eame code, ainsi que le dioxyde de soufre (SO2 ) et l\u2019ammoniac (NH3). Pr\u00e9ciser l\u0027ann\u00e9e de r\u00e9f\u00e9rence en commentaire. Les donn\u00e9es peuvent \u00eatre fournies notamment par les associations agr\u00e9es pour la surveillance de la qualit\u00e9 de l\u0027air (AASQA). L\u0027\u00e9valuation est bas\u00e9e sur l\u0027\u00e9volution de l\u0027indicateur.\u003c/p\u003e\n',
@@ -293,7 +293,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-4b',
     uid: 'cae-4b',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de PM10 (tonnes)',
     description:
       '\u003cp\u003eCes indicateurs estiment les \u00e9missions annuelles des six polluants atmosph\u00e9riques exig\u00e9s dans le contenu r\u00e9glementaire des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial) : oxydes d\u2019azote (NOx), les particules PM 10 et PM 2,5 et les compos\u00e9s organiques volatils (COV), tels que d\u00e9finis au I de l\u2019article R. 221-1 du m\u00eame code, ainsi que le dioxyde de soufre (SO2 ) et l\u2019ammoniac (NH3). Pr\u00e9ciser l\u0027ann\u00e9e de r\u00e9f\u00e9rence en commentaire. Les donn\u00e9es peuvent \u00eatre fournies notamment par les associations agr\u00e9es pour la surveillance de la qualit\u00e9 de l\u0027air (AASQA). L\u0027\u00e9valuation est bas\u00e9e sur l\u0027\u00e9volution de l\u0027indicateur.\u003c/p\u003e\n',
@@ -305,7 +305,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-4c',
     uid: 'cae-4c',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de PM2,5 (tonnes)',
     description:
       '\u003cp\u003eCes indicateurs estiment les \u00e9missions annuelles des six polluants atmosph\u00e9riques exig\u00e9s dans le contenu r\u00e9glementaire des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial) : oxydes d\u2019azote (NOx), les particules PM 10 et PM 2,5 et les compos\u00e9s organiques volatils (COV), tels que d\u00e9finis au I de l\u2019article R. 221-1 du m\u00eame code, ainsi que le dioxyde de soufre (SO2 ) et l\u2019ammoniac (NH3). Pr\u00e9ciser l\u0027ann\u00e9e de r\u00e9f\u00e9rence en commentaire. Les donn\u00e9es peuvent \u00eatre fournies notamment par les associations agr\u00e9es pour la surveillance de la qualit\u00e9 de l\u0027air (AASQA). L\u0027\u00e9valuation est bas\u00e9e sur l\u0027\u00e9volution de l\u0027indicateur.\u003c/p\u003e\n',
@@ -317,7 +317,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-4d',
     uid: 'cae-4d',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de COV (tonnes)',
     description:
       '\u003cp\u003eCes indicateurs estiment les \u00e9missions annuelles des six polluants atmosph\u00e9riques exig\u00e9s dans le contenu r\u00e9glementaire des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial) : oxydes d\u2019azote (NOx), les particules PM 10 et PM 2,5 et les compos\u00e9s organiques volatils (COV), tels que d\u00e9finis au I de l\u2019article R. 221-1 du m\u00eame code, ainsi que le dioxyde de soufre (SO2 ) et l\u2019ammoniac (NH3). Pr\u00e9ciser l\u0027ann\u00e9e de r\u00e9f\u00e9rence en commentaire. Les donn\u00e9es peuvent \u00eatre fournies notamment par les associations agr\u00e9es pour la surveillance de la qualit\u00e9 de l\u0027air (AASQA). L\u0027\u00e9valuation est bas\u00e9e sur l\u0027\u00e9volution de l\u0027indicateur.\u003c/p\u003e\n',
@@ -329,7 +329,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-4e',
     uid: 'cae-4e',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de SO2  (tonnes)',
     description:
       '\u003cp\u003eCes indicateurs estiment les \u00e9missions annuelles des six polluants atmosph\u00e9riques exig\u00e9s dans le contenu r\u00e9glementaire des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial) : oxydes d\u2019azote (NOx), les particules PM 10 et PM 2,5 et les compos\u00e9s organiques volatils (COV), tels que d\u00e9finis au I de l\u2019article R. 221-1 du m\u00eame code, ainsi que le dioxyde de soufre (SO2 ) et l\u2019ammoniac (NH3). Pr\u00e9ciser l\u0027ann\u00e9e de r\u00e9f\u00e9rence en commentaire. Les donn\u00e9es peuvent \u00eatre fournies notamment par les associations agr\u00e9es pour la surveillance de la qualit\u00e9 de l\u0027air (AASQA). L\u0027\u00e9valuation est bas\u00e9e sur l\u0027\u00e9volution de l\u0027indicateur.\u003c/p\u003e\n',
@@ -341,7 +341,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-4f',
     uid: 'cae-4f',
     valeur: '',
-    action_ids: ['citergie__1.1.1'],
+    action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de NH3 (tonnes)',
     description:
       '\u003cp\u003eCes indicateurs estiment les \u00e9missions annuelles des six polluants atmosph\u00e9riques exig\u00e9s dans le contenu r\u00e9glementaire des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial) : oxydes d\u2019azote (NOx), les particules PM 10 et PM 2,5 et les compos\u00e9s organiques volatils (COV), tels que d\u00e9finis au I de l\u2019article R. 221-1 du m\u00eame code, ainsi que le dioxyde de soufre (SO2 ) et l\u2019ammoniac (NH3). Pr\u00e9ciser l\u0027ann\u00e9e de r\u00e9f\u00e9rence en commentaire. Les donn\u00e9es peuvent \u00eatre fournies notamment par les associations agr\u00e9es pour la surveillance de la qualit\u00e9 de l\u0027air (AASQA). L\u0027\u00e9valuation est bas\u00e9e sur l\u0027\u00e9volution de l\u0027indicateur.\u003c/p\u003e\n',
@@ -353,7 +353,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-5',
     uid: 'cae-5',
     valeur: '',
-    action_ids: ['citergie__1.2.2'],
+    action_ids: ['cae__1.2.2'],
     nom: 'Part modale de la voiture (en nombre de d\u00e9placements)',
     description:
       '\u003cp\u003eL\u0027objectif de cet indicateur est de juger de l\u0027impact des mesures de planification des d\u00e9placements sur l\u0027utilisation de la voiture sur le territoire, via le suivi de la part modale de la voiture (nombre de d\u00e9placements en voiture/nombre de d\u00e9placements). Pour information, des valeurs limites et cibles indicatives de parts modales sont donn\u00e9es, bas\u00e9es sur les moyennes nationales et les meilleurs scores atteints par des collectivit\u00e9s Cit\u0027ergie. Mais le conseiller doit appr\u00e9cier les efforts de la collectivit\u00e9, en fonction du contexte territorial, et les progr\u00e8s r\u00e9alis\u00e9s sur l\u0027indicateur.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eValeur limite : 65 % (ville dans une aire urbaine) / 75% (EPCI ou ville hors aire urbaine)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eValeur cible : 40 % (ville dans une aire urbaine) / 50 % (EPCI ou ville hors aire urbaine)\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n',
@@ -365,7 +365,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-6a',
     uid: 'cae-6a',
     valeur: '',
-    action_ids: ['citergie__1.2.3'],
+    action_ids: ['cae__1.2.3'],
     nom: 'Production de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats) par habitant (kg/hab.an)',
     description:
       '\u003cp\u003eLes d\u00e9chets m\u00e9nagers et assimil\u00e9s comprennent les ordures m\u00e9nag\u00e8res r\u00e9siduelles, les collectes s\u00e9lectives et les d\u00e9chets collect\u00e9s en d\u00e9ch\u00e8teries (y compris d\u00e9chets et gravats), soit la totalit\u00e9 des d\u00e9chets des m\u00e9nages et des non m\u00e9nages pris en charge par le service public. Les d\u00e9chets produits par les services municipaux (d\u00e9chets de l\u2019assainissement collectif, d\u00e9chets de nettoyage des rues, de march\u00e9, \u2026) ne rel\u00e8vent pas de ce p\u00e9rim\u00e8tre.  Le calcul ne consid\u00e8re que les services de collecte op\u00e9rationnels, c\u0027est-\u00e0-dire ceux qui ont fonctionn\u00e9 au moins une journ\u00e9e au cours de l\u0027ann\u00e9e de r\u00e9f\u00e9rence du calcul et les d\u00e9ch\u00e8teries op\u00e9rationnelles, c\u0027est-\u00e0-dire des d\u00e9ch\u00e8teries qui ont \u00e9t\u00e9 ouvertes au moins une journ\u00e9e au cours de l\u0027ann\u00e9e de r\u00e9f\u00e9rence du calcul.\u003c/p\u003e\n\u003cp\u003eLa valeur limite est issue des chiffres-cl\u00e9s d\u00e9chets de l\u2019ADEME, \u00e9dition 2016, bas\u00e9 sur l\u2019enqu\u00eate Collecte 2013 et la valeur cible des 47 territoires pionniers en France.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eValeur limite : 573 kg/hab.an\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eValeur cible : 480 kg/hab.an\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n',
@@ -377,7 +377,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-6b',
     uid: 'cae-6b',
     valeur: '',
-    action_ids: ['citergie__1.2.3'],
+    action_ids: ['cae__1.2.3'],
     nom: 'Production Ordures m\u00e9nag\u00e8res r\u00e9siduelles (kg/hab)',
     description:
       '\u003cp\u003eComposante de l\u0027indicateur 6a:\u003c/p\u003e\n\u003cp\u003eProduction de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats) par habitant (kg/hab.an)\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eL\u0027indicateur concerne uniquement les ordures m\u00e9nag\u00e8res r\u00e9siduelles, c\u2019est-\u00e0-dire les d\u00e9chets collect\u00e9s en m\u00e9lange (poubelles ordinaires). La valeur limite est issue des chiffres-cl\u00e9s d\u00e9chets de l\u2019ADEME, \u00e9dition 2016, bas\u00e9 sur l\u2019enqu\u00eate Collecte 2013 et la valeur cible des 47 territoires pionniers en France.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eValeur limite : 265 kg/hab.an\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eValeur cible : 120 kg/hab.an\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n',
@@ -389,7 +389,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-6c',
     uid: 'cae-6c',
     valeur: '',
-    action_ids: ['citergie__1.2.3'],
+    action_ids: ['cae__1.2.3'],
     nom: 'Production de d\u00e9chets collect\u00e9s s\u00e9lectivement, soit en porte-\u00e0-porte, soit en apport volontaire (kg/hab)',
     description:
       '\u003cp\u003eComposante de l\u0027indicateur 6a:\u003c/p\u003e\n\u003cp\u003eProduction de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats) par habitant (kg/hab.an)\u003c/p\u003e\n\u003cp\u003e: emballages, d\u00e9chets fermentescibles, verre\u2026\u003c/p\u003e\n',
@@ -401,7 +401,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-6d',
     uid: 'cae-6d',
     valeur: '',
-    action_ids: ['citergie__1.2.3'],
+    action_ids: ['cae__1.2.3'],
     nom: 'Production de d\u00e9chets occasionnels (kg/hab)',
     description:
       '\u003cp\u003eComposante de l\u0027indicateur 6a:\u003c/p\u003e\n\u003cp\u003eProduction de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats) par habitant (kg/hab.an)\u003c/p\u003e\n\u003cp\u003e: encombrants, d\u00e9chets verts, d\u00e9blais et gravats\u2026\u003c/p\u003e\n',
@@ -413,7 +413,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'cae-7',
     uid: 'cae-7',
     valeur: '',
-    action_ids: ['citergie__1.2.3'],
+    action_ids: ['cae__1.2.3'],
     nom: 'Recyclage mati\u00e8re et organique des d\u00e9chets m\u00e9nagers et assimil\u00e9s (%)',
     description:
       '\u003cp\u003eIl s\u2019agit de la part (en poids) des d\u00e9chets m\u00e9nagers et assimil\u00e9s (DMA, cf. d\u00e9finition ci-dessus) orient\u00e9s vers le recyclage mati\u00e8re et organique. Le recyclage consiste en toute op\u00e9ration de valorisation par laquelle les d\u00e9chets, y compris organiques, sont retrait\u00e9s en substances, mati\u00e8res ou produits pour resservir \u00e0 leur fonction initiale ou \u00e0 d\u2019autres fins (d\u00e9finition du code de l\u2019environnement). La valorisation \u00e9nerg\u00e9tique n\u0027est pas prise en compte ici.\u003c/p\u003e\n\u003cp\u003eNB : On mesure les d\u00e9chets \u00ab orient\u00e9s vers le recyclage \u00bb, les refus de tri ne sont donc pas d\u00e9duits. Ne sont pas consid\u00e9r\u00e9s ici comme \u00ab orient\u00e9s vers le recyclage \u00bb les d\u00e9chets entrant dans des installations de tri m\u00e9canobiologique. Pour ces derniers, seuls les flux sortant orient\u00e9s vers la valorisation organique (compostage ou m\u00e9thanisation) ou vers le recyclage mati\u00e8re (m\u00e9taux r\u00e9cup\u00e9r\u00e9s) sont \u00e0 int\u00e9grer dans les flux \u00ab orient\u00e9s vers le recyclage \u00bb. Les m\u00e2chefers valoris\u00e9s ainsi que les m\u00e9taux r\u00e9cup\u00e9r\u00e9s sur m\u00e2chefers ne sont pas int\u00e9gr\u00e9s.\u003c/p\u003e\n',

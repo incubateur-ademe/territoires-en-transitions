@@ -93,6 +93,7 @@ export abstract class DataLayerReadCachedEndpoint<
   }
 
   _cache: Record<string, T[]> = {};
+  _promises: Record<string, Promise<PostgrestResponse<T>>> = {};
   clearCache() {
     this._cache = {};
   }
@@ -107,9 +108,14 @@ export abstract class DataLayerReadCachedEndpoint<
     if (this._cache[key] !== undefined) {
       return this._cache[key];
     }
-    const queryResponse = await this._read(getParams);
+
+    if (this._promises[key] === undefined)
+      this._promises[key] = this._read(getParams);
+    const queryResponse = await this._promises[key];
+    delete this._promises[key];
 
     this._cache[key] = this.handleResponse(queryResponse);
+
     return this._cache[key];
   }
 }

@@ -18,7 +18,7 @@ export const eciAxes = eciReferentiel ? eciReferentiel.actions : [];
 // For ECI, main action is at level #1, here, we flatten the actions once.
 export const eciFlattenMainActions = flattenActions(eciAxes);
 
-const caeReferentiel = actions.find(action => action.id === 'citergie');
+const caeReferentiel = actions.find(action => action.id === 'cae');
 export const caeAxes = caeReferentiel ? caeReferentiel.actions : [];
 // For ECI, main action is at level #1, here, we flatten the actions twice.
 export const caeFlattenMainActions = flattenActions(flattenActions(caeAxes));
