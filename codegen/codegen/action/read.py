@@ -11,7 +11,6 @@ def build_action(doc: Document) -> dict:
             "nom": "",
             "actions": [],
             "description": "",
-            "description": "",
             "exemples": "",
             "contexte": "",
             "ressources": "",
