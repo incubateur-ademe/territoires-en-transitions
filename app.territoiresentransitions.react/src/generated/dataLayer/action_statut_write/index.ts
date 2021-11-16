@@ -2,7 +2,7 @@
 
 export interface ActionStatutWrite {
   action_id: string;
-  avancement: string;
+  avancement: 'pas_fait' | 'fait' | 'non_renseigne' | 'programme' | 'en_cours';
   concerne: boolean;
   epci_id: number;
   modified_by: string;

@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/extend-expect';
-import {actionStatutReadEndpoint} from 'core-logic/api/endpoints/ActionStatutReadEndpoint';
 import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
+import {ActionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
+import type {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
 
 describe('Action-statut repo should retrieve data-layer default statuses', () => {
   it(

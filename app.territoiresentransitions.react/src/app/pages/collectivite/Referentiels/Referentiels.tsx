@@ -31,7 +31,7 @@ const eciReferentiel = actions.find(
   action => action.id === 'economie_circulaire'
 )!;
 
-const caeReferentiel = actions.find(action => action.id === 'citergie')!;
+const caeReferentiel = actions.find(action => action.id === 'cae')!;
 // For ECI, main action is at level #1, here, we flatten the actions twice.
 
 const ConditionnalActionsReferentiels = ({view}: {view: View}) => {

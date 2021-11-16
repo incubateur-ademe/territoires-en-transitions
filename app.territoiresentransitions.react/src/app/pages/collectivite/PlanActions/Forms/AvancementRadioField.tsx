@@ -2,10 +2,11 @@ import {FC} from 'react';
 import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 import {AvancementRadioButton} from 'ui/shared/AvancementRadioButton';
-import {Avancement} from 'types';
+
 import {Option, Options} from 'types';
 import {ficheActionAvancementLabels} from 'app/labels';
 import * as R from 'ramda';
+import {Avancement} from 'generated/dataLayer/action_statut_read';
 
 type AvancementRadioFieldProps = {
   id?: string;

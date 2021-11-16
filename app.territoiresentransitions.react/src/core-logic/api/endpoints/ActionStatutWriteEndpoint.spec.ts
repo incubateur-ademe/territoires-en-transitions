@@ -8,7 +8,6 @@ describe('Action-statut write endpoint', () => {
     const statut: ActionStatutWrite = {
       concerne: true,
       avancement: 'fait',
-      modified_by: '275bbc67-f84d-4420-99fc-f77db2b29ee8',
       action_id: 'cae_1.2.3.1',
       epci_id: 1,
     };
@@ -23,7 +22,6 @@ describe('Action-statut write endpoint', () => {
     const statut: ActionStatutWrite = {
       concerne: true,
       avancement: 'fait',
-      modified_by: '275bbc67-f84d-4420-99fc-f77db2b29ee8',
       action_id: 'cae_1.2.3.1',
       epci_id: 666,
     };

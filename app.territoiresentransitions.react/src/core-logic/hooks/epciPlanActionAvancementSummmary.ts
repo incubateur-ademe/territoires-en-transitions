@@ -2,12 +2,12 @@ import {getFicheActionStoreForEpci} from 'core-logic/api/hybridStores';
 import * as R from 'ramda';
 import {useEffect, useState} from 'react';
 import {FicheActionStorable} from 'storables/FicheActionStorable';
-import {Avancement, FicheActionAvancement} from 'types';
+import {FicheActionAvancement} from 'types';
 import {
   PlanActionStructure,
   PlanActionTyped,
 } from 'types/PlanActionTypedInterface';
-import {FicheAction} from 'generated/models';
+import {Avancement} from 'generated/dataLayer/action_statut_read';
 
 export type PlanActionAvancementSummmary = {
   avancementsCount?: Partial<Record<FicheActionAvancement, number>>;

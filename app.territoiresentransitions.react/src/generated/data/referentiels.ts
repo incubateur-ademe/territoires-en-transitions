@@ -2,7 +2,7 @@ import {ActionReferentiel} from '../models/action_referentiel';
 
 export const actions: ActionReferentiel[] = [
   new ActionReferentiel({
-    id: 'citergie',
+    id: 'cae',
     id_nomenclature: '',
     nom: 'Climat Air \u00c9nergie',
     description: '',
@@ -13,7 +13,7 @@ export const actions: ActionReferentiel[] = [
     points: -1.0,
     actions: [
       new ActionReferentiel({
-        id: 'citergie__1',
+        id: 'cae_1',
         id_nomenclature: '1',
         nom: 'Planification territoriale',
         description: '',
@@ -24,7 +24,7 @@ export const actions: ActionReferentiel[] = [
         points: -1.0,
         actions: [
           new ActionReferentiel({
-            id: 'citergie__1.1',
+            id: 'cae_1.1',
             id_nomenclature: '1.1',
             nom: 'Strat\u00e9gie globale climat-air-\u00e9nergie',
             description: '',
@@ -35,7 +35,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__1.1.1',
+                id: 'cae_1.1.1',
                 id_nomenclature: '1.1.1',
                 nom: 'D\u00e9finir la vision, les objectifs et la strat\u00e9gie Climat-Air-\u00c9nergie',
                 description:
@@ -50,7 +50,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__1.1.1.1',
+                    id: 'cae_1.1.1.1',
                     id_nomenclature: '1.1.1.1',
                     nom: 'Formaliser la vision et les engagements',
                     description: '',
@@ -61,7 +61,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.1.1',
+                        id: 'cae_1.1.1.1.1',
                         id_nomenclature: '1.1.1.1.1',
                         nom: 'Formaliser une vision et des engagements dans une d\u00e9cision de politique g\u00e9n\u00e9rale (d\u00e9lib\u00e9ration)',
                         description:
@@ -75,7 +75,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.1.2',
+                        id: 'cae_1.1.1.1.2',
                         id_nomenclature: '1.1.1.1.2',
                         nom: 'S\u0027engager dans des d\u00e9marches ambitieuses et reconnues (TEPOS, Convention des Maires)',
                         description:
@@ -91,7 +91,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.1.2',
+                    id: 'cae_1.1.1.2',
                     id_nomenclature: '1.1.1.2',
                     nom: 'D\u00e9finir les principaux objectifs \u00e9nerg\u00e9tiques et climatiques',
                     description: '',
@@ -102,7 +102,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.2.1',
+                        id: 'cae_1.1.1.2.1',
                         id_nomenclature: '1.1.1.2.1',
                         nom: 'D\u00e9finir des objectifs \u00e9nerg\u00e9tiques et climatiques directeurs chiffr\u00e9s',
                         description:
@@ -116,7 +116,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.2.2',
+                        id: 'cae_1.1.1.2.2',
                         id_nomenclature: '1.1.1.2.2',
                         nom: 'Adapter les objectifs \u00e9nerg\u00e9tiques et climatiques chiffr\u00e9s au territoire',
                         description: '',
@@ -129,7 +129,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.2.3',
+                        id: 'cae_1.1.1.2.3',
                         id_nomenclature: '1.1.1.2.3',
                         nom: 'D\u00e9finir des objectifs concernant la lutte contre la pollution de l\u2019air',
                         description:
@@ -145,7 +145,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.1.3',
+                    id: 'cae_1.1.1.3',
                     id_nomenclature: '1.1.1.3',
                     nom: 'D\u00e9tailler la strat\u00e9gie et les objectifs \u00e9nerg\u00e9tiques et climatiques par secteurs d\u2019activit\u00e9s (sc\u00e9narios)',
                     description:
@@ -157,7 +157,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.3.1',
+                        id: 'cae_1.1.1.3.1',
                         id_nomenclature: '1.1.1.3.1',
                         nom: 'D\u00e9tailler des sc\u00e9narios prospectifs et des objectifs chiffr\u00e9s dans la strat\u00e9gie',
                         description:
@@ -171,7 +171,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.3.2',
+                        id: 'cae_1.1.1.3.2',
                         id_nomenclature: '1.1.1.3.2',
                         nom: 'D\u00e9tailler les objectifs chiffr\u00e9s pour chaque secteur d\u2019activit\u00e9',
                         description:
@@ -185,7 +185,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.3.3',
+                        id: 'cae_1.1.1.3.3',
                         id_nomenclature: '1.1.1.3.3',
                         nom: 'D\u00e9tailler les objectifs chiffr\u00e9s \u00e0 atteindre \u00e0 l\u2019horizon 2020, 2030 et 2050 par secteurs d\u2019activit\u00e9s',
                         description: '',
@@ -198,7 +198,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.3.4',
+                        id: 'cae_1.1.1.3.4',
                         id_nomenclature: '1.1.1.3.4',
                         nom: 'D\u00e9finir des objectifs particuli\u00e8rement ambitieux dans les domaines de la planification de l\u2019am\u00e9nagement, du b\u00e2timent et des transports',
                         description: '',
@@ -211,7 +211,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.3.5',
+                        id: 'cae_1.1.1.3.5',
                         id_nomenclature: '1.1.1.3.5',
                         nom: 'D\u00e9tailler les objectifs de d\u00e9veloppement pour chaque fili\u00e8re de production d\u2019\u00e9nergies renouvelables',
                         description:
@@ -225,7 +225,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.3.6',
+                        id: 'cae_1.1.1.3.6',
                         id_nomenclature: '1.1.1.3.6',
                         nom: 'Mettre en \u00e9vidence les cons\u00e9quences en mati\u00e8re d\u2019emploi et de co\u00fbt de l\u2019inaction dans la strat\u00e9gie',
                         description: '',
@@ -240,7 +240,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.1.4',
+                    id: 'cae_1.1.1.4',
                     id_nomenclature: '1.1.1.4',
                     nom: 'Pr\u00e9ciser la strat\u00e9gie sur la qualit\u00e9 de l\u2019air',
                     description: '',
@@ -251,7 +251,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.4.1',
+                        id: 'cae_1.1.1.4.1',
                         id_nomenclature: '1.1.1.4.1',
                         nom: 'Faire appara\u00eetre une hi\u00e9rarchisation des actions dans la strat\u00e9gie sur la qualit\u00e9 de l\u0027air',
                         description:
@@ -265,7 +265,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.4.2',
+                        id: 'cae_1.1.1.4.2',
                         id_nomenclature: '1.1.1.4.2',
                         nom: 'R\u00e9aliser un chiffrage des impacts du programme d\u0027actions sur la qualit\u00e9 de l\u0027air',
                         description:
@@ -279,7 +279,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.4.3',
+                        id: 'cae_1.1.1.4.3',
                         id_nomenclature: '1.1.1.4.3',
                         nom: 'Quantifier les actions en termes d\u0027\u00e9missions de polluants atmosph\u00e9riques \u00e9vit\u00e9es (En zone PPA)',
                         description:
@@ -295,7 +295,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.1.5',
+                    id: 'cae_1.1.1.5',
                     id_nomenclature: '1.1.1.5',
                     nom: 'D\u00e9cliner la strat\u00e9gie climat-air-\u00e9nergie de mani\u00e8re op\u00e9rationnelle en coh\u00e9rence avec les objectifs',
                     description:
@@ -309,7 +309,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.1.6',
+                    id: 'cae_1.1.1.6',
                     id_nomenclature: '1.1.1.6',
                     nom: 'Diffuser la vision, les objectifs et la strat\u00e9gie Climat-Air-\u00c9nergie',
                     description:
@@ -321,7 +321,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.6.1',
+                        id: 'cae_1.1.1.6.1',
                         id_nomenclature: '1.1.1.6.1',
                         nom: 'Comparer annuellement les objectifs au rythme r\u00e9el de mise en \u0153uvre sur le territoire',
                         description: '',
@@ -334,7 +334,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.6.2',
+                        id: 'cae_1.1.1.6.2',
                         id_nomenclature: '1.1.1.6.2',
                         nom: 'Reprendre les objectifs dans les documents de planification',
                         description: '',
@@ -347,7 +347,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.6.3',
+                        id: 'cae_1.1.1.6.3',
                         id_nomenclature: '1.1.1.6.3',
                         nom: 'Communiquer en interne et en externe pour diffuser et partager la vision',
                         description: '',
@@ -360,7 +360,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.6.4',
+                        id: 'cae_1.1.1.6.4',
                         id_nomenclature: '1.1.1.6.4',
                         nom: 'R\u00e9pondre \u00e0 des appels \u00e0 projets climat-air-\u00e9nergie',
                         description: '',
@@ -375,7 +375,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.1.7',
+                    id: 'cae_1.1.1.7',
                     id_nomenclature: '1.1.1.7',
                     nom: '\u00c9valuer et valoriser les r\u00e9sultats de cette politique climat-air-\u00e9nergie',
                     description:
@@ -387,7 +387,7 @@ export const actions: ActionReferentiel[] = [
                     points: 35,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.7.1',
+                        id: 'cae_1.1.1.7.1',
                         id_nomenclature: '1.1.1.7.1',
                         nom: 'R\u00e9duire la consommation \u00e9nerg\u00e9tique totale du territoire',
                         description:
@@ -401,7 +401,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.7.2',
+                        id: 'cae_1.1.1.7.2',
                         id_nomenclature: '1.1.1.7.2',
                         nom: 'R\u00e9duire les \u00e9missions annuelles de gaz \u00e0 effet de serre du territoire',
                         description:
@@ -415,7 +415,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.1.7.3',
+                        id: 'cae_1.1.1.7.3',
                         id_nomenclature: '1.1.1.7.3',
                         nom: 'R\u00e9duire les \u00e9missions annuelles des 6 polluants atmosph\u00e9riques r\u00e8glementaires de l\u0027arr\u00eat\u00e9 PCAET (NOx ; PM10 ; PM2,5 ; COV ; SO2 et ammoniac)',
                         description:
@@ -433,7 +433,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__1.1.2',
+                id: 'cae_1.1.2',
                 id_nomenclature: '1.1.2',
                 nom: 'R\u00e9aliser le diagnostic Climat-Air-\u00c9nergie du territoire',
                 description:
@@ -448,7 +448,7 @@ export const actions: ActionReferentiel[] = [
                 points: 10,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__1.1.2.1',
+                    id: 'cae_1.1.2.1',
                     id_nomenclature: '1.1.2.1',
                     nom: 'Formaliser les engagements, recenser et synth\u00e9tiser les donn\u00e9es et \u00e9tudes existantes',
                     description:
@@ -460,7 +460,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.1.1',
+                        id: 'cae_1.1.2.1.1',
                         id_nomenclature: '1.1.2.1.1',
                         nom: 'Formaliser les engagements par une d\u00e9cision politique (d\u00e9lib\u00e9ration)',
                         description: '',
@@ -473,7 +473,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.1.2',
+                        id: 'cae_1.1.2.1.2',
                         id_nomenclature: '1.1.2.1.2',
                         nom: 'D\u00e9dier des ressources humaines internes au diagnostic et/ou d\u00e9cider de confier une mission externe',
                         description:
@@ -487,7 +487,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.1.3',
+                        id: 'cae_1.1.2.1.3',
                         id_nomenclature: '1.1.2.1.3',
                         nom: 'Mettre en place une base d\u0027indicateurs du diagnostic',
                         description: '',
@@ -500,7 +500,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.1.4',
+                        id: 'cae_1.1.2.1.4',
                         id_nomenclature: '1.1.2.1.4',
                         nom: 'Recueillir les donn\u00e9es \u00e9nerg\u00e9tiques territoriales, GES et polluants atmosph\u00e9riques existantes qui concernent le territoire',
                         description:
@@ -514,7 +514,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.1.5',
+                        id: 'cae_1.1.2.1.5',
                         id_nomenclature: '1.1.2.1.5',
                         nom: 'Participer \u00e0 la collecte et transmission des donn\u00e9es pour les diagnostics r\u00e9alis\u00e9s \u00e0 l\u2019\u00e9chelle intercommunale (communes uniquement)',
                         description: '',
@@ -529,7 +529,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.2.2',
+                    id: 'cae_1.1.2.2',
                     id_nomenclature: '1.1.2.2',
                     nom: 'R\u00e9aliser un bilan climat-air-\u00e9nergie complet (diversit\u00e9 des indicateurs)',
                     description:
@@ -541,7 +541,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.2.1',
+                        id: 'cae_1.1.2.2.1',
                         id_nomenclature: '1.1.2.2.1',
                         nom: 'Disposer d\u0027un inventaire des \u00e9missions de GES et de polluants atmosph\u00e9riques',
                         description:
@@ -555,7 +555,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.2.2',
+                        id: 'cae_1.1.2.2.2',
                         id_nomenclature: '1.1.2.2.2',
                         nom: 'Estimer la s\u00e9questration nette de dioxyde de carbone et de ses possibilit\u00e9s de d\u00e9veloppement',
                         description:
@@ -569,7 +569,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.2.3',
+                        id: 'cae_1.1.2.2.3',
                         id_nomenclature: '1.1.2.2.3',
                         nom: 'Analyser la consommation \u00e9nerg\u00e9tique finale du territoire et le potentiel de r\u00e9duction de celle-ci.',
                         description:
@@ -583,7 +583,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.2.4',
+                        id: 'cae_1.1.2.2.4',
                         id_nomenclature: '1.1.2.2.4',
                         nom: 'Pr\u00e9senter les enjeux des r\u00e9seaux de distribution et de transport d\u2019\u00e9lectricit\u00e9, de gaz et de chaleur.',
                         description: '',
@@ -596,7 +596,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.2.5',
+                        id: 'cae_1.1.2.2.5',
                         id_nomenclature: '1.1.2.2.5',
                         nom: 'Analyser les productions \u00e9nerg\u00e9tiques renouvelables sur le territoire et leur potentiel de d\u00e9veloppement.',
                         description: '',
@@ -611,7 +611,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.2.3',
+                    id: 'cae_1.1.2.3',
                     id_nomenclature: '1.1.2.3',
                     nom: 'Adopter et pr\u00e9senter une m\u00e9thodologie claire',
                     description: '',
@@ -622,7 +622,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.3.1',
+                        id: 'cae_1.1.2.3.1',
                         id_nomenclature: '1.1.2.3.1',
                         nom: 'Les unit\u00e9s utilis\u00e9es sont celles exig\u00e9es r\u00e9glementairement',
                         description:
@@ -636,7 +636,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.3.2',
+                        id: 'cae_1.1.2.3.2',
                         id_nomenclature: '1.1.2.3.2',
                         nom: 'Expliciter la prise en compte ou non des \u00e9missions indirectes',
                         description: '',
@@ -649,7 +649,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.3.3',
+                        id: 'cae_1.1.2.3.3',
                         id_nomenclature: '1.1.2.3.3',
                         nom: 'Expliciter les sources et les donn\u00e9es (ann\u00e9e, acteurs, p\u00e9rim\u00e8tres)',
                         description: '',
@@ -664,7 +664,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.2.4',
+                    id: 'cae_1.1.2.4',
                     id_nomenclature: '1.1.2.4',
                     nom: 'R\u00e9aliser un diagnostic allant au-del\u00e0 des exigences r\u00e9glementaires',
                     description:
@@ -676,7 +676,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.4.1',
+                        id: 'cae_1.1.2.4.1',
                         id_nomenclature: '1.1.2.4.1',
                         nom: 'Prendre en compte les \u00e9missions indirectes',
                         description:
@@ -690,7 +690,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.4.2',
+                        id: 'cae_1.1.2.4.2',
                         id_nomenclature: '1.1.2.4.2',
                         nom: 'Identifier les concentrations des principaux polluants et les populations expos\u00e9es \u00e0 des d\u00e9passements de normes',
                         description:
@@ -704,7 +704,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.4.3',
+                        id: 'cae_1.1.2.4.3',
                         id_nomenclature: '1.1.2.4.3',
                         nom: 'D\u00e9tailler finement l\u0027analyse de chaque secteur',
                         description:
@@ -720,7 +720,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.2.5',
+                    id: 'cae_1.1.2.5',
                     id_nomenclature: '1.1.2.5',
                     nom: 'Valoriser les r\u00e9sultats en interne et en externe',
                     description: '',
@@ -731,7 +731,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.5.1',
+                        id: 'cae_1.1.2.5.1',
                         id_nomenclature: '1.1.2.5.1',
                         nom: 'Analyser les \u00e9volutions constat\u00e9es',
                         description:
@@ -745,7 +745,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.5.2',
+                        id: 'cae_1.1.2.5.2',
                         id_nomenclature: '1.1.2.5.2',
                         nom: 'Suivre l\u0027\u00e9volution de la consommation en fonction des \u00e9nergies',
                         description: '',
@@ -758,7 +758,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.5.3',
+                        id: 'cae_1.1.2.5.3',
                         id_nomenclature: '1.1.2.5.3',
                         nom: 'Pr\u00e9senter les indicateurs aux agents et aux \u00e9lus',
                         description: '',
@@ -771,7 +771,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.5.4',
+                        id: 'cae_1.1.2.5.4',
                         id_nomenclature: '1.1.2.5.4',
                         nom: 'R\u00e9aliser l\u0027appropriation des r\u00e9sultats par les communes pour les diagnostics \u00e0 l\u2019\u00e9chelle de l\u2019EPCI',
                         description: '',
@@ -784,7 +784,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.5.5',
+                        id: 'cae_1.1.2.5.5',
                         id_nomenclature: '1.1.2.5.5',
                         nom: 'Communiquer les indicateurs aux acteurs du territoire et aux citoyens',
                         description: '',
@@ -797,7 +797,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.5.6',
+                        id: 'cae_1.1.2.5.6',
                         id_nomenclature: '1.1.2.5.6',
                         nom: 'Utiliser les indicateurs pour prioriser les actions et orienter la politique de la collectivit\u00e9',
                         description: '',
@@ -810,7 +810,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.2.5.7',
+                        id: 'cae_1.1.2.5.7',
                         id_nomenclature: '1.1.2.5.7',
                         nom: 'Mettre \u00e0 jour r\u00e9guli\u00e8rement les indicateurs',
                         description:
@@ -828,7 +828,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__1.1.3',
+                id: 'cae_1.1.3',
                 id_nomenclature: '1.1.3',
                 nom: 'R\u00e9aliser un diagnostic de vuln\u00e9rabilit\u00e9 et s\u2019engager dans un programme d\u0027adaptation au changement climatique du territoire',
                 description:
@@ -843,7 +843,7 @@ export const actions: ActionReferentiel[] = [
                 points: 8,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__1.1.3.1',
+                    id: 'cae_1.1.3.1',
                     id_nomenclature: '1.1.3.1',
                     nom: 'Formaliser l\u2019int\u00e9r\u00eat de la collectivit\u00e9 dans sa volont\u00e9 de r\u00e9duire la vuln\u00e9rabilit\u00e9 du territoire au changement climatique',
                     description: '',
@@ -854,7 +854,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.1.1',
+                        id: 'cae_1.1.3.1.1',
                         id_nomenclature: '1.1.3.1.1',
                         nom: 'Prendre en compte les \u00e9tudes r\u00e9alis\u00e9es au niveau r\u00e9gional ou interr\u00e9gional (SRCAE/SRADDET, \u00e9tudes MEDCIE ou autre), voire national (PNACC2)',
                         description:
@@ -868,7 +868,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.1.2',
+                        id: 'cae_1.1.3.1.2',
                         id_nomenclature: '1.1.3.1.2',
                         nom: 'Allouer un budget et/ou des moyens humains',
                         description:
@@ -884,7 +884,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.3.2',
+                    id: 'cae_1.1.3.2',
                     id_nomenclature: '1.1.3.2',
                     nom: 'Conna\u00eetre la vuln\u00e9rabilit\u00e9 du territoire au changement climatique',
                     description:
@@ -896,7 +896,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.2.1',
+                        id: 'cae_1.1.3.2.1',
                         id_nomenclature: '1.1.3.2.1',
                         nom: 'Conna\u00eetre les \u00e9volutions climatiques du territoire',
                         description:
@@ -910,7 +910,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.2.2',
+                        id: 'cae_1.1.3.2.2',
                         id_nomenclature: '1.1.3.2.2',
                         nom: 'Conna\u00eetre les impacts \u00e9conomiques du changement climatique sur le territoire',
                         description:
@@ -924,7 +924,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.2.3',
+                        id: 'cae_1.1.3.2.3',
                         id_nomenclature: '1.1.3.2.3',
                         nom: 'Conna\u00eetre les impacts sociaux du changement climatique sur le territoire',
                         description:
@@ -938,7 +938,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.2.4',
+                        id: 'cae_1.1.3.2.4',
                         id_nomenclature: '1.1.3.2.4',
                         nom: 'Conna\u00eetre les impacts en termes de biodiversit\u00e9',
                         description: '',
@@ -951,7 +951,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.2.5',
+                        id: 'cae_1.1.3.2.5',
                         id_nomenclature: '1.1.3.2.5',
                         nom: 'Conna\u00eetre les impacts sur les r\u00e9seaux : eau, assainissement, approvisionnement en \u00e9nergie',
                         description: '',
@@ -964,7 +964,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.2.6',
+                        id: 'cae_1.1.3.2.6',
                         id_nomenclature: '1.1.3.2.6',
                         nom: 'Conna\u00eetre les impacts sur l\u2019am\u00e9nagement\u00a0: \u00eelots de chaleurs urbains',
                         description: '',
@@ -979,7 +979,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.3.3',
+                    id: 'cae_1.1.3.3',
                     id_nomenclature: '1.1.3.3',
                     nom: 'Adopter un programme d\u2019actions d\u2019adaptation et int\u00e9grer les effets du changement climatique dans les comp\u00e9tences et les politiques de la collectivit\u00e9',
                     description:
@@ -991,7 +991,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.3.1',
+                        id: 'cae_1.1.3.3.1',
                         id_nomenclature: '1.1.3.3.1',
                         nom: 'D\u00e9finir un programme d\u2019actions sp\u00e9cifique ou int\u00e9grer de fa\u00e7on transversale forte l\u2019adaptation dans le programme d\u2019actions climat-air-\u00e9nergie',
                         description:
@@ -1005,7 +1005,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.3.2',
+                        id: 'cae_1.1.3.3.2',
                         id_nomenclature: '1.1.3.3.2',
                         nom: 'Valoriser l\u2019\u00e9tude de vuln\u00e9rabilit\u00e9 et communiquer en priorite\u0301 aupr\u00e8s des acteurs leviers de changement',
                         description:
@@ -1019,7 +1019,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.3.3',
+                        id: 'cae_1.1.3.3.3',
                         id_nomenclature: '1.1.3.3.3',
                         nom: 'Int\u00e9grer les \u00e9l\u00e9ments de r\u00e9silience climatique dans les documents de planification structurants',
                         description:
@@ -1035,7 +1035,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.1.3.4',
+                    id: 'cae_1.1.3.4',
                     id_nomenclature: '1.1.3.4',
                     nom: 'Mettre en place un pilotage ope\u0301rationnel de suivi et d\u2019\u00e9valuation de la politique territoriale d\u2019adaptation au changement climatique',
                     description: '',
@@ -1046,7 +1046,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.4.1',
+                        id: 'cae_1.1.3.4.1',
                         id_nomenclature: '1.1.3.4.1',
                         nom: 'Structurer et mettre en \u0153uvre une de\u0301marche de suivi-e\u0301valuation',
                         description:
@@ -1060,7 +1060,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.1.3.4.2',
+                        id: 'cae_1.1.3.4.2',
                         id_nomenclature: '1.1.3.4.2',
                         nom: 'R\u00e9aliser une revue de suivi p\u00e9riodique pour mesurer les progr\u00e8s et l\u2019\u00e9tat d\u2019avancement de la politique d\u2019adaptation au changement climatique',
                         description:
@@ -1080,7 +1080,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__1.2',
+            id: 'cae_1.2',
             id_nomenclature: '1.2',
             nom: 'Planification sectorielle',
             description: '',
@@ -1091,7 +1091,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__1.2.1',
+                id: 'cae_1.2.1',
                 id_nomenclature: '1.2.1',
                 nom: 'Mettre en place un sch\u00e9ma directeur des \u00e9nergies et des r\u00e9seaux de chaleur',
                 description:
@@ -1106,7 +1106,7 @@ export const actions: ActionReferentiel[] = [
                 points: 10,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__1.2.1.1',
+                    id: 'cae_1.2.1.1',
                     id_nomenclature: '1.2.1.1',
                     nom: 'Organiser le pilotage',
                     description: '',
@@ -1117,7 +1117,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.1.1',
+                        id: 'cae_1.2.1.1.1',
                         id_nomenclature: '1.2.1.1.1',
                         nom: 'D\u00e9signer un \u00e9lu r\u00e9f\u00e9rent et un technicien responsable',
                         description: '',
@@ -1130,7 +1130,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.1.2',
+                        id: 'cae_1.2.1.1.2',
                         id_nomenclature: '1.2.1.1.2',
                         nom: 'D\u00e9l\u00e9guer la comp\u00e9tence sch\u00e9ma directeur des \u00e9nergies et des r\u00e9seaux de chaleur \u00e0 l\u2019intercommunalit\u00e9',
                         description:
@@ -1144,7 +1144,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.1.3',
+                        id: 'cae_1.2.1.1.3',
                         id_nomenclature: '1.2.1.1.3',
                         nom: 'Prendre la d\u00e9cision (d\u00e9lib\u00e9rer) de r\u00e9aliser l\u0027\u00e9tude en interne ou de confier une mission externe',
                         description:
@@ -1160,7 +1160,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.1.2',
+                    id: 'cae_1.2.1.2',
                     id_nomenclature: '1.2.1.2',
                     nom: '\u00c9tudier la faisabilit\u00e9 de d\u00e9veloppement des r\u00e9seaux de chaleur sur le territoire',
                     description:
@@ -1172,7 +1172,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.2.1',
+                        id: 'cae_1.2.1.2.1',
                         id_nomenclature: '1.2.1.2.1',
                         nom: '\u00c9tudier la faisabilit\u00e9 des r\u00e9seaux de chaleur aliment\u00e9s en \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration',
                         description:
@@ -1186,7 +1186,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.2.2',
+                        id: 'cae_1.2.1.2.2',
                         id_nomenclature: '1.2.1.2.2',
                         nom: '\u00c9largir la r\u00e9flexion en menant une \u00e9tude de faisabilit\u00e9 de cr\u00e9ation d\u2019un r\u00e9seau de chaleur alimentant les b\u00e2timents publics et priv\u00e9s.',
                         description:
@@ -1202,7 +1202,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.1.3',
+                    id: 'cae_1.2.1.3',
                     id_nomenclature: '1.2.1.3',
                     nom: '\u00c9tudier les potentiels de d\u00e9veloppement des \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration sur le territoire',
                     description: '',
@@ -1213,7 +1213,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.3.1',
+                        id: 'cae_1.2.1.3.1',
                         id_nomenclature: '1.2.1.3.1',
                         nom: 'Prendre en compte et quantifier tous les potentiels de d\u00e9veloppement',
                         description:
@@ -1227,7 +1227,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.3.2',
+                        id: 'cae_1.2.1.3.2',
                         id_nomenclature: '1.2.1.3.2',
                         nom: '\u00c9tablir un plan d\u0027approvisionnement territorial en bois \u00e9nergie (collectivit\u00e9s m\u00e9tropolitaines)',
                         description:
@@ -1243,7 +1243,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.1.4',
+                    id: 'cae_1.2.1.4',
                     id_nomenclature: '1.2.1.4',
                     nom: '\u00c9tablir un sch\u00e9ma directeur pour la cr\u00e9ation/extension-densification d\u0027un r\u00e9seau de chaleur (collectivit\u00e9s m\u00e9tropolitaines)',
                     description: '',
@@ -1254,7 +1254,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.4.1',
+                        id: 'cae_1.2.1.4.1',
                         id_nomenclature: '1.2.1.4.1',
                         nom: 'Prendre en compte de mani\u00e8re globale tous les projets pr\u00e9sents sur le territoire (HLM, gros ensembles, industrie\u2026)',
                         description: '',
@@ -1267,7 +1267,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.4.2',
+                        id: 'cae_1.2.1.4.2',
                         id_nomenclature: '1.2.1.4.2',
                         nom: 'Pr\u00e9voir l\u0027extension du r\u00e9seau de chaleur et l\u0027\u00e9volution vers un mix \u00e9nerg\u00e9tique sup\u00e9rieur \u00e0 50 % d\u2019\u00e9nergies renouvelables',
                         description:
@@ -1283,7 +1283,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.1.5',
+                    id: 'cae_1.2.1.5',
                     id_nomenclature: '1.2.1.5',
                     nom: 'D\u00e9terminer les secteurs g\u00e9ographiques prioritaires de d\u00e9veloppement des \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration',
                     description:
@@ -1297,7 +1297,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.1.6',
+                    id: 'cae_1.2.1.6',
                     id_nomenclature: '1.2.1.6',
                     nom: 'Coordonner les diff\u00e9rentes d\u00e9marches de planification sectorielle',
                     description: '',
@@ -1308,7 +1308,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.6.1',
+                        id: 'cae_1.2.1.6.1',
                         id_nomenclature: '1.2.1.6.1',
                         nom: 'Int\u00e9grer les secteurs prioritaires de d\u00e9veloppement des \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration aux documents d\u2019urbanisme et dans les projets d\u2019am\u00e9nagement',
                         description: '',
@@ -1321,7 +1321,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.6.2',
+                        id: 'cae_1.2.1.6.2',
                         id_nomenclature: '1.2.1.6.2',
                         nom: 'En pr\u00e9sence d\u2019un r\u00e9seau de chaleur, \u00e9tudier l\u2019int\u00e9r\u00eat de proc\u00e9der \u00e0 son classement et le faire si cela est pertinent',
                         description: '',
@@ -1334,7 +1334,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.6.3',
+                        id: 'cae_1.2.1.6.3',
                         id_nomenclature: '1.2.1.6.3',
                         nom: 'Int\u00e9grer des mesures de ma\u00eetrise de la demande en \u00e9nergie',
                         description:
@@ -1350,7 +1350,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.1.7',
+                    id: 'cae_1.2.1.7',
                     id_nomenclature: '1.2.1.7',
                     nom: 'Communiquer les r\u00e9sultats et associer les acteurs du territoire',
                     description: '',
@@ -1361,7 +1361,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.7.1',
+                        id: 'cae_1.2.1.7.1',
                         id_nomenclature: '1.2.1.7.1',
                         nom: 'Mettre \u00e0 disposition de l\u2019ensemble des parties prenantes du territoire la programmation \u00e9nerg\u00e9tique',
                         description:
@@ -1375,7 +1375,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.7.2',
+                        id: 'cae_1.2.1.7.2',
                         id_nomenclature: '1.2.1.7.2',
                         nom: 'Soigner la port\u00e9e et la forme des \u00e9tudes r\u00e9alis\u00e9es',
                         description:
@@ -1389,7 +1389,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.7.3',
+                        id: 'cae_1.2.1.7.3',
                         id_nomenclature: '1.2.1.7.3',
                         nom: 'Associer les d\u00e9cideurs, les repr\u00e9sentants d\u0027int\u00e9r\u00eats et la soci\u00e9t\u00e9 civile',
                         description: '',
@@ -1402,7 +1402,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.1.7.4',
+                        id: 'cae_1.2.1.7.4',
                         id_nomenclature: '1.2.1.7.4',
                         nom: 'Associer les investisseurs potentiels',
                         description: '',
@@ -1419,7 +1419,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__1.2.2',
+                id: 'cae_1.2.2',
                 id_nomenclature: '1.2.2',
                 nom: 'Organiser les mobilit\u00e9s sur le territoire',
                 description:
@@ -1434,7 +1434,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__1.2.2.1',
+                    id: 'cae_1.2.2.1',
                     id_nomenclature: '1.2.2.1',
                     nom: 'Acter la volont\u00e9 politique de mettre en place une d\u00e9marche de planification des d\u00e9placements',
                     description:
@@ -1446,7 +1446,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.1.1',
+                        id: 'cae_1.2.2.1.1',
                         id_nomenclature: '1.2.2.1.1',
                         nom: 'Prendre la comp\u00e9tence d\u2019organisation de la mobilit\u00e9 (pour les communaut\u00e9s de communes)',
                         description: '',
@@ -1459,7 +1459,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.1.2',
+                        id: 'cae_1.2.2.1.2',
                         id_nomenclature: '1.2.2.1.2',
                         nom: 'D\u00e9cider (d\u00e9lib\u00e9ration) de r\u00e9aliser la d\u00e9marche de planification des d\u00e9placements (PDM, PDMS)',
                         description:
@@ -1473,7 +1473,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.1.3',
+                        id: 'cae_1.2.2.1.3',
                         id_nomenclature: '1.2.2.1.3',
                         nom: 'Disposer d\u2019une planification ant\u00e9rieure ou s\u0027approprier les enjeux et proposition lors de l\u2019\u00e9laboration des documents structurants par l\u2019intercommunalit\u00e9 (communes)',
                         description:
@@ -1489,7 +1489,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.2.2',
+                    id: 'cae_1.2.2.2',
                     id_nomenclature: '1.2.2.2',
                     nom: '\u00c9tablir un diagnostic mobilit\u00e9 dans une approche concert\u00e9e',
                     description:
@@ -1501,7 +1501,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.2.1',
+                        id: 'cae_1.2.2.2.1',
                         id_nomenclature: '1.2.2.2.1',
                         nom: 'Quantifier les flux de mobilit\u00e9 gr\u00e2ce \u00e0 des comptages et/ou une mod\u00e9lisation et identifier les zones \u00e0 enjeux importants',
                         description:
@@ -1515,7 +1515,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.2.2',
+                        id: 'cae_1.2.2.2.2',
                         id_nomenclature: '1.2.2.2.2',
                         nom: 'Traduire de fa\u00e7on spatialis\u00e9e (carte) les orientations',
                         description:
@@ -1529,7 +1529,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.2.3',
+                        id: 'cae_1.2.2.2.3',
                         id_nomenclature: '1.2.2.2.3',
                         nom: '\u00c9valuer les GES et polluants atmosph\u00e9riques li\u00e9s aux d\u00e9placements sur le p\u00e9rim\u00e8tre du plan de mobilit\u00e9',
                         description: '',
@@ -1542,7 +1542,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.2.4',
+                        id: 'cae_1.2.2.2.4',
                         id_nomenclature: '1.2.2.2.4',
                         nom: 'Associer les acteurs du territoire dans une proc\u00e9dure concert\u00e9e lors de l\u2019\u00e9laboration ou r\u00e9vision du plan de mobilit\u00e9',
                         description: '',
@@ -1555,7 +1555,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.2.5',
+                        id: 'cae_1.2.2.2.5',
                         id_nomenclature: '1.2.2.2.5',
                         nom: 'V\u00e9rifier la compatibilit\u00e9 avec le PCAET ou prendre en compte les PCAET s\u2019il y en a plusieurs dans le p\u00e9rim\u00e8tre du plan de mobilit\u00e9',
                         description: '',
@@ -1568,7 +1568,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.2.6',
+                        id: 'cae_1.2.2.2.6',
                         id_nomenclature: '1.2.2.2.6',
                         nom: 'Assurer une coordination strat\u00e9gique et op\u00e9rationnelle entre l\u2019AOM locale et la r\u00e9gion pour d\u00e9finir la politique de mobilit\u00e9',
                         description: '',
@@ -1581,7 +1581,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.2.7',
+                        id: 'cae_1.2.2.2.7',
                         id_nomenclature: '1.2.2.2.7',
                         nom: 'Soumettre le plan pour avis aux AOM limitrophes afin d\u2019am\u00e9liorer la collaboration au-del\u00e0 du ressort territorial',
                         description: '',
@@ -1594,7 +1594,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.2.8',
+                        id: 'cae_1.2.2.2.8',
                         id_nomenclature: '1.2.2.2.8',
                         nom: 'Mettre en coh\u00e9rence la politique de mobilit\u00e9 avec celle de l\u2019urbanisme local, d\u00e9clin\u00e9e par le plan local d\u2019urbanisme (PLU)',
                         description: '',
@@ -1607,7 +1607,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.2.9',
+                        id: 'cae_1.2.2.2.9',
                         id_nomenclature: '1.2.2.2.9',
                         nom: 'Bien identifier et int\u00e9grer a minima les enjeux de mobilit\u00e9 dans les documents de planification et programmes existants (PLU, PLH, PDMS \u2026)',
                         description:
@@ -1623,7 +1623,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.2.3',
+                    id: 'cae_1.2.2.3',
                     id_nomenclature: '1.2.2.3',
                     nom: 'Planifier des actions pour limiter l\u2019usage de la voiture individuelle',
                     description:
@@ -1635,7 +1635,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.3.1',
+                        id: 'cae_1.2.2.3.1',
                         id_nomenclature: '1.2.2.3.1',
                         nom: 'Expliciter les mesures pour diminuer \u00e0 la source les besoins de d\u00e9placements motoris\u00e9s (lien avec la politique d\u2019urbanisme)',
                         description: '',
@@ -1648,7 +1648,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.3.2',
+                        id: 'cae_1.2.2.3.2',
                         id_nomenclature: '1.2.2.3.2',
                         nom: 'Pr\u00e9ciser le raccordement aux transports en commun des zones g\u00e9n\u00e9ratrices de trafic mal desservies',
                         description: '',
@@ -1661,7 +1661,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.3.3',
+                        id: 'cae_1.2.2.3.3',
                         id_nomenclature: '1.2.2.3.3',
                         nom: 'Planifier de fa\u00e7on raisonn\u00e9e le stationnement',
                         description: '',
@@ -1674,7 +1674,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.3.4',
+                        id: 'cae_1.2.2.3.4',
                         id_nomenclature: '1.2.2.3.4',
                         nom: 'Pr\u00e9ciser les mesures pour d\u00e9velopper le covoiturage et l\u0027autopartage (parkings, places r\u00e9serv\u00e9es...), le d\u00e9ploiement de services v\u00e9los et la mobilit\u00e9 \u00e9lectrique',
                         description: '',
@@ -1687,7 +1687,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.3.5',
+                        id: 'cae_1.2.2.3.5',
                         id_nomenclature: '1.2.2.3.5',
                         nom: 'Expliciter les mesures pour ralentir ou diminuer le trafic motoris\u00e9',
                         description:
@@ -1703,7 +1703,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.2.4',
+                    id: 'cae_1.2.2.4',
                     id_nomenclature: '1.2.2.4',
                     nom: 'Prioriser le d\u00e9veloppement des modes alternatifs de d\u00e9placement \u00e0 la voiture dans la planification',
                     description:
@@ -1715,7 +1715,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.4.1',
+                        id: 'cae_1.2.2.4.1',
                         id_nomenclature: '1.2.2.4.1',
                         nom: 'Planifier le r\u00e9seau pi\u00e9tonnier',
                         description:
@@ -1729,7 +1729,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.4.2',
+                        id: 'cae_1.2.2.4.2',
                         id_nomenclature: '1.2.2.4.2',
                         nom: 'Planifier les chemins menant \u00e0 l\u0027\u00e9cole et la gestion de l\u2019espace autour des \u00e9coles',
                         description:
@@ -1743,7 +1743,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.4.3',
+                        id: 'cae_1.2.2.4.3',
                         id_nomenclature: '1.2.2.4.3',
                         nom: 'Planifier le r\u00e9seau cyclable (existence d\u0027un sch\u00e9ma d\u0027am\u00e9nagements cyclables ou d\u2019un plan v\u00e9lo)',
                         description: '',
@@ -1756,7 +1756,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.4.4',
+                        id: 'cae_1.2.2.4.4',
                         id_nomenclature: '1.2.2.4.4',
                         nom: 'Planifier la continuit\u00e9 des itin\u00e9raires cyclables et pi\u00e9tons',
                         description: '',
@@ -1769,7 +1769,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.4.5',
+                        id: 'cae_1.2.2.4.5',
                         id_nomenclature: '1.2.2.4.5',
                         nom: 'Planifier les transports publics (lignes, arr\u00eats, etc.)',
                         description: '',
@@ -1782,7 +1782,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.4.6',
+                        id: 'cae_1.2.2.4.6',
                         id_nomenclature: '1.2.2.4.6',
                         nom: 'Porter attention \u00e0 l\u2019intermodalit\u00e9 dans la planification',
                         description: '',
@@ -1795,7 +1795,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.4.7',
+                        id: 'cae_1.2.2.4.7',
                         id_nomenclature: '1.2.2.4.7',
                         nom: 'Favoriser le d\u00e9veloppement du covoiturage et de l\u0027autopartage',
                         description: '',
@@ -1808,7 +1808,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.4.8',
+                        id: 'cae_1.2.2.4.8',
                         id_nomenclature: '1.2.2.4.8',
                         nom: 'Organiser et optimiser les usages des v\u00e9hicules \u00e9lectriques',
                         description: '',
@@ -1821,7 +1821,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.4.9',
+                        id: 'cae_1.2.2.4.9',
                         id_nomenclature: '1.2.2.4.9',
                         nom: 'Envisager l\u2019hippomobilit\u00e9 pour certains usages sp\u00e9cifiques',
                         description:
@@ -1837,7 +1837,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.2.5',
+                    id: 'cae_1.2.2.5',
                     id_nomenclature: '1.2.2.5',
                     nom: 'Suivre les actions mises en \u0153uvre et atteindre des r\u00e9sultats significatifs',
                     description:
@@ -1849,7 +1849,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.5.1',
+                        id: 'cae_1.2.2.5.1',
                         id_nomenclature: '1.2.2.5.1',
                         nom: 'Int\u00e9grer des mesures organisationnelles et de suivi',
                         description:
@@ -1863,7 +1863,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.5.2',
+                        id: 'cae_1.2.2.5.2',
                         id_nomenclature: '1.2.2.5.2',
                         nom: '\u00c9valuer le document au moins tous les 5 ans',
                         description: '',
@@ -1876,7 +1876,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.5.3',
+                        id: 'cae_1.2.2.5.3',
                         id_nomenclature: '1.2.2.5.3',
                         nom: 'Cr\u00e9er un observatoire des d\u00e9placements',
                         description: '',
@@ -1889,7 +1889,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.5.4',
+                        id: 'cae_1.2.2.5.4',
                         id_nomenclature: '1.2.2.5.4',
                         nom: 'Diminuer ou stabiliser les d\u00e9placements en voiture particuli\u00e8re (part modale de la voiture)',
                         description:
@@ -1903,7 +1903,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.2.5.5',
+                        id: 'cae_1.2.2.5.5',
                         id_nomenclature: '1.2.2.5.5',
                         nom: 'Obtenir un impact b\u00e9n\u00e9fique de la programmation sur la diminution de la pollution atmosph\u00e9rique',
                         description:
@@ -1921,7 +1921,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__1.2.3',
+                id: 'cae_1.2.3',
                 id_nomenclature: '1.2.3',
                 nom: 'D\u00e9finir et mettre en oeuvre la strat\u00e9gie de pr\u00e9vention et de gestion des d\u00e9chets',
                 description:
@@ -1935,7 +1935,7 @@ export const actions: ActionReferentiel[] = [
                 points: 10,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__1.2.3.1',
+                    id: 'cae_1.2.3.1',
                     id_nomenclature: '1.2.3.1',
                     nom: 'D\u00e9finir une strat\u00e9gie de pr\u00e9vention et de gestion des d\u00e9chets et sensibiliser les acteurs \u00e0 la pr\u00e9vention et au tri des d\u00e9chets',
                     description: '',
@@ -1946,7 +1946,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.1.1',
+                        id: 'cae_1.2.3.1.1',
                         id_nomenclature: '1.2.3.1.1',
                         nom: 'Communiquer r\u00e9guli\u00e8rement vers la population et les acteurs socio-\u00e9conomiques pour inciter \u00e0 la r\u00e9duction des d\u00e9chets',
                         description: '',
@@ -1959,7 +1959,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.1.2',
+                        id: 'cae_1.2.3.1.2',
                         id_nomenclature: '1.2.3.1.2',
                         nom: 'Pratiquer et rendre visible la collecte s\u00e9par\u00e9e des emballages et papiers dans tous les lieux publics',
                         description:
@@ -1973,7 +1973,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.1.3',
+                        id: 'cae_1.2.3.1.3',
                         id_nomenclature: '1.2.3.1.3',
                         nom: 'Disposer d\u0027un programme local de pr\u00e9vention',
                         description: '',
@@ -1986,7 +1986,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.1.4',
+                        id: 'cae_1.2.3.1.4',
                         id_nomenclature: '1.2.3.1.4',
                         nom: '\u00c9tablir un r\u00e8glement de collecte, suivre les co\u00fbts du service, \u00e9tablir un rapport annuel sur les co\u00fbts et performances du service (comp\u00e9tence collecte)',
                         description:
@@ -2000,7 +2000,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.1.5',
+                        id: 'cae_1.2.3.1.5',
                         id_nomenclature: '1.2.3.1.5',
                         nom: 'Suivre les co\u00fbts du service, \u00e9tablir un rapport annuel sur les co\u00fbts et performances du service (comp\u00e9tence traitement)',
                         description:
@@ -2014,7 +2014,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.1.6',
+                        id: 'cae_1.2.3.1.6',
                         id_nomenclature: '1.2.3.1.6',
                         nom: ': Pr\u00e9venir (sensibilisation des agents, des services, etc.) et g\u00e9rer les d\u00e9chets conforme \u00e0 la r\u00e9glementation, r\u00e9employer et recycler les d\u00e9chets occasionn\u00e9s par les construction/d\u00e9construction des b\u00e2timents, respecter l\u2019obligation de tri 5 flux pour les services (inter)communaux. (Hors comp\u00e9tences collecte et traitement (commune ou communaut\u00e9 de commune))',
                         description:
@@ -2030,7 +2030,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.3.2',
+                    id: 'cae_1.2.3.2',
                     id_nomenclature: '1.2.3.2',
                     nom: 'Mettre en \u0153uvre une politique locale de pr\u00e9vention et de gestion des d\u00e9chets ambitieuse et tourn\u00e9e vers l\u2019\u00e9conomie circulaire',
                     description: '',
@@ -2041,7 +2041,7 @@ export const actions: ActionReferentiel[] = [
                     points: 50,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.1',
+                        id: 'cae_1.2.3.2.1',
                         id_nomenclature: '1.2.3.2.1',
                         nom: 'Engager des actions allant au-del\u00e0 des obligations r\u00e9glementaires et mobiliser les acteurs pour r\u00e9duire, r\u00e9utiliser, r\u00e9parer, recycler, valoriser les ressources/les d\u00e9chets',
                         description:
@@ -2055,7 +2055,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.2',
+                        id: 'cae_1.2.3.2.2',
                         id_nomenclature: '1.2.3.2.2',
                         nom: 'Engager une d\u00e9marche de pr\u00e9vention ambitieuse',
                         description:
@@ -2069,7 +2069,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.3',
+                        id: 'cae_1.2.3.2.3',
                         id_nomenclature: '1.2.3.2.3',
                         nom: 'Travailler en \u00e9troite collaboration avec ses partenaires et participer \u00e0 la construction des objectifs de la strat\u00e9gie et du programme d\u2019actions en cas de transfert de comp\u00e9tences (partiel ou total)',
                         description: '',
@@ -2082,7 +2082,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.4',
+                        id: 'cae_1.2.3.2.4',
                         id_nomenclature: '1.2.3.2.4',
                         nom: 'Mettre en place la tarification incitative (comp\u00e9tence collecte)',
                         description: '',
@@ -2095,7 +2095,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.5',
+                        id: 'cae_1.2.3.2.5',
                         id_nomenclature: '1.2.3.2.5',
                         nom: 'Favoriser le r\u00e9emploi et la r\u00e9utilisation (comp\u00e9tence collecte)',
                         description:
@@ -2109,7 +2109,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.6',
+                        id: 'cae_1.2.3.2.6',
                         id_nomenclature: '1.2.3.2.6',
                         nom: 'D\u00e9velopper les zones de r\u00e9emploi en d\u00e9ch\u00e8terie et/ou accompagner la cr\u00e9ation d\u2019une recyclerie attenante \u00e0 une d\u00e9ch\u00e8terie, etc. (comp\u00e9tence collecte)',
                         description: '',
@@ -2122,7 +2122,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.7',
+                        id: 'cae_1.2.3.2.7',
                         id_nomenclature: '1.2.3.2.7',
                         nom: 'Optimiser le service de collecte (comp\u00e9tence collecte)',
                         description:
@@ -2136,7 +2136,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.8',
+                        id: 'cae_1.2.3.2.8',
                         id_nomenclature: '1.2.3.2.8',
                         nom: 'Mettre en \u0153uvre des fili\u00e8re r\u00e9emploi ou de nouvelles fili\u00e8res de recyclage en d\u00e9ch\u00e8terie (comp\u00e9tence collecte)',
                         description: '',
@@ -2149,7 +2149,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.9',
+                        id: 'cae_1.2.3.2.9',
                         id_nomenclature: '1.2.3.2.9',
                         nom: 'D\u00e9finir la limite du service public, articulation service public/offre priv\u00e9e (comp\u00e9tence collecte)',
                         description:
@@ -2163,7 +2163,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.10',
+                        id: 'cae_1.2.3.2.10',
                         id_nomenclature: '1.2.3.2.10',
                         nom: 'Animer les entreprises du territoire (comp\u00e9tence collecte)',
                         description:
@@ -2177,7 +2177,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.11',
+                        id: 'cae_1.2.3.2.11',
                         id_nomenclature: '1.2.3.2.11',
                         nom: 'Etudier la fr\u00e9quence, les itin\u00e9raires de collecte et la motorisation des v\u00e9hicules d\u00e9di\u00e9s \u00e0 la collecte des d\u00e9chets (comp\u00e9tence collecte)',
                         description:
@@ -2191,7 +2191,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.12',
+                        id: 'cae_1.2.3.2.12',
                         id_nomenclature: '1.2.3.2.12',
                         nom: 'Mettre en place une tarification incitative \u00e0 la pr\u00e9vention et au recyclage (comp\u00e9tence traitement)',
                         description:
@@ -2205,7 +2205,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.13',
+                        id: 'cae_1.2.3.2.13',
                         id_nomenclature: '1.2.3.2.13',
                         nom: 'Ins\u00e9rer des clauses de r\u00e9duction annuelle des quantit\u00e9s incin\u00e9r\u00e9es et enfouies dans les contrats de D\u00e9l\u00e9gation de Service Public (DSP) (comp\u00e9tence traitement)',
                         description: '',
@@ -2218,7 +2218,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.14',
+                        id: 'cae_1.2.3.2.14',
                         id_nomenclature: '1.2.3.2.14',
                         nom: 'Augmenter le recyclage / les nouvelles fili\u00e8res de valorisation mati\u00e8re (hors TMB) (pl\u00e2tre, encombrants, meubles/bois) (comp\u00e9tence traitement)',
                         description: '',
@@ -2231,7 +2231,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.15',
+                        id: 'cae_1.2.3.2.15',
                         id_nomenclature: '1.2.3.2.15',
                         nom: 'Etendre les consignes de tri \u00e0 tous les plastiques (comp\u00e9tence traitement)',
                         description: '',
@@ -2244,7 +2244,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.16',
+                        id: 'cae_1.2.3.2.16',
                         id_nomenclature: '1.2.3.2.16',
                         nom: 'Privil\u00e9gier les d\u00e9bouch\u00e9s locaux pour minimiser le transport et permettre un d\u00e9veloppement \u00e9conomique local (comp\u00e9tence traitement)',
                         description: '',
@@ -2257,7 +2257,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.17',
+                        id: 'cae_1.2.3.2.17',
                         id_nomenclature: '1.2.3.2.17',
                         nom: 'Tri des macro-d\u00e9chets en amont des incin\u00e9rateurs et d\u00e9charges pour retirer ceux qui peuvent \u00eatre recycl\u00e9s (comp\u00e9tence traitement)',
                         description: '',
@@ -2270,7 +2270,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.18',
+                        id: 'cae_1.2.3.2.18',
                         id_nomenclature: '1.2.3.2.18',
                         nom: 'Disposer d\u0027une installation de valorisation des d\u00e9chets organiques (compostage ou m\u00e9thanisation) (comp\u00e9tence traitement)',
                         description:
@@ -2284,7 +2284,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.19',
+                        id: 'cae_1.2.3.2.19',
                         id_nomenclature: '1.2.3.2.19',
                         nom: 'Etudier et mettre en place les transferts possibles par voie ferroviaire ou fluviale des d\u00e9chets entre les sites de regroupement et les sites de traitement  (comp\u00e9tence traitement)',
                         description:
@@ -2298,7 +2298,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.20',
+                        id: 'cae_1.2.3.2.20',
                         id_nomenclature: '1.2.3.2.20',
                         nom: 'Mettre en place des actions de pr\u00e9vention et de r\u00e9duction des d\u00e9chets au sein des services (hors comp\u00e9tences collecte et traitement)',
                         description: '',
@@ -2311,7 +2311,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.21',
+                        id: 'cae_1.2.3.2.21',
                         id_nomenclature: '1.2.3.2.21',
                         nom: 'Animer les entreprises du territoire',
                         description:
@@ -2325,7 +2325,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.2.22',
+                        id: 'cae_1.2.3.2.22',
                         id_nomenclature: '1.2.3.2.22',
                         nom: 'Prendre en compte l\u0027objectif national de recycler 70% des d\u00e9chets du BTP et mettre en \u0153uvre des actions pour y contribuer',
                         description:
@@ -2341,7 +2341,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.3.3',
+                    id: 'cae_1.2.3.3',
                     id_nomenclature: '1.2.3.3',
                     nom: 'Suivre annuellement et atteindre les objectifs',
                     description:
@@ -2353,7 +2353,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.3.1',
+                        id: 'cae_1.2.3.3.1',
                         id_nomenclature: '1.2.3.3.1',
                         nom: 'Produire moins de d\u00e9chets m\u00e9nagers et assimil\u00e9s que la moyenne nationale, voire moins que les territoires pionniers en France',
                         description:
@@ -2367,7 +2367,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.3.2',
+                        id: 'cae_1.2.3.3.2',
                         id_nomenclature: '1.2.3.3.2',
                         nom: 'Diminuer la production des d\u00e9chets m\u00e9nagers et assimil\u00e9s',
                         description:
@@ -2381,7 +2381,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.3.3',
+                        id: 'cae_1.2.3.3.3',
                         id_nomenclature: '1.2.3.3.3',
                         nom: 'Produire moins d\u2019ordures m\u00e9nag\u00e8res r\u00e9siduelles que la moyenne nationale, voire moins que les territoires pionniers en France',
                         description:
@@ -2395,7 +2395,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.3.4',
+                        id: 'cae_1.2.3.3.4',
                         id_nomenclature: '1.2.3.3.4',
                         nom: 'Atteindre un % de valorisation mati\u00e8re et organique des d\u00e9chets m\u00e9nagers et assimil\u00e9s sup\u00e9rieur \u00e0 la moyenne nationale, voire sup\u00e9rieur au meilleur score Cit\u0027ergie',
                         description:
@@ -2409,7 +2409,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.3.3.5',
+                        id: 'cae_1.2.3.3.5',
                         id_nomenclature: '1.2.3.3.5',
                         nom: 'Progresser dans le taux de recyclage des d\u00e9chets du BTP',
                         description:
@@ -2427,7 +2427,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__1.2.4',
+                id: 'cae_1.2.4',
                 id_nomenclature: '1.2.4',
                 nom: 'Planifier la r\u00e9novation  des b\u00e2timents r\u00e9sidentiels et tertiaires et la construction durable sur le territoire',
                 description:
@@ -2442,7 +2442,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__1.2.4.1',
+                    id: 'cae_1.2.4.1',
                     id_nomenclature: '1.2.4.1',
                     nom: 'Prendre en compte les enjeux climat-air-\u00e9nergie dans la strat\u00e9gie "habitat"',
                     description: '',
@@ -2453,7 +2453,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.1.1',
+                        id: 'cae_1.2.4.1.1',
                         id_nomenclature: '1.2.4.1.1',
                         nom: 'Disposer d\u0027un Programme Local de l\u0027Habitat (PLH) n\u2019ayant pas plus de 6 ans et anticiper son renouvellement',
                         description: '',
@@ -2466,7 +2466,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.1.2',
+                        id: 'cae_1.2.4.1.2',
                         id_nomenclature: '1.2.4.1.2',
                         nom: 'Prendre en compte les enjeux environnementaux dans le programme local de l\u0027habitat (PLH)',
                         description:
@@ -2480,7 +2480,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.1.3',
+                        id: 'cae_1.2.4.1.3',
                         id_nomenclature: '1.2.4.1.3',
                         nom: 'Int\u00e9grer dans le diagnostic du Programme Local de l\u0027Habitat (ou \u00e9quivalent) des \u00e9l\u00e9ments sur la performance \u00e9nerg\u00e9tique du parc b\u00e2ti',
                         description:
@@ -2494,7 +2494,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.1.4',
+                        id: 'cae_1.2.4.1.4',
                         id_nomenclature: '1.2.4.1.4',
                         nom: 'Indiquer la r\u00e9novation thermique de l\u0027habitat comme un objectif prioritaire du Programme Local de l\u0027Habitat',
                         description:
@@ -2508,7 +2508,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.1.5',
+                        id: 'cae_1.2.4.1.5',
                         id_nomenclature: '1.2.4.1.5',
                         nom: 'Identifier l\u0027adaptation au changement climatique (et plus particuli\u00e8rement le confort d\u0027\u00e9t\u00e9) comme une th\u00e9matique \u00e0 fort enjeu',
                         description: '',
@@ -2523,7 +2523,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.4.2',
+                    id: 'cae_1.2.4.2',
                     id_nomenclature: '1.2.4.2',
                     nom: 'Disposer d\u0027une strat\u00e9gie pour la r\u00e9novation des locaux tertiaires',
                     description: '',
@@ -2534,7 +2534,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.2.1',
+                        id: 'cae_1.2.4.2.1',
                         id_nomenclature: '1.2.4.2.1',
                         nom: 'Disposer d\u0027un diagnostic sur l\u0027\u00e9tat du parc b\u00e2ti tertiaire du territoire',
                         description:
@@ -2548,7 +2548,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.2.2',
+                        id: 'cae_1.2.4.2.2',
                         id_nomenclature: '1.2.4.2.2',
                         nom: 'Disposer d\u0027un document cadre visant \u00e0 qualifier/inciter la construction et la r\u00e9novation performante des locaux tertiaires',
                         description:
@@ -2564,7 +2564,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.4.3',
+                    id: 'cae_1.2.4.3',
                     id_nomenclature: '1.2.4.3',
                     nom: 'Construire la politique  sur le b\u00e2timent de fa\u00e7on transversale et int\u00e9gr\u00e9e avec les autres th\u00e9matiques et acteurs',
                     description: '',
@@ -2575,7 +2575,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.3.1',
+                        id: 'cae_1.2.4.3.1',
                         id_nomenclature: '1.2.4.3.1',
                         nom: 'Mobiliser les parties prenantes de son territoire directement concern\u00e9es par la construction et la r\u00e9novation performante (BBC ou \u00e9quivalent) pour construire sa politique',
                         description: '',
@@ -2588,7 +2588,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.3.2',
+                        id: 'cae_1.2.4.3.2',
                         id_nomenclature: '1.2.4.3.2',
                         nom: 'Limiter l\u2019\u00e9talement urbain de la politique de l\u2019habitat et du tertiaire',
                         description:
@@ -2602,7 +2602,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.3.3',
+                        id: 'cae_1.2.4.3.3',
                         id_nomenclature: '1.2.4.3.3',
                         nom: 'D\u00e9finir des zones pr\u00e9f\u00e9rentielles de d\u00e9veloppement dans le Programme Local de l\u0027Habitat coh\u00e9rentes avec la mobilit\u00e9 durable',
                         description:
@@ -2616,7 +2616,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.3.4',
+                        id: 'cae_1.2.4.3.4',
                         id_nomenclature: '1.2.4.3.4',
                         nom: 'Contextualiser et prioriser la politique de la collectivit\u00e9 par rapport aux',
                         description:
@@ -2630,7 +2630,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.3.5',
+                        id: 'cae_1.2.4.3.5',
                         id_nomenclature: '1.2.4.3.5',
                         nom: 'Faciliter l\u2019appropriation par les communes (d\u00e9clinaison des objectifs, articulation avec les PLU et les projets communaux, travail d\u0027animation)',
                         description: '',
@@ -2645,7 +2645,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.4.4',
+                    id: 'cae_1.2.4.4',
                     id_nomenclature: '1.2.4.4',
                     nom: 'Fixer des niveaux de performance \u00e9lev\u00e9s \u00e0 atteindre pour les constructions et les r\u00e9novations  des b\u00e2timents',
                     description: '',
@@ -2656,7 +2656,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.4.1',
+                        id: 'cae_1.2.4.4.1',
                         id_nomenclature: '1.2.4.4.1',
                         nom: 'Fixer des objectifs chiffr\u00e9s en mati\u00e8re de r\u00e9novation thermique et de construction neuve dans le Programme Local de l\u0027Habitat (ou \u00e9quivalent)',
                         description:
@@ -2670,7 +2670,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.4.2',
+                        id: 'cae_1.2.4.4.2',
                         id_nomenclature: '1.2.4.4.2',
                         nom: 'Faire r\u00e9f\u00e9rence \u00e0 des labels de performance dans le Programme Local de l\u0027Habitat (ou \u00e9quivalent)',
                         description:
@@ -2684,7 +2684,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.4.3',
+                        id: 'cae_1.2.4.4.3',
                         id_nomenclature: '1.2.4.4.3',
                         nom: 'D\u00e9finir \u00e9galement des objectifs chiffr\u00e9s et des crit\u00e8res de performance pour les b\u00e2timents tertiaires',
                         description:
@@ -2698,7 +2698,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.4.4',
+                        id: 'cae_1.2.4.4.4',
                         id_nomenclature: '1.2.4.4.4',
                         nom: 'Viser l\u0027am\u00e9lioration de la qualit\u00e9 de l\u0027air int\u00e9rieur des b\u00e2timents',
                         description:
@@ -2712,7 +2712,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.4.5',
+                        id: 'cae_1.2.4.4.5',
                         id_nomenclature: '1.2.4.4.5',
                         nom: 'Viser le confort d\u0027\u00e9t\u00e9 des b\u00e2timents',
                         description:
@@ -2728,7 +2728,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.4.5',
+                    id: 'cae_1.2.4.5',
                     id_nomenclature: '1.2.4.5',
                     nom: 'Associer \u00e0 la planification des dispositifs op\u00e9rationnels et financiers',
                     description:
@@ -2740,7 +2740,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.2.4.5.1',
+                        id: 'cae_1.2.4.5.1',
                         id_nomenclature: '1.2.4.5.1',
                         nom: 'pas de nom',
                         description: '',
@@ -2755,7 +2755,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.2.4.6',
+                    id: 'cae_1.2.4.6',
                     id_nomenclature: '1.2.4.6',
                     nom: 'Observer et \u00e9valuer la progression de la construction et de la r\u00e9novation performante sur le territoire',
                     description:
@@ -2773,7 +2773,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__1.3',
+            id: 'cae_1.3',
             id_nomenclature: '1.3',
             nom: 'Urbanisme',
             description: '',
@@ -2784,7 +2784,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__1.3.1',
+                id: 'cae_1.3.1',
                 id_nomenclature: '1.3.1',
                 nom: 'Utiliser les documents d\u0027urbanisme pour assurer la mise en \u0153uvre des objectifs climat-air-\u00e9nergie et lutter contre l\u0027artificialisation des sols',
                 description:
@@ -2799,7 +2799,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__1.3.1.1',
+                    id: 'cae_1.3.1.1',
                     id_nomenclature: '1.3.1.1',
                     nom: 'Organiser le pilotage des documents d\u2019urbanisme',
                     description: '',
@@ -2810,7 +2810,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.1.1',
+                        id: 'cae_1.3.1.1.1',
                         id_nomenclature: '1.3.1.1.1',
                         nom: 'Disposer d\u2019un \u00e9lu et si possible (selon la taille de la collectivit\u00e9) d\u2019un cadre responsable de l\u2019urbanisme (urbaniste) ainsi que d\u0027une commission politique ad hoc',
                         description: '',
@@ -2823,7 +2823,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.1.2',
+                        id: 'cae_1.3.1.1.2',
                         id_nomenclature: '1.3.1.1.2',
                         nom: 'Int\u00e9rer l\u2019\u00e9lu en charge du Plan Climat dans la commission pr\u00e9-cit\u00e9e',
                         description: '',
@@ -2836,7 +2836,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.1.3',
+                        id: 'cae_1.3.1.1.3',
                         id_nomenclature: '1.3.1.1.3',
                         nom: 'Impliquer les autres \u00e9lus concern\u00e9s par l\u2019am\u00e9nagement du territoire',
                         description: '',
@@ -2849,7 +2849,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.1.4',
+                        id: 'cae_1.3.1.1.4',
                         id_nomenclature: '1.3.1.1.4',
                         nom: 'Sensibiliser/former les \u00e9lus et techniciens aux enjeux crois\u00e9s de l\u2019urbanisme durable et de l\u2019\u00e9nergie',
                         description:
@@ -2863,7 +2863,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.1.5',
+                        id: 'cae_1.3.1.1.5',
                         id_nomenclature: '1.3.1.1.5',
                         nom: 'Mobiliser l\u0027ensemble des services techniques pour favoriser une approche transversale des politiques locales dans les documents d\u0027urbanisme',
                         description: '',
@@ -2876,7 +2876,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.1.6',
+                        id: 'cae_1.3.1.1.6',
                         id_nomenclature: '1.3.1.1.6',
                         nom: 'Travailler/Dialoguer r\u00e9guli\u00e8rement avec d\u2019autres acteurs sur ce th\u00e8me : EPCI, communes membres, agences d\u2019urbanisme, bailleurs sociaux, chambres consulaires, CAUE, etc.',
                         description: '',
@@ -2891,7 +2891,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.1.2',
+                    id: 'cae_1.3.1.2',
                     id_nomenclature: '1.3.1.2',
                     nom: 'R\u00e9aliser les \u00e9tudes n\u00e9cessaires \u00e0 l\u2019int\u00e9gration des th\u00e9matiques climat-air-\u00e9nergie',
                     description:
@@ -2903,7 +2903,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.2.1',
+                        id: 'cae_1.3.1.2.1',
                         id_nomenclature: '1.3.1.2.1',
                         nom: 'R\u00e9aliser des analyses crois\u00e9es des enjeux climat-air-\u00e9nergie et urbains',
                         description:
@@ -2917,7 +2917,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.2.2',
+                        id: 'cae_1.3.1.2.2',
                         id_nomenclature: '1.3.1.2.2',
                         nom: 'Utiliser des outils cartographiques pour illustrer les enjeux et les dynamiques de son territoire',
                         description: '',
@@ -2930,7 +2930,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.2.3',
+                        id: 'cae_1.3.1.2.3',
                         id_nomenclature: '1.3.1.2.3',
                         nom: 'Int\u00e9grer dans le rapport de pr\u00e9sentation du PLU/SCOT un \u00e9tat des lieux de la situation en mati\u00e8re d\u2019\u00e9missions de gaz \u00e0 effet de serre, de consommations et productions \u00e9nerg\u00e9tiques, d\u2019\u00e9missions de polluants atmosph\u00e9riques, des vuln\u00e9rabilit\u00e9s climatiques',
                         description:
@@ -2944,7 +2944,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.2.4',
+                        id: 'cae_1.3.1.2.4',
                         id_nomenclature: '1.3.1.2.4',
                         nom: 'Analyser le potentiel de densification (identification des friches, des dents creuses, etc.)',
                         description: '',
@@ -2957,7 +2957,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.2.5',
+                        id: 'cae_1.3.1.2.5',
                         id_nomenclature: '1.3.1.2.5',
                         nom: 'Disposer d\u0027un inventaire des capacit\u00e9s de stationnement de v\u00e9hicules motoris\u00e9s, de v\u00e9hicules hybrides et \u00e9lectriques et de v\u00e9los des parcs ouverts au public et des possibilit\u00e9s de mutualisation de ces capacit\u00e9s',
                         description:
@@ -2973,7 +2973,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.1.3',
+                    id: 'cae_1.3.1.3',
                     id_nomenclature: '1.3.1.3',
                     nom: 'Mettre la politique d\u2019urbanisme et les objectifs de d\u00e9veloppement en coh\u00e9rence avec la politique climat-air-\u00e9nergie',
                     description: '',
@@ -2984,7 +2984,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.3.1',
+                        id: 'cae_1.3.1.3.1',
                         id_nomenclature: '1.3.1.3.1',
                         nom: 'Int\u00e9grer dans le PADD des engagements clairs pour l\u0027adaptation et l\u0027att\u00e9nuation par rapport au changement climatique',
                         description:
@@ -2998,7 +2998,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.3.2',
+                        id: 'cae_1.3.1.3.2',
                         id_nomenclature: '1.3.1.3.2',
                         nom: 'Disposer d\u0027une strat\u00e9gie multicrit\u00e8re et prendre en compte les zones de bruits et les zones d\u2019\u00e9missions de polluants atmosph\u00e9riques pour limiter l\u2019impact sur la population (\u00e9vitement ou am\u00e9nagements sp\u00e9cifiques pour limiter les nuisances)',
                         description: '',
@@ -3011,7 +3011,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.3.3',
+                        id: 'cae_1.3.1.3.3',
                         id_nomenclature: '1.3.1.3.3',
                         nom: 'Articuler la strat\u00e9gie d\u2019urbanisme avec le sch\u00e9ma directeur de l\u2019\u00e9nergie s\u2019il existe',
                         description:
@@ -3025,7 +3025,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.3.4',
+                        id: 'cae_1.3.1.3.4',
                         id_nomenclature: '1.3.1.3.4',
                         nom: 'Identifier une hi\u00e9rarchie de d\u00e9veloppement urbain en fonction d\u2019un niveau de desserte en transports collectifs et/ou de voies pour modes actifs',
                         description:
@@ -3039,7 +3039,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.3.5',
+                        id: 'cae_1.3.1.3.5',
                         id_nomenclature: '1.3.1.3.5',
                         nom: 'Lier la strat\u00e9gie d\u2019urbanisation avec la proximit\u00e9 et les capacit\u00e9s des autres r\u00e9seaux (\u00e9nerg\u00e9tique, eau/assainissement)',
                         description: '',
@@ -3052,7 +3052,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.3.6',
+                        id: 'cae_1.3.1.3.6',
                         id_nomenclature: '1.3.1.3.6',
                         nom: 'Prioriser les dents creuses et les friches dans les strat\u00e9gies d\u2019am\u00e9nagement pour limiter l\u2019\u00e9talement urbain',
                         description:
@@ -3068,7 +3068,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.1.4',
+                    id: 'cae_1.3.1.4',
                     id_nomenclature: '1.3.1.4',
                     nom: 'Transcrire les engagements climat-air-\u00e9nergie dans les volets opposables des documents d\u2019urbanisme',
                     description: '',
@@ -3079,7 +3079,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.4.1',
+                        id: 'cae_1.3.1.4.1',
                         id_nomenclature: '1.3.1.4.1',
                         nom: 'Utiliser les orientations d\u0027am\u00e9nagement et de programmation (OAP) du PLU pour favoriser le d\u00e9veloppement durable des secteurs cl\u00e9s',
                         description:
@@ -3093,7 +3093,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.4.2',
+                        id: 'cae_1.3.1.4.2',
                         id_nomenclature: '1.3.1.4.2',
                         nom: 'Subdiviser les zones \u00e0 urbaniser ou urbaines pour adapter finement le r\u00e8glement \u00e0 chaque zone \u00e0 enjeu du territoire',
                         description: '',
@@ -3106,7 +3106,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.4.3',
+                        id: 'cae_1.3.1.4.3',
                         id_nomenclature: '1.3.1.4.3',
                         nom: 'Comptabiliser et rationaliser les zones \u00e0 ouvrir \u00e0 l\u2019urbanisation',
                         description:
@@ -3120,7 +3120,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.4.4',
+                        id: 'cae_1.3.1.4.4',
                         id_nomenclature: '1.3.1.4.4',
                         nom: 'Disposer de documents cartographiques d\u00e9terminants mettant en \u00e9vidence les secteurs pouvant faire l\u0027objet de prescriptions \u00e9nerg\u00e9tiques ou urbaines particuli\u00e8res, cartes strat\u00e9giques air, trame verte et bleue',
                         description: '',
@@ -3133,7 +3133,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.4.5',
+                        id: 'cae_1.3.1.4.5',
                         id_nomenclature: '1.3.1.4.5',
                         nom: 'Contribuer explicitement dans les  r\u00e8glement du PLU et le DOO du SCOT (en dictant certaines r\u00e8gles au PLU le cas \u00e9ch\u00e9ant) \u00e0 la lutte et \u00e0 l\u0027adaptation au changement climatique, ainsi qu\u0027\u00e0 la pr\u00e9servation de la qualit\u00e9 de l\u0027air',
                         description:
@@ -3147,7 +3147,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.4.6',
+                        id: 'cae_1.3.1.4.6',
                         id_nomenclature: '1.3.1.4.6',
                         nom: 'Utiliser les nouvelles possibilit\u00e9s Grenelle, ALUR et TECV',
                         description:
@@ -3163,7 +3163,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.1.5',
+                    id: 'cae_1.3.1.5',
                     id_nomenclature: '1.3.1.5',
                     nom: 'Conna\u00eetre et prot\u00e9ger les  espaces naturels, agricoles et forestiers de l\u2019artificialisation des sols via les documents d\u2019urbanisme et la politique fonci\u00e8re associ\u00e9e',
                     description: '',
@@ -3174,7 +3174,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.5.1',
+                        id: 'cae_1.3.1.5.1',
                         id_nomenclature: '1.3.1.5.1',
                         nom: 'R\u00e9aliser un suivi (mutualis\u00e9 \u00e0 l\u2019\u00e9chelle intercommunale) du foncier et des b\u00e2timents agricoles, r\u00e9aliser des diagnostics fonciers participatifs',
                         description: '',
@@ -3187,7 +3187,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.5.2',
+                        id: 'cae_1.3.1.5.2',
                         id_nomenclature: '1.3.1.5.2',
                         nom: 'Afficher clairemetn la strat\u00e9gie de protection des espaces naturels, agricoles et forestiers dans le PLU/SCOT (PADD)',
                         description: '',
@@ -3200,7 +3200,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.5.3',
+                        id: 'cae_1.3.1.5.3',
                         id_nomenclature: '1.3.1.5.3',
                         nom: 'Reconna\u00eetre la valeur du foncier naturel, agricole, forestier dans les documents d\u0027urbanisme et de planification',
                         description:
@@ -3214,7 +3214,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.5.4',
+                        id: 'cae_1.3.1.5.4',
                         id_nomenclature: '1.3.1.5.4',
                         nom: 'Limiter l\u2019artificialisation des sols sur le long terme, avec la mise en place de dispositifs r\u00e9glementaires de protection et d\u2019outils d\u0027intervention fonci\u00e8re',
                         description:
@@ -3230,7 +3230,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.1.6',
+                    id: 'cae_1.3.1.6',
                     id_nomenclature: '1.3.1.6',
                     nom: 'Suivre des indicateurs relatifs \u00e0 l\u2019urbanisme durable et atteindre les objectifs fix\u00e9s',
                     description: '',
@@ -3241,7 +3241,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.6.1',
+                        id: 'cae_1.3.1.6.1',
                         id_nomenclature: '1.3.1.6.1',
                         nom: 'Disposer d\u2019un indicateur de compacit\u00e9 des formes urbaines qui \u00e9volue positivement',
                         description:
@@ -3255,7 +3255,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.6.2',
+                        id: 'cae_1.3.1.6.2',
                         id_nomenclature: '1.3.1.6.2',
                         nom: 'pas de diminution du % de surfaces naturelles et agricoles par rapport \u00e0 la surface totale de la collectivit\u00e9',
                         description: '',
@@ -3268,7 +3268,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.6.3',
+                        id: 'cae_1.3.1.6.3',
                         id_nomenclature: '1.3.1.6.3',
                         nom: 'Diminuer la surface annuelle artificialis\u00e9e (moyenne sur plusieurs ann\u00e9es si le suivi n\u2019est pas annuel)',
                         description: '',
@@ -3281,7 +3281,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.1.6.4',
+                        id: 'cae_1.3.1.6.4',
                         id_nomenclature: '1.3.1.6.4',
                         nom: 'Atteindre les objectifs de mod\u00e9ration de la consommation d\u2019espace et de lutte contre l\u2019\u00e9talement urbain fix\u00e9s dans le PLU ou le SCOT',
                         description: '',
@@ -3298,7 +3298,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__1.3.2',
+                id: 'cae_1.3.2',
                 id_nomenclature: '1.3.2',
                 nom: 'Transcrire les enjeux climat-air-\u00e9nergie et de pr\u00e9servation des ressources naturelles dans les op\u00e9rations d\u0027am\u00e9nagement',
                 description:
@@ -3313,7 +3313,7 @@ export const actions: ActionReferentiel[] = [
                 points: 10,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__1.3.2.1',
+                    id: 'cae_1.3.2.1',
                     id_nomenclature: '1.3.2.1',
                     nom: 'S\u2019organiser pour bien piloter les op\u00e9rations d\u2019am\u00e9nagement',
                     description: '',
@@ -3324,7 +3324,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.1.1',
+                        id: 'cae_1.3.2.1.1',
                         id_nomenclature: '1.3.2.1.1',
                         nom: 'Mettre en place un Syst\u00e8me de Management d\u2019Op\u00e9ration (SMO) pour la conduite et le suivi des projets',
                         description:
@@ -3338,7 +3338,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.1.2',
+                        id: 'cae_1.3.2.1.2',
                         id_nomenclature: '1.3.2.1.2',
                         nom: 'Mettre en place un dialogue partenarial et pluridisciplinaire en interne et en externe (CAUE, ALEC, agence d\u2019urbanisme, espace conseil FAIRE, \u2026) institutionnalis\u00e9 (convention ou autres dispositifs cadrant la relation)',
                         description:
@@ -3352,7 +3352,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.1.3',
+                        id: 'cae_1.3.2.1.3',
                         id_nomenclature: '1.3.2.1.3',
                         nom: 'Recourir \u00e0 un assistant \u00e0 ma\u00eetrise d\u2019ouvrage dot\u00e9 de comp\u00e9tences climat-air-\u00e9nergie si besoin de renforcer les comp\u00e9tences internes',
                         description: '',
@@ -3367,7 +3367,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.2.2',
+                    id: 'cae_1.3.2.2',
                     id_nomenclature: '1.3.2.2',
                     nom: 'Adopter une approche multith\u00e9matique dans le diagnostic et la conception des projets urbains',
                     description: '',
@@ -3378,7 +3378,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.2.1',
+                        id: 'cae_1.3.2.2.1',
                         id_nomenclature: '1.3.2.2.1',
                         nom: 'Demander une approche int\u00e9gr\u00e9e de type AEU2 pour une analyse crois\u00e9e des enjeux climat-air-\u00e9nergie et urbains pour tous les projets d\u0027urbanisme op\u00e9rationnel ma\u00eetris\u00e9s par la collectivit\u00e9',
                         description:
@@ -3392,7 +3392,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.2.2',
+                        id: 'cae_1.3.2.2.2',
                         id_nomenclature: '1.3.2.2.2',
                         nom: 'R\u00e9aliser des \u00e9tudes de pr\u00e9d\u00e9finition des projets urbains et \u00e9tude de l\u2019approvisionnement \u00e9nerg\u00e9tique et des productions d\u2019\u00e9nergie (y compris potentiel de d\u00e9veloppement des \u00e9nergies renouvelable) pour les sites \u00e0 enjeux (friches qui se lib\u00e8rent en centre-bourg ou ville, extensions urbaines pr\u00e9vues dans le document d\u2019urbanisme, etc.)',
                         description:
@@ -3406,7 +3406,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.2.3',
+                        id: 'cae_1.3.2.2.3',
                         id_nomenclature: '1.3.2.2.3',
                         nom: 'Utiliser des outils de mod\u00e9lisation climat-air-\u00e9nergie (de type Analyse de Cycle Vie sur l\u0027\u00e9chelle quartier d\u00e8s la conception) pour aider \u00e0 la d\u00e9cision',
                         description:
@@ -3422,7 +3422,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.2.3',
+                    id: 'cae_1.3.2.3',
                     id_nomenclature: '1.3.2.3',
                     nom: 'Elaborer un document "cadre" pour syst\u00e9matiser la qualit\u00e9 environnementale des op\u00e9rations ma\u00eetris\u00e9es par la collectivit\u00e9',
                     description: '',
@@ -3433,7 +3433,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.3.1',
+                        id: 'cae_1.3.2.3.1',
                         id_nomenclature: '1.3.2.3.1',
                         nom: 'D\u00e9finir des pr\u00e9conisations \u00e0 l\u2019\u00e9chelle du quartier ou de la ville inspir\u00e9es notamment des outils nationaux existants (cahiers th\u00e9matiques AEU2, label national Ecoquartier, HQE-Performance quartier\u2026)',
                         description:
@@ -3447,7 +3447,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.3.2',
+                        id: 'cae_1.3.2.3.2',
                         id_nomenclature: '1.3.2.3.2',
                         nom: 'D\u00e9finir des crit\u00e8res \u00e0 l\u2019\u00e9chelle du b\u00e2timent : BEPos, label E+/C-, Maison passive, BBC, Effinergie, Ecodom, HQE avec objectifs \u00e9nergie ou air d\u00e9finis, label b\u00e2timent biosourc\u00e9, chauffage tr\u00e8s performant (flamme verte 7 \u00e9toiles pour le bois ou \u00e9quivalent) ou valorisation des rejets thermiques, confort d\u0027\u00e9t\u00e9, qualit\u00e9 de l\u0027air int\u00e9rieur...',
                         description: '',
@@ -3460,7 +3460,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.3.3',
+                        id: 'cae_1.3.2.3.3',
                         id_nomenclature: '1.3.2.3.3',
                         nom: 'Utiliser ce document comme base de discussions et de r\u00e9flexions entre les acteurs et l\u0027adapter/d\u00e9cliner dans diff\u00e9rents documents de conception op\u00e9rationnels des projets (plan masse, notice environnementale, cahier des charges, cahier de prescriptions...)',
                         description: '',
@@ -3475,7 +3475,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.2.4',
+                    id: 'cae_1.3.2.4',
                     id_nomenclature: '1.3.2.4',
                     nom: 'Assurer la ma\u00eetrise d\u2019ouvrage publique ou semi-publique des op\u00e9rations d\u2019am\u00e9nagement cl\u00e9s pour mieux prendre en compte les enjeux climat-air-\u00e9nergie et la pr\u00e9servation des ressources naturelles',
                     description: '',
@@ -3486,7 +3486,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.4.1',
+                        id: 'cae_1.3.2.4.1',
                         id_nomenclature: '1.3.2.4.1',
                         nom: 'Mettre en place une politique fonci\u00e8re active (droit de pr\u00e9emption urbain, zone d\u2019am\u00e9nagement diff\u00e9r\u00e9 -ZAD-, participation \u00e0 un \u00e9tablissement foncier local \u2013EPFL-...)',
                         description: '',
@@ -3499,7 +3499,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.4.2',
+                        id: 'cae_1.3.2.4.2',
                         id_nomenclature: '1.3.2.4.2',
                         nom: 'Int\u00e9grer des exigences climat-air-\u00e9nergie dans les op\u00e9rations d\u0027am\u00e9nagement cl\u00e9s (lotissements publics ou zones d\u2019am\u00e9nagement concert\u00e9es) et les inscrire dans les cahiers des charges de cession de terrain',
                         description: '',
@@ -3514,7 +3514,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.2.5',
+                    id: 'cae_1.3.2.5',
                     id_nomenclature: '1.3.2.5',
                     nom: 'Int\u00e9grer des exigences climat-air-\u00e9nergie dans tous les appels d\u2019offre d\u2019urbanisme et les cahiers des charges de cession des terrains',
                     description: '',
@@ -3525,7 +3525,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.5.1',
+                        id: 'cae_1.3.2.5.1',
                         id_nomenclature: '1.3.2.5.1',
                         nom: 'Int\u00e8grer dans ses crit\u00e8res de choix des offres l\u0027impact environnemental de la proposition : kWh \u00e9conomis\u00e9, \u00e9missions de CO2 ou \u00e9missions/exposition aux polluants atmosph\u00e9riques, etc.',
                         description: '',
@@ -3538,7 +3538,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.5.2',
+                        id: 'cae_1.3.2.5.2',
                         id_nomenclature: '1.3.2.5.2',
                         nom: 'Utiliser des sp\u00e9cifications techniques pour fixer des objectifs de performances environnementales, de mani\u00e8re prescriptive, \u00e0 l\u2019\u00e9chelle de la ville, du quartier (AEU2, HQE Performance Quartier...) et du b\u00e2timent (niveau passif ou \u00e0 \u00e9nergie positive -label E+/C- demand\u00e9 pour les b\u00e2timents neufs, label BBC r\u00e9novation pour les travaux de r\u00e9novation, obligation si pertinent d\u2019installation de panneaux solaires sur les nouvelles toitures de b\u00e2timent ou de raccordement \u00e0 un r\u00e9seau de chaleur, exiger si pertinent davantage de places de v\u00e9los dans les constructions neuves, r\u00e9alisation d\u2019abris \u00e0 v\u00e9lo ext\u00e9rieurs attenants au b\u00e2timent principal \u2026).',
                         description:
@@ -3552,7 +3552,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.5.3',
+                        id: 'cae_1.3.2.5.3',
                         id_nomenclature: '1.3.2.5.3',
                         nom: 'Int\u00e8grer dans les crit\u00e8res de jugement des offres les r\u00e9f\u00e9rences environnementales et les pratiques internes de l\u0027entreprise candidate (exp\u00e9rience requise en HQE ou \u00e9quivalent, label de performance \u00e9nerg\u00e9tique, formation \u00e0 l\u2019AEU2, certification ISO 14001/9001 de l\u2019entreprise, d\u00e9marche d\u0027\u00e9co-responsabilit\u00e9 interne...)',
                         description: '',
@@ -3565,7 +3565,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.5.4',
+                        id: 'cae_1.3.2.5.4',
                         id_nomenclature: '1.3.2.5.4',
                         nom: 'Donner un caract\u00e8re contraignant aux exigences (prescriptions et non simples recommandations, inscription dans les documents contractuels et opposables, contr\u00f4le, sanction pr\u00e9vue en cas de non-respect)',
                         description: '',
@@ -3580,7 +3580,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.2.6',
+                    id: 'cae_1.3.2.6',
                     id_nomenclature: '1.3.2.6',
                     nom: 'Organiser la gestion des d\u00e9chets des chantiers d\u0027am\u00e9nagement en partenariat avec les am\u00e9nageurs',
                     description: '',
@@ -3591,7 +3591,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.6.1',
+                        id: 'cae_1.3.2.6.1',
                         id_nomenclature: '1.3.2.6.1',
                         nom: 'Fixer un objectif de recyclage \u00e0 l\u0027\u00e9chelle des projets',
                         description: '',
@@ -3604,7 +3604,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.6.2',
+                        id: 'cae_1.3.2.6.2',
                         id_nomenclature: '1.3.2.6.2',
                         nom: 'Mettre en place une plateforme locale de r\u00e9cup\u00e9ration/\u00e9changes de mat\u00e9riaux de construction / d\u00e9molition ou de terres excav\u00e9es (\u00e0 l\u0027\u00e9chelle territoriale ou du projet)',
                         description: '',
@@ -3619,7 +3619,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.2.7',
+                    id: 'cae_1.3.2.7',
                     id_nomenclature: '1.3.2.7',
                     nom: 'Contr\u00f4ler l\u2019efficacit\u00e9 et le respect des exigences',
                     description: '',
@@ -3630,7 +3630,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.7.1',
+                        id: 'cae_1.3.2.7.1',
                         id_nomenclature: '1.3.2.7.1',
                         nom: 'Diffuser r\u00e9ellement les documents cadres et r\u00e9f\u00e9rentiels cr\u00e9\u00e9s dans les services, s\u0027assurer qu\u0027ils sont appropri\u00e9s et appliqu\u00e9s par les acteurs concern\u00e9s',
                         description: '',
@@ -3643,7 +3643,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.7.2',
+                        id: 'cae_1.3.2.7.2',
                         id_nomenclature: '1.3.2.7.2',
                         nom: 'Mettre en place une approche d\u0027am\u00e9lioration continue pour am\u00e9liorer les outils (r\u00e9f\u00e9rentiel, charte, etc.) selon le retour d\u0027exp\u00e9rience',
                         description: '',
@@ -3656,7 +3656,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.7.3',
+                        id: 'cae_1.3.2.7.3',
                         id_nomenclature: '1.3.2.7.3',
                         nom: 'Pr\u00e9voir le suivi r\u00e9el des performances climat-air-\u00e9nergie des b\u00e2timents occup\u00e9s pour certaines op\u00e9rations embl\u00e9matiques (instrumentation, prestation d\u00e9di\u00e9e et soutenue/exig\u00e9e par la collectivit\u00e9)',
                         description: '',
@@ -3669,7 +3669,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.7.4',
+                        id: 'cae_1.3.2.7.4',
                         id_nomenclature: '1.3.2.7.4',
                         nom: 'Montrer que l\u0027int\u00e9gration de crit\u00e8res environnementaux dans les consultations a d\u00e9j\u00e0 abouti r\u00e9ellement \u00e0 faire basculer le choix en faveur du candidat le plus exemplaire sur ces aspects',
                         description: '',
@@ -3682,7 +3682,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.2.7.5',
+                        id: 'cae_1.3.2.7.5',
                         id_nomenclature: '1.3.2.7.5',
                         nom: 'Obtenir une reconnaissance nationale ou r\u00e9gionale d\u2019une ou plusieurs op\u00e9rations, certification d\u2019une d\u00e9marche (label \u00e9conomie circulaire, label \u00e9co-quartier\u2026) ou de r\u00e9sultats obtenus, retomb\u00e9es presse ou visites de site par des acteurs ext\u00e9rieurs',
                         description: '',
@@ -3699,7 +3699,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__1.3.3',
+                id: 'cae_1.3.3',
                 id_nomenclature: '1.3.3',
                 nom: 'Accompagner et contr\u00f4ler les travaux de construction et de r\u00e9novation',
                 description:
@@ -3713,7 +3713,7 @@ export const actions: ActionReferentiel[] = [
                 points: 4,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__1.3.3.1',
+                    id: 'cae_1.3.3.1',
                     id_nomenclature: '1.3.3.1',
                     nom: 'Organiser toute la cha\u00eene des acteurs en charge de l\u2019instruction \u00e0 l\u2019octroi des permis de construire pour une attention accrue sur la th\u00e9matique climat-air-\u00e9nergie',
                     description: '',
@@ -3724,7 +3724,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.1.1',
+                        id: 'cae_1.3.3.1.1',
                         id_nomenclature: '1.3.3.1.1',
                         nom: 'Disposer d\u0027une organisation claire avec responsabilit\u00e9s attribu\u00e9es (interne et/ou externe)',
                         description: '',
@@ -3737,7 +3737,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.1.2',
+                        id: 'cae_1.3.3.1.2',
                         id_nomenclature: '1.3.3.1.2',
                         nom: 'Associer le service \u201c\u00e9nergie\u201d qui formule un avis sur l\u0027autorisation d\u0027urbanisme',
                         description: '',
@@ -3750,7 +3750,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.1.3',
+                        id: 'cae_1.3.3.1.3',
                         id_nomenclature: '1.3.3.1.3',
                         nom: 'Adopter des directives, instructions de service, cahiers des charges \u00e9nergie/environnement pour les instructeurs, formulaires appropri\u00e9s',
                         description: '',
@@ -3763,7 +3763,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.1.4',
+                        id: 'cae_1.3.3.1.4',
                         id_nomenclature: '1.3.3.1.4',
                         nom: 'Former/Sensibiliser les instructeurs et/ou tout autre personne en contact avec les p\u00e9titionnaires (secr\u00e9taire de mairie)',
                         description:
@@ -3777,7 +3777,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.1.5',
+                        id: 'cae_1.3.3.1.5',
                         id_nomenclature: '1.3.3.1.5',
                         nom: 'Mettre en place d\u0027aires de mise en valeur de l\u2019architecture et du patrimoine (AVAP) pour \u00e9tablir un consensus en amont dans les secteurs o\u00f9 la protection du patrimoine architectural repr\u00e9sente un frein fort \u00e0 la r\u00e9novation \u00e9nerg\u00e9tique du b\u00e2ti',
                         description: '',
@@ -3792,7 +3792,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.3.2',
+                    id: 'cae_1.3.3.2',
                     id_nomenclature: '1.3.3.2',
                     nom: 'Diffuser de l\u2019information \u00e0 l\u2019occasion des demandes d\u2019autorisation',
                     description: '',
@@ -3803,7 +3803,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.2.1',
+                        id: 'cae_1.3.3.2.1',
                         id_nomenclature: '1.3.3.2.1',
                         nom: 'Joindre aux formulaires de demande de permis de construire des plaquette de pr\u00e9sentation des acteurs ressources du territoire sur le logement ( espace conseil FAIRE, CAUE, ADIL...) ou de recommandations (avec exemples locaux)',
                         description: '',
@@ -3816,7 +3816,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.2.2',
+                        id: 'cae_1.3.3.2.2',
                         id_nomenclature: '1.3.3.2.2',
                         nom: 'Prendre des rendez-vous avec un conseiller FAIRE ou le CAUE pour chaque demande de permis de construire',
                         description: '',
@@ -3831,7 +3831,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.3.3',
+                    id: 'cae_1.3.3.3',
                     id_nomenclature: '1.3.3.3',
                     nom: 'V\u00e9rifier le respect des exigences autant que possible',
                     description: '',
@@ -3842,7 +3842,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.3.1',
+                        id: 'cae_1.3.3.3.1',
                         id_nomenclature: '1.3.3.3.1',
                         nom: 'Surveiller le respect de la r\u00e9glementation thermique (pour les \u00e9l\u00e9ments visibles sur les plans et via les attestations de conformit\u00e9) et prendre en compte les vuln\u00e9rabilit\u00e9s du territoire au changement climatique',
                         description: '',
@@ -3855,7 +3855,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.3.2',
+                        id: 'cae_1.3.3.3.2',
                         id_nomenclature: '1.3.3.3.2',
                         nom: 'Surveiller le respect des prescriptions en mati\u00e8re de mobilit\u00e9 dans les contrats de droits priv\u00e9s',
                         description: '',
@@ -3868,7 +3868,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.3.3',
+                        id: 'cae_1.3.3.3.3',
                         id_nomenclature: '1.3.3.3.3',
                         nom: 'Surveiller les pi\u00e8ces justificatives du respect des crit\u00e8res de performance environnementale dans le cas de la bonification des droits \u00e0 construire',
                         description: '',
@@ -3881,7 +3881,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.3.4',
+                        id: 'cae_1.3.3.3.4',
                         id_nomenclature: '1.3.3.3.4',
                         nom: 'Effectuer au moins deux contr\u00f4les par an sur le terrain par instructeur',
                         description: '',
@@ -3894,7 +3894,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.3.5',
+                        id: 'cae_1.3.3.3.5',
                         id_nomenclature: '1.3.3.3.5',
                         nom: 'Porter attention \u00e0 la r\u00e9novation embarqu\u00e9e (v\u00e9rification des justifications)',
                         description: '',
@@ -3907,7 +3907,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__1.3.3.3.6',
+                        id: 'cae_1.3.3.3.6',
                         id_nomenclature: '1.3.3.3.6',
                         nom: 'Renvoyer vers les structures comp\u00e9tentes pour effectuer le suivi des consommations \u00e9nerg\u00e9tiques avant et apr\u00e8s travaux',
                         description:
@@ -3923,7 +3923,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__1.3.3.4',
+                    id: 'cae_1.3.3.4',
                     id_nomenclature: '1.3.3.4',
                     nom: 'Suivre les attestations de conformit\u00e9',
                     description:
@@ -3943,7 +3943,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'citergie__2',
+        id: 'cae_2',
         id_nomenclature: '2',
         nom: 'Patrimoine de la collectivit\u00e9',
         description: '',
@@ -3954,7 +3954,7 @@ export const actions: ActionReferentiel[] = [
         points: -1.0,
         actions: [
           new ActionReferentiel({
-            id: 'citergie__2.1',
+            id: 'cae_2.1',
             id_nomenclature: '2.1',
             nom: 'Suivi et strat\u00e9gie patrimoniale',
             description: '',
@@ -3965,7 +3965,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__2.1.1',
+                id: 'cae_2.1.1',
                 id_nomenclature: '2.1.1',
                 nom: 'Mettre en place une comptabilit\u00e9 \u00e9nerg\u00e9tique et des \u00e9missions de GES des b\u00e2timents publics',
                 description:
@@ -3980,7 +3980,7 @@ export const actions: ActionReferentiel[] = [
                 points: 10,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.1.1.1',
+                    id: 'cae_2.1.1.1',
                     id_nomenclature: '2.1.1.1',
                     nom: 'Mettre en place un socle de connaissance initiale sur son patrimoine',
                     description:
@@ -3992,7 +3992,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.1.1',
+                        id: 'cae_2.1.1.1.1',
                         id_nomenclature: '2.1.1.1.1',
                         nom: '\u00c9tablir une liste de tous les b\u00e2timents et \u00e9quipements (avec surface, ann\u00e9e de construction, installations techniques, type d\u2019occupation, \u2026) en int\u00e9grant les \u00e9l\u00e9ments renseign\u00e9s sur la plateforme OPERAT dans le cadre des exigences du d\u00e9cret tertiaire (pour les b\u00e2timents \u003e 1000m2)',
                         description: '',
@@ -4005,7 +4005,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.1.2',
+                        id: 'cae_2.1.1.1.2',
                         id_nomenclature: '2.1.1.1.2',
                         nom: 'R\u00e9aliser l\u0027inventaire des contrats d\u2019exploitation ou de maintenance de chaque b\u00e2timent, et des principaux travaux effectu\u00e9s depuis leur livraison',
                         description: '',
@@ -4018,7 +4018,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.1.3',
+                        id: 'cae_2.1.1.1.3',
                         id_nomenclature: '2.1.1.1.3',
                         nom: 'Identifier les gros consommateurs (viser les b\u00e2timents g\u00e9n\u00e9rant 50% des consommations) et r\u00e9aliser un audit \u00e9nerg\u00e9tique.',
                         description: '',
@@ -4031,7 +4031,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.1.4',
+                        id: 'cae_2.1.1.1.4',
                         id_nomenclature: '2.1.1.1.4',
                         nom: 'Effectuer un relev\u00e9 des surfaces chauff\u00e9es et/ou climatis\u00e9es',
                         description: '',
@@ -4044,7 +4044,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.1.5',
+                        id: 'cae_2.1.1.1.5',
                         id_nomenclature: '2.1.1.1.5',
                         nom: 'Identifier tous les contrats de fourniture d\u0027\u00e9nergie',
                         description: '',
@@ -4057,7 +4057,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.1.6',
+                        id: 'cae_2.1.1.1.6',
                         id_nomenclature: '2.1.1.1.6',
                         nom: 'Saisir toutes les factures d\u0027\u00e9nergie des 3 derni\u00e8res ann\u00e9es (ou demander aux gestionnaires du r\u00e9seau de distribution un d\u00e9tail pluriannuel des consommations des b\u00e2timents de la collectivit\u00e9 si pas de suivi existant)',
                         description: '',
@@ -4070,7 +4070,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.1.7',
+                        id: 'cae_2.1.1.1.7',
                         id_nomenclature: '2.1.1.1.7',
                         nom: 'Partager et co-construire les objectifs et le diagnostic avec les partenaires si la gestion des b\u00e2timents est d\u00e9l\u00e9gu\u00e9e',
                         description: '',
@@ -4085,7 +4085,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.1.2',
+                    id: 'cae_2.1.1.2',
                     id_nomenclature: '2.1.1.2',
                     nom: 'S\u2019organiser pour effectuer le suivi r\u00e9gulier des consommations \u00e9nerg\u00e9tiques du patrimoine b\u00e2ti',
                     description: '',
@@ -4096,7 +4096,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.2.1',
+                        id: 'cae_2.1.1.2.1',
                         id_nomenclature: '2.1.1.2.1',
                         nom: 'D\u00e9terminer la personne/structure charg\u00e9e d\u0027effectuer le relev\u00e9 de la consommation \u00e9nerg\u00e9tique (tous les agents \u00e9nerg\u00e9tiques)',
                         description: '',
@@ -4109,7 +4109,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.2.2',
+                        id: 'cae_2.1.1.2.2',
                         id_nomenclature: '2.1.1.2.2',
                         nom: 'D\u00e9terminer la personne/structure \u00e0 qui il faut transmettre la consommation d\u0027\u00e9nergie pour la d\u00e9termination de l\u0027indice \u00e9nerg\u00e9tique est d\u00e9termin\u00e9e',
                         description: '',
@@ -4122,7 +4122,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.2.3',
+                        id: 'cae_2.1.1.2.3',
                         id_nomenclature: '2.1.1.2.3',
                         nom: 'Mener une r\u00e9flexion sur le type et le positionnement des compteurs et sous-compteurs',
                         description: '',
@@ -4135,7 +4135,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.2.4',
+                        id: 'cae_2.1.1.2.4',
                         id_nomenclature: '2.1.1.2.4',
                         nom: 'Indiquer les t\u00e2ches dans la fiche de poste gestionnaire des b\u00e2timents et \u00e9quipements',
                         description: '',
@@ -4150,7 +4150,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.1.3',
+                    id: 'cae_2.1.1.3',
                     id_nomenclature: '2.1.1.3',
                     nom: 'Faire un bilan complet, allant au-del\u00e0 de la r\u00e9glementation',
                     description: '',
@@ -4161,7 +4161,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.3.1',
+                        id: 'cae_2.1.1.3.1',
                         id_nomenclature: '2.1.1.3.1',
                         nom: 'Augmenter chaque ann\u00e9e la part de b\u00e2timents diagnostiqu\u00e9s, jusqu\u0027\u00e0 connaissance quasi-totale du patrimoine (viser plus de 80% des consommations). Les b\u00e2timents en propri\u00e9t\u00e9, en location, et en DSP doivent progressivement \u00eatre connus.',
                         description: '',
@@ -4174,7 +4174,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.3.2',
+                        id: 'cae_2.1.1.3.2',
                         id_nomenclature: '2.1.1.3.2',
                         nom: '\u00c9largir le bilan aux b\u00e2timents communaux pour les EPCI, notamment en zone rurale ou faiblement dot\u00e9s en patrimoine',
                         description: '',
@@ -4187,7 +4187,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.3.3',
+                        id: 'cae_2.1.1.3.3',
                         id_nomenclature: '2.1.1.3.3',
                         nom: 'Corriger les indices \u00e9nerg\u00e9tiques du climat (chaleur ou besoin en climatisation), et les d\u00e9composer en chaleur/froid, \u00e9lectricit\u00e9, CO2',
                         description: '',
@@ -4200,7 +4200,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.3.4',
+                        id: 'cae_2.1.1.3.4',
                         id_nomenclature: '2.1.1.3.4',
                         nom: 'D\u00e9tailler l\u0027analyse du type d\u0027utilisation d\u0027\u00e9lectricit\u00e9 (chauffage central, eau chaude sanitaire, air conditionn\u00e9, cuisson, \u00e9clairage, \u00e9lectricit\u00e9 sp\u00e9cifique)',
                         description: '',
@@ -4213,7 +4213,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.3.5',
+                        id: 'cae_2.1.1.3.5',
                         id_nomenclature: '2.1.1.3.5',
                         nom: 'Effectuer un relev\u00e9 des consommations d\u0027eau (par ex. par personne ou par m3/an, cf. mesure 2.3.2) en distinguant les consommations d\u0027eau chaude (connaissances des volumes journaliers ou mensuels) et en identifiant les principaux b\u00e2timents appropri\u00e9s \u00e0 une production d\u0027eau chaude solaire collective (logement collectif social, maison de retraite, secteur hospitalier)',
                         description: '',
@@ -4226,7 +4226,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.3.6',
+                        id: 'cae_2.1.1.3.6',
                         id_nomenclature: '2.1.1.3.6',
                         nom: 'Etudier les mat\u00e9riaux et les techniques de construction et de finition',
                         description: '',
@@ -4239,7 +4239,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.3.7',
+                        id: 'cae_2.1.1.3.7',
                         id_nomenclature: '2.1.1.3.7',
                         nom: 'R\u00e9aliser un bilan initial de la qualit\u00e9 de l\u0027air int\u00e9rieur des b\u00e2timents (mesure de confinement a minima, et dans l\u0027id\u00e9al de plusieurs polluants dans les ERP par anticipation des futures exigences r\u00e9glementaires), identifier les \u00e9l\u00e9ments ou comportements \u00e9missifs ou d\u00e9gradant la qualit\u00e9 de l\u0027air',
                         description: '',
@@ -4252,7 +4252,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.3.8',
+                        id: 'cae_2.1.1.3.8',
                         id_nomenclature: '2.1.1.3.8',
                         nom: 'Compl\u00e9ter l\u0027analyse par des visites et des entretiens avec les utilisateurs',
                         description: '',
@@ -4267,7 +4267,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.1.4',
+                    id: 'cae_2.1.1.4',
                     id_nomenclature: '2.1.1.4',
                     nom: 'Effectuer un suivi des consommations r\u00e9gulier et multi-flux',
                     description:
@@ -4279,7 +4279,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.4.1',
+                        id: 'cae_2.1.1.4.1',
                         id_nomenclature: '2.1.1.4.1',
                         nom: 'Saisir tous les gros consommateurs',
                         description: '',
@@ -4292,7 +4292,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.4.2',
+                        id: 'cae_2.1.1.4.2',
                         id_nomenclature: '2.1.1.4.2',
                         nom: 'Effectuer le relev\u00e9 chaque mois pour les b\u00e2timents les plus consommateurs/les grandes installations ; effectuer des relev\u00e9s p\u00e9riodiques pour les installations plus petites (surface chauff\u00e9e \u003c 500 m2).',
                         description:
@@ -4306,7 +4306,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.4.3',
+                        id: 'cae_2.1.1.4.3',
                         id_nomenclature: '2.1.1.4.3',
                         nom: 'Mesurer r\u00e9guli\u00e8rement la qualit\u00e9 de l\u0027air int\u00e9rieur (a minima mesure du confinement via indicateur du CO2 une fois par an) dans les b\u00e2timents abritant des populations sensibles. Aller au-del\u00e0 du renouvellement de la surveillance r\u00e8glementaire tous les 7 ans dans les ERP.',
                         description: '',
@@ -4321,7 +4321,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.1.5',
+                    id: 'cae_2.1.1.5',
                     id_nomenclature: '2.1.1.5',
                     nom: 'Elargir le p\u00e9rim\u00e8tre des b\u00e2timents pris en compte',
                     description: '',
@@ -4332,7 +4332,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.5.1',
+                        id: 'cae_2.1.1.5.1',
                         id_nomenclature: '2.1.1.5.1',
                         nom: 'Prendre en compte le patrimoine satellite (en d\u00e9l\u00e9gation)',
                         description:
@@ -4348,7 +4348,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.1.6',
+                    id: 'cae_2.1.1.6',
                     id_nomenclature: '2.1.1.6',
                     nom: 'Optimiser le suivi, l\u0027entretien et l\u0027exploitation des installations techniques',
                     description: '',
@@ -4359,7 +4359,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.6.1',
+                        id: 'cae_2.1.1.6.1',
                         id_nomenclature: '2.1.1.6.1',
                         nom: 'Assurer l\u0027optimisation de l\u0027exploitation par un sp\u00e9cialiste au cours des 4 derni\u00e8res ann\u00e9es',
                         description: '',
@@ -4372,7 +4372,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.6.2',
+                        id: 'cae_2.1.1.6.2',
                         id_nomenclature: '2.1.1.6.2',
                         nom: 'Int\u00e9grer des clauses d\u2019int\u00e9ressement aux contrats d\u2019exploitation/maintenance des installations techniques d\u2019\u00e9nergie',
                         description: '',
@@ -4385,7 +4385,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.6.3',
+                        id: 'cae_2.1.1.6.3',
                         id_nomenclature: '2.1.1.6.3',
                         nom: 'Confier une mission de suivi d\u2019exploitation \u00e0 un bureau d\u2019\u00e9tude pour les collectivit\u00e9s non dot\u00e9es des comp\u00e9tences suffisantes en interne',
                         description: '',
@@ -4398,7 +4398,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.6.4',
+                        id: 'cae_2.1.1.6.4',
                         id_nomenclature: '2.1.1.6.4',
                         nom: 'Mettre en place un outil performant de suivi lorsque le patrimoine le justifie (b\u00e2timents complexes, consommations importantes)',
                         description:
@@ -4414,7 +4414,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.1.7',
+                    id: 'cae_2.1.1.7',
                     id_nomenclature: '2.1.1.7',
                     nom: 'Communiquer',
                     description: '',
@@ -4425,7 +4425,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.7.1',
+                        id: 'cae_2.1.1.7.1',
                         id_nomenclature: '2.1.1.7.1',
                         nom: 'Afficher le diagnostic de performance \u00e9nerg\u00e9tique (DPE) sur des b\u00e2timents non concern\u00e9s par l\u0027obligation d\u0027affichage',
                         description:
@@ -4439,7 +4439,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.7.2',
+                        id: 'cae_2.1.1.7.2',
                         id_nomenclature: '2.1.1.7.2',
                         nom: 'Transmettre aux concierges, gardiens d\u0027immeubles et/ou utilisateurs des b\u00e2timents l\u0027\u00e9valuation de la comptabilit\u00e9 \u00e9nerg\u00e9tique (feed-back \u00e0 leurs efforts)',
                         description: '',
@@ -4452,7 +4452,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.7.3',
+                        id: 'cae_2.1.1.7.3',
                         id_nomenclature: '2.1.1.7.3',
                         nom: 'Ajouter le reporting des consommations du patrimoine dans le rapport annuel D\u00e9veloppement Durable, s\u2019il existe.',
                         description: '',
@@ -4465,7 +4465,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.1.7.4',
+                        id: 'cae_2.1.1.7.4',
                         id_nomenclature: '2.1.1.7.4',
                         nom: 'Faire un bilan annuel par b\u00e2timent de la d\u00e9pense d\u0027\u00e9nergie de la commune et en pr\u00e9senter une synth\u00e8se aux \u00e9lus et aux services',
                         description: '',
@@ -4480,7 +4480,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.1.8',
+                    id: 'cae_2.1.1.8',
                     id_nomenclature: '2.1.1.8',
                     nom: 'Identifier le potentiel d\u0027\u00e9conomie (\u00e9nergie et co\u00fbt) et de d\u00e9veloppement des \u00e9nergies renouvelables',
                     description:
@@ -4496,7 +4496,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__2.1.2',
+                id: 'cae_2.1.2',
                 id_nomenclature: '2.1.2',
                 nom: 'Elaborer une strat\u00e9gie patrimoniale incluant un programme de r\u00e9novation',
                 description:
@@ -4511,7 +4511,7 @@ export const actions: ActionReferentiel[] = [
                 points: 8,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.1.2.1',
+                    id: 'cae_2.1.2.1',
                     id_nomenclature: '2.1.2.1',
                     nom: 'Acter la volont\u00e9 politique de mettre en place une strat\u00e9gie patrimoniale ou un plan de r\u00e9novation',
                     description: '',
@@ -4522,7 +4522,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.1.1',
+                        id: 'cae_2.1.2.1.1',
                         id_nomenclature: '2.1.2.1.1',
                         nom: 'Disposer d\u0027une d\u00e9lib\u00e9ration politique',
                         description: '',
@@ -4535,7 +4535,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.1.2',
+                        id: 'cae_2.1.2.1.2',
                         id_nomenclature: '2.1.2.1.2',
                         nom: 'Disposer d\u0027une d\u00e9cision budg\u00e9taire (enveloppe de travaux ou enveloppe d\u2019ing\u00e9nierie pour prestation externe d\u2019\u00e9laboration de la strat\u00e9gie)',
                         description: '',
@@ -4548,7 +4548,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.1.3',
+                        id: 'cae_2.1.2.1.3',
                         id_nomenclature: '2.1.2.1.3',
                         nom: 'Affecter des ressources humaines en interne',
                         description: '',
@@ -4563,7 +4563,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.2.2',
+                    id: 'cae_2.1.2.2',
                     id_nomenclature: '2.1.2.2',
                     nom: 'Mettre en \u0153uvre une strat\u00e9gie de rationalisation de son patrimoine',
                     description: '',
@@ -4574,7 +4574,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.2.1',
+                        id: 'cae_2.1.2.2.1',
                         id_nomenclature: '2.1.2.2.1',
                         nom: 'R\u00e9aliser l\u2019\u00e9tat des lieux technique et des usages (occupation), des besoins et de leurs dynamiques, en int\u00e9grant les \u00e9l\u00e9ments renseign\u00e9s sur la plateforme OPERAT dans le cadre des exigences du d\u00e9cret tertiaire',
                         description: '',
@@ -4587,7 +4587,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.2.2',
+                        id: 'cae_2.1.2.2.2',
                         id_nomenclature: '2.1.2.2.2',
                         nom: 'Adopter et mettre en \u0153uvre la strat\u00e9gie de rationalisation avec des premi\u00e8res r\u00e9alisations',
                         description: '',
@@ -4600,7 +4600,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.2.3',
+                        id: 'cae_2.1.2.2.3',
                         id_nomenclature: '2.1.2.2.3',
                         nom: 'Parvenir \u00e0 ma\u00eetriser les surfaces de son patrimoine, id\u00e9alement les r\u00e9duire',
                         description: '',
@@ -4613,7 +4613,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.2.4',
+                        id: 'cae_2.1.2.2.4',
                         id_nomenclature: '2.1.2.2.4',
                         nom: 'R\u00e9affecter pour tout ou partie dans le programme de r\u00e9novation le produit des cessions',
                         description: '',
@@ -4628,7 +4628,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.2.3',
+                    id: 'cae_2.1.2.3',
                     id_nomenclature: '2.1.2.3',
                     nom: '\u00catre ambitieux et op\u00e9rationnel dans la strat\u00e9gie de r\u00e9novation',
                     description: '',
@@ -4639,7 +4639,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.3.1',
+                        id: 'cae_2.1.2.3.1',
                         id_nomenclature: '2.1.2.3.1',
                         nom: 'D\u00e9finir des objectifs de long terme (2050) et court moyen terme (2030) et tracer une trajectoire cible avec les rythmes et performances \u00e0 atteindre pour la massification de la r\u00e9novation \u00e9nerg\u00e9tique du patrimoine communal (objectifs quantifi\u00e9s en nombre ou % de b\u00e2timents \u00e0 r\u00e9nover, avec un \u00e9ch\u00e9ancier) sur la base d\u2019un \u00e9tat des lieux initial',
                         description:
@@ -4653,7 +4653,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.3.2',
+                        id: 'cae_2.1.2.3.2',
                         id_nomenclature: '2.1.2.3.2',
                         nom: 'Int\u00e9grer dans le programme d\u2019actions des mesures d\u2019urgence/court terme (les b\u00e2timents principaux sont trait\u00e9s en priorit\u00e9) et des mesures \u00e0 long terme pour les \u00e9quipements ayant un potentiel d\u0027\u00e9conomie (type de mesures, co\u00fbts pr\u00e9vus, moment de la mise en \u0153uvre) ainsi qu\u0027une estimation des potentiels d\u0027\u00e9conomie d\u2019\u00e9nergie et de gaz \u00e0 effet de serre et une estimation de la production d\u2019\u00e9nergies renouvelables g\u00e9n\u00e9r\u00e9e',
                         description: '',
@@ -4666,7 +4666,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.3.3',
+                        id: 'cae_2.1.2.3.3',
                         id_nomenclature: '2.1.2.3.3',
                         nom: 'Associer le programme \u00e0 une programmation pluriannuelle des investissements (PPI)',
                         description: '',
@@ -4679,7 +4679,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.3.4',
+                        id: 'cae_2.1.2.3.4',
                         id_nomenclature: '2.1.2.3.4',
                         nom: 'Viser a minima le niveau BBC-r\u00e9novation en M\u00e9tropole (\u00e9ventuellement en plusieurs \u00e9tapes \u00ab BBC-compatibles \u00bb) et une consommation \u00e9nerg\u00e9tique inf\u00e9rieure \u00e0 300 kWhEP/m\u00b2.an dans les DOM (correspondant \u00e0 la classe A du DPE-G pour les b\u00e2timents tertiaires existants sauf sant\u00e9 et h\u00f4tels) pour les r\u00e9novations',
                         description: '',
@@ -4694,7 +4694,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.2.4',
+                    id: 'cae_2.1.2.4',
                     id_nomenclature: '2.1.2.4',
                     nom: 'Elaborer la strat\u00e9gie dans une approche transversale climat-air-\u00e9nergie',
                     description: '',
@@ -4705,7 +4705,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.4.1',
+                        id: 'cae_2.1.2.4.1',
                         id_nomenclature: '2.1.2.4.1',
                         nom: 'Pr\u00e9voir des travaux permettant une meilleure adaptation du b\u00e2ti au changement climatique (confort d\u0027\u00e9t\u00e9, risques naturels...)',
                         description: '',
@@ -4718,7 +4718,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.4.2',
+                        id: 'cae_2.1.2.4.2',
                         id_nomenclature: '2.1.2.4.2',
                         nom: 'Limiter les antagonismes entre l\u0027am\u00e9lioration de la performance \u00e9nerg\u00e9tique et la qualit\u00e9 de l\u0027air int\u00e9rieur et ext\u00e9rieur',
                         description: '',
@@ -4731,7 +4731,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.4.3',
+                        id: 'cae_2.1.2.4.3',
                         id_nomenclature: '2.1.2.4.3',
                         nom: 'Favoriser le recours aux fili\u00e8res locales d\u2019\u00e9cor\u00e9novation, contribuer \u00e0 la mont\u00e9e en comp\u00e9tences des professionnels locaux',
                         description: '',
@@ -4746,7 +4746,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.2.5',
+                    id: 'cae_2.1.2.5',
                     id_nomenclature: '2.1.2.5',
                     nom: '\u00c9tudier des moyens de financement innovants pour la mise en \u0153uvre du plan pluriannuel de travaux',
                     description:
@@ -4758,7 +4758,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.5.1',
+                        id: 'cae_2.1.2.5.1',
                         id_nomenclature: '2.1.2.5.1',
                         nom: 'Utiliser les Certificats d\u2019Economie d\u2019\u00c9nergie (CEE)',
                         description: '',
@@ -4771,7 +4771,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.5.2',
+                        id: 'cae_2.1.2.5.2',
                         id_nomenclature: '2.1.2.5.2',
                         nom: 'Mettre en \u0153uvre un contrat de performance \u00e9nerg\u00e9tique (CPE), par exemple via un march\u00e9 public de partenariat \u00e9nerg\u00e9tique',
                         description: '',
@@ -4784,7 +4784,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.5.3',
+                        id: 'cae_2.1.2.5.3',
                         id_nomenclature: '2.1.2.5.3',
                         nom: 'Mettre en \u0153uvre un dispositif de type INTRACTING, forme de convention de performance interne \u00e0 la collectivit\u00e9 (CPE interne)',
                         description: '',
@@ -4797,7 +4797,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.5.4',
+                        id: 'cae_2.1.2.5.4',
                         id_nomenclature: '2.1.2.5.4',
                         nom: 'Instaurer un fonds local d\u2019aide aux travaux via les ressources issues du d\u00e9veloppement des \u00e9nergies renouvelables sur le territoire ou fonds d\u2019amor\u00e7age g\u00e9r\u00e9s par l\u2019EPCI (principe des \u00e9conomies d\u2019\u00e9nergies r\u00e9alis\u00e9es sur les premi\u00e8res op\u00e9rations qui permettent de refinancer le fonds d\u2019amor\u00e7age pour accompagner de nouveaux projets de r\u00e9novation)',
                         description: '',
@@ -4812,7 +4812,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.2.6',
+                    id: 'cae_2.1.2.6',
                     id_nomenclature: '2.1.2.6',
                     nom: 'Suivre et adapter le plan pluriannuel de travaux',
                     description: '',
@@ -4823,7 +4823,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.6.1',
+                        id: 'cae_2.1.2.6.1',
                         id_nomenclature: '2.1.2.6.1',
                         nom: 'Renforcer le suivi \u00e9nerg\u00e9tique des b\u00e2timents concern\u00e9s par le plan (si la comp\u00e9tence gestion et suivi est d\u00e9l\u00e9gu\u00e9e, la collectivit\u00e9 suit activement les activit\u00e9s du gestionnaire et dispose d\u2019une vision de la situation existante). Le suivi est a minima annuel pour les b\u00e2timents cibl\u00e9s par le d\u00e9cret tertiaire.',
                         description: '',
@@ -4836,7 +4836,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.6.2',
+                        id: 'cae_2.1.2.6.2',
                         id_nomenclature: '2.1.2.6.2',
                         nom: 'Suivre un ratio financier sur l\u0027effort de r\u00e9novation en euros travaux/m\u00b2 de surface totale (b\u00e2timents r\u00e9gul\u00e9s thermiquement)',
                         description: '',
@@ -4849,7 +4849,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.6.3',
+                        id: 'cae_2.1.2.6.3',
                         id_nomenclature: '2.1.2.6.3',
                         nom: 'V\u00e9rifier l\u2019atteinte des objectifs du plan et adapter/renforcer les actions si n\u00e9cessaire',
                         description: '',
@@ -4862,7 +4862,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.2.6.4',
+                        id: 'cae_2.1.2.6.4',
                         id_nomenclature: '2.1.2.6.4',
                         nom: 'Mettre en \u00e9vidence et communiquer sur les \u00e9conomies d\u0027\u00e9nergie et r\u00e9duction de GES engendr\u00e9es par les actions effectu\u00e9es',
                         description: '',
@@ -4879,7 +4879,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__2.1.3',
+                id: 'cae_2.1.3',
                 id_nomenclature: '2.1.3',
                 nom: 'Etre exemplaire sur les b\u00e2timents publics neufs et r\u00e9nov\u00e9s',
                 description:
@@ -4894,7 +4894,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.1.3.1',
+                    id: 'cae_2.1.3.1',
                     id_nomenclature: '2.1.3.1',
                     nom: 'D\u00e9lib\u00e9rer et inscrire les niveaux de performance dans un document cadre',
                     description: '',
@@ -4905,7 +4905,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.1.1',
+                        id: 'cae_2.1.3.1.1',
                         id_nomenclature: '2.1.3.1.1',
                         nom: 'D\u00e9cider de la r\u00e9alisation',
                         description:
@@ -4919,7 +4919,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.1.2',
+                        id: 'cae_2.1.3.1.2',
                         id_nomenclature: '2.1.3.1.2',
                         nom: 'Elaborer un document "cadre" pour la qualit\u00e9 environnementale de ses b\u00e2timents',
                         description:
@@ -4935,7 +4935,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.3.2',
+                    id: 'cae_2.1.3.2',
                     id_nomenclature: '2.1.3.2',
                     nom: 'D\u00e9finir des r\u00e8gles d\u2019usages des b\u00e2timents publics',
                     description: '',
@@ -4946,7 +4946,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.2.1',
+                        id: 'cae_2.1.3.2.1',
                         id_nomenclature: '2.1.3.2.1',
                         nom: 'D\u00e9finir des r\u00e8gles/r\u00e9f\u00e9rentiels d\u0027usage des b\u00e2timents, \u00e0 destination des usagers et du personnel \u0153uvrant dans les locaux, visant \u00e0 am\u00e9liorer ou atteindre les performances climat-air-\u00e9nergie attendues et les maintenir sur le long terme',
                         description: '',
@@ -4961,7 +4961,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.3.3',
+                    id: 'cae_2.1.3.3',
                     id_nomenclature: '2.1.3.3',
                     nom: 'D\u00e9finir des niveaux de performances ambitieux',
                     description: '',
@@ -4972,7 +4972,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.1',
+                        id: 'cae_2.1.3.3.1',
                         id_nomenclature: '2.1.3.3.1',
                         nom: 'Les constructions neuves sont passives ou \u00e0 \u00e9nergie positive et \u00e0 haute performance environnementale',
                         description:
@@ -4986,7 +4986,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.2',
+                        id: 'cae_2.1.3.3.2',
                         id_nomenclature: '2.1.3.3.2',
                         nom: 'Les r\u00e9novations visent un niveau de consommation \u00e0 atteindre',
                         description:
@@ -5000,7 +5000,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.3',
+                        id: 'cae_2.1.3.3.3',
                         id_nomenclature: '2.1.3.3.3',
                         nom: 'Les niveaux de performances et les pratiques recommand\u00e9es font r\u00e9f\u00e9rence \u00e0 des labels ou r\u00e9f\u00e9rentiels de qualit\u00e9 reconnus au niveau national ou r\u00e9gional',
                         description:
@@ -5014,7 +5014,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.4',
+                        id: 'cae_2.1.3.3.4',
                         id_nomenclature: '2.1.3.3.4',
                         nom: 'Le confort d\u2019\u00e9t\u00e9 est pris en compte mais le recours \u00e0 la climatisation est limit\u00e9 en \u00e9t\u00e9, notamment par l\u2019architecture bioclimatique et l\u2019optimisation de la ventilation naturelle (brasseur d\u2019air).',
                         description:
@@ -5028,7 +5028,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.5',
+                        id: 'cae_2.1.3.3.5',
                         id_nomenclature: '2.1.3.3.5',
                         nom: 'Les risques amplifi\u00e9s par le changement climatique (risques inondations ou retrait-gonflement des argiles par exemple) sont pris en compte de mani\u00e8re forte dans la conception des b\u00e2timents pour limiter leur vuln\u00e9rabilit\u00e9',
                         description: '',
@@ -5041,7 +5041,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.6',
+                        id: 'cae_2.1.3.3.6',
                         id_nomenclature: '2.1.3.3.6',
                         nom: 'Les mat\u00e9riaux utilis\u00e9s ont une faible \u00e9nergie grise, sont locaux, recycl\u00e9s ou recyclables facilement',
                         description: '',
@@ -5054,7 +5054,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.7',
+                        id: 'cae_2.1.3.3.7',
                         id_nomenclature: '2.1.3.3.7',
                         nom: 'Les chantiers sont respectueux de l\u2019environnement (limitation des nuisances environnementales engendr\u00e9es par les diff\u00e9rentes activit\u00e9s du chantier, principalement en mati\u00e8re de gestion des d\u00e9chets, limitation des pollutions \u2013 eau, air-, respect de la biodiversit\u00e9 et des milieux, et limitation du bruit)',
                         description: '',
@@ -5067,7 +5067,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.8',
+                        id: 'cae_2.1.3.3.8',
                         id_nomenclature: '2.1.3.3.8',
                         nom: 'Des mesures en faveur de la qualit\u00e9 de l\u2019air int\u00e9rieur sont prises',
                         description: '',
@@ -5080,7 +5080,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.9',
+                        id: 'cae_2.1.3.3.9',
                         id_nomenclature: '2.1.3.3.9',
                         nom: 'Des mesures sur les \u00e9conomies d\u2019eau et la gestion des eaux pluviales ont \u00e9t\u00e9 prises',
                         description: '',
@@ -5093,7 +5093,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.10',
+                        id: 'cae_2.1.3.3.10',
                         id_nomenclature: '2.1.3.3.10',
                         nom: 'Des mesures sur l\u2019\u00e9clairage sont prises',
                         description: '',
@@ -5106,7 +5106,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.11',
+                        id: 'cae_2.1.3.3.11',
                         id_nomenclature: '2.1.3.3.11',
                         nom: 'La v\u00e9g\u00e9talisation des abords, voire des murs ou des toitures, est privil\u00e9gi\u00e9e (dans une approche multicrit\u00e8re dans le choix des essences : risques d\u2019allergies, biodiversit\u00e9, production alimentaire, entretien\u2026)',
                         description: '',
@@ -5119,7 +5119,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.3.12',
+                        id: 'cae_2.1.3.3.12',
                         id_nomenclature: '2.1.3.3.12',
                         nom: 'Si existant et si n\u00e9cessaire en fonction des besoins du b\u00e2timent, le raccordement \u00e0 un r\u00e9seau de chaleur/froid utilisant des \u00e9nergies renouvelables a \u00e9t\u00e9 pris en compte',
                         description: '',
@@ -5134,7 +5134,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.3.4',
+                    id: 'cae_2.1.3.4',
                     id_nomenclature: '2.1.3.4',
                     nom: 'Construire ou r\u00e9nover un ou des b\u00e2timents exemplaires',
                     description: '',
@@ -5145,7 +5145,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.4.1',
+                        id: 'cae_2.1.3.4.1',
                         id_nomenclature: '2.1.3.4.1',
                         nom: 'Le(s) b\u00e2timent(s) concern\u00e9(s) respecte(nt) les niveaux de performance fix\u00e9es dans le document cadre, voire au-del\u00e0',
                         description: '',
@@ -5158,7 +5158,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.4.2',
+                        id: 'cae_2.1.3.4.2',
                         id_nomenclature: '2.1.3.4.2',
                         nom: 'L\u2019op\u00e9ration a \u00e9t\u00e9 l\u2019occasion de former des professionnels et de sensibiliser les habitants',
                         description: '',
@@ -5173,7 +5173,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.3.5',
+                    id: 'cae_2.1.3.5',
                     id_nomenclature: '2.1.3.5',
                     nom: 'Int\u00e9grer ces niveaux de performance dans les appels d\u2019offres',
                     description: '',
@@ -5184,7 +5184,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.5.1',
+                        id: 'cae_2.1.3.5.1',
                         id_nomenclature: '2.1.3.5.1',
                         nom: 'Int\u00e9grer dans les crit\u00e8res de choix des offres, l\u0027analyse du cycle de vie comme outil d\u0027aide \u00e0 la d\u00e9cision pour les constructions ou les r\u00e9novations',
                         description: '',
@@ -5197,7 +5197,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.5.2',
+                        id: 'cae_2.1.3.5.2',
                         id_nomenclature: '2.1.3.5.2',
                         nom: 'Utiliser des sp\u00e9cifications techniques pour fixer des objectifs de performances environnementales, de mani\u00e8re prescriptive',
                         description:
@@ -5211,7 +5211,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.5.3',
+                        id: 'cae_2.1.3.5.3',
                         id_nomenclature: '2.1.3.5.3',
                         nom: 'Int\u00e9grer dans les crit\u00e8res de jugement des offres les r\u00e9f\u00e9rences environnementales et les pratiques internes de l\u0027entreprise candidate',
                         description:
@@ -5225,7 +5225,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.5.4',
+                        id: 'cae_2.1.3.5.4',
                         id_nomenclature: '2.1.3.5.4',
                         nom: 'Le niveau de performance doit \u00eatre sup\u00e9rieur au niveau r\u00e9glementaire en vigueur',
                         description: '',
@@ -5238,7 +5238,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.5.5',
+                        id: 'cae_2.1.3.5.5',
                         id_nomenclature: '2.1.3.5.5',
                         nom: 'L\u0027int\u00e9gration de crit\u00e8res environnementaux dans les consultations a d\u00e9j\u00e0 abouti r\u00e9ellement \u00e0 faire basculer le choix en faveur du candidat le plus exemplaire sur ces aspects',
                         description: '',
@@ -5253,7 +5253,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.1.3.6',
+                    id: 'cae_2.1.3.6',
                     id_nomenclature: '2.1.3.6',
                     nom: 'G\u00e9n\u00e9raliser les op\u00e9rations exemplaires et diffuser les bonnes pratiques',
                     description:
@@ -5265,7 +5265,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.6.1',
+                        id: 'cae_2.1.3.6.1',
                         id_nomenclature: '2.1.3.6.1',
                         nom: 'Mettre en place un syst\u00e8me de management pour le suivi des projets de construction et de r\u00e9novation (responsabilit\u00e9s, pilotage, tableau de bord, suivi...)',
                         description: '',
@@ -5278,7 +5278,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.6.2',
+                        id: 'cae_2.1.3.6.2',
                         id_nomenclature: '2.1.3.6.2',
                         nom: 'Diffuser r\u00e9ellement les documents cadres et r\u00e9f\u00e9rentiels cr\u00e9\u00e9s dans les services, appropri\u00e9s par les acteurs concern\u00e9s, et appliqu\u00e9s syst\u00e9matiquement',
                         description: '',
@@ -5291,7 +5291,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.6.3',
+                        id: 'cae_2.1.3.6.3',
                         id_nomenclature: '2.1.3.6.3',
                         nom: 'Recourir \u00e0 un AMO charg\u00e9 de veiller \u00e0 la qualit\u00e9 environnementale du/des projets (pour les collectivit\u00e9s ne disposant pas des ressources/comp\u00e9tences en interne)',
                         description: '',
@@ -5304,7 +5304,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.1.3.6.4',
+                        id: 'cae_2.1.3.6.4',
                         id_nomenclature: '2.1.3.6.4',
                         nom: 'Inciter et encourager les communes de l\u0027intercommunalit\u00e9 \u00e0 mettre en place des projets exemplaires (diffusion documents cadres, guides d\u2019usages, objectifs, etc).',
                         description: '',
@@ -5323,7 +5323,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__2.2',
+            id: 'cae_2.2',
             id_nomenclature: '2.2',
             nom: 'Valeurs cibles \u00e9nerg\u00e9tiques et climatiques',
             description: '',
@@ -5334,7 +5334,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__2.2.1',
+                id: 'cae_2.2.1',
                 id_nomenclature: '2.2.1',
                 nom: 'Augmenter l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique pour la chaleur et le rafra\u00eechissement des b\u00e2timents publics',
                 description:
@@ -5348,7 +5348,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.2.1.1',
+                    id: 'cae_2.2.1.1',
                     id_nomenclature: '2.2.1.1',
                     nom: 'Mettre en place des actions de sobri\u00e9t\u00e9 pour limiter les besoins en chauffage et climatisation',
                     description:
@@ -5362,7 +5362,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.1.2',
+                    id: 'cae_2.2.1.2',
                     id_nomenclature: '2.2.1.2',
                     nom: 'Mettre en place des indicateurs en kWh/m2/an d\u0027\u00e9nergie primaire par cat\u00e9gories de b\u00e2timents pour les usages chaleur/rafra\u00eechissement et les comparer avec des valeurs de r\u00e9f\u00e9rences locales',
                     description: '',
@@ -5375,7 +5375,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.1.3',
+                    id: 'cae_2.2.1.3',
                     id_nomenclature: '2.2.1.3',
                     nom: 'Mettre en place des actions d\u2019efficacit\u00e9 \u00e9nerg\u00e9tique pour la chaleur et le rafra\u00eechissement du patrimoine sp\u00e9cifique',
                     description:
@@ -5387,7 +5387,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.1.3.1',
+                        id: 'cae_2.2.1.3.1',
                         id_nomenclature: '2.2.1.3.1',
                         nom: 'Mener des \u00e9tudes sp\u00e9cifiques pour diminuer les consommations de ces \u00e9quipements et mettre en place des actions',
                         description: '',
@@ -5400,7 +5400,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.1.3.2',
+                        id: 'cae_2.2.1.3.2',
                         id_nomenclature: '2.2.1.3.2',
                         nom: 'Favoriser des installations de production de froid performantes',
                         description: '',
@@ -5415,7 +5415,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.1.4',
+                    id: 'cae_2.2.1.4',
                     id_nomenclature: '2.2.1.4',
                     nom: 'R\u00e9nover les b\u00e2timents les plus \u00e9nergivores',
                     description: '',
@@ -5426,7 +5426,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.1.4.1',
+                        id: 'cae_2.2.1.4.1',
                         id_nomenclature: '2.2.1.4.1',
                         nom: 'Ne plus avoir de b\u00e2timents de cat\u00e9gorie F ou G (DPE \u00e9nergie)',
                         description:
@@ -5440,7 +5440,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.1.4.2',
+                        id: 'cae_2.2.1.4.2',
                         id_nomenclature: '2.2.1.4.2',
                         nom: 'Poss\u00e9der au moins 30% de b\u00e2timent en classe A ou B \u00e0 court terme',
                         description:
@@ -5456,7 +5456,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.1.5',
+                    id: 'cae_2.2.1.5',
                     id_nomenclature: '2.2.1.5',
                     nom: 'Constater la baisse des consommations moyennes globales des b\u00e2timents publics*',
                     description:
@@ -5468,7 +5468,7 @@ export const actions: ActionReferentiel[] = [
                     points: 50,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.1.5.1',
+                        id: 'cae_2.2.1.5.1',
                         id_nomenclature: '2.2.1.5.1',
                         nom: 'Diminuer ses consommations en kWh/hab (kWh/m\u00b2 pour les EPCI)',
                         description: '',
@@ -5481,7 +5481,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.1.5.2',
+                        id: 'cae_2.2.1.5.2',
                         id_nomenclature: '2.2.1.5.2',
                         nom: 'Inscrire cette diminution dans le rythme impos\u00e9 par le d\u00e9cret tertiaire',
                         description:
@@ -5499,7 +5499,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__2.2.2',
+                id: 'cae_2.2.2',
                 id_nomenclature: '2.2.2',
                 nom: 'Augmenter l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique pour l\u0027\u00e9lectricit\u00e9 des b\u00e2timents publics',
                 description:
@@ -5513,7 +5513,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.2.2.1',
+                    id: 'cae_2.2.2.1',
                     id_nomenclature: '2.2.2.1',
                     nom: 'Mettre en place des actions de sobri\u00e9t\u00e9 pour limiter les besoins en \u00e9lectricit\u00e9',
                     description:
@@ -5527,7 +5527,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.2.2',
+                    id: 'cae_2.2.2.2',
                     id_nomenclature: '2.2.2.2',
                     nom: 'Mettre en place des indicateurs en kWh/m2/an d\u0027\u00e9nergie primaire par cat\u00e9gories de b\u00e2timents pour les usages \u00e9lectriques et les comparer avec des valeurs de r\u00e9f\u00e9rences locales.',
                     description: '',
@@ -5540,7 +5540,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.2.3',
+                    id: 'cae_2.2.2.3',
                     id_nomenclature: '2.2.2.3',
                     nom: 'Mettre en place des actions d\u2019efficacit\u00e9 \u00e9nerg\u00e9tique sur l\u2019\u00e9lectricit\u00e9 pour le patrimoine sp\u00e9cifique',
                     description:
@@ -5556,7 +5556,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__2.2.3',
+                id: 'cae_2.2.3',
                 id_nomenclature: '2.2.3',
                 nom: 'Augmenter la part de consommation en \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration pour la chaleur et le rafra\u00eechissement des b\u00e2timents publics',
                 description:
@@ -5571,7 +5571,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.2.3.1',
+                    id: 'cae_2.2.3.1',
                     id_nomenclature: '2.2.3.1',
                     nom: 'Utiliser les \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration locales en priorit\u00e9 (selon gisement)',
                     description:
@@ -5583,7 +5583,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.3.1.1',
+                        id: 'cae_2.2.3.1.1',
                         id_nomenclature: '2.2.3.1.1',
                         nom: 'Mobiliser le potentiel de r\u00e9cup\u00e9ration de chaleur fatale dans et \u00e0 proximit\u00e9 du patrimoine de la collectivit\u00e9 (cf. mesure 3.2.1)',
                         description: '',
@@ -5596,7 +5596,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.3.1.2',
+                        id: 'cae_2.2.3.1.2',
                         id_nomenclature: '2.2.3.1.2',
                         nom: 'Favoriser le recours \u00e0 la g\u00e9othermie profonde s\u0027il y a un gisement',
                         description: '',
@@ -5609,7 +5609,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.3.1.3',
+                        id: 'cae_2.2.3.1.3',
                         id_nomenclature: '2.2.3.1.3',
                         nom: 'Privil\u00e9gier le bois local si la collectivit\u00e9 dispose de chaufferies bois pour ses b\u00e2timents et \u00e9quipements : suivi d\u0027un indicateur pour la part de bois local dans l\u0027approvisionnement (issu d\u0027un rayon d\u0027approvisionnement de 100 km max.)',
                         description: '',
@@ -5624,7 +5624,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.3.2',
+                    id: 'cae_2.2.3.2',
                     id_nomenclature: '2.2.3.2',
                     nom: 'Si la collectivit\u00e9 dispose de chaufferies bois pour ses b\u00e2timents et \u00e9quipements, privil\u00e9gier le bois certifi\u00e9',
                     description: '',
@@ -5635,7 +5635,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.3.2.1',
+                        id: 'cae_2.2.3.2.1',
                         id_nomenclature: '2.2.3.2.1',
                         nom: 'Obtenir une certification du bois local au minimum au niveau moyen r\u00e9gional',
                         description: '',
@@ -5648,7 +5648,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.3.2.2',
+                        id: 'cae_2.2.3.2.2',
                         id_nomenclature: '2.2.3.2.2',
                         nom: 'Le bois import\u00e9 provient a\u0300 100% de for\u00eats g\u00e9r\u00e9es durablement (PEFC, FSC...)',
                         description: '',
@@ -5663,7 +5663,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.3.3',
+                    id: 'cae_2.2.3.3',
                     id_nomenclature: '2.2.3.3',
                     nom: 'Prendre en compte la qualit\u00e9 de l\u0027air dans ses choix',
                     description:
@@ -5675,7 +5675,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.3.3.1',
+                        id: 'cae_2.2.3.3.1',
                         id_nomenclature: '2.2.3.3.1',
                         nom: 'Privil\u00e9gier lorsque cela est possible la chaleur sans combustion comme la r\u00e9cup\u00e9ration de chaleur fatale (cf. mesure 3.2.1), la g\u00e9othermie, le solaire...',
                         description: '',
@@ -5688,7 +5688,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.3.3.2',
+                        id: 'cae_2.2.3.3.2',
                         id_nomenclature: '2.2.3.3.2',
                         nom: 'Porter une attention particuli\u00e8re au traitement des fum\u00e9es des installations biomasse collective, allant au-del\u00e0 de la r\u00e9glementation',
                         description:
@@ -5704,7 +5704,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.3.4',
+                    id: 'cae_2.2.3.4',
                     id_nomenclature: '2.2.3.4',
                     nom: 'Suivre et atteindre une part d\u2019\u00e9nergie renouvelable et de r\u00e9cup\u00e9ration cons\u00e9quente pour la chaleur et le rafra\u00eechissement des b\u00e2timents publics',
                     description:
@@ -5720,7 +5720,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__2.2.4',
+                id: 'cae_2.2.4',
                 id_nomenclature: '2.2.4',
                 nom: 'Augmenter la part de consommation en \u00e9nergies renouvelables pour l\u0027\u00e9lectricit\u00e9 des b\u00e2timents publics',
                 description:
@@ -5735,7 +5735,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.2.4.1',
+                    id: 'cae_2.2.4.1',
                     id_nomenclature: '2.2.4.1',
                     nom: 'D\u00e9lib\u00e9rer et monter en comp\u00e9tences sur le sujet',
                     description:
@@ -5747,7 +5747,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.4.1.1',
+                        id: 'cae_2.2.4.1.1',
                         id_nomenclature: '2.2.4.1.1',
                         nom: 'Avoir la d\u00e9lib\u00e9ration sur la d\u00e9cision de construire des installations de production d\u0027\u00e9lectricit\u00e9, en pr\u00e9cisant le financement pr\u00e9vu',
                         description: '',
@@ -5760,7 +5760,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.4.1.2',
+                        id: 'cae_2.2.4.1.2',
                         id_nomenclature: '2.2.4.1.2',
                         nom: 'Prendre connaissance des diff\u00e9rentes offres existantes des fournisseurs d\u0027\u00e9lectricit\u00e9 (offres EnR, garanties d\u0027origine, crit\u00e8res de qualit\u00e9 environnementale...) et s\u0027organiser pour consulter le march\u00e9 (connaissance fine de ses consommations par point de livraison)',
                         description: '',
@@ -5775,7 +5775,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.4.2',
+                    id: 'cae_2.2.4.2',
                     id_nomenclature: '2.2.4.2',
                     nom: 'Installer des \u00e9quipements de production d\u2019\u00e9lectricit\u00e9 renouvelable',
                     description: '',
@@ -5786,7 +5786,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.4.2.1',
+                        id: 'cae_2.2.4.2.1',
                         id_nomenclature: '2.2.4.2.1',
                         nom: 'Avoir des installations de production d\u0027\u00e9lectricit\u00e9 renouvelable existantes',
                         description: '',
@@ -5799,7 +5799,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.4.2.2',
+                        id: 'cae_2.2.4.2.2',
                         id_nomenclature: '2.2.4.2.2',
                         nom: 'Vendre prioritairement \u00e0 des acteurs (acheteurs, fournisseurs) proposant une offre renouvelable de haute qualit\u00e9',
                         description:
@@ -5813,7 +5813,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.4.2.3',
+                        id: 'cae_2.2.4.2.3',
                         id_nomenclature: '2.2.4.2.3',
                         nom: 'Etudier l\u2019auto-consommation et la mettre en \u0153uvre sur les installations o\u00f9 elle est pertinente',
                         description: '',
@@ -5826,7 +5826,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.4.2.4',
+                        id: 'cae_2.2.4.2.4',
                         id_nomenclature: '2.2.4.2.4',
                         nom: 'Dans les DOM, installer ou favoriser les moyens de production avec stockage de l\u2019\u00e9lectricit\u00e9',
                         description: '',
@@ -5841,7 +5841,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.4.3',
+                    id: 'cae_2.2.4.3',
                     id_nomenclature: '2.2.4.3',
                     nom: 'Atteindre une part \u00e9lev\u00e9e d\u2019\u00e9lectricit\u00e9 renouvelable produite par les installations de la collectivit\u00e9',
                     description:
@@ -5855,7 +5855,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.4.4',
+                    id: 'cae_2.2.4.4',
                     id_nomenclature: '2.2.4.4',
                     nom: 'Acheter de l\u2019\u00e9lectricit\u00e9 renouvelable',
                     description:
@@ -5871,7 +5871,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__2.2.5',
+                id: 'cae_2.2.5',
                 id_nomenclature: '2.2.5',
                 nom: 'Limiter les \u00e9missions de gaz \u00e0 effet de serre des b\u00e2timents publics',
                 description:
@@ -5884,7 +5884,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.2.5.1',
+                    id: 'cae_2.2.5.1',
                     id_nomenclature: '2.2.5.1',
                     nom: 'Effectuer des bilans GES plus complets que la r\u00e9glementation ne l\u2019impose',
                     description: '',
@@ -5895,7 +5895,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.5.1.1',
+                        id: 'cae_2.2.5.1.1',
                         id_nomenclature: '2.2.5.1.1',
                         nom: 'Fixer des cibles en termes d\u0027\u00e9missions de GES pour les b\u00e2timents non soumis aux r\u00e8glementations thermiques ou au DPE (comme les piscines ou les patinoires)',
                         description: '',
@@ -5908,7 +5908,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.5.1.2',
+                        id: 'cae_2.2.5.1.2',
                         id_nomenclature: '2.2.5.1.2',
                         nom: 'Aller plus loin que le DPE ou le bilan GES \u00ab patrimoine et comp\u00e9tences \u00bb r\u00e9glementaires pour effectuer le bilan GES de ses b\u00e2timents (bilan GES sur \u00e9missions directes et indirectes en distinguant par exemple les usages de l\u0027\u00e9lectricit\u00e9)',
                         description: '',
@@ -5923,7 +5923,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.5.2',
+                    id: 'cae_2.2.5.2',
                     id_nomenclature: '2.2.5.2',
                     nom: 'Limiter les \u00e9missions de GES li\u00e9es \u00e0 la production de froid',
                     description: '',
@@ -5934,7 +5934,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.5.2.1',
+                        id: 'cae_2.2.5.2.1',
                         id_nomenclature: '2.2.5.2.1',
                         nom: 'Etudier des dispositifs bioclimatiques et tous les param\u00e8tres du confort thermique pour limiter le recours \u00e0 la climatisation.',
                         description: '',
@@ -5947,7 +5947,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.5.2.2',
+                        id: 'cae_2.2.5.2.2',
                         id_nomenclature: '2.2.5.2.2',
                         nom: 'Porter une attention particuli\u00e8re au pouvoir de r\u00e9chauffement global (PRG) des fluides frigorig\u00e8nes utilis\u00e9s, \u00e0 la qualit\u00e9 des op\u00e9rations de maintenance (installateur qualifi\u00e9, suivi des quantit\u00e9s de fluides recharg\u00e9es, r\u00e9cup\u00e9ration des fluides, pertes minimes...) et au traitement en fin de vie de ces \u00e9quipements.',
                         description:
@@ -5963,7 +5963,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.5.3',
+                    id: 'cae_2.2.5.3',
                     id_nomenclature: '2.2.5.3',
                     nom: 'R\u00e9duire les \u00e9missions de GES sur l\u2019ensemble du cycle de vie des b\u00e2timents publics',
                     description: '',
@@ -5974,7 +5974,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.2.5.3.1',
+                        id: 'cae_2.2.5.3.1',
                         id_nomenclature: '2.2.5.3.1',
                         nom: 'Evaluer des \u00e9missions de GES li\u00e9s aux produits et mat\u00e9riaux de construction utilis\u00e9s dans les b\u00e2timents publics',
                         description: '',
@@ -5987,7 +5987,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.2.5.3.2',
+                        id: 'cae_2.2.5.3.2',
                         id_nomenclature: '2.2.5.3.2',
                         nom: 'Utiliser l\u0027analyse du cycle de vie comme outil d\u0027aide \u00e0 la d\u00e9cision pour les constructions ou les r\u00e9novations',
                         description: '',
@@ -6002,7 +6002,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.5.4',
+                    id: 'cae_2.2.5.4',
                     id_nomenclature: '2.2.5.4',
                     nom: 'R\u00e9duire la part des b\u00e2timents F ou G (classification DPE pour les gaz \u00e0 effet de serre) en r\u00e9novant les b\u00e2timents les plus \u00e9nergivores',
                     description:
@@ -6016,7 +6016,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.2.5.5',
+                    id: 'cae_2.2.5.5',
                     id_nomenclature: '2.2.5.5',
                     nom: 'Augmenter la part des b\u00e2timents A ou B (classification DPE pour les gaz \u00e0 effet de serre)',
                     description:
@@ -6034,7 +6034,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__2.3',
+            id: 'cae_2.3',
             id_nomenclature: '2.3',
             nom: 'Eclairage public et \u00e9conomie d\u0027eau dans les b\u00e2timents',
             description: '',
@@ -6045,7 +6045,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__2.3.1',
+                id: 'cae_2.3.1',
                 id_nomenclature: '2.3.1',
                 nom: 'Optimiser l\u0027\u00e9clairage public',
                 description:
@@ -6060,7 +6060,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.3.1.1',
+                    id: 'cae_2.3.1.1',
                     id_nomenclature: '2.3.1.1',
                     nom: 'R\u00e9aliser un diagnostic de l\u2019\u00e9clairage public',
                     description:
@@ -6074,7 +6074,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.1.2',
+                    id: 'cae_2.3.1.2',
                     id_nomenclature: '2.3.1.2',
                     nom: 'Mettre en place des actions de sobri\u00e9t\u00e9 sur l\u2019\u00e9clairage public en priorit\u00e9',
                     description:
@@ -6088,7 +6088,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.1.3',
+                    id: 'cae_2.3.1.3',
                     id_nomenclature: '2.3.1.3',
                     nom: 'D\u00e9lib\u00e9rer et mettre en \u0153uvre un plan d\u2019optimisation de l\u2019\u00e9clairage public',
                     description: '',
@@ -6099,7 +6099,7 @@ export const actions: ActionReferentiel[] = [
                     points: 35,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.1.3.1',
+                        id: 'cae_2.3.1.3.1',
                         id_nomenclature: '2.3.1.3.1',
                         nom: 'Mettre en \u0153uvre de mesures d\u0027am\u00e9lioration des performances issues du diagnostic',
                         description:
@@ -6113,7 +6113,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.1.3.2',
+                        id: 'cae_2.3.1.3.2',
                         id_nomenclature: '2.3.1.3.2',
                         nom: 'Formaliser des exigences/objectifs en mati\u00e8re d\u0027entretien/maintenance dans un document d\u00e9di\u00e9 (contrat de maintenance, r\u00e9gie...)',
                         description: '',
@@ -6126,7 +6126,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.1.3.3',
+                        id: 'cae_2.3.1.3.3',
                         id_nomenclature: '2.3.1.3.3',
                         nom: 'Inscrire des mesures de limitation des consommations \u00e9nerg\u00e9tiques dans un document formalis\u00e9, un plan pluriannuel d\u2019optimisation (Sch\u00e9ma directeur d\u0027am\u00e9nagement lumi\u00e8re / Plan lumi\u00e8re, Plan d\u2019am\u00e9nagement Lumi\u00e8re ou autre document...)',
                         description: '',
@@ -6139,7 +6139,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.1.3.4',
+                        id: 'cae_2.3.1.3.4',
                         id_nomenclature: '2.3.1.3.4',
                         nom: 'Porter une attention \u00e0 la concertation avec la population et \u00e0 la valorisation de la d\u00e9marche',
                         description:
@@ -6153,7 +6153,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.1.3.5',
+                        id: 'cae_2.3.1.3.5',
                         id_nomenclature: '2.3.1.3.5',
                         nom: 'Identifier les enseignes lumineuses ill\u00e9gales et prendre des mesures d\u2019accompagnement pour y rem\u00e9dier (prise en compte de l\u2019\u00e9nergie dans le r\u00e8glement local de publicit\u00e9 quand il existe)',
                         description: '',
@@ -6166,7 +6166,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.1.3.6',
+                        id: 'cae_2.3.1.3.6',
                         id_nomenclature: '2.3.1.3.6',
                         nom: 'Int\u00e9grer une op\u00e9ration de portage collectif (EPCI, syndicat d\u2019\u00e9nergie, Agence locale de l\u2019\u00e9nergie) sur l\u2019optimisation de l\u2019\u00e9clairage public',
                         description: '',
@@ -6179,7 +6179,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.1.3.7',
+                        id: 'cae_2.3.1.3.7',
                         id_nomenclature: '2.3.1.3.7',
                         nom: 'Porter une attention au dimensionnement et \u00e0 la performance des d\u00e9corations de No\u00ebl',
                         description: '',
@@ -6192,7 +6192,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.1.3.8',
+                        id: 'cae_2.3.1.3.8',
                         id_nomenclature: '2.3.1.3.8',
                         nom: 'Respecter les prescriptions techniques de l\u2019arr\u00eat\u00e9 du 27 d\u00e9cembre 2018 relatif \u00e0 la pr\u00e9vention, \u00e0 la r\u00e9duction et \u00e0 la limitation des nuisances lumineuses',
                         description:
@@ -6208,7 +6208,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.1.4',
+                    id: 'cae_2.3.1.4',
                     id_nomenclature: '2.3.1.4',
                     nom: 'Suivre et atteindre les objectifs fix\u00e9s en mati\u00e8re d\u2019\u00e9clairage public',
                     description: '',
@@ -6219,7 +6219,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.1.4.1',
+                        id: 'cae_2.3.1.4.1',
                         id_nomenclature: '2.3.1.4.1',
                         nom: 'Comparer l\u2019indicateur de consommation/habitant avec les valeurs de r\u00e9f\u00e9rences (10% des points):',
                         description:
@@ -6233,7 +6233,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.1.4.2',
+                        id: 'cae_2.3.1.4.2',
                         id_nomenclature: '2.3.1.4.2',
                         nom: 'Suivre le co\u00fbt total et le co\u00fbt rapport\u00e9 \u00e0 l\u2019habitant de l\u2019\u00e9clairage public (d\u00e9penses \u00e9nerg\u00e9tiques)',
                         description: '',
@@ -6250,7 +6250,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__2.3.2',
+                id: 'cae_2.3.2',
                 id_nomenclature: '2.3.2',
                 nom: 'Economiser l\u0027eau dans les b\u00e2timents publics',
                 description:
@@ -6263,7 +6263,7 @@ export const actions: ActionReferentiel[] = [
                 points: 2,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.3.2.1',
+                    id: 'cae_2.3.2.1',
                     id_nomenclature: '2.3.2.1',
                     nom: 'R\u00e9aliser un diagnostic pr\u00e9cis des consommations d\u2019eau et des conduites d\u2019eau de l\u2019ensemble des b\u00e2timents publics et des grands consommateurs',
                     description: '',
@@ -6274,7 +6274,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.1.1',
+                        id: 'cae_2.3.2.1.1',
                         id_nomenclature: '2.3.2.1.1',
                         nom: 'R\u00e9aliser un diagnostic des consommations d\u0027eau de chaque b\u00e2timent public et des grands consommateurs (fontaines, piscines, etc.)',
                         description: '',
@@ -6287,7 +6287,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.1.2',
+                        id: 'cae_2.3.2.1.2',
                         id_nomenclature: '2.3.2.1.2',
                         nom: 'Equiper les compteurs des b\u00e2timents publics de t\u00e9l\u00e9-rel\u00e8ve',
                         description: '',
@@ -6302,7 +6302,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.2.2',
+                    id: 'cae_2.3.2.2',
                     id_nomenclature: '2.3.2.2',
                     nom: 'Formaliser l\u2019engagement de la collectivit\u00e9 \u00e0 r\u00e9duire ses consommations',
                     description: '',
@@ -6313,7 +6313,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.2.1',
+                        id: 'cae_2.3.2.2.1',
                         id_nomenclature: '2.3.2.2.1',
                         nom: 'D\u00e9cider de l\u0027installation des appareils et robinets \u00e9conomes en eau (budget allou\u00e9)',
                         description: '',
@@ -6326,7 +6326,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.2.2',
+                        id: 'cae_2.3.2.2.2',
                         id_nomenclature: '2.3.2.2.2',
                         nom: 'S\u0027engager pour un objectif chiffr\u00e9 de r\u00e9duction des consommations d\u0027eau',
                         description: '',
@@ -6341,7 +6341,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.2.3',
+                    id: 'cae_2.3.2.3',
                     id_nomenclature: '2.3.2.3',
                     nom: 'Sensibiliser et informer les utilisateurs des b\u00e2timents publics',
                     description: '',
@@ -6352,7 +6352,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.3.1',
+                        id: 'cae_2.3.2.3.1',
                         id_nomenclature: '2.3.2.3.1',
                         nom: 'Tenir informer les utilisateurs des b\u00e2timents publics et les employ\u00e9s sur une utilisation scrupuleuse de l\u0027eau',
                         description: '',
@@ -6367,7 +6367,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.2.4',
+                    id: 'cae_2.3.2.4',
                     id_nomenclature: '2.3.2.4',
                     nom: 'Mettre en \u0153uvre les actions et suivre les consommations',
                     description: '',
@@ -6378,7 +6378,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.4.1',
+                        id: 'cae_2.3.2.4.1',
                         id_nomenclature: '2.3.2.4.1',
                         nom: 'Relever des valeurs de consommations \u00e0 une fr\u00e9quence qui d\u00e9pend de la consommation',
                         description:
@@ -6392,7 +6392,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.4.2',
+                        id: 'cae_2.3.2.4.2',
                         id_nomenclature: '2.3.2.4.2',
                         nom: 'Installer les appareils et robinets \u00e9conomes dans les b\u00e2timents de la collectivit\u00e9 les plus consommateurs d\u0027eau',
                         description: '',
@@ -6405,7 +6405,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.4.3',
+                        id: 'cae_2.3.2.4.3',
                         id_nomenclature: '2.3.2.4.3',
                         nom: 'Identifier un service technique pour effectuer les r\u00e9parations en cas de fuite',
                         description: '',
@@ -6418,7 +6418,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.4.4',
+                        id: 'cae_2.3.2.4.4',
                         id_nomenclature: '2.3.2.4.4',
                         nom: 'Porter une attention particuli\u00e8re sur les piscines',
                         description:
@@ -6432,7 +6432,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.4.5',
+                        id: 'cae_2.3.2.4.5',
                         id_nomenclature: '2.3.2.4.5',
                         nom: 'R\u00e9gler les poussoirs sur des dur\u00e9es courtes dans les b\u00e2timents scolaires et \u00e9duquer les enfants \u00e0 \u00e9conomiser l\u2019eau (et ne pas jouer avec)',
                         description: '',
@@ -6445,7 +6445,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.4.6',
+                        id: 'cae_2.3.2.4.6',
                         id_nomenclature: '2.3.2.4.6',
                         nom: 'R\u00e9cup\u00e9rer les eaux pluviales en toiture pour l\u0027utilisation dans le b\u00e2timent ou les espaces verts',
                         description: '',
@@ -6460,7 +6460,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.2.5',
+                    id: 'cae_2.3.2.5',
                     id_nomenclature: '2.3.2.5',
                     nom: 'Etre exemplaire sur les consommations d\u2019eau',
                     description: '',
@@ -6471,7 +6471,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.5.1',
+                        id: 'cae_2.3.2.5.1',
                         id_nomenclature: '2.3.2.5.1',
                         nom: 'Diminuer les consommations/m2 par rapport aux ann\u00e9es pr\u00e9c\u00e9dentes et communiquer officiellement (ex : rapport de d\u00e9veloppement durable, bilan \u00e9nergie/GES...)',
                         description: '',
@@ -6484,7 +6484,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.2.5.2',
+                        id: 'cae_2.3.2.5.2',
                         id_nomenclature: '2.3.2.5.2',
                         nom: 'Pour les piscines, attester de leur performance par un suivi pr\u00e9cis mensuel avec un indicateur adapt\u00e9',
                         description:
@@ -6502,7 +6502,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__2.3.3',
+                id: 'cae_2.3.3',
                 id_nomenclature: '2.3.3',
                 nom: 'G\u00e9rer sa voirie durablement',
                 description:
@@ -6514,7 +6514,7 @@ export const actions: ActionReferentiel[] = [
                 points: 2,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__2.3.3.1',
+                    id: 'cae_2.3.3.1',
                     id_nomenclature: '2.3.3.1',
                     nom: 'Conna\u00eetre son patrimoine (voirie)',
                     description: '',
@@ -6525,7 +6525,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.1.1',
+                        id: 'cae_2.3.3.1.1',
                         id_nomenclature: '2.3.3.1.1',
                         nom: 'Mettre en place et tenir \u00e0 jour un SIG r\u00e9pertoriant les voiries',
                         description:
@@ -6539,7 +6539,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.1.2',
+                        id: 'cae_2.3.3.1.2',
                         id_nomenclature: '2.3.3.1.2',
                         nom: 'Conna\u00eetre la longueur totale de voirie g\u00e9r\u00e9e par la collectivit\u00e9',
                         description: '',
@@ -6552,7 +6552,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.1.3',
+                        id: 'cae_2.3.3.1.3',
                         id_nomenclature: '2.3.3.1.3',
                         nom: 'Collecter des informations qualitatives sur l\u0027\u00e9tat de chaque voirie',
                         description: '',
@@ -6567,7 +6567,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.3.2',
+                    id: 'cae_2.3.3.2',
                     id_nomenclature: '2.3.3.2',
                     nom: 'Former/sensibiliser les agents en charge de la voirie',
                     description: '',
@@ -6578,7 +6578,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.2.1',
+                        id: 'cae_2.3.3.2.1',
                         id_nomenclature: '2.3.3.2.1',
                         nom: 'Former les agents pour limiter les impacts environnementaux des projets de voirie',
                         description: '',
@@ -6591,7 +6591,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.2.2',
+                        id: 'cae_2.3.3.2.2',
                         id_nomenclature: '2.3.3.2.2',
                         nom: 'Cr\u00e9er des \u00e9changes entre les agents du service voirie avec le service "mobilit\u00e9/transport" (sur des projets particuliers et de mani\u00e8re plus transversale) pour une politique coh\u00e9rente visant le d\u00e9veloppement cyclable/TC et la juste part de la voiture',
                         description: '',
@@ -6604,7 +6604,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.2.3',
+                        id: 'cae_2.3.3.2.3',
                         id_nomenclature: '2.3.3.2.3',
                         nom: 'Inscrire la baisse de l\u0027impact environnemental des projets voirie comme un objectif du service',
                         description:
@@ -6620,7 +6620,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.3.3',
+                    id: 'cae_2.3.3.3',
                     id_nomenclature: '2.3.3.3',
                     nom: 'Adopter une politique pr\u00e9ventive limitant les interventions lourdes',
                     description: '',
@@ -6631,7 +6631,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.3.1',
+                        id: 'cae_2.3.3.3.1',
                         id_nomenclature: '2.3.3.3.1',
                         nom: 'Privil\u00e9gier le pr\u00e9ventif plut\u00f4t que le curatif dans la programmation des travaux, afin de limiter les interventions lourdes',
                         description: '',
@@ -6644,7 +6644,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.3.2',
+                        id: 'cae_2.3.3.3.2',
                         id_nomenclature: '2.3.3.3.2',
                         nom: 'Prendre en compte les impacts du changement climatique dans les crit\u00e8res de durabilit\u00e9 des voiries et techniques de mise en oeuvre',
                         description: '',
@@ -6657,7 +6657,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.3.3',
+                        id: 'cae_2.3.3.3.3',
                         id_nomenclature: '2.3.3.3.3',
                         nom: 'Coordonner des travaux entre les diff\u00e9rents services et partenaires (r\u00e9seaux \u00e9nerg\u00e9tiques, t\u00e9l\u00e9com, assainissement, eau, espaces verts...) pour limiter les interventions',
                         description: '',
@@ -6672,7 +6672,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.3.4',
+                    id: 'cae_2.3.3.4',
                     id_nomenclature: '2.3.3.4',
                     nom: 'Limiter l\u0027impact environnemental des mat\u00e9riaux de voirie',
                     description: '',
@@ -6683,7 +6683,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.4.1',
+                        id: 'cae_2.3.3.4.1',
                         id_nomenclature: '2.3.3.4.1',
                         nom: 'Renforcer l\u0027usage des mat\u00e9riaux suivants dans ces chantiers : mat\u00e9riaux perm\u00e9ables, recycl\u00e9s, \u00e0 faible alb\u00e9do, \u00e0 basse temp\u00e9rature de mise en oeuvre (enrob\u00e9s \u00e0 froid ou ti\u00e8de...), liants v\u00e9g\u00e9taux',
                         description: '',
@@ -6696,7 +6696,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.4.2',
+                        id: 'cae_2.3.3.4.2',
                         id_nomenclature: '2.3.3.4.2',
                         nom: 'Utiliser des outils d\u0027aides \u00e0 la d\u00e9cision et \u00e0 la gestion de projet :',
                         description:
@@ -6710,7 +6710,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.4.3',
+                        id: 'cae_2.3.3.4.3',
                         id_nomenclature: '2.3.3.4.3',
                         nom: 'Pr\u00e9voir et pratiquer la valorisation des d\u00e9chets issus des voiries en fin de vie (tri \u00e0 la source, recyclage...)',
                         description: '',
@@ -6723,7 +6723,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.4.4',
+                        id: 'cae_2.3.3.4.4',
                         id_nomenclature: '2.3.3.4.4',
                         nom: 'Inscrire des crit\u00e8res environnementaux dans les appels d\u0027offres des chantiers voirie',
                         description: '',
@@ -6738,7 +6738,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.3.5',
+                    id: 'cae_2.3.3.5',
                     id_nomenclature: '2.3.3.5',
                     nom: 'Anticiper et encourager les changements de comportement et le report modal via la politique voirie',
                     description:
@@ -6750,7 +6750,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.5.1',
+                        id: 'cae_2.3.3.5.1',
                         id_nomenclature: '2.3.3.5.1',
                         nom: 'Dans les projets neufs, adapter les gabarits aux usages, limiter l\u0027emprise de la voirie r\u00e9serv\u00e9e aux voitures (normes minimales).',
                         description: '',
@@ -6763,7 +6763,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.5.2',
+                        id: 'cae_2.3.3.5.2',
                         id_nomenclature: '2.3.3.5.2',
                         nom: 'Limiter la cr\u00e9ation de nouvelles voiries au strict n\u00e9cessaire',
                         description:
@@ -6779,7 +6779,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__2.3.3.6',
+                    id: 'cae_2.3.3.6',
                     id_nomenclature: '2.3.3.6',
                     nom: 'T\u00e9moigner de la baisse de l\u0027impact environnemental de sa politique voirie',
                     description: '',
@@ -6790,7 +6790,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.6.1',
+                        id: 'cae_2.3.3.6.1',
                         id_nomenclature: '2.3.3.6.1',
                         nom: 'Suivre de mani\u00e8re chiffr\u00e9e l\u0027avancement de sa politique et se fixer des objectifs',
                         description:
@@ -6804,7 +6804,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__2.3.3.6.2',
+                        id: 'cae_2.3.3.6.2',
                         id_nomenclature: '2.3.3.6.2',
                         nom: 'Suivre un indicateur visant la sobri\u00e9t\u00e9',
                         description:
@@ -6826,7 +6826,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'citergie__3',
+        id: 'cae_3',
         id_nomenclature: '3',
         nom: 'Approvisionnement \u00e9nergie, eau, assainissement',
         description: '',
@@ -6837,7 +6837,7 @@ export const actions: ActionReferentiel[] = [
         points: -1.0,
         actions: [
           new ActionReferentiel({
-            id: 'citergie__3.1',
+            id: 'cae_3.1',
             id_nomenclature: '3.1',
             nom: 'Organisation de la distribution d\u0027\u00e9nergie et services associ\u00e9s',
             description: '',
@@ -6848,7 +6848,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__3.1.1',
+                id: 'cae_3.1.1',
                 id_nomenclature: '3.1.1',
                 nom: 'Optimiser le service public de la distribution d\u0027\u00e9nergie',
                 description:
@@ -6863,7 +6863,7 @@ export const actions: ActionReferentiel[] = [
                 points: 10,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__3.1.1.1',
+                    id: 'cae_3.1.1.1',
                     id_nomenclature: '3.1.1.1',
                     nom: 'Conna\u00eetre les enjeux de la distribution d\u2019\u00e9nergie sur le territoire',
                     description: '',
@@ -6874,7 +6874,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.1.1',
+                        id: 'cae_3.1.1.1.1',
                         id_nomenclature: '3.1.1.1.1',
                         nom: 'Conna\u00eetre les enjeux de la distribution d\u2019\u00e9nergie sur son territoire',
                         description:
@@ -6888,7 +6888,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.1.2',
+                        id: 'cae_3.1.1.1.2',
                         id_nomenclature: '3.1.1.1.2',
                         nom: 'Demander au syndicat d\u2019\u00e9nergie ou au concessionnaire/gestionnaire du r\u00e9seau les informations utiles \u00e0 sa politique \u00e9nergie',
                         description:
@@ -6902,7 +6902,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.1.3',
+                        id: 'cae_3.1.1.1.3',
                         id_nomenclature: '3.1.1.1.3',
                         nom: 'Suivre les concessions par des personnes d\u00e9di\u00e9es et sp\u00e9cialis\u00e9es',
                         description:
@@ -6916,7 +6916,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.1.4',
+                        id: 'cae_3.1.1.1.4',
                         id_nomenclature: '3.1.1.1.4',
                         nom: 'Conna\u00eetre les provisions pour renouvellement le cas \u00e9ch\u00e9ant',
                         description: '',
@@ -6931,7 +6931,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.1.1.2',
+                    id: 'cae_3.1.1.2',
                     id_nomenclature: '3.1.1.2',
                     nom: 'Impliquer les acteurs de la distribution d\u2019\u00e9nergie de mani\u00e8re transversale',
                     description: '',
@@ -6942,7 +6942,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.2.1',
+                        id: 'cae_3.1.1.2.1',
                         id_nomenclature: '3.1.1.2.1',
                         nom: 'Les concessionnaires prennent ou ont pris une part active aux travaux du PCAET ou \u00e9quivalent (signature de charte, participation aux ateliers\u2026)',
                         description: '',
@@ -6955,7 +6955,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.2.2',
+                        id: 'cae_3.1.1.2.2',
                         id_nomenclature: '3.1.1.2.2',
                         nom: 'Mettre en place un comit\u00e9 consultatif sp\u00e9cifique au r\u00e9seau de chaleur/froid',
                         description: '',
@@ -6968,7 +6968,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.2.3',
+                        id: 'cae_3.1.1.2.3',
                         id_nomenclature: '3.1.1.2.3',
                         nom: 'S\u2019assurer de la bonne repr\u00e9sentativit\u00e9\u0301 de l\u2019ensemble des acteurs et notamment de la pr\u00e9sence des repr\u00e9sentants des usagers et des abonn\u00e9s.',
                         description: '',
@@ -6983,7 +6983,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.1.1.3',
+                    id: 'cae_3.1.1.3',
                     id_nomenclature: '3.1.1.3',
                     nom: 'Int\u00e9grer des crit\u00e8res d\u2019efficacit\u00e9 \u00e9nerg\u00e9tique et de d\u00e9veloppement des \u00e9nergies renouvelable dans le service public de distribution d\u2019\u00e9nergie',
                     description: '',
@@ -6994,7 +6994,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.3.1',
+                        id: 'cae_3.1.1.3.1',
                         id_nomenclature: '3.1.1.3.1',
                         nom: 'Pour les r\u00e9seaux de chauffage/froid urbain, \u00eatre attentif \u00e0 la performance environnementale dans le choix de son concessionnaire et inscrire des exigences dans le contrat et les avenants qui les lient',
                         description:
@@ -7008,7 +7008,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.3.2',
+                        id: 'cae_3.1.1.3.2',
                         id_nomenclature: '3.1.1.3.2',
                         nom: 'Demander aux concessionnaires de pr\u00e9ciser dans leurs rapports annuels les mesures d\u0027am\u00e9lioration des performances \u00e9nerg\u00e9tiques r\u00e9alis\u00e9es et l\u0027\u00e9tat des r\u00e9flexions et actions sur les smart grid ou l\u2019injection du bio-m\u00e9thane dans le r\u00e9seau gaz',
                         description:
@@ -7022,7 +7022,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.3.3',
+                        id: 'cae_3.1.1.3.3',
                         id_nomenclature: '3.1.1.3.3',
                         nom: 'En r\u00e9gie, afficher et formaliser la performance \u00e9nerg\u00e9tique du service et sa contribution \u00e0 la politique MDE et EnR de la collectivit\u00e9',
                         description:
@@ -7038,7 +7038,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.1.1.4',
+                    id: 'cae_3.1.1.4',
                     id_nomenclature: '3.1.1.4',
                     nom: 'D\u00e9finir et piloter une strat\u00e9gie en mati\u00e8re d\u2019optimisation des r\u00e9seaux pour dialoguer plus efficacement avec les acteurs sp\u00e9cialis\u00e9s',
                     description: '',
@@ -7049,7 +7049,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.4.1',
+                        id: 'cae_3.1.1.4.1',
                         id_nomenclature: '3.1.1.4.1',
                         nom: 'D\u00e9finir un plan strat\u00e9gique / une feuille de route propre \u00e0 la collectivit\u00e9',
                         description:
@@ -7063,7 +7063,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.4.2',
+                        id: 'cae_3.1.1.4.2',
                         id_nomenclature: '3.1.1.4.2',
                         nom: 'Suivre et mettre \u00e0 jour le sch\u00e9ma de coh\u00e9rence de d\u00e9veloppement des r\u00e9seaux de distribution d\u2019\u00e9nergie du PCAET',
                         description:
@@ -7077,7 +7077,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.4.3',
+                        id: 'cae_3.1.1.4.3',
                         id_nomenclature: '3.1.1.4.3',
                         nom: 'Piloter et suivre de mani\u00e8re globale sa politique \u00e9nerg\u00e9tique en exploitant les donn\u00e9es des diff\u00e9rents r\u00e9seaux (\u00e9lectricit\u00e9, gaz, chaleur/froid)',
                         description: '',
@@ -7090,7 +7090,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.4.4',
+                        id: 'cae_3.1.1.4.4',
                         id_nomenclature: '3.1.1.4.4',
                         nom: 'Produire des documents synth\u00e9tis\u00e9s/appropri\u00e9s sur ce sujet',
                         description:
@@ -7106,7 +7106,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.1.1.5',
+                    id: 'cae_3.1.1.5',
                     id_nomenclature: '3.1.1.5',
                     nom: 'Mettre en \u0153uvre un programme localis\u00e9 de ma\u00eetrise de l\u2019\u00e9nergie avec les gestionnaires/concessionnaires des r\u00e9seaux',
                     description: '',
@@ -7117,7 +7117,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.5.1',
+                        id: 'cae_3.1.1.5.1',
                         id_nomenclature: '3.1.1.5.1',
                         nom: 'Oeuvrer (via l\u2019autorit\u00e9 conc\u00e9dante le cas \u00e9ch\u00e9ant) pour la mise en place d\u0027un service de flexibilit\u00e9 local aupr\u00e8s du gestionnaire de r\u00e9seau (\u00e9tude en cours ou service en place), appel\u00e9 \u00e9galement \u00ab boucle \u00e9nerg\u00e9tique locale \u00bb ou \u00e9quivalent',
                         description:
@@ -7131,7 +7131,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.5.2',
+                        id: 'cae_3.1.1.5.2',
                         id_nomenclature: '3.1.1.5.2',
                         nom: 'Accompagner des projet pilotes en auto-consommation d\u2019\u00e9lectricit\u00e9 renouvelable pour augmenter les taux d\u2019auto-consommation et d\u2019auto-production (juste dimensionnement, synchronisation de la consommation avec la production, op\u00e9ration collective\u2026)',
                         description: '',
@@ -7144,7 +7144,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.1.5.3',
+                        id: 'cae_3.1.1.5.3',
                         id_nomenclature: '3.1.1.5.3',
                         nom: 'Participer \u00e0 des projets de smartgrid',
                         description: '',
@@ -7161,7 +7161,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__3.1.2',
+                id: 'cae_3.1.2',
                 id_nomenclature: '3.1.2',
                 nom: 'Inciter \u00e0 la r\u00e9duction des consommations et \u00e0 l\u2019achat d\u2019\u00e9lectricit\u00e9 verte avec les fournisseurs et syndicats d\u2019\u00e9nergie',
                 description:
@@ -7176,7 +7176,7 @@ export const actions: ActionReferentiel[] = [
                 points: 10,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__3.1.2.1',
+                    id: 'cae_3.1.2.1',
                     id_nomenclature: '3.1.2.1',
                     nom: 'Inciter \u00e0 l\u2019achat d\u2019\u00e9lectricit\u00e9 renouvelable',
                     description: '',
@@ -7187,7 +7187,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.1.1',
+                        id: 'cae_3.1.2.1.1',
                         id_nomenclature: '3.1.2.1.1',
                         nom: 'S\u0027engager \u00e0 mener une politique active de promotion des achats d\u0027\u00e9lectricit\u00e9 verte aupr\u00e8s de ses habitants et acteurs socio-\u00e9conomiques pour augmenter la demande',
                         description:
@@ -7201,7 +7201,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.1.2',
+                        id: 'cae_3.1.2.1.2',
                         id_nomenclature: '3.1.2.1.2',
                         nom: 'Faire la promotion et informer les habitants et les entreprises de la possibilit\u00e9 d\u0027acheter de l\u0027\u00e9lectricit\u00e9 verte et sur les crit\u00e8res de qualit\u00e9 \u00e0 respecter',
                         description:
@@ -7215,7 +7215,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.1.3',
+                        id: 'cae_3.1.2.1.3',
                         id_nomenclature: '3.1.2.1.3',
                         nom: 'Encourager et soutenir les d\u00e9marches de groupement d\u0027achats d\u0027\u00e9lectricit\u00e9 verte des acteurs publics et priv\u00e9s (r\u00e9union d\u0027information/formation/cahier des charges...)',
                         description: '',
@@ -7230,7 +7230,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.1.2.2',
+                    id: 'cae_3.1.2.2',
                     id_nomenclature: '3.1.2.2',
                     nom: 'Utiliser la facturation de l\u2019\u00e9nergie pour encourager les comportements \u00e9conomes (selon marge d\u2019actions)',
                     description: '',
@@ -7241,7 +7241,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.2.1',
+                        id: 'cae_3.1.2.2.1',
                         id_nomenclature: '3.1.2.2.1',
                         nom: 'Faire apparaitre de mani\u00e8re \u00e9vidente dans les objectifs politiques des fournisseurs locaux (factures) des principes de tarification des agents \u00e9nerg\u00e9tiques favorisant un comportement \u00e9conome en \u00e9nergie',
                         description:
@@ -7255,7 +7255,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.2.2',
+                        id: 'cae_3.1.2.2.2',
                         id_nomenclature: '3.1.2.2.2',
                         nom: 'Indiquer une valeur de r\u00e9f\u00e9rence (moyenne nationale ou r\u00e9gionale d\u0027un m\u00e9nage-type), l\u0027\u00e9volution des consommations par rapport aux ann\u00e9es pr\u00e9c\u00e9dentes, des recommandations ou des sites-ressources sur les factures d\u0027\u00e9lectricit\u00e9, de gaz ou chauffage urbain',
                         description: '',
@@ -7270,7 +7270,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.1.2.3',
+                    id: 'cae_3.1.2.3',
                     id_nomenclature: '3.1.2.3',
                     nom: 'D\u00e9velopper les prestations en mati\u00e8re de ma\u00eetrise de l\u2019\u00e9nergie et d\u2019\u00e9nergie renouvelable propos\u00e9es par les acteurs de l\u2019\u00e9nergie',
                     description: '',
@@ -7281,7 +7281,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.3.1',
+                        id: 'cae_3.1.2.3.1',
                         id_nomenclature: '3.1.2.3.1',
                         nom: 'B\u00e9n\u00e9ficier et/ou solliciter son syndicat pour mettre en place des services en mati\u00e8re de MDE et d\u0027ENR',
                         description:
@@ -7295,7 +7295,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.3.2',
+                        id: 'cae_3.1.2.3.2',
                         id_nomenclature: '3.1.2.3.2',
                         nom: 'Les fournisseurs d\u2019\u00e9nergie (gaz, chaleur, \u00e9lectricit\u00e9, en lien avec la collectivit\u00e9) proposent aux clients des prestations de services dans le domaine de la MDE et des ENR',
                         description: '',
@@ -7308,7 +7308,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.3.3',
+                        id: 'cae_3.1.2.3.3',
                         id_nomenclature: '3.1.2.3.3',
                         nom: 'Se fixer des objectifs de performances et d\u2019am\u00e9lioration de ces services',
                         description:
@@ -7322,7 +7322,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.3.4',
+                        id: 'cae_3.1.2.3.4',
                         id_nomenclature: '3.1.2.3.4',
                         nom: 'Accompagner des projets pilotes d\u2019auto-consommation d\u2019\u00e9lectricit\u00e9 renouvelable',
                         description:
@@ -7338,7 +7338,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.1.2.4',
+                    id: 'cae_3.1.2.4',
                     id_nomenclature: '3.1.2.4',
                     nom: 'Suivre l\u2019efficacit\u00e9 des actions men\u00e9es',
                     description: '',
@@ -7349,7 +7349,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.4.1',
+                        id: 'cae_3.1.2.4.1',
                         id_nomenclature: '3.1.2.4.1',
                         nom: 'Se rapprocher des fournisseurs actifs de son territoire pour conna\u00eetre et orienter les offres propos\u00e9es sur son territoire et suivre le volume d\u0027\u00e9lectricit\u00e9 verte achet\u00e9 \u00e0 l\u0027\u00e9chelle du territoire (habitants et acteurs socio-professionnels publics et priv\u00e9s)',
                         description: '',
@@ -7362,7 +7362,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.4.2',
+                        id: 'cae_3.1.2.4.2',
                         id_nomenclature: '3.1.2.4.2',
                         nom: 'Poss\u00e8der une offre 100% renouvelable et augmenter la proportion de clients sur ce produit',
                         description:
@@ -7376,7 +7376,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.1.2.4.3',
+                        id: 'cae_3.1.2.4.3',
                         id_nomenclature: '3.1.2.4.3',
                         nom: 'Augmenter le volume des prestations fournies',
                         description:
@@ -7396,7 +7396,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__3.2',
+            id: 'cae_3.2',
             id_nomenclature: '3.2',
             nom: 'Production \u00e9nerg\u00e9tique locale',
             description: '',
@@ -7407,7 +7407,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__3.2.1',
+                id: 'cae_3.2.1',
                 id_nomenclature: '3.2.1',
                 nom: 'R\u00e9cup\u00e9rer la chaleur industrielle, pratiquer la cog\u00e9n\u00e9ration, utiliser les r\u00e9seaux de chaleur/froid comme vecteur',
                 description:
@@ -7422,7 +7422,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__3.2.1.1',
+                    id: 'cae_3.2.1.1',
                     id_nomenclature: '3.2.1.1',
                     nom: 'Evaluer le potentiel de r\u00e9cup\u00e9ration de chaleur et de cog\u00e9n\u00e9ration',
                     description:
@@ -7434,7 +7434,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.1.1',
+                        id: 'cae_3.2.1.1.1',
                         id_nomenclature: '3.2.1.1.1',
                         nom: 'Approfondir la connaissance du tissu industriel pr\u00e9sent sur leur territoire',
                         description:
@@ -7448,7 +7448,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.1.2',
+                        id: 'cae_3.2.1.1.2',
                         id_nomenclature: '3.2.1.1.2',
                         nom: 'Se rapprocher aupr\u00e8s des industries a priori pertinentes et des gros consommateurs',
                         description: '',
@@ -7461,7 +7461,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.1.3',
+                        id: 'cae_3.2.1.1.3',
                         id_nomenclature: '3.2.1.1.3',
                         nom: 'Identifier des projets existants et de sites ainsi que des zones de demande en chaleur/froid',
                         description: '',
@@ -7474,7 +7474,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.1.4',
+                        id: 'cae_3.2.1.1.4',
                         id_nomenclature: '3.2.1.1.4',
                         nom: 'R\u00e9aliser une \u00e9valuation qualitative des rejets thermiques des entreprises industrielles',
                         description: '',
@@ -7487,7 +7487,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.1.5',
+                        id: 'cae_3.2.1.1.5',
                         id_nomenclature: '3.2.1.1.5',
                         nom: 'R\u00e9aliser une \u00e9valuation quantitative du potentiel \u00e0 travers une \u00e9tude de potentiel pre\u0301alable re\u0301cente',
                         description:
@@ -7501,7 +7501,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.1.6',
+                        id: 'cae_3.2.1.1.6',
                         id_nomenclature: '3.2.1.1.6',
                         nom: 'Faire une \u00e9tude sur le potentiel en auto-consommation',
                         description: '',
@@ -7514,7 +7514,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.1.7',
+                        id: 'cae_3.2.1.1.7',
                         id_nomenclature: '3.2.1.1.7',
                         nom: 'R\u00e9aliser une \u00e9tude de potentiel de micro-cog\u00e9n\u00e9ration',
                         description: '',
@@ -7527,7 +7527,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.1.8',
+                        id: 'cae_3.2.1.1.8',
                         id_nomenclature: '3.2.1.1.8',
                         nom: 'R\u00e9aliser une \u00e9tude de potentiel d\u2019injection vers un r\u00e9seau de chaleur existant, potentiel pour r\u00e9aliser des (micro) r\u00e9seaux de chaleur/froid',
                         description: '',
@@ -7542,7 +7542,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.2.1.2',
+                    id: 'cae_3.2.1.2',
                     id_nomenclature: '3.2.1.2',
                     nom: 'Soutenir les installations de r\u00e9cup\u00e9ration de chaleur industrielle et de cog\u00e9n\u00e9ration sur le territoire',
                     description: '',
@@ -7553,7 +7553,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.2.1',
+                        id: 'cae_3.2.1.2.1',
                         id_nomenclature: '3.2.1.2.1',
                         nom: 'Se fixer des dispositions contraignantes et des objectifs de d\u00e9veloppement dans la programmation \u00e9nerg\u00e9tique de la collectivit\u00e9',
                         description: '',
@@ -7566,7 +7566,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.2.2',
+                        id: 'cae_3.2.1.2.2',
                         id_nomenclature: '3.2.1.2.2',
                         nom: 'Conseiller activement les porteurs de projets de territoire',
                         description: '',
@@ -7579,7 +7579,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.2.3',
+                        id: 'cae_3.2.1.2.3',
                         id_nomenclature: '3.2.1.2.3',
                         nom: 'Permettre aux entreprises de se rencontrer et d\u2019identifier des synergies potentielles relatives \u00e0 la r\u00e9cup\u00e9ration de chaleur (dans une d\u00e9marche globale d\u2019\u00e9cologie industrielle \u00e9valu\u00e9e dans la mesure 6.3.1)',
                         description: '',
@@ -7592,7 +7592,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.2.4',
+                        id: 'cae_3.2.1.2.4',
                         id_nomenclature: '3.2.1.2.4',
                         nom: 'Soutenir une campagne / un programme de promotion de la micro-cog\u00e9n\u00e9ration',
                         description: '',
@@ -7605,7 +7605,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.2.5',
+                        id: 'cae_3.2.1.2.5',
                         id_nomenclature: '3.2.1.2.5',
                         nom: 'Participer financi\u00e8rement aux installations lorsque la desserte concerne un r\u00e9seau de chaleur urbain',
                         description: '',
@@ -7620,7 +7620,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.2.1.3',
+                    id: 'cae_3.2.1.3',
                     id_nomenclature: '3.2.1.3',
                     nom: 'Suivre le d\u00e9veloppement de la r\u00e9cup\u00e9ration de chaleur et de la cog\u00e9n\u00e9ration et atteindre les objectifs fix\u00e9s',
                     description: '',
@@ -7631,7 +7631,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.3.1',
+                        id: 'cae_3.2.1.3.1',
                         id_nomenclature: '3.2.1.3.1',
                         nom: 'Des installations sont en fonctionnement sur le territoire',
                         description:
@@ -7645,7 +7645,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.3.2',
+                        id: 'cae_3.2.1.3.2',
                         id_nomenclature: '3.2.1.3.2',
                         nom: 'Epuiser le potentiel de r\u00e9cup\u00e9ration de la chaleur industrielle identifi\u00e9',
                         description: '',
@@ -7658,7 +7658,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.3.3',
+                        id: 'cae_3.2.1.3.3',
                         id_nomenclature: '3.2.1.3.3',
                         nom: 'Epuiser le potentiel principal de cog\u00e9n\u00e9ration (hors micro-cog\u00e9n\u00e9ration)',
                         description: '',
@@ -7671,7 +7671,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.1.3.4',
+                        id: 'cae_3.2.1.3.4',
                         id_nomenclature: '3.2.1.3.4',
                         nom: 'R\u00e9aliser l\u0027injection vers un r\u00e9seau de chaleur \u00e0 proximit\u00e9',
                         description:
@@ -7689,7 +7689,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__3.2.2',
+                id: 'cae_3.2.2',
                 id_nomenclature: '3.2.2',
                 nom: 'Augmenter l\u0027utilisation des \u00e9nergies renouvelables pour la chaleur et le rafra\u00eechissement',
                 description:
@@ -7704,7 +7704,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__3.2.2.1',
+                    id: 'cae_3.2.2.1',
                     id_nomenclature: '3.2.2.1',
                     nom: 'Utiliser les r\u00e9seaux de chaleur pour atteindre les objectifs fix\u00e9s en mati\u00e8re de chaleur renouvelable',
                     description:
@@ -7718,7 +7718,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.2.2.2',
+                    id: 'cae_3.2.2.2',
                     id_nomenclature: '3.2.2.2',
                     nom: 'Atteindre les objectifs fix\u00e9s en mati\u00e8re de couverture des besoins de chaleur et de rafraichissement du territoire par les \u00e9nergies renouvelables',
                     description:
@@ -7734,7 +7734,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__3.2.3',
+                id: 'cae_3.2.3',
                 id_nomenclature: '3.2.3',
                 nom: 'Augmenter la production d\u0027\u00e9lectricit\u00e9 issue d\u0027\u00e9nergies renouvelables sur le territoire',
                 description:
@@ -7749,7 +7749,7 @@ export const actions: ActionReferentiel[] = [
                 points: 8,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__3.2.3.1',
+                    id: 'cae_3.2.3.1',
                     id_nomenclature: '3.2.3.1',
                     nom: 'Augmenter progressivement la production d\u0027\u00e9lectricit\u00e9 renouvelable',
                     description:
@@ -7763,7 +7763,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.2.3.2',
+                    id: 'cae_3.2.3.2',
                     id_nomenclature: '3.2.3.2',
                     nom: 'Diversifier les sources de production d\u2019\u00e9lectricit\u00e9 renouvelable',
                     description: '',
@@ -7774,7 +7774,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.2.3.2.1',
+                        id: 'cae_3.2.3.2.1',
                         id_nomenclature: '3.2.3.2.1',
                         nom: 'Susciter les projets citoyens et/ou encadrer l\u2019intervention d\u2019un d\u00e9veloppeur ext\u00e9rieur pour r\u00e9aliser et exploiter un \u00e9quipement d\u00e9di\u00e9 \u00e0 la production d\u2019\u00e9lectricit\u00e9',
                         description:
@@ -7788,7 +7788,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.3.2.2',
+                        id: 'cae_3.2.3.2.2',
                         id_nomenclature: '3.2.3.2.2',
                         nom: 'La puissance photovolta\u00efque install\u00e9e sur le territoire vise des seuils (dans la description)',
                         description:
@@ -7802,7 +7802,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.2.3.2.3',
+                        id: 'cae_3.2.3.2.3',
                         id_nomenclature: '3.2.3.2.3',
                         nom: 'Mettre en fonctionnement des installations \u00e9oliennes ou hydro\u00e9lectriques sur le territoire',
                         description:
@@ -7818,7 +7818,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.2.3.3',
+                    id: 'cae_3.2.3.3',
                     id_nomenclature: '3.2.3.3',
                     nom: 'Atteindre une part \u00e9lev\u00e9e d\u2019\u00e9lectricit\u00e9 renouvelable',
                     description:
@@ -7836,7 +7836,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__3.3',
+            id: 'cae_3.3',
             id_nomenclature: '3.3',
             nom: 'Gestion de l\u0027eau, des espaces verts, des d\u00e9chets du territoire',
             description: '',
@@ -7847,7 +7847,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__3.3.1',
+                id: 'cae_3.3.1',
                 id_nomenclature: '3.3.1',
                 nom: 'Optimiser l\u2019efficacit\u00e9 des installations d\u0027eau potable (\u00e9nergie et ressource)',
                 description:
@@ -7862,7 +7862,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__3.3.1.1',
+                    id: 'cae_3.3.1.1',
                     id_nomenclature: '3.3.1.1',
                     nom: 'D\u00e9finir la recherche de l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique comme un objectif dans les contrats de DSP ou l\u0027inscrire dans la strat\u00e9gie de la r\u00e9gie',
                     description: '',
@@ -7873,7 +7873,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.1.1',
+                        id: 'cae_3.3.1.1.1',
                         id_nomenclature: '3.3.1.1.1',
                         nom: 'Demander la recherche de l\u2019efficacit\u00e9 \u00e9nerg\u00e9tique dans les contrats de DSP ou l\u0027inscrite dans la strat\u00e9gie de la r\u00e9gie',
                         description:
@@ -7887,7 +7887,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.1.2',
+                        id: 'cae_3.3.1.1.2',
                         id_nomenclature: '3.3.1.1.2',
                         nom: 'Determiner les indices les plus importants dans le cadre d\u0027une analyse et proposer des mesures d\u0027am\u00e9lioration de l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique',
                         description:
@@ -7903,7 +7903,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.1.2',
+                    id: 'cae_3.3.1.2',
                     id_nomenclature: '3.3.1.2',
                     nom: 'Conseiller et former, de fa\u00e7on fr\u00e9quente, les acteurs du secteur',
                     description: '',
@@ -7914,7 +7914,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.2.1',
+                        id: 'cae_3.3.1.2.1',
                         id_nomenclature: '3.3.1.2.1',
                         nom: 'Dispenser des formations \u00e0 destination des acteurs du secteur',
                         description:
@@ -7928,7 +7928,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.2.2',
+                        id: 'cae_3.3.1.2.2',
                         id_nomenclature: '3.3.1.2.2',
                         nom: 'Coop\u00e9rer avec des associations sp\u00e9cialis\u00e9es',
                         description: '',
@@ -7943,7 +7943,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.1.3',
+                    id: 'cae_3.3.1.3',
                     id_nomenclature: '3.3.1.3',
                     nom: 'Mettre en \u0153uvre des mesures concr\u00e8tes visant l\u0027am\u00e9lioration et l\u0027optimisation de l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique des installations d\u0027eau potable',
                     description: '',
@@ -7954,7 +7954,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.3.1',
+                        id: 'cae_3.3.1.3.1',
                         id_nomenclature: '3.3.1.3.1',
                         nom: 'Exploiter compl\u00e9tement le potentiel des sources situ\u00e9es en hauteur',
                         description: '',
@@ -7967,7 +7967,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.3.2',
+                        id: 'cae_3.3.1.3.2',
                         id_nomenclature: '3.3.1.3.2',
                         nom: 'Exploiter totalement le potentiel de production d\u0027\u00e9lectricit\u00e9 par turbinage',
                         description:
@@ -7981,7 +7981,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.3.3',
+                        id: 'cae_3.3.1.3.3',
                         id_nomenclature: '3.3.1.3.3',
                         nom: 'Avoir un rendement \u00e9l\u00e9v\u00e9 sur les pompes \u00e0 grande capacit\u00e9 dans des conditions hydrauliques ad\u00e9quates',
                         description:
@@ -7995,7 +7995,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.3.4',
+                        id: 'cae_3.3.1.3.4',
                         id_nomenclature: '3.3.1.3.4',
                         nom: 'Optimiser les stations de traitement',
                         description: '',
@@ -8008,7 +8008,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.3.5',
+                        id: 'cae_3.3.1.3.5',
                         id_nomenclature: '3.3.1.3.5',
                         nom: 'Mettre \u00e0 disposition un budget appropri\u00e9 pour les travaux courants de r\u00e9paration de casses et programmer un budget de renouvellement pluriannuel',
                         description:
@@ -8024,7 +8024,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.1.4',
+                    id: 'cae_3.3.1.4',
                     id_nomenclature: '3.3.1.4',
                     nom: 'Mettre en place des mesures incitatives pour faire \u00e9conomiser l\u2019eau aux usagers',
                     description: '',
@@ -8035,7 +8035,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.4.1',
+                        id: 'cae_3.3.1.4.1',
                         id_nomenclature: '3.3.1.4.1',
                         nom: 'D\u00e9finir dans les objectifs politiques du distributeur d\u0027eau l\u0027utilisation \u00e9conome de l\u0027eau par les clients et les int\u00e9grer dans la strat\u00e9gie commerciale',
                         description: '',
@@ -8048,7 +8048,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.4.2',
+                        id: 'cae_3.3.1.4.2',
                         id_nomenclature: '3.3.1.4.2',
                         nom: 'Utiliser de la facture comme moyen de sensibilisation',
                         description:
@@ -8062,7 +8062,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.4.3',
+                        id: 'cae_3.3.1.4.3',
                         id_nomenclature: '3.3.1.4.3',
                         nom: 'Mettre en place des tarifs lin\u00e9aires ou une tarification progressive (pas de rabais de quantit\u00e9)',
                         description: '',
@@ -8075,7 +8075,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.4.4',
+                        id: 'cae_3.3.1.4.4',
                         id_nomenclature: '3.3.1.4.4',
                         nom: 'Encourager via des actions les comportements et \u00e9quipements \u00e9conomes en eau',
                         description:
@@ -8089,7 +8089,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.1.4.5',
+                        id: 'cae_3.3.1.4.5',
                         id_nomenclature: '3.3.1.4.5',
                         nom: 'Promouvoir l\u0027utilisation des eaux pluviales avec une attention particuli\u00e8re accord\u00e9e \u00e0 leur qualit\u00e9',
                         description:
@@ -8105,7 +8105,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.1.5',
+                    id: 'cae_3.3.1.5',
                     id_nomenclature: '3.3.1.5',
                     nom: 'Anticiper le renouvellement des installations',
                     description:
@@ -8119,7 +8119,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.1.6',
+                    id: 'cae_3.3.1.6',
                     id_nomenclature: '3.3.1.6',
                     nom: 'Suivre les consommations d\u2019\u00e9nergie et d\u2019eau suite \u00e0 la mise en \u0153uvre des mesures',
                     description:
@@ -8135,7 +8135,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__3.3.2',
+                id: 'cae_3.3.2',
                 id_nomenclature: '3.3.2',
                 nom: 'Optimiser le potentiel \u00e9nerg\u00e9tique des syst\u00e8mes d\u0027assainissement',
                 description:
@@ -8150,7 +8150,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__3.3.2.1',
+                    id: 'cae_3.3.2.1',
                     id_nomenclature: '3.3.2.1',
                     nom: 'R\u00e9aliser un \u00e9tat des lieux de l\u2019efficacit\u00e9 des syst\u00e8mes d\u2019assainissement et formaliser les objectifs',
                     description: '',
@@ -8161,7 +8161,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.2.1.1',
+                        id: 'cae_3.3.2.1.1',
                         id_nomenclature: '3.3.2.1.1',
                         nom: 'Effectuer une analyse de l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique des installations de collecte et d\u0027\u00e9puration des eaux us\u00e9es',
                         description: '',
@@ -8174,7 +8174,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.2.1.2',
+                        id: 'cae_3.3.2.1.2',
                         id_nomenclature: '3.3.2.1.2',
                         nom: 'Demander dans les contrats de DSP la recherche de l\u2019efficacit\u00e9 \u00e9nerg\u00e9tique des stations d\u0027\u00e9puration ou l\u0027inscrire dans la strat\u00e9gie de la r\u00e9gie',
                         description:
@@ -8190,7 +8190,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.2.2',
+                    id: 'cae_3.3.2.2',
                     id_nomenclature: '3.3.2.2',
                     nom: 'Analyser le potentiel de r\u00e9cup\u00e9ration de chaleur sur les eaux us\u00e9es',
                     description:
@@ -8204,7 +8204,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.2.3',
+                    id: 'cae_3.3.2.3',
                     id_nomenclature: '3.3.2.3',
                     nom: 'Analyser le potentiel de valorisation des boues d\u2019\u00e9puration',
                     description: '',
@@ -8215,7 +8215,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.2.3.1',
+                        id: 'cae_3.3.2.3.1',
                         id_nomenclature: '3.3.2.3.1',
                         nom: 'R\u00e9aliser une \u00e9tude sur les possibilit\u00e9s de valorisation des boues',
                         description:
@@ -8229,7 +8229,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.2.3.2',
+                        id: 'cae_3.3.2.3.2',
                         id_nomenclature: '3.3.2.3.2',
                         nom: 'Etre attentif \u00e0 l\u0027actualisation des donn\u00e9es et conclusions de l\u0027\u00e9tude sur les possibilit\u00e9s de valorisation des boues',
                         description:
@@ -8245,7 +8245,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.2.4',
+                    id: 'cae_3.3.2.4',
                     id_nomenclature: '3.3.2.4',
                     nom: 'R\u00e9aliser les travaux d\u2019am\u00e9lioration de l\u2019efficacit\u00e9 \u00e9nerg\u00e9tique du syst\u00e8me d\u2019assainissement',
                     description:
@@ -8257,7 +8257,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.2.4.1',
+                        id: 'cae_3.3.2.4.1',
                         id_nomenclature: '3.3.2.4.1',
                         nom: 'Appliquer toutes les mesures r\u00e9sultant des analyses de l\u2019efficacit\u00e9 \u00e9nerg\u00e9tique du syst\u00e8me d\u2019assainissement',
                         description: '',
@@ -8272,7 +8272,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.2.5',
+                    id: 'cae_3.3.2.5',
                     id_nomenclature: '3.3.2.5',
                     nom: 'R\u00e9aliser les travaux de valorisation \u00e9nerg\u00e9tique des syst\u00e8mes d\u2019assainissement',
                     description: '',
@@ -8283,7 +8283,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.2.5.1',
+                        id: 'cae_3.3.2.5.1',
                         id_nomenclature: '3.3.2.5.1',
                         nom: 'Avoir r\u00e9alis\u00e9 ou \u00eatre en phase de construction des installations de r\u00e9cup\u00e9ration de chaleur sur les eaux us\u00e9es ou \u00e9pur\u00e9es',
                         description: '',
@@ -8296,7 +8296,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.2.5.2',
+                        id: 'cae_3.3.2.5.2',
                         id_nomenclature: '3.3.2.5.2',
                         nom: 'Mettre en place un dispositif de valorisation des boues d\u2019\u00e9puration et d\u00e9passer le simple respect de la r\u00e8glementation dans sa mise en \u0153uvre',
                         description:
@@ -8312,7 +8312,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.2.6',
+                    id: 'cae_3.3.2.6',
                     id_nomenclature: '3.3.2.6',
                     nom: 'Suivre r\u00e9guli\u00e8rement les actions et \u00e9valuer leurs effets',
                     description:
@@ -8324,7 +8324,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.2.6.1',
+                        id: 'cae_3.3.2.6.1',
                         id_nomenclature: '3.3.2.6.1',
                         nom: 'Suivre l\u0027effet des mesures pour am\u00e9liorer l\u2019efficacit\u00e9 \u00e9nerg\u00e9tique des syst\u00e8mes d\u2019assainissement par des indicateurs',
                         description:
@@ -8338,7 +8338,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.2.6.2',
+                        id: 'cae_3.3.2.6.2',
                         id_nomenclature: '3.3.2.6.2',
                         nom: 'Suivre un indicateur mesurant la production de chaleur de r\u00e9cup\u00e9ration sur les eaux us\u00e9es en MWh/an.',
                         description: '',
@@ -8351,7 +8351,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.2.6.3',
+                        id: 'cae_3.3.2.6.3',
                         id_nomenclature: '3.3.2.6.3',
                         nom: 'Suivre un indicateur de valorisation des boues d\u2019\u00e9puration, montrant la progression de la collectivit\u00e9',
                         description:
@@ -8369,7 +8369,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__3.3.3',
+                id: 'cae_3.3.3',
                 id_nomenclature: '3.3.3',
                 nom: 'Optimiser la gestion des eaux pluviales',
                 description:
@@ -8384,7 +8384,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__3.3.3.1',
+                    id: 'cae_3.3.3.1',
                     id_nomenclature: '3.3.3.1',
                     nom: 'Conna\u00eetre les enjeux locaux de la gestion des eaux pluviales et des inondations sur son territoire',
                     description: '',
@@ -8395,7 +8395,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.1.1',
+                        id: 'cae_3.3.3.1.1',
                         id_nomenclature: '3.3.3.1.1',
                         nom: 'Sensibiliser \u00e9lus et technicien \u00e0 la gestion int\u00e9gr\u00e9e des eaux pluviales par des solutions compensatoires de r\u00e9tention ou infiltration \u00e0 la parcelle',
                         description: '',
@@ -8408,7 +8408,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.1.2',
+                        id: 'cae_3.3.3.1.2',
                         id_nomenclature: '3.3.3.1.2',
                         nom: 'Cartographier les zones inondables',
                         description: '',
@@ -8421,7 +8421,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.1.3',
+                        id: 'cae_3.3.3.1.3',
                         id_nomenclature: '3.3.3.1.3',
                         nom: 'R\u00e9aliser un sch\u00e9ma directeur d\u2019assainissement et du pluvial',
                         description: '',
@@ -8434,7 +8434,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.1.4',
+                        id: 'cae_3.3.3.1.4',
                         id_nomenclature: '3.3.3.1.4',
                         nom: 'Mod\u00e9liser les comportements des fleuves et des eaux pluviales',
                         description: '',
@@ -8449,7 +8449,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.3.2',
+                    id: 'cae_3.3.3.2',
                     id_nomenclature: '3.3.3.2',
                     nom: 'Informer la population des enjeux et des solutions permettant de limiter le ruissellement',
                     description: '',
@@ -8460,7 +8460,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.2.1',
+                        id: 'cae_3.3.3.2.1',
                         id_nomenclature: '3.3.3.2.1',
                         nom: 'Informer sur les zones \u00e0 risques et sur les comportements \u00e0 adopter en cas d\u2019inondation',
                         description: '',
@@ -8473,7 +8473,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.2.2',
+                        id: 'cae_3.3.3.2.2',
                         id_nomenclature: '3.3.3.2.2',
                         nom: 'Informer sur la gestion int\u00e9gr\u00e9e des eaux pluviales : documents et/ou r\u00e9unions d\u2019informations sp\u00e9cialement con\u00e7us pour les particuliers',
                         description: '',
@@ -8486,7 +8486,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.2.3',
+                        id: 'cae_3.3.3.2.3',
                         id_nomenclature: '3.3.3.2.3',
                         nom: 'Mettre en place des mesures d\u0027incitations des particuliers pour la r\u00e9cup\u00e9ration des eaux pluviales',
                         description: '',
@@ -8501,7 +8501,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.3.3',
+                    id: 'cae_3.3.3.3',
                     id_nomenclature: '3.3.3.3',
                     nom: 'R\u00e9duire les \u00e9missions de polluants et le ruissellement \u00e0 la source, au-del\u00e0 des comp\u00e9tences du service en charge de la gestion des eaux pluviales',
                     description: '',
@@ -8512,7 +8512,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.3.1',
+                        id: 'cae_3.3.3.3.1',
                         id_nomenclature: '3.3.3.3.1',
                         nom: 'Adapter le choix des rev\u00eatements de chauss\u00e9es et autres mat\u00e9riaux urbains (mat\u00e9riaux neutres)',
                         description:
@@ -8526,7 +8526,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.3.2',
+                        id: 'cae_3.3.3.3.2',
                         id_nomenclature: '3.3.3.3.2',
                         nom: 'Utiliser des peintures de sols et autres mat\u00e9riaux sans adjuvants toxiques',
                         description: '',
@@ -8539,7 +8539,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.3.3',
+                        id: 'cae_3.3.3.3.3',
                         id_nomenclature: '3.3.3.3.3',
                         nom: 'Modifier les pratiques locales de nettoyage des rues (fr\u00e9quence accrue du nettoyage) et sensibiliser sur la n\u00e9cessit\u00e9 de ne pas rejeter de d\u00e9tritus sur la voie publique',
                         description: '',
@@ -8552,7 +8552,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.3.4',
+                        id: 'cae_3.3.3.3.4',
                         id_nomenclature: '3.3.3.3.4',
                         nom: 'En m\u00e9tropole, utiliser de mani\u00e8re plus r\u00e9fl\u00e9chie les produits de d\u00e9neigement et de d\u00e9vergla\u00e7age',
                         description: '',
@@ -8565,7 +8565,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.3.5',
+                        id: 'cae_3.3.3.3.5',
                         id_nomenclature: '3.3.3.3.5',
                         nom: 'Am\u00e9liorer l\u2019efficacit\u00e9 des syst\u00e8mes de d\u00e9pollution des syst\u00e8mes industriels producteurs de fum\u00e9e et am\u00e9liorer la gestion des aires de stockage industrielles',
                         description: '',
@@ -8578,7 +8578,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.3.6',
+                        id: 'cae_3.3.3.3.6',
                         id_nomenclature: '3.3.3.3.6',
                         nom: 'Faire participer les services urbanisme, espaces verts et transport \u00e0 l\u2019atteinte des objectifs en mati\u00e8re de gestion int\u00e9gr\u00e9e des eaux pluviales',
                         description:
@@ -8594,7 +8594,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.3.4',
+                    id: 'cae_3.3.3.4',
                     id_nomenclature: '3.3.3.4',
                     nom: 'Utiliser le r\u00e8glement d\u2019assainissement pour g\u00e9rer les eaux pluviales au plus pr\u00e8s de leur point de chute',
                     description: '',
@@ -8605,7 +8605,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.4.1',
+                        id: 'cae_3.3.3.4.1',
                         id_nomenclature: '3.3.3.4.1',
                         nom: 'Int\u00e9grer au r\u00e8glement d\u0027assainissement des normes permettant de limiter le ruissellement des eaux pluviales et la surcharge des collecteurs d\u2019assainissement',
                         description:
@@ -8619,7 +8619,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.4.2',
+                        id: 'cae_3.3.3.4.2',
                         id_nomenclature: '3.3.3.4.2',
                         nom: 'Appliquer syst\u00e9matiquement les mesures du r\u00e8glement d\u0027assainissement',
                         description: '',
@@ -8632,7 +8632,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.4.3',
+                        id: 'cae_3.3.3.4.3',
                         id_nomenclature: '3.3.3.4.3',
                         nom: 'Mettre en place des mesures particuli\u00e8res sur certaines zones pour limiter les risques d\u0027inondation par ruissellement qui peuvent \u00eatre amplifi\u00e9s par le changement climatique',
                         description: '',
@@ -8647,7 +8647,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.3.5',
+                    id: 'cae_3.3.3.5',
                     id_nomenclature: '3.3.3.5',
                     nom: 'Mener une politique ferme de pr\u00e9vention des inondations et de protection du milieu r\u00e9cepteur',
                     description: '',
@@ -8658,7 +8658,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.5.1',
+                        id: 'cae_3.3.3.5.1',
                         id_nomenclature: '3.3.3.5.1',
                         nom: 'Participer activement \u00e0 l\u0027\u00e9laboration d\u0027une politique de gestion des inondations',
                         description:
@@ -8672,7 +8672,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.5.2',
+                        id: 'cae_3.3.3.5.2',
                         id_nomenclature: '3.3.3.5.2',
                         nom: 'Mettre en place un centre de contr\u00f4le des installations d\u2019assainissement et pluvial',
                         description:
@@ -8686,7 +8686,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.5.3',
+                        id: 'cae_3.3.3.5.3',
                         id_nomenclature: '3.3.3.5.3',
                         nom: 'Couvrir toutes les zones concern\u00e9es par le risques inondations par un PPRI',
                         description:
@@ -8700,7 +8700,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.5.4',
+                        id: 'cae_3.3.3.5.4',
                         id_nomenclature: '3.3.3.5.4',
                         nom: 'Interdire les constructions dans les zones \u00e0 fort risques',
                         description: '',
@@ -8713,7 +8713,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.5.5',
+                        id: 'cae_3.3.3.5.5',
                         id_nomenclature: '3.3.3.5.5',
                         nom: 'Mettre en place la taxe GEMAPI',
                         description:
@@ -8729,7 +8729,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.3.6',
+                    id: 'cae_3.3.3.6',
                     id_nomenclature: '3.3.3.6',
                     nom: 'Devenir exemplaire sur l\u2019ensemble du territoire',
                     description: '',
@@ -8740,7 +8740,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.6.1',
+                        id: 'cae_3.3.3.6.1',
                         id_nomenclature: '3.3.3.6.1',
                         nom: 'Avoir mis en place sur le territoire de nombreux ouvrages de gestion alternative des eaux pluviales',
                         description:
@@ -8754,7 +8754,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.6.2',
+                        id: 'cae_3.3.3.6.2',
                         id_nomenclature: '3.3.3.6.2',
                         nom: 'Evaluer la proportion du territoire \u00e9quip\u00e9e d\u0027un syst\u00e8me s\u00e9paratif ou de r\u00e9tention/infiltration \u00e0 la parcelle',
                         description: '',
@@ -8767,7 +8767,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.3.6.3',
+                        id: 'cae_3.3.3.6.3',
                         id_nomenclature: '3.3.3.6.3',
                         nom: 'Traiter les rejets urbains par temps de pluie (de temps de retour au moins mensuel) avant rejet au milieu naturel',
                         description: '',
@@ -8784,7 +8784,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__3.3.4',
+                id: 'cae_3.3.4',
                 id_nomenclature: '3.3.4',
                 nom: 'Pr\u00e9server la biodiversit\u00e9 du territoire et d\u00e9velopper des espaces verts',
                 description:
@@ -8799,7 +8799,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__3.3.4.1',
+                    id: 'cae_3.3.4.1',
                     id_nomenclature: '3.3.4.1',
                     nom: 'Conna\u00eetre l\u2019\u00e9tat de la biodiversit\u00e9 et conna\u00eetre les enjeux li\u00e9s aux espaces verts sur son territoire (obligations r\u00e9glementaires)',
                     description: '',
@@ -8810,7 +8810,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.1.1',
+                        id: 'cae_3.3.4.1.1',
                         id_nomenclature: '3.3.4.1.1',
                         nom: 'Identifier les r\u00e9servoirs et corridors \u00e9cologiques et assurer la mise en \u0153uvre de la trame verte et bleue',
                         description:
@@ -8824,7 +8824,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.1.2',
+                        id: 'cae_3.3.4.1.2',
                         id_nomenclature: '3.3.4.1.2',
                         nom: 'Etudier les impacts du plan d\u2019action du plan climat / des actions men\u00e9es dans le cadre de la politique climat air \u00e9nergie sur la biodiversit\u00e9',
                         description:
@@ -8840,7 +8840,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.4.2',
+                    id: 'cae_3.3.4.2',
                     id_nomenclature: '3.3.4.2',
                     nom: 'Sensibiliser \u00e0 l\u2019importance et \u00e0 la fragilit\u00e9 de la biodiversit\u00e9 et aux enjeux li\u00e9s aux espaces verts',
                     description: '',
@@ -8851,7 +8851,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.2.1',
+                        id: 'cae_3.3.4.2.1',
                         id_nomenclature: '3.3.4.2.1',
                         nom: 'Mettre en place des actions de sensibilisation aux diff\u00e9rents publics \u00e0 la biodiversit\u00e9',
                         description: '',
@@ -8864,7 +8864,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.2.2',
+                        id: 'cae_3.3.4.2.2',
                         id_nomenclature: '3.3.4.2.2',
                         nom: 'Mettre en valeur les informations et actions locales relatives \u00e0 la biodiversit\u00e9 dans ses supports de communication',
                         description:
@@ -8878,7 +8878,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.2.3',
+                        id: 'cae_3.3.4.2.3',
                         id_nomenclature: '3.3.4.2.3',
                         nom: 'Participer \u00e0 la r\u00e9alisation des pratiques de gestion des espaces verts.',
                         description:
@@ -8892,7 +8892,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.2.4',
+                        id: 'cae_3.3.4.2.4',
                         id_nomenclature: '3.3.4.2.4',
                         nom: 'Organiser de sessions de sensibilisation / formation en interne sur la gestion diff\u00e9renci\u00e9e des espaces verts et les pratiques alternatives aux produits phytosanitaires',
                         description: '',
@@ -8907,7 +8907,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.4.3',
+                    id: 'cae_3.3.4.3',
                     id_nomenclature: '3.3.4.3',
                     nom: 'R\u00e9duire les impacts de l\u2019\u00e9clairage sur la biodiversit\u00e9 nocturne',
                     description:
@@ -8919,7 +8919,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.3.1',
+                        id: 'cae_3.3.4.3.1',
                         id_nomenclature: '3.3.4.3.1',
                         nom: 'Etre en relation avec les associations environnementales locales, syndicat d\u2019\u00e9nergie ou autres partenaires pour faire le lien entre la politique d\u2019\u00e9clairage public et le respect de la biodiversit\u00e9',
                         description: '',
@@ -8932,7 +8932,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.3.2',
+                        id: 'cae_3.3.4.3.2',
                         id_nomenclature: '3.3.4.3.2',
                         nom: 'R\u00e9aliser une trame sombre (ou trame noire)',
                         description: '',
@@ -8945,7 +8945,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.3.3',
+                        id: 'cae_3.3.4.3.3',
                         id_nomenclature: '3.3.4.3.3',
                         nom: 'Organiser un \u00e9v\u00e9nement contre la pollution lumineuse',
                         description:
@@ -8959,7 +8959,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.3.4',
+                        id: 'cae_3.3.4.3.4',
                         id_nomenclature: '3.3.4.3.4',
                         nom: 'Obtenir le label \u00ab Villes et villages \u00e9toil\u00e9s \u00bb de l\u2019ANPCEN',
                         description: '',
@@ -8972,7 +8972,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.3.5',
+                        id: 'cae_3.3.4.3.5',
                         id_nomenclature: '3.3.4.3.5',
                         nom: 'Suivre la r\u00e9glementation relative \u00e0 l\u2019\u00e9clairage des enseignes',
                         description: '',
@@ -8987,7 +8987,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.4.4',
+                    id: 'cae_3.3.4.4',
                     id_nomenclature: '3.3.4.4',
                     nom: 'Mettre en place une gestion diff\u00e9renci\u00e9e des espaces verts et des pratiques alternatives aux produits phytosanitaires sur le territoire',
                     description: '',
@@ -8998,7 +8998,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.4.1',
+                        id: 'cae_3.3.4.4.1',
                         id_nomenclature: '3.3.4.4.1',
                         nom: 'Pratiquer la gestion diff\u00e9renci\u00e9e des espaces verts et syst\u00e9matiser les pratiques alternatives aux produits phytosanitaires',
                         description:
@@ -9012,7 +9012,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.4.2',
+                        id: 'cae_3.3.4.4.2',
                         id_nomenclature: '3.3.4.4.2',
                         nom: 'Sensibiliser les habitants \u00e0 la gestion diff\u00e9renci\u00e9e et aux pratiques alternatives aux produits phytosanitaires',
                         description: '',
@@ -9025,7 +9025,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.4.3',
+                        id: 'cae_3.3.4.4.3',
                         id_nomenclature: '3.3.4.4.3',
                         nom: 'Utiliser des esp\u00e8ces rustiques et adapt\u00e9es au contexte local, y compris dans la perspective du changement climatique.',
                         description:
@@ -9041,7 +9041,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.4.5',
+                    id: 'cae_3.3.4.5',
                     id_nomenclature: '3.3.4.5',
                     nom: 'Prendre en compte la biodiversit\u00e9 dans une approche transversale',
                     description: '',
@@ -9052,7 +9052,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.5.1',
+                        id: 'cae_3.3.4.5.1',
                         id_nomenclature: '3.3.4.5.1',
                         nom: 'Travailler ensemble pour mener la politique de pr\u00e9servation de la biodiversit\u00e9 (r\u00e9union commune, relecture it\u00e9rative des documents\u2026)',
                         description:
@@ -9066,7 +9066,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.5.2',
+                        id: 'cae_3.3.4.5.2',
                         id_nomenclature: '3.3.4.5.2',
                         nom: 'Int\u00e8grer les enjeux et les objectifs de la d\u00e9marche climat-air-\u00e9nergie dans l\u2019\u00e9laboration de la trame verte et bleue (et vice-versa)',
                         description:
@@ -9080,7 +9080,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.5.3',
+                        id: 'cae_3.3.4.5.3',
                         id_nomenclature: '3.3.4.5.3',
                         nom: 'D\u00e9finir des crit\u00e8res environnementaux pour orienter les porteurs de projet',
                         description:
@@ -9094,7 +9094,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.5.4',
+                        id: 'cae_3.3.4.5.4',
                         id_nomenclature: '3.3.4.5.4',
                         nom: 'Concilier trame verte et bleue avec densification des espaces urbains',
                         description:
@@ -9108,7 +9108,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.5.5',
+                        id: 'cae_3.3.4.5.5',
                         id_nomenclature: '3.3.4.5.5',
                         nom: 'D\u00e9cider d\u2019un seuil maximal d\u2019imperm\u00e9abilisation des sols pour tout projet d\u2019am\u00e9nagement de construction, de r\u00e9novation ou d\u2019agrandissement sur le territoire',
                         description: '',
@@ -9121,7 +9121,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.5.6',
+                        id: 'cae_3.3.4.5.6',
                         id_nomenclature: '3.3.4.5.6',
                         nom: 'Utiliser le coefficient de biotope par surface dans le PLU',
                         description: '',
@@ -9134,7 +9134,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.5.7',
+                        id: 'cae_3.3.4.5.7',
                         id_nomenclature: '3.3.4.5.7',
                         nom: 'Int\u00e9grer la vuln\u00e9rabilit\u00e9 des esp\u00e8ces au changement climatique \u00e0 la strat\u00e9gie d\u2019adaptation du territoire',
                         description: '',
@@ -9149,7 +9149,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.4.6',
+                    id: 'cae_3.3.4.6',
                     id_nomenclature: '3.3.4.6',
                     nom: 'Mettre en place des actions de pr\u00e9servation de la biodiversit\u00e9 contribuant \u00e0 l\u2019adaptation au changement climatique et \u00e0 l\u2019am\u00e9lioration du cadre de vie',
                     description:
@@ -9161,7 +9161,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.6.1',
+                        id: 'cae_3.3.4.6.1',
                         id_nomenclature: '3.3.4.6.1',
                         nom: 'Restaurer des zones humides',
                         description: '',
@@ -9174,7 +9174,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.6.2',
+                        id: 'cae_3.3.4.6.2',
                         id_nomenclature: '3.3.4.6.2',
                         nom: 'V\u00e9g\u00e9taliser des b\u00e2timents (toitures, fa\u00e7ades\u2026) en prenant en compte la biodiversit\u00e9',
                         description: '',
@@ -9187,7 +9187,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.6.3',
+                        id: 'cae_3.3.4.6.3',
                         id_nomenclature: '3.3.4.6.3',
                         nom: 'D\u00e9min\u00e9raliser des espaces urbains non b\u00e2tis (cours d\u2019\u00e9cole, d\u2019immeubles, voiries)',
                         description: '',
@@ -9200,7 +9200,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.6.4',
+                        id: 'cae_3.3.4.6.4',
                         id_nomenclature: '3.3.4.6.4',
                         nom: 'Mettre en place des actions de valorisation \u00e9cologique des espaces publics',
                         description:
@@ -9216,7 +9216,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.4.7',
+                    id: 'cae_3.3.4.7',
                     id_nomenclature: '3.3.4.7',
                     nom: 'Utiliser des outils de contractualisation op\u00e9rationnels pour la mise en \u0153uvre de la trame verte et bleue',
                     description:
@@ -9228,7 +9228,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.7.1',
+                        id: 'cae_3.3.4.7.1',
                         id_nomenclature: '3.3.4.7.1',
                         nom: 'Mettre en place un outil de contractualisation \u00e0 l\u2019\u00e9chelle parcellaire',
                         description:
@@ -9242,7 +9242,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.7.2',
+                        id: 'cae_3.3.4.7.2',
                         id_nomenclature: '3.3.4.7.2',
                         nom: 'Mettre en place un outil \u00e0 une \u00e9chelle plus large',
                         description: '',
@@ -9257,7 +9257,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.4.8',
+                    id: 'cae_3.3.4.8',
                     id_nomenclature: '3.3.4.8',
                     nom: 'Suivre l\u2019\u00e9volution de la biodiversit\u00e9 et la gestion des espaces verts',
                     description: '',
@@ -9268,7 +9268,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.8.1',
+                        id: 'cae_3.3.4.8.1',
                         id_nomenclature: '3.3.4.8.1',
                         nom: 'Faire contribuer les services de la collectivit\u00e9 en lien avec les espaces verts ou l\u2019entretien du r\u00e9seau routier au comptage de la biodiversit\u00e9 et au suivi de son \u00e9volution',
                         description: '',
@@ -9281,7 +9281,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.8.2',
+                        id: 'cae_3.3.4.8.2',
                         id_nomenclature: '3.3.4.8.2',
                         nom: 'Suivre l\u2019\u00e9volution de la biodiversit\u00e9 \u00e0 travers un observatoire ou un atlas dynamique de la biodiversit\u00e9 locale, en partenariat avec une association ou un autre organisme du territoire',
                         description: '',
@@ -9294,7 +9294,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.4.8.3',
+                        id: 'cae_3.3.4.8.3',
                         id_nomenclature: '3.3.4.8.3',
                         nom: 'Suivre les quantit\u00e9s annuelles d\u0027engrais et d\u0027eau pour les espaces verts et les faire diminuer',
                         description: '',
@@ -9311,7 +9311,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__3.3.5',
+                id: 'cae_3.3.5',
                 id_nomenclature: '3.3.5',
                 nom: 'Valoriser les d\u00e9chets r\u00e9siduels et les biod\u00e9chets',
                 description:
@@ -9326,7 +9326,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__3.3.5.1',
+                    id: 'cae_3.3.5.1',
                     id_nomenclature: '3.3.5.1',
                     nom: 'Effectuer un \u00e9tat des lieux du potentiel d\u2019optimisation de la valorisation \u00e9nerg\u00e9tique des d\u00e9chets',
                     description: '',
@@ -9337,7 +9337,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.1.1',
+                        id: 'cae_3.3.5.1.1',
                         id_nomenclature: '3.3.5.1.1',
                         nom: 'Evaluer finement la quantit\u00e9 de biogaz \u00e9mis dans les centres d\u2019enfouissement techniques',
                         description: '',
@@ -9350,7 +9350,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.1.2',
+                        id: 'cae_3.3.5.1.2',
                         id_nomenclature: '3.3.5.1.2',
                         nom: 'une analyse sur l\u0027augmentation de l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique de l\u0027UIOM est disponible. Si la collectivit\u00e9 a d\u00e9l\u00e9gu\u00e9 sa comp\u00e9tence, elle incite et encourage la collectivit\u00e9 comp\u00e9tente \u00e0 effectuer cette analyse.',
                         description:
@@ -9364,7 +9364,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.1.3',
+                        id: 'cae_3.3.5.1.3',
                         id_nomenclature: '3.3.5.1.3',
                         nom: 'Etudier du potentiel m\u00e9thanisation sur les biod\u00e9chets, int\u00e9grant des synergies avec les gros producteurs de biod\u00e9chets et les agriculteurs pour une vision globale des gisements',
                         description: '',
@@ -9377,7 +9377,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.1.4',
+                        id: 'cae_3.3.5.1.4',
                         id_nomenclature: '3.3.5.1.4',
                         nom: 'Etudier la faisabilit\u00e9 sur la mise en place de la collecte s\u00e9lective des biod\u00e9chets des m\u00e9nages (\u00e9valu\u00e9 dans l\u2019action 1.2.3)',
                         description: '',
@@ -9390,7 +9390,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.1.5',
+                        id: 'cae_3.3.5.1.5',
                         id_nomenclature: '3.3.5.1.5',
                         nom: 'Etudier les possibilit\u00e9s d\u0027injection du biom\u00e9thane valoris\u00e9 dans le r\u00e9seau ou dans des v\u00e9hicules (budget ou moyens humains mobilis\u00e9s)',
                         description: '',
@@ -9403,7 +9403,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.1.6',
+                        id: 'cae_3.3.5.1.6',
                         id_nomenclature: '3.3.5.1.6',
                         nom: 'Etudier les possibilit\u00e9s de production et de valorisation de bio-carburants \u00e0 partir des biod\u00e9chets locaux (budget ou moyens humains mobilis\u00e9s)',
                         description: '',
@@ -9418,7 +9418,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.5.2',
+                    id: 'cae_3.3.5.2',
                     id_nomenclature: '3.3.5.2',
                     nom: 'Valoriser l\u2019\u00e9nergie issue de la gestion des d\u00e9chets',
                     description: '',
@@ -9429,7 +9429,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.2.1',
+                        id: 'cae_3.3.5.2.1',
                         id_nomenclature: '3.3.5.2.1',
                         nom: 'Valoriser la chaleur de l\u0027UIOM (utilisation compl\u00e8te, en interne et/ou vente \u00e0 l\u0027ext\u00e9rieur)et suivre le % r\u00e9el de valorisation \u00e9nerg\u00e9tique/d\u00e9chets entrants.',
                         description: '',
@@ -9442,7 +9442,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.2.2',
+                        id: 'cae_3.3.5.2.2',
                         id_nomenclature: '3.3.5.2.2',
                         nom: 'Valoriser la chaleur r\u00e9siduelle (cog\u00e9n\u00e9ration) si l\u0027UIOM produit de l\u0027\u00e9lectricit\u00e9',
                         description: '',
@@ -9455,7 +9455,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.2.3',
+                        id: 'cae_3.3.5.2.3',
                         id_nomenclature: '3.3.5.2.3',
                         nom: 'Valoriser la chaleur ou l\u0027\u00e9lectricit\u00e9 dans l\u0027unit\u00e9 de combustion de CSR (pour les DOM)',
                         description: '',
@@ -9468,7 +9468,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.2.4',
+                        id: 'cae_3.3.5.2.4',
                         id_nomenclature: '3.3.5.2.4',
                         nom: 'Optimiser le captage du biogaz issu des centres d\u2019enfouissement',
                         description:
@@ -9482,7 +9482,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.2.5',
+                        id: 'cae_3.3.5.2.5',
                         id_nomenclature: '3.3.5.2.5',
                         nom: 'Valoriser le biogaz issu du centre d\u2019enfouissement',
                         description: '',
@@ -9495,7 +9495,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.2.6',
+                        id: 'cae_3.3.5.2.6',
                         id_nomenclature: '3.3.5.2.6',
                         nom: 'Mettre en place une gestion int\u00e9gr\u00e9e des diff\u00e9rents biod\u00e9chets du territoire, avec une part de valorisation \u00e9nerg\u00e9tique (m\u00e9thanisation, combustion ou agro-carburants)',
                         description: '',
@@ -9508,7 +9508,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.2.7',
+                        id: 'cae_3.3.5.2.7',
                         id_nomenclature: '3.3.5.2.7',
                         nom: 'Promouvoir les bonnes pratiques de compostage aupr\u00e8s des particuliers',
                         description:
@@ -9522,7 +9522,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.2.8',
+                        id: 'cae_3.3.5.2.8',
                         id_nomenclature: '3.3.5.2.8',
                         nom: 'Contr\u00f4ler l\u0027interdiction du br\u00fblage \u00e0 l\u0027air libre des d\u00e9chets verts est contr\u00f4l\u00e9e et faire l\u0027objet de nombreuses actions de sensibilisation',
                         description:
@@ -9536,7 +9536,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.2.9',
+                        id: 'cae_3.3.5.2.9',
                         id_nomenclature: '3.3.5.2.9',
                         nom: 'Trouver des d\u00e9bouch\u00e9s pour l\u0027ensemble de l\u0027\u00e9nergie produite et pour le compost (lien avec le monde agricole)',
                         description:
@@ -9552,7 +9552,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__3.3.5.3',
+                    id: 'cae_3.3.5.3',
                     id_nomenclature: '3.3.5.3',
                     nom: 'Suivre les objectifs et atteindre un haut niveau de valorisation des d\u00e9chets',
                     description: '',
@@ -9563,7 +9563,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.3.1',
+                        id: 'cae_3.3.5.3.1',
                         id_nomenclature: '3.3.5.3.1',
                         nom: 'Avoir un rendement de l\u0027UIOM \u00e9lev\u00e9',
                         description:
@@ -9577,7 +9577,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.3.2',
+                        id: 'cae_3.3.5.3.2',
                         id_nomenclature: '3.3.5.3.2',
                         nom: 'Les centres de stockage des d\u00e9chets m\u00e9nagers et assimil\u00e9s font l\u0027objet d\u0027une valorisation \u00e9nerg\u00e9tique du biogaz \u003e75%',
                         description:
@@ -9591,7 +9591,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.3.3',
+                        id: 'cae_3.3.5.3.3',
                         id_nomenclature: '3.3.5.3.3',
                         nom: 'Augmenter la production d\u2019\u00e9lectricit\u00e9 et de chaleur en kWh produit \u00e0 partir de biod\u00e9chets pour l\u0027ensemble du territoire (m\u00e9nages et activit\u00e9s \u00e9conomiques, agricoles...) ou \u00e0 d\u00e9faut la quantit\u00e9 en kg/hab.an de biod\u00e9chets m\u00e9nagers et assimil\u00e9s issus de collecte s\u00e9lective valoris\u00e9s',
                         description: '',
@@ -9604,7 +9604,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__3.3.5.3.4',
+                        id: 'cae_3.3.5.3.4',
                         id_nomenclature: '3.3.5.3.4',
                         nom: 'T\u00e9moigner des performances par des indicateurs de suivi de la politique de compostage',
                         description:
@@ -9626,7 +9626,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'citergie__4',
+        id: 'cae_4',
         id_nomenclature: '4',
         nom: 'Mobilit\u00e9',
         description: '',
@@ -9637,7 +9637,7 @@ export const actions: ActionReferentiel[] = [
         points: -1.0,
         actions: [
           new ActionReferentiel({
-            id: 'citergie__4.1',
+            id: 'cae_4.1',
             id_nomenclature: '4.1',
             nom: 'Promotion et suivi de la mobilit\u00e9 durable sur le territoire et en interne',
             description: '',
@@ -9648,7 +9648,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__4.1.1',
+                id: 'cae_4.1.1',
                 id_nomenclature: '4.1.1',
                 nom: 'Promouvoir et suivre les pratiques multimodales sur le territoire',
                 description:
@@ -9663,7 +9663,7 @@ export const actions: ActionReferentiel[] = [
                 points: 10,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__4.1.1.1',
+                    id: 'cae_4.1.1.1',
                     id_nomenclature: '4.1.1.1',
                     nom: 'Conna\u00eetre les parts modales sur son territoire',
                     description:
@@ -9675,7 +9675,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.1.1',
+                        id: 'cae_4.1.1.1.1',
                         id_nomenclature: '4.1.1.1.1',
                         nom: 'R\u00e9aliser une enqu\u00eate destin\u00e9e \u00e0 \u00e9valuer la part modale de chaque mode de d\u00e9placement actif ou alternatif',
                         description:
@@ -9691,7 +9691,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.1.2',
+                    id: 'cae_4.1.1.2',
                     id_nomenclature: '4.1.1.2',
                     nom: 'S\u2019organiser pour mener une politique d\u2019information et de sensibilisation sur la mobilit\u00e9 durable',
                     description: '',
@@ -9702,7 +9702,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.2.1',
+                        id: 'cae_4.1.1.2.1',
                         id_nomenclature: '4.1.1.2.1',
                         nom: 'Formaliser une politique d\u0027information et de sensibilisation des habitants, int\u00e9grant notamment des liens avec la qualit\u00e9 de l\u2019air',
                         description: '',
@@ -9715,7 +9715,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.2.2',
+                        id: 'cae_4.1.1.2.2',
                         id_nomenclature: '4.1.1.2.2',
                         nom: 'Disposer d\u0027un budget et de moyens humains d\u00e9di\u00e9s \u00e0 l\u2019information sur la mobilit\u00e9 durable',
                         description: '',
@@ -9728,7 +9728,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.2.3',
+                        id: 'cae_4.1.1.2.3',
                         id_nomenclature: '4.1.1.2.3',
                         nom: 'Travailler a minima avec les autres collectivit\u00e9s et les Autorit\u00e9s Organisatrices des Mobilit\u00e9s afin de d\u00e9velopper l\u2019intermodalit\u00e9 (promotion des autres modes de transports disponibles au d\u00e9part ou \u00e0 destination, etc.)',
                         description:
@@ -9744,7 +9744,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.1.3',
+                    id: 'cae_4.1.1.3',
                     id_nomenclature: '4.1.1.3',
                     nom: 'Promouvoir l\u2019intermodalit\u00e9 et les modes de transports alternatifs \u00e0 la voiture individuelle sous des formes et vers des cibles vari\u00e9es',
                     description:
@@ -9756,7 +9756,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.3.1',
+                        id: 'cae_4.1.1.3.1',
                         id_nomenclature: '4.1.1.3.1',
                         nom: 'Promouvoir et soutenir les modes alternatifs \u00e0 la voiture individuelle et l\u0027intermodalit\u00e9',
                         description: '',
@@ -9769,7 +9769,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.3.2',
+                        id: 'cae_4.1.1.3.2',
                         id_nomenclature: '4.1.1.3.2',
                         nom: 'Promouvoir et soutenir le t\u00e9l\u00e9travail, les vid\u00e9o-conf\u00e9rences, l\u2019am\u00e9nagement des horaires de travail pour limiter les d\u00e9placements et faciliter l\u0027usage des transports en commun, ou modes actifs',
                         description: '',
@@ -9782,7 +9782,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.3.3',
+                        id: 'cae_4.1.1.3.3',
                         id_nomenclature: '4.1.1.3.3',
                         nom: 'Promouvoir et soutenir les Plans de mobilit\u00e9 dans les entreprises (PDME - Plans de mobilit\u00e9 employeur) et les plans de mobilit\u00e9 employeur communs pour les entreprises situ\u00e9es sur un m\u00eame site.',
                         description: '',
@@ -9795,7 +9795,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.3.4',
+                        id: 'cae_4.1.1.3.4',
                         id_nomenclature: '4.1.1.3.4',
                         nom: 'Promouvoir et soutenir l\u0027usage des v\u00e9hicules \u00e9lectriques, au biogaz ou \u00e0 hydrog\u00e8ne de mani\u00e8re raisonn\u00e9e et compl\u00e9mentaire aux modes alternatifs',
                         description: '',
@@ -9810,7 +9810,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.1.4',
+                    id: 'cae_4.1.1.4',
                     id_nomenclature: '4.1.1.4',
                     nom: 'Cr\u00e9er un lieu/service d\u00e9di\u00e9 \u00e0 l\u2019information sur l\u2019\u00e9co-mobilit\u00e9',
                     description: '',
@@ -9821,7 +9821,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.4.1',
+                        id: 'cae_4.1.1.4.1',
                         id_nomenclature: '4.1.1.4.1',
                         nom: 'Centraliser l\u2019information disponible dans un lieu d\u00e9di\u00e9 \u00e0 la mobilit\u00e9 ou diffus\u00e9e par un service unique',
                         description:
@@ -9835,7 +9835,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.4.2',
+                        id: 'cae_4.1.1.4.2',
                         id_nomenclature: '4.1.1.4.2',
                         nom: 'D\u00e9velopper des services d\u2019information individualis\u00e9e de mobilit\u00e9 aupr\u00e8s des usagers',
                         description: '',
@@ -9850,7 +9850,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.1.5',
+                    id: 'cae_4.1.1.5',
                     id_nomenclature: '4.1.1.5',
                     nom: 'Travailler avec les acteurs de la mobilit\u00e9 \u00e0 l\u2019\u00e9chelle du bassin de vie',
                     description: '',
@@ -9861,7 +9861,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.5.1',
+                        id: 'cae_4.1.1.5.1',
                         id_nomenclature: '4.1.1.5.1',
                         nom: 'Cr\u00e9er/participer \u00e0 un r\u00e9seau local d\u00e9di\u00e9 \u00e0 la mobilit\u00e9 durable',
                         description:
@@ -9877,7 +9877,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.1.6',
+                    id: 'cae_4.1.1.6',
                     id_nomenclature: '4.1.1.6',
                     nom: 'V\u00e9rifier la progression des parts modales des modes de transports alternatifs \u00e0 la voiture, atteindre des valeurs exemplaires et les communiquer',
                     description: '',
@@ -9888,7 +9888,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.6.1',
+                        id: 'cae_4.1.1.6.1',
                         id_nomenclature: '4.1.1.6.1',
                         nom: 'Analyser la progression des parts modales dans le temps et les comparer avec les parts modales moyennes \u00e0 l\u0027\u00e9chelle nationale (ou r\u00e9gionale pour les DOM) ou encore de collectivit\u00e9s exemplaires',
                         description:
@@ -9902,7 +9902,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.6.2',
+                        id: 'cae_4.1.1.6.2',
                         id_nomenclature: '4.1.1.6.2',
                         nom: 'Avoir de bonnes performances',
                         description: '',
@@ -9915,7 +9915,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.1.6.3',
+                        id: 'cae_4.1.1.6.3',
                         id_nomenclature: '4.1.1.6.3',
                         nom: 'Communiquer et valoriser l\u0027exemplarit\u00e9 de la politique de mobilit\u00e9 durable men\u00e9e (via une campagne d\u0027affichage des chiffres cl\u00e9s, dans les journaux locaux, \u2026)',
                         description: '',
@@ -9932,7 +9932,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__4.1.2',
+                id: 'cae_4.1.2',
                 id_nomenclature: '4.1.2',
                 nom: 'Promouvoir la mobilit\u00e9 durable en interne au sein de la collectivit\u00e9',
                 description:
@@ -9947,7 +9947,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__4.1.2.1',
+                    id: 'cae_4.1.2.1',
                     id_nomenclature: '4.1.2.1',
                     nom: 'R\u00e9aliser un diagnostic de ses besoins et de sa flotte de v\u00e9hicules',
                     description: '',
@@ -9958,7 +9958,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.1.1',
+                        id: 'cae_4.1.2.1.1',
                         id_nomenclature: '4.1.2.1.1',
                         nom: 'Evaluer ses besoins en mati\u00e8re de v\u00e9hicules motoris\u00e9s (kilom\u00e8tres parcourus, usages, temps et fr\u00e9quence d\u0027utilisation, location, communication, \u2026).',
                         description: '',
@@ -9971,7 +9971,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.1.2',
+                        id: 'cae_4.1.2.1.2',
                         id_nomenclature: '4.1.2.1.2',
                         nom: 'R\u00e9aliser un bilan \u00e9conomique de son poste \u00ab d\u00e9placements \u00bb',
                         description: '',
@@ -9984,7 +9984,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.1.3',
+                        id: 'cae_4.1.2.1.3',
                         id_nomenclature: '4.1.2.1.3',
                         nom: 'La collectivit\u00e9 r\u00e9alise un diagnostic de sa flotte de v\u00e9hicules.',
                         description:
@@ -10000,7 +10000,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.2.2',
+                    id: 'cae_4.1.2.2',
                     id_nomenclature: '4.1.2.2',
                     nom: 'Engager une politique de mobilit\u00e9 durable au sein de la collectivit\u00e9',
                     description: '',
@@ -10011,7 +10011,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.2.1',
+                        id: 'cae_4.1.2.2.1',
                         id_nomenclature: '4.1.2.2.1',
                         nom: 'S\u2019engager politiquement en faveur d\u2019un Plan de Mobilit\u00e9',
                         description:
@@ -10025,7 +10025,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.2.2',
+                        id: 'cae_4.1.2.2.2',
                         id_nomenclature: '4.1.2.2.2',
                         nom: 'Encourager le personnel \u00e0 l\u0027\u00e9co-mobilit\u00e9',
                         description: '',
@@ -10038,7 +10038,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.2.3',
+                        id: 'cae_4.1.2.2.3',
                         id_nomenclature: '4.1.2.2.3',
                         nom: 'Prendre des directives concernant la priorit\u00e9 aux trajets en transports publics, \u00e0 v\u00e9lo, \u00e0 pied pour les d\u00e9placements domicile-travail et/ou professionnels seulement (note de service)',
                         description: '',
@@ -10051,7 +10051,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.2.4',
+                        id: 'cae_4.1.2.2.4',
                         id_nomenclature: '4.1.2.2.4',
                         nom: 'Justifier les d\u00e9placements professionnels en avion et voiture (soumis \u00e0 une autorisation pr\u00e9alable), et les d\u00e9placements des \u00e9lus municipaux, dont les frais font l\u2019objet d\u2019une prise en charge par la collectivit\u00e9',
                         description: '',
@@ -10064,7 +10064,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.2.5',
+                        id: 'cae_4.1.2.2.5',
                         id_nomenclature: '4.1.2.2.5',
                         nom: 'Int\u00e9grer dans les directives d\u2019achats des crit\u00e8res d\u2019efficacit\u00e9 \u00e9nerg\u00e9tique et des carburants faiblement \u00e9metteurs en CO2 et polluants atmosph\u00e9riques (attention port\u00e9e \u00e0 l\u2019\u00e9tiquette \u00e9nergie au poids des v\u00e9hicules ainsi qu\u2019a\u0300 leur motorisation : \u00e9lectrique, biogaz ou hydrog\u00e8ne).',
                         description: '',
@@ -10079,7 +10079,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.2.3',
+                    id: 'cae_4.1.2.3',
                     id_nomenclature: '4.1.2.3',
                     nom: 'Former \u00e0 l\u0027\u00e9co-conduite et renouveler sa flotte de v\u00e9hicules',
                     description: '',
@@ -10090,7 +10090,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.3.1',
+                        id: 'cae_4.1.2.3.1',
                         id_nomenclature: '4.1.2.3.1',
                         nom: 'Proposer une offre de formation de type "Eco-drive" aux agents.',
                         description:
@@ -10104,7 +10104,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.3.2',
+                        id: 'cae_4.1.2.3.2',
                         id_nomenclature: '4.1.2.3.2',
                         nom: 'Renouveler la flotte de v\u00e9hicules (en priorit\u00e9 les v\u00e9hicules les plus polluants et \u00e9nergivores) et acheter de nouveaux v\u00e9hicules en s\u0027appuyant sur les crit\u00e8res fix\u00e9s en mati\u00e8re d\u0027\u00e9nergie, d\u0027\u00e9missions de carbone et de polluants ainsi qu\u0027en prenant en compte les besoins et usages de la collectivit\u00e9 (taille, poids des v\u00e9hicules...)',
                         description: '',
@@ -10119,7 +10119,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.2.4',
+                    id: 'cae_4.1.2.4',
                     id_nomenclature: '4.1.2.4',
                     nom: 'Optimiser, rationaliser les d\u00e9placements au sein de la collectivit\u00e9',
                     description: '',
@@ -10130,7 +10130,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.4.1',
+                        id: 'cae_4.1.2.4.1',
                         id_nomenclature: '4.1.2.4.1',
                         nom: 'Optimiser ou rationaliser les trajets et les circuits en installant des syst\u00e8mes de g\u00e9olocalisation et des logiciels d\u0027optimisation des d\u00e9placements',
                         description: '',
@@ -10143,7 +10143,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.4.2',
+                        id: 'cae_4.1.2.4.2',
                         id_nomenclature: '4.1.2.4.2',
                         nom: 'Mettre en place en interne des dispositifs de covoiturage ou de mutualisation des v\u00e9hicules et des trajets entre les services, et limiter les v\u00e9hicules de fonction au sein de la collectivit\u00e9 (r\u00e9duction du nombre de v\u00e9hicules sur la base des besoins r\u00e9els et substitution de certains v\u00e9hicules par des modes alternatifs)',
                         description: '',
@@ -10156,7 +10156,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.4.3',
+                        id: 'cae_4.1.2.4.3',
                         id_nomenclature: '4.1.2.4.3',
                         nom: 'R\u00e9fl\u00e9chir \u00e0 une r\u00e9organisation des activit\u00e9s moins g\u00e9n\u00e9ratrices de flux',
                         description: '',
@@ -10171,7 +10171,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.2.5',
+                    id: 'cae_4.1.2.5',
                     id_nomenclature: '4.1.2.5',
                     nom: 'Mettre en place des mesures incitatives',
                     description: '',
@@ -10182,7 +10182,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.5.1',
+                        id: 'cae_4.1.2.5.1',
                         id_nomenclature: '4.1.2.5.1',
                         nom: 'R\u00e9glementer les places de stationnement devant les b\u00e2timents communaux (indiquer le r\u00e8glement et le tarif)',
                         description: '',
@@ -10195,7 +10195,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.5.2',
+                        id: 'cae_4.1.2.5.2',
                         id_nomenclature: '4.1.2.5.2',
                         nom: 'Faire la promotion du co-voiturage pour les employ\u00e9s et faciliter le stationnement pour les covoitureurs',
                         description: '',
@@ -10208,7 +10208,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.5.3',
+                        id: 'cae_4.1.2.5.3',
                         id_nomenclature: '4.1.2.5.3',
                         nom: 'Encourager le t\u00e9l\u00e9travail et les vid\u00e9o-conf\u00e9rences (si d\u00e9bit suffisant en zone rurale)',
                         description: '',
@@ -10221,7 +10221,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.5.4',
+                        id: 'cae_4.1.2.5.4',
                         id_nomenclature: '4.1.2.5.4',
                         nom: 'Am\u00e9nager les horaires pour faciliter l\u2019usage des modes actifs ou TC.',
                         description:
@@ -10235,7 +10235,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.5.5',
+                        id: 'cae_4.1.2.5.5',
                         id_nomenclature: '4.1.2.5.5',
                         nom: 'D\u00e9ployer d\u2019autres mesures incitatives par exemple installation de douches, places de parking ve\u0301lo re\u0301pondant aux besoins des agents etc.',
                         description: '',
@@ -10250,7 +10250,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.2.6',
+                    id: 'cae_4.1.2.6',
                     id_nomenclature: '4.1.2.6',
                     nom: 'Mettre \u00e0 disposition des moyens physiques dans la majorit\u00e9 des lieux de travail',
                     description: '',
@@ -10261,7 +10261,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.6.1',
+                        id: 'cae_4.1.2.6.1',
                         id_nomenclature: '4.1.2.6.1',
                         nom: 'Proposer des places de stationnement attrayantes et s\u00e9curis\u00e9es pour les v\u00e9los, situ\u00e9es \u00e0 un endroit optimal pr\u00e8s de l\u0027entr\u00e9e',
                         description: '',
@@ -10274,7 +10274,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.6.2',
+                        id: 'cae_4.1.2.6.2',
                         id_nomenclature: '4.1.2.6.2',
                         nom: 'Acheter et mettre \u00e0 disposition des agents des v\u00e9los de service ou de v\u00e9los de fonction',
                         description: '',
@@ -10287,7 +10287,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.6.3',
+                        id: 'cae_4.1.2.6.3',
                         id_nomenclature: '4.1.2.6.3',
                         nom: 'Donner la possibilit\u00e9 de suspendre/s\u00e9cher l\u0027\u00e9quipement cycliste (casque, p\u00e8lerine), douches/vestiaires',
                         description: '',
@@ -10300,7 +10300,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.6.4',
+                        id: 'cae_4.1.2.6.4',
                         id_nomenclature: '4.1.2.6.4',
                         nom: 'D\u00e9ployer une offre de voiture en auto-partage (pool de v\u00e9hicules de service partag\u00e9)',
                         description: '',
@@ -10313,7 +10313,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.6.5',
+                        id: 'cae_4.1.2.6.5',
                         id_nomenclature: '4.1.2.6.5',
                         nom: 'Disposer de mat\u00e9riels de visioconf\u00e9rence et d\u2019audioconf\u00e9rence performants (si d\u00e9bit suffisant en zone rurale)',
                         description: '',
@@ -10328,7 +10328,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.2.7',
+                    id: 'cae_4.1.2.7',
                     id_nomenclature: '4.1.2.7',
                     nom: 'Inciter financi\u00e8rement les agents \u00e0 l\u2019usage des modes actifs / TC',
                     description: '',
@@ -10339,7 +10339,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.7.1',
+                        id: 'cae_4.1.2.7.1',
                         id_nomenclature: '4.1.2.7.1',
                         nom: 'Mettre \u00e0 disposition et utiliser des titres de transports publics non nominatifs pour les d\u00e9placements professionnels',
                         description: '',
@@ -10352,7 +10352,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.7.2',
+                        id: 'cae_4.1.2.7.2',
                         id_nomenclature: '4.1.2.7.2',
                         nom: 'Mettre \u00e0 disposition des employ\u00e9s des contributions pour des abonnements transports publics ou location v\u00e9lo allant au-del\u00e0 des obligations r\u00e9glementaires.',
                         description: '',
@@ -10365,7 +10365,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.7.3',
+                        id: 'cae_4.1.2.7.3',
                         id_nomenclature: '4.1.2.7.3',
                         nom: 'Mettre en place  le forfait mobilit\u00e9 durable ou le remboursement des frais d\u0027alimentation d\u0027un v\u00e9hicule \u00e9lectrique personnel (voiture ou v\u00e9lo \u00e0 assistance \u00e9lectrique) utilis\u00e9 dans le cadre du travail.',
                         description:
@@ -10381,7 +10381,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.1.2.8',
+                    id: 'cae_4.1.2.8',
                     id_nomenclature: '4.1.2.8',
                     nom: 'Atteindre les objectifs et communiquer sur les actions engag\u00e9es',
                     description: '',
@@ -10392,7 +10392,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.8.1',
+                        id: 'cae_4.1.2.8.1',
                         id_nomenclature: '4.1.2.8.1',
                         nom: 'Faire diminuer les consommations annuelles (kW/an/agent)',
                         description: '',
@@ -10405,7 +10405,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.8.2',
+                        id: 'cae_4.1.2.8.2',
                         id_nomenclature: '4.1.2.8.2',
                         nom: 'Faire diminuer les \u00e9missions de polluants atmosph\u00e9riques associ\u00e9s \u00e0 l\u2019usage de la flotte de v\u00e9hicules sont en diminution',
                         description: '',
@@ -10418,7 +10418,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.8.3',
+                        id: 'cae_4.1.2.8.3',
                         id_nomenclature: '4.1.2.8.3',
                         nom: 'Faire augmenter le pourcentage d\u2019agents form\u00e9s \u00e0 l\u2019\u00e9co-conduite',
                         description: '',
@@ -10431,7 +10431,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.8.4',
+                        id: 'cae_4.1.2.8.4',
                         id_nomenclature: '4.1.2.8.4',
                         nom: 'R\u00e9aliser des enqu\u00eates p\u00e9riodiques sur les crit\u00e8res du Plan de mobilit\u00e9 et sur la r\u00e9partition modale',
                         description:
@@ -10445,7 +10445,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.8.5',
+                        id: 'cae_4.1.2.8.5',
                         id_nomenclature: '4.1.2.8.5',
                         nom: 'R\u00e9duire les d\u00e9placements li\u00e9s \u00e0 son activit\u00e9 (attest\u00e9 par des chiffres)',
                         description: '',
@@ -10458,7 +10458,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.8.6',
+                        id: 'cae_4.1.2.8.6',
                         id_nomenclature: '4.1.2.8.6',
                         nom: 'Faire augmenter la part des d\u00e9placements professionnels sans voiture (attest\u00e9 par des chiffres)',
                         description: '',
@@ -10471,7 +10471,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.8.7',
+                        id: 'cae_4.1.2.8.7',
                         id_nomenclature: '4.1.2.8.7',
                         nom: 'P\u00e9renniser les actions \u00e9comobiles',
                         description: '',
@@ -10484,7 +10484,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.8.8',
+                        id: 'cae_4.1.2.8.8',
                         id_nomenclature: '4.1.2.8.8',
                         nom: 'Int\u00e9grer et utiliser les r\u00e9sultats des enqu\u00eates dans les processus d\u2019am\u00e9lioration',
                         description: '',
@@ -10497,7 +10497,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.1.2.8.9',
+                        id: 'cae_4.1.2.8.9',
                         id_nomenclature: '4.1.2.8.9',
                         nom: 'Communiquer sur son exemplarit\u00e9, via notamment un affichage sur les v\u00e9hicules de la collectivit\u00e9 (ex : "je roule au gaz naturel")',
                         description: '',
@@ -10516,7 +10516,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__4.2',
+            id: 'cae_4.2',
             id_nomenclature: '4.2',
             nom: 'Rationalisation des d\u00e9placements motoris\u00e9s',
             description: '',
@@ -10527,7 +10527,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__4.2.1',
+                id: 'cae_4.2.1',
                 id_nomenclature: '4.2.1',
                 nom: '\u00c9laborer une politique de stationnement volontariste',
                 description:
@@ -10542,7 +10542,7 @@ export const actions: ActionReferentiel[] = [
                 points: 8,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__4.2.1.1',
+                    id: 'cae_4.2.1.1',
                     id_nomenclature: '4.2.1.1',
                     nom: 'R\u00e9aliser un diagnostic de l\u2019offre de stationnement et des pratiques',
                     description: '',
@@ -10553,7 +10553,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.1.1',
+                        id: 'cae_4.2.1.1.1',
                         id_nomenclature: '4.2.1.1.1',
                         nom: 'R\u00e9aliser un diagnostic de l\u0027offre en stationnement par exemple l\u2019inventaire des places de stationnement (publiques a minima et priv\u00e9es si possible) et du potentiel (jour et nuit)',
                         description:
@@ -10567,7 +10567,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.1.2',
+                        id: 'cae_4.2.1.1.2',
                         id_nomenclature: '4.2.1.1.2',
                         nom: 'r\u00e9aliser un inventaire des pratiques actuelles (a minima en zone centre et de forte attractivit\u00e9)',
                         description: '',
@@ -10582,7 +10582,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.1.2',
+                    id: 'cae_4.2.1.2',
                     id_nomenclature: '4.2.1.2',
                     nom: 'Mettre en place une strat\u00e9gie sur les zones analys\u00e9es',
                     description: '',
@@ -10593,7 +10593,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.2.1',
+                        id: 'cae_4.2.1.2.1',
                         id_nomenclature: '4.2.1.2.1',
                         nom: 'Mettre en place une politique de stationnement dans le centre-ville et/ ou les zones de forte pression (commerces de quartier, etc.)',
                         description:
@@ -10607,7 +10607,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.2.2',
+                        id: 'cae_4.2.1.2.2',
                         id_nomenclature: '4.2.1.2.2',
                         nom: 'Mettre en place une tarification diff\u00e9renci\u00e9e si besoin',
                         description: '',
@@ -10620,7 +10620,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.2.3',
+                        id: 'cae_4.2.1.2.3',
                         id_nomenclature: '4.2.1.2.3',
                         nom: 'Pour les communes en zones rurale, mettre l\u0027accent sur la sensibilisation et l\u2019information aupr\u00e8s des habitants sur le besoin de g\u00e9rer l\u2019usage de la voiture et de marquer les places r\u00e9serv\u00e9es au stationnement et le d\u00e9veloppement de zones bleues le cas \u00e9ch\u00e9ant autour des zones de trafic.',
                         description: '',
@@ -10633,7 +10633,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.2.4',
+                        id: 'cae_4.2.1.2.4',
                         id_nomenclature: '4.2.1.2.4',
                         nom: 'Faire respecter la r\u00e9glementation via de la pr\u00e9vention et de la verbalisation',
                         description:
@@ -10649,7 +10649,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.1.3',
+                    id: 'cae_4.2.1.3',
                     id_nomenclature: '4.2.1.3',
                     nom: 'Favoriser les v\u00e9hicules et les espaces de stationnement plus respectueux de l\u0027environnement',
                     description: '',
@@ -10660,7 +10660,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.3.1',
+                        id: 'cae_4.2.1.3.1',
                         id_nomenclature: '4.2.1.3.1',
                         nom: 'Mettre en place une tarification et une signalisation diff\u00e9renci\u00e9e selon la qualit\u00e9 environnementale des v\u00e9hicules (co-voiturage, v\u00e9hicules peu \u00e9metteurs, etc.)',
                         description: '',
@@ -10673,7 +10673,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.3.2',
+                        id: 'cae_4.2.1.3.2',
                         id_nomenclature: '4.2.1.3.2',
                         nom: 'Installer des bornes ou services de recharge pour les v\u00e9hicules \u00e9lectriques sur les sites strat\u00e9giques, et dans les ensembles d\u0027habitations et locaux tertiaires (anticipant ou allant plus loin que les obligations r\u00e9glementaires), en veillant \u00e0 la coh\u00e9rence avec la strat\u00e9gie de rationalisation du stationnement \u00e9tablie',
                         description: '',
@@ -10686,7 +10686,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.3.3',
+                        id: 'cae_4.2.1.3.3',
                         id_nomenclature: '4.2.1.3.3',
                         nom: 'Mettre en place un syst\u00e8me de guidage pour limiter la recherche de place (si n\u00e9cessaire)',
                         description: '',
@@ -10699,7 +10699,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.3.4',
+                        id: 'cae_4.2.1.3.4',
                         id_nomenclature: '4.2.1.3.4',
                         nom: 'Ombrager les espaces de stationnement pour limiter le recours \u00e0 la climatisation, tout en limitant l\u2019imperm\u00e9abilisation des sols',
                         description: '',
@@ -10714,7 +10714,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.1.4',
+                    id: 'cae_4.2.1.4',
                     id_nomenclature: '4.2.1.4',
                     nom: 'Repenser la strat\u00e9gie de stationnement afin de favoriser l\u0027intermodalit\u00e9 et le recours aux modes actifs de d\u00e9placement',
                     description: '',
@@ -10725,7 +10725,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.4.1',
+                        id: 'cae_4.2.1.4.1',
                         id_nomenclature: '4.2.1.4.1',
                         nom: 'Inscrire des objectifs maximaux de stationnement priv\u00e9 dans les documents d\u0027urbanisme',
                         description:
@@ -10739,7 +10739,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.4.2',
+                        id: 'cae_4.2.1.4.2',
                         id_nomenclature: '4.2.1.4.2',
                         nom: 'Ne pas favoriser la voiture \u00e0 tout prix en centre-ville ou dans les situations complexes en terme de stationnement',
                         description:
@@ -10753,7 +10753,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.4.3',
+                        id: 'cae_4.2.1.4.3',
                         id_nomenclature: '4.2.1.4.3',
                         nom: 'Encourager le stationnement dans les parkings souterrains ou ferm\u00e9s plut\u00f4t qu\u0027en voirie pour r\u00e9\u00e9quilibrer l\u0027occupation de l\u0027espace public au profit des cheminements pi\u00e9tons et cyclables et r\u00e9duire le nombre de voitures ventouses.',
                         description: '',
@@ -10766,7 +10766,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.4.4',
+                        id: 'cae_4.2.1.4.4',
                         id_nomenclature: '4.2.1.4.4',
                         nom: 'R\u00e9server une partie des places \u00ab lib\u00e9r\u00e9es \u00bb en voirie aux personnes \u00e0 mobilit\u00e9 r\u00e9duite, afin d\u2019am\u00e9liorer leur accessibilit\u00e9.',
                         description: '',
@@ -10779,7 +10779,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.4.5',
+                        id: 'cae_4.2.1.4.5',
                         id_nomenclature: '4.2.1.4.5',
                         nom: 'Convertir les places de stationnement sur voirie situ\u00e9es juste avant un passage pi\u00e9ton en espace de stationnement cyclable (favorisant au passage la visibilit\u00e9 des pi\u00e9tons)',
                         description: '',
@@ -10792,7 +10792,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.4.6',
+                        id: 'cae_4.2.1.4.6',
                         id_nomenclature: '4.2.1.4.6',
                         nom: 'Affecter les recettes du stationnement payant pour la mobilit\u00e9 durable (par ex. d\u00e9dier les recettes du stationnement au financement de v\u00e9los en libre-service)',
                         description: '',
@@ -10807,7 +10807,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.1.5',
+                    id: 'cae_4.2.1.5',
                     id_nomenclature: '4.2.1.5',
                     nom: 'Elargir la r\u00e9flexion sur le stationnement',
                     description: '',
@@ -10818,7 +10818,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.5.1',
+                        id: 'cae_4.2.1.5.1',
                         id_nomenclature: '4.2.1.5.1',
                         nom: 'Int\u00e9grer \u00e0 la r\u00e9flexion le stationnement de nuit et le stationnement priv\u00e9 (pour les nouvelles places), r\u00e9glementer le stationnement en dehors des zones centrales ou de forte attractivit\u00e9',
                         description:
@@ -10832,7 +10832,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.5.2',
+                        id: 'cae_4.2.1.5.2',
                         id_nomenclature: '4.2.1.5.2',
                         nom: 'Mettre en place des espaces de stationnement dans une perspective d\u2019usages multiples (scolaire, commercial, associatif)',
                         description: '',
@@ -10847,7 +10847,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.1.6',
+                    id: 'cae_4.2.1.6',
                     id_nomenclature: '4.2.1.6',
                     nom: 'Evaluer et communiquer sur la politique de stationnement',
                     description: '',
@@ -10858,7 +10858,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.6.1',
+                        id: 'cae_4.2.1.6.1',
                         id_nomenclature: '4.2.1.6.1',
                         nom: 'Mener des enqu\u00eates p\u00e9riodiques sur le taux de rotation et sur la r\u00e9gularit\u00e9 du stationnement',
                         description: '',
@@ -10871,7 +10871,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.6.2',
+                        id: 'cae_4.2.1.6.2',
                         id_nomenclature: '4.2.1.6.2',
                         nom: 'Analyser le taux d\u2019occupation dans le centre-ville',
                         description: '',
@@ -10884,7 +10884,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.6.3',
+                        id: 'cae_4.2.1.6.3',
                         id_nomenclature: '4.2.1.6.3',
                         nom: 'Suivre un indicateur en nombre de place de stationnement par habitant et le comparer \u00e0 des valeurs de r\u00e9f\u00e9rences, pour viser un juste dimensionnement de l\u2019offre selon le contexte et les modes alternatifs disponibles',
                         description: '',
@@ -10897,7 +10897,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.6.4',
+                        id: 'cae_4.2.1.6.4',
                         id_nomenclature: '4.2.1.6.4',
                         nom: 'Prouver l\u2019efficacit\u00e9 de la tarification sur le trafic',
                         description: '',
@@ -10910,7 +10910,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.6.5',
+                        id: 'cae_4.2.1.6.5',
                         id_nomenclature: '4.2.1.6.5',
                         nom: 'Utiliser et int\u00e9grer les r\u00e9sultats des enqu\u00eates dans les processus d\u2019am\u00e9lioration',
                         description: '',
@@ -10923,7 +10923,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.1.6.6',
+                        id: 'cae_4.2.1.6.6',
                         id_nomenclature: '4.2.1.6.6',
                         nom: 'Communiquer les r\u00e9sultats aux acteurs du territoire',
                         description: '',
@@ -10940,7 +10940,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__4.2.2',
+                id: 'cae_4.2.2',
                 id_nomenclature: '4.2.2',
                 nom: 'R\u00e9guler le trafic, r\u00e9duire la vitesse et valoriser l\u0027espace public',
                 description:
@@ -10955,7 +10955,7 @@ export const actions: ActionReferentiel[] = [
                 points: 16,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__4.2.2.1',
+                    id: 'cae_4.2.2.1',
                     id_nomenclature: '4.2.2.1',
                     nom: 'Identifier les zones g\u00e9n\u00e9ratrices de d\u00e9placements et travers\u00e9es par des flux importants',
                     description: '',
@@ -10966,7 +10966,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.1.1',
+                        id: 'cae_4.2.2.1.1',
                         id_nomenclature: '4.2.2.1.1',
                         nom: 'Identifier les points noirs (accidentologie)',
                         description: '',
@@ -10979,7 +10979,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.1.2',
+                        id: 'cae_4.2.2.1.2',
                         id_nomenclature: '4.2.2.1.2',
                         nom: 'Identifier les axes o\u00f9 la congestion est importante et de risque de bouchons',
                         description: '',
@@ -10992,7 +10992,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.1.3',
+                        id: 'cae_4.2.2.1.3',
                         id_nomenclature: '4.2.2.1.3',
                         nom: 'Identifier o\u00f9 la collectivit\u00e9 \u00e0 des voies r\u00e9serv\u00e9es au transport public',
                         description: '',
@@ -11005,7 +11005,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.1.4',
+                        id: 'cae_4.2.2.1.4',
                         id_nomenclature: '4.2.2.1.4',
                         nom: 'Rep\u00e9rer les zones g\u00e9n\u00e9ratrices de d\u00e9placements et les axes de circulation importants',
                         description: '',
@@ -11018,7 +11018,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.1.5',
+                        id: 'cae_4.2.2.1.5',
                         id_nomenclature: '4.2.2.1.5',
                         nom: 'Identifier les zones o\u00f9 il est n\u00e9cessaire de mettre en place des zones apais\u00e9es (zone r\u00e9sidentielles, proximit\u00e9 des \u00e9coles, c\u0153ur de bourg, \u2026)',
                         description: '',
@@ -11031,7 +11031,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.1.6',
+                        id: 'cae_4.2.2.1.6',
                         id_nomenclature: '4.2.2.1.6',
                         nom: 'R\u00e9aliser des actions de concertation en amont avec la population pour l\u2019identification des besoins et des ressentis',
                         description: '',
@@ -11046,7 +11046,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.2.2',
+                    id: 'cae_4.2.2.2',
                     id_nomenclature: '4.2.2.2',
                     nom: 'Mettre en place des outils de gestion du trafic',
                     description: '',
@@ -11057,7 +11057,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.2.1',
+                        id: 'cae_4.2.2.2.1',
                         id_nomenclature: '4.2.2.2.1',
                         nom: 'Formaliser une strat\u00e9gie de gestion du trafic diff\u00e9renci\u00e9e selon les zones (centre, p\u00e9riph\u00e9rie, axes principaux, zones r\u00e9sidentielles, rues commerciales\u2026)',
                         description: '',
@@ -11070,7 +11070,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.2.2',
+                        id: 'cae_4.2.2.2.2',
                         id_nomenclature: '4.2.2.2.2',
                         nom: 'Mettre en place un outil de suivi du trafic (en temps r\u00e9el dans l\u2019id\u00e9al) et utiliser des donn\u00e9es pour l\u2019am\u00e9lioration de la politique de mobilit\u00e9 et notamment sur les \u00e9volutions des trac\u00e9es des voies bus (pour les collectivit\u00e9s travers\u00e9es par des flux importants et/ou celles dot\u00e9es de transport en commun)',
                         description: '',
@@ -11083,7 +11083,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.2.3',
+                        id: 'cae_4.2.2.2.3',
                         id_nomenclature: '4.2.2.2.3',
                         nom: 'Valoriser les donn\u00e9es pour mieux anticiper les difficult\u00e9s \u00e0 venir et notamment favoriser le transport public, r\u00e9duire les bouchons et r\u00e9duire les pollutions et risques d\u2019accidents',
                         description: '',
@@ -11098,7 +11098,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.2.3',
+                    id: 'cae_4.2.2.3',
                     id_nomenclature: '4.2.2.3',
                     nom: 'R\u00e9am\u00e9nager et restructurer la voirie et les espaces publics afin de cr\u00e9er des zones de circulation apais\u00e9e',
                     description: '',
@@ -11109,7 +11109,7 @@ export const actions: ActionReferentiel[] = [
                     points: 35,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.3.1',
+                        id: 'cae_4.2.2.3.1',
                         id_nomenclature: '4.2.2.3.1',
                         nom: 'R\u00e9am\u00e9nager et restructurer la voirie et les espaces publics (trame viaire, organisation et signal\u00e9tique) dans les zones pr\u00e9sentant des probl\u00e9matiques de conflits (zones hostiles) pi\u00e9tons/cyclistes/automobilistes',
                         description:
@@ -11123,7 +11123,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.3.2',
+                        id: 'cae_4.2.2.3.2',
                         id_nomenclature: '4.2.2.3.2',
                         nom: 'Installer une signalisation favorisant la r\u00e9duction des vitesses et la valorisation des commerces de proximit\u00e9',
                         description:
@@ -11137,7 +11137,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.3.3',
+                        id: 'cae_4.2.2.3.3',
                         id_nomenclature: '4.2.2.3.3',
                         nom: 'Mettre en place une signalisation aux entr\u00e9es de ville pour signaler la politique g\u00e9n\u00e9rale de la ville',
                         description: '',
@@ -11150,7 +11150,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.3.4',
+                        id: 'cae_4.2.2.3.4',
                         id_nomenclature: '4.2.2.3.4',
                         nom: 'Collaborer avec les acteurs du territoire et des citoyens pour la mise en place des actions',
                         description: '',
@@ -11165,7 +11165,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.2.4',
+                    id: 'cae_4.2.2.4',
                     id_nomenclature: '4.2.2.4',
                     nom: 'Evaluer les actions en faveur de la r\u00e9gulation du trafic et la valorisation de l\u2019espace public',
                     description: '',
@@ -11176,7 +11176,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.4.1',
+                        id: 'cae_4.2.2.4.1',
                         id_nomenclature: '4.2.2.4.1',
                         nom: 'Avoir de nombreux axes int\u00e9gr\u00e9s dans l\u2019outil de gestion du trafic',
                         description: '',
@@ -11189,7 +11189,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.4.2',
+                        id: 'cae_4.2.2.4.2',
                         id_nomenclature: '4.2.2.4.2',
                         nom: 'Avoir un pourcentage important de voirie apais\u00e9e (majorit\u00e9 des voies en centre-ville, voire g\u00e9n\u00e9ralisation de la zone 30 en ville avec zone d\u2019exception \u00e0 50)',
                         description: '',
@@ -11202,7 +11202,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.4.3',
+                        id: 'cae_4.2.2.4.3',
                         id_nomenclature: '4.2.2.4.3',
                         nom: '\u00c9valuer et suivre les actions mises en \u0153uvre avec des enqu\u00eates p\u00e9riodiques comme les contr\u00f4les de la vitesse, la statistique des accidents, la r\u00e9duction du danger, des sondages de popularit\u00e9',
                         description: '',
@@ -11215,7 +11215,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.2.4.4',
+                        id: 'cae_4.2.2.4.4',
                         id_nomenclature: '4.2.2.4.4',
                         nom: 'Utiliser les r\u00e9sultats des enqu\u00eates et les int\u00e9grer dans les processus d\u0027am\u00e9lioration',
                         description: '',
@@ -11232,7 +11232,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__4.2.3',
+                id: 'cae_4.2.3',
                 id_nomenclature: '4.2.3',
                 nom: 'Optimiser la logistique et la gestion des flux de marchandises sur le territoire',
                 description:
@@ -11247,7 +11247,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__4.2.3.1',
+                    id: 'cae_4.2.3.1',
                     id_nomenclature: '4.2.3.1',
                     nom: 'Engager une concertation avec les acteurs locaux pour identifier les flux de marchandises et les besoins',
                     description: '',
@@ -11258,7 +11258,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.1.1',
+                        id: 'cae_4.2.3.1.1',
                         id_nomenclature: '4.2.3.1.1',
                         nom: 'Identifier, contacter et mettre en relation les diff\u00e9rents acteurs de la logistique sur le territoire (collectivit\u00e9s, transporteurs, clients, chargeurs, commer\u00e7ants et citoyens) y compris les op\u00e9rateurs portuaires',
                         description: '',
@@ -11271,7 +11271,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.1.2',
+                        id: 'cae_4.2.3.1.2',
                         id_nomenclature: '4.2.3.1.2',
                         nom: 'Dresser une cartographie des flux (int\u00e9grant aussi le trafic engendr\u00e9 par le transit des poids lourds)',
                         description: '',
@@ -11284,7 +11284,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.1.3',
+                        id: 'cae_4.2.3.1.3',
                         id_nomenclature: '4.2.3.1.3',
                         nom: 'R\u00e9aliser un \u00e9tat des lieux sur la livraison de marchandises sur le territoire, (flux, nature, en int\u00e9grant notamment les op\u00e9rateurs portuaires et la probl\u00e9matique des livraisons li\u00e9es au e-commerce, notamment celles assur\u00e9es par des v\u00e9hicules utilitaires l\u00e9gers) et les besoins de stationnement associ\u00e9s',
                         description: '',
@@ -11297,7 +11297,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.1.4',
+                        id: 'cae_4.2.3.1.4',
                         id_nomenclature: '4.2.3.1.4',
                         nom: 'Conna\u00eetre et sensibiliser les entreprises aux enjeux du \u00ab dernier kilom\u00e8tre \u00bb dans la distribution de marchandises et de l\u2019impact sur la qualit\u00e9 de l\u2019air des v\u00e9hicules utilitaires et des poids lourds anciens (notamment pour s\u0027adapter \u00e0 la mise en place \u00e9ventuelle de zone \u00e0 circulation restreinte)',
                         description: '',
@@ -11310,7 +11310,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.1.5',
+                        id: 'cae_4.2.3.1.5',
                         id_nomenclature: '4.2.3.1.5',
                         nom: 'Identifier un interlocuteur au sein de la collectivit\u00e9 pour traiter du sujet',
                         description: '',
@@ -11323,7 +11323,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.1.6',
+                        id: 'cae_4.2.3.1.6',
                         id_nomenclature: '4.2.3.1.6',
                         nom: 'Identifier les circuits-courts de proximit\u00e9 pertinents et favoriser leur d\u00e9ploiement autour des bassins de vie',
                         description: '',
@@ -11336,7 +11336,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.1.7',
+                        id: 'cae_4.2.3.1.7',
                         id_nomenclature: '4.2.3.1.7',
                         nom: 'R\u00e9aliser des \u00e9tudes sur l\u2019optimisation \u00e9nerg\u00e9tique des \u00e9quipements du port, sur les besoins de formation des grutiers, des chauffeurs, etc.',
                         description: '',
@@ -11351,7 +11351,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.3.2',
+                    id: 'cae_4.2.3.2',
                     id_nomenclature: '4.2.3.2',
                     nom: 'Int\u00e9grer des orientations en faveur de l\u0027optimisation du transport de marchandises \u00e0 l\u0027\u00e9chelle du territoire dans les documents de planification',
                     description: '',
@@ -11362,7 +11362,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.2.1',
+                        id: 'cae_4.2.3.2.1',
                         id_nomenclature: '4.2.3.2.1',
                         nom: 'Int\u00e9grer des actions pr\u00e9cises sur le transport de marchandises en ville dans le PDU',
                         description: '',
@@ -11375,7 +11375,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.2.2',
+                        id: 'cae_4.2.3.2.2',
                         id_nomenclature: '4.2.3.2.2',
                         nom: 'Orienter les projets d\u2019\u00e9quipements en faveur de l\u2019optimisation du transport de marchandises \u00e0 l\u2019\u00e9chelle du territoire dans le SCOT par exemple le report modal du routier vers le rail ou le fluvial (ou maritime et cabotage)',
                         description: '',
@@ -11388,7 +11388,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.2.3',
+                        id: 'cae_4.2.3.2.3',
                         id_nomenclature: '4.2.3.2.3',
                         nom: 'Optimiser les sch\u00e9mas logistiques urbains par rapport \u00e0 leur impact sur la qualit\u00e9 de l\u0027air',
                         description: '',
@@ -11403,7 +11403,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.3.3',
+                    id: 'cae_4.2.3.3',
                     id_nomenclature: '4.2.3.3',
                     nom: 'Se doter de la comp\u00e9tence "gestion des marchandises"',
                     description: '',
@@ -11416,7 +11416,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.3.4',
+                    id: 'cae_4.2.3.4',
                     id_nomenclature: '4.2.3.4',
                     nom: 'R\u00e9glementer, encadrer, soutenir et faire appliquer l\u0027optimisation de la gestion des flux de marchandises sur le territoire',
                     description: '',
@@ -11427,7 +11427,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.4.1',
+                        id: 'cae_4.2.3.4.1',
                         id_nomenclature: '4.2.3.4.1',
                         nom: 'R\u00e9glementer afin d\u0027organiser l\u0027acc\u00e8s au centre-ville (plage horaire, diff\u00e9renciation selon les performances environnementales des v\u00e9hicules, etc), voire mise en place d\u0027une zone \u00e0 circulation restreinte en zone PPA',
                         description: '',
@@ -11440,7 +11440,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.4.2',
+                        id: 'cae_4.2.3.4.2',
                         id_nomenclature: '4.2.3.4.2',
                         nom: 'Proposer des solutions alternatives de transport de marchandises',
                         description:
@@ -11454,7 +11454,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.4.3',
+                        id: 'cae_4.2.3.4.3',
                         id_nomenclature: '4.2.3.4.3',
                         nom: 'Mettre en place des centres de distribution urbaine (pour les collectivit\u00e9s \u003e 50 000 habitants) et des points relais (dans des commerces, des entreprises ou des \u00e9quipements sp\u00e9cialis\u00e9s)',
                         description: '',
@@ -11467,7 +11467,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.4.4',
+                        id: 'cae_4.2.3.4.4',
                         id_nomenclature: '4.2.3.4.4',
                         nom: 'Mettre en place des services mutualis\u00e9s de livraison (acteurs \u00e9conomiques, \u00e9tablissements publics et des particuliers)',
                         description: '',
@@ -11480,7 +11480,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.4.5',
+                        id: 'cae_4.2.3.4.5',
                         id_nomenclature: '4.2.3.4.5',
                         nom: 'Encourager la mutualisation des services',
                         description:
@@ -11494,7 +11494,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.4.6',
+                        id: 'cae_4.2.3.4.6',
                         id_nomenclature: '4.2.3.4.6',
                         nom: 'En milieu rural, cibler les acteurs cl\u00e9s par exemple les agriculteurs pour r\u00e9aliser des actions pour optimiser le transport de marchandises',
                         description: '',
@@ -11507,7 +11507,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.4.7',
+                        id: 'cae_4.2.3.4.7',
                         id_nomenclature: '4.2.3.4.7',
                         nom: 'En pr\u00e9sence d\u2019un port, R\u00e9aliser des actions sp\u00e9cifiques',
                         description:
@@ -11523,7 +11523,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.3.5',
+                    id: 'cae_4.2.3.5',
                     id_nomenclature: '4.2.3.5',
                     nom: 'Repenser la strat\u00e9gie de stationnement des v\u00e9hicules de marchandises',
                     description: '',
@@ -11534,7 +11534,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.5.1',
+                        id: 'cae_4.2.3.5.1',
                         id_nomenclature: '4.2.3.5.1',
                         nom: 'Proposer un r\u00e9seau coh\u00e9rent et suffisant d\u0027aires de livraison',
                         description: '',
@@ -11547,7 +11547,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.5.2',
+                        id: 'cae_4.2.3.5.2',
                         id_nomenclature: '4.2.3.5.2',
                         nom: 'R\u00e9glementer sur la dur\u00e9e et la plage horaire autoris\u00e9e pour \u00e9viter les heures de pointe et limiter les conflits d\u0027usage',
                         description: '',
@@ -11560,7 +11560,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.5.3',
+                        id: 'cae_4.2.3.5.3',
                         id_nomenclature: '4.2.3.5.3',
                         nom: 'Contr\u00f4ler le bon fonctionnement des aires de livraisons (respect, juste dimensionnement et localisation)',
                         description: '',
@@ -11575,7 +11575,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.2.3.6',
+                    id: 'cae_4.2.3.6',
                     id_nomenclature: '4.2.3.6',
                     nom: 'Inciter et soutenir les acteurs du territoire dans un cadre formalis\u00e9',
                     description: '',
@@ -11586,7 +11586,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.6.1',
+                        id: 'cae_4.2.3.6.1',
                         id_nomenclature: '4.2.3.6.1',
                         nom: '\u00c9laborer une charte locale "logistique urbaine" reprenant les principes du cadre national, avec plan d\u0027actions sur les GES et les polluants atmosph\u00e9riques',
                         description: '',
@@ -11599,7 +11599,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.6.2',
+                        id: 'cae_4.2.3.6.2',
                         id_nomenclature: '4.2.3.6.2',
                         nom: 'S\u0027engager avec l\u0027ADEME dans une d\u00e9marche "engagement volontaire collectivit\u00e9s", qui cible la logistique urbaine durable',
                         description:
@@ -11613,7 +11613,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.6.3',
+                        id: 'cae_4.2.3.6.3',
                         id_nomenclature: '4.2.3.6.3',
                         nom: 'Engager une d\u00e9marche environnementale de type charte \u00ab Objectif CO2 \u00bb pour inciter les transporteurs \u00e0 optimiser leur activit\u00e9 en termes d\u0027\u00e9missions de GES',
                         description:
@@ -11627,7 +11627,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.2.3.6.4',
+                        id: 'cae_4.2.3.6.4',
                         id_nomenclature: '4.2.3.6.4',
                         nom: 'Inciter les chargeurs \u00e0 s\u2019engager dans une d\u00e9marche volontaire FRET 21ou EVCOM pour leur permettre de r\u00e9duire l\u2019impact environnemental de leurs transports',
                         description: '',
@@ -11646,7 +11646,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__4.3',
+            id: 'cae_4.3',
             id_nomenclature: '4.3',
             nom: 'Mobilit\u00e9 alternative',
             description: '',
@@ -11657,7 +11657,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__4.3.1',
+                id: 'cae_4.3.1',
                 id_nomenclature: '4.3.1',
                 nom: 'D\u00e9velopper le r\u00e9seau pi\u00e9tonnier',
                 description:
@@ -11672,7 +11672,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__4.3.1.1',
+                    id: 'cae_4.3.1.1',
                     id_nomenclature: '4.3.1.1',
                     nom: 'Se doter d\u2019outils pour adopter une strat\u00e9gie de d\u00e9veloppement du r\u00e9seau pi\u00e9tonnier s\u0027appuyant sur un apaisement de la circulation',
                     description: '',
@@ -11683,7 +11683,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.1.1',
+                        id: 'cae_4.3.1.1.1',
                         id_nomenclature: '4.3.1.1.1',
                         nom: 'Voter et adopter un budget pour le d\u00e9veloppement et l\u2019am\u00e9lioration du r\u00e9seau',
                         description: '',
@@ -11696,7 +11696,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.1.2',
+                        id: 'cae_4.3.1.1.2',
                         id_nomenclature: '4.3.1.1.2',
                         nom: 'D\u00e9signer un responsable des cheminements pour pi\u00e9tons',
                         description: '',
@@ -11709,7 +11709,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.1.3',
+                        id: 'cae_4.3.1.1.3',
                         id_nomenclature: '4.3.1.1.3',
                         nom: '\u00c9valuer le ressenti des pi\u00e9tons sur l\u0027usage de ce mode de d\u00e9placements* enqu\u00eate p\u00e9riode sur la part modale des pi\u00e9tons* sondages de popularit\u00e9, sentiment de s\u00e9curit\u00e9, etc.',
                         description: '',
@@ -11722,7 +11722,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.1.4',
+                        id: 'cae_4.3.1.1.4',
                         id_nomenclature: '4.3.1.1.4',
                         nom: '\u00c9laborer un sch\u00e9ma directeur de la mobilit\u00e9 pi\u00e9tonne en pensant le r\u00e9seau pi\u00e9ton conjointement aux autres r\u00e9seaux de modes actifs de d\u00e9placements afin de favoriser l\u0027intermodalit\u00e9. Les collectivit\u00e9s rurales orientent leurs actions sur les lieux de fr\u00e9quentation (centres bourgs, \u00e9coles, etc).',
                         description: '',
@@ -11737,7 +11737,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.1.2',
+                    id: 'cae_4.3.1.2',
                     id_nomenclature: '4.3.1.2',
                     nom: 'Am\u00e9liorer prioritairement la situation des zones \u00e0 forts enjeux',
                     description: '',
@@ -11748,7 +11748,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.2.1',
+                        id: 'cae_4.3.1.2.1',
                         id_nomenclature: '4.3.1.2.1',
                         nom: 'Identifier les zones \u00e0 enjeux importants en mati\u00e8re de mobilit\u00e9 pi\u00e9tonne (centre, zones r\u00e9sidentielles) et mettre en place des mesures (am\u00e9nagement et signal\u00e9tique) visant \u00e0 l\u0027apaisement de celles-ci (zones limit\u00e9es \u00e0 30 km/h, zone de rencontres\u2026)',
                         description: '',
@@ -11761,7 +11761,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.2.2',
+                        id: 'cae_4.3.1.2.2',
                         id_nomenclature: '4.3.1.2.2',
                         nom: 'Rep\u00e9rer les points noirs pouvant freiner le d\u00e9veloppement de la mobilit\u00e9 pi\u00e9tonne dans certaines zones et les traiter (am\u00e9nager et s\u00e9curiser davantage de passages pi\u00e9tons, les abords des \u00e9coles, supprimer le maximum de stop et de feux tricolores en zone apais\u00e9e et r\u00e9tablir la priorit\u00e9 \u00e0 droite)',
                         description: '',
@@ -11776,7 +11776,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.1.3',
+                    id: 'cae_4.3.1.3',
                     id_nomenclature: '4.3.1.3',
                     nom: 'Densifier et am\u00e9liorer globalement la qualit\u00e9 du r\u00e9seau pi\u00e9ton sur le territoire',
                     description:
@@ -11788,7 +11788,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.3.1',
+                        id: 'cae_4.3.1.3.1',
                         id_nomenclature: '4.3.1.3.1',
                         nom: 'Densifier le r\u00e9seau pi\u00e9ton en veillant \u00e0 garantir un maillage desservant efficacement l\u0027ensemble des lieux \u00e0 forte fr\u00e9quentation, les d\u00e9tours et lacunes',
                         description: '',
@@ -11801,7 +11801,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.3.2',
+                        id: 'cae_4.3.1.3.2',
                         id_nomenclature: '4.3.1.3.2',
                         nom: 'S\u0027appuyer sur la signalisation afin d\u0027accompagner et guider les pi\u00e9tons',
                         description:
@@ -11815,7 +11815,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.3.3',
+                        id: 'cae_4.3.1.3.3',
                         id_nomenclature: '4.3.1.3.3',
                         nom: 'Accompagner les personnes \u00e0 mobilit\u00e9 r\u00e9duite (par ex. abaissement des trottoirs) plus que le minimum requis (outil : sch\u00e9mas d\u0027accessibilit\u00e9)',
                         description: '',
@@ -11830,7 +11830,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.1.4',
+                    id: 'cae_4.3.1.4',
                     id_nomenclature: '4.3.1.4',
                     nom: '(20% dans les DOM) Devenir un territoire exemplaire en mati\u00e8re de mobilit\u00e9 pi\u00e9tonne',
                     description:
@@ -11842,7 +11842,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.4.1',
+                        id: 'cae_4.3.1.4.1',
                         id_nomenclature: '4.3.1.4.1',
                         nom: 'Se saisir des outils r\u00e9glementaires, avec des sc\u00e9narios ambitieux (large p\u00e9rim\u00e8tre g\u00e9ographique, suffisamment de cat\u00e9gories de v\u00e9hicules vis\u00e9s par les restrictions\u2026) et des moyens de contr\u00f4le (respect par les usagers)',
                         description: '',
@@ -11855,7 +11855,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.4.2',
+                        id: 'cae_4.3.1.4.2',
                         id_nomenclature: '4.3.1.4.2',
                         nom: 'Cr\u00e9er une ou plusieurs aires pi\u00e9tonnes',
                         description:
@@ -11869,7 +11869,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.4.3',
+                        id: 'cae_4.3.1.4.3',
                         id_nomenclature: '4.3.1.4.3',
                         nom: 'Initier des op\u00e9rations d\u2019usage dynamique de la voirie',
                         description:
@@ -11883,7 +11883,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.4.4',
+                        id: 'cae_4.3.1.4.4',
                         id_nomenclature: '4.3.1.4.4',
                         nom: 'Attester de l\u0027exemplarit\u00e9 par l\u2019augmentation du nombre de pi\u00e9tons',
                         description: '',
@@ -11896,7 +11896,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.1.4.5',
+                        id: 'cae_4.3.1.4.5',
                         id_nomenclature: '4.3.1.4.5',
                         nom: 'Communiquer autour des actions phares mises en place en faveur des pi\u00e9tons',
                         description: '',
@@ -11913,7 +11913,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__4.3.2',
+                id: 'cae_4.3.2',
                 id_nomenclature: '4.3.2',
                 nom: 'D\u00e9velopper le r\u00e9seau et les infrastructures cyclables',
                 description:
@@ -11928,7 +11928,7 @@ export const actions: ActionReferentiel[] = [
                 points: 16,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__4.3.2.1',
+                    id: 'cae_4.3.2.1',
                     id_nomenclature: '4.3.2.1',
                     nom: 'Conna\u00eetre et analyser les d\u00e9placements et stationnements cyclistes du territoire',
                     description: '',
@@ -11939,7 +11939,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.1.1',
+                        id: 'cae_4.3.2.1.1',
                         id_nomenclature: '4.3.2.1.1',
                         nom: 'Analyser la situation en particulier \u00e0 proximit\u00e9 des entreprises, magasins, lieux touristiques, installations fortement fr\u00e9quent\u00e9es',
                         description:
@@ -11953,7 +11953,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.1.2',
+                        id: 'cae_4.3.2.1.2',
                         id_nomenclature: '4.3.2.1.2',
                         nom: 'Mener des enqu\u00eates p\u00e9riodiques sur la part modale des cyclistes et utiliser les \u00e9tudes r\u00e9alis\u00e9es par d\u2019autres organismes',
                         description:
@@ -11969,7 +11969,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.2.2',
+                    id: 'cae_4.3.2.2',
                     id_nomenclature: '4.3.2.2',
                     nom: 'Consulter et informer les habitants',
                     description: '',
@@ -11980,7 +11980,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.2.1',
+                        id: 'cae_4.3.2.2.1',
                         id_nomenclature: '4.3.2.2.1',
                         nom: '\u00c9valuer le ressenti des habitants au regard du mode de d\u00e9placement cycliste',
                         description:
@@ -11994,7 +11994,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.2.2',
+                        id: 'cae_4.3.2.2.2',
                         id_nomenclature: '4.3.2.2.2',
                         nom: 'Evaluer les besoins des cyclistes (notamment enqu\u00eates sp\u00e9cifiques pour les d\u00e9placements de loisirs et de tourisme)',
                         description: '',
@@ -12007,7 +12007,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.2.3',
+                        id: 'cae_4.3.2.2.3',
                         id_nomenclature: '4.3.2.2.3',
                         nom: 'Informer les cyclistes sur le r\u00e9seau existant (notamment informations sp\u00e9cifiques \u00e0 destination des touristes)',
                         description: '',
@@ -12020,7 +12020,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.2.4',
+                        id: 'cae_4.3.2.2.4',
                         id_nomenclature: '4.3.2.2.4',
                         nom: 'Faire conna\u00eetre les nouvelles r\u00e8gles du d\u00e9cret PAMA 2015 (cf. r\u00e9glementation) et verbaliser les enfreintes',
                         description: '',
@@ -12035,7 +12035,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.2.3',
+                    id: 'cae_4.3.2.3',
                     id_nomenclature: '4.3.2.3',
                     nom: 'Adopter un sch\u00e9ma directeur cyclable',
                     description: '',
@@ -12046,7 +12046,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.3.1',
+                        id: 'cae_4.3.2.3.1',
                         id_nomenclature: '4.3.2.3.1',
                         nom: 'Disposer d\u2019un sch\u00e9ma directeur cyclable (ou modes actifs dans une approche mixte marche et v\u00e9lo)',
                         description: '',
@@ -12059,7 +12059,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.3.2',
+                        id: 'cae_4.3.2.3.2',
                         id_nomenclature: '4.3.2.3.2',
                         nom: 'D\u00e9signer au sein de l\u0027administration un responsable du r\u00e9seau cyclable et stationnement cyclable',
                         description: '',
@@ -12072,7 +12072,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.3.3',
+                        id: 'cae_4.3.2.3.3',
                         id_nomenclature: '4.3.2.3.3',
                         nom: 'Voter et adopter un budget pour le d\u00e9veloppement du r\u00e9seau et des places de stationnement structurant (investissement et fonctionnement)',
                         description: '',
@@ -12087,7 +12087,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.2.4',
+                    id: 'cae_4.3.2.4',
                     id_nomenclature: '4.3.2.4',
                     nom: 'Mettre en \u0153uvre son sch\u00e9ma directeur cyclable',
                     description: '',
@@ -12098,7 +12098,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.4.1',
+                        id: 'cae_4.3.2.4.1',
                         id_nomenclature: '4.3.2.4.1',
                         nom: 'Disposer de la comp\u00e9tence pour mettre en \u0153uvre des actions',
                         description:
@@ -12112,7 +12112,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.4.2',
+                        id: 'cae_4.3.2.4.2',
                         id_nomenclature: '4.3.2.4.2',
                         nom: 'Anticiper et/ou r\u00e9duire les conflits d\u2019usage, notamment en traitant les points noirs du r\u00e9seau pouvant freiner le d\u00e9veloppement de la mobilit\u00e9 cyclable',
                         description: '',
@@ -12125,7 +12125,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.4.3',
+                        id: 'cae_4.3.2.4.3',
                         id_nomenclature: '4.3.2.4.3',
                         nom: 'Traiter les discontinuit\u00e9s cyclables (plus important que l\u2019augmentation du lin\u00e9aire d\u2019am\u00e9nagements)',
                         description: '',
@@ -12138,7 +12138,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.4.4',
+                        id: 'cae_4.3.2.4.4',
                         id_nomenclature: '4.3.2.4.4',
                         nom: 'Densifier le r\u00e9seau cyclable en veillant \u00e0 garantir un maillage desservant efficacement l\u0027ensemble des lieux \u00e0 forte fr\u00e9quentation (notamment touristique)',
                         description: '',
@@ -12151,7 +12151,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.4.5',
+                        id: 'cae_4.3.2.4.5',
                         id_nomenclature: '4.3.2.4.5',
                         nom: 'Limiter les d\u00e9tours et les obstacles pour les cyclistes en retravaillant le plan de circulation des voiries',
                         description:
@@ -12165,7 +12165,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.4.6',
+                        id: 'cae_4.3.2.4.6',
                         id_nomenclature: '4.3.2.4.6',
                         nom: 'Eliminer les endroits dangereux \u00e0 la circulation cycliste (autour des \u00e9coles, travers\u00e9e des routes principales, etc.), s\u00e9curiser et diff\u00e9rencier les r\u00e9seaux',
                         description:
@@ -12179,7 +12179,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.4.7',
+                        id: 'cae_4.3.2.4.7',
                         id_nomenclature: '4.3.2.4.7',
                         nom: 'S\u0027appuyer sur la signalisation des itin\u00e9raires afin d\u0027accompagner et guider les cyclistes et penser le r\u00e9seau cyclable conjointement aux autres r\u00e9seaux de modes actifs de d\u00e9placements afin de favoriser l\u0027intermodalit\u00e9',
                         description:
@@ -12193,7 +12193,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.4.8',
+                        id: 'cae_4.3.2.4.8',
                         id_nomenclature: '4.3.2.4.8',
                         nom: 'S\u0027assurer de la qualit\u00e9 des am\u00e9nagements cyclables et de leur entretien',
                         description: '',
@@ -12206,7 +12206,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.4.9',
+                        id: 'cae_4.3.2.4.9',
                         id_nomenclature: '4.3.2.4.9',
                         nom: 'R\u00e9aliser des enqu\u00eates p\u00e9riodiques (comptages) et aupr\u00e8s d\u2019un panel de cycliste (sondages, entretiens, \u2026) pour \u00e9valuer l\u2019\u00e9volution des pratiques.',
                         description:
@@ -12222,7 +12222,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.2.5',
+                    id: 'cae_4.3.2.5',
                     id_nomenclature: '4.3.2.5',
                     nom: 'Proposer des offres de stationnement v\u00e9lo de qualit\u00e9',
                     description: '',
@@ -12233,7 +12233,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.5.1',
+                        id: 'cae_4.3.2.5.1',
                         id_nomenclature: '4.3.2.5.1',
                         nom: 'Proposer des locaux v\u00e9los s\u00e9curis\u00e9s, \u00e9quip\u00e9s et accessibles dans tous les lieux d\u2019attractivit\u00e9 (les \u00e9tablissements collectifs, les entreprises, les commerces, les \u00e9coles)',
                         description: '',
@@ -12246,7 +12246,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.5.2',
+                        id: 'cae_4.3.2.5.2',
                         id_nomenclature: '4.3.2.5.2',
                         nom: 'Soutenir des installations priv\u00e9es en particulier autour des h\u00f4tels et des complexes touristiques',
                         description: '',
@@ -12259,7 +12259,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.5.3',
+                        id: 'cae_4.3.2.5.3',
                         id_nomenclature: '4.3.2.5.3',
                         nom: 'S\u00e9curiser les stationnements en particulier \u00e0 proximit\u00e9 de p\u00f4les multimodaux, des \u00e9coles et commerces principaux',
                         description:
@@ -12275,7 +12275,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.2.6',
+                    id: 'cae_4.3.2.6',
                     id_nomenclature: '4.3.2.6',
                     nom: 'D\u00e9velopper un ou des r\u00e9seaux express v\u00e9lo (REV) pour faciliter les d\u00e9placements entre les grandes villes et leur p\u00e9riph\u00e9rie',
                     description:
@@ -12289,7 +12289,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.2.7',
+                    id: 'cae_4.3.2.7',
                     id_nomenclature: '4.3.2.7',
                     nom: 'Suivre et \u00e9valuer les r\u00e9sultats',
                     description: '',
@@ -12300,7 +12300,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.7.1',
+                        id: 'cae_4.3.2.7.1',
                         id_nomenclature: '4.3.2.7.1',
                         nom: 'Augmenter le % de voirie am\u00e9nag\u00e9e ou \u00e0 d\u00e9faut la longueur cumul\u00e9e de pistes cyclables pour 1000 habitants',
                         description:
@@ -12314,7 +12314,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.7.2',
+                        id: 'cae_4.3.2.7.2',
                         id_nomenclature: '4.3.2.7.2',
                         nom: 'Augmenter le nombre de places de stationnement v\u00e9lo pour 100 habitants',
                         description:
@@ -12328,7 +12328,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.2.7.3',
+                        id: 'cae_4.3.2.7.3',
                         id_nomenclature: '4.3.2.7.3',
                         nom: 'Augmenter le passage de v\u00e9los sur les pistes (nombre par jour)',
                         description: '',
@@ -12345,7 +12345,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__4.3.3',
+                id: 'cae_4.3.3',
                 id_nomenclature: '4.3.3',
                 nom: 'Proposer une offre de transports publics attractive et de qualit\u00e9',
                 description:
@@ -12360,7 +12360,7 @@ export const actions: ActionReferentiel[] = [
                 points: 14,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__4.3.3.1',
+                    id: 'cae_4.3.3.1',
                     id_nomenclature: '4.3.3.1',
                     nom: 'S\u2019organiser en interne',
                     description: '',
@@ -12371,7 +12371,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.1.1',
+                        id: 'cae_4.3.3.1.1',
                         id_nomenclature: '4.3.3.1.1',
                         nom: 'Mettre en place une organisation interne et des moyens d\u00e9di\u00e9s au d\u00e9veloppement et au suivi des transports en commun (budget allou\u00e9, personnel identifi\u00e9)',
                         description: '',
@@ -12386,7 +12386,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.3.2',
+                    id: 'cae_4.3.3.2',
                     id_nomenclature: '4.3.3.2',
                     nom: '\u00c9valuer et analyser les besoins en transports collectifs',
                     description: '',
@@ -12397,7 +12397,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.2.1',
+                        id: 'cae_4.3.3.2.1',
                         id_nomenclature: '4.3.3.2.1',
                         nom: 'Se rapprocher des AOM (autorit\u00e9s organisatrices de la mobilit\u00e9) locales afin d\u0027\u00e9valuer les besoins des usagers actuels',
                         description:
@@ -12411,7 +12411,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.2.2',
+                        id: 'cae_4.3.3.2.2',
                         id_nomenclature: '4.3.3.2.2',
                         nom: 'Classer ses besoins par ordre de priorit\u00e9',
                         description: '',
@@ -12424,7 +12424,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.2.3',
+                        id: 'cae_4.3.3.2.3',
                         id_nomenclature: '4.3.3.2.3',
                         nom: 'Identifier les principaux g\u00e9n\u00e9rateurs de d\u00e9placement',
                         description:
@@ -12438,7 +12438,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.2.4',
+                        id: 'cae_4.3.3.2.4',
                         id_nomenclature: '4.3.3.2.4',
                         nom: 'Pr\u00e9senter les r\u00e9sultats de l\u0027analyse aux responsables d\u0027AOT-AOM, aux \u00e9lus des collectivit\u00e9s concern\u00e9es, aux associations d\u0027usagers des transports, aux commer\u00e7ants, aux gestionnaires de zones d\u0027activit\u00e9s et aux entreprises de transport.',
                         description: '',
@@ -12451,7 +12451,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.2.5',
+                        id: 'cae_4.3.3.2.5',
                         id_nomenclature: '4.3.3.2.5',
                         nom: 'Pour les collectivit\u00e9s concern\u00e9es (littoral, DOM\u2026), int\u00e8grer au diagnostic l\u2019offre maritime/fluviale.',
                         description: '',
@@ -12466,7 +12466,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.3.3',
+                    id: 'cae_4.3.3.3',
                     id_nomenclature: '4.3.3.3',
                     nom: 'Orienter l\u2019achat de v\u00e9hicules des transports publics et le renouvellement de flotte vers les carburants alternatifs (bioGNV, \u00e9lectrique et hydrog\u00e8ne)',
                     description: '',
@@ -12477,7 +12477,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.3.1',
+                        id: 'cae_4.3.3.3.1',
                         id_nomenclature: '4.3.3.3.1',
                         nom: 'D\u00e9ployer des flottes de transport public \u00e0 tr\u00e8s faibles \u00e9missions en adaptant le choix du carburant alternatif aux ressources du territoire. Restreindre le cahier des charges aux carburants susnomm\u00e9s',
                         description: '',
@@ -12490,7 +12490,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.3.2',
+                        id: 'cae_4.3.3.3.2',
                         id_nomenclature: '4.3.3.3.2',
                         nom: 'Augmenter le % de v\u00e9hicules faiblement \u00e9metteurs',
                         description: '',
@@ -12503,7 +12503,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.3.3',
+                        id: 'cae_4.3.3.3.3',
                         id_nomenclature: '4.3.3.3.3',
                         nom: 'S\u2019engager dans une op\u00e9ration type \u00ab Objectif CO2 les transporteurs s\u2019engagent \u00bb',
                         description: '',
@@ -12518,7 +12518,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.3.4',
+                    id: 'cae_4.3.3.4',
                     id_nomenclature: '4.3.3.4',
                     nom: 'Am\u00e9liorer l\u0027efficacit\u00e9 du r\u00e9seau de transports collectifs en collaboration avec les AOM et les principaux g\u00e9n\u00e9rateurs de d\u00e9placements',
                     description: '',
@@ -12529,7 +12529,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.4.1',
+                        id: 'cae_4.3.3.4.1',
                         id_nomenclature: '4.3.3.4.1',
                         nom: 'Optimiser l\u0027offre existante',
                         description:
@@ -12543,7 +12543,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.4.2',
+                        id: 'cae_4.3.3.4.2',
                         id_nomenclature: '4.3.3.4.2',
                         nom: 'Donner la priorit\u00e9 aux transports publics dans le trafic, en lien avec les collectivit\u00e9s comp\u00e9tentes en mati\u00e8re de voirie',
                         description:
@@ -12557,7 +12557,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.4.3',
+                        id: 'cae_4.3.3.4.3',
                         id_nomenclature: '4.3.3.4.3',
                         nom: 'D\u00e9velopper des syst\u00e8mes d\u0027information r\u00e9actifs pour informer en temps r\u00e9el ou quasiment les usagers de l\u0027\u00e9tat du trafic sur le r\u00e9seau de TC',
                         description:
@@ -12571,7 +12571,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.4.4',
+                        id: 'cae_4.3.3.4.4',
                         id_nomenclature: '4.3.3.4.4',
                         nom: 'Prendre des mesures pour assurer la fiabilit\u00e9 lors d\u0027\u00e9v\u00e9nements climatiques extr\u00eames, et la qualit\u00e9 des transports',
                         description:
@@ -12585,7 +12585,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.4.5',
+                        id: 'cae_4.3.3.4.5',
                         id_nomenclature: '4.3.3.4.5',
                         nom: 'Associer les principaux g\u00e9n\u00e9rateurs de d\u00e9placements \u00e0 la r\u00e9flexion, travailler en amont avec eux afin de les sensibiliser et les inciter \u00e0 ajuster leur organisation et leurs horaires',
                         description:
@@ -12599,7 +12599,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.4.6',
+                        id: 'cae_4.3.3.4.6',
                         id_nomenclature: '4.3.3.4.6',
                         nom: 'Adapter et/ou am\u00e9liorer l\u0027accessibilit\u00e9 de l\u0027offre de transports publics aux PMR',
                         description: '',
@@ -12612,7 +12612,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.4.7',
+                        id: 'cae_4.3.3.4.7',
                         id_nomenclature: '4.3.3.4.7',
                         nom: 'S\u2019engager dans une op\u00e9ration type \u00ab Objectif CO2 les transporteurs s\u2019engagent \u00bb',
                         description: '',
@@ -12627,7 +12627,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.3.5',
+                    id: 'cae_4.3.3.5',
                     id_nomenclature: '4.3.3.5',
                     nom: 'Diversifier l\u2019offre de transport collectif, pour plus de souplesse',
                     description:
@@ -12639,7 +12639,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.5.1',
+                        id: 'cae_4.3.3.5.1',
                         id_nomenclature: '4.3.3.5.1',
                         nom: 'Mettre en place des offres propres \u00e0 la collectivit\u00e9 ou soutenir les offres/dessertes existantes (utilisation des transports scolaires\u2026)',
                         description:
@@ -12655,7 +12655,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.3.6',
+                    id: 'cae_4.3.3.6',
                     id_nomenclature: '4.3.3.6',
                     nom: 'Mettre en place une tarification adapt\u00e9e',
                     description: '',
@@ -12666,7 +12666,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.6.1',
+                        id: 'cae_4.3.3.6.1',
                         id_nomenclature: '4.3.3.6.1',
                         nom: 'Cr\u00e9er une billettique unique',
                         description:
@@ -12680,7 +12680,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.6.2',
+                        id: 'cae_4.3.3.6.2',
                         id_nomenclature: '4.3.3.6.2',
                         nom: 'Mettre en place une offre de cartes journali\u00e8res pour les transports publics et gratuit\u00e9 des transports en commun en cas d\u0027\u00e9pisodes de pollution',
                         description: '',
@@ -12693,7 +12693,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.6.3',
+                        id: 'cae_4.3.3.6.3',
                         id_nomenclature: '4.3.3.6.3',
                         nom: 'Adapter la tarification aux enjeux sociaux / aux classes d\u2019\u00e2ges',
                         description: '',
@@ -12708,7 +12708,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.3.7',
+                    id: 'cae_4.3.3.7',
                     id_nomenclature: '4.3.3.7',
                     nom: 'Evaluer et communiquer les r\u00e9sultats',
                     description: '',
@@ -12719,7 +12719,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.7.1',
+                        id: 'cae_4.3.3.7.1',
                         id_nomenclature: '4.3.3.7.1',
                         nom: '\u00c9valuer la progression de l\u0027utilisation des transports publics',
                         description:
@@ -12733,7 +12733,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.7.2',
+                        id: 'cae_4.3.3.7.2',
                         id_nomenclature: '4.3.3.7.2',
                         nom: 'Utiliser les r\u00e9sultats des enqu\u00eates et les int\u00e9grer dans les processus d\u0027am\u00e9lioration',
                         description: '',
@@ -12746,7 +12746,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.3.7.3',
+                        id: 'cae_4.3.3.7.3',
                         id_nomenclature: '4.3.3.7.3',
                         nom: 'Communiquer sur les r\u00e9sultats',
                         description: '',
@@ -12763,7 +12763,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__4.3.4',
+                id: 'cae_4.3.4',
                 id_nomenclature: '4.3.4',
                 nom: 'D\u00e9velopper l\u0027offre multimodale et l\u0027intermodalit\u00e9',
                 description:
@@ -12778,7 +12778,7 @@ export const actions: ActionReferentiel[] = [
                 points: 8,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__4.3.4.1',
+                    id: 'cae_4.3.4.1',
                     id_nomenclature: '4.3.4.1',
                     nom: 'Analyser les besoins et l\u2019offre multimodale existante',
                     description: '',
@@ -12789,7 +12789,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.1.1',
+                        id: 'cae_4.3.4.1.1',
                         id_nomenclature: '4.3.4.1.1',
                         nom: 'Analyser la situation en mati\u00e8re de co-voiturage, d\u2019auto-partage, de location de v\u00e9los et services associ\u00e9s',
                         description:
@@ -12803,7 +12803,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.1.2',
+                        id: 'cae_4.3.4.1.2',
                         id_nomenclature: '4.3.4.1.2',
                         nom: 'Conna\u00eetre les enjeux de l\u2019intermodalit\u00e9 et formaliser la volont\u00e9 de faciliter l\u2019intermodalit\u00e9 dans un document (ou est d\u00e9montr\u00e9e par des premi\u00e8res r\u00e9alisations)',
                         description: '',
@@ -12816,7 +12816,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.1.3',
+                        id: 'cae_4.3.4.1.3',
                         id_nomenclature: '4.3.4.1.3',
                         nom: 'Mettre \u00e0 disposition des moyens pour la mise en \u0153uvre d\u2019actions en faveur de la multi-modalit\u00e9 et de l\u2019intermodalit\u00e9 (budget allou\u00e9, personnel identifi\u00e9)',
                         description: '',
@@ -12831,7 +12831,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.4.2',
+                    id: 'cae_4.3.4.2',
                     id_nomenclature: '4.3.4.2',
                     nom: 'Faciliter le changement de mode de transport',
                     description:
@@ -12843,7 +12843,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.2.1',
+                        id: 'cae_4.3.4.2.1',
                         id_nomenclature: '4.3.4.2.1',
                         nom: 'D\u00e9velopper des parkings relais (P+R)',
                         description: '',
@@ -12856,7 +12856,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.2.2',
+                        id: 'cae_4.3.4.2.2',
                         id_nomenclature: '4.3.4.2.2',
                         nom: 'Autoriser et faciliter l\u2019embarquement des v\u00e9los dans les transports en commun lorsque les conditions d\u2019exploitation le permettent',
                         description:
@@ -12870,7 +12870,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.2.3',
+                        id: 'cae_4.3.4.2.3',
                         id_nomenclature: '4.3.4.2.3',
                         nom: 'Mettre en place une tarification et une billettique unique/coordonn\u00e9e entre les diff\u00e9rentes offres de transport (TC, location de v\u00e9lo, auto-partage\u2026)',
                         description: '',
@@ -12883,7 +12883,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.2.4',
+                        id: 'cae_4.3.4.2.4',
                         id_nomenclature: '4.3.4.2.4',
                         nom: 'Installer un p\u00f4le d\u2019\u00e9changes multimodal, combinant en m\u00eame lieu plusieurs modes de transport alternatifs diff\u00e9rents',
                         description: '',
@@ -12898,7 +12898,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.4.3',
+                    id: 'cae_4.3.4.3',
                     id_nomenclature: '4.3.4.3',
                     nom: 'D\u00e9velopper l\u0027usage de la voiture partag\u00e9e',
                     description:
@@ -12912,7 +12912,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.4.4',
+                    id: 'cae_4.3.4.4',
                     id_nomenclature: '4.3.4.4',
                     nom: 'Equiper les habitants en v\u00e9lo',
                     description:
@@ -12924,7 +12924,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.4.1',
+                        id: 'cae_4.3.4.4.1',
                         id_nomenclature: '4.3.4.4.1',
                         nom: 'D\u00e9velopper des offres de locations v\u00e9lo afin de provoquer l\u2019essai par la population (syst\u00e8me de v\u00e9los en libre-service et/ou syst\u00e8me de location longue dur\u00e9e)',
                         description: '',
@@ -12937,7 +12937,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.4.2',
+                        id: 'cae_4.3.4.4.2',
                         id_nomenclature: '4.3.4.4.2',
                         nom: 'Aider directement les habitants en subventionnant l\u2019achat de v\u00e9los classiques, v\u00e9los utilitaires, v\u00e9los pliants (pour l\u2019intermodalit\u00e9 avec les transports en commun), ou de v\u00e9los \u00e0 assistance \u00e9lectrique (VAE)',
                         description: '',
@@ -12952,7 +12952,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.4.5',
+                    id: 'cae_4.3.4.5',
                     id_nomenclature: '4.3.4.5',
                     nom: 'Accompagner les cyclistes avec des services associ\u00e9s au v\u00e9lo',
                     description: '',
@@ -12963,7 +12963,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.5.1',
+                        id: 'cae_4.3.4.5.1',
                         id_nomenclature: '4.3.4.5.1',
                         nom: 'Encourager l\u0027apprentissage du v\u00e9lo et inciter la r\u00e9appropriation des deux roues notamment en milieu rural',
                         description:
@@ -12977,7 +12977,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.5.2',
+                        id: 'cae_4.3.4.5.2',
                         id_nomenclature: '4.3.4.5.2',
                         nom: 'Soutenir les v\u00e9los-\u00e9coles pour d\u00e9ployer leurs missions d\u0027accompagnement et d\u0027apprentissage du v\u00e9lo',
                         description: '',
@@ -12990,7 +12990,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.5.3',
+                        id: 'cae_4.3.4.5.3',
                         id_nomenclature: '4.3.4.5.3',
                         nom: 'Encourager le marquage des v\u00e9los \u00ab bicycode \u00bb et informer sur les meilleures astuces contre le vol',
                         description: '',
@@ -13003,7 +13003,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.5.4',
+                        id: 'cae_4.3.4.5.4',
                         id_nomenclature: '4.3.4.5.4',
                         nom: 'Soutenir les ateliers de r\u00e9paration, les associations de recyclage, les coursiers \u00e0 v\u00e9lo, les maisons du v\u00e9lo, etc.',
                         description: '',
@@ -13016,7 +13016,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.5.5',
+                        id: 'cae_4.3.4.5.5',
                         id_nomenclature: '4.3.4.5.5',
                         nom: 'D\u00e9velopper des d\u00e9marches innovantes autour des services v\u00e9los (v\u00e9los sp\u00e9ciaux, familiaux et v\u00e9lo cargo)',
                         description: '',
@@ -13031,7 +13031,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__4.3.4.6',
+                    id: 'cae_4.3.4.6',
                     id_nomenclature: '4.3.4.6',
                     nom: 'Suivre et atteindre les objectifs fix\u00e9s',
                     description: '',
@@ -13042,7 +13042,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.6.1',
+                        id: 'cae_4.3.4.6.1',
                         id_nomenclature: '4.3.4.6.1',
                         nom: 'Constater de l\u0027augmentation de la pratique du co-voiturage et de l\u2019auto-partage (chiffres fournis)',
                         description: '',
@@ -13055,7 +13055,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.6.2',
+                        id: 'cae_4.3.4.6.2',
                         id_nomenclature: '4.3.4.6.2',
                         nom: 'Constater de l\u0027augmentation du parc de v\u00e9los en partage (v\u00e9lo libre-service ou location longue dur\u00e9e)',
                         description: '',
@@ -13068,7 +13068,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.6.3',
+                        id: 'cae_4.3.4.6.3',
                         id_nomenclature: '4.3.4.6.3',
                         nom: 'R\u00e9aliser des enqu\u00eates p\u00e9riodiques (par exemple sur l\u0027utilisation des diff\u00e9rentes offres, sondages de popularit\u00e9)',
                         description: '',
@@ -13081,7 +13081,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__4.3.4.6.4',
+                        id: 'cae_4.3.4.6.4',
                         id_nomenclature: '4.3.4.6.4',
                         nom: 'Utiliser les r\u00e9sultats des enqu\u00eates et les int\u00e9grer dans le processus d\u0027am\u00e9lioration',
                         description: '',
@@ -13102,7 +13102,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'citergie__5',
+        id: 'cae_5',
         id_nomenclature: '5',
         nom: 'Organisation interne',
         description: '',
@@ -13113,7 +13113,7 @@ export const actions: ActionReferentiel[] = [
         points: -1.0,
         actions: [
           new ActionReferentiel({
-            id: 'citergie__5.1',
+            id: 'cae_5.1',
             id_nomenclature: '5.1',
             nom: 'Gouvernance',
             description: '',
@@ -13124,7 +13124,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__5.1.1',
+                id: 'cae_5.1.1',
                 id_nomenclature: '5.1.1',
                 nom: 'Organiser les ressources humaines pour mener la politique climat-air-\u00e9nergie',
                 description:
@@ -13139,7 +13139,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__5.1.1.1',
+                    id: 'cae_5.1.1.1',
                     id_nomenclature: '5.1.1.1',
                     nom: 'Doter la politique climat-air-\u00e9nergie de moyens humains',
                     description: '',
@@ -13150,7 +13150,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.1.1',
+                        id: 'cae_5.1.1.1.1',
                         id_nomenclature: '5.1.1.1.1',
                         nom: 'Disposer d\u0027une ou plusieurs personnes responsables des questions climat-air-\u00e9nergie au niveau technique',
                         description: '',
@@ -13163,7 +13163,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.1.2',
+                        id: 'cae_5.1.1.1.2',
                         id_nomenclature: '5.1.1.1.2',
                         nom: 'Attribuer une mission de conseil \u00e0 des personnes ou entreprises externes sp\u00e9cialis\u00e9es (par exemple  conseiller FAIRE, Agence de mobilit\u00e9, Agence locale, association sp\u00e9cialis\u00e9e, ...) ou proc\u00e8der \u00e0 un recrutement en interne si les ressources humaines sont insuffisantes.',
                         description: '',
@@ -13176,7 +13176,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.1.3',
+                        id: 'cae_5.1.1.1.3',
                         id_nomenclature: '5.1.1.1.3',
                         nom: 'D\u00e9signer un chef de projet climat-air-\u00e9nergie ; en cas d\u2019indisponibilit\u00e9 (arr\u00eat maladie longue dur\u00e9e, maternit\u00e9, d\u00e9part\u2026), son remplacement est une priorit\u00e9 (pas d\u2019absence de longue dur\u00e9e (ex : plus de 3 mois)',
                         description: '',
@@ -13191,7 +13191,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.1.2',
+                    id: 'cae_5.1.1.2',
                     id_nomenclature: '5.1.1.2',
                     nom: 'D\u00e9cliner finement les responsabilit\u00e9s et les r\u00e9f\u00e9rents',
                     description: '',
@@ -13202,7 +13202,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.2.1',
+                        id: 'cae_5.1.1.2.1',
                         id_nomenclature: '5.1.1.2.1',
                         nom: 'Des r\u00e9f\u00e9rents par service sont identifi\u00e9s pour les diff\u00e9rents sujets',
                         description:
@@ -13216,7 +13216,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.2.2',
+                        id: 'cae_5.1.1.2.2',
                         id_nomenclature: '5.1.1.2.2',
                         nom: 'Identifier une ou des personnes pour garantir le bon fonctionnement des services et fournir des services sp\u00e9cifiques en cas de ph\u00e9nom\u00e8nes extr\u00eames li\u00e9s au changement climatique (canicule, temp\u00eate...).',
                         description: '',
@@ -13229,7 +13229,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.2.3',
+                        id: 'cae_5.1.1.2.3',
                         id_nomenclature: '5.1.1.2.3',
                         nom: 'Compl\u00e9ter syst\u00e9matiquement les instructions de travail et les fiches de poste pour les agents concern\u00e9s avec des t\u00e2ches couvrant l\u2019ensemble des th\u00e9matiques climat-air-\u00e9nergie (urbanisme, b\u00e2timents, mobilit\u00e9, adaptation, etc.)',
                         description: '',
@@ -13244,7 +13244,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.1.3',
+                    id: 'cae_5.1.1.3',
                     id_nomenclature: '5.1.1.3',
                     nom: 'Travailler en transversalit\u00e9',
                     description: '',
@@ -13255,7 +13255,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.3.1',
+                        id: 'cae_5.1.1.3.1',
                         id_nomenclature: '5.1.1.3.1',
                         nom: 'Am\u00e9nager le poste du chef de projet climat-air-\u00e9nergie pour lui permettre de se consacrer pleinement \u00e0 sa mission et de travailler en transversalit\u00e9 et de mani\u00e8re l\u00e9gitime avec les autres services (positionnement strat\u00e9gique dans l\u0027organigramme)',
                         description: '',
@@ -13268,7 +13268,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.3.2',
+                        id: 'cae_5.1.1.3.2',
                         id_nomenclature: '5.1.1.3.2',
                         nom: 'Disposer d\u0027une \u00e9quipe projet transversale, pilot\u00e9e par le chef de projet, charg\u00e9e d\u2019assurer la mise en \u0153uvre de la strat\u00e9gie climat-air-\u00e9nergie ; elle se r\u00e9unit r\u00e9guli\u00e8rement et dynamise la d\u00e9marche en interne',
                         description: '',
@@ -13281,7 +13281,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.3.3',
+                        id: 'cae_5.1.1.3.3',
                         id_nomenclature: '5.1.1.3.3',
                         nom: 'Avoir des DGS, DGA et/ou DST qui sont impliqu\u00e9s et contribuent au portage et soutiennent le chef de projet (notamment vis \u00e0 vis de la transversalit\u00e9 et de la mobilisation des autres agents)',
                         description: '',
@@ -13294,7 +13294,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.3.4',
+                        id: 'cae_5.1.1.3.4',
                         id_nomenclature: '5.1.1.3.4',
                         nom: 'Former ponctuellement des groupes de travail techniques m\u00ealant diff\u00e9rent services selon les besoins et projets',
                         description: '',
@@ -13309,7 +13309,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.1.4',
+                    id: 'cae_5.1.1.4',
                     id_nomenclature: '5.1.1.4',
                     nom: 'Mesurer l\u2019efficacit\u00e9 de l\u2019organisation interne et l\u2019ajuster si n\u00e9cessaire',
                     description: '',
@@ -13320,7 +13320,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.4.1',
+                        id: 'cae_5.1.1.4.1',
                         id_nomenclature: '5.1.1.4.1',
                         nom: 'Mettre en place une organisation interne qui permet une circulation rapide des informations',
                         description:
@@ -13334,7 +13334,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.4.2',
+                        id: 'cae_5.1.1.4.2',
                         id_nomenclature: '5.1.1.4.2',
                         nom: '\u00c9valuer si le personnel et des r\u00e9f\u00e9rents sp\u00e9cialis\u00e9s sont actifs et efficaces (ils sont sollicit\u00e9s par les autres services, leurs coll\u00e8gues, leurs sup\u00e9rieurs hi\u00e9rarchiques ou le grand public et ils r\u00e9pondent de mani\u00e8re r\u00e9active et pertinente) ; si non, r\u00e9ajuster l\u2019organisation interne',
                         description: '',
@@ -13347,7 +13347,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.4.3',
+                        id: 'cae_5.1.1.4.3',
                         id_nomenclature: '5.1.1.4.3',
                         nom: 'Les agents am\u00e9liorent la qualit\u00e9 de l\u0027organisation',
                         description: '',
@@ -13360,7 +13360,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.4.4',
+                        id: 'cae_5.1.1.4.4',
                         id_nomenclature: '5.1.1.4.4',
                         nom: 'Les fiches de postes sont compl\u00e9t\u00e9es et am\u00e9lior\u00e9es',
                         description: '',
@@ -13373,7 +13373,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.1.4.5',
+                        id: 'cae_5.1.1.4.5',
                         id_nomenclature: '5.1.1.4.5',
                         nom: 'Le nombre d\u2019\u00e9quivalents temps plein (ETP) d\u00e9di\u00e9s \u00e0 la mise en \u0153uvre de la politique climat-air-\u00e9nergie est maintenu ou en augmentation',
                         description: '',
@@ -13390,7 +13390,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__5.1.2',
+                id: 'cae_5.1.2',
                 id_nomenclature: '5.1.2',
                 nom: 'Assurer le pilotage et le portage de la politique climat-air-\u00e9nergie',
                 description:
@@ -13405,7 +13405,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__5.1.2.1',
+                    id: 'cae_5.1.2.1',
                     id_nomenclature: '5.1.2.1',
                     nom: 'D\u00e9finir un comit\u00e9 de pilotage transversal et l\u00e9gitime',
                     description: '',
@@ -13416,7 +13416,7 @@ export const actions: ActionReferentiel[] = [
                     points: 35,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.1.1',
+                        id: 'cae_5.1.2.1.1',
                         id_nomenclature: '5.1.2.1.1',
                         nom: 'L\u00e9gitimer la composition et le r\u00f4le du comit\u00e9 de pilotage par une d\u00e9cision de l\u2019organe d\u00e9lib\u00e9rant de la collectivit\u00e9, de l\u2019ex\u00e9cutif ou un autre document formel ayant fait l\u2019objet de l\u2019approbation du ou de la Pr\u00e9sident(e)/Maire de la collectivit\u00e9',
                         description: '',
@@ -13429,7 +13429,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.1.2',
+                        id: 'cae_5.1.2.1.2',
                         id_nomenclature: '5.1.2.1.2',
                         nom: 'Int\u00e9grer le comit\u00e9 de pilotage de mani\u00e8re p\u00e9renne dans le fonctionnement de la collectivit\u00e9 et dans les organes de direction politique.',
                         description:
@@ -13443,7 +13443,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.1.3',
+                        id: 'cae_5.1.2.1.3',
                         id_nomenclature: '5.1.2.1.3',
                         nom: 'Identifier les pilotes techniques et politiques. En cas de COPIL conjoint ville-intercommunalit\u00e9, des \u00e9lus des deux collectivit\u00e9s participent et contribuent au comit\u00e9 de pilotage',
                         description: '',
@@ -13456,7 +13456,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.1.4',
+                        id: 'cae_5.1.2.1.4',
                         id_nomenclature: '5.1.2.1.4',
                         nom: 'R\u00e9unir au sein du comit\u00e9 de pilotage des \u00e9lus et personnes r\u00e9f\u00e9rentes dans des th\u00e9matiques vari\u00e9es, non restreintes uniquement \u00e0 l\u2019\u00e9nergie ou l\u2019environnement (mobilit\u00e9, am\u00e9nagement, \u00e9nergie, eau, assainissement, organisation interne, partenariats et coop\u00e9ration, finances, etc.) afin de traiter les questions climat air \u00e9nergie de fa\u00e7on transversale',
                         description: '',
@@ -13469,7 +13469,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.1.5',
+                        id: 'cae_5.1.2.1.5',
                         id_nomenclature: '5.1.2.1.5',
                         nom: 'R\u00e9unir d\u2019autres acteurs du territoire au sein du comit\u00e9 de pilotage  (associations, organismes institutionnels, etc).',
                         description: '',
@@ -13484,7 +13484,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.2.2',
+                    id: 'cae_5.1.2.2',
                     id_nomenclature: '5.1.2.2',
                     nom: 'Elaborer et valider les objectifs de la politique climat air \u00e9nergie en comit\u00e9 de pilotage',
                     description: '',
@@ -13495,7 +13495,7 @@ export const actions: ActionReferentiel[] = [
                     points: 35,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.2.1',
+                        id: 'cae_5.1.2.2.1',
                         id_nomenclature: '5.1.2.2.1',
                         nom: 'R\u00e9unir le comit\u00e9 de pilotage au minimum 2 fois par an avec ordre du jour puis r\u00e9diger un compte rendu de ses d\u00e9cisions',
                         description: '',
@@ -13508,7 +13508,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.2.2',
+                        id: 'cae_5.1.2.2.2',
                         id_nomenclature: '5.1.2.2.2',
                         nom: '\u00c9laborer ou d\u00e9cider des objectifs climat air \u00e9nergie au sein du comit\u00e9 de pilotage (a minima dans les 6 domaines Cit\u2019ergie)',
                         description: '',
@@ -13521,7 +13521,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.2.3',
+                        id: 'cae_5.1.2.2.3',
                         id_nomenclature: '5.1.2.2.3',
                         nom: 'Donner au comit\u00e9 de pilotage un r\u00f4le v\u00e9ritablement moteur pour la politique climat-air-\u00e9nergie (d\u00e9cisions constructives et ambitieuses, lancement de nouvelles \u00e9tudes ou actions\u2026); Impulser via celui-ci une dynamique positive aupr\u00e8s des services',
                         description: '',
@@ -13534,7 +13534,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.2.4',
+                        id: 'cae_5.1.2.2.4',
                         id_nomenclature: '5.1.2.2.4',
                         nom: 'Porter les objectifs au plus haut niveau par les \u00e9lus (maire ou pr\u00e9sident de la collectivit\u00e9) et au sein des instances d\u00e9cisionnaires',
                         description: '',
@@ -13547,7 +13547,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.2.5',
+                        id: 'cae_5.1.2.2.5',
                         id_nomenclature: '5.1.2.2.5',
                         nom: 'Le/la Maire / Pr\u00e9sident(e) participe \u00e0 certaines r\u00e9unions (voire assure une pr\u00e9sidence ou une co-pr\u00e9sidence du COPIL) pour prouver l\u2019implication politique au plus haut niveau dans la d\u00e9marche',
                         description: '',
@@ -13562,7 +13562,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.2.3',
+                    id: 'cae_5.1.2.3',
                     id_nomenclature: '5.1.2.3',
                     nom: 'Assurer la mise en \u0153uvre effective des d\u00e9cisions prises',
                     description: '',
@@ -13573,7 +13573,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.3.1',
+                        id: 'cae_5.1.2.3.1',
                         id_nomenclature: '5.1.2.3.1',
                         nom: 'Organiser le comit\u00e9 de pilotage pour suivre la mise en \u0153uvre effective des d\u00e9cisions prises (tableau de suivi par exemple)',
                         description: '',
@@ -13586,7 +13586,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.3.2',
+                        id: 'cae_5.1.2.3.2',
                         id_nomenclature: '5.1.2.3.2',
                         nom: 'Le comit\u00e9 de pilotage attribue des missions externes pour la r\u00e9alisation des actions',
                         description: '',
@@ -13599,7 +13599,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.3.3',
+                        id: 'cae_5.1.2.3.3',
                         id_nomenclature: '5.1.2.3.3',
                         nom: 'Les directeurs de service, et notamment DGS, DGA et/ou DST apportent du soutien au comit\u00e9 de pilotage pour la mise en place op\u00e9rationnelle des d\u00e9cisions (relais au sein des diff\u00e9rents services notamment)',
                         description: '',
@@ -13612,7 +13612,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.2.3.4',
+                        id: 'cae_5.1.2.3.4',
                         id_nomenclature: '5.1.2.3.4',
                         nom: 'Le comit\u00e9 de pilotage veille \u00e0 la bonne compr\u00e9hension par les habitants et usagers du territoire des d\u00e9cisions prises (information par voie de presse, participation des membres du comit\u00e9 de pilotage \u00e0 des r\u00e9unions publiques, etc.)',
                         description: '',
@@ -13629,7 +13629,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__5.1.3',
+                id: 'cae_5.1.3',
                 id_nomenclature: '5.1.3',
                 nom: 'Former et mobiliser les \u00e9lus et les services sur les th\u00e9matiques climat-air-\u00e9nergie',
                 description:
@@ -13644,7 +13644,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__5.1.3.1',
+                    id: 'cae_5.1.3.1',
                     id_nomenclature: '5.1.3.1',
                     nom: 'Accompagner les \u00e9lus et les agents dans la pratique des \u00e9co-gestes quotidiens',
                     description: '',
@@ -13655,7 +13655,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.1.1',
+                        id: 'cae_5.1.3.1.1',
                         id_nomenclature: '5.1.3.1.1',
                         nom: 'Accompagner les \u00e9lus et les agents dans la pratique des \u00e9co-gestes quotidiens (politique de num\u00e9risation des documents, impression recto-verso, extinction des lumi\u00e8res et des ordinateurs, etc.)',
                         description: '',
@@ -13670,7 +13670,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.3.2',
+                    id: 'cae_5.1.3.2',
                     id_nomenclature: '5.1.3.2',
                     nom: 'Formaliser le plan de formation/sensibilisation des agents et des \u00e9lus',
                     description: '',
@@ -13681,7 +13681,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.2.1',
+                        id: 'cae_5.1.3.2.1',
                         id_nomenclature: '5.1.3.2.1',
                         nom: 'D\u00e9cliner un plan de formation/sensibilisation pour chacun (techniciens, directeurs, \u00e9lus, \u2026) en fonction de ses besoins et de son degr\u00e9 d\u2019implication dans l\u2019atteinte des objectifs du programme d\u2019actions climat-air-\u00e9nergie de la collectivit\u00e9 et du territoire',
                         description: '',
@@ -13694,7 +13694,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.2.2',
+                        id: 'cae_5.1.3.2.2',
                         id_nomenclature: '5.1.3.2.2',
                         nom: 'Rendre visibles et varier dans la liste des formations propos\u00e9es celles en lien avec le climat, l\u0027air ou l\u0027\u00e9nergie',
                         description: '',
@@ -13709,7 +13709,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.3.3',
+                    id: 'cae_5.1.3.3',
                     id_nomenclature: '5.1.3.3',
                     nom: 'Accompagner les \u00e9lus et les agents sur des th\u00e9matiques particuli\u00e8res',
                     description: '',
@@ -13720,7 +13720,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.3.1',
+                        id: 'cae_5.1.3.3.1',
                         id_nomenclature: '5.1.3.3.1',
                         nom: 'Les agents ont analys\u00e9 l\u0027impact du changement climatique sur leurs activit\u00e9s et sont accompagn\u00e9s pour s\u0027y adapter',
                         description: '',
@@ -13733,7 +13733,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.3.2',
+                        id: 'cae_5.1.3.3.2',
                         id_nomenclature: '5.1.3.3.2',
                         nom: 'Traiter le sujet de la qualit\u00e9 de l\u0027air de mani\u00e8re transversale et ne pas le cantonner au service sant\u00e9',
                         description: '',
@@ -13748,7 +13748,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.3.4',
+                    id: 'cae_5.1.3.4',
                     id_nomenclature: '5.1.3.4',
                     nom: 'Mettre en \u0153uvre le plan de formation/sensibilisation climat-air-\u00e9nergie',
                     description: '',
@@ -13759,7 +13759,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.4.1',
+                        id: 'cae_5.1.3.4.1',
                         id_nomenclature: '5.1.3.4.1',
                         nom: 'Encourager r\u00e9ellement les activit\u00e9s de formation/sensibilisation (prendre les frais \u00e0 sa charge, attribuer le temps n\u00e9cessaire)',
                         description: '',
@@ -13772,7 +13772,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.4.2',
+                        id: 'cae_5.1.3.4.2',
                         id_nomenclature: '5.1.3.4.2',
                         nom: 'Les personnes identifi\u00e9es participent effectivement aux formations climat-air-\u00e9nergie sur lesquelles elles se sont positionn\u00e9es',
                         description: '',
@@ -13785,7 +13785,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.4.3',
+                        id: 'cae_5.1.3.4.3',
                         id_nomenclature: '5.1.3.4.3',
                         nom: 'La liste des formations effectivement r\u00e9alis\u00e9es sur le sujet climat-air-\u00e9nergie est vari\u00e9e (plusieurs th\u00e9matiques et services concern\u00e9s)',
                         description: '',
@@ -13798,7 +13798,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.4.4',
+                        id: 'cae_5.1.3.4.4',
                         id_nomenclature: '5.1.3.4.4',
                         nom: 'Int\u00e9grer un syst\u00e8me d\u2019\u00e9valuation dans les formations',
                         description: '',
@@ -13813,7 +13813,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.3.5',
+                    id: 'cae_5.1.3.5',
                     id_nomenclature: '5.1.3.5',
                     nom: 'Engager et motiver les \u00e9lus et les agents',
                     description: '',
@@ -13824,7 +13824,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.5.1',
+                        id: 'cae_5.1.3.5.1',
                         id_nomenclature: '5.1.3.5.1',
                         nom: 'Fixer collectivement ou par service des objectifs concernant la performance climat air \u00e9nergie de la collectivit\u00e9 (ils sont fix\u00e9s par \u00e9crit, sont mesurables et ont un d\u00e9lai)',
                         description: '',
@@ -13837,7 +13837,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.5.2',
+                        id: 'cae_5.1.3.5.2',
                         id_nomenclature: '5.1.3.5.2',
                         nom: 'Disposer d\u0027un syst\u00e8me de reconnaissance des initiatives (individuelles ou collectives) ou de l\u0027atteinte des objectifs',
                         description: '',
@@ -13850,7 +13850,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.5.3',
+                        id: 'cae_5.1.3.5.3',
                         id_nomenclature: '5.1.3.5.3',
                         nom: 'Les agents font part de leurs id\u00e9es d\u0027am\u00e9liorations (objectifs ou bonnes pratiques)',
                         description: '',
@@ -13863,7 +13863,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.5.4',
+                        id: 'cae_5.1.3.5.4',
                         id_nomenclature: '5.1.3.5.4',
                         nom: 'Organiser des \u00e9v\u00e8nements "festifs" ou mettre en place un dispositif d\u2019\u00e9mulation pour former et sensibiliser les agents et les \u00e9lus (concours inter-services, semaines de l\u0027efficacit\u00e9 \u00e9nerg\u00e9tique, semaine de la lutte contre le changement climatique ou de la qualit\u00e9 de l\u0027air, etc.)',
                         description: '',
@@ -13876,7 +13876,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.5.5',
+                        id: 'cae_5.1.3.5.5',
                         id_nomenclature: '5.1.3.5.5',
                         nom: 'Les \u00e9lus participent r\u00e9guli\u00e8rement \u00e0 des visites de site, des conf\u00e9rences, etc.',
                         description: '',
@@ -13891,7 +13891,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.3.6',
+                    id: 'cae_5.1.3.6',
                     id_nomenclature: '5.1.3.6',
                     nom: 'Evaluer et valoriser l\u2019efficacit\u00e9 des actions de formation et de mobilisation',
                     description: '',
@@ -13902,7 +13902,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.6.1',
+                        id: 'cae_5.1.3.6.1',
                         id_nomenclature: '5.1.3.6.1',
                         nom: 'Valoriser l\u2019atteinte des objectifs de performances ou les bonnes pratiques des services (newsletter, bulletin de paie, intranet, etc.)',
                         description: '',
@@ -13915,7 +13915,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.6.2',
+                        id: 'cae_5.1.3.6.2',
                         id_nomenclature: '5.1.3.6.2',
                         nom: 'Porter \u00e0 connaissance de l\u2019ensemble des services de la collectivit\u00e9 le plan de formation (formations propos\u00e9es) et le bilan quantitatif et qualitatif des formations (nombre de sessions, nombre d\u2019inscrits, \u00e9valuation de la satisfaction des stagiaires, ...)',
                         description: '',
@@ -13928,7 +13928,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.3.6.3',
+                        id: 'cae_5.1.3.6.3',
                         id_nomenclature: '5.1.3.6.3',
                         nom: 'Suivre et mesurer l\u2019efficacit\u00e9 des formations/sensibilisation \u00e0 travers des indicateurs sp\u00e9cifiques (\u00e9valuation des acquis de la formation, \u00e9valuation du passage \u00e0 l\u2019action suite \u00e0 la formation, enqu\u00eate de satisfaction, etc.)',
                         description: '',
@@ -13945,7 +13945,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__5.1.4',
+                id: 'cae_5.1.4',
                 id_nomenclature: '5.1.4',
                 nom: 'Suivre l\u0027avancement et \u00e9valuer r\u00e9guli\u00e8rement la politique climat-air-\u00e9nergie',
                 description:
@@ -13960,7 +13960,7 @@ export const actions: ActionReferentiel[] = [
                 points: 8,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__5.1.4.1',
+                    id: 'cae_5.1.4.1',
                     id_nomenclature: '5.1.4.1',
                     nom: 'Se doter d\u2019outils et de moyens pour suivre et \u00e9valuer son plan d\u2019action',
                     description: '',
@@ -13971,7 +13971,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.1.1',
+                        id: 'cae_5.1.4.1.1',
                         id_nomenclature: '5.1.4.1.1',
                         nom: 'Disposer d\u2019un tableau de bord op\u00e9rationnel pour le suivi du plan d\u2019action',
                         description:
@@ -13985,7 +13985,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.1.2',
+                        id: 'cae_5.1.4.1.2',
                         id_nomenclature: '5.1.4.1.2',
                         nom: 'Pr\u00e9voir pr\u00e9cis\u00e9ment les modalit\u00e9s du suivi : fr\u00e9quence annuelle de r\u00e9union \u00e0 minima, date de mise \u00e0 jour du tableau de bord, constitution de l\u2019\u00e9quipe de suivi, modalit\u00e9s de collecte des donn\u00e9es n\u00e9cessaires \u00e0 l\u2019actualisation du tableau de bord, etc.',
                         description: '',
@@ -13998,7 +13998,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.1.3',
+                        id: 'cae_5.1.4.1.3',
                         id_nomenclature: '5.1.4.1.3',
                         nom: 'Constituer et mettre en place une instance sp\u00e9cifique de suivi-\u00e9valuation: comit\u00e9 de pilotage \u00e9tabli ou instance sp\u00e9cifique, cela peut \u00eatre une instance neutre (citoyenne)',
                         description: '',
@@ -14011,7 +14011,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.1.4',
+                        id: 'cae_5.1.4.1.4',
                         id_nomenclature: '5.1.4.1.4',
                         nom: 'Planifier l\u0027information des r\u00e9sultats annuels au public',
                         description: '',
@@ -14026,7 +14026,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.4.2',
+                    id: 'cae_5.1.4.2',
                     id_nomenclature: '5.1.4.2',
                     nom: 'Suivre et \u00e9valuer r\u00e9guli\u00e8rement l\u2019atteinte des objectifs',
                     description: '',
@@ -14037,7 +14037,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.2.1',
+                        id: 'cae_5.1.4.2.1',
                         id_nomenclature: '5.1.4.2.1',
                         nom: 'Disposer d\u0027un suivi effectif : V\u00e9rifier l\u0027atteinte des objectifs r\u00e9guli\u00e8rement pour l\u2019ensemble des th\u00e9matiques climat-air-\u00e9nergie \u00e0 travers des indicateurs qualitatifs et quantitatifs (pas de fr\u00e9quents reports et espacements des r\u00e9unions de suivi)',
                         description: '',
@@ -14050,7 +14050,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.2.2',
+                        id: 'cae_5.1.4.2.2',
                         id_nomenclature: '5.1.4.2.2',
                         nom: 'Actualiser annuellement le calendrier, le budget, les personnes responsables et l\u0027\u00e9tat d\u0027avancement des actions',
                         description: '',
@@ -14063,7 +14063,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.2.3',
+                        id: 'cae_5.1.4.2.3',
                         id_nomenclature: '5.1.4.2.3',
                         nom: 'Partager le tableau de bord au sein de l\u2019\u00e9quipe projet qui le renseigne et le fait \u00e9voluer',
                         description:
@@ -14079,7 +14079,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.4.3',
+                    id: 'cae_5.1.4.3',
                     id_nomenclature: '5.1.4.3',
                     nom: 'Communiquer et informer les acteurs du territoire de l\u2019avancement du programme d\u2019actions',
                     description: '',
@@ -14090,7 +14090,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.3.1',
+                        id: 'cae_5.1.4.3.1',
                         id_nomenclature: '5.1.4.3.1',
                         nom: 'Synth\u00e9tiser les r\u00e9sultats des actions',
                         description: '',
@@ -14103,7 +14103,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.3.2',
+                        id: 'cae_5.1.4.3.2',
                         id_nomenclature: '5.1.4.3.2',
                         nom: 'Publier les r\u00e9sultats et le suivi annuel : en interne, dans les instances concern\u00e9es (commissions, conseil municipal, bureau, conseil communautaire..); en externe sur le site de la collectivit\u00e9, lors de r\u00e9unions publiques, dans le rapport de DD, dans le rapport d\u2019activit\u00e9, etc.',
                         description: '',
@@ -14116,7 +14116,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.3.3',
+                        id: 'cae_5.1.4.3.3',
                         id_nomenclature: '5.1.4.3.3',
                         nom: 'Int\u00e9grer des acteurs du territoire (habitants, acteurs socio-\u00e9conomiques) au dispositif d\u0027\u00e9valuation par exemple dans une instance sp\u00e9cifique (\u00e9valuation participative)',
                         description: '',
@@ -14129,7 +14129,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.3.4',
+                        id: 'cae_5.1.4.3.4',
                         id_nomenclature: '5.1.4.3.4',
                         nom: 'Aller au-del\u00e0 de l\u0027exigence r\u00e8glementaire de mise \u00e0 disposition, au bout de 3 ans, d\u0027un rapport au public sur la mise en \u0153uvre du PCAET',
                         description: '',
@@ -14144,7 +14144,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.1.4.4',
+                    id: 'cae_5.1.4.4',
                     id_nomenclature: '5.1.4.4',
                     nom: 'Faire \u00e9voluer son programme d\u2019actions gr\u00e2ce au dispositif de suivi et d\u2019\u00e9valuation',
                     description: '',
@@ -14155,7 +14155,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.4.1',
+                        id: 'cae_5.1.4.4.1',
                         id_nomenclature: '5.1.4.4.1',
                         nom: 'Actualiser le programme d\u0027actions et l\u0027adapter chaque ann\u00e9e',
                         description: '',
@@ -14168,7 +14168,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.1.4.4.2',
+                        id: 'cae_5.1.4.4.2',
                         id_nomenclature: '5.1.4.4.2',
                         nom: 'Mettre en place un cycle d\u0027am\u00e9lioration continue (objectif-planification-r\u00e9alisation-contr\u00f4le-objectif)',
                         description: '',
@@ -14187,7 +14187,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__5.2',
+            id: 'cae_5.2',
             id_nomenclature: '5.2',
             nom: 'Finances et commande publique',
             description: '',
@@ -14198,7 +14198,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__5.2.1',
+                id: 'cae_5.2.1',
                 id_nomenclature: '5.2.1',
                 nom: 'Financer la politique Climat Air Energie et r\u00e9aliser une \u00e9valuation climat du budget',
                 description:
@@ -14213,7 +14213,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__5.2.1.1',
+                    id: 'cae_5.2.1.1',
                     id_nomenclature: '5.2.1.1',
                     nom: 'Sensibiliser les \u00e9lu.e.s et former les \u00e9quipes \u00e0 la prise en compte de la politique climat-air-\u00e9nergie dans le processus d\u2019\u00e9laboration budg\u00e9taire',
                     description: '',
@@ -14224,7 +14224,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.1.1',
+                        id: 'cae_5.2.1.1.1',
                         id_nomenclature: '5.2.1.1.1',
                         nom: 'Sensibiliser l\u2019ensemble des \u00e9lu.e.s \u00e0 l\u2019importance de piloter la politique climat-air-\u00e9nergie dans ses aspects budg\u00e9taires, et leur pr\u00e9senter l\u2019int\u00e9r\u00eat de r\u00e9aliser une \u00e9valuation climat du budget',
                         description: '',
@@ -14237,7 +14237,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.1.2',
+                        id: 'cae_5.2.1.1.2',
                         id_nomenclature: '5.2.1.1.2',
                         nom: 'Nommer une \u00e9quipe transversale pour prendre en charge les aspects budg\u00e9taires li\u00e9s \u00e0 la politique climat-air-\u00e9nergie',
                         description:
@@ -14251,7 +14251,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.1.3',
+                        id: 'cae_5.2.1.1.3',
                         id_nomenclature: '5.2.1.1.3',
                         nom: 'Former l\u0027\u00e9quipe en charge des aspects budg\u00e9taires li\u00e9s \u00e0 la politique climat-air-\u00e9nergie sur l\u2019\u00e9valuation climat du budget, la budg\u00e9tisation de la politique climat-air-\u00e9nergie, et aux dispositifs de financement de cette politique',
                         description: '',
@@ -14264,7 +14264,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.1.4',
+                        id: 'cae_5.2.1.1.4',
                         id_nomenclature: '5.2.1.1.4',
                         nom: 'Sensibiliser l\u2019ensemble des services \u00e0 l\u2019importance de prendre en compte les enjeux climat-air-\u00e9nergie lors de toute programmation de d\u00e9penses',
                         description: '',
@@ -14279,7 +14279,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.1.2',
+                    id: 'cae_5.2.1.2',
                     id_nomenclature: '5.2.1.2',
                     nom: 'Attribuer un budget pour la politique climat-air-\u00e9nergie',
                     description: '',
@@ -14290,7 +14290,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.2.1',
+                        id: 'cae_5.2.1.2.1',
                         id_nomenclature: '5.2.1.2.1',
                         nom: 'Faire correspondre \u00e0 chaque \u00e9tape de la construction de la politique climat-air-\u00e9nergie un budget : action de sensibilisation, de communication, diagnostic, suivi, \u00e9valuation, programme d\u2019actions. Ce budget de la politique climat-air-\u00e9nergie est traduit en une trajectoire annuelle de d\u00e9penses.',
                         description: '',
@@ -14303,7 +14303,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.2.2',
+                        id: 'cae_5.2.1.2.2',
                         id_nomenclature: '5.2.1.2.2',
                         nom: 'Disposer d\u2019un plan pluriannuel d\u2019investissement qui int\u00e8gre des actions climat-air-\u00e9nergie en ligne avec ses documents programme',
                         description: '',
@@ -14316,7 +14316,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.2.3',
+                        id: 'cae_5.2.1.2.3',
                         id_nomenclature: '5.2.1.2.3',
                         nom: 'Allouer le budget chaque ann\u00e9e par le conseil de la collectivit\u00e9. Acter un document donnant une lecture transversale de l\u2019ensemble des recettes et d\u00e9penses qui concourent aux objectifs de la politique climat-air-\u00e9nergie',
                         description: '',
@@ -14331,7 +14331,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.1.3',
+                    id: 'cae_5.2.1.3',
                     id_nomenclature: '5.2.1.3',
                     nom: 'R\u00e9aliser chaque ann\u00e9e une \u00e9valuation climat du budget',
                     description:
@@ -14345,7 +14345,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.1.4',
+                    id: 'cae_5.2.1.4',
                     id_nomenclature: '5.2.1.4',
                     nom: 'Analyser les marges de man\u0153uvre budg\u00e9taires de la collectivit\u00e9 sur la base de l\u2019\u00e9valuation climat du budget',
                     description:
@@ -14359,7 +14359,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.1.5',
+                    id: 'cae_5.2.1.5',
                     id_nomenclature: '5.2.1.5',
                     nom: 'Diversifier les modes de financement pour atteindre les objectifs climat air \u00e9nergie et innover',
                     description: '',
@@ -14370,7 +14370,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.5.1',
+                        id: 'cae_5.2.1.5.1',
                         id_nomenclature: '5.2.1.5.1',
                         nom: 'La collectivit\u00e9 \u00e9tudie l\u2019ensemble des sources de financement possibles pour les actions de sa politique climat-aire-\u00e9nergie.',
                         description:
@@ -14384,7 +14384,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.5.2',
+                        id: 'cae_5.2.1.5.2',
                         id_nomenclature: '5.2.1.5.2',
                         nom: 'La collectivit\u00e9 fait preuve d\u2019innovation pour le financement des actions de sa politique climat-air-\u00e9nergie (CEE, CPE, MDE et r\u00e9affectation de recettes, projets citoyens)',
                         description:
@@ -14400,7 +14400,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.1.6',
+                    id: 'cae_5.2.1.6',
                     id_nomenclature: '5.2.1.6',
                     nom: 'Suivre annuellement le budget',
                     description: '',
@@ -14411,7 +14411,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.6.1',
+                        id: 'cae_5.2.1.6.1',
                         id_nomenclature: '5.2.1.6.1',
                         nom: 'Suivre annuellement le budget total pour la politique climat-air-\u00e9nergie par un indicateur en euros/an/habitant',
                         description: '',
@@ -14424,7 +14424,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.6.2',
+                        id: 'cae_5.2.1.6.2',
                         id_nomenclature: '5.2.1.6.2',
                         nom: 'Orienter les d\u00e9penses budg\u00e9taires gr\u00e2ce \u00e0 l\u2019analyse des marges de man\u0153uvre tir\u00e9e de l\u2019\u00e9valuation climat du budget',
                         description:
@@ -14440,7 +14440,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.1.7',
+                    id: 'cae_5.2.1.7',
                     id_nomenclature: '5.2.1.7',
                     nom: '\u00catre coh\u00e9rent dans sa politique de soutien financier',
                     description: '',
@@ -14451,7 +14451,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.7.1',
+                        id: 'cae_5.2.1.7.1',
                         id_nomenclature: '5.2.1.7.1',
                         nom: 'Apporter du soutien financier \u00e0 des th\u00e9matiques environnementales vari\u00e9es (b\u00e2timents, \u00e9nergie, air, eau, agriculture, ENR, mobilit\u00e9...), \u00e0 des cibles vari\u00e9es (particuliers, association, entreprises, agriculteurs...), et sous diff\u00e9rentes formes (partenariat avec des banques, tiers-investissement, fonds de garantie, fonds d\u0027investissement, prise de participation dans des SCIC/SEM \u0153uvrant pour le DD ou des SAS/SA portant des projets de production d\u2019\u00e9nergie renouvelable sur leur territoire...)',
                         description: '',
@@ -14464,7 +14464,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.7.2',
+                        id: 'cae_5.2.1.7.2',
                         id_nomenclature: '5.2.1.7.2',
                         nom: 'Diposer d\u0027un r\u00e8glement des aides clair et bien le diffuser',
                         description: '',
@@ -14477,7 +14477,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.7.3',
+                        id: 'cae_5.2.1.7.3',
                         id_nomenclature: '5.2.1.7.3',
                         nom: 'Ne pas octroyer d\u2019aides pour des projets en contradiction avec les enjeux climatiques et \u00e9nerg\u00e9tiques (ex : courses automobiles, soutien aux a\u00e9roports, grands projets routiers,...)',
                         description: '',
@@ -14490,7 +14490,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.1.7.4',
+                        id: 'cae_5.2.1.7.4',
                         id_nomenclature: '5.2.1.7.4',
                         nom: 'Pratiquer l\u0027\u00e9co-conditionnement des aides habituelles de la collectivit\u00e9 lorsque cela est possible (bonification, diff\u00e9renciation des montants d\u2019aides selon des crit\u00e8res)',
                         description: '',
@@ -14507,7 +14507,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__5.2.2',
+                id: 'cae_5.2.2',
                 id_nomenclature: '5.2.2',
                 nom: 'Etre exemplaire en mati\u00e8re d\u0027\u00e9coresponsabilit\u00e9 de la commande publique',
                 description:
@@ -14522,7 +14522,7 @@ export const actions: ActionReferentiel[] = [
                 points: 8,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__5.2.2.1',
+                    id: 'cae_5.2.2.1',
                     id_nomenclature: '5.2.2.1',
                     nom: 'S\u0027organiser et mobiliser en interne',
                     description: '',
@@ -14533,7 +14533,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.1.1',
+                        id: 'cae_5.2.2.1.1',
                         id_nomenclature: '5.2.2.1.1',
                         nom: 'Identifier un agent r\u00e9f\u00e9rent en interne : cet agent a \u00e9t\u00e9 form\u00e9 sur les possibilit\u00e9s d\u0027int\u00e9gration du d\u00e9veloppement durable dans les march\u00e9s publics (r\u00e9f\u00e9rent "achat durable\u201d)',
                         description: '',
@@ -14546,7 +14546,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.1.2',
+                        id: 'cae_5.2.2.1.2',
                         id_nomenclature: '5.2.2.1.2',
                         nom: 'Sensibiliser et mobiliser les \u00e9lus, les inciter \u00e0 adopter une politique volontariste : connaissance de la logique cycle de vie des produits et services et de la notion de co\u00fbt du cycle de vie, connaissance des \u00e9co-labels',
                         description: '',
@@ -14561,7 +14561,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.2.2',
+                    id: 'cae_5.2.2.2',
                     id_nomenclature: '5.2.2.2',
                     nom: 'Voter une d\u00e9lib\u00e9ration sur la mise en \u0153uvre de clauses environnementales (et sociales) dans les march\u00e9s publics',
                     description: '',
@@ -14572,7 +14572,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.2.1',
+                        id: 'cae_5.2.2.2.1',
                         id_nomenclature: '5.2.2.2.1',
                         nom: 'D\u00e9cider de prendre en compte les aspects \u00e9nergie et environnement, notamment l\u0027impact \u00e9nerg\u00e9tique et GES de la fabrication et du transport des marchandises, et les co\u00fbts globaux lors des achats, incluant la consommation d\u2019\u00e9nergie \u00e0 l\u2019utilisation (d\u00e9lib\u00e9ration, note de services)',
                         description: '',
@@ -14585,7 +14585,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.2.2',
+                        id: 'cae_5.2.2.2.2',
                         id_nomenclature: '5.2.2.2.2',
                         nom: 'Mettre \u00e0 disposition des agents et \u00e9lus des directives g\u00e9n\u00e9rales avec crit\u00e8res pour les march\u00e9s publics',
                         description: '',
@@ -14600,7 +14600,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.2.3',
+                    id: 'cae_5.2.2.3',
                     id_nomenclature: '5.2.2.3',
                     nom: 'Mener les actions simples',
                     description: '',
@@ -14611,7 +14611,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.3.1',
+                        id: 'cae_5.2.2.3.1',
                         id_nomenclature: '5.2.2.3.1',
                         nom: 'Identifier et changer les pratiques pour les produits faciles \u00e0 \u00e9viter ou substituer',
                         description: '',
@@ -14624,7 +14624,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.3.2',
+                        id: 'cae_5.2.2.3.2',
                         id_nomenclature: '5.2.2.3.2',
                         nom: 'Effectuer les achats d\u0027articles en papier (papier \u00e0 imprimer, papier hygi\u00e9nique), de d\u00e9tergents et d\u0027appareils de bureau selon des crit\u00e8res \u00e9cologiques (exemple : \u00e9colabel et notamment \u00e9colabel europ\u00e9en)',
                         description: '',
@@ -14637,7 +14637,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.3.3',
+                        id: 'cae_5.2.2.3.3',
                         id_nomenclature: '5.2.2.3.3',
                         nom: 'Privil\u00e9gier les produits de saison, locaux et biologiques pour les \u00e9v\u00e8nements ponctuels organis\u00e9s par la collectivit\u00e9, les achats alimentaires',
                         description:
@@ -14653,7 +14653,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.2.4',
+                    id: 'cae_5.2.2.4',
                     id_nomenclature: '5.2.2.4',
                     nom: 'Contribuer \u00e0 un r\u00e9seau local achats responsables',
                     description: '',
@@ -14664,7 +14664,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.4.1',
+                        id: 'cae_5.2.2.4.1',
                         id_nomenclature: '5.2.2.4.1',
                         nom: 'Entrer dans un r\u00e9seau local d\u0027achats responsables et y participer activement',
                         description: '',
@@ -14677,7 +14677,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.4.2',
+                        id: 'cae_5.2.2.4.2',
                         id_nomenclature: '5.2.2.4.2',
                         nom: 'Favoriser les plateformes locales de distribution',
                         description:
@@ -14693,7 +14693,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.2.5',
+                    id: 'cae_5.2.2.5',
                     id_nomenclature: '5.2.2.5',
                     nom: 'Adopter une d\u00e9lib\u00e9ration d\u00e9finissant un plan pour les achats responsables, recenser les pratiques, effectuer un \u00e9tat des lieux de la production locale',
                     description: '',
@@ -14704,7 +14704,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.5.1',
+                        id: 'cae_5.2.2.5.1',
                         id_nomenclature: '5.2.2.5.1',
                         nom: 'Conna\u00eetre et formaliser dans un document (listing) l\u0027\u00e9tendue de l\u0027offre locale pour r\u00e9pondre aux besoins de la collectivit\u00e9 (producteurs, fournisseurs...)',
                         description: '',
@@ -14717,7 +14717,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.5.2',
+                        id: 'cae_5.2.2.5.2',
                         id_nomenclature: '5.2.2.5.2',
                         nom: 'Identifier dans cette d\u00e9lib\u00e9ration, les pratiques d\u0027achats et les am\u00e9liorations \u00e0 apporter',
                         description: '',
@@ -14730,7 +14730,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.5.3',
+                        id: 'cae_5.2.2.5.3',
                         id_nomenclature: '5.2.2.5.3',
                         nom: 'D\u00e9tailler les directives pour les achats dans les domaines du mat\u00e9riel du bureau, entretien des b\u00e2timents, v\u00e9hicules et mobilit\u00e9, mat\u00e9riaux de construction',
                         description: '',
@@ -14745,7 +14745,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.2.6',
+                    id: 'cae_5.2.2.6',
                     id_nomenclature: '5.2.2.6',
                     nom: 'Appliquer des clauses environnementales vari\u00e9es et syst\u00e9matiser la logique cycle de vie des produits et services, afin de d\u00e9terminer les dispositions environnementales pertinentes selon les familles d\u0027achat',
                     description: '',
@@ -14756,7 +14756,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.6.1',
+                        id: 'cae_5.2.2.6.1',
                         id_nomenclature: '5.2.2.6.1',
                         nom: 'Inviter les candidats \u00e0 r\u00e9pondre aux appels d\u0027offres de mani\u00e8re \u00e9lectronique',
                         description: '',
@@ -14769,7 +14769,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.6.2',
+                        id: 'cae_5.2.2.6.2',
                         id_nomenclature: '5.2.2.6.2',
                         nom: '\u00c9valuer les fournisseurs sur l\u2019application de leurs engagements environnementaux pendant le d\u00e9roulement de leur prestation (par exemple prestataires de restauration collective ou travaux)',
                         description:
@@ -14783,7 +14783,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.6.3',
+                        id: 'cae_5.2.2.6.3',
                         id_nomenclature: '5.2.2.6.3',
                         nom: 'Encourager la fourniture du bilan GES des produits/services achet\u00e9s dans les appels d\u2019offres',
                         description: '',
@@ -14796,7 +14796,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.6.4',
+                        id: 'cae_5.2.2.6.4',
                         id_nomenclature: '5.2.2.6.4',
                         nom: 'Effectuer l\u0027entretien des b\u00e2timents et des espaces publics selon des crit\u00e8res \u00e9cologiques',
                         description: '',
@@ -14809,7 +14809,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.6.5',
+                        id: 'cae_5.2.2.6.5',
                         id_nomenclature: '5.2.2.6.5',
                         nom: 'Effectuer le choix des mat\u00e9riaux de construction selon des crit\u00e8res \u00e9cologiques (le bois est notamment syst\u00e9matiquement \u00e9tudi\u00e9) et repose sur les gisements locaux (Pis\u00e9, paille, etc.)',
                         description: '',
@@ -14822,7 +14822,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.6.6',
+                        id: 'cae_5.2.2.6.6',
                         id_nomenclature: '5.2.2.6.6',
                         nom: 'Choisir les techniques et mat\u00e9riaux de finition, ainsi que le mobilier pour limiter la pollution de l\u0027air int\u00e9rieur (faibles \u00e9missions de COV et formald\u00e9hydes notamment), soit en privil\u00e9giant des produits avec \u00e9tiquette A+, soit en achetant des produits d\u2019occasion',
                         description: '',
@@ -14835,7 +14835,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.6.7',
+                        id: 'cae_5.2.2.6.7',
                         id_nomenclature: '5.2.2.6.7',
                         nom: 'Inclure la prise en compte de la dur\u00e9e de vie et de la fin de vie des produits achet\u00e9s dans les crit\u00e8res d\u2019achats',
                         description: '',
@@ -14850,7 +14850,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.2.7',
+                    id: 'cae_5.2.2.7',
                     id_nomenclature: '5.2.2.7',
                     nom: 'Participer \u00e0 l\u0027am\u00e9lioration de l\u0027offre en services et produits responsables / entra\u00eener les acteurs locaux',
                     description: '',
@@ -14861,7 +14861,7 @@ export const actions: ActionReferentiel[] = [
                     points: 5,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.7.1',
+                        id: 'cae_5.2.2.7.1',
                         id_nomenclature: '5.2.2.7.1',
                         nom: 'Informer les fournisseurs et producteurs de la politique d\u2019achats responsables par une communication cibl\u00e9e aupr\u00e8s des entreprises concern\u00e9es, voire via la plateforme d\u2019achat de la collectivit\u00e9',
                         description: '',
@@ -14876,7 +14876,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__5.2.2.8',
+                    id: 'cae_5.2.2.8',
                     id_nomenclature: '5.2.2.8',
                     nom: 'Passer au crible l\u0027ensemble des achats publics',
                     description: '',
@@ -14887,7 +14887,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.8.1',
+                        id: 'cae_5.2.2.8.1',
                         id_nomenclature: '5.2.2.8.1',
                         nom: '% des march\u00e9s (en nombre) int\u00e9grant des clauses environnementales (et sociales) dans les sp\u00e9cifications techniques ou les crit\u00e8res d\u2019attribution en augmentation',
                         description: '',
@@ -14900,7 +14900,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__5.2.2.8.2',
+                        id: 'cae_5.2.2.8.2',
                         id_nomenclature: '5.2.2.8.2',
                         nom: '% des march\u00e9s (en \u20ac) int\u00e9grant des clauses environnementales (et sociales) dans les sp\u00e9cifications techniques ou les crit\u00e8res d\u2019attribution en augmentation',
                         description: '',
@@ -14921,7 +14921,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'citergie__6',
+        id: 'cae_6',
         id_nomenclature: '6',
         nom: 'Coop\u00e9ration, communication',
         description: '',
@@ -14932,7 +14932,7 @@ export const actions: ActionReferentiel[] = [
         points: -1.0,
         actions: [
           new ActionReferentiel({
-            id: 'citergie__6.1',
+            id: 'cae_6.1',
             id_nomenclature: '6.1',
             nom: 'Strat\u00e9gie de coop\u00e9ration et de communication',
             description: '',
@@ -14943,7 +14943,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__6.1.1',
+                id: 'cae_6.1.1',
                 id_nomenclature: '6.1.1',
                 nom: 'D\u00e9velopper une strat\u00e9gie partenariale multi-niveaux',
                 description:
@@ -14958,7 +14958,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.1.1.1',
+                    id: 'cae_6.1.1.1',
                     id_nomenclature: '6.1.1.1',
                     nom: 'Identifier les acteurs cl\u00e9s \u00e0 associer',
                     description: '',
@@ -14969,7 +14969,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.1.1',
+                        id: 'cae_6.1.1.1.1',
                         id_nomenclature: '6.1.1.1.1',
                         nom: 'Identifier et cartographier les acteurs cl\u00e9s (priv\u00e9s et publics, interne et externe) \u00e0 associer',
                         description: '',
@@ -14982,7 +14982,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.1.2',
+                        id: 'cae_6.1.1.1.2',
                         id_nomenclature: '6.1.1.1.2',
                         nom: 'Inscrire la coop\u00e9ration dans les fiches de poste des agents concern\u00e9s (missions identifi\u00e9es et temps associ\u00e9)',
                         description: '',
@@ -14997,7 +14997,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.1.2',
+                    id: 'cae_6.1.1.2',
                     id_nomenclature: '6.1.1.2',
                     nom: 'Echanger et s\u2019impliquer dans des projets \u00e0 l\u2019\u00e9chelle extra-locale',
                     description:
@@ -15009,7 +15009,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.2.1',
+                        id: 'cae_6.1.1.2.1',
                         id_nomenclature: '6.1.1.2.1',
                         nom: 'Coop\u00e9rer avec les territoires voisins (communes ou EPCI limitrophes) sur l\u0027inter-territoriale ou \u00e0 une autre \u00e9chelle (Parcs naturels r\u00e9gionaux, Pays\u2026)',
                         description:
@@ -15023,7 +15023,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.2.2',
+                        id: 'cae_6.1.1.2.2',
                         id_nomenclature: '6.1.1.2.2',
                         nom: 'Echanger et coop\u00e9rer avec les institutions nationales et r\u00e9gionales impliqu\u00e9es dans les PCAET, SRCAE/SRADDET et PPA (DREAL, DDT, Minist\u00e8re de l\u0027\u00e9cologie...)',
                         description:
@@ -15037,7 +15037,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.2.3',
+                        id: 'cae_6.1.1.2.3',
                         id_nomenclature: '6.1.1.2.3',
                         nom: 'Echanger et coop\u00e9rer avec les chambres consulaires et plateformes d\u0027information sp\u00e9cifiques aux diff\u00e9rents acteurs du territoire',
                         description: '',
@@ -15050,7 +15050,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.2.4',
+                        id: 'cae_6.1.1.2.4',
                         id_nomenclature: '6.1.1.2.4',
                         nom: 'Participer aux groupes de travail dans les services r\u00e9gionaux sp\u00e9cialis\u00e9s en mati\u00e8re d\u2019\u00e9nergie climat air (ASQUA, EIE, AASQA, etc)',
                         description: '',
@@ -15063,7 +15063,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.2.5',
+                        id: 'cae_6.1.1.2.5',
                         id_nomenclature: '6.1.1.2.5',
                         nom: 'Participer aux commissions de suivi des sites (pour veiller \u00e0 la question de la qualit\u00e9 de l\u0027air, par exemple)',
                         description: '',
@@ -15078,7 +15078,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.1.3',
+                    id: 'cae_6.1.1.3',
                     id_nomenclature: '6.1.1.3',
                     nom: 'Formaliser la strat\u00e9gie partenariale',
                     description: '',
@@ -15089,7 +15089,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.3.1',
+                        id: 'cae_6.1.1.3.1',
                         id_nomenclature: '6.1.1.3.1',
                         nom: 'Planifier le dialogue et la collaboration \u00e0 travers des accords de partenariat formalis\u00e9s',
                         description:
@@ -15103,7 +15103,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.3.2',
+                        id: 'cae_6.1.1.3.2',
                         id_nomenclature: '6.1.1.3.2',
                         nom: 'Renforcer les engagements demand\u00e9s aux partenaires et les impliquer dans le suivi et l\u2019\u00e9valuation de la politique climat air \u00e9nergie en fixant des objectifs chiffr\u00e9s et dat\u00e9s par exemple en mati\u00e8re de r\u00e9duction de GES et de consommation d\u2019\u00e9nergie',
                         description: '',
@@ -15116,7 +15116,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.3.3',
+                        id: 'cae_6.1.1.3.3',
                         id_nomenclature: '6.1.1.3.3',
                         nom: 'Proposer un accompagnement technique vis-\u00e0-vis des partenaires (aide \u00e0 la d\u00e9finition des objectifs, \u00e0 l\u2019\u00e9valuation des actions engag\u00e9es, etc)',
                         description: '',
@@ -15129,7 +15129,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.3.4',
+                        id: 'cae_6.1.1.3.4',
                         id_nomenclature: '6.1.1.3.4',
                         nom: 'Voter et budg\u00e9ter le plan de coop\u00e9ration (valables sur plusieurs ann\u00e9es)',
                         description: '',
@@ -15142,7 +15142,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.3.5',
+                        id: 'cae_6.1.1.3.5',
                         id_nomenclature: '6.1.1.3.5',
                         nom: 'Mettre en \u0153uvre au moins 2 partenariats significatifs et multi-acteurs dans le domaine climat-air-\u00e9nergie durant les 4 derni\u00e8res ann\u00e9es',
                         description:
@@ -15158,7 +15158,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.1.4',
+                    id: 'cae_6.1.1.4',
                     id_nomenclature: '6.1.1.4',
                     nom: 'S\u2019impliquer dans l\u2019\u00e9volution du cadre r\u00e9glementaire et l\u00e9gislatif climat air \u00e9nergie',
                     description:
@@ -15170,7 +15170,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.4.1',
+                        id: 'cae_6.1.1.4.1',
                         id_nomenclature: '6.1.1.4.1',
                         nom: 'Interpeller les acteurs sur les blocages l\u00e9gislatifs et r\u00e9glementaires rencontr\u00e9s',
                         description: '',
@@ -15183,7 +15183,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.4.2',
+                        id: 'cae_6.1.1.4.2',
                         id_nomenclature: '6.1.1.4.2',
                         nom: 'Interpeller officiellement le niveau national voire europ\u00e9en sur les blocages rencontr\u00e9s (d\u00e9put\u00e9s, s\u00e9nateurs, commission europ\u00e9enne)',
                         description: '',
@@ -15196,7 +15196,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.4.3',
+                        id: 'cae_6.1.1.4.3',
                         id_nomenclature: '6.1.1.4.3',
                         nom: 'Proposer les \u00e9volutions l\u00e9gislatives, r\u00e9glementaires et autres initiatives',
                         description: '',
@@ -15209,7 +15209,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.4.4',
+                        id: 'cae_6.1.1.4.4',
                         id_nomenclature: '6.1.1.4.4',
                         nom: 'Prendre position et/ou mener des actions lors de proc\u00e9dures de consultation ordinaires (lois, ordonnances, planifications, infrastructures de transport, etc.) attest\u00e9es par des documents \u00e9crits',
                         description:
@@ -15225,7 +15225,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.1.5',
+                    id: 'cae_6.1.1.5',
                     id_nomenclature: '6.1.1.5',
                     nom: 'Mettre en place des actions au niveau international',
                     description: '',
@@ -15236,7 +15236,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.5.1',
+                        id: 'cae_6.1.1.5.1',
                         id_nomenclature: '6.1.1.5.1',
                         nom: 'S\u2019engager dans des projets europ\u00e9ens (LIFE, Interreg\u2026)',
                         description: '',
@@ -15249,7 +15249,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.5.2',
+                        id: 'cae_6.1.1.5.2',
                         id_nomenclature: '6.1.1.5.2',
                         nom: 'Sensibiliser les \u00e9lus, agents et acteurs du territoire aux enjeux de la coop\u00e9ration d\u00e9centralis\u00e9e (via des expositions par exemple)',
                         description: '',
@@ -15262,7 +15262,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.5.3',
+                        id: 'cae_6.1.1.5.3',
                         id_nomenclature: '6.1.1.5.3',
                         nom: 'Int\u00e9grer les questions climat air \u00e9nergie dans les accords existants de coop\u00e9ration d\u00e9centralis\u00e9e',
                         description: '',
@@ -15275,7 +15275,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.5.4',
+                        id: 'cae_6.1.1.5.4',
                         id_nomenclature: '6.1.1.5.4',
                         nom: 'Monter un ou plusieurs projets de coop\u00e9ration d\u00e9centralis\u00e9e sur les th\u00e9matiques climat air \u00e9nergie',
                         description: '',
@@ -15288,7 +15288,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.1.5.5',
+                        id: 'cae_6.1.1.5.5',
                         id_nomenclature: '6.1.1.5.5',
                         nom: 'Budg\u00e9ter l\u0027aide au d\u00e9veloppement et les projets de coop\u00e9ration d\u00e9centralis\u00e9e (% du budget consacr\u00e9 \u00e0 ce sujet)',
                         description: '',
@@ -15305,7 +15305,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__6.1.2',
+                id: 'cae_6.1.2',
                 id_nomenclature: '6.1.2',
                 nom: 'Renforcer la coop\u00e9ration au sein de l\u0027intercommunalit\u00e9',
                 description:
@@ -15320,7 +15320,7 @@ export const actions: ActionReferentiel[] = [
                 points: 4,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.1.2.1',
+                    id: 'cae_6.1.2.1',
                     id_nomenclature: '6.1.2.1',
                     nom: 'Partager une strat\u00e9gie climat-air-\u00e9nergie commune',
                     description: '',
@@ -15331,7 +15331,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.1.1',
+                        id: 'cae_6.1.2.1.1',
                         id_nomenclature: '6.1.2.1.1',
                         nom: 'Echanger/relayer/diffuser des donn\u00e9es, des documents et des bonnes pratiques entre EPCI et communes membres, concernant leur politique climat air \u00e9nergie',
                         description: '',
@@ -15344,7 +15344,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.1.2',
+                        id: 'cae_6.1.2.1.2',
                         id_nomenclature: '6.1.2.1.2',
                         nom: 'Etre \u00e0 l\u2019initiative ou participer \u00e0 des rencontres ponctuelles bilat\u00e9rales commune/intercommunalit\u00e9 en lien avec le climat, l\u2019air et l\u2019\u00e9nergie',
                         description:
@@ -15360,7 +15360,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.2.2',
+                    id: 'cae_6.1.2.2',
                     id_nomenclature: '6.1.2.2',
                     nom: 'Conna\u00eetre les r\u00f4les de chacun en mati\u00e8re de climat, d\u2019air et d\u2019\u00e9nergie',
                     description: '',
@@ -15371,7 +15371,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.2.1',
+                        id: 'cae_6.1.2.2.1',
                         id_nomenclature: '6.1.2.2.1',
                         nom: 'Sur les th\u00e9matiques en lien avec le climat, l\u2019air et l\u2019\u00e9nergie, les r\u00f4les et comp\u00e9tences de chacun (intercommunalit\u00e9/commune) sont clairs',
                         description:
@@ -15385,7 +15385,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.2.2',
+                        id: 'cae_6.1.2.2.2',
                         id_nomenclature: '6.1.2.2.2',
                         nom: 'Les interlocuteurs climat-air-\u00e9nergie principaux dans chaque collectivit\u00e9 sont connus et ont \u00e9t\u00e9 rencontr\u00e9s',
                         description:
@@ -15401,7 +15401,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.2.3',
+                    id: 'cae_6.1.2.3',
                     id_nomenclature: '6.1.2.3',
                     nom: 'Initier et/ou participer \u00e0 des actions mutualis\u00e9es sur le territoire',
                     description:
@@ -15413,7 +15413,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.3.1',
+                        id: 'cae_6.1.2.3.1',
                         id_nomenclature: '6.1.2.3.1',
                         nom: 'EPCI : la collectivit\u00e9 est animatrice sur le sujet climat-air-\u00e9nergie sur son territoire.',
                         description:
@@ -15427,7 +15427,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.3.2',
+                        id: 'cae_6.1.2.3.2',
                         id_nomenclature: '6.1.2.3.2',
                         nom: 'Commune : la collectivit\u00e9 est force de proposition aupr\u00e8s de l\u2019intercommunalit\u00e9 pour la mise en place d\u2019actions mutualis\u00e9es et participe r\u00e9guli\u00e8rement aux actions collectives propos\u00e9es par son EPCI.',
                         description:
@@ -15443,7 +15443,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.2.4',
+                    id: 'cae_6.1.2.4',
                     id_nomenclature: '6.1.2.4',
                     nom: 'Syst\u00e9matiser la coop\u00e9ration intercommunale et donner l\u2019exemple sur le territoire',
                     description: '',
@@ -15454,7 +15454,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.4.1',
+                        id: 'cae_6.1.2.4.1',
                         id_nomenclature: '6.1.2.4.1',
                         nom: 'EPCI: Mettre en place un outil global pour accompagner les communes membres sur les th\u00e9matique climat-air-\u00e9nergie',
                         description:
@@ -15468,7 +15468,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.4.2',
+                        id: 'cae_6.1.2.4.2',
                         id_nomenclature: '6.1.2.4.2',
                         nom: 'EPCI: R\u00e9flechir sur de nouveaux outils juridico-financiers pour faciliter le passage \u00e0 l\u2019acte des communes',
                         description:
@@ -15482,7 +15482,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.4.3',
+                        id: 'cae_6.1.2.4.3',
                         id_nomenclature: '6.1.2.4.3',
                         nom: 'EPCI: Institutionnaliser les r\u00e9unions th\u00e9matiques avec les communes membres',
                         description:
@@ -15496,7 +15496,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.4.4',
+                        id: 'cae_6.1.2.4.4',
                         id_nomenclature: '6.1.2.4.4',
                         nom: 'Commune: Elle donne l\u2019exemple au sein de l\u2019EPCI',
                         description:
@@ -15510,7 +15510,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.2.4.5',
+                        id: 'cae_6.1.2.4.5',
                         id_nomenclature: '6.1.2.4.5',
                         nom: 'Commune: Participation quasi-syst\u00e9matique aux actions propos\u00e9es par l\u2019EPCI',
                         description: '',
@@ -15527,7 +15527,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__6.1.3',
+                id: 'cae_6.1.3',
                 id_nomenclature: '6.1.3',
                 nom: 'D\u00e9velopper un plan de communication pour chaque cible du territoire',
                 description:
@@ -15542,7 +15542,7 @@ export const actions: ActionReferentiel[] = [
                 points: 4,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.1.3.1',
+                    id: 'cae_6.1.3.1',
                     id_nomenclature: '6.1.3.1',
                     nom: 'Conna\u00eetre les besoins, identifier les cibles prioritaires et budg\u00e9ter le plan de communication',
                     description: '',
@@ -15553,7 +15553,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.1.1',
+                        id: 'cae_6.1.3.1.1',
                         id_nomenclature: '6.1.3.1.1',
                         nom: 'Conna\u00eetre les besoins en information et identifier des diff\u00e9rents publics cibles (habitants, entreprises, locataires de logements sociaux, promoteurs...)',
                         description: '',
@@ -15566,7 +15566,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.1.2',
+                        id: 'cae_6.1.3.1.2',
                         id_nomenclature: '6.1.3.1.2',
                         nom: 'D\u00e9finir le budget, les ressources humaines et le calendrier (dates ou p\u00e9riodicit\u00e9) pr\u00e9vus pour les manifestations et actions de communication',
                         description: '',
@@ -15581,7 +15581,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.3.2',
+                    id: 'cae_6.1.3.2',
                     id_nomenclature: '6.1.3.2',
                     nom: 'D\u00e9cliner l\u2019identit\u00e9 climat air \u00e9nergie de la collectivit\u00e9 dans les diff\u00e9rents supports de communication',
                     description: '',
@@ -15592,7 +15592,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.2.1',
+                        id: 'cae_6.1.3.2.1',
                         id_nomenclature: '6.1.3.2.1',
                         nom: 'Prendre en compte la th\u00e9matique climat air \u00e9nergie dans la charte graphique de la collectivit\u00e9',
                         description: '',
@@ -15605,7 +15605,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.2.2',
+                        id: 'cae_6.1.3.2.2',
                         id_nomenclature: '6.1.3.2.2',
                         nom: 'Mettre en avant des d\u00e9clarations claires relatives aux questions \u00e9nerg\u00e9tiques et climatiques sur le site internet de la collectivit\u00e9',
                         description: '',
@@ -15618,7 +15618,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.2.3',
+                        id: 'cae_6.1.3.2.3',
                         id_nomenclature: '6.1.3.2.3',
                         nom: 'Mentionner r\u00e9guli\u00e8rement les d\u00e9marches et actions climat air \u00e9nergie dans les diff\u00e9rents supports de communication \u00e9tablis et/ou utilis\u00e9s par la collectivit\u00e9',
                         description:
@@ -15632,7 +15632,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.2.4',
+                        id: 'cae_6.1.3.2.4',
                         id_nomenclature: '6.1.3.2.4',
                         nom: 'Exploiter les moyens de communication existants (journal de la collectivit\u00e9, r\u00e9unions publiques, m\u00e9dias locaux, affichage, etc) pour diffuser les informations',
                         description: '',
@@ -15645,7 +15645,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.2.5',
+                        id: 'cae_6.1.3.2.5',
                         id_nomenclature: '6.1.3.2.5',
                         nom: 'Mettre en avant des installations et projets exemplaires dans le secteur des \u00e9nergies renouvelables et de la lutte contre le changement climatique (par exemple, chaudi\u00e8re bois collective, maisons passives...)',
                         description: '',
@@ -15658,7 +15658,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.2.6',
+                        id: 'cae_6.1.3.2.6',
                         id_nomenclature: '6.1.3.2.6',
                         nom: 'Etre coh\u00e9rent dans le travail quotidien et les d\u00e9cisions prises',
                         description:
@@ -15674,7 +15674,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.3.3',
+                    id: 'cae_6.1.3.3',
                     id_nomenclature: '6.1.3.3',
                     nom: 'Donner du poids et cr\u00e9dibiliser les actions de la collectivit\u00e9 dans sa communication',
                     description: '',
@@ -15685,7 +15685,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.3.1',
+                        id: 'cae_6.1.3.3.1',
                         id_nomenclature: '6.1.3.3.1',
                         nom: 'Inscrire ses d\u00e9marches et actions climat-air-\u00e9nergie dans des d\u00e9marches de reconnaissance locales, nationales ou europ\u00e9ennes pour cr\u00e9dibiliser et renforcer sa communication',
                         description:
@@ -15701,7 +15701,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.3.4',
+                    id: 'cae_6.1.3.4',
                     id_nomenclature: '6.1.3.4',
                     nom: 'D\u00e9cliner le plan de communication pour chaque cible du territoire',
                     description: '',
@@ -15712,7 +15712,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.4.1',
+                        id: 'cae_6.1.3.4.1',
                         id_nomenclature: '6.1.3.4.1',
                         nom: 'Mettre en place des supports de communication diff\u00e9renci\u00e9s selon les cibles (contenu, m\u00e9dias et lieux de diffusion...)',
                         description: '',
@@ -15725,7 +15725,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.4.2',
+                        id: 'cae_6.1.3.4.2',
                         id_nomenclature: '6.1.3.4.2',
                         nom: 'Pour les collectivit\u00e9s comptant moins de 15 000 hab, mutualiser l\u2019\u00e9laboration de supports de communication avec d\u0027autres collectivit\u00e9s.',
                         description: '',
@@ -15738,7 +15738,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.4.3',
+                        id: 'cae_6.1.3.4.3',
                         id_nomenclature: '6.1.3.4.3',
                         nom: 'Mettre en place des actions (\u00e9v\u00e8nements) nombreuses et vari\u00e9es (lieux, formes, horaires) sur les th\u00e8mes climat-air-\u00e9nergie.',
                         description:
@@ -15754,7 +15754,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.1.3.5',
+                    id: 'cae_6.1.3.5',
                     id_nomenclature: '6.1.3.5',
                     nom: 'Contr\u00f4ler et \u00e9valuer l\u2019efficacit\u00e9 du plan de communication',
                     description: '',
@@ -15765,7 +15765,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.5.1',
+                        id: 'cae_6.1.3.5.1',
                         id_nomenclature: '6.1.3.5.1',
                         nom: 'Evaluer et contr\u00f4ler de l\u0027efficacit\u00e9 des actions par des enqu\u00eates aupr\u00e8s des diff\u00e9rentes cibles',
                         description: '',
@@ -15778,7 +15778,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.5.2',
+                        id: 'cae_6.1.3.5.2',
                         id_nomenclature: '6.1.3.5.2',
                         nom: 'Etre identifi\u00e9 depuis l\u0027ext\u00e9rieur et depuis l\u0027int\u00e9rieur comme \u00e9tant une "collectivit\u00e9 engag\u00e9e et/ou novatrice dans les secteurs de l\u0027\u00e9nergie, de l\u0027environnement et du climat"',
                         description: '',
@@ -15791,7 +15791,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.1.3.5.3',
+                        id: 'cae_6.1.3.5.3',
                         id_nomenclature: '6.1.3.5.3',
                         nom: 'Communiquer aux acteurs du territoire des d\u00e9marches et actions climat air \u00e9nergie men\u00e9es sur le territoire (Cit\u2019ergie, TEPOS, PCAET\u2026) et leur mettre \u00e0 disposition le suivi et l\u2019\u00e9valuation de ces d\u00e9marches (transparence de la collectivit\u00e9)',
                         description: '',
@@ -15810,7 +15810,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__6.2',
+            id: 'cae_6.2',
             id_nomenclature: '6.2',
             nom: 'B\u00e2timents r\u00e9sidentiels et tertiaires',
             description: '',
@@ -15821,7 +15821,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__6.2.1',
+                id: 'cae_6.2.1',
                 id_nomenclature: '6.2.1',
                 nom: 'Coop\u00e9rer avec les acteurs professionnels du b\u00e2timent et de l\u0027immobilier',
                 description:
@@ -15836,7 +15836,7 @@ export const actions: ActionReferentiel[] = [
                 points: 10,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.2.1.1',
+                    id: 'cae_6.2.1.1',
                     id_nomenclature: '6.2.1.1',
                     nom: 'Disposer d\u0027une connaissance fine des acteurs du b\u00e2timent et de l\u0027immobilier priv\u00e9 et les sensibiliser aux enjeux climat-air-\u00e9nergie',
                     description:
@@ -15848,7 +15848,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.1.1.1',
+                        id: 'cae_6.2.1.1.1',
                         id_nomenclature: '6.2.1.1.1',
                         nom: 'Se doter d\u2019une bonne connaissance des acteurs du b\u00e2timent et de l\u0027immobilier priv\u00e9 de son territoire',
                         description:
@@ -15862,7 +15862,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.1.1.2',
+                        id: 'cae_6.2.1.1.2',
                         id_nomenclature: '6.2.1.1.2',
                         nom: 'Informer les acteurs du b\u00e2timent et de l\u2019immobilier sur la politique \u00e9nerg\u00e9tique et climatique de la collectivit\u00e9 et sur les objectifs \u00e0 atteindre dans le secteur du b\u00e2timent et de la mobilit\u00e9 pour les diff\u00e9rentes cibles (propri\u00e9taires occupants ou bailleurs, logements individuels ou collectifs\u2026)',
                         description: '',
@@ -15875,7 +15875,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.1.1.3',
+                        id: 'cae_6.2.1.1.3',
                         id_nomenclature: '6.2.1.1.3',
                         nom: 'Informer les acteurs du b\u00e2timent et de l\u2019immobilier sur la vuln\u00e9rabilit\u00e9 du territoire au changement climatique',
                         description:
@@ -15889,7 +15889,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.1.1.4',
+                        id: 'cae_6.2.1.1.4',
                         id_nomenclature: '6.2.1.1.4',
                         nom: 'Informer les acteurs du b\u00e2timent et de l\u2019immobilier des dispositifs mis en place au niveau r\u00e9gional et local ainsi que des formations disponibles, en s\u2019appuyant sur les acteurs de la formation professionnelle de son territoire',
                         description: '',
@@ -15902,7 +15902,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.1.1.5',
+                        id: 'cae_6.2.1.1.5',
                         id_nomenclature: '6.2.1.1.5',
                         nom: 'Informer les am\u00e9nageurs sur les dispositifs permettant de d\u00e9velopper les usages cyclables',
                         description:
@@ -15918,7 +15918,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.1.2',
+                    id: 'cae_6.2.1.2',
                     id_nomenclature: '6.2.1.2',
                     nom: 'Animer et inciter les acteurs \u00e0 qualifier leurs pratiques',
                     description: '',
@@ -15929,7 +15929,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.1.2.1',
+                        id: 'cae_6.2.1.2.1',
                         id_nomenclature: '6.2.1.2.1',
                         nom: 'Favoriser l\u2019animation des acteurs avec mise en place de dispositifs vari\u00e9s (ateliers, visites, rencontres, formation) afin de cr\u00e9er une culture commune sur le territoire',
                         description: '',
@@ -15942,7 +15942,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.1.2.2',
+                        id: 'cae_6.2.1.2.2',
                         id_nomenclature: '6.2.1.2.2',
                         nom: 'Favoriser la mise en r\u00e9seau des professionnels du b\u00e2timent et leur visibilit\u00e9 au travers du label RGE',
                         description:
@@ -15956,7 +15956,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.1.2.3',
+                        id: 'cae_6.2.1.2.3',
                         id_nomenclature: '6.2.1.2.3',
                         nom: 'Favoriser les exon\u00e9rations fiscales (taxe fonci\u00e8re) et bonification des droits \u00e0 construire pour inciter les acteurs priv\u00e9s \u00e0 la construction (promoteurs/investisseurs) et \u00e0 la r\u00e9novation durable',
                         description: '',
@@ -15971,7 +15971,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.1.3',
+                    id: 'cae_6.2.1.3',
                     id_nomenclature: '6.2.1.3',
                     nom: 'Les bailleurs sociaux sont engag\u00e9s aux c\u00f4t\u00e9s de la collectivit\u00e9 dans des actions particuli\u00e8rement ambitieuses',
                     description:
@@ -15985,7 +15985,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.1.4',
+                    id: 'cae_6.2.1.4',
                     id_nomenclature: '6.2.1.4',
                     nom: 'Disposer d\u2019une strat\u00e9gie de mobilisation des professionnels du b\u00e2timent et de l\u2019immobilier formalis\u00e9e',
                     description:
@@ -16001,7 +16001,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__6.2.2',
+                id: 'cae_6.2.2',
                 id_nomenclature: '6.2.2',
                 nom: 'Pr\u00e9venir et lutter contre la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique',
                 description:
@@ -16016,7 +16016,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.2.2.1',
+                    id: 'cae_6.2.2.1',
                     id_nomenclature: '6.2.2.1',
                     nom: 'R\u00e9aliser un \u00e9tat des lieux de la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique li\u00e9e au logement et \u00e0 la mobilit\u00e9 sur le territoire',
                     description: '',
@@ -16027,7 +16027,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.1.1',
+                        id: 'cae_6.2.2.1.1',
                         id_nomenclature: '6.2.2.1.1',
                         nom: 'Disposer de la liste des acteurs intervenants sur la th\u00e9matique de pr\u00e9carit\u00e9, susceptibles d\u2019int\u00e9grer la question de la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique li\u00e9e au logement et \u00e0 la mobilit\u00e9 sur le territoire',
                         description: '',
@@ -16040,7 +16040,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.1.2',
+                        id: 'cae_6.2.2.1.2',
                         id_nomenclature: '6.2.2.1.2',
                         nom: 'R\u00e9aliser un diagnostic (donn\u00e9es INSEE, ANAH, CCAS/CIAS, CAF, FSL\u2026) afin d\u0027identifier et caract\u00e9riser les m\u00e9nages en situation de pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique',
                         description:
@@ -16054,7 +16054,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.1.3',
+                        id: 'cae_6.2.2.1.3',
                         id_nomenclature: '6.2.2.1.3',
                         nom: 'Cartographier les zones d\u2019intervention (OPAH, PIG, programme de r\u00e9novation urbaine...) et les comparer aux zones o\u00f9 statistiquement il peut y avoir de la pr\u00e9carit\u00e9',
                         description: '',
@@ -16069,7 +16069,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.2.2',
+                    id: 'cae_6.2.2.2',
                     id_nomenclature: '6.2.2.2',
                     nom: 'Adopter une strat\u00e9gie de lutte contre la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique li\u00e9e au logement et \u00e0 la mobilit\u00e9',
                     description: '',
@@ -16080,7 +16080,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.2.1',
+                        id: 'cae_6.2.2.2.1',
                         id_nomenclature: '6.2.2.2.1',
                         nom: 'Introduire la lutte contre la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique comme un enjeu prioritaire de la politique du territoire dans les diff\u00e9rents documents directeurs (PLH, PDU\u2026)',
                         description: '',
@@ -16093,7 +16093,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.2.2',
+                        id: 'cae_6.2.2.2.2',
                         id_nomenclature: '6.2.2.2.2',
                         nom: 'Fixer et formaliser dans les documents du territoire des objectifs et des orientations en mati\u00e8re de lutte contre la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique et de recherche de baisse des charges pour les usagers',
                         description: '',
@@ -16108,7 +16108,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.2.3',
+                    id: 'cae_6.2.2.3',
                     id_nomenclature: '6.2.2.3',
                     nom: 'F\u00e9d\u00e9rer les acteurs autour de la probl\u00e9matique de la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique afin d\u2019initier la pr\u00e9vention contre la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique',
                     description: '',
@@ -16119,7 +16119,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.3.1',
+                        id: 'cae_6.2.2.3.1',
                         id_nomenclature: '6.2.2.3.1',
                         nom: 'Coordonner et f\u00e9d\u00e9rer les acteurs locaux gravitant autour de la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique pour le logement (bailleurs sociaux, CCAS, ADIL...en lien avec l\u2019ANAH) et pour la mobilit\u00e9 : rencontres r\u00e9guli\u00e8res, mise en r\u00e9seau, outils partag\u00e9s',
                         description: '',
@@ -16132,7 +16132,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.3.2',
+                        id: 'cae_6.2.2.3.2',
                         id_nomenclature: '6.2.2.3.2',
                         nom: 'Sensibiliser les \u00e9lus et les services \u00e0 la lutte contre la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique (le CCAS ou CIAS -Centre Communal ou Intercommunal d\u0027Action Sociale- notamment)',
                         description: '',
@@ -16145,7 +16145,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.3.3',
+                        id: 'cae_6.2.2.3.3',
                         id_nomenclature: '6.2.2.3.3',
                         nom: 'Informer et sensibiliser les m\u00e9nages sur la pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique li\u00e9e au logement, \u00e0 la mobilit\u00e9 (dispositif \u201cFamilles \u00e0 Energie Positive\u201d par exemple)',
                         description: '',
@@ -16158,7 +16158,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.3.4',
+                        id: 'cae_6.2.2.3.4',
                         id_nomenclature: '6.2.2.3.4',
                         nom: 'Sensibiliser et communiquer sur les outils existants',
                         description: '',
@@ -16171,7 +16171,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.3.5',
+                        id: 'cae_6.2.2.3.5',
                         id_nomenclature: '6.2.2.3.5',
                         nom: 'Sensibiliser les acteurs et les habitants sur les enjeux sanitaires li\u00e9s \u00e0 une mauvaise qualit\u00e9 de l\u0027air int\u00e9rieur',
                         description: '',
@@ -16186,7 +16186,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.2.4',
+                    id: 'cae_6.2.2.4',
                     id_nomenclature: '6.2.2.4',
                     nom: 'Formaliser une offre d\u0027outils \u00e0 destination des m\u00e9nages en situation de pr\u00e9carit\u00e9',
                     description: '',
@@ -16197,7 +16197,7 @@ export const actions: ActionReferentiel[] = [
                     points: 40,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.4.1',
+                        id: 'cae_6.2.2.4.1',
                         id_nomenclature: '6.2.2.4.1',
                         nom: 'D\u00e9velopper et proposer une aide financi\u00e8re locale \u00e0 destination des m\u00e9nages en situation de pr\u00e9carit\u00e9 \u00e9nerg\u00e9tique (en particulier, aides \u00e0 la r\u00e9novation pour les propri\u00e9taires occupants)',
                         description: '',
@@ -16210,7 +16210,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.4.2',
+                        id: 'cae_6.2.2.4.2',
                         id_nomenclature: '6.2.2.4.2',
                         nom: 'Mettre en place des actions de suivi et d\u0027accompagnement des m\u00e9nages pr\u00e9caires',
                         description: '',
@@ -16223,7 +16223,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.4.3',
+                        id: 'cae_6.2.2.4.3',
                         id_nomenclature: '6.2.2.4.3',
                         nom: 'Mettre en place des actions conjointes avec les acteurs de l\u0027h\u00e9bergement pour diminuer la facture \u00e9nerg\u00e9tique des logements et les inciter \u00e0 des constructions et r\u00e9novations performantes, \u00e0 recourir aux solutions \u00e9nerg\u00e9tiques les moins on\u00e9reuses',
                         description:
@@ -16237,7 +16237,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.4.4',
+                        id: 'cae_6.2.2.4.4',
                         id_nomenclature: '6.2.2.4.4',
                         nom: 'Utiliser les outils existants et en cr\u00e9er des nouveaux',
                         description:
@@ -16251,7 +16251,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.2.4.5',
+                        id: 'cae_6.2.2.4.5',
                         id_nomenclature: '6.2.2.4.5',
                         nom: 'Monter des partenariats pour proposer/\u00e9laborer une offre de solutions alternatives afin d\u0027\u00e9viter les d\u00e9placements contraints en v\u00e9hicule individuel pour les publics pr\u00e9caires',
                         description:
@@ -16269,7 +16269,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__6.2.3',
+                id: 'cae_6.2.3',
                 id_nomenclature: '6.2.3',
                 nom: 'Accompagner les particuliers pour la r\u00e9novation et la construction durable de leur logement (habitat individuel et collectif)',
                 description:
@@ -16284,7 +16284,7 @@ export const actions: ActionReferentiel[] = [
                 points: 10,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.2.3.1',
+                    id: 'cae_6.2.3.1',
                     id_nomenclature: '6.2.3.1',
                     nom: 'Disposer de services d\u2019information climat-air-\u00e9nergie visibles et accessibles pour le particulier',
                     description:
@@ -16296,7 +16296,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.1.1',
+                        id: 'cae_6.2.3.1.1',
                         id_nomenclature: '6.2.3.1.1',
                         nom: 'Promouvoir activement l\u0027offre d\u0027information et de conseils',
                         description: '',
@@ -16309,7 +16309,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.1.2',
+                        id: 'cae_6.2.3.1.2',
                         id_nomenclature: '6.2.3.1.2',
                         nom: 'Disposer de structures d\u0027accueil centrales, ouvertes au moins une fois par semaine',
                         description: '',
@@ -16322,7 +16322,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.1.3',
+                        id: 'cae_6.2.3.1.3',
                         id_nomenclature: '6.2.3.1.3',
                         nom: 'Disposer d\u2019un service d\u0027information propre \u00e0 la collectivit\u00e9 ou participer activement \u00e0 un service d\u0027information local/d\u00e9partemental/r\u00e9gional neutre pour les questions concernant le climat, l\u0027air et l\u0027\u00e9nergie dans le b\u00e2timent pour les particuliers (suffisant pour les collectivit\u00e9s inf\u00e9rieures \u00e0 10 000 habitants)',
                         description: '',
@@ -16335,7 +16335,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.1.4',
+                        id: 'cae_6.2.3.1.4',
                         id_nomenclature: '6.2.3.1.4',
                         nom: 'Simplifier l\u2019acc\u00e8s \u00e0 ces services d\u0027information (lieu, prix) pour le grand public',
                         description: '',
@@ -16350,7 +16350,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.3.2',
+                    id: 'cae_6.2.3.2',
                     id_nomenclature: '6.2.3.2',
                     nom: 'Adresser des conseils pour la r\u00e9novation BBC notamment, et la construction, \u00e0 des cibles vari\u00e9es',
                     description:
@@ -16364,7 +16364,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.3.3',
+                    id: 'cae_6.2.3.3',
                     id_nomenclature: '6.2.3.3',
                     nom: 'Accompagner le particulier jusqu\u2019aux travaux de r\u00e9novation \u00e9nerg\u00e9tique',
                     description:
@@ -16376,7 +16376,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.3.1',
+                        id: 'cae_6.2.3.3.1',
                         id_nomenclature: '6.2.3.3.1',
                         nom: 'S\u0027appuyer a minima sur les missions de son espace conseil FAIRE pour guider le particulier dans son parcours de r\u00e9novation de son logement.',
                         description:
@@ -16390,7 +16390,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.3.2',
+                        id: 'cae_6.2.3.3.2',
                         id_nomenclature: '6.2.3.3.2',
                         nom: 'Disposer d\u2019un espace conseil FAIRE actif sur son territoire pour accompagner le particulier jusqu\u2019aux travaux, qui inclut des prestations avanc\u00e9es',
                         description:
@@ -16406,7 +16406,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.3.4',
+                    id: 'cae_6.2.3.4',
                     id_nomenclature: '6.2.3.4',
                     nom: 'Soutenir financi\u00e8rement le particulier',
                     description:
@@ -16418,7 +16418,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.4.1',
+                        id: 'cae_6.2.3.4.1',
                         id_nomenclature: '6.2.3.4.1',
                         nom: 'Des aides financi\u00e8res ponctuelles existent \u00e0 la r\u00e9novation niveau BBC (notamment) et la construction durable',
                         description: '',
@@ -16431,7 +16431,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.4.2',
+                        id: 'cae_6.2.3.4.2',
                         id_nomenclature: '6.2.3.4.2',
                         nom: 'Mettre en place des programmes de financement globaux, coh\u00e9rents et partenariaux, ou pour certains publics ANRU, OPAH, PIG, CLE ou \u00e9quivalents pour une massification des actions de r\u00e9novation de l\u0027habitat',
                         description: '',
@@ -16444,7 +16444,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.4.3',
+                        id: 'cae_6.2.3.4.3',
                         id_nomenclature: '6.2.3.4.3',
                         nom: 'Couvrir par les aides financi\u00e8res des publics ANAH et hors ANAH',
                         description: '',
@@ -16459,7 +16459,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.3.5',
+                    id: 'cae_6.2.3.5',
                     id_nomenclature: '6.2.3.5',
                     nom: 'Mesurer les r\u00e9sultats de l\u2019accompagnement',
                     description:
@@ -16471,7 +16471,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.5.1',
+                        id: 'cae_6.2.3.5.1',
                         id_nomenclature: '6.2.3.5.1',
                         nom: 'Contr\u00f4ler les r\u00e9sultats des consultations',
                         description: '',
@@ -16484,7 +16484,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.5.2',
+                        id: 'cae_6.2.3.5.2',
                         id_nomenclature: '6.2.3.5.2',
                         nom: 'Nombre de consultations et temps accord\u00e9 pour le conseil',
                         description:
@@ -16498,7 +16498,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.3.5.3',
+                        id: 'cae_6.2.3.5.3',
                         id_nomenclature: '6.2.3.5.3',
                         nom: 'Communiquer et transmettre les indicateurs \u00e0 ceux qui en font la demande, et en particulier les communes',
                         description: '',
@@ -16513,7 +16513,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.3.6',
+                    id: 'cae_6.2.3.6',
                     id_nomenclature: '6.2.3.6',
                     nom: 'Mettre en place un dispositif de suivi des projets subventionn\u00e9s pour analyser l\u0027efficacit\u00e9 des moyens investis',
                     description:
@@ -16529,7 +16529,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__6.2.4',
+                id: 'cae_6.2.4',
                 id_nomenclature: '6.2.4',
                 nom: 'Accompagner les acteurs du secteur tertiaire pour la r\u00e9novation et la construction durable de leurs locaux',
                 description:
@@ -16544,7 +16544,7 @@ export const actions: ActionReferentiel[] = [
                 points: 8,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.2.4.1',
+                    id: 'cae_6.2.4.1',
                     id_nomenclature: '6.2.4.1',
                     nom: 'Disposer de services d\u2019information climat-air-\u00e9nergie visibles et accessibles pour les acteurs tertiaires',
                     description:
@@ -16556,7 +16556,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.1.1',
+                        id: 'cae_6.2.4.1.1',
                         id_nomenclature: '6.2.4.1.1',
                         nom: 'Promouvoir activement l\u0027offre d\u0027information et de conseils en partenariat avec les acteurs sp\u00e9cialis\u00e9s',
                         description: '',
@@ -16569,7 +16569,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.1.2',
+                        id: 'cae_6.2.4.1.2',
                         id_nomenclature: '6.2.4.1.2',
                         nom: 'Disposer de structures d\u0027accueil centrales, ouvertes au moins une fois par semaine',
                         description: '',
@@ -16582,7 +16582,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.1.3',
+                        id: 'cae_6.2.4.1.3',
                         id_nomenclature: '6.2.4.1.3',
                         nom: 'Disposer d\u2019un service d\u0027information propre \u00e0 la collectivit\u00e9 ou participer activement \u00e0 un service d\u0027information local/d\u00e9partemental/r\u00e9gional neutre pour les questions concernant le climat, l\u0027air et l\u0027\u00e9nergie dans le b\u00e2timent pour le secteur tertiaire priv\u00e9 (suffisant pour les collectivit\u00e9s inf\u00e9rieures \u00e0 10 000 habitants)',
                         description: '',
@@ -16595,7 +16595,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.1.4',
+                        id: 'cae_6.2.4.1.4',
                         id_nomenclature: '6.2.4.1.4',
                         nom: 'Simplifier l\u2019acc\u00e8s \u00e0 ces services d\u0027information (lieu, prix) pour les acteurs tertiaires',
                         description: '',
@@ -16610,7 +16610,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.4.2',
+                    id: 'cae_6.2.4.2',
                     id_nomenclature: '6.2.4.2',
                     nom: 'Aller au-del\u00e0 du conseil ponctuel pour la r\u00e9novation durable du secteur tertitaire priv\u00e9',
                     description: '',
@@ -16621,7 +16621,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.2.1',
+                        id: 'cae_6.2.4.2.1',
                         id_nomenclature: '6.2.4.2.1',
                         nom: 'Accompagner concr\u00e8tement les entreprises du secteur tertiaire (TPE/PME et commer\u00e7ants notamment) et les artisans pour am\u00e9liorer la performance climat-air-\u00e9nergie de leurs locaux en partenariat avec les acteurs sp\u00e9cialis\u00e9s (chambres consulaires...)',
                         description:
@@ -16635,7 +16635,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.2.2',
+                        id: 'cae_6.2.4.2.2',
                         id_nomenclature: '6.2.4.2.2',
                         nom: 'Soutenir sp\u00e9cifiquement les entreprises tertiaires \u003e 1000 m\u00b2 soumises aux obligations du "D\u00e9cret Tertiaire"',
                         description:
@@ -16651,7 +16651,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.4.3',
+                    id: 'cae_6.2.4.3',
                     id_nomenclature: '6.2.4.3',
                     nom: 'Rationaliser et mutualiser la construction de nouveaux locaux tertiaires',
                     description: '',
@@ -16662,7 +16662,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.3.1',
+                        id: 'cae_6.2.4.3.1',
                         id_nomenclature: '6.2.4.3.1',
                         nom: 'Mettre en relation les disponibilit\u00e9s (recensement de bureaux d\u00e9laiss\u00e9s/inoccup\u00e9s) et les besoins en bureaux ou salles de r\u00e9union des principales TPE/PME et collectivit\u00e9s, afin d\u2019optimiser l\u2019utilisation des locaux existants.',
                         description: '',
@@ -16675,7 +16675,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.3.2',
+                        id: 'cae_6.2.4.3.2',
                         id_nomenclature: '6.2.4.3.2',
                         nom: 'Favoriser l\u2019implantation d\u2019activit\u00e9 de co-working sur le territoire',
                         description: '',
@@ -16690,7 +16690,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.4.4',
+                    id: 'cae_6.2.4.4',
                     id_nomenclature: '6.2.4.4',
                     nom: 'Inciter \u00e0 la limitation des consommations d\u0027\u00e9lectricit\u00e9 sp\u00e9cifique propres au secteur tertiaire',
                     description: '',
@@ -16701,7 +16701,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.4.1',
+                        id: 'cae_6.2.4.4.1',
                         id_nomenclature: '6.2.4.4.1',
                         nom: 'Aider \u00e0 la mise en place d\u2019un syst\u00e8me de management \u00e9nerg\u00e9tique et inciter \u00e0 la certification des entreprises (ISO 50 001, ISO 26 000\u2026)',
                         description: '',
@@ -16714,7 +16714,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.4.2',
+                        id: 'cae_6.2.4.4.2',
                         id_nomenclature: '6.2.4.4.2',
                         nom: 'Sensibiliser et diffuser les bonnes pratiques en mati\u00e8re d\u0027utilisation sobre des technologiques num\u00e9riques, de l\u0027\u00e9clairage, des \u00e9quipements de r\u00e9frig\u00e9ration dans les commerces...',
                         description: '',
@@ -16729,7 +16729,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.4.5',
+                    id: 'cae_6.2.4.5',
                     id_nomenclature: '6.2.4.5',
                     nom: 'Coop\u00e9rer avec les autres acteurs du tertiaire public sur le territoire (enseignement, h\u00f4pitaux, services administratifs...)',
                     description:
@@ -16743,7 +16743,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.2.4.6',
+                    id: 'cae_6.2.4.6',
                     id_nomenclature: '6.2.4.6',
                     nom: 'Mesurer les r\u00e9sultats de l\u2019activit\u00e9 d\u0027accompagnement',
                     description: '',
@@ -16754,7 +16754,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.6.1',
+                        id: 'cae_6.2.4.6.1',
                         id_nomenclature: '6.2.4.6.1',
                         nom: 'Le nombre de consultations \u00e9manant des acteurs tertiaires priv\u00e9s est en augmentation',
                         description: '',
@@ -16767,7 +16767,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.6.2',
+                        id: 'cae_6.2.4.6.2',
                         id_nomenclature: '6.2.4.6.2',
                         nom: 'Des locaux tertiaires r\u00e9nov\u00e9s (BBC r\u00e9novation) ou neufs exemplaires (E+C-, certification HQE\u2026), ayant fait l\u0027objet du soutien de la collectivit\u00e9, sont pr\u00e9sents sur le territoire',
                         description: '',
@@ -16780,7 +16780,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.2.4.6.3',
+                        id: 'cae_6.2.4.6.3',
                         id_nomenclature: '6.2.4.6.3',
                         nom: 'Suivre le respect des obligations de performance du d\u00e9cret tertiaire sur son territoire',
                         description:
@@ -16800,7 +16800,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__6.3',
+            id: 'cae_6.3',
             id_nomenclature: '6.3',
             nom: 'Activit\u00e9s \u00e9conomiques',
             description: '',
@@ -16811,7 +16811,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__6.3.1',
+                id: 'cae_6.3.1',
                 id_nomenclature: '6.3.1',
                 nom: 'Favoriser les activit\u00e9s \u00e9conomiques durables',
                 description:
@@ -16826,7 +16826,7 @@ export const actions: ActionReferentiel[] = [
                 points: 8,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.3.1.1',
+                    id: 'cae_6.3.1.1',
                     id_nomenclature: '6.3.1.1',
                     nom: 'Partager la strat\u00e9gie, les connaissances et les enjeux li\u00e9s aux entreprises au sein de la collectivit\u00e9',
                     description: '',
@@ -16837,7 +16837,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.1.1',
+                        id: 'cae_6.3.1.1.1',
                         id_nomenclature: '6.3.1.1.1',
                         nom: 'Travailler en transversalit\u00e9 entre le service/chef de projet d\u00e9veloppement \u00e9conomique (ou \u00e9quivalent) et d\u2019autres services, sur des projets communs',
                         description:
@@ -16851,7 +16851,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.1.2',
+                        id: 'cae_6.3.1.1.2',
                         id_nomenclature: '6.3.1.1.2',
                         nom: 'D\u00e9finir pr\u00e9cis\u00e9ment le champ d\u2019exercice de la comp\u00e9tence \u00ab d\u00e9veloppement \u00e9conomique \u00bb',
                         description:
@@ -16865,7 +16865,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.1.3',
+                        id: 'cae_6.3.1.1.3',
                         id_nomenclature: '6.3.1.1.3',
                         nom: 'Disposer d\u2019un argumentaire clair pour inciter les entreprises \u00e0 mettre en place des actions en faveur de la transition \u00e9nerg\u00e9tique et climatique',
                         description: '',
@@ -16880,7 +16880,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.1.2',
+                    id: 'cae_6.3.1.2',
                     id_nomenclature: '6.3.1.2',
                     nom: 'Capitaliser et travailler en partenariat avec les acteurs sp\u00e9cialis\u00e9s',
                     description: '',
@@ -16891,7 +16891,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.2.1',
+                        id: 'cae_6.3.1.2.1',
                         id_nomenclature: '6.3.1.2.1',
                         nom: 'Identifier les acteurs sp\u00e9cialis\u00e9s au contact des entreprises, conna\u00eetre leurs actions et leur pr\u00e9senter la politique climat-air-\u00e9nergie de la collectivit\u00e9',
                         description:
@@ -16905,7 +16905,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.2.2',
+                        id: 'cae_6.3.1.2.2',
                         id_nomenclature: '6.3.1.2.2',
                         nom: 'Recenser les bonnes pratiques des entreprises du territoire, les entreprises \u00ab locomotives \u00bb pouvant servir de relais et d\u2019exemples',
                         description:
@@ -16919,7 +16919,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.2.3',
+                        id: 'cae_6.3.1.2.3',
                         id_nomenclature: '6.3.1.2.3',
                         nom: 'Formations des d\u00e9veloppeurs d\u2019entreprises sur les enjeux et bonnes pratiques climat-air-\u00e9nergie en entreprise ; travailler avec eux pour identifier et hi\u00e9rarchiser les enjeux les plus importants \u00e0 porter aupr\u00e8s des entreprises, et int\u00e9grer ensuite ces th\u00e9matiques dans les documents d\u0027accueil ou services d\u0027accompagnement propos\u00e9s par la collectivit\u00e9',
                         description: '',
@@ -16934,7 +16934,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.1.3',
+                    id: 'cae_6.3.1.3',
                     id_nomenclature: '6.3.1.3',
                     nom: 'Am\u00e9liorer la qualit\u00e9 et la mixit\u00e9 des zones d\u0027activit\u00e9s \u00e9conomiques',
                     description: '',
@@ -16945,7 +16945,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.3.1',
+                        id: 'cae_6.3.1.3.1',
                         id_nomenclature: '6.3.1.3.1',
                         nom: 'Mettre en place et qualifier les missions des gestionnaires de zones d\u0027activit\u00e9s pour un am\u00e9nagement adapt\u00e9 et inclusif (services/commerces de la vie quotidienne de type cr\u00e8che/boulangerie dans les p\u00f4les d\u0027emplois)',
                         description: '',
@@ -16958,7 +16958,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.3.2',
+                        id: 'cae_6.3.1.3.2',
                         id_nomenclature: '6.3.1.3.2',
                         nom: 'D\u00e9cliner des orientations strat\u00e9giques fortes en mati\u00e8re de localisation et de qualit\u00e9 environnementale des zones d\u0027activit\u00e9s dans les documents d\u2019urbanisme',
                         description:
@@ -16972,7 +16972,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.3.3',
+                        id: 'cae_6.3.1.3.3',
                         id_nomenclature: '6.3.1.3.3',
                         nom: 'Faire certifier les zones d\u2019activit\u00e9s (norme ISO 14001 / r\u00e8glement EMAS)',
                         description: '',
@@ -16987,7 +16987,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.1.4',
+                    id: 'cae_6.3.1.4',
                     id_nomenclature: '6.3.1.4',
                     nom: 'Impliquer les entreprises dans des projets d\u2019\u00e9cologie industrielle structur\u00e9s et collectifs',
                     description: '',
@@ -16998,7 +16998,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.4.1',
+                        id: 'cae_6.3.1.4.1',
                         id_nomenclature: '6.3.1.4.1',
                         nom: 'Identifier les p\u00e9rim\u00e8tres pertinents pour d\u00e9velopper le concept d\u2019\u00e9cologie industrielle et inviter les entreprises \u00e0 identifier les synergies possibles',
                         description:
@@ -17012,7 +17012,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.4.2',
+                        id: 'cae_6.3.1.4.2',
                         id_nomenclature: '6.3.1.4.2',
                         nom: 'Elaborer un plan d\u2019action, une charte d\u2019engagement, un cahier des charges ou un r\u00e8glement d\u2019appel \u00e0 projets pour formaliser les engagements des entreprises dans un projet d\u0027\u00e9cologie industrielle/\u00e9conomie circulaire',
                         description: '',
@@ -17025,7 +17025,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.4.3',
+                        id: 'cae_6.3.1.4.3',
                         id_nomenclature: '6.3.1.4.3',
                         nom: 'S\u0027impliquer ou soutenir l\u0027utilisation de la d\u00e9marche territoriale/label "\u00e9conomie circulaire" \u00e0 l\u0027\u00e9chelle pertinente',
                         description: '',
@@ -17038,7 +17038,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.4.4',
+                        id: 'cae_6.3.1.4.4',
                         id_nomenclature: '6.3.1.4.4',
                         nom: 'Dans les DOM, R\u00e9aliser des actions sp\u00e9cifiques pour la fili\u00e8re "bateau" (recommandations du Grenelle de la Mer sur l\u0027\u00e9co-conception et la gestion du recyclage/d\u00e9mant\u00e8lement des navires)',
                         description: '',
@@ -17053,7 +17053,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.1.5',
+                    id: 'cae_6.3.1.5',
                     id_nomenclature: '6.3.1.5',
                     nom: 'Maintenir une dynamique \u00e9conomique, en ad\u00e9quation avec les besoins d\u2019une soci\u00e9t\u00e9 bas carbone',
                     description: '',
@@ -17064,7 +17064,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.5.1',
+                        id: 'cae_6.3.1.5.1',
                         id_nomenclature: '6.3.1.5.1',
                         nom: 'Renforcer le r\u00f4le de relais des commer\u00e7ants et artisans aupr\u00e8s de leurs clients, pour modifier les habitudes de consommation',
                         description:
@@ -17078,7 +17078,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.5.2',
+                        id: 'cae_6.3.1.5.2',
                         id_nomenclature: '6.3.1.5.2',
                         nom: 'Soutenir l\u2019artisanat et les commerces de proximit\u00e9 par des exon\u00e9rations de charge locale (fonci\u00e8re par exemple), par des mesures particuli\u00e8res dans le PLU, par une mise en valeur des produits/savoirs faires locaux ou \u00e0 faible impact environnemental (offres touristiques, partenariat dans le cadre des comit\u00e9s d\u2019entreprises, cr\u00e9ation d\u2019un label local etc.), par des op\u00e9rations FISAC\u2026',
                         description: '',
@@ -17091,7 +17091,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.1.5.3',
+                        id: 'cae_6.3.1.5.3',
                         id_nomenclature: '6.3.1.5.3',
                         nom: 'Maintenir ou d\u00e9velopper l\u2019attractivit\u00e9 \u00e9conomique de son territoire, en ad\u00e9quation avec les besoins d\u2019une soci\u00e9t\u00e9 bas carbone',
                         description:
@@ -17109,7 +17109,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__6.3.2',
+                id: 'cae_6.3.2',
                 id_nomenclature: '6.3.2',
                 nom: 'D\u00e9velopper un  tourisme durable',
                 description:
@@ -17124,7 +17124,7 @@ export const actions: ActionReferentiel[] = [
                 points: 4,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.3.2.1',
+                    id: 'cae_6.3.2.1',
                     id_nomenclature: '6.3.2.1',
                     nom: 'Identifier les enjeux et les bonnes pratiques en mati\u00e8re de tourisme durable sur le territoire',
                     description: '',
@@ -17135,7 +17135,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.1.1',
+                        id: 'cae_6.3.2.1.1',
                         id_nomenclature: '6.3.2.1.1',
                         nom: 'Identifier les pratiques de tourisme durable dans l\u0027offre existante notamment les \u00e9tablissements labellis\u00e9s (ex : Ecolabel europ\u00e9en).',
                         description: '',
@@ -17148,7 +17148,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.1.2',
+                        id: 'cae_6.3.2.1.2',
                         id_nomenclature: '6.3.2.1.2',
                         nom: 'Identifier les acteurs touristiques cl\u00e9s sur le territoire, les professionnels volontaires et les axes de progression',
                         description: '',
@@ -17161,7 +17161,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.1.3',
+                        id: 'cae_6.3.2.1.3',
                         id_nomenclature: '6.3.2.1.3',
                         nom: 'Conna\u00eetre les impacts environnementaux des activit\u00e9s touristiques locales et leur vuln\u00e9rabilit\u00e9 au changement climatique et formaliser les enjeux prioritaires au regard de ce diagnostic, en concertation avec les acteurs concern\u00e9s',
                         description:
@@ -17177,7 +17177,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.2.2',
+                    id: 'cae_6.3.2.2',
                     id_nomenclature: '6.3.2.2',
                     nom: 'Mobiliser les acteurs du tourisme',
                     description: '',
@@ -17188,7 +17188,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.2.1',
+                        id: 'cae_6.3.2.2.1',
                         id_nomenclature: '6.3.2.2.1',
                         nom: 'Engager l\u2019Office de Tourisme dans une d\u00e9marche \u00e9co-responsable',
                         description: '',
@@ -17201,7 +17201,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.2.2',
+                        id: 'cae_6.3.2.2.2',
                         id_nomenclature: '6.3.2.2.2',
                         nom: 'Valoriser par l\u2019office de tourisme des acteurs du tourisme engag\u00e9s dans une d\u00e9marche de tourisme durable',
                         description:
@@ -17215,7 +17215,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.2.3',
+                        id: 'cae_6.3.2.2.3',
                         id_nomenclature: '6.3.2.2.3',
                         nom: 'Sensibiliser aux enjeux climat-air-\u00e9nergie, l\u2019ensemble des acteurs professionnels et associatifs',
                         description:
@@ -17229,7 +17229,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.2.4',
+                        id: 'cae_6.3.2.2.4',
                         id_nomenclature: '6.3.2.2.4',
                         nom: 'Accueillir de fa\u00e7on responsable, sensibiliser et impliquer les travailleurs saisonniers',
                         description: '',
@@ -17242,7 +17242,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.2.5',
+                        id: 'cae_6.3.2.2.5',
                         id_nomenclature: '6.3.2.2.5',
                         nom: 'D\u00e9velopper un programme de formation \u00e0 la r\u00e9duction des \u00e9missions de gaz \u00e0 effet de serre, des consommations \u00e9nerg\u00e9tiques et la protection de l\u2019environnement pour ces acteurs et favoriser le partage des bonnes pratiques',
                         description: '',
@@ -17255,7 +17255,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.2.6',
+                        id: 'cae_6.3.2.2.6',
                         id_nomenclature: '6.3.2.2.6',
                         nom: 'Sensibiliser les touristes aux enjeux du tourisme durable et inciter aux bonnes pratiques (publicit\u00e9 pour des infrastructures touristiques durables, incitation \u00e0 l\u0027utilisation de transports collectifs, tri des d\u00e9chets, etc.) via des campagnes de communication, l\u0027organisation d\u0027\u00e9v\u00e9nements sur les sites touristiques, ...',
                         description: '',
@@ -17270,7 +17270,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.2.3',
+                    id: 'cae_6.3.2.3',
                     id_nomenclature: '6.3.2.3',
                     nom: 'D\u00e9velopper une offre touristique de haute qualit\u00e9 environnementale (hors mobilit\u00e9)',
                     description: '',
@@ -17281,7 +17281,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.3.1',
+                        id: 'cae_6.3.2.3.1',
                         id_nomenclature: '6.3.2.3.1',
                         nom: 'D\u00e9velopper des activit\u00e9s touristiques au contenu p\u00e9dagogique permettant l\u0027\u00e9ducation \u00e0 l\u0027environnement et aux enjeux climat air \u00e9nergie, en particulier \u00e0 destination des jeunes',
                         description: '',
@@ -17294,7 +17294,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.3.2',
+                        id: 'cae_6.3.2.3.2',
                         id_nomenclature: '6.3.2.3.2',
                         nom: 'Cr\u00e9er des partenariats visant l\u2019information et la sensibilisation aux enjeux \u00e9nergie climat sur le territoire ou tout autre particularit\u00e9 environnementale du territoire ainsi que les produits locaux, la promotion de l\u0027artisanat local, etc. entre professionnels de l\u0027h\u00e9bergement et de la restauration et les autres acteurs du territoire',
                         description: '',
@@ -17307,7 +17307,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.3.3',
+                        id: 'cae_6.3.2.3.3',
                         id_nomenclature: '6.3.2.3.3',
                         nom: 'Augmenter le nombre de structures touristiques labellis\u00e9es (Ecolabel europ\u00e9en notamment), par exemple en soutenant une op\u00e9ration collective d\u0027\u00e9co labellisation de professionnels de la restauration et de l\u0027h\u00e9bergement',
                         description: '',
@@ -17320,7 +17320,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.3.4',
+                        id: 'cae_6.3.2.3.4',
                         id_nomenclature: '6.3.2.3.4',
                         nom: 'Soutenir la cr\u00e9ation d\u0027entreprises \u0153uvrant pour le tourisme durable par le biais d\u0027appels \u00e0 projets, de valorisation m\u00e9diatique, de soutiens financiers',
                         description:
@@ -17334,7 +17334,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.3.5',
+                        id: 'cae_6.3.2.3.5',
                         id_nomenclature: '6.3.2.3.5',
                         nom: 'Cr\u00e9er des \u00e9v\u00e9nements touristiques sur le territoire \u00e9co-responsables au travers un engagement via une charte et visant la certification ISO 20121:2012 (\u00e9v\u00e8nements int\u00e9grant le d\u00e9veloppement durable)',
                         description:
@@ -17350,7 +17350,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.2.4',
+                    id: 'cae_6.3.2.4',
                     id_nomenclature: '6.3.2.4',
                     nom: 'Mettre en place une offre globale de mobilit\u00e9 durable en lien avec le tourisme',
                     description: '',
@@ -17361,7 +17361,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.4.1',
+                        id: 'cae_6.3.2.4.1',
                         id_nomenclature: '6.3.2.4.1',
                         nom: 'Faciliter l\u2019acc\u00e8s pour se rendre sur le territoire par les transports en commun. Promouvoir l\u2019usage des transports en commun sur tous les supports de communication',
                         description: '',
@@ -17374,7 +17374,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.4.2',
+                        id: 'cae_6.3.2.4.2',
                         id_nomenclature: '6.3.2.4.2',
                         nom: 'Faciliter l\u2019acc\u00e8s \u00e0 l\u2019int\u00e9rieur du territoire aux activit\u00e9s/h\u00e9bergements par les transports en commun. Promouvoir l\u2019usage des transports en commun sur tous les supports de communication',
                         description: '',
@@ -17387,7 +17387,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.4.3',
+                        id: 'cae_6.3.2.4.3',
                         id_nomenclature: '6.3.2.4.3',
                         nom: 'Identifier et remettre en \u00e9tat / d\u00e9velopper les circuits de randonn\u00e9e p\u00e9destres et cyclables touristiques sur le territoire',
                         description: '',
@@ -17400,7 +17400,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.4.4',
+                        id: 'cae_6.3.2.4.4',
                         id_nomenclature: '6.3.2.4.4',
                         nom: 'Interdire/contraindre fortement l\u0027acc\u00e8s aux v\u00e9hicules motoris\u00e9s sur une ou des parties particuli\u00e8rement sensibles et fr\u00e9quent\u00e9es du territoire',
                         description: '',
@@ -17413,7 +17413,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.4.5',
+                        id: 'cae_6.3.2.4.5',
                         id_nomenclature: '6.3.2.4.5',
                         nom: 'Cr\u00e9ation de circuits touristiques sans voiture, de services de mobilit\u00e9 en particulier pour le \u201cdernier kilom\u00e8tre\u201d en lien avec les h\u00e9bergements',
                         description:
@@ -17427,7 +17427,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.4.6',
+                        id: 'cae_6.3.2.4.6',
                         id_nomenclature: '6.3.2.4.6',
                         nom: 'Prendre en compte le d\u00e9placement des saisonniers dans l\u2019offre de transports et de logements',
                         description:
@@ -17443,7 +17443,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.2.5',
+                    id: 'cae_6.3.2.5',
                     id_nomenclature: '6.3.2.5',
                     nom: 'Int\u00e9grer et formaliser de mani\u00e8re ambitieuse l\u2019enjeu du tourisme durable dans la vision climat air \u00e9nergie du territoire',
                     description: '',
@@ -17454,7 +17454,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.5.1',
+                        id: 'cae_6.3.2.5.1',
                         id_nomenclature: '6.3.2.5.1',
                         nom: 'Porter une offre touristique durable et adapt\u00e9e au changement climatique dans le discours politique et les documents de planification',
                         description:
@@ -17468,7 +17468,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.5.2',
+                        id: 'cae_6.3.2.5.2',
                         id_nomenclature: '6.3.2.5.2',
                         nom: 'Adh\u00e9rer collectivement \u00e0 des chartes \u00e0 l\u2019\u00e9chelle du territoire',
                         description:
@@ -17482,7 +17482,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.5.3',
+                        id: 'cae_6.3.2.5.3',
                         id_nomenclature: '6.3.2.5.3',
                         nom: 'Pr\u00e9sence d\u0027orientations strat\u00e9giques fortes en mati\u00e8re de qualit\u00e9 environnementale des zones d\u0027activit\u00e9s touristiques',
                         description: '',
@@ -17495,7 +17495,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.5.4',
+                        id: 'cae_6.3.2.5.4',
                         id_nomenclature: '6.3.2.5.4',
                         nom: 'Cr\u00e9er une taxe locale sur les prestations touristiques et de loisirs pour financer des projets d\u0027adaptation sur le territoire',
                         description: '',
@@ -17508,7 +17508,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.2.5.5',
+                        id: 'cae_6.3.2.5.5',
                         id_nomenclature: '6.3.2.5.5',
                         nom: 'G\u00e9rer de fa\u00e7on durable les zones de baignade et/ou les stations de ski et les distinguer par une labellisation',
                         description:
@@ -17526,7 +17526,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__6.3.3',
+                id: 'cae_6.3.3',
                 id_nomenclature: '6.3.3',
                 nom: 'Contribuer \u00e0 l\u0027innovation et l\u0027excellence sur la th\u00e9matique climat-air-\u00e9nergie',
                 description:
@@ -17540,7 +17540,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.3.3.1',
+                    id: 'cae_6.3.3.1',
                     id_nomenclature: '6.3.3.1',
                     nom: 'Mener une veille pro-active sur les acteurs et projets phares',
                     description: '',
@@ -17551,7 +17551,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.1.1',
+                        id: 'cae_6.3.3.1.1',
                         id_nomenclature: '6.3.3.1.1',
                         nom: 'Recenser les acteurs priv\u00e9s et ceux de la recherche, de l\u0027enseignement sup\u00e9rieur, de la formation professionnelle (GRETA, lyc\u00e9e agricole, CFA, MFR\u2026), qui sont susceptibles de mener des projets sur les th\u00e9matiques climat-air-\u00e9nergie (situ\u00e9s sur le territoire ou \u00e0 proximit\u00e9 de celui-ci pour le milieu rural)',
                         description: '',
@@ -17564,7 +17564,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.1.2',
+                        id: 'cae_6.3.3.1.2',
                         id_nomenclature: '6.3.3.1.2',
                         nom: 'Rencontrer des acteurs pour \u00e9tudier des partenariats sur des projets concrets et/ou des axes de recherches et de formations',
                         description: '',
@@ -17577,7 +17577,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.1.3',
+                        id: 'cae_6.3.3.1.3',
                         id_nomenclature: '6.3.3.1.3',
                         nom: 'Recenser les principaux appels \u00e0 projets, notamment europ\u00e9ens, et informer les acteurs du territoire susceptibles d\u2019y r\u00e9pondre ont \u00e9t\u00e9 inform\u00e9s',
                         description:
@@ -17593,7 +17593,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.3.2',
+                    id: 'cae_6.3.3.2',
                     id_nomenclature: '6.3.3.2',
                     nom: 'Formaliser l\u2019engagement de la collectivit\u00e9 dans le soutien des projets des acteurs priv\u00e9s',
                     description: '',
@@ -17604,7 +17604,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.2.1',
+                        id: 'cae_6.3.3.2.1',
                         id_nomenclature: '6.3.3.2.1',
                         nom: 'Le partenariat ou l\u0027implication de la collectivit\u00e9 avec les acteurs d\u00e9crits pr\u00e9c\u00e9demment a fait l\u0027objet d\u0027une discussion',
                         description:
@@ -17620,7 +17620,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.3.3',
+                    id: 'cae_6.3.3.3',
                     id_nomenclature: '6.3.3.3',
                     nom: 'Participer \u00e0 des \u00e9tudes et des recherches pour faire progresser les connaissances et techniques',
                     description: '',
@@ -17631,7 +17631,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.3.1',
+                        id: 'cae_6.3.3.3.1',
                         id_nomenclature: '6.3.3.3.1',
                         nom: 'Mener des \u00e9tudes et recherches avec les organismes de formation (stagiaires, apprentis), les \u00e9tablissements d\u0027enseignements sup\u00e9rieurs ou de recherche',
                         description:
@@ -17645,7 +17645,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.3.2',
+                        id: 'cae_6.3.3.3.2',
                         id_nomenclature: '6.3.3.3.2',
                         nom: 'Se proposer comme territoire test/pilote pour des projets de recherche/exp\u00e9rimentation',
                         description: '',
@@ -17660,7 +17660,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.3.4',
+                    id: 'cae_6.3.3.4',
                     id_nomenclature: '6.3.3.4',
                     nom: 'S\u2019investir et se mobiliser concr\u00e8tement sur des r\u00e9alisations ambitieuses',
                     description: '',
@@ -17671,7 +17671,7 @@ export const actions: ActionReferentiel[] = [
                     points: 25,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.4.1',
+                        id: 'cae_6.3.3.4.1',
                         id_nomenclature: '6.3.3.4.1',
                         nom: 'Les projets soutenus vont au-del\u00e0 de la r\u00e9glementation et int\u00e8grent des performances environnementales et climatiques chiffr\u00e9es, dans une approche transversale. Ils sont men\u00e9s dans une approche participative.',
                         description: '',
@@ -17684,7 +17684,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.4.2',
+                        id: 'cae_6.3.3.4.2',
                         id_nomenclature: '6.3.3.4.2',
                         nom: 'Organiser des r\u00e9unions r\u00e9guli\u00e8res entre la ma\u00eetrise d\u0027ouvrage priv\u00e9e, la ma\u00eetrise d\u0027\u0153uvre et la collectivit\u00e9',
                         description: '',
@@ -17697,7 +17697,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.4.3',
+                        id: 'cae_6.3.3.4.3',
                         id_nomenclature: '6.3.3.4.3',
                         nom: 'La collectivit\u00e9 a tir\u00e9 vers le haut les objectifs fix\u00e9s pour le projet et a aid\u00e9 \u00e0 mettre en place un dispositif d\u0027\u00e9valuation des performances du projet',
                         description: '',
@@ -17710,7 +17710,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.4.4',
+                        id: 'cae_6.3.3.4.4',
                         id_nomenclature: '6.3.3.4.4',
                         nom: 'Formuler des avis techniques ou organisationnels sur le projet',
                         description: '',
@@ -17723,7 +17723,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.4.5',
+                        id: 'cae_6.3.3.4.5',
                         id_nomenclature: '6.3.3.4.5',
                         nom: 'Mobiliser des outils ou du personnel de la collectivit\u00e9 pour suivre le projet et fournir des conseils',
                         description: '',
@@ -17736,7 +17736,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.4.6',
+                        id: 'cae_6.3.3.4.6',
                         id_nomenclature: '6.3.3.4.6',
                         nom: 'Communiquer sur le projet',
                         description: '',
@@ -17749,7 +17749,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.4.7',
+                        id: 'cae_6.3.3.4.7',
                         id_nomenclature: '6.3.3.4.7',
                         nom: 'Permettre la formation de partenariats entre les acteurs d\u00e9crits pr\u00e9c\u00e9demment (priv\u00e9s, enseignement, recherche, \u2026), en les mettant en relation gr\u00e2ce \u00e0 son r\u00f4le d\u2019animateur, m\u00e9diateur',
                         description: '',
@@ -17764,7 +17764,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.3.3.5',
+                    id: 'cae_6.3.3.5',
                     id_nomenclature: '6.3.3.5',
                     nom: 'Etre un territoire d\u2019innovation et d\u2019excellence sur certaines th\u00e9matiques',
                     description: '',
@@ -17775,7 +17775,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.5.1',
+                        id: 'cae_6.3.3.5.1',
                         id_nomenclature: '6.3.3.5.1',
                         nom: 'Etre membre d\u2019un p\u00f4le de comp\u00e9titivit\u00e9, p\u00f4le d\u0027excellence rural, cluster et/ou etre laur\u00e9at d\u2019un appel \u00e0 projet sur le d\u00e9veloppement durable, notamment europ\u00e9en (LIFE, H2020, etc...)',
                         description: '',
@@ -17788,7 +17788,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.5.2',
+                        id: 'cae_6.3.3.5.2',
                         id_nomenclature: '6.3.3.5.2',
                         nom: 'Existance d\u0027une offre de formation locale et diversifi\u00e9e (th\u00e9matiques et niveaux de qualification) aux m\u00e9tiers utiles \u00e0 la transition \u00e9nerg\u00e9tique et climatique',
                         description:
@@ -17802,7 +17802,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.3.3.5.3',
+                        id: 'cae_6.3.3.5.3',
                         id_nomenclature: '6.3.3.5.3',
                         nom: 'Se positionner clairement contre les grands projets nuisibles en mati\u00e8re d\u2019impacts sur le climat, la qualit\u00e9 de l\u2019air ou la consommation d\u2019\u00e9nergie ou l\u2019utilisation des terres agricoles sous l\u2019influence de son territoire',
                         description:
@@ -17822,7 +17822,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__6.4',
+            id: 'cae_6.4',
             id_nomenclature: '6.4',
             nom: 'Agriculture, for\u00eat',
             description: '',
@@ -17833,7 +17833,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__6.4.1',
+                id: 'cae_6.4.1',
                 id_nomenclature: '6.4.1',
                 nom: 'Soutenir une agriculture et une alimentation plus durable',
                 description:
@@ -17848,7 +17848,7 @@ export const actions: ActionReferentiel[] = [
                 points: 12,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.4.1.1',
+                    id: 'cae_6.4.1.1',
                     id_nomenclature: '6.4.1.1',
                     nom: 'R\u00e9aliser un diagnostic agricole et alimentaire de son territoire',
                     description:
@@ -17862,7 +17862,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.1.2',
+                    id: 'cae_6.4.1.2',
                     id_nomenclature: '6.4.1.2',
                     nom: 'Animer son territoire sur le sujet de l\u2019agriculture et de l\u2019alimentation durable',
                     description:
@@ -17874,7 +17874,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.2.1',
+                        id: 'cae_6.4.1.2.1',
                         id_nomenclature: '6.4.1.2.1',
                         nom: 'Initier une concertation entre les acteurs (r\u00e9unions professionnelles, r\u00e9unions publiques\u2026)',
                         description: '',
@@ -17887,7 +17887,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.2.2',
+                        id: 'cae_6.4.1.2.2',
                         id_nomenclature: '6.4.1.2.2',
                         nom: 'Mener des actions de sensibilisation (r\u00e9unions publiques, films, intervenants ext\u00e9rieurs, th\u00e9\u00e2tre, expos, d\u00e9fis Famille \u00e0 alimentation positive\u2026)',
                         description: '',
@@ -17900,7 +17900,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.2.3',
+                        id: 'cae_6.4.1.2.3',
                         id_nomenclature: '6.4.1.2.3',
                         nom: 'Mettre en relation les acteurs',
                         description:
@@ -17916,7 +17916,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.1.3',
+                    id: 'cae_6.4.1.3',
                     id_nomenclature: '6.4.1.3',
                     nom: 'Am\u00e9liorer la performance environnementale de la production agricole',
                     description:
@@ -17928,7 +17928,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.3.1',
+                        id: 'cae_6.4.1.3.1',
                         id_nomenclature: '6.4.1.3.1',
                         nom: 'Favoriser le d\u00e9veloppement de pratiques agro\u00e9cologiques, l\u2019installation de producteurs bios/ avec des pratiques agro-\u00e9cologiques, favoriser les conversions en bio, soutenir les groupements locaux d\u2019agriculture biologique (GAB)',
                         description: '',
@@ -17941,7 +17941,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.3.2',
+                        id: 'cae_6.4.1.3.2',
                         id_nomenclature: '6.4.1.3.2',
                         nom: 'Encourager les fili\u00e8res locales \u00e0 rentrer dans des logiques de performance environnementale et d\u2019\u00e9coconception : int\u00e9gration d\u2019exigences et suivi d\u2019indicateurs environnementaux dans les cahiers des charges, promotion des d\u00e9marches HVE, formation \u00e0 l\u2019agro-\u00e9cologie',
                         description: '',
@@ -17954,7 +17954,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.3.3',
+                        id: 'cae_6.4.1.3.3',
                         id_nomenclature: '6.4.1.3.3',
                         nom: 'Travailler avec les AOC, IGP, marques r\u00e9gionales etc. pour qualifier les productions',
                         description: '',
@@ -17969,7 +17969,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.1.4',
+                    id: 'cae_6.4.1.4',
                     id_nomenclature: '6.4.1.4',
                     nom: 'Reterritorialiser l\u2019alimentation de la collectivit\u00e9 et contribuer \u00e0 sa r\u00e9silience alimentaire',
                     description: '',
@@ -17980,7 +17980,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.4.1',
+                        id: 'cae_6.4.1.4.1',
                         id_nomenclature: '6.4.1.4.1',
                         nom: 'Accompagner la diversification des productions agricoles locales pour r\u00e9pondre aux besoins du territoire (l\u00e9gumes secs, fruits et l\u00e9gumes frais de saison, etc.)',
                         description: '',
@@ -17993,7 +17993,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.4.2',
+                        id: 'cae_6.4.1.4.2',
                         id_nomenclature: '6.4.1.4.2',
                         nom: 'Int\u00e9grer les questions d\u2019approvisionnement alimentaire (durable) dans les r\u00e9flexions urbanistiques : types de commerces, march\u00e9s de d\u00e9tails et march\u00e9 de gros (MIN), acc\u00e8s aux modes doux\u2026',
                         description: '',
@@ -18006,7 +18006,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.4.3',
+                        id: 'cae_6.4.1.4.3',
                         id_nomenclature: '6.4.1.4.3',
                         nom: 'Favoriser l\u2019acc\u00e8s \u00e0 la terre et les regroupements de producteurs locaux pour optimiser la logistique du dernier kilom\u00e8tre et l\u2019installation de boutiques paysans',
                         description: '',
@@ -18019,7 +18019,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.4.4',
+                        id: 'cae_6.4.1.4.4',
                         id_nomenclature: '6.4.1.4.4',
                         nom: 'Valoriser les produits locaux / fili\u00e8res locales de qualit\u00e9 (cr\u00e9ation de march\u00e9 de producteurs locaux, guide, cartographie\u2026)',
                         description: '',
@@ -18032,7 +18032,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.4.5',
+                        id: 'cae_6.4.1.4.5',
                         id_nomenclature: '6.4.1.4.5',
                         nom: 'En milieu urbain, accompagner l\u2019installation de fermes urbaines durables ; de jardins partag\u00e9s ou p\u00e9dagogiques, des ruches (dans le respect de la biodiversit\u00e9 locale de pollinisateurs), les plantations comestibles en milieu urbain, encourager la multiplication des potagers priv\u00e9s (sensibiliser aux pratiques agro-\u00e9cologiques, enjeux environnementaux et sanitaires)',
                         description: '',
@@ -18045,7 +18045,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.4.6',
+                        id: 'cae_6.4.1.4.6',
                         id_nomenclature: '6.4.1.4.6',
                         nom: 'Favoriser / soutenir les initiatives d\u2019acc\u00e8s \u00e0 tous \u00e0 une alimentation saine et durable. Faire se rencontrer les acteurs de l\u2019alimentation, de la sant\u00e9 et du social',
                         description: '',
@@ -18058,7 +18058,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.4.7',
+                        id: 'cae_6.4.1.4.7',
                         id_nomenclature: '6.4.1.4.7',
                         nom: 'Mettre en place ou soutenir les actions de sensibilisation du grand public \u00e0 l\u2019alimentation durable',
                         description: '',
@@ -18071,7 +18071,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.4.8',
+                        id: 'cae_6.4.1.4.8',
                         id_nomenclature: '6.4.1.4.8',
                         nom: 'Pr\u00e9server les terres agricoles via les documents d\u2019urbanisme',
                         description:
@@ -18087,7 +18087,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.1.5',
+                    id: 'cae_6.4.1.5',
                     id_nomenclature: '6.4.1.5',
                     nom: 'Modifier les habitudes alimentaires, notamment dans la restauration collective, en respectant les obligations de la loi EGalim et en s\u2019engageant plus loin',
                     description: '',
@@ -18098,7 +18098,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.5.1',
+                        id: 'cae_6.4.1.5.1',
                         id_nomenclature: '6.4.1.5.1',
                         nom: 'Revoir les approvisionnements en restauration collective publique',
                         description:
@@ -18112,7 +18112,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.5.2',
+                        id: 'cae_6.4.1.5.2',
                         id_nomenclature: '6.4.1.5.2',
                         nom: 'Informer les convives sur l\u2019origine, la saisonnalit\u00e9 et la qualit\u00e9 des produits servis (Egalim et autres crit\u00e8res de qualit\u00e9 / durabilit\u00e9); mettre en place un affichage environnemental et nutritionnel des menus',
                         description: '',
@@ -18125,7 +18125,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.5.3',
+                        id: 'cae_6.4.1.5.3',
                         id_nomenclature: '6.4.1.5.3',
                         nom: 'Diversifier les apports alimentaires, en coh\u00e9rence avec les nouvelles recommandations de Sant\u00e9 Publique France',
                         description:
@@ -18139,7 +18139,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.5.4',
+                        id: 'cae_6.4.1.5.4',
                         id_nomenclature: '6.4.1.5.4',
                         nom: 'Lutter contre le gaspillage alimentaire (ajuster les quantit\u00e9s aux besoins, sensibiliser les convives, organiser des pes\u00e9es annuelles sur une semaine, etc.)',
                         description: '',
@@ -18152,7 +18152,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.5.5',
+                        id: 'cae_6.4.1.5.5',
                         id_nomenclature: '6.4.1.5.5',
                         nom: 'Lors des achats de mat\u00e9riels/r\u00e9novations importantes, r\u00e9fl\u00e9chir sur la globalit\u00e9 du repas (besoin en l\u00e9gumerie, cuisson basse temp\u00e9rature, contenants de diff\u00e9rentes tailles pour les petites/grandes faims, salade bar, \u2026)',
                         description: '',
@@ -18165,7 +18165,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.5.6',
+                        id: 'cae_6.4.1.5.6',
                         id_nomenclature: '6.4.1.5.6',
                         nom: 'Former les cuisinier\u00b7es et le personnel de cantine \u00e0 l\u0027introduction de produits bio locaux et \u00e0 la diversification des prot\u00e9ines, et plus globalement aux enjeux environnementaux, et leur fournir un corpus de recettes adapt\u00e9es \u00e0 la restauration collective. Les former \u00e9galement aux d\u00e9marches de r\u00e9duction du gaspillage alimentaire.',
                         description: '',
@@ -18178,7 +18178,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.5.7',
+                        id: 'cae_6.4.1.5.7',
                         id_nomenclature: '6.4.1.5.7',
                         nom: 'Former les acheteur\u00b7ses et les gestionnaires impliqu\u00e9\u00b7es dans la restauration collective aux questions environnementales, sociales, sanitaires de l\u2019alimentation, aux achats bios/locaux et aux d\u00e9marches de r\u00e9duction du gaspillage alimentaire.',
                         description: '',
@@ -18191,7 +18191,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.5.8',
+                        id: 'cae_6.4.1.5.8',
                         id_nomenclature: '6.4.1.5.8',
                         nom: 'En restauration scolaire en particulier, organiser des ateliers sur la provenance des aliments consomm\u00e9s par les enfants (dont les prot\u00e9ines animales), sur l\u0027impact environnemental de leur assiette, pour les produits locaux ou d\u2019importation faisant partie de nos habitudes alimentaires, organiser des visites de fermes d\u2019o\u00f9 proviennent les aliments cuisin\u00e9s ou des interventions des producteurs. Organiser avec les enfants des pes\u00e9es d\u2019assiette, et le tri s\u00e9lectif des d\u00e9chets, pour agir sur le gaspillage alimentaire. Co-construire les menus avec eux\u00b7elles (et le\u00b7a di\u00e9t\u00e9ticien\u00b7ne de la ville)',
                         description:
@@ -18207,7 +18207,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.1.6',
+                    id: 'cae_6.4.1.6',
                     id_nomenclature: '6.4.1.6',
                     nom: 'Participer concr\u00e8tement \u00e0 des installations et au maintien des pratiques agricoles durables',
                     description: '',
@@ -18218,7 +18218,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.6.1',
+                        id: 'cae_6.4.1.6.1',
                         id_nomenclature: '6.4.1.6.1',
                         nom: 'Cr\u00e9er une r\u00e9gie agricole et/ou utiliser de baux environnementaux',
                         description: '',
@@ -18231,7 +18231,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.6.2',
+                        id: 'cae_6.4.1.6.2',
                         id_nomenclature: '6.4.1.6.2',
                         nom: 'Acqu\u00e9rir, mettre en r\u00e9serve (convention de portage foncier EPF ou SAFER, stockage en direct par la collectivit\u00e9) ou mettre \u00e0 disposition du foncier (terres ou b\u00e2timent, fermes communales ou intercommunales, fermes relais, r\u00e9gies communales) en partenariats avec des associations (exemple Fonci\u00e8re Terre de Liens)',
                         description: '',
@@ -18244,7 +18244,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.6.3',
+                        id: 'cae_6.4.1.6.3',
                         id_nomenclature: '6.4.1.6.3',
                         nom: 'Installer des porteurs de projets exemplaires et cr\u00e9er des espaces-test',
                         description:
@@ -18258,7 +18258,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.6.4',
+                        id: 'cae_6.4.1.6.4',
                         id_nomenclature: '6.4.1.6.4',
                         nom: 'dans les DOM, les mesures sp\u00e9cifiques DOM plan Ecophyto sont d\u00e9clin\u00e9es/soutenues localement',
                         description:
@@ -18274,7 +18274,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.1.7',
+                    id: 'cae_6.4.1.7',
                     id_nomenclature: '6.4.1.7',
                     nom: 'Adopter une vision globale gr\u00e2ce \u00e0 la formalisation d\u2019un Projet Alimentaire Territorial (PAT)',
                     description:
@@ -18288,7 +18288,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.1.8',
+                    id: 'cae_6.4.1.8',
                     id_nomenclature: '6.4.1.8',
                     nom: 'Mesurer et atteindre des objectifs ambitieux en mati\u00e8re d\u2019agriculture et d\u2019alimentation durable',
                     description: '',
@@ -18299,7 +18299,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.8.1',
+                        id: 'cae_6.4.1.8.1',
                         id_nomenclature: '6.4.1.8.1',
                         nom: 'Mettre en place et suivre des indicateurs en mati\u00e8re d\u0027intrants (fr\u00e9quence, quantit\u00e9, produits...) selon les cultures, soutien et suivi technique des rendements/co\u00fbts/impacts environnementaux d\u2019espaces test agricoles\u2026',
                         description:
@@ -18313,7 +18313,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.8.2',
+                        id: 'cae_6.4.1.8.2',
                         id_nomenclature: '6.4.1.8.2',
                         nom: 'En restauration collective, sur le gaspillage alimentaire, atteindre l\u2019objectif de 50% de r\u00e9duction par rapport \u00e0 la r\u00e9f\u00e9rence nationale du secteur',
                         description: '',
@@ -18326,7 +18326,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.8.3',
+                        id: 'cae_6.4.1.8.3',
                         id_nomenclature: '6.4.1.8.3',
                         nom: 'S\u2019engager \u00e0 au moins 75% de l\u2019alimentation en restauration collective qui soit de qualit\u00e9 ou durable, dont au moins 40% issus de l\u2019agriculture biologique et 50% issue de produits locaux ; poursuivre la diversification alimentaire.',
                         description:
@@ -18340,7 +18340,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.8.4',
+                        id: 'cae_6.4.1.8.4',
                         id_nomenclature: '6.4.1.8.4',
                         nom: 'mettre en place un programme pour l\u2019acc\u00e8s \u00e0 tous \u00e0 une alimentation saine et durable, incluant : sensibilisation et accompagnement de la population, soutien \u00e0 des structures ESS type \u00e9piceries solidaires, AMAP, etc.), programme de type ch\u00e8que alimentaire ou S\u00e9curit\u00e9 sociale alimentaire locale',
                         description: '',
@@ -18353,7 +18353,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.1.8.5',
+                        id: 'cae_6.4.1.8.5',
                         id_nomenclature: '6.4.1.8.5',
                         nom: 'Avoir un pourcentage \u00e9lev\u00e9 de Surface Agricole Utile en agricultue biologique.',
                         description:
@@ -18371,7 +18371,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__6.4.2',
+                id: 'cae_6.4.2',
                 id_nomenclature: '6.4.2',
                 nom: 'Soutenir l\u0027utilisation durable des for\u00eats et des espaces bois\u00e9s',
                 description:
@@ -18384,7 +18384,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.4.2.1',
+                    id: 'cae_6.4.2.1',
                     id_nomenclature: '6.4.2.1',
                     nom: 'Sensibiliser \u00e9lus, services et acteurs du territoire aux enjeux li\u00e9s \u00e0 la for\u00eat et aux espaces bois\u00e9s',
                     description: '',
@@ -18395,7 +18395,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.1.1',
+                        id: 'cae_6.4.2.1.1',
                         id_nomenclature: '6.4.2.1.1',
                         nom: 'Sensibiliser les \u00e9lus et services de la collectivit\u00e9 et les particuliers \u00e0 la gestion durable de la for\u00eat (sensibilisation notamment aux leviers forestiers d\u2019att\u00e9nuation du changement climatique : s\u00e9questration carbone en for\u00eat et production durable de bois pour les usages bois mat\u00e9riau et bois \u00e9nergie) et \u00e0 l\u2019utilisation du bois \u00e9nergie sur le territoire, de fa\u00e7on compl\u00e9mentaire aux usages mat\u00e9riaux',
                         description: '',
@@ -18408,7 +18408,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.1.2',
+                        id: 'cae_6.4.2.1.2',
                         id_nomenclature: '6.4.2.1.2',
                         nom: 'Sensibiliser les \u00e9lus \u00e0 l\u2019utilisation du bois mat\u00e9riau, notamment \u00e0 l\u2019utilisation du bois dans la construction',
                         description: '',
@@ -18421,7 +18421,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.1.3',
+                        id: 'cae_6.4.2.1.3',
                         id_nomenclature: '6.4.2.1.3',
                         nom: 'Sensibilises \u00e9lus \u00e0 l\u2019utilisation optimale du bois',
                         description:
@@ -18435,7 +18435,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.1.4',
+                        id: 'cae_6.4.2.1.4',
                         id_nomenclature: '6.4.2.1.4',
                         nom: 'Sensibiliser les \u00e9lus \u00e0 la lutte contre la d\u00e9forestation import\u00e9e',
                         description: '',
@@ -18450,7 +18450,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.2.2',
+                    id: 'cae_6.4.2.2',
                     id_nomenclature: '6.4.2.2',
                     nom: 'Lutter contre la d\u00e9forestation import\u00e9e',
                     description: '',
@@ -18461,7 +18461,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.2.1',
+                        id: 'cae_6.4.2.2.1',
                         id_nomenclature: '6.4.2.2.1',
                         nom: 'Etre attentif \u00e0 la provenance du bois pour ses fournitures (par exemple son mobilier), il doit provenir de for\u00eat locales et g\u00e9r\u00e9es durablement',
                         description: '',
@@ -18474,7 +18474,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.2.2',
+                        id: 'cae_6.4.2.2.2',
                         id_nomenclature: '6.4.2.2.2',
                         nom: 'Dresser une liste des produits alimentaires dont la production est cause de d\u00e9forestation (par exemple\u00a0: soja, huile de palme, b\u0153uf et se coproduits, cacao, h\u00e9v\u00e9a). Contr\u00f4ler leur provenance et les m\u00e9thodes de production lorsqu\u2019ils sont utilis\u00e9s pour la restauration publique',
                         description:
@@ -18490,7 +18490,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.2.3',
+                    id: 'cae_6.4.2.3',
                     id_nomenclature: '6.4.2.3',
                     nom: 'R\u00e9aliser des diagnostics, conna\u00eetre les enjeux li\u00e9s \u00e0 la for\u00eat et aux espaces bois\u00e9s sur son territoire',
                     description: '',
@@ -18501,7 +18501,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.3.1',
+                        id: 'cae_6.4.2.3.1',
                         id_nomenclature: '6.4.2.3.1',
                         nom: 'R\u00e9aliser un diagnostic pour identifier les attentes, les besoins, les pratiques et la nature des activit\u00e9s foresti\u00e8res, y compris pour leur adaptation au changement climatique',
                         description: '',
@@ -18514,7 +18514,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.3.2',
+                        id: 'cae_6.4.2.3.2',
                         id_nomenclature: '6.4.2.3.2',
                         nom: 'R\u00e9aliser un diagnostic de la for\u00eat incluant les surfaces par typologie des for\u00eats, les stocks de carbone et la s\u00e9questration de carbone par la for\u00eat, le taux des pr\u00e9l\u00e8vements, la r\u00e9partition de la r\u00e9colte entre les diff\u00e9rents usages du bois, de ses usages et de ses acteurs sur le territoire.',
                         description: '',
@@ -18527,7 +18527,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.3.3',
+                        id: 'cae_6.4.2.3.3',
                         id_nomenclature: '6.4.2.3.3',
                         nom: 'Etudier les diff\u00e9rents potentiels de la for\u00eat et des espaces bois\u00e9s dans le cadre d\u2019une d\u00e9marche territoriale concert\u00e9e (ex : \u00e9laboration d\u2019une charte concert\u00e9e de territoire)',
                         description: '',
@@ -18542,7 +18542,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.2.4',
+                    id: 'cae_6.4.2.4',
                     id_nomenclature: '6.4.2.4',
                     nom: 'Formaliser sa strat\u00e9gie dans des documents de planification d\u00e9di\u00e9s \u00e0 la for\u00eat et dans les documents d\u2019urbanisme',
                     description: '',
@@ -18553,7 +18553,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.4.1',
+                        id: 'cae_6.4.2.4.1',
                         id_nomenclature: '6.4.2.4.1',
                         nom: 'La collectivit\u00e9 met en \u0153uvre avec les acteurs du territoire un plan de pr\u00e9servation et de valorisation de la for\u00eat',
                         description:
@@ -18567,7 +18567,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.4.2',
+                        id: 'cae_6.4.2.4.2',
                         id_nomenclature: '6.4.2.4.2',
                         nom: 'Prendre en compte les zones bois\u00e9es dans les documents d\u2019urbanisme (zonage appropri\u00e9, espaces bois\u00e9s class\u00e9s, \u00e9l\u00e9ments remarquables \u00e0 prot\u00e9ger et rep\u00e9r\u00e9s dans les documents graphiques)',
                         description: '',
@@ -18580,7 +18580,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.4.3',
+                        id: 'cae_6.4.2.4.3',
                         id_nomenclature: '6.4.2.4.3',
                         nom: 'Articuler sa strat\u00e9gie avec les politiques locales de d\u00e9veloppement (Chartes de Pays, etc.) et les autres dispositifs de gestion foresti\u00e8re (sch\u00e9mas r\u00e9gionaux de gestion foresti\u00e8re, plan de d\u00e9veloppement de massif) en co-construction avec les acteurs locaux concern\u00e9s (ex : les Chartes foresti\u00e8res)',
                         description: '',
@@ -18593,7 +18593,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.4.4',
+                        id: 'cae_6.4.2.4.4',
                         id_nomenclature: '6.4.2.4.4',
                         nom: 'P\u00e9renniser un pilotage multi-partenarial de la politique de pr\u00e9servation et de valorisation de la for\u00eat',
                         description: '',
@@ -18608,7 +18608,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.2.5',
+                    id: 'cae_6.4.2.5',
                     id_nomenclature: '6.4.2.5',
                     nom: 'Mettre en place les actions d\u00e9finies dans le plan de pr\u00e9servation et valorisation de la for\u00eat permettant une mobilisation durable de bois et un renforcement durable des puits de carbone dans les for\u00eats (biomasse et sols)',
                     description:
@@ -18620,7 +18620,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.5.1',
+                        id: 'cae_6.4.2.5.1',
                         id_nomenclature: '6.4.2.5.1',
                         nom: 'Prot\u00e9ger les for\u00eats de l\u2019artificialisation des sols et favorisef la restauration des for\u00eats impact\u00e9es par des \u00e9v\u00e8nements extr\u00eames',
                         description: '',
@@ -18633,7 +18633,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.5.2',
+                        id: 'cae_6.4.2.5.2',
                         id_nomenclature: '6.4.2.5.2',
                         nom: 'Favoriser le regroupement forestier',
                         description: '',
@@ -18646,7 +18646,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.5.3',
+                        id: 'cae_6.4.2.5.3',
                         id_nomenclature: '6.4.2.5.3',
                         nom: 'Mettre en place des actions pour favoriser l\u2019\u00e9laboration des documents de gestion ciblant une production de bois de qualit\u00e9 et encourageant des pratiques sylvicoles comme la conversion des taillis en futaies ; l\u2019am\u00e9lioration sylvicole des accrus forestiers et en raisonnant les pratiques pouvant avoir des impacts n\u00e9gatifs sur les stocks de carbone du sol',
                         description:
@@ -18660,7 +18660,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.5.4',
+                        id: 'cae_6.4.2.5.4',
                         id_nomenclature: '6.4.2.5.4',
                         nom: 'Mettre en place des mesures pour favoriser la s\u00e9questration de carbone dans les for\u00eats et les espaces bois\u00e9s (ex : \u00eelots de s\u00e9nescence, arbres morts...).',
                         description: '',
@@ -18673,7 +18673,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.5.5',
+                        id: 'cae_6.4.2.5.5',
                         id_nomenclature: '6.4.2.5.5',
                         nom: 'Mettre en place des actions favorisant l\u2019utilisation optimale du bois (tri du bois, chantiers group\u00e9s).',
                         description: '',
@@ -18688,7 +18688,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.2.6',
+                    id: 'cae_6.4.2.6',
                     id_nomenclature: '6.4.2.6',
                     nom: 'Prendre en charge, promouvoir et soutenir le d\u00e9veloppement d\u2019une fili\u00e8re bois-construction locale et \u00e0 haute performance environnementale',
                     description: '',
@@ -18699,7 +18699,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.6.1',
+                        id: 'cae_6.4.2.6.1',
                         id_nomenclature: '6.4.2.6.1',
                         nom: 'Soutenir la structuration et l\u2019optimisation de la fili\u00e8re bois',
                         description:
@@ -18713,7 +18713,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.6.2',
+                        id: 'cae_6.4.2.6.2',
                         id_nomenclature: '6.4.2.6.2',
                         nom: 'Engager une op\u00e9ration de construction / r\u00e9novation bois en adaptant les sp\u00e9cifications techniques aux caract\u00e9ristiques du bois local',
                         description: '',
@@ -18726,7 +18726,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.6.3',
+                        id: 'cae_6.4.2.6.3',
                         id_nomenclature: '6.4.2.6.3',
                         nom: 'Accompagner les acteurs de la fili\u00e8re bois du territoire pour p\u00e9n\u00e9trer le march\u00e9 de la construction bois sur le territoire et au-del\u00e0',
                         description: '',
@@ -18739,7 +18739,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.6.4',
+                        id: 'cae_6.4.2.6.4',
                         id_nomenclature: '6.4.2.6.4',
                         nom: 'Porter des actions d\u2019augmentation de la demande, notamment des actions de communication (et de formation) vers les constructeurs de b\u00e2timent, les architectes et ma\u00eetres d\u2019\u0153uvre, les particuliers qui font construire',
                         description: '',
@@ -18754,7 +18754,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.2.7',
+                    id: 'cae_6.4.2.7',
                     id_nomenclature: '6.4.2.7',
                     nom: 'Prendre en charge, promouvoir et soutenir le d\u00e9veloppement d\u2019une fili\u00e8re bois-\u00e9nergie \u00e0 haute performance environnementale',
                     description: '',
@@ -18765,7 +18765,7 @@ export const actions: ActionReferentiel[] = [
                     points: 15,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.7.1',
+                        id: 'cae_6.4.2.7.1',
                         id_nomenclature: '6.4.2.7.1',
                         nom: 'Accompagner le d\u00e9veloppement d\u2019une offre et d\u2019une demande collective en bois-\u00e9nergie sur le territoire adapt\u00e9 aux ressources disponibles dans le territoire (r\u00e9flexion globale et compl\u00e9mentaire avec la fili\u00e8re bois-construction, utilisation de la ressource bocag\u00e8re\u2026) ; puis d\u00e9velopper et s\u00e9curiser la fili\u00e8re d\u2019approvisionnement bois-\u00e9nergie locale en s\u2019appuyant sur la compl\u00e9mentarit\u00e9 des fili\u00e8res et le principe d\u2019utilisation de bois en cascade.',
                         description: '',
@@ -18778,7 +18778,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.7.2',
+                        id: 'cae_6.4.2.7.2',
                         id_nomenclature: '6.4.2.7.2',
                         nom: 'Participer \u00e0 une fili\u00e8re bois \u00e9nergie sur un bassin plus vaste (selon la ressource en bois disponible sur son territoire)',
                         description: '',
@@ -18793,7 +18793,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.4.2.8',
+                    id: 'cae_6.4.2.8',
                     id_nomenclature: '6.4.2.8',
                     nom: 'Suivre et atteindre ses objectifs en mati\u00e8re de for\u00eat et d\u2019espaces bois\u00e9s',
                     description: '',
@@ -18804,7 +18804,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.8.1',
+                        id: 'cae_6.4.2.8.1',
                         id_nomenclature: '6.4.2.8.1',
                         nom: 'Conna\u00eetre le % de surfaces foresti\u00e8res certifi\u00e9es',
                         description:
@@ -18818,7 +18818,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.4.2.8.2',
+                        id: 'cae_6.4.2.8.2',
                         id_nomenclature: '6.4.2.8.2',
                         nom: 'Suivre la s\u00e9questration carbone de la for\u00eat et d\u2019autres indicateurs',
                         description:
@@ -18838,7 +18838,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'citergie__6.5',
+            id: 'cae_6.5',
             id_nomenclature: '6.5',
             nom: 'Soci\u00e9t\u00e9 civile',
             description: '',
@@ -18849,7 +18849,7 @@ export const actions: ActionReferentiel[] = [
             points: -1.0,
             actions: [
               new ActionReferentiel({
-                id: 'citergie__6.5.1',
+                id: 'cae_6.5.1',
                 id_nomenclature: '6.5.1',
                 nom: 'Mobiliser la soci\u00e9t\u00e9 civile en d\u00e9veloppant la concertation',
                 description:
@@ -18864,7 +18864,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.5.1.1',
+                    id: 'cae_6.5.1.1',
                     id_nomenclature: '6.5.1.1',
                     nom: 'D\u00e9finir une organisation et identifier des axes de travail',
                     description: '',
@@ -18875,7 +18875,7 @@ export const actions: ActionReferentiel[] = [
                     points: 35,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.1.1',
+                        id: 'cae_6.5.1.1.1',
                         id_nomenclature: '6.5.1.1.1',
                         nom: 'Entretenir la culture de la collaboration sur le territoire',
                         description: '',
@@ -18888,7 +18888,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.1.2',
+                        id: 'cae_6.5.1.1.2',
                         id_nomenclature: '6.5.1.1.2',
                         nom: 'Conna\u00eetre les diff\u00e9rents niveaux d\u2019implication des citoyens : l\u2019information, la consultation, la concertation, la co-production, la cod\u00e9cision, l\u2019auto-gestion',
                         description: '',
@@ -18901,7 +18901,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.1.3',
+                        id: 'cae_6.5.1.1.3',
                         id_nomenclature: '6.5.1.1.3',
                         nom: 'Formaliser les \u00ab r\u00e8gles du jeu \u00bb de la concertation : les objectifs et le pouvoir d\u2019influence des instances sont d\u00e9finis clairement, les droits et les devoirs de chacun (collectivit\u00e9 / citoyens) sont annonc\u00e9s, par exemple dans une charte',
                         description: '',
@@ -18914,7 +18914,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.1.4',
+                        id: 'cae_6.5.1.1.4',
                         id_nomenclature: '6.5.1.1.4',
                         nom: 'D\u00e9finir un/des groupes de travail sur des th\u00e8mes vari\u00e9s : climat, air, \u00e9nergie, d\u00e9chets, eau, assainissement, mobilit\u00e9\u2026',
                         description: '',
@@ -18927,7 +18927,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.1.5',
+                        id: 'cae_6.5.1.1.5',
                         id_nomenclature: '6.5.1.1.5',
                         nom: 'Institutionnaliser la collaboration entre les habitants et la collectivit\u00e9 sur les th\u00e8mes relevant de l\u0027\u00e9nergie et du climat en d\u00e9finissant un organe participatif et/de concertation ou en se basant sur les groupes de travail d\u00e9j\u00e0 existants (qualifier les Conseils de quartier, Conseils de d\u00e9veloppement, \u2026)',
                         description: '',
@@ -18942,7 +18942,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.1.2',
+                    id: 'cae_6.5.1.2',
                     id_nomenclature: '6.5.1.2',
                     nom: 'Conduire une concertation r\u00e9guli\u00e8re et p\u00e9renne',
                     description: '',
@@ -18953,7 +18953,7 @@ export const actions: ActionReferentiel[] = [
                     points: 45,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.2.1',
+                        id: 'cae_6.5.1.2.1',
                         id_nomenclature: '6.5.1.2.1',
                         nom: 'Animer et mobiliser r\u00e9guli\u00e8rement (au moins trois fois par an) les habitants lors d\u2019ateliers th\u00e9matiques ou autour de projets particuliers (plan v\u00e9lo, r\u00e9novation d\u2019une \u00e9cole, etc.).',
                         description: '',
@@ -18966,7 +18966,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.2.2',
+                        id: 'cae_6.5.1.2.2',
                         id_nomenclature: '6.5.1.2.2',
                         nom: 'S\u0027organiser pour faire participer des publics vari\u00e9s en mobilisant des canaux de communication et des formats de concertation vari\u00e9s et adapt\u00e9s au diff\u00e9rents publics',
                         description:
@@ -18980,7 +18980,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.2.3',
+                        id: 'cae_6.5.1.2.3',
                         id_nomenclature: '6.5.1.2.3',
                         nom: 'Adapter les processus de concertation des habitants au travail collaboratif et \u00e0 l\u2019expression de la parole de chacun.',
                         description:
@@ -18994,7 +18994,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.2.4',
+                        id: 'cae_6.5.1.2.4',
                         id_nomenclature: '6.5.1.2.4',
                         nom: 'Mettre en place des formats participatifs favorisant les initiatives avec un budget et des moyens d\u00e9di\u00e9s : budget participatifs, appels \u00e0 projets, etc.',
                         description: '',
@@ -19007,7 +19007,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.2.5',
+                        id: 'cae_6.5.1.2.5',
                         id_nomenclature: '6.5.1.2.5',
                         nom: 'Mobiliser les instances de concertation r\u00e9guli\u00e8res (conseil de quartier, conseil de d\u00e9veloppement, ...) pour participer \u00e0 la construction du PCAET et les tenir inform\u00e9s au moins une fois par an de l\u2019avanc\u00e9e du plan d\u2019actions',
                         description: '',
@@ -19020,7 +19020,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.2.6',
+                        id: 'cae_6.5.1.2.6',
                         id_nomenclature: '6.5.1.2.6',
                         nom: 'Impliquer les citoyens sur des questions concr\u00e8tes qui les concernent directement (\u00e0 l\u2019\u00e9chelle du b\u00e2timent, du quartier par exemple), mais \u00e9galement sur des \u00e9l\u00e9ments plus strat\u00e9giques (contribution \u00e0 la \u00ab vision \u00bb globale du territoire dans une approche de transition \u00e9nerg\u00e9tique)',
                         description: '',
@@ -19033,7 +19033,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.2.7',
+                        id: 'cae_6.5.1.2.7',
                         id_nomenclature: '6.5.1.2.7',
                         nom: 'Allouer des d\u00e9lais et des moyens suffisants aux m\u00e9canismes participatifs pour une implication de qualit\u00e9',
                         description: '',
@@ -19046,7 +19046,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.2.8',
+                        id: 'cae_6.5.1.2.8',
                         id_nomenclature: '6.5.1.2.8',
                         nom: 'Pr\u00e9voir si n\u00e9cessaire une expertise externe afin d\u2019animer les s\u00e9ances, de produire des comptes rendus rapidement, de disposer de lieux conviviaux et adapt\u00e9s, de mat\u00e9riels informatiques et audiovisuels de qualit\u00e9.',
                         description: '',
@@ -19061,7 +19061,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.1.3',
+                    id: 'cae_6.5.1.3',
                     id_nomenclature: '6.5.1.3',
                     nom: 'Utiliser les contributions des instances de concertation',
                     description:
@@ -19073,7 +19073,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.3.1',
+                        id: 'cae_6.5.1.3.1',
                         id_nomenclature: '6.5.1.3.1',
                         nom: 'Le travail des habitants est reconnu et rendu public (plaquette de synth\u00e8se, article de presse...)',
                         description: '',
@@ -19086,7 +19086,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.3.2',
+                        id: 'cae_6.5.1.3.2',
                         id_nomenclature: '6.5.1.3.2',
                         nom: 'Faire syst\u00e9matiquement un retour aux instances participatives pour rendre compte des arbitrages faits au regard des contributions et pr\u00e9senter l\u2019avanc\u00e9e des projets.',
                         description: '',
@@ -19099,7 +19099,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.3.3',
+                        id: 'cae_6.5.1.3.3',
                         id_nomenclature: '6.5.1.3.3',
                         nom: 'Evaluer de fa\u00e7on r\u00e9guli\u00e8re les dispositifs de concertation',
                         description: '',
@@ -19112,7 +19112,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.1.3.4',
+                        id: 'cae_6.5.1.3.4',
                         id_nomenclature: '6.5.1.3.4',
                         nom: 'Voter au moins une d\u00e9cision par an par l\u0027organe d\u00e9lib\u00e9rant de la collectivit\u00e9 issue du travail des groupes de travail',
                         description: '',
@@ -19129,7 +19129,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__6.5.2',
+                id: 'cae_6.5.2',
                 id_nomenclature: '6.5.2',
                 nom: 'Inciter les citoyens et les relais d\u0027opinions \u00e0 une consommation responsable, limiter l\u0027emprise de la publicit\u00e9',
                 description:
@@ -19144,7 +19144,7 @@ export const actions: ActionReferentiel[] = [
                 points: 6,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.5.2.1',
+                    id: 'cae_6.5.2.1',
                     id_nomenclature: '6.5.2.1',
                     nom: 'S\u0027organiser en interne et localement pour sensibiliser les habitants',
                     description: '',
@@ -19155,7 +19155,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.1.1',
+                        id: 'cae_6.5.2.1.1',
                         id_nomenclature: '6.5.2.1.1',
                         nom: 'une personne au sein de la collectivit\u00e9 est sp\u00e9cifiquement charg\u00e9e des actions de sensibilisation aupr\u00e8s des habitants et est form\u00e9e aux questions de changement de comportement',
                         description: '',
@@ -19168,7 +19168,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.1.2',
+                        id: 'cae_6.5.2.1.2',
                         id_nomenclature: '6.5.2.1.2',
                         nom: 'D\u00e9finir un budget pour les actions de promotion des comportements \u00e9co-responsables des citoyens (dont les achats, l\u0027usage et la fin de vie de produits plus respectueux de l\u0027environnement comme ceux porteurs de l\u0027Ecolabel Europ\u00e9en)',
                         description: '',
@@ -19181,7 +19181,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.1.3',
+                        id: 'cae_6.5.2.1.3',
                         id_nomenclature: '6.5.2.1.3',
                         nom: 'D\u00e9dier un lieu \u00e0 la sensibilisation climat-air-\u00e9nergie (il est visible et accessible)',
                         description:
@@ -19197,7 +19197,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.2.2',
+                    id: 'cae_6.5.2.2',
                     id_nomenclature: '6.5.2.2',
                     nom: 'Informer et mobiliser les relais d\u2019opinions (partis politiques, associations, ONG)',
                     description: '',
@@ -19208,7 +19208,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.2.1',
+                        id: 'cae_6.5.2.2.1',
                         id_nomenclature: '6.5.2.2.1',
                         nom: 'Les relais d\u0027opinion connaissent les objectifs et les axes de la politique climat-air-\u00e9nergie de la collectivit\u00e9',
                         description: '',
@@ -19221,7 +19221,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.2.2',
+                        id: 'cae_6.5.2.2.2',
                         id_nomenclature: '6.5.2.2.2',
                         nom: 'Convier les relais d\u0027opinions aux groupes de travail',
                         description:
@@ -19235,7 +19235,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.2.3',
+                        id: 'cae_6.5.2.2.3',
                         id_nomenclature: '6.5.2.2.3',
                         nom: 'Le nombre d\u0027associations environnementales est important, elles font des propositions constructives, r\u00e9guli\u00e8res et sont soutenues par la collectivit\u00e9 (convention de partenariat, mise en place de forum des associations, etc.). En fonction du tissu associatif local, les relais d\u2019opinions sont vari\u00e9s d\u2019un territoire \u00e0 l\u2019autre.',
                         description: '',
@@ -19250,7 +19250,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.2.3',
+                    id: 'cae_6.5.2.3',
                     id_nomenclature: '6.5.2.3',
                     nom: 'Sensibiliser les habitants sur l\u2019\u00e9co-consommation et les \u00e9co-gestes',
                     description:
@@ -19264,7 +19264,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.2.4',
+                    id: 'cae_6.5.2.4',
                     id_nomenclature: '6.5.2.4',
                     nom: 'Montrer l\u2019exemple lors des \u00e9v\u00e8nements',
                     description: '',
@@ -19275,7 +19275,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.4.1',
+                        id: 'cae_6.5.2.4.1',
                         id_nomenclature: '6.5.2.4.1',
                         nom: 'A l\u0027occasion de manifestations ou \u00e0 l\u0027occasion de r\u00e9compenses \u00e0 des jeux ou objets "promotionnels", des objets incitant aux comportements \u00e9co-responsables sont privil\u00e9gi\u00e9s',
                         description:
@@ -19289,7 +19289,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.4.2',
+                        id: 'cae_6.5.2.4.2',
                         id_nomenclature: '6.5.2.4.2',
                         nom: 'Mettre en place des \u201cponts\u201d entre les diff\u00e9rents postes de consommation',
                         description:
@@ -19303,7 +19303,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.4.3',
+                        id: 'cae_6.5.2.4.3',
                         id_nomenclature: '6.5.2.4.3',
                         nom: 'R\u00e9aliser de mani\u00e8re \u00e9co-responsable la tenue des \u00e9v\u00e8nements des relais d\u0027opinions',
                         description:
@@ -19319,7 +19319,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.2.5',
+                    id: 'cae_6.5.2.5',
                     id_nomenclature: '6.5.2.5',
                     nom: 'Limiter l\u2019emprise de la publicit\u00e9',
                     description: '',
@@ -19330,7 +19330,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.5.1',
+                        id: 'cae_6.5.2.5.1',
                         id_nomenclature: '6.5.2.5.1',
                         nom: 'Sensibiliser les habitants \u00e0 travers des actions rapides et efficaces (par exemple distribution g\u00e9n\u00e9ralis\u00e9e d\u2019autocollants \u00ab Stop Pub \u00bb avec le bulletin municipal)',
                         description: '',
@@ -19343,7 +19343,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.5.2',
+                        id: 'cae_6.5.2.5.2',
                         id_nomenclature: '6.5.2.5.2',
                         nom: 'Faire respecter les obligations concernant les enseignes lumineuses et l\u0027affichage par exemple en s\u2019appuyant sur les associations locales pour vous accompagner dans le travail de recensement et de sensibilisation',
                         description: '',
@@ -19356,7 +19356,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.5.3',
+                        id: 'cae_6.5.2.5.3',
                         id_nomenclature: '6.5.2.5.3',
                         nom: 'Mettre en place une taxe locale sur les enseignes et publicit\u00e9s ext\u00e9rieures (TPLE)',
                         description: '',
@@ -19369,7 +19369,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.5.4',
+                        id: 'cae_6.5.2.5.4',
                         id_nomenclature: '6.5.2.5.4',
                         nom: 'Devenir une ville sans publicit\u00e9 en instaurant une Zone de Publicit\u00e9 Restreinte',
                         description: '',
@@ -19382,7 +19382,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.5.5',
+                        id: 'cae_6.5.2.5.5',
                         id_nomenclature: '6.5.2.5.5',
                         nom: 'Mettre en place un r\u00e8glement local de publicit\u00e9 (RLP)',
                         description: '',
@@ -19397,7 +19397,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.2.6',
+                    id: 'cae_6.5.2.6',
                     id_nomenclature: '6.5.2.6',
                     nom: 'Soutenir l\u2019\u00e9co-consommation locale, notamment via un syst\u00e8me d\u0027\u00e9change local ou une monnaie locale',
                     description:
@@ -19409,7 +19409,7 @@ export const actions: ActionReferentiel[] = [
                     points: 10,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.6.1',
+                        id: 'cae_6.5.2.6.1',
                         id_nomenclature: '6.5.2.6.1',
                         nom: 'Initier la cr\u00e9ation d\u2019une monnaie locale ou soutenir les associations \u00e0 l\u2019initiative de ces projets (Charte d\u2019engagement environnemental adoss\u00e9 \u00e0 la monnaie locale par exemple)',
                         description: '',
@@ -19422,7 +19422,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.6.2',
+                        id: 'cae_6.5.2.6.2',
                         id_nomenclature: '6.5.2.6.2',
                         nom: 'Informer les habitants de l\u2019int\u00e9r\u00eat d\u2019une monnaie locale',
                         description: '',
@@ -19435,7 +19435,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.2.6.3',
+                        id: 'cae_6.5.2.6.3',
                         id_nomenclature: '6.5.2.6.3',
                         nom: 'D\u00e9velopper des circuits de proximit\u00e9 et favoriser les initiatives de consommation alternative (mise \u00e0 disposition de lieux par exemple)',
                         description: '',
@@ -19452,7 +19452,7 @@ export const actions: ActionReferentiel[] = [
               }),
 
               new ActionReferentiel({
-                id: 'citergie__6.5.3',
+                id: 'cae_6.5.3',
                 id_nomenclature: '6.5.3',
                 nom: 'D\u00e9velopper des actions d\u0027\u00e9ducation et de sensibilisation dans les \u00e9tablissements scolaires et centres de petite enfance',
                 description:
@@ -19467,7 +19467,7 @@ export const actions: ActionReferentiel[] = [
                 points: 4,
                 actions: [
                   new ActionReferentiel({
-                    id: 'citergie__6.5.3.1',
+                    id: 'cae_6.5.3.1',
                     id_nomenclature: '6.5.3.1',
                     nom: 'Rencontrer les acteurs locaux de l\u2019\u00e9ducation et la petite enfance et s\u2019organiser pour mener des actions communes',
                     description: '',
@@ -19478,7 +19478,7 @@ export const actions: ActionReferentiel[] = [
                     points: 30,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.1.1',
+                        id: 'cae_6.5.3.1.1',
                         id_nomenclature: '6.5.3.1.1',
                         nom: 'D\u00e9finir le budget et les ressources humaines pr\u00e9vus pour les actions de sensibilisation climat-air-\u00e9nergie dans les \u00e9coles et structures d\u2019accueil de jeunes enfants',
                         description: '',
@@ -19491,7 +19491,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.1.2',
+                        id: 'cae_6.5.3.1.2',
                         id_nomenclature: '6.5.3.1.2',
                         nom: 'Pr\u00e9senter les enjeux et la politique climat-air-\u00e9nergie de la collectivit\u00e9 aux enseignants et professionnels de la petite enfance',
                         description: '',
@@ -19504,7 +19504,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.1.3',
+                        id: 'cae_6.5.3.1.3',
                         id_nomenclature: '6.5.3.1.3',
                         nom: 'Identifier les bonnes pratiques, ressources et projets d\u00e9j\u00e0 mis en place dans les structures et les besoins d\u2019accompagnement',
                         description: '',
@@ -19517,7 +19517,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.1.4',
+                        id: 'cae_6.5.3.1.4',
                         id_nomenclature: '6.5.3.1.4',
                         nom: 'Faire travailler les acteurs de l\u2019\u00e9ducation et de la petite enfance en r\u00e9seau sur ces sujets (groupe de travail, formation collective\u2026)',
                         description: '',
@@ -19532,7 +19532,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.3.2',
+                    id: 'cae_6.5.3.2',
                     id_nomenclature: '6.5.3.2',
                     nom: 'Sensibiliser les enfants aux enjeux climat-air-\u00e9nergie et \u00e0 l\u2019\u00e9co-citoyennet\u00e9',
                     description: '',
@@ -19543,7 +19543,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.2.1',
+                        id: 'cae_6.5.3.2.1',
                         id_nomenclature: '6.5.3.2.1',
                         nom: 'Participer et soutenir la journ\u00e9e ou semaine-\u00e9v\u00e8nement sur le climat, l\u2019air ou l\u2019\u00e9nergie',
                         description: '',
@@ -19556,7 +19556,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.2.2',
+                        id: 'cae_6.5.3.2.2',
                         id_nomenclature: '6.5.3.2.2',
                         nom: 'Participer et soutenir le d\u00e9fi inter-\u00e9coles ou inter-classes sur le th\u00e8me de l\u2019\u00e9nergie, la mobilit\u00e9, le tri des d\u00e9chets\u2026',
                         description: '',
@@ -19569,7 +19569,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.2.3',
+                        id: 'cae_6.5.3.2.3',
                         id_nomenclature: '6.5.3.2.3',
                         nom: 'Participer et soutenir la visite d\u2019une v\u00e9lo-station, d\u2019un centre de tri des d\u00e9chets, d\u2019un jardin partag\u00e9\u2026',
                         description: '',
@@ -19582,7 +19582,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.2.4',
+                        id: 'cae_6.5.3.2.4',
                         id_nomenclature: '6.5.3.2.4',
                         nom: 'Soutenir l\u0027implication des \u00e9l\u00e8ves et des enseignants dans le diagnostic, le suivi et les mesures prises pour am\u00e9liorer la qualit\u00e9 de l\u0027air int\u00e9rieur',
                         description: '',
@@ -19595,7 +19595,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.2.5',
+                        id: 'cae_6.5.3.2.5',
                         id_nomenclature: '6.5.3.2.5',
                         nom: 'Soutenir l\u0027implication des \u00e9l\u00e8ves dans les projets climat-air-\u00e9nergie de la collectivit\u00e9 (trouver le nom ou dessiner le logo d\u2019un projet ENR citoyen ou des panneaux de sensibilisation\u2026)',
                         description: '',
@@ -19608,7 +19608,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.2.6',
+                        id: 'cae_6.5.3.2.6',
                         id_nomenclature: '6.5.3.2.6',
                         nom: 'Participer \u00e0 la r\u00e9alisation d\u2019une vid\u00e9o participative, r\u00e9alisation d\u2019une exposition en lien avec l\u2019\u00e9nergie, l\u2019air ou le climat',
                         description: '',
@@ -19621,7 +19621,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.2.7',
+                        id: 'cae_6.5.3.2.7',
                         id_nomenclature: '6.5.3.2.7',
                         nom: 'Soutenir les appels \u00e0 projets en direction des \u00e9tablissements pour inciter \u00e0 la mise en place d\u2019actions p\u00e9dagogiques climat-air-\u00e9nergie',
                         description: '',
@@ -19634,7 +19634,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.2.8',
+                        id: 'cae_6.5.3.2.8',
                         id_nomenclature: '6.5.3.2.8',
                         nom: 'Soutenir la labellisation \u00ab \u00e9co-\u00e9cole \u00bb',
                         description: '',
@@ -19649,7 +19649,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.3.3',
+                    id: 'cae_6.5.3.3',
                     id_nomenclature: '6.5.3.3',
                     nom: 'Mettre en place des lignes de bus p\u00e9destre ou cycliste dans le cadre d\u2019un Plan de d\u00e9placement \u00e9tablissement scolaire (PDES)',
                     description: '',
@@ -19660,7 +19660,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.3.1',
+                        id: 'cae_6.5.3.3.1',
                         id_nomenclature: '6.5.3.3.1',
                         nom: 'Identifier et localiser des parents et \u00e9l\u00e8ves volontaires',
                         description: '',
@@ -19673,7 +19673,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.3.2',
+                        id: 'cae_6.5.3.3.2',
                         id_nomenclature: '6.5.3.3.2',
                         nom: 'Organiser une journ\u00e9e test (choix d\u2019une date festive pour faire participer le maximum d\u2019\u00e9l\u00e8ves)',
                         description: '',
@@ -19686,7 +19686,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.3.3',
+                        id: 'cae_6.5.3.3.3',
                         id_nomenclature: '6.5.3.3.3',
                         nom: 'Mat\u00e9rialiser des arr\u00eats et itin\u00e9raires des p\u00e9dibus/v\u00e9lobus',
                         description: '',
@@ -19699,7 +19699,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.3.4',
+                        id: 'cae_6.5.3.3.4',
                         id_nomenclature: '6.5.3.3.4',
                         nom: 'Soutenir une offre d\u2019\u00e9quipements \u00e0 toutes les \u00e9coles participantes (mobilier urbain, gilets r\u00e9fl\u00e9chissants, etc.)',
                         description: '',
@@ -19712,7 +19712,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.3.5',
+                        id: 'cae_6.5.3.3.5',
                         id_nomenclature: '6.5.3.3.5',
                         nom: 'Participer \u00e0 l\u0027analyse et \u00e0 la valorisation des retours d\u2019exp\u00e9riences',
                         description: '',
@@ -19727,7 +19727,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.3.4',
+                    id: 'cae_6.5.3.4',
                     id_nomenclature: '6.5.3.4',
                     nom: 'P\u00e9renniser et massifier la sensibilisation',
                     description:
@@ -19741,7 +19741,7 @@ export const actions: ActionReferentiel[] = [
                   }),
 
                   new ActionReferentiel({
-                    id: 'citergie__6.5.3.5',
+                    id: 'cae_6.5.3.5',
                     id_nomenclature: '6.5.3.5',
                     nom: 'Suivre les r\u00e9sultats et atteindre les objectifs fix\u00e9s',
                     description: '',
@@ -19752,7 +19752,7 @@ export const actions: ActionReferentiel[] = [
                     points: 20,
                     actions: [
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.5.1',
+                        id: 'cae_6.5.3.5.1',
                         id_nomenclature: '6.5.3.5.1',
                         nom: 'Avoir un % \u00e9lev\u00e9 (\u003e 50%) d\u2019\u00e9l\u00e8ves concern\u00e9s par une d\u00e9marche de sensibilisation/action',
                         description: '',
@@ -19765,7 +19765,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.5.2',
+                        id: 'cae_6.5.3.5.2',
                         id_nomenclature: '6.5.3.5.2',
                         nom: 'Avoir une part d\u2019\u00e9tablissements scolaires couverts par un PDES ou un p\u00e9dibus/v\u00e9lobus en augmentation',
                         description: '',
@@ -19778,7 +19778,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.5.3',
+                        id: 'cae_6.5.3.5.3',
                         id_nomenclature: '6.5.3.5.3',
                         nom: 'Contr\u00f4ler l\u2019efficacit\u00e9 des actions mises en place, par exemple : baisse constat\u00e9e des consommations d\u2019\u00e9conomies d\u0027\u00e9nergie ou d\u2019eau r\u00e9alis\u00e9es, baisse de la quantit\u00e9 de d\u00e9chets r\u00e9siduels\u2026',
                         description: '',
@@ -19791,7 +19791,7 @@ export const actions: ActionReferentiel[] = [
                       }),
 
                       new ActionReferentiel({
-                        id: 'citergie__6.5.3.5.4',
+                        id: 'cae_6.5.3.5.4',
                         id_nomenclature: '6.5.3.5.4',
                         nom: 'Avoir une reconnaissance via un dispositif de labellisation ou des retomb\u00e9es presse (\u00e9co-\u00e9cole, \u00e9colo cr\u00e8che, article de presse\u2026)',
                         description: '',
