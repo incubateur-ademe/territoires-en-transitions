@@ -62,6 +62,7 @@ def render_actions_as_typescript(
     render_field_text_to_html(actions, "description")
     render_field_text_to_html(actions, "contexte")
     render_field_text_to_html(actions, "exemples")
+    render_field_text_to_html(actions, "preuve")
     render_field_text_to_html(actions, "ressources")
 
     template = env.get_template(template_file)
