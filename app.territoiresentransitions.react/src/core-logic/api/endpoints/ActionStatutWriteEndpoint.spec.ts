@@ -3,7 +3,7 @@ import {ActionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWr
 import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
 
 describe('Action-statut write endpoint', () => {
-  it('Saving a statut should return the same statut', async () => {
+  it('Saving a statut should return an equivalent statut', async () => {
     const endpoint = new ActionStatutWriteEndpoint();
     const statut: ActionStatutWrite = {
       concerne: true,
