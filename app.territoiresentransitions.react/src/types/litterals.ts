@@ -1,16 +1,7 @@
 // TODO : This should be defined in generated
-export type Avancement =
-  | ''
-  | 'faite'
-  | 'programmee'
-  | 'pas_faite'
-  | 'non_concernee'
-  | 'en_cours';
 
-export type FicheActionAvancement = Exclude<
-  Avancement,
-  'non_concernee' | 'programmee' | ''
->;
+import {Avancement} from 'generated/dataLayer/action_statut_read';
+export type FicheActionAvancement = Exclude<Avancement, 'programme'>;
 
 export type Referentiel = 'eci' | 'cae';
 export type ReferentielOfIndicateur = 'eci' | 'cae' | 'crte';
