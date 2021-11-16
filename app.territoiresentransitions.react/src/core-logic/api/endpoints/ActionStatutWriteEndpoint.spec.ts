@@ -13,9 +13,9 @@ describe('Action-statut write endpoint', () => {
       epci_id: 1,
     };
     const result = await endpoint.save(statut);
-    expect(result!.epci_id).toEqual(result!.epci_id);
-    expect(result!.concerne).toEqual(result!.concerne);
-    expect(result!.action_id).toEqual(result!.action_id);
+    expect(result!.epci_id).toEqual(statut.epci_id);
+    expect(result!.concerne).toEqual(statut.concerne);
+    expect(result!.action_id).toEqual(statut.action_id);
   });
 
   it('Saving a statut with bad epci should fail', async () => {
