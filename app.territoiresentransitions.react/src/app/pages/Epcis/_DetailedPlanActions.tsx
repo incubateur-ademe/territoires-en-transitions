@@ -81,22 +81,24 @@ const FicheActionAvancementCountBarAndLegend = ({
     return <></>;
   const avancementsCount = epciPlanActionAvancementSummmary.avancementsCount;
 
-  const avancementToGetAdjectiveFromCount: Record<
+  const getAdjectiveFromCountByAvancement: Record<
     FicheActionAvancement,
     (count: number) => string
   > = {
-    faite: count =>
+    non_renseigne: count =>
+      addSAtTheEndOfWordIfCountGreaterThan1({count, word: 'non renseignée'}),
+    fait: count =>
       addSAtTheEndOfWordIfCountGreaterThan1({count, word: 'faite'}),
     en_cours: () => 'en cours',
-    pas_faite: count =>
+    pas_fait: count =>
       addSAtTheEndOfWordIfCountGreaterThan1({count, word: 'non faite'}),
   };
 
-  const avancementLegends = R.keys(avancementToGetAdjectiveFromCount).map(
+  const avancementLegends = R.keys(getAdjectiveFromCountByAvancement).map(
     avancement => {
       const count = avancementsCount[avancement as FicheActionAvancement] ?? 0;
       if (count > 0)
-        return `${count} ${avancementToGetAdjectiveFromCount[avancement](
+        return `${count} ${getAdjectiveFromCountByAvancement[avancement](
           count
         )}`;
       return undefined;
@@ -108,7 +110,7 @@ const FicheActionAvancementCountBarAndLegend = ({
       epciPlanActionAvancementSummmary.total) *
     100;
   const faitePercentage =
-    ((epciPlanActionAvancementSummmary.avancementsCount['faite'] ?? 0) /
+    ((epciPlanActionAvancementSummmary.avancementsCount['fait'] ?? 0) /
       epciPlanActionAvancementSummmary.total) *
     100;
 
@@ -120,7 +122,7 @@ const FicheActionAvancementCountBarAndLegend = ({
             className=" h-5"
             style={{
               width: `${faitePercentage}%`,
-              backgroundColor: ficheActionAvancementColors['faite'],
+              backgroundColor: ficheActionAvancementColors['fait'],
             }}
           />
           <div

@@ -1,9 +1,6 @@
 import * as R from 'ramda';
-import type {
-  Avancement,
-  FicheActionAvancement,
-  ReferentielOfIndicateur,
-} from 'types';
+import type {FicheActionAvancement, ReferentielOfIndicateur} from 'types';
+import {Avancement} from 'generated/dataLayer/action_statut_read';
 
 // Define all labels from app
 export const referentielToName: Record<ReferentielOfIndicateur, string> = {
@@ -12,18 +9,19 @@ export const referentielToName: Record<ReferentielOfIndicateur, string> = {
   crte: 'Contrat Relance Transition Écologique',
 };
 
-export const avancementLabels: Omit<Record<Avancement, string>, ''> = {
-  non_concernee: 'Non concernée',
-  pas_faite: 'Pas faite',
-  programmee: 'Prévue',
+export const avancementLabels: Record<Avancement, string> = {
+  //non_concerne: 'Non concernée',
+  pas_fait: 'Pas faite',
+  programme: 'Prévue',
   en_cours: 'En cours',
-  faite: 'Faite',
+  fait: 'Faite',
+  non_renseigne: 'Non renseignée',
 };
 
 export const ficheActionAvancementLabels: Record<
   FicheActionAvancement,
   string
-> = R.omit(['non_concernee', 'programmee'], avancementLabels);
+> = R.omit(['programme'], avancementLabels);
 
 export const epciCard_AxisShortLabel: Record<string, string> = {
   economie_circulaire__1: 'Stratégie globale',

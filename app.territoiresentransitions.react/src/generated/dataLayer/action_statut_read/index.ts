@@ -2,10 +2,12 @@
 
 export interface ActionStatutRead {
   action_id: string;
-  avancement: string;
+  avancement: 'pas_fait' | 'fait' | 'non_renseigne' | 'programme' | 'en_cours';
   concerne: boolean;
   epci_id: number;
   id: number;
   modified_at: string;
   modified_by: string;
 }
+
+export type Avancement = ActionStatutRead['avancement'];

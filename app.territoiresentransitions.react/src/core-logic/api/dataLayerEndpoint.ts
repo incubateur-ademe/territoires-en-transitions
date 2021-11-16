@@ -88,7 +88,9 @@ export abstract class DataLayerReadCachedEndpoint<
   constructor(changeNotifiers: ChangeNotifier[]) {
     super();
     for (const changeNotifier of changeNotifiers) {
-      changeNotifier.addListener(this.clearCache);
+      changeNotifier.addListener(() => {
+        this.clearCache();
+      });
     }
   }
 
