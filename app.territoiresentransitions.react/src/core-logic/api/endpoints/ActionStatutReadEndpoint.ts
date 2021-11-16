@@ -1,15 +1,20 @@
-import {DataLayerReadEndpoint} from 'core-logic/api/dataLayerEndpoint';
+import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
+import {actionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
+
+export interface EpciBasedParams {
+  epci_id: number;
+}
 
 export interface StatutGetParams {
   epci_id: number;
   action_id?: string;
 }
 
-export class ActionStatutReadEndpoint extends DataLayerReadEndpoint<
+class ActionStatutReadEndpoint extends DataLayerReadCachedEndpoint<
   ActionStatutRead,
-  StatutGetParams
+  StatutGetParams & EpciBasedParams
 > {
   readonly name = 'action_statut';
 
@@ -23,3 +28,7 @@ export class ActionStatutReadEndpoint extends DataLayerReadEndpoint<
     return this._table.eq('epci_id', getParams.epci_id);
   }
 }
+
+export const actionStatutReadEndpoint = new ActionStatutReadEndpoint([
+  actionStatutWriteEndpoint,
+]);

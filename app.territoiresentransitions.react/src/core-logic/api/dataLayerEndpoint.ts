@@ -79,6 +79,42 @@ export abstract class DataLayerReadEndpoint<
 }
 
 /**
+ *
+ */
+export abstract class DataLayerReadCachedEndpoint<
+  T,
+  GetParams
+> extends DataLayerReadEndpoint<T, GetParams> {
+  constructor(changeNotifiers: ChangeNotifier[]) {
+    super();
+    for (const changeNotifier of changeNotifiers) {
+      changeNotifier.addListener(this.clearCache);
+    }
+  }
+
+  _cache: Record<string, T[]> = {};
+  clearCache() {
+    this._cache = {};
+  }
+
+  /**
+   * Get a list of T using getParams.
+   *
+   * Uses query.
+   */
+  async getBy(getParams: GetParams): Promise<T[]> {
+    const key = JSON.stringify(getParams);
+    if (this._cache[key] !== undefined) {
+      return this._cache[key];
+    }
+    const queryResponse = await this._read(getParams);
+
+    this._cache[key] = this.handleResponse(queryResponse);
+    return this._cache[key];
+  }
+}
+
+/**
  * Data layer write only endpoint
  */
 export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {

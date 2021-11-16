@@ -11,3 +11,5 @@ export class ActionStatutWriteEndpoint extends DataLayerWriteEndpoint<ActionStat
     return this._table.upsert([statut]);
   }
 }
+
+export const actionStatutWriteEndpoint = new ActionStatutWriteEndpoint();
