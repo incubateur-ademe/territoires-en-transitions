@@ -21,7 +21,7 @@ jobs:
 
       - name: Black Code Formatter
         uses: psf/black@21.5b1
-        
+
       # Restore cache or create a new one for all dependencies installed with
       # Python.
       - name: Set up Python cache
@@ -36,9 +36,9 @@ jobs:
             ${{ runner.os }}-
 
       # Check black formatting :( Does not work. Any clue ?
-      # - name: Black checking 
+      # - name: Black checking
       #   run: |
-      #     pipenv run black --check . 
+      #     pipenv run black --check .
       #   working-directory: ${{env.working-directory}}
 
       # Restore cache or create a new one for all dependencies installed with
@@ -73,7 +73,7 @@ jobs:
           pipenv install --dev
         working-directory: ${{env.working-directory}}
 
-      # Launch docker 
+      # Launch docker
       - name: Build the stack
         run: |
           cp ./data_layer/test_only_docker/.env.sample  ./data_layer/test_only_docker/supabase_test.env
