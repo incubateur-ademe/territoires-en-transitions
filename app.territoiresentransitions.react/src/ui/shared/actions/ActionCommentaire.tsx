@@ -22,16 +22,17 @@ export const ActionCommentaire = ({actionId}: {actionId: string}) => {
 const ActionCommentaireField = observer(
   ({observable}: {observable: ActionCommentaireFieldObservable}) => (
     <textarea
-      defaultValue={observable.fieldValue}
-      onBlur={evt => observable.saveFieldValue(evt.target.value)}
+      value={observable.fieldValue}
+      onChange={event => observable.setFieldValue(event.currentTarget.value)}
+      onBlur={_ => observable.saveFieldValue()}
       className="fr-input mt-2 w-full bg-white p-3 mr-5"
     />
   )
 );
 
 class ActionCommentaireFieldObservable {
-  private epciId: number;
-  private actionId: string;
+  private readonly epciId: number;
+  private readonly actionId: string;
   fieldValue = '';
 
   constructor({actionId, epciId}: {epciId: number; actionId: string}) {
@@ -41,18 +42,16 @@ class ActionCommentaireFieldObservable {
     this.fetch();
   }
 
-  private setFieldValue(fieldValue: string) {
+  setFieldValue(fieldValue: string) {
     this.fieldValue = fieldValue;
   }
 
-  saveFieldValue(fieldValue: string) {
-    actionCommentaireRepository
-      .save({
-        action_id: this.actionId,
-        epci_id: this.epciId,
-        commentaire: fieldValue,
-      })
-      .then(saved => this.setFieldValue(saved?.commentaire ?? ''));
+  saveFieldValue() {
+    actionCommentaireRepository.save({
+      action_id: this.actionId,
+      epci_id: this.epciId,
+      commentaire: this.fieldValue,
+    });
   }
 
   fetch() {
