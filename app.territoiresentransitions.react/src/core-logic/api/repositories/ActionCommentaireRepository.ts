@@ -1,6 +1,7 @@
 import {actionCommentaireReadEndpoint} from 'core-logic/api/endpoints/ActionCommentaireReadEndpoint';
 import {ActionCommentaireRead} from 'generated/dataLayer/action_commentaire_read';
 import {ActionCommentaireWrite} from 'generated/dataLayer/action_commentaire_write';
+import {actionCommentaireWriteEndpoint} from 'core-logic/api/endpoints/ActionCommentaireWriteEndpoint';
 
 class ActionCommentaireRepository {
   // save(commentaire: ActionCommentaireWrite): Promise<ActionCommentaireWrite |
