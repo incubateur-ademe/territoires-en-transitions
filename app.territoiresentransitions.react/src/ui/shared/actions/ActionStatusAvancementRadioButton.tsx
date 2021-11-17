@@ -3,7 +3,7 @@ import * as R from 'ramda';
 import type {Option, Options} from 'types';
 import {AvancementRadioButton} from 'ui/shared/AvancementRadioButton';
 import {BehaviorSubject, Observable, Subject, withLatestFrom} from 'rxjs';
-import {Subscribe} from '@react-rxjs/core';
+
 import {
   ActionStatutRead,
   Avancement,
@@ -108,19 +108,7 @@ class ActionStatusAvancementRadioButtonBloc {
   }
 }
 
-export const ActionStatusAvancementRadioButton = ({
-  actionId,
-}: {
-  actionId: string;
-}) => {
-  return (
-    <Subscribe>
-      <_ActionStatusAvancementRadioButton actionId={actionId} />
-    </Subscribe>
-  );
-};
-
-export class _ActionStatusAvancementRadioButton extends Component<
+export class ActionStatusAvancementRadioButton extends Component<
   {
     actionId: string;
   },
