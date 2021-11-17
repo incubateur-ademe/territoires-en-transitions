@@ -29,7 +29,12 @@ def test_postgres_setup_should_create_tables(initialized_cursor):
 
 
 def test_epci_insertion_should_update_table_and_view(initialized_cursor):
-    insert_epci = open("tests/postgres/insert_fake_epcis.sql", "r").read()
+    insert_epci = open("tests/postgres/11-insert_fake_epcis.sql", "r").read()
+    insert_epci = """
+        insert into
+        action_statut(epci_id, action_id, avancement, concerne, modified_by)
+        values (1, 'cae_1', 'fait', true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
+    """
     initialized_cursor.execute(insert_epci)
 
     initialized_cursor.execute("select * from epci;")
@@ -44,7 +49,9 @@ def test_epci_insertion_should_update_table_and_view(initialized_cursor):
 
 
 def test_referentiel_should_update_table_and_view(initialized_cursor):
-    insert_referentiel = open("tests/postgres/insert_fake_referentiel.sql", "r").read()
+    insert_referentiel = open(
+        "tests/postgres/12-insert_fake_referentiel.sql", "r"
+    ).read()
     initialized_cursor.execute(insert_referentiel)
 
     initialized_cursor.execute("select * from action_relation;")
