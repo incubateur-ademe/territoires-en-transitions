@@ -14,11 +14,11 @@ describe('Action-commentaire reading endpoint should retrieve data-layer default
     async () => {
       const results = await actionCommentaireReadEndpoint.getBy({
         epci_id: 1,
-        action_id: 'cae_1',
+        action_id: 'cae_1.2.3.1',
       });
       expect(results.length).toBeGreaterThanOrEqual(1);
       expect(results[0].epci_id).toEqual(1);
-      expect(results[0].action_id).toEqual('cae_1');
+      expect(results[0].action_id).toEqual('cae_1.2.3.1');
     }
   );
   it(
