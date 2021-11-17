@@ -65,3 +65,22 @@ def test_referentiel_should_update_table_and_view(initialized_cursor):
     assert len(children) == len(relations)
     for child in children:
         print(child)
+
+
+def test_can_insert_and_retrieve_action_commentaire(postgres_connection):
+    with postgres_connection.cursor() as cursor:
+        insert_commentaire = """
+        insert into action_commentaire(epci_id, action_id, commentaire, modified_by)
+        values (1, 'cae_1.2.3' , 'un commentaire', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9')
+        """
+        cursor.execute(insert_commentaire)
+        cursor.execute(
+            "select * from action_commentaire where modified_by='17440546-f389-4d4f-bfdb-b0c94a1bd0f9';"
+        )
+        all_action_commentaires = cursor.fetchall()
+        assert len(all_action_commentaires) == 1
+        assert all_action_commentaires[-1][1:4] == (
+            1,
+            "cae_1.2.3",
+            "un commentaire",
+        )
