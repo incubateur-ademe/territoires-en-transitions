@@ -64,18 +64,4 @@ class ActionCommentaireFieldObservable {
         this.setFieldValue(fetched?.commentaire ?? '');
       });
   }
-
-  private listenToFieldValueChanges() {
-    this._fieldValueToSave;
-  }
-
-  onMount() {
-    this.listenToFieldValueChanges();
-    this.fetch();
-  }
-
-  dispose() {
-    this._commentaire.unsubscribe();
-    this._fieldValueToSave.unsubscribe();
-  }
 }
