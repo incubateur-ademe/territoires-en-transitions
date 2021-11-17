@@ -1,20 +1,13 @@
-import {UtilisateurInscriptionInterface} from 'generated/models/utilisateur_inscription';
 import React, {useState} from 'react';
-import {ENV} from 'environmentVariables';
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Link} from 'react-router-dom';
-
-const politique_vie_privee =
-  'https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel';
-
-export interface InscriptionFormData {
-  email: string;
-  nom: string;
-  prenom: string;
-  vie_privee_conditions: boolean;
-}
+import {
+  InscriptionUtilisateur,
+  politique_vie_privee,
+  registerUser,
+} from 'core-logic/api/auth/registration';
 
 type FormState = 'ready' | 'success' | 'failure';
 
@@ -57,10 +50,11 @@ const RegistrationForm = () => {
     );
   }
 
-  const initialData: InscriptionFormData = {
+  const initialData: InscriptionUtilisateur = {
     email: '',
     nom: '',
     prenom: '',
+    mot_de_passe: '',
     vie_privee_conditions: false,
   };
 
@@ -74,48 +68,28 @@ const RegistrationForm = () => {
     prenom: Yup.string()
       .max(300, 'Ce champ doit faire au maximum 300 caractères')
       .required('Champ requis'),
+    mot_de_passe: Yup.string()
+      .min(8, 'Ce champ doit faire au minimum 8 caractères')
+      .max(300, 'Ce champ doit faire au maximum 300 caractères')
+      .required('Champ requis'),
     vie_privee_conditions: Yup.boolean().isTrue('Champ requis'),
   });
 
-  const register = (data: InscriptionFormData) => {
-    const endpoint = `${ENV.backendHost}/v2/auth/register`;
-    const inscription: UtilisateurInscriptionInterface = {
-      email: data.email,
-      nom: data.nom,
-      prenom: data.prenom,
-      vie_privee_conditions: data.vie_privee_conditions
-        ? politique_vie_privee
-        : '',
-    };
-    fetch(endpoint, {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(inscription),
-    })
+  const register = (data: InscriptionUtilisateur) => {
+    registerUser(data)
       .catch(reason => {
         setState('failure');
         setErrorMessage(`${reason}`);
       })
-      .then(async response => {
-        if (response) {
-          setState(response.ok ? 'success' : 'failure');
-          if (!response.ok) {
-            const contents = await response.json();
-            setErrorMessage(contents['detail']['message']);
-          }
-        } else {
-          setState('failure');
-        }
+      .then(_ => {
+        setState('success');
       });
   };
 
   return (
     <main className="fr-container ">
       <div className="max-w-3xl pt-8 mx-auto">
-        <Formik<InscriptionFormData>
+        <Formik<InscriptionUtilisateur>
           initialValues={initialData}
           validationSchema={validation}
           onSubmit={register}
@@ -130,6 +104,13 @@ const RegistrationForm = () => {
                   label="Email"
                   component={LabeledTextField}
                 />
+                <div className="p-5" />
+                <Field
+                  name="mot_de_passe"
+                  label="Mot de passe"
+                  component={LabeledTextField}
+                />
+
                 <div className="p-5" />
                 <Field name="nom" label="Prénom" component={LabeledTextField} />
                 <div className="p-5" />
