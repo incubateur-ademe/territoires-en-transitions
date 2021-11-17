@@ -4,10 +4,11 @@ import {ActionCommentaireWrite} from 'generated/dataLayer/action_commentaire_wri
 import {actionCommentaireWriteEndpoint} from 'core-logic/api/endpoints/ActionCommentaireWriteEndpoint';
 
 class ActionCommentaireRepository {
-  // save(commentaire: ActionCommentaireWrite): Promise<ActionCommentaireWrite |
-  // null> {
-  //return actionCommentaireWriteEndpoint.save(commentaire);
-  //}
+  save(
+    commentaire: ActionCommentaireWrite
+  ): Promise<ActionCommentaireWrite | null> {
+    return actionCommentaireWriteEndpoint.save(commentaire);
+  }
 
   async fetch(args: {
     epciId: number;
