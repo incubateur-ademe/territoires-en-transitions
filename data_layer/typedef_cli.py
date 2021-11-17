@@ -9,7 +9,10 @@ import typer
 from psycopg import Connection, Cursor
 
 business_tables = {"read": ["business_action_statut"], "write": ["score"]}
-client_tables = {"read": ["client_epci"], "write": ["action_statut"]}
+client_tables = {
+    "read": ["client_epci", "action_statut", "action_commentaire"],
+    "write": ["action_statut", "action_commentaire"],
+}
 
 default_postgres_url = f"postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:49154/postgres"
 

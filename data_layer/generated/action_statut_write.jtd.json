@@ -3,13 +3,13 @@
     "epci_id": {
       "type": "int32"
     },
-    "avancement": {
-      "type": "string"
-    },
     "concerne": {
       "type": "boolean"
     },
     "modified_by": {
+      "type": "string"
+    },
+    "avancement": {
       "type": "string"
     },
     "action_id": {

@@ -123,6 +123,21 @@ from score
          join action_relation on action_id = action_relation.id;
 
 
+
+--------------------------------
+--------ACTION COMMENTAIRE------
+--------------------------------
+
+create table action_commentaire
+(
+    id          serial primary key,
+    epci_id     integer references epci                              not null,
+    action_id   action_id references action_relation                 not null,
+    commentaire text                                                 not null,
+    modified_by uuid references auth.users default auth.uid()        not null,
+    modified_at timestamp with time zone   default CURRENT_TIMESTAMP not null
+);
+
 --------------------------------
 ----------- EVENTS -------------
 --------------------------------
