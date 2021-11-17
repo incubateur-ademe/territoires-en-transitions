@@ -1,0 +1,13 @@
+{
+  "properties": {
+    "action_id": {
+      "type": "string"
+    },
+    "commentaire": {
+      "type": "string"
+    },
+    "epci_id": {
+      "type": "int32"
+    }
+  }
+}
