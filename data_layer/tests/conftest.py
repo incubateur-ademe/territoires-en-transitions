@@ -2,19 +2,25 @@ import os
 from urllib.parse import urlparse
 
 import psycopg
+from psycopg.rows import dict_row
 import pytest
 import supabase
 from psycopg import Connection
 from supabase.lib.realtime_client import SupabaseRealtimeClient
+from dotenv import load_dotenv
 
 from fake_layers.business import Business
 from fake_layers.client import Client
 
+load_dotenv()
 supabase_project = os.getenv("SUPABASE_PROJECT")
+postgres_port = os.getenv("POSTGRES_PORT")
 supabase_url = f"https://{supabase_project}.supabase.co"
 supabase_key = os.getenv("SUPABASE_KEY")
 postgres_password = "your-super-secret-and-long-postgres-password"
-postgres_url = f"postgresql://postgres:{postgres_password}@localhost:49154/postgres"
+postgres_url = (
+    f"postgresql://postgres:{postgres_password}@localhost:{postgres_port}/postgres"
+)
 
 
 @pytest.fixture()
@@ -58,3 +64,13 @@ def business(supabase_client) -> Business:
 @pytest.fixture()
 def app_client(supabase_client) -> Client:
     return Client(supabase_client)
+
+
+@pytest.fixture()
+def initialized_cursor(postgres_connection: Connection, request):
+    cursor = postgres_connection.cursor(row_factory=dict_row)
+    development = open("postgres/development.sql", "r").read()
+    cursor.execute(development)
+    request.addfinalizer(cursor.close)
+
+    return cursor
