@@ -76,7 +76,7 @@ jobs:
       # Launch docker
       - name: Build the stack
         run: |
-          cp ./data_layer/test_only_docker/.env.sample  ./data_layer/test_only_docker/supabase_test.env
+          cp ./data_layer/test_only_docker/.env.sample  ./data_layer/test_only_docker/supabase_test/.env
           docker-compose -f ./data_layer/test_only_docker/supabase_test/docker-compose.yml up --build -d
 
       # Run tests
