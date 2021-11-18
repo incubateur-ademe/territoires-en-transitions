@@ -1,0 +1,19 @@
+{
+  "properties": {
+    "epci_id": {
+      "type": "int32"
+    },
+    "referentiel": {
+      "type": "string"
+    },
+    "avancement": {
+      "type": "string"
+    },
+    "concerne": {
+      "type": "boolean"
+    },
+    "action_id": {
+      "type": "string"
+    }
+  }
+}
