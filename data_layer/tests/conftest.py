@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 
 from fake_layers.business import Business
 from fake_layers.client import Client
+from tests.utils.prepare_cursor import prepare_cursor
+from tests.utils.sql_factories import make_sql_insert_epci
 
 load_dotenv()
 supabase_project = os.getenv("SUPABASE_PROJECT")
@@ -70,7 +72,7 @@ def app_client(supabase_client) -> Client:
 def initialized_cursor(postgres_connection: Connection, request):
     cursor = postgres_connection.cursor(row_factory=dict_row)
     development = open("postgres/development.sql", "r").read()
-    cursor.execute(development)
+    prepare_cursor(cursor, development)
     request.addfinalizer(cursor.close)
 
     return cursor
