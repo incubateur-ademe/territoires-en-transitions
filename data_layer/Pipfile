@@ -14,6 +14,7 @@ results = "*"
 jsonschema = "*"
 jtd = "*"
 typer = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
