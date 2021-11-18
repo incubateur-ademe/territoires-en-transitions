@@ -1,4 +1,4 @@
-name: Test Business
+name: Test Data Layer
 
 on:
   push:
@@ -13,14 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AUTH_DISABLED_DUMMY_USER: YES
-      working-directory: ./business
+      working-directory: ./data_layer
 
     steps:
       # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2
-
-      - name: Black Code Formatter
-        uses: psf/black@21.5b1
 
       # Restore cache or create a new one for all dependencies installed with
       # Python.
@@ -34,12 +31,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ env.python-tools-cache-name }}
             ${{ runner.os }}-
-
-      # Check black formatting :( Does not work. Any clue ?
-      # - name: Black checking
-      #   run: |
-      #     pipenv run black --check .
-      #   working-directory: ${{env.working-directory}}
 
       # Restore cache or create a new one for all dependencies installed with
       # Pipenv
@@ -81,5 +72,5 @@ jobs:
 
       # Run tests
       - name: Run tests
-        run: pipenv run pytest tests
+        run: pipenv run pytest tests/unit # TODO : run all tests 
         working-directory: ${{env.working-directory}}
