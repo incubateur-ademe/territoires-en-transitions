@@ -1,9 +1,9 @@
 {
   "properties": {
-    "nom": {
+    "siren": {
       "type": "string"
     },
-    "siren": {
+    "nom": {
       "type": "string"
     }
   }

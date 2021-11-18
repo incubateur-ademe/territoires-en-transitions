@@ -1,9 +1,9 @@
 {
   "properties": {
-    "action_id": {
+    "commentaire": {
       "type": "string"
     },
-    "commentaire": {
+    "action_id": {
       "type": "string"
     },
     "epci_id": {

@@ -10,7 +10,7 @@ from psycopg import Connection, Cursor
 
 business_tables = {"read": ["business_action_statut"], "write": ["score"]}
 client_tables = {
-    "read": ["client_epci", "action_statut", "action_commentaire"],
+    "read": ["client_epci", "action_statut", "action_commentaire", "score"],
     "write": ["action_statut", "action_commentaire"],
 }
 

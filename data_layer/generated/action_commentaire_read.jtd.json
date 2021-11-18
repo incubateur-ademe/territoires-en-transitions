@@ -1,22 +1,22 @@
 {
   "properties": {
-    "modified_at": {
-      "type": "timestamp"
-    },
-    "action_id": {
-      "type": "string"
-    },
     "commentaire": {
       "type": "string"
     },
     "id": {
       "type": "int32"
     },
-    "epci_id": {
-      "type": "int32"
+    "action_id": {
+      "type": "string"
+    },
+    "modified_at": {
+      "type": "timestamp"
     },
     "modified_by": {
       "type": "string"
+    },
+    "epci_id": {
+      "type": "int32"
     }
   }
 }
