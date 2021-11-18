@@ -1,4 +1,9 @@
-from tests.utils.sql_factories import make_sql_to_insert_action_relation
+from tests.utils.prepare_cursor import prepare_cursor
+from tests.utils.sql_factories import (
+    make_sql_insert_epci,
+    make_sql_to_insert_action_relation,
+    make_sql_insert_user,
+)
 
 
 def test_insert_action_relation_should_update_table_and_view(initialized_cursor):
@@ -28,27 +33,32 @@ def test_insert_action_relation_should_update_table_and_view(initialized_cursor)
             "referentiel": "cae",
             "id": "cae",
             "parent": None,
-            "children": ["cae_1", "cae_2"],
+            "children": "{cae_1,cae_2}",
         },
         {"referentiel": "cae", "id": "cae_1", "parent": "cae", "children": None},
         {"referentiel": "cae", "id": "cae_2", "parent": "cae", "children": None},
     ]
 
 
-def test_can_insert_and_retrieve_action_commentaire(postgres_connection):
-    with postgres_connection.cursor() as cursor:
-        insert_commentaire = """
+def test_can_insert_and_retrieve_action_commentaire(initialized_cursor):
+    prepare_cursor(
+        initialized_cursor,
+        make_sql_insert_epci()
+        + make_sql_to_insert_action_relation(action_id="cae_1.2.3")
+        + make_sql_insert_user("17440546-f389-4d4f-bfdb-b0c94a1bd0f9"),
+    )
+
+    insert_commentaire = """
         insert into action_commentaire(epci_id, action_id, commentaire, modified_by)
         values (1, 'cae_1.2.3' , 'un commentaire', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9')
-        """
-        cursor.execute(insert_commentaire)
-        cursor.execute(
-            "select * from action_commentaire where modified_by='17440546-f389-4d4f-bfdb-b0c94a1bd0f9';"
-        )
-        all_action_commentaires = cursor.fetchall()
-        assert len(all_action_commentaires) == 1
-        assert all_action_commentaires[-1][1:4] == (
-            1,
-            "cae_1.2.3",
-            "un commentaire",
-        )
+    """
+
+    initialized_cursor.execute(insert_commentaire)
+    initialized_cursor.execute(
+        "select * from action_commentaire where modified_by='17440546-f389-4d4f-bfdb-b0c94a1bd0f9';"
+    )
+    all_action_commentaires = initialized_cursor.fetchall()
+    assert len(all_action_commentaires) == 1
+    last_action_commentaire = all_action_commentaires[-1]
+    last_action_commentaire["action_id"] == "cae_1.2.3"
+    last_action_commentaire["commentaire"] == "un commentaire"

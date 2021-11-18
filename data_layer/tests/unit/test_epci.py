@@ -1,7 +1,8 @@
+from tests.utils.sql_factories import make_sql_insert_epci
+
+
 def test_epci_insertion_should_update_table_and_view(initialized_cursor):
-    insert_epci = """
-    insert into epci values (default, '12345678901234', 'Yolo', default, default);
-    """
+    insert_epci = make_sql_insert_epci()
     initialized_cursor.execute(insert_epci)
 
     initialized_cursor.execute("select * from epci;")
