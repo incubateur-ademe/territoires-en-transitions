@@ -45,19 +45,22 @@ comment on table action_relation is
     'Relation between an action and its parent. '
         'Parent must be inserted before its child; child must be deleted before its parent.';
 
-create view action_children
+create or replace view action_children
 as
 select referentiel, id, parent, children.ids as children
-from action_relation
+from action_relation as ar
          left join lateral (
-    select array_agg(id) as ids
+    select array_agg(action_relation.id) as ids
     from action_relation
-    where id = action_relation.parent
+    where action_relation.parent = ar.id
+
     )
     as children on true;
 comment on view action_children is
     'Action and its children, computed from action relation';
 
+select *
+from action_children;
 
 --------------------------------
 ---------- STATUT --------------
