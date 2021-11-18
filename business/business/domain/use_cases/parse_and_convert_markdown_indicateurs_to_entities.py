@@ -86,16 +86,27 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         if conversion_errors:
             self.bus.publish_event(
                 events.IndicateurMarkdownParsingOrConvertionFailed(
-                    f"Incohérences dans la conversion de {len(conversion_errors)} indicateurs: \n"
+                    f"Incohérences dans la conversion de {len(conversion_errors)} indicateurs : \n"
                     + "\n".join(conversion_errors)
                 )
             )
         else:
-            self.bus.publish_event(
-                events.IndicateurMarkdownConvertedToEntities(
-                    indicateurs=indicateurs, referentiel=command.referentiel
+            indicateur_ids = [indicateur.indicateur_id for indicateur in indicateurs]
+            duplicated_ids = [
+                id for k, id in enumerate(indicateur_ids) if id in indicateur_ids[:k]
+            ]
+            if duplicated_ids:
+                self.bus.publish_event(
+                    events.IndicateurMarkdownParsingOrConvertionFailed(
+                        f"Incohérence dans la conversion : Des ids d'indicateurs ne sont pas uniques : {', '.join(set(duplicated_ids))}"
+                    )
                 )
-            )
+            else:
+                self.bus.publish_event(
+                    events.IndicateurMarkdownConvertedToEntities(
+                        indicateurs=indicateurs, referentiel=command.referentiel
+                    )
+                )
 
     def parse(self, md_files: List[str]) -> Tuple[List[MarkdownIndicateur], List[str]]:
         md_indicateurs: List[MarkdownIndicateur] = []

@@ -1,9 +1,6 @@
-from pathlib import Path
 from typing import Optional
 
-import pytest
 
-from business.adapters.json_referentiel_repo import JsonReferentielRepository
 from business.domain.models.indicateur import Indicateur, IndicateurId
 from business.domain.ports.domain_message_bus import InMemoryDomainMessageBus
 from business.domain.ports.referentiel_repo import (
@@ -14,7 +11,6 @@ from business.domain.ports.referentiel_repo import (
 from business.domain.use_cases.parse_and_convert_markdown_indicateurs_to_entities import (
     ParseAndConvertMarkdownIndicateursToEntities,
 )
-from business.domain.ports.indicateur_repo import InMemoryIndicateurRepository
 from business.domain.models import commands, events
 from business.utils.action_id import ActionId
 from tests.utils.referentiel_factory import make_dummy_referentiel
@@ -109,4 +105,16 @@ def test_fails_when_valeur_refers_to_unknown_indicateur_id():
     assert (
         failure_events[0].reason
         == "Incohérences dans la conversion de 1 indicateurs: \nL'indicateur cae-1a référence dans `valeur` un id d'indicateur qui n'existe pas dans la base de données: unknown_action_id"
+    )
+
+
+def test_fails_when_duplicated_indicateur_id():
+    failure_events, parsed_events = prepare_use_case(
+        "./tests/data/md_indicateurs_duplicated_id"
+    )
+    assert len(failure_events) == 1
+    assert len(parsed_events) == 0
+    assert (
+        failure_events[0].reason
+        == "Incohérence dans la conversion : Des ids d'indicateurs ne sont pas uniques : cae-1a"
     )
