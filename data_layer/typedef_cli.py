@@ -29,7 +29,7 @@ def postgres_connection(postgres_url: str) -> Connection:
     return psycopg.connect(**params)
 
 
-def initialized_cursor(connection: Connection) -> Cursor:
+def cursor(connection: Connection) -> Cursor:
     cursor = connection.cursor()
     development = open("postgres/development.sql", "r").read()
     cursor.execute(development)
@@ -65,7 +65,7 @@ def main(
         language = "typescript"
         typer.echo("Generating client typedefs...")
 
-    cursor = initialized_cursor(postgres_connection(postgres_url))
+    cursor = cursor(postgres_connection(postgres_url))
     cursor.execute("select * from table_as_json_typedef")
     schemas = cursor.fetchall()
     saved = []

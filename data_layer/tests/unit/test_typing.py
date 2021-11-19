@@ -4,10 +4,10 @@ import os.path
 from jtd import Schema
 
 
-def test_table_epci_returns_a_valid_json_schema(initialized_cursor):
+def test_table_epci_returns_a_valid_json_schema(cursor):
     tables_as_json_schemas = "select * from table_as_json_typedef where title = 'epci';"
-    initialized_cursor.execute(tables_as_json_schemas)
-    schemas = initialized_cursor.fetchall()
+    cursor.execute(tables_as_json_schemas)
+    schemas = cursor.fetchall()
     assert len(schemas) == 1
     assert schemas[0]["read"] == {
         "properties": {
@@ -22,13 +22,13 @@ def test_table_epci_returns_a_valid_json_schema(initialized_cursor):
 
 # TODO
 def skip_test_table_action_statut_returns_a_valid_json_schema_with_enum(
-    initialized_cursor,
+    cursor,
 ):
     tables_as_json_schemas = (
         "select * from table_as_json_typedef where title = 'business_action_statut';"
     )
-    initialized_cursor.execute(tables_as_json_schemas)
-    schemas = initialized_cursor.fetchall()
+    cursor.execute(tables_as_json_schemas)
+    schemas = cursor.fetchall()
     assert len(schemas) == 1
     assert schemas[0]["read"] == {
         "properties": {
@@ -48,13 +48,13 @@ def skip_test_table_action_statut_returns_a_valid_json_schema_with_enum(
 
 
 def test_table_as_json_typedef_should_return_parsable_typedef_schemas(
-    initialized_cursor,
+    cursor,
 ):
     # todo run on all tables
     tables_as_json_typedef = "select * from table_as_json_typedef;"
 
-    initialized_cursor.execute(tables_as_json_typedef)
-    schemas = initialized_cursor.fetchall()
+    cursor.execute(tables_as_json_typedef)
+    schemas = cursor.fetchall()
     for schema_row in schemas:
         read = schema_row["read"]
         write = schema_row["write"]
@@ -64,12 +64,12 @@ def test_table_as_json_typedef_should_return_parsable_typedef_schemas(
         assert write_schema
 
 
-def test_table_as_json_schema_should_save_schemas(initialized_cursor):
+def test_table_as_json_schema_should_save_schemas(cursor):
     args = {"read": ["business_action_statut"], "write": ["score"]}
 
     tables_as_json_typedef = "select * from table_as_json_typedef"
-    initialized_cursor.execute(tables_as_json_typedef)
-    schemas = initialized_cursor.fetchall()
+    cursor.execute(tables_as_json_typedef)
+    schemas = cursor.fetchall()
     for schema_row in schemas:
         title = schema_row["title"]
         read = schema_row["read"]

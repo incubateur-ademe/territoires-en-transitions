@@ -16,9 +16,9 @@ def make_sql_to_insert_action_relation(
     return sql
 
 
-def make_sql_insert_epci(nom="Yolo", siren="12345678901234"):
+def make_sql_insert_epci(id: Optional[int] = 1, nom="Yolo", siren="12345678901234"):
     return f"""
-    insert into epci(id, siren, nom) values (default, '{siren}', '{nom}');
+    insert into epci(id, siren, nom) values ({id or "default"}, '{siren}', '{nom}');
     """
 
 
@@ -51,4 +51,15 @@ def make_sql_insert_score(
                     {total_taches_count},
                     {completed_taches_count},
                     '{created_at}'::timestamptz);"""
+    return sql
+
+
+def make_sql_truncate_all_tables():
+    tables = [
+        "score",
+        "action_relation",
+        "epci",
+        "client_scores",
+    ]
+    sql = f"""TRUNCATE {', '.join(tables)} RESTART IDENTITY CASCADE"""
     return sql
