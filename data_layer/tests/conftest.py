@@ -11,8 +11,7 @@ from dotenv import load_dotenv
 
 from fake_layers.business import Business
 from fake_layers.client import Client
-from tests.utils.prepare_cursor import prepare_cursor
-from tests.utils.sql_factories import make_sql_insert_epci
+from tests.utils.sql_factories import make_sql_truncate_all_tables
 
 load_dotenv()
 supabase_project = os.getenv("SUPABASE_PROJECT")
@@ -69,10 +68,26 @@ def app_client(supabase_client) -> Client:
 
 
 @pytest.fixture()
-def initialized_cursor(postgres_connection: Connection, request):
+def cursor(postgres_connection: Connection, request):
     cursor = postgres_connection.cursor(row_factory=dict_row)
-    development = open("postgres/development.sql", "r").read()
-    prepare_cursor(cursor, development)
+    # development = open("postgres/development.sql", "r").read()
+    # prepare_cursor(cursor, development)
     request.addfinalizer(cursor.close)
+    return cursor
 
+
+def clear_cursor(cursor):
+    cursor.execute(make_sql_truncate_all_tables())
+    cursor.connection.commit()
+
+
+@pytest.fixture()
+def autoclear_cursor(cursor, request):
+    clear_cursor(cursor)
+
+    def clear_and_close_cursor():
+        clear_cursor(cursor)
+        cursor.close()
+
+    request.addfinalizer(clear_and_close_cursor)
     return cursor
