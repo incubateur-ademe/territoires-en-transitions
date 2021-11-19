@@ -1,39 +1,61 @@
-import {supabase} from 'core-logic/api/supabase';
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {ScoreRead} from 'generated/dataLayer/score_read';
-import {
-  RealtimeSubscription,
-  SupabaseRealtimePayload,
-} from '@supabase/supabase-js';
+import {Referentiel} from 'types';
 
-class ScoreSocket {
-  private epciId: number;
-  private payloads = new Subject<SupabaseRealtimePayload<ScoreRead[]>>();
-  private scores = new Subject<ScoreRead[]>();
-  private subscription: RealtimeSubscription | null = null;
+export interface ClientScoreBatchRead {
+  // TODO : move elsewhere.
+  id: number;
+  epci_id: number;
+  referentiel: Referentiel;
+  scores: ScoreRead[];
+  score_created_at: string;
+}
+export class ScoreSocket {
+  epciId: number;
+  _scores = new BehaviorSubject<ScoreRead[]>([]);
 
-  constructor({epciId}: {epciId: number}) {
+  get scoreObservable(): Observable<ScoreRead[]> {
+    return this._scores.pipe();
+  }
+
+  constructor({
+    epciId,
+    controller,
+  }: {
+    epciId: number;
+    controller: ScoreController;
+  }) {
     this.epciId = epciId;
+    controller.init(this);
+  }
+}
+
+abstract class ScoreController {
+  _scoreSocket: ScoreSocket | null = null;
+
+  init(scoreSocket: ScoreSocket) {
+    this._scoreSocket = scoreSocket;
   }
 
-  start() {
-    this.listenToPayloads();
-    this.subscribe();
+  handleScores(clientScores: ClientScoreBatchRead) {
+    if (!this._scoreSocket)
+      throw 'Score socket is null; cannot handle scores !';
+    const scoreReads = clientScores.scores;
+    this._scoreSocket._scores.next(scoreReads);
   }
 
-  stop() {
-    this.subscription?.unsubscribe();
-    this.subscription = null;
+  abstract dispose(): void;
+  abstract listen(): void;
+}
+
+export class InMemoryScoreController extends ScoreController {
+  private clientScores: ClientScoreBatchRead[];
+  constructor({clientScores}: {clientScores: ClientScoreBatchRead[]}) {
+    super();
+    this.clientScores = clientScores;
   }
-
-  private listenToPayloads() {}
-
-  private subscribe() {
-    if (this.subscription) throw 'Already subscribed, cannot listen twice.';
-    this.subscription = supabase
-      .from<ScoreRead>(`score:epci_id=${this.epciId}`)
-      .on('INSERT', payload => this.payloads.next(payload))
-      .on('UPDATE', payload => this.payloads.next(payload))
-      .subscribe();
+  dispose() {}
+  listen() {
+    this.clientScores.map(clientScores => this.handleScores(clientScores));
   }
 }
