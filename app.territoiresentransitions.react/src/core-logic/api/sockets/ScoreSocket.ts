@@ -30,7 +30,7 @@ export class ScoreSocket {
   }
 }
 
-abstract class ScoreController {
+export abstract class ScoreController {
   _scoreSocket: ScoreSocket | null = null;
 
   init(scoreSocket: ScoreSocket) {
