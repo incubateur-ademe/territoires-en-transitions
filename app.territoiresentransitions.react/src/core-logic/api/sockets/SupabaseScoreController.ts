@@ -1,11 +1,18 @@
-import {supabase} from 'core-logic/api/supabase';
+import {ScoreController, ClientScoreBatchRead} from './ScoreSocket';
 import {
   RealtimeSubscription,
+  SupabaseClient,
   SupabaseRealtimePayload,
 } from '@supabase/supabase-js';
 
-class SupabaseScoreController extends ScoreController {
+export class SupabaseScoreController extends ScoreController {
   private subscription: RealtimeSubscription | null = null;
+  private supabaseClient: SupabaseClient;
+
+  constructor({supabaseClient}: {supabaseClient: SupabaseClient}) {
+    super();
+    this.supabaseClient = supabaseClient;
+  }
 
   dispose() {
     this.subscription?.unsubscribe();
@@ -25,7 +32,7 @@ class SupabaseScoreController extends ScoreController {
   private subscribe() {
     if (!this._scoreSocket) throw 'Score socket is null; cannot subscribe !';
     if (this.subscription) throw 'Already subscribed, cannot listen twice.';
-    this.subscription = supabase
+    this.subscription = this.supabaseClient
       .from<ClientScoreBatchRead>(
         `client_scores:epci_id=${this._scoreSocket?.epciId}`
       )
