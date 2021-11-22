@@ -14,7 +14,7 @@ def build_action(doc: Document) -> dict:
             "exemples": "",
             "contexte": "",
             "ressources": "",
-            "preuve": ""
+            "preuve": "",
         }
 
     return markdown_parser(doc, node_builder=builder, children_key="actions")[-1]
