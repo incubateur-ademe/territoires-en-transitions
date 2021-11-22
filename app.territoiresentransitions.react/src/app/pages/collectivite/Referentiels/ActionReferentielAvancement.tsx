@@ -76,8 +76,6 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
       </div>
 
       <section>
-        <h2 className="fr-h2"> Les actions</h2>
-        {action.id}{' '}
         {action.actions.every(action =>
           idsOfActionWithStatuses.includes(action.id)
         )}
