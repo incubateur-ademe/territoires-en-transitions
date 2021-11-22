@@ -1,15 +1,9 @@
-from dataclasses import asdict
-from api.utils.connection_api import (
-    AddressAlreadyExists,
-    AdemeConnectionApi,
-    DummyConnectionApi,
-    GetTokenError,
-)
 from typing import List
 
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 from fastapi import Response
+from fastapi.security import OAuth2PasswordBearer
 from starlette.responses import JSONResponse
 from tortoise.exceptions import DoesNotExist
 
@@ -18,18 +12,23 @@ from api.config.configuration import (
     AUTH_KEYCLOAK,
     AUTH_REALM,
 )
-from fastapi.security import OAuth2PasswordBearer
 from api.models.pydantic.ademe_utilisateur import (
     AdemeUtilisateur as AdemeUtilisateurModel,
 )
 from api.models.pydantic.utilisateur_inscription import UtilisateurInscription
+from api.models.tortoise.ademe_utilisateur import (
+    AdemeUtilisateur as AdemeUtilisateurTortoise,
+)
 from api.models.tortoise.utilisateur import Utilisateur
 from api.models.tortoise.utilisateur_droits import (
     UtilisateurDroits_Pydantic,
     UtilisateurDroits,
 )
-from api.models.tortoise.ademe_utilisateur import (
-    AdemeUtilisateur as AdemeUtilisateurTortoise,
+from api.utils.connection_api import (
+    AddressAlreadyExists,
+    AdemeConnectionApi,
+    DummyConnectionApi,
+    GetTokenError,
 )
 
 router = APIRouter(prefix="/v2/auth")
@@ -39,7 +38,6 @@ token_endpoint = (
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=token_endpoint)
-
 
 connection_api = (
     DummyConnectionApi() if AUTH_DISABLED_DUMMY_USER else AdemeConnectionApi()
@@ -63,7 +61,7 @@ async def register(inscription: UtilisateurInscription, response: Response):
             ademe_user_id=user_id,
             vie_privee_conditions=inscription.vie_privee_conditions,
         )
-        return asdict(register_response_data)
+        return register_response_data.dict()
 
     except AddressAlreadyExists:
         message = "L'adresse Email que vous avez renseigné dispose déjà d'un compte utilisateur.\n \
