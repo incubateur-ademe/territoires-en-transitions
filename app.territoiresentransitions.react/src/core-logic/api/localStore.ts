@@ -19,6 +19,8 @@ import {
   IndicateurPersonnaliseStorable,
   UtilisateurConnecteInterface,
   UtilisateurConnecte,
+  AuditItemCheckedStorable,
+  AuditItemCheckedInterface,
 } from 'storables';
 import {ChangeNotifier} from 'core-logic/api/reactivity';
 
@@ -204,3 +206,10 @@ export const utilisateurConnecteStore =
         serialized as UtilisateurConnecteInterface
       ),
   });
+
+export const auditItemCheckedStore = new LocalStore<AuditItemCheckedStorable>({
+  pathname: AuditItemCheckedStorable.pathname,
+  serializer: storable => storable,
+  deserializer: serialized =>
+    new AuditItemCheckedStorable(serialized as AuditItemCheckedInterface),
+});
