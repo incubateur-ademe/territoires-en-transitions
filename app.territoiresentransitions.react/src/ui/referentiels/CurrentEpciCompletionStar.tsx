@@ -3,8 +3,7 @@ import {ActionReferentielScoreStorable} from 'storables';
 import {useActionReferentielScore} from 'core-logic/hooks/actionReferentielScore';
 import {useEffect, useState} from 'react';
 import star from './star.png';
-import {IconButton, Tooltip} from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import {Tooltip} from '@material-ui/core';
 
 const JaugeStar = (props: {fillPercentage: number}) => {
   const cacheStyle = {
