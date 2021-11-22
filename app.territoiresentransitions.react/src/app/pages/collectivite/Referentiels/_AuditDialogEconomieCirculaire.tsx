@@ -1,5 +1,9 @@
 import {Checkbox} from '@material-ui/core';
+import {auditItemCheckedStore} from 'core-logic/api/localStore';
+import {useEpciId} from 'core-logic/hooks';
 import * as R from 'ramda';
+import {ChangeEvent, useEffect, useState} from 'react';
+import {AuditItemCheckedStorable} from 'storables';
 
 const auditCheckListsEci = {
   '': [
@@ -20,12 +24,45 @@ const auditCheckListsEci = {
   ],
 };
 
-const _UiCheckbox = (props: {label: string}) => (
-  <div className="flex gap-2 items-center">
-    <Checkbox color="primary" />
-    <div>{props.label}</div>
-  </div>
-);
+const _UiCheckbox = (props: {label: string}) => {
+  const epciId = useEpciId();
+  const [isCheckedByItemText, setIsCheckedByItemText] = useState<
+    Record<string, boolean>
+  >({});
+
+  useEffect(() => {
+    try {
+      const auditItemCheckedStorable = auditItemCheckedStore.retrieveById(
+        epciId!
+      );
+      setIsCheckedByItemText(auditItemCheckedStorable.isCheckedByItemText);
+    } catch (error) {
+      setIsCheckedByItemText({});
+    }
+  }, []);
+  return (
+    <div className="flex gap-2 items-center">
+      <Checkbox
+        color="primary"
+        checked={isCheckedByItemText[props.label] === true}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          const newIsCheckedByItemText = {
+            ...isCheckedByItemText,
+            [props.label]: event.target.checked,
+          };
+          setIsCheckedByItemText(newIsCheckedByItemText);
+          auditItemCheckedStore.store(
+            new AuditItemCheckedStorable({
+              epci_id: epciId!,
+              isCheckedByItemText: newIsCheckedByItemText,
+            })
+          );
+        }}
+      />
+      <div>{props.label}</div>
+    </div>
+  );
+};
 
 export const AuditDialogEconomieCirculaire = () => (
   <div>
