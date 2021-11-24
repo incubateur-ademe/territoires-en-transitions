@@ -34,7 +34,8 @@ export class SupabaseScoreController extends ScoreController {
     if (this.subscription) throw 'Already subscribed, cannot listen twice.';
     this.subscription = this.supabaseClient
       .from<ClientScoreBatchRead>(
-        `client_scores:epci_id=${this._scoreSocket?.epciId}`
+        // todo filter by epci col :epci_id=${this._scoreSocket?.epciId}
+        'client_scores'
       )
       .on('INSERT', payload => this.handlePayload(payload))
       .on('UPDATE', payload => this.handlePayload(payload))
