@@ -39,10 +39,11 @@ const AnyIndicateurValueInput = ({
     });
   }, []);
 
-  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const convertToFloatAndStore = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
 
     const floatValue = parseFloat(inputValue.replace(',', '.'));
+    console.log(inputValue, floatValue);
     commands.indicateurCommands.storeAnyIndicateurValue({
       store: store,
       interface: {
@@ -63,7 +64,10 @@ const AnyIndicateurValueInput = ({
           borderColor === 'blue' ? 'border-bf500' : 'border-gray-500'
         }`}
         value={inputValue}
-        onChange={handleChange}
+        onChange={(event: React.FormEvent<HTMLInputElement>) =>
+          setInputValue(event.currentTarget.value)
+        }
+        onBlur={convertToFloatAndStore}
       />
     </label>
   );

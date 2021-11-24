@@ -1,4 +1,5 @@
 import {Editable} from 'ui/shared';
+import {addTargetToContentAnchors} from 'utils/content';
 import './CrossExpandPanel.css';
 
 export const CrossExpandPanelWithHtmlContent = (props: {
@@ -17,7 +18,9 @@ export const CrossExpandPanelWithHtmlContent = (props: {
       </summary>
       <div
         className="content"
-        dangerouslySetInnerHTML={{__html: props.content}}
+        dangerouslySetInnerHTML={{
+          __html: addTargetToContentAnchors(props.content),
+        }}
       />
     </details>
   </div>

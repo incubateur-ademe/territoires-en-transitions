@@ -11,7 +11,7 @@ export const AddFicheActionButton = (props: {actionId?: string}) => {
       className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-file-fill fr-btn--icon-left"
       to={linkTo}
     >
-      Ajouter une fiche action
+      Ajouter au plan d'actions
     </Link>
   );
 };
