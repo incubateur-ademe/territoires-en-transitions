@@ -1,7 +1,9 @@
 from pathlib import Path
 import json
 
-from business.adapters.json_referentiel_repo import JsonReferentielRepository
+from business.referentiel.adapters.json_referentiel_repo import (
+    JsonReferentielRepository,
+)
 from tests.utils.referentiel_factory import (
     make_action_children,
     make_action_definition,

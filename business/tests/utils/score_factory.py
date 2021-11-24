@@ -1,7 +1,5 @@
-from typing import Tuple
-
-from business.utils.action_id import ActionId, retrieve_referentiel
-from business.domain.models.action_score import ActionScore
+from business.utils.action_id import ActionId
+from business.evaluation.domain.models.action_score import ActionScore
 
 
 def make_action_score(
