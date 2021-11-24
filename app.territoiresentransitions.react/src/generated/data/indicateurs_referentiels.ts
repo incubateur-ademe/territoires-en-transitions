@@ -1660,8 +1660,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'crte-11.1',
-    uid: 'crte-11.1',
+    id: 'crte-11.1-SO2',
+    uid: 'crte-11.1-SO2',
     valeur: 'cae-4e',
     action_ids: [],
     nom: 'Emissions annuelles de SO2 du territoire (tonnes)',
@@ -1672,8 +1672,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'crte-11.1',
-    uid: 'crte-11.1',
+    id: 'crte-11.1-NOx',
+    uid: 'crte-11.1-NOx',
     valeur: 'cae-4a',
     action_ids: [],
     nom: 'Emissions annuelles de NOx du territoire (tonnes)',
@@ -1684,8 +1684,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'crte-11.1',
-    uid: 'crte-11.1',
+    id: 'crte-11.1-COVNM',
+    uid: 'crte-11.1-COVNM',
     valeur: 'cae-4d',
     action_ids: [],
     nom: 'Emissions annuelles de COVNM du territoire (tonnes)',
@@ -1696,8 +1696,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'crte-11.1',
-    uid: 'crte-11.1',
+    id: 'crte-11.1-PM',
+    uid: 'crte-11.1-PM',
     valeur: 'cae-4c',
     action_ids: [],
     nom: 'Emissions annuelles de PM2,5 du territoire (tonnes)',
@@ -1708,9 +1708,9 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'crte-11.1',
-    uid: 'crte-11.1',
-    valeur: '4f',
+    id: 'crte-11.1-NH3',
+    uid: 'crte-11.1-NH3',
+    valeur: 'cae-4f',
     action_ids: [],
     nom: 'Emissions annuelles de NH3 du territoire (tonnes)',
     description:

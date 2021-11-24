@@ -1,4 +1,8 @@
-with fiches as (
+with real_epci as (
+    select uid
+    from epci
+    where siren != ''
+),  fiches as (
     select epci_id,
            count(epci_id) as count
     from ficheaction
@@ -54,7 +58,7 @@ from (
                 (cae_statuses.count >= 20)::integer as cae_statuses,
                 (indicateurs.count >= 5)::integer as indicateurs_referentiels,
                 (indicateurs_perso.count >= 1)::integer as indicateurs_perso
-         from epci
+         from real_epci
                   full join fiches on fiches.epci_id = uid
                   full join eci_statuses on eci_statuses.epci_id = uid
                   full join cae_statuses on cae_statuses.epci_id = uid

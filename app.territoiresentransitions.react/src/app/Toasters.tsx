@@ -179,20 +179,6 @@ export function Toasters() {
           storeError: "L'indicateur n'a pas été enregistré",
         })}
       />
-      <EndpointToaster
-        endpoint={indicateurResultatStore.api}
-        composer={makeComposer({
-          storeSuccess: "La valeur de l'indicateur est enregistrée",
-          storeError: "La valeur de l'indicateur n'a pas été enregistrée",
-        })}
-      />
-      <EndpointToaster
-        endpoint={indicateurObjectifStore.api}
-        composer={makeComposer({
-          storeSuccess: "La valeur de l'objectif est enregistrée",
-          storeError: "La valeur de l'objectif n'a pas été enregistrée",
-        })}
-      />
 
       <EndpointToaster
         endpoint={indicateurPersonnaliseObjectifStore.api}
