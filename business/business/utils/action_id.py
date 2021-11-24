@@ -1,6 +1,6 @@
 from typing import NewType
 
-from business.domain.models.litterals import Referentiel
+from business.core.domain.models.referentiel import Referentiel
 
 # TODO : move this file to domain.
 

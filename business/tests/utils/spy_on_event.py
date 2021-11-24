@@ -1,13 +1,13 @@
 from typing import Any, Type, List
 
-from business.domain.ports.domain_message_bus import (
+from business.core.domain.ports.domain_message_bus import (
     AbstractDomainMessageBus,
 )
-from business.domain.models import events
+from business.core.domain.models.event import DomainEvent
 
 
 def spy_on_event(
-    event_bus: AbstractDomainMessageBus, event_type: Type[events.DomainEvent]
+    event_bus: AbstractDomainMessageBus, event_type: Type[DomainEvent]
 ) -> List[Any]:
     published_events = []
 

@@ -1,15 +1,15 @@
 from typing import List
 
-from business.domain.ports.domain_message_bus import (
+from business.core.domain.ports.domain_message_bus import (
     InMemoryDomainMessageBus,
 )
 
-from business.adapters.replay_realtime import ReplayRealtime
-from business.domain.ports.realtime import (
+from business.evaluation.adapters.replay_realtime import ReplayRealtime
+from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
     EpciActionStatutUpdateConverter,
 )
-from business.domain.models import events
+from business.evaluation.domain.models import events
 
 from tests.utils.spy_on_event import spy_on_event
 

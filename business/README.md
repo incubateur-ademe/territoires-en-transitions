@@ -2,7 +2,8 @@
 Ce service est responsable de "l'intelligence" de Territoires En Transitions. Il s'interface avec une couche de stockage de façon évenementielle. Ainsi, les commandes de ce service Business sont déclanchées par des évènements. 
 
 ## Organisation en mode "clean-archi"
-Si vous ouvrez le dossier business, vous remarquerez l'organisation suivante :
+Si vous ouvrez le dossier business, vous trouverez un dossier par "domaines": Referentiel, EPCI, Evaluation, ... 
+Puis, au sein de chaque dossier, vous remarquerez l'organisation suivante :
 
 - **DOMAIN**
     - **ports:** API de dépendance où nous définissons comment l'application interagit avec des "briques" externes. Par exemple, un port de dépôt aurait une méthode "add". La mise en œuvre réelle de ces "briques" se fait par des adaptateurs.
@@ -11,7 +12,7 @@ Si vous ouvrez le dossier business, vous remarquerez l'organisation suivante :
     - **Use cases:** toutes les règles métier spécifiques à l'application sont divisées en une liste de cas d'usage, chacun ayant une seule responsabilité. Par exemple: stocker le référentiel dans un dépôt.
     Les use-cases sont testés dans tests/unit.  
 
-    - **models** objets métiers manipulés dans l'application. Parmi eux, [events](business/domain/models/events.py) et [commands](business/domain/models/events.py) qui régissent l'orchestration des cas d'usages. 
+    - **models** objets métiers manipulés dans l'application. Parmi eux, `events.py` qui régissent l'orchestration des cas d'usages. 
 
 - **ADAPTATERS**:
     La mise en œuvre réelle des ports. Par exemple, un dépôt pourrait être implémenté avec la base de données Postgres, donc la méthode "add" serait un INSERT. 

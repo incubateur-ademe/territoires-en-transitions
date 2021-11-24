@@ -1,11 +1,14 @@
 from typing import List, Optional, Tuple
 
-from business.domain.models.action_children import ActionChildren
-from business.domain.models.action_definition import ActionDefinition, ActionId
-from business.domain.models.action_points import ActionPoints
-from business.domain.models.indicateur import Indicateur, IndicateurId
-from business.domain.models.litterals import Referentiel
-from business.domain.models.markdown_action_node import MarkdownActionNode
+from business.referentiel.domain.models.action_children import ActionChildren
+from business.referentiel.domain.models.action_definition import (
+    ActionDefinition,
+    ActionId,
+)
+from business.referentiel.domain.models.action_points import ActionPoints
+from business.referentiel.domain.models.indicateur import Indicateur, IndicateurId
+from business.core.domain.models.referentiel import Referentiel
+from business.referentiel.domain.models.markdown_action_node import MarkdownActionNode
 from business.utils.action_id import retrieve_referentiel
 
 

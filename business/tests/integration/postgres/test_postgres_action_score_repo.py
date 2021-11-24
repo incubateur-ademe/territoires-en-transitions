@@ -1,9 +1,9 @@
 import pytest
 
-from business.adapters.postgres.postgres_action_score_repo import (
+from business.evaluation.adapters.postgres_action_score_repo import (
     PostgresActionScoreRepository,
 )
-from business.adapters.postgres.postgres_repo import PostgresRepositoryError
+from business.utils.postgres_repo import PostgresRepositoryError
 from business.utils.action_id import ActionId
 from tests.utils.score_factory import make_action_score
 from .fixtures import *
