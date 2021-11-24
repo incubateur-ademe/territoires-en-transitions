@@ -3,9 +3,9 @@ from typing import Callable, Dict, List
 
 from pydantic import BaseModel
 
-from business.domain.models.action_children import ActionChildren
-from business.domain.models.action_points import ActionPoints
-from business.domain.models.action_definition import ActionId
+from business.referentiel.domain.models.action_children import ActionChildren
+from business.referentiel.domain.models.action_points import ActionPoints
+from business.referentiel.domain.models.action_definition import ActionId
 
 # TODO: can it inherit also from ActionPoints model ?
 class ActionPointsNode(BaseModel):
