@@ -64,6 +64,8 @@ export abstract class DataLayerReadEndpoint<
         status: response.status,
       };
       this.notifyListeners();
+      console.log('Error when reading:', response);
+
       return [];
     }
 
@@ -176,6 +178,7 @@ export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
         status: response.status,
       };
       this.notifyListeners();
+      console.log('Error when writting:', response);
       return null;
     }
 

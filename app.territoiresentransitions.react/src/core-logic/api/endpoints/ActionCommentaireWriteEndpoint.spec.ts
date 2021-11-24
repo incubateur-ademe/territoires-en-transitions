@@ -3,7 +3,7 @@ import {ActionCommentaireWriteEndpoint} from 'core-logic/api/endpoints/ActionCom
 import {ActionCommentaireWrite} from 'generated/dataLayer/action_commentaire_write';
 
 describe('Action-commentaire write endpoint', () => {
-  it('Saving a commentaire should return an equivalent commentaire', async () => {
+  it('Should return an equivalent commentaire when saving a commentaire ', async () => {
     const endpoint = new ActionCommentaireWriteEndpoint();
     const commentaire: ActionCommentaireWrite = {
       epci_id: 1,
@@ -16,7 +16,7 @@ describe('Action-commentaire write endpoint', () => {
     expect(result!.action_id).toEqual(commentaire.action_id);
   });
 
-  it('Saving a commentaire with bad epci should fail', async () => {
+  it('Should fail when saving a commentaire with bad epci', async () => {
     const endpoint = new ActionCommentaireWriteEndpoint();
     const commentaire: ActionCommentaireWrite = {
       epci_id: 666,

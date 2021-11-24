@@ -52,12 +52,13 @@ describe('Score socket ', () => {
     const socket = new ScoreSocket({epciId, controller});
 
     const timelimit = timer(5);
-
+    let result;
     socket.scoreObservable
       .pipe(takeUntil(timelimit))
-      .subscribe(actualScoreReads =>
-        expect(actualScoreReads).toBe([scoreRead1, scoreRead2])
-      );
+      .subscribe(actualScoreReads => {
+        result = actualScoreReads;
+      });
     controller.listen();
+    expect(result).toStrictEqual([scoreRead1, scoreRead2]);
   });
 });
