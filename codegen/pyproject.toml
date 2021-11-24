@@ -22,7 +22,7 @@ packages = [
 python = "^3.9"
 
 # Templating
-Jinja2 = "^2.11.2"
+Jinja2 = "^2.11.3"
 
 # Formatting generated files
 black = "21.5b1"
