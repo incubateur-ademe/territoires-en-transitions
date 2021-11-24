@@ -39,15 +39,12 @@ describe('Supabase Score Controller ', () => {
       created_at: '2021-01-01',
       ...writeScore,
     };
-    const timelimit = timer(200);
 
     let actual: ScoreRead[] = [];
-    socket.scoreObservable
-      .pipe(takeUntil(timelimit))
-      .subscribe(actualScoreReads => {
-        actual = actualScoreReads;
-        console.log('actualScoreReads -> -> ', actualScoreReads);
-      });
+    socket.scoreObservable.subscribe(actualScoreReads => {
+      actual = actualScoreReads;
+      console.log('actualScoreReads -> -> ', actualScoreReads);
+    });
 
     controller.listen();
 
@@ -58,7 +55,10 @@ describe('Supabase Score Controller ', () => {
 
     console.log('insertResponse : ', insertResponse);
 
-    await sleep(10);
+    socket.scoreObservable.subscribe(e => console.log('obs', e));
+    socket._scores.subscribe(e => console.log('subj', e));
+
+    await sleep(3000);
 
     expect(actual).toHaveLength(1);
     expect(actual[0]).toStrictEqual(expectedScoreRead);
