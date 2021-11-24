@@ -17,7 +17,6 @@ class ActionCommentaireRepository {
     const results = await actionCommentaireReadEndpoint.getBy({
       epci_id: args.epciId,
     });
-
     return results.find(statut => statut.action_id === args.actionId) || null;
   }
 }

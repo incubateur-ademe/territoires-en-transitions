@@ -1,8 +1,5 @@
 import '@testing-library/jest-dom/extend-expect';
 import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
-import {ActionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
-import type {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
-import {actionCommentaireRepository} from 'core-logic/api/repositories/ActionCommentaireRepository';
 
 describe('Action-statut repo should retrieve data-layer default statuses', () => {
   it(
@@ -34,13 +31,13 @@ describe(
       const result = await actionStatutRepository.save({
         epci_id: 1,
         action_id: 'cae_1.2.3',
-        avancement: 'en_cours',
+        avancement: 'fait',
         concerne: true,
       });
       expect(result).not.toBeNull();
       expect(result!.epci_id).toEqual(1);
       expect(result!.action_id).toEqual('cae_1.2.3');
-      expect(result!.avancement).toEqual('en_cours');
+      expect(result!.avancement).toEqual('fait');
     });
   }
 );
