@@ -3,9 +3,10 @@ set search_path to public;
 ---------------------------------
 ------------ EPCI ---------------
 ---------------------------------
-create domain siren as varchar(14)
+create type nature as enum ('SMF', 'CU', 'CC', 'SIVOM', 'POLEM', 'MET69', 'METRO', 'SMO', 'CA', 'EPT', 'SIVU', 'PETR');
+create domain siren as varchar(9)
     check (
-        value ~ '^\d{14}$'
+        value ~ '^\d{9}$'
         );
 
 
@@ -14,6 +15,7 @@ create table epci
     id          serial primary key,
     siren       siren                                              not null,
     nom         varchar(300)                                       not null,
+    nature      nature                                             not null,
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
     modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );

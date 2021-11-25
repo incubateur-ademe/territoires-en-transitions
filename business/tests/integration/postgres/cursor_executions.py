@@ -24,8 +24,8 @@ def insert_action_relation(
 
 
 def insert_epci(cursor: Cursor, epci_id: int, siren: Optional[str] = None):
-    siren = siren or f"".join([str(random.randint(1, 9)) for k in range(14)])
-    sql = f"insert into epci values ({epci_id}, %(siren)s, 'Yolo', default, default);"
+    siren = siren or f"".join([str(random.randint(1, 9)) for k in range(9)])
+    sql = f"insert into epci values ({epci_id}, %(siren)s, 'Yolo', 'CC', default, default);"
     cursor.execute(sql, {"siren": siren})
 
 
