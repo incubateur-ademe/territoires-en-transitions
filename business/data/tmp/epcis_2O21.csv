@@ -1,0 +1,1629 @@
+,siren,nom,nature
+0,200042935,Haut - Bugey Agglomération,CA
+1,200071751,CA du Bassin de Bourg-en-Bresse,CA
+2,240100750,CA du Pays de Gex,CA
+3,200029999,CC Rives de l'Ain - Pays du Cerdon,CC
+4,200040350,CC Bugey Sud,CC
+5,200042497,CC Dombes Saône Vallée,CC
+6,200069193,CC de la Dombes,CC
+7,200070118,CC Val de Saône Centre,CC
+8,200070555,CC de la Veyle,CC
+9,200071371,CC Bresse et Saône,CC
+10,240100610,CC de la Côtière à Montluel,CC
+11,240100800,CC de Miribel et du Plateau,CC
+12,240100883,CC de la Plaine de l'Ain,CC
+13,240100891,CC du Pays Bellegardien (CCPB),CC
+77,250101086,SM intercommunal de destruction des ordures ménagères Veyle Saône,SMF
+80,250102365,SM de traitement des déchets ménagers et assimilés (ORGANOM),SMF
+81,250102373,SM pour le traitement des déchets ménagers et assimilés (SM de Crocu),SMF
+83,257401620,SM intercommunal de gestion des déchets du Faucigny Genevois (SIDEFAGE),SMF
+91,200043495,CA du Pays de Laon,CA
+92,200071785,CA Chauny Tergnier La Fère,CA
+93,200071892,CA du Saint-Quentinois,CA
+94,200072031,CA de la Région de Château-Thierry,CA
+95,240200477,GrandSoissons Agglomération,CA
+96,200040426,CC du Val de l'Oise,CC
+97,200071769,CC Picardie des Châteaux,CC
+98,200071983,CC Thiérache Sambre et Oise,CC
+99,200071991,CC Retz en Valois,CC
+100,240200444,CC de la Thiérache du Centre,CC
+101,240200469,CC du Pays de la Serre,CC
+102,240200493,CC du Pays du Vermandois,CC
+103,240200501,CC du Val de l'Aisne,CC
+104,240200519,CC du Canton d'Oulchy le Château,CC
+105,240200576,CC de la Champagne Picarde,CC
+106,240200584,CC du Canton de Charly sur Marne,CC
+107,240200592,CC du Chemin des Dames,CC
+108,240200600,CC des Trois Rivières,CC
+109,240200634,CC des Portes de la Thiérache,CC
+293,250200383,SI de ramassage et de traitement des ordures ménagères (SIRTOM) de la région de Laon ,SMF
+306,250208790,Valor'Aisne (Syndicat départemental de traitement des déchets ménagers de l'Aisne),SMO
+309,200085694,PETR du Soissonnais et du Valois,PETR
+310,200071082,CA Montluçon Communauté,CA
+311,200071140,CA Moulins Communauté,CA
+312,200071363,CA Vichy Communauté,CA
+313,200071389,CC Saint-Pourçain Sioule Limagne,CC
+314,200071470,CC Entr'Allier Besbre et Loire,CC
+315,200071496,CC du Bocage Bourbonnais,CC
+316,200071512,CC Commentry Montmarault Néris Communauté,CC
+317,240300491,CC du Pays de Lapalisse,CC
+318,240300558,CC du Pays de Tronçais,CC
+319,240300566,CC du Val de Cher,CC
+320,240300657,CC du Pays d'Huriel,CC
+380,250300050,SI de collecte et de traitement des ordures ménagères (SICTOM) Sud-Allier,SMF
+381,250300217,SM de collecte et de traitement des ordures ménagères Nord-Allier (SICTOM Nord Allier),SMF
+383,250303039,SI de collecte et de traitement des ordures ménagères (SICTOM) du secteur de Cérilly,SMF
+385,250303294,SM intercommunal de collecte et de traitement d'ordures ménagères de la région montluçonnaise,SMF
+390,200034700,CA Durance-Lubéron-Verdon Agglomération,CA
+391,200067437,CA Provence-Alpes-Agglomération,CA
+392,200068625,"CC Alpes-Provence-Verdon ""Sources de lumière""",CC
+393,200068765,CC du Sisteronais-Buëch,CC
+394,200071025,CC Haute-Provence-Pays de Banon,CC
+395,200071033,CC Jabron-Lure-Vançon-Durance,CC
+396,200072304,CC Vallée de l'Ubaye - Serre-Ponçon,CC
+397,240400440,CC Pays Forcalquier et Montagne de Lure,CC
+436,250401221,SM départemental d'élimination et de valorisation des ordures ménagères (SYDEVOM) des Alpes-de-Haute-Provence,SMO
+437,200067825,CA Gap-Tallard-Durance,CA
+438,200067320,CC Serre-Ponçon Val d'Avance,CC
+439,200067445,CC Buëch-Dévoluy,CC
+440,200067452,CC du Guillestrois et du Queyras,CC
+441,200067742,CC Serre-Ponçon,CC
+442,200068096,CC Champsaur-Valgaudemar,CC
+443,240500439,CC du Briançonnais,CC
+444,240500462,CC du Pays des Ecrins,CC
+484,250500790,"Syndicat Mixte de Traitement des Ordures Ménagères du Guillestrois, du Queyras et de l'Argentiérois (SMITOMGA)",SMF
+496,200030195,Métropole Nice Côte d'Azur,METRO
+497,200039857,CA du Pays de Grasse,CA
+498,200039915,CA Cannes Pays de Lérins,CA
+499,240600551,CA de la Riviera Française,CA
+500,240600585,CA de Sophia Antipolis,CA
+501,200039931,CC Alpes d'Azur,CC
+502,240600593,CC du Pays des Paillons,CC
+524,240600023,SIVOM de Valberg,SIVOM
+543,200000586,SM d'élimination des déchets (SMED),SMO
+547,200046076,SM pour la valorisation des déchets UNIVALOM,SMO
+561,200071413,CA Privas Centre Ardèche,CA
+562,200072015,CA Annonay Rhône Agglo,CA
+563,200073096,CA Arche Agglo,CA
+564,200016905,CC du Pays de Lamastre,CC
+565,200039808,CC des Gorges de l'Ardèche,CC
+566,200039824,CC Ardèche des Sources et Volcans,CC
+567,200039832,CC Pays des Vans en Cévennes,CC
+568,200041366,CC Rhône Crussol,CC
+569,200041465,CC Val Eyrieux,CC
+570,200071405,CC Ardèche Rhône Coiron,CC
+571,200072007,CC de la Montagne d'Ardèche,CC
+572,200073245,CC du Bassin d'Aubenas,CC
+573,240700302,CC du Pays Beaume-Drobie,CC
+574,240700617,CC Val de Ligne,CC
+575,240700716,CC du Val d'Ay,CC
+576,240700815,CC Berg et Coiron,CC
+577,240700864,CC du Rhône aux Gorges de l'Ardèche,CC
+640,250700135,SI de collecte et de traitement des ordures ménagères du secteur Eyrieux-Doux (SICTOMSED),SMF
+641,250700218,SI de collecte et de traitement des ordures ménagères de la Basse-Ardèche (SICTOBA),SMF
+646,250701851,Syndicat pour la destruction des ordures ménagères du secteur d'Aubenas (SIDOMSA),SMF
+659,200041630,Ardenne Métropole,CA
+660,200041622,CC Ardennes Thiérache,CC
+661,200043156,CC du Pays Réthelois,CC
+662,200067759,CC Vallées et Plateau d'Ardenne,CC
+663,240800821,"CC Ardenne, Rives de Meuse",CC
+664,240800847,CC des Portes du Luxembourg,CC
+665,240800862,CC des Crêtes Préardennaises,CC
+666,240800920,CC de l'Argonne Ardennaise,CC
+766,200088730,"SM du SCOT ""Nord Ardennes""",SMF
+770,250800646,SICOMAR de l'arrondissement de Réthel,SMF
+775,250800489,SM de traitement des déchets Ardennais (VALODEA),SMO
+779,200067791,CA Pays Foix-Varilhes,CA
+780,200044469,CC du Pays de Mirepoix,CC
+781,200066223,CC Arize Lèze,CC
+782,200066231,CC des Portes d'Ariège Pyrénées,CC
+783,200066363,CC de la Haute Ariège,CC
+784,200067940,CC Couserans-Pyrénées,CC
+785,240900431,CC du Pays de Tarascon,CC
+786,240900464,CC du Pays d'Olmes,CC
+822,240900399,"SM d'étude, de collecte et de traitement des déchets ménagers et assimilés du Plantaurel (SMECTOM du Plantaurel)",SMF
+834,200069250,CA Troyes Champagne Métropole,CA
+835,200000545,CC des Portes de Romilly sur Seine,CC
+836,200006716,CC du Nogentais,CC
+837,200040137,CC des Lacs de Champagne,CC
+838,200066892,CC de Vendeuvre-Soulaines,CC
+839,200069003,CC du Barséquanais en Champagne,CC
+840,200070126,CC Seine et Aube,CC
+841,200071041,CC du Chaourçois et du Val d'Armance,CC
+842,200071777,"CC d'Arcis, Mailly, Ramerupt",CC
+843,241000223,"CC Forêts, Lacs, Terres en Champagne",CC
+844,241000405,CC de la Région de Bar sur Aube,CC
+845,241000447,CC du Pays d'Othe,CC
+846,241000488,CC de l'Orvin et de l'Ardusson,CC
+905,251002515,SM d'élimination des déchets ménagers du territoire d'Orient,SMF
+910,251002531,Syndicat départemental d'élimination des déchets de l'Aube (SDEDA),SMO
+914,200035715,CA Carcassonne Agglo,CA
+915,241100593,CA Le Grand Narbonne,CA
+916,200035707,CC Piège Lauragais Malepère,CC
+917,200035855,CC Castelnaudary Lauragais Audois,CC
+918,200035863,"CC Région Lézignanaise, Corbières et Minervois",CC
+919,200042463,CC de la Montagne Noire,CC
+920,200043776,CC Pyrénées audoises,CC
+921,200071926,CC du Limouxin,CC
+991,200036101,COVALDEM 11 ,SMF
+1000,251100236,SMICTOM de l'Ouest Audois,SMF
+1013,241200187,CA Rodez Agglomération,CA
+1014,200067064,CC Decazeville Communauté,CC
+1015,200067155,"CC Saint Affricain, Roquefort, Sept Vallons",CC
+1016,200067163,"CC Monts, Rance et Rougier",CC
+1017,200067171,"CC Aubrac, Carladez et Viadène",CC
+1018,200067478,CC Comtal Lot et Truyère,CC
+1019,200068484,CC des Causses à l'Aubrac,CC
+1020,200068831,Pays Ségali Communauté,CC
+1021,200069383,Ouest Aveyron Communauté,CC
+1022,241200542,CC du Réquistanais,CC
+1023,241200567,CC de Millau Grands Causses,CC
+1024,241200625,CC du Pays Rignacois,CC
+1025,241200641,CC Conques-Marcillac,CC
+1026,241200658,CC du Pays de Salars,CC
+1027,241200674,CC du Plateau de Montbazens,CC
+1028,241200765,CC de Lévézou Pareloup,CC
+1029,241200807,CC Aveyron Bas Ségala Viaur,CC
+1030,241200906,CC Larzac et Vallées,CC
+1031,241200914,CC de la Muse et des Raspes du Tarn,CC
+1066,251200978,SMICTOM Nord Aveyron,SMF
+1082,251201588,SM départemental pour le traitement et la valorisation des déchets ménagers et assimilés (SYDOM Aveyron),SMO
+1087,200054807,Métropole d'Aix-Marseille-Provence,METRO
+1088,200035087,CA Terre de Provence,CA
+1089,241300417,CA d'Arles-Crau-Camargue-Montagnette,CA
+1090,241300375,CC  Vallée des Baux-Alpilles (CC VBA),CC
+1134,200065597,CU Caen la Mer,CU
+1135,200069532,CA Lisieux Normandie,CA
+1136,200065563,CC Normandie-Cabourg-Pays d'Auge,CC
+1137,200065589,CC Val ès Dunes,CC
+1138,200066710,CC Cingal-Suisse Normande,CC
+1139,200066728,CC Vallées de l'Orne et de l'Odon,CC
+1140,200066801,CC Isigny-Omaha Intercom,CC
+1141,200066827,CC du Pays de Honfleur-Beuzeville,CC
+1142,200068799,CC Intercom de la Vire au Noireau,CC
+1143,200069516,CC Seulles Terre et Mer,CC
+1144,200069524,CC Pré-Bocage Intercom,CC
+1145,241400415,CC Coeur Côte Fleurie,CC
+1146,241400514,CC du Pays de Falaise,CC
+1147,241400555,CC de Bayeux Intercom,CC
+1148,241400860,CC Coeur de Nacre,CC
+1149,241400878,CC Terre d'Auge,CC
+1258,251402723,SM intercommunal des surplus ménagers du Bessin (COLLECTEA),SMF
+1259,251402756,SM SICTOM de la Bruyère,SMF
+1266,251405031,SM traitement valorisation des déchets ménagers région Ouest Calvados (SEROC),SMF
+1278,241500230,CA du Bassin d'Aurillac,CA
+1279,200066637,CC Hautes Terres,CC
+1280,200066660,CC de Saint-Flour,CC
+1281,200066678,CC de la Châtaigneraie Cantalienne,CC
+1282,241500255,CC du Pays Gentiane,CC
+1283,241500271,CC du Pays de Mauriac,CC
+1284,241501055,CC Sumène - Artense,CC
+1285,241501089,CC Cère et Goul en Carladès,CC
+1286,241501139,CC du Pays de Salers,CC
+1317,200038149,"SM du SCOT du bassin d'Aurillac, du Carladès et de la Châtaigneraie",SMF
+1321,251500963,"SM d'élimination des ordures ménagères de la région de Mauriac, Pléaux, Salers, Saint-Cernin (SIETOM de Drugeac)",SMF
+1325,251500948,SM de la station du Lioran,SMO
+1326,251502944,SM du lac de Garabit-Grandval,SMO
+1331,200070514,CA du Grand Cognac,CA
+1332,200071827,CA du Grand Angoulême,CA
+1333,200029734,CC des 4B Sud Charente,CC
+1334,200043016,CC Val de Charente,CC
+1335,200068914,CC La Rochefoucauld - Porte du Périgord,CC
+1336,200070282,CC Lavalette Tude Dronne,CC
+1337,200072023,CC Coeur de Charente,CC
+1338,200072049,CC de Charente Limousine,CC
+1339,241600303,CC du Rouillacais,CC
+1403,251602660,Syndicat de valorisation des déchets ménagers de la Charente (CALITOM),SMF
+1416,200036473,CA de Saintes,CA
+1417,200041762,CA Rochefort Océan,CA
+1418,241700434,CA de La Rochelle,CA
+1419,241700640,CA Royan Atlantique,CA
+1420,200041499,CC Aunis Atlantique,CC
+1421,200041523,CC de la Haute Saintonge,CC
+1422,200041614,CC Aunis Sud,CC
+1423,200041689,Vals de Saintonge Communauté,CC
+1424,241700459,CC de l'Ile de Ré,CC
+1425,241700517,CC Coeur de Saintonge,CC
+1426,241700624,CC de l'Ile d'Oléron,CC
+1427,241700632,CC de Gémozac et de la Saintonge Viticole,CC
+1428,241700699,CC du Bassin de Marennes,CC
+1544,251701900,SM CYCLAD,SMF
+1548,251710687,Syndicat intercommunautaire du littoral,SMF
+1566,241800507,CA Bourges Plus,CA
+1567,200000933,CC Sauldre et Sologne,CC
+1568,200007177,CC Pays de Nérondes,CC
+1569,200011781,CC Portes du Berry entre Loire et Val d'Aubois,CC
+1570,200027076,CC Arnon Boischaut Cher,CC
+1571,200032514,CC Berry-Loire-Vauvise,CC
+1572,200036135,CC Coeur de France,CC
+1573,200049484,CC Berry Grand Sud,CC
+1574,200066330,CC Terres du Haut Berry,CC
+1575,200069227,CC Pays Fort Sancerrois Val de Loire,CC
+1576,200070571,CC Coeur de Berry,CC
+1577,200090561,CC Vierzon-Sologne-Berry,CC
+1578,241800374,CC la Septaine,CC
+1579,241800424,CC le Dunois,CC
+1580,241800432,CC les Trois Provinces,CC
+1581,241800457,CC Fercher Pays Florentais,CC
+1657,200033140,"SM de collecte et de traitement des résidus ménagers des régions de Léré, Sancerre et Vailly-sur-Sauldre",SMF
+1673,251801817,SMIRTOM du Saint Amandois,SMF
+1678,251887873,SICTREM de Baugy,SMF
+1688,200043172,CA du Bassin de Brive,CA
+1689,241927201,CA Tulle Agglo,CA
+1690,200066603,CC du Pays de Lubersac-Pompadour,CC
+1691,200066645,CC Vézère-Monédières-Millesources,CC
+1692,200066744,CC Haute-Corrèze Communauté,CC
+1693,200066751,CC Xaintrie Val'Dordogne,CC
+1694,200066769,CC Midi Corrézien,CC
+1695,241900133,CC de Ventadour - Egletons - Monédières,CC
+1696,241927243,CC du Pays d'Uzerche,CC
+1701,251907101,SIVU d'Ambrugeat-Davignac,SIVU
+1726,251903100,SM pour le ramassage et le traitement des ordures ménagères de la région de Brive,SMF
+1730,200044980,SM départemental pour le transport et le traitement des ordures ménagères (SYTTOM 19),SMO
+1737,242100410,Dijon Métropole,METRO
+1738,200006682,"CA Beaune, Côte et Sud - Communauté Beaune-Chagny-Nolay",CA
+1739,200000925,CC de la Plaine Dijonnaise,CC
+1740,200039055,CC Ouche et Montagne,CC
+1741,200039063,"CC Forêts, Seine et Suzon",CC
+1742,200069540,CC Norge et Tille,CC
+1743,200070894,CC de Gevrey-Chambertin et de Nuits-Saint-Georges,CC
+1744,200070902,CC Auxonne Pontailler Val de Saône,CC
+1745,200070910,CC Tille et Venelle,CC
+1746,200071017,CC des Terres d'Auxois,CC
+1747,200071173,CC du Pays Arnay Liernais,CC
+1748,200071207,CC de Pouilly en Auxois/Bligny sur Ouche,CC
+1749,200072825,CC Mirebellois et Fontenois,CC
+1750,242100154,CC des Vallées de la Tille et de l'Ignon,CC
+1751,242101434,CC du Pays Châtillonnais,CC
+1752,242101442,CC de Saulieu,CC
+1753,242101459,CC du Pays d'Alésia et de la Seine,CC
+1754,242101491,CC du Montbardois,CC
+1755,242101509,CC Rives de Saône,CC
+1847,242100014,SIVOM de Aignay-le-Duc,SIVOM
+1848,242100055,SIVOM de Baigneux-les-Juifs,SIVOM
+1850,242100212,SIVOM de Montigny-sur-Aube,SIVOM
+1879,252108667,SM des ordures ménagères,SMF
+1880,252108972,SM de Haute Côte-d'Or pour le traitement des déchets ménagers et assimilés,SMF
+1884,252109434,SM de collecte et de traitement des déchets ménagers et assimilés de la Plaine Dijonnaise,SMF
+1892,200065928,CA Lannion-Trégor Communauté,CA
+1893,200067981,CA Guingamp-Paimpol Agglomération de l'Armor à l'Argoat,CA
+1894,200068989,CA Dinan Agglomération,CA
+1895,200069391,CA Lamballe Terre et Mer,CA
+1896,200069409,CA Saint-Brieuc Armor Agglomération,CA
+1897,200067460,CC Loudéac Communauté - Bretagne Centre,CC
+1898,200069086,CC Leff Armor Communauté,CC
+1899,242200715,CC du Kreiz-Breizh (CCKB),CC
+1935,200043677,SM Kerval Centre Armor,SMF
+1947,252202106,SMICTOM du Ménez Bré,SMF
+1950,252203161,SMITRED Ouest-Armor,SMF
+1951,252203195,SM des déchets des Pays de la Rance et de la Baie,SMF
+1969,200034825,CA du Grand Guéret,CA
+1970,200041556,CC Portes de la Creuse en Marche,CC
+1971,200044014,CC Creuse Grand Sud,CC
+1972,200067189,CC Creuse Sud Ouest,CC
+1973,200067544,Creuse Confluence,CC
+1974,200067593,CC Marche et Combraille en Aquitaine,CC
+1975,242300135,CC du Pays Sostranien,CC
+1976,242320000,CC de Bénévent Grand Bourg,CC
+1977,242320109,CC du Pays Dunois,CC
+2025,242301307,SIVOM Auzances Bellegarde,SMF
+2027,252306147,SMICTOM de la région de Chénérailles,SMF
+2033,252326079,EVOLIS 23,SMF
+2035,252326103,SIVOM de la Courtine,SMF
+2042,200040392,CA Le Grand Périgueux,CA
+2043,200070647,CA Bergeracoise,CA
+2044,200027217,CC Sarlat-Périgord Noir,CC
+2045,200034197,CC de Montaigne Montravel et Gurson,CC
+2046,200034833,CC des Bastides Dordogne-Périgord,CC
+2047,200040095,CC Isle Vern Salembre en Périgord,CC
+2048,200040384,CC Isle Double Landais,CC
+2049,200040400,CC du Périgord Ribéracois,CC
+2050,200040830,CC du Pays de Fénelon,CC
+2051,200040889,CC de Portes Sud Périgord,CC
+2052,200041051,CC Vallée de la Dordogne et Forêt Bessède,CC
+2053,200041150,CC du Terrassonnais en Périgord Noir Thenon Hautefort,CC
+2054,200041168,CC de la Vallée de l'Homme,CC
+2055,200041440,CC de Domme- Villefranche du Périgord,CC
+2056,200041572,CC Dronne et Belle,CC
+2057,200069094,CC Isle et Crempse en Périgord,CC
+2058,200071819,CC du Périgord Nontronnais,CC
+2059,242400752,CC Périgord-Limousin,CC
+2060,242400935,CC du Pays de Saint Aulaye,CC
+2061,242401024,CC Isle-Loue-Auvézère en Périgord,CC
+2148,252402284,SMICTOM du Périgord Noir,SMF
+2149,252402466,SMCTOM de Nontron,SMF
+2150,252402474,SMCTOM secteur de Thiviers,SMF
+2153,252405329,SM départemental pour la gestion et le traitement des déchets ménagers et assimilés,SMF
+2161,242500361,CU Grand Besançon Métropole,CU
+2162,200065647,CA Pays de Montbéliard Agglomération,CA
+2163,200023075,CC du Pays de Maîche,CC
+2164,200068070,CC Loue-Lison,CC
+2165,200068294,CC des Deux Vallées Vertes,CC
+2166,200069565,CC des Lacs et Montagnes du Haut-Doubs,CC
+2167,242500320,CC de Montbenoit,CC
+2168,242500338,CC du Grand Pontarlier,CC
+2169,242504116,CC du Val de Morteau,CC
+2170,242504181,CC des Portes du Haut-Doubs,CC
+2171,242504355,CC du Plateau de Russey,CC
+2172,242504371,CC du Pays de Sancey-Belleherbe,CC
+2173,242504447,CC du Doubs Baumois,CC
+2174,242504488,CC Altitude 800,CC
+2175,242504496,CC du Plateau de Frasne et du Val de Drugeon (CFD),CC
+2284,242500312,SI des Combes Derniers,SIVOM
+2302,200061836,SM du Pays du Haut-Doubs,SMF
+2311,252500533,SM pour la prévention et la valorisation des déchets du Haut-Doubs,SMF
+2317,252507124,SM de collecte des ordures ménagères du Haut-Doubs,SMF
+2318,252508247,SYBERT,SMF
+2338,200040459,CA Montélimar Agglomération,CA
+2339,200068781,CA Valence Romans Agglo,CA
+2340,200040491,CC Porte de Dromardèche,CC
+2341,200040509,CC du Crestois et de Pays de Saillans Coeur de Drôme,CC
+2342,200042901,CC Drôme Sud Provence,CC
+2343,200067767,CC du Royans-Vercors,CC
+2344,200068229,CC des Baronnies en Drôme Provençale,CC
+2345,242600252,CC du Val de Drôme en Biovallée,CC
+2346,242600492,CC Dieulefit-Bourdeaux,CC
+2347,242600534,CC du Diois,CC
+2423,252600903,SI rhôdanien collecte et traitement ordures ménagères (SIRCTOM),SMF
+2427,252601828,Syndicat traitement déchets ménagers (SYTRAD),SMF
+2430,252602552,Syndicat des Portes de Provence (SYPP),SMF
+2441,200071454,CA Evreux Portes de Normandie,CA
+2442,200072312,CA Seine Normandie Agglomération,CA
+2443,200089456,CA Seine-Eure,CA
+2444,200065787,CC de Pont-Audemer / Val de Risle,CC
+2445,200066017,CC Lieuvin Pays d'Auge,CC
+2446,200066405,CC Roumois Seine,CC
+2447,200066413,CC Intercom Bernay Terres de Normandie,CC
+2448,200066462,CC Interco Normandie Sud Eure,CC
+2449,200070142,CC Lyons Andelle,CC
+2450,200071843,CC du Vexin Normand,CC
+2451,242700276,CC du Pays de Conches,CC
+2452,242700607,CC du Pays du Neubourg,CC
+2584,252701990,Syndicat de gestion des ordures ménagères de l'Est et du Nord de l'Eure (SYGOM),SMF
+2586,252703111,SM pour l'étude et le traitement des ordures ménagères de l'Eure (SETOM de l'Eure),SMF
+2587,252703863,Syndicat de destruction des ordures ménagères de l'Ouest de l'Eure (SDOMODE),SMF
+2591,200033181,CA Chartres Métropole,CA
+2592,200040277,CA Agglo du Pays de Dreux,CA
+2593,200006971,CC du Perche,CC
+2594,200058360,CC entre Beauce et Perche,CC
+2595,200069912,CC des Forêts du Perche,CC
+2596,200069953,CC des Portes Euréliennes d'Ile de France,CC
+2597,200069961,CC du Grand Châteaudun,CC
+2598,200070159,CC Coeur de Beauce,CC
+2599,200070167,CC Terres de Perche,CC
+2600,242852465,CC du Bonnevalais,CC
+2699,252800065,SICTOM de la région d'Auneau,SMF
+2703,252801196,"SM intercommunal pour le ramassage et le traitement des ordures ménagères de Courville-sur-Eure, La Loupe et Senonches",SMF
+2704,252801329,SICTOM de la région de Nogent-le-Rotrou,SMF
+2707,252802129,SICTOM de la région de Châteaudun,SMF
+2708,252802152,"SICTOM de la région de Bonneval, Brou, Illiers-Combray (SICTOM BBI)",SMF
+2710,252803341,SI pour le traitement et la valorisation des déchets (SITREVA),SMF
+2718,242900314,Brest Métropole,METRO
+2719,200068120,CA Quimper Bretagne Occidentale,CA
+2720,242900694,CA Quimperlé Communauté,CA
+2721,242900769,CA Concarneau Cornouaille Agglomération,CA
+2722,242900835,CA Morlaix Communauté,CA
+2723,200066868,CC Presqu'île de Crozon-Aulne maritime,CC
+2724,200067072,CC Haut-Léon Communauté,CC
+2725,200067197,CC Monts d'Arrée Communauté,CC
+2726,200067247,CC Pleyben-Châteaulin-Porzay,CC
+2727,242900074,CC du Pays d'Iroise,CC
+2728,242900553,CC du Pays des Abers,CC
+2729,242900561,CC de Haute Cornouaille,CC
+2730,242900629,CC Cap Sizun - Pointe du Raz,CC
+2731,242900645,CC Douarnenez Communauté,CC
+2732,242900660,CC du Pays Fouesnantais,CC
+2733,242900702,CC du Pays Bigouden Sud,CC
+2734,242900710,CC du Haut Pays Bigouden,CC
+2735,242900744,CC Poher Communauté,CC
+2736,242900751,CC du Pays de Landivisiau,CC
+2737,242900793,CC Communauté Lesneven Côte des Légendes,CC
+2738,242900801,CC du Pays de Landerneau-Daoulas,CC
+2792,252901871,VALCOR,SMF
+2793,252901996,SI incinération des déchets du Pays de Quimper (SIDEPAQ),SMF
+2811,242010056,CA du Pays Ajaccien,CA
+2812,200038958,CC de la Pieve de l'Ornano et du Taravo,CC
+2813,200040764,CC du Sud Corse,CC
+2814,200067049,CC Spelunca-Liamone,CC
+2815,242000495,CC de l'Alta Rocca,CC
+2816,242000503,CC Celavu-Prunelli,CC
+2817,242010130,CC du Sartenais Valinco Taravo,CC
+2826,242000156,SIVOM du Haut Taravo,SIVOM
+2827,242000172,SIVOM de la vallée de la Cinarca et du Liamone,SIVOM
+2830,242010031,SIVOM pour l'équipement et la gestion du hameau de Bavella,SIVOM
+2842,242000354,CA de Bastia,CA
+2843,200015162,CC de l'Oriente,CC
+2844,200033827,CC de Fium'Orbu Castellu,CC
+2845,200034205,CC de la Costa Verde,CC
+2846,200036499,CC de Marana-Golo,CC
+2847,200042943,CC du Cap Corse,CC
+2848,200073104,CC de l'Ile-Rousse - Balagne,CC
+2849,200073120,CC Nebbiu - Conca d'Oro,CC
+2850,200073138,CC Pasquale Paoli,CC
+2851,200073252,CC de la Castagniccia-Casinca,CC
+2852,242020071,CC du Centre Corse,CC
+2853,242020105,CC de Calvi Balagne,CC
+2868,242000271,SIVOM de la vallée d'Orezza,SIVOM
+2874,242000438,SIVOM de Rogna,SMF
+2881,200034692,CA du Gard Rhodanien,CA
+2882,200066918,CA Alès Agglomération,CA
+2883,243000643,CA de Nîmes Métropole,CA
+2884,200034379,CC Pays d'Uzès,CC
+2885,200034411,CC du Piémont Cévenol,CC
+2886,200034601,CC Causses Aigoual Cévennes,CC
+2887,200035129,CC de Cèze Cévennes,CC
+2888,243000270,CC du Pays Viganais,CC
+2889,243000296,CC du Pays de Sommières,CC
+2890,243000569,"CC Rhony, Vistre, Vidourle",CC
+2891,243000585,CC Beaucaire Terre d'Argence,CC
+2892,243000593,CC de Petite Camargue,CC
+2893,243000650,CC Terre de Camargue,CC
+2894,243000684,CC du Pont du Gard,CC
+2994,253001135,SMICTOM de la région d'Uzès,SMF
+2995,253001325,SMICTOM Rhône Garrigues,SMF
+3000,253002869,SM de traitement des ordures ménagères et assimilés Aigoual Cévennes Vidourle (SYMTOMA),SMF
+3001,253002919,SM Sud Rhône Environnement,SMF
+3002,253002950,SITOM de la région Sud Gard,SMF
+3004,253003115,SMIRITOM de la Zone Nord du Plan départemental des déchets,SMF
+3021,243100518,Toulouse Métropole,METRO
+3022,200068641,CA Le Muretain Agglo,CA
+3023,243100633,CA du Sicoval,CA
+3024,200034957,CC du Frontonnais,CC
+3025,200066819,CC du Volvestre,CC
+3026,200068807,CC du Bassin Auterivain Haut-Garonnais,CC
+3027,200068815,CC Coeur de Garonne,CC
+3028,200071298,CC des Terres du Lauragais,CC
+3029,200071314,CC des Hauts-Tolosans,CC
+3030,200072635,CC Pyrénées Haut Garonnaises,CC
+3031,200072643,CC Coeur et Coteaux du Comminges,CC
+3032,200073146,CC Cagire Garonne Salat,CC
+3033,243100567,CC Lauragais Revel Sorezois,CC
+3034,243100732,CC des Coteaux du Girou,CC
+3035,243100773,CC Val'Aïgo,CC
+3036,243100781,CC de la Save au Touch,CC
+3037,243100815,CC des Coteaux Bellevue,CC
+3083,243100328,SIVOM du Haut Comminges,SMF
+3084,243100344,SIVOM des cantons de Saint-Gaudens - Montréjeau - Aspet - Magnoac,SMF
+3086,253100572,SIPOM,SMF
+3094,253102172,Syndicat de syndicats de traitement des ordures ménagères des Pyrénées (SYSTOM des Pyrénées),SMF
+3097,253102636,"SM DECOSET (déchetteries, collecte sélective, traitement)",SMF
+3115,200050938,PETR du Pays Lauragais,PETR
+3118,200066926,CA Grand Auch Coeur de Gascogne,CA
+3119,200023620,CC de la Gascogne Toulousaine,CC
+3120,200034726,CC Bastides de Lomagne,CC
+3121,200035632,CC Armagnac Adour,CC
+3122,200035756,CC Astarac Arros en Gascogne,CC
+3123,200042372,CC des Coteaux Arrats Gimone,CC
+3124,200072320,CC Val de Gers,CC
+3125,243200391,CC de la Lomagne Gersoise,CC
+3126,243200409,CC du Bas Armagnac,CC
+3127,243200417,CC de la Tenarèze,CC
+3128,243200425,CC Coeur d'Astarac en Gascogne,CC
+3129,243200458,CC du Grand Armagnac,CC
+3130,243200508,CC Bastides et Vallons du Gers,CC
+3131,243200599,CC du Saves,CC
+3132,243200607,CC Artagnan de Fezensac,CC
+3167,200043180,SICTOM du secteur Centre,SMF
+3188,243200318,SI de la Lomagne,SMF
+3189,253200174,SICTOM du secteur de Condom,SMF
+3191,253200984,SM de collecte des déchets du secteur Sud,SMF
+3192,253200992,SICTOM du secteur Ouest,SMF
+3193,253201024,SICTOM du secteur Sud-Est,SMF
+3194,253201065,SICTOM du secteur Est,SMF
+3199,253201842,SM de production d'eau potable et de traitement des déchets du Gers (TRIGONE),SMO
+3204,243300316,Bordeaux Métropole,METRO
+3205,200070092,CA du Libournais,CA
+3206,243300563,CA Bassin d'Arcachon Sud (COBAS),CA
+3207,243301504,CA du Bassin d'Arcachon Nord,CA
+3208,200023794,CC de Blaye,CC
+3209,200035533,CC du Grand Saint Emilionnais,CC
+3210,200043974,CC du Sud Gironde,CC
+3211,200043982,CC du Bazadais,CC
+3212,200044394,CC du Réolais en Sud Gironde,CC
+3213,200069581,CC Convergence Garonne,CC
+3214,200069599,CC rurales de l'Entre-Deux-Mers,CC
+3215,200069995,CC Médoc Coeur de Presqu'île,CC
+3216,200070720,CC Médoc Atlantique,CC
+3217,243300811,CC de l'Estuaire,CC
+3218,243301165,CC Jalle-Eau-Bourde,CC
+3219,243301181,CC Latitude Nord Gironde,CC
+3220,243301215,CC du Créonnais,CC
+3221,243301223,CC du Grand Cubzaguais,CC
+3222,243301249,CC du Secteur de Saint-Loubès,CC
+3223,243301264,CC de Montesquieu,CC
+3224,243301355,CC les Coteaux Bordelais,CC
+3225,243301371,CC du Pays Foyen,CC
+3226,243301389,CC Médullienne,CC
+3227,243301397,CC du Fronsadais,CC
+3228,243301405,CC du Val de l'Eyre,CC
+3229,243301439,CC des Portes de l'Entre-Deux-Mers,CC
+3230,243301447,CC Médoc Estuaire,CC
+3231,243301454,CC Castillon/Pujols,CC
+3371,200001634,SM pour la révision et le suivi du SCOT du bassin d'Arcachon - Val de l'Eyre (SYBARVAL),SMF
+3381,200078335,SM du Sud Gironde,SMF
+3394,253300545,SI de l'Entre-deux-Mers Ouest pour la collecte et le traitement des ordures ménagères (SEMOCTOM),SMF
+3395,253300578,SM pour la collecte et le traitement des ordures ménagères (SICTOM) du Sud Gironde,SMF
+3397,253300701,Syndicat médocain intercommunal pour la collecte et le traitement des ordures ménagères (SMICOTOM),SMF
+3406,253303499,Union des syndicats pour la collecte et le traitement des ordures ménagères (USTOM) du Castillonais et du Réolais,SMF
+3407,253303911,Union communautaire pour le traitement des ordures ménagères de La Brède - Podensac,SMF
+3410,253306302,SIVOM de la rive droite,SMF
+3415,253306617,SM intercommunal de collecte et de valorisation des déchets ménagers du Libournais-Haute Gironde (SMICVAL),SMF
+3427,243400017,Montpellier Méditerranée Métropole,METRO
+3428,200066355,CA Sète Agglopôle Méditerranée,CA
+3429,243400470,CA du Pays de l'Or,CA
+3430,243400769,CA de Béziers-Méditerranée,CA
+3431,243400819,CA Hérault-Méditerranée,CA
+3432,200017341,CC Lodévois et Larzac,CC
+3433,200022986,CC du Grand Pic Saint-Loup,CC
+3434,200042646,CC Grand Orb communauté de communes en Languedoc,CC
+3435,200042653,CC Sud-Hérault,CC
+3436,200066348,CC du Minervois au Caroux,CC
+3437,200071058,CC Les Avant-Monts,CC
+3438,243400355,CC du Clermontais,CC
+3439,243400488,CC la Domitienne,CC
+3440,243400520,CC du Pays de Lunel,CC
+3441,243400694,CC Vallée de l'Hérault,CC
+3442,243400736,CC des Cévennes Gangeoises et Suménoises,CC
+3495,253400485,SMICTOM Pézenas-Agde,SMF
+3501,253403232,Syndicat Centre Hérault,SMF
+3513,200017127,Syndicat de développement local du Pays Coeur d'Hérault ou ''SYDEL du Pays Coeur d'Hérault'',SMO
+3535,243500139,Rennes Métropole,METRO
+3536,200039022,CA Vitré Communauté,CA
+3537,200072452,CA Fougères Agglomération,CA
+3538,243500741,CA Redon Agglomération,CA
+3539,243500782,CA du Pays de Saint Malo Agglomération,CA
+3540,200038990,CC de Saint-Méen Montauban,CC
+3541,200043990,CC Vallons de Haute-Bretagne Communauté,CC
+3542,200070662,CC Bretagne Porte de Loire Communauté,CC
+3543,200070670,CC du Pays de Dol et de la Baie du Mont Saint-Michel,CC
+3544,200070688,CC Couesnon Marches de Bretagne,CC
+3545,243500550,CC Montfort Communauté,CC
+3546,243500618,CC Brocéliande Communauté,CC
+3547,243500634,Roche aux Fées Communauté,CC
+3548,243500659,CC Pays de Châteaugiron Communauté,CC
+3549,243500667,CC Val d'Ille-Aubigné,CC
+3550,243500725,CC Côte d'Emeraude,CC
+3551,243500733,CC Bretagne Romantique,CC
+3552,243500774,CC Liffré-Cormier Communauté,CC
+3614,200073500,SMICTOM du Pays de Fougères,SMF
+3625,200090884,SMICTOM Valcobreizh,SMF
+3637,253500862,SMICTOM des Pays de Vilaine,SMF
+3638,253500953,syndicat mixte pour la collecte et le tri des ordures ménagères du secteur Sud-Est d'ille et vilaine,SMF
+3639,253500995,SMICTOM du Centre Ouest de l'Ille-et-Vilaine,SMF
+3652,200084945,SMO de traitement des déchets ménagers et assimilés,SMO
+3659,243600327,CA Châteauroux Métropole,CA
+3660,200007052,CC de la Marche Berrichonne,CC
+3661,200018521,CC du Val de Bouzanne,CC
+3662,200035137,CC Marche Occitane - Val d'Anglin,CC
+3663,200035848,CC du Châtillonnais en Berry,CC
+3664,200040558,CC Ecueillé-Valençay,CC
+3665,200068872,CC Eguzon - Argenton - Vallée de la Creuse,CC
+3666,200068880,CC Champagne Boischauts,CC
+3667,243600202,CC Chabris - Pays de Bazelle,CC
+3668,243600236,CC du Pays d'Issoudun,CC
+3669,243600293,CC de la Région de Levroux,CC
+3670,243600301,CC Val de l'Indre - Brenne,CC
+3671,243600319,CC Brenne - Val de Creuse,CC
+3672,243600343,CC Coeur de Brenne,CC
+3673,243600350,CC de la Châtre et Sainte-Sévère,CC
+3759,253600456,SICTOM de Champagne Berrichonne,SMF
+3763,253602429,SM du traitement des ordures ménagères de la région de Châteauroux,SMF
+3767,253609937,SM pour la collecte et le traitement des ordures ménagères de la zone Ouest du département de l'Indre,SMF
+3778,243700754,Tours Métropole Val de Loire,METRO
+3779,200043065,CC du Val d Amboise,CC
+3780,200043081,"CC Chinon, Vienne et Loire",CC
+3781,200071587,CC Loches Sud Touraine,CC
+3782,200072650,CC Touraine Vallée de l'Indre,CC
+3783,200072668,CC Touraine Val de Vienne,CC
+3784,200072981,CC Touraine Ouest Val de Loire,CC
+3785,200073161,CC Touraine-Est Vallées,CC
+3786,200073237,CC de Gâtine et Choisilles - Pays de Racan,CC
+3787,243700499,CC du Castelrenaudais,CC
+3788,243700820,CC de Bléré Val de Cher,CC
+3859,253700454,SMICTOM du Chinonais,SMF
+3864,253702963,SMICTOM d'Amboise,SMF
+3867,253753107,SMIPE Val Touraine Anjou,SMF
+3876,200040715,Grenoble-Alpes-Métropole,METRO
+3877,200077014,CA Vienne Condrieu,CA
+3878,243800604,CA Porte de l'Isère (CAPI),CA
+3879,243800984,CA du Pays Voironnais,CA
+3880,200018166,CC Le Grésivaudan,CC
+3881,200030658,CC du Trièves,CC
+3882,200040111,CC Coeur de Chartreuse,CC
+3883,200040657,CC de la Matheysine,CC
+3884,200059392,CC Bièvre Isère,CC
+3885,200068542,CC Les Balcons du Dauphiné,CC
+3886,200068567,CC Les Vals du Dauphiné,CC
+3887,200070431,CC Saint-Marcellin Vercors Isère Communauté,CC
+3888,200085751,CC Entre Bièvre et Rhône,CC
+3889,243800745,CC de l'Oisans,CC
+3890,243800935,CC Lyon-Saint-Exupéry en Dauphiné,CC
+3891,243801024,CC du Massif du Vercors,CC
+3892,243801073,CC de Bièvre Est,CC
+3893,243801255,CC des Collines du Nord Dauphiné,CC
+3996,253801179,SICTOM de la région de Morestel,SMF
+3997,253801450,SI du Bréda et de la Combe de Savoie (SIBRECSA),SMF
+3999,253801716,SICTOM du Guiers,SMF
+4000,253802367,SICTOM de la Bièvre,SMF
+4001,253802730,SITOM Nord Isère,SMF
+4006,253804710,SM Nord Dauphiné,SMF
+4023,200010650,CA du Grand Dole,CA
+4024,200071116,CA ECLA  (Espace Communautaire Lons Agglomération),CA
+4025,200026573,CC Haut-Jura Saint-Claude,CC
+4026,200069615,CC Bresse Haute Seille,CC
+4027,200069623,CC Champagnole Nozeroy Jura,CC
+4028,200071595,"CC Arbois, Poligny, Salins, Coeur du Jura",CC
+4029,200072056,CC Porte du Jura,CC
+4030,200090579,CC Terre d?Emeraude Communauté ,CC
+4031,243900354,CC de la Station des Rousses-Haut Jura,CC
+4032,243900420,CC du Val d'Amour,CC
+4033,243900479,CC Haut-Jura Arcade Communauté,CC
+4034,243900560,CC Jura Nord,CC
+4035,243900610,CC la Grandvallière,CC
+4036,243901089,CC de la Plaine Jurassienne,CC
+4156,253900625,SICTOM de la région de Champagnole,SMF
+4157,253900633,SICTOM de la zone de Dole,SMF
+4158,253900641,SICTOM de la zone de Lons-le-Saunier,SMF
+4159,253900658,SICTOM du Haut-Jura,SMF
+4162,253901839,SYDOM,SMF
+4179,244000675,CA du Grand Dax,CA
+4180,244000808,CA Mont de Marsan Agglomération,CA
+4181,200030435,CC d'Aire-sur-l'Adour,CC
+4182,200035541,CC des Landes d'Armagnac,CC
+4183,200069417,CC Pays d'Orthe et Arrigans,CC
+4184,200069631,CC Terres de Chalosse,CC
+4185,200069649,CC Chalosse Tursan,CC
+4186,200069656,CC Coeur Haute Lande,CC
+4187,244000543,CC de Mimizan,CC
+4188,244000659,CC du Seignanx,CC
+4189,244000691,CC du Pays Morcenais,CC
+4190,244000766,CC du Pays Tarusate,CC
+4191,244000774,CC du Pays de Villeneuve en Armagnac Landais,CC
+4192,244000824,CC du Pays Grenadois,CC
+4193,244000857,CC Côte Landes Nature,CC
+4194,244000865,CC Maremne Adour Côte Sud,CC
+4195,244000873,CC des Grands Lacs,CC
+4196,244000881,CC Coteaux et Vallées des Luys,CC
+4264,244000279,SIVOM du Born,SMF
+4266,254000839,SIETOM de Chalosse,SMF
+4267,254000847,SICTOM du Marsan,SMF
+4268,254001977,SICTOM Côte Sud,SMF
+4271,254003239,SM d'élimination des déchets de la haute Lande,SMF
+4299,200030385,CA de Blois ''Agglopolys'',CA
+4300,200072072,CA Territoires Vendômois,CA
+4301,200000800,CC Coeur de Sologne,CC
+4302,200018406,CC du Romorantinais et du Monestois,CC
+4303,200040772,CC du Perche et Haut Vendômois,CC
+4304,200055481,CC Beauce Val de Loire,CC
+4305,200072064,CC Val-de-Cher-Controis,CC
+4306,244100293,CC des Collines du Perche,CC
+4307,244100780,CC de la Sologne des Etangs,CC
+4308,244100798,CC du Grand Chambord,CC
+4309,244100806,CC de la Sologne des Rivières,CC
+4407,254100415,SM de collecte et de traitement des ordures ménagères de Sologne,SMF
+4408,254100472,SM d'élimination des ordures ménagères du groupement de Mer,SMF
+4410,254100837,SM d'enlèvement et d'élimination des ordures ménagères du Val de Cher,SMF
+4415,254102023,"SM de collecte, de traitement et de valorisation des déchets ménagers du Vendômois (VAL DEM)",SMF
+4417,254103054,SM de collecte et de traitement des déchets du Blaisois (VAL-ECO),SMF
+4426,244200770,Saint-Etienne Métropole,METRO
+4427,200035731,CA Roannais Agglomération,CA
+4428,200065886,Loire Forez Agglomération (LFA),CA
+4429,200035202,CC Charlieu-Belmont,CC
+4430,200065894,CC de Forez-Est,CC
+4431,244200614,CC des Vals d'Aix et Isable,CC
+4432,244200622,CC des Monts du Pilat,CC
+4433,244200630,CC du Pays Entre Loire et Rhône,CC
+4434,244200820,CC du Pays d'Urfé,CC
+4435,244200895,CC du Pilat Rhodanien,CC
+4475,200017424,SYDEMER,SMF
+4486,254202104,Syndicat d'études et d'élimination des déchets du Roannais (SEEDR),SMF
+4495,200073419,CA du Puy-en-Velay,CA
+4496,200073393,CC des Rives du Haut Allier,CC
+4497,200073401,CC Mézenc-Loire-Meygal,CC
+4498,200073427,CC Marches du Velay-Rochebaron,CC
+4499,200085728,CC Brioude Sud Auvergne,CC
+4500,244300307,CC du Pays de Montfaucon,CC
+4501,244301016,CC des Sucs,CC
+4502,244301099,CC Auzon Communauté,CC
+4503,244301107,CC du Haut Lignon,CC
+4504,244301123,CC des Pays de Cayres et de Pradelles,CC
+4505,244301131,CC Loire et Semène,CC
+4537,200040129,SICTOM des Monts du Forez,SMF
+4541,254300049,SICTOM Issoire - Brioude,SMF
+4542,254300395,SM pour le tri sélectif et le traitement des déchets ménagers et assimilés de la région de Monistrol-sur-Loire (SYMPTTOM),SMF
+4544,254300593,SICTOM Velay-Pilat,SMF
+4546,254300759,SICTOM entre Monts et vallées,SMF
+4547,254300809,SICTOM de la région Emblavez-Meygal,SMF
+4561,244400404,Nantes Métropole,METRO
+4562,200067346,CA Pornic Agglo Pays de Retz,CA
+4563,200067635,CA Clisson Sèvre et Maine Agglo,CA
+4564,244400610,CA de la Presqu'île de Guérande Atlantique (CAP ATLANTIQUE),CA
+4565,244400644,CA de la Région Nazairienne et de l'Estuaire (CARENE),CA
+4566,200000438,CC du Pays de Pontchâteau St-Gildas-des-Bois,CC
+4567,200067866,CC Sèvre et Loire,CC
+4568,200071546,CC Sud Retz Atlantique,CC
+4569,200072726,CC Châteaubriant-Derval,CC
+4570,200072734,CC Estuaire et Sillon,CC
+4571,244400438,Grand Lieu Communauté,CC
+4572,244400453,CC de la Région de Blain,CC
+4573,244400503,CC d'Erdre et Gesvres,CC
+4574,244400537,CC de Nozay,CC
+4575,244400552,CC du Pays d'Ancenis,CC
+4576,244400586,CC du Sud Estuaire,CC
+4603,254402522,SM Centre Nord Atlantique pour le traitement et le recyclage des déchets,SMF
+4617,244500468,Orléans Métropole,METRO
+4618,244500203,CA Montargoise et Rives du Loing (AME),CA
+4619,200005932,CC des Portes de Sologne,CC
+4620,200035764,CC de la Beauce Loirétaine,CC
+4621,200066280,CC du Pithiverais,CC
+4622,200067668,"CC de la Cléry, du Betz et de l'Ouanne",CC
+4623,200067676,CC Canaux et Forêts en Gâtinais,CC
+4624,200068278,CC Berry Loire Puisaye,CC
+4625,200070100,CC du Val de Sully,CC
+4626,200070183,CC des Terres du Val de Loire,CC
+4627,200071850,CC du Pithiverais-Gâtinais,CC
+4628,244500211,CC Giennoises,CC
+4629,244500419,CC des Quatre Vallées,CC
+4630,244500427,CC des Loges,CC
+4631,244500484,CC de la Forêt,CC
+4632,244500542,CC de la Plaine du Nord Loiret,CC
+4763,254500010,SMIRTOM de la région d'Artenay,SMF
+4764,254500226,SMICTOM de la région de Châteauneuf-sur-Loire,SMF
+4765,254500739,SM pour la collecte et le traitement des déchets ménagers de l'arrondissement de Pithiviers (SMITOMAP),SMF
+4767,254501620,"SMICTOM des cantons de Gien, Châtillon-sur-Loire, Châtillon-Coligny, Briare",SMF
+4771,254502164,SMIRTOM de la région de Montargis,SMF
+4773,254502578,SYCTOM des régions de Gien et Châteauneuf-sur-Loire,SMF
+4776,254503105,SM Beauce Gâtinais valorisation,SMF
+4784,200079903,PETR pour le développement du Pays Beauce Gâtinais en Pithiverais,PETR
+4785,200086643,PETR Gâtinais Montargois,PETR
+4786,200023737,CA du Grand Cahors,CA
+4787,200035327,CC Cazals-Salviac,CC
+4788,200039519,CC du Quercy Blanc,CC
+4789,200066371,CC Causses et Vallée de la Dordogne,CC
+4790,200067361,CC Grand-Figeac,CC
+4791,244600433,CC de la Vallée du Lot et du Vignoble,CC
+4792,244600482,CC Quercy - Bouriane,CC
+4793,244600532,CC du Pays de Lalbenque-Limogne,CC
+4794,244600573,CC du Causse de Labastide Murat,CC
+4845,254600265,SMICTOM du Pays de Gourdon,SMF
+4848,254600901,SM collecte et traitement des ordures ménagères les Marches du Sud Quercy,SMF
+4863,453372997,SYDED du Lot,SMO
+4866,200023307,CA du Grand Villeneuvois,CA
+4867,200030674,CA Val de Garonne Agglomération ,CA
+4868,200035459,CA d'Agen,CA
+4869,200036523,CC des Bastides en Haut Agenais Périgord,CC
+4870,200036572,CC Porte d'Aquitaine en Pays de Serres,CC
+4871,200068922,CC du Confluent et des Coteaux de Prayssas,CC
+4872,200068930,CC Fumel Vallée du Lot,CC
+4873,200068948,CC Albret Communauté,CC
+4874,244700449,CC du Pays de Duras,CC
+4875,244700464,CC du Pays de Lauzun,CC
+4876,244701355,CC des Coteaux et Landes de Gascogne,CC
+4877,244701405,CC Lot et Tolzac,CC
+4921,200020550,SMICTOM Lot-et-Garonne Baïse,SMF
+4940,254702582,SM de valorisation et de traitement des déchets ménagers et assimilés en Lot-et-Garonne,SMO
+4941,200006930,CC du Haut Allier,CC
+4942,200069102,CC Randon - Margeride,CC
+4943,200069128,CC Mont Lozère,CC
+4944,200069136,CC des Cévennes au Mont Lozère,CC
+4945,200069144,CC des Hautes Terres de l'Aubrac,CC
+4946,200069151,CC Gorges Causses Cévennes,CC
+4947,200069185,CC des Terres d'Apcher-Margeride-Aubrac,CC
+4948,200069268,CC Aubrac Lot Causses Tarn,CC
+4949,244800405,CC Coeur de Lozère,CC
+4950,244800470,CC du Gévaudan,CC
+4955,254800758,SI Aubrac-Colagne,SIVU
+4962,244800256,SM La Montagne,SMF
+4963,254300718,SICTOM des Hauts plateaux,SMF
+4965,254800022,Syndicat départemental d'énergie et d'équipement de la Lozère (SDEE),SMF
+4968,254800345,SICTOM des bassins du Haut-Tarn,SMF
+4971,254800709,SM de collecte et de traitement des déchets ménagers Lozère Centre,SMF
+4982,244900015,CU Angers Loire Métropole,CU
+4983,200060010,CA Mauges Communauté,CA
+4984,200071678,CA Agglomération du Choletais,CA
+4985,200071876,CA Saumur Val de Loire,CA
+4986,200068955,CC Anjou Loir et Sarthe,CC
+4987,200071553,CC Loire Layon Aubance,CC
+4988,200071868,CC des Vallées du Haut-Anjou,CC
+4989,244900809,CC Anjou Bleu Communauté,CC
+4990,244900882,CC Baugeois Vallée,CC
+5022,254900442,SI du Segréen pour le traitement des ordures (SISTO),SMF
+5023,254900517,SICTOM  Loir et Sarthe,SMF
+5026,254901341,SMITOM du Sud Saumurois,SMF
+5027,254902034,Pôle métropolitain Loire Angers,SMF
+5029,254902414,SYCTOM du Loire Béconnais et ses environs,SMF
+5031,254902562,SM pour le traitement et la valorisation des déchets ménagers résiduels (VALOR 3 E),SMF
+5036,254902257,SM intercommunal de valorisation et de recyclage thermique des déchets de l'Est Anjou,SMO
+5040,200052629,PETR du Segréen,PETR
+5041,200066389,CA Saint-Lô Agglo,CA
+5042,200067205,CA du Cotentin,CA
+5043,200069425,CA Mont-Saint-Michel-Normandie,CA
+5044,200042604,"CC de Granville, Terre et Mer",CC
+5045,200042729,CC de la Baie du Cotentin,CC
+5046,200043354,CC de Villedieu Intercom,CC
+5047,200067023,CC Coutances Mer et Bocage,CC
+5048,200067031,CC Côte Ouest Centre Manche,CC
+5102,255001638,SM de la Perrelle,SMF
+5105,255003063,SM du Point Fort,SMF
+5119,200067213,CU du Grand Reims,CU
+5120,200066876,CA de Châlons-en-Champagne,CA
+5121,200067684,"CA Epernay, Coteaux et Plaine de Champagne",CA
+5122,200034718,"CC de Vitry, Champagne et Der",CC
+5123,200042620,CC de la Région de Suippes,CC
+5124,200042703,CC de l'Argonne Champenoise,CC
+5125,200042992,CC Perthois-Bocage et Der,CC
+5126,200043438,CC de la Moivre à la Coole,CC
+5127,200066835,CC de Sézanne-Sud Ouest Marnais,CC
+5128,200066850,CC des Paysages de la Champagne,CC
+5129,200067379,CC Côtes de Champagne et Val de Saulx,CC
+5130,245100615,CC de la Grande Vallée de la Marne,CC
+5131,245100888,CC de la Brie Champenoise,CC
+5132,245100979,CC du Sud Marnais,CC
+5174,200035673,SM du Sud-Est Marnais (SYMSEM),SMF
+5203,255102592,SM de valorisation des ordures ménagères (SYVALOM),SMO
+5207,200068658,CA de Chaumont,CA
+5208,200068666,CA de Saint-Dizier Der et Blaise,CA
+5209,200027308,CC d'Auberive Vingeanne et Montsaugeonnais,CC
+5210,200044253,CC du Bassin de Joinville en Champagne,CC
+5211,200069664,CC Meuse Rognon,CC
+5212,200070332,CC des Savoir-Faire,CC
+5213,200072999,CC du Grand Langres,CC
+5214,245200597,CC des Trois Forêts,CC
+5271,200055614,Syndicat départemental d'énergie et des déchets 52,SMF
+5293,255201402,SMICTOM de Saint-Dizier,SMF
+5296,255202335,SMICTOM de la région de Langres,SMF
+5300,200083392,Laval Agglomération,CA
+5301,200033298,CC des Coëvrons,CC
+5302,200042182,CC du Mont des Avaloirs,CC
+5303,200048551,CC du Pays de Craon,CC
+5304,200055887,CC Mayenne Communauté,CC
+5305,245300223,CC du Pays de Meslay-Grez,CC
+5306,245300355,CC de l'Ernée,CC
+5307,245300389,CC du Bocage Mayennais,CC
+5308,245300447,CC du Pays de Château-Gontier,CC
+5337,245400676,Métropole du Grand Nancy,METRO
+5338,245400262,Grand Longwy Agglomération,CA
+5339,200035772,CC du Pays du Saintois,CC
+5340,200041515,CC du Bassin de Pont-à-Mousson,CC
+5341,200043693,CC Terre Lorraine du Longuyonnais,CC
+5342,200067643,CC Meurthe Mortagne Moselle,CC
+5343,200069433,CC de Vezouze en Piémont,CC
+5344,200070290,CC Coeur du Pays Haut,CC
+5345,200070324,CC du Territoire de Lunéville à Baccarat,CC
+5346,200070563,CC Terres Touloises,CC
+5347,200070589,CC de Seille et Grand Couronné,CC
+5348,200070738,CC Mad et Moselle,CC
+5349,200070845,CC Orne Lorraine Confluences,CC
+5350,245400171,CC Moselle et Madon,CC
+5351,245400189,CC des Pays du Sel et du Vermois,CC
+5352,245400510,CC du Pays de Colombey et du Sud Toulois,CC
+5353,245400601,CC du Bassin de Pompey,CC
+5354,245400759,CC du Pays du Sanon,CC
+5507,255400905,"SI pour le ramassage et le traitement des ordures ménagères du secteur de Briey,de la vallée de l'Orne et du Jarnisy",SMF
+5510,255401333,SM de traitement des ordures ménagères de la région de Villerupt,SMF
+5511,255401341,SI pour la collecte et l'élimination des déchets des ménages dans le secteur de Piennes,SMF
+5528,200033025,CA de Bar-le-Duc - Sud Meuse,CA
+5529,200049187,CA du Grand Verdun,CA
+5530,200034874,CC Côtes de Meuse Woëvre,CC
+5531,200066108,CC des Portes de Meuse,CC
+5532,200066116,CC Argonne-Meuse,CC
+5533,200066132,CC du Pays de Stenay et du Val Dunois,CC
+5534,200066140,CC de l'Aire à l'Argonne,CC
+5535,200066157,CC de Commercy - Void - Vaucouleurs,CC
+5536,200066165,CC Val de Meuse - Voie Sacrée,CC
+5537,200066173,CC de Damvillers Spincourt,CC
+5538,245500327,CC du Sammiellois,CC
+5539,245501176,CC du Territoire de Fresnes en Woëvre,CC
+5540,245501184,CC du Pays de Revigny sur Ornain,CC
+5541,245501242,CC du Pays d'Etain,CC
+5542,245501259,CC du Pays de Montmédy,CC
+5599,200046647,SM d'études et de traitement des déchets ménagers et assimilés,SMF
+5619,200049906,PETR du Pays Barrois,PETR
+5622,200042174,CA Lorient Agglomération,CA
+5623,200067932,CA Golfe du Morbihan - Vannes Agglomération,CA
+5624,200027027,CC Arc Sud Bretagne,CC
+5625,200043123,CC Auray Quiberon Terre Atlantique,CC
+5626,200066777,Ploërmel Communauté,CC
+5627,200066785,CC de l'Oust à Brocéliande,CC
+5628,200067221,CC Centre Morbihan Communauté,CC
+5629,245600440,CC de Blavet Bellevue Océan,CC
+5630,245600465,CC de Belle Ile en Mer,CC
+5631,245614383,CC Questembert Communauté,CC
+5632,245614417,CC Roi Morvan Communauté,CC
+5633,245614433,CC Pontivy Communauté,CC
+5669,255601908,SI pour le transfert et le traitement des ordures ménagères du Morbihan intérieur (SITTOM - MI),SMF
+5672,255613374,SM du Sud Est du Morbihan (SYSEM),SMF
+5681,200039865,Metz Métropole,METRO
+5682,200067502,CA Saint-Avold Synergie,CA
+5683,200070746,CA Sarreguemines Confluences,CA
+5684,245700372,CA de Forbach Porte de France,CA
+5685,245701222,CA du Val de Fensch,CA
+5686,245701362,CA Portes de France-Thionville,CA
+5687,200039907,CC du Sud Messin,CC
+5688,200039949,CC Rives de Moselle,CC
+5689,200067486,CC Bouzonvillois-Trois Frontières,CC
+5690,200067650,CC Houve-Pays Boulageois,CC
+5691,200067957,CC Haut Chemin-Pays de Pange,CC
+5692,200068146,CC Sarrebourg Moselle Sud,CC
+5693,200069441,CC du Pays de Bitche,CC
+5694,245700133,CC du District Urbain de Faulquemont (DUF),CC
+5695,245700398,CC de Freyming-Merlebach,CC
+5696,245700695,CC de Cattenom et Environs,CC
+5697,245700950,CC du Pays de Phalsbourg,CC
+5698,245701164,CC du Warndt,CC
+5699,245701206,CC du Saulnois,CC
+5700,245701271,CC du Pays Orne Moselle,CC
+5701,245701354,CC de l'Arc Mosellan,CC
+5702,245701404,CC du Pays Haut Val d'Alzette,CC
+5836,245700604,SIVOM d'Algrange Nilvange,SIVOM
+5857,200027118,"SM de transport et de traitement des déchets ménagers de Lorraine Nord ""SYDELON""",SMF
+5899,255704900,SYDEME,SMF
+5911,200049989,SM du pays de Sarrebourg,PETR
+5912,245804406,CA de Nevers,CA
+5913,200067429,CC Haut Nivernais-Val d'Yonne,CC
+5914,200067692,CC Tannay-Brinon-Corbigny,CC
+5915,200067700,CC Sud Nivernais,CC
+5916,200067882,CC Bazois Loire Morvan,CC
+5917,200067890,CC Morvan Sommets et Grands Lacs,CC
+5918,200067908,CC Amognes Coeur du Nivernais,CC
+5919,200067916,CC Coeur de Loire,CC
+5920,200068088,CC Les Bertranges,CC
+5921,245801063,CC Loire et Allier,CC
+5922,245804497,CC du Nivernais Bourbonnais,CC
+5999,255800682,Syndicat de gestion des déchets du Centre Nivernais,SMF
+6000,255801441,"SICTOM d'Avril, Fleury, Luthenay",SMF
+6001,255801466,SICTOM de Saint-Pierre-le-Moûtier,SMF
+6010,200093201,Métropole Européenne de Lille,METRO
+6011,245900428,CU de Dunkerque,CU
+6012,200030633,CA du Caudrésis et du Catésis,CA
+6013,200042190,CA de la Porte du Hainaut,CA
+6014,200043396,CA Maubeuge Val de Sambre,CA
+6015,200044618,CA Douaisis Agglo,CA
+6016,200068500,CA de Cambrai,CA
+6017,245901160,CA Valenciennes Métropole,CA
+6018,200040947,CC de Flandre Intérieure,CC
+6019,200040954,CC des Hauts de Flandre,CC
+6020,200041960,CC Pévèle-Carembault,CC
+6021,200043263,CC Coeur de l'Avesnois,CC
+6022,200043321,CC du Pays de Mormal,CC
+6023,200043404,CC du Sud Avesnois,CC
+6024,245900758,CC Flandre Lys,CC
+6025,245901038,CC du Pays Solesmois,CC
+6026,245901152,CC Coeur d'Ostrevent (CCCO),CC
+6100,255900573,SM de collecte et de traitement des ordures ménagères de la région des Flandres,SMF
+6101,255900599,SM de ramassage des ordures ménagères Flandre - Nord,SMF
+6102,255900680,SI d'enlèvement et d'incinération des ordures ménagères (SIRIOM),SMF
+6103,255900938,SI de valorisation des déchets ménagers du Hainaut Valenciennois (ECOVALOR),SMF
+6104,255900953,Syndicat inter-arrondissement de valorisation et d'élimination des déchets (SIAVED),SMF
+6106,255902561,SM pour le traitement des déchets ménagers du Pays de Pévèle au Pays des Weppes (SYMIDEME),SMF
+6109,255902652,SM de l'arrondissement d'Avesnes,SMF
+6122,255900011,SM de la station touristique départementale du Val Joly ,SMO
+6131,200067965,CA de la Région de Compiègne et de la Basse Automne,CA
+6132,200067999,CA du Beauvaisis,CA
+6133,200068047,CA Creil Sud Oise,CA
+6134,200066975,CC Senlis Sud Oise,CC
+6135,200067973,CC Thelloise,CC
+6136,200068005,CC de l'Oise Picarde,CC
+6137,246000129,CC du Liancourtois,CC
+6138,246000376,CC du Clermontois,CC
+6139,246000566,CC du Plateau Picard,CC
+6140,246000582,CC des Sablons,CC
+6141,246000707,CC du Vexin-Thelle,CC
+6142,246000749,CC des Lisières de l'Oise,CC
+6143,246000756,CC du Pays Noyonnais,CC
+6144,246000764,CC de l'Aire Cantilienne,CC
+6145,246000772,CC des Deux Vallées,CC
+6146,246000848,CC de la Picardie Verte,CC
+6147,246000855,CC du Pays des Sources,CC
+6148,246000871,CC du Pays de Valois,CC
+6149,246000897,CC de la Plaine d'Estrées,CC
+6150,246000913,CC du Pays de Bray,CC
+6151,246000921,CC des Pays d'Oise et d'Halatte,CC
+6363,200067619,"SM du département de l'Oise, pour le transport et le traitement des déchets ménagers et assimilés",SMF
+6370,200081255,SM de l'Oise plateau Picard,SMF
+6404,246100663,CU d'Alençon,CU
+6405,200035814,CA Flers Agglo,CA
+6406,200035103,CC de la Vallée de la Haute Sarthe,CC
+6407,200035111,CC des Sources de l'Orne,CC
+6408,200036069,CC du Pays de Mortagne au Perche,CC
+6409,200068435,CC Coeur du Perche,CC
+6410,200068443,CC Andaine - Passais,CC
+6411,200068450,CC Argentan Intercom,CC
+6412,200068468,CC des Pays de L'Aigle,CC
+6413,200068856,CC des Hauts du Perche,CC
+6414,200069458,CC des Vallées d'Auge et du Merlerault,CC
+6415,200071504,CC des Collines du Perche Normand,CC
+6416,200071520,CC Domfront Tinchebray Interco,CC
+6417,200071652,CC du Pays Fertois et du Bocage Carrougien,CC
+6418,246100390,CC du Val d'Orne,CC
+6475,200045110,SITCOM de la région d'Argentan,SMF
+6492,256102138,SMIRTOM de la région de Flers,SMF
+6493,256102153,SIRTOM du Perche Ornais,SMF
+6494,256102179,SMIRTOM de la région de L'Aigle,SMF
+6509,200033579,CU d'Arras,CU
+6510,200069029,CA des Deux Baies en Montreuillois,CA
+6511,200069037,CA du Pays de Saint-Omer,CA
+6512,200072460,"CA de Béthune-Bruay, Artois-Lys Romane",CA
+6513,200090751,CA Grand Calais Terres et Mers,CA
+6514,246200299,CA d'Hénin-Carvin,CA
+6515,246200364,CA de Lens - Liévin,CA
+6516,246200729,CA du Boulonnais,CA
+6517,200018083,CC de Desvres-Samer,CC
+6518,200035442,CC du Sud-Artois,CC
+6519,200044030,CC des 7 Vallées,CC
+6520,200044048,CC Osartis Marquion,CC
+6521,200069235,CC du Haut Pays du Montreuillois,CC
+6522,200069482,CC des Campagnes de l'Artois,CC
+6523,200069672,CC du Ternois,CC
+6524,200072478,CC Pays d'Opale,CC
+6525,246200380,CC de la Terre des Deux Caps,CC
+6526,246200844,CC de la Région d'Audruicq,CC
+6527,246201016,CC du Pays de Lumbres,CC
+6655,200007201,"SM d'élimination et de valorisation des déchets des communautés d'agglomération du Douaisis, d'Hénin-Carvin et de la communauté de communes Osartis (SYMEVAD)",SMF
+6673,256203761,SM Lys Audomarois (SMLA),SMF
+6676,256203910,SM Flandre Morinie,SMF
+6677,256203936,SM d'élimination et de valorisation des déchets ménagers du Calaisis (SEVADEC ),SMF
+6680,256204074,SM Artois valorisation,SMF
+6684,256204199,SM de traitement et de tri,SMF
+6696,200075679,PETR Ternois-7 vallées,PETR
+6697,246300701,Clermont Auvergne Métropole,METRO
+6698,200070407,CA Agglo Pays d'Issoire,CA
+6699,200070753,CA Riom Limagne et Volcans,CA
+6700,200067627,CC Billom Communauté,CC
+6701,200069169,CC Dômes Sancy Artense,CC
+6702,200069177,CC Mond'Arverne Communauté,CC
+6703,200070712,CC Thiers Dore et Montagne,CC
+6704,200070761,CC Ambert Livradois Forez,CC
+6705,200071199,CC Plaine Limagne,CC
+6706,200071215,CC Chavanon Combrailles et Volcans,CC
+6707,200072080,CC du Pays de Saint-Eloy,CC
+6708,200072098,CC Combrailles Sioule et Morge,CC
+6709,246300966,CC du Massif du Sancy,CC
+6710,246301097,CC Entre Dore et Allier,CC
+6796,256300161,SM de collecte et de traitement des résidus urbains du bois de l'Aumône (SBA),SMF
+6801,256301052,SICTOM des Couzes,SMF
+6802,256301086,SM de collecte et de traitement des ordures ménagères de la Haute Dordogne (SMCTOM de la Haute Dordogne),SMF
+6803,256301128,SICTOM des Combrailles,SMF
+6804,256301185,SICTOM de la région de Pontaumur - Pontgibaud,SMF
+6807,256302670,Syndicat pour la valorisation et le traitement des déchets ménagers et assimilés du Puy-de-Dôme et de la Haute Loire (VALTOM),SMF
+6855,200067106,CA du Pays Basque,CA
+6856,200067254,CA Pau Béarn Pyrénées,CA
+6857,200039204,CC de Lacq-Orthez,CC
+6858,200067239,CC des Luys en Béarn,CC
+6859,200067262,CC du Haut Béarn,CC
+6860,200067288,CC du Béarn des Gaves,CC
+6861,200067296,CC du Nord Est Béarn,CC
+6862,246400337,CC de la Vallée d'Ossau,CC
+6863,246401756,CC Pays de Nay,CC
+7018,256404542,SIECTOM coteaux Béarn Adour,SMF
+7019,256404641,SM Bil Ta Garbi,SMF
+7032,200069300,CA Tarbes-Lourdes-Pyrénées,CA
+7033,200070787,CC du Plateau de Lannemezan,CC
+7034,200070795,CC du Pays de Trie et du Magnoac,CC
+7035,200070803,CC des Coteaux du Val d'Arros,CC
+7036,200070811,CC Pyrénées Vallées des Gaves,CC
+7037,200070829,CC Neste Barousse,CC
+7038,200072106,CC Adour Madiran,CC
+7039,246500482,CC de la Haute-Bigorre,CC
+7040,246500573,CC Aure Louron,CC
+7104,200011732,SM départemental de traitement des déchets ménagers et assimilés,SMF
+7105,200041234,SM de collecte et de traitement des ordures ménagères du plateau de Lannemezan-Nestes-coteaux,SMF
+7114,256500869,SM de l'agglomération tarbaise élimination des déchets ménagers et assimilés,SMF
+7132,200027183,CU Perpignan Méditerranée Métropole,CU
+7133,200043602,"CC des Albères, de la Côte Vermeille et de l'Illibéris",CC
+7134,200049211,CC Conflent-Canigó,CC
+7135,200070365,CC Corbières Salanque Méditerranée,CC
+7136,246600282,CC Sud-Roussillon,CC
+7137,246600373,CC du Vallespir,CC
+7138,246600399,CC Pyrénées Cerdagne,CC
+7139,246600415,CC Roussillon-Conflent,CC
+7140,246600423,CC Agly Fenouillèdes,CC
+7141,246600449,CC des Aspres,CC
+7142,246600464,CC Pyrénées Catalanes,CC
+7143,246600548,CC du Haut Vallespir,CC
+7186,246600183,SIVOM canton de Millas,SIVOM
+7195,200049716,SM ramassage ordures ménagères Font-Romeu-Odeillo-Via,SMF
+7204,256601501,"SM départemental de transport, traitement et valorisation des ordures ménagères et déchets assimilés (SYDETOM)",SMF
+7218,246700488,Eurométropole de Strasbourg,METRO
+7219,200067874,CA de Haguenau,CA
+7220,200013050,CC Sauer-Pechelbronn,CC
+7221,200030526,CC du Ried de Marckolsheim,CC
+7222,200034270,CC du Pays de Barr,CC
+7223,200034635,CC du Kochersberg,CC
+7224,200040178,CC de l'Outre-Forêt,CC
+7225,200041283,CC de la Plaine du Rhin,CC
+7226,200041325,CC du Pays Rhénan,CC
+7227,200067783,CC de Hanau-La Petite Pierre,CC
+7228,200067841,CC de l'Alsace Bossue,CC
+7229,200067924,CC du Canton d'Erstein,CC
+7230,200068112,CC du Pays de Saverne,CC
+7231,200068864,CC de la Mossig et du Vignoble,CC
+7232,246700306,CC de la Vallée de la Bruche,CC
+7233,246700744,CC des Portes de Rosheim,CC
+7234,246700777,CC de la Vallée de Villé,CC
+7235,246700843,CC de la Basse-Zorn,CC
+7236,246700926,CC du Pays de Wissembourg,CC
+7237,246700959,CC du Pays de la Zorn,CC
+7238,246700967,CC de Sélestat,CC
+7239,246701064,CC de la Région de Molsheim-Mutzig,CC
+7240,246701080,CC du Pays de Sainte-Odile,CC
+7241,246701098,CC du Pays de Niederbronn-les-Bains,CC
+7312,246700462,SIVOM de la région de Wissembourg,SIVOM
+7331,200051878,SM pour la collecte et le traitement des ordures ménagères de Molsheim et environs ,SMF
+7334,256701244,Syndicat Mixte Intercommunal pour la Collecte et le Traitement des Ordures Ménagères du Nord Alsace,SMF
+7336,256701301,SM pour la collecte et de traitement des ordures ménagères de la région de Saverne,SMF
+7337,256701871,SM pour le traitement des ordures ménagères du secteur de Haguenau - Saverne (SMITOM),SMF
+7344,256702937,SM du Pays de la Mossig et de la Sommerau,SMF
+7346,256702960,SM de collecte et de traitement des ordures ménagères d'Alsace Centrale,SMF
+7363,200069680,PETR Sélestat - Alsace Centrale,PETR
+7370,200066009,CA Mulhouse Alsace Agglomération,CA
+7371,200066058,CA Saint-Louis Agglomération,CA
+7372,246800726,CA Colmar Agglomération,CA
+7373,200036465,CC de Thann-Cernay,CC
+7374,200066025,CC Pays Rhin - Brisach,CC
+7375,200066033,CC Sud Alsace Largue,CC
+7376,200066041,CC Sundgau,CC
+7377,246800205,CC de la Vallée de Saint-Amarin,CC
+7378,246800395,CC du Val d'Argent,CC
+7379,246800445,CC du Centre du Haut-Rhin,CC
+7380,246800494,"CC du Pays de Rouffach, Vignobles et Châteaux",CC
+7381,246800551,CC de la Vallée de Kaysersberg,CC
+7382,246800569,CC de la Région de Guebwiller,CC
+7383,246800577,CC du Pays de Ribeauvillé,CC
+7384,246800585,CC de la Vallée de Munster,CC
+7385,246800676,CC de la Vallée de la Doller et du Soultzbach,CC
+7486,246800510,SIVOM de la station climatique des trois épis,SIVOM
+7500,246800254,SIVOM de l'agglomération mulhousienne,SMF
+7507,256801531,SM à vocation multiple pour le traitement des déchets ménagers du secteur 4,SMF
+7508,256801697,SI de traitement des déchets de Colmar et environs,SMF
+7513,256802208,SM de Thann-Cernay pour la gestion des déchets ménagers et assimilés,SMF
+7554,200040566,CA de l'Ouest Rhodanien,CA
+7555,200040590,CA Villefranche Beaujolais Saône,CA
+7556,200040574,CC Beaujolais Pierres Dorées,CC
+7557,200066587,CC des Monts du Lyonnais,CC
+7558,200067817,CC Saône-Beaujolais,CC
+7559,246900575,CC de l'Est Lyonnais (CCEL),CC
+7560,246900625,CC du Pays de l'Arbresle (CCPA),CC
+7561,246900724,CC des Vallons du Lyonnais (CCVL),CC
+7562,246900740,CC du Pays Mornantais (COPAMO),CC
+7563,246900757,CC de la Vallée du Garon (CCVG),CC
+7564,246900765,CC du Pays de l'Ozon,CC
+7565,200046977,Métropole de Lyon,MET69
+7623,200035046,SM de l'Ouest Lyonnais,SMF
+7632,256900705,"SM d'élimination, de traitement et de valorisation des déchets Beaujolais Dombes (SYTRAIVAL)",SMF
+7633,256901133,SI de collecte et de traitement des ordures ménagères (SITOM Sud Rhône),SMF
+7658,247000011,CA de Vesoul,CA
+7659,200036150,CC des Hauts du Val de Saône,CC
+7660,200036549,CC Val de Gray,CC
+7661,200041721,CC de la Haute Comté,CC
+7662,200041853,CC du Pays de Montbozon et du Chanois,CC
+7663,200041861,CC du Triangle Vert,CC
+7664,200041879,CC Terres de Saône,CC
+7665,200041887,CC du Val Marnaysien,CC
+7666,247000367,CC des Combes,CC
+7667,247000623,CC des Quatre Rivières,CC
+7668,247000664,CC du Pays de Lure,CC
+7669,247000698,CC des Monts de Gy,CC
+7670,247000706,CC du Pays Riolais,CC
+7671,247000714,CC du Pays de Villersexel,CC
+7672,247000722,CC du Pays d'Héricourt,CC
+7673,247000755,CC du Pays de Luxeuil,CC
+7674,247000821,CC Rahin et Chérimont,CC
+7675,247000854,CC des 1000 étangs,CC
+7832,257001024,Syndicat de collecte des ordures ménagères du Val de Saône,SMF
+7833,257001040,SM de collecte des déchets ménagers des 2 rivières,SMF
+7836,257003426,SYTEVOM SYndicat Transfert Elimination Valorisation des Ordures énagères,SMF
+7844,247100290,CU Le Creusot Montceau-les-Mines,CU
+7845,200070308,CA Mâconnais Beaujolais Agglomération,CA
+7846,247100589,CA Le Grand Chalon,CA
+7847,200040038,CC Saône Doubs Bresse,CC
+7848,200040293,CC du Clunisois,CC
+7849,200042414,CC Bresse Revermont 71,CC
+7850,200069698,CC Mâconnais - Tournugeois,CC
+7851,200070316,"CC Entre Arroux, Loire et Somme",CC
+7852,200070530,CC du Grand Autunois Morvan,CC
+7853,200070548,CC Brionnais Sud Bourgogne,CC
+7854,200071538,CC Terres de Bresse,CC
+7855,200071579,CC Bresse Louhannaise Intercom',CC
+7856,200071645,CC Saint Cyr Mère Boitier entre Charolais et Mâconnais,CC
+7857,200071884,CC Le Grand Charolais,CC
+7858,247100639,CC de Marcigny,CC
+7859,247100647,CC Bresse Nord Intercom',CC
+7860,247103765,CC Entre Saône et Grosne,CC
+7861,247103864,CC de Semur en Brionnais,CC
+7862,247104094,CC  Sud Côte Chalonnaise,CC
+7934,247100019,SIVOM de l'Arçon et de l'Urbise,SIVOM
+7952,200053122,SI de collecte et d'élimination des déchets de Bresse Nord,SMF
+7956,200075307,SIVOM du Louhannais,SMF
+7981,257102541,SIRTOM de la région de Chagny,SMF
+7983,257102830,SIRTOM de la vallée de la Grosne,SMF
+7987,257103341,SM d'études et de traitement des déchets,SMF
+7988,257103846,SM d'élimination et de valorisation des déchets et ordures ménagères (SMEVOM) du Charollais-Brionnais et Autunois,SMF
+7996,247200132,CU Le Mans Métropole,CU
+7997,200040475,CC Loué - Brûlon - Noyen,CC
+7998,200068963,CC Maine Coeur de Sarthe,CC
+7999,200070373,CC Loir-Lucé-Bercé,CC
+8000,200072676,CC Maine Saosnois,CC
+8001,200072684,CC Le Gesnois Bilurien,CC
+8002,200072692,CC des Vallées de la Braye et de l'Anille,CC
+8003,200072700,CC Haute Sarthe Alpes Mancelles,CC
+8004,200072718,CC de la Champagne Conlinoise et du Pays de Sillé,CC
+8005,200073112,CC Sud Sarthe,CC
+8006,247200090,CC de Sablé-sur-Sarthe,CC
+8007,247200348,CC du Pays Fléchois,CC
+8008,247200421,CC du Sud Est du Pays Manceau,CC
+8009,247200447,CC Orée de Bercé - Belinois,CC
+8010,247200629,CC du Val de Sarthe,CC
+8011,247200686,CC du Pays de l'Huisne Sarthoise,CC
+8116,257200147,SM du Val de Loir pour collectes et traitement des déchets,SMF
+8118,257201251,SMIRGEOM du Nord Ouest de la Sarthe,SMF
+8119,257201376,Syndicat mixte de valorisation des ordures ménagères - Loir et Sarthe (SYVALORM Loir et Sarthe),SMF
+8126,200001873,SM du Pays vallée de la Sarthe,SMO
+8130,257201988,SM d'étude pour l'élimination des déchets du secteur Sud de la Sarthe,SMO
+8131,257202358,SM du Pays de la Haute Sarthe,SMO
+8135,200076396,PETR Pays vallée du Loir,PETR
+8136,200068674,CA Grand Lac,CA
+8137,200068997,CA Arlysère,CA
+8138,200069110,CA du Grand Chambéry,CA
+8139,200023299,CC Coeur de Tarentaise,CC
+8140,200040798,CC Val Vanoise,CC
+8141,200041010,CC Coeur de Savoie,CC
+8142,200070340,CC Haute Maurienne Vanoise,CC
+8143,200070464,CC Coeur de Maurienne Arvan,CC
+8144,247300015,CC des Vallées d'Aigueblanche,CC
+8145,247300254,CC de Haute-Tarentaise,CC
+8146,247300262,CC de Yenne,CC
+8147,247300361,CC du Canton de La Chambre,CC
+8148,247300452,CC Maurienne Galibier,CC
+8149,247300528,CC Val Guiers,CC
+8150,247300668,CC du Lac d'Aiguebelette (CCLA),CC
+8151,247300676,CC Porte de Maurienne,CC
+8152,247300817,CC Les Versants d'Aime,CC
+8210,200023364,SM Savoie déchets,SMF
+8216,257301457,SIRTOM Maurienne,SMF
+8232,200011773,CA Annemasse-Les Voirons-Agglomération,CA
+8233,200066793,CA du Grand Annecy,CA
+8234,200067551,CA Thonon Agglomération,CA
+8235,200000172,CC Faucigny-Glières,CC
+8236,200023372,CC de la Vallée de Chamonix-Mont-Blanc,CC
+8237,200033116,CC Cluses-Arve et Montagnes,CC
+8238,200034098,CC des Montagnes du Giffre,CC
+8239,200034882,CC Pays du Mont-Blanc,CC
+8240,200070852,CC Usses et Rhône,CC
+8241,200071967,CC Pays d'Evian Vallée d'Abondance,CC
+8242,247400047,CC de la Vallée Verte,CC
+8243,247400112,CC du Pays de Cruseilles,CC
+8244,247400567,CC Fier et Usses,CC
+8245,247400583,CC Arve et Salève,CC
+8246,247400617,CC des Vallées de Thônes,CC
+8247,247400666,CC des Quatre Rivières,CC
+8248,247400682,CC du Haut-Chablais,CC
+8249,247400690,CC du Genevois,CC
+8250,247400724,CC du Pays Rochois,CC
+8251,247400740,CC Rumilly Terre de Savoie,CC
+8252,247400773,CC des sources du lac d'Annecy,CC
+8315,247400799,SIVOM de la région de Cluses,SMF
+8316,257400663,SI du traitement des ordures ménagères des vallées du Mont-Blanc,SMF
+8318,257401463,Syndicat de traitement des ordures du Chablais,SMF
+8337,200054781,Métropole du Grand Paris,METRO
+8341,257500074,SM central de traitement des ordures ménagères (SYCTOM),SMF
+8346,200023414,Métropole Rouen Normandie,METRO
+8347,200084952,Le Havre Seine Métropole,CU
+8348,200010700,CA Caux Seine Agglo,CA
+8349,200069821,CA Fécamp Caux Littoral Agglomération,CA
+8350,247600786,CA de la Région Dieppoise,CA
+8351,200068534,CC Terroir de Caux,CC
+8352,200069722,CC interrégionale Aumale - Blangy-sur-Bresle,CC
+8353,200069730,CC des 4 rivières,CC
+8354,200069839,CC de la Côte d'Albâtre,CC
+8355,200069847,CC Plateau de Caux-Doudeville-Yerville,CC
+8356,200070068,CC Communauté Bray-Eawy,CC
+8357,200070449,CC inter-Caux-Vexin,CC
+8358,247600505,CC Campagne-de-Caux,CC
+8359,247600588,CC des Villes Soeurs,CC
+8360,247600604,CC de Londinières,CC
+8361,247600620,CC Yvetot Normandie,CC
+8362,247600646,CC Caux - Austreberthe,CC
+8363,247600729,CC Falaises du Talou,CC
+8527,200074359,Syndicat des ordures ménagères des vallées de l'Austreberthe et Seine (SOMVAS),SMF
+8542,257600445,Syndicat départemental d'énergie de Seine-Maritime,SMF
+8549,257604371,SM d'élimination des déchets de l'arrondissement de Rouen (SMEDAR),SMF
+8550,257604405,Syndicat d'élimination et de valorisation énergétique des déchets de l'estuaire (SEVEDE),SMF
+8557,257604710,SM de traitement et de valorisation des déchets du Pays de Caux (SMITVAD),SMF
+8574,200049609,PETR Pays plateau de Caux-Maritime,PETR
+8575,200049617,Pays Dieppois - Terroir de Caux,PETR
+8576,200057958,CA Paris - Vallée de la Marne,CA
+8577,200072130,CA du Pays de Meaux,CA
+8578,200072346,CA du Pays de Fontainebleau,CA
+8579,200090504,CA Coulommiers Pays de Brie,CA
+8580,247700057,CA Melun Val de Seine,CA
+8581,247700339,CA Val d'Europe Agglomération,CA
+8582,247700594,CA Marne et Gondoire,CA
+8583,200023125,CC Les Portes Briardes Entre Villes et Forêts,CC
+8584,200023240,CC Pays de Nemours,CC
+8585,200023919,CC Gâtinais Val de Loing,CC
+8586,200033090,CC Plaines et Monts de France,CC
+8587,200037133,CC du Provinois,CC
+8588,200040251,CC Bassée-Montois,CC
+8589,200070779,CC Brie des Rivières et Châteaux,CC
+8590,200072544,CC des Deux Morin,CC
+8591,200072874,CC Val Briard,CC
+8592,247700032,CC Moret Seine et Loing,CC
+8593,247700065,CC du Pays de l'Ourcq,CC
+8594,247700107,CC Pays de Montereau,CC
+8595,247700644,CC l'Orée de la Brie,CC
+8596,247700701,CC Brie Nangissienne,CC
+8791,257701631,SMF enlèvement et traitement des résidus ménagers de la région de Lagny-sur-Marne,SMF
+8792,257701656,COVALTRI 77,SMF
+8793,257701698,SMF collecte et traitement des ordures ménagères de la région de Fontainebleau,SMF
+8794,257701748,Syndicat de la région de Montereau-Fault-Yonne pour le traitement des ordures ménagères (SIRMOTOM),SMF
+8799,257703389,SM pour l'enlèvement et le traitement des ordures ménagères de la vallée du Loing,SMF
+8801,257703546,SMF enlèvement et traitement des ordures ménagères de la région de Tournan-en-Brie,SMF
+8815,257705277,SM de traitement des ordures ménagères et assimilées du centre Ouest seine et marnais (SMITOMCO),SMF
+8816,257705293,SMF Est Seine-et-Marne pour le traitement des ordures ménagères (SMETOM-GEEODE),SMF
+8819,257705574,Syndicat de traitement des déchets ménagers (SYTRADEM du Sud Est Seine-et-Marne),SMF
+8833,257704916,SMO traitement des ordures ménagères du Nord Seine et Marne,SMO
+8835,200059889,CU Grand Paris Seine et Oise,CU
+8836,200058519,CA Saint Germain Boucles de Seine,CA
+8837,200058782,CA de Saint Quentin en Yvelines,CA
+8838,200073344,CA Rambouillet Territoires,CA
+8839,247800584,CA Versailles Grand Parc (CAVGP),CA
+8840,200033173,CC de la Haute Vallée de Chevreuse,CC
+8841,200034130,CC Gally Mauldre,CC
+8842,200071074,CC Les Portes de l'Ile de France,CC
+8843,247800550,CC du Pays Houdanais (CCPH),CC
+8844,247800618,CC Coeur d'Yvelines,CC
+8928,200062461,VALOSEINE,SMF
+8941,257800300,SI d'évacuation et d'élimination des déchets de l'Ouest Yvelines (SIEED),SMF
+8942,257800375,SI pour la destruction des ordures ménagères et la production d'énergie (SIDOMPE),SMF
+8943,257800656,SI pour le traitement des résidus urbains de la Boucle de la Seine,SMF
+8946,257801290,SI de collecte et de traitement des ordures ménagères de la région de Rambouillet (SICTOM),SMF
+8959,200040244,CA du Bocage Bressuirais,CA
+8960,200041317,CA du Niortais,CA
+8961,200041333,CC de Parthenay-Gâtine,CC
+8962,200041416,CC Airvaudais-Val du Thouet,CC
+8963,200041994,CC Haut Val de Sèvre,CC
+8964,200069748,CC Val de Gâtine,CC
+8965,200069755,CC Mellois en Poitou,CC
+8966,247900798,CC du Thouarsais,CC
+9022,200091049,SI d'énergie des Deux-Sèvres (SIEDS),SMF
+9026,257902353,SM à la carte du Haut Val de Sèvre et Sud Gâtine,SMF
+9033,257902296,SM de traitement et d'élimination des déchets des Deux-Sèvres (SMITED),SMO
+9036,200070993,CA de la Baie de Somme,CA
+9037,248000531,CA Amiens Métropole,CA
+9038,200037059,CC de la Haute Somme (Combles - Péronne - Roisel),CC
+9039,200070928,CC Terre de Picardie,CC
+9040,200070936,CC Ponthieu-Marquenterre,CC
+9041,200070944,CC du Vimeu,CC
+9042,200070951,CC du Territoire Nord Picardie,CC
+9043,200070969,CC Avre Luce Noye,CC
+9044,200070977,CC du Grand Roye,CC
+9045,200070985,CC de l'Est de la Somme,CC
+9046,200071181,CC Somme Sud-Ouest,CC
+9047,200071223,CC Nièvre et Somme,CC
+9048,248000499,CC du Val de Somme,CC
+9049,248000747,CC du Pays du Coquelicot,CC
+9171,248000051,SIVOM d'Ault,SIVOM
+9172,248000143,SIVOM de Gamaches,SIVOM
+9175,200044378,SMIRTOM du plateau picard Nord,SMF
+9206,258002344,TRINOVAL,SMF
+9208,258004571,SMITOM du Santerre,SMF
+9218,200082063,Pôle Métropolitain du Grand Amiénois,POLEM
+9220,200066124,CA Gaillac-Graulhet,CA
+9221,248100430,CA de Castres Mazamet,CA
+9222,248100737,CA de l'Albigeois (C2A),CA
+9223,200034023,CC Tarn-Agout,CC
+9224,200034031,CC des Monts d'Alban et du Villefranchois,CC
+9225,200034049,CC Centre Tarn,CC
+9226,200034056,CC du Lautrécois et du Pays d'Agout,CC
+9227,200034064,CC du Cordais et du Causse (4 C),CC
+9228,200040905,CC Carmausin-Ségala,CC
+9229,200066553,CC des Monts de Lacaune et de la Montagne du Haut Languedoc,CC
+9230,200066561,CC Sidobre Vals et Plateaux,CC
+9231,248100158,CC du Sor et de l'Agout,CC
+9232,248100497,CC Val 81,CC
+9233,248100745,CC Thoré Montagne Noire,CC
+9284,200073807,SICTOM secteur Valence Valderiès,SMF
+9287,200075711,SM pour la collecte et le traitement des ordures ménagères de la région de Lavaur,SMF
+9320,200049161,Pôle territorial de l'Albigeois et des Bastides,PETR
+9323,248200099,CA Grand Montauban,CA
+9324,200040418,CC du Pays de Serres en Quercy,CC
+9325,200066322,CC Terres des Confluences,CC
+9326,200066652,CC Grand Sud Tarn et Garonne,CC
+9327,200066884,CC Quercy Vert-Aveyron,CC
+9328,200067122,CC Coteaux et Plaines du Pays Lafrançaisain,CC
+9329,248200016,CC des Deux Rives,CC
+9330,248200057,CC du Quercy Caussadais,CC
+9331,248200065,CC de la Lomagne Tarn-et-Garonnaise,CC
+9332,248200107,CC du Quercy Rouergue et des Gorges de l'Aveyron,CC
+9357,258200658,SM enlèvement et élimination des ordures ménagères groupement moyenne Garonne,SMF
+9360,258200856,SM d'enlèvement et d'élimination des ordures ménagères du Sud-Quercy,SMF
+9362,258201029,SM du traitement des ordures menagères et autres déchets (SIRTOMAD),SMF
+9367,258201367,Syndicat départemental des déchets ,SMO
+9370,248300543,Métropole Toulon-Provence-Méditerranée,METRO
+9371,200035319,Estérel Côte d'Azur Agglomération,CA
+9372,200068104,CA de la Provence Verte,CA
+9373,248300394,CA Sud Sainte Baume,CA
+9374,248300493,Dracénie Provence Verdon Agglomération,CA
+9375,200004802,CC du Pays de Fayence,CC
+9376,200027100,CC Méditerranée Porte des Maures,CC
+9377,200036077,CC du Golfe de Saint-Tropez,CC
+9378,200040202,CC Provence Verdon,CC
+9379,200040210,CC Lacs et Gorges du Verdon,CC
+9380,248300410,CC de la Vallée du Gapeau,CC
+9381,248300550,CC Coeur du Var,CC
+9417,200046852,SM du Haut Var,SMF
+9425,248300089,SM de la zone du Verdon,SMF
+9426,258300581,SM du développement durable de l'Est Var pour le traitement et la valorisation des déchets ménagers,SMF
+9427,258300953,SM de transport et de traitement des ordures ménagères de l'aire toulonnaise (SITTOMAT),SMF
+9430,258302637,Syndicat de valorisation et d'élimination des déchets nouvelle génération (SIVED NG),SMF
+9436,200040442,CA Luberon Monts de Vaucluse,CA
+9437,248400053,CA Ventoux-Comtat-Venaissin (COVE),CA
+9438,248400251,CA du Grand Avignon (COGA),CA
+9439,200000628,CC Rhône Lez Provence,CC
+9440,200035723,CC Ventoux Sud,CC
+9441,200040624,CC Pays d'Apt-Luberon,CC
+9442,200040681,CC Enclave des Papes-Pays de Grignan,CC
+9443,248400160,CC Aygues-Ouvèze en Provence (CCAOP),CC
+9444,248400236,CC du Pays Réuni d'Orange,CC
+9445,248400285,CC Territoriale Sud-Luberon,CC
+9446,248400293,CC des Sorgues du Comtat,CC
+9447,248400319,CC du Pays des Sorgues et des Monts de Vaucluse,CC
+9448,248400335,CC Vaison Ventoux,CC
+9463,258400134,SM pour la valorisation des déchets du pays d'Avignon (SIDOMRA),SMF
+9464,258400472,"SM intercommunautaire pour l'étude, la construction et l'exploitation d'unités de traitement des ordures ménagères de la région de Cavaillon (SIECEUTOM)",SMF
+9469,258402510,SM ramassage et traitement ordures ménagères de la région d'Apt (SIRTOM d'Apt),SMF
+9471,258403013,SM chargé du SCOT de la région de Cavaillon,SMF
+9481,200071165,CA Les Sables d'Olonne Agglomération,CA
+9482,248500589,CA La Roche sur Yon - Agglomération,CA
+9483,200023778,CC du Pays de Saint-Gilles-Croix-de-Vie,CC
+9484,200070233,"CC Terres de Montaigu, CC Montaigu-Rocheservière",CC
+9485,200071629,CC Challans-Gois Communauté,CC
+9486,200071900,CC Vendée Grand Littoral,CC
+9487,200071918,CC du Pays de Saint-Fulgent - Les Essarts,CC
+9488,200071934,CC du Pays de Fontenay-Vendée,CC
+9489,200072882,CC de Vie et Boulogne,CC
+9490,200073260,CC Sud Vendée Littoral,CC
+9491,248500191,CC de l'Ile de Noirmoutier,CC
+9492,248500258,CC Océan Marais de Monts,CC
+9493,248500340,CC Pays de Chantonnay,CC
+9494,248500415,CC du Pays de la Châtaigneraie,CC
+9495,248500464,CC du Pays de Pouzauges,CC
+9496,248500530,CC du Pays des Achards,CC
+9497,248500563,"CC Vendée, Sèvre, Autise",CC
+9498,248500621,CC du Pays des Herbiers,CC
+9499,248500662,CC du Pays de Mortagne,CC
+9532,258500446,SYCODEM Sud Vendée,SMF
+9533,258500651,Syndicat de collecte des ordures ménagères (SCOM) de l'Est Vendéen,SMF
+9542,258502962,SM départemental d'études et de traitement des déchets ménagers et assimilés de Vendée (TRIVALIS),SMF
+9550,200069854,CU du Grand Poitiers,CU
+9551,248600413,CA Grand Châtellerault,CA
+9552,200043628,CC des Vallées du Clain,CC
+9553,200069763,CC du Haut-Poitou,CC
+9554,200070035,CC du Civraisien en Poitou,CC
+9555,200070043,CC Vienne et Gartempe,CC
+9556,248600447,CC du Pays Loudunais,CC
+9593,258600493,Syndicat interdépartemental mixte pour l'équipement rural,SMO
+9596,248719312,CU Limoges Métropole,CU
+9597,200040814,CC Briance Sud Haute Vienne,CC
+9598,200059400,CC Porte Océane du Limousin,CC
+9599,200066512,CC Elan Limousin Avenir Nature,CC
+9600,200066520,CC Ouest Limousin,CC
+9601,200070506,CC Pays de Nexon Monts de Chalus,CC
+9602,200071942,CC Haut Limousin en Marche,CC
+9603,248700189,CC du Pays de Saint Yrieix,CC
+9604,248719262,CC Gartempe - Saint Pardoux,CC
+9605,248719288,CC du Val de Vienne,CC
+9606,248719338,CC Briance-Combade,CC
+9607,248719353,CC des Portes de Vassivière,CC
+9608,248719361,CC de Noblat,CC
+9640,258718741,SI de collecte et de traitement des ordures ménagères de Sud Haute-Vienne,SMF
+9645,258700251,SM départemental pour l'élimination des déchets ménagers et assimilés,SMO
+9651,200068757,CA d'Epinal,CA
+9652,200071066,CA de Saint-Dié-des-Vosges,CA
+9653,200005957,CC de la Région de Rambervillers,CC
+9654,200033868,CC des Ballons des Hautes-Vosges,CC
+9655,200042000,CC Bruyères-Vallons des Vosges,CC
+9656,200068369,CC de Mirecourt Dompaire,CC
+9657,200068377,CC de la Porte des Vosges Méridionales,CC
+9658,200068559,CC de l'Ouest Vosgien,CC
+9659,200068682,CC Terre d'Eau,CC
+9660,200068773,CC des Vosges côté Sud Ouest,CC
+9661,200071157,CC des Hautes Vosges,CC
+9748,248800088,SIVOM de Grand,SIVOM
+9750,248800245,SI de la vallée de la Roche-Harchéchamp,SIVOM
+9756,200071280,SM de collecte et de traitement des déchets ménagers et assimilés de la région de Lerrain,SMF
+9760,258801422,SM de collecte et de valorisation des déchets ménagers de la région d'Epinal,SMF
+9762,258802560,ÉVODIA,SMF
+9771,200067114,CA de l'Auxerrois,CA
+9772,248900334,CA du Grand Sénonais,CA
+9773,200039642,CC Le Tonnerrois en Bourgogne,CC
+9774,200039709,CC du Serein,CC
+9775,200039758,"CC Avallon, Vézelay, Morvan",CC
+9776,200067080,CC Chablis Villages et Terroirs,CC
+9777,200067130,CC de Puisaye-Forterre,CC
+9778,200067304,CC Serein et Armance,CC
+9779,248900383,CC de l'Agglomération Migennoise,CC
+9780,248900524,CC de l'Aillantais en Bourgogne,CC
+9781,248900664,CC de la Vanne et du Pays d'Othe,CC
+9782,248900748,CC du Gâtinais en Bourgogne,CC
+9783,248900896,CC Yonne Nord,CC
+9784,248900938,CC du Jovinien,CC
+9880,200069052,CA Grand Belfort,CA
+9881,200069060,CC des Vosges du Sud,CC
+9882,249000241,CC du Sud Territoire,CC
+9902,200075133,SM pour la collecte et le traitement des ordures ménagères de la zone sous-vosgienne,SMF
+9904,259000735,SM d'études et de réalisation pour le traitement intercommunal des déchets,SMF
+9910,200017846,CA Etampois Sud Essonne,CA
+9911,200056232,CA Communauté Paris-Saclay,CA
+9912,200057859,CA Coeur d'Essonne Agglomération,CA
+9913,200058477,CA Val d'Yerres Val de Seine,CA
+9914,200059228,CA Grand Paris Sud Seine Essonne Sénart,CA
+9915,249100074,CC du Pays de Limours (CCPL),CC
+9916,249100157,CC des 2 Vallées,CC
+9917,249100546,CC du Val d'Essonne (CCVE),CC
+9918,249100553,CC Entre Juine et Renarde (CCEJR),CC
+9919,249100595,CC le Dourdannais en Hurepoix (CCDH),CC
+9957,200062321,SM des ordures ménagères de la vallée de Chevreuse,SMF
+9958,200066959,SIRTOM du Sud-Francilien,SMF
+9962,200077832,"Syndicat pour l'innovation, le recyclage et l'énergie par les déchets et ordures ménagères (SIREDOM) - Agence Sud Francilienne pour l'énergie, les déchets et l'environnement",SMF
+9966,259100741,SM Massy-Antony-Hauts-de-Bièvre pour le chauffage urbain et le traitement des résidus ménagers (SIMACUR),SMF
+9970,259101988,SM d'élimination des déchets de la région d'Etampes (SEDRE),SMF
+9974,259102705,SM de la vallée de l'Yerres et des Sénarts,SMF
+9994,200057966,Vallée Sud-Grand Paris,EPT
+9995,200057974,Grand Paris Seine Ouest,EPT
+9996,200057982,Paris Ouest La Défense,EPT
+9997,200057990,Boucle Nord de Seine,EPT
+10016,200057867,Plaine Commune,EPT
+10017,200057875,Est Ensemble,EPT
+10018,200058097,Paris Terres d'Envol,EPT
+10019,200058790,Grand Paris Grand Est,EPT
+10042,259400992,SM de traitement des déchets urbains du Val-de-Marne (SMITDUVM),SMF
+10057,200057941,#ParisEstMarne&Bois,EPT
+10058,200058006,Grand Paris Sud Est Avenir,EPT
+10059,200058014,Grand-Orly Seine Bièvre,EPT
+10060,200055655,CA Roissy Pays de France,CA
+10061,200056380,CA Plaine Vallée,CA
+10062,200058485,CA Val Parisis,CA
+10063,249500109,CA de Cergy-Pontoise,CA
+10064,200035970,CC Vexin Centre,CC
+10065,200073013,CC Carnelle Pays-de-France,CC
+10066,249500430,CC Sausseron Impressionnistes,CC
+10067,249500455,CC de la Vallée de l'Oise et des Trois Forêts,CC
+10068,249500489,CC du Haut Val d'Oise,CC
+10069,249500513,CC du Vexin-Val de Seine,CC
+10161,259500023,SM pour la valorisation des déchets ménagers dénommé Azur,SMF
+10163,259500288,SM pour la collecte et le traitement des ordures ménagères de la région de L'Isle-Adam (SICTOMIA) ,SMF
+10166,259501211,SM Tri-Action,SMF
+10167,259501252,SM de ramassage et de traitement des ordures ménagères du Vexin (SMIRTOM du Vexin),SMF
+10168,259502086,SM pour la gestion et l'incinération des déchets urbains de la région de Sarcelles  (SIGIDURS),SMF
+10170,259502367,SM pour la collecte et le traitement des déchets de la vallée de Montmorency dénommé Syndicat Émeraude,SMF
+10177,200018653,CA CAP Excellence,CA
+10178,200041507,CA La Riviéra du Levant,CA
+10179,200044691,CA du Nord Grande Terre,CA
+10180,249710062,CA du Nord Basse-Terre,CA
+10181,249710070,CA Grand Sud Caraïbe,CA
+10182,249710047,CC de Marie-Galante,CC
+10190,200044709,Syndicat de valorisation des déchets,SMO
+10191,200095834,SM d'Innovation et de Valorisation de Guadeloupe (SINNOVAL Guadeloupe),SMO
+10193,200041788,CA du Pays Nord Martinique,CA
+10194,249720053,CA de l'Espace Sud de la Martinique,CA
+10195,249720061,CA du Centre de la Martinique,CA
+10196,259720084,Syndicat martiniquais pour le traitement et la valorisation des déchets,SMF
+10200,249730045,CA du Centre Littoral,CA
+10201,200027548,CC des Savanes,CC
+10202,249730037,CC de l'Ouest Guyanais,CC
+10203,249730052,CC de l'Est Guyanais,CC
+10207,249740077,CA CIVIS (Communauté Intercommunale des Villes Solidaires),CA
+10208,249740085,CA du Sud,CA
+10209,249740093,CA Intercommunale de la Réunion Est (CIREST),CA
+10210,249740101,CA Territoire de la Côte Ouest (TCO),CA
+10211,249740119,CA Intercommunale du Nord de la Réunion (CINOR),CA
+10218,200045342,SM de traitement des déchets des microrégions Sud et Ouest de La Réunion,SMO
+10219,200050052,SM de traitement des déchets des microrégions Nord et Est de la Réunion,SMO
+10222,200060457,CA de Dembeni / Mamoudzou,CA
+10223,200060465,CA du Grand Nord de Mayotte,CA
+10224,200050532,CC de Petite-Terre,CC
+10225,200059871,CC du Centre-Ouest,CC
+10226,200060473,CC du Sud,CC
+10227,200089886,SI d'élimination et de valorisation des déchets de Mayotte,SMF
