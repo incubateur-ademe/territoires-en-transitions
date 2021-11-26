@@ -16,6 +16,7 @@ psycopg = "*"
 business = {editable = true, path = "."}
 python-dotenv = "*"
 pandas = "*"
+openpyxl = "*"
 
 [dev-packages]
 
