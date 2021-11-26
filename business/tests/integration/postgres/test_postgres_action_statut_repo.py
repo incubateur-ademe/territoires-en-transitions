@@ -4,7 +4,7 @@ from business.evaluation.adapters.postgres_action_statut_repo import (
 from business.utils.action_id import ActionId
 from tests.utils.postgres_fixtures import *
 from .cursor_executions import (
-    insert_epci,
+    # insert_epci,
     insert_referentiel,
     insert_action_statut_for_epci,
 )
@@ -22,7 +22,7 @@ def test_can_get_all_actions_of_a_referentiel_for_epci(postgres_connection):
             ActionId("cae_2"): ActionId("cae"),
         },
     )
-    insert_epci(test_cursor, 1)
+    # insert_epci(test_cursor, 1)
     insert_action_statut_for_epci(test_cursor, epci_id=1, action_id="cae_1")
 
     # add and retrieve a score for action "cae_1" of CAE referentiel on EPCI #1

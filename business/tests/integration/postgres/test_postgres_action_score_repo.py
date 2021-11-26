@@ -7,14 +7,14 @@ from business.utils.postgres_repo import PostgresRepositoryError
 from business.utils.action_id import ActionId
 from tests.utils.score_factory import make_action_score
 from tests.utils.postgres_fixtures import *
-from .cursor_executions import insert_epci, insert_referentiel
+from .cursor_executions import insert_referentiel  # insert_epci
 
 
 def test_cannot_write_if_epci_or_action_does_not_exist(postgres_connection):
     repo = PostgresActionScoreRepository(postgres_connection)
     with pytest.raises(PostgresRepositoryError):
         repo.add_entities_for_epci(
-            epci_id=1, entities=[make_action_score("cae", points=50)]
+            epci_id=10000, entities=[make_action_score("cae", points=50)]
         )
 
 
@@ -33,8 +33,8 @@ def test_adding_entities_for_different_epcis_to_repo_should_write_in_postgres(
             ActionId("cae_2"): ActionId("cae"),
         },
     )
-    insert_epci(test_cursor, 1)
-    insert_epci(test_cursor, 2)
+    # insert_epci(test_cursor, 1)
+    # insert_epci(test_cursor, 2)
 
     repo = PostgresActionScoreRepository(postgres_connection)
 
