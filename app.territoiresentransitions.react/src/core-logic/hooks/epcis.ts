@@ -4,35 +4,43 @@ import {EpciStorable} from 'storables/EpciStorable';
 import {useAllStorables} from 'core-logic/hooks/storables';
 import {epciStore} from 'core-logic/api/hybridStores';
 import {useDroits} from 'core-logic/hooks/authentication';
+import {EpciRead} from 'generated/dataLayer/epci_read';
+import {epciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoint';
 
 /**
  * Returns the list of epcis owned by the current user.
  */
 export const currentUserEpcis = (): EpciStorable[] => {
-  const all = allSortedEpcis();
-  const droits = useDroits();
-  const [epcis, setEpcis] = useState<EpciStorable[]>([]);
-
+  // const all = allSortedEpcis();
+  // const results = await epciReadEndpoint.getBy({});
+  const [allEpcis, setAllEpcis] = useState<EpciRead[]>([]);
   useEffect(() => {
-    currentUtilisateurDroits().then(droits => {
-      if (droits) {
-        const writable = [];
-        for (const droit of droits) {
-          if (droit.ecriture) {
-            for (const epci of all) {
-              if (epci.id === droit.epci_id) {
-                writable.push(epci);
-                break;
-              }
-            }
-          }
-        }
-        if (!writable.every(s => epcis.includes(s))) setEpcis(writable);
-      }
-    });
-  }, [epcis, all, droits]);
+    epciReadEndpoint.getBy({}).then(allEpcis => setAllEpcis(allEpcis));
+  }, []);
 
-  return epcis.sort((a, b) => a.nom.localeCompare(b.nom));
+  const droits = useDroits();
+  // const [epcis, setEpcis] = useState<EpciStorable[]>([]);
+
+  // useEffect(() => {
+  // currentUtilisateurDroits().then(droits => {
+  // if (droits) {
+  // const writable = [];
+  // for (const droit of droits) {
+  //   if (droit.ecriture) {
+  //     for (const epci of allEpcis) {
+  //       if (epci.id === droit.epci_id) {
+  //         writable.push(epci);
+  //         break;
+  //       }
+  //     }
+  //   }
+  // }
+  // if (!writable.every(s => epcis.includes(s))) setEpcis(writable);
+  // }
+  // });
+  // }, [epcis, allEpcis, droits]);
+
+  return []; //epcis.sort((a, b) => a.nom.localeCompare(b.nom));
 };
 
 /**

@@ -3,16 +3,25 @@ import {AddDialog} from 'app/pages/Epcis/_AddDialog';
 import 'app/DesignSystem/buttons.css';
 import 'app/DesignSystem/core.css';
 import 'app/DesignSystem/variables.css';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {OwnedEpciCard} from 'app/pages/Epcis/_OwnedEpciCard';
 import {SimpleEpciCard} from 'app/pages/Epcis/_SimpleEpciCard';
 
 import {allSortedEpcis, currentUserEpcis} from 'core-logic/hooks';
 import {Spacer} from 'ui/shared';
+import {epciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoint';
+import {EpciRead} from 'generated/dataLayer/epci_read';
 
 const Epcis = () => {
   const usersEpcis = currentUserEpcis();
   const allEpcis = allSortedEpcis();
+  const [allEpciReads, setAllEpciReads] = useState<EpciRead[]>([]);
+  useEffect(() => {
+    epciReadEndpoint
+      .getBy({})
+      .then(allEpciReads => setAllEpciReads(allEpciReads));
+  }, []);
+
   const [addEpciDialogOpen, setAddEpciDialogOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -41,7 +50,7 @@ const Epcis = () => {
         </div>
       </section>
 
-      <section>
+      {/* <section>
         <Spacer size={8} />
         <h2 className="fr-h2 text-center">
           Consulter toutes les collectivités
@@ -52,9 +61,9 @@ const Epcis = () => {
             <SimpleEpciCard epci={epci} key={epci.id} />
           ))}
         </div>
-      </section>
+      </section> */}
       <AddDialog
-        epcis={allEpcis}
+        epcis={allEpciReads}
         open={addEpciDialogOpen}
         close={() => {
           setAddEpciDialogOpen(false);
