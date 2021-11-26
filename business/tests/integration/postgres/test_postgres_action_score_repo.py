@@ -6,7 +6,7 @@ from business.evaluation.adapters.postgres_action_score_repo import (
 from business.utils.postgres_repo import PostgresRepositoryError
 from business.utils.action_id import ActionId
 from tests.utils.score_factory import make_action_score
-from .fixtures import *
+from tests.utils.postgres_fixtures import *
 from .cursor_executions import insert_epci, insert_referentiel
 
 
@@ -21,7 +21,8 @@ def test_cannot_write_if_epci_or_action_does_not_exist(postgres_connection):
 def test_adding_entities_for_different_epcis_to_repo_should_write_in_postgres(
     postgres_connection,
 ):
-    test_cursor = postgres_connection.cursor()
+    # test_cursor = autoclear_cursor
+    test_cursor = postgres_connection.cursor(row_factory=dict_row)
     insert_referentiel(
         test_cursor,
         "cae",
@@ -45,7 +46,7 @@ def test_adding_entities_for_different_epcis_to_repo_should_write_in_postgres(
 
     epci_1_action_id_with_scores = test_cursor.fetchall()
     assert len(epci_1_action_id_with_scores) == 1
-    assert epci_1_action_id_with_scores == [("cae",)]
+    assert epci_1_action_id_with_scores == [{"action_id": "cae"}]
 
     # add and retrieve a score for action "cae_1.1" on epci #2
     repo.add_entities_for_epci(
@@ -54,4 +55,4 @@ def test_adding_entities_for_different_epcis_to_repo_should_write_in_postgres(
     test_cursor.execute("select action_id from score where epci_id=2;")
     epci_1_action_id_with_scores = test_cursor.fetchall()
     assert len(epci_1_action_id_with_scores) == 1
-    assert epci_1_action_id_with_scores == [("cae_1.1",)]
+    assert epci_1_action_id_with_scores == [{"action_id": "cae_1.1"}]

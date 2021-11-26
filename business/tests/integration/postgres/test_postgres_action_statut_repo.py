@@ -2,7 +2,7 @@ from business.evaluation.adapters.postgres_action_statut_repo import (
     PostgresActionStatutRepository,
 )
 from business.utils.action_id import ActionId
-from .fixtures import *
+from tests.utils.postgres_fixtures import *
 from .cursor_executions import (
     insert_epci,
     insert_referentiel,
@@ -11,8 +11,8 @@ from .cursor_executions import (
 
 
 def test_can_get_all_actions_of_a_referentiel_for_epci(postgres_connection):
-    test_cursor = postgres_connection.cursor()
-
+    # test_cursor = autoclear_cursor
+    test_cursor = postgres_connection.cursor(row_factory=dict_row)
     insert_referentiel(
         test_cursor,
         "cae",

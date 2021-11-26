@@ -110,6 +110,7 @@ services:
     volumes:
       # - ./volumes/db/data:/var/lib/postgresql/data
       - ./volumes/db/init:/docker-entrypoint-initdb.d
+    
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     command: postgres -c wal_level=logical

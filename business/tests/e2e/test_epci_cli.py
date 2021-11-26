@@ -1,5 +1,4 @@
 from business.epci.cli_import_epci import cli_import_epci
-from tests.integration.postgres.fixtures import test_postgres_url
 
 expected_nb_of_epcis = 12
 
@@ -11,9 +10,11 @@ def skip_test_update_referentiels():
             [
                 "--repo-option",
                 "POSTGRES",
-                "--postgres-url",
-                test_postgres_url,
+                "--output-path",
+                "./tests/data/tmp/epcis.sql",
             ]
         )
     except SystemExit:
         pass
+
+    # TODO : Should we check that the SQL file can be executed ? To do so, we need to expose a DB without EPCIs already inserted...
