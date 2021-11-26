@@ -25,3 +25,7 @@ business.eeg-info/*
 business.eeg-info
 
 ./data/referentiel_repository.json
+
+*/.DS_Store
+*/*/.DS_Store
+*/*/*/.DS_Store

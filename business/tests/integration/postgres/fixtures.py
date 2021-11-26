@@ -3,7 +3,7 @@ import pytest
 
 from business.utils.get_postgres_connection_params import get_postgres_connection_params
 
-test_postgres_url = f"postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:50001/postgres"  # NB : port 50001 should be specified in docker-compose variables !
+test_postgres_url = f"postgresql://postgres:your-supe¨r-secret-and-long-postgres-password@localhost:50001/postgres"  # NB : port 50001 should be specified in docker-compose variables !
 
 
 @pytest.fixture()
