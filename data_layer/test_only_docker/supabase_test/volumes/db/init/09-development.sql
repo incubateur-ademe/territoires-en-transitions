@@ -3,7 +3,7 @@ set search_path to public;
 ---------------------------------
 ------------ EPCI ---------------
 ---------------------------------
-create domain siren as varchar(14)
+create domain siren as varchar(9)
     check (
         value ~ '^\d{9}$'
         );
