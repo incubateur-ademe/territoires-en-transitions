@@ -11,6 +11,7 @@ class PostgresRepositoryError(Exception):
 class PostgresRepository(abc.ABC):
     def __init__(self, connection: psycopg.Connection) -> None:
         self.cursor = self.make_cursor(connection)
+        self.connection = connection
 
     @staticmethod
     def make_cursor(connection: psycopg.Connection) -> Cursor:

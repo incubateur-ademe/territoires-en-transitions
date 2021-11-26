@@ -44,3 +44,5 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
                 self.cursor.execute(sql, score_as_dict)
             except errors.ForeignKeyViolation as error:
                 raise PostgresRepositoryError(str(error))
+
+        # self.connection.commit() TODO !
