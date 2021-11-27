@@ -51,3 +51,15 @@ python typedef_cli.py --help
 Génére les modèles client ou business à partir de [json typedefs](https://jsontypedef.com/docs/jtd-in-5-minutes/) 
 pour être utilisés par
 [json typedef codegen](https://jsontypedef.com/docs/jtd-codegen/)
+
+        
+### Faux utilisateurs
+
+```yaml
+1:
+  email: yolo@dodo.com
+  password": yolododo
+2:
+  email: yulu@dudu.com
+  password: yulududu 
+```
