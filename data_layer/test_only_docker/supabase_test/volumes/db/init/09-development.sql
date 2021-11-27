@@ -1,15 +1,16 @@
 set search_path to public;
 
----------------------------------
------------- EPCI ---------------
----------------------------------
+create type nature as enum ('SMF', 'CU', 'CC', 'SIVOM', 'POLEM', 'MET69', 'METRO', 'SMO', 'CA', 'EPT', 'SIVU', 'PETR');
 create domain siren as varchar(9)
     check (
         value ~ '^\d{9}$'
         );
+create type role_name as enum ('agent', 'conseiller', 'auditeur');
 
-create type nature as enum ('SMF', 'CU', 'CC', 'SIVOM', 'POLEM', 'MET69', 'METRO', 'SMO', 'CA', 'EPT', 'SIVU', 'PETR');
 
+---------------------------------
+------------ EPCI ---------------
+---------------------------------
 create table epci
 (
     id          serial primary key,
@@ -26,6 +27,79 @@ as
 select siren, nom
 from epci;
 comment on view client_epci is 'The necessary EPCI information to display in the client.';
+
+
+---------------------------------
+------------ DROITS -------------
+---------------------------------
+
+create table private_utilisateur_droit
+(
+    id          serial primary key,
+    user_id     uuid references auth.users                         not null,
+    epci_id     integer references epci                            not null,
+    role_name   role_name                                          not null,
+    active      bool                                               not null,
+    created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
+    modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
+);
+
+create table private_epci_invitation
+(
+    id         serial primary key,
+    role_name  role_name                                          not null,
+    epci_id    integer references epci                            not null,
+    created_by uuid references auth.users,
+    created_at timestamp with time zone default CURRENT_TIMESTAMP not null
+);
+
+
+-- utilisateur trigger before insert
+-- - check no other utilisateur_droit for epci
+-- - check
+
+-- works for unclaimed epci only
+create or replace function claim_epci(siren siren) returns boolean
+as
+$$
+declare
+    epci_already_claimed bool;
+    claimed_epci_id      integer;
+begin
+
+    select id from epci where epci.siren = $1 into claimed_epci_id;
+
+    select count(*) > 0
+    from private_utilisateur_droit
+    where epci_id = claimed_epci_id
+    into epci_already_claimed;
+
+    if not epci_already_claimed
+    then
+        insert into private_utilisateur_droit(user_id, epci_id, role_name, active)
+        values (auth.uid(), claimed_epci_id, 'agent', true);
+        return true;
+    else
+        return false;
+    end if;
+
+end;
+$$ language plpgsql;
+
+-- create function accept_invitation(invitation_id uuid);
+-- create function create_invitation();
+
+create view client_owned_epci
+as
+with current_droits as (
+    select *
+    from private_utilisateur_droit
+    where user_id = auth.uid()
+)
+select siren, nom, role_name
+from current_droits
+         join epci on epci_id = epci.id
+order by nom;
 
 --------------------------------
 -------- REFERENTIEL -----------
