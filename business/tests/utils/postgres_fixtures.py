@@ -21,7 +21,7 @@ def cursor(postgres_connection: psycopg.Connection, request):
 
 
 def clear_cursor(cursor: psycopg.Cursor):
-    tables = ["score, action_relation"]
+    tables = ["score, action_relation", "auth.users"]
     cursor.execute(f"""TRUNCATE {', '.join(tables)} RESTART IDENTITY CASCADE""")
     cursor.connection.commit()
 
