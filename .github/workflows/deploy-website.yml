@@ -84,7 +84,7 @@ jobs:
           pip3 install awscli-plugin-endpoint
 
       # Use AWS CLI to upload the client app on Scaleway.
-      - name: Deploy on Scaleway
+      - name: Deploy on Scaleway Object Storage
         run: |
           aws s3 cp ~/tmp/client s3://territoiresentransitions.fr --recursive --acl public-read
         env:
