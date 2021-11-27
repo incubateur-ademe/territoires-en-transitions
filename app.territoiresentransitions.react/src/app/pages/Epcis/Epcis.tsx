@@ -14,7 +14,7 @@ import {EpciRead} from 'generated/dataLayer/epci_read';
 
 const Epcis = () => {
   const usersEpcis = currentUserEpcis();
-  const allEpcis = allSortedEpcis();
+
   const [allEpciReads, setAllEpciReads] = useState<EpciRead[]>([]);
   useEffect(() => {
     epciReadEndpoint
@@ -49,19 +49,6 @@ const Epcis = () => {
           </div>
         </div>
       </section>
-
-      {/* <section>
-        <Spacer size={8} />
-        <h2 className="fr-h2 text-center">
-          Consulter toutes les collectivités
-        </h2>
-        <Spacer size={3} />
-        <div className="grid grid-cols-3 gap-12">
-          {allEpcis.map(epci => (
-            <SimpleEpciCard epci={epci} key={epci.id} />
-          ))}
-        </div>
-      </section> */}
       <AddDialog
         epcis={allEpciReads}
         open={addEpciDialogOpen}

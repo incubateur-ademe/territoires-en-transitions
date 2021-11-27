@@ -5,7 +5,7 @@ describe('Action-statut reading endpoint should retrieve data-layer default stat
   it('should retrieve all EPCIs', async () => {
     const results = await epciReadEndpoint.getBy({}); // all
 
-    expect(results.length).toEqual(200);
+    expect(results.length).toEqual(1628);
     expect(results[0].nom).toEqual('Haut - Bugey Agglomération');
   });
 });
