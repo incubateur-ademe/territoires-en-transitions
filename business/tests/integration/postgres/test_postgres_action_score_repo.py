@@ -19,10 +19,9 @@ def test_cannot_write_if_epci_or_action_does_not_exist(postgres_connection):
 
 
 def test_adding_entities_for_different_epcis_to_repo_should_write_in_postgres(
-    postgres_connection,
+    postgres_connection, autoclear_cursor
 ):
-    # test_cursor = autoclear_cursor
-    test_cursor = postgres_connection.cursor(row_factory=dict_row)
+    test_cursor = autoclear_cursor
     insert_referentiel(
         test_cursor,
         "cae",
