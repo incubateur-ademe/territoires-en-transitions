@@ -10,9 +10,10 @@ from .cursor_executions import (
 )
 
 
-def test_can_get_all_actions_of_a_referentiel_for_epci(postgres_connection):
-    # test_cursor = autoclear_cursor
-    test_cursor = postgres_connection.cursor(row_factory=dict_row)
+def test_can_get_all_actions_of_a_referentiel_for_epci(
+    postgres_connection, autoclear_cursor
+):
+    test_cursor = autoclear_cursor
     insert_referentiel(
         test_cursor,
         "cae",

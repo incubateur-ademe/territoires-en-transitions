@@ -45,4 +45,4 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
             except errors.ForeignKeyViolation as error:
                 raise PostgresRepositoryError(str(error))
 
-        # self.connection.commit() TODO !
+        self.connection.commit()

@@ -21,14 +21,9 @@ def cursor(postgres_connection: psycopg.Connection, request):
 
 
 def clear_cursor(cursor: psycopg.Cursor):
-    try:
-        tables = ["score, action_relation"]
-        cursor.execute(f"""TRUNCATE {', '.join(tables)} RESTART IDENTITY CASCADE""")
-        cursor.connection.commit()
-    except psycopg.errors.ObjectInUse as e:
-        pass
-        print(e)
-        # TODO !
+    tables = ["score, action_relation"]
+    cursor.execute(f"""TRUNCATE {', '.join(tables)} RESTART IDENTITY CASCADE""")
+    cursor.connection.commit()
 
 
 @pytest.fixture()
