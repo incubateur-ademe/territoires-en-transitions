@@ -14,9 +14,8 @@ from fake_layers.client import Client
 from tests.utils.sql_factories import make_sql_truncate_all_tables
 
 load_dotenv()
-supabase_project = os.getenv("SUPABASE_PROJECT")
 postgres_port = os.getenv("POSTGRES_PORT")
-supabase_url = f"https://{supabase_project}.supabase.co"
+supabase_url = os.getenv("SUPABASE_URL")
 supabase_key = os.getenv("SUPABASE_KEY")
 postgres_password = "your-super-secret-and-long-postgres-password"
 postgres_url = (

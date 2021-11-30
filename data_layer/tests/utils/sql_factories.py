@@ -63,3 +63,8 @@ def make_sql_truncate_all_tables():
     ]
     sql = f"""TRUNCATE {', '.join(tables)} RESTART IDENTITY CASCADE"""
     return sql
+
+
+def make_sql_create_user(user_uid: Optional[str] = None, email="tom@gmail.com"):
+    """Returns a user whose password is 'yolo'"""
+    return f"""INSERT INTO auth.users (id, email, encrypted_password) VALUES ('{user_uid}', '{email}', '$2a$10$n8hCY1kKn3BIX56bB3LlQuudbH0m5C7Oqr2dJ8LsIMvlr5JWNGyC.');"""
