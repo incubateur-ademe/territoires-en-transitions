@@ -113,3 +113,8 @@ services:
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     command: postgres -c wal_level=logical
+
+  adminer:
+    image: adminer
+    ports:
+      - "${ADMINER_PORT:-8090}:8080"
