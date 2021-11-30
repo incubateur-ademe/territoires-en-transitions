@@ -17,8 +17,9 @@ describe('Action-statut reading endpoint should retrieve data-layer default stat
         action_id: 'cae_1',
       });
       expect(results.length).toBeGreaterThanOrEqual(1);
-      expect(results[0].epci_id).toEqual(1);
-      expect(results[0].action_id).toEqual('cae_1');
+      expect(results[0]).toEqual(
+        expect.objectContaining({action_id: 'cae_1', epci_id: 1})
+      );
     }
   );
   it(

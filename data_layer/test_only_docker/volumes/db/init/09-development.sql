@@ -147,12 +147,12 @@ create type avancement as enum ('fait', 'pas_fait', 'programme', 'non_renseigne'
 create table action_statut
 (
     id          serial primary key,
-    epci_id     integer references epci                            not null,
-    action_id   action_id references action_relation               not null,
-    avancement  avancement                                         not null,
-    concerne    boolean                                            not null,
-    modified_by uuid references auth.users                         not null,
-    modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
+    epci_id     integer references epci                              not null,
+    action_id   action_id references action_relation                 not null,
+    avancement  avancement                                           not null,
+    concerne    boolean                                              not null,
+    modified_by uuid references auth.users default auth.uid()        not null,
+    modified_at timestamp with time zone   default CURRENT_TIMESTAMP not null
 );
 
 
@@ -307,6 +307,19 @@ create table action_commentaire
     modified_by uuid references auth.users default auth.uid()        not null,
     modified_at timestamp with time zone   default CURRENT_TIMESTAMP not null
 );
+
+alter table action_commentaire
+enable row level security;
+
+create policy "Enable select"
+ on action_commentaire
+ for select
+ using (true);
+
+create policy "Insert for authenticated user"
+ on action_commentaire
+ for insert
+ using (action_commentaire.modified_by = auth.uid());
 
 --------------------------------
 ----------- EVENTS -------------
