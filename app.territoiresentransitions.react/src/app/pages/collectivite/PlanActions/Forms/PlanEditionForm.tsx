@@ -17,6 +17,7 @@ import {v4 as uuid} from 'uuid';
 const InlineEditableTitle = (props: {
   text: string;
   onSave: (text: string) => void;
+  remove?: () => void;
   level: number;
   // textClass?: string;
   onStateChange?: (editing: boolean) => void;
@@ -44,6 +45,18 @@ const InlineEditableTitle = (props: {
           >
             <div className="fr-fi-edit-fill" />
           </IconButton>
+
+          {props.remove !== undefined && (
+            <IconButton
+              aria-label="supprimer"
+              onClick={e => {
+                e.preventDefault();
+                props.remove!();
+              }}
+            >
+              <div className="fr-fi-delete-fill" />
+            </IconButton>
+          )}
         </>
       )}
       {editing && (
@@ -82,6 +95,7 @@ function EditableCategoryTitle(props: {
   level: number;
   update: (categorie: Categorie) => void;
   add?: (categorie: Categorie) => void;
+  remove: (categorie: Categorie) => void;
 }) {
   const [editing, setEditing] = useState<boolean>(false);
   const [adding, setAdding] = useState<boolean>(false);
@@ -96,6 +110,9 @@ function EditableCategoryTitle(props: {
             onSave={text => {
               props.categorie.nom = text;
               props.update(props.categorie);
+            }}
+            remove={() => {
+              props.remove(props.categorie);
             }}
             text={props.categorie.nom}
             onStateChange={setEditing}
@@ -143,6 +160,7 @@ function EditableCategoryLevel(props: {
   nodes: CategoryNode[];
   update: (categorie: Categorie) => void;
   add: (categorie: Categorie) => void;
+  remove: (categorie: Categorie) => void;
   level?: number;
 }) {
   const level = props.level ?? 0;
@@ -155,6 +173,7 @@ function EditableCategoryLevel(props: {
               categorie={node.categorie}
               update={props.update}
               add={level < 2 ? props.add : undefined}
+              remove={props.remove}
               level={level}
             />
 
@@ -163,6 +182,7 @@ function EditableCategoryLevel(props: {
                 <EditableCategoryLevel
                   nodes={node.children}
                   update={props.update}
+                  remove={props.remove}
                   add={props.add}
                   level={level + 1}
                 />
@@ -242,6 +262,9 @@ export const PlanEditionForm = (props: {
             const plan = props.plan;
             plan.categories.push(categorie);
             planActionStore.store(plan);
+          }}
+          remove={(categorie: Categorie) => {
+            alert(categorie.nom);
           }}
           level={1}
         />
