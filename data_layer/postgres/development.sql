@@ -309,17 +309,21 @@ create table action_commentaire
 );
 
 alter table action_commentaire
-enable row level security;
+    enable row level security;
 
 create policy "Enable select"
- on action_commentaire
- for select
- using (true);
+    on action_commentaire
+    for select
+    using (true);
+
+
+drop policy "Insert for authenticated user"
+    on action_commentaire;
 
 create policy "Insert for authenticated user"
- on action_commentaire
- for insert
- using (action_commentaire.modified_by = auth.uid());
+    on action_commentaire
+    for insert
+    with check (true);
 
 --------------------------------
 ----------- EVENTS -------------
