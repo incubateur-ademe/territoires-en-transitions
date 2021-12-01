@@ -4,12 +4,7 @@ import pytest
 import supabase
 
 from tests.utils.prepare_cursor import prepare_cursor
-from tests.utils.sql_factories import (
-    make_sql_insert_epci,
-    make_sql_to_insert_action_relation,
-    make_sql_insert_user,
-    make_sql_create_user,
-)
+from tests.utils.sql_factories import *
 
 
 def test_insert_action_relation_should_update_table_and_view(cursor):
@@ -46,17 +41,17 @@ def test_insert_action_relation_should_update_table_and_view(cursor):
     ]
 
 
-def test_can_insert_and_retrieve_action_commentaire(cursor):
-    prepare_cursor(
-        cursor,
-        make_sql_insert_epci()
-        + make_sql_to_insert_action_relation(action_id="cae_1.2.3")
-        + make_sql_insert_user("17440546-f389-4d4f-bfdb-b0c94a1bd0f9"),
-    )
+def test_can_insert_and_retrieve_action_commentaire(
+    cursor,
+    supabase_client: supabase.Client,
+):
+    supabase_client.auth.sign_up(email="la@la", password="password")
+
+    prepare_cursor(cursor, make_sql_to_insert_action_relation(action_id="cae_1.2.3"))
 
     insert_commentaire = """
-        insert into action_commentaire(epci_id, action_id, commentaire, modified_by)
-        values (1, 'cae_1.2.3' , 'un commentaire', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9')
+        insert into action_commentaire(epci_id, action_id, commentaire)
+        values (1, 'cae_1.2.3' , 'un commentaire')
     """
 
     cursor.execute(insert_commentaire)
@@ -70,20 +65,31 @@ def test_can_insert_and_retrieve_action_commentaire(cursor):
     last_action_commentaire["commentaire"] == "un commentaire"
 
 
+def test_can_insert_and_retrieve_commentaire_from_authentified_user(
+    cursor, supabase_client
+):
+    # user1 is connected but tries to insert modified_by with uuid of user2
+    user1_uid = str(uuid.uuid4())
+    user2_uid = str(uuid.uuid4())
+    cursor.execute(make_sql_insert_user(email="user1@gmail.com", user_uid=user1_uid))
+    cursor.execute(make_sql_insert_user(email="user2@gmail.com", user_uid=user2_uid))
+
+    supabase_client.auth.sign_in("user1@gmail.com", "yolododo")
+
+    with pytest.raises(Exception):
+        cursor.execute(make_sql_insert_action_commentaire(user_uid=user2_uid))
+
+
 def test_cannot_insert_commentaire_if_modified_by_different_from_auth_user(
     cursor, supabase_client
 ):
     # user1 is connected but tries to insert modified_by with uuid of user2
     user1_uid = str(uuid.uuid4())
     user2_uid = str(uuid.uuid4())
-    cursor.execute(make_sql_create_user(email="user1@gmail.com", user_uid=user1_uid))
-    cursor.execute(make_sql_create_user(email="user2@gmail.com", user_uid=user2_uid))
+    cursor.execute(make_sql_insert_user(email="user1@gmail.com", user_uid=user1_uid))
+    cursor.execute(make_sql_insert_user(email="user2@gmail.com", user_uid=user2_uid))
 
     supabase_client.auth.sign_in("user1@gmail.com", "yolododo")
 
-    insert_commentaire = f"""
-        insert into action_commentaire(epci_id, action_id, commentaire, modified_by)
-        values (1, 'cae_1.2.3' , 'un commentaire', '{user2_uid}')
-    """
     with pytest.raises(Exception):
-        cursor.execute(insert_commentaire)
+        cursor.execute(make_sql_insert_action_commentaire(user_uid=user2_uid))

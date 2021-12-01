@@ -22,12 +22,6 @@ def make_sql_insert_epci(id: Optional[int] = 1, nom="Yolo", siren="1234567890123
     """
 
 
-def make_sql_insert_user(user_uid="17440546-f389-4d4f-bfdb-b0c94a1bd0f9"):
-    return f"""
-    insert into auth.users(id) values ('{user_uid}');
-    """
-
-
 def make_sql_insert_score(
     epci_id=1,
     action_id="cae_1.2.3",
@@ -65,6 +59,15 @@ def make_sql_truncate_all_tables():
     return sql
 
 
-def make_sql_create_user(user_uid: Optional[str] = None, email="tom@gmail.com"):
+def make_sql_insert_user(user_uid: Optional[str] = None, email="tom@gmail.com"):
     """Returns a user whose password is 'yolo'"""
     return f"""INSERT INTO auth.users (id, email, encrypted_password) VALUES ('{user_uid}', '{email}', '$2a$10$n8hCY1kKn3BIX56bB3LlQuudbH0m5C7Oqr2dJ8LsIMvlr5JWNGyC.');"""
+
+
+def make_sql_insert_action_commentaire(
+    user_uid: str, commentaire="un commentaire", action_id="cae_1.2.3", epci_id=1
+) -> str:
+    return f"""
+        insert into action_commentaire(epci_id, action_id, commentaire, modified_by)
+        values ({epci_id}, '{action_id}' , '{commentaire}', '{user_uid}')
+    """

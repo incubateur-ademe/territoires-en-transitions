@@ -14,9 +14,9 @@ from fake_layers.client import Client
 from tests.utils.sql_factories import make_sql_truncate_all_tables
 
 load_dotenv()
-postgres_port = os.getenv("POSTGRES_PORT")
-supabase_url = os.getenv("SUPABASE_URL")
-supabase_key = os.getenv("SUPABASE_KEY")
+postgres_port = os.getenv("POSTGRES_PORT", 50001)
+supabase_url = os.getenv("SUPABASE_URL", "")
+supabase_key = os.getenv("SUPABASE_KEY", "")
 postgres_password = "your-super-secret-and-long-postgres-password"
 postgres_url = (
     f"postgresql://postgres:{postgres_password}@localhost:{postgres_port}/postgres"
@@ -56,23 +56,14 @@ def realtime_client() -> SupabaseRealtimeClient:
     return SupabaseRealtimeClient(realtime_url, {"params": {"apikey": supabase_key}})
 
 
-@pytest.fixture()
-def business(supabase_client) -> Business:
-    return Business(supabase_client)
+# @pytest.fixture()
+# def business(supabase_client) -> Business:
+#     return Business(supabase_client)
 
 
 @pytest.fixture()
 def app_client(supabase_client) -> Client:
     return Client(supabase_client)
-
-
-@pytest.fixture()
-def cursor(postgres_connection: Connection, request):
-    cursor = postgres_connection.cursor(row_factory=dict_row)
-    # development = open("postgres/development.sql", "r").read()
-    # prepare_cursor(cursor, development)
-    request.addfinalizer(cursor.close)
-    return cursor
 
 
 def clear_cursor(cursor):
@@ -81,7 +72,8 @@ def clear_cursor(cursor):
 
 
 @pytest.fixture()
-def autoclear_cursor(cursor, request):
+def cursor(postgres_connection: Connection, request):
+    cursor = postgres_connection.cursor(row_factory=dict_row)
     clear_cursor(cursor)
 
     def clear_and_close_cursor():

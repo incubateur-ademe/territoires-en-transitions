@@ -1,8 +1,5 @@
 {
   "properties": {
-    "epci_id": {
-      "type": "int32"
-    },
     "referentiel": {
       "type": "string"
     },
@@ -14,6 +11,9 @@
     },
     "action_id": {
       "type": "string"
+    },
+    "epci_id": {
+      "type": "int32"
     }
   }
 }
