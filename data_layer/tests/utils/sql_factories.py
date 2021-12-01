@@ -67,3 +67,12 @@ def make_sql_insert_action_commentaire(
         insert into action_commentaire(epci_id, action_id, commentaire, modified_by)
         values ({epci_id}, '{action_id}' , '{commentaire}', '{user_uid}')
     """
+
+
+def make_sql_insert_action_statut(
+    user_uid: str, action_id="cae_1.2.3", concerne=True, avancement="fait", epci_id=1
+):
+    return f"""
+        insert into action_statut(epci_id, action_id, avancement, concerne, modified_by)
+        values ({epci_id}, '{action_id}', '{avancement}', '{concerne}', '{user_uid}')
+    """
