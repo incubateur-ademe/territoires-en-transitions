@@ -35,5 +35,18 @@ def test_authentified_user_can_insert_action_commentaire(
     last_action_commentaire["commentaire"] == "un commentaire"
 
 
-def test_anyone_can_retrieve_action_commentaire():
-    pass
+def test_anyone_can_retrieve_action_commentaire(supabase_client, cursor):
+    user_uid = "a1dd4a56-d0c8-4b1e-b3b5-5e7e982df3a8"
+    prepare_cursor(
+        cursor,
+        make_sql_insert_user(user_uid=user_uid)
+        + make_sql_to_insert_action_relation(action_id="cae_1.2.3")
+        + make_sql_insert_action_commentaire(
+            user_uid=user_uid, commentaire="lala", action_id="cae_1.2.3"
+        ),
+    )
+
+    response = supabase_client.from_("action_commentaire").select("*").execute()
+    assert response["status_code"] == 200
+    assert len(response["data"]) == 1
+    assert response["data"][0]["modified_by"] == user_uid
