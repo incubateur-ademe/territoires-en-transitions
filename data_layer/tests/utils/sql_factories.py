@@ -54,8 +54,9 @@ def make_sql_truncate_all_tables():
     return sql
 
 
-def make_sql_insert_user(user_uid: Optional[str] = None, email="tom@gmail.com"):
+def make_sql_insert_user(user_uid: Optional[str] = None, email: Optional[str] = None):
     """Returns a user whose password is 'yolo'"""
+    email = email or f"{user_uid}@gmail.com"
     return f"""INSERT INTO auth.users (id, email, encrypted_password) VALUES ('{user_uid}', '{email}', '$2a$10$n8hCY1kKn3BIX56bB3LlQuudbH0m5C7Oqr2dJ8LsIMvlr5JWNGyC.');"""
 
 
