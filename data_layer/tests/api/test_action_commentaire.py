@@ -8,19 +8,25 @@ def test_authentified_user_can_insert_action_commentaire(
     cursor,
     supabase_client: supabase.Client,
 ):
-    supabase_client.auth.sign_up(email="la@la", password="password")
-    supabase_client.auth.sign_in(email="la@la", password="password")
+    supabase_client.auth.sign_up(email="la@la.com", password="password")
+    supabase_client.auth.sign_in(email="la@la.com", password="password")
 
     prepare_cursor(cursor, make_sql_to_insert_action_relation(action_id="cae_1.2.3"))
 
     data = (
         supabase_client.table("action_commentaire")
         .insert(
-            {"epci_id": 1, "commentaire": "un commentaire", "action_id": "cae_1.2.3"}
+            {
+                "epci_id": 1,
+                "commentaire": "un commentaire",
+                "action_id": "cae_1.2.3",
+                # "modified_by": supabase_client.auth.user()["id"],
+            }
         )
         .execute()
     )
-    assert len(data.get("data", [])) > 0
+
+    assert data.get("data", {})["status_code"] == 201
     cursor.execute("select * from action_commentaire;")
     all_action_commentaires = cursor.fetchall()
     assert len(all_action_commentaires) == 1

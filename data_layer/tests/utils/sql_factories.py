@@ -49,12 +49,7 @@ def make_sql_insert_score(
 
 
 def make_sql_truncate_all_tables():
-    tables = [
-        "score",
-        "action_relation",
-        "epci",
-        "client_scores",
-    ]
+    tables = ["action_commentaire", "score", "action_relation", "auth.users"]
     sql = f"""TRUNCATE {', '.join(tables)} RESTART IDENTITY CASCADE"""
     return sql
 

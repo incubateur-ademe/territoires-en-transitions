@@ -90,6 +90,7 @@ def test_cannot_insert_commentaire_if_modified_by_different_from_auth_user(
     cursor.execute(make_sql_insert_user(email="user2@gmail.com", user_uid=user2_uid))
 
     supabase_client.auth.sign_in("user1@gmail.com", "yolododo")
+    supabase_client.postgrest.from_("").insert()
 
     with pytest.raises(Exception):
         cursor.execute(make_sql_insert_action_commentaire(user_uid=user2_uid))
