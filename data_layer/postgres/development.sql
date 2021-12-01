@@ -316,10 +316,6 @@ create policy "Enable select"
     for select
     using (true);
 
-
-drop policy "Insert for authenticated user"
-    on action_commentaire;
-
 create policy "Insert for authenticated user"
     on action_commentaire
     for insert
