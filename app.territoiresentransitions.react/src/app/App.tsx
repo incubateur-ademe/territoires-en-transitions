@@ -1,4 +1,3 @@
-import {Navigation} from 'app/Navigation';
 import {EpcisPage} from 'app/pages/Epcis/EpcisPage';
 import {
   BrowserRouter as Router,
@@ -43,26 +42,26 @@ export const App = () => {
           <Toasters />
           <Switch>
             <HomeRoute exact path="/">
-              <Header nav={<Navigation />} />
+              <Header />
               <Home />
             </HomeRoute>
 
             <Route path={'/auth'}>
-              <Header nav={<Navigation />} />
+              <Header />
               <AuthRoutes />
             </Route>
 
             <Route path={'/epcis'}>
-              <Header nav={<Navigation />} />
+              <Header />
               <EpcisPage />
             </Route>
 
             <Route path={'/collectivite/:epciId'}>
-              <Header nav={<Navigation />} />
+              <Header />
               <CollectiviteRoutes />
             </Route>
             <Route path={'/statistics'}>
-              <Header nav={<Navigation />} />
+              <Header />
               <StatisticsPage />
             </Route>
           </Switch>

@@ -1,5 +1,5 @@
+import {EpciRead} from 'generated/dataLayer/epci_read';
 import {Link} from 'react-router-dom';
-import type {EpciStorable} from 'storables/EpciStorable';
 
 const SimpleEpciCardLink = (props: {label: string; linkTo: string}) => (
   <Link
@@ -10,24 +10,24 @@ const SimpleEpciCardLink = (props: {label: string; linkTo: string}) => (
   </Link>
 );
 
-type SimpleEpciCardProps = {epci: EpciStorable};
+type SimpleEpciCardProps = {epci: EpciRead};
 export const SimpleEpciCard = ({epci}: SimpleEpciCardProps) => (
   <div className="flex flex-col items-center justify-between p-8 bg-beige">
     <h3 className="fr-h3 p-2 text-center ">{epci.nom}</h3>
     <div>
       <SimpleEpciCardLink
         label="Plan d'actions"
-        linkTo={`/collectivite/${epci.id}/plan_actions`}
+        linkTo={`/collectivite/${epci.siren}/plan_actions`}
       />
       <div className="pb-3" />
       <SimpleEpciCardLink
         label="Référentiels"
-        linkTo={`/collectivite/${epci.id}/referentiels`}
+        linkTo={`/collectivite/${epci.siren}/referentiels`}
       />
       <div className="pb-3" />
       <SimpleEpciCardLink
         label="Indicateurs"
-        linkTo={`/collectivite/${epci.id}/indicateurs`}
+        linkTo={`/collectivite/${epci.siren}/indicateurs`}
       />
     </div>
   </div>
