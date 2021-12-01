@@ -308,18 +308,19 @@ create table action_commentaire
     modified_at timestamp with time zone   default CURRENT_TIMESTAMP not null
 );
 
-alter table action_commentaire
-enable row level security;
+-- alter table action_commentaire
+--     enable row level security;
 
-create policy "Enable select"
- on action_commentaire
- for select
- using (true);
+-- create policy "Enable select"
+--     on action_commentaire
+--     for select
+--     using (true);
 
-create policy "Insert for authenticated user"
- on action_commentaire
- for insert
- with check (action_commentaire.modified_by = auth.uid());
+
+-- create policy "Insert for authenticated user"
+--     on action_commentaire
+--     for insert
+--     with check (true);
 
 --------------------------------
 ----------- EVENTS -------------
