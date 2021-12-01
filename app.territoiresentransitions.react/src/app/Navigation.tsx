@@ -1,4 +1,4 @@
-import {Link, useParams} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {useConnected, useEpciId} from 'core-logic/hooks';
 import {useCurrentEpci} from 'core-logic/hooks';
 
@@ -19,38 +19,64 @@ const ConnexionSwitchLink = () => {
   );
 };
 
-const EpciNavigation = () => {
+export const EpciNavigation = () => {
   const epciId = useEpciId();
   const epci = useCurrentEpci();
 
   return (
-    <div className="fr-links-group">
-      {epci && <span className="text-lg px-2">{epci.nom}</span>}
-      <Link className="fr-link" to="/epcis">
-        Changer
-      </Link>
+    // <div className="fr-links-group">
 
-      <Link className="fr-link" to={`/collectivite/${epciId}/plan_actions`}>
-        Mon plan d'actions
-      </Link>
-      <Link className="fr-link" to={`/collectivite/${epciId}/referentiels`}>
-        Référentiels
-      </Link>
-      <Link className="fr-link" to={`/collectivite/${epciId}/indicateurs`}>
-        Indicateurs
-      </Link>
-    </div>
+    <nav className="fr-nav" id="header-navigation" role="navigation">
+      {/* {epci && <span className="text-lg px-2">{epci.nom}</span>} */}
+      <ul className="fr-nav__list">
+        <li className="fr-nav__item">
+          <Link
+            className="fr-nav__link"
+            to={`/collectivite/${epciId}/tableau_bord`}
+          >
+            Tableau de bord
+          </Link>
+        </li>
+        <li className="fr-nav__item">
+          <Link
+            className="fr-nav__link active"
+            to={`/collectivite/${epciId}/plan_actions`}
+          >
+            Plans d'actions
+          </Link>
+        </li>
+        <li className="fr-nav__item">
+          <Link
+            className="fr-nav__link"
+            to={`/collectivite/${epciId}/referentiels`}
+          >
+            Référentiels
+          </Link>
+        </li>
+        <li className="fr-nav__item">
+          <Link
+            className="fr-nav__link"
+            to={`/collectivite/${epciId}/indicateurs`}
+          >
+            Indicateurs
+          </Link>
+        </li>
+      </ul>
+    </nav>
   );
 };
 
 export const Navigation = () => {
-  const {epciId} = useParams<{epciId: string}>();
-  const isEpciRoute = !!epciId;
   return (
     <div className="fr-header__tools">
       <div className="fr-header__tools-links">
         <ul className="fr-links-group">
-          {isEpciRoute && <EpciNavigation />}
+          <Link className="fr-link" to="/all_epcis">
+            Toutes les collectivités
+          </Link>
+          <Link className="fr-link" to="/">
+            Mes collectivités
+          </Link>
           <ConnexionSwitchLink />
         </ul>
       </div>

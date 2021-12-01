@@ -1,42 +1,41 @@
-import Dialog from '@material-ui/core/Dialog';
-import {commands} from 'core-logic/commands';
+import {epciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoint';
 import {EpciRead} from 'generated/dataLayer/epci_read';
-import React from 'react';
-import {EpciStorable} from 'storables';
-import {LabeledTextInput, SelectInput} from 'ui';
+import React, {useEffect, useState} from 'react';
+import {SelectInput, UiDialogButton} from 'ui';
 
-export interface AddDialogProps {
-  open: boolean;
-  close: () => void;
-  epcis: EpciRead[];
-}
+export const AddDialog = () => {
+  const [opened, setOpened] = React.useState<boolean>(false);
 
-export const AddDialog = (props: AddDialogProps) => {
-  const {open, close, epcis} = props;
-  const selectInputValues = epcis.map(epciStorable => ({
-    value: epciStorable.siren,
-    label: epciStorable.nom,
-  }));
+  const [allEpciReads, setAllEpciReads] = useState<EpciRead[]>([]);
+  useEffect(() => {
+    epciReadEndpoint
+      .getBy({})
+      .then(allEpciReads => setAllEpciReads(allEpciReads));
+  }, []);
 
   const [selectedEpciSiren, setSelectedEpciSiren] = React.useState<string>();
-  // const [inputEpciNom, setInputEpciNom] = React.useState('');
-
-  // const overmindActions = useActions();
 
   const submit = async () => {
     console.log('Should add EPCI ', selectedEpciSiren, ' to user rights.... ');
-    // await commands.epcisCommands.addEpciToMyList(selectedEpciId);
     close();
   };
 
   return (
-    <Dialog open={open} onClose={close} maxWidth="md" fullWidth={true}>
+    <UiDialogButton
+      title="Rejoindre une collectivité"
+      opened={opened}
+      setOpened={setOpened}
+    >
       <div className="py-7">
-        <h3 className="text-center pb-4"> Rejoindre ma collectivité </h3>
         <div className="flex flex-row justify-center">
           <SelectInput
             label="Sélectionner une collectivité"
-            options={selectInputValues}
+            options={allEpciReads.map((epciRead: EpciRead) => {
+              return {
+                value: epciRead.siren,
+                label: epciRead.nom,
+              };
+            })}
             defaultValue=""
             onChange={epciSiren => {
               setSelectedEpciSiren(epciSiren);
@@ -49,10 +48,10 @@ export const AddDialog = (props: AddDialogProps) => {
             className="fr-btn fr-btn--secondary fr-btn--sm"
             onClick={submit}
           >
-            Rejoindre
+            Rejoindre cette collectivité
           </button>
         </div>
       </div>
-    </Dialog>
+    </UiDialogButton>
   );
 };
