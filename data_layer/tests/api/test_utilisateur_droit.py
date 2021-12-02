@@ -8,6 +8,8 @@ from httpx import Response
 from tests.utils.supabase import supabase_rpc_as_user, supabase_query_as_user
 
 tom_email = "tom@gmail.com"
+tom_nom = "valley"
+tom_prenom = "tom"
 fake_user_id = "17440546-f389-4d4f-bfdb-b0c94a1bd0f9"
 bugey_epci_siren = "200042935"
 bugey_epci_nom = "Haut - Bugey Agglomération"
@@ -21,10 +23,27 @@ def decode_response_content(response: Response) -> str:
     return json.loads(response.content.decode())
 
 
+def insert_dcp(supabase_client: supabase.Client, user: User, dcp: dict):
+    query = supabase_client.table("dcp").insert(dcp)
+    query = supabase_query_as_user(supabase_client, user, query)
+    response = query.execute()
+    assert response["status_code"] == 201
+
+
 async def tom_signs_in_and_claim_bugey(supabase_client: supabase.Client) -> User:
-    # 0. Tom signs in
+    # 0. Tom signs in and inserts it DCP
     supabase_client.auth.sign_up(email=tom_email, password="password")
     user = supabase_client.auth.sign_in(email=tom_email, password="password")
+    insert_dcp(
+        supabase_client,
+        user,
+        {
+            "nom": tom_nom,
+            "prenom": tom_prenom,
+            "email": tom_email,
+            "user_id": user["user"]["id"],
+        },
+    )
 
     # 1. Tom claims EPCI "Haut - Bugey Agglomération"
     response = await supabase_rpc_as_user(
@@ -171,4 +190,8 @@ async def test_user_requests_referent_contact_informations_for_epci_should_keep_
         params={"siren": bugey_epci_siren},
     )
     assert response.status_code == 200
-    assert decode_response_content(response) == {"email": tom_email}  # TODO : fixme !
+    assert decode_response_content(response) == {
+        "email": tom_email,
+        "nom": tom_nom,
+        "prenom": tom_prenom,
+    }
