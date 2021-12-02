@@ -1,7 +1,6 @@
 import {Spacer} from 'ui/shared';
 import {ficheActionAvancementColors} from 'app/theme';
 import {FicheActionAvancement} from 'types';
-import {DetailedEpciCardPropsLink} from 'app/pages/Epcis/_DetailedEpciCardPropsLink';
 import {
   useAllStorables,
   useEpciPlanActionAvancementSummmary,
@@ -13,6 +12,7 @@ import {PlanCreationForm} from 'app/pages/collectivite/PlanActions/Forms/PlanCre
 import {PlanActionStorable} from 'storables';
 import {getPlanActionStoreForEpci} from 'core-logic/api/hybridStores';
 import {PlanActionTyped} from 'types/PlanActionTypedInterface';
+import {DetailedEpciCardPropsLink} from 'app/pages/ToutesCollectivites/_DetailedEpciCardPropsLink';
 
 const addSAtTheEndOfWordIfCountGreaterThan1 = (props: {
   count: number;

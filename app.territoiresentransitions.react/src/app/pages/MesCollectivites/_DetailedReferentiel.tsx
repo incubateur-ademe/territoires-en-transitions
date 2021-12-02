@@ -2,9 +2,9 @@ import {UiGaugeProgressStat, RootProgressStat} from 'ui/referentiels';
 import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 
-import {DetailedEpciCardPropsLink} from './_DetailedEpciCardPropsLink';
 import {Referentiel} from 'types';
 import {epciCard_AxisShortLabel} from 'app/labels';
+import {DetailedEpciCardPropsLink} from 'app/pages/ToutesCollectivites/_DetailedEpciCardPropsLink';
 
 const AxisSummary = (props: {
   title: string;

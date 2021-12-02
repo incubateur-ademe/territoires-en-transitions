@@ -1,15 +1,11 @@
-import {signInRedirect} from 'core-logic/api/authRedirect';
 import {Field, Form, Formik} from 'formik';
 import {signIn, SignInCredentials} from 'core-logic/api/auth/signIn';
 import * as Yup from 'yup';
 import LabeledTextField from 'ui/forms/LabeledTextField';
-import React from 'react';
 
 /**
  */
 export const SignInPage = () => {
-  //signInRedirect();
-
   const validation = Yup.object({
     email: Yup.string()
       .email("Cette adresse email n'est pas valide")
