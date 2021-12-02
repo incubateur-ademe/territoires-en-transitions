@@ -71,10 +71,10 @@ export const Navigation = () => {
     <div className="fr-header__tools">
       <div className="fr-header__tools-links">
         <ul className="fr-links-group">
-          <Link className="fr-link" to="/all_epcis">
+          <Link className="fr-link" to="/toutes_collectivites">
             Toutes les collectivités
           </Link>
-          <Link className="fr-link" to="/">
+          <Link className="fr-link" to="/mes_collectivites">
             Mes collectivités
           </Link>
           <ConnexionSwitchLink />

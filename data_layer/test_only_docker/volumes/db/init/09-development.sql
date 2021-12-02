@@ -78,9 +78,9 @@ begin
     then
         insert into private_utilisateur_droit(user_id, epci_id, role_name, active)
         values (auth.uid(), claimed_epci_id, 'agent', true);
-        return true;
+        return {success: TRUE};
     else
-        return false;
+        return  {success: FALSE, reason: already_claimed};
     end if;
 
 end;

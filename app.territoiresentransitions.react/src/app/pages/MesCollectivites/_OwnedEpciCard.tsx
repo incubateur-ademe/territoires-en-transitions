@@ -2,9 +2,9 @@ import type {EpciStorable} from 'storables/EpciStorable';
 import {caeAxes, eciAxes} from 'utils/referentiels';
 import {useEpciAxisReferentielScores} from 'core-logic/hooks';
 
-import {DetailedEpciCardPropsLink} from './_DetailedEpciCardPropsLink';
 import {DetailedPlanActions} from './_DetailedPlanActions';
 import {DetailedReferentiel} from './_DetailedReferentiel';
+import {DetailedEpciCardPropsLink} from 'app/pages/ToutesCollectivites/_DetailedEpciCardPropsLink';
 
 const DetailedEpciCard = ({epci}: {epci: EpciStorable}) => {
   const caeScores = useEpciAxisReferentielScores({

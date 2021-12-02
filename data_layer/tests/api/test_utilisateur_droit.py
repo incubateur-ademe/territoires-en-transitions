@@ -11,7 +11,7 @@ beb_epci_nom = "CA du Bassin de Bourg-en-Bresse"
 
 
 @pytest.mark.asyncio
-async def test_claim_epci_ok_for_first_claimer_should_update_view(
+async def test_user_claims_and_unclaims_epci_ok_for_first_claimer_should_become_referent_and_update_view(
     cursor, supabase_client: supabase.Client
 ):
     # 0. Tom signs in
@@ -26,6 +26,7 @@ async def test_claim_epci_ok_for_first_claimer_should_update_view(
         params={"siren": bugey_epci_siren},
     )
     assert bool(response.content)
+    assert response == {"success": True}
 
     # 2. Tom also claims EPCI "CA du Bassin de Bourg-en-Bresse"
     response = await supabase_rpc_as_user(
@@ -35,6 +36,7 @@ async def test_claim_epci_ok_for_first_claimer_should_update_view(
         params={"siren": beb_epci_siren},
     )
     assert bool(response.content)
+    assert response == {"success": True}
 
     # 3. View should return the two EPCIs (ordered by name)
     query = supabase_client.from_("client_owned_epci").select("*")
@@ -54,19 +56,43 @@ async def test_claim_epci_ok_for_first_claimer_should_update_view(
         },
     ]
 
+    # 4. Tom unclaims EPCI Bugey
+    response = await supabase_rpc_as_user(
+        supabase_client,
+        user,
+        func_name="unclaim_epci",
+        params={"siren": bugey_epci_siren},
+    )
+    assert response == {"success": True}
+
+    # 5.  View should now return the only EPCI
+    query = supabase_client.from_("client_owned_epci").select("*")
+    query = supabase_query_as_user(supabase_client, user, query)
+    response = query.execute()
+    client_owned_epci = response["data"]
+    assert client_owned_epci == [
+        {
+            "siren": beb_epci_siren,
+            "role_name": "agent",
+            "nom": beb_epci_nom,
+        }
+    ]
+
 
 @pytest.mark.asyncio
-async def test_claim_epci_nok_for_second_claimer(supabase_client):
+async def test_user_claims_epci_for_second_claimer_receives_referent_contact_informations(
+    supabase_client,
+):
     # Tom signs in and claims EPCI Bugey
     supabase_client.auth.sign_up(email="tom@gmail.com", password="password")
     response = await supabase_client.postgrest.rpc(
         "claim_epci", {"siren": beb_epci_siren}
     )
-    assert response == {"claim_epci": True}
+    assert response == {"success": True}
 
     # Then, erik claims this same EPCI
     supabase_client.auth.sign_up(email="erik@gmail.com", password="password")
     response = await supabase_client.postgrest.rpc(
         "claim_epci", {"siren": beb_epci_siren}
     )
-    assert response == {"claim_epci": False}
+    assert response == {"success": False, "reason": "already_claimed"}

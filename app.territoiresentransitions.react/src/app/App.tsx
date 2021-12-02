@@ -1,4 +1,3 @@
-import {EpcisPage} from 'app/pages/Epcis/EpcisPage';
 import {
   BrowserRouter as Router,
   Redirect,
@@ -24,6 +23,8 @@ import {ScrollToTop} from 'app/ScrollToTop';
 import {createTheme, MuiThemeProvider} from '@material-ui/core';
 import {MatomoProvider} from '@datapunt/matomo-tracker-react';
 import {matomoInstance} from 'app/matomo_instance';
+import {ToutesCollectivitesPage} from 'app/pages';
+import {MesCollectivitesPage} from 'app/pages/MesCollectivites/MesCollectivitesPage';
 
 const theme = createTheme({
   palette: {
@@ -51,11 +52,14 @@ export const App = () => {
               <AuthRoutes />
             </Route>
 
-            <Route path={'/epcis'}>
+            <Route path={'/mes_collectivites'}>
               <Header />
-              <EpcisPage />
+              <MesCollectivitesPage />
             </Route>
-
+            <Route path={'/toutes_collectivites'}>
+              <Header />
+              <ToutesCollectivitesPage />
+            </Route>
             <Route path={'/collectivite/:epciId'}>
               <Header />
               <CollectiviteRoutes />
@@ -87,7 +91,7 @@ const HomeRoute = ({children, ...rest}: RouteProps) => {
         ) : (
           <Redirect
             to={{
-              pathname: '/epcis',
+              pathname: '/mes_collectivites',
               state: {from: location},
             }}
           />

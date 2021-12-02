@@ -2,7 +2,7 @@ import 'app/DesignSystem/buttons.css';
 import 'app/DesignSystem/core.css';
 
 import {Field, Form, Formik} from 'formik';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {
   connected,
   currentAccessToken,
