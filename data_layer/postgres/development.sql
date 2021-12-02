@@ -133,6 +133,19 @@ comment on function quit_epci is
     'Otherwise it will fail wit a code 40x.';
 
 
+
+create or replace function referent_contact() returns json as
+$$
+begin
+    perform set_config('response.status', '418', true);
+    return json_build_object('message', 'The requested entity body is short and stout.',
+                             'hint', 'Tip it over and pour it out.');
+end;
+$$ language plpgsql;
+comment on function referent_contact is
+    'Unclaims an EPCI: ';
+
+
 create or replace function teapot() returns json as
 $$
 begin
