@@ -1,10 +1,9 @@
 import {isStorable, Storable} from './storable';
 
 import {APIEndpoint} from './apiEndpoint';
-import {currentAccessToken} from './authentication';
 import {ChangeNotifier} from 'core-logic/api/reactivity';
 
-export const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
+export const defaultAuthorization = () => `Bearer `;
 
 /**
  * A subscribable store with an external cache.

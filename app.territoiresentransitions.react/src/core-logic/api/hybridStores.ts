@@ -1,5 +1,4 @@
 import {HybridStore} from './hybridStore';
-import {currentAccessToken} from './authentication';
 import {ENV} from 'environmentVariables';
 import {getCurrentEpciId} from 'core-logic/api/currentEpci';
 import {Referentiel} from 'types';
@@ -37,7 +36,7 @@ import {
   PlanActionStorable,
 } from 'storables';
 
-export const defaultAuthorization = () => `Bearer ${currentAccessToken()}`;
+export const defaultAuthorization = () => `Bearer`;
 
 export const indicateurResultatStore =
   new HybridStore<AnyIndicateurValueStorable>({

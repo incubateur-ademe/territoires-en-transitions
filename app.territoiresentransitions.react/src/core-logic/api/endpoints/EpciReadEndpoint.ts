@@ -3,7 +3,7 @@ import {EpciRead} from 'generated/dataLayer/epci_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
 
 class EpciReadEndpoint extends DataLayerReadCachedEndpoint<EpciRead, {}> {
-  readonly name = 'client_epci';
+  readonly name = 'all_epci';
 
   async _read(): Promise<PostgrestResponse<EpciRead>> {
     return this._table;

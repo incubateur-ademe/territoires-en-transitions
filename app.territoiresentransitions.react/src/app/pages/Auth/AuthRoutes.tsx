@@ -1,33 +1,20 @@
-import {Route, useRouteMatch} from 'react-router-dom';
+import {Route} from 'react-router-dom';
 import {IdentityPage} from 'app/pages/Auth/IdentityPage';
-import {RedirectPage} from 'app/pages/Auth/RedirectPage';
 import {RegisterPage} from 'app/pages/Auth/RegisterPage';
 import {SignInPage} from 'app/pages/Auth/SignInPage';
-import {SignOutPage} from 'app/pages/Auth/SignOutPage';
-import {TokenSignInPage} from 'app/pages/Auth/TokenSignInPage';
+import {identityPath, signUpPath, signInPath} from 'app/paths';
 
 export const AuthRoutes = () => {
-  const {path} = useRouteMatch();
-
   return (
     <>
-      <Route path={`${path}/identity/`}>
+      <Route path={identityPath}>
         <IdentityPage />
       </Route>
-      <Route path={`${path}/redirect/`}>
-        <RedirectPage />
-      </Route>
-      <Route path={`${path}/register/`}>
+      <Route path={signUpPath}>
         <RegisterPage />
       </Route>
-      <Route path={`${path}/signin/`}>
+      <Route path={signInPath}>
         <SignInPage />
-      </Route>
-      <Route path={`${path}/signout/`}>
-        <SignOutPage />
-      </Route>
-      <Route path={`${path}/token_signin/`}>
-        <TokenSignInPage />
       </Route>
     </>
   );

@@ -14,6 +14,7 @@ import StatisticsPage from 'app/pages/statistics/StatisticsPage';
 import Home from 'app/pages/Home';
 import {useConnected} from 'core-logic/hooks';
 
+import {Redirector} from 'app/Redirector';
 import 'app/app.css';
 import 'app/DesignSystem/core.css';
 import 'app/DesignSystem/variables.css';
@@ -41,6 +42,7 @@ export const App = () => {
         <Router>
           <ScrollToTop />
           <Toasters />
+          <Redirector />
           <Switch>
             <HomeRoute exact path="/">
               <Header />

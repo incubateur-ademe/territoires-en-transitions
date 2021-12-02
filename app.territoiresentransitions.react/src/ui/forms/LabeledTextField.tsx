@@ -17,7 +17,7 @@ type LabeledTextInputProps = {
  * In order to style the label text, a child element should be passed instead.
  */
 const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
-  field, // { name, value, onChange, onBlur }
+  field,
   form: {touched, errors},
   ...props
 }) => {
