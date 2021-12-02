@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import LabeledTextField from 'ui/forms/LabeledTextField';
@@ -8,6 +8,8 @@ import {
   politique_vie_privee,
   registerUser,
 } from 'core-logic/api/auth/registration';
+import {Spacer, ValiderButton} from 'ui/shared';
+import {signInPath} from 'app/paths';
 
 type FormState = 'ready' | 'success' | 'failure';
 
@@ -22,28 +24,22 @@ const RegistrationForm = () => {
     return (
       <main className="mx-auto max-w-2xl">
         <h1 className="text-2xl">Erreur</h1>
-        <div className="pb-10" />
+        <Spacer />
         <p>Le compte n'a pas pu être créé.</p>
         {errorMessage && <p>{errorMessage}</p>}
         {!errorMessage && <p>Erreur indéterminée</p>}
-        <div className="pb-5" />
+        <Spacer />
       </main>
     );
   } else if (state === 'success') {
     return (
-      <main className="mx-auto max-w-2xl">
-        <h1 className="text-2xl">Votre compte</h1>
-        <div className="pb-10" />
-        <p>Votre compte a bien été créé.</p>
-        <div className="p-5" />
-        <p>
-          Lors de votre première connexion cliquez sur "Mot de passe oublié ?"
-          afin de créer votre mot de passe.
-        </p>
-        <div className="p-5" />
+      <main className="mx-auto max-w-2xl text-center">
+        <Spacer />
+        <div>Votre compte a bien été créé ! </div>
+        <Spacer />
         <div>
-          <Link to="/auth/signin/" className="fr-btn">
-            Me connecter
+          <Link to={signInPath} className="fr-btn">
+            Se connecter
           </Link>
         </div>
       </main>
@@ -54,7 +50,7 @@ const RegistrationForm = () => {
     email: '',
     nom: '',
     prenom: '',
-    mot_de_passe: '',
+    password: '',
     vie_privee_conditions: false,
   };
 
@@ -68,7 +64,7 @@ const RegistrationForm = () => {
     prenom: Yup.string()
       .max(300, 'Ce champ doit faire au maximum 300 caractères')
       .required('Champ requis'),
-    mot_de_passe: Yup.string()
+    password: Yup.string()
       .min(8, 'Ce champ doit faire au minimum 8 caractères')
       .max(300, 'Ce champ doit faire au maximum 300 caractères')
       .required('Champ requis'),
@@ -106,7 +102,7 @@ const RegistrationForm = () => {
                 />
                 <div className="p-5" />
                 <Field
-                  name="mot_de_passe"
+                  name="password"
                   label="Mot de passe"
                   component={LabeledTextField}
                 />
@@ -134,9 +130,7 @@ const RegistrationForm = () => {
               </label>
               <div className="p-5" />
               <div className="max-w-2xl flex flex-row-reverse">
-                <button type="submit" className="fr-btn">
-                  Envoyer
-                </button>
+                <ValiderButton />
               </div>
             </Form>
           )}

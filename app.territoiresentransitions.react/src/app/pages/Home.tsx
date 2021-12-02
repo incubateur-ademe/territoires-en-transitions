@@ -1,4 +1,4 @@
-import {signInRedirect} from 'core-logic/api/authRedirect';
+import {signUpPath, signInPath} from 'app/paths';
 import {Link} from 'react-router-dom';
 
 const Home = () => {
@@ -15,10 +15,10 @@ const Home = () => {
       </p>
 
       <div className="flex flex-row-reverse gap-3">
-        <button className="fr-btn" onClick={signInRedirect}>
+        <Link className="fr-btn" to={signInPath}>
           Se connecter
-        </button>
-        <Link className="fr-btn fr-btn--secondary" to="/auth/register/">
+        </Link>
+        <Link className="fr-btn fr-btn--secondary" to={signUpPath}>
           Créer un compte
         </Link>
       </div>

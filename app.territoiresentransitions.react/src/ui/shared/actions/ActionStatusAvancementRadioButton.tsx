@@ -5,7 +5,6 @@ import {AvancementRadioButton} from 'ui/shared/AvancementRadioButton';
 
 import {Avancement} from 'generated/dataLayer/action_statut_read';
 import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
-import React from 'react';
 import {makeAutoObservable} from 'mobx';
 import {observer} from 'mobx-react-lite';
 

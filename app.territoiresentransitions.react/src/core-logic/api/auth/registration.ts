@@ -1,8 +1,8 @@
 import {supabase} from 'core-logic/api/supabase';
-
+import {DcpWrite} from 'generated/dataLayer/dcp_write';
 export interface InscriptionUtilisateur {
   email: string;
-  mot_de_passe: string;
+  password: string;
   nom: string;
   prenom: string;
   vie_privee_conditions: boolean;
@@ -19,10 +19,17 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
 
   const signedUp = await supabase.auth.signUp({
     email: inscription.email,
-    password: inscription.mot_de_passe,
+    password: inscription.password,
   });
 
-  if (signedUp.error) throw signedUp.error;
+  if (!signedUp.user || signedUp.error) throw signedUp.error;
 
   // todo later save DCPs
+  const dcp: DcpWrite = {
+    email: inscription.email,
+    prenom: inscription.prenom,
+    nom: inscription.nom,
+    user_id: signedUp.user.id,
+  };
+  await supabase.from('dcp').insert([dcp]);
 };

@@ -1,18 +1,19 @@
 import {Link} from 'react-router-dom';
 import {useConnected, useEpciId} from 'core-logic/hooks';
 import {useCurrentEpci} from 'core-logic/hooks';
+import {allEpcisPath, myEpcisPath, signInPath, signUpPath} from 'app/paths';
 
 const ConnexionSwitchLink = () => {
   const connected = useConnected();
   if (connected)
     return (
-      <Link className="fr-link" to="/auth/signout">
+      <Link className="fr-link" to={signUpPath}>
         <div className="fr-fi-account-line m-1"></div>
         Déconnexion
       </Link>
     );
   return (
-    <Link className="fr-link" to="/auth/signin">
+    <Link className="fr-link" to={signInPath}>
       <div className="fr-fi-account-line m-1"></div>
       Se connecter
     </Link>
@@ -71,10 +72,10 @@ export const Navigation = () => {
     <div className="fr-header__tools">
       <div className="fr-header__tools-links">
         <ul className="fr-links-group">
-          <Link className="fr-link" to="/toutes_collectivites">
+          <Link className="fr-link" to={allEpcisPath}>
             Toutes les collectivités
           </Link>
-          <Link className="fr-link" to="/mes_collectivites">
+          <Link className="fr-link" to={myEpcisPath}>
             Mes collectivités
           </Link>
           <ConnexionSwitchLink />
