@@ -133,8 +133,8 @@ async def test_user_claims_epci_for_second_claimer(supabase_client, cursor):
 
 
 @pytest.mark.asyncio
-async def test_user_requests_referent_contact_informations_for_epci(
-    supabase_client,
+async def test_user_requests_referent_contact_informations_for_epci_should_keep_trace(
+    supabase_client, cursor
 ):
     await tom_signs_in_and_claim_bugey(supabase_client)
 
@@ -145,7 +145,7 @@ async def test_user_requests_referent_contact_informations_for_epci(
     response = await supabase_rpc_as_user(
         supabase_client,
         erik_user,
-        func_name="request_referent_contact",
+        func_name="referent_contact",
         params={"siren": bugey_epci_siren},
     )
     assert response.status_code == 200

@@ -99,13 +99,13 @@ declare
     epci_already_joined bool;
     joined_epci_id integer;
 begin
-    -- select the epci id to uncla using its siren
+    -- select the epci id to unclaim using its siren
     select id from epci where epci.siren = $1 into joined_epci_id;
 
     -- compute epci_already_joined, which is true if a droit exist for claimed epci
     select count(*) > 0
     from private_utilisateur_droit
-    where epci_id = joined_epci_id
+    where epci_id = joined_epci_id and role_name = 'referent'
     into epci_already_joined;
 
     if not epci_already_joined
@@ -134,16 +134,43 @@ comment on function quit_epci is
 
 
 
-create or replace function referent_contact() returns json as
+create or replace function referent_contact(siren siren) returns json as
 $$
-begin
-    perform set_config('response.status', '418', true);
-    return json_build_object('message', 'The requested entity body is short and stout.',
-                             'hint', 'Tip it over and pour it out.');
+declare
+    requested_epci_id integer;
+    referent_id uuid;
+    referent_email text;
+begin   
+ -- select the epci id to get contact info from using its siren
+    select id from epci where epci.siren = $1 into requested_epci_id;
+
+-- select referent user id 
+    select user_id
+    from private_utilisateur_droit
+    where epci_id = requested_epci_id and role_name = 'referent'
+    into referent_id;
+
+    if user_id is null
+    then 
+        perform set_config('response.status', '404', true);
+        return json_build_object('message', 'Cette collectivité n''a pas de référent.');
+
+-- retrieve contact information of referent_id TODO 
+    -- select email 
+    -- from auth.users 
+    -- where id = referent_id
+    -- into referent_email; 
+    
+
+    perform set_config('response.status', '200', true);
+    return json_build_object('email', referent_id); -- todo : retrieve contact info 
 end;
 $$ language plpgsql;
 comment on function referent_contact is
-    'Unclaims an EPCI: ';
+    'Retrieves contact information of the referent of an EPCI given the EPCI siren. ';
+
+
+
 
 
 create or replace function teapot() returns json as

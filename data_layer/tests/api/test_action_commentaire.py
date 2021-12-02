@@ -19,7 +19,6 @@ def test_authentified_user_can_insert_action_commentaire(
             "epci_id": 1,
             "commentaire": "un commentaire",
             "action_id": "cae_1.2.3",
-            # "modified_by": make_action_api_scenario.authentified_user_uid,  # TODO : find a way to infer user uid !!
         }
     )
 

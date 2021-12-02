@@ -36,8 +36,6 @@ class MakeActionApiScenario:
             self.supabase_client, self.authentified_user, query
         )
         response = query.execute()
-        # response = self.supabase_client.table(self.table_name).insert(entity).execute()
-
         assert response.get("status_code") == 201
 
         self.cursor.execute(f"select * from {self.table_name};")
@@ -56,6 +54,7 @@ class MakeActionApiScenario:
         query = supabase_query_as_user(
             self.supabase_client, self.authentified_user, query
         )
+
         response = query.execute()
         assert response["status_code"] == 403
 

@@ -93,6 +93,7 @@ comment on function claim_epci is
     'will succeed with a code 200 if this EPCI does not have referent yet.'
     'If the EPCI was already claimed it will fail with a code 409.';
 
+
 create or replace function quit_epci(siren siren) returns json as
 $$
 declare
@@ -131,6 +132,44 @@ comment on function quit_epci is
     'Unclaims an EPCI: '
     'Will succeed with a code 200 if user have a droit on this collectivité.'
     'Otherwise it will fail wit a code 40x.';
+
+
+create or replace function referent_contact(siren siren) returns json as
+$$
+declare
+    requested_epci_id integer;
+    referent_id uuid;
+    referent_email text;
+begin   
+ -- select the epci id to get contact info from using its siren
+    select id from epci where epci.siren = $1 into requested_epci_id;
+
+-- select referent user id 
+    select user_id
+    from private_utilisateur_droit
+    where epci_id = requested_epci_id and role_name = 'referent'
+    into referent_id;
+
+    if user_id is null
+    then 
+        perform set_config('response.status', '404', true);
+        return json_build_object('message', 'Cette collectivité n''a pas de référent.');
+
+-- retrieve contact information of referent_id TODO 
+    -- select email 
+    -- from auth.users 
+    -- where id = referent_id
+    -- into referent_email; 
+    
+
+    perform set_config('response.status', '200', true);
+    return json_build_object('email', referent_id); -- todo : retrieve contact info 
+end
+$$ language plpgsql;
+comment on function referent_contact is
+    'Retrieves contact information of the referent of an EPCI given the EPCI siren. ';
+
+
 
 
 create or replace function teapot() returns json as
