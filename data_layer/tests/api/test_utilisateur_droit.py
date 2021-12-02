@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 import json
 
 import pytest
@@ -17,8 +17,8 @@ beb_epci_nom = "CA du Bassin de Bourg-en-Bresse"
 User = Dict[str, Any]
 
 
-def decode_response_message(response: Response) -> str:
-    return json.loads(response.content.decode())["message"]
+def decode_response_content(response: Response) -> str:
+    return json.loads(response.content.decode())
 
 
 async def tom_signs_in_and_claim_bugey(supabase_client: supabase.Client) -> User:
@@ -51,14 +51,17 @@ async def test_user_claims_epci_ok_for_first_claimer_should_become_referent_and_
         params={"siren": beb_epci_siren},
     )
     assert response.status_code == 200
-    assert decode_response_message(response) == "Vous êtes référent de la collectivité."
+    assert (
+        decode_response_content(response)["message"]
+        == "Vous êtes référent de la collectivité."
+    )
 
-    # 3. View should return the two EPCIs with role referent (ordered by name)
-    query = supabase_client.from_("client_owned_epci").select("*")
+    # 3. View client_owned_epci should return the two EPCIs with role referent (ordered by name)
+    query = supabase_client.from_("owned_epci").select("*")
     query = supabase_query_as_user(supabase_client, tom_user, query)
     response = query.execute()
-    client_owned_epci = response["data"]
-    assert client_owned_epci == [
+    owned_epci_data = response["data"]
+    assert owned_epci_data == [
         {
             "siren": beb_epci_siren,
             "role_name": "referent",
@@ -71,6 +74,21 @@ async def test_user_claims_epci_ok_for_first_claimer_should_become_referent_and_
         },
     ]
 
+    # 3. View active_epci should return the two (now active) EPCIs (ordered by name)
+    query = supabase_client.from_("active_epci").select("*")
+    query = supabase_query_as_user(supabase_client, tom_user, query)
+    response = query.execute()
+    active_epci_data = response["data"]
+    assert active_epci_data == [
+        {
+            "siren": beb_epci_siren,
+            "nom": beb_epci_nom,
+        },
+        {
+            "siren": bugey_epci_siren,
+            "nom": bugey_epci_nom,
+        },
+    ]
 
 
 @pytest.mark.asyncio
@@ -87,7 +105,10 @@ async def test_user_quits_his_epci_should_update_view(
         params={"siren": bugey_epci_siren},
     )
     assert response.status_code == 200
-    assert decode_response_message(response) == "Vous avez quitté la collectivité."
+    assert (
+        decode_response_content(response)["message"]
+        == "Vous avez quitté la collectivité."
+    )
 
 
 @pytest.mark.asyncio
@@ -105,7 +126,7 @@ async def test_user_cannot_quit_epci_if_not_his(
     )
     assert response.status_code == 409
     assert (
-        decode_response_message(response)
+        decode_response_content(response)["message"]
         == "Vous n'avez pas pu quitter la collectivité."
     )
 
@@ -128,7 +149,7 @@ async def test_user_claims_epci_for_second_claimer(supabase_client, cursor):
 
     assert response.status_code == 409
     assert (
-        decode_response_message(response)
+        decode_response_content(response)["message"]
         == "La collectivité dispose déjà d'un référent."
     )
 
@@ -150,4 +171,4 @@ async def test_user_requests_referent_contact_informations_for_epci_should_keep_
         params={"siren": bugey_epci_siren},
     )
     assert response.status_code == 200
-    assert response.content == {"email": tom_email}
+    assert decode_response_content(response) == {"email": tom_email}  # TODO : fixme !
