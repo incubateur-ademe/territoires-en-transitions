@@ -14,7 +14,7 @@ bugey_epci_nom = "Haut - Bugey Agglomération"
 beb_epci_siren = "200071751"
 beb_epci_nom = "CA du Bassin de Bourg-en-Bresse"
 
-User = Optional[Dict[str, Any]]
+User = Dict[str, Any]
 
 
 def decode_response_message(response: Response) -> str:
