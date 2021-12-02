@@ -32,7 +32,7 @@ comment on view all_epci is 'All EPCIs with the necessary information to display
 
 
 ---------------------------------
------------- DROITS -------------
+-------------- DCP --------------
 ---------------------------------
 create table dcp
 (
@@ -174,6 +174,8 @@ declare
     requested_epci_id integer;
     referent_id       uuid;
     referent_email    text;
+    referent_nom      text;
+    referent_prenom   text;
 begin
     -- select the epci id to get contact info from using its siren
     select id from epci where epci.siren = $1 into requested_epci_id;
@@ -191,12 +193,12 @@ begin
         return json_build_object('message', 'Cette collectivité n''a pas de référent.');
     else
         -- retrieve contact information of referent_id TODO
-        -- select email
-        -- from auth.users
-        -- where id = referent_id
-        -- into referent_email;
+        select email, nom, prenom
+        from dcp
+        where user_id = referent_id
+        into referent_email, referent_nom, referent_prenom;
         perform set_config('response.status', '200', true);
-        return json_build_object('email', referent_id); -- todo : retrieve contact info
+        return json_build_object('email', referent_email, 'nom', referent_nom, 'prenom', referent_prenom);
     end if;
 end
 
