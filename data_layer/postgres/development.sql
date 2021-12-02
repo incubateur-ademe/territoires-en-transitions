@@ -5,7 +5,7 @@ create domain siren as varchar(9)
     check (
         value ~ '^\d{9}$'
         );
-create type role_name as enum ('agent', 'conseiller', 'auditeur');
+create type role_name as enum ('agent', 'referent', 'conseiller', 'auditeur');
 
 
 ---------------------------------
