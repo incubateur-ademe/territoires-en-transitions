@@ -72,6 +72,7 @@ async def test_user_claims_epci_ok_for_first_claimer_should_become_referent_and_
     ]
 
 
+
 @pytest.mark.asyncio
 async def test_user_quits_his_epci_should_update_view(
     cursor, supabase_client: supabase.Client
