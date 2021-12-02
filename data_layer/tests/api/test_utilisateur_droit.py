@@ -80,6 +80,26 @@ async def test_user_claims_and_unclaims_epci_ok_for_first_claimer_should_become_
 
 
 @pytest.mark.asyncio
+async def test_user_cannot_quit_epci_if_not_his(
+    cursor, supabase_client: supabase.Client
+):
+    tom_user = await tom_signs_in_and_claim_bugey(supabase_client)
+
+    # Tom quits EPCI Bugey
+    response = await supabase_rpc_as_user(
+        supabase_client,
+        tom_user,
+        func_name="quit_epci",
+        params={"siren": beb_epci_siren},
+    )
+    assert response.status_code == 409
+    assert (
+        decode_response_message(response)
+        == "Vous n'avez pas pu quitter la collectivité."
+    )
+
+
+@pytest.mark.asyncio
 async def test_user_claims_epci_for_second_claimer_receives_referent_contact_informations(
     supabase_client,
 ):
