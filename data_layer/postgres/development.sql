@@ -22,11 +22,12 @@ create table epci
 );
 comment on table epci is 'EPCI information, writable only by postgres user';
 
-create view client_epci
+create view all_epci
 as
 select siren, nom
-from epci;
-comment on view client_epci is 'The necessary EPCI information to display in the client.';
+from epci
+order by nom;
+comment on view all_epci is 'All EPCIs with the necessary information to display in the client.';
 
 
 ---------------------------------
@@ -53,6 +54,13 @@ create table private_epci_invitation
     created_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
+create view active_epci as
+select siren, nom
+from epci
+         join private_utilisateur_droit on epci.id = private_utilisateur_droit.epci_id
+where private_utilisateur_droit.id is not null
+  and private_utilisateur_droit.active
+order by nom;
 
 
 create or replace function claim_epci(siren siren) returns json
