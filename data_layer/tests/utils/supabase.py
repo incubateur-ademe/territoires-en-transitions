@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict
 
 import supabase
 from httpx import Response
@@ -7,9 +7,9 @@ from supabase.lib.query_builder import SupabaseQueryBuilder
 
 async def supabase_rpc_as_user(
     supabase_client: supabase.Client,
-    user: Dict[str, any],
+    user: Dict[str, Any],
     func_name: str,
-    params: Dict[str, any],
+    params: Dict[str, Any],
 ) -> Response:
     """
     Returns the response of an rpc function executed as an user.
@@ -33,7 +33,7 @@ async def supabase_rpc_as_user(
 
 
 def supabase_query_as_user(
-    supabase_client: supabase.Client, user: Dict[str, any], query: SupabaseQueryBuilder
+    supabase_client: supabase.Client, user: Dict[str, Any], query: SupabaseQueryBuilder
 ):
     """
     Transform a query so it will be executable as an user.
