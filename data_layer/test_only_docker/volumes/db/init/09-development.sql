@@ -22,11 +22,12 @@ create table epci
 );
 comment on table epci is 'EPCI information, writable only by postgres user';
 
-create view client_epci
+create view all_epci
 as
 select siren, nom
-from epci;
-comment on view client_epci is 'The necessary EPCI information to display in the client.';
+from epci
+order by nom;
+comment on view all_epci is 'All EPCIs with the necessary information to display in the client.';
 
 
 ---------------------------------
@@ -53,6 +54,13 @@ create table private_epci_invitation
     created_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
+create view active_epci as
+select siren, nom
+from epci
+         join private_utilisateur_droit on epci.id = private_utilisateur_droit.epci_id
+where private_utilisateur_droit.id is not null
+  and private_utilisateur_droit.active
+order by nom;
 
 
 create or replace function claim_epci(siren siren) returns json
@@ -90,23 +98,23 @@ end
 $$ language plpgsql;
 comment on function claim_epci is
     'Claims an EPCI : '
-    'will succeed with a code 200 if this EPCI does not have referent yet.'
-    'If the EPCI was already claimed it will fail with a code 409.';
-
+        'will succeed with a code 200 if this EPCI does not have referent yet.'
+        'If the EPCI was already claimed it will fail with a code 409.';
 
 create or replace function quit_epci(siren siren) returns json as
 $$
 declare
     epci_already_joined bool;
-    joined_epci_id integer;
+    joined_epci_id      integer;
 begin
-    -- select the epci id to uncla using its siren
+    -- select the epci id to unclaim using its siren
     select id from epci where epci.siren = $1 into joined_epci_id;
 
     -- compute epci_already_joined, which is true if a droit exist for claimed epci
     select count(*) > 0
     from private_utilisateur_droit
     where epci_id = joined_epci_id
+      and role_name = 'referent'
     into epci_already_joined;
 
     if not epci_already_joined
@@ -119,7 +127,8 @@ begin
         -- current user quit collectivité
         -- deactivate the droits
         update private_utilisateur_droit
-        set active = false, modified_at = now()
+        set active      = false,
+            modified_at = now()
         where epci_id = joined_epci_id;
 
         -- return success with a message
@@ -130,45 +139,45 @@ end
 $$ language plpgsql;
 comment on function quit_epci is
     'Unclaims an EPCI: '
-    'Will succeed with a code 200 if user have a droit on this collectivité.'
-    'Otherwise it will fail wit a code 40x.';
+        'Will succeed with a code 200 if user have a droit on this collectivité.'
+        'Otherwise it will fail wit a code 40x.';
 
 
 create or replace function referent_contact(siren siren) returns json as
 $$
 declare
     requested_epci_id integer;
-    referent_id uuid;
-    referent_email text;
-begin   
- -- select the epci id to get contact info from using its siren
+    referent_id       uuid;
+    referent_email    text;
+begin
+    -- select the epci id to get contact info from using its siren
     select id from epci where epci.siren = $1 into requested_epci_id;
 
--- select referent user id 
+    -- select referent user id
     select user_id
     from private_utilisateur_droit
-    where epci_id = requested_epci_id and role_name = 'referent'
+    where epci_id = requested_epci_id
+      and role_name = 'referent'
     into referent_id;
 
-    if user_id is null
-    then 
+    if referent_id is null
+    then
         perform set_config('response.status', '404', true);
         return json_build_object('message', 'Cette collectivité n''a pas de référent.');
-
--- retrieve contact information of referent_id TODO 
-    -- select email 
-    -- from auth.users 
-    -- where id = referent_id
-    -- into referent_email; 
-    
-
-    perform set_config('response.status', '200', true);
-    return json_build_object('email', referent_id); -- todo : retrieve contact info 
+    else
+        -- retrieve contact information of referent_id TODO
+        -- select email
+        -- from auth.users
+        -- where id = referent_id
+        -- into referent_email;
+        perform set_config('response.status', '200', true);
+        return json_build_object('email', referent_id); -- todo : retrieve contact info
+    end if;
 end
+
 $$ language plpgsql;
 comment on function referent_contact is
-    'Retrieves contact information of the referent of an EPCI given the EPCI siren. ';
-
+    'Returns the contact information of the EPCI referent given the siren.';
 
 
 
@@ -184,7 +193,7 @@ $$ language plpgsql;
 -- create function accept_invitation(invitation_id uuid);
 -- create function create_invitation();
 
-create view client_owned_epci
+create view owned_epci
 as
 with current_droits as (
     select *

@@ -17,9 +17,8 @@ load_dotenv()
 postgres_port = os.getenv("POSTGRES_PORT", 50001)
 supabase_url = os.getenv("SUPABASE_URL", "")
 supabase_key = os.getenv("SUPABASE_KEY", "")
-postgres_password = "your-super-secret-and-long-postgres-password"
 postgres_url = (
-    f"postgresql://postgres:{postgres_password}@localhost:{postgres_port}/postgres"
+    f"postgresql://supabase_admin:yolododo@localhost:{postgres_port}/postgres"
 )
 
 
