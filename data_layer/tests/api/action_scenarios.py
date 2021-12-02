@@ -43,7 +43,7 @@ class MakeActionApiScenario:
         self.cursor.execute(f"select * from {self.table_name};")
         retrieved = self.cursor.fetchall()
         assert len(retrieved) == 1
-        assert str(retrieved[0]["modified_by"]) == self.authentified_user["uid"]
+        assert str(retrieved[0]["modified_by"]) == self.authentified_user["user"]["id"]
 
     def assert_cannot_insert_entity_with_wrong_user_uid(
         self, entity: dict, wrong_user_uid: str
