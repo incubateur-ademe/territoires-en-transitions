@@ -56,8 +56,7 @@ class MakeActionApiScenario:
         query = supabase_query_as_user(
             self.supabase_client, self.authentified_user, query
         )
-
-        # response = self.supabase_client.table(self.table_name).insert(entity).execute()
+        response = query.execute()
         assert response["status_code"] == 403
 
     def assert_anyone_can_retrieve_entity(self, insertion_sql: str, editor_uid: str):

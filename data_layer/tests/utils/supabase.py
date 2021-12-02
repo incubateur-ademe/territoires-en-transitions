@@ -51,6 +51,8 @@ def supabase_query_as_user(
     headers = {
         "apiKey": supabase_client.supabase_key,
         "Authorization": f"Bearer {user['access_token']}",
+        "Prefer": "return=representation",
+        "Content-Type": "application/json",
     }
     query.session.headers = headers
     return query
