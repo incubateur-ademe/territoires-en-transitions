@@ -54,21 +54,18 @@ create table private_epci_invitation
 );
 
 
--- utilisateur trigger before insert
--- - check no other utilisateur_droit for epci
--- - check
 
--- works for unclaimed epci only
-create or replace function claim_epci(siren siren) returns boolean
+create or replace function claim_epci(siren siren) returns json
 as
 $$
 declare
     epci_already_claimed bool;
     claimed_epci_id      integer;
 begin
-
+    -- select the claimed epci using its siren
     select id from epci where epci.siren = $1 into claimed_epci_id;
 
+    -- compute epci_already_claimed, which is true if a droit exist for claimed epci
     select count(*) > 0
     from private_utilisateur_droit
     where epci_id = claimed_epci_id
@@ -76,13 +73,72 @@ begin
 
     if not epci_already_claimed
     then
+        -- current user can claim epci as its own
+        -- create a droit for current user on epci
         insert into private_utilisateur_droit(user_id, epci_id, role_name, active)
-        values (auth.uid(), claimed_epci_id, 'agent', true);
-        return true;
+        values (auth.uid(), claimed_epci_id, 'referent', true);
+        -- return a success message
+        perform set_config('response.status', '200', true);
+        return json_build_object('message', 'Vous êtes référent de la collectivité.');
     else
-        return false;
+        -- current user cannot claim the epci
+        -- return an error with a reason
+        perform set_config('response.status', '409', true);
+        return json_build_object('message', 'La collectivité dispose déjà d''un référent.');
     end if;
+end
+$$ language plpgsql;
+comment on function claim_epci is
+    'Claims an EPCI : '
+    'will succeed with a code 200 if this EPCI does not have referent yet.'
+    'If the EPCI was already claimed it will fail with a code 409.';
 
+create or replace function quit_epci(siren siren) returns json as
+$$
+declare
+    epci_already_joined bool;
+    joined_epci_id integer;
+begin
+    -- select the epci id to uncla using its siren
+    select id from epci where epci.siren = $1 into joined_epci_id;
+
+    -- compute epci_already_joined, which is true if a droit exist for claimed epci
+    select count(*) > 0
+    from private_utilisateur_droit
+    where epci_id = joined_epci_id
+    into epci_already_joined;
+
+    if not epci_already_joined
+    then
+        -- current user cannot quit an epci that was not joined.
+        -- return an error with a reason
+        perform set_config('response.status', '409', true);
+        return json_build_object('message', 'Vous n''avez pas pu quitter la collectivité.');
+    else
+        -- current user quit collectivité
+        -- deactivate the droits
+        update private_utilisateur_droit
+        set active = false, modified_at = now()
+        where epci_id = joined_epci_id;
+
+        -- return success with a message
+        perform set_config('response.status', '200', true);
+        return json_build_object('message', 'Vous avez quitté la collectivité.');
+    end if;
+end
+$$ language plpgsql;
+comment on function quit_epci is
+    'Unclaims an EPCI: '
+    'Will succeed with a code 200 if user have a droit on this collectivité.'
+    'Otherwise it will fail wit a code 40x.';
+
+
+create or replace function teapot() returns json as
+$$
+begin
+    perform set_config('response.status', '418', true);
+    return json_build_object('message', 'The requested entity body is short and stout.',
+                             'hint', 'Tip it over and pour it out.');
 end;
 $$ language plpgsql;
 
