@@ -30,6 +30,31 @@ order by nom;
 comment on view all_epci is 'All EPCIs with the necessary information to display in the client.';
 
 
+
+---------------------------------
+-------------- DCP --------------
+---------------------------------
+create table dcp
+(
+    user_id     uuid references auth.users,
+    nom         text                                               not null,
+    prenom      text                                               not null,
+    email       text                                               not null,
+    limited     bool                     default false             not null,
+    deleted     bool                     default false             not null,
+    created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
+    modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
+);
+comment on table dcp is 'Les données à caractère personnel.';
+
+alter table dcp
+    enable row level security;
+
+create policy own_dcp_only
+    on dcp
+    for all
+    using (auth.uid() = user_id);
+
 ---------------------------------
 ------------ DROITS -------------
 ---------------------------------
@@ -149,6 +174,8 @@ declare
     requested_epci_id integer;
     referent_id       uuid;
     referent_email    text;
+    referent_nom      text;
+    referent_prenom   text;
 begin
     -- select the epci id to get contact info from using its siren
     select id from epci where epci.siren = $1 into requested_epci_id;
@@ -166,16 +193,16 @@ begin
         return json_build_object('message', 'Cette collectivité n''a pas de référent.');
     else
         -- retrieve contact information of referent_id TODO
-        -- select email
-        -- from auth.users
-        -- where id = referent_id
-        -- into referent_email;
+        select email, nom, prenom
+        from dcp
+        where user_id = referent_id
+        into referent_email, referent_nom, referent_prenom;
         perform set_config('response.status', '200', true);
-        return json_build_object('email', referent_id); -- todo : retrieve contact info
+        return json_build_object('email', referent_email, 'nom', referent_nom, 'prenom', referent_prenom);
     end if;
 end
 
-$$ language plpgsql;
+$$ language plpgsql security definer;
 comment on function referent_contact is
     'Returns the contact information of the EPCI referent given the siren.';
 
