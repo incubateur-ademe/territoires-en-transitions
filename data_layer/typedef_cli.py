@@ -14,7 +14,7 @@ client_tables = {
     "write": ["action_statut", "action_commentaire"],
 }
 
-default_postgres_url = f"postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:49154/postgres"
+default_postgres_url = "postgresql://supabase_admin:yolododo@localhost:50001/postgres"
 
 
 def postgres_connection(postgres_url: str) -> Connection:
@@ -29,10 +29,10 @@ def postgres_connection(postgres_url: str) -> Connection:
     return psycopg.connect(**params)
 
 
-def cursor(connection: Connection) -> Cursor:
+def typing_cursor(connection: Connection) -> Cursor:
     cursor = connection.cursor()
-    development = open("postgres/development.sql", "r").read()
-    cursor.execute(development)
+    typing = open("postgres/typing.sql", "r").read()
+    cursor.execute(typing)
     return cursor
 
 
@@ -65,7 +65,7 @@ def main(
         language = "typescript"
         typer.echo("Generating client typedefs...")
 
-    cursor = cursor(postgres_connection(postgres_url))
+    cursor = typing_cursor(postgres_connection(postgres_url))
     cursor.execute("select * from table_as_json_typedef")
     schemas = cursor.fetchall()
     saved = []
