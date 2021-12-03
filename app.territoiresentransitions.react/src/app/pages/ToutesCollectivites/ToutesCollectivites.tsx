@@ -4,14 +4,14 @@ import 'app/DesignSystem/variables.css';
 import {useEffect, useState} from 'react';
 
 import {Spacer} from 'ui/shared';
-import {epciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoint';
+import {allEpciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoints';
 import {EpciRead} from 'generated/dataLayer/epci_read';
 import {SimpleEpciCard} from 'ui/epcis/SimpleEpciCard';
 
 const ToutesCollectivites = () => {
   const [activeEpciReads, setActiveEpciReads] = useState<EpciRead[]>([]);
   useEffect(() => {
-    epciReadEndpoint // TODO : should be activeEpciReadEndpoint
+    allEpciReadEndpoint // TODO : should be activeEpciReadEndpoint
       .getBy({})
       .then(activeEpciReads => setActiveEpciReads(activeEpciReads));
   }, []);

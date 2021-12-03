@@ -1,24 +1,20 @@
 import {useEffect, useState} from 'react';
-import {currentUtilisateurDroits} from 'core-logic/api/authentication';
 import {EpciStorable} from 'storables/EpciStorable';
 import {useAllStorables} from 'core-logic/hooks/storables';
 import {epciStore} from 'core-logic/api/hybridStores';
-import {useDroits} from 'core-logic/hooks/authentication';
 import {EpciRead} from 'generated/dataLayer/epci_read';
-import {epciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoint';
+import {allEpciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoints';
 
 /**
  * Returns the list of epcis owned by the current user.
  */
 export const currentUserEpcis = (): EpciStorable[] => {
-  // const all = allSortedEpcis();
-  // const results = await epciReadEndpoint.getBy({});
   const [allEpcis, setAllEpcis] = useState<EpciRead[]>([]);
   useEffect(() => {
-    epciReadEndpoint.getBy({}).then(allEpcis => setAllEpcis(allEpcis));
+    allEpciReadEndpoint.getBy({}).then(allEpcis => setAllEpcis(allEpcis));
   }, []);
 
-  const droits = useDroits();
+  // const droits = useDroits();
   // const [epcis, setEpcis] = useState<EpciStorable[]>([]);
 
   // useEffect(() => {
