@@ -4,7 +4,7 @@ import {ActionReferentiel} from 'generated/models/action_referentiel';
 
 import {Referentiel} from 'types';
 import {epciCard_AxisShortLabel} from 'app/labels';
-import {DetailedEpciCardPropsLink} from 'app/pages/ToutesCollectivites/_DetailedEpciCardPropsLink';
+import {DetailedEpciCardPropsLink} from 'app/pages/AllActiveEpcis/_DetailedEpciCardPropsLink';
 
 const AxisSummary = (props: {
   title: string;

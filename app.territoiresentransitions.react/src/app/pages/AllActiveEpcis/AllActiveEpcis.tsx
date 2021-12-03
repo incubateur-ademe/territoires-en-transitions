@@ -8,7 +8,7 @@ import {activeEpciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoints
 import {SimpleEpciCard} from 'ui/epcis/SimpleEpciCard';
 import {ActiveEpciRead} from 'generated/dataLayer';
 
-const ToutesCollectivites = () => {
+const AllActiveEpcis = () => {
   const [activeEpciReads, setActiveEpciReads] = useState<ActiveEpciRead[]>([]);
   useEffect(() => {
     activeEpciReadEndpoint // TODO : should be activeEpciReadEndpoint
@@ -31,4 +31,4 @@ const ToutesCollectivites = () => {
   );
 };
 
-export default ToutesCollectivites;
+export default AllActiveEpcis;

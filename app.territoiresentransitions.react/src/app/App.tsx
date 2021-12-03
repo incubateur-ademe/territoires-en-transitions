@@ -24,8 +24,9 @@ import {ScrollToTop} from 'app/ScrollToTop';
 import {createTheme, MuiThemeProvider} from '@material-ui/core';
 import {MatomoProvider} from '@datapunt/matomo-tracker-react';
 import {matomoInstance} from 'app/matomo_instance';
-import {ToutesCollectivitesPage} from 'app/pages';
+import {AllActiveEpcisPage} from 'app/pages';
 import {CurrentUserEpcisPage} from 'app/pages/CurrentUserEpcis/CurrentUserEpcisPage';
+import {allEpcisPath, authBasePath, myEpcisPath} from 'app/paths';
 
 const theme = createTheme({
   palette: {
@@ -49,18 +50,18 @@ export const App = () => {
               <Home />
             </HomeRoute>
 
-            <Route path={'/auth'}>
+            <Route path={authBasePath}>
               <Header />
               <AuthRoutes />
             </Route>
 
-            <Route path={'/mes_collectivites'}>
+            <Route path={myEpcisPath}>
               <Header />
               <CurrentUserEpcisPage />
             </Route>
-            <Route path={'/toutes_collectivites'}>
+            <Route path={allEpcisPath}>
               <Header />
-              <ToutesCollectivitesPage />
+              <AllActiveEpcisPage />
             </Route>
             <Route path={'/collectivite/:epciId'}>
               <Header />

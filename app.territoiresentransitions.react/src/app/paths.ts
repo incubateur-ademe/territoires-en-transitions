@@ -1,4 +1,4 @@
-const authBasePath = '/auth';
+export const authBasePath = '/auth';
 
 export const signInPath = `${authBasePath}/signin`;
 export const signUpPath = `${authBasePath}/signup`;
