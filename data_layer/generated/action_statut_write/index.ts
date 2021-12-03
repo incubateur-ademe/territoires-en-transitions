@@ -5,5 +5,4 @@ export interface ActionStatutWrite {
   avancement: string;
   concerne: boolean;
   epci_id: number;
-  modified_by: string;
 }

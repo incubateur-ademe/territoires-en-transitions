@@ -1,5 +1,8 @@
 {
   "properties": {
+    "modified_by": {
+      "type": "string"
+    },
     "commentaire": {
       "type": "string"
     },
@@ -9,14 +12,11 @@
     "action_id": {
       "type": "string"
     },
-    "modified_at": {
-      "type": "timestamp"
-    },
-    "modified_by": {
-      "type": "string"
-    },
     "epci_id": {
       "type": "int32"
+    },
+    "modified_at": {
+      "type": "timestamp"
     }
   }
 }
