@@ -8,6 +8,11 @@ export class AuthBloc {
 
   constructor() {
     makeAutoObservable(this);
+    const connectedUser = supabase.auth.user();
+    if (connectedUser) {
+      this._connected = true;
+      this._userId = connectedUser.id;
+    }
   }
 
   connect({email, password}: {email: string; password: string}) {

@@ -37,7 +37,7 @@ const CurrentUserEpcis = () => {
     <div className="app fr-container m-5">
       <section className="text-center">
         <h1 className="fr-h1">Mes collectivités</h1>
-        <MyEpciCards ownedEpciReads={epciCardsBloc.ownedEpciReads} />
+        <MyEpciCards bloc={ownedEpciBloc} />
         <h2 className="fr-h2 text-center mb-8">Rejoindre votre collectivité</h2>
         <div className="my-4">
           Pourquoi pas un petit texte qui explique un peu.
