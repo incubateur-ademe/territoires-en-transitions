@@ -1,4 +1,3 @@
-import {currentEpciBloc} from 'core-logic/observables';
 import {ActiveEpciRead} from 'generated/dataLayer';
 import {Link} from 'react-router-dom';
 

@@ -43,7 +43,6 @@ export const App = () => {
         <Router>
           <ScrollToTop />
           <Toasters />
-          <Redirector />
           <Switch>
             <HomeRoute exact path="/">
               <Header />
