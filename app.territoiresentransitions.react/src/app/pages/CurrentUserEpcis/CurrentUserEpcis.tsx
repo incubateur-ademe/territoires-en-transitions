@@ -3,43 +3,15 @@ import 'app/DesignSystem/core.css';
 import 'app/DesignSystem/variables.css';
 
 import {OwnedEpciRead} from 'generated/dataLayer';
-import {authBloc, AuthBloc} from 'core-logic/observables';
-import {autorun, makeAutoObservable, reaction} from 'mobx';
 import {SimpleEpciCard} from 'ui/epcis/SimpleEpciCard';
 import {AddDialog} from './_AddDialog';
-import {ownedEpciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoints';
 import {observer} from 'mobx-react-lite';
-import {CollectionsBookmarkOutlined} from '@material-ui/icons';
-import {forEach} from 'ramda';
+import {
+  ownedEpciBloc,
+  OwnedEpciBloc,
+} from 'core-logic/observables/OwnedEpciBloc';
 
-export class MyEpcisCardsBloc {
-  ownedEpciReads: OwnedEpciRead[] = [];
-
-  constructor() {
-    makeAutoObservable(this);
-    this.updateOwnedEpciReads(authBloc.userId);
-    console.log('construction : ', this.ownedEpciReads);
-
-    reaction(
-      () => authBloc.userId,
-      userId => {
-        this.updateOwnedEpciReads(userId);
-        console.log('reaction: ', this.ownedEpciReads);
-      }
-    );
-  }
-
-  private updateOwnedEpciReads(userId: string | null) {
-    console.log('current user is', userId);
-    ownedEpciReadEndpoint.getBy({}).then(retrieved => {
-      this.ownedEpciReads = retrieved;
-      console.log('retrieved : ', retrieved);
-      console.log('updateOwnedEpciReads', this.ownedEpciReads);
-    });
-  }
-}
-
-const MyEpciCards = observer(({bloc}: {bloc: MyEpcisCardsBloc}) => {
+const MyEpciCards = observer(({bloc}: {bloc: OwnedEpciBloc}) => {
   const ownedEpciReads = bloc.ownedEpciReads;
 
   return (
@@ -60,10 +32,7 @@ const MyEpciCards = observer(({bloc}: {bloc: MyEpcisCardsBloc}) => {
   );
 });
 
-const epciCardsBloc = new MyEpcisCardsBloc();
-
 const CurrentUserEpcis = () => {
-  console.log('in compontene: ', epciCardsBloc.ownedEpciReads);
   return (
     <div className="app fr-container m-5">
       <section className="text-center">
