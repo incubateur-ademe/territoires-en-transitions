@@ -1,13 +1,13 @@
 import {allEpciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoints';
 import {claimEpci} from 'core-logic/api/procedures/ClaimEpciProcedure';
-import {EpciRead} from 'generated/dataLayer/epci_read';
+import {AllEpciRead} from 'generated/dataLayer/all_epci_read';
 import React, {useEffect, useState} from 'react';
 import {SelectInput, UiDialogButton} from 'ui';
 
 export const AddDialog = () => {
   const [opened, setOpened] = React.useState<boolean>(false);
 
-  const [allEpciReads, setAllEpciReads] = useState<EpciRead[]>([]);
+  const [allEpciReads, setAllEpciReads] = useState<AllEpciRead[]>([]);
   useEffect(() => {
     allEpciReadEndpoint
       .getBy({})
@@ -34,7 +34,7 @@ export const AddDialog = () => {
         <div className="flex flex-row justify-center">
           <SelectInput
             label="Sélectionner une collectivité"
-            options={allEpciReads.map((epciRead: EpciRead) => {
+            options={allEpciReads.map((epciRead: AllEpciRead) => {
               return {
                 value: epciRead.siren,
                 label: epciRead.nom,

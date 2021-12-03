@@ -2,8 +2,8 @@
 
 import {RoleName} from 'generated/dataLayer';
 
-export interface OwnedEpciRead {
+export interface ActiveEpciRead {
   siren: string;
   nom: string;
-  role_name: RoleName;
+  role_name: RoleName | null;
 }

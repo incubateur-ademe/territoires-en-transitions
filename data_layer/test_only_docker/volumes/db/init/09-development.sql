@@ -79,12 +79,17 @@ create table private_epci_invitation
     created_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
-create view active_epci as
-select distinct siren, nom
+create view active_epci
+as
+with current_droits as (
+    select *
+    from private_utilisateur_droit
+    where user_id = auth.uid() 
+    and private_utilisateur_droit.active
+)
+select siren, nom, role_name
 from epci
-    join private_utilisateur_droit on epci.id = private_utilisateur_droit.epci_id
-where private_utilisateur_droit.id is not null
-  and private_utilisateur_droit.active
+    left join current_droits on epci_id = epci.id
 order by nom;
 
 
@@ -225,11 +230,12 @@ as
 with current_droits as (
     select *
     from private_utilisateur_droit
-    where user_id = auth.uid()
+    where user_id = auth.uid() 
+    and private_utilisateur_droit.active
 )
 select siren, nom, role_name
-from epci
-    right join current_droits on epci_id = epci.id
+from current_droits
+    join epci on epci_id = epci.id
 order by nom;
 
 --------------------------------

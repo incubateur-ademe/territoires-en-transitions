@@ -4,7 +4,7 @@ import 'app/DesignSystem/variables.css';
 import {useEffect, useState} from 'react';
 
 import {Spacer} from 'ui/shared';
-import {EpciRead} from 'generated/dataLayer/epci_read';
+import {AllEpciRead} from 'generated/dataLayer/all_epci_read';
 import {AddDialog} from 'app/pages/MesCollectivites/_AddDialog';
 import {SimpleEpciCard} from 'ui/epcis/SimpleEpciCard';
 

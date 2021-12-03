@@ -1,11 +1,11 @@
-import {EpciRead} from 'generated/dataLayer/epci_read';
+import {AllEpciRead} from 'generated/dataLayer/all_epci_read';
 
-export const epci1: EpciRead = {
+export const epci1: AllEpciRead = {
   nom: 'Haut - Bugey Agglomération',
   siren: '200042935',
 };
 
-export const epci2: EpciRead = {
+export const epci2: AllEpciRead = {
   nom: 'CA du Bassin de Bourg-en-Bresse',
   siren: '200071751',
 };
