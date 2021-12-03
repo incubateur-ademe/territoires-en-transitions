@@ -16,6 +16,5 @@ export const Redirector = () => {
       else history.push(signInPath);
     }
   );
-
   return null;
 };

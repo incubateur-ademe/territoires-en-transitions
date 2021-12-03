@@ -17,9 +17,19 @@ export class CurrentEpciBloc {
     makeAutoObservable(this);
   }
 
-  async change({siren}: {siren: string}) {
+  update({siren}: {siren: string | null}) {
+    if (siren === null) {
+      this._siren = null;
+      this._nom = null;
+      this._role_name = null;
+    } else if (siren !== this._siren) {
+      this._fetchOwnedEpci({siren: siren});
+    }
+  }
+
+  async _fetchOwnedEpci({siren}: {siren: string}) {
     const ownedEpciRead = await ownedEpciReadEndpoint.getBy({siren});
-    if (ownedEpciRead) {
+    if (ownedEpciRead[0]) {
       this._siren = ownedEpciRead[0].siren;
       this._nom = ownedEpciRead[0].nom;
       this._role_name = ownedEpciRead[0].role_name;
