@@ -1,5 +1,4 @@
 import {allEpciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoints';
-import {claimEpci} from 'core-logic/api/procedures/ClaimEpciProcedure';
 import {AllEpciRead} from 'generated/dataLayer/all_epci_read';
 import React, {useEffect, useState} from 'react';
 import {SelectInput, UiDialogButton} from 'ui';
@@ -20,9 +19,10 @@ export const AddDialog = () => {
   const submit = async () => {
     console.log('Should add EPCI ', selectedEpciSiren, ' to user rights.... ');
     if (selectedEpciSiren) {
-      const claimResult = await claimEpci(selectedEpciSiren);
+      await ownedEpciBloc.claim(selectedEpciSiren);
+      setOpened(false);
     }
-    close();
+    // close();
   };
 
   return (

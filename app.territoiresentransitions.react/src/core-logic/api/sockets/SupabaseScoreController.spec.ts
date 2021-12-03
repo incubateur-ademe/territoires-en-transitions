@@ -4,7 +4,7 @@ import {SupabaseScoreController} from 'core-logic/api/sockets/SupabaseScoreContr
 import {supabase} from 'core-logic/api/supabase';
 import {ScoreRead} from 'generated/dataLayer/score_read';
 import {Server as WebSocketServer} from 'mock-socket';
-import {takeUntil, timer} from 'rxjs';
+import {sleep} from 'utils/sleep';
 
 describe('Supabase Score Controller ', () => {
   const schema = 'public';
