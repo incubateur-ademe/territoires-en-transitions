@@ -6,10 +6,6 @@ import {ScoreRead} from 'generated/dataLayer/score_read';
 import {Server as WebSocketServer} from 'mock-socket';
 import {takeUntil, timer} from 'rxjs';
 
-const sleep = (ms: number) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
-};
-
 describe('Supabase Score Controller ', () => {
   const schema = 'public';
   const readTableName = 'client_scores';

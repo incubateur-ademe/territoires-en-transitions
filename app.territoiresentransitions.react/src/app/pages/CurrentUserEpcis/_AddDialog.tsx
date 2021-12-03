@@ -3,6 +3,7 @@ import {claimEpci} from 'core-logic/api/procedures/ClaimEpciProcedure';
 import {AllEpciRead} from 'generated/dataLayer/all_epci_read';
 import React, {useEffect, useState} from 'react';
 import {SelectInput, UiDialogButton} from 'ui';
+import {ownedEpciBloc} from 'core-logic/observables/OwnedEpciBloc';
 
 export const AddDialog = () => {
   const [opened, setOpened] = React.useState<boolean>(false);

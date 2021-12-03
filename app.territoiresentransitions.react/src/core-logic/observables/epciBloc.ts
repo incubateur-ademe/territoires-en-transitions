@@ -27,6 +27,7 @@ export class CurrentEpciBloc {
       console.log('EPCI is not active... Throw or error message ?');
     }
   }
+
   get currentEpci(): CurrentEpciObserved | null {
     if (this._siren === null || this._nom === null) return null;
     return {
