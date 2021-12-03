@@ -9,6 +9,7 @@ import {LabeledTextInput} from 'ui';
 import {planActionStore} from 'core-logic/api/hybridStores';
 import {PlanActionStorable} from 'storables/PlanActionStorable';
 import {v4 as uuid} from 'uuid';
+import {Category} from '@material-ui/icons';
 
 /**
  * A title that is editable in place, as the title display is replaced with an
@@ -264,11 +265,25 @@ export const PlanEditionForm = (props: {
             planActionStore.store(plan);
           }}
           remove={(categorie: Categorie) => {
-            alert(categorie.nom);
+            if (confirm(categoryDeletionMessage(categorie))) {
+              const plan = props.plan;
+              plan.categories = plan.categories.filter(
+                (c: Categorie) => c !== c
+              );
+              console.log(plan.categories);
+            }
           }}
           level={1}
         />
       </div>
     </div>
+  );
+};
+
+const categoryDeletionMessage = (categorie: Categorie) => {
+  return (
+    `Supprimer la catégorie ${categorie.nom}.\n\n` +
+    `Les fiches appartenant à ${categorie.nom} ou a ses sous catégories seront ` +
+    'rattachées à la catégorie "Fiches actions non classées".'
   );
 };
