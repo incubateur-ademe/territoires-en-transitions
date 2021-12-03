@@ -6,13 +6,13 @@ import {
   useEpciPlanActionAvancementSummmary,
 } from 'core-logic/hooks';
 import * as R from 'ramda';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {UiDialogButton} from 'ui';
 import {PlanCreationForm} from 'app/pages/collectivite/PlanActions/Forms/PlanCreationForm';
 import {PlanActionStorable} from 'storables';
 import {getPlanActionStoreForEpci} from 'core-logic/api/hybridStores';
 import {PlanActionTyped} from 'types/PlanActionTypedInterface';
-import {DetailedEpciCardPropsLink} from 'app/pages/ToutesCollectivites/_DetailedEpciCardPropsLink';
+import {DetailedEpciCardPropsLink} from 'app/pages/AllActiveEpcis/_DetailedEpciCardPropsLink';
 
 const addSAtTheEndOfWordIfCountGreaterThan1 = (props: {
   count: number;

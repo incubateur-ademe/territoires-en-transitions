@@ -6,7 +6,7 @@ import {observer} from 'mobx-react-lite';
 
 export const ActionCommentaire = ({actionId}: {actionId: string}) => {
   const epciId = 1; // TODO !
-  const observable = new ActionCommentaireFieldObservable({actionId, epciId});
+  const observable = new ActionCommentaireFieldBloc({actionId, epciId});
   return (
     <div className={' border-gray-300'}>
       <div className="CrossExpandPanel">
@@ -20,7 +20,7 @@ export const ActionCommentaire = ({actionId}: {actionId: string}) => {
 };
 
 const ActionCommentaireField = observer(
-  ({observable}: {observable: ActionCommentaireFieldObservable}) => (
+  ({observable}: {observable: ActionCommentaireFieldBloc}) => (
     <textarea
       value={observable.fieldValue}
       onChange={event => observable.setFieldValue(event.currentTarget.value)}
@@ -30,7 +30,7 @@ const ActionCommentaireField = observer(
   )
 );
 
-class ActionCommentaireFieldObservable {
+class ActionCommentaireFieldBloc {
   private readonly epciId: number;
   private readonly actionId: string;
   fieldValue = '';

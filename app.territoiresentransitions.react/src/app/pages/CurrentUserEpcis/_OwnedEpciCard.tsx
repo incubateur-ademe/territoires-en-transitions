@@ -4,7 +4,7 @@ import {useEpciAxisReferentielScores} from 'core-logic/hooks';
 
 import {DetailedPlanActions} from './_DetailedPlanActions';
 import {DetailedReferentiel} from './_DetailedReferentiel';
-import {DetailedEpciCardPropsLink} from 'app/pages/ToutesCollectivites/_DetailedEpciCardPropsLink';
+import {DetailedEpciCardPropsLink} from 'app/pages/AllActiveEpcis/_DetailedEpciCardPropsLink';
 
 const DetailedEpciCard = ({epci}: {epci: EpciStorable}) => {
   const caeScores = useEpciAxisReferentielScores({

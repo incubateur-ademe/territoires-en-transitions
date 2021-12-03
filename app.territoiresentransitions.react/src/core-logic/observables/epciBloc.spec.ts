@@ -12,7 +12,7 @@ describe('epciBloc', () => {
       siren: '200042935',
       role_name: 'referent',
     };
-    expect(currentEpciBloc.observed).toBe(expectedObserved);
+    expect(currentEpciBloc.currentEpci).toBe(expectedObserved);
   });
   it('should change to epci given siren when connected user does not belong to EPCI, so not editable', () => {
     const currentEpciBloc = new CurrentEpciBloc();
@@ -23,6 +23,6 @@ describe('epciBloc', () => {
       nom: 'Haut - Bugey Agglomération',
       siren: '200042935',
     };
-    expect(currentEpciBloc.observed).toBe(expectedObserved);
+    expect(currentEpciBloc.currentEpci).toBe(expectedObserved);
   });
 });

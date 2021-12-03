@@ -3,15 +3,15 @@ import {makeAutoObservable} from 'mobx';
 import {RoleName} from 'generated/dataLayer';
 
 export type CurrentEpciObserved = {
-  nom?: string;
-  siren?: string;
-  role_name?: RoleName;
+  nom: string;
+  siren: string;
+  role_name: RoleName | null;
 };
 
 export class CurrentEpciBloc {
-  private _siren?: string;
-  private _nom?: string;
-  private _role_name?: RoleName;
+  private _siren: string | null = null;
+  private _nom: string | null = null;
+  private _role_name: RoleName | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -27,12 +27,17 @@ export class CurrentEpciBloc {
       console.log('EPCI is not active... Throw or error message ?');
     }
   }
-  get observed(): CurrentEpciObserved {
+  get currentEpci(): CurrentEpciObserved | null {
+    if (this._siren === null || this._nom === null) return null;
     return {
       nom: this._nom,
       siren: this._siren,
       role_name: this._role_name,
     };
+  }
+
+  get readonly(): boolean {
+    return this.currentEpci !== null && this._role_name === null;
   }
 }
 
