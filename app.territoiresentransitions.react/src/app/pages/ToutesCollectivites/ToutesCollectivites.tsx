@@ -5,11 +5,11 @@ import {useEffect, useState} from 'react';
 
 import {Spacer} from 'ui/shared';
 import {allEpciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoints';
-import {EpciRead} from 'generated/dataLayer/epci_read';
+import {AllEpciRead} from 'generated/dataLayer/all_epci_read';
 import {SimpleEpciCard} from 'ui/epcis/SimpleEpciCard';
 
 const ToutesCollectivites = () => {
-  const [activeEpciReads, setActiveEpciReads] = useState<EpciRead[]>([]);
+  const [activeEpciReads, setActiveEpciReads] = useState<AllEpciRead[]>([]);
   useEffect(() => {
     allEpciReadEndpoint // TODO : should be activeEpciReadEndpoint
       .getBy({})
