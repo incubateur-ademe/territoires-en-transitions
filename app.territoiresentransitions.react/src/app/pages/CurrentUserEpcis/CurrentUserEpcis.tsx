@@ -38,54 +38,29 @@ export class MyEpcisCardsBloc {
     });
   }
 }
-const LogNom = observer(({nom}: {nom: string}) => {
-  console.log('LogNom ');
-  return <div>nom: {nom}</div>;
-});
 
-const MyEpciCards = observer(
-  ({ownedEpciReads}: {ownedEpciReads: OwnedEpciRead[]}) => {
-    console.log(
-      'MyEPciCards: ',
-      ownedEpciReads.map(lala => lala.nom)
-    );
-    const lulu: OwnedEpciRead[] = ownedEpciReads.map(lala => ({
-      nom: lala.nom,
-      siren: lala.siren,
-      role_name: 'agent',
-    }));
-    console.log('lulu : ', lulu);
-    return (
-      !!ownedEpciReads[0] && (
-        <div>
-          {ownedEpciReads.length}
-          <SimpleEpciCard epci={lulu[0]} />
-          {lulu.map(lu => {
-            <SimpleEpciCard
-              key={lu.siren}
-              epci={{
-                nom: lu.nom,
-                role_name: 'referent',
-                siren: lu.siren,
-              }}
-            />;
-          })}
-        </div>
-      )
-    );
-  }
-);
+const MyEpciCards = observer(({bloc}: {bloc: MyEpcisCardsBloc}) => {
+  const ownedEpciReads = bloc.ownedEpciReads;
 
-const epciCardsBloc = new MyEpcisCardsBloc();
-
-autorun(() => {
-  console.log(
-    'autorun :',
-    epciCardsBloc.ownedEpciReads.map(obs => {
-      obs.nom;
-    })
+  return (
+    !!ownedEpciReads[0] && (
+      <div>
+        {ownedEpciReads.map((epci: OwnedEpciRead) => (
+          <SimpleEpciCard
+            key={epci.siren}
+            epci={{
+              nom: epci.nom,
+              role_name: epci.role_name,
+              siren: epci.siren,
+            }}
+          />
+        ))}
+      </div>
+    )
   );
 });
+
+const epciCardsBloc = new MyEpcisCardsBloc();
 
 const CurrentUserEpcis = () => {
   console.log('in compontene: ', epciCardsBloc.ownedEpciReads);
