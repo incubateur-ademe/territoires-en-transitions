@@ -1,0 +1,13 @@
+{
+  "properties": {
+    "siren": {
+      "type": "string"
+    },
+    "role_name": {
+      "type": "string"
+    },
+    "nom": {
+      "type": "string"
+    }
+  }
+}

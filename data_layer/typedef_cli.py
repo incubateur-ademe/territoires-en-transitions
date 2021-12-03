@@ -10,8 +10,17 @@ from psycopg import Connection, Cursor
 
 business_tables = {"read": ["business_action_statut"], "write": ["score"]}
 client_tables = {
-    "read": ["client_epci", "action_statut", "action_commentaire", "score"],
-    "write": ["action_statut", "action_commentaire"],
+    "read": [
+        "epci",
+        "action_statut",
+        "action_commentaire",
+        "score",
+        "owned_epci",
+        "active_epci",
+        "all_epci",
+        "dcp",
+    ],
+    "write": ["action_statut", "action_commentaire", "dcp"],
 }
 
 default_postgres_url = "postgresql://supabase_admin:yolododo@localhost:50001/postgres"

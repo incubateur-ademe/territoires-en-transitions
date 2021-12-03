@@ -3,23 +3,20 @@
     "id": {
       "type": "int32"
     },
-    "concerne": {
-      "type": "boolean"
-    },
-    "epci_id": {
-      "type": "int32"
-    },
-    "avancement": {
+    "nom": {
       "type": "string"
     },
     "modified_at": {
       "type": "timestamp"
     },
-    "modified_by": {
+    "nature": {
       "type": "string"
     },
-    "action_id": {
+    "siren": {
       "type": "string"
+    },
+    "created_at": {
+      "type": "timestamp"
     }
   }
 }

@@ -1,7 +1,16 @@
 {
   "properties": {
+    "id": {
+      "type": "int32"
+    },
+    "points": {
+      "type": "float64"
+    },
     "created_at": {
       "type": "timestamp"
+    },
+    "concernee": {
+      "type": "boolean"
     },
     "completed_taches_count": {
       "type": "int32"
@@ -9,29 +18,20 @@
     "epci_id": {
       "type": "int32"
     },
-    "potentiel": {
-      "type": "float64"
-    },
-    "previsionnel": {
-      "type": "float64"
-    },
-    "referentiel_points": {
-      "type": "float64"
-    },
-    "points": {
-      "type": "float64"
-    },
-    "id": {
+    "total_taches_count": {
       "type": "int32"
     },
     "action_id": {
       "type": "string"
     },
-    "total_taches_count": {
-      "type": "int32"
+    "previsionnel": {
+      "type": "float64"
     },
-    "concernee": {
-      "type": "boolean"
+    "potentiel": {
+      "type": "float64"
+    },
+    "referentiel_points": {
+      "type": "float64"
     }
   }
 }
