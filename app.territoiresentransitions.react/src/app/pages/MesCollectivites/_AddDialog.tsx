@@ -1,6 +1,5 @@
-import {epciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoint';
+import {allEpciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoints';
 import {claimEpci} from 'core-logic/api/procedures/ClaimEpciProcedure';
-import {supabase} from 'core-logic/api/supabase';
 import {EpciRead} from 'generated/dataLayer/epci_read';
 import React, {useEffect, useState} from 'react';
 import {SelectInput, UiDialogButton} from 'ui';
@@ -10,7 +9,7 @@ export const AddDialog = () => {
 
   const [allEpciReads, setAllEpciReads] = useState<EpciRead[]>([]);
   useEffect(() => {
-    epciReadEndpoint
+    allEpciReadEndpoint
       .getBy({})
       .then(allEpciReads => setAllEpciReads(allEpciReads));
   }, []);

@@ -6,10 +6,16 @@ Le scénario est le suivant :
 1. Utilisateurs avec des comptes 
                    
 a. Utilisateur Yolo:
-A des données pour l'epci `id` 1
+
 ```yaml
 email: yolo@dodo.com
 password: yolododo
+prenom: Yolo
+nom: Dodo
+id: 17440546-f389-4d4f-bfdb-b0c94a1bd0f9
+droits: 
+  - `referent` sur l'EPCI #1 
+  - `agent` sur l'EPCI #2 
 ```
 
 b. Utilisateur Yulu
@@ -17,6 +23,31 @@ N'a aucune donnée ni aucun droit
 ```yaml
 email: yulu@dudu.com
 password: yulududu
+prenom: Yulu
+nom: Dudu
+id: c98235a0-60e7-4ceb-9172-0a991cce0386
+```
+
+c. Utilisateur Yili conseiller
+
+```yaml
+email: yili@didi.com
+prenom: Yili
+nom: Yili
+id: bf407fc6-3634-45ff-a988-301e9088096a
+droits: 
+  - `conseiller` sur l'EPCI #1 
+```
+
+d. Utilisateur Yala auditeur
+
+```yaml
+email: yala@dada.com
+prenom: Yala
+nom: Yala
+id: bf407fc6-3634-45ff-a988-301e9088096a
+droits: 
+  - `auditeur` sur l'EPCI #1 
 ```
 
 2. Actions du référentiel

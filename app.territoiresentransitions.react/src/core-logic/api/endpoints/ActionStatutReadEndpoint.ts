@@ -3,10 +3,6 @@ import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
 import {actionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
 
-export interface EpciBasedParams {
-  epci_id: number;
-}
-
 export interface StatutGetParams {
   epci_id: number;
   action_id?: string;
@@ -14,7 +10,7 @@ export interface StatutGetParams {
 
 class ActionStatutReadEndpoint extends DataLayerReadCachedEndpoint<
   ActionStatutRead,
-  StatutGetParams & EpciBasedParams
+  StatutGetParams
 > {
   readonly name = 'action_statut';
 
