@@ -81,15 +81,22 @@ create table private_epci_invitation
 
 create view active_epci
 as
-with current_droits as (
+with epci_with_droits as (
+    select epci_id, siren, nom
+    from epci
+            join private_utilisateur_droit on epci.id = private_utilisateur_droit.epci_id
+    where private_utilisateur_droit.id is not null
+    and private_utilisateur_droit.active
+),
+current_droits as (
     select *
     from private_utilisateur_droit
     where user_id = auth.uid() 
     and private_utilisateur_droit.active
 )
-select siren, nom, role_name
-from epci
-    left join current_droits on epci_id = epci.id
+select distinct siren, nom, role_name
+from current_droits
+    right join epci_with_droits on current_droits.epci_id = epci_with_droits.epci_id
 order by nom;
 
 

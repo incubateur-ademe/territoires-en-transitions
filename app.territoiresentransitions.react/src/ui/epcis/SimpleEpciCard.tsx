@@ -1,4 +1,4 @@
-import {AllEpciRead} from 'generated/dataLayer/all_epci_read';
+import {ActiveEpciRead} from 'generated/dataLayer';
 import {Link} from 'react-router-dom';
 
 const SimpleEpciCardLink = (props: {label: string; linkTo: string}) => (
@@ -10,7 +10,7 @@ const SimpleEpciCardLink = (props: {label: string; linkTo: string}) => (
   </Link>
 );
 
-type SimpleEpciCardProps = {epci: AllEpciRead};
+type SimpleEpciCardProps = {epci: ActiveEpciRead};
 export const SimpleEpciCard = ({epci}: SimpleEpciCardProps) => (
   <div className="flex flex-col items-center justify-between p-8 bg-beige">
     <h3 className="fr-h3 p-2 text-center ">{epci.nom}</h3>

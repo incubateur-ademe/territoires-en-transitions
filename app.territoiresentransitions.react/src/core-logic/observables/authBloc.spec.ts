@@ -8,7 +8,7 @@ describe('authBloc', () => {
     await when(() => authBloc.connected);
 
     expect(authBloc.connected).toBe(true);
-    expect(authBloc.authError).not.toBeDefined();
+    expect(authBloc.authError).toBeNull();
   });
   it('should message error if incorrect password is given) ', async () => {
     const authBloc = new AuthBloc();
@@ -20,6 +20,7 @@ describe('authBloc', () => {
     expect(authBloc.authError).toBe(
       "L'email et le mot de passe ne correspondent pas."
     );
+    expect(authBloc.userId).toBeNull();
   });
   it('should message error if unknown email is given ', async () => {
     const authBloc = new AuthBloc();
@@ -30,5 +31,6 @@ describe('authBloc', () => {
     expect(authBloc.authError).toBe(
       "L'email et le mot de passe ne correspondent pas."
     );
+    expect(authBloc.userId).toBeNull();
   });
 });

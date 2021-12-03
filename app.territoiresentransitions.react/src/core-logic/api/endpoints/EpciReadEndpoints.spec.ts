@@ -27,7 +27,7 @@ describe('Active EPCI reading endpoint should retrieve only claimed EPCI', () =>
     const expected: ActiveEpciRead[] = [{...epci1, role_name: null}];
     expect(results).toEqual(expected);
   });
-  it('should retrieve all active EPCI if no siren is given', async () => {
+  it('should retrieve all (2) active EPCI if no siren is given', async () => {
     const results = await activeEpciReadEndpoint.getBy({});
     expect(results.length).toEqual(2);
   });
