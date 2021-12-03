@@ -9,10 +9,6 @@ const SimpleEpciCardLink = (props: {
   <Link
     className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
     to={props.linkTo}
-    onClick={() => {
-      console.log('currentEpciBloc.change ', props.siren);
-      currentEpciBloc.change({siren: props.siren});
-    }}
   >
     {props.label}
   </Link>
