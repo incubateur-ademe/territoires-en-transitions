@@ -1,14 +1,14 @@
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
 
-const MesCollectivites = lazy(
-  () => import('app/pages/MesCollectivites/MesCollectivites')
+const CurrentUserEpcis = lazy(
+  () => import('app/pages/CurrentUserEpcis/CurrentUserEpcis')
 );
 
-export const MesCollectivitesPage = () => {
+export const CurrentUserEpcisPage = () => {
   return (
     <Suspense fallback={renderLoader()}>
-      <MesCollectivites />
+      <CurrentUserEpcis />
     </Suspense>
   );
 };

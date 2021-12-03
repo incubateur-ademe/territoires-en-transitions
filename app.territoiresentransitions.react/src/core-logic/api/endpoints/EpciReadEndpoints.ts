@@ -2,6 +2,7 @@ import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {AllEpciRead} from 'generated/dataLayer/all_epci_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
 import {OwnedEpciRead} from 'generated/dataLayer/owned_epci_read';
+import {ActiveEpciRead} from 'generated/dataLayer';
 
 class AllEpciReadEndpoint extends DataLayerReadCachedEndpoint<AllEpciRead, {}> {
   readonly name = 'all_epci';
@@ -16,14 +17,14 @@ export interface ActiveEpciReadParams {
 }
 
 class ActiveEpciReadEndpoint extends DataLayerReadCachedEndpoint<
-  AllEpciRead,
+  ActiveEpciRead,
   ActiveEpciReadParams
 > {
   readonly name = 'active_epci';
 
   async _read(
     params: ActiveEpciReadParams
-  ): Promise<PostgrestResponse<AllEpciRead>> {
+  ): Promise<PostgrestResponse<ActiveEpciRead>> {
     if (!params.siren) return this._table;
     return this._table.eq('siren', params.siren);
   }

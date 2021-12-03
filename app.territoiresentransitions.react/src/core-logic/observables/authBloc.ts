@@ -2,9 +2,9 @@ import {makeAutoObservable} from 'mobx';
 import {supabase} from 'core-logic/api/supabase';
 
 export class AuthBloc {
-  private userId?: string;
+  private _userId: string | null = null;
   private _connected = false;
-  private _authError?: string;
+  private _authError: string | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -16,12 +16,13 @@ export class AuthBloc {
       .then(session => {
         if (session.user) {
           this._connected = true;
-          this.userId = session.user.id;
-          this._authError = undefined;
+          this._userId = session.user.id;
+          this._authError = null;
           console.log('user connected ', session.user);
         } else {
           console.log(session.error?.message);
           this._authError = "L'email et le mot de passe ne correspondent pas.";
+          this._userId = null;
         }
       })
       .catch(error => {
@@ -41,6 +42,9 @@ export class AuthBloc {
   }
   get authError() {
     return this._authError;
+  }
+  get userId() {
+    return this._userId;
   }
 }
 

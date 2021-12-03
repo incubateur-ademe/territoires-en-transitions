@@ -25,7 +25,7 @@ import {createTheme, MuiThemeProvider} from '@material-ui/core';
 import {MatomoProvider} from '@datapunt/matomo-tracker-react';
 import {matomoInstance} from 'app/matomo_instance';
 import {ToutesCollectivitesPage} from 'app/pages';
-import {MesCollectivitesPage} from 'app/pages/MesCollectivites/MesCollectivitesPage';
+import {CurrentUserEpcisPage} from 'app/pages/CurrentUserEpcis/CurrentUserEpcisPage';
 
 const theme = createTheme({
   palette: {
@@ -56,7 +56,7 @@ export const App = () => {
 
             <Route path={'/mes_collectivites'}>
               <Header />
-              <MesCollectivitesPage />
+              <CurrentUserEpcisPage />
             </Route>
             <Route path={'/toutes_collectivites'}>
               <Header />

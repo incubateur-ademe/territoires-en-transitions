@@ -1,9 +1,6 @@
-import {
-  activeEpciReadEndpoint,
-  ownedEpciReadEndpoint,
-} from 'core-logic/api/endpoints/EpciReadEndpoints';
+import {ownedEpciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoints';
 import {makeAutoObservable} from 'mobx';
-import {RoleName} from 'generated/dataLayer/owned_epci_read';
+import {RoleName} from 'generated/dataLayer';
 
 export type CurrentEpciObserved = {
   nom?: string;
@@ -11,7 +8,7 @@ export type CurrentEpciObserved = {
   role_name?: RoleName;
 };
 
-class CurrentEpciBloc {
+export class CurrentEpciBloc {
   private _siren?: string;
   private _nom?: string;
   private _role_name?: RoleName;
