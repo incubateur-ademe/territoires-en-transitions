@@ -36,7 +36,7 @@ prenom: Yili
 nom: Yili
 id: 3f407fc6-3634-45ff-a988-301e9088096a
 droits: 
-  - `conseiller` sur l'EPCI #1 
+  - `conseiller` sur les EPCI #1 and #2
 ```
 
 d. Utilisateur Yala auditeur
@@ -47,7 +47,7 @@ prenom: Yala
 nom: Yala
 id: 4f407fc6-3634-45ff-a988-301e9088096a
 droits: 
-  - `auditeur` sur l'EPCI #1 
+  - `auditeur` sur les EPCI #1, #2, #3, #4
 ```
 
 2. Actions du référentiel

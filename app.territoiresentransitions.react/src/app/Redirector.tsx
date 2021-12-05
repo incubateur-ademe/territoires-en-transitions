@@ -1,16 +1,20 @@
 import {myEpcisPath, signInPath} from 'app/paths';
 import {authBloc} from 'core-logic/observables/authBloc';
 import {reaction} from 'mobx';
-import {useHistory, useParams} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {currentEpciBloc} from 'core-logic/observables';
-import {useEffect} from 'react';
-import {findAllInRenderedTree} from 'react-dom/test-utils';
 import {useEpciId} from 'core-logic/hooks';
 
-export const Redirector = () => {
-  const history = useHistory();
+export const EpciRedirector = () => {
   const epciId = useEpciId();
+  console.log(epciId);
   currentEpciBloc.update({siren: epciId || null});
+
+  return null;
+};
+
+export const ConnectedRedirector = () => {
+  const history = useHistory();
 
   reaction(
     () => authBloc.connected,

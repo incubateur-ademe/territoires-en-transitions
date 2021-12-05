@@ -28,6 +28,7 @@ export const SignInPage = () => {
           validationSchema={validation}
           onSubmit={credentials => {
             authBloc.connect(credentials);
+            console.log(authBloc.connected);
           }}
         >
           {() => (

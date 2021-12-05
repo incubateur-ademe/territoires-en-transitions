@@ -79,25 +79,23 @@ create table private_epci_invitation
     created_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
-create view active_epci
+create view elses_epci
 as
-with epci_with_droits as (
-    select epci_id, siren, nom
-    from epci
-            join private_utilisateur_droit on epci.id = private_utilisateur_droit.epci_id
-    where private_utilisateur_droit.id is not null
-    and private_utilisateur_droit.active
-),
-current_droits as (
-    select *
-    from private_utilisateur_droit
-    where user_id = auth.uid() 
-    and private_utilisateur_droit.active
+with active_epci as 
+    (select distinct siren, nom
+        from epci
+        join private_utilisateur_droit on epci.id = private_utilisateur_droit.epci_id
+        where private_utilisateur_droit.id is not null
+        and private_utilisateur_droit.active
+    ),
+owned_siren as 
+(
+  select siren as owned_siren from owned_epci
 )
-select distinct siren, nom, role_name
-from current_droits
-    right join epci_with_droits on current_droits.epci_id = epci_with_droits.epci_id
-order by nom;
+select siren, nom from active_epci 
+left join owned_siren on owned_siren.owned_siren = active_epci.siren 
+where owned_siren.owned_siren is null;
+
 
 
 create or replace function claim_epci(siren siren) returns json

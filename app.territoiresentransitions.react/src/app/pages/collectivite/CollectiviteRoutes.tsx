@@ -20,7 +20,7 @@ export const CollectiviteRoutes = () => {
   const epciId = useEpciId()!;
   return (
     <>
-      <Route path={`${path}/referentiels`}>
+      <Route path={`${path}/referentiel`}>
         <Redirect to={`/collectivite/${epciId}/referentiel/eci`} />
       </Route>
       <Route path={`${path}/referentiel/:referentiel/`}>

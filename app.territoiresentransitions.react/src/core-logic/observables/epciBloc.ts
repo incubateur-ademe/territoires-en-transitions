@@ -1,6 +1,9 @@
-import {ownedEpciReadEndpoint} from 'core-logic/api/endpoints/EpciReadEndpoints';
+import {
+  elsesEpciReadEndpoint,
+  ownedEpciReadEndpoint,
+} from 'core-logic/api/endpoints/EpciReadEndpoints';
 import {makeAutoObservable} from 'mobx';
-import {RoleName} from 'generated/dataLayer';
+import {ElsesEpciRead, OwnedEpciRead, RoleName} from 'generated/dataLayer';
 
 export type CurrentEpciObserved = {
   nom: string;
@@ -18,23 +21,31 @@ export class CurrentEpciBloc {
   }
 
   update({siren}: {siren: string | null}) {
+    console.log('epciBloc update ', siren);
     if (siren === null) {
       this._siren = null;
       this._nom = null;
       this._role_name = null;
     } else if (siren !== this._siren) {
-      this._fetchOwnedEpci({siren: siren});
+      this._fetchEpci({siren});
     }
   }
 
-  async _fetchOwnedEpci({siren}: {siren: string}) {
-    const ownedEpciRead = await ownedEpciReadEndpoint.getBy({siren});
-    if (ownedEpciRead[0]) {
-      this._siren = ownedEpciRead[0].siren;
-      this._nom = ownedEpciRead[0].nom;
-      this._role_name = ownedEpciRead[0].role_name;
+  async _fetchEpci({siren}: {siren: string}) {
+    const ownedFetched = (await ownedEpciReadEndpoint.getBy({siren}))[0];
+    if (ownedFetched) {
+      this._nom = ownedFetched.nom;
+      this._siren = ownedFetched.siren;
+      this._role_name = ownedFetched.role_name;
     } else {
-      console.log('EPCI is not active... Throw or error message ?');
+      const elsesFetched = (await elsesEpciReadEndpoint.getBy({siren}))[0];
+      if (elsesFetched) {
+        this._nom = elsesFetched.nom;
+        this._siren = elsesFetched.siren;
+        this._role_name = null;
+      } else {
+        console.log('EPCI is not active, should throw !');
+      }
     }
   }
 

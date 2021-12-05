@@ -23,7 +23,7 @@ export class AuthBloc {
           this._connected = true;
           this._userId = session.user.id;
           this._authError = null;
-          console.log('user connected ', session.user);
+          console.log('user connected ', this.userId);
         } else {
           console.log(session.error?.message);
           this._authError = "L'email et le mot de passe ne correspondent pas.";
@@ -39,10 +39,12 @@ export class AuthBloc {
     supabase.auth.signOut().then(response => {
       if (response.error === null) this._connected = false;
       else this._authError = response.error.message;
+      console.log('Connected : ', this._connected);
     });
   }
 
   get connected() {
+    console.log('connected change to ', this._connected);
     return this._connected;
   }
   get authError() {

@@ -1,11 +1,18 @@
-import {Link} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import {allEpcisPath, myEpcisPath, signInPath, signUpPath} from 'app/paths';
-import {authBloc, currentEpciBloc} from 'core-logic/observables';
+import {AuthBloc, authBloc, currentEpciBloc} from 'core-logic/observables';
+import {observer} from 'mobx-react-lite';
 
-const ConnexionSwitchLink = () => {
-  if (authBloc.connected)
+const ConnexionSwitchLink = observer(({bloc}: {bloc: AuthBloc}) => {
+  if (bloc.connected)
     return (
-      <Link className="fr-link" to={signUpPath}>
+      <Link
+        className="fr-link"
+        to={signUpPath}
+        onClick={() => {
+          bloc.disconnect();
+        }}
+      >
         <div className="fr-fi-account-line m-1"></div>
         Se déconnecter
       </Link>
@@ -16,46 +23,75 @@ const ConnexionSwitchLink = () => {
       Se connecter
     </Link>
   );
+});
+
+const EpciNavigationTab = ({
+  siren,
+  label,
+  pathSuffix,
+}: {
+  siren: string;
+  label: string;
+  pathSuffix: string;
+}) => {
+  const location = useLocation();
+  const active = location.pathname.includes(pathSuffix);
+  return (
+    <Link
+      className={`fr-nav__item p-4 ${active ? 'border-b-2 border-bf500' : ''}`}
+      to={`/collectivite/${siren}/${pathSuffix}`}
+    >
+      {label}
+    </Link>
+  );
 };
 
+const LaLa = () => (
+  <div>
+    <select
+      className="mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+      onChange={opt => {
+        console.log('lala', opt);
+      }}
+    >
+      <label className="fr-label">label</label>
+      <option key="la" value="la">
+        Option1
+      </option>
+      <option key="li" value="li">
+        Option2
+      </option>
+    </select>
+  </div>
+);
 export const EpciNavigation = () => {
   return (
     currentEpciBloc.currentEpci && (
-      <nav className="fr-nav" id="header-navigation" role="navigation">
-        <ul className="fr-nav__list">
-          <li className="fr-nav__item">
-            <Link
-              className="fr-nav__link"
-              to={`/collectivite/${currentEpciBloc.currentEpci.siren}/tableau_bord`}
-            >
-              Tableau de bord
-            </Link>
-          </li>
-          <li className="fr-nav__item">
-            <Link
-              className="fr-nav__link active"
-              to={`/collectivite/${currentEpciBloc.currentEpci.siren}/plan_actions`}
-            >
-              Plans d'actions
-            </Link>
-          </li>
-          <li className="fr-nav__item">
-            <Link
-              className="fr-nav__link"
-              to={`/collectivite/${currentEpciBloc.currentEpci.siren}/referentiels`}
-            >
-              Référentiels
-            </Link>
-          </li>
-          <li className="fr-nav__item">
-            <Link
-              className="fr-nav__link"
-              to={`/collectivite/${currentEpciBloc.currentEpci.siren}/indicateurs`}
-            >
-              Indicateurs
-            </Link>
-          </li>
-        </ul>
+      <nav className="flex flex-row gap-5" aria-label="Menu principal">
+        <EpciNavigationTab
+          siren={currentEpciBloc.currentEpci.siren}
+          label="Tableau de bord"
+          pathSuffix="tableau_bord"
+        />
+
+        <EpciNavigationTab
+          siren={currentEpciBloc.currentEpci.siren}
+          label="Plans d'actions"
+          pathSuffix="plan_action"
+        />
+
+        <EpciNavigationTab
+          siren={currentEpciBloc.currentEpci.siren}
+          label="Référentiels"
+          pathSuffix="referentiel"
+        />
+
+        <EpciNavigationTab
+          siren={currentEpciBloc.currentEpci.siren}
+          label="Indicateurs"
+          pathSuffix="indicateurs"
+        />
+        <LaLa />
       </nav>
     )
   );
@@ -74,10 +110,10 @@ export const Navigation = () => {
             <></>
           )}
           <Link className="fr-link" to={allEpcisPath}>
-            Toutes les collectivités
+            Les collectivités
           </Link>
 
-          <ConnexionSwitchLink />
+          <ConnexionSwitchLink bloc={authBloc} />
         </ul>
       </div>
     </div>
