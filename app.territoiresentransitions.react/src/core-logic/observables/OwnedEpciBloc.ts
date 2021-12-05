@@ -6,7 +6,6 @@ import {
   ownedEpciReadEndpoint,
 } from 'core-logic/api/endpoints/EpciReadEndpoints';
 import {claimEpci} from 'core-logic/api/procedures/ClaimEpciProcedure';
-import {sleep} from 'utils/sleep';
 
 export class OwnedEpciBloc {
   ownedEpciReads: OwnedEpciRead[] = [];
@@ -40,6 +39,10 @@ export class OwnedEpciBloc {
     if (success) {
       this.updateOwnedEpciReads(authBloc.userId);
     }
+  }
+
+  get ownedEpciSirens() {
+    return this.ownedEpciReads.map(ownedEpci => ownedEpci.siren);
   }
 }
 

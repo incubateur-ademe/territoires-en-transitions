@@ -1,14 +1,12 @@
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
 
-const AllActiveEpcis = lazy(
-  () => import('app/pages/AllActiveEpcis/AllActiveEpcis')
-);
+const ElsesEpcis = lazy(() => import('app/pages/ElsesEpcis/ElsesEpcis'));
 
-export const AllActiveEpcisPage = () => {
+export const ElsesEpcisPage = () => {
   return (
     <Suspense fallback={renderLoader()}>
-      <AllActiveEpcis />
+      <ElsesEpcis />
     </Suspense>
   );
 };

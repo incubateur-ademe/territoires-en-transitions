@@ -1,4 +1,4 @@
-import {ActiveEpciRead} from 'generated/dataLayer';
+import {ElsesEpciRead, OwnedEpciRead} from 'generated/dataLayer';
 import {Link} from 'react-router-dom';
 
 const SimpleEpciCardLink = (props: {
@@ -14,28 +14,33 @@ const SimpleEpciCardLink = (props: {
   </Link>
 );
 
-type SimpleEpciCardProps = {epci: ActiveEpciRead};
-export const SimpleEpciCard = ({epci}: SimpleEpciCardProps) => (
-  <div className="flex flex-col items-center justify-between p-8 bg-beige">
-    <h3 className="fr-h3 p-2 text-center ">{epci.nom}</h3>
-    <div>
-      <SimpleEpciCardLink
-        label="Plan d'actions"
-        linkTo={`/collectivite/${epci.siren}/plan_actions`}
-        siren={epci.siren}
-      />
-      <div className="pb-3" />
-      <SimpleEpciCardLink
-        label="Référentiels"
-        linkTo={`/collectivite/${epci.siren}/referentiels`}
-        siren={epci.siren}
-      />
-      <div className="pb-3" />
-      <SimpleEpciCardLink
-        label="Indicateurs"
-        linkTo={`/collectivite/${epci.siren}/indicateurs`}
-        siren={epci.siren}
-      />
+export const SimpleEpciCard = ({
+  epci,
+}: {
+  epci: ElsesEpciRead | OwnedEpciRead;
+}) => {
+  return (
+    <div className="flex flex-col items-center justify-between p-8 bg-beige border-t-4">
+      <h3 className="fr-h3 p-2 text-center ">{epci.nom}</h3>
+      <div>
+        <SimpleEpciCardLink
+          label="Plan d'actions"
+          linkTo={`/collectivite/${epci.siren}/plan_actions`}
+          siren={epci.siren}
+        />
+        <div className="pb-3" />
+        <SimpleEpciCardLink
+          label="Référentiels"
+          linkTo={`/collectivite/${epci.siren}/referentiels`}
+          siren={epci.siren}
+        />
+        <div className="pb-3" />
+        <SimpleEpciCardLink
+          label="Indicateurs"
+          linkTo={`/collectivite/${epci.siren}/indicateurs`}
+          siren={epci.siren}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};

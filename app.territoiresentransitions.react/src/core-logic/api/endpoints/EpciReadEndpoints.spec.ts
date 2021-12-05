@@ -1,11 +1,11 @@
 import '@testing-library/jest-dom/extend-expect';
 import {
   allEpciReadEndpoint,
-  activeEpciReadEndpoint,
+  elsesEpciReadEndpoint,
   ownedEpciReadEndpoint,
 } from 'core-logic/api/endpoints/EpciReadEndpoints';
 import {supabase} from 'core-logic/api/supabase';
-import {ActiveEpciRead} from 'generated/dataLayer';
+import {ElsesEpciRead} from 'generated/dataLayer';
 import {OwnedEpciRead} from 'generated/dataLayer/owned_epci_read';
 
 import {epci1, epci2, yoloCredentials, yuluCredentials} from 'test_utils/epci';
@@ -19,17 +19,18 @@ describe('All EPCI reading endpoint should retrieve 1628 EPCIs', () => {
   });
 });
 
-describe('Active EPCI reading endpoint should retrieve only claimed EPCI', () => {
+describe('Elses EPCI reading endpoint should retrieve only claimed EPCI', () => {
   it('should retrieve one active EPCI if a given siren is given', async () => {
-    const results = await activeEpciReadEndpoint.getBy({siren: '200042935'});
+    const results = await elsesEpciReadEndpoint.getBy({siren: '200042935'});
 
     expect(results.length).toEqual(1);
-    const expected: ActiveEpciRead[] = [{...epci1, role_name: null}];
+    const expected: ElsesEpciRead[] = [{...epci1}];
     expect(results).toEqual(expected);
   });
-  it('should retrieve all (2) active EPCI if no siren is given', async () => {
-    const results = await activeEpciReadEndpoint.getBy({});
-    expect(results.length).toEqual(2);
+  it("should retrieve else's active EPCI (3) if no siren is given", async () => {
+    await supabase.auth.signIn(yoloCredentials);
+    const results = await elsesEpciReadEndpoint.getBy({});
+    expect(results.length).toEqual(3);
   });
 });
 
