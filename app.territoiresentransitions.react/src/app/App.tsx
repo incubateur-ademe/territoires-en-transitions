@@ -18,9 +18,9 @@ import {ConnectedRedirector} from 'app/Redirector';
 import 'app/app.css';
 import 'app/DesignSystem/core.css';
 import 'app/DesignSystem/variables.css';
-// import 'app/DesignSystem/buttons.css';
-// import '@gouvfr/dsfr/dist/css/buttons';
-// import '@gouvfr/dsfr/dist/dsfr';
+
+import '@gouvfr/dsfr/dist/dsfr/dsfr.css';
+
 import {Toasters} from 'app/Toasters';
 import {ScrollToTop} from 'app/ScrollToTop';
 import {createTheme, MuiThemeProvider} from '@material-ui/core';
@@ -38,345 +38,96 @@ const theme = createTheme({
   },
 });
 
-const SideMenu = () => (
-  <nav className="fr-sidemenu" role="navigation" aria-label="Menu latéral">
-    <div className="fr-sidemenu__inner">
-      <button
-        className="fr-sidemenu__btn"
-        aria-controls="fr-sidemenu-wrapper"
-        aria-expanded="false"
-      >
-        Dans cette rubrique
-      </button>
-      <div className="fr-collapse" id="fr-sidemenu-wrapper">
-        <div className="fr-sidemenu__title">Titre de rubrique</div>
-        <ul className="fr-sidemenu__list">
-          <li className="fr-sidemenu__item">
-            <button
-              className="fr-sidemenu__btn"
-              aria-expanded="false"
-              aria-controls="fr-sidemenu-item-0"
-            >
-              Niveau 1
-            </button>
-            <div className="fr-collapse" id="fr-sidemenu-item-0">
-              <ul className="fr-sidemenu__list">
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li className="fr-sidemenu__item fr-sidemenu__item--active">
-            <button
-              className="fr-sidemenu__btn"
-              aria-expanded="false"
-              aria-controls="fr-sidemenu-item-1"
-              aria-current="true"
-            >
-              Entrée menu active
-            </button>
-            <div className="fr-collapse" id="fr-sidemenu-item-1">
-              <ul className="fr-sidemenu__list">
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item fr-sidemenu__item--active">
-                  <a
-                    className="fr-sidemenu__link"
-                    href="#"
-                    target="_self"
-                    aria-current="page"
-                  >
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li className="fr-sidemenu__item">
-            <a className="fr-sidemenu__link" href="#" target="_self">
-              Accès direct
-            </a>
-          </li>
-          <li className="fr-sidemenu__item">
-            <button
-              className="fr-sidemenu__btn"
-              aria-expanded="false"
-              aria-controls="fr-sidemenu-item-3"
-            >
-              Niveau 1
-            </button>
-            <div className="fr-collapse" id="fr-sidemenu-item-3">
-              <ul className="fr-sidemenu__list">
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
+const Lala = () => (
+  <nav
+    className="fr-nav"
+    id="navigation-773"
+    role="navigation"
+    aria-label="Menu principal"
+  >
+    <ul className="fr-nav__list">
+      <li className="fr-nav__item">
+        <button
+          className="fr-nav__btn"
+          aria-expanded="true"
+          aria-controls="menu-776"
+          aria-current="true"
+        >
+          Entrée menu active et ouverte ... :(
+        </button>
+        <div
+          className="fr-collapse fr-menu fr-collapse__expanded"
+          id="menu-776"
+        >
+          <ul className="fr-menu__list">
+            <li>
+              <a className="fr-nav__link" href="#" target="_self">
+                Lien de navigation
+              </a>
+            </li>
+            <li>
+              <a
+                className="fr-nav__link"
+                href="#"
+                target="_self"
+                aria-current="page"
+              >
+                Lien de navigation
+              </a>
+            </li>
+            <li>
+              <a className="fr-nav__link" href="#" target="_self">
+                Lien de navigation
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li className="fr-nav__item">
+        <button
+          className="fr-nav__btn"
+          aria-expanded="false"
+          aria-controls="menu-774"
+        >
+          Entrée menu fermée
+        </button>
 
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li className="fr-sidemenu__item">
-            <button
-              className="fr-sidemenu__btn"
-              aria-expanded="false"
-              aria-controls="fr-sidemenu-item-4"
-            >
-              Niveau 1
-            </button>
-            <div className="fr-collapse" id="fr-sidemenu-item-4">
-              <ul className="fr-sidemenu__list">
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li className="fr-sidemenu__item">
-            <a className="fr-sidemenu__link" href="#" target="_self">
-              Accès direct
-            </a>
-          </li>
-          <li className="fr-sidemenu__item">
-            <button
-              className="fr-sidemenu__btn"
-              aria-expanded="false"
-              aria-controls="fr-sidemenu-item-6"
-            >
-              Niveau 1
-            </button>
-            <div className="fr-collapse" id="fr-sidemenu-item-6">
-              <ul className="fr-sidemenu__list">
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li className="fr-sidemenu__item">
-            <button
-              className="fr-sidemenu__btn"
-              aria-expanded="false"
-              aria-controls="fr-sidemenu-item-7"
-            >
-              Niveau 1
-            </button>
-            <div className="fr-collapse" id="fr-sidemenu-item-7">
-              <ul className="fr-sidemenu__list">
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li className="fr-sidemenu__item">
-            <a className="fr-sidemenu__link" href="#" target="_self">
-              Accès direct
-            </a>
-          </li>
-          <li className="fr-sidemenu__item">
-            <button
-              className="fr-sidemenu__btn"
-              aria-expanded="false"
-              aria-controls="fr-sidemenu-item-9"
-            >
-              Niveau 1
-            </button>
-            <div className="fr-collapse" id="fr-sidemenu-item-9">
-              <ul className="fr-sidemenu__list">
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
+        <div
+          className="fr-collapse fr-menu fr-collapse--expanded"
+          aria-expanded="true"
+          id="menu-774"
+        >
+          <ul className="fr-menu__list overflow-visible">
+            <li>
+              <a className="fr-nav__link" href="#" target="_self">
+                Lien de navigation
+              </a>
+            </li>
+            <li>
+              <a className="fr-nav__link" href="#" target="_self">
+                Lien de navigation
+              </a>
+            </li>
+
+            <li>
+              <a className="fr-nav__link" href="#" target="_self">
+                Lien de navigation
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li className="fr-nav__item">
+        <a className="fr-nav__link" href="#" target="_self">
+          accès direct
+        </a>
+      </li>
+      <li className="fr-nav__item">
+        <a className="fr-nav__link" href="#" target="_self">
+          accès direct
+        </a>
+      </li>
+    </ul>
   </nav>
 );
 
@@ -406,7 +157,7 @@ export const App = () => {
             </Route>
             <Route path={allEpcisPath}>
               <Header />
-              <SideMenu />
+              <Lala />
               <AllActiveEpcisPage />
             </Route>
             <Route path={'/collectivite/:epciId'}>
