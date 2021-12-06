@@ -79,6 +79,20 @@ create table private_epci_invitation
     created_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
+
+create view owned_epci
+as
+with current_droits as (
+    select *
+    from private_utilisateur_droit
+    where user_id = auth.uid() 
+    and private_utilisateur_droit.active
+)
+select siren, nom, role_name
+from current_droits
+    join epci on epci_id = epci.id
+order by nom;
+
 create view elses_epci
 as
 with active_epci as 
@@ -230,18 +244,6 @@ $$ language plpgsql;
 -- create function accept_invitation(invitation_id uuid);
 -- create function create_invitation();
 
-create view owned_epci
-as
-with current_droits as (
-    select *
-    from private_utilisateur_droit
-    where user_id = auth.uid() 
-    and private_utilisateur_droit.active
-)
-select siren, nom, role_name
-from current_droits
-    join epci on epci_id = epci.id
-order by nom;
 
 --------------------------------
 -------- REFERENTIEL -----------

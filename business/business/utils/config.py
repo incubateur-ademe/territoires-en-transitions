@@ -14,6 +14,7 @@ from business.core.domain.ports.domain_message_bus import AbstractDomainMessageB
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
+from business.referentiel.adapters.sql_referentiel_repo import SqlReferentielRepository
 from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
     AbstractRealtime,
@@ -54,12 +55,19 @@ class Config:
 
     def get_referentiel_repo(self) -> AbstractReferentielRepository:
         if self.ENV.referentiels_repository == "JSON":
-            if self.ENV.referentiels_repo_json is None:
+            if self.ENV.referentiels_repo_file is None:
                 raise ValueError(
                     "`REFERENTIEL_REPO_JSON` should de specified in mode JSON"
                 )
-            return JsonReferentielRepository(Path(self.ENV.referentiels_repo_json))
+            return JsonReferentielRepository(Path(self.ENV.referentiels_repo_file))
+        elif self.ENV.referentiels_repository == "SQL":
+            if self.ENV.referentiels_repo_file is None:
+                raise ValueError(
+                    "`REFERENTIEL_REPO_JSON` should de specified in mode JSON"
+                )
+            return SqlReferentielRepository(Path(self.ENV.referentiels_repo_file))
         else:
+            # PostgresReferentielRepository()
             raise NotImplementedError(
                 f"Referentiels repo adapter {self.ENV.referentiels_repository} not yet implemented."
             )

@@ -79,7 +79,7 @@ export const searchParents = (
 };
 
 export const referentielMesureDepth = (actionId: string): number =>
-  actionId.startsWith('economie_circulaire') ? 2 : 3;
+  actionId.startsWith('eci') ? 2 : 3;
 
 export const actionIdDepth = (actionId: string) => {
   const [, action] = actionId.split('__');
@@ -100,7 +100,7 @@ export const displayName = (action: ActionReferentiel) =>
     : action.nom;
 
 export const referentielId = (actionId: string): Referentiel =>
-  actionId.startsWith('economie_circulaire') ? 'eci' : 'cae';
+  actionId.startsWith('eci') ? 'eci' : 'cae';
 
 export const actionPath = (epciId: string, actionId: string): string => {
   const elements = actionId.split('.');

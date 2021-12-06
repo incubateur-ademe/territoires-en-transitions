@@ -27,22 +27,9 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
         ParseAndConvertMarkdownIndicateursToEntities
     ],
     events.IndicateurMarkdownConvertedToEntities: [StoreReferentielIndicateurs],
-    events.ExtractReferentielActionsToCsvTriggered: [ExtractReferentielActionsToCsv]
-    # events.MarkdownReferentielNodeConvertedToEntities: [
-    #     commands.StoreReferentielActions
-    # ],
-    # events.IndicateurMarkdownConvertedToEntities: [
-    #     commands.StoreReferentielIndicateurs
-    # ],
+    events.ExtractReferentielActionsToCsvTriggered: [ExtractReferentielActionsToCsv],
 }
 
-# COMMAND_HANDLERS: Dict[Type[commands.DomainCommand], Type[UseCase]] = {
-#     commands.ParseMarkdownReferentielFolder: ParseMarkdownReferentielFolder,
-#     commands.ConvertMarkdownReferentielNodeToEntities: ConvertMarkdownReferentielNodeToEntities,
-#     commands.StoreReferentielActions: StoreReferentielActions,
-#     commands.ParseAndConvertMarkdownIndicateursToEntities: ParseAndConvertMarkdownIndicateursToEntities,
-#     commands.StoreReferentielIndicateurs: StoreReferentielIndicateurs,
-# }
 
 # 2. Define config (necessary abstraction)
 class ReferentielConfig(Config):
@@ -90,7 +77,7 @@ def store_referentiels(
     config = ReferentielConfig(
         domain_message_bus,
         env_variables=EnvironmentVariables(
-            referentiels_repository=repo_option, referentiels_repo_json=to_json
+            referentiels_repository=repo_option, referentiels_repo_file=to_json
         ),
     )
     prepare_bus(
@@ -124,8 +111,8 @@ def store_referentiels(
     prompt="Referentiel repository option",
 )
 @click.option(
-    "--to-json",
-    prompt="Repo Json path (required if repo-option==JSON) ",
+    "--to-file",
+    prompt="Repo Output path (required if repo-option==JSON | SQL) ",
     default="./data/referentiel_repository.json",
 )
 @click.option("--actions/--no-actions", is_flag=True, default=True)
@@ -134,7 +121,7 @@ def store_referentiels(
 @click.option("--referentiel")
 def store_referentiels_command(
     repo_option: ReferetielsRepository,
-    to_json: Optional[str],
+    to_file: Optional[str],
     markdown_folder: str,
     actions: bool,
     indicateurs: bool,
@@ -149,7 +136,7 @@ def store_referentiels_command(
         - f"{markdown_foder}/indicateurs/{referentiel}/*md"
     """
     store_referentiels(
-        repo_option, to_json, markdown_folder, actions, indicateurs, referentiel
+        repo_option, to_file, markdown_folder, actions, indicateurs, referentiel
     )
 
 
@@ -159,6 +146,6 @@ if __name__ == "__main__":
 
 # Command lines
 # --------------
-# python business/referentiel/entrypoints/referentiels.py --repo-option JSON --referentiel "cae"
-# python business/referentiel/entrypoints/referentiels.py --repo-option JSON --referentiel "eci"
-# python business/referentiel/entrypoints/referentiels.py --repo-option JSON --referentiel "crte" --no-actions
+# python business/referentiel/entrypoints/cli.py --repo-option JSON --referentiel "cae"
+# python business/referentiel/entrypoints/cli.py --repo-option JSON --referentiel "eci"
+# python business/referentiel/entrypoints/cli.py --repo-option JSON --referentiel "crte" --no-actions

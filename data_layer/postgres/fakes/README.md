@@ -50,8 +50,14 @@ droits:
   - `auditeur` sur les EPCI #1, #2, #3, #4
 ```
 
-2. Actions du référentiel
-
+2. Statut action référentiel 
+```yaml
+modified_by: Yolo Dodo (17440546-f389-4d4f-bfdb-b0c94a1bd0f9)
+epci: #1
+action: cae_1.1.1.1.1
+avancement: fait
+concerne: true
+```
 
 3. Commentaire action référentiel
 Commentaire de l'action cae_1.2.3, ajouté par Yolo sur l'epci 1 ('Haut - Bugey Agglomération', '200042935', 'CA')

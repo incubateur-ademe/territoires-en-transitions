@@ -12,3 +12,4 @@ export const epci2: AllEpciRead = {
 
 export const yoloCredentials = {email: 'yolo@dodo.com', password: 'yolododo'};
 export const yuluCredentials = {email: 'yulu@dudu.com', password: 'yulududu'};
+export const yiliCredentials = {email: 'yili@didi.com', password: 'yilididi'};

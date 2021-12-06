@@ -10,9 +10,7 @@ const flattenActions = (actions: ActionReferentiel[]): ActionReferentiel[] =>
     actions
   );
 
-export const eciReferentiel = actions.find(
-  action => action.id === 'economie_circulaire'
-);
+export const eciReferentiel = actions.find(action => action.id === 'eci');
 
 export const eciAxes = eciReferentiel ? eciReferentiel.actions : [];
 // For ECI, main action is at level #1, here, we flatten the actions once.

@@ -29,7 +29,7 @@ def env_variables() -> EnvironmentVariables:
         referentiels_repository="JSON",
         labelisation_repositories="IN_MEMORY",
         realtime="REPLAY",
-        referentiels_repo_json=referentiels_repo_json,  # This implies that CLI has already run and generated referentiels in this file
+        referentiels_repo_file=referentiels_repo_json,  # This implies that CLI has already run and generated referentiels in this file
     )
 
 

@@ -19475,7 +19475,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__1.1',
+    id: 'eci_1.1',
     id_nomenclature: '1.1',
     nom: 'D\u00e9finir une strat\u00e9gie globale de la politique Economie Circulaire et assurer un portage politique fort',
     description:
@@ -19490,7 +19490,7 @@ export const actions: ActionReferentiel[] = [
     points: 30,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__1.1.1',
+        id: 'eci_1.1.1',
         id_nomenclature: '1.1.1',
         nom: 'S\u0027engager politiquement et mettre en place des moyens',
         description:
@@ -19503,7 +19503,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.1.1',
+            id: 'eci_1.1.1.1',
             id_nomenclature: '1.1.1.1',
             nom: 'Identifier un \u00e9lu r\u00e9f\u00e9rent en charge de la politique Economie Circulaire',
             description: '',
@@ -19516,7 +19516,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.1.2',
+            id: 'eci_1.1.1.2',
             id_nomenclature: '1.1.1.2',
             nom: 'Engager la politique Economie Circulaire',
             description: '',
@@ -19529,7 +19529,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.1.3',
+            id: 'eci_1.1.1.3',
             id_nomenclature: '1.1.1.3',
             nom: 'Identifier l\u0027\u00e9quipe technique',
             description: '',
@@ -19542,7 +19542,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.1.4',
+            id: 'eci_1.1.1.4',
             id_nomenclature: '1.1.1.4',
             nom: 'Allouer un budget \u00e0 la politique \u00e9conomie circulaire',
             description: '',
@@ -19557,7 +19557,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__1.1.2',
+        id: 'eci_1.1.2',
         id_nomenclature: '1.1.2',
         nom: 'R\u00e9aliser le diagnostic de l\u0027\u00e9conomie circulaire',
         description:
@@ -19570,7 +19570,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.2.1',
+            id: 'eci_1.1.2.1',
             id_nomenclature: '1.1.2.1',
             nom: 'Identifier les enjeux et objectifs en lien avec l\u0027\u00e9conomie circulaire  dans les documents de planification existants',
             description: '',
@@ -19583,7 +19583,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.2.2',
+            id: 'eci_1.1.2.2',
             id_nomenclature: '1.1.2.2',
             nom: 'Int\u00e9grer dans le diagnostic une analyse des secteurs \u00e9conomiques',
             description: '',
@@ -19596,7 +19596,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.2.3',
+            id: 'eci_1.1.2.3',
             id_nomenclature: '1.1.2.3',
             nom: 'Int\u00e9grer dans le diagnostic une analyse des enjeux environnementaux',
             description: '',
@@ -19609,7 +19609,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.2.4',
+            id: 'eci_1.1.2.4',
             id_nomenclature: '1.1.2.4',
             nom: 'Int\u00e9grer dans le diagnostic une analyse des enjeux sociaux',
             description: '',
@@ -19622,7 +19622,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.2.5',
+            id: 'eci_1.1.2.5',
             id_nomenclature: '1.1.2.5',
             nom: 'R\u00e9aliser un recensement des acteurs et des initiatives',
             description: '',
@@ -19637,7 +19637,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__1.1.3',
+        id: 'eci_1.1.3',
         id_nomenclature: '1.1.3',
         nom: '\u00c9largir la gouvernance en interne et en externe',
         description:
@@ -19650,7 +19650,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.3.1',
+            id: 'eci_1.1.3.1',
             id_nomenclature: '1.1.3.1',
             nom: 'Mettre en place un comit\u00e9 de pilotage interne \u00e9largi',
             description: '',
@@ -19663,7 +19663,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.3.2',
+            id: 'eci_1.1.3.2',
             id_nomenclature: '1.1.3.2',
             nom: 'Mettre en place une gouvernance \u00e9largie avec les repr\u00e9sentants des acteurs du territoire (soci\u00e9t\u00e9 civile, acteurs publics, acteurs \u00e9conomiques)',
             description: '',
@@ -19676,7 +19676,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.3.3',
+            id: 'eci_1.1.3.3',
             id_nomenclature: '1.1.3.3',
             nom: 'Mettre en place des groupes de travail pour la construction des actions \u00e9conomie circulaire',
             description: '',
@@ -19691,7 +19691,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__1.1.4',
+        id: 'eci_1.1.4',
         id_nomenclature: '1.1.4',
         nom: 'Adopter une strat\u00e9gie et un programme d\u0027actions \u00c9conomie Circulaire',
         description:
@@ -19704,7 +19704,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.1',
+            id: 'eci_1.1.4.1',
             id_nomenclature: '1.1.4.1',
             nom: 'Int\u00e8grer dans la strat\u00e9gie les enjeux \u00e9conomiques, environnementaux et sociaux',
             description: '',
@@ -19717,7 +19717,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.2',
+            id: 'eci_1.1.4.2',
             id_nomenclature: '1.1.4.2',
             nom: 'Fixer dans la strat\u00e9gie des caps \u00e0 court, moyen et long terme',
             description: '',
@@ -19730,7 +19730,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.3',
+            id: 'eci_1.1.4.3',
             id_nomenclature: '1.1.4.3',
             nom: 'Cibler dans la strat\u00e9gie la soci\u00e9t\u00e9 civile, les acteurs publics et les acteurs \u00e9conomiques',
             description: '',
@@ -19743,7 +19743,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.4',
+            id: 'eci_1.1.4.4',
             id_nomenclature: '1.1.4.4',
             nom: 'Couvrir dans la strat\u00e9gie tous les axes de l\u0027\u00e9conomie circulaire',
             description: '',
@@ -19756,7 +19756,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.5',
+            id: 'eci_1.1.4.5',
             id_nomenclature: '1.1.4.5',
             nom: 'Int\u00e9grer dans le programme d\u0027actions des actions vers la soci\u00e9t\u00e9 civile',
             description: '',
@@ -19769,7 +19769,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.6',
+            id: 'eci_1.1.4.6',
             id_nomenclature: '1.1.4.6',
             nom: 'Int\u00e9grer dans le programme d\u0027actions des actions vers les acteurs publics',
             description: '',
@@ -19782,7 +19782,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.7',
+            id: 'eci_1.1.4.7',
             id_nomenclature: '1.1.4.7',
             nom: 'Int\u00e9grer dans le programme d\u0027actions des actions vers les acteurs \u00e9conomiques',
             description: '',
@@ -19795,7 +19795,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.8',
+            id: 'eci_1.1.4.8',
             id_nomenclature: '1.1.4.8',
             nom: 'Int\u00e9grer dans le programme d\u0027actions des actions sur le pilier approvisionnement durable de l\u0027\u00e9conomie circulaire',
             description: '',
@@ -19808,7 +19808,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.9',
+            id: 'eci_1.1.4.9',
             id_nomenclature: '1.1.4.9',
             nom: 'Int\u00e9grer dans le programme d\u0027actions des actions sur le pilier \u00e9co-conception de l\u0027\u00e9conomie circulaire',
             description: '',
@@ -19821,7 +19821,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.10',
+            id: 'eci_1.1.4.10',
             id_nomenclature: '1.1.4.10',
             nom: 'Int\u00e9grer dans le programme d\u0027actions des actions sur le pilier \u00e9cologie industrielle et territoriale de l\u0027\u00e9conomie circulaire',
             description: '',
@@ -19834,7 +19834,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.11',
+            id: 'eci_1.1.4.11',
             id_nomenclature: '1.1.4.11',
             nom: 'Int\u00e9grer dans le programme d\u0027actions des actions sur le pilier \u00e9conomie de la fonctionnalit\u00e9 de l\u0027\u00e9conomie circulaire',
             description: '',
@@ -19847,7 +19847,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.12',
+            id: 'eci_1.1.4.12',
             id_nomenclature: '1.1.4.12',
             nom: 'Int\u00e9grer dans le programme d\u0027actions des actions sur le pilier consommation responsable de l\u0027\u00e9conomie circulaire',
             description: '',
@@ -19860,7 +19860,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.13',
+            id: 'eci_1.1.4.13',
             id_nomenclature: '1.1.4.13',
             nom: 'Int\u00e9grer dans le programme d\u0027actions des actions sur le pilier allongement de la dur\u00e9e d\u0027usage de l\u0027\u00e9conomie circulaire',
             description: '',
@@ -19873,7 +19873,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.4.14',
+            id: 'eci_1.1.4.14',
             id_nomenclature: '1.1.4.14',
             nom: 'Int\u00e9grer dans le programme d\u0027actions des actions sur le pilier recyclage de l\u0027\u00e9conomie circulaire',
             description: '',
@@ -19888,7 +19888,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__1.1.5',
+        id: 'eci_1.1.5',
         id_nomenclature: '1.1.5',
         nom: 'Mettre en \u0153uvre et valoriser les actions',
         description:
@@ -19901,7 +19901,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.5.1',
+            id: 'eci_1.1.5.1',
             id_nomenclature: '1.1.5.1',
             nom: 'Valoriser des actions ant\u00e9rieures \u00e0 la strat\u00e9gie',
             description: '',
@@ -19914,7 +19914,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.5.2',
+            id: 'eci_1.1.5.2',
             id_nomenclature: '1.1.5.2',
             nom: 'Valoriser plus de 20% des actions issues du programme d\u0027actions',
             description: '',
@@ -19927,7 +19927,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.5.3',
+            id: 'eci_1.1.5.3',
             id_nomenclature: '1.1.5.3',
             nom: 'Valoriser plus de 50% des actions issues du programme d\u0027actions',
             description: '',
@@ -19940,7 +19940,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.1.5.4',
+            id: 'eci_1.1.5.4',
             id_nomenclature: '1.1.5.4',
             nom: 'Couvrir les diff\u00e9rents pilliers de l\u0027\u00e9conomie circulaire avec le programme d\u0027actions r\u00e9alis\u00e9',
             description: '',
@@ -19957,7 +19957,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__1.2',
+    id: 'eci_1.2',
     id_nomenclature: '1.2',
     nom: 'D\u00e9velopper une d\u00e9marche transversale avec l\u0027ensemble des politiques de la collectivit\u00e9',
     description:
@@ -19971,7 +19971,7 @@ export const actions: ActionReferentiel[] = [
     points: 30,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__1.2.1',
+        id: 'eci_1.2.1',
         id_nomenclature: '1.2.1',
         nom: 'Former en interne',
         description:
@@ -19984,7 +19984,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__1.2.1.1',
+            id: 'eci_1.2.1.1',
             id_nomenclature: '1.2.1.1',
             nom: 'D\u00e9finir un programme de formation \u00e9conomie circulaire',
             description: '',
@@ -19997,7 +19997,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.2.1.2',
+            id: 'eci_1.2.1.2',
             id_nomenclature: '1.2.1.2',
             nom: 'Inclure dans le programme de formation des formations \u00e9conomie circulaire pour les \u00e9lus et les techniciens',
             description: '',
@@ -20010,7 +20010,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.2.1.3',
+            id: 'eci_1.2.1.3',
             id_nomenclature: '1.2.1.3',
             nom: 'Disposer de plus de 20% des unit\u00e9s de gestion qui ont au moins 1 salari\u00e9 form\u00e9 \u00e0 l\u0027\u00e9conomie circulaire',
             description: '',
@@ -20023,7 +20023,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.2.1.4',
+            id: 'eci_1.2.1.4',
             id_nomenclature: '1.2.1.4',
             nom: 'Former le DGA/DGS \u00e0 l\u0027\u00e9conomie circulaire',
             description: '',
@@ -20036,7 +20036,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.2.1.5',
+            id: 'eci_1.2.1.5',
             id_nomenclature: '1.2.1.5',
             nom: 'Former plus de 20% des \u00e9lus \u00e0 l\u0027\u00e9conomie circulaire',
             description: '',
@@ -20051,7 +20051,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__1.2.2',
+        id: 'eci_1.2.2',
         id_nomenclature: '1.2.2',
         nom: 'Mettre en place une transversalit\u00e9 des actions et des projets',
         description:
@@ -20066,7 +20066,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__1.2.3',
+        id: 'eci_1.2.3',
         id_nomenclature: '1.2.3',
         nom: 'Int\u00e9grer l\u0027\u00e9conomie circulaire dans les politiques territoriales',
         description:
@@ -20081,7 +20081,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__1.2.4',
+        id: 'eci_1.2.4',
         id_nomenclature: '1.2.4',
         nom: 'Mettre en place une transversalit\u00e9 inter-collectivit\u00e9s',
         description:
@@ -20094,7 +20094,7 @@ export const actions: ActionReferentiel[] = [
         points: 40,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__1.2.4.1',
+            id: 'eci_1.2.4.1',
             id_nomenclature: '1.2.4.1',
             nom: 'Partager avec les EPCI les observations sur les gisements de d\u00e9chets \u00e0 optimiser',
             description: '',
@@ -20107,7 +20107,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.2.4.2',
+            id: 'eci_1.2.4.2',
             id_nomenclature: '1.2.4.2',
             nom: 'Accompagner collectivement les EPCI adh\u00e9rents vers la construction d\u0027actions sur leurs autres comp\u00e9tences',
             description: '',
@@ -20120,7 +20120,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.2.4.3',
+            id: 'eci_1.2.4.3',
             id_nomenclature: '1.2.4.3',
             nom: 'R\u00e9aliser des actions d\u0027am\u00e9lioration en amont de la production de d\u00e9chets dans le cadre d\u0027une comp\u00e9tence',
             description: '',
@@ -20133,7 +20133,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.2.4.4',
+            id: 'eci_1.2.4.4',
             id_nomenclature: '1.2.4.4',
             nom: 'R\u00e9aliser des actions d\u0027am\u00e9lioration en amont de la production de d\u00e9chets dans le cadre de plusieurs comp\u00e9tences',
             description: '',
@@ -20150,7 +20150,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__1.3',
+    id: 'eci_1.3',
     id_nomenclature: '1.3',
     nom: 'Suivre, \u00e9valuer et am\u00e9liorer le d\u00e9ploiement de la politique \u00c9conomie Circulaire',
     description:
@@ -20164,7 +20164,7 @@ export const actions: ActionReferentiel[] = [
     points: 30,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__1.3.1',
+        id: 'eci_1.3.1',
         id_nomenclature: '1.3.1',
         nom: 'D\u00e9terminer des indicateurs sp\u00e9cifiques dot\u00e9s d\u0027objectifs',
         description:
@@ -20177,7 +20177,7 @@ export const actions: ActionReferentiel[] = [
         points: 50,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__1.3.1.1',
+            id: 'eci_1.3.1.1',
             id_nomenclature: '1.3.1.1',
             nom: 'Identifier les indicateurs de r\u00e9sultat',
             description: '',
@@ -20190,7 +20190,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.3.1.2',
+            id: 'eci_1.3.1.2',
             id_nomenclature: '1.3.1.2',
             nom: 'Identifier les indicateurs d\u0027impact',
             description: '',
@@ -20203,7 +20203,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.3.1.3',
+            id: 'eci_1.3.1.3',
             id_nomenclature: '1.3.1.3',
             nom: 'Identifier les indicateurs sp\u00e9cifiques par secteur strat\u00e9gique (en lien avec l\u0027orientation 3.1)',
             description: '',
@@ -20218,7 +20218,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__1.3.2',
+        id: 'eci_1.3.2',
         id_nomenclature: '1.3.2',
         nom: 'Effectuer le bilan et ajuster les actions',
         description:
@@ -20231,7 +20231,7 @@ export const actions: ActionReferentiel[] = [
         points: 50,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__1.3.2.1',
+            id: 'eci_1.3.2.1',
             id_nomenclature: '1.3.2.1',
             nom: 'R\u00e9aliser le bilan',
             description: '',
@@ -20244,7 +20244,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.3.2.2',
+            id: 'eci_1.3.2.2',
             id_nomenclature: '1.3.2.2',
             nom: 'Partager le bilan avec la gouvernance',
             description: '',
@@ -20257,7 +20257,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.3.2.3',
+            id: 'eci_1.3.2.3',
             id_nomenclature: '1.3.2.3',
             nom: 'Communiquer sur le bilan \u00e0 l\u0027externe',
             description: '',
@@ -20270,7 +20270,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__1.3.2.4',
+            id: 'eci_1.3.2.4',
             id_nomenclature: '1.3.2.4',
             nom: 'Mettre \u00e0 jour r\u00e9guli\u00e8rement le programme d\u0027actions au regard, notamment, de l\u0027\u00e9valuation',
             description: '',
@@ -20287,7 +20287,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__2.1',
+    id: 'eci_2.1',
     id_nomenclature: '2.1',
     nom: 'Disposer d\u0027un programme de pr\u00e9vention des d\u00e9chets',
     description:
@@ -20301,7 +20301,7 @@ export const actions: ActionReferentiel[] = [
     points: 10,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__2.1.0',
+        id: 'eci_2.1.0',
         id_nomenclature: '2.1.0',
         nom: 'Suivre la r\u00e9glementation',
         description:
@@ -20316,7 +20316,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.1.1',
+        id: 'eci_2.1.1',
         id_nomenclature: '2.1.1',
         nom: 'Mettre en \u0153uvre les actions du PLPDMA',
         description:
@@ -20329,7 +20329,7 @@ export const actions: ActionReferentiel[] = [
         points: 40,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.1.1.1',
+            id: 'eci_2.1.1.1',
             id_nomenclature: '2.1.1.1',
             nom: 'D\u00e9ployer 3 \u00e0 9 actions sur l\u0027ann\u00e9e',
             description: '',
@@ -20342,7 +20342,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.1.1.2',
+            id: 'eci_2.1.1.2',
             id_nomenclature: '2.1.1.2',
             nom: 'D\u00e9ployer 10 \u00e0 14 actions sur l\u0027ann\u00e9e',
             description: '',
@@ -20355,7 +20355,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.1.1.3',
+            id: 'eci_2.1.1.3',
             id_nomenclature: '2.1.1.3',
             nom: 'D\u00e9ployer 15 actions ou plus',
             description: '',
@@ -20368,7 +20368,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.1.1.4',
+            id: 'eci_2.1.1.4',
             id_nomenclature: '2.1.1.4',
             nom: 'Exploiter 1 ou 2 axes du guide PLPDMA de l\u0027ADEME',
             description: '',
@@ -20381,7 +20381,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.1.1.5',
+            id: 'eci_2.1.1.5',
             id_nomenclature: '2.1.1.5',
             nom: 'Exploiter 3 ou 4 axes du guide PLPDMA de l\u0027ADEME',
             description: '',
@@ -20394,7 +20394,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.1.1.6',
+            id: 'eci_2.1.1.6',
             id_nomenclature: '2.1.1.6',
             nom: 'Exploiter 5 ou 6 axes du guide PLPDMA de l\u0027ADEME',
             description: '',
@@ -20407,7 +20407,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.1.1.7',
+            id: 'eci_2.1.1.7',
             id_nomenclature: '2.1.1.7',
             nom: 'Exploiter les 7 axes du guide PLPDMA de l\u0027ADEME',
             description: '',
@@ -20422,7 +20422,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.1.2',
+        id: 'eci_2.1.2',
         id_nomenclature: '2.1.2',
         nom: 'Disposer d\u0027une commission consultative d\u0027\u00e9laboration et de suivi (CCES) \u00e9largie',
         description:
@@ -20435,7 +20435,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.1.2.1',
+            id: 'eci_2.1.2.1',
             id_nomenclature: '2.1.2.1',
             nom: 'Organiser au moins 1 r\u00e9union de la CCES par an',
             description: '',
@@ -20448,7 +20448,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.1.2.2',
+            id: 'eci_2.1.2.2',
             id_nomenclature: '2.1.2.2',
             nom: '\u00c9largir la composition de la CCES au-del\u00e0 des \u00e9lus',
             description: '',
@@ -20463,7 +20463,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.1.3',
+        id: 'eci_2.1.3',
         id_nomenclature: '2.1.3',
         nom: 'Suivre le PLPDMA',
         description:
@@ -20479,7 +20479,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__2.2',
+    id: 'eci_2.2',
     id_nomenclature: '2.2',
     nom: 'Am\u00e9liorer l\u0027efficience du syst\u00e8me de collecte',
     description:
@@ -20493,7 +20493,7 @@ export const actions: ActionReferentiel[] = [
     points: 15,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__2.2.0',
+        id: 'eci_2.2.0',
         id_nomenclature: '2.2.0',
         nom: 'Respecter la r\u00e9glementation',
         description:
@@ -20508,7 +20508,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.2.1',
+        id: 'eci_2.2.1',
         id_nomenclature: '2.2.1',
         nom: 'Connaitre l\u0027\u00e9tat du service public de collecte des d\u00e9chets',
         description:
@@ -20521,7 +20521,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.2.1.1',
+            id: 'eci_2.2.1.1',
             id_nomenclature: '2.2.1.1',
             nom: 'Disposer d\u0027une analyse actualis\u00e9e par rapport \u00e0 l\u0027\u00e9tat du syst\u00e8me de collecte sur le taux d\u0027utilisation du service',
             description: '',
@@ -20534,7 +20534,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.2.1.2',
+            id: 'eci_2.2.1.2',
             id_nomenclature: '2.2.1.2',
             nom: 'Disposer d\u0027une analyse actualis\u00e9e par rapport \u00e0 l\u0027\u00e9tat du syst\u00e8me de collecte sur l\u0027\u00e9valuation du parc de d\u00e9ch\u00e8teries',
             description: '',
@@ -20547,7 +20547,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.2.1.3',
+            id: 'eci_2.2.1.3',
             id_nomenclature: '2.2.1.3',
             nom: 'Disposer d\u0027une \u00e9tude pr\u00e9alable \u00e0 la mise en place de solutions alternatives pour diminuer les flux trait\u00e9s',
             description: '',
@@ -20562,7 +20562,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.2.2',
+        id: 'eci_2.2.2',
         id_nomenclature: '2.2.2',
         nom: 'D\u00e9finir un plan d\u0027action',
         description:
@@ -20575,7 +20575,7 @@ export const actions: ActionReferentiel[] = [
         points: 30,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.2.2.1',
+            id: 'eci_2.2.2.1',
             id_nomenclature: '2.2.2.1',
             nom: 'Disposer d\u0027un plan d\u0027actions en cours d\u0027\u00e9laboration',
             description: '',
@@ -20588,7 +20588,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.2.2.2',
+            id: 'eci_2.2.2.2',
             id_nomenclature: '2.2.2.2',
             nom: 'Disposer d\u0027un plan d\u0027actions valid\u00e9 par les \u00e9lus',
             description: '',
@@ -20603,7 +20603,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.2.3',
+        id: 'eci_2.2.3',
         id_nomenclature: '2.2.3',
         nom: 'Mettre en \u0153uvre le plan d\u0027actions et communiquer',
         description:
@@ -20616,7 +20616,7 @@ export const actions: ActionReferentiel[] = [
         points: 50,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.2.3.1',
+            id: 'eci_2.2.3.1',
             id_nomenclature: '2.2.3.1',
             nom: 'Disposer de bac puc\u00e9s et contr\u00f4ler l\u0027acc\u00e8s aux d\u00e9ch\u00e8teries',
             description: '',
@@ -20629,7 +20629,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.2.3.2',
+            id: 'eci_2.2.3.2',
             id_nomenclature: '2.2.3.2',
             nom: 'Optimiser le r\u00e9seau de d\u00e9ch\u00e8teries',
             description: '',
@@ -20642,7 +20642,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.2.3.3',
+            id: 'eci_2.2.3.3',
             id_nomenclature: '2.2.3.3',
             nom: 'D\u00e9velopper l\u0027accueil de nouvelles fili\u00e8res en d\u00e9ch\u00e8teries (li\u00e9es aux REP ou non)',
             description: '',
@@ -20655,7 +20655,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.2.3.4',
+            id: 'eci_2.2.3.4',
             id_nomenclature: '2.2.3.4',
             nom: 'Trier \u00e0 la source les bio d\u00e9chets',
             description: '',
@@ -20668,7 +20668,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.2.3.5',
+            id: 'eci_2.2.3.5',
             id_nomenclature: '2.2.3.5',
             nom: '\u00c9tendre les consignes de tri',
             description: '',
@@ -20685,7 +20685,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__2.3',
+    id: 'eci_2.3',
     id_nomenclature: '2.3',
     nom: 'Am\u00e9liorer la valorisation des d\u00e9chets (dont organiques)',
     description:
@@ -20700,7 +20700,7 @@ export const actions: ActionReferentiel[] = [
     points: 20,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__2.3.0',
+        id: 'eci_2.3.0',
         id_nomenclature: '2.3.0',
         nom: 'Respecter la r\u00e8glementation',
         description:
@@ -20715,7 +20715,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.3.1',
+        id: 'eci_2.3.1',
         id_nomenclature: '2.3.1',
         nom: 'Connaitre les flux',
         description:
@@ -20728,7 +20728,7 @@ export const actions: ActionReferentiel[] = [
         points: 33,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.1.1',
+            id: 'eci_2.3.1.1',
             id_nomenclature: '2.3.1.1',
             nom: 'Connaitre les flux de d\u00e9chets',
             description: '',
@@ -20741,7 +20741,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.1.2',
+            id: 'eci_2.3.1.2',
             id_nomenclature: '2.3.1.2',
             nom: 'Disposer d\u0027un \u00e9tat des lieux de l\u0027utilisation des fili\u00e8res existantes',
             description: '',
@@ -20754,7 +20754,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.1.3',
+            id: 'eci_2.3.1.3',
             id_nomenclature: '2.3.1.3',
             nom: 'Etudier l\u0027optimisation des fili\u00e8res envisageables',
             description: '',
@@ -20769,7 +20769,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.3.2',
+        id: 'eci_2.3.2',
         id_nomenclature: '2.3.2',
         nom: 'Concr\u00e9tiser les solutions issues des \u00e9tudes d\u0027optimisation',
         description:
@@ -20782,7 +20782,7 @@ export const actions: ActionReferentiel[] = [
         points: 33,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.2.1',
+            id: 'eci_2.3.2.1',
             id_nomenclature: '2.3.2.1',
             nom: 'Concr\u00e9tiser au moins une solution et avoir concr\u00e9tis\u00e9 moins d\u0027un tiers des solutions retenues dans l\u2019\u00e9tude',
             description: '',
@@ -20795,7 +20795,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.2.2',
+            id: 'eci_2.3.2.2',
             id_nomenclature: '2.3.2.2',
             nom: 'Concr\u00e9tiser entre un tiers et deux tiers des solutions',
             description: '',
@@ -20808,7 +20808,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.2.3',
+            id: 'eci_2.3.2.3',
             id_nomenclature: '2.3.2.3',
             nom: 'Concr\u00e9tiser plus de deux tiers des solutions',
             description: '',
@@ -20821,7 +20821,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.2.4',
+            id: 'eci_2.3.2.4',
             id_nomenclature: '2.3.2.4',
             nom: 'Toutes les solutions ont \u00e9t\u00e9 concr\u00e9tis\u00e9es',
             description: '',
@@ -20836,7 +20836,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.3.3',
+        id: 'eci_2.3.3',
         id_nomenclature: '2.3.3',
         nom: 'Suivre et accompagner les installations de traitement',
         description:
@@ -20849,7 +20849,7 @@ export const actions: ActionReferentiel[] = [
         points: 34,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.3.1',
+            id: 'eci_2.3.3.1',
             id_nomenclature: '2.3.3.1',
             nom: 'Mesurer l\u0027effet de l\u0027accompagnement',
             description: '',
@@ -20862,7 +20862,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.3.2',
+            id: 'eci_2.3.3.2',
             id_nomenclature: '2.3.3.2',
             nom: 'Valoriser au moins 50% des d\u00e9chets',
             description: '',
@@ -20875,7 +20875,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.3.3',
+            id: 'eci_2.3.3.3',
             id_nomenclature: '2.3.3.3',
             nom: 'Valoriser au moins 60% des d\u00e9chets',
             description: '',
@@ -20888,7 +20888,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.3.4',
+            id: 'eci_2.3.3.4',
             id_nomenclature: '2.3.3.4',
             nom: 'Valoriser au moins 70% des d\u00e9chets',
             description: '',
@@ -20901,7 +20901,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.3.5',
+            id: 'eci_2.3.3.5',
             id_nomenclature: '2.3.3.5',
             nom: 'Valoriser au moins 80% des d\u00e9chets',
             description: '',
@@ -20914,7 +20914,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.3.3.6',
+            id: 'eci_2.3.3.6',
             id_nomenclature: '2.3.3.6',
             nom: 'Valoriser au moins 90% des d\u00e9chets',
             description: '',
@@ -20931,7 +20931,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__2.4',
+    id: 'eci_2.4',
     id_nomenclature: '2.4',
     nom: 'R\u00e9duire les impacts environnementaux et sociaux de la gestion des d\u00e9chets',
     description:
@@ -20946,7 +20946,7 @@ export const actions: ActionReferentiel[] = [
     points: 20,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__2.4.1',
+        id: 'eci_2.4.1',
         id_nomenclature: '2.4.1',
         nom: 'Identifier les pistes de r\u00e9duction des impacts',
         description:
@@ -20959,7 +20959,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.1.1',
+            id: 'eci_2.4.1.1',
             id_nomenclature: '2.4.1.1',
             nom: 'Programmer une \u00e9tude pour identifier les pistes de r\u00e9duction des impacts',
             description: '',
@@ -20972,7 +20972,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.1.2',
+            id: 'eci_2.4.1.2',
             id_nomenclature: '2.4.1.2',
             nom: 'R\u00e9aliser l\u0027\u00e9tude et identifier les pistes de r\u00e9duction des impacts',
             description: '',
@@ -20985,7 +20985,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.1.3',
+            id: 'eci_2.4.1.3',
             id_nomenclature: '2.4.1.3',
             nom: 'Prioriser les actions d\u0027optimisation',
             description: '',
@@ -21000,7 +21000,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.4.2',
+        id: 'eci_2.4.2',
         id_nomenclature: '2.4.2',
         nom: 'G\u00e9rer les impacts de la collecte des d\u00e9chets',
         description:
@@ -21013,7 +21013,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.2.1',
+            id: 'eci_2.4.2.1',
             id_nomenclature: '2.4.2.1',
             nom: 'Mettre en place le plan d\u0027actions',
             description: '',
@@ -21026,7 +21026,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.2.2',
+            id: 'eci_2.4.2.2',
             id_nomenclature: '2.4.2.2',
             nom: 'Chiffer les objectifs du plan d\u0027actions',
             description: '',
@@ -21039,7 +21039,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.2.3',
+            id: 'eci_2.4.2.3',
             id_nomenclature: '2.4.2.3',
             nom: 'D\u00e9marrer la mise en \u0153uvre des actions',
             description: '',
@@ -21052,7 +21052,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.2.4',
+            id: 'eci_2.4.2.4',
             id_nomenclature: '2.4.2.4',
             nom: 'Mettre en place le pilotage de la progression des actions',
             description: '',
@@ -21067,7 +21067,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.4.3',
+        id: 'eci_2.4.3',
         id_nomenclature: '2.4.3',
         nom: 'Mettre en place le report modal de la collecte des d\u00e9chets',
         description:
@@ -21082,7 +21082,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.4.4',
+        id: 'eci_2.4.4',
         id_nomenclature: '2.4.4',
         nom: 'G\u00e9rer les impacts du traitement des d\u00e9chets',
         description:
@@ -21095,7 +21095,7 @@ export const actions: ActionReferentiel[] = [
         points: 30,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.4.1',
+            id: 'eci_2.4.4.1',
             id_nomenclature: '2.4.4.1',
             nom: 'Mettre en place le plan d\u0027actions',
             description: '',
@@ -21108,7 +21108,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.4.2',
+            id: 'eci_2.4.4.2',
             id_nomenclature: '2.4.4.2',
             nom: 'Chiffrer les objectifs du plan d\u0027actions',
             description: '',
@@ -21121,7 +21121,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.4.3',
+            id: 'eci_2.4.4.3',
             id_nomenclature: '2.4.4.3',
             nom: 'D\u00e9marrer la mise en \u0153uvre des actions',
             description: '',
@@ -21134,7 +21134,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.4.4',
+            id: 'eci_2.4.4.4',
             id_nomenclature: '2.4.4.4',
             nom: 'Mettre en place le pilotage de la progression des actions',
             description: '',
@@ -21149,7 +21149,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.4.5',
+        id: 'eci_2.4.5',
         id_nomenclature: '2.4.5',
         nom: 'Communiquer sur les impacts',
         description:
@@ -21162,7 +21162,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.5.1',
+            id: 'eci_2.4.5.1',
             id_nomenclature: '2.4.5.1',
             nom: 'Planifier les actions de communication',
             description: '',
@@ -21175,7 +21175,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.5.2',
+            id: 'eci_2.4.5.2',
             id_nomenclature: '2.4.5.2',
             nom: 'R\u00e9aliser une communication \u00e9crite',
             description: '',
@@ -21188,7 +21188,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.5.3',
+            id: 'eci_2.4.5.3',
             id_nomenclature: '2.4.5.3',
             nom: 'R\u00e9aliser une communication orale (r\u00e9unions d\u0027information, etc.)',
             description: '',
@@ -21201,7 +21201,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.5.4',
+            id: 'eci_2.4.5.4',
             id_nomenclature: '2.4.5.4',
             nom: 'Communiquer sur les impacts de la gestion des d\u00e9chets',
             description: '',
@@ -21214,7 +21214,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.4.5.5',
+            id: 'eci_2.4.5.5',
             id_nomenclature: '2.4.5.5',
             nom: 'Communiquer pour pr\u00e9venir les comportements ind\u00e9sirables',
             description: '',
@@ -21231,7 +21231,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__2.5',
+    id: 'eci_2.5',
     id_nomenclature: '2.5',
     nom: 'Cr\u00e9er du lien avec les acteurs \u00e9conomiques du territoire pour cr\u00e9er des dynamiques sur leurs d\u00e9chets',
     description:
@@ -21246,7 +21246,7 @@ export const actions: ActionReferentiel[] = [
     points: 15,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__2.5.1',
+        id: 'eci_2.5.1',
         id_nomenclature: '2.5.1',
         nom: 'Informer les professionnels',
         description:
@@ -21261,7 +21261,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.5.2',
+        id: 'eci_2.5.2',
         id_nomenclature: '2.5.2',
         nom: 'Conseiller les professionnels',
         description:
@@ -21274,7 +21274,7 @@ export const actions: ActionReferentiel[] = [
         points: 50,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.5.2.1',
+            id: 'eci_2.5.2.1',
             id_nomenclature: '2.5.2.1',
             nom: 'Identifier les crit\u00e8res de priorisation des entreprises \u00e0 conseiller',
             description: '',
@@ -21287,7 +21287,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.5.2.2',
+            id: 'eci_2.5.2.2',
             id_nomenclature: '2.5.2.2',
             nom: 'Conseiller toutes les entreprises cibl\u00e9es',
             description: '',
@@ -21300,7 +21300,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.5.2.3',
+            id: 'eci_2.5.2.3',
             id_nomenclature: '2.5.2.3',
             nom: 'Disposer d\u0027un taux de satisfaction \u00e9lev\u00e9 des entreprises conseill\u00e9es',
             description: '',
@@ -21315,7 +21315,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__2.5.3',
+        id: 'eci_2.5.3',
         id_nomenclature: '2.5.3',
         nom: 'Structurer et mettre en r\u00e9seau les acteurs',
         description:
@@ -21328,7 +21328,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__2.5.3.1',
+            id: 'eci_2.5.3.1',
             id_nomenclature: '2.5.3.1',
             nom: 'Mettre en place des moyens pour identifier ou f\u00e9d\u00e9rer des r\u00e9seaux d\u0027acteurs sur le territoire',
             description: '',
@@ -21341,7 +21341,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.5.3.2',
+            id: 'eci_2.5.3.2',
             id_nomenclature: '2.5.3.2',
             nom: 'Mettre en place des moyens pour accompagner les projets dans leur d\u00e9finition',
             description: '',
@@ -21354,7 +21354,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__2.5.3.3',
+            id: 'eci_2.5.3.3',
             id_nomenclature: '2.5.3.3',
             nom: 'Mettre en place des moyens pour soutenir le d\u00e9ploiement des projets',
             description: '',
@@ -21371,7 +21371,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__3.1',
+    id: 'eci_3.1',
     id_nomenclature: '3.1',
     nom: 'Identifier et d\u00e9velopper des fili\u00e8res/domaines \u00e0 enjeu en lien avec l\u0027\u00e9conomie circulaire sur le territoire',
     description:
@@ -21386,7 +21386,7 @@ export const actions: ActionReferentiel[] = [
     points: 35,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__3.1.1',
+        id: 'eci_3.1.1',
         id_nomenclature: '3.1.1',
         nom: 'R\u00e9aliser le diagnostic des fili\u00e8re(s) \u00e0 enjeux d\u0027\u00e9conomie circulaire',
         description:
@@ -21399,7 +21399,7 @@ export const actions: ActionReferentiel[] = [
         points: 33,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.1.1',
+            id: 'eci_3.1.1.1',
             id_nomenclature: '3.1.1.1',
             nom: 'Prioriser la fili\u00e8re (les fili\u00e8res) \u00e0 diagnostiquer',
             description: '',
@@ -21412,7 +21412,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.1.2',
+            id: 'eci_3.1.1.2',
             id_nomenclature: '3.1.1.2',
             nom: 'Disposer d\u0027un diagnostic de fili\u00e8re(s) \u00e0 enjeux d\u0027\u00e9conomie circulaire en cours de r\u00e9alisation',
             description: '',
@@ -21425,7 +21425,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.1.3',
+            id: 'eci_3.1.1.3',
             id_nomenclature: '3.1.1.3',
             nom: 'Disposer d\u0027un diagnostic de fili\u00e8re(s) \u00e0 enjeux d\u0027\u00e9conomie circulaire finalis\u00e9',
             description: '',
@@ -21438,7 +21438,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.1.4',
+            id: 'eci_3.1.1.4',
             id_nomenclature: '3.1.1.4',
             nom: 'Partager le diagnostic avec les acteurs cl\u00e9s des fili\u00e8res \u00e9tudi\u00e9es',
             description: '',
@@ -21453,7 +21453,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.1.2',
+        id: 'eci_3.1.2',
         id_nomenclature: '3.1.2',
         nom: 'Construire un plan d\u0027action sp\u00e9cifique',
         description:
@@ -21466,7 +21466,7 @@ export const actions: ActionReferentiel[] = [
         points: 33,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.2.1',
+            id: 'eci_3.1.2.1',
             id_nomenclature: '3.1.2.1',
             nom: 'Construire le plan d\u0027actions',
             description: '',
@@ -21479,7 +21479,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.2.2',
+            id: 'eci_3.1.2.2',
             id_nomenclature: '3.1.2.2',
             nom: 'Co-construire le plan d\u0027action avec les acteurs cl\u00e9s des fili\u00e8res',
             description: '',
@@ -21492,7 +21492,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.2.3',
+            id: 'eci_3.1.2.3',
             id_nomenclature: '3.1.2.3',
             nom: 'Valider le plan d\u0027actions',
             description: '',
@@ -21505,7 +21505,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.2.4',
+            id: 'eci_3.1.2.4',
             id_nomenclature: '3.1.2.4',
             nom: 'R\u00e9aliser les actions du plan d\u0027actions',
             description: '',
@@ -21520,7 +21520,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.1.3',
+        id: 'eci_3.1.3',
         id_nomenclature: '3.1.3',
         nom: 'Piloter et suivre les r\u00e9sultats du plan d\u0027actions',
         description:
@@ -21533,7 +21533,7 @@ export const actions: ActionReferentiel[] = [
         points: 34,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.3.1',
+            id: 'eci_3.1.3.1',
             id_nomenclature: '3.1.3.1',
             nom: 'D\u00e9finir un protocole de suivi',
             description: '',
@@ -21546,7 +21546,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.3.2',
+            id: 'eci_3.1.3.2',
             id_nomenclature: '3.1.3.2',
             nom: 'Recueillir les donn\u00e9es',
             description: '',
@@ -21559,7 +21559,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.1.3.3',
+            id: 'eci_3.1.3.3',
             id_nomenclature: '3.1.3.3',
             nom: 'Analyser l\u0027\u00e9volution des indicateurs et ajuster le plan d\u0027actions',
             description: '',
@@ -21576,7 +21576,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__3.2',
+    id: 'eci_3.2',
     id_nomenclature: '3.2',
     nom: 'R\u00e9aliser des achats responsables',
     description:
@@ -21591,7 +21591,7 @@ export const actions: ActionReferentiel[] = [
     points: 25,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__3.2.0',
+        id: 'eci_3.2.0',
         id_nomenclature: '3.2.0',
         nom: 'Mettre en place le Sch\u00e9ma de promotion des achats publics socialement et \u00e9cologiquement responsables (SPASER)',
         description:
@@ -21606,7 +21606,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.2.1',
+        id: 'eci_3.2.1',
         id_nomenclature: '3.2.1',
         nom: 'D\u00e9finir la politique d\u0027achats responsables et sensibiliser',
         description:
@@ -21619,7 +21619,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.2.1.1',
+            id: 'eci_3.2.1.1',
             id_nomenclature: '3.2.1.1',
             nom: 'D\u00e9cider d\u0027engager une structuration de sa politique d\u0027achats responsables',
             description: '',
@@ -21632,7 +21632,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.2.1.2',
+            id: 'eci_3.2.1.2',
             id_nomenclature: '3.2.1.2',
             nom: 'Disposer d\u0027une politique d\u0027achat structur\u00e9e',
             description: '',
@@ -21645,7 +21645,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.2.1.3',
+            id: 'eci_3.2.1.3',
             id_nomenclature: '3.2.1.3',
             nom: 'R\u00e9aliser une cartographie des achats',
             description: '',
@@ -21658,7 +21658,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.2.1.4',
+            id: 'eci_3.2.1.4',
             id_nomenclature: '3.2.1.4',
             nom: 'Sensibiliser et former \u00e0 la pratique des achats responsables au sein de la collectivit\u00e9',
             description: '',
@@ -21673,7 +21673,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.2.2',
+        id: 'eci_3.2.2',
         id_nomenclature: '3.2.2',
         nom: 'Exp\u00e9rimenter l\u0027int\u00e9gration de dispositions relevant de l\u0027\u00e9conomie circulaire',
         description:
@@ -21686,7 +21686,7 @@ export const actions: ActionReferentiel[] = [
         points: 50,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.2.2.1',
+            id: 'eci_3.2.2.1',
             id_nomenclature: '3.2.2.1',
             nom: 'Disposer d\u0027au moins 30% des march\u00e9s publics incluant des dispositions environnementales',
             description: '',
@@ -21699,7 +21699,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.2.2.2',
+            id: 'eci_3.2.2.2',
             id_nomenclature: '3.2.2.2',
             nom: 'Disposer d\u0027au moins 60% des march\u00e9s publics incluant des dispositions environnementales',
             description: '',
@@ -21712,7 +21712,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.2.2.3',
+            id: 'eci_3.2.2.3',
             id_nomenclature: '3.2.2.3',
             nom: 'Disposer d\u0027au moins 30% des march\u00e9s publics incluant des dispositions sociales',
             description: '',
@@ -21727,7 +21727,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.2.3',
+        id: 'eci_3.2.3',
         id_nomenclature: '3.2.3',
         nom: 'P\u00e9renniser la d\u00e9marche',
         description:
@@ -21740,7 +21740,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.2.3.1',
+            id: 'eci_3.2.3.1',
             id_nomenclature: '3.2.3.1',
             nom: 'Mettre en place un tableau de bord',
             description: '',
@@ -21753,7 +21753,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.2.3.2',
+            id: 'eci_3.2.3.2',
             id_nomenclature: '3.2.3.2',
             nom: 'Participer au r\u00e9seau d\u0027acheteurs',
             description: '',
@@ -21766,7 +21766,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.2.3.3',
+            id: 'eci_3.2.3.3',
             id_nomenclature: '3.2.3.3',
             nom: 'Promouvoir les achats responsables',
             description: '',
@@ -21783,7 +21783,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__3.3',
+    id: 'eci_3.3',
     id_nomenclature: '3.3',
     nom: 'Soutenir et accompagner la consommation responsable et la sobri\u00e9t\u00e9 des acteurs du territoire',
     description:
@@ -21797,7 +21797,7 @@ export const actions: ActionReferentiel[] = [
     points: 25,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__3.3.1',
+        id: 'eci_3.3.1',
         id_nomenclature: '3.3.1',
         nom: 'Communiquer et sensibiliser \u00e0 la consommation responsable et \u00e0 la sobri\u00e9t\u00e9',
         description:
@@ -21810,7 +21810,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.1.1',
+            id: 'eci_3.3.1.1',
             id_nomenclature: '3.3.1.1',
             nom: 'Disposer de support(s) de communication recensant les solutions de consommation sobre et responsable sur la territoire',
             description: '',
@@ -21823,7 +21823,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.1.2',
+            id: 'eci_3.3.1.2',
             id_nomenclature: '3.3.1.2',
             nom: 'Organiser des ateliers de sensibilisation \u00e0 la consommation sobre et responsable',
             description: '',
@@ -21836,7 +21836,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.1.3',
+            id: 'eci_3.3.1.3',
             id_nomenclature: '3.3.1.3',
             nom: 'Soutenir financi\u00e8rement ou organiser des \u00e9v\u00e8nements mettant en avant la consommation responsable et la sobri\u00e9t\u00e9',
             description: '',
@@ -21851,7 +21851,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.3.2',
+        id: 'eci_3.3.2',
         id_nomenclature: '3.3.2',
         nom: 'Promouvoir et lancer une dynamique relative \u00e0 la consommation responsable et de sobri\u00e9t\u00e9',
         description:
@@ -21864,7 +21864,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.2.1',
+            id: 'eci_3.3.2.1',
             id_nomenclature: '3.3.2.1',
             nom: 'Sensibiliser les \u00e9lus et les techniciens',
             description: '',
@@ -21877,7 +21877,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.2.2',
+            id: 'eci_3.3.2.2',
             id_nomenclature: '3.3.2.2',
             nom: 'Former les \u00e9lus et les techniciens',
             description: '',
@@ -21890,7 +21890,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.2.3',
+            id: 'eci_3.3.2.3',
             id_nomenclature: '3.3.2.3',
             nom: 'Disposer d\u0027une liste d\u2019actions \u00e0 d\u00e9cliner dans chaque service form\u00e9',
             description: '',
@@ -21903,7 +21903,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.2.4',
+            id: 'eci_3.3.2.4',
             id_nomenclature: '3.3.2.4',
             nom: 'Formaliser dans un document une vision et un plan d\u0027action de la collectivit\u00e9 sur consommation responsable et la sobri\u00e9t\u00e9',
             description: '',
@@ -21918,7 +21918,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.3.3',
+        id: 'eci_3.3.3',
         id_nomenclature: '3.3.3',
         nom: 'Agir pour la consommation responsable et la sobri\u00e9t\u00e9 dans le cadre de ses comp\u00e9tences',
         description:
@@ -21931,7 +21931,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.3.1',
+            id: 'eci_3.3.3.1',
             id_nomenclature: '3.3.3.1',
             nom: 'R\u00e9aliser des actions \u00e0 destination d\u0027\u00e9tablissements scolaires',
             description: '',
@@ -21944,7 +21944,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.3.2',
+            id: 'eci_3.3.3.2',
             id_nomenclature: '3.3.3.2',
             nom: 'R\u00e9aliser des actions sur au moins 1 autre comp\u00e9tence de la collectivit\u00e9',
             description: '',
@@ -21957,7 +21957,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.3.3',
+            id: 'eci_3.3.3.3',
             id_nomenclature: '3.3.3.3',
             nom: 'R\u00e9aliser des actions sur au moins 3 comp\u00e9tences de la collectivit\u00e9',
             description: '',
@@ -21970,7 +21970,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.3.4',
+            id: 'eci_3.3.3.4',
             id_nomenclature: '3.3.3.4',
             nom: 'R\u00e9aliser des actions de fa\u00e7on transversale qui concernent toutes les actions de la collectivit\u00e9',
             description: '',
@@ -21985,7 +21985,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.3.4',
+        id: 'eci_3.3.4',
         id_nomenclature: '3.3.4',
         nom: 'Accompagner les acteurs externes sur des actions de consommation responsable et de sobri\u00e9t\u00e9',
         description:
@@ -21998,7 +21998,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.4.1',
+            id: 'eci_3.3.4.1',
             id_nomenclature: '3.3.4.1',
             nom: 'Mettre en place au moins une action',
             description: '',
@@ -22011,7 +22011,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.4.2',
+            id: 'eci_3.3.4.2',
             id_nomenclature: '3.3.4.2',
             nom: 'Mettre en place un ensemble d\u2019actions vers une cible',
             description: '',
@@ -22024,7 +22024,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.3.4.3',
+            id: 'eci_3.3.4.3',
             id_nomenclature: '3.3.4.3',
             nom: 'Mettre en place un ensemble d\u2019actions vers l\u0027ensemble des cibles cl\u00e9s du territoire',
             description: '',
@@ -22041,7 +22041,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__3.4',
+    id: 'eci_3.4',
     id_nomenclature: '3.4',
     nom: 'Soutenir et accompagner l\u0027\u00e9coconception des produits transform\u00e9s et des services du territoire',
     description:
@@ -22056,7 +22056,7 @@ export const actions: ActionReferentiel[] = [
     points: 25,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__3.4.1',
+        id: 'eci_3.4.1',
         id_nomenclature: '3.4.1',
         nom: 'Animer le r\u00e9seau',
         description:
@@ -22069,7 +22069,7 @@ export const actions: ActionReferentiel[] = [
         points: 30,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.4.1.1',
+            id: 'eci_3.4.1.1',
             id_nomenclature: '3.4.1.1',
             nom: 'Organiser au moins un \u00e9v\u00e8nement par an avec les entreprises du territoire',
             description: '',
@@ -22082,7 +22082,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.4.1.2',
+            id: 'eci_3.4.1.2',
             id_nomenclature: '3.4.1.2',
             nom: 'Organiser au moins 2 \u00e9v\u00e8nements par an avec les entreprises du territoire',
             description: '',
@@ -22095,7 +22095,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.4.1.3',
+            id: 'eci_3.4.1.3',
             id_nomenclature: '3.4.1.3',
             nom: 'Organiser au moins 3 \u00e9v\u00e8nements par an avec les entreprises du territoire',
             description: '',
@@ -22108,7 +22108,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.4.1.4',
+            id: 'eci_3.4.1.4',
             id_nomenclature: '3.4.1.4',
             nom: 'Organiser au moins 4 \u00e9v\u00e8nements par an avec les entreprises du territoire',
             description: '',
@@ -22123,7 +22123,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.4.2',
+        id: 'eci_3.4.2',
         id_nomenclature: '3.4.2',
         nom: 'Encourager la collaboration entreprises-\u00e9tablissements de formation',
         description:
@@ -22136,7 +22136,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.4.2.1',
+            id: 'eci_3.4.2.1',
             id_nomenclature: '3.4.2.1',
             nom: 'Etablir la liste des \u00e9tablissements du territoire qui dispensent une formation en \u00e9coconception',
             description: '',
@@ -22149,7 +22149,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.4.2.2',
+            id: 'eci_3.4.2.2',
             id_nomenclature: '3.4.2.2',
             nom: 'Disposer au moins d\u0027un partenariat avec un organisme/entreprise conclu sous l\u2019\u00e9gide de la collectivit\u00e9 abordant le d\u00e9veloppement de l\u0027\u00e9coconception',
             description: '',
@@ -22164,7 +22164,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.4.3',
+        id: 'eci_3.4.3',
         id_nomenclature: '3.4.3',
         nom: 'Accompagner les entreprises',
         description:
@@ -22177,7 +22177,7 @@ export const actions: ActionReferentiel[] = [
         points: 30,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.4.3.1',
+            id: 'eci_3.4.3.1',
             id_nomenclature: '3.4.3.1',
             nom: 'Accompagner les entreprises au travers d\u0027op\u00e9rations collectives',
             description: '',
@@ -22190,7 +22190,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.4.3.2',
+            id: 'eci_3.4.3.2',
             id_nomenclature: '3.4.3.2',
             nom: 'Accompagner les entreprises au travers d\u0027un accompagnement individuel',
             description: '',
@@ -22205,7 +22205,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.4.4',
+        id: 'eci_3.4.4',
         id_nomenclature: '3.4.4',
         nom: 'Ecoconcevoir les projets \u00e0 impacts',
         description:
@@ -22218,7 +22218,7 @@ export const actions: ActionReferentiel[] = [
         points: 15,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.4.4.1',
+            id: 'eci_3.4.4.1',
             id_nomenclature: '3.4.4.1',
             nom: 'Disposer d\u0027une m\u00e9thodologie d\u0027\u00e9coconception des projets \u00e0 impact',
             description: '',
@@ -22231,7 +22231,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.4.4.2',
+            id: 'eci_3.4.4.2',
             id_nomenclature: '3.4.4.2',
             nom: 'Mettre en \u0153uvre la pens\u00e9e cycle de vie sur les projets structurants',
             description: '',
@@ -22248,7 +22248,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__3.5',
+    id: 'eci_3.5',
     id_nomenclature: '3.5',
     nom: 'Soutenir et accompagner les projets d\u0027Ecologie Industrielle et Territoriale (EIT)',
     description:
@@ -22263,7 +22263,7 @@ export const actions: ActionReferentiel[] = [
     points: 25,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__3.5.1',
+        id: 'eci_3.5.1',
         id_nomenclature: '3.5.1',
         nom: 'Elaborer la strat\u00e9gie et structurer en interne',
         description:
@@ -22278,7 +22278,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.5.2',
+        id: 'eci_3.5.2',
         id_nomenclature: '3.5.2',
         nom: 'Mettre en r\u00e9seau les acteurs et mettre en place une gouvernance',
         description:
@@ -22290,7 +22290,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.2.1',
+            id: 'eci_3.5.2.1',
             id_nomenclature: '3.5.2.1',
             nom: 'R\u00e9aliser au moins une action',
             description: '',
@@ -22303,7 +22303,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.2.2',
+            id: 'eci_3.5.2.2',
             id_nomenclature: '3.5.2.2',
             nom: 'R\u00e9aliser au moins 2 actions',
             description: '',
@@ -22316,7 +22316,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.2.3',
+            id: 'eci_3.5.2.3',
             id_nomenclature: '3.5.2.3',
             nom: 'R\u00e9aliser au moins 3 actions',
             description: '',
@@ -22329,7 +22329,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.2.4',
+            id: 'eci_3.5.2.4',
             id_nomenclature: '3.5.2.4',
             nom: 'R\u00e9aliser au moins 4 actions',
             description: '',
@@ -22344,7 +22344,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.5.3',
+        id: 'eci_3.5.3',
         id_nomenclature: '3.5.3',
         nom: 'Accompagner op\u00e9rationnellement les projets',
         description:
@@ -22357,7 +22357,7 @@ export const actions: ActionReferentiel[] = [
         points: 30,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.3.1',
+            id: 'eci_3.5.3.1',
             id_nomenclature: '3.5.3.1',
             nom: 'Financer ou internaliser un animateur EIT',
             description: '',
@@ -22370,7 +22370,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.3.2',
+            id: 'eci_3.5.3.2',
             id_nomenclature: '3.5.3.2',
             nom: 'Contribuer \u00e0 l\u0027identification de nouvelles synergies',
             description: '',
@@ -22383,7 +22383,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.3.3',
+            id: 'eci_3.5.3.3',
             id_nomenclature: '3.5.3.3',
             nom: 'Mettre en \u0153uvre au moins une synergie par an',
             description: '',
@@ -22396,7 +22396,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.3.4',
+            id: 'eci_3.5.3.4',
             id_nomenclature: '3.5.3.4',
             nom: 'Mettre en \u0153uvre au moins 2 synergies par an',
             description: '',
@@ -22409,7 +22409,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.3.5',
+            id: 'eci_3.5.3.5',
             id_nomenclature: '3.5.3.5',
             nom: 'Mettre en \u0153uvre 3 synergies ou plus par an',
             description: '',
@@ -22422,7 +22422,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.3.6',
+            id: 'eci_3.5.3.6',
             id_nomenclature: '3.5.3.6',
             nom: 'Int\u00e9grer l\u0027eit dans les projets d\u0027am\u00e9nagement du territoire (zones d\u0027activit\u00e9s)',
             description: '',
@@ -22435,7 +22435,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.3.7',
+            id: 'eci_3.5.3.7',
             id_nomenclature: '3.5.3.7',
             nom: 'Au moins une synergie mise en \u0153uvre sur les activit\u00e9s de la collectivit\u00e9',
             description: '',
@@ -22450,7 +22450,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.5.4',
+        id: 'eci_3.5.4',
         id_nomenclature: '3.5.4',
         nom: 'P\u00e9renniser et partager les exp\u00e9riences',
         description:
@@ -22463,7 +22463,7 @@ export const actions: ActionReferentiel[] = [
         points: 30,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.4.1',
+            id: 'eci_3.5.4.1',
             id_nomenclature: '3.5.4.1',
             nom: 'Transf\u00e9rer le pilotage de la d\u00e9marche',
             description: '',
@@ -22476,7 +22476,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.4.2',
+            id: 'eci_3.5.4.2',
             id_nomenclature: '3.5.4.2',
             nom: 'Disposer d\u0027un ETP d\u00e9di\u00e9',
             description: '',
@@ -22489,7 +22489,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.5.4.3',
+            id: 'eci_3.5.4.3',
             id_nomenclature: '3.5.4.3',
             nom: 'Renseigner les projets EIT sur la plateforme ELIPSE et SYNAPSE et communiquer',
             description: '',
@@ -22506,7 +22506,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__3.6',
+    id: 'eci_3.6',
     id_nomenclature: '3.6',
     nom: 'Soutenir et accompagner l\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration',
     description:
@@ -22521,7 +22521,7 @@ export const actions: ActionReferentiel[] = [
     points: 25,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__3.6.1',
+        id: 'eci_3.6.1',
         id_nomenclature: '3.6.1',
         nom: 'Sensibiliser et former',
         description:
@@ -22534,7 +22534,7 @@ export const actions: ActionReferentiel[] = [
         points: 15,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.1.1',
+            id: 'eci_3.6.1.1',
             id_nomenclature: '3.6.1.1',
             nom: 'Engager une formation du personnel de la collectivit\u00e9',
             description: '',
@@ -22547,7 +22547,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.1.2',
+            id: 'eci_3.6.1.2',
             id_nomenclature: '3.6.1.2',
             nom: 'Avoir form\u00e9 des personnes de la collectivit\u00e9',
             description: '',
@@ -22560,7 +22560,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.1.3',
+            id: 'eci_3.6.1.3',
             id_nomenclature: '3.6.1.3',
             nom: 'Engager une sensibilisation des acteurs du territoire',
             description: '',
@@ -22573,7 +22573,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.1.4',
+            id: 'eci_3.6.1.4',
             id_nomenclature: '3.6.1.4',
             nom: 'Sensibiliser les acteurs du territoire',
             description: '',
@@ -22588,7 +22588,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.6.2',
+        id: 'eci_3.6.2',
         id_nomenclature: '3.6.2',
         nom: 'Soutenir les entreprises du territoire et construire des r\u00e9ponses aux enjeux de politique publique adapt\u00e9es aux diff\u00e9rents usages',
         description:
@@ -22601,7 +22601,7 @@ export const actions: ActionReferentiel[] = [
         points: 35,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.2.1',
+            id: 'eci_3.6.2.1',
             id_nomenclature: '3.6.2.1',
             nom: 'Participer \u00e0 des actions d\u0027animation des entreprises',
             description: '',
@@ -22614,7 +22614,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.2.2',
+            id: 'eci_3.6.2.2',
             id_nomenclature: '3.6.2.2',
             nom: 'Adh\u00e9rer \u00e0 une structure d\u0027animation des acteurs du territoire',
             description: '',
@@ -22627,7 +22627,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.2.3',
+            id: 'eci_3.6.2.3',
             id_nomenclature: '3.6.2.3',
             nom: 'Soutenir financi\u00e8rement une structure d\u2019animation des acteurs du territoire',
             description: '',
@@ -22640,7 +22640,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.2.4',
+            id: 'eci_3.6.2.4',
             id_nomenclature: '3.6.2.4',
             nom: 'Int\u00e9grer des crit\u00e8res d\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration dans la commande publique',
             description: '',
@@ -22655,7 +22655,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.6.3',
+        id: 'eci_3.6.3',
         id_nomenclature: '3.6.3',
         nom: 'Apprendre \u00e0 coop\u00e9rer dans une dynamique d\u2019\u00e9cosyst\u00e8mes entre acteurs publics et priv\u00e9s dans le cadre des projets coop\u00e9ratifs territoriaux',
         description:
@@ -22668,7 +22668,7 @@ export const actions: ActionReferentiel[] = [
         points: 30,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.3.1',
+            id: 'eci_3.6.3.1',
             id_nomenclature: '3.6.3.1',
             nom: 'Faire \u00e9merger un projet coop\u00e9ratif territorial d\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration ou participer \u00e0 un projet',
             description: '',
@@ -22681,7 +22681,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.3.2',
+            id: 'eci_3.6.3.2',
             id_nomenclature: '3.6.3.2',
             nom: 'Piloter et stabiliser un \u00e9cosyst\u00e8me coop\u00e9ratif territorial d\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration',
             description: '',
@@ -22696,7 +22696,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.6.4',
+        id: 'eci_3.6.4',
         id_nomenclature: '3.6.4',
         nom: 'Evaluer les effets',
         description:
@@ -22709,7 +22709,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.4.1',
+            id: 'eci_3.6.4.1',
             id_nomenclature: '3.6.4.1',
             nom: 'Identifier les effets \u00e0 \u00e9valuer',
             description: '',
@@ -22722,7 +22722,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.4.2',
+            id: 'eci_3.6.4.2',
             id_nomenclature: '3.6.4.2',
             nom: 'Identifier les modalit\u00e9s d\u0027\u00e9valuation',
             description: '',
@@ -22735,7 +22735,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.6.4.3',
+            id: 'eci_3.6.4.3',
             id_nomenclature: '3.6.4.3',
             nom: 'Mettre en place une \u00e9valuation',
             description: '',
@@ -22752,7 +22752,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__3.7',
+    id: 'eci_3.7',
     id_nomenclature: '3.7',
     nom: 'Soutenir et accompagner la recherche, l\u0027innovation et l\u0027exp\u00e9rimentation',
     description:
@@ -22766,7 +22766,7 @@ export const actions: ActionReferentiel[] = [
     points: 20,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__3.7.1',
+        id: 'eci_3.7.1',
         id_nomenclature: '3.7.1',
         nom: 'Accompagner non financi\u00e8rement des programmes',
         description:
@@ -22779,7 +22779,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.7.1.1',
+            id: 'eci_3.7.1.1',
             id_nomenclature: '3.7.1.1',
             nom: 'Accepter des sollicitations pour des programmes d\u0027\u00e9tudes ou de R\u0026I',
             description: '',
@@ -22792,7 +22792,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.7.1.2',
+            id: 'eci_3.7.1.2',
             id_nomenclature: '3.7.1.2',
             nom: 'S\u0027impliquer dans le suivi des travaux',
             description: '',
@@ -22805,7 +22805,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.7.1.3',
+            id: 'eci_3.7.1.3',
             id_nomenclature: '3.7.1.3',
             nom: 'S\u0027approprier les r\u00e9sultats afin d\u0027am\u00e9liorer ses pratiques',
             description: '',
@@ -22820,7 +22820,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__3.7.2',
+        id: 'eci_3.7.2',
         id_nomenclature: '3.7.2',
         nom: 'Financer des projets de R\u0026I',
         description:
@@ -22833,7 +22833,7 @@ export const actions: ActionReferentiel[] = [
         points: 75,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__3.7.2.1',
+            id: 'eci_3.7.2.1',
             id_nomenclature: '3.7.2.1',
             nom: 'Disposer d\u0027au moins 1 projet en tant que collectivit\u00e9 \u003c 100 000 habitants ou entre 2 \u00e0 9 projets en tant que collectivit\u00e9 \u003e 100 000 habitants',
             description: '',
@@ -22846,7 +22846,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__3.7.2.2',
+            id: 'eci_3.7.2.2',
             id_nomenclature: '3.7.2.2',
             nom: 'Disposer d\u0027au moins 2 projets  en tant que collectivit\u00e9 \u003c 100 000 habitants ou au moins 10 projets en tant que collectivit\u00e9 \u003e 100 000 habitants',
             description: '',
@@ -22863,7 +22863,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__4.1',
+    id: 'eci_4.1',
     id_nomenclature: '4.1',
     nom: 'Conna\u00eetre les co\u00fbts de la gestion des d\u00e9chets pour ma\u00eetriser les d\u00e9penses publiques',
     description:
@@ -22878,7 +22878,7 @@ export const actions: ActionReferentiel[] = [
     points: 20,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__4.1.0',
+        id: 'eci_4.1.0',
         id_nomenclature: '4.1.0',
         nom: 'R\u00e9diger le rapport annuel SPPGD',
         description:
@@ -22891,7 +22891,7 @@ export const actions: ActionReferentiel[] = [
         points: -1.0,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.0.1',
+            id: 'eci_4.1.0.1',
             id_nomenclature: '4.1.0.1',
             nom: 'R\u00e9diger le rapport annuel',
             description: '',
@@ -22904,7 +22904,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.0.2',
+            id: 'eci_4.1.0.2',
             id_nomenclature: '4.1.0.2',
             nom: 'R\u00e9diger le rapport annuel avec tous les \u00e9l\u00e9ments du d\u00e9cret et le publier en ligne',
             description: '',
@@ -22919,7 +22919,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.1.1',
+        id: 'eci_4.1.1',
         id_nomenclature: '4.1.1',
         nom: 'Conna\u00eetre la structure des co\u00fbts de la gestion des d\u00e9chets',
         description:
@@ -22932,7 +22932,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.1.1',
+            id: 'eci_4.1.1.1',
             id_nomenclature: '4.1.1.1',
             nom: 'R\u00e9aliser la matrice des co\u00fbts',
             description: '',
@@ -22945,7 +22945,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.1.2',
+            id: 'eci_4.1.1.2',
             id_nomenclature: '4.1.1.2',
             nom: 'Positionner les r\u00e9sultats de la matrice des co\u00fbts par rapport \u00e0 d\u0027autres collectivit\u00e9s',
             description: '',
@@ -22960,7 +22960,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.1.2',
+        id: 'eci_4.1.2',
         id_nomenclature: '4.1.2',
         nom: 'Etudier les pistes d\u0027optimisation',
         description:
@@ -22973,7 +22973,7 @@ export const actions: ActionReferentiel[] = [
         points: 30,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.2.1',
+            id: 'eci_4.1.2.1',
             id_nomenclature: '4.1.2.1',
             nom: 'Analyser la matrice des co\u00fbts',
             description: '',
@@ -22986,7 +22986,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.2.2',
+            id: 'eci_4.1.2.2',
             id_nomenclature: '4.1.2.2',
             nom: 'R\u00e9aliser une \u00e9tude au cours des deux derni\u00e8res ann\u00e9es \u00e9coul\u00e9es',
             description: '',
@@ -23001,7 +23001,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.1.3',
+        id: 'eci_4.1.3',
         id_nomenclature: '4.1.3',
         nom: 'Agir pour optimiser les d\u00e9penses publiques de gestion de d\u00e9chets',
         description:
@@ -23014,7 +23014,7 @@ export const actions: ActionReferentiel[] = [
         points: 30,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.3.1',
+            id: 'eci_4.1.3.1',
             id_nomenclature: '4.1.3.1',
             nom: 'Mettre en \u0153uvre jusqu\u0027\u00e0 50% des actions suite \u00e0 l\u0027\u00e9tude',
             description: '',
@@ -23027,7 +23027,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.3.2',
+            id: 'eci_4.1.3.2',
             id_nomenclature: '4.1.3.2',
             nom: 'Mettre en \u0153uvre plus de 50% des actions suite \u00e0 l\u0027\u00e9tude',
             description: '',
@@ -23040,7 +23040,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.3.3',
+            id: 'eci_4.1.3.3',
             id_nomenclature: '4.1.3.3',
             nom: 'Mettre en \u0153uvre toutes les actions suite \u00e0 l\u0027\u00e9tude',
             description: '',
@@ -23055,7 +23055,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.1.4',
+        id: 'eci_4.1.4',
         id_nomenclature: '4.1.4',
         nom: 'Communiquer sur la d\u00e9marche d\u0027optimisation',
         description:
@@ -23068,7 +23068,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.4.1',
+            id: 'eci_4.1.4.1',
             id_nomenclature: '4.1.4.1',
             nom: 'Communiquer sur le positionnement et les r\u00e9sultats',
             description: '',
@@ -23081,7 +23081,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.1.4.2',
+            id: 'eci_4.1.4.2',
             id_nomenclature: '4.1.4.2',
             nom: 'Communiquer sur les objectifs et la d\u00e9marche d\u0027am\u00e9lioration',
             description: '',
@@ -23098,7 +23098,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__4.2',
+    id: 'eci_4.2',
     id_nomenclature: '4.2',
     nom: 'Mettre en place un syst\u00e8me de financement qui encourage l\u0027adh\u00e9sion aux pratiques de l\u0027\u00e9conomie circulaire',
     description:
@@ -23113,7 +23113,7 @@ export const actions: ActionReferentiel[] = [
     points: 20,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__4.2.1',
+        id: 'eci_4.2.1',
         id_nomenclature: '4.2.1',
         nom: 'Facturer des usagers non m\u00e9nagers',
         description:
@@ -23125,7 +23125,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.1.1',
+            id: 'eci_4.2.1.1',
             id_nomenclature: '4.2.1.1',
             nom: 'Engager la mise en place de la redevance sp\u00e9ciale',
             description: '',
@@ -23138,7 +23138,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.1.2',
+            id: 'eci_4.2.1.2',
             id_nomenclature: '4.2.1.2',
             nom: 'Couvrir toutes les communes du territoire avec la redevance sp\u00e9ciale',
             description: '',
@@ -23153,7 +23153,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.2.2',
+        id: 'eci_4.2.2',
         id_nomenclature: '4.2.2',
         nom: 'Etudier le potentiel de mise en place de la Tarification incitative (Ti)',
         description:
@@ -23165,7 +23165,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.2.1',
+            id: 'eci_4.2.2.1',
             id_nomenclature: '4.2.2.1',
             nom: 'Engager l\u0027\u00e9tude de la mise en place de la tarification incitative (phase de lancement)',
             description: '',
@@ -23178,7 +23178,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.2.2',
+            id: 'eci_4.2.2.2',
             id_nomenclature: '4.2.2.2',
             nom: 'Disposer d\u0027une \u00e9tude de mise en place de la tarification incitative en cours de r\u00e9alisation (phase de r\u00e9alisation)',
             description: '',
@@ -23191,7 +23191,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.2.3',
+            id: 'eci_4.2.2.3',
             id_nomenclature: '4.2.2.3',
             nom: 'Disposer d\u0027une \u00e9tude de mise en place de la tarification incitative r\u00e9alis\u00e9e (\u00e9tude termin\u00e9e)',
             description: '',
@@ -23206,7 +23206,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.2.3',
+        id: 'eci_4.2.3',
         id_nomenclature: '4.2.3',
         nom: 'Mettre en \u0153uvre la Redevance Sp\u00e9ciale incitative pour les usagers non m\u00e9nagers',
         description:
@@ -23218,7 +23218,7 @@ export const actions: ActionReferentiel[] = [
         points: 40,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.3.1',
+            id: 'eci_4.2.3.1',
             id_nomenclature: '4.2.3.1',
             nom: 'Inclure une part variable dans la redevance sp\u00e9ciale en fonction des lev\u00e9es et/ou pes\u00e9es',
             description: '',
@@ -23231,7 +23231,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.3.2',
+            id: 'eci_4.2.3.2',
             id_nomenclature: '4.2.3.2',
             nom: 'Diff\u00e9rencier la redevance sp\u00e9ciale en fonction des flux',
             description: '',
@@ -23246,7 +23246,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.2.4',
+        id: 'eci_4.2.4',
         id_nomenclature: '4.2.4',
         nom: 'Mettre en \u0153uvre la Tarification incitative (Ti) pour tous les usagers',
         description:
@@ -23258,7 +23258,7 @@ export const actions: ActionReferentiel[] = [
         points: 15,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.4.1',
+            id: 'eci_4.2.4.1',
             id_nomenclature: '4.2.4.1',
             nom: 'Lancer la mise en place de la tarification incitative',
             description: '',
@@ -23271,7 +23271,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.4.2',
+            id: 'eci_4.2.4.2',
             id_nomenclature: '4.2.4.2',
             nom: 'Couvrir toute la population de la collectivit\u00e9 avec la tarification incitative',
             description: '',
@@ -23286,7 +23286,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.2.5',
+        id: 'eci_4.2.5',
         id_nomenclature: '4.2.5',
         nom: 'Mettre en place la Tarification incitative (Ti) du second niveau',
         description:
@@ -23298,7 +23298,7 @@ export const actions: ActionReferentiel[] = [
         points: -1.0,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.5.1',
+            id: 'eci_4.2.5.1',
             id_nomenclature: '4.2.5.1',
             nom: 'Inclure une part variable en fonction de sa production de d\u00e9chets dans la facturation des adh\u00e9rents',
             description: '',
@@ -23311,7 +23311,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.2.5.2',
+            id: 'eci_4.2.5.2',
             id_nomenclature: '4.2.5.2',
             nom: 'Diff\u00e9rentier la facturation des adh\u00e9rents en fonction des  flux',
             description: '',
@@ -23328,7 +23328,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__4.3',
+    id: 'eci_4.3',
     id_nomenclature: '4.3',
     nom: 'Promouvoir et mettre en place des outils financiers en faveur de l\u0027\u00e9conomie circulaire \u00e0 destination des autres acteurs du territoire',
     description:
@@ -23342,7 +23342,7 @@ export const actions: ActionReferentiel[] = [
     points: 20,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__4.3.1',
+        id: 'eci_4.3.1',
         id_nomenclature: '4.3.1',
         nom: 'R\u00e9aliser une veille',
         description:
@@ -23357,7 +23357,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.3.2',
+        id: 'eci_4.3.2',
         id_nomenclature: '4.3.2',
         nom: 'Communiquer sur les moyens de financement',
         description:
@@ -23372,7 +23372,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.3.3',
+        id: 'eci_4.3.3',
         id_nomenclature: '4.3.3',
         nom: 'Accompagner les acteurs du territoire',
         description:
@@ -23385,7 +23385,7 @@ export const actions: ActionReferentiel[] = [
         points: 35,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.3.3.1',
+            id: 'eci_4.3.3.1',
             id_nomenclature: '4.3.3.1',
             nom: 'Mettre en place des moyens pour identifier les acteurs en recherche de financements',
             description: '',
@@ -23398,7 +23398,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.3.3.2',
+            id: 'eci_4.3.3.2',
             id_nomenclature: '4.3.3.2',
             nom: 'Mettre en place des moyens pour accompagner les acteurs sur la recherche de financements',
             description: '',
@@ -23411,7 +23411,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.3.3.3',
+            id: 'eci_4.3.3.3',
             id_nomenclature: '4.3.3.3',
             nom: 'Accompagner des projets',
             description: '',
@@ -23426,7 +23426,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__4.3.4',
+        id: 'eci_4.3.4',
         id_nomenclature: '4.3.4',
         nom: 'Financer des projets sur le sujet de l\u0027\u00e9conomie circulaire',
         description:
@@ -23439,7 +23439,7 @@ export const actions: ActionReferentiel[] = [
         points: 25,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__4.3.4.1',
+            id: 'eci_4.3.4.1',
             id_nomenclature: '4.3.4.1',
             nom: 'Disposer de document de r\u00e9f\u00e9rence pr\u00e9sentant les modalit\u00e9s de financement',
             description: '',
@@ -23452,7 +23452,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.3.4.2',
+            id: 'eci_4.3.4.2',
             id_nomenclature: '4.3.4.2',
             nom: 'Lister les projets',
             description: '',
@@ -23465,7 +23465,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__4.3.4.3',
+            id: 'eci_4.3.4.3',
             id_nomenclature: '4.3.4.3',
             nom: 'Mettre en coh\u00e9rence les subventions allou\u00e9es aux acteurs du territoire au regard de la sobri\u00e9t\u00e9',
             description: '',
@@ -23482,7 +23482,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__5.1',
+    id: 'eci_5.1',
     id_nomenclature: '5.1',
     nom: 'Actions dirig\u00e9es vers le Grand Public et les associations',
     description:
@@ -23497,7 +23497,7 @@ export const actions: ActionReferentiel[] = [
     points: 30,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__5.1.1',
+        id: 'eci_5.1.1',
         id_nomenclature: '5.1.1',
         nom: 'Informer et sensibiliser le grand public',
         description:
@@ -23510,7 +23510,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.1.1',
+            id: 'eci_5.1.1.1',
             id_nomenclature: '5.1.1.1',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier approvisionnement durable',
             description:
@@ -23524,7 +23524,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.1.2',
+            id: 'eci_5.1.1.2',
             id_nomenclature: '5.1.1.2',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9co-conception',
             description:
@@ -23538,7 +23538,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.1.3',
+            id: 'eci_5.1.1.3',
             id_nomenclature: '5.1.1.3',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9cologie industrielle et territoriale (EIT)',
             description:
@@ -23552,7 +23552,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.1.4',
+            id: 'eci_5.1.1.4',
             id_nomenclature: '5.1.1.4',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9conomie de la fonctionnalit\u00e9',
             description:
@@ -23566,7 +23566,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.1.5',
+            id: 'eci_5.1.1.5',
             id_nomenclature: '5.1.1.5',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier consommation responsable',
             description:
@@ -23580,7 +23580,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.1.6',
+            id: 'eci_5.1.1.6',
             id_nomenclature: '5.1.1.6',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier allongement de la dur\u00e9e d\u0027usage',
             description:
@@ -23594,7 +23594,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.1.7',
+            id: 'eci_5.1.1.7',
             id_nomenclature: '5.1.1.7',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier recyclage',
             description:
@@ -23610,7 +23610,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__5.1.2',
+        id: 'eci_5.1.2',
         id_nomenclature: '5.1.2',
         nom: 'Aider \u00e0 l\u0027action en direction du grand public',
         description:
@@ -23623,7 +23623,7 @@ export const actions: ActionReferentiel[] = [
         points: 40,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.2.1',
+            id: 'eci_5.1.2.1',
             id_nomenclature: '5.1.2.1',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier approvisionnement durable',
             description:
@@ -23637,7 +23637,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.2.2',
+            id: 'eci_5.1.2.2',
             id_nomenclature: '5.1.2.2',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9co-conception',
             description:
@@ -23651,7 +23651,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.2.3',
+            id: 'eci_5.1.2.3',
             id_nomenclature: '5.1.2.3',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9cologie industrielle et territoriale (EIT)',
             description:
@@ -23665,7 +23665,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.2.4',
+            id: 'eci_5.1.2.4',
             id_nomenclature: '5.1.2.4',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9conomie de la fonctionnalit\u00e9',
             description:
@@ -23679,7 +23679,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.2.5',
+            id: 'eci_5.1.2.5',
             id_nomenclature: '5.1.2.5',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier consommation responsable',
             description:
@@ -23693,7 +23693,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.2.6',
+            id: 'eci_5.1.2.6',
             id_nomenclature: '5.1.2.6',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier allongement de la dur\u00e9e d\u0027usage',
             description:
@@ -23707,7 +23707,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.2.7',
+            id: 'eci_5.1.2.7',
             id_nomenclature: '5.1.2.7',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier recyclage',
             description:
@@ -23723,7 +23723,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__5.1.3',
+        id: 'eci_5.1.3',
         id_nomenclature: '5.1.3',
         nom: 'F\u00e9d\u00e9rer les acteurs du territoire',
         description:
@@ -23736,7 +23736,7 @@ export const actions: ActionReferentiel[] = [
         points: 40,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.3.1',
+            id: 'eci_5.1.3.1',
             id_nomenclature: '5.1.3.1',
             nom: 'R\u00e9aliser une enqu\u00eate sur les besoins des acteurs',
             description: '',
@@ -23749,7 +23749,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.3.2',
+            id: 'eci_5.1.3.2',
             id_nomenclature: '5.1.3.2',
             nom: 'Analyser les besoins',
             description: '',
@@ -23762,7 +23762,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.3.3',
+            id: 'eci_5.1.3.3',
             id_nomenclature: '5.1.3.3',
             nom: 'Cr\u00e9er un ou des espaces communs de dialogue pour les acteurs du territoire',
             description: '',
@@ -23775,7 +23775,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.3.4',
+            id: 'eci_5.1.3.4',
             id_nomenclature: '5.1.3.4',
             nom: 'Disposer d\u0027accord(s) avec un ou plusieurs acteurs grand public du territoire',
             description: '',
@@ -23788,7 +23788,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.1.3.5',
+            id: 'eci_5.1.3.5',
             id_nomenclature: '5.1.3.5',
             nom: 'Publier les indicateurs de r\u00e9ussite des partenariats',
             description: '',
@@ -23805,7 +23805,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__5.2',
+    id: 'eci_5.2',
     id_nomenclature: '5.2',
     nom: 'Actions dirig\u00e9es vers les autres collectivit\u00e9s du territoire',
     description:
@@ -23819,7 +23819,7 @@ export const actions: ActionReferentiel[] = [
     points: 30,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__5.2.1',
+        id: 'eci_5.2.1',
         id_nomenclature: '5.2.1',
         nom: 'Informer, sensibiliser et former les autres collectivit\u00e9s et EPCI de son territoire',
         description:
@@ -23832,7 +23832,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.1.1',
+            id: 'eci_5.2.1.1',
             id_nomenclature: '5.2.1.1',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier approvisionnement durable',
             description:
@@ -23846,7 +23846,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.1.2',
+            id: 'eci_5.2.1.2',
             id_nomenclature: '5.2.1.2',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9co-conception',
             description:
@@ -23860,7 +23860,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.1.3',
+            id: 'eci_5.2.1.3',
             id_nomenclature: '5.2.1.3',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9cologie industrielle et territoriale (EIT)',
             description:
@@ -23874,7 +23874,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.1.4',
+            id: 'eci_5.2.1.4',
             id_nomenclature: '5.2.1.4',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9conomie de la fonctionnalit\u00e9',
             description:
@@ -23888,7 +23888,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.1.5',
+            id: 'eci_5.2.1.5',
             id_nomenclature: '5.2.1.5',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier consommation responsable',
             description:
@@ -23902,7 +23902,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.1.6',
+            id: 'eci_5.2.1.6',
             id_nomenclature: '5.2.1.6',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier allongement de la dur\u00e9e d\u0027usage',
             description:
@@ -23916,7 +23916,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.1.7',
+            id: 'eci_5.2.1.7',
             id_nomenclature: '5.2.1.7',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier recyclage',
             description:
@@ -23932,7 +23932,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__5.2.2',
+        id: 'eci_5.2.2',
         id_nomenclature: '5.2.2',
         nom: 'Aider \u00e0 l\u0027action des autres collectivit\u00e9s et EPCI de son territoire',
         description:
@@ -23945,7 +23945,7 @@ export const actions: ActionReferentiel[] = [
         points: 40,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.2.1',
+            id: 'eci_5.2.2.1',
             id_nomenclature: '5.2.2.1',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier approvisionnement durable',
             description:
@@ -23959,7 +23959,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.2.2',
+            id: 'eci_5.2.2.2',
             id_nomenclature: '5.2.2.2',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9co-conception',
             description:
@@ -23973,7 +23973,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.2.3',
+            id: 'eci_5.2.2.3',
             id_nomenclature: '5.2.2.3',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9cologie industrielle et territoriale (EIT)',
             description:
@@ -23987,7 +23987,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.2.4',
+            id: 'eci_5.2.2.4',
             id_nomenclature: '5.2.2.4',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9conomie de la fonctionnalit\u00e9',
             description:
@@ -24001,7 +24001,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.2.5',
+            id: 'eci_5.2.2.5',
             id_nomenclature: '5.2.2.5',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier consommation responsable',
             description:
@@ -24015,7 +24015,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.2.6',
+            id: 'eci_5.2.2.6',
             id_nomenclature: '5.2.2.6',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier allongement de la dur\u00e9e d\u0027usage',
             description:
@@ -24029,7 +24029,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.2.7',
+            id: 'eci_5.2.2.7',
             id_nomenclature: '5.2.2.7',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier recyclage',
             description:
@@ -24045,7 +24045,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__5.2.3',
+        id: 'eci_5.2.3',
         id_nomenclature: '5.2.3',
         nom: 'Structurer des partenariats',
         description:
@@ -24058,7 +24058,7 @@ export const actions: ActionReferentiel[] = [
         points: 40,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.3.1',
+            id: 'eci_5.2.3.1',
             id_nomenclature: '5.2.3.1',
             nom: 'Identifier les EPCI \u00e0 potentiel de collaboration',
             description: '',
@@ -24071,7 +24071,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.3.2',
+            id: 'eci_5.2.3.2',
             id_nomenclature: '5.2.3.2',
             nom: 'Identifier les enjeux',
             description: '',
@@ -24084,7 +24084,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.2.3.3',
+            id: 'eci_5.2.3.3',
             id_nomenclature: '5.2.3.3',
             nom: 'Conclure un/des accord(s) avec un ou plusieurs EPCI du territoire',
             description: '',
@@ -24101,7 +24101,7 @@ export const actions: ActionReferentiel[] = [
   }),
 
   new ActionReferentiel({
-    id: 'economie_circulaire__5.3',
+    id: 'eci_5.3',
     id_nomenclature: '5.3',
     nom: 'Actions dirig\u00e9es vers les acteurs \u00e9conomiques (TPE/PME, grandes entreprises, commer\u00e7ants, artisans, \u2026 y compris associations \u00e0 activit\u00e9 \u00e9conomique et acteurs \u00e9conomiques publics : type CHU, EHPAD, SEM, ...)',
     description:
@@ -24116,7 +24116,7 @@ export const actions: ActionReferentiel[] = [
     points: 30,
     actions: [
       new ActionReferentiel({
-        id: 'economie_circulaire__5.3.1',
+        id: 'eci_5.3.1',
         id_nomenclature: '5.3.1',
         nom: 'Informer et former les acteurs \u00e9conomiques',
         description:
@@ -24129,7 +24129,7 @@ export const actions: ActionReferentiel[] = [
         points: 20,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.1.1',
+            id: 'eci_5.3.1.1',
             id_nomenclature: '5.3.1.1',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier approvisionnement durable',
             description:
@@ -24143,7 +24143,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.1.2',
+            id: 'eci_5.3.1.2',
             id_nomenclature: '5.3.1.2',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9co-conception',
             description:
@@ -24157,7 +24157,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.1.3',
+            id: 'eci_5.3.1.3',
             id_nomenclature: '5.3.1.3',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9cologie industrielle et territoriale (EIT)',
             description:
@@ -24171,7 +24171,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.1.4',
+            id: 'eci_5.3.1.4',
             id_nomenclature: '5.3.1.4',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9conomie de la fonctionnalit\u00e9',
             description:
@@ -24185,7 +24185,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.1.5',
+            id: 'eci_5.3.1.5',
             id_nomenclature: '5.3.1.5',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier consommation responsable',
             description:
@@ -24199,7 +24199,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.1.6',
+            id: 'eci_5.3.1.6',
             id_nomenclature: '5.3.1.6',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier allongement de la dur\u00e9e d\u0027usage',
             description:
@@ -24213,7 +24213,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.1.7',
+            id: 'eci_5.3.1.7',
             id_nomenclature: '5.3.1.7',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier recyclage',
             description:
@@ -24229,7 +24229,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__5.3.2',
+        id: 'eci_5.3.2',
         id_nomenclature: '5.3.2',
         nom: 'Aider \u00e0 l\u0027action \u00e0 destination des acteurs \u00e9conomiques',
         description:
@@ -24242,7 +24242,7 @@ export const actions: ActionReferentiel[] = [
         points: 50,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.2.1',
+            id: 'eci_5.3.2.1',
             id_nomenclature: '5.3.2.1',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier approvisionnement durable',
             description:
@@ -24256,7 +24256,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.2.2',
+            id: 'eci_5.3.2.2',
             id_nomenclature: '5.3.2.2',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9co-conception',
             description:
@@ -24270,7 +24270,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.2.3',
+            id: 'eci_5.3.2.3',
             id_nomenclature: '5.3.2.3',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9cologie industrielle et territoriale (EIT)',
             description:
@@ -24284,7 +24284,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.2.4',
+            id: 'eci_5.3.2.4',
             id_nomenclature: '5.3.2.4',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier \u00e9conomie de la fonctionnalit\u00e9',
             description:
@@ -24298,7 +24298,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.2.5',
+            id: 'eci_5.3.2.5',
             id_nomenclature: '5.3.2.5',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier consommation responsable',
             description:
@@ -24312,7 +24312,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.2.6',
+            id: 'eci_5.3.2.6',
             id_nomenclature: '5.3.2.6',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier allongement de la dur\u00e9e d\u0027usage',
             description:
@@ -24326,7 +24326,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.2.7',
+            id: 'eci_5.3.2.7',
             id_nomenclature: '5.3.2.7',
             nom: 'R\u00e9aliser au moins 1 ou 2 actions sur le pilier recyclage',
             description:
@@ -24342,7 +24342,7 @@ export const actions: ActionReferentiel[] = [
       }),
 
       new ActionReferentiel({
-        id: 'economie_circulaire__5.3.3',
+        id: 'eci_5.3.3',
         id_nomenclature: '5.3.3',
         nom: 'F\u00e9d\u00e9rer les acteurs du territoire',
         description:
@@ -24355,7 +24355,7 @@ export const actions: ActionReferentiel[] = [
         points: 30,
         actions: [
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.3.1',
+            id: 'eci_5.3.3.1',
             id_nomenclature: '5.3.3.1',
             nom: '\u00c9tablir une cartographie de repr\u00e9sentants locaux \u00e0 potentiel de partenariat',
             description: '',
@@ -24368,7 +24368,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.3.2',
+            id: 'eci_5.3.3.2',
             id_nomenclature: '5.3.3.2',
             nom: 'Construire des accords avec les repr\u00e9sentants locaux sur 1 \u00e0 2 piliers',
             description: '',
@@ -24381,7 +24381,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.3.3',
+            id: 'eci_5.3.3.3',
             id_nomenclature: '5.3.3.3',
             nom: 'Construire des accords avec les repr\u00e9sentants locaux sur 3 \u00e0 4 piliers',
             description: '',
@@ -24394,7 +24394,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.3.4',
+            id: 'eci_5.3.3.4',
             id_nomenclature: '5.3.3.4',
             nom: 'Construire des accords avec les repr\u00e9sentants locaux sur 5 \u00e0 7 piliers',
             description: '',
@@ -24407,7 +24407,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.3.5',
+            id: 'eci_5.3.3.5',
             id_nomenclature: '5.3.3.5',
             nom: 'Suivre les indicateurs des partenariats',
             description: '',
@@ -24420,7 +24420,7 @@ export const actions: ActionReferentiel[] = [
           }),
 
           new ActionReferentiel({
-            id: 'economie_circulaire__5.3.3.6',
+            id: 'eci_5.3.3.6',
             id_nomenclature: '5.3.3.6',
             nom: 'Communiquer les r\u00e9sultats',
             description: '',

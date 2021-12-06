@@ -15,9 +15,7 @@ const viewTitles: Record<View, string> = {
   eci: 'Économie Circulaire',
 };
 
-const eciReferentiel = actions.find(
-  action => action.id === 'economie_circulaire'
-)!;
+const eciReferentiel = actions.find(action => action.id === 'eci')!;
 
 const caeReferentiel = actions.find(action => action.id === 'cae')!;
 // For ECI, main action is at level #1, here, we flatten the actions twice.
