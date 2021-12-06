@@ -5,11 +5,11 @@ from pathlib import Path
 from typing import List
 
 
-from business.referentiel.domain.models.indicateur import Indicateur
 from business.referentiel.domain.ports.referentiel_repo import (
     InMemoryReferentielRepository,
     ReferentielEntities,
 )
+from business.referentiel.domain.models.indicateur import Indicateur
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_definition import ActionDefinition
 from business.referentiel.domain.models.action_points import ActionPoints

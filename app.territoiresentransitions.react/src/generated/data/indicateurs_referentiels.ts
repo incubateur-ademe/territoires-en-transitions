@@ -1747,7 +1747,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-001',
     uid: 'eci-001',
     valeur: '',
-    action_ids: ['economie_circulaire__1.1'],
+    action_ids: ['eci_1.1'],
     nom: 'Part du budget consacr\u00e9e \u00e0 la politique Economie Circulaire dans le budget global (%)',
     description:
       '\u003cp\u003eLa collectivit\u00e9 d\u00e9finit le p\u00e9rim\u00e8tre de sa politique Economie Circulaire transversale avec d\u0027autres politiques et strat\u00e9gies.\u003c/p\u003e\n\u003cp\u003eLa m\u00e9thodologie \u0026quot;Evaluation climat des budgets des collectivit\u00e9s territoriales\u0026quot; peut \u00eatre utilis\u00e9e pour d\u00e9finir le p\u00e9rimetre du budget Economie Circualire.\u003c/p\u003e\n\u003cp\u003eLe budget Economie Circulaire peut inclure :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eles salaires (ou part des salaires) des salari\u00e9s travaillant sur l\u0027Economie Circulaire,\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ele co\u00fbt des formations sur l\u0027Economie Circulaire,\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eles soutien financier et non-financier des acteurs du territoires et leurs projets pour l\u0027Economie Circulaire,\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ele financement d\u0027\u00e9v\u00e8nements consacr\u00e9s \u00e0 l\u0027Economie Circulaire,\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003ele financement des projets propres \u00e0 la collectivit\u00e9\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e-etc.\u003c/p\u003e\n\u003cp\u003eLe budget peut inclure des instruments financiers mobilisant des financement public d\u0027autres institutions, voire des financements priv\u00e9s.\u003c/p\u003e\n\u003cp\u003eLes collectivit\u00e9s utilisant la comptabilit\u00e9 analytique peuvent cr\u00e9er un compte analytique associ\u00e9.\u003c/p\u003e\n',
@@ -1759,7 +1759,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-002',
     uid: 'eci-002',
     valeur: '',
-    action_ids: ['economie_circulaire__1.2'],
+    action_ids: ['eci_1.2'],
     nom: 'Part des services de la collectivit\u00e9 form\u00e9s \u00e0 l\u0027Economie Circulaire (%)',
     description:
       '\u003cp\u003eNombre de services avec au moins un salari\u00e9 actuellement pr\u00e9sent dans son poste ayant \u00e9t\u00e9 form\u00e9 \u00e0 l\u0027Economie Circulaire dans les 4 derni\u00e8res ann\u00e9es/ Nombre de services de la collectivit\u00e9 * 100. Les services incluent toutes les th\u00e9matiques et secteurs, y compris fonctions support.\u003c/p\u003e\n',
@@ -1771,7 +1771,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-003',
     uid: 'eci-003',
     valeur: '',
-    action_ids: ['economie_circulaire__1.2'],
+    action_ids: ['eci_1.2'],
     nom: 'Part de formations Economie Circulaire dans le programme de formation de la collectivit\u00e9 (nombre)',
     description:
       '\u003cp\u003eNombre de formations en lien avec l\u0027Economie Circulaire / Nombre total de formations suivis par les agents *100\u003c/p\u003e\n',
@@ -1783,7 +1783,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-005',
     uid: 'eci-005',
     valeur: '',
-    action_ids: ['economie_circulaire__2.1'],
+    action_ids: ['eci_2.1'],
     nom: 'Production de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats) par habitant (kg/hab.an)',
     description:
       '\u003cp\u003ePoids de DMA  (avec d\u00e9blais et gravats) produits sur le territoire / Population du territoire\u003c/p\u003e\n',
@@ -1795,7 +1795,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-006',
     uid: 'eci-006',
     valeur: '',
-    action_ids: ['economie_circulaire__2.2'],
+    action_ids: ['eci_2.2'],
     nom: 'Part de d\u00e9chets soumis \u00e0 la collecte s\u00e9par\u00e9e dans les Ordures M\u00e9nagers et Assimil\u00e9s (OMR) et la benne tout venant d\u00e9chetterie (%)',
     description:
       '\u003cp\u003ePoids de d\u00e9chets soumis \u00e0 la collecte s\u00e9par\u00e9e (d\u0027apr\u00e8s le r\u00e8glement de collecte) / Poids des OMR et de la benne tout venant des d\u00e9ch\u00e8teries.\u003c/p\u003e\n\u003cp\u003eM\u00e9thode d\u0027\u00e9chantillonnage : https://www.sinoe.org/contrib/ademe/carademe/pages/guide_OMCS_echant1.php\u003c/p\u003e\n',
@@ -1807,7 +1807,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-007',
     uid: 'eci-007',
     valeur: '',
-    action_ids: ['economie_circulaire__2.3'],
+    action_ids: ['eci_2.3'],
     nom: 'Part des DMA envoy\u00e9e pour la r\u00e9utilisation, le recyclage et la valorisation organique ou \u00e9nerg\u00e9tique (%)',
     description:
       '\u003cp\u003ePoids des DMA envoy\u00e9s pour la r\u00e9utilisation, le recyclage ou la valorisation / Poids des DMA produits sur le territoire.\u003c/p\u003e\n\u003cp\u003eIl est possible de d\u00e9tailler cet indicateur par voie de valorisation si un suivi plus fin est souhait\u00e9. Exemples : recyclerie, usine de compostage, m\u00e9thanisation, etc.\u003c/p\u003e\n',
@@ -1819,7 +1819,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-008',
     uid: 'eci-008',
     valeur: '',
-    action_ids: ['economie_circulaire__2.3'],
+    action_ids: ['eci_2.3'],
     nom: 'Taux de mise en d\u00e9charge de DMA (%)',
     description:
       '\u003cp\u003ePoids de d\u00e9chets envoy\u00e9s en d\u00e9charge / Poids de d\u00e9chets produits sur le territoire\u003c/p\u003e\n',
@@ -1831,7 +1831,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-009',
     uid: 'eci-009',
     valeur: '',
-    action_ids: ['economie_circulaire__2.4'],
+    action_ids: ['eci_2.4'],
     nom: 'Part de DMA b\u00e9n\u00e9ficiant d\u0027un mode de transport \u00e0 faible impact (%)',
     description:
       '\u003cp\u003eMode de transport \u00e0 faible impact : v\u00e9hicules \u00e9lectriques, mobilit\u00e9 douce ou active, \u00e9quipements utilisant la voie fluviale, la voie ferroviaire.\u003c/p\u003e\n\u003cp\u003eTonnes de DMA transport\u00e9s par les \u00e9quipements de transport \u00e0 faible impact / Tonnes de DMA transport\u00e9s\u003c/p\u003e\n',
@@ -1843,7 +1843,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-010',
     uid: 'eci-010',
     valeur: '',
-    action_ids: ['economie_circulaire__2.4'],
+    action_ids: ['eci_2.4'],
     nom: 'Emissions GES des Installations de Stockage de D\u00e9chets Non-Dangereux (ISDND) (eqtCO2/tonne de d\u00e9chets entrant)',
     description:
       '\u003cp\u003eEquivalent en tonnes de CO2 par an emis par l\u0027ISDND / volume de d\u00e9chets entrants en tonnes\u003c/p\u003e\n',
@@ -1855,7 +1855,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-011',
     uid: 'eci-011',
     valeur: '',
-    action_ids: ['economie_circulaire__2.4'],
+    action_ids: ['eci_2.4'],
     nom: 'Emissions GES\u00a0de la collecte des DMA sur le territoire (eqtCO2/tonne de d\u00e9chets)',
     description:
       '\u003cp\u003eM\u00e9thode de calcul:\u003c/p\u003e\n\u003cp\u003e\u00c9tape 1 : Constitution d\u2019un catalogue de facteurs d\u2019efficacit\u00e9 \u00e9nerg\u00e9tique et de facteurs d\u2019\u00e9missions\u003c/p\u003e\n\u003cp\u003e\u00c9tape 2 : \u00c9tablissement d\u2019hypoth\u00e8ses sur les distances parcourues\u003c/p\u003e\n\u003cp\u003e\u00c9tape 3 : Calcul des \u00e9missions de la collecte DMA\u003c/p\u003e\n\u003cp\u003eCette m\u00e9thode peut s\u0027appliquer au calcul d\u0027un indicateur d\u0027\u00e9mission du transport de touts les d\u00e9chets du territoire en y ajoutant :\u003c/p\u003e\n\u003cp\u003e\u00c9tape 3 : Calcul des \u00e9missions de chaque fili\u00e8re\u003c/p\u003e\n\u003cp\u003e\u00c9tape 4 : Consolidation des r\u00e9sultats de calcul pour l\u2019ensemble des d\u00e9chets transport\u00e9s\u003c/p\u003e\n\u003cp\u003eVoir la m\u00e9thodologie d\u00e9taill\u00e9e et donn\u00e9es dans l\u0027\u00e9tude \u0026quot;TRANSPORT ET LOGISTIQUE DES DECHETS: ENJEUX ET EVOLUTIONS DU TRANSPORT ET DE LA LOGISTIQUE DES DECHETS\u0026quot;, 2014, ADEME\u003c/p\u003e\n',
@@ -1867,7 +1867,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-012',
     uid: 'eci-012',
     valeur: '',
-    action_ids: ['economie_circulaire__2.5'],
+    action_ids: ['eci_2.5'],
     nom: 'Nombre de fili\u00e8res anim\u00e9s par la collectivit\u00e9 ou ses partenaires pour la prise en charge des d\u00e9chets (BTP, DAE\u2026) (nombre)',
     description:
       '\u003cp\u003eLa collectivit\u00e9 d\u00e9finit le p\u00e9rim\u00e8tre des fili\u00e8res pertinent pour le territoire. L\u0027animation sous-entend des actions allant de soutien de dialogue \u00e0 l\u0027accompagnement d\u0027action pour am\u00e9liorer la dynamique d\u00e9chets des acteurs \u00e9conomiques (pr\u00e9vention, am\u00e9lioration de tri, de collecte et de valorisation, etc.)\u003c/p\u003e\n',
@@ -1879,7 +1879,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-013',
     uid: 'eci-013',
     valeur: '',
-    action_ids: ['economie_circulaire__3.1'],
+    action_ids: ['eci_3.1'],
     nom: 'Nombre de boucles locales d\u0027\u00e9conomie circulaire mises en place dans les 4 derni\u00e8res ann\u00e9es  (nombre)',
     description:
       '\u003cp\u003eL\u0027indicateur prend en compte les boucles locales op\u00e9rationnelles, c\u2019est-\u00e0-dire celles o\u00f9 au moins un \u00e9change mati\u00e8re/produit a \u00e9t\u00e9 effectu\u00e9 dans la derni\u00e8re ann\u00e9e. Comptabiliser les boucles mises en place depuis 4 ans.\u003c/p\u003e\n\u003cp\u003eUne boucle locale d\u2019\u00e9conomie circulaire vise \u00e0 conserver le plus longtemps possible dans l\u2019\u00e9conomie (locale) la valeur d\u2019un produit, de ses composants ou des mati\u00e8res (des ressources) en limitant la g\u00e9n\u00e9ration de d\u00e9chets (et en d\u00e9veloppant le partage, la r\u00e9paration, le r\u00e9emploi, la r\u00e9utilisation, la r\u00e9novation, la refabrication et le recyclage) dans une perspective de d\u00e9veloppement d\u2019activit\u00e9 \u00e9conomique (durable, faible en carbone et r\u00e9duction de l\u2019utilisation des ressources naturelles) et d\u2019emplois locaux (ou de proximit\u00e9).\u003c/p\u003e\n',
@@ -1891,7 +1891,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-014',
     uid: 'eci-014',
     valeur: '',
-    action_ids: ['economie_circulaire__3.2'],
+    action_ids: ['eci_3.2'],
     nom: 'Pourcentage de contrat d\u0027achats publiques de la collectivit\u00e9 comportant au moins une consid\u00e9ration environnementale (%)',
     description:
       '\u003cp\u003e% de contrat en nombre ou % de contrat en montant (au choix). Les contrat sur une ann\u00e9e civile sont pris en compte.\u003c/p\u003e\n\u003cp\u003eVoir la notion de la concid\u00e9ration environnementale au PNAAPD 2021-2025 - objectif 100% des march\u00e9s comportent une consid\u00e9ration environnementale.\u003c/p\u003e\n',
@@ -1903,7 +1903,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-015',
     uid: 'eci-015',
     valeur: '',
-    action_ids: ['economie_circulaire__3.2'],
+    action_ids: ['eci_3.2'],
     nom: 'Part de biens ou de constructions temporaires acquis annuellement par la collectivit\u00e9 issus du r\u00e9emploi ou de la r\u00e9utilisation ou int\u00e8grent des mati\u00e8res recycl\u00e9es (%)',
     description:
       '\u003cp\u003eDonn\u00e9es de suivi des objectifs de la loi AGEC articles 56 et 58 (d\u00e9cret n\u00b0 2021-254 du 9 mars 2021).\u003c/p\u003e\n\u003cp\u003eObjectif de 20% de achats reconditionn\u00e9s.\u003c/p\u003e\n',
@@ -1915,7 +1915,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-017',
     uid: 'eci-017',
     valeur: '',
-    action_ids: ['economie_circulaire__3.4'],
+    action_ids: ['eci_3.4'],
     nom: 'Part d\u0027entreprises et d\u0027\u00e9tablissements ayant \u00e9t\u00e9 form\u00e9es \u00e0 l\u0027\u00e9coconception durant les 4 derni\u00e8res ann\u00e9es (%)',
     description:
       '\u003cp\u003eNombre d\u0027entreprises et d\u0027\u00e9tablissements ayant \u00e9t\u00e9 form\u00e9es \u00e0 l\u0027\u00e9coconception / Nombre d\u0027entreprises et d\u0027\u00e9tablissements sur le territoire\u003c/p\u003e\n',
@@ -1927,7 +1927,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-018',
     uid: 'eci-018',
     valeur: '',
-    action_ids: ['economie_circulaire__3.5'],
+    action_ids: ['eci_3.5'],
     nom: 'Nombre de synergies d\u0027Ecologie Industrielle et Territoriale (EIT) op\u00e9rationnelles sur le territoire (nombre)',
     description:
       '\u003cp\u003eSynergie est consid\u00e9r\u00e9e comme op\u00e9rationnelle \u00e0 partir d\u0027au moins un \u00e9change mati\u00e8re r\u00e9alis\u00e9\u003c/p\u003e\n',
@@ -1939,7 +1939,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-019',
     uid: 'eci-019',
     valeur: '',
-    action_ids: ['economie_circulaire__3.5'],
+    action_ids: ['eci_3.5'],
     nom: 'Nombre d\u0027entreprises engag\u00e9es dans les synergie d\u0027EIT (nombre)',
     description:
       '\u003cp\u003eSynergie est consid\u00e9r\u00e9e comme op\u00e9rationnelle \u00e0 partir d\u0027au moins un \u00e9change mati\u00e8re r\u00e9alis\u00e9 ou d\u0027un service de mutualisation utilis\u00e9 par au moins deux entit\u00e9s.\u003c/p\u003e\n',
@@ -2071,7 +2071,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-030',
     uid: 'eci-030',
     valeur: '',
-    action_ids: ['economie_circulaire__1.2.2'],
+    action_ids: ['eci_1.2.2'],
     nom: 'Part des comp\u00e9tences obligatoires et facultatives exerc\u00e9es par la collectivit\u00e9 (mobilit\u00e9, urbanisme, etc.) pour lesquelles l\u2019\u00e9quipe Economie Circulaire a co-construit au moins une action favorisant l\u2019Economie Circulaire dans les 4 derni\u00e8res ann\u00e9es',
     description:
       '\u003cp\u003e% des comp\u00e9tences obligatoires et facultatives exerc\u00e9es par la collectivit\u00e9 (mobilit\u00e9, urbanisme, etc.) pour lesquelles l\u2019\u00e9quipe Economie Circulaire a co-construit au moins une action favorisant l\u2019Economie Circulaire dans les 4 derni\u00e8res ann\u00e9es\u003c/p\u003e\n',
@@ -2083,7 +2083,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-031',
     uid: 'eci-031',
     valeur: '',
-    action_ids: ['economie_circulaire__1.2.3'],
+    action_ids: ['eci_1.2.3'],
     nom: 'Part des strat\u00e9gies ou des politiques dans lesquelles l\u2019\u00e9quipe Economie Circulaire a \u00e9t\u00e9 associ\u00e9e pour leur conception',
     description:
       '\u003cp\u003e% des strat\u00e9gies ou des politiques dans lesquelles l\u2019\u00e9quipe Economie Circulaire a \u00e9t\u00e9 associ\u00e9e pour leur conception\u003c/p\u003e\n',
@@ -2095,7 +2095,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-032',
     uid: 'eci-032',
     valeur: '',
-    action_ids: ['economie_circulaire__4.2.4'],
+    action_ids: ['eci_4.2.4'],
     nom: 'Part de la population de la collectivit\u00e9 couverte par la Tarification Incitative',
     description:
       '\u003cp\u003e% de la population de la collectivit\u00e9 couverte par la TI\u003c/p\u003e\n',
@@ -2107,7 +2107,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-033',
     uid: 'eci-033',
     valeur: '',
-    action_ids: ['economie_circulaire__3.6'],
+    action_ids: ['eci_3.6'],
     nom: 'Nombre d\u0027actions de la collectivit\u00e9 en \u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration (nombre)',
     description:
       '\u003cp\u003ePour le p\u00e9rimetre de l\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration - Panorama national et pistes d\u0027action pour l\u0027\u00e9conomie de la fonctionnalit\u00e9 (https://librairie.ademe.fr/changement-climatique-et-energie/23-panorama-national-et-pistes-d-action-pour-l-economie-de-la-fonctionnalite.html)\u003c/p\u003e\n\u003cp\u003eLes actions : actions de sencibilisation, les commandes publiques, les projets coop\u00e9ratifs, actions collectives.\u003c/p\u003e\n',
@@ -2119,7 +2119,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-034',
     uid: 'eci-034',
     valeur: '',
-    action_ids: ['economie_circulaire__3.6'],
+    action_ids: ['eci_3.6'],
     nom: 'Nombre d\u0027entreprises ou etablissements sencibilis\u00e9es ou accompagn\u00e9es sur les questions de l\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration (nombre)',
     description:
       '\u003cp\u003ePour le p\u00e9rimetre de l\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration - Panorama national et pistes d\u0027action pour l\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration (https://librairie.ademe.fr/changement-climatique-et-energie/23-panorama-national-et-pistes-d-action-pour-l-economie-de-la-fonctionnalite.html)\u003c/p\u003e\n',
@@ -2131,7 +2131,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-035',
     uid: 'eci-035',
     valeur: '',
-    action_ids: ['economie_circulaire__3.7'],
+    action_ids: ['eci_3.7'],
     nom: 'Nombre de projets de recherche, d\u0027innovation ou d\u0027exp\u00e9rimentation accompagn\u00e9s financi\u00e8rement ou non-financi\u00e8rement par la collectivit\u00e9 (nombre)',
     description:
       '\u003cp\u003eLes projets peuvent porter sur des sujets techniques, technologiques, organisationnels ou de mod\u00e8les d\u0027affires. Si la collectivit\u00e9 souhaite aller plus loin dans le suivi, elle peut prendre en compte l\u0027ampleur des projets (budgets, nombre de partenaires, etc.)\u003c/p\u003e\n',
@@ -2143,7 +2143,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-036',
     uid: 'eci-036',
     valeur: '',
-    action_ids: ['economie_circulaire__3.7'],
+    action_ids: ['eci_3.7'],
     nom: 'Effet de levier d\u0027accompagnement financier des projets de recherche, d\u0027innovation et d\u0027exp\u00e9rimentation en mati\u00e8re d\u0027Economie Circulaire  (1\u20ac public pour X \u20ac priv\u00e9)',
     description:
       '\u003cp\u003e[Total des budgets de projets Economie Circulaire soutenus par la collectivit\u00e9]-[Total d\u0027aide financi\u00e8re apport\u00e9e aux projets Economie Circulaire par la collectivit\u00e9] / [Total d\u0027aide financi\u00e8re apport\u00e9e aux projets Economie Circulaire par la collectivit\u00e9]\u003c/p\u003e\n',
@@ -2155,7 +2155,7 @@ export const indicateurs: IndicateurReferentiel[] = [
     id: 'eci-037',
     uid: 'eci-037',
     valeur: '',
-    action_ids: ['economie_circulaire__4.1'],
+    action_ids: ['eci_4.1'],
     nom: 'D\u00e9pense annuelle consacr\u00e9e \u00e0 la gestion des d\u00e9chets (\u20ac/habitant)',
     description:
       '\u003cp\u003eVoir la m\u00e9thode de calcul de la matrice des co\u00fbts. M\u00e9thodologie sur SINOE D\u00e9chets : https://www.sinoe.org/thematiques/consult/ss-theme/25\u003c/p\u003e\n',

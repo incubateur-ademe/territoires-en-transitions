@@ -27,8 +27,12 @@ def get_env_variable(
     return variable
 
 
-ReferetielsRepository = Literal["JSON", "SUPABASE"]
-referentiels_repository_options: List[ReferetielsRepository] = ["JSON", "SUPABASE"]
+ReferetielsRepository = Literal["JSON", "SUPABASE", "SQL"]
+referentiels_repository_options: List[ReferetielsRepository] = [
+    "JSON",
+    "SUPABASE",
+    "SQL",
+]
 
 LabelisationRepositories = Literal["IN_MEMORY", "SUPABASE"]
 labelisation_repositories_options: List[LabelisationRepositories] = [
@@ -45,7 +49,7 @@ class EnvironmentVariables:
     referentiels_repository: Optional[ReferetielsRepository] = None
     labelisation_repositories: Optional[LabelisationRepositories] = None
     realtime: Optional[Realtime] = None
-    referentiels_repo_json: Optional[str] = None
+    referentiels_repo_file: Optional[str] = None
 
     def __str__(self):
         return f"\
@@ -65,5 +69,5 @@ def get_env_variables() -> EnvironmentVariables:
             "LABELISATION_REPOSITORIES", labelisation_repositories_options
         ),
         realtime=get_env_variable("REALTIME", realtime_options),
-        referentiels_repo_json=os.getenv("REFERENTIELS_REPO_JSON"),
+        referentiels_repo_file=os.getenv("REFERENTIELS_REPO_JSON"),
     )

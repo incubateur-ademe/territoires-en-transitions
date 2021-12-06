@@ -2,11 +2,11 @@ import '@testing-library/jest-dom/extend-expect';
 import {ActionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
 import {supabase} from 'core-logic/api/supabase';
 import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
+import {yiliCredentials, yoloCredentials} from 'test_utils/epci';
 
 describe('Action-statut write endpoint', () => {
   beforeAll(async () => {
-    await supabase.auth.signUp({email: 'yili@didi.com', password: 'yolododo'});
-    await supabase.auth.signIn({email: 'yili@didi.com', password: 'yolododo'});
+    await supabase.auth.signIn(yiliCredentials);
   });
   it('Saving a statut should return an equivalent statut', async () => {
     const endpoint = new ActionStatutWriteEndpoint();

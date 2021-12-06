@@ -224,9 +224,7 @@ export const getActionReferentielScoreStoreForReferentielForEpci = (props: {
 
 export const getActionReferentielScoreStoreFromId = (id: string) => {
   const epciId = getCurrentEpciSiren()!;
-  const referentiel: Referentiel = id.includes('economie_circulaire')
-    ? 'eci'
-    : 'cae';
+  const referentiel: Referentiel = id.includes('eci') ? 'eci' : 'cae';
 
   return getActionReferentielScoreStoreForReferentielForEpci({
     epciId,
