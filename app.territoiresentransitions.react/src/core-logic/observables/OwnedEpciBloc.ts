@@ -33,12 +33,13 @@ export class OwnedEpciBloc {
     });
   }
 
-  async claim(siren: string) {
+  async claim(siren: string): Promise<boolean> {
     const success = await claimEpci(siren);
     ownedEpciReadEndpoint.clearCache();
     if (success) {
       this.updateOwnedEpciReads(authBloc.userId);
     }
+    return success;
   }
 
   get ownedEpciSirens() {

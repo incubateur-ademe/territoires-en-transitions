@@ -12,6 +12,10 @@ import {
 } from 'core-logic/observables';
 import {observer} from 'mobx-react-lite';
 import {EpciRedirector} from 'app/Redirector';
+import {
+  JoinCurrentEpciDialog,
+  SelectEpciDialog,
+} from 'app/pages/CurrentUserEpcis/_AddDialog';
 
 const HeaderObserver = observer(
   ({
@@ -63,6 +67,7 @@ const HeaderObserver = observer(
         </div>
         <EpciHeader bloc={currentEpciBloc} />
       </header>
+      <EpciReadOnlyBanner bloc={currentEpciBloc} />
     </>
   )
 );
@@ -71,11 +76,16 @@ export const Header = () => (
   <HeaderObserver currentEpciBloc={currentEpciBloc} authBloc={authBloc} />
 );
 
-const ReadOnlyBanner = () => (
-  <div className="flex justify-end h-5 bg-yellow-400 py-0.5 bg-opacity-70">
-    <p className="pr-3 text-xs">lecture seule</p>
-  </div>
-);
+const EpciReadOnlyBanner = observer(({bloc}: {bloc: CurrentEpciBloc}) => {
+  if (bloc.readonly)
+    return (
+      <div className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70">
+        <div className="text-sm mr-4">lecture seule</div>
+        <JoinCurrentEpciDialog siren={bloc.currentEpci!.siren} />
+      </div>
+    );
+  return null;
+});
 
 const EpciHeader = observer(({bloc}: {bloc: CurrentEpciBloc}) => {
   return (
@@ -83,7 +93,6 @@ const EpciHeader = observer(({bloc}: {bloc: CurrentEpciBloc}) => {
       <div className="fr-container">
         {bloc.currentEpci !== null && (
           <div>
-            {bloc.readonly && <ReadOnlyBanner />}
             <div className="flex flex-row justify-between">
               <EpciNavigation />
               <div className="flex items-center font-bold">

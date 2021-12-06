@@ -4,7 +4,7 @@ import 'app/DesignSystem/variables.css';
 
 import {OwnedEpciRead} from 'generated/dataLayer';
 import {SimpleEpciCard} from 'ui/epcis/SimpleEpciCard';
-import {AddDialog} from './_AddDialog';
+import {SelectEpciDialog} from './_AddDialog';
 import {observer} from 'mobx-react-lite';
 import {
   ownedEpciBloc,
@@ -44,7 +44,7 @@ const CurrentUserEpcis = () => {
         <div className="my-4">
           Pourquoi pas un petit texte qui explique un peu.
         </div>
-        <AddDialog />
+        <SelectEpciDialog />
         <Spacer />
 
         <MyEpciCards bloc={ownedEpciBloc} />

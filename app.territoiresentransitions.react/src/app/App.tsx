@@ -63,7 +63,7 @@ export const App = () => {
               <CurrentUserEpcisPage />
             </Route>
             <Route path={allEpcisPath}>
-              {/* <Lala /> */}
+              <Lala />
               <Header />
               <AllActiveEpcisPage />
             </Route>
