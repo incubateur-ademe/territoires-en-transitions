@@ -10,6 +10,11 @@ export const epci2: AllEpciRead = {
   siren: '200071751',
 };
 
+export const epci40: AllEpciRead = {
+  nom: 'PETR du Soissonnais et du Valois',
+  siren: '200085694',
+};
+
 export const yoloCredentials = {email: 'yolo@dodo.com', password: 'yolododo'};
 export const yuluCredentials = {email: 'yulu@dudu.com', password: 'yulududu'};
 export const yiliCredentials = {email: 'yili@didi.com', password: 'yilididi'};

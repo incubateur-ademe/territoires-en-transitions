@@ -13,7 +13,7 @@ describe('Action-statut write endpoint', () => {
     const statut: ActionStatutWrite = {
       concerne: true,
       avancement: 'fait',
-      action_id: 'cae_1.2.3.4',
+      action_id: 'cae_1.1.1.1.2',
       epci_id: 1,
     };
     const result = await endpoint.save(statut);
@@ -21,7 +21,7 @@ describe('Action-statut write endpoint', () => {
     expect(result).not.toBeNull();
     expect(result).toEqual(
       expect.objectContaining({
-        action_id: 'cae_1.2.3.4',
+        action_id: 'cae_1.1.1.1.2',
         epci_id: 1,
         concerne: true,
         avancement: 'fait',
