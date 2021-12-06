@@ -54,6 +54,6 @@ describe('Owned EPCI reading endpoint ', () => {
   it('should retrieve 0 EPCI for Yulu', async () => {
     await supabase.auth.signIn(yuluCredentials);
     const results = await ownedEpciReadEndpoint.getBy({});
-    expect(results.length).toEqual(0);
+    expect(results).toEqual([]);
   });
 });

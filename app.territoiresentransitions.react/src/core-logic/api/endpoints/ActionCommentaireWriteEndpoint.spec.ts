@@ -13,7 +13,7 @@ describe('Action-commentaire write endpoint', () => {
     const endpoint = new ActionCommentaireWriteEndpoint();
     const commentaire: ActionCommentaireWrite = {
       epci_id: 1,
-      action_id: 'cae_1.2.3.4',
+      action_id: 'cae_1.1.1.1.2',
       commentaire: 'yolo',
     };
     const actualCommentaireWrite = await endpoint.save(commentaire);
@@ -23,11 +23,11 @@ describe('Action-commentaire write endpoint', () => {
   it('Should fail when saving a commentaire with bad epci', async () => {
     const endpoint = new ActionCommentaireWriteEndpoint();
     const commentaire: ActionCommentaireWrite = {
-      epci_id: 666,
-      action_id: 'cae_1.2.3.1',
+      epci_id: 10000,
+      action_id: 'cae_1.1.1.1.2',
       commentaire: 'yolo',
     };
     const result = await endpoint.save(commentaire);
-    expect(result).toEqual(null);
+    expect(result).toEqual([null]);
   });
 });
