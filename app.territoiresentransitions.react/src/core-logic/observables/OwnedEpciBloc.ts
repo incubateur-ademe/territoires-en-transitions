@@ -5,7 +5,7 @@ import {
   allEpciReadEndpoint,
   ownedEpciReadEndpoint,
 } from 'core-logic/api/endpoints/EpciReadEndpoints';
-import {claimEpci} from 'core-logic/api/procedures/ClaimEpciProcedure';
+import {claimEpci} from 'core-logic/api/procedures/epciProcedures';
 
 export class OwnedEpciBloc {
   ownedEpciReads: OwnedEpciRead[] = [];

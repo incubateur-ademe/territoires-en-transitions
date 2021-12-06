@@ -3,6 +3,7 @@ import '../CrossExpandPanel.css';
 import {makeAutoObservable} from 'mobx';
 import {actionCommentaireRepository} from 'core-logic/api/repositories/ActionCommentaireRepository';
 import {observer} from 'mobx-react-lite';
+import {currentEpciBloc} from 'core-logic/observables';
 
 export const ActionCommentaire = ({actionId}: {actionId: string}) => {
   const epciId = 1; // TODO !
@@ -26,6 +27,7 @@ const ActionCommentaireField = observer(
       onChange={event => observable.setFieldValue(event.currentTarget.value)}
       onBlur={_ => observable.saveFieldValue()}
       className="fr-input mt-2 w-full bg-white p-3 mr-5"
+      disabled={currentEpciBloc.readonly}
     />
   )
 );

@@ -1,11 +1,11 @@
 import {LabeledTextInput} from 'ui';
 import {useState} from 'react';
 import {commands} from 'core-logic/commands';
-import {useEpciId} from 'core-logic/hooks';
+import {useEpciSiren} from 'core-logic/hooks';
 
 export const PlanCreationForm = (props: {onSave: () => void}) => {
   const [nom, setNom] = useState<string>('');
-  const epciId = useEpciId()!;
+  const epciId = useEpciSiren()!;
 
   const handleSave = async () => {
     if (!nom) return;

@@ -3,10 +3,10 @@ import {authBloc} from 'core-logic/observables/authBloc';
 import {reaction} from 'mobx';
 import {useHistory} from 'react-router-dom';
 import {currentEpciBloc} from 'core-logic/observables';
-import {useEpciId} from 'core-logic/hooks';
+import {useEpciSiren} from 'core-logic/hooks';
 
 export const EpciRedirector = () => {
-  const epciId = useEpciId();
+  const epciId = useEpciSiren();
   console.log(epciId);
   currentEpciBloc.update({siren: epciId || null});
 

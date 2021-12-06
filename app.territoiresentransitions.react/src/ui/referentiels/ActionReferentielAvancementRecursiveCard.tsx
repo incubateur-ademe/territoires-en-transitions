@@ -76,15 +76,15 @@ export const ActionReferentielAvancementCard = ({
           showPoints={true}
         />
       </div>
-      <div className="flex justify-between my-6">
-        {' '}
-        <div className={` ${!displayAddFicheActionButton ? 'hidden' : ''}`}>
-          <AddFicheActionButton actionId={action.id} />
-        </div>
-        <div className={` ${!isTache ? 'hidden' : ''}`}>
-          <ActionStatusAvancementRadioButton actionId={action.id} />
-        </div>
+      {/* <div className="flex justify-between my-6"> */}
+      {/* {' '} */}
+      {/* <div className={` ${!displayAddFicheActionButton ? 'hidden' : ''}`}> */}
+      {/* <AddFicheActionButton actionId={action.id} /> */}
+      {/* </div> */}
+      <div className={` ${!isTache ? 'hidden' : ''}`}>
+        <ActionStatusAvancementRadioButton actionId={action.id} />
       </div>
+      {/* </div> */}
       <div className="w-1/2">
         <ActionDescriptionExpandPanel action={action} />
         <ActionExemplesExpandPanel action={action} />

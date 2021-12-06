@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useEpciId} from 'core-logic/hooks';
+import {useEpciSiren} from 'core-logic/hooks';
 import {AnyIndicateurValueStorable} from 'storables';
 import {HybridStore} from 'core-logic/api/hybridStore';
 import {commands} from 'core-logic/commands';
@@ -23,7 +23,7 @@ const AnyIndicateurValueInput = ({
   store: HybridStore<AnyIndicateurValueStorable>;
   borderColor?: 'blue' | 'gray';
 }) => {
-  const epciId = useEpciId()!;
+  const epciId = useEpciSiren()!;
   const [inputValue, setInputValue] = useState<string | number>('');
   const valueIndicateurUid = inferValueIndicateurUid(indicateurUid);
 

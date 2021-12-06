@@ -1,4 +1,4 @@
-import {useAllFiches, useEpciId, useStorable} from 'core-logic/hooks';
+import {useAllFiches, useEpciSiren, useStorable} from 'core-logic/hooks';
 import {PlanActionStorable} from 'storables/PlanActionStorable';
 import {planActionStore} from 'core-logic/api/hybridStores';
 import {Link, useParams} from 'react-router-dom';
@@ -76,7 +76,7 @@ const CategoryLevel = (props: {nodes: CategorizedNode[]; level?: number}) => {
  * Displays plan categories.
  */
 const Plan = (props: {plan: PlanActionTyped}) => {
-  const epciId = useEpciId()!;
+  const epciId = useEpciSiren()!;
   const fiches = useAllFiches(epciId);
   const sorted = categorizeAndSortFiches(fiches, props.plan);
   const nested = nestCategorized(sorted);
@@ -90,7 +90,7 @@ const Plan = (props: {plan: PlanActionTyped}) => {
 const PlanButtons = (props: {plan: PlanActionStorable & PlanActionTyped}) => {
   const [editing, setEditing] = useState<boolean>(false);
 
-  const epciId = useEpciId()!;
+  const epciId = useEpciSiren()!;
 
   return (
     <div className="flex flex-row items-center justify-end w-full">
@@ -107,7 +107,7 @@ const PlanButtons = (props: {plan: PlanActionStorable & PlanActionTyped}) => {
 
       <Link
         className="fr-btn h-8"
-        to={`/collectivite/${epciId}/nouvelle_fiche?plan_uid=${props.plan.uid}`}
+        to={`/epci/${epciId}/nouvelle_fiche?plan_uid=${props.plan.uid}`}
       >
         Ajouter une fiche action
       </Link>

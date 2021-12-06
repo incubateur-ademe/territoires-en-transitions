@@ -4,21 +4,25 @@ import {ProgressStatStatic} from 'ui/referentiels';
 import {ActionDescriptionExpandPanel} from 'ui/shared';
 import {ActionReferentielTitle} from './ActionReferentielTitle';
 import {referentielToName} from 'app/labels';
-import {getCurrentEpciId} from 'core-logic/api/currentEpci';
 import {referentielId} from 'utils/actions';
+import {makeEpciActionsPath} from 'app/paths';
+import {currentEpciBloc} from 'core-logic/observables';
 
 export const ActionReferentielTitleCard = ({
   action,
 }: {
   action: ActionReferentiel;
 }) => {
+  const epciSiren = currentEpciBloc.currentEpci?.siren;
   const referentiel = referentielId(action.id);
   return (
     <article className="bg-beige my-4">
       <Link
-        to={`/collectivite/${getCurrentEpciId()}/action/${referentiel}/${
-          action.id
-        }`}
+        to={makeEpciActionsPath({
+          siren: epciSiren!,
+          referentiel,
+          actionId: action.id,
+        })}
         className="LinkedCardHeader"
       >
         <div className="flex p-4 justify-between">

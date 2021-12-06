@@ -10,7 +10,7 @@ import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnalise
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
-import {useEpciId} from 'core-logic/hooks';
+import {useEpciSiren} from 'core-logic/hooks';
 import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
@@ -110,7 +110,7 @@ export const IndicateurPersonnaliseCard = ({
   indicateur: IndicateurPersonnaliseStorable;
   hideIfNoValues?: boolean;
 }) => {
-  const epciId = useEpciId()!;
+  const epciId = useEpciSiren()!;
   const resultatValueStorables = useAnyIndicateurValueForAllYears(
     indicateur.uid,
     epciId,
