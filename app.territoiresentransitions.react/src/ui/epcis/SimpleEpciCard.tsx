@@ -1,3 +1,4 @@
+import {makeEpciTabPath} from 'app/paths';
 import {ElsesEpciRead, OwnedEpciRead} from 'generated/dataLayer';
 import {Link} from 'react-router-dom';
 
@@ -25,19 +26,19 @@ export const SimpleEpciCard = ({
       <div>
         <SimpleEpciCardLink
           label="Plan d'actions"
-          linkTo={`/collectivite/${epci.siren}/plan_actions`}
+          linkTo={makeEpciTabPath({siren: epci.siren, tab: 'plans_actions'})}
           siren={epci.siren}
         />
         <div className="pb-3" />
         <SimpleEpciCardLink
           label="Référentiels"
-          linkTo={`/collectivite/${epci.siren}/referentiels`}
+          linkTo={makeEpciTabPath({siren: epci.siren, tab: 'referentiels'})}
           siren={epci.siren}
         />
         <div className="pb-3" />
         <SimpleEpciCardLink
           label="Indicateurs"
-          linkTo={`/collectivite/${epci.siren}/indicateurs`}
+          linkTo={makeEpciTabPath({siren: epci.siren, tab: 'indicateurs'})}
           siren={epci.siren}
         />
       </div>

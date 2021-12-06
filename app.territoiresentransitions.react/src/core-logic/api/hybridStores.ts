@@ -1,6 +1,6 @@
 import {HybridStore} from './hybridStore';
 import {ENV} from 'environmentVariables';
-import {getCurrentEpciId} from 'core-logic/api/currentEpci';
+import {getCurrentEpciSiren} from 'core-logic/api/currentEpci';
 import {Referentiel} from 'types';
 
 import {
@@ -41,7 +41,7 @@ export const defaultAuthorization = () => `Bearer`;
 export const indicateurResultatStore =
   new HybridStore<AnyIndicateurValueStorable>({
     host: ENV.backendHost,
-    endpoint: () => `v2/indicateur_resultat/${getCurrentEpciId()}`,
+    endpoint: () => `v2/indicateur_resultat/${getCurrentEpciSiren()}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -51,7 +51,7 @@ export const indicateurResultatStore =
 export const indicateurObjectifStore =
   new HybridStore<AnyIndicateurValueStorable>({
     host: ENV.backendHost,
-    endpoint: () => `v2/indicateur_objectif/${getCurrentEpciId()}`,
+    endpoint: () => `v2/indicateur_objectif/${getCurrentEpciSiren()}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -61,7 +61,8 @@ export const indicateurObjectifStore =
 export const indicateurPersonnaliseResultatStore =
   new HybridStore<AnyIndicateurValueStorable>({
     host: ENV.backendHost,
-    endpoint: () => `v2/indicateur_personnalise_resultat/${getCurrentEpciId()}`,
+    endpoint: () =>
+      `v2/indicateur_personnalise_resultat/${getCurrentEpciSiren()}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -71,7 +72,8 @@ export const indicateurPersonnaliseResultatStore =
 export const indicateurPersonnaliseObjectifStore =
   new HybridStore<AnyIndicateurValueStorable>({
     host: ENV.backendHost,
-    endpoint: () => `v2/indicateur_personnalise_objectif/${getCurrentEpciId()}`,
+    endpoint: () =>
+      `v2/indicateur_personnalise_objectif/${getCurrentEpciSiren()}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -80,7 +82,7 @@ export const indicateurPersonnaliseObjectifStore =
 
 export const actionStatusStore = new HybridStore<ActionStatusStorable>({
   host: ENV.backendHost,
-  endpoint: () => `v2/${ActionStatus.pathname}/${getCurrentEpciId()}`,
+  endpoint: () => `v2/${ActionStatus.pathname}/${getCurrentEpciSiren()}`,
   authorization: defaultAuthorization,
   serializer: storable => storable,
   deserializer: serialized =>
@@ -136,7 +138,8 @@ export const getPlanActionStoreForEpci = (epciId: string) => {
 export const ficheActionCategorieStore =
   new HybridStore<FicheActionCategorieStorable>({
     host: ENV.backendHost,
-    endpoint: () => `v2/${FicheActionCategorie.pathname}/${getCurrentEpciId()}`,
+    endpoint: () =>
+      `v2/${FicheActionCategorie.pathname}/${getCurrentEpciSiren()}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -149,7 +152,7 @@ export const indicateurPersonnaliseStore =
   new HybridStore<IndicateurPersonnaliseStorable>({
     host: ENV.backendHost,
     endpoint: () =>
-      `v2/${IndicateurPersonnalise.pathname}/${getCurrentEpciId()}`,
+      `v2/${IndicateurPersonnalise.pathname}/${getCurrentEpciSiren()}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -162,7 +165,9 @@ export const indicateurReferentielCommentaireStore =
   new HybridStore<IndicateurReferentielCommentaireStorable>({
     host: ENV.backendHost,
     endpoint: () =>
-      `v2/${IndicateurReferentielCommentaire.pathname}/${getCurrentEpciId()}`,
+      `v2/${
+        IndicateurReferentielCommentaire.pathname
+      }/${getCurrentEpciSiren()}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -218,7 +223,7 @@ export const getActionReferentielScoreStoreForReferentielForEpci = (props: {
 };
 
 export const getActionReferentielScoreStoreFromId = (id: string) => {
-  const epciId = getCurrentEpciId()!;
+  const epciId = getCurrentEpciSiren()!;
   const referentiel: Referentiel = id.includes('economie_circulaire')
     ? 'eci'
     : 'cae';
@@ -231,7 +236,7 @@ export const getActionReferentielScoreStoreFromId = (id: string) => {
 
 export const actionMetaStore = new HybridStore<ActionMetaStorable>({
   host: ENV.backendHost,
-  endpoint: () => `v2/${ActionMeta.pathname}/${getCurrentEpciId()}`,
+  endpoint: () => `v2/${ActionMeta.pathname}/${getCurrentEpciSiren()}`,
   authorization: defaultAuthorization,
   serializer: storable => storable,
   deserializer: serialized =>
@@ -240,7 +245,7 @@ export const actionMetaStore = new HybridStore<ActionMetaStorable>({
 
 export const planActionStore = new HybridStore<PlanActionStorable>({
   host: ENV.backendHost,
-  endpoint: () => `v2/${PlanAction.pathname}/${getCurrentEpciId()}`,
+  endpoint: () => `v2/${PlanAction.pathname}/${getCurrentEpciSiren()}`,
   authorization: defaultAuthorization,
   serializer: storable => storable,
   deserializer: serialized =>

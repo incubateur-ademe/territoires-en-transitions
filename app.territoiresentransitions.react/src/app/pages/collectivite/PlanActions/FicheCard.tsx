@@ -1,4 +1,4 @@
-import {useEpciId} from 'core-logic/hooks';
+import {useEpciSiren} from 'core-logic/hooks';
 import {Link} from 'react-router-dom';
 import {FicheAction} from 'generated/models/fiche_action';
 
@@ -19,7 +19,7 @@ type FicheCardProps = {
   fiche: FicheAction;
 };
 export const FicheCard = (props: FicheCardProps) => {
-  const epciId = useEpciId();
+  const epciId = useEpciSiren();
   const fiche = props.fiche;
   const avancement = fiche.avancement as Avancement;
   const formatedTitle = fiche.custom_id

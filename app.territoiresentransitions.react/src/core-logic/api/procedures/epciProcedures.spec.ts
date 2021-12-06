@@ -1,5 +1,9 @@
-import {claimEpci} from 'core-logic/api/procedures/ClaimEpciProcedure';
+import {
+  claimEpci,
+  referentContact,
+} from 'core-logic/api/procedures/epciProcedures';
 import {supabase} from 'core-logic/api/supabase';
+import {epci1, epci2} from 'test_utils/epci';
 
 describe('Claim and remove EPCI Remote Procedure Call ', () => {
   const claimedEpciSiren = '240100800';
@@ -12,4 +16,16 @@ describe('Claim and remove EPCI Remote Procedure Call ', () => {
   });
   it('should return false when user is not first to claim this epci ', async () => {});
   it('should be able to remove its own rights from an epci ', async () => {});
+});
+
+describe('Request referent_contact', () => {
+  it('should return referent contact of owned epci if exists', async () => {
+    const procedureResponse = await referentContact(epci1.siren);
+    expect(procedureResponse).toBeDefined();
+    expect(procedureResponse).toBe({
+      prenom: 'Yolo',
+      nom: 'Dodo',
+      email: 'yolo@dodo.com',
+    });
+  });
 });

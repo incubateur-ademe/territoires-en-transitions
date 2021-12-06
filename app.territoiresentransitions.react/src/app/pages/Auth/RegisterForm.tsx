@@ -68,7 +68,7 @@ const RegistrationForm = () => {
       .min(8, 'Ce champ doit faire au minimum 8 caractères')
       .max(300, 'Ce champ doit faire au maximum 300 caractères')
       .required('Champ requis'),
-    vie_privee_conditions: Yup.boolean().isTrue('Champ requis'),
+    // vie_privee_conditions: Yup.boolean().isTrue('Champ requis'),
   });
 
   const register = (data: InscriptionUtilisateur) => {

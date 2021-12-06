@@ -5,6 +5,7 @@ import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {Referentiel} from 'types';
 import {epciCard_AxisShortLabel} from 'app/labels';
 import {DetailedEpciCardPropsLink} from 'app/pages/ElsesEpcis/_DetailedEpciCardPropsLink';
+import {makeEpciReferentielsPath} from 'app/paths';
 
 const AxisSummary = (props: {
   title: string;
@@ -71,7 +72,7 @@ export const DetailedReferentiel = ({
       <div className="flex flex-col items-center py-4">
         <DetailedEpciCardPropsLink
           label="Voir le référentiel"
-          linkTo={`/collectivite/${epciId}/referentiel/${referentiel}`} // TODO link to ECI ref
+          linkTo={makeEpciReferentielsPath({siren: epciId, referentiel: 'eci'})}
         />
       </div>
     </div>

@@ -3,7 +3,7 @@ import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseSt
 import {v4 as uuid} from 'uuid';
 
 import {IndicateurPersonnaliseInterface} from 'generated/models/indicateur_personnalise';
-import {useEpciId} from 'core-logic/hooks';
+import {useEpciSiren} from 'core-logic/hooks';
 import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
 import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {UiDialogButton} from 'ui/UiDialogButton';
@@ -14,7 +14,7 @@ export const IndicateurPersonnaliseCreationDialog = ({
   buttonClasses?: string;
 }) => {
   const [editing, setEditing] = React.useState<boolean>(false);
-  const epciId = useEpciId();
+  const epciId = useEpciSiren();
   const freshData = (): IndicateurPersonnaliseInterface => {
     return {
       epci_id: epciId!,

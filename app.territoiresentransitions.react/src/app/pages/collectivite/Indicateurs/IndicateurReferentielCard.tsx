@@ -8,7 +8,7 @@ import {
   indicateurObjectifStore,
   indicateurResultatStore,
 } from 'core-logic/api/hybridStores';
-import {useEpciId} from 'core-logic/hooks';
+import {useEpciSiren} from 'core-logic/hooks';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
@@ -17,7 +17,7 @@ import {Editable, Spacer} from 'ui/shared';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   const [value, setValue] = React.useState('');
-  const epciId = useEpciId()!;
+  const epciId = useEpciSiren()!;
 
   const id = IndicateurReferentielCommentaireStorable.buildId(
     epciId,
@@ -95,7 +95,7 @@ export const IndicateurReferentielCard = ({
   startOpen?: boolean;
   hideIfNoValues?: boolean;
 }) => {
-  const epciId = useEpciId()!;
+  const epciId = useEpciSiren()!;
   const resultatValueStorables = useAnyIndicateurValueForAllYears(
     indicateur.uid,
     epciId,

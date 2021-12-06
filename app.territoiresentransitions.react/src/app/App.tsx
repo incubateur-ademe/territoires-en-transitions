@@ -8,7 +8,7 @@ import {
 import {Footer, Header} from 'ui';
 import {FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
-import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
+import {EpciRoutes} from 'app/pages/collectivite/EpciRoutes';
 import StatisticsPage from 'app/pages/statistics/StatisticsPage';
 
 import Home from 'app/pages/Home';
@@ -38,99 +38,6 @@ const theme = createTheme({
   },
 });
 
-const Lala = () => (
-  <nav
-    className="fr-nav"
-    id="navigation-773"
-    role="navigation"
-    aria-label="Menu principal"
-  >
-    <ul className="fr-nav__list">
-      <li className="fr-nav__item">
-        <button
-          className="fr-nav__btn"
-          aria-expanded="true"
-          aria-controls="menu-776"
-          aria-current="true"
-        >
-          Entrée menu active et ouverte ... :(
-        </button>
-        <div
-          className="fr-collapse fr-menu fr-collapse__expanded"
-          id="menu-776"
-        >
-          <ul className="fr-menu__list">
-            <li>
-              <a className="fr-nav__link" href="#" target="_self">
-                Lien de navigation
-              </a>
-            </li>
-            <li>
-              <a
-                className="fr-nav__link"
-                href="#"
-                target="_self"
-                aria-current="page"
-              >
-                Lien de navigation
-              </a>
-            </li>
-            <li>
-              <a className="fr-nav__link" href="#" target="_self">
-                Lien de navigation
-              </a>
-            </li>
-          </ul>
-        </div>
-      </li>
-      <li className="fr-nav__item">
-        <button
-          className="fr-nav__btn"
-          aria-expanded="false"
-          aria-controls="menu-774"
-        >
-          Entrée menu fermée
-        </button>
-
-        <div
-          className="fr-collapse fr-menu fr-collapse--expanded"
-          aria-expanded="true"
-          id="menu-774"
-        >
-          <ul className="fr-menu__list overflow-visible">
-            <li>
-              <a className="fr-nav__link" href="#" target="_self">
-                Lien de navigation
-              </a>
-            </li>
-            <li>
-              <a className="fr-nav__link" href="#" target="_self">
-                Lien de navigation
-              </a>
-            </li>
-
-            <li>
-              <a className="fr-nav__link" href="#" target="_self">
-                Lien de navigation
-              </a>
-            </li>
-          </ul>
-        </div>
-      </li>
-      <li className="fr-nav__item">
-        <a className="fr-nav__link" href="#" target="_self">
-          accès direct
-        </a>
-      </li>
-      <li className="fr-nav__item">
-        <a className="fr-nav__link" href="#" target="_self">
-          accès direct
-        </a>
-      </li>
-    </ul>
-  </nav>
-);
-
 export const App = () => {
   return (
     <MatomoProvider value={matomoInstance}>
@@ -156,13 +63,13 @@ export const App = () => {
               <CurrentUserEpcisPage />
             </Route>
             <Route path={allEpcisPath}>
+              {/* <Lala /> */}
               <Header />
-              <Lala />
               <AllActiveEpcisPage />
             </Route>
-            <Route path={'/collectivite/:epciId'}>
+            <Route path={'/epci/:epciSiren'}>
               <Header />
-              <CollectiviteRoutes />
+              <EpciRoutes />
             </Route>
             <Route path={'/statistics'}>
               <Header />
@@ -200,3 +107,43 @@ const HomeRoute = ({children, ...rest}: RouteProps) => {
     />
   );
 };
+
+const Lala = () => (
+  <nav className="fr-sidemenu" role="navigation" aria-label="Menu latéral">
+    <div className="fr-sidemenu__inner">
+      <button
+        className="fr-sidemenu__btn"
+        aria-controls="fr-sidemenu-wrapper"
+        aria-expanded={true}
+      >
+        Dans cette rubrique
+      </button>
+      <div className="fr-collapse" id="fr-sidemenu-wrapper">
+        <div className="fr-sidemenu__title">Titre de rubrique</div>
+        <ul className="fr-sidemenu__list">
+          <li className="fr-sidemenu__item">
+            <button
+              className="fr-sidemenu__btn"
+              aria-expanded={true}
+              aria-controls="fr-sidemenu-item-0"
+            >
+              Niveau 1
+            </button>
+            <div
+              className="fr-collapse fr-collapse__expanded"
+              id="fr-sidemenu-item-0"
+            >
+              <ul className="fr-sidemenu__list">
+                <li className="fr-sidemenu__item">
+                  <a className="fr-sidemenu__link" href="#" target="_self">
+                    Accès direct niveau 2
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+);

@@ -15,7 +15,7 @@ function PlanNavChip(props: {
       <Chip
         label={props.planNom}
         component="a"
-        href={`/collectivite/${props.epciId}/plan_action/${props.planUid}`}
+        href={`/epci/${props.epciId}/plan_action/${props.planUid}`}
         color={props.active ? 'primary' : 'default'}
         clickable
       />

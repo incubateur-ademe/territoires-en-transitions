@@ -5,6 +5,7 @@ import {useEpciAxisReferentielScores} from 'core-logic/hooks';
 import {DetailedPlanActions} from './_DetailedPlanActions';
 import {DetailedReferentiel} from './_DetailedReferentiel';
 import {DetailedEpciCardPropsLink} from 'app/pages/ElsesEpcis/_DetailedEpciCardPropsLink';
+import {makeEpciTabPath} from 'app/paths';
 
 const DetailedEpciCard = ({epci}: {epci: EpciStorable}) => {
   const caeScores = useEpciAxisReferentielScores({
@@ -24,7 +25,7 @@ const DetailedEpciCard = ({epci}: {epci: EpciStorable}) => {
       <div className="flex justify-end items-end mb-6 -mt-11">
         <DetailedEpciCardPropsLink
           label="Voir les indicateurs"
-          linkTo={`/collectivite/${epci.id}/indicateurs`}
+          linkTo={makeEpciTabPath({siren: epci.id, tab: 'indicateurs'})}
         />
       </div>
       <div className="grid grid-cols-3 gap-6 col-end-auto">

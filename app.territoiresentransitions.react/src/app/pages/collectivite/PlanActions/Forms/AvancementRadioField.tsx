@@ -19,11 +19,7 @@ type AvancementRadioFieldProps = {
  * Could use generics.
  */
 export const AvancementRadioField: FC<AvancementRadioFieldProps & FieldProps> =
-  ({
-    field, // { name, value, onChange, onBlur }
-    form: {setFieldValue},
-    ...props
-  }) => {
+  ({field, form: {setFieldValue}, ...props}) => {
     const htmlId = props.id ?? uuid();
 
     const avancements: Options<Avancement> = R.values(
