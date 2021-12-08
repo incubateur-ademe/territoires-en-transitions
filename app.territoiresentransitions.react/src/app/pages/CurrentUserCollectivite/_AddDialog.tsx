@@ -180,7 +180,7 @@ export const SelectCollectiviteDialog = () => {
             options={allCollectiviteReads.map(
               (collectiviteRead: AllCollectiviteRead) => {
                 return {
-                  value: collectiviteRead.id.toString(),
+                  value: collectiviteRead.collectivite_id.toString(),
                   label: collectiviteRead.nom,
                 };
               }
