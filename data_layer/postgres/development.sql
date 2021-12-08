@@ -265,7 +265,7 @@ with current_droits as (
     from private_utilisateur_droit
     where user_id = auth.uid()
 )
-select  collectivite.id as collectivite_id, nom, role_name
+select collectivite.id as collectivite_id, nom, role_name
 from current_droits
          join collectivite on collectivite.id = current_droits.collectivite_id
          join epci on collectivite.id = epci.collectivite_id
