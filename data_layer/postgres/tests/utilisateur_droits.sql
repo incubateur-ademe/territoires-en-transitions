@@ -1,3 +1,8 @@
+-- original function
+create or replace function auth.uid() returns uuid as $$
+select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
+$$ language sql stable;
+
 -- make uid work as if yolododo user is connected
 create or replace function auth.uid() returns uuid as $$
 select '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid;
@@ -6,8 +11,6 @@ $$ language sql stable;
 select * from owned_collectivite;
 
 select * from active_collectivite;
-
-
 
 select * from elses_collectivite;
 
