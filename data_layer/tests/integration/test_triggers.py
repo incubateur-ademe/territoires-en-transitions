@@ -1,6 +1,6 @@
 from tests.utils.prepare_cursor import prepare_cursor
 from tests.utils.sql_factories import (
-    make_sql_insert_epci,
+    make_sql_insert_collectivite,
     make_sql_insert_score,
     make_sql_to_insert_action_relation,
 )
@@ -13,7 +13,7 @@ def test_insert_score_triggers_an_update_of_table_client_score(
     # 1. insert scores
     prepare_cursor(
         cursor,
-        make_sql_insert_epci()
+        make_sql_insert_collectivite()
         + make_sql_to_insert_action_relation(action_id="cae_1")
         + make_sql_to_insert_action_relation(action_id="cae_2"),
     )
