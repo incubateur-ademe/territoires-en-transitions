@@ -3,7 +3,7 @@
 import {RoleName} from 'generated/dataLayer';
 
 export interface OwnedCollectiviteRead {
-  id: number;
+  collectivite_id: number;
   nom: string;
   role_name: RoleName;
 }

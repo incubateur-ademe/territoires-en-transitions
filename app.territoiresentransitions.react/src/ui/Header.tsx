@@ -83,7 +83,7 @@ const CollectiviteReadOnlyBanner = observer(
         <div className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70">
           <div className="text-sm mr-4">lecture seule</div>
           <JoinCurrentCollectiviteDialog
-            collectiviteId={bloc.currentCollectivite!.id}
+            collectiviteId={bloc.currentCollectivite!.collectivite_id}
           />
         </div>
       );

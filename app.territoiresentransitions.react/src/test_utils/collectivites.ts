@@ -2,17 +2,17 @@ import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 
 export const collectivite1: AllCollectiviteRead = {
   nom: 'Haut - Bugey Agglomération',
-  id: 1,
+  collectivite_id: 1,
 };
 
 export const collectivite2: AllCollectiviteRead = {
   nom: 'CA du Bassin de Bourg-en-Bresse',
-  id: 2,
+  collectivite_id: 2,
 };
 
 export const epci40: AllCollectiviteRead = {
   nom: 'PETR du Soissonnais et du Valois',
-  id: 40,
+  collectivite_id: 40,
 };
 
 export const yoloCredentials = {email: 'yolo@dodo.com', password: 'yolododo'};

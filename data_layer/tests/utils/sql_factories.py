@@ -16,9 +16,9 @@ def make_sql_to_insert_action_relation(
     return sql
 
 
-def make_sql_insert_epci(nom="Yolo", siren="12345678901234", nature="CC"):
+def make_sql_insert_epci(nom="Yolo", siren="123456789", nature="CC"):
     return f"""
-    insert into epci(siren, nom, nature) values ('{siren}', '{nom}', '{nature});
+    insert into epci(siren, nom, nature) values ('{siren}', '{nom}', '{nature}');
     """
 
 
@@ -61,18 +61,25 @@ def make_sql_insert_user(user_uid: Optional[str] = None, email: Optional[str] = 
 
 
 def make_sql_insert_action_commentaire(
-    user_uid: str, commentaire="un commentaire", action_id="cae_1.2.3", epci_id=1
+    user_uid: str,
+    commentaire="un commentaire",
+    action_id="cae_1.2.3",
+    collectivite_id=1,
 ) -> str:
     return f"""
-        insert into action_commentaire(epci_id, action_id, commentaire, modified_by)
-        values ({epci_id}, '{action_id}' , '{commentaire}', '{user_uid}')
+        insert into action_commentaire(collectivite_id, action_id, commentaire, modified_by)
+        values ({collectivite_id}, '{action_id}' , '{commentaire}', '{user_uid}')
     """
 
 
 def make_sql_insert_action_statut(
-    user_uid: str, action_id="cae_1.2.3", concerne=True, avancement="fait", epci_id=1
+    user_uid: str,
+    action_id="cae_1.2.3",
+    concerne=True,
+    avancement="fait",
+    collectivite_id=1,
 ):
     return f"""
-        insert into action_statut(epci_id, action_id, avancement, concerne, modified_by)
-        values ({epci_id}, '{action_id}', '{avancement}', '{concerne}', '{user_uid}')
+        insert into action_statut(collectivite_id, action_id, avancement, concerne, modified_by)
+        values ({collectivite_id}, '{action_id}', '{avancement}', '{concerne}', '{user_uid}')
     """

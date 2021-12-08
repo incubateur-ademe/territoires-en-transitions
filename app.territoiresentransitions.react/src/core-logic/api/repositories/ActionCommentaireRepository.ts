@@ -15,7 +15,7 @@ class ActionCommentaireRepository {
     actionId: string;
   }): Promise<ActionCommentaireRead | null> {
     const results = await actionCommentaireReadEndpoint.getBy({
-      epci_id: args.collectiviteId,
+      collectivite_id: args.collectiviteId,
     });
     return results.find(statut => statut.action_id === args.actionId) || null;
   }
