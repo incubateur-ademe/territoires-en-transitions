@@ -30,28 +30,28 @@ export const SimpleCollectiviteCard = ({
         <SimpleCollectiviteCardLink
           label="Plan d'actions"
           linkTo={makeCollectiviteTabPath({
-            id: collectivite.id,
+            id: collectivite.collectivite_id,
             tab: 'plans_actions',
           })}
-          id={collectivite.id}
+          id={collectivite.collectivite_id}
         />
         <div className="pb-3" />
         <SimpleCollectiviteCardLink
           label="Référentiels"
           linkTo={makeCollectiviteTabPath({
-            id: collectivite.id,
+            id: collectivite.collectivite_id,
             tab: 'referentiels',
           })}
-          id={collectivite.id}
+          id={collectivite.collectivite_id}
         />
         <div className="pb-3" />
         <SimpleCollectiviteCardLink
           label="Indicateurs"
           linkTo={makeCollectiviteTabPath({
-            id: collectivite.id,
+            id: collectivite.collectivite_id,
             tab: 'indicateurs',
           })}
-          id={collectivite.id}
+          id={collectivite.collectivite_id}
         />
       </div>
     </div>

@@ -7,6 +7,8 @@ import {Avancement} from 'generated/dataLayer/action_statut_read';
 import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
 import {makeAutoObservable} from 'mobx';
 import {observer} from 'mobx-react-lite';
+import {currentCollectiviteBloc} from 'core-logic/observables/collectiviteBloc';
+import {useCollectiviteId} from 'core-logic/hooks';
 
 const avancements: Options<Avancement> = R.values(
   R.mapObjIndexed((label, value) => ({value, label}), avancementLabels)
@@ -17,22 +19,33 @@ export const ActionStatusAvancementRadioButton = ({
 }: {
   actionId: string;
 }) => {
-  const collectiviteId = 1; // TODO !
-  const observable = new ActionStatusAvancementRadioButtonBloc({
+  const collectiviteId = useCollectiviteId()!;
+  console.log('collectiviteId: ', collectiviteId);
+  const actionStatusAvancementBloc = new ActionStatusAvancementRadioButtonBloc({
     actionId,
     collectiviteId,
   });
-  return <_ActionStatusAvancementRadioButton observable={observable} />;
+  return (
+    <_ActionStatusAvancementRadioButton
+      actionStatusAvancementBloc={actionStatusAvancementBloc}
+    />
+  );
 };
 
 const _ActionStatusAvancementRadioButton = observer(
-  ({observable}: {observable: ActionStatusAvancementRadioButtonBloc}) => {
-    const avancement = observable.avancement;
+  ({
+    actionStatusAvancementBloc,
+  }: {
+    actionStatusAvancementBloc: ActionStatusAvancementRadioButtonBloc;
+  }) => {
+    const avancement = actionStatusAvancementBloc.avancement;
     return (
       <AvancementRadioButton
         avancements={avancements}
         optionIsChecked={({option}) => avancement === option.value}
-        onClick={evt => observable.pickAvancementOption(evt.option)}
+        onClick={evt =>
+          actionStatusAvancementBloc.pickAvancementOption(evt.option)
+        }
       />
     );
   }
