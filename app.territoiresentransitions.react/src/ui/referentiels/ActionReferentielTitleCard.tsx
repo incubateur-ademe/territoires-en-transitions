@@ -5,21 +5,21 @@ import {ActionDescriptionExpandPanel} from 'ui/shared';
 import {ActionReferentielTitle} from './ActionReferentielTitle';
 import {referentielToName} from 'app/labels';
 import {referentielId} from 'utils/actions';
-import {makeEpciActionsPath} from 'app/paths';
-import {currentEpciBloc} from 'core-logic/observables';
+import {makeCollectiviteActionsPath} from 'app/paths';
+import {currentCollectiviteBloc} from 'core-logic/observables';
 
 export const ActionReferentielTitleCard = ({
   action,
 }: {
   action: ActionReferentiel;
 }) => {
-  const epciSiren = currentEpciBloc.currentEpci?.siren;
+  const collectiviteId = currentCollectiviteBloc.currentCollectivite?.id;
   const referentiel = referentielId(action.id);
   return (
     <article className="bg-beige my-4">
       <Link
-        to={makeEpciActionsPath({
-          siren: epciSiren!,
+        to={makeCollectiviteActionsPath({
+          id: collectiviteId!,
           referentiel,
           actionId: action.id,
         })}

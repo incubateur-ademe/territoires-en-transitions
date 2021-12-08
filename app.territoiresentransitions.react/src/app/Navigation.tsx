@@ -1,14 +1,18 @@
 import {Link, useLocation} from 'react-router-dom';
 import {
-  allEpcisPath,
-  makeEpciIndicateursPath,
-  makeEpciReferentielsPath,
-  makeEpciTabPath,
-  myEpcisPath,
+  allCollectivitesPath,
+  makeCollectiviteIndicateursPath,
+  makeCollectiviteReferentielsPath,
+  makeCollectiviteTabPath,
+  myCollectivitesPath,
   signInPath,
   signUpPath,
 } from 'app/paths';
-import {AuthBloc, authBloc, currentEpciBloc} from 'core-logic/observables';
+import {
+  AuthBloc,
+  authBloc,
+  currentCollectiviteBloc,
+} from 'core-logic/observables';
 import {observer} from 'mobx-react-lite';
 import * as R from 'ramda';
 
@@ -37,7 +41,7 @@ const ConnexionSwitchLink = observer(({bloc}: {bloc: AuthBloc}) => {
 const _activeTabStyle = (active: boolean): string =>
   `${active ? 'border-b-2 border-bf500' : ''}`;
 
-const EpciNavigationDirectTab = ({
+const CollectiviteNavigationDirectTab = ({
   label,
   path,
 }: {
@@ -53,7 +57,7 @@ const EpciNavigationDirectTab = ({
   );
 };
 
-const EpciNavigationDropdownTab = (props: {
+const CollectiviteNavigationDropdownTab = (props: {
   menuLabel: string;
   listPathsAndLabels: {path: string; label: string}[];
 }) => {
@@ -90,74 +94,74 @@ const EpciNavigationDropdownTab = (props: {
   );
 };
 
-export const EpciNavigation = () => {
+export const CollectiviteNavigation = () => {
   return (
-    currentEpciBloc.currentEpci && (
+    currentCollectiviteBloc.currentCollectivite && (
       <nav className="flex flex-row gap-5" aria-label="Menu principal">
-        <EpciNavigationDirectTab
+        <CollectiviteNavigationDirectTab
           label="Tableau de bord"
-          path={makeEpciTabPath({
-            siren: currentEpciBloc.currentEpci.siren,
+          path={makeCollectiviteTabPath({
+            id: currentCollectiviteBloc.currentCollectivite.id,
             tab: 'tableau_bord',
           })}
         />
 
-        <EpciNavigationDropdownTab
+        <CollectiviteNavigationDropdownTab
           menuLabel="Référentiels"
           listPathsAndLabels={[
             {
-              path: makeEpciReferentielsPath({
-                siren: currentEpciBloc.currentEpci.siren,
+              path: makeCollectiviteReferentielsPath({
+                id: currentCollectiviteBloc.currentCollectivite.id,
                 referentiel: 'eci',
               }),
               label: 'Économie Circulaire',
             },
             {
-              path: makeEpciReferentielsPath({
-                siren: currentEpciBloc.currentEpci.siren,
+              path: makeCollectiviteReferentielsPath({
+                id: currentCollectiviteBloc.currentCollectivite.id,
                 referentiel: 'cae',
               }),
               label: 'Climat Air Énergie',
             },
           ]}
         />
-        <EpciNavigationDropdownTab
+        <CollectiviteNavigationDropdownTab
           menuLabel="Indicateurs"
           listPathsAndLabels={[
             {
-              path: makeEpciIndicateursPath({
-                siren: currentEpciBloc.currentEpci.siren,
+              path: makeCollectiviteIndicateursPath({
+                id: currentCollectiviteBloc.currentCollectivite.id,
                 view: 'eci',
               }),
               label: 'Économie Circulaire',
             },
             {
-              path: makeEpciIndicateursPath({
-                siren: currentEpciBloc.currentEpci.siren,
+              path: makeCollectiviteIndicateursPath({
+                id: currentCollectiviteBloc.currentCollectivite.id,
                 view: 'cae',
               }),
               label: 'Climat Air Énergie',
             },
             {
-              path: makeEpciIndicateursPath({
-                siren: currentEpciBloc.currentEpci.siren,
+              path: makeCollectiviteIndicateursPath({
+                id: currentCollectiviteBloc.currentCollectivite.id,
                 view: 'crte',
               }),
               label: 'CRTE',
             },
             {
-              path: makeEpciIndicateursPath({
-                siren: currentEpciBloc.currentEpci.siren,
+              path: makeCollectiviteIndicateursPath({
+                id: currentCollectiviteBloc.currentCollectivite.id,
                 view: 'perso',
               }),
               label: 'Personnalisés',
             },
           ]}
         />
-        <EpciNavigationDirectTab
+        <CollectiviteNavigationDirectTab
           label="Plans d'actions"
-          path={makeEpciTabPath({
-            siren: currentEpciBloc.currentEpci.siren,
+          path={makeCollectiviteTabPath({
+            id: currentCollectiviteBloc.currentCollectivite.id,
             tab: 'plans_actions',
           })}
         />
@@ -172,13 +176,13 @@ export const Navigation = () => {
       <div className="fr-header__tools-links">
         <ul className="fr-links-group">
           {authBloc.connected ? (
-            <Link className="fr-link" to={myEpcisPath}>
+            <Link className="fr-link" to={myCollectivitesPath}>
               Mes collectivités
             </Link>
           ) : (
             <></>
           )}
-          <Link className="fr-link" to={allEpcisPath}>
+          <Link className="fr-link" to={allCollectivitesPath}>
             Les autres collectivités
           </Link>
 

@@ -4,37 +4,37 @@ export const signInPath = `${authBasePath}/signin`;
 export const signUpPath = `${authBasePath}/signup`;
 export const identityPath = `${authBasePath}/identity`;
 
-export const allEpcisPath = '/toutes_epcis';
-export const myEpcisPath = '/mes_epcis';
+export const allCollectivitesPath = '/toutes_collectivites';
+export const myCollectivitesPath = '/mes_collectivites';
 
-export const makeEpciTabPath = (props: {
-  siren: string;
+export const makeCollectiviteTabPath = (props: {
+  id: number;
   tab: 'referentiels' | 'indicateurs' | 'tableau_bord' | 'plans_actions';
-}) => `/epci/${props.siren}/${props.tab}`;
+}) => `/collectivite/${props.id}/${props.tab}`;
 
-export const makeEpciReferentielsPath = ({
-  siren,
+export const makeCollectiviteReferentielsPath = ({
+  id,
   referentiel,
 }: {
-  siren: string;
+  id: number;
   referentiel: 'eci' | 'cae';
-}) => `${makeEpciTabPath({siren, tab: 'referentiels'})}/${referentiel}`;
+}) => `${makeCollectiviteTabPath({id, tab: 'referentiels'})}/${referentiel}`;
 
-export const makeEpciActionsPath = (props: {
-  siren: string;
+export const makeCollectiviteActionsPath = (props: {
+  id: number;
   referentiel: 'eci' | 'cae';
   actionId: string;
 }) =>
-  // `${makeEpciTabPath({
-  //   siren: props.siren,
+  // `${makeCollectiviteTabPath({
+  //   siren: props.id,
   //   tab: 'referentiels',
   // })}/action/${props.referentiel}/${props.actionId}`;
-  `/epci/${props.siren}/action/${props.referentiel}/${props.actionId}`;
+  `/collectivite/${props.id}/action/${props.referentiel}/${props.actionId}`;
 
-export const makeEpciIndicateursPath = ({
-  siren,
+export const makeCollectiviteIndicateursPath = ({
+  id,
   view,
 }: {
-  siren: string;
+  id: number;
   view: 'eci' | 'cae' | 'crte' | 'perso';
-}) => `${makeEpciTabPath({siren, tab: 'indicateurs'})}/${view}`;
+}) => `${makeCollectiviteTabPath({id, tab: 'indicateurs'})}/${view}`;

@@ -11,7 +11,7 @@ export interface ClientScoreBatchRead {
   score_created_at: string;
 }
 export class ScoreSocket {
-  epciId: number;
+  collectiviteId: number;
   _scores = new BehaviorSubject<ScoreRead[]>([]);
 
   get scoreObservable(): Observable<ScoreRead[]> {
@@ -19,13 +19,13 @@ export class ScoreSocket {
   }
 
   constructor({
-    epciId,
+    collectiviteId,
     controller,
   }: {
-    epciId: number;
+    collectiviteId: number;
     controller: ScoreController;
   }) {
-    this.epciId = epciId;
+    this.collectiviteId = collectiviteId;
     controller.init(this);
   }
 }

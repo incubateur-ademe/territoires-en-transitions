@@ -14,7 +14,7 @@ export const ficheActionAvancementColors: Record<
   string
 > = {
   fait: '#059669',
-  en_cours: '#C0D72D',
+  programme: '#C0D72D',
   pas_fait: '#DA0505',
   non_renseigne: '#444',
 };

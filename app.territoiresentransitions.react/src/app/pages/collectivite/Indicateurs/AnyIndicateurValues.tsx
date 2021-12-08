@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useEpciSiren} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks';
 import {AnyIndicateurValueStorable} from 'storables';
 import {HybridStore} from 'core-logic/api/hybridStore';
 import {commands} from 'core-logic/commands';
@@ -23,12 +23,12 @@ const AnyIndicateurValueInput = ({
   store: HybridStore<AnyIndicateurValueStorable>;
   borderColor?: 'blue' | 'gray';
 }) => {
-  const epciId = useEpciSiren()!;
+  const collectiviteId = useCollectiviteId()!;
   const [inputValue, setInputValue] = useState<string | number>('');
   const valueIndicateurUid = inferValueIndicateurUid(indicateurUid);
 
   const storableId = AnyIndicateurValueStorable.buildId(
-    epciId,
+    collectiviteId.toString(),
     valueIndicateurUid,
     year
   );
@@ -46,7 +46,7 @@ const AnyIndicateurValueInput = ({
     commands.indicateurCommands.storeAnyIndicateurValue({
       store: store,
       interface: {
-        epci_id: epciId,
+        epci_id: collectiviteId.toString(),
         indicateur_id: valueIndicateurUid,
         year: year,
         value: floatValue,

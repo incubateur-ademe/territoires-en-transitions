@@ -4,13 +4,12 @@ import {commands} from 'core-logic/commands';
 import {
   indicateurPersonnaliseResultatStore,
   indicateurPersonnaliseObjectifStore,
-  indicateurResultatStore,
 } from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnaliseMetaTypedInterface';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
-import {useEpciSiren} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks';
 import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
@@ -110,15 +109,15 @@ export const IndicateurPersonnaliseCard = ({
   indicateur: IndicateurPersonnaliseStorable;
   hideIfNoValues?: boolean;
 }) => {
-  const epciId = useEpciSiren()!;
+  const collectiviteId = useCollectiviteId()!;
   const resultatValueStorables = useAnyIndicateurValueForAllYears(
     indicateur.uid,
-    epciId,
+    collectiviteId,
     indicateurPersonnaliseResultatStore
   );
   const objectifValueStorables = useAnyIndicateurValueForAllYears(
     indicateur.uid,
-    epciId,
+    collectiviteId,
     indicateurPersonnaliseObjectifStore
   );
 

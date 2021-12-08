@@ -1,15 +1,18 @@
 import {LabeledTextInput} from 'ui';
 import {useState} from 'react';
 import {commands} from 'core-logic/commands';
-import {useEpciSiren} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks';
 
 export const PlanCreationForm = (props: {onSave: () => void}) => {
   const [nom, setNom] = useState<string>('');
-  const epciId = useEpciSiren()!;
+  const collectiviteId = useCollectiviteId()!;
 
   const handleSave = async () => {
     if (!nom) return;
-    await commands.plansCommands.createPlanAction(epciId, nom);
+    await commands.plansCommands.createPlanAction(
+      collectiviteId.toString(),
+      nom
+    );
     props.onSave();
   };
 

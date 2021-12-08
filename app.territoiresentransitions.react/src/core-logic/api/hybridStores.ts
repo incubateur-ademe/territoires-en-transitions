@@ -89,10 +89,10 @@ export const actionStatusStore = new HybridStore<ActionStatusStorable>({
     new ActionStatusStorable(serialized as ActionStatusInterface),
 });
 
-const makeFicheActionStoreForEpci = (epciId: string) => {
+const makeFicheActionStoreForEpci = (collectiviteId: string) => {
   return new HybridStore<FicheActionStorable>({
     host: ENV.backendHost,
-    endpoint: () => `v2/${FicheAction.pathname}/${epciId}`,
+    endpoint: () => `v2/${FicheAction.pathname}/${collectiviteId}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -105,17 +105,18 @@ const ficheActionStoreForEpci: Record<
   HybridStore<FicheActionStorable>
 > = {};
 
-export const getFicheActionStoreForEpci = (epciId: string) => {
-  if (!ficheActionStoreForEpci[epciId]) {
-    ficheActionStoreForEpci[epciId] = makeFicheActionStoreForEpci(epciId);
+export const getFicheActionStoreForEpci = (collectiviteId: string) => {
+  if (!ficheActionStoreForEpci[collectiviteId]) {
+    ficheActionStoreForEpci[collectiviteId] =
+      makeFicheActionStoreForEpci(collectiviteId);
   }
-  return ficheActionStoreForEpci[epciId];
+  return ficheActionStoreForEpci[collectiviteId];
 };
 
-const makePlanActionStoreForEpci = (epciId: string) => {
+const makePlanActionStoreForEpci = (collectiviteId: string) => {
   return new HybridStore<PlanActionStorable>({
     host: ENV.backendHost,
-    endpoint: () => `v2/${PlanAction.pathname}/${epciId}`,
+    endpoint: () => `v2/${PlanAction.pathname}/${collectiviteId}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -128,11 +129,12 @@ const planActionStoreForEpci: Record<
   HybridStore<PlanActionStorable>
 > = {};
 
-export const getPlanActionStoreForEpci = (epciId: string) => {
-  if (!planActionStoreForEpci[epciId]) {
-    planActionStoreForEpci[epciId] = makePlanActionStoreForEpci(epciId);
+export const getPlanActionStoreForEpci = (collectiviteId: string) => {
+  if (!planActionStoreForEpci[collectiviteId]) {
+    planActionStoreForEpci[collectiviteId] =
+      makePlanActionStoreForEpci(collectiviteId);
   }
-  return planActionStoreForEpci[epciId];
+  return planActionStoreForEpci[collectiviteId];
 };
 
 export const ficheActionCategorieStore =
@@ -185,12 +187,12 @@ export const epciStore = new HybridStore<EpciStorable>({
 });
 
 const makeActionReferentielScoreStoreForReferentielForEpci = (props: {
-  epciId: string;
+  collectiviteId: string;
   referentiel: Referentiel;
 }) =>
   new HybridStore<ActionReferentielScoreStorable>({
     host: ENV.backendHost,
-    endpoint: () => `v2/notation/${props.referentiel}/${props.epciId}`,
+    endpoint: () => `v2/notation/${props.referentiel}/${props.collectiviteId}`,
     authorization: defaultAuthorization,
     serializer: storable => storable,
     deserializer: serialized =>
@@ -205,29 +207,29 @@ const actionReferentielScoreStoreForReferentielForEpci: Record<
 > = {eci: {}, cae: {}};
 
 export const getActionReferentielScoreStoreForReferentielForEpci = (props: {
-  epciId: string;
+  collectiviteId: string;
   referentiel: Referentiel;
 }) => {
   if (
     !actionReferentielScoreStoreForReferentielForEpci[props.referentiel][
-      props.epciId
+      props.collectiviteId
     ]
   ) {
     actionReferentielScoreStoreForReferentielForEpci[props.referentiel][
-      props.epciId
+      props.collectiviteId
     ] = makeActionReferentielScoreStoreForReferentielForEpci(props);
   }
   return actionReferentielScoreStoreForReferentielForEpci[props.referentiel][
-    props.epciId
+    props.collectiviteId
   ];
 };
 
 export const getActionReferentielScoreStoreFromId = (id: string) => {
-  const epciId = getCurrentEpciSiren()!;
+  const collectiviteId = getCurrentEpciSiren()!;
   const referentiel: Referentiel = id.includes('eci') ? 'eci' : 'cae';
 
   return getActionReferentielScoreStoreForReferentielForEpci({
-    epciId,
+    collectiviteId,
     referentiel,
   });
 };

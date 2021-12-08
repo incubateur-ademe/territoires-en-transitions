@@ -3,11 +3,11 @@ import '../CrossExpandPanel.css';
 import {makeAutoObservable} from 'mobx';
 import {actionCommentaireRepository} from 'core-logic/api/repositories/ActionCommentaireRepository';
 import {observer} from 'mobx-react-lite';
-import {currentEpciBloc} from 'core-logic/observables';
+import {currentCollectiviteBloc} from 'core-logic/observables';
 
 export const ActionCommentaire = ({actionId}: {actionId: string}) => {
-  const epciId = 1; // TODO !
-  const observable = new ActionCommentaireFieldBloc({actionId, epciId});
+  const collectiviteId = 1; // TODO !
+  const observable = new ActionCommentaireFieldBloc({actionId, collectiviteId});
   return (
     <div className={' border-gray-300'}>
       <div className="CrossExpandPanel">
@@ -27,19 +27,25 @@ const ActionCommentaireField = observer(
       onChange={event => observable.setFieldValue(event.currentTarget.value)}
       onBlur={_ => observable.saveFieldValue()}
       className="fr-input mt-2 w-full bg-white p-3 mr-5"
-      disabled={currentEpciBloc.readonly}
+      disabled={currentCollectiviteBloc.readonly}
     />
   )
 );
 
 class ActionCommentaireFieldBloc {
-  private readonly epciId: number;
+  private readonly collectiviteId: number;
   private readonly actionId: string;
   fieldValue = '';
 
-  constructor({actionId, epciId}: {epciId: number; actionId: string}) {
+  constructor({
+    actionId,
+    collectiviteId,
+  }: {
+    collectiviteId: number;
+    actionId: string;
+  }) {
     makeAutoObservable(this);
-    this.epciId = epciId;
+    this.collectiviteId = collectiviteId;
     this.actionId = actionId;
     this.fetch();
   }
@@ -51,7 +57,7 @@ class ActionCommentaireFieldBloc {
   saveFieldValue() {
     actionCommentaireRepository.save({
       action_id: this.actionId,
-      epci_id: this.epciId,
+      collectivite_id: this.collectiviteId,
       commentaire: this.fieldValue,
     });
   }
@@ -59,7 +65,7 @@ class ActionCommentaireFieldBloc {
   fetch() {
     actionCommentaireRepository
       .fetch({
-        epciId: this.epciId,
+        collectiviteId: this.collectiviteId,
         actionId: this.actionId,
       })
       .then(fetched => {

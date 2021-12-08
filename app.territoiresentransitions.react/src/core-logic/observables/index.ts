@@ -1,2 +1,2 @@
 export * from './authBloc';
-export * from './epciBloc';
+export * from './collectiviteBloc';

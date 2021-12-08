@@ -1,13 +1,7 @@
 export interface ActionStatusInterface {
   action_id: string;
   epci_id: string;
-  avancement:
-    | 'faite'
-    | 'programmee'
-    | 'pas_faite'
-    | 'non_concernee'
-    | 'en_cours'
-    | '';
+  avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | '';
 }
 
 export class ActionStatus {
@@ -17,13 +11,7 @@ export class ActionStatus {
   }
   action_id: string;
   epci_id: string;
-  avancement:
-    | 'faite'
-    | 'programmee'
-    | 'pas_faite'
-    | 'non_concernee'
-    | 'en_cours'
-    | '';
+  avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | '';
 
   /**
    * Creates a ActionStatus instance.
@@ -35,13 +23,7 @@ export class ActionStatus {
   }: {
     action_id: string;
     epci_id: string;
-    avancement:
-      | 'faite'
-      | 'programmee'
-      | 'pas_faite'
-      | 'non_concernee'
-      | 'en_cours'
-      | '';
+    avancement: 'faite' | 'programmee' | 'pas_faite' | 'non_concernee' | '';
   }) {
     this.action_id = action_id;
     this.epci_id = epci_id;

@@ -9,11 +9,11 @@ class ActionStatutRepository {
   }
 
   async fetch(args: {
-    epciId: number;
+    collectiviteId: number;
     actionId: string;
   }): Promise<ActionStatutRead | null> {
     const results = await actionStatutReadEndpoint.getBy({
-      epci_id: args.epciId,
+      epci_id: args.collectiviteId,
     });
 
     return results.find(statut => statut.action_id === args.actionId) || null;

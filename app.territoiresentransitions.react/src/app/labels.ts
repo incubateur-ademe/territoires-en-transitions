@@ -1,4 +1,3 @@
-import * as R from 'ramda';
 import type {FicheActionAvancement, ReferentielOfIndicateur} from 'types';
 import {Avancement} from 'generated/dataLayer/action_statut_read';
 
@@ -13,7 +12,6 @@ export const avancementLabels: Record<Avancement, string> = {
   //non_concerne: 'Non concernée',
   pas_fait: 'Pas faite',
   programme: 'Prévue',
-  en_cours: 'En cours',
   fait: 'Faite',
   non_renseigne: 'Non renseignée',
 };
@@ -21,7 +19,7 @@ export const avancementLabels: Record<Avancement, string> = {
 export const ficheActionAvancementLabels: Record<
   FicheActionAvancement,
   string
-> = R.omit(['programme'], avancementLabels);
+> = avancementLabels;
 
 export const epciCard_AxisShortLabel: Record<string, string> = {
   eci_1: 'Stratégie globale',

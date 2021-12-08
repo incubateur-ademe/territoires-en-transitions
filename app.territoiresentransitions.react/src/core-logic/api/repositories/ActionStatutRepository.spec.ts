@@ -7,7 +7,7 @@ describe('Action-statut repo should retrieve data-layer default statuses', () =>
       ' are given',
     async () => {
       const result = await actionStatutRepository.fetch({
-        epciId: 1,
+        collectiviteId: 1,
         actionId: 'cae_1',
       });
       expect(result).not.toBeNull();
@@ -17,7 +17,7 @@ describe('Action-statut repo should retrieve data-layer default statuses', () =>
   );
   it('Retrieves nothing when no statut has been inserted for this actionId', async () => {
     const result = await actionStatutRepository.fetch({
-      epciId: 1,
+      collectiviteId: 1,
       actionId: 'cae_2',
     });
     expect(result).toBeNull();
@@ -29,13 +29,13 @@ describe(
   () => {
     it('inserts action statut on action cae_1.2.3', async () => {
       const result = await actionStatutRepository.save({
-        epci_id: 1,
+        collectivite_id: 1,
         action_id: 'cae_1.2.3',
         avancement: 'fait',
         concerne: true,
       });
       expect(result).not.toBeNull();
-      expect(result!.epci_id).toEqual(1);
+      expect(result!.collectivite_id).toEqual(1);
       expect(result!.action_id).toEqual('cae_1.2.3');
       expect(result!.avancement).toEqual('fait');
     });

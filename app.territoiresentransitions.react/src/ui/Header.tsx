@@ -3,36 +3,33 @@
 // import '@gouvfr/dsfr/dist/css/links.css';
 // import '@gouvfr/dsfr/dist/css/navigation.css';
 
-import {EpciNavigation, Navigation} from 'app/Navigation';
+import {CollectiviteNavigation, Navigation} from 'app/Navigation';
 import {
   authBloc,
   AuthBloc,
-  currentEpciBloc,
-  CurrentEpciBloc,
+  currentCollectiviteBloc,
+  CurrentCollectiviteBloc,
 } from 'core-logic/observables';
 import {observer} from 'mobx-react-lite';
-import {EpciRedirector} from 'app/Redirector';
-import {
-  JoinCurrentEpciDialog,
-  SelectEpciDialog,
-} from 'app/pages/CurrentUserEpcis/_AddDialog';
+import {CollectiviteRedirector} from 'app/Redirector';
+import {JoinCurrentCollectiviteDialog} from 'app/pages/CurrentUserCollectivite/_AddDialog';
 
 const HeaderObserver = observer(
   ({
     authBloc,
-    currentEpciBloc,
+    currentCollectiviteBloc,
   }: {
     authBloc: AuthBloc;
-    currentEpciBloc: CurrentEpciBloc;
+    currentCollectiviteBloc: CurrentCollectiviteBloc;
   }) => (
     <>
-      <EpciRedirector />
+      <CollectiviteRedirector />
       <header role="banner" className="header fr-header ">
         {authBloc.userId}, {authBloc.connected ? 'connected' : 'not connected'},{' '}
         with role{' '}
-        {currentEpciBloc.readonly
+        {currentCollectiviteBloc.readonly
           ? 'readonly'
-          : currentEpciBloc.currentEpci?.role_name}
+          : currentCollectiviteBloc.currentCollectivite?.role_name}
         <div className="fr-header__body">
           <div className="fr-container">
             <div className="fr-header__body-row header__row">
@@ -65,43 +62,52 @@ const HeaderObserver = observer(
             </div>
           </div>
         </div>
-        <EpciHeader bloc={currentEpciBloc} />
+        <CollectiviteHeader bloc={currentCollectiviteBloc} />
       </header>
-      <EpciReadOnlyBanner bloc={currentEpciBloc} />
+      <CollectiviteReadOnlyBanner bloc={currentCollectiviteBloc} />
     </>
   )
 );
 
 export const Header = () => (
-  <HeaderObserver currentEpciBloc={currentEpciBloc} authBloc={authBloc} />
+  <HeaderObserver
+    currentCollectiviteBloc={currentCollectiviteBloc}
+    authBloc={authBloc}
+  />
 );
 
-const EpciReadOnlyBanner = observer(({bloc}: {bloc: CurrentEpciBloc}) => {
-  if (bloc.readonly)
-    return (
-      <div className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70">
-        <div className="text-sm mr-4">lecture seule</div>
-        <JoinCurrentEpciDialog siren={bloc.currentEpci!.siren} />
-      </div>
-    );
-  return null;
-});
+const CollectiviteReadOnlyBanner = observer(
+  ({bloc}: {bloc: CurrentCollectiviteBloc}) => {
+    if (bloc.readonly)
+      return (
+        <div className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70">
+          <div className="text-sm mr-4">lecture seule</div>
+          <JoinCurrentCollectiviteDialog
+            collectiviteId={bloc.currentCollectivite!.id}
+          />
+        </div>
+      );
+    return null;
+  }
+);
 
-const EpciHeader = observer(({bloc}: {bloc: CurrentEpciBloc}) => {
-  return (
-    <>
-      <div className="fr-container">
-        {bloc.currentEpci !== null && (
-          <div>
-            <div className="flex flex-row justify-between">
-              <EpciNavigation />
-              <div className="flex items-center font-bold">
-                {bloc.currentEpci.nom}
+const CollectiviteHeader = observer(
+  ({bloc}: {bloc: CurrentCollectiviteBloc}) => {
+    return (
+      <>
+        <div className="fr-container">
+          {bloc.currentCollectivite !== null && (
+            <div>
+              <div className="flex flex-row justify-between">
+                <CollectiviteNavigation />
+                <div className="flex items-center font-bold">
+                  {bloc.currentCollectivite.nom}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-    </>
-  );
-});
+          )}
+        </div>
+      </>
+    );
+  }
+);

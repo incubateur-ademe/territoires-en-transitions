@@ -7,78 +7,80 @@ import {
 import {PlanActionPage} from 'app/pages/collectivite/PlanActions/PlanActionsPage';
 import {FicheActionPage} from 'app/pages/collectivite/PlanActions/FicheActionPage';
 import {FicheActionCreationPage} from 'app/pages/collectivite/PlanActions/FicheActionCreationPage';
-import {useEpciSiren} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks';
 import {planActionDefault} from 'generated/models/plan_action_default';
 import {
-  makeEpciIndicateursPath,
-  makeEpciReferentielsPath,
-  makeEpciTabPath,
+  makeCollectiviteIndicateursPath,
+  makeCollectiviteReferentielsPath,
+  makeCollectiviteTabPath,
 } from 'app/paths';
 
 /**
- * Routes starting with collectivite/:epciId/ see App.ts Router.
+ * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
  *
- * Is responsible for setting the current epci id.
+ * Is responsible for setting the current collectivite id.
  */
-export const EpciRoutes = () => {
+export const CollectiviteRoutes = () => {
   const {path} = useRouteMatch();
-  const epciSiren = useEpciSiren()!;
+  const collectiviteId = useCollectiviteId()!;
   return (
     <>
       <Route
-        path={`${makeEpciTabPath({
-          siren: epciSiren,
+        path={`${makeCollectiviteTabPath({
+          id: collectiviteId,
           tab: 'referentiels',
         })}`}
       >
         <Redirect
-          to={makeEpciReferentielsPath({
-            siren: epciSiren,
+          to={makeCollectiviteReferentielsPath({
+            id: collectiviteId,
             referentiel: 'eci',
           })}
         />
       </Route>
       <Route
-        path={`${makeEpciTabPath({
-          siren: epciSiren,
+        path={`${makeCollectiviteTabPath({
+          id: collectiviteId,
           tab: 'referentiels',
         })}/:referentiel`}
       >
         <ReferentielsPage />
       </Route>
-      <Route path={`/epci/${epciSiren}/action/:referentiel/:actionId`}>
+      <Route
+        path={`/collectivite/${collectiviteId}/action/:referentiel/:actionId`}
+      >
         <ActionReferentielAvancementPage />
       </Route>
       <Route
-        path={`${makeEpciTabPath({
-          siren: epciSiren,
+        path={`${makeCollectiviteTabPath({
+          id: collectiviteId,
           tab: 'indicateurs',
         })}/:view`}
       >
         <IndicateursPage />
       </Route>
       <Route
-        path={`${makeEpciTabPath({
-          siren: epciSiren,
+        path={`${makeCollectiviteTabPath({
+          id: collectiviteId,
           tab: 'indicateurs',
         })}`}
       >
         <Redirect
-          to={makeEpciIndicateursPath({
-            siren: epciSiren,
+          to={makeCollectiviteIndicateursPath({
+            id: collectiviteId,
             view: 'eci',
           })}
         />
       </Route>
       <Route
-        path={makeEpciTabPath({
-          siren: epciSiren,
+        path={makeCollectiviteTabPath({
+          id: collectiviteId,
           tab: 'plans_actions',
         })}
       >
         {' '}
         <Redirect
-          to={`/epci/${epciSiren}/plan_action/${planActionDefault.uid}`}
+          to={`/collectivite/${collectiviteId}/plan_action/${planActionDefault.uid}`}
         />
       </Route>
       <Route path={`${path}/plan_action/:planUid`}>

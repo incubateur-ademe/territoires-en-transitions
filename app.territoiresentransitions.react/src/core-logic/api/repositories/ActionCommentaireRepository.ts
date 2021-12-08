@@ -11,11 +11,11 @@ class ActionCommentaireRepository {
   }
 
   async fetch(args: {
-    epciId: number;
+    collectiviteId: number;
     actionId: string;
   }): Promise<ActionCommentaireRead | null> {
     const results = await actionCommentaireReadEndpoint.getBy({
-      epci_id: args.epciId,
+      epci_id: args.collectiviteId,
     });
     return results.find(statut => statut.action_id === args.actionId) || null;
   }

@@ -3,7 +3,6 @@ import {ProgressStatStatic} from '.';
 import {
   ActionDescriptionExpandPanel,
   ActionCommentaire,
-  AddFicheActionButton,
   ActionStatusAvancementRadioButton,
   ActionExemplesExpandPanel,
 } from 'ui/shared';

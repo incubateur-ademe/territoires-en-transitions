@@ -1,4 +1,4 @@
-import {useEpciSiren} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks';
 import {Link} from 'react-router-dom';
 import {FicheAction} from 'generated/models/fiche_action';
 
@@ -19,7 +19,7 @@ type FicheCardProps = {
   fiche: FicheAction;
 };
 export const FicheCard = (props: FicheCardProps) => {
-  const epciId = useEpciSiren();
+  const collectiviteId = useCollectiviteId();
   const fiche = props.fiche;
   const avancement = fiche.avancement as Avancement;
   const formatedTitle = fiche.custom_id
@@ -27,7 +27,7 @@ export const FicheCard = (props: FicheCardProps) => {
     : fiche.titre;
   return (
     <article className="bg-beige mb-5 px-4 py-2 flex flex-row items-center justify-between">
-      <Link to={`/collectivite/${epciId}/fiche/${fiche.uid}`}>
+      <Link to={`/collectivite/${collectiviteId}/fiche/${fiche.uid}`}>
         <h3 className="fr-h3">{formatedTitle}</h3>
       </Link>
       <div className="flex flex-row whitespace-nowrap items-center">

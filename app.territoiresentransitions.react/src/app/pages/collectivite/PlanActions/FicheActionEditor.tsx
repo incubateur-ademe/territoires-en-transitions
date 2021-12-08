@@ -15,14 +15,15 @@ import {useState} from 'react';
  * This is the main component of FicheActionPage, use to show a fiche.
  */
 const FicheActionEditor = () => {
-  const {epciId, ficheUid} = useParams<{epciId: string; ficheUid: string}>();
+  const {collectiviteId, ficheUid} =
+    useParams<{collectiviteId: string; ficheUid: string}>();
   const [planCategories, setPlanCategories] = useState<
     PlanCategorieSelection[]
   >([]);
-  const ficheActionStore = getFicheActionStoreForEpci(epciId);
-  const ficheStorableId = FicheActionStorable.buildId(epciId, ficheUid);
+  const ficheActionStore = getFicheActionStoreForEpci(collectiviteId);
+  const ficheStorableId = FicheActionStorable.buildId(collectiviteId, ficheUid);
   const history = useHistory();
-  const fiche = useFiche(ficheStorableId, epciId);
+  const fiche = useFiche(ficheStorableId, collectiviteId);
 
   const saveFiche = async (fiche: FicheActionInterface) => {
     await ficheActionStore.store(new FicheActionStorable(fiche));
@@ -31,7 +32,7 @@ const FicheActionEditor = () => {
   const save = async (data: FicheActionFormData) => {
     await saveFiche(data);
     await updatePlansOnFicheSave(data);
-    history.push(`/collectivite/${epciId}/plan_actions`);
+    history.push(`/collectivite/${collectiviteId}/plan_actions`);
   };
 
   return (

@@ -102,11 +102,14 @@ export const displayName = (action: ActionReferentiel) =>
 export const referentielId = (actionId: string): Referentiel =>
   actionId.startsWith('eci') ? 'eci' : 'cae';
 
-export const actionPath = (epciId: string, actionId: string): string => {
+export const actionPath = (
+  collectiviteId: number,
+  actionId: string
+): string => {
   const elements = actionId.split('.');
   const depth = elements.length;
   const mesureDepth = referentielMesureDepth(actionId);
-  const epciPath = `/collectivite/${epciId}`;
+  const epciPath = `/collectivite/${collectiviteId}`;
 
   if (depth < mesureDepth) {
     return `${epciPath}/referentiel/${referentielId(actionId)}/#${actionId}`;
