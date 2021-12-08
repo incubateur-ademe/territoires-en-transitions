@@ -44,7 +44,7 @@ export class OwnedCollectiviteBloc {
 
   get ownedCollectiviteIds() {
     return this.ownedCollectiviteReads.map(
-      ownedCollectivite => ownedCollectivite.id
+      ownedCollectivite => ownedCollectivite.collectivite_id
     );
   }
 }

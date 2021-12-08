@@ -35,12 +35,14 @@ const ElsesCollectivitesObserver = observer(
           <Spacer size={3} />
           <div className="grid grid-cols-3 gap-12">
             {elseCollectiviteReads.map(collectivite => {
-              if (bloc.ownedCollectiviteIds.includes(collectivite.id))
+              if (
+                bloc.ownedCollectiviteIds.includes(collectivite.collectivite_id)
+              )
                 return null;
               return (
                 <SimpleCollectiviteCard
                   collectivite={collectivite}
-                  key={collectivite.id}
+                  key={collectivite.collectivite_id}
                 />
               );
             })}
