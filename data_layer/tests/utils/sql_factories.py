@@ -16,9 +16,9 @@ def make_sql_to_insert_action_relation(
     return sql
 
 
-def make_sql_insert_epci(id: Optional[int] = 1, nom="Yolo", siren="12345678901234"):
+def make_sql_insert_epci(nom="Yolo", siren="12345678901234", nature="CC"):
     return f"""
-    insert into epci(id, siren, nom) values ({id or "default"}, '{siren}', '{nom}');
+    insert into epci(siren, nom, nature) values ('{siren}', '{nom}', '{nature});
     """
 
 
