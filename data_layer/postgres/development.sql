@@ -11,25 +11,63 @@ create type role_name as enum ('agent', 'referent', 'conseiller', 'auditeur');
 ---------------------------------
 ------------ EPCI ---------------
 ---------------------------------
-create table epci
+create table collectivite
 (
     id          serial primary key,
-    siren       siren                                              not null,
-    nom         varchar(300)                                       not null,
-    nature      nature                                             not null,
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
     modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
-comment on table epci is 'EPCI information, writable only by postgres user';
+comment on table collectivite is 'EPCI information, writable only by postgres user';
 
-create view all_epci
+create table epci
+(
+    id      serial primary key,
+    collectivite_id integer references collectivite,
+    siren   siren unique not null,
+    nom     varchar(300) not null,
+    nature  nature       not null
+);
+
+
+
+create or replace function before_epci_write_create_collectivite() returns trigger as
+$$
+declare
+    created_collectivite_id integer;
+begin
+    insert into collectivite default values ;
+    select currval(pg_get_serial_sequence('collectivite','id')) into created_collectivite_id;
+    new.collectivite_id = created_collectivite_id;
+    -- The new is what will be inserted
+    return new;
+end;
+$$ language 'plpgsql';
+
+create trigger before_epci_write
+    before insert
+    on epci
+    for each row
+execute procedure before_epci_write_create_collectivite();
+
+create view all_collectivite
 as
-select siren, nom
+select collectivite_id, nom
 from epci
 order by nom;
-comment on view all_epci is 'All EPCIs with the necessary information to display in the client.';
+comment on view all_collectivite is 'All EPCIs with the necessary information to display in the client.';
 
-
+-- create table groupement
+-- (
+--     id     serial primary key,
+--     nom    varchar(300) not null
+-- );
+--
+-- create table collectivite_groupement
+-- (
+--     id              serial primary key,
+--     collectivite_id integer references collectivite,
+--     groupement_id   integer references groupement
+-- );
 
 ---------------------------------
 -------------- DCP --------------
@@ -63,7 +101,7 @@ create table private_utilisateur_droit
 (
     id          serial primary key,
     user_id     uuid references auth.users                         not null,
-    epci_id     integer references epci                            not null,
+    collectivite_id     integer references collectivite                            not null,
     role_name   role_name                                          not null,
     active      bool                                               not null,
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
@@ -74,75 +112,74 @@ create table private_epci_invitation
 (
     id         serial primary key,
     role_name  role_name                                          not null,
-    epci_id    integer references epci                            not null,
+    collectivite_id    integer references collectivite                            not null,
     created_by uuid references auth.users,
     created_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
-create view active_epci as
-select siren, nom
-from epci
-         join private_utilisateur_droit on epci.id = private_utilisateur_droit.epci_id
+create view active_collectivite as
+select collectivite.id, nom
+from collectivite
+        join epci on epci.collectivite_id = collectivite.id
+        join private_utilisateur_droit on collectivite.id = private_utilisateur_droit.collectivite_id
 where private_utilisateur_droit.id is not null
   and private_utilisateur_droit.active
 order by nom;
 
 
-create or replace function claim_epci(siren siren) returns json
+create or replace function claim_collectivite(id integer) returns json
 as
 $$
 declare
-    epci_already_claimed bool;
-    claimed_epci_id      integer;
+    collectivite_already_claimed bool;
+    claimed_collectivite_id      integer;
 begin
-    -- select the claimed epci using its siren
-    select id from epci where epci.siren = $1 into claimed_epci_id;
+    select id into claimed_collectivite_id;
 
-    -- compute epci_already_claimed, which is true if a droit exist for claimed epci
+    -- compute collectivite_already_claimed, which is true if a droit exist for claimed collectivite
     select count(*) > 0
     from private_utilisateur_droit
-    where epci_id = claimed_epci_id
-    into epci_already_claimed;
+    where private_utilisateur_droit.collectivite_id = claimed_collectivite_id
+    into collectivite_already_claimed;
 
-    if not epci_already_claimed
+    if not collectivite_already_claimed
     then
-        -- current user can claim epci as its own
-        -- create a droit for current user on epci
-        insert into private_utilisateur_droit(user_id, epci_id, role_name, active)
-        values (auth.uid(), claimed_epci_id, 'referent', true);
+        -- current user can claim collectivite as its own
+        -- create a droit for current user on collectivite
+        insert into private_utilisateur_droit(user_id, collectivite_id, role_name, active)
+        values (auth.uid(), claimed_collectivite_id, 'referent', true);
         -- return a success message
         perform set_config('response.status', '200', true);
         return json_build_object('message', 'Vous êtes référent de la collectivité.');
     else
-        -- current user cannot claim the epci
+        -- current user cannot claim the collectivite
         -- return an error with a reason
         perform set_config('response.status', '409', true);
         return json_build_object('message', 'La collectivité dispose déjà d''un référent.');
     end if;
 end
 $$ language plpgsql;
-comment on function claim_epci is
+comment on function claim_collectivite is
     'Claims an EPCI : '
         'will succeed with a code 200 if this EPCI does not have referent yet.'
         'If the EPCI was already claimed it will fail with a code 409.';
 
-create or replace function quit_epci(siren siren) returns json as
+create or replace function quit_collectivite(id integer) returns json as
 $$
 declare
-    epci_already_joined bool;
-    joined_epci_id      integer;
+    collectivite_already_joined bool;
+    joined_collectivite_id      integer;
 begin
-    -- select the epci id to unclaim using its siren
-    select id from epci where epci.siren = $1 into joined_epci_id;
+    select id into joined_collectivite_id;
 
     -- compute epci_already_joined, which is true if a droit exist for claimed epci
     select count(*) > 0
     from private_utilisateur_droit
-    where epci_id = joined_epci_id
+    where collectivite_id = joined_collectivite_id
       and role_name = 'referent'
-    into epci_already_joined;
+    into collectivite_already_joined;
 
-    if not epci_already_joined
+    if not collectivite_already_joined
     then
         -- current user cannot quit an epci that was not joined.
         -- return an error with a reason
@@ -154,7 +191,7 @@ begin
         update private_utilisateur_droit
         set active      = false,
             modified_at = now()
-        where epci_id = joined_epci_id;
+        where collectivite_id = joined_collectivite_id;
 
         -- return success with a message
         perform set_config('response.status', '200', true);
@@ -162,28 +199,28 @@ begin
     end if;
 end
 $$ language plpgsql;
-comment on function quit_epci is
-    'Unclaims an EPCI: '
+comment on function quit_collectivite is
+    'Unclaims an Collectivité: '
         'Will succeed with a code 200 if user have a droit on this collectivité.'
         'Otherwise it will fail wit a code 40x.';
 
 
-create or replace function referent_contact(siren siren) returns json as
+create or replace function referent_contact(id integer) returns json as
 $$
 declare
-    requested_epci_id integer;
+    requested_collectivite_id integer;
     referent_id       uuid;
     referent_email    text;
     referent_nom      text;
     referent_prenom   text;
 begin
-    -- select the epci id to get contact info from using its siren
-    select id from epci where epci.siren = $1 into requested_epci_id;
+    -- select the collectivite id to get contact info from using its siren
+    select id into requested_collectivite_id;
 
     -- select referent user id
     select user_id
     from private_utilisateur_droit
-    where epci_id = requested_epci_id
+    where collectivite_id = requested_collectivite_id
       and role_name = 'referent'
     into referent_id;
 
@@ -204,7 +241,7 @@ end
 
 $$ language plpgsql security definer;
 comment on function referent_contact is
-    'Returns the contact information of the EPCI referent given the siren.';
+    'Returns the contact information of the Collectivité referent given the siren.';
 
 
 
@@ -220,16 +257,17 @@ $$ language plpgsql;
 -- create function accept_invitation(invitation_id uuid);
 -- create function create_invitation();
 
-create view owned_epci
+create view owned_collectivite
 as
 with current_droits as (
     select *
     from private_utilisateur_droit
     where user_id = auth.uid()
 )
-select siren, nom, role_name
+select  nom, role_name
 from current_droits
-         join epci on epci_id = epci.id
+         join collectivite on collectivite.id = current_droits.collectivite_id
+        join epci  on collectivite.id = epci.collectivite_id
 order by nom;
 
 --------------------------------
@@ -278,7 +316,7 @@ create type avancement as enum ('fait', 'pas_fait', 'programme', 'non_renseigne'
 create table action_statut
 (
     id          serial primary key,
-    epci_id     integer references epci                              not null,
+    epci_id     integer references collectivite                              not null,
     action_id   action_id references action_relation                 not null,
     avancement  avancement                                           not null,
     concerne    boolean                                              not null,
@@ -314,7 +352,7 @@ from action_statut
 create table score
 (
     id                     serial primary key,
-    epci_id                integer references epci                not null,
+    epci_id                integer references collectivite                not null,
     action_id              action_id references action_relation   not null,
     points                 real                                   not null,
     potentiel              real                                   not null,
@@ -333,7 +371,7 @@ comment on column score.created_at is
 create table client_scores
 (
     id               serial primary key,
-    epci_id          integer references epci  not null,
+    epci_id          integer references collectivite  not null,
     referentiel      referentiel              not null,
     scores           jsonb                    not null,
     score_created_at timestamp with time zone not null
@@ -432,7 +470,7 @@ execute procedure after_score_update_insert_client_scores();
 create table action_commentaire
 (
     id          serial primary key,
-    epci_id     integer references epci                              not null,
+    epci_id     integer references collectivite                              not null,
     action_id   action_id references action_relation                 not null,
     commentaire text                                                 not null,
     modified_by uuid references auth.users default auth.uid()        not null,
@@ -457,7 +495,7 @@ create policy "Insert for authenticated user"
 --------------------------------
 create table epci_action_statut_update_event
 (
-    epci_id     integer references epci                            not null,
+    epci_id     integer references collectivite                            not null,
     referentiel referentiel                                        not null,
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null
 );
