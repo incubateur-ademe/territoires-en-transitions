@@ -9,7 +9,7 @@ const ActionReferentielAvancement = lazy(
 
 export const ActionReferentielAvancementPage = () => {
   const {actionId} = useParams<{
-    epciId: string;
+    collectiviteId: string;
     actionId: string;
   }>();
 

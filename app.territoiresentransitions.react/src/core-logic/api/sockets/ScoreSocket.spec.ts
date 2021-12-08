@@ -8,15 +8,15 @@ import {takeUntil} from 'rxjs/operators';
 import {timer} from 'rxjs';
 
 const makeScoreRead = ({
-  epciId = 1,
+  collectiviteId = 1,
   action_id = 'cae_1',
 }: {
-  epciId?: number;
+  collectiviteId?: number;
   action_id?: string;
 }): ScoreRead => {
   return {
     id: 1,
-    epci_id: epciId,
+    collectivite_id: collectiviteId,
     action_id: action_id,
     completed_taches_count: 10,
     total_taches_count: 12,
@@ -31,8 +31,8 @@ const makeScoreRead = ({
 
 describe('Score socket ', () => {
   it('Should expose ReadScores when Client Scores payloads are published', async () => {
-    const scoreRead1 = makeScoreRead({epciId: 1, action_id: 'cae_1'});
-    const scoreRead2 = makeScoreRead({epciId: 1, action_id: 'cae_2'});
+    const scoreRead1 = makeScoreRead({collectiviteId: 1, action_id: 'cae_1'});
+    const scoreRead2 = makeScoreRead({collectiviteId: 1, action_id: 'cae_2'});
 
     const clientScores: ClientScoreBatchRead[] = [
       {
@@ -44,12 +44,12 @@ describe('Score socket ', () => {
       },
     ];
 
-    const epciId = 1;
+    const collectiviteId = 1;
 
     const controller = new InMemoryScoreController({
       clientScores,
     });
-    const socket = new ScoreSocket({epciId, controller});
+    const socket = new ScoreSocket({collectiviteId, controller});
 
     const timelimit = timer(5);
     let result;

@@ -1,18 +1,18 @@
-import {AllEpciRead} from 'generated/dataLayer/all_epci_read';
+import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 
-export const epci1: AllEpciRead = {
+export const collectivite1: AllCollectiviteRead = {
   nom: 'Haut - Bugey Agglomération',
-  siren: '200042935',
+  id: 1,
 };
 
-export const epci2: AllEpciRead = {
+export const collectivite2: AllCollectiviteRead = {
   nom: 'CA du Bassin de Bourg-en-Bresse',
-  siren: '200071751',
+  id: 2,
 };
 
-export const epci40: AllEpciRead = {
+export const epci40: AllCollectiviteRead = {
   nom: 'PETR du Soissonnais et du Valois',
-  siren: '200085694',
+  id: 40,
 };
 
 export const yoloCredentials = {email: 'yolo@dodo.com', password: 'yolododo'};

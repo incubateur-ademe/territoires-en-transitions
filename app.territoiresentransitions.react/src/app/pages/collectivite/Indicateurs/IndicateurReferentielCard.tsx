@@ -8,19 +8,19 @@ import {
   indicateurObjectifStore,
   indicateurResultatStore,
 } from 'core-logic/api/hybridStores';
-import {useEpciSiren} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
-import {Editable, Spacer} from 'ui/shared';
+import {Editable} from 'ui/shared';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   const [value, setValue] = React.useState('');
-  const epciId = useEpciSiren()!;
+  const collectiviteId = useCollectiviteId()!;
 
   const id = IndicateurReferentielCommentaireStorable.buildId(
-    epciId,
+    collectiviteId.toString(),
     props.indicateur.id
   );
 
@@ -28,13 +28,13 @@ const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
     commands.indicateurCommands
       .getIndicateurReferentielCommentaire(id)
       .then(storable => setValue(storable?.value ?? ''));
-  }, [value, epciId]);
+  }, [value, collectiviteId]);
 
   const handleSave = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const inputValue = event.currentTarget.value;
     commands.indicateurCommands.storeIndicateurReferentielCommentaire(
       new IndicateurReferentielCommentaireStorable({
-        epci_id: epciId,
+        epci_id: collectiviteId.toString(),
         indicateur_id: props.indicateur.id,
         value: inputValue,
       })
@@ -95,15 +95,15 @@ export const IndicateurReferentielCard = ({
   startOpen?: boolean;
   hideIfNoValues?: boolean;
 }) => {
-  const epciId = useEpciSiren()!;
+  const collectiviteId = useCollectiviteId()!;
   const resultatValueStorables = useAnyIndicateurValueForAllYears(
     indicateur.uid,
-    epciId,
+    collectiviteId,
     indicateurResultatStore
   );
   const objectifValueStorables = useAnyIndicateurValueForAllYears(
     indicateur.uid,
-    epciId,
+    collectiviteId,
     indicateurObjectifStore
   );
 

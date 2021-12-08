@@ -9,20 +9,20 @@ import {sleep} from 'utils/sleep';
 describe('Supabase Score Controller ', () => {
   const schema = 'public';
   const readTableName = 'client_scores';
-  const epciId = 1;
+  const collectiviteId = 1;
 
   it('[TEMPORARY TEST] should publish a score in socket when score is written directly in client score table ', async () => {
     const controller = new SupabaseScoreController({
       supabaseClient: supabase,
     });
-    const socket = new ScoreSocket({controller, epciId});
+    const socket = new ScoreSocket({controller, collectiviteId});
 
     // Mimic server
     const writeScore = {
       action_id: 'cae_1.2.3',
       completed_taches_count: 1,
       concernee: true,
-      epci_id: 1,
+      collectivite_id: 1,
       points: 100,
       potentiel: 100,
       previsionnel: 100,
@@ -62,7 +62,7 @@ describe('Supabase Score Controller ', () => {
 
   it.skip('Should ', async () => {
     // TODO : fix me !
-    const topic = `realtime:${schema}:${readTableName}:epci_id=${epciId}`;
+    const topic = `realtime:${schema}:${readTableName}:collectivite_id=${collectiviteId}`;
     // const server = new WS('ws://localhost:1234/');
     const server = new WebSocketServer('ws://localhost:1234');
     // const client = new WebSocket('ws://localhost:1234');
@@ -87,7 +87,7 @@ describe('Supabase Score Controller ', () => {
       supabaseClient: supabase,
       // todo options: { realtime: {}}
     });
-    const socket = new ScoreSocket({controller, epciId});
+    const socket = new ScoreSocket({controller, collectiviteId});
 
     // localSupabaseClient.onConnMessage;
 

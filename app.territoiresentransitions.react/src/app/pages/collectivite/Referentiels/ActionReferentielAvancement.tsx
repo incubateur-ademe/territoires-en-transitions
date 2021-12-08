@@ -6,7 +6,7 @@ import {
   ProgressStatStatic,
 } from 'ui/referentiels';
 import 'app/DesignSystem/buttons.css';
-import {AddFicheActionButton, Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared';
 import {isIndicateurRelatedToAction} from 'utils/indicateurs';
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';

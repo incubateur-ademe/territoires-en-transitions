@@ -12,7 +12,6 @@ import {PlanCreationForm} from 'app/pages/collectivite/PlanActions/Forms/PlanCre
 import {PlanActionStorable} from 'storables';
 import {getPlanActionStoreForEpci} from 'core-logic/api/hybridStores';
 import {PlanActionTyped} from 'types/PlanActionTypedInterface';
-import {DetailedEpciCardPropsLink} from 'app/pages/ElsesEpcis/_DetailedEpciCardPropsLink';
 
 const addSAtTheEndOfWordIfCountGreaterThan1 = (props: {
   count: number;
@@ -22,9 +21,13 @@ const addSAtTheEndOfWordIfCountGreaterThan1 = (props: {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const hiddenIfNullable = (variable: any) => `${variable ? '' : 'hidden'}`;
 
-export const DetailedPlanActions = ({epciId}: {epciId: string}) => {
+export const DetailedPlanActions = ({
+  collectiviteId,
+}: {
+  collectiviteId: string;
+}) => {
   const [creating, setCreating] = useState<boolean>(false);
-  const store = getPlanActionStoreForEpci(epciId);
+  const store = getPlanActionStoreForEpci(collectiviteId);
   const plans = useAllStorables<PlanActionStorable>(store);
   plans.sort((a, b) => a.nom.localeCompare(b.nom));
 
@@ -49,10 +52,10 @@ export const DetailedPlanActions = ({epciId}: {epciId: string}) => {
           <Spacer size={1} />
           <div className="flex justify-between items-center">
             <div className="text-sm font-bold">{plan.nom}</div>
-            <DetailedEpciCardPropsLink
+            {/* <DetailedEpciCardPropsLink
               label="Voir"
-              linkTo={`/collectivite/${epciId}/plan_action/${plan.uid}`}
-            />
+              linkTo={`/collectivite/${collectiviteId}/plan_action/${plan.uid}`}
+            /> */}
           </div>
           <Spacer size={2} />
           <div className="flex flex-col items-center">
@@ -89,7 +92,8 @@ const FicheActionAvancementCountBarAndLegend = ({
       addSAtTheEndOfWordIfCountGreaterThan1({count, word: 'non renseignée'}),
     fait: count =>
       addSAtTheEndOfWordIfCountGreaterThan1({count, word: 'faite'}),
-    en_cours: () => 'en cours',
+    programme: count =>
+      addSAtTheEndOfWordIfCountGreaterThan1({count, word: 'programmée'}),
     pas_fait: count =>
       addSAtTheEndOfWordIfCountGreaterThan1({count, word: 'non faite'}),
   };
@@ -105,8 +109,8 @@ const FicheActionAvancementCountBarAndLegend = ({
     }
   );
 
-  const enCoursPercentage =
-    ((epciPlanActionAvancementSummmary.avancementsCount['en_cours'] ?? 0) /
+  const programmePercentage =
+    ((epciPlanActionAvancementSummmary.avancementsCount['programme'] ?? 0) /
       epciPlanActionAvancementSummmary.total) *
     100;
   const faitePercentage =
@@ -128,8 +132,8 @@ const FicheActionAvancementCountBarAndLegend = ({
           <div
             className=" h-5"
             style={{
-              width: `${enCoursPercentage}%`,
-              backgroundColor: ficheActionAvancementColors['en_cours'],
+              width: `${programmePercentage}%`,
+              backgroundColor: ficheActionAvancementColors['programme'],
             }}
           />
         </div>

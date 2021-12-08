@@ -5,7 +5,7 @@ export interface ScoreRead {
   completed_taches_count: number;
   concernee: boolean;
   created_at: string;
-  epci_id: number;
+  collectivite_id: number;
   id: number;
   points: number;
   potentiel: number;

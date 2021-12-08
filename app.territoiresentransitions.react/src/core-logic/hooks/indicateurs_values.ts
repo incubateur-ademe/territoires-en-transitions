@@ -6,7 +6,7 @@ import {inferValueIndicateurUid} from 'utils/referentiels';
 
 export const useAnyIndicateurValueForAllYears = (
   indicateurUid: string,
-  epciId: string,
+  collectiviteId: number,
   store: HybridStore<AnyIndicateurValueStorable>
 ) => {
   const [valuesForYears, setValuesForYears] = useState<
@@ -18,13 +18,13 @@ export const useAnyIndicateurValueForAllYears = (
   useEffect(() => {
     const listener = async () => {
       const values = await store.retrieveAtPath(
-        `${epciId}/${valueIndicateurUid}`
+        `${collectiviteId}/${valueIndicateurUid}`
       );
       setValuesForYears(values);
     };
 
     store
-      .retrieveAtPath(`${epciId}/${valueIndicateurUid}`)
+      .retrieveAtPath(`${collectiviteId}/${valueIndicateurUid}`)
       .then(previousStoredValues => {
         if (
           valuesForYears.length !== previousStoredValues.length ||

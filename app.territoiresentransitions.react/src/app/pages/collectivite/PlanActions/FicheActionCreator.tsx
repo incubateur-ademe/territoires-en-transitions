@@ -18,9 +18,9 @@ import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
  * Used to create a fiche, shows FicheActionForm.
  */
 const FicheActionCreator = () => {
-  const {epciId} = useParams<{epciId: string}>();
+  const {collectiviteId} = useParams<{collectiviteId: string}>();
 
-  const ficheActionStore = getFicheActionStoreForEpci(epciId);
+  const ficheActionStore = getFicheActionStoreForEpci(collectiviteId);
 
   const history = useHistory();
 
@@ -49,7 +49,7 @@ const FicheActionCreator = () => {
 
   const fiche: FicheActionInterface = {
     uid: uuid(),
-    epci_id: epciId,
+    epci_id: collectiviteId,
     referentiel_action_ids: referentiel_action_ids,
     titre: titre,
     avancement: 'pas_faite',
@@ -75,7 +75,7 @@ const FicheActionCreator = () => {
   const save = async (data: FicheActionFormData) => {
     await saveFiche(data);
     await updatePlansOnFicheSave(data);
-    history.push(`/collectivite/${epciId}/plan_actions`);
+    history.push(`/collectivite/${collectiviteId}/plan_actions`);
   };
 
   return (

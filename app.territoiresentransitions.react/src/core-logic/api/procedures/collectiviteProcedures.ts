@@ -1,8 +1,8 @@
 import {supabase} from 'core-logic/api/supabase';
 
-export const claimEpci = async (siren: string): Promise<boolean> => {
-  const {data, error} = await supabase.rpc('claim_epci', {
-    siren,
+export const claimCollectivite = async (id: number): Promise<boolean> => {
+  const {data, error} = await supabase.rpc('claim_collectivite', {
+    id,
   });
 
   if (error) {
@@ -18,10 +18,12 @@ export type ReferentContactResponse = {
   prenom: string;
 }; // TODO : shuold be generated
 
-export const referentContact = async (siren: string): Promise<any | null> => {
+export const referentContact = async (
+  collectivite_id: number
+): Promise<any | null> => {
   // Promise<ReferentContactResponse | null> TODO : type me !
   const {data, error} = await supabase.rpc('referent_contact', {
-    siren,
+    collectivite_id,
   });
 
   if (error || !data) {

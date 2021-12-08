@@ -1,6 +1,6 @@
 import {Line} from 'react-chartjs-2';
 import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
-import {useEpciSiren} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks';
 import {HybridStore} from 'core-logic/api/hybridStore';
 import {AnyIndicateurValueStorable} from 'storables';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
@@ -51,15 +51,15 @@ const AnyIndicateurLineChart = (props: {
   resultatStore: HybridStore<AnyIndicateurValueStorable>;
   objectifStore: HybridStore<AnyIndicateurValueStorable>;
 }) => {
-  const epciId = useEpciSiren()!;
+  const collectiviteId = useCollectiviteId()!;
   const resultatValueStorables = useAnyIndicateurValueForAllYears(
     props.indicateurUid,
-    epciId,
+    collectiviteId,
     props.resultatStore
   );
   const objectifValueStorables = useAnyIndicateurValueForAllYears(
     props.indicateurUid,
-    epciId,
+    collectiviteId,
     props.objectifStore
   );
 

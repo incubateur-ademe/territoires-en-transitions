@@ -1,14 +1,14 @@
-import {myEpcisPath, signInPath} from 'app/paths';
+import {myCollectivitesPath, signInPath} from 'app/paths';
 import {authBloc} from 'core-logic/observables/authBloc';
 import {reaction} from 'mobx';
 import {useHistory} from 'react-router-dom';
-import {currentEpciBloc} from 'core-logic/observables';
-import {useEpciSiren} from 'core-logic/hooks';
+import {currentCollectiviteBloc} from 'core-logic/observables';
+import {useCollectiviteId} from 'core-logic/hooks';
 
-export const EpciRedirector = () => {
-  const epciId = useEpciSiren();
-  console.log(epciId);
-  currentEpciBloc.update({siren: epciId || null});
+export const CollectiviteRedirector = () => {
+  const collectiviteId = useCollectiviteId();
+  console.log(collectiviteId);
+  currentCollectiviteBloc.update({id: collectiviteId});
 
   return null;
 };
@@ -20,7 +20,7 @@ export const ConnectedRedirector = () => {
     () => authBloc.connected,
     connected => {
       console.log('authBloc connected changed', connected);
-      if (connected) history.push(myEpcisPath);
+      if (connected) history.push(myCollectivitesPath);
       else history.push(signInPath);
     }
   );

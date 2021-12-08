@@ -3,14 +3,12 @@ import {supabase} from 'core-logic/api/supabase';
 
 export class AuthBloc {
   private _userId: string | null = null;
-  private _connected = false;
   private _authError: string | null = null;
 
   constructor() {
     makeAutoObservable(this);
     const connectedUser = supabase.auth.user();
     if (connectedUser) {
-      this._connected = true;
       this._userId = connectedUser.id;
     }
   }
@@ -20,7 +18,6 @@ export class AuthBloc {
       .signIn({email, password})
       .then(session => {
         if (session.user) {
-          this._connected = true;
           this._userId = session.user.id;
           this._authError = null;
           console.log('user connected ', this.userId);
@@ -37,15 +34,14 @@ export class AuthBloc {
 
   disconnect() {
     supabase.auth.signOut().then(response => {
-      if (response.error === null) this._connected = false;
-      else this._authError = response.error.message;
-      console.log('Connected : ', this._connected);
+      if (response.error === null) {
+        this._userId = null;
+      } else this._authError = response.error.message;
     });
   }
 
   get connected() {
-    console.log('connected change to ', this._connected);
-    return this._connected;
+    return this.userId !== null;
   }
   get authError() {
     return this._authError;

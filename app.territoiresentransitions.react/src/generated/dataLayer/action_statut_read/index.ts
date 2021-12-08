@@ -2,7 +2,7 @@
 
 export interface ActionStatutRead {
   action_id: string;
-  avancement: 'pas_fait' | 'fait' | 'non_renseigne' | 'programme' | 'en_cours';
+  avancement: 'pas_fait' | 'fait' | 'non_renseigne' | 'programme';
   concerne: boolean;
   epci_id: number;
   id: number;

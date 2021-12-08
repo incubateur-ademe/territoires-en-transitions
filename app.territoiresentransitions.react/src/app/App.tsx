@@ -8,7 +8,7 @@ import {
 import {Footer, Header} from 'ui';
 import {FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
-import {EpciRoutes} from 'app/pages/collectivite/EpciRoutes';
+import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import StatisticsPage from 'app/pages/statistics/StatisticsPage';
 
 import Home from 'app/pages/Home';
@@ -26,9 +26,13 @@ import {ScrollToTop} from 'app/ScrollToTop';
 import {createTheme, MuiThemeProvider} from '@material-ui/core';
 import {MatomoProvider} from '@datapunt/matomo-tracker-react';
 import {matomoInstance} from 'app/matomo_instance';
-import {AllActiveEpcisPage} from 'app/pages';
-import {CurrentUserEpcisPage} from 'app/pages/CurrentUserEpcis/CurrentUserEpcisPage';
-import {allEpcisPath, authBasePath, myEpcisPath} from 'app/paths';
+import {ElsesCollectivitesPage, CurrentUserCollectivitesPage} from 'app/pages';
+import {
+  allCollectivitesPath,
+  authBasePath,
+  myCollectivitesPath,
+} from 'app/paths';
+// import {SideMenu, SideMenuItem, SideMenuLink} from '@dataesr/react-dsfr';
 
 const theme = createTheme({
   palette: {
@@ -58,18 +62,18 @@ export const App = () => {
               <AuthRoutes />
             </Route>
 
-            <Route path={myEpcisPath}>
+            <Route path={myCollectivitesPath}>
               <Header />
-              <CurrentUserEpcisPage />
+              <CurrentUserCollectivitesPage />
             </Route>
-            <Route path={allEpcisPath}>
-              <Lala />
+            <Route path={allCollectivitesPath}>
+              {/* <Lala /> */}
               <Header />
-              <AllActiveEpcisPage />
+              <ElsesCollectivitesPage />
             </Route>
-            <Route path={'/epci/:epciSiren'}>
+            <Route path={'/collectivite/:collectiviteId'}>
               <Header />
-              <EpciRoutes />
+              <CollectiviteRoutes />
             </Route>
             <Route path={'/statistics'}>
               <Header />
@@ -108,42 +112,17 @@ const HomeRoute = ({children, ...rest}: RouteProps) => {
   );
 };
 
-const Lala = () => (
-  <nav className="fr-sidemenu" role="navigation" aria-label="Menu latéral">
-    <div className="fr-sidemenu__inner">
-      <button
-        className="fr-sidemenu__btn"
-        aria-controls="fr-sidemenu-wrapper"
-        aria-expanded={true}
-      >
-        Dans cette rubrique
-      </button>
-      <div className="fr-collapse" id="fr-sidemenu-wrapper">
-        <div className="fr-sidemenu__title">Titre de rubrique</div>
-        <ul className="fr-sidemenu__list">
-          <li className="fr-sidemenu__item">
-            <button
-              className="fr-sidemenu__btn"
-              aria-expanded={true}
-              aria-controls="fr-sidemenu-item-0"
-            >
-              Niveau 1
-            </button>
-            <div
-              className="fr-collapse fr-collapse__expanded"
-              id="fr-sidemenu-item-0"
-            >
-              <ul className="fr-sidemenu__list">
-                <li className="fr-sidemenu__item">
-                  <a className="fr-sidemenu__link" href="#" target="_self">
-                    Accès direct niveau 2
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-);
+// const Lala = () => (
+//   <SideMenu title="SideMenu Title" buttonLabel="SideMenu Button">
+//     <SideMenuItem title="SideMenu Item #1">
+//       <SideMenuLink href="/">SideMenu Link #1</SideMenuLink>
+//       <SideMenuLink onClick={() => {}}>SideMenu Link #2</SideMenuLink>
+//     </SideMenuItem>
+//     <SideMenuItem title="SideMenu Item #2">
+//       <SideMenuItem title="SideMenu Level 2 Item #1">
+//         <SideMenuLink href="/">SideMenu Level 2 Link #1</SideMenuLink>
+//         <SideMenuLink href="/">SideMenu Level 2 Link #2</SideMenuLink>
+//       </SideMenuItem>
+//     </SideMenuItem>
+//   </SideMenu>
+// );

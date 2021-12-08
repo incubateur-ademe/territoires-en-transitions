@@ -3,5 +3,5 @@
 export interface ActionCommentaireWrite {
   action_id: string;
   commentaire: string;
-  epci_id: number;
+  collectivite_id: number;
 }

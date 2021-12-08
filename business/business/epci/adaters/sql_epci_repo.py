@@ -19,5 +19,5 @@ class SqlEpciRepository(AbstractEpciRepository):
                     "'" + value.replace("'", "''") + "'"
                     for value in epci_as_dict.values()
                 ]
-                sql = f"insert into epci({', '.join(columns)}) values ({', '.join(formated_values)});"
+                sql = f"insert into collectivite({', '.join(columns)}) values ({', '.join(formated_values)});"
                 f.write(f"{sql}\n")

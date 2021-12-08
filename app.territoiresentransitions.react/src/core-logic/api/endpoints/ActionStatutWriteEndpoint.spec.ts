@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/extend-expect';
 import {ActionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
 import {supabase} from 'core-logic/api/supabase';
 import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
-import {yiliCredentials, yoloCredentials} from 'test_utils/epci';
+import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('Action-statut write endpoint', () => {
   beforeAll(async () => {
@@ -14,7 +14,7 @@ describe('Action-statut write endpoint', () => {
       concerne: true,
       avancement: 'fait',
       action_id: 'cae_1.1.1.1.2',
-      epci_id: 1,
+      collectivite_id: 1,
     };
     const result = await endpoint.save(statut);
 
@@ -36,7 +36,7 @@ describe('Action-statut write endpoint', () => {
       concerne: true,
       avancement: 'fait',
       action_id: 'cae_1.2.3.4',
-      epci_id: 10000,
+      collectivite_id: 10000,
     };
     const result = await endpoint.save(statut);
     expect(result).toEqual(null);

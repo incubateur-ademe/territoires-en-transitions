@@ -17,10 +17,10 @@ export const ActionStatusAvancementRadioButton = ({
 }: {
   actionId: string;
 }) => {
-  const epciId = 1; // TODO !
+  const collectiviteId = 1; // TODO !
   const observable = new ActionStatusAvancementRadioButtonBloc({
     actionId,
-    epciId,
+    collectiviteId,
   });
   return <_ActionStatusAvancementRadioButton observable={observable} />;
 };
@@ -40,14 +40,20 @@ const _ActionStatusAvancementRadioButton = observer(
 
 class ActionStatusAvancementRadioButtonBloc {
   private actionId: string;
-  private epciId: number;
+  private collectiviteId: number;
   avancement: Avancement = 'non_renseigne';
   concerne = true;
 
-  constructor({actionId, epciId}: {epciId: number; actionId: string}) {
+  constructor({
+    actionId,
+    collectiviteId,
+  }: {
+    collectiviteId: number;
+    actionId: string;
+  }) {
     makeAutoObservable(this);
     this.actionId = actionId;
-    this.epciId = epciId;
+    this.collectiviteId = collectiviteId;
     this.fetch();
   }
 
@@ -71,7 +77,7 @@ class ActionStatusAvancementRadioButtonBloc {
     actionStatutRepository
       .save({
         action_id: this.actionId,
-        epci_id: this.epciId,
+        collectivite_id: this.collectiviteId,
         avancement: this.avancement,
         concerne: this.concerne,
       })
@@ -87,7 +93,7 @@ class ActionStatusAvancementRadioButtonBloc {
     actionStatutRepository
       .fetch({
         actionId: this.actionId,
-        epciId: this.epciId,
+        collectiviteId: this.collectiviteId,
       })
       .then(fetched => {
         if (fetched) this.setAvancement(fetched.avancement);

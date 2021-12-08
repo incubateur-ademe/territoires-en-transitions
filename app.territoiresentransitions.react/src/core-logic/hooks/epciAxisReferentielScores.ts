@@ -8,7 +8,7 @@ const storablesToState = (storables: ActionReferentielScoreStorable[]) =>
   storables.filter(score => actionIdDepth(score.action_id) <= 1);
 
 export const useEpciAxisReferentielScores = (props: {
-  epciId: string;
+  collectiviteId: string;
   referentiel: Referentiel;
 }): ActionReferentielScoreStorable[] => {
   const [axisActionReferentielScores, setAxisActionReferentielScores] =

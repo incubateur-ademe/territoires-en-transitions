@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useHistory} from 'react-router-dom';
-import {useEpciSiren} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks';
 import {
   actionIdDepth,
   actionPath,
@@ -96,7 +96,7 @@ export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
     referentielActions
   );
   const history = useHistory();
-  const epciId = useEpciSiren()!;
+  const collectiviteId = useCollectiviteId()!;
 
   const handleClose = () => {
     setOpened(false);
@@ -104,7 +104,7 @@ export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
 
   const onSelect = (selectedId: string) => {
     setOpened(false);
-    history.push(actionPath(epciId, selectedId));
+    history.push(actionPath(collectiviteId, selectedId));
   };
 
   return (
