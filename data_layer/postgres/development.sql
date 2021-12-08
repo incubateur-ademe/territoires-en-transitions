@@ -117,13 +117,14 @@ create table private_epci_invitation
     created_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
-create view active_collectivite as
-select collectivite.id, nom
+create or replace view active_collectivite as
+select collectivite.id as collectivite_id, nom
 from collectivite
         join epci on epci.collectivite_id = collectivite.id
         join private_utilisateur_droit on collectivite.id = private_utilisateur_droit.collectivite_id
 where private_utilisateur_droit.id is not null
   and private_utilisateur_droit.active
+group by collectivite.id, nom
 order by nom;
 
 
@@ -264,11 +265,19 @@ with current_droits as (
     from private_utilisateur_droit
     where user_id = auth.uid()
 )
-select  collectivite.id as collectivite_id, nom, role_name
+select collectivite.id as collectivite_id, nom, role_name
 from current_droits
          join collectivite on collectivite.id = current_droits.collectivite_id
-        join epci  on collectivite.id = epci.collectivite_id
+         join epci on collectivite.id = epci.collectivite_id
 order by nom;
+
+create or replace view elses_collectivite
+as
+select owned_collectivite.collectivite_id, owned_collectivite.nom
+from active_collectivite
+         left join owned_collectivite on
+        owned_collectivite.collectivite_id = active_collectivite.collectivite_id
+where owned_collectivite.collectivite_id is not null;
 
 --------------------------------
 -------- REFERENTIEL -----------
@@ -304,8 +313,6 @@ from action_relation as ar
 comment on view action_children is
     'Action and its children, computed from action relation';
 
-select *
-from action_children;
 
 --------------------------------
 ---------- STATUT --------------
