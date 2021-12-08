@@ -2,32 +2,35 @@ import '@testing-library/jest-dom/extend-expect';
 import {actionStatutReadEndpoint} from 'core-logic/api/endpoints/ActionStatutReadEndpoint';
 
 describe('Action-statut reading endpoint should retrieve data-layer default statuses', () => {
-  it('Retrieves at least one status when epci_id is given', async () => {
-    const results = await actionStatutReadEndpoint.getBy({epci_id: 1});
+  it('Retrieves at least one status when collectivite_id is given', async () => {
+    const results = await actionStatutReadEndpoint.getBy({collectivite_id: 1});
 
     expect(results.length).toBeGreaterThanOrEqual(1);
-    expect(results[0].epci_id).toEqual(1);
+    expect(results[0].collectivite_id).toEqual(1);
   });
   it(
-    'Retrieves at least one status when epci_id and action_id with status' +
+    'Retrieves at least one status when collectivite_id and action_id with status' +
       ' are given',
     async () => {
       const results = await actionStatutReadEndpoint.getBy({
-        epci_id: 1,
-        action_id: 'cae_1',
+        collectivite_id: 1,
+        action_id: 'cae_1.1.1.1.1',
       });
       expect(results.length).toBeGreaterThanOrEqual(1);
       expect(results[0]).toEqual(
-        expect.objectContaining({action_id: 'cae_1', epci_id: 1})
+        expect.objectContaining({
+          action_id: 'cae_1.1.1.1.1',
+          collectivite_id: 1,
+        })
       );
     }
   );
   it(
-    'Retrieves no statuses when epci_id and action_id without status are' +
+    'Retrieves no statuses when collectivite_id and action_id without status are' +
       ' given',
     async () => {
       const results = await actionStatutReadEndpoint.getBy({
-        epci_id: 1,
+        collectivite_id: 1,
         action_id: 'test_1',
       });
       expect(results.length).toEqual(0);

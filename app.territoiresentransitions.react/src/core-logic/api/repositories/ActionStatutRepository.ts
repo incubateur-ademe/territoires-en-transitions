@@ -13,7 +13,7 @@ class ActionStatutRepository {
     actionId: string;
   }): Promise<ActionStatutRead | null> {
     const results = await actionStatutReadEndpoint.getBy({
-      epci_id: args.collectiviteId,
+      collectivite_id: args.collectiviteId,
     });
 
     return results.find(statut => statut.action_id === args.actionId) || null;

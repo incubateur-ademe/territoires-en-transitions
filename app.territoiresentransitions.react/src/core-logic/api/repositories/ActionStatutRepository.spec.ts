@@ -8,11 +8,11 @@ describe('Action-statut repo should retrieve data-layer default statuses', () =>
     async () => {
       const result = await actionStatutRepository.fetch({
         collectiviteId: 1,
-        actionId: 'cae_1',
+        actionId: 'cae_1.1.1.1.1',
       });
       expect(result).not.toBeNull();
-      expect(result!.epci_id).toEqual(1);
-      expect(result!.action_id).toEqual('cae_1');
+      expect(result!.collectivite_id).toEqual(1);
+      expect(result!.action_id).toEqual('cae_1.1.1.1.1');
     }
   );
   it('Retrieves nothing when no statut has been inserted for this actionId', async () => {

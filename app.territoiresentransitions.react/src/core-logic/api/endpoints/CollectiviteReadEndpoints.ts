@@ -16,7 +16,7 @@ class AllCollectiviteReadEndpoint extends DataLayerReadEndpoint<
 }
 
 export interface ElsesCollectiviteReadParams {
-  id?: number;
+  collectivite_id?: number;
 }
 
 class ElsesCollectiviteReadEndpoint extends DataLayerReadEndpoint<
@@ -28,13 +28,13 @@ class ElsesCollectiviteReadEndpoint extends DataLayerReadEndpoint<
   async _read(
     params: ElsesCollectiviteReadParams
   ): Promise<PostgrestResponse<ElsesCollectiviteRead>> {
-    if (!params.id) return this._table;
-    return this._table.eq('id', params.id);
+    if (!params.collectivite_id) return this._table;
+    return this._table.eq('collectivite_id', params.collectivite_id);
   }
 }
 
 export interface OwnedCollectiviteReadParams {
-  id?: number;
+  collectivite_id?: number;
 }
 class OwnedCollectiviteReadEndpoint extends DataLayerReadEndpoint<
   OwnedCollectiviteRead,
@@ -45,8 +45,8 @@ class OwnedCollectiviteReadEndpoint extends DataLayerReadEndpoint<
   async _read(
     params: OwnedCollectiviteReadParams
   ): Promise<PostgrestResponse<OwnedCollectiviteRead>> {
-    if (!params.id) return this._table;
-    return this._table.eq('id', params.id);
+    if (!params.collectivite_id) return this._table;
+    return this._table.eq('collectivite_id', params.collectivite_id);
   }
 }
 

@@ -28,6 +28,6 @@ describe('Action-commentaire write endpoint', () => {
       commentaire: 'yolo',
     };
     const result = await endpoint.save(commentaire);
-    expect(result).toEqual([null]);
+    expect(result).toEqual(null);
   });
 });
