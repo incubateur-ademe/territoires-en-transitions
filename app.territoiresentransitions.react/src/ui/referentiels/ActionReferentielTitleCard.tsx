@@ -13,7 +13,8 @@ export const ActionReferentielTitleCard = ({
 }: {
   action: ActionReferentiel;
 }) => {
-  const collectiviteId = currentCollectiviteBloc.currentCollectivite?.id;
+  const collectiviteId =
+    currentCollectiviteBloc.currentCollectivite?.collectivite_id;
   const referentiel = referentielId(action.id);
   return (
     <article className="bg-beige my-4">

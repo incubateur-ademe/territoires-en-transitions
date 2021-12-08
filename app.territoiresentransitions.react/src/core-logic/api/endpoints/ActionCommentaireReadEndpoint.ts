@@ -4,7 +4,7 @@ import {PostgrestResponse} from '@supabase/supabase-js';
 import {actionCommentaireWriteEndpoint} from 'core-logic/api/endpoints/ActionCommentaireWriteEndpoint';
 
 export interface CommentaireGetParams {
-  epci_id: number;
+  collectivite_id: number;
   action_id?: string;
 }
 
@@ -19,9 +19,9 @@ class ActionCommentaireReadEndpoint extends DataLayerReadCachedEndpoint<
   ): Promise<PostgrestResponse<ActionCommentaireRead>> {
     if (getParams.action_id)
       return this._table
-        .eq('epci_id', getParams.epci_id)
+        .eq('collectivite_id', getParams.collectivite_id)
         .eq('action_id', getParams.action_id);
-    return this._table.eq('epci_id', getParams.epci_id);
+    return this._table.eq('collectivite_id', getParams.collectivite_id);
   }
 }
 

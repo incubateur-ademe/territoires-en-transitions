@@ -25,14 +25,14 @@ describe('All Collectivite reading endpoint should retrieve 1628 Collectivites',
 });
 
 describe('Elses Collectivite reading endpoint should retrieve only claimed Collectivite', () => {
-  it('should retrieve one active Collectivite if a given siren is given', async () => {
+  it('should retrieve one active Collectivite if a given id is given', async () => {
     const results = await elsesCollectiviteReadEndpoint.getBy({
-      id: 1,
+      collectivite_id: 1,
     });
 
     expect(results.length).toEqual(1);
-    const expected: ElsesCollectiviteRead[] = [{...collectivite1}];
-    expect(results).toEqual(expected);
+    const expected: ElsesCollectiviteRead[] = [collectivite1];
+    expect(results[0]).toEqual(expected[0]);
   });
   it("should retrieve else's active Collectivite (3) if no siren is given", async () => {
     await supabase.auth.signIn(yoloCredentials);

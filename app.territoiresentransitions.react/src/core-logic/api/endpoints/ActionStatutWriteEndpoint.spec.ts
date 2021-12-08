@@ -22,7 +22,7 @@ describe('Action-statut write endpoint', () => {
     expect(result).toEqual(
       expect.objectContaining({
         action_id: 'cae_1.1.1.1.2',
-        epci_id: 1,
+        collectivite_id: 1,
         concerne: true,
         avancement: 'fait',
       })

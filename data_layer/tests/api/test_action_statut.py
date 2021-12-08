@@ -17,7 +17,7 @@ def test_authentified_user_can_insert_action_statut(
     )
     make_action_api_scenario.assert_authentified_user_can_insert_entity(
         {
-            "epci_id": 1,
+            "collectivite_id": 1,
             "avancement": "programme",
             "concerne": False,
             "action_id": "cae_1.2.3",
@@ -38,7 +38,7 @@ def test_cannot_insert_action_statut_with_wrong_user_uid(
     )
     make_action_api_scenario.assert_cannot_insert_entity_with_wrong_user_uid(
         entity={
-            "epci_id": 1,
+            "collectivite_id": 1,
             "avancement": "programme",
             "concerne": False,
             "action_id": "cae_1.2.3",

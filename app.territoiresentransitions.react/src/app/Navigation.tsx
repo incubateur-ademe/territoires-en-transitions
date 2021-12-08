@@ -101,7 +101,7 @@ export const CollectiviteNavigation = () => {
         <CollectiviteNavigationDirectTab
           label="Tableau de bord"
           path={makeCollectiviteTabPath({
-            id: currentCollectiviteBloc.currentCollectivite.id,
+            id: currentCollectiviteBloc.currentCollectivite.collectivite_id,
             tab: 'tableau_bord',
           })}
         />
@@ -111,14 +111,14 @@ export const CollectiviteNavigation = () => {
           listPathsAndLabels={[
             {
               path: makeCollectiviteReferentielsPath({
-                id: currentCollectiviteBloc.currentCollectivite.id,
+                id: currentCollectiviteBloc.currentCollectivite.collectivite_id,
                 referentiel: 'eci',
               }),
               label: 'Économie Circulaire',
             },
             {
               path: makeCollectiviteReferentielsPath({
-                id: currentCollectiviteBloc.currentCollectivite.id,
+                id: currentCollectiviteBloc.currentCollectivite.collectivite_id,
                 referentiel: 'cae',
               }),
               label: 'Climat Air Énergie',
@@ -130,28 +130,28 @@ export const CollectiviteNavigation = () => {
           listPathsAndLabels={[
             {
               path: makeCollectiviteIndicateursPath({
-                id: currentCollectiviteBloc.currentCollectivite.id,
+                id: currentCollectiviteBloc.currentCollectivite.collectivite_id,
                 view: 'eci',
               }),
               label: 'Économie Circulaire',
             },
             {
               path: makeCollectiviteIndicateursPath({
-                id: currentCollectiviteBloc.currentCollectivite.id,
+                id: currentCollectiviteBloc.currentCollectivite.collectivite_id,
                 view: 'cae',
               }),
               label: 'Climat Air Énergie',
             },
             {
               path: makeCollectiviteIndicateursPath({
-                id: currentCollectiviteBloc.currentCollectivite.id,
+                id: currentCollectiviteBloc.currentCollectivite.collectivite_id,
                 view: 'crte',
               }),
               label: 'CRTE',
             },
             {
               path: makeCollectiviteIndicateursPath({
-                id: currentCollectiviteBloc.currentCollectivite.id,
+                id: currentCollectiviteBloc.currentCollectivite.collectivite_id,
                 view: 'perso',
               }),
               label: 'Personnalisés',
@@ -161,7 +161,7 @@ export const CollectiviteNavigation = () => {
         <CollectiviteNavigationDirectTab
           label="Plans d'actions"
           path={makeCollectiviteTabPath({
-            id: currentCollectiviteBloc.currentCollectivite.id,
+            id: currentCollectiviteBloc.currentCollectivite.collectivite_id,
             tab: 'plans_actions',
           })}
         />

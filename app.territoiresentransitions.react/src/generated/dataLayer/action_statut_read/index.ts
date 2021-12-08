@@ -4,7 +4,7 @@ export interface ActionStatutRead {
   action_id: string;
   avancement: 'pas_fait' | 'fait' | 'non_renseigne' | 'programme';
   concerne: boolean;
-  epci_id: number;
+  collectivite_id: number;
   id: number;
   modified_at: string;
   modified_by: string;

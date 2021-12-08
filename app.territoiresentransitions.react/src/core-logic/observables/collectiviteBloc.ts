@@ -3,50 +3,54 @@ import {
   ownedCollectiviteReadEndpoint,
 } from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
 import {makeAutoObservable} from 'mobx';
-import {
-  ElsesCollectiviteRead,
-  OwnedCollectiviteRead,
-  RoleName,
-} from 'generated/dataLayer';
+import {RoleName} from 'generated/dataLayer';
 
 export type CurrentCollectiviteObserved = {
   nom: string;
-  id: number;
+  collectivite_id: number;
   role_name: RoleName | null;
 };
 
 export class CurrentCollectiviteBloc {
-  private _id: number | null = null;
+  private _collectiviteId: number | null = null;
   private _nom: string | null = null;
-  private _role_name: RoleName | null = null;
+  private _roleName: RoleName | null = null;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  update({id}: {id: number | null}) {
-    console.log('CollectiviteBloc update ', id);
-    if (id === null) {
-      this._id = null;
+  update({collectiviteId}: {collectiviteId: number | null}) {
+    console.log('CollectiviteBloc update ', collectiviteId);
+    if (collectiviteId === null) {
+      this._collectiviteId = null;
       this._nom = null;
-      this._role_name = null;
-    } else if (id !== this._id) {
-      this._fetchCollectivite({id});
+      this._roleName = null;
+    } else if (collectiviteId !== this._collectiviteId) {
+      this._fetchCollectivite({collectiviteId});
     }
   }
 
-  async _fetchCollectivite({id}: {id: number}) {
-    const ownedFetched = (await ownedCollectiviteReadEndpoint.getBy({id}))[0];
+  async _fetchCollectivite({collectiviteId}: {collectiviteId: number}) {
+    const ownedFetched = (
+      await ownedCollectiviteReadEndpoint.getBy({
+        collectivite_id: collectiviteId,
+      })
+    )[0];
     if (ownedFetched) {
       this._nom = ownedFetched.nom;
-      this._id = ownedFetched.id;
-      this._role_name = ownedFetched.role_name;
+      this._collectiviteId = ownedFetched.collectivite_id;
+      this._roleName = ownedFetched.role_name;
     } else {
-      const elsesFetched = (await elsesCollectiviteReadEndpoint.getBy({id}))[0];
+      const elsesFetched = (
+        await elsesCollectiviteReadEndpoint.getBy({
+          collectivite_id: collectiviteId,
+        })
+      )[0];
       if (elsesFetched) {
         this._nom = elsesFetched.nom;
-        this._id = elsesFetched.id;
-        this._role_name = null;
+        this._collectiviteId = elsesFetched.collectivite_id;
+        this._roleName = null;
       } else {
         console.log('Collectivite is not active, should throw !');
       }
@@ -54,16 +58,16 @@ export class CurrentCollectiviteBloc {
   }
 
   get currentCollectivite(): CurrentCollectiviteObserved | null {
-    if (this._id === null || this._nom === null) return null;
+    if (this._collectiviteId === null || this._nom === null) return null;
     return {
       nom: this._nom,
-      id: this._id,
-      role_name: this._role_name,
+      collectivite_id: this._collectiviteId,
+      role_name: this._roleName,
     };
   }
 
   get readonly(): boolean {
-    return this.currentCollectivite !== null && this._role_name === null;
+    return this.currentCollectivite !== null && this._roleName === null;
   }
 }
 
