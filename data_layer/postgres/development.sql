@@ -274,8 +274,8 @@ order by nom;
 create or replace view elses_collectivite
 as
 select owned_collectivite.collectivite_id, owned_collectivite.nom
-from active_collectivite
-         left join owned_collectivite on
+from owned_collectivite
+         left join active_collectivite on
         owned_collectivite.collectivite_id = active_collectivite.collectivite_id
 where owned_collectivite.collectivite_id is not null;
 
