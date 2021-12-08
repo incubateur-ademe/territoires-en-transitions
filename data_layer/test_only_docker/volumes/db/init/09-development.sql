@@ -118,7 +118,7 @@ create table private_epci_invitation
 );
 
 create view active_collectivite as
-select collectivite.id, nom
+select collectivite.id as collectivite_id, nom
 from collectivite
         join epci on epci.collectivite_id = collectivite.id
         join private_utilisateur_droit on collectivite.id = private_utilisateur_droit.collectivite_id
@@ -267,25 +267,15 @@ with current_droits as (
 select collectivite.id as collectivite_id, nom, role_name
 from current_droits
          join collectivite on collectivite.id = current_droits.collectivite_id
-         join epci  on collectivite.id = epci.collectivite_id
+         join epci on collectivite.id = epci.collectivite_id
 order by nom;
-
 
 create view elses_collectivite
 as
-with active_collectivite as 
-    (select distinct collectivite.id as collectivite_id, nom
-        from collectivite
-        join private_utilisateur_droit on collectivite.id = private_utilisateur_droit.collectivite_id
-        where private_utilisateur_droit.id is not null
-        and private_utilisateur_droit.active
-    ), 
-owned_id as 
-(
-  select collectivite_id from owned_collectivite
-)
-select id, nom from active_collectivite 
-left join owned_collectivite on owned_collectivite.collectivite_id = active_epci.collectivite_id 
+    select owned_collectivite.collectivite_id, owned_collectivite.nom
+from active_collectivite
+         left join owned_collectivite on
+             owned_collectivite.collectivite_id = active_collectivite.collectivite_id
 where owned_collectivite.collectivite_id is null;
 
 
