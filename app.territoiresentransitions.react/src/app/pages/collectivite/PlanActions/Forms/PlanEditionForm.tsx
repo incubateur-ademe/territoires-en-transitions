@@ -9,7 +9,6 @@ import {LabeledTextInput} from 'ui';
 import {planActionStore} from 'core-logic/api/hybridStores';
 import {PlanActionStorable} from 'storables/PlanActionStorable';
 import {v4 as uuid} from 'uuid';
-import {Category} from '@material-ui/icons';
 
 /**
  * A title that is editable in place, as the title display is replaced with an
@@ -96,7 +95,7 @@ function EditableCategoryTitle(props: {
   level: number;
   update: (categorie: Categorie) => void;
   add?: (categorie: Categorie) => void;
-  remove: (categorie: Categorie) => void;
+  remove?: (categorie: Categorie) => void;
 }) {
   const [editing, setEditing] = useState<boolean>(false);
   const [adding, setAdding] = useState<boolean>(false);
@@ -112,9 +111,13 @@ function EditableCategoryTitle(props: {
               props.categorie.nom = text;
               props.update(props.categorie);
             }}
-            remove={() => {
-              props.remove(props.categorie);
-            }}
+            remove={
+              props.remove
+                ? () => {
+                    props.remove!(props.categorie);
+                  }
+                : undefined
+            }
             text={props.categorie.nom}
             onStateChange={setEditing}
             level={props.level}
@@ -174,9 +177,10 @@ function EditableCategoryLevel(props: {
               categorie={node.categorie}
               update={props.update}
               add={level < 2 ? props.add : undefined}
-              remove={props.remove}
+              remove={node.children.length > 0 ? undefined : props.remove}
               level={level}
             />
+            <span>{node.children.length}</span>
 
             {node.children && (
               <div className="ml-5">
@@ -268,9 +272,23 @@ export const PlanEditionForm = (props: {
             if (confirm(categoryDeletionMessage(categorie))) {
               const plan = props.plan;
               plan.categories = plan.categories.filter(
-                (c: Categorie) => c !== c
+                (c: Categorie) => c.uid !== categorie.uid
               );
-              console.log(plan.categories);
+              plan.fiches_by_category = plan.fiches_by_category.map(
+                (fc: {
+                  category_uid?: string | undefined;
+                  fiche_uid: string;
+                }) => {
+                  if (fc.category_uid === categorie.uid) {
+                    return {fiche_uid: fc.fiche_uid};
+                  }
+                  return {
+                    fiche_uid: fc.fiche_uid,
+                    category_uid: fc.category_uid,
+                  };
+                }
+              );
+              planActionStore.store(plan);
             }
           }}
           level={1}
