@@ -632,3 +632,140 @@ select title,
 from json_type_def;
 comment on view table_as_json_typedef is
     'Json type definition for all public tables (including views). Only non nullable/non default fields are listed';
+
+
+
+--------------------------------
+----------- BUSINESS -------------
+--------------------------------
+create type indicateur_referentiel as enum ('cae', 'crte', 'eci');
+create type climat_pratic_id as enum (
+    'strategie',
+    'urbanisme',
+    'batiments',
+    'energie',
+    'mobilites',
+    'agri_alim',
+    'foret_biodiv',
+    'conso_resp',
+    'dechets',
+    'eau',
+    'preca_energie',
+    'dev_eco',
+    'tourisme',
+    'orga_interne',
+    'forma_sensib',
+    'parten_coop'
+    );
+
+create table indicateur_definition
+(
+     indicateur_id text not null ,
+     identifiant text not null ,
+     nom text not null ,
+     unite text not null ,
+     climat_pratic_ids climat_pratic_id[] not null
+     -- action_ids  ,
+     -- indicateur_id text not null ,
+     -- indicateur_id text not null ,
+     --indicateur_id text not null ,
+
+);
+create table indicateur_relation
+(
+);
+create table action_definition
+(
+);
+create table action_computed_point
+(
+);
+
+
+--------------------------------
+----------- Stuff -------------
+--------------------------------
+create table collectivite_donnees
+(
+    id serial primary key ,
+    collectivite_id integer references collectivite
+);
+
+create table any_indicateur_value
+(
+    valeur float   not null,
+    annee  integer not null
+);
+
+create table indicateur_resultat
+(
+    indicateur_id integer references indicateur_definition not null
+) inherits (collectivite_donnees, any_indicateur_value);
+
+create table indicateur_objectif
+(
+    indicateur_id integer references indicateur_definition not null
+
+) inherits (collectivite_donnees, any_indicateur_value);
+
+create table indicateur_commentaire
+(
+    indicateur_id integer references indicateur_definition not null,
+    commentaire   text                                     not null
+) inherits (collectivite_donnees);
+
+
+-- perso
+create table indicateur_personnalise_definition
+(
+    titre       text not null,
+    description text not null,
+    unite       text not null,
+    commentaire text not null
+) inherits (collectivite_donnees);
+
+create table indicateur_personnalise_resultat
+(
+    indicateur_id integer references indicateur_personnalise_definition not null
+) inherits (collectivite_donnees, any_indicateur_value);
+
+create table indicateur_personnalise_objectif
+(
+    indicateur_id integer references indicateur_personnalise_definition not null
+
+) inherits (collectivite_donnees, any_indicateur_value);
+
+create type fiche_action_avancement as enum  ('pas_fait', 'fait', 'en_cours');
+-- fiche action
+create table fiche_action
+(
+
+    avancement fiche_action_avancement not null ,
+    en_retard bool not null ,
+    numeration text not null ,
+    titre text not null ,
+    description text not null ,
+    structure text not null ,
+    personne_referente text not null ,
+    elu_referent text not null ,
+    partenaires text not null ,
+    budget_global text not null ,
+    date_fin text not null ,
+    date_debut text not null
+) inherits (collectivite_donnees);
+
+create table fiche_action_action_relation
+(
+    fiche_action_id integer references fiche_action,
+    action_id text references action_relation
+);
+create table fiche_action_indicateur_relation
+(
+    fiche_action_id integer references fiche_action,
+    indicateur_id text references indicateur_definition
+);
+create table fiche_action_indicateur_personnalise_relation
+(
+    fiche_action_id integer references fiche_action,
+    indicateur_id text references indicateur_personnalise_definition
+);
