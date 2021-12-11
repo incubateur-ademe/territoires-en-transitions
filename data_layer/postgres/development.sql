@@ -14,6 +14,7 @@ create type role_name as enum ('agent', 'referent', 'conseiller', 'auditeur');
 create table collectivite
 (
     id          serial primary key,
+    nom         varchar(300)                                       not null,
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
     modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
@@ -24,7 +25,6 @@ create table epci
     id      serial primary key,
     collectivite_id integer references collectivite,
     siren   siren unique not null,
-    nom     varchar(300) not null,
     nature  nature       not null
 );
 
@@ -51,8 +51,8 @@ execute procedure before_epci_write_create_collectivite();
 
 create view all_collectivite
 as
-select collectivite_id, nom
-from epci
+select id as collectivite_id, nom
+from collectivite
 order by nom;
 comment on view all_collectivite is 'All EPCIs with the necessary information to display in the client.';
 
@@ -118,13 +118,12 @@ create table private_epci_invitation
 );
 
 create or replace view active_collectivite as
-select collectivite.id as collectivite_id, nom
-from collectivite
-        join epci on epci.collectivite_id = collectivite.id
-        join private_utilisateur_droit on collectivite.id = private_utilisateur_droit.collectivite_id
+select collectivite_id, nom
+from all_collectivite
+        join private_utilisateur_droit on all_collectivite.collectivite_id = private_utilisateur_droit.collectivite_id
 where private_utilisateur_droit.id is not null
   and private_utilisateur_droit.active
-group by collectivite.id, nom
+group by all_collectivite.collectivite_id, nom
 order by nom;
 
 
@@ -638,7 +637,7 @@ comment on view table_as_json_typedef is
 --------------------------------
 ----------- BUSINESS -------------
 --------------------------------
-create type indicateur_referentiel as enum ('cae', 'crte', 'eci');
+create type indicateur_group as enum ('cae', 'crte', 'eci');
 create type climat_pratic_id as enum (
     'strategie',
     'urbanisme',
@@ -664,16 +663,24 @@ create table indicateur_definition
      identifiant text not null ,
      nom text not null ,
      unite text not null ,
-     climat_pratic_ids climat_pratic_id[] not null
-     -- action_ids  ,
-     -- indicateur_id text not null ,
-     -- indicateur_id text not null ,
-     --indicateur_id text not null ,
-
+     climat_pratic_ids climat_pratic_id[] not null,
+     parent integer references  indicateur_parent
 );
-create table indicateur_relation
+create table indicateur_parent
 (
+    id serial primary key ,
+    numero text unique not null ,
+    nom text not null
 );
+comment on table indicateur_parent is 'An optional parent used to group indicateurs together.';
+
+create table indicateur_action (
+    indicateur_id integer references indicateur_definition,
+    action_id integer references action_relation,
+    constraint indicateur_parent_pkey primary key (indicateur_id, action_id)
+);
+comment on table indicateur_action is 'Indicateur <-> Action many-to-many relationship';
+
 create table action_definition
 (
 );
@@ -683,14 +690,8 @@ create table action_computed_point
 
 
 --------------------------------
------------ Stuff -------------
+----------- Données -------------
 --------------------------------
-create table collectivite_donnees
-(
-    id serial primary key ,
-    collectivite_id integer references collectivite
-);
-
 create table any_indicateur_value
 (
     valeur float   not null,
@@ -699,47 +700,61 @@ create table any_indicateur_value
 
 create table indicateur_resultat
 (
+    id serial primary key ,
+    collectivite_id integer references collectivite,
     indicateur_id integer references indicateur_definition not null
-) inherits (collectivite_donnees, any_indicateur_value);
+) inherits (any_indicateur_value);
 
 create table indicateur_objectif
 (
-    indicateur_id integer references indicateur_definition not null
+    id serial primary key ,
+    collectivite_id integer references collectivite,
+    indicateur_id integer references indicateur_definition
 
-) inherits (collectivite_donnees, any_indicateur_value);
+) inherits ( any_indicateur_value);
 
 create table indicateur_commentaire
 (
+    id serial primary key ,
+    collectivite_id integer references collectivite,
     indicateur_id integer references indicateur_definition not null,
     commentaire   text                                     not null
-) inherits (collectivite_donnees);
+);
 
 
 -- perso
 create table indicateur_personnalise_definition
 (
+    id serial primary key ,
+    collectivite_id integer references collectivite,
     titre       text not null,
     description text not null,
     unite       text not null,
     commentaire text not null
-) inherits (collectivite_donnees);
+);
 
 create table indicateur_personnalise_resultat
 (
+    id serial primary key ,
+    collectivite_id integer references collectivite,
     indicateur_id integer references indicateur_personnalise_definition not null
-) inherits (collectivite_donnees, any_indicateur_value);
+
+) inherits (any_indicateur_value);
 
 create table indicateur_personnalise_objectif
 (
+    id serial primary key ,
+    collectivite_id integer references collectivite,
     indicateur_id integer references indicateur_personnalise_definition not null
 
-) inherits (collectivite_donnees, any_indicateur_value);
+) inherits ( any_indicateur_value);
 
 create type fiche_action_avancement as enum  ('pas_fait', 'fait', 'en_cours');
 -- fiche action
 create table fiche_action
 (
-
+    id serial primary key ,
+    collectivite_id integer references collectivite,
     avancement fiche_action_avancement not null ,
     en_retard bool not null ,
     numeration text not null ,
@@ -752,20 +767,23 @@ create table fiche_action
     budget_global text not null ,
     date_fin text not null ,
     date_debut text not null
-) inherits (collectivite_donnees);
+);
 
 create table fiche_action_action_relation
 (
+    id serial primary key ,
     fiche_action_id integer references fiche_action,
     action_id text references action_relation
 );
 create table fiche_action_indicateur_relation
 (
+    id serial primary key ,
     fiche_action_id integer references fiche_action,
     indicateur_id text references indicateur_definition
 );
 create table fiche_action_indicateur_personnalise_relation
 (
+    id serial primary key ,
     fiche_action_id integer references fiche_action,
     indicateur_id text references indicateur_personnalise_definition
 );
