@@ -8,6 +8,12 @@ create domain siren as varchar(9)
 create type role_name as enum ('agent', 'referent', 'conseiller', 'auditeur');
 
 
+create table absract_modified_at
+(
+    modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
+);
+
+
 ---------------------------------
 ------------ EPCI ---------------
 ---------------------------------
@@ -22,10 +28,10 @@ comment on table collectivite is 'EPCI information, writable only by postgres us
 
 create table epci
 (
-    id      serial primary key,
+    id              serial primary key,
     collectivite_id integer references collectivite,
-    siren   siren unique not null,
-    nature  nature       not null
+    siren           siren unique not null,
+    nature          nature       not null
 );
 
 
@@ -35,8 +41,8 @@ $$
 declare
     created_collectivite_id integer;
 begin
-    insert into collectivite default values ;
-    select currval(pg_get_serial_sequence('collectivite','id')) into created_collectivite_id;
+    insert into collectivite default values;
+    select currval(pg_get_serial_sequence('collectivite', 'id')) into created_collectivite_id;
     new.collectivite_id = created_collectivite_id;
     -- The new is what will be inserted
     return new;
@@ -99,28 +105,28 @@ create policy own_dcp_only
 
 create table private_utilisateur_droit
 (
-    id          serial primary key,
-    user_id     uuid references auth.users                         not null,
-    collectivite_id     integer references collectivite                            not null,
-    role_name   role_name                                          not null,
-    active      bool                                               not null,
-    created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
-    modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
+    id              serial primary key,
+    user_id         uuid references auth.users                         not null,
+    collectivite_id integer references collectivite                    not null,
+    role_name       role_name                                          not null,
+    active          bool                                               not null,
+    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null,
+    modified_at     timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
 create table private_epci_invitation
 (
-    id         serial primary key,
-    role_name  role_name                                          not null,
-    collectivite_id    integer references collectivite                            not null,
-    created_by uuid references auth.users,
-    created_at timestamp with time zone default CURRENT_TIMESTAMP not null
+    id              serial primary key,
+    role_name       role_name                                          not null,
+    collectivite_id integer references collectivite                    not null,
+    created_by      uuid references auth.users,
+    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
 create or replace view active_collectivite as
-select collectivite_id, nom
+select all_collectivite.collectivite_id, nom
 from all_collectivite
-        join private_utilisateur_droit on all_collectivite.collectivite_id = private_utilisateur_droit.collectivite_id
+         join private_utilisateur_droit on all_collectivite.collectivite_id = private_utilisateur_droit.collectivite_id
 where private_utilisateur_droit.id is not null
   and private_utilisateur_droit.active
 group by all_collectivite.collectivite_id, nom
@@ -209,10 +215,10 @@ create or replace function referent_contact(id integer) returns json as
 $$
 declare
     requested_collectivite_id integer;
-    referent_id       uuid;
-    referent_email    text;
-    referent_nom      text;
-    referent_prenom   text;
+    referent_id               uuid;
+    referent_email            text;
+    referent_nom              text;
+    referent_prenom           text;
 begin
     -- select the collectivite id to get contact info from using its siren
     select id into requested_collectivite_id;
@@ -277,8 +283,7 @@ select active_collectivite.collectivite_id, active_collectivite.nom
 from active_collectivite
          full outer join owned_collectivite on
         owned_collectivite.collectivite_id = active_collectivite.collectivite_id
-where
-    auth.uid() is null -- return all active collectivités if auth.user is null
+where auth.uid() is null -- return all active collectivités if auth.user is null
    or owned_collectivite.collectivite_id is not null;
 comment on view elses_collectivite is 'Collectivités not belonging to the authenticated user';
 
@@ -295,8 +300,8 @@ comment on type action_id is 'A unique action id. ex: eci_1.1.1.1';
 
 create table action_relation
 (
-    id          action_id primary key not null,
-    referentiel referentiel           not null,
+    id          action_id primary key,
+    referentiel referentiel not null,
     parent      action_id references action_relation
 );
 comment on table action_relation is
@@ -326,13 +331,13 @@ create type avancement as enum ('fait', 'pas_fait', 'programme', 'non_renseigne'
 
 create table action_statut
 (
-    id          serial primary key,
-    collectivite_id     integer references collectivite                              not null,
-    action_id   action_id references action_relation                 not null,
-    avancement  avancement                                           not null,
-    concerne    boolean                                              not null,
-    modified_by uuid references auth.users default auth.uid()        not null,
-    modified_at timestamp with time zone   default CURRENT_TIMESTAMP not null
+    id              serial primary key,
+    collectivite_id integer references collectivite                      not null,
+    action_id       action_id references action_relation                 not null,
+    avancement      avancement                                           not null,
+    concerne        boolean                                              not null,
+    modified_by     uuid references auth.users default auth.uid()        not null,
+    modified_at     timestamp with time zone   default CURRENT_TIMESTAMP not null
 );
 
 
@@ -363,7 +368,7 @@ from action_statut
 create table score
 (
     id                     serial primary key,
-    collectivite_id                integer references collectivite                not null,
+    collectivite_id        integer references collectivite        not null,
     action_id              action_id references action_relation   not null,
     points                 real                                   not null,
     potentiel              real                                   not null,
@@ -382,10 +387,10 @@ comment on column score.created_at is
 create table client_scores
 (
     id               serial primary key,
-    collectivite_id          integer references collectivite  not null,
-    referentiel      referentiel              not null,
-    scores           jsonb                    not null,
-    score_created_at timestamp with time zone not null
+    collectivite_id  integer references collectivite not null,
+    referentiel      referentiel                     not null,
+    scores           jsonb                           not null,
+    score_created_at timestamp with time zone        not null
 );
 comment on table client_scores is 'Client score data is generated from score on trigger';
 comment on column client_scores.score_created_at is 'Equal score.created_at.';
@@ -397,10 +402,10 @@ create or replace function
 )
     returns table
             (
-                collectivite_id     int,
-                referentiel referentiel,
-                scores      jsonb,
-                created_at  timestamptz
+                collectivite_id int,
+                referentiel     referentiel,
+                scores          jsonb,
+                created_at      timestamptz
             )
 as
 $$
@@ -480,12 +485,12 @@ execute procedure after_score_update_insert_client_scores();
 
 create table action_commentaire
 (
-    id          serial primary key,
-    collectivite_id     integer references collectivite                              not null,
-    action_id   action_id references action_relation                 not null,
-    commentaire text                                                 not null,
-    modified_by uuid references auth.users default auth.uid()        not null,
-    modified_at timestamp with time zone   default CURRENT_TIMESTAMP not null
+    id              serial primary key,
+    collectivite_id integer references collectivite                      not null,
+    action_id       action_id references action_relation                 not null,
+    commentaire     text                                                 not null,
+    modified_by     uuid references auth.users default auth.uid()        not null,
+    modified_at     timestamp with time zone   default CURRENT_TIMESTAMP not null
 );
 
 alter table action_commentaire
@@ -506,9 +511,9 @@ create policy "Insert for authenticated user"
 --------------------------------
 create table epci_action_statut_update_event
 (
-    collectivite_id     integer references collectivite                            not null,
-    referentiel referentiel                                        not null,
-    created_at  timestamp with time zone default CURRENT_TIMESTAMP not null
+    collectivite_id integer references collectivite                    not null,
+    referentiel     referentiel                                        not null,
+    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
 
@@ -578,7 +583,6 @@ create trigger before_action_statut_update
 execute procedure before_action_statut_update_write_log();
 
 
-
 --------------------------------
 ----------- TYPING -------------
 --------------------------------
@@ -638,152 +642,172 @@ comment on view table_as_json_typedef is
 ----------- BUSINESS -------------
 --------------------------------
 create type indicateur_group as enum ('cae', 'crte', 'eci');
-create type climat_pratic_id as enum (
-    'strategie',
-    'urbanisme',
-    'batiments',
-    'energie',
-    'mobilites',
-    'agri_alim',
-    'foret_biodiv',
-    'conso_resp',
-    'dechets',
-    'eau',
-    'preca_energie',
-    'dev_eco',
-    'tourisme',
-    'orga_interne',
-    'forma_sensib',
-    'parten_coop'
-    );
 
-create table indicateur_definition
-(
-     indicateur_id text not null ,
-     identifiant text not null ,
-     nom text not null ,
-     unite text not null ,
-     climat_pratic_ids climat_pratic_id[] not null,
-     parent integer references  indicateur_parent
-);
+-- create table climat_pratic_thematique
+-- (
+--     id  text primary key,
+--     nom text not null
+-- ) inherits (absract_modified_at);
+
 create table indicateur_parent
 (
-    id serial primary key ,
-    numero text unique not null ,
-    nom text not null
+    id     serial primary key,
+    numero text unique not null,
+    nom    text        not null
 );
 comment on table indicateur_parent is 'An optional parent used to group indicateurs together.';
 
-create table indicateur_action (
-    indicateur_id integer references indicateur_definition,
-    action_id integer references action_relation,
-    constraint indicateur_parent_pkey primary key (indicateur_id, action_id)
-);
+
+
+create domain indicateur_id as varchar(30);
+create table indicateur_definition
+(
+    indicateur_id indicateur_id primary key,
+    identifiant   text not null,
+    nom           text not null,
+    unite         text not null,
+    parent        integer references indicateur_parent
+) inherits (absract_modified_at);
+comment on table indicateur_definition is 'Indicateur definition from markdown. Populated by business';
+
+
+
+create table indicateur_action
+(
+    indicateur_id indicateur_id references indicateur_definition
+        on delete cascade, -- if indicateur_definition is removed, indicateur_action will be deleted.
+    action_id     action_id references action_relation
+        on delete cascade, -- if action_relation is removed, indicateur_action will be deleted.
+    primary key (indicateur_id, action_id)
+) inherits (absract_modified_at);
 comment on table indicateur_action is 'Indicateur <-> Action many-to-many relationship';
+
 
 create table action_definition
 (
-);
-create table action_computed_point
-(
-);
+    action_id   action_id primary key references action_relation,
+    referentiel referentiel not null,
+    identifiant text        not null,
+    nom         text        not null,
+    description text        not null,
+    contexte    text        not null,
+    exemples    text        not null,
+    ressources  text        not null,
+    points      float,
+    pourcentage float
+) inherits (absract_modified_at);
+comment on table action_definition is 'Action definition from markdown. Populated by business';
 
+
+
+create table action_computed_points
+(
+    action_id action_id primary key references action_relation,
+    value     float not null
+) inherits (absract_modified_at);
 
 --------------------------------
 ----------- Données -------------
 --------------------------------
-create table any_indicateur_value
+create table abstract_any_indicateur_value
 (
     valeur float   not null,
     annee  integer not null
-);
+) inherits (absract_modified_at);
 
 create table indicateur_resultat
 (
-    id serial primary key ,
+    id              serial primary key,
     collectivite_id integer references collectivite,
-    indicateur_id integer references indicateur_definition not null
-) inherits (any_indicateur_value);
+    indicateur_id   indicateur_id references indicateur_definition not null
+) inherits (abstract_any_indicateur_value);
 
 create table indicateur_objectif
 (
-    id serial primary key ,
+    id              serial primary key,
     collectivite_id integer references collectivite,
-    indicateur_id integer references indicateur_definition
-
-) inherits ( any_indicateur_value);
+    indicateur_id   indicateur_id references indicateur_definition
+) inherits (abstract_any_indicateur_value);
 
 create table indicateur_commentaire
 (
-    id serial primary key ,
+    id              serial primary key,
     collectivite_id integer references collectivite,
-    indicateur_id integer references indicateur_definition not null,
-    commentaire   text                                     not null
-);
+    indicateur_id   indicateur_id references indicateur_definition not null,
+    commentaire     text                                           not null,
+    modified_by     uuid references auth.users default auth.uid()  not null
+) inherits (absract_modified_at);
 
 
 -- perso
 create table indicateur_personnalise_definition
 (
-    id serial primary key ,
+    id              serial primary key,
     collectivite_id integer references collectivite,
-    titre       text not null,
-    description text not null,
-    unite       text not null,
-    commentaire text not null
-);
+    titre           text                                          not null,
+    description     text                                          not null,
+    unite           text                                          not null,
+    commentaire     text                                          not null,
+    modified_by     uuid references auth.users default auth.uid() not null
+) inherits (absract_modified_at);
 
 create table indicateur_personnalise_resultat
 (
-    id serial primary key ,
-    collectivite_id integer references collectivite,
-    indicateur_id integer references indicateur_personnalise_definition not null
+    id                         serial primary key,
+    collectivite_id            integer references collectivite,
+    indicateur_personnalise_id integer references indicateur_personnalise_definition not null
 
-) inherits (any_indicateur_value);
+) inherits (abstract_any_indicateur_value);
 
 create table indicateur_personnalise_objectif
 (
-    id serial primary key ,
-    collectivite_id integer references collectivite,
-    indicateur_id integer references indicateur_personnalise_definition not null
+    id                         serial primary key,
+    collectivite_id            integer references collectivite,
+    indicateur_personnalise_id integer references indicateur_personnalise_definition not null
 
-) inherits ( any_indicateur_value);
+) inherits (abstract_any_indicateur_value);
 
-create type fiche_action_avancement as enum  ('pas_fait', 'fait', 'en_cours');
+create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours');
+
 -- fiche action
 create table fiche_action
 (
-    id serial primary key ,
-    collectivite_id integer references collectivite,
-    avancement fiche_action_avancement not null ,
-    en_retard bool not null ,
-    numeration text not null ,
-    titre text not null ,
-    description text not null ,
-    structure text not null ,
-    personne_referente text not null ,
-    elu_referent text not null ,
-    partenaires text not null ,
-    budget_global text not null ,
-    date_fin text not null ,
-    date_debut text not null
+    id                 serial primary key,
+    collectivite_id    integer references collectivite,
+    avancement         fiche_action_avancement not null,
+    numeration         text                    not null,
+    titre              text                    not null,
+    description        text                    not null,
+    structure_pilote   text                    not null,
+    personne_referente text                    not null,
+    elu_referent       text                    not null,
+    partenaires        text                    not null,
+    budget_global      text                    not null,
+    commentaire        text                    not null,
+    date_fin           text                    not null,
+    date_debut         text                    not null,
+    deleted            boolean default false   not null,
+    en_retard          boolean default false   not null
+
+) inherits (absract_modified_at);
+
+create table fiche_action_action
+(
+    fiche_action_id integer references fiche_action,
+    action_id       action_id references action_relation,
+    primary key (fiche_action_id, action_id)
 );
 
-create table fiche_action_action_relation
+create table fiche_action_indicateur
 (
-    id serial primary key ,
     fiche_action_id integer references fiche_action,
-    action_id text references action_relation
+    indicateur_id   indicateur_id references indicateur_definition,
+    primary key (fiche_action_id, indicateur_id)
 );
-create table fiche_action_indicateur_relation
+
+create table fiche_action_indicateur_personnalise
 (
-    id serial primary key ,
-    fiche_action_id integer references fiche_action,
-    indicateur_id text references indicateur_definition
-);
-create table fiche_action_indicateur_personnalise_relation
-(
-    id serial primary key ,
-    fiche_action_id integer references fiche_action,
-    indicateur_id text references indicateur_personnalise_definition
+    fiche_action_id            integer references fiche_action,
+    indicateur_personnalise_id integer references indicateur_personnalise_definition,
+    primary key (fiche_action_id, indicateur_personnalise_id)
 );
