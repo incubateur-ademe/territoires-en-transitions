@@ -1,6 +1,7 @@
 # Part modale des modes actifs et transports en commun dans les déplacements domicile-travail
 ```yaml
-id: crte-5.1
+id: crte_5.1
+identifiant: 5.1
 unite: '%'
 ```
 ## Description

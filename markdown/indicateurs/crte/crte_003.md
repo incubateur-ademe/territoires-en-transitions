@@ -1,6 +1,7 @@
 # Production annuelle d’ENR du territoire hors hydroélectrique (MWh / an)
 ```yaml
-id: crte-3.1
+id: crte_3.1
+identifiant: 3.1
 unite: MWh
 ```
 ## Description
@@ -38,7 +39,8 @@ La production annuelle d’énergie hydroélectrique sur le territoire est compt
 
 # Production annuelle d’énergie hydroélectrique du territoire (MWh / an)
 ```yaml
-id: crte-3.2
+id: crte_3.2
+identifiant: 3.2
 unite: MWh
 ```
 ## Description

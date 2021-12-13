@@ -1,6 +1,7 @@
 # Emissions annuelles de SO2 du territoire (tonnes)
 ```yaml
-id: crte-11.1-SO2
+id: crte_11.1-SO2
+identifiant: 11.1-SO2
 unite: tonnes
 valeur: cae-4e
 ```
@@ -22,7 +23,8 @@ valeur: cae-4e
 
 # Emissions annuelles de NOx du territoire (tonnes)
 ```yaml
-id: crte-11.1-NOx
+id: crte_11.1-NOx
+identifiant: 11.1-NOx
 unite: tonnes
 valeur: cae-4a
 ```
@@ -44,7 +46,8 @@ valeur: cae-4a
 
 # Emissions annuelles de COVNM du territoire (tonnes)
 ```yaml
-id: crte-11.1-COVNM
+id: crte_11.1-COVNM
+identifiant: 11.1-COVNM
 unite: tonnes
 valeur: cae-4d
 ```
@@ -66,7 +69,8 @@ valeur: cae-4d
 
 # Emissions annuelles de PM2,5 du territoire (tonnes)
 ```yaml
-id: crte-11.1-PM
+id: crte_11.1-PM
+identifiant: 11.1-PM
 unite: tonnes
 valeur: cae-4c
 ```
@@ -88,7 +92,8 @@ valeur: cae-4c
 
 # Emissions annuelles de NH3 du territoire (tonnes)
 ```yaml
-id: crte-11.1-NH3
+id: crte_11.1-NH3
+identifiant: 11.1-NH3
 unite: tonnes
 valeur: cae-4f
 ```

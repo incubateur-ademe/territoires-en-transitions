@@ -1,6 +1,7 @@
 # Taux de fuite des réseaux d’eau du territoire (%)
 ```yaml
-id: crte-8.1
+id: crte_8.1
+identifiant: 8.1
 unite: '%'
 ```
 ## Description

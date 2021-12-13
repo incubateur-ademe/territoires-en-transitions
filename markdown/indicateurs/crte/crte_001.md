@@ -1,6 +1,7 @@
 # Emissions de GES annuelles du territoire (TeqCO2 / an)
 ```yaml
-id: crte-1.1
+id: crte_1.1
+identifiant: 1.1
 unite: teq CO2
 valeur: cae-1a
 ```
@@ -26,7 +27,8 @@ valeur: cae-1a
 
 # Emissions de GES annuelles par habitant (TeqCO2 / an / hab)
 ```yaml
-id: crte-1.2
+id: crte_1.2
+identifiant: 1.2
 unite: teq CO2/hab
 valeur: cae-1b
 ```

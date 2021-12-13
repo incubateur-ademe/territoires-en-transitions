@@ -1,6 +1,7 @@
 # Surface Agricole Utile totale du territoire (ha)
 ```yaml
-id: crte-4.1
+id: crte_4.1
+identifiant: 4.1
 unite: ha
 ```
 ## Description
@@ -17,7 +18,8 @@ unite: ha
 
 # Part de la surface agricole utile en agriculture biologique (%)
 ```yaml
-id: crte-4.2
+id: crte_4.2
+identifiant: 4.2
 unite: '%'
 valeur: cae-59
 ```

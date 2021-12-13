@@ -1,6 +1,7 @@
 # Indicateur de fragmentation des milieux naturels (km²)
 ```yaml
-id: crte-12.1
+id: crte_12.1
+identifiant: 12.1
 unite: km²
 ```
 ## Description

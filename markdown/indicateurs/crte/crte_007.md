@@ -1,6 +1,7 @@
 # Population située dans une zone à risque naturel élevé
 ```yaml
-id: crte-7.1
+id: crte_7.1
+identifiant: 7.1
 unite: '%'
 ```
 ## Description

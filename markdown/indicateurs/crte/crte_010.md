@@ -1,6 +1,7 @@
 # Collecte annuelle de déchets ménagers et assimilés avec gravats
 ```yaml
-id: crte-10.1
+id: crte_10.1
+identifiant: 10.1
 unite: kg/hab
 valeur: cae-6a 
 ```
@@ -26,7 +27,8 @@ Pour la production par habitant, la production totale du territoire est rapport�
 
 # Collecte annuelle de déchets ménagers et assimilés hors gravats (kg/hab)
 ```yaml
-id: crte-10.2
+id: crte_10.2
+identifiant: 10.2
 unite: kg/hab
 valeur: cae-6a 
 ```

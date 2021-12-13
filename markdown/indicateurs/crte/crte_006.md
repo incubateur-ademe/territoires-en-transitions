@@ -1,6 +1,7 @@
 # Linéaire d’aménagements cyclables sécurisés
 ```yaml
-id: crte-6.1
+id: crte_6.1
+identifiant: 6.1
 unite: km
 ```
 ## Description

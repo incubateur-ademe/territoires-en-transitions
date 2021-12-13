@@ -1,6 +1,7 @@
 # Artificialisation des espaces naturels, agricoles, forestiers (ha)
 ```yaml
-id: crte-13.1
+id: crte_13.1
+identifiant: 13.1
 unite: ha
 valeur: cae-11
 ```

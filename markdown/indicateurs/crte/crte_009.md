@@ -1,6 +1,7 @@
 # Part des cours d’eau en bon état écologique (%)
 ```yaml
-id: crte-9.1
+id: crte_9.1
+identifiant: 9.1
 unite: '%'
 ```
 ## Description
