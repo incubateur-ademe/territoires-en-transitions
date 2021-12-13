@@ -30,6 +30,7 @@ create table epci
 (
     id              serial primary key,
     collectivite_id integer references collectivite,
+    nom         varchar(300)                                       not null,
     siren           siren unique not null,
     nature          nature       not null
 );
@@ -270,7 +271,7 @@ with current_droits as (
     from private_utilisateur_droit
     where user_id = auth.uid()
 )
-select collectivite.id as collectivite_id, nom, role_name
+select collectivite.id as collectivite_id, collectivite.nom, role_name
 from current_droits
          join collectivite on collectivite.id = current_droits.collectivite_id
          join epci on collectivite.id = epci.collectivite_id
@@ -662,10 +663,13 @@ comment on table indicateur_parent is 'An optional parent used to group indicate
 create domain indicateur_id as varchar(30);
 create table indicateur_definition
 (
-    indicateur_id indicateur_id primary key,
+    id indicateur_id primary key,
+    indicateur_group indicateur_group not null, 
     identifiant   text not null,
+    cf_valeur_indicateur indicateur_id references indicateur_definition not null,
     nom           text not null,
     unite         text not null,
+    obligation_eci boolean not null, 
     parent        integer references indicateur_parent
 ) inherits (absract_modified_at);
 comment on table indicateur_definition is 'Indicateur definition from markdown. Populated by business';

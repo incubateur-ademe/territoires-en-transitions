@@ -33,11 +33,15 @@ class ExtractReferentielActionsToCsv(UseCase):
                 trigger.referentiel
             )
         }
-
         columns = ["identifiant", "nom", "value"]
+
+        if not definitions_by_id:
+            return pd.DataFrame(columns=columns).to_csv(trigger.csv_path)
+
         df = pd.concat([pd.DataFrame(points_by_id), pd.DataFrame(definitions_by_id)]).T[
             columns
         ]
+
         df_sorted = df.sort_values(
             by="identifiant",
             key=lambda s: s.map(cmp_to_key(self.compare_definition_identifiants)),  # type: ignore

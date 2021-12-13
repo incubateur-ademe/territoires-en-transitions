@@ -28,25 +28,51 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
         points: List[ActionPoints],
     ):
         super().add_referentiel_actions(definitions, children, points)
-        self.to_sql()
+        self.actions_to_sql()
 
     def add_indicateurs(
         self,
         indicateurs: List[Indicateur],
     ):
         super().add_indicateurs(indicateurs)
-        self.to_sql()
+        self.indicateurs_to_sql()
 
-    def to_sql(self):
-        with open(self.path, "w") as f:
+    def indicateurs_to_sql(self):
+        with open(self.path, "a") as f:
+            for indicateur_def in self._indicateurs:
+                sql = f"insert into action_relation(id, indicateur_group, identifiant, cf_valeur_indicateur, nom, unite, obligation_eci, parent) values ('{indicateur_def.indicateur_id}', '{indicateur_def.indicateur_group}', '{indicateur_def.identifiant}', '{indicateur_def.values_refers_to}', '{indicateur_def.nom}', '{indicateur_def.unite}', '{indicateur_def.obligation_eci}' ,   null);"
+                f.write(f"{sql}\n")
+
+    def actions_to_sql(self):
+        self.write_sql_for_action_relation()
+        self.write_sql_for_action_definition()
+        self.write_sql_for_action_computed_points()
+
+    def write_sql_for_action_relation(self):
+        with open(self.path, "a") as f:
             for referentiel, referentiel_entities in self._actions_by_ref.items():
                 for children in referentiel_entities.children:
-                    if referentiel == children.action_id:
+                    if len(children.action_id.split("_")) == 1:  # root action
                         sql = f"insert into action_relation(id, referentiel, parent) values ('{children.action_id}', '{referentiel}', null);"
                         f.write(f"{sql}\n")
                     for child_id in children.children_ids:
                         sql = f"insert into action_relation(id, referentiel, parent) values ('{child_id}', '{referentiel}', '{children.action_id}');"
                         f.write(f"{sql}\n")
 
-    def from_sql(self):  # TODO !
+    def write_sql_for_action_computed_points(self):
+        with open(self.path, "a") as f:
+            for referentiel, referentiel_entities in self._actions_by_ref.items():
+                for points in referentiel_entities.points:
+                    sql = f"insert into action_computed_points(action_id, value) values ('{points.action_id}', '{points.value}');"
+                    f.write(f"{sql}\n")
+
+    def write_sql_for_action_definition(self):
+        with open(self.path, "a") as f:
+            for referentiel, referentiel_entities in self._actions_by_ref.items():
+                for definition in referentiel_entities.definitions:
+                    sql = f"insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('{definition.action_id}', '{definition.referentiel}', '{definition.identifiant}', '{definition.nom}', '{definition.description}', '{definition.contexte}', '{definition.exemples}', '{definition.ressources}', {definition.points or 'null'}, {definition.pourcentage or 'null'});"
+                    f.write(f"{sql}\n")
+
+    def from_sql(self):  # TODO ?
         self._actions_by_ref = {}
+        self._indicateurs = []

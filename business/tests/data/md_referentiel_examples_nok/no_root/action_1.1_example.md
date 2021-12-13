@@ -2,7 +2,6 @@
 ```yaml
 identifiant: 1.1
 pourcentage:  30
-climat_pratic_id: strategie
 ```
 ## Description
 Description de l'action 1.1 

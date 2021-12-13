@@ -22,6 +22,7 @@ class ParseMarkdownReferentielFolder(UseCase):
         action_nodes = []
         for md_file in md_files:
             actions_as_dict = self._build_actions_as_dict_from_md(md_file)
+
             for action_as_dict in actions_as_dict:
                 try:
                     action_node = MarkdownActionNode(**action_as_dict)

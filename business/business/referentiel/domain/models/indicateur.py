@@ -22,7 +22,7 @@ ClimatPraticId = Literal[
     "parten_coop",
 ]
 
-Programme = Literal["cae", "pcaet"]
+IndicateurGroup = Literal["eci", "cae", "crte"]
 
 IndicateurId = NewType("IndicateurId", str)
 
@@ -31,12 +31,10 @@ IndicateurId = NewType("IndicateurId", str)
 class Indicateur:
     indicateur_id: IndicateurId
     identifiant: str
+    indicateur_group: IndicateurGroup
     nom: str
     unite: str
-    climat_pratic_ids: Optional[List[ClimatPraticId]]
     action_ids: List[ActionId]
-    programmes: Optional[List[Programme]]
     description: str
     values_refers_to: Optional[IndicateurId] = None
-    source: Optional[str] = None  # TODO : keep, or ?
-    obligation_eci: Optional[bool] = None  # TODO : keep, or ?
+    obligation_eci: bool = False

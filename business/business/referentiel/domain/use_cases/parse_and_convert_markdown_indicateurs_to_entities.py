@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from glob import glob
 import os
 import re
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Union
 from pathlib import Path
 
 import marshmallow_dataclass
@@ -10,8 +10,8 @@ from marshmallow import ValidationError
 
 from business.referentiel.domain.models.indicateur import (
     Indicateur,
+    IndicateurGroup,
     IndicateurId,
-    Programme,
     ClimatPraticId,
 )
 from business.referentiel.domain.models import events
@@ -37,13 +37,14 @@ class MarkdownIndicateur:
     """Indicateur as defined in markdown files"""
 
     id: str
+    identifiant: Any  # TODO : should be string
     valeur: Optional[str]
     nom: str
     unite: str
     description: str
     obligation_cae: Optional[bool]
     actions: Optional[List[str]]
-    programmes: Optional[List[Programme]]
+    programmes: Optional[List[str]]
     climat_pratic_ids: Optional[List[ClimatPraticId]]
     source: Optional[str]  # TODO : should we transfert ?
     obligation_eci: Optional[bool]  # TODO : should we transfert ?
@@ -116,10 +117,12 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         return md_indicateurs, parsing_errors
 
     def convert(
-        self, md_indicateurs: List[MarkdownIndicateur], referentiel: Referentiel
+        self,
+        md_indicateurs: List[MarkdownIndicateur],
+        indicateur_group: IndicateurGroup,
     ) -> Tuple[List[Indicateur], List[str]]:
         repo_action_ids = self.referentiel_repo.get_all_action_ids_from_referentiel(
-            referentiel
+            indicateur_group
         )
         repo_indicateur_ids = self.referentiel_repo.get_all_indicateur_ids()
         indicateurs: List[Indicateur] = []
@@ -131,7 +134,7 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
                         md_indicateur,
                         repo_action_ids,
                         repo_indicateur_ids,
-                        referentiel,
+                        indicateur_group,
                     )
                 )
             except MarkdownIndicateurInconsistent as error:
@@ -143,7 +146,7 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         md_indicateur: MarkdownIndicateur,
         repo_action_ids: List[ActionId],
         repo_indicateur_ids: List[IndicateurId],
-        referentiel: Referentiel,
+        indicateur_group: IndicateurGroup,
     ) -> Indicateur:
         refered_indicateur_id = md_indicateur.valeur
         if refered_indicateur_id and refered_indicateur_id not in repo_indicateur_ids:
@@ -163,12 +166,11 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
 
         return Indicateur(
             indicateur_id=IndicateurId(md_indicateur.id),
-            identifiant=self._infer_identifiant_from_id(md_indicateur.id, referentiel),
+            indicateur_group=indicateur_group,
+            identifiant=self._format_identifiant(str(md_indicateur.identifiant)),
             nom=md_indicateur.nom,
             description=md_indicateur.description,
             unite=md_indicateur.unite,
-            climat_pratic_ids=md_indicateur.climat_pratic_ids,
-            programmes=md_indicateur.programmes,
             action_ids=refered_action_ids,
         )
 
@@ -185,18 +187,27 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
 
     @staticmethod
     def _infer_action_ids(md_action_ids: List[str]) -> List[ActionId]:
-        return [
-            ActionId(md_action_id.replace("/", "_")) for md_action_id in md_action_ids
-        ]
+        return [ActionId(md_action_id) for md_action_id in md_action_ids]
 
     @staticmethod
-    def _infer_identifiant_from_id(indicateur_id: str, referentiel: Referentiel) -> str:
-        regex = referentiel + "-([0-9]{1,3})(.+)?"
-        match = re.match(regex, indicateur_id)
+    def _format_identifiant(identifiant: str):
+        regex = "([0-9]{1,3})(.+)?"
+        match = re.match(regex, identifiant)
 
         if not match:
-            raise MarkdownIndicateurInconsistent(
-                f"L'id de l'indicateur {indicateur_id} ne matche pas le pattern {regex}. "
-            )
+            return identifiant
+
         number, literal = match.groups()
         return f"{number}.{literal}"
+
+    # @staticmethod
+    # def _infer_identifiant_from_id(indicateur_id: str, referentiel: Referentiel) -> str:
+    #     regex = referentiel + "-([0-9]{1,3})(.+)?"
+    #     match = re.match(regex, indicateur_id)
+
+    #     if not match:
+    #         raise MarkdownIndicateurInconsistent(
+    #             f"L'id de l'indicateur {indicateur_id} ne matche pas le pattern {regex}. "
+    #         )
+    #     number, literal = match.groups()
+    #     return f"{number}.{literal}"

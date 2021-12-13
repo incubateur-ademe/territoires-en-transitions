@@ -1,7 +1,8 @@
 # Nom de l'indicateur 1.a
 
 ```yaml
-id: cae-1a
+id: cae_1a
+identifiant: 1a
 unite: CO2
 obligation_cae: true
 valeur: unknown_action_id

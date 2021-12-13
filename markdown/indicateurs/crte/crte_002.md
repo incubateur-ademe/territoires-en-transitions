@@ -3,7 +3,7 @@
 id: crte_2.1
 identifiant: 2.1
 unite: GWh
-valeur: cae-2a
+valeur: cae_2a
 ```
 ## Description
 
@@ -22,10 +22,10 @@ valeur: cae-2a
 
 # Consommation énergétique finale annuelle (MWh/hab)
 ```yaml
-id: crte_1.2
-identifiant: 1.2
+id: crte_2.1.hab
+identifiant: 2.1.hab
 unite: MWh/hab
-valeur: cae-2b
+valeur: cae_2b
 ```
 ## Description
 
