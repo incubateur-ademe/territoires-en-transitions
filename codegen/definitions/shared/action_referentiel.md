@@ -25,6 +25,8 @@ ActionReferentiel:
         type: Optional[String]
     ressources:
         type: Optional[String]
+    preuve:
+        type: Optional[String]
     points:
         type: num
     actions:

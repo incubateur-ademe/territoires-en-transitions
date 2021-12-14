@@ -7,6 +7,7 @@ import {
   CurrentEpciGaugeProgressStat,
 } from 'ui/referentiels';
 import {Chevron} from 'ui/shared/Chevron';
+import {CurrentEpciCompletionStar} from 'ui/referentiels/CurrentEpciCompletionStar';
 
 /**
  * An expandable action used for "axes" and "orientations, shows Scores.
@@ -21,7 +22,13 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
         summary={
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center w-full">
-              <div className="px-3 w-1/12 ">
+              <div className="flex gap-2 justify-start w-36">
+                <div className="-mt-1">
+                  <CurrentEpciCompletionStar
+                    action={action}
+                    tooltipPlacement="left"
+                  />
+                </div>
                 <CurrentEpciGaugeProgressStat action={action} size="xs" />
               </div>
               <div className="flex items-center mr-6">
@@ -38,11 +45,7 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
       >
         <div className=" ml-8 mb-6">
           {action.actions.map(action => (
-            <ActionReferentielTitleCard
-              key={action.id}
-              action={action}
-              referentiel="cae"
-            />
+            <ActionReferentielTitleCard key={action.id} action={action} />
           ))}
         </div>
       </LazyDetails>

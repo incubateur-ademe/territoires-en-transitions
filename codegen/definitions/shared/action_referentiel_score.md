@@ -13,12 +13,14 @@ ActionReferentielScore:
         type: String
     avancement:
         type: String
-        options: 
+        options:
             - faite
             - programmee
             - pas_faite
             - non_concernee
-            - 
+            -
+    completion:
+        type: num
     points:
         type: num
     percentage:

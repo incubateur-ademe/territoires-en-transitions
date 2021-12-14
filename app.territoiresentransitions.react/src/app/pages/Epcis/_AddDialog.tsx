@@ -1,7 +1,7 @@
 import Dialog from '@material-ui/core/Dialog';
 import {commands} from 'core-logic/commands';
 import React from 'react';
-import {EpciStorable} from 'storables/EpciStorable';
+import {EpciStorable} from 'storables';
 import {LabeledTextInput, SelectInput} from 'ui';
 
 export interface AddDialogProps {

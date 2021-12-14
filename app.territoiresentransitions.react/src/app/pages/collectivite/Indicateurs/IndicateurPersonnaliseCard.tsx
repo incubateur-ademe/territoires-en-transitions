@@ -1,16 +1,20 @@
 import React from 'react';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import {commands} from 'core-logic/commands';
-import {IndicateurPersonnaliseInterface} from 'generated/models/indicateur_personnalise';
 import {
-  indicateurPersonnaliseStore,
-  indicateurPersonnaliseValueStore,
+  indicateurPersonnaliseResultatStore,
+  indicateurPersonnaliseObjectifStore,
+  indicateurResultatStore,
 } from 'core-logic/api/hybridStores';
-import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
 import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnaliseMetaTypedInterface';
-import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
+import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
+import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
-import {UiDialogButton} from 'ui/UiDialogButton';
+import {useEpciId} from 'core-logic/hooks';
+import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
+import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
+import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
+import {Editable, Spacer} from 'ui/shared';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -44,7 +48,9 @@ const IndicateurPersonnaliseCommentaire = (props: {
   return (
     <div className="CrossExpandPanel">
       <details>
-        <summary>Commentaire</summary>
+        <summary>
+          <Editable text="Commentaire" />
+        </summary>
         <textarea
           value={value}
           onChange={handleChange}
@@ -56,50 +62,81 @@ const IndicateurPersonnaliseCommentaire = (props: {
   );
 };
 
-const IndicateurPersonnaliseEditionDialog = ({
-  indicateur,
-}: {
+const IndicateurPersonnaliseCardContent = (props: {
   indicateur: IndicateurPersonnaliseStorable;
 }) => {
-  const [editing, setEditing] = React.useState<boolean>(false);
-  const onSave = (indicateur: IndicateurPersonnaliseInterface) => {
-    indicateurPersonnaliseStore.store(
-      new IndicateurPersonnaliseStorable(indicateur)
-    );
-    setEditing(false);
-  };
   return (
     <div>
-      <UiDialogButton
-        buttonClasses="fr-btn--secondary"
-        title="Modifier l'indicateur"
-        opened={editing}
-        setOpened={setEditing}
-      >
-        <IndicateurPersonnaliseForm indicateur={indicateur} onSave={onSave} />
-      </UiDialogButton>
+      <IndicateurDescriptionPanel description={props.indicateur.description} />
+      <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
+
+      <AnyIndicateurEditableExpandPanel
+        store={indicateurPersonnaliseObjectifStore}
+        indicateurUid={props.indicateur.uid}
+        title="Objectifs"
+        editable={true}
+      />
+      <Spacer />
+      <AnyIndicateurLineChartExpandable
+        indicateur={props.indicateur}
+        indicateurId={props.indicateur.uid}
+        resultatStore={indicateurPersonnaliseResultatStore}
+        objectifStore={indicateurPersonnaliseObjectifStore}
+      />
     </div>
   );
 };
 
-export const IndicateurPersonnaliseCard = (props: {
+const IndicateurPersonnaliseHeaderTitle = (props: {
   indicateur: IndicateurPersonnaliseStorable;
-}) => {
-  return (
-    <div className="flex flex-col px-5 py-4 bg-beige mb-5">
-      <div className="flex flex-row justify-between items-center">
-        <h3 className="fr-h3 mb-6">{props.indicateur.nom}</h3>
-        <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
-      </div>
-      <AnyIndicateurValues
-        storage={{
-          indicateurId: props.indicateur.id,
-          store: indicateurPersonnaliseValueStore,
-        }}
-      />
-      <div className="h-5" />
-      <IndicateurDescriptionPanel description={props.indicateur.description} />
-      <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
+}) => (
+  <div className="flex justify-between w-full">
+    <div>
+      {' '}
+      {`${
+        props.indicateur.custom_id ? `${props.indicateur.custom_id} - ` : ''
+      }${props.indicateur.nom}`}
     </div>
+    <div className="mr-4">
+      <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
+    </div>
+  </div>
+);
+
+export const IndicateurPersonnaliseCard = ({
+  indicateur,
+  hideIfNoValues = false,
+}: {
+  indicateur: IndicateurPersonnaliseStorable;
+  hideIfNoValues?: boolean;
+}) => {
+  const epciId = useEpciId()!;
+  const resultatValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurPersonnaliseResultatStore
+  );
+  const objectifValueStorables = useAnyIndicateurValueForAllYears(
+    indicateur.uid,
+    epciId,
+    indicateurPersonnaliseObjectifStore
+  );
+
+  if (
+    hideIfNoValues &&
+    !resultatValueStorables.length &&
+    !objectifValueStorables.length
+  )
+    return null;
+  return (
+    <AnyIndicateurCard
+      headerTitle={
+        <IndicateurPersonnaliseHeaderTitle indicateur={indicateur} />
+      }
+      indicateurUid={indicateur.uid}
+      indicateurResultatStore={indicateurPersonnaliseResultatStore}
+    >
+      <IndicateurPersonnaliseCardContent indicateur={indicateur} />
+    </AnyIndicateurCard>
   );
 };

@@ -1,27 +1,27 @@
+import {Storable} from './storable';
 import {
   ActionCustom,
   ActionCustomInterface,
-} from 'generated/models/action_custom';
-import {ActionCustomStorable} from 'storables/ActionCustomStorable';
-import {ActionStatusStorable} from 'storables/ActionStatusStorable';
-import {
   ActionStatus,
   ActionStatusInterface,
-} from 'generated/models/action_status';
-import {Storable} from './storable';
-import {FicheActionStorable} from 'storables/FicheActionStorable';
-import type {FicheActionInterface} from 'generated/models/fiche_action';
-import {FicheActionCategorieStorable} from 'storables/FicheActionCategorieStorable';
-import type {FicheActionCategorieInterface} from 'generated/models/fiche_action_categorie';
-import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
-import type {IndicateurPersonnaliseInterface} from 'generated/models/indicateur_personnalise';
-import {IndicateurPersonnaliseValueStorable} from 'storables/IndicateurPersonnaliseValueStorable';
-import type {IndicateurPersonnaliseValueInterface} from 'generated/models/indicateur_personnalise_value';
-import {UtilisateurConnecteStorable} from 'storables/UtilisateurConnecteStorable';
+  AnyIndicateurValueInterface,
+  FicheActionCategorieInterface,
+  FicheActionInterface,
+  IndicateurPersonnaliseInterface,
+} from 'generated/models';
 import {
-  UtilisateurConnecte,
+  ActionStatusStorable,
+  AnyIndicateurValueStorable,
+  ActionCustomStorable,
+  FicheActionStorable,
+  FicheActionCategorieStorable,
+  UtilisateurConnecteLocalStorable,
+  IndicateurPersonnaliseStorable,
   UtilisateurConnecteInterface,
-} from 'generated/models/utilisateur_connecte';
+  UtilisateurConnecte,
+  AuditItemCheckedStorable,
+  AuditItemCheckedInterface,
+} from 'storables';
 import {ChangeNotifier} from 'core-logic/api/reactivity';
 
 /**
@@ -189,22 +189,27 @@ export const indicateurPersonnaliseStore =
       ),
   });
 
-export const indicateurPersonnaliseValueStore =
-  new LocalStore<IndicateurPersonnaliseValueStorable>({
-    pathname: IndicateurPersonnaliseValueStorable.pathname,
+export const indicateurPersonnaliseResultatStore =
+  new LocalStore<AnyIndicateurValueStorable>({
+    pathname: AnyIndicateurValueStorable.pathname,
     serializer: storable => storable,
     deserializer: serialized =>
-      new IndicateurPersonnaliseValueStorable(
-        serialized as IndicateurPersonnaliseValueInterface
-      ),
+      new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
   });
 
 export const utilisateurConnecteStore =
-  new LocalStore<UtilisateurConnecteStorable>({
+  new LocalStore<UtilisateurConnecteLocalStorable>({
     pathname: UtilisateurConnecte.pathname,
     serializer: storable => storable,
     deserializer: serialized =>
-      new UtilisateurConnecteStorable(
+      new UtilisateurConnecteLocalStorable(
         serialized as UtilisateurConnecteInterface
       ),
   });
+
+export const auditItemCheckedStore = new LocalStore<AuditItemCheckedStorable>({
+  pathname: AuditItemCheckedStorable.pathname,
+  serializer: storable => storable,
+  deserializer: serialized =>
+    new AuditItemCheckedStorable(serialized as AuditItemCheckedInterface),
+});

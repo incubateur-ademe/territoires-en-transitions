@@ -12,7 +12,7 @@ from codegen.utils.templates import build_jinja_environment
 
 def render_field_text_to_html(
     actions: List[dict],
-    field: Literal["description", "contexte", "exemples", "ressources"],
+    field: Literal["description", "contexte", "exemples", "ressources", "preuve"],
 ):
     """Renders descriptions markdown to html. Convert description in place."""
     renderer = HTMLRenderer()
@@ -62,6 +62,7 @@ def render_actions_as_typescript(
     render_field_text_to_html(actions, "description")
     render_field_text_to_html(actions, "contexte")
     render_field_text_to_html(actions, "exemples")
+    render_field_text_to_html(actions, "preuve")
     render_field_text_to_html(actions, "ressources")
 
     template = env.get_template(template_file)

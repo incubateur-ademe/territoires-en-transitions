@@ -12,9 +12,13 @@ import * as R from 'ramda';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {actions} from 'generated/data/referentiels';
 import {CurrentEpciGaugeProgressStat} from 'ui/referentiels';
+import {CurrentEpciCompletionStar} from 'ui/referentiels/CurrentEpciCompletionStar';
+import {AuditDialogEconomieCirculaire} from './_AuditDialogEconomieCirculaire';
+import {UiDialogButton} from 'ui';
+import {useState} from 'react';
 
 type View = 'cae' | 'eci' | 'both';
-const viewTitles: Record<View, String> = {
+const viewTitles: Record<View, string> = {
   cae: 'Climat Air Énergie',
   eci: 'Économie Circulaire',
   both: 'Vue combinée',
@@ -56,7 +60,11 @@ const ConditionnalActionsReferentiels = ({view}: {view: View}) => {
   }
 };
 
-function ReferentielNavChip(props: {epciId: string; to: View; current: View}) {
+const ReferentielNavChip = (props: {
+  epciId: string;
+  to: View;
+  current: View;
+}) => {
   return (
     <div className="mr-2">
       <Chip
@@ -68,25 +76,27 @@ function ReferentielNavChip(props: {epciId: string; to: View; current: View}) {
       />
     </div>
   );
-}
+};
 
-function ReferentielTitle(props: {view: View}) {
+const ReferentielTitle = (props: {view: View}) => {
   const referentiel = props.view === 'eci' ? eciReferentiel : caeReferentiel;
-
   return (
-    <header className="flex flex-row items-center mb-6 space-x-10">
+    <header className="mb-6 flex gap-8">
       <h2 className="fr-h2">{viewTitles[props.view]}</h2>
-      <div className={`${props.view === 'both' ? 'hidden' : ''}`}>
-        {/* <ProgressStatStatic
-          action={referentiel}
-          position="left"
-          showPoints={true}
-        /> */}
-        <CurrentEpciGaugeProgressStat action={referentiel} size="sm" />
+      <div className={`font-light ${props.view === 'both' ? 'hidden' : ''} `}>
+        <div className="flex gap-2">
+          {' '}
+          Taux de remplissage :
+          <CurrentEpciCompletionStar action={referentiel} />
+        </div>
+        <div className="flex gap-2">
+          Score :
+          <CurrentEpciGaugeProgressStat action={referentiel} size="sm" />
+        </div>
       </div>
     </header>
   );
-}
+};
 
 export const ActionsReferentiels = () => {
   const {referentiel} = useParams<{
@@ -94,6 +104,8 @@ export const ActionsReferentiels = () => {
   }>();
   const current = referentiel ?? 'eci';
   const epciId = useEpciId()!;
+
+  const [auditDialogOpened, setAuditDialogOpened] = useState<boolean>(false);
 
   return (
     <main className="fr-container mt-9 mb-16">
@@ -105,7 +117,20 @@ export const ActionsReferentiels = () => {
       </div>
 
       <Spacer />
-      <ReferentielTitle view={current} />
+      <div className="flex justify-between mb-6">
+        <ReferentielTitle view={current} />
+        <div className={`${referentiel === 'eci' ? '' : 'hidden'} `}>
+          <UiDialogButton
+            title="Demande d'audit"
+            opened={auditDialogOpened}
+            setOpened={setAuditDialogOpened}
+            buttonClasses="fr-btn--secondary"
+          >
+            <AuditDialogEconomieCirculaire />
+          </UiDialogButton>
+        </div>
+      </div>
+
       <ConditionnalActionsReferentiels view={current} />
     </main>
   );

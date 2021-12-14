@@ -16,6 +16,8 @@ export const RedirectPage = () => {
   const api = ENV.backendHost;
   const endpoint = `${api}/v2/auth/token`;
 
+  type Tokens = {access_token: string; refresh_token: string}; // Should be shared with backend.
+
   let host = window.location.hostname;
 
   // use sandbox for local dev as keycloak doesn't support localhost as a valid redirect domain.
@@ -31,7 +33,7 @@ export const RedirectPage = () => {
         .then(async tokenResponse => {
           if (tokenResponse.ok) {
             setState('ok');
-            const data = await tokenResponse.json();
+            const data = (await tokenResponse.json()) as Tokens;
             saveTokens(data['access_token'], data['refresh_token']);
             window.location.href = '/epcis/';
           } else {

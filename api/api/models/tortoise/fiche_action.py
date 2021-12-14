@@ -1,31 +1,40 @@
-from tortoise import fields, models
-from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise import models
+from tortoise.contrib.pydantic.creator import pydantic_model_creator
+from tortoise.fields.data import (
+    FloatField,
+    IntField,
+    CharField,
+    BooleanField,
+    DatetimeField,
+    JSONField,
+    TextField,
+)
 
 
 class FicheAction(models.Model):
-    id = fields.IntField(pk=True)
-    epci_id = fields.CharField(max_length=36)
-    uid = fields.CharField(max_length=36)
-    custom_id = fields.CharField(max_length=36)
-    avancement = fields.CharField(max_length=36)
-    en_retard = fields.BooleanField()
-    referentiel_action_ids = fields.JSONField()
-    referentiel_indicateur_ids = fields.JSONField()
-    titre = fields.CharField(max_length=300)
-    description = fields.TextField()
-    budget = fields.FloatField()
-    personne_referente = fields.CharField(max_length=100)
-    structure_pilote = fields.CharField(max_length=300)
-    elu_referent = fields.CharField(max_length=300)
-    partenaires = fields.CharField(max_length=300)
-    commentaire = fields.TextField()
-    date_debut = fields.CharField(max_length=36)
-    date_fin = fields.CharField(max_length=36)
-    indicateur_personnalise_ids = fields.JSONField()
-    latest = fields.BooleanField()
-    deleted = fields.BooleanField()
-    created_at = fields.DatetimeField(auto_now_add=True)
-    modified_at = fields.DatetimeField(auto_now=True)
+    id = IntField(pk=True)
+    epci_id = CharField(max_length=36)
+    uid = CharField(max_length=36)
+    custom_id = CharField(max_length=36)
+    avancement = CharField(max_length=36)
+    en_retard = BooleanField()
+    referentiel_action_ids = JSONField()
+    referentiel_indicateur_ids = JSONField()
+    titre = CharField(max_length=300)
+    description = TextField()
+    budget = FloatField()
+    personne_referente = CharField(max_length=100)
+    structure_pilote = CharField(max_length=300)
+    elu_referent = CharField(max_length=300)
+    partenaires = CharField(max_length=300)
+    commentaire = TextField()
+    date_debut = CharField(max_length=36)
+    date_fin = CharField(max_length=36)
+    indicateur_personnalise_ids = JSONField()
+    latest = BooleanField()
+    deleted = BooleanField()
+    created_at = DatetimeField(auto_now_add=True)
+    modified_at = DatetimeField(auto_now=True)
 
 
 FicheAction_Pydantic = pydantic_model_creator(
