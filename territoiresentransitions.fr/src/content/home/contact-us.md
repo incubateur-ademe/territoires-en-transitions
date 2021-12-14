@@ -1,4 +1,11 @@
-Si vous cherchez à développer une approche collaborative des enjeux de transition écologique au-delà des thématiques climat, air, énergie et économie circulaire  (ex: sociaux, environnementaux, économiques) : Rendez-vous sur la [plateforme des territoires démonstrateurs de la transition écologique](https://territoires-en-transition.ecologie.gouv.fr/)
+
+
+## Territoires en Transitions - Deux offres complémentaires
+
+Renforcez, structurez et valorisez votre projet territorial, suivez vos plans d'actions et vos indicateurs sur les dimensions Climat, Air, Énergie et Économie Circulaire avec l'appui des référentiels nationaux du programme territoires engagés transition écologique, https://territoiresentransitions.fr/. 
+
+Développez une approche collaborative des enjeux de transition écologique au-delà des thématiques Climat, Air, Énergie et Économie Circulaire (sociaux, environnementaux, économiques) dans votre projet de territoire, et accédez à des fonctionnalités de pilotage global, avec la plateforme des territoires démonstrateurs de la transition écologique, https://territoires-en-transition.ecologie.gouv.fr/.
+
 
 ## Contactez-nous
 
