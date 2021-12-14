@@ -180,8 +180,6 @@ function EditableCategoryLevel(props: {
               remove={node.children.length > 0 ? undefined : props.remove}
               level={level}
             />
-            <span>{node.children.length}</span>
-
             {node.children && (
               <div className="ml-5">
                 <EditableCategoryLevel
