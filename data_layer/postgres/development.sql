@@ -20,7 +20,6 @@ create table absract_modified_at
 create table collectivite
 (
     id          serial primary key,
-    nom         varchar(300)                                       not null,
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
     modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
 );
@@ -30,6 +29,7 @@ create table epci
 (
     id              serial primary key,
     collectivite_id integer references collectivite,
+    nom         varchar(300)                                       not null,
     siren           siren unique not null,
     nature          nature       not null
 );
@@ -55,12 +55,12 @@ create trigger before_epci_write
     for each row
 execute procedure before_epci_write_create_collectivite();
 
-create view all_collectivite
+create view named_collectivite
 as
-select id as collectivite_id, nom
-from collectivite
+select collectivite_id, epci.nom as nom
+from collectivite join epci on epci.collectivite_id = collectivite_id
 order by nom;
-comment on view all_collectivite is 'All EPCIs with the necessary information to display in the client.';
+comment on view named_collectivite is 'All EPCIs with the necessary information to display in the client.';
 
 -- create table groupement
 -- (
@@ -124,12 +124,12 @@ create table private_epci_invitation
 );
 
 create or replace view active_collectivite as
-select all_collectivite.collectivite_id, nom
-from all_collectivite
-         join private_utilisateur_droit on all_collectivite.collectivite_id = private_utilisateur_droit.collectivite_id
+select named_collectivite.collectivite_id, nom
+from named_collectivite
+         join private_utilisateur_droit on named_collectivite.collectivite_id = private_utilisateur_droit.collectivite_id
 where private_utilisateur_droit.id is not null
   and private_utilisateur_droit.active
-group by all_collectivite.collectivite_id, nom
+group by named_collectivite.collectivite_id, nom
 order by nom;
 
 
@@ -270,10 +270,10 @@ with current_droits as (
     from private_utilisateur_droit
     where user_id = auth.uid()
 )
-select collectivite.id as collectivite_id, nom, role_name
+select named_collectivite.collectivite_id as collectivite_id, named_collectivite.nom, role_name
 from current_droits
-         join collectivite on collectivite.id = current_droits.collectivite_id
-         join epci on collectivite.id = epci.collectivite_id
+         join named_collectivite on named_collectivite.collectivite_id = current_droits.collectivite_id
+         join epci on named_collectivite.collectivite_id = epci.collectivite_id
 order by nom;
 
 
@@ -607,12 +607,13 @@ create domain indicateur_id as varchar(30);
 create table indicateur_definition
 (
     id indicateur_id primary key,
-    indicateur_group indicateur_group not null, 
+    indicateur_group indicateur_group not null,
     identifiant   text not null,
-    cf_valeur_indicateur indicateur_id references indicateur_definition not null,
+    valeur_indicateur indicateur_id references indicateur_definition,
     nom           text not null,
+    description   text not null,
     unite         text not null,
-    obligation_eci boolean not null, 
+    obligation_eci boolean not null,
     parent        integer references indicateur_parent
 ) inherits (absract_modified_at);
 comment on table indicateur_definition is 'Indicateur definition from markdown. Populated by business';
