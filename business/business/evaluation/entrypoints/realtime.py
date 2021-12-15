@@ -16,8 +16,10 @@ from business.utils.config import Config
 
 # 1. Define Handlers
 EVENT_HANDLERS: EventHandlers = {
-    events.ActionStatutUpdatedForEpci: [ComputeReferentielScoresForEpci],
-    events.ReferentielScoresForEpciComputed: [StoreScoresForEpci],
+    events.ActionStatutUpdatedForCollectivite: [
+        ComputeReferentielScoresForCollectivite
+    ],
+    events.ReferentielScoresForCollectiviteComputed: [StoreScoresForCollectivite],
 }
 
 
@@ -39,10 +41,12 @@ class EvaluationConfig(Config):
 
     def prepare_use_cases(self) -> List[UseCase]:
         return [
-            ComputeReferentielScoresForEpci(
+            ComputeReferentielScoresForCollectivite(
                 self.domain_message_bus, self.referentiel_repo, self.statuses_repo
             ),
-            StoreScoresForEpci(self.domain_message_bus, score_repo=self.score_repo),
+            StoreScoresForCollectivite(
+                self.domain_message_bus, score_repo=self.score_repo
+            ),
         ]
 
 

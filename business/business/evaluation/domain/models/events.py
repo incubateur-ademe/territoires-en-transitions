@@ -7,31 +7,31 @@ from business.core.domain.models.event import DomainEvent, DomainFailureEvent
 
 
 @dataclass
-class ActionStatutUpdatedForEpci(DomainEvent):
-    epci_id: int
+class ActionStatutUpdatedForCollectivite(DomainEvent):
+    collectivite_id: int
     referentiel: Referentiel
     created_at: str
 
 
 @dataclass
-class ReferentielScoresForEpciComputed(DomainEvent):
-    epci_id: int
+class ReferentielScoresForCollectiviteComputed(DomainEvent):
+    collectivite_id: int
     referentiel: Referentiel
     scores: List[ActionScore]
 
 
 @dataclass
-class ReferentielScoresForEpciComputationFailed(DomainFailureEvent):
+class ReferentielScoresForCollectiviteComputationFailed(DomainFailureEvent):
     pass
 
 
 @dataclass
-class ScoresForEpciStored(DomainEvent):
-    epci_id: int
+class ScoresForCollectiviteStored(DomainEvent):
+    collectivite_id: int
 
 
 @dataclass
-class ScoresStorageForEpciFailed(DomainFailureEvent):
+class ScoresStorageForCollectiviteFailed(DomainFailureEvent):
     pass
 
 

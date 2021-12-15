@@ -12,8 +12,8 @@ json_path = Path("./tests/data/tmp/referentiels.json")
 mkdir(json_path.parent)
 
 
-expected_nb_of_actions = {"eci": 367, "cae": 1472}
-expected_nb_of_indicateurs = {"eci": 35, "cae": 108}
+expected_nb_of_actions = {"eci": 367, "cae": 1478}
+expected_nb_of_indicateurs = {"eci": 35, "cae": 123}
 
 
 @pytest.mark.parametrize(
@@ -29,7 +29,7 @@ def test_update_referentiels(referentiel: str):
             [
                 "--repo-option",
                 "JSON",
-                "--to-json",
+                "--to-file",
                 json_path,
                 "--referentiel",
                 referentiel,

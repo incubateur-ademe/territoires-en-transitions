@@ -54,7 +54,7 @@ def test_fails_when_markdown_indicateurs_refers_to_unknown_action_ids():
     assert len(parsed_events) == 0
     assert (
         failure_events[0].reason
-        == "Incohérences dans la conversion de 2 indicateurs: \nL'indicateur cae-1a référence des actions qui n'existent pas dans la base de donnée: cae_1.1.1.\nL'indicateur cae-1b référence des actions qui n'existent pas dans la base de donnée: cae_1.1.3."
+        == "Incohérences dans la conversion de 2 indicateurs: \nL'indicateur cae_1a référence des actions qui n'existent pas dans la base de donnée: cae_1.1.1.\nL'indicateur cae_1b référence des actions qui n'existent pas dans la base de donnée: cae_1.1.3."
     )
 
 
@@ -71,24 +71,22 @@ def test_parse_and_convert_markdown_indicateurs_to_entities_from_ok_folder():
 
     assert parsed_events[0].indicateurs == [
         Indicateur(
-            indicateur_id=IndicateurId("cae-1a"),
+            indicateur_id=IndicateurId("cae_1a"),
+            indicateur_group="cae",
             identifiant="1.a",
             nom="Nom de l'indicateur 1.a",
             unite="CO2",
-            climat_pratic_ids=["strategie"],
             action_ids=[ActionId("cae_1.1.1")],
-            programmes=["cae", "pcaet"],
             description="Description de l'indicateur 1.a\n\n",
             values_refers_to=None,
         ),
         Indicateur(
-            indicateur_id=IndicateurId("cae-1b"),
+            indicateur_id=IndicateurId("cae_1b"),
+            indicateur_group="cae",
             identifiant="1.b",
             nom="Nom de l'indicateur 1.b",
             unite="CO2/hab",
-            climat_pratic_ids=["strategie"],
             action_ids=[ActionId("cae_1.1.3")],
-            programmes=["cae"],
             description="Description de l'indicateur 1.b\n\n",
             values_refers_to=None,
         ),
@@ -104,8 +102,7 @@ def test_fails_when_valeur_refers_to_unknown_indicateur_id():
     # in indicateurs are unknwown
     assert len(failure_events) == 1
     assert len(parsed_events) == 0
-
     assert (
         failure_events[0].reason
-        == "Incohérences dans la conversion de 1 indicateurs: \nL'indicateur cae-1a référence dans `valeur` un id d'indicateur qui n'existe pas dans la base de données: unknown_action_id"
+        == "Incohérences dans la conversion de 1 indicateurs: \nL'indicateur cae_1a référence dans `valeur` un id d'indicateur qui n'existe pas dans la base de données: unknown_action_id"
     )

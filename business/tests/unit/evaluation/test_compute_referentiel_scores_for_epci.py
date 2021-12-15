@@ -13,8 +13,8 @@ from business.evaluation.domain.ports.action_status_repo import (
     InMemoryActionStatutRepository,
 )
 from business.core.domain.ports.domain_message_bus import InMemoryDomainMessageBus
-from business.evaluation.domain.use_cases.compute_referentiel_scores_for_epci import (
-    ComputeReferentielScoresForEpci,
+from business.evaluation.domain.use_cases.compute_referentiel_scores_for_collectivite import (
+    ComputeReferentielScoresForCollectivite,
 )
 from business.utils.action_id import ActionId
 
@@ -64,18 +64,24 @@ referentiel_repo.add_referentiel_actions(
 
 def prepare_use_case(
     statuses: List[ActionStatut],
-    trigger: Optional[events.ActionStatutUpdatedForEpci] = None,
+    trigger: Optional[events.ActionStatutUpdatedForCollectivite] = None,
 ) -> Tuple[
-    List[events.ReferentielScoresForEpciComputed],
-    List[events.ReferentielScoresForEpciComputationFailed],
+    List[events.ReferentielScoresForCollectiviteComputed],
+    List[events.ReferentielScoresForCollectiviteComputationFailed],
 ]:
     bus = InMemoryDomainMessageBus()
     statuses_repo = InMemoryActionStatutRepository(statuses)
-    use_case = ComputeReferentielScoresForEpci(bus, referentiel_repo, statuses_repo)
-    score_computed_events = spy_on_event(bus, events.ReferentielScoresForEpciComputed)
-    failure_events = spy_on_event(bus, events.ReferentielScoresForEpciComputationFailed)
-    trigger = trigger or events.ActionStatutUpdatedForEpci(
-        epci_id=1, referentiel=test_referentiel, created_at="2020-01-01T12"
+    use_case = ComputeReferentielScoresForCollectivite(
+        bus, referentiel_repo, statuses_repo
+    )
+    score_computed_events = spy_on_event(
+        bus, events.ReferentielScoresForCollectiviteComputed
+    )
+    failure_events = spy_on_event(
+        bus, events.ReferentielScoresForCollectiviteComputationFailed
+    )
+    trigger = trigger or events.ActionStatutUpdatedForCollectivite(
+        collectivite_id=1, referentiel=test_referentiel, created_at="2020-01-01T12"
     )
     use_case.execute(trigger)
 
@@ -83,8 +89,8 @@ def prepare_use_case(
 
 
 def test_notation_fails_when_referentiel_is_empty():
-    trigger = events.ActionStatutUpdatedForEpci(
-        epci_id=1, referentiel="cae", created_at="2020-01-01T12"
+    trigger = events.ActionStatutUpdatedForCollectivite(
+        collectivite_id=1, referentiel="cae", created_at="2020-01-01T12"
     )
     statuses = []
     converted_events, failure_events = prepare_use_case(statuses, trigger)

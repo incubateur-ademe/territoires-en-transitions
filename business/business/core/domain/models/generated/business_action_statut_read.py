@@ -27,7 +27,7 @@ class BusinessActionStatutRead:
     action_id: "str"
     avancement: "ActionStatutAvancement"
     concerne: "bool"
-    epci_id: "int"
+    collectivite_id: "int"
     referentiel: "str"
 
     @classmethod
@@ -36,7 +36,7 @@ class BusinessActionStatutRead:
             _from_json_data(str, data.get("action_id")),
             _from_json_data(ActionStatutAvancement, data.get("avancement")),
             _from_json_data(bool, data.get("concerne")),
-            _from_json_data(int, data.get("epci_id")),
+            _from_json_data(int, data.get("collectivite_id")),
             _from_json_data(str, data.get("referentiel")),
         )
 
@@ -45,7 +45,7 @@ class BusinessActionStatutRead:
         data["action_id"] = _to_json_data(self.action_id)
         data["avancement"] = _to_json_data(self.avancement)
         data["concerne"] = _to_json_data(self.concerne)
-        data["epci_id"] = _to_json_data(self.epci_id)
+        data["collectivite_id"] = _to_json_data(self.collectivite_id)
         data["referentiel"] = _to_json_data(self.referentiel)
         return data
 

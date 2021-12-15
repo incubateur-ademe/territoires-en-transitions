@@ -2,15 +2,13 @@
   "indicateurs": [
     {
       "indicateur_id": "eci-12",
+      "indicateur_group": "eci",
       "identifiant": "",
       "nom": "",
       "unite": "",
-      "climat_pratic_ids": [],
       "action_ids": [],
-      "programmes": null,
       "description": "",
       "values_refers_to": null,
-      "source": null,
       "obligation_eci": null
     }
   ],

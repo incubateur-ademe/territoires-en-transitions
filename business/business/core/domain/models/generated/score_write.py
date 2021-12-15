@@ -11,7 +11,7 @@ class ScoreWrite:
     action_id: "str"
     completed_taches_count: "int"
     concernee: "bool"
-    epci_id: "int"
+    collectivite_id: "int"
     points: "float"
     potentiel: "float"
     previsionnel: "float"
@@ -24,7 +24,7 @@ class ScoreWrite:
             _from_json_data(str, data.get("action_id")),
             _from_json_data(int, data.get("completed_taches_count")),
             _from_json_data(bool, data.get("concernee")),
-            _from_json_data(int, data.get("epci_id")),
+            _from_json_data(int, data.get("collectivite_id")),
             _from_json_data(float, data.get("points")),
             _from_json_data(float, data.get("potentiel")),
             _from_json_data(float, data.get("previsionnel")),
@@ -37,7 +37,7 @@ class ScoreWrite:
         data["action_id"] = _to_json_data(self.action_id)
         data["completed_taches_count"] = _to_json_data(self.completed_taches_count)
         data["concernee"] = _to_json_data(self.concernee)
-        data["epci_id"] = _to_json_data(self.epci_id)
+        data["collectivite_id"] = _to_json_data(self.collectivite_id)
         data["points"] = _to_json_data(self.points)
         data["potentiel"] = _to_json_data(self.potentiel)
         data["previsionnel"] = _to_json_data(self.previsionnel)

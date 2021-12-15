@@ -10,15 +10,15 @@ from tests.utils.postgres_fixtures import *
 from .cursor_executions import insert_referentiel  # insert_epci
 
 
-def test_cannot_write_if_epci_or_action_does_not_exist(postgres_connection):
+def test_cannot_write_if_collectivite_or_action_does_not_exist(postgres_connection):
     repo = PostgresActionScoreRepository(postgres_connection)
     with pytest.raises(PostgresRepositoryError):
-        repo.add_entities_for_epci(
-            epci_id=10000, entities=[make_action_score("cae", points=50)]
+        repo.add_entities_for_collectivite(
+            collectivite_id=10000, entities=[make_action_score("cae", points=50)]
         )
 
 
-def test_adding_entities_for_different_epcis_to_repo_should_write_in_postgres(
+def test_adding_entities_for_different_collectivites_to_repo_should_write_in_postgres(
     postgres_connection, autoclear_cursor
 ):
     test_cursor = autoclear_cursor
@@ -32,26 +32,24 @@ def test_adding_entities_for_different_epcis_to_repo_should_write_in_postgres(
             ActionId("cae_2"): ActionId("cae"),
         },
     )
-    # insert_epci(test_cursor, 1)
-    # insert_epci(test_cursor, 2)
 
     repo = PostgresActionScoreRepository(postgres_connection)
 
     # add and retrieve a score for action "cae" on epci #1
-    repo.add_entities_for_epci(
-        epci_id=1, entities=[make_action_score("cae", points=50)]
+    repo.add_entities_for_collectivite(
+        collectivite_id=1, entities=[make_action_score("cae", points=50)]
     )
-    test_cursor.execute("select action_id from score where epci_id=1;")
+    test_cursor.execute("select action_id from score where collectivite_id=1;")
 
-    epci_1_action_id_with_scores = test_cursor.fetchall()
-    assert len(epci_1_action_id_with_scores) == 1
-    assert epci_1_action_id_with_scores == [{"action_id": "cae"}]
+    collectivite_1_action_id_with_scores = test_cursor.fetchall()
+    assert len(collectivite_1_action_id_with_scores) == 1
+    assert collectivite_1_action_id_with_scores == [{"action_id": "cae"}]
 
-    # add and retrieve a score for action "cae_1.1" on epci #2
-    repo.add_entities_for_epci(
-        epci_id=2, entities=[make_action_score("cae_1.1", points=90)]
+    # add and retrieve a score for action "cae_1.1" on collectivite #2
+    repo.add_entities_for_collectivite(
+        collectivite_id=2, entities=[make_action_score("cae_1.1", points=90)]
     )
-    test_cursor.execute("select action_id from score where epci_id=2;")
-    epci_1_action_id_with_scores = test_cursor.fetchall()
-    assert len(epci_1_action_id_with_scores) == 1
-    assert epci_1_action_id_with_scores == [{"action_id": "cae_1.1"}]
+    test_cursor.execute("select action_id from score where collectivite_id=2;")
+    collectivite_1_action_id_with_scores = test_cursor.fetchall()
+    assert len(collectivite_1_action_id_with_scores) == 1
+    assert collectivite_1_action_id_with_scores == [{"action_id": "cae_1.1"}]
