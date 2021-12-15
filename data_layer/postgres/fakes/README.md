@@ -53,15 +53,33 @@ droits:
 2. Statut action référentiel 
 ```yaml
 modified_by: Yolo Dodo (17440546-f389-4d4f-bfdb-b0c94a1bd0f9)
-epci: #1
+collectivite_id: 1
 action: cae_1.1.1.1.1
 avancement: fait
 concerne: true
 ```
 
 3. Commentaire action référentiel
-Commentaire de l'action cae_1.2.3, ajouté par Yolo sur l'epci 1 ('Haut - Bugey Agglomération', '200042935', 'CA')
+Commentaire de l'action cae_1.2.3, ajouté par Yolo sur la collectivité 1 ('Haut - Bugey Agglomération', '200042935', 'CA')
 ```yaml
 commentaire: un commentaire
 action_id: cae_1.2.3
+collectivite_id: 1
+```
+
+4. Indicateur référentiel objectif & résultat 
+Résultat : 
+```yaml
+collectivite_id: 1
+indicateur_id: cae_8
+annee: 2020
+valeur: 20
+```
+
+Objectif : 
+```yaml
+collectivite_id: 1
+indicateur_id: cae_8
+annee: 2021
+valeur: 21
 ```

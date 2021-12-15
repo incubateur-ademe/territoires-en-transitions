@@ -1,14 +1,13 @@
-import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
+import {DataLayerReadEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
-import {actionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
 
 export interface StatutGetParams {
   collectivite_id: number;
   action_id?: string;
 }
 
-class ActionStatutReadEndpoint extends DataLayerReadCachedEndpoint<
+class ActionStatutReadEndpoint extends DataLayerReadEndpoint<
   ActionStatutRead,
   StatutGetParams
 > {
@@ -25,6 +24,4 @@ class ActionStatutReadEndpoint extends DataLayerReadCachedEndpoint<
   }
 }
 
-export const actionStatutReadEndpoint = new ActionStatutReadEndpoint([
-  actionStatutWriteEndpoint,
-]);
+export const actionStatutReadEndpoint = new ActionStatutReadEndpoint();

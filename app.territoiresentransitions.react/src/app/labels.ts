@@ -11,7 +11,7 @@ export const referentielToName: Record<ReferentielOfIndicateur, string> = {
 export const avancementLabels: Record<Avancement, string> = {
   //non_concerne: 'Non concernée',
   pas_fait: 'Pas faite',
-  programme: 'Prévue',
+  programme: 'Programmée',
   fait: 'Faite',
   non_renseigne: 'Non renseignée',
 };
