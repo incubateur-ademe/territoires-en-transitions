@@ -50,6 +50,6 @@ values (1,
         'commentaire',
         'fin',
         'début',
-        array ['root']::action_id[],
+        array ['cae']::action_id[],
         array ['ind0']::indicateur_id[],
         array [1]::integer[]);
