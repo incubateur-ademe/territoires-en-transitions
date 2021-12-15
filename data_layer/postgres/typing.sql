@@ -1,17 +1,23 @@
 --------------------------------
 ----------- TYPING -------------
 --------------------------------
-create or replace function udt_name_to_json_type(udt_name text) returns text
+create or replace function udt_name_to_json_type(udt_name text) returns json
 as
 $$
 begin
     return
         case
-            when udt_name ~ '^bool' then 'boolean'
-            when udt_name ~ '^int' then 'int32'
-            when udt_name ~ '^float' then 'float64'
-            when udt_name ~ '^timestamp' then 'timestamp'
-            else 'string'
+            -- supported types
+            when udt_name ~ '^bool' then json_build_object('type', 'boolean')
+            when udt_name ~ '^int' then json_build_object('type', 'int32')
+            when udt_name ~ '^float' then json_build_object('type', 'float64')
+            when udt_name ~ '^timestamp' then json_build_object('type', 'timestamp')
+            -- lists
+            when udt_name ~ '^_int' then json_build_object('elements', json_build_object('type', 'int32'))
+            when udt_name ~ '^_float' then json_build_object('elements', json_build_object('type', 'float64'))
+            when udt_name ~ '^_' then json_build_object('elements', json_build_object('type', 'string'))
+            -- fallback to string
+            else json_build_object('type', 'string')
             end;
 end;
 $$ language plpgsql;
@@ -33,13 +39,13 @@ with table_columns as (
          select title,
                 json_object_agg(
                         column_name,
-                        json_build_object('type', udt_name_to_json_type(udt_name))
-                    )                            as all_properties,
+                        udt_name_to_json_type(udt_name)
+                    )                      as all_properties,
 
                 json_object_agg(
                 column_name,
-                json_build_object('type', udt_name_to_json_type(udt_name))
-                    ) filter ( where mandatory ) as writable_properties
+                udt_name_to_json_type(udt_name))
+                filter ( where mandatory ) as writable_properties
 
          from table_columns
          group by title
@@ -50,3 +56,16 @@ select title,
 from json_type_def;
 comment on view table_as_json_typedef is
     'Json type definition for all public tables (including views). Only non nullable/non default fields are listed';
+
+select *
+from table_as_json_typedef
+where title = 'fiche_action';
+
+select columns.table_name     as title,
+       column_name,
+       column_default is null as mandatory,
+       udt_name
+
+from information_schema.columns
+where table_schema = 'public'
+  and table_name = 'fiche_action';
