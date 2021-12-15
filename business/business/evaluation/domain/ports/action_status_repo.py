@@ -10,8 +10,8 @@ class AbstractActionStatutRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_all_for_epci(
-        self, epci_id: int, referentiel: Referentiel
+    def get_all_for_collectivite(
+        self, collectivite_id: int, referentiel: Referentiel
     ) -> List[ActionStatut]:
         raise NotImplementedError
 
@@ -20,8 +20,8 @@ class InMemoryActionStatutRepository(AbstractActionStatutRepository):
     def __init__(self, entities: List[ActionStatut] = None) -> None:
         self._entities = entities or []
 
-    def get_all_for_epci(
-        self, epci_id: int, referentiel: Referentiel
+    def get_all_for_collectivite(
+        self, collectivite_id: int, referentiel: Referentiel
     ) -> List[ActionStatut]:
         return self._entities
 

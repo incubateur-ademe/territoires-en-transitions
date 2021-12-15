@@ -23,7 +23,7 @@ def test_domain_event_published_on_replay_correct_realtime_status_update_observe
             {
                 "record": {
                     "referentiel": "eci",
-                    "epci_id": 1,
+                    "collectivite_id": 1,
                     "created_at": "2020-01-01T12",
                 },
                 "table": "epci_action_statut_update_event",
@@ -31,15 +31,17 @@ def test_domain_event_published_on_replay_correct_realtime_status_update_observe
         ]
     )
     failure_events = spy_on_event(bus, events.RealtimeEventWithWrongFormatObserved)
-    corresponding_domain_events = spy_on_event(bus, events.ActionStatutUpdatedForEpci)
+    corresponding_domain_events = spy_on_event(
+        bus, events.ActionStatutUpdatedForCollectivite
+    )
 
     realtime.start()
 
     assert len(failure_events) == 0
     assert len(corresponding_domain_events) == 1
 
-    assert corresponding_domain_events[0] == events.ActionStatutUpdatedForEpci(
-        epci_id=1, referentiel="eci", created_at="2020-01-01T12"
+    assert corresponding_domain_events[0] == events.ActionStatutUpdatedForCollectivite(
+        collectivite_id=1, referentiel="eci", created_at="2020-01-01T12"
     )
 
 
@@ -53,7 +55,7 @@ def test_failure_published_when_realtime_event_has_unknown_referentiel():
             {
                 "record": {
                     "referentiel": "toto",
-                    "epci_id": 1,
+                    "collectivite_id": 1,
                     "created_at": "2020-01-01T12",
                 },
                 "table": "epci_action_statut_update_event",
@@ -97,5 +99,5 @@ def test_realtime_event_has_wrong_record_format():
 
     assert (
         failure_events[0].reason
-        == "Realtime event with wrong format: {'epci_id': ['Missing data for required field.']}"
+        == "Realtime event with wrong format: {'collectivite_id': ['Missing data for required field.']}"
     )

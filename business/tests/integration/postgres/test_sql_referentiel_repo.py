@@ -1,10 +1,7 @@
 from pathlib import Path
-from business.referentiel.domain.models.action_definition import ActionDefinition
-from business.utils.action_id import ActionId
 
 from tests.utils.postgres_fixtures import *
 from business.referentiel.adapters.sql_referentiel_repo import SqlReferentielRepository
-from business.epci.domain.epci import Epci
 from tests.utils.files import remove_file, mkdir
 from tests.utils.referentiel_factory import (
     make_action_children,
@@ -22,7 +19,9 @@ def test_can_add_referentiel_actions(postgres_connection):
 
     repo = SqlReferentielRepository(sql_path)
 
-    definition_ref = make_action_definition(action_id="ref", referentiel="eci")
+    definition_ref = make_action_definition(
+        action_id="ref", referentiel="eci", description="l'ademe !"
+    )
     definition_ref_1 = make_action_definition(action_id="ref_1", referentiel="eci")
 
     children_ref = make_action_children(action_id="ref", children_ids=["ref_1"])
@@ -44,16 +43,17 @@ def test_can_add_referentiel_actions(postgres_connection):
         file_content
         == "insert into action_relation(id, referentiel, parent) values ('ref', 'eci', null);\n"
         + "insert into action_relation(id, referentiel, parent) values ('ref_1', 'eci', 'ref');\n"
-        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('ref', 'eci', '', '', '', '', '', '', null, null);\n"
+        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('ref', 'eci', '', '', 'l''ademe !', '', '', '', null, null);\n"
         + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('ref_1', 'eci', '', '', '', '', '', '', null, null);\n"
         + "insert into action_computed_points(action_id, value) values ('ref', '500');\n"
         + "insert into action_computed_points(action_id, value) values ('ref_1', '300');\n"
     )
 
-    # check that sql can be executed and epci can be added
+    # check that sql can be executed and referntiel actions can be added
     test_cursor = postgres_connection.cursor(row_factory=dict_row)
     test_cursor.execute(file_content)
 
+    # check referentiel action have correctly been inserted
     test_cursor.execute("select * from action_relation where id in ('ref', 'ref_1');")
     inserted_relations = test_cursor.fetchall()
     assert len(inserted_relations) == 2
@@ -84,25 +84,18 @@ def test_can_add_referentiel_indicateurs(postgres_connection):
     repo = SqlReferentielRepository(sql_path)
 
     indicateur_def = make_indicateur(
-        indicateur_id="indicateur_1", indicateur_group="eci"
+        indicateur_id="indicateur_1", indicateur_group="eci", description="l'ademe !"
     )
 
     repo.add_indicateurs([indicateur_def])
 
     with open(sql_path) as file:
         file_content = file.read()
-
-    breakpoint()
     assert (
         file_content
-        == "insert into action_relation(id, referentiel, parent) values ('ref', 'eci', null);\n"
-        + "insert into action_relation(id, referentiel, parent) values ('ref_1', 'eci', 'ref');\n"
-        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('ref', 'eci', '', '', '', '', '', '', null, null);\n"
-        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('ref_1', 'eci', '', '', '', '', '', '', null, null);\n"
-        + "insert into action_computed_points(action_id, value) values ('ref', '500');\n"
-        + "insert into action_computed_points(action_id, value) values ('ref_1', '300');\n"
+        == "insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('indicateur_1', 'eci', '', null, '', 'l''ademe !', '', false ,   null);\n"
     )
 
-    # check that sql can be executed and epci can be added
+    # check that sql can be executed and referentiel indicateurs can be added
     test_cursor = postgres_connection.cursor(row_factory=dict_row)
     test_cursor.execute(file_content)

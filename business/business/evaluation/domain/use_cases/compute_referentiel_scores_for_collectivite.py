@@ -25,7 +25,7 @@ class ComputeReferentielscoresError(Exception):
     pass
 
 
-class ComputeReferentielScoresForEpci(UseCase):
+class ComputeReferentielScoresForCollectivite(UseCase):
     def __init__(
         self,
         bus: AbstractDomainMessageBus,
@@ -37,7 +37,7 @@ class ComputeReferentielScoresForEpci(UseCase):
         self.referentiel_repo = referentiel_repo
         self.points_trees: Dict[Referentiel, ActionsPointsTree] = {}
 
-    def execute(self, command: events.ActionStatutUpdatedForEpci):
+    def execute(self, command: events.ActionStatutUpdatedForCollectivite):
         point_tree = self.points_trees.get(command.referentiel)
         if point_tree is None:
             try:
@@ -45,13 +45,13 @@ class ComputeReferentielScoresForEpci(UseCase):
                 self.points_trees[command.referentiel] = point_tree
             except ActionsPointsTreeError:
                 self.bus.publish_event(
-                    events.ReferentielScoresForEpciComputationFailed(
+                    events.ReferentielScoresForCollectiviteComputationFailed(
                         f"Referentiel tree could not be computed for referentiel {command.referentiel}"
                     )
                 )  # TODO
                 return
-        statuses = self.statuses_repo.get_all_for_epci(
-            command.epci_id, command.referentiel
+        statuses = self.statuses_repo.get_all_for_collectivite(
+            command.collectivite_id, command.referentiel
         )
 
         status_by_action_id: Dict[str, ActionStatut] = {
@@ -84,8 +84,8 @@ class ComputeReferentielScoresForEpci(UseCase):
             )
         )
         self.bus.publish_event(
-            events.ReferentielScoresForEpciComputed(
-                epci_id=command.epci_id,
+            events.ReferentielScoresForCollectiviteComputed(
+                collectivite_id=command.collectivite_id,
                 referentiel=command.referentiel,
                 scores=list(scores.values()),
             )

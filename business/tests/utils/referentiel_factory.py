@@ -62,6 +62,7 @@ def make_action_children(action_id: str, children_ids: List[str]):
 
 def make_markdown_action_node(
     identifiant: str,
+    description: Optional[str] = None,
     points: Optional[float] = None,
     pourcentage: Optional[float] = None,
     actions: List[MarkdownActionNode] = [],
@@ -75,7 +76,7 @@ def make_markdown_action_node(
         actions=actions,
         ressources="",
         exemples="",
-        description="",
+        description=description or "",
         thematique_id="",
         contexte="",
         nom="",
@@ -84,6 +85,7 @@ def make_markdown_action_node(
 
 def make_indicateur(
     indicateur_id: str,
+    description: Optional[str] = None,
     indicateur_group: Optional[IndicateurGroup] = None,
     action_ids: Optional[List[str]] = None,
     values_refers_to: Optional[str] = None,
@@ -97,7 +99,7 @@ def make_indicateur(
         action_ids=[ActionId(action_id) for action_id in action_ids]
         if action_ids
         else [],
-        description="",
+        description=description or "",
         values_refers_to=IndicateurId(values_refers_to)
         if values_refers_to
         else None

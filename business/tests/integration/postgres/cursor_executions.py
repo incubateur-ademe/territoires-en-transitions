@@ -1,4 +1,3 @@
-import random
 from uuid import uuid4
 from typing import Dict, Optional
 
@@ -48,10 +47,14 @@ def insert_user(cursor: Cursor, user_id: str):
 
 
 def insert_action_statut_for_epci(
-    cursor: Cursor, *, epci_id: int, action_id: str, user_id: Optional[str] = None
+    cursor: Cursor,
+    *,
+    collectivite_id: int,
+    action_id: str,
+    user_id: Optional[str] = None
 ):
     """Insert action statut with cursor
-    Insert statut to an action for a given epci.
+    Insert statut to an action for a given collectivite.
     If no user_id is specified, then insert a user id
     """
     if user_id is None:
@@ -61,8 +64,12 @@ def insert_action_statut_for_epci(
     cursor.execute(
         """
         insert into
-        action_statut(epci_id, action_id, avancement, concerne, modified_by)
-        values (%(epci_id)s, %(action_id)s, 'fait', true, %(user_id)s);
+        action_statut(collectivite_id, action_id, avancement, concerne, modified_by)
+        values (%(collectivite_id)s, %(action_id)s, 'fait', true, %(user_id)s);
         """,
-        {"epci_id": epci_id, "action_id": action_id, "user_id": user_id},
+        {
+            "collectivite_id": collectivite_id,
+            "action_id": action_id,
+            "user_id": user_id,
+        },
     )

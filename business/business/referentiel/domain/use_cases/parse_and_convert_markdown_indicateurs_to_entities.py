@@ -12,7 +12,6 @@ from business.referentiel.domain.models.indicateur import (
     Indicateur,
     IndicateurGroup,
     IndicateurId,
-    ClimatPraticId,
 )
 from business.referentiel.domain.models import events
 from business.core.domain.models.referentiel import Referentiel
@@ -45,7 +44,7 @@ class MarkdownIndicateur:
     obligation_cae: Optional[bool]
     actions: Optional[List[str]]
     programmes: Optional[List[str]]
-    climat_pratic_ids: Optional[List[ClimatPraticId]]
+    climat_pratic_ids: Optional[List[str]]
     source: Optional[str]  # TODO : should we transfert ?
     obligation_eci: Optional[bool]  # TODO : should we transfert ?
 

@@ -3,24 +3,8 @@ from typing import List, Literal, NewType, Optional
 
 from business.utils.action_id import ActionId
 
-ClimatPraticId = Literal[
-    "strategie",
-    "urbanisme",
-    "batiments",
-    "energie",
-    "mobilites",
-    "agri_alim",
-    "foret_biodiv",
-    "conso_resp",
-    "dechets",
-    "eau",
-    "preca_energie",
-    "dev_eco",
-    "tourisme",
-    "orga_interne",
-    "forma_sensib",
-    "parten_coop",
-]
+
+# TODO : This should be generated !
 
 IndicateurGroup = Literal["eci", "cae", "crte"]
 
@@ -37,4 +21,4 @@ class Indicateur:
     action_ids: List[ActionId]
     description: str
     values_refers_to: Optional[IndicateurId] = None
-    obligation_eci: bool = False
+    obligation_eci: Optional[bool] = False

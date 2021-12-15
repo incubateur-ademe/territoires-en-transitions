@@ -26,12 +26,12 @@ class PostgresActionStatutRepository(
     def make_cursor(connection: Connection) -> Cursor:
         return connection.cursor(row_factory=class_row(BusinessActionStatutRead))
 
-    def get_all_for_epci(
-        self, epci_id: int, referentiel: Referentiel
+    def get_all_for_collectivite(
+        self, collectivite_id: int, referentiel: Referentiel
     ) -> List[ActionStatut]:
         self.cursor.execute(
-            "select * from business_action_statut where epci_id=%(epci_id)s and referentiel=%(referentiel)s;",
-            {"epci_id": epci_id, "referentiel": referentiel},
+            "select * from business_action_statut where collectivite_id=%(collectivite_id)s and referentiel=%(referentiel)s;",
+            {"collectivite_id": collectivite_id, "referentiel": referentiel},
         )
         readings: List[BusinessActionStatutRead] = self.cursor.fetchall()
         return [

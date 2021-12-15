@@ -20,11 +20,13 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
     def __init__(self, connection: Connection) -> None:
         PostgresRepository.__init__(self, connection)
 
-    def add_entities_for_epci(self, epci_id: int, entities: List[ActionScore]):
+    def add_entities_for_collectivite(
+        self, collectivite_id: int, entities: List[ActionScore]
+    ):
         for score in entities:
             score_as_dict = asdict(
                 PgScoreWrite(
-                    epci_id=epci_id,
+                    collectivite_id=collectivite_id,
                     action_id=score.action_id,
                     completed_taches_count=score.completed_taches_count,
                     total_taches_count=score.total_taches_count,

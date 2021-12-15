@@ -8,7 +8,7 @@ from business.evaluation.domain.ports.action_score_repo import (
 from business.utils.use_case import UseCase
 
 
-class StoreScoresForEpci(UseCase):
+class StoreScoresForCollectivite(UseCase):
     def __init__(
         self,
         bus: AbstractDomainMessageBus,
@@ -17,13 +17,17 @@ class StoreScoresForEpci(UseCase):
         self.bus = bus
         self.score_repo = score_repo
 
-    def execute(self, command: events.ReferentielScoresForEpciComputed):
-        epci_id = command.epci_id
-        scores = command.scores
+    def execute(self, trigger: events.ReferentielScoresForCollectiviteComputed):
+        collectivite_id = trigger.collectivite_id
+        scores = trigger.scores
         try:
-            self.score_repo.add_entities_for_epci(epci_id, entities=scores)
-            self.bus.publish_event(events.ScoresForEpciStored(epci_id=epci_id))
+            self.score_repo.add_entities_for_collectivite(
+                collectivite_id, entities=scores
+            )
+            self.bus.publish_event(
+                events.ScoresForCollectiviteStored(collectivite_id=collectivite_id)
+            )
         except Exception as storing_error:  # TODO : catch more precise exception
             self.bus.publish_event(
-                events.ScoresStorageForEpciFailed(reason=str(storing_error))
+                events.ScoresStorageForCollectiviteFailed(reason=str(storing_error))
             )
