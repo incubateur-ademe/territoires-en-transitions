@@ -790,24 +790,24 @@ create table fiche_action
 (
     id                          serial primary key,
     collectivite_id             integer references collectivite,
-    avancement                  fiche_action_avancement                           not null,
-    numeration                  text                                              not null,
-    titre                       text                                              not null,
-    description                 text                                              not null,
-    structure_pilote            text                                              not null,
-    personne_referente          text                                              not null,
-    elu_referent                text                                              not null,
-    partenaires                 text                                              not null,
-    budget_global               text                                              not null,
-    commentaire                 text                                              not null,
-    date_fin                    text                                              not null,
-    date_debut                  text                                              not null,
-    deleted                     boolean         default false                     not null,
-    en_retard                   boolean         default false                     not null,
+    avancement                  fiche_action_avancement not null,
+    numeration                  text                    not null,
+    titre                       text                    not null,
+    description                 text                    not null,
+    structure_pilote            text                    not null,
+    personne_referente          text                    not null,
+    elu_referent                text                    not null,
+    partenaires                 text                    not null,
+    budget_global               text                    not null,
+    commentaire                 text                    not null,
+    date_fin                    text                    not null,
+    date_debut                  text                    not null,
+    deleted                     boolean default false   not null,
+    en_retard                   boolean default false   not null,
     -- relations to other tables
-    action_ids                  action_id[]     default array []::action_id[]     not null,
-    indicateur_ids              indicateur_id[] default array []::indicateur_id[] not null,
-    indicateur_personnalise_ids integer[]       default array []::integer[]       not null
+    action_ids                  action_id[]             not null,
+    indicateur_ids              indicateur_id[]         not null,
+    indicateur_personnalise_ids integer[]               not null
 ) inherits (absract_modified_at);
 comment on table fiche_action is 'Fiche action used by the client';
 
