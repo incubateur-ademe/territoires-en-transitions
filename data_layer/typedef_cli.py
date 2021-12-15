@@ -19,8 +19,15 @@ client_tables = {
         "active_epci",
         "all_epci",
         "dcp",
+        "fiche_action",
+        "dcp",
     ],
-    "write": ["action_statut", "action_commentaire", "dcp"],
+    "write": [
+        "action_statut",
+        "fiche_action",
+        "action_commentaire",
+        "dcp",
+    ],
 }
 
 default_postgres_url = "postgresql://supabase_admin:yolododo@localhost:50001/postgres"
