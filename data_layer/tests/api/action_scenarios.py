@@ -30,7 +30,6 @@ class MakeActionApiScenario:
         )
 
     def assert_authentified_user_can_insert_entity(self, entity: dict):
-
         query = self.supabase_client.table(self.table_name).insert(entity)
         query = supabase_query_as_user(
             self.supabase_client, self.authentified_user, query

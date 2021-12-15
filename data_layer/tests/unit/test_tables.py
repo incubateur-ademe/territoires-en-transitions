@@ -49,7 +49,7 @@ def test_epci_insertion_should_update_table_and_view(cursor):
 
     assert len(epcis) == 1
 
-    cursor.execute("select * from client_epci;")
+    cursor.execute("select * from all_collectivite;")
     client_epcis = cursor.fetchall()
 
     assert len(client_epcis) == 1

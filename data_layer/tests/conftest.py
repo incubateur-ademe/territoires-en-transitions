@@ -2,15 +2,13 @@ import os
 from urllib.parse import urlparse
 
 import psycopg
-from psycopg.rows import dict_row
 import pytest
 import supabase
-from psycopg import Connection
-from supabase.lib.realtime_client import SupabaseRealtimeClient
 from dotenv import load_dotenv
+from psycopg import Connection
+from psycopg.rows import dict_row
 
-from fake_layers.business import Business
-from fake_layers.client import Client
+from fake_layers.fake_client import Client
 from tests.utils.sql_factories import make_sql_truncate_all_tables
 
 load_dotenv()
@@ -45,19 +43,6 @@ def supabase_client() -> supabase.Client:
     """Return the default supabase"""
     # here we use a client with a service role for both client and business layers.
     return supabase.create_client(supabase_url, supabase_key)
-
-
-@pytest.fixture()
-def realtime_client() -> SupabaseRealtimeClient:
-    """Return the default supabase"""
-    # here we use a client with a service role for both client and business layers.
-    realtime_url = f"{supabase_url}/realtime/v1".replace("http", "ws")
-    return SupabaseRealtimeClient(realtime_url, {"params": {"apikey": supabase_key}})
-
-
-# @pytest.fixture()
-# def business(supabase_client) -> Business:
-#     return Business(supabase_client)
 
 
 @pytest.fixture()

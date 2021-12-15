@@ -1,6 +1,6 @@
 from tests.utils.prepare_cursor import prepare_cursor
 from tests.utils.sql_factories import (
-    make_sql_insert_collectivite,
+    make_sql_insert_epci,
     make_sql_insert_score,
     make_sql_to_insert_action_relation,
 )
@@ -13,7 +13,7 @@ def test_insert_score_triggers_an_update_of_table_client_score(
     # 1. insert scores
     prepare_cursor(
         cursor,
-        make_sql_insert_collectivite()
+        make_sql_insert_epci()
         + make_sql_to_insert_action_relation(action_id="cae_1")
         + make_sql_to_insert_action_relation(action_id="cae_2"),
     )
@@ -31,7 +31,7 @@ def test_insert_score_triggers_an_update_of_table_client_score(
     assert len(score_batches_for_epci_1) == 1
 
     # 3. only 1 row should be returned  todo !!
-    cursor.execute("""SELECT * FROM client_scores WHERE epci_id=1;""")
+    cursor.execute("""SELECT * FROM client_scores WHERE collectivite_id=1;""")
 
     client_scores = cursor.fetchall()
     assert len(client_scores) == 1
@@ -42,4 +42,4 @@ def test_insert_score_triggers_an_update_of_table_client_score(
     )
     should_create_client_scores_for_epci = cursor.fetchall()
     assert len(should_create_client_scores_for_epci) == 1
-    should_create_client_scores_for_epci[0] == False
+    assert not should_create_client_scores_for_epci[0]

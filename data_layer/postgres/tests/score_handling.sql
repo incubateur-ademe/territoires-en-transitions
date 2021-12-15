@@ -19,7 +19,7 @@ from get_score_batches_for_epci(1);
 -- 3. only 1 row should be returned  todo
 select *
 from client_scores
-where epci_id = 1;
+where collectivite_id = 1;
 
 -- 4. there should be no client scores to compute.
 select *

@@ -10,15 +10,16 @@ def make_sql_to_insert_action_relation(
 
     sql = f"""
     insert into action_relation
-    values ('{action_id}', '{referentiel}', {f"'{parent_id}'" if parent_id else "null" });
+    values ('{action_id}', '{referentiel}', {f"'{parent_id}'" if parent_id else "null"});
     """
 
     return sql
 
 
 def make_sql_insert_epci(nom="Yolo", siren="123456789", nature="CC"):
+    # todo actually insert epci when the trigger will be ready.
     return f"""
-    insert into epci(siren, nom, nature) values ('{siren}', '{nom}', '{nature}');
+    insert into collectivite(nom) values ('{nom}');
     """
 
 
@@ -34,7 +35,10 @@ def make_sql_insert_score(
     completed_taches_count=6,
     created_at="2021-01-01",
 ):
-    sql = f"""insert into score (epci_id, action_id, points, potentiel, referentiel_points, concernee, previsionnel, total_taches_count, completed_taches_count, created_at)
+    sql = f"""insert into score (
+    collectivite_id, action_id, points, potentiel, referentiel_points, concernee, previsionnel, 
+    total_taches_count, completed_taches_count, created_at
+    )
             values ({epci_id},
                     '{action_id}',
                     {points},
@@ -57,7 +61,8 @@ def make_sql_truncate_all_tables():
 def make_sql_insert_user(user_uid: Optional[str] = None, email: Optional[str] = None):
     """Returns a user whose password is 'yolo'"""
     email = email or f"{user_uid}@gmail.com"
-    return f"""INSERT INTO auth.users (id, email, encrypted_password) VALUES ('{user_uid}', '{email}', '$2a$10$n8hCY1kKn3BIX56bB3LlQuudbH0m5C7Oqr2dJ8LsIMvlr5JWNGyC.');"""
+    return f"""INSERT INTO auth.users (id, email, encrypted_password) 
+    VALUES ('{user_uid}', '{email}', '$2a$10$n8hCY1kKn3BIX56bB3LlQuudbH0m5C7Oqr2dJ8LsIMvlr5JWNGyC.');"""
 
 
 def make_sql_insert_action_commentaire(

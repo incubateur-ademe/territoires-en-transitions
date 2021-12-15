@@ -1,6 +1,5 @@
 import supabase
 
-from tests.utils.prepare_cursor import prepare_cursor
 from tests.utils.sql_factories import *
 from .action_scenarios import MakeActionApiScenario
 
