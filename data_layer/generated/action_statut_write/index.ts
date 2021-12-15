@@ -3,6 +3,6 @@
 export interface ActionStatutWrite {
   action_id: string;
   avancement: string;
+  collectivite_id: number;
   concerne: boolean;
-  epci_id: number;
 }

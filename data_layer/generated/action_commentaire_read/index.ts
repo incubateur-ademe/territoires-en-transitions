@@ -2,8 +2,8 @@
 
 export interface ActionCommentaireRead {
   action_id: string;
+  collectivite_id: number;
   commentaire: string;
-  epci_id: number;
   id: number;
   modified_at: string;
   modified_by: string;

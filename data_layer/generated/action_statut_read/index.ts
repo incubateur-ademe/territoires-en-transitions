@@ -3,9 +3,8 @@
 export interface ActionStatutRead {
   action_id: string;
   avancement: string;
+  collectivite_id: number;
   concerne: boolean;
-  epci_id: number;
-  id: number;
   modified_at: string;
   modified_by: string;
 }
