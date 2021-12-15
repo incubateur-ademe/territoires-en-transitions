@@ -7,7 +7,6 @@ import {Avancement} from 'generated/dataLayer/action_statut_read';
 import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
 import {makeAutoObservable} from 'mobx';
 import {observer} from 'mobx-react-lite';
-import {currentCollectiviteBloc} from 'core-logic/observables/collectiviteBloc';
 import {useCollectiviteId} from 'core-logic/hooks';
 
 const avancements: Options<Avancement> = R.values(
@@ -108,7 +107,10 @@ class ActionStatusAvancementRadioButtonBloc {
         collectiviteId: this.collectiviteId,
       })
       .then(fetched => {
-        if (fetched) this.setAvancement(fetched.avancement);
+        if (fetched) {
+          this.setAvancement(fetched.avancement);
+          console.log('fetched : ', fetched);
+        }
       });
   }
 }
