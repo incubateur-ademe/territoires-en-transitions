@@ -909,7 +909,7 @@ comment on function after_fiche_action_write_save_relationships is
         'from fiche action data on insert or update to ensure they are correct';
 
 -- plan d'action
-create table planaction
+create table plan_action
 (
     id                 serial primary key,
     collectivite_id    integer references collectivite,
