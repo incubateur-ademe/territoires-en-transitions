@@ -32,12 +32,12 @@ describe('Elses Collectivite reading endpoint should retrieve only claimed Colle
 
     expect(results.length).toEqual(1);
     const expected: ElsesCollectiviteRead[] = [collectivite1];
-    expect(results[0]).toEqual(expected[0]);
+    expect(results).toEqual(expected);
   });
-  it("should retrieve else's active Collectivite (3) if no siren is given", async () => {
+  it("should retrieve else's active Collectivite (2) if no id is given", async () => {
     await supabase.auth.signIn(yoloCredentials);
     const results = await elsesCollectiviteReadEndpoint.getBy({});
-    expect(results.length).toEqual(3);
+    expect(results.length).toEqual(2);
   });
 });
 
