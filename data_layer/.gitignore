@@ -21,3 +21,6 @@ tests/data/tmp
 
 # eeg-info
 business.eeg-info/
+
+# http client environment
+http-client.env.json
