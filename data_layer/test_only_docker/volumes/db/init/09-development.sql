@@ -29,7 +29,7 @@ create table epci
 (
     id              serial primary key,
     collectivite_id integer references collectivite,
-    nom         varchar(300)                                       not null,
+    nom             varchar(300) not null,
     siren           siren unique not null,
     nature          nature       not null
 );
@@ -57,9 +57,10 @@ execute procedure before_epci_write_create_collectivite();
 
 create view named_collectivite
 as
-select collectivite_id, nom
-from collectivite join epci on epci.collectivite_id = collectivite.id
-order by nom; 
+select collectivite_id, epci.nom as nom
+from collectivite
+         join epci on epci.collectivite_id = collectivite_id
+order by nom;
 comment on view named_collectivite is 'All EPCIs with the necessary information to display in the client.';
 
 -- create table groupement
@@ -126,7 +127,8 @@ create table private_epci_invitation
 create or replace view active_collectivite as
 select named_collectivite.collectivite_id, nom
 from named_collectivite
-         join private_utilisateur_droit on named_collectivite.collectivite_id = private_utilisateur_droit.collectivite_id
+         join private_utilisateur_droit
+              on named_collectivite.collectivite_id = private_utilisateur_droit.collectivite_id
 where private_utilisateur_droit.id is not null
   and private_utilisateur_droit.active
 group by named_collectivite.collectivite_id, nom
@@ -331,13 +333,14 @@ create type avancement as enum ('fait', 'pas_fait', 'programme', 'non_renseigne'
 
 create table action_statut
 (
-    id              serial primary key,
     collectivite_id integer references collectivite                      not null,
     action_id       action_id references action_relation                 not null,
     avancement      avancement                                           not null,
     concerne        boolean                                              not null,
     modified_by     uuid references auth.users default auth.uid()        not null,
-    modified_at     timestamp with time zone   default CURRENT_TIMESTAMP not null
+    modified_at     timestamp with time zone   default CURRENT_TIMESTAMP not null,
+
+    primary key (collectivite_id, action_id)
 );
 
 
@@ -364,7 +367,6 @@ from action_statut
 --------------------------------
 ----------- SCORE --------------
 --------------------------------
-
 create table score
 (
     id                     serial primary key,
@@ -482,7 +484,6 @@ execute procedure after_score_update_insert_client_scores();
 --------------------------------
 --------ACTION COMMENTAIRE------
 --------------------------------
-
 create table action_commentaire
 (
     id              serial primary key,
@@ -606,15 +607,15 @@ comment on table indicateur_parent is 'An optional parent used to group indicate
 create domain indicateur_id as varchar(30);
 create table indicateur_definition
 (
-    id indicateur_id primary key,
-    indicateur_group indicateur_group not null, 
-    identifiant   text not null,
+    id                indicateur_id primary key,
+    indicateur_group  indicateur_group not null,
+    identifiant       text             not null,
     valeur_indicateur indicateur_id references indicateur_definition,
-    nom           text not null,
-    description   text not null,
-    unite         text not null,
-    obligation_eci boolean not null, 
-    parent        integer references indicateur_parent
+    nom               text             not null,
+    description       text             not null,
+    unite             text             not null,
+    obligation_eci    boolean          not null,
+    parent            integer references indicateur_parent
 ) inherits (absract_modified_at);
 comment on table indicateur_definition is 'Indicateur definition from markdown. Populated by business';
 
@@ -646,13 +647,81 @@ create table action_definition
 ) inherits (absract_modified_at);
 comment on table action_definition is 'Action definition from markdown. Populated by business';
 
-
+create view action_definition_summary
+as
+select action_id,
+       referentiel,
+       identifiant,
+       nom,
+       description
+from action_definition
+order by action_id;
+comment on view action_definition_summary is
+    'The minimum information from definition';
 
 create table action_computed_points
 (
     action_id action_id primary key references action_relation,
     value     float not null
 ) inherits (absract_modified_at);
+comment on table action_computed_points is
+    'Action points computed by the business';
+
+create or replace function referentiel_down_to_action(
+    referentiel referentiel
+)
+    returns setof action_definition_summary as
+$$
+declare
+    referentiel_action_depth integer;
+begin
+    if referentiel_down_to_action.referentiel = 'cae'
+    then
+        select 3 into referentiel_action_depth;
+    else
+        select 2 into referentiel_action_depth;
+    end if;
+    return query
+        select *
+        from action_definition_summary
+        where action_definition_summary.referentiel = referentiel_down_to_action.referentiel
+          and char_length(action_definition_summary.action_id) -
+              char_length(replace(action_definition_summary.action_id, '.', ''))
+            < referentiel_action_depth;
+end;
+$$ language plpgsql;
+comment on function referentiel_down_to_action is 'Returns referentiel action summary down to the action level';
+
+
+create or replace function action_down_to_tache(
+    referentiel referentiel,
+    action_id action_id
+)
+    returns setof action_definition_summary as
+$$
+declare
+    referentiel_action_depth integer;
+    id                       action_id;
+begin
+    -- action_id is ambiguous
+    select action_down_to_tache.action_id into id;
+    if action_down_to_tache.referentiel = 'cae'
+    then
+        select 3 into referentiel_action_depth;
+    else
+        select 2 into referentiel_action_depth;
+    end if;
+    return query
+        select *
+        from action_definition_summary
+        where action_definition_summary.referentiel = action_down_to_tache.referentiel
+          and action_definition_summary.action_id like id || '%'
+          and char_length(action_definition_summary.action_id) -
+              char_length(replace(action_definition_summary.action_id, '.', ''))
+            >= referentiel_action_depth - 1;
+end
+$$ language plpgsql;
+comment on function action_down_to_tache is 'Returns referentiel action summary down to the action level';
 
 --------------------------------
 ----------- Données -------------
@@ -665,25 +734,26 @@ create table abstract_any_indicateur_value
 
 create table indicateur_resultat
 (
-    id              serial primary key,
     collectivite_id integer references collectivite,
-    indicateur_id   indicateur_id references indicateur_definition not null
+    indicateur_id   indicateur_id references indicateur_definition not null,
+    primary key (collectivite_id, annee, indicateur_id)
 ) inherits (abstract_any_indicateur_value);
 
 create table indicateur_objectif
 (
-    id              serial primary key,
+
     collectivite_id integer references collectivite,
-    indicateur_id   indicateur_id references indicateur_definition
+    indicateur_id   indicateur_id references indicateur_definition,
+    primary key (collectivite_id, annee, indicateur_id)
 ) inherits (abstract_any_indicateur_value);
 
 create table indicateur_commentaire
 (
-    id              serial primary key,
     collectivite_id integer references collectivite,
     indicateur_id   indicateur_id references indicateur_definition not null,
     commentaire     text                                           not null,
-    modified_by     uuid references auth.users default auth.uid()  not null
+    modified_by     uuid references auth.users default auth.uid()  not null,
+    primary key (collectivite_id, indicateur_id)
 ) inherits (absract_modified_at);
 
 
@@ -701,18 +771,16 @@ create table indicateur_personnalise_definition
 
 create table indicateur_personnalise_resultat
 (
-    id                         serial primary key,
     collectivite_id            integer references collectivite,
-    indicateur_personnalise_id integer references indicateur_personnalise_definition not null
-
+    indicateur_personnalise_id integer references indicateur_personnalise_definition not null,
+    primary key (indicateur_personnalise_id, annee)
 ) inherits (abstract_any_indicateur_value);
 
 create table indicateur_personnalise_objectif
 (
-    id                         serial primary key,
     collectivite_id            integer references collectivite,
-    indicateur_personnalise_id integer references indicateur_personnalise_definition not null
-
+    indicateur_personnalise_id integer references indicateur_personnalise_definition not null,
+    primary key (indicateur_personnalise_id, annee)
 ) inherits (abstract_any_indicateur_value);
 
 create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours');
@@ -839,3 +907,17 @@ execute procedure after_fiche_action_write_save_relationships();
 comment on function after_fiche_action_write_save_relationships is
     'Save relationships with actions, indicateurs and indicateurs personnalisés '
         'from fiche action data on insert or update to ensure they are correct';
+
+-- plan d'action
+create table planaction
+(
+    id                 serial primary key,
+    collectivite_id    integer references collectivite,
+    uid                varchar(36)                                        not null,
+    nom                varchar(300)                                       not null,
+    categories         jsonb                                              not null,
+    fiches_by_category jsonb                                              not null,
+    created_at         timestamp with time zone default CURRENT_TIMESTAMP not null,
+    modified_at        timestamp with time zone default CURRENT_TIMESTAMP not null
+);
+
