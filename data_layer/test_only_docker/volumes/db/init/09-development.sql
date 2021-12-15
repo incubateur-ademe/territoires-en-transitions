@@ -57,8 +57,8 @@ execute procedure before_epci_write_create_collectivite();
 
 create view named_collectivite
 as
-select collectivite_id, epci.nom as nom
-from collectivite join epci on epci.collectivite_id = collectivite_id
+select collectivite_id, nom
+from collectivite join epci on epci.collectivite_id = collectivite.id
 order by nom; 
 comment on view named_collectivite is 'All EPCIs with the necessary information to display in the client.';
 

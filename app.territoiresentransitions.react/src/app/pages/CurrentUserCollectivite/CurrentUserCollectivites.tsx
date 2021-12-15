@@ -22,14 +22,10 @@ const MyCollectiviteCards = observer(
           <h2 className="fr-h2">Mes collectivités</h2>
           <div className="grid grid-cols-3 gap-12">
             {ownedCollectiviteReads.map(
-              (Collectivite: OwnedCollectiviteRead) => (
+              (collectivite: OwnedCollectiviteRead) => (
                 <SimpleCollectiviteCard
-                  key={Collectivite.id}
-                  collectivite={{
-                    nom: Collectivite.nom,
-                    role_name: Collectivite.role_name,
-                    id: Collectivite.id,
-                  }}
+                  key={collectivite.collectivite_id}
+                  collectivite={collectivite}
                 />
               )
             )}
