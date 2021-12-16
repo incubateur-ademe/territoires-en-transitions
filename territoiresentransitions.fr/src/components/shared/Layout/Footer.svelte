@@ -52,7 +52,7 @@
             <a class="fr-footer__content-link" href="https://beta.gouv.fr/">beta.gouv</a>
           </li>
           <li class="fr-footer__content-item">
-            <a class="fr-footer__content-link" href="http://citergie.ademe.fr/">citergie.fr</a>
+            <a class="fr-footer__content-link" href="https://territoireengagetransitionecologique.ademe.fr/">territoireengagetransitionecologique.ademe.fr</a>
           </li>
         </ul>
       </div>
