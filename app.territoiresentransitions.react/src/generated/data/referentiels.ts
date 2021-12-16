@@ -23016,6 +23016,23 @@ export const actions: ActionReferentiel[] = [
             points: 20,
             actions: [
               new ActionReferentiel({
+                id: 'economie_circulaire__2.4.0',
+                id_nomenclature: '2.4.0',
+                nom: 'Identifier les pistes de r\u00e9duction des impacts',
+                description:
+                  '\u003cp\u003eLa collectivit\u00e9 applique ou fait appliquer, dans tous les sites de collecte, de stockage ou de traitement des d\u00e9chets, la r\u00e9glementation contr\u00f4l\u00e9e par la DREAL pour les \u00e9missions polluantes et les nuisances (olfactives, sonores....)\u003c/p\u003e\n\u003cp\u003eEn cas de non-conformit\u00e9, la collectivit\u00e9 doit justifier d\u0027un plan d\u0027actions correctives et de l\u0027absence de contentieux\u003c/p\u003e\n',
+                contexte: '',
+                ressources: '',
+                preuve:
+                  '\u003cp\u003eExemples de preuve de la conformit\u00e9 des installations (selon la nature de l\u0027installation) :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eAutorisation d\u0027exploiter pour les sites class\u00e9s ICPE\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eCR de commission de suivi de site\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eDUERP\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n',
+                exemples:
+                  '\u003cp\u003eExemples de r\u00e8gles \u00e0 respecter suivant les modes de traitement :\u003c/p\u003e\n\u003cp\u003eCollecte :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eMise en application de la recommandation R437 de la CNAMTS relative \u00e0 la s\u00e9curit\u00e9 lors de la collecte\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eD\u00e9ch\u00e8teries :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eMise en place de solutions de garde-corps au droit des bennes pour les d\u00e9ch\u00e8teries avec quais\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eMise en place de locaux ou compartiments abrit\u00e9s des intemp\u00e9ries, fixes ou modulaires, pour le stockage des DDS et des objets faisant l\u0027objet d\u0027une collecte \u0026quot;pr\u00e9servente\u0026quot;\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eMise en place de dispositifs de s\u00e9curit\u00e9 incendie selon le classement ICPE des sites\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eMise en place de dispositifs de s\u00e9curit\u00e9 pour lutter contre le vandalisme\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003ePlateformes de compostage centralis\u00e9 :\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003eLes meilleures pratiques sont r\u00e9alis\u00e9es et formalis\u00e9es (courbes de suivi des temp\u00e9ratures et de l\u0027humidit\u00e9, a\u00e9ration...)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eLes jus sont r\u00e9cup\u00e9r\u00e9s et trait\u00e9s.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eLes refus sont valoris\u00e9s de mani\u00e8re appropri\u00e9e (UTOM ou ISDND si pas d\u0027UTOM)\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003eLa plateforme de compostage dispose d\u0027une certification (ex: label ASQA) ou produit un compost conforme \u00e0 la norme NFU\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n',
+                thematique_id: 'dechets',
+                points: 0,
+                actions: [],
+              }),
+
+              new ActionReferentiel({
                 id: 'economie_circulaire__2.4.1',
                 id_nomenclature: '2.4.1',
                 nom: 'Identifier les pistes de r\u00e9duction des impacts',
