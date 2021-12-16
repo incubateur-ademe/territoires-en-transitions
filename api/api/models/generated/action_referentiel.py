@@ -17,6 +17,3 @@ class ActionReferentiel(BaseModel):
     preuve: Optional[str]
     points: float
     actions: List[ActionReferentiel]
-
-
-ActionReferentiel.update_forward_refs()
