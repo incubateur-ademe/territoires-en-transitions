@@ -4,17 +4,17 @@ import {AnyIndicateurValueStorable} from 'storables';
 import {HybridStore} from 'core-logic/api/hybridStore';
 import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {Chevron} from 'ui/shared/Chevron';
-import {Editable} from 'ui/shared';
+import {indicateurResultatReadEndpoint} from 'core-logic/api/endpoints/AnyIndicateurValueReadEndpoint';
 
 export const AnyIndicateurCard = ({
   children,
   headerTitle,
-  indicateurUid,
+  indicateurId,
   indicateurResultatStore,
 }: {
   headerTitle: React.ReactElement;
   children: React.ReactElement;
-  indicateurUid: string;
+  indicateurId: string;
   indicateurResultatStore: HybridStore<AnyIndicateurValueStorable>;
 }) => {
   const [opened, setOpened] = useState(false);
@@ -35,8 +35,8 @@ export const AnyIndicateurCard = ({
 
           <div className="text-lg ml-7 mb-2">Résultats</div>
           <AnyIndicateurValues
-            store={indicateurResultatStore}
-            indicateurUid={indicateurUid}
+            readEndpoint={indicateurResultatReadEndpoint}
+            indicateurId={indicateurId}
             borderColor="blue"
           />
         </header>

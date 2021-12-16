@@ -14,6 +14,7 @@ import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_val
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
 import {Editable, Spacer} from 'ui/shared';
+import {indicateurObjectifReadEndpoint} from 'core-logic/api/endpoints/AnyIndicateurValueReadEndpoint';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -70,15 +71,15 @@ const IndicateurPersonnaliseCardContent = (props: {
       <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
 
       <AnyIndicateurEditableExpandPanel
-        store={indicateurPersonnaliseObjectifStore}
-        indicateurUid={props.indicateur.uid}
+        readEndpoint={indicateurObjectifReadEndpoint}
+        indicateurId={props.indicateur.id}
         title="Objectifs"
         editable={true}
       />
       <Spacer />
       <AnyIndicateurLineChartExpandable
         indicateur={props.indicateur}
-        indicateurId={props.indicateur.uid}
+        indicateurId={props.indicateur.id}
         resultatStore={indicateurPersonnaliseResultatStore}
         objectifStore={indicateurPersonnaliseObjectifStore}
       />
@@ -132,7 +133,7 @@ export const IndicateurPersonnaliseCard = ({
       headerTitle={
         <IndicateurPersonnaliseHeaderTitle indicateur={indicateur} />
       }
-      indicateurUid={indicateur.uid}
+      indicateurId={indicateur.uid}
       indicateurResultatStore={indicateurPersonnaliseResultatStore}
     >
       <IndicateurPersonnaliseCardContent indicateur={indicateur} />

@@ -14,6 +14,7 @@ import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_val
 import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {Editable} from 'ui/shared';
+import {indicateurObjectifReadEndpoint} from 'core-logic/api/endpoints/AnyIndicateurValueReadEndpoint';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   const [value, setValue] = React.useState('');
@@ -67,8 +68,8 @@ export const IndicateurReferentielCardContent = (props: {
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <Commentaire indicateur={props.indicateur} />
       <AnyIndicateurEditableExpandPanel
-        store={indicateurObjectifStore}
-        indicateurUid={props.indicateur.uid}
+        readEndpoint={indicateurObjectifReadEndpoint}
+        indicateurId={props.indicateur.id}
         title="Objectifs"
         editable={true}
       />
@@ -119,7 +120,7 @@ export const IndicateurReferentielCard = ({
       headerTitle={
         <IndicateurReferentielCardHeaderTitle indicateur={indicateur} />
       }
-      indicateurUid={indicateur.uid}
+      indicateurId={indicateur.uid}
       indicateurResultatStore={indicateurResultatStore}
     >
       <IndicateurReferentielCardContent indicateur={indicateur} />

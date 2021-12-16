@@ -4,21 +4,13 @@ import {makeNewIndicateurResultatReadEndpoint} from 'core-logic/api/endpoints/An
 describe('Indicateur-resultat reading endpoint should retrieve data-layer default resultat values', () => {
   const endpoint = makeNewIndicateurResultatReadEndpoint();
 
-  it('Retrieves at least one status when collectivite_id is given', async () => {
-    const results = await endpoint.getBy({
-      collectivite_id: 1,
-    });
-
-    expect(results.length).toBeGreaterThanOrEqual(1);
-    expect(results[0].collectivite_id).toEqual(1);
-  });
   it(
     'Retrieves at least one resutat when collectivite_id and indicateur_id with resultat' +
       ' are given',
     async () => {
       const results = await endpoint.getBy({
-        collectivite_id: 1,
-        indicateur_id: 'cae_8',
+        collectiviteId: 1,
+        indicateurId: 'cae_8',
       });
       expect(results.length).toBeGreaterThanOrEqual(1);
       expect(results[0]).toEqual(
@@ -36,7 +28,8 @@ describe('Indicateur-resultat reading endpoint should retrieve data-layer defaul
       ' given',
     async () => {
       const results = await endpoint.getBy({
-        collectivite_id: 2,
+        collectiviteId: 2,
+        indicateurId: 'cae_8',
       });
       expect(results.length).toEqual(0);
     }
