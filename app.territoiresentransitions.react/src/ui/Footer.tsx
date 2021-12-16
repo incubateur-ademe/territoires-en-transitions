@@ -118,9 +118,9 @@ export const Footer = (props: FooterProps) => {
                 <li className="fr-footer__content-item">
                   <a
                     className="fr-footer__content-link"
-                    href="http://citergie.ademe.fr/"
+                    href="https://territoireengagetransitionecologique.ademe.fr/"
                   >
-                    citergie.fr
+                    territoireengagetransitionecologique.ademe.fr
                   </a>
                 </li>
               </ul>
