@@ -11,9 +11,10 @@ describe('Fiche action write endpoint', () => {
 
   it('Should return an equivalent fiche when saving a fiche ', async () => {
     const endpoint = new FicheActionWriteEndpoint();
-    const commentaire: FicheActionWrite = {
+    const fiche: FicheActionWrite = {
       collectivite_id: 1,
       avancement: 'pas_fait',
+      uid: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
       numeration: 'A1',
       titre: 'titre http',
       description: 'description',
@@ -29,15 +30,16 @@ describe('Fiche action write endpoint', () => {
       indicateur_ids: ['ind0'],
       indicateur_personnalise_ids: [1],
     };
-    const actualCommentaireWrite = await endpoint.save(commentaire);
+    const actualCommentaireWrite = await endpoint.save(fiche);
     expect(actualCommentaireWrite).not.toBeNull();
   });
 
   it('Should fail when saving a commentaire with bad epci', async () => {
     const endpoint = new FicheActionWriteEndpoint();
-    const commentaire: FicheActionWrite = {
+    const fiche: FicheActionWrite = {
       collectivite_id: 10000,
       avancement: 'pas_fait',
+      uid: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
       numeration: 'A1',
       titre: 'titre http',
       description: 'description',
@@ -53,7 +55,7 @@ describe('Fiche action write endpoint', () => {
       indicateur_ids: ['ind0'],
       indicateur_personnalise_ids: [1],
     };
-    const result = await endpoint.save(commentaire);
+    const result = await endpoint.save(fiche);
     expect(result).toEqual(null);
   });
 });

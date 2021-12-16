@@ -22,6 +22,7 @@ values (default,
 
 insert into fiche_action
 (collectivite_id,
+ uid,
  avancement,
  numeration,
  titre,
@@ -38,6 +39,7 @@ insert into fiche_action
  indicateur_ids,
  indicateur_personnalise_ids)
 values (1,
+        '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
         'pas_fait',
         'A0',
         'titre',
@@ -53,3 +55,26 @@ values (1,
         array ['cae']::action_id[],
         array ['ind0']::indicateur_id[],
         array [1]::integer[]);
+
+insert into plan_action
+(collectivite_id,
+ uid,
+ nom,
+ categories,
+ fiches_by_category)
+values (1,
+        'plan_collectivite',
+        'Plan d''actions de la collectivité',
+        '[
+          {
+            "nom": "1. Yolo",
+            "uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
+          }
+        ]',
+        '[
+          {
+            "fiche_uid": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
+            "category_uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
+          }
+        ]');
+

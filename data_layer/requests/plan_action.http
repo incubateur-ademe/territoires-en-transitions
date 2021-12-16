@@ -22,6 +22,32 @@ GET {{api}}/rest/v1/plan_action?select=*
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
+
+### Insert a plan
+POST {{api}}/rest/v1/plan_action
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Prefer: return=representation
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "uid": "plan_collectivite",
+  "nom": "Plan d'actions de la collectivité",
+  "categories": [
+    {
+      "nom": "1. Yolo",
+      "uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
+    }
+  ],
+  "fiches_by_category": [
+    {
+      "fiche_uid": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
+      "category_uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
+    }
+  ]
+}
+
 ### List all fiches
 GET {{api}}/rest/v1/fiche_action?select=*
 apikey: {{anon}}
@@ -37,6 +63,7 @@ Content-Type: application/json
 {
   "collectivite_id": 1,
   "avancement": "pas_fait",
+  "uid": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
   "numeration": "A1",
   "titre": "titre http",
   "description": "description",

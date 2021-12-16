@@ -790,6 +790,7 @@ create table fiche_action
 (
     id                          serial primary key,
     collectivite_id             integer references collectivite,
+    uid                         uuid                    not null,
     avancement                  fiche_action_avancement not null,
     numeration                  text                    not null,
     titre                       text                    not null,

@@ -1,6 +1,7 @@
 import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
+import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWriteEndpoint';
 
 export interface FicheGetParams {
   collectivite_id: number;
@@ -24,4 +25,6 @@ class FicheActionReadEndpoint extends DataLayerReadCachedEndpoint<
   }
 }
 
-export const ficheActionReadEndpoint = new FicheActionReadEndpoint([]);
+export const ficheActionReadEndpoint = new FicheActionReadEndpoint([
+  ficheActionWriteEndpoint,
+]);
