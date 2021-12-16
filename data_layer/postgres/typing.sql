@@ -16,6 +16,8 @@ begin
             when udt_name ~ '^_int' then json_build_object('elements', json_build_object('type', 'int32'))
             when udt_name ~ '^_float' then json_build_object('elements', json_build_object('type', 'float64'))
             when udt_name ~ '^_' then json_build_object('elements', json_build_object('type', 'string'))
+            -- json
+            when udt_name ~ '^json' then json_build_object()
             -- fallback to string
             else json_build_object('type', 'string')
             end;
@@ -56,16 +58,3 @@ select title,
 from json_type_def;
 comment on view table_as_json_typedef is
     'Json type definition for all public tables (including views). Only non nullable/non default fields are listed';
-
-select *
-from table_as_json_typedef
-where title = 'fiche_action';
-
-select columns.table_name     as title,
-       column_name,
-       column_default is null as mandatory,
-       udt_name
-
-from information_schema.columns
-where table_schema = 'public'
-  and table_name = 'fiche_action';

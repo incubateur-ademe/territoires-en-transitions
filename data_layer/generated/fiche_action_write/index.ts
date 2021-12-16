@@ -17,4 +17,5 @@ export interface FicheActionWrite {
   personne_referente: string;
   structure_pilote: string;
   titre: string;
+  uid: string;
 }

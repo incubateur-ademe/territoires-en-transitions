@@ -20,11 +20,12 @@ client_tables = {
         "all_epci",
         "dcp",
         "fiche_action",
-        "dcp",
+        "plan_action",
     ],
     "write": [
         "action_statut",
         "fiche_action",
+        "plan_action",
         "action_commentaire",
         "dcp",
     ],
