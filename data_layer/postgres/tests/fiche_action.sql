@@ -25,7 +25,7 @@ values (default,
 insert into fiche_action
 (collectivite_id,
  avancement,
- numeration,
+ numerotation,
  titre,
  description,
  structure_pilote,

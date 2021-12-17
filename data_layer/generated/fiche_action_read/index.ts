@@ -16,7 +16,7 @@ export interface FicheActionRead {
   indicateur_ids: string[];
   indicateur_personnalise_ids: number[];
   modified_at: string;
-  numeration: string;
+  numerotation: string;
   partenaires: string;
   personne_referente: string;
   structure_pilote: string;
