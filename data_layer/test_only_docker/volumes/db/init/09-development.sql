@@ -792,7 +792,7 @@ create table fiche_action
     collectivite_id             integer references collectivite,
     uid                         uuid                    not null,
     avancement                  fiche_action_avancement not null,
-    numeration                  text                    not null,
+    numerotation                text                    not null,
     titre                       text                    not null,
     description                 text                    not null,
     structure_pilote            text                    not null,

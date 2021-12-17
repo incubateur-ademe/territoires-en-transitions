@@ -12,7 +12,7 @@ export interface FicheActionWrite {
   elu_referent: string;
   indicateur_ids: string[];
   indicateur_personnalise_ids: number[];
-  numeration: string;
+  numerotation: string;
   partenaires: string;
   personne_referente: string;
   structure_pilote: string;

@@ -24,7 +24,7 @@ insert into fiche_action
 (collectivite_id,
  uid,
  avancement,
- numeration,
+ numerotation,
  titre,
  description,
  structure_pilote,
