@@ -1,4 +1,3 @@
-import {FicheActionInterface} from 'generated/models/fiche_action';
 import React, {useState} from 'react';
 import * as Yup from 'yup';
 import {Field, Form, Formik, useFormikContext} from 'formik';
@@ -20,6 +19,7 @@ import {PlanCategoriesSelectionField} from 'app/pages/collectivite/PlanActions/F
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
+import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 
 /**
  * Stores both plan and category uid, represents the user's selection of a
@@ -62,8 +62,8 @@ function onKeyDown(event: React.KeyboardEvent) {
 }
 
 const LinkedActionsReferentielCards = () => {
-  const {values} = useFormikContext<FicheActionInterface>();
-  const linkedActions = values.referentiel_action_ids.map(
+  const {values} = useFormikContext<FicheActionRead>();
+  const linkedActions = values.action_ids.map(
     actionId => searchActionById(actionId, actions)!
   );
 
@@ -82,33 +82,35 @@ const LinkedActionsReferentielCards = () => {
 };
 
 const LinkedIndicateurCards = () => {
-  const {values} = useFormikContext<FicheActionInterface>();
-  const linkedIndicateurs = values.referentiel_indicateur_ids.map(
+  const {values} = useFormikContext<FicheActionRead>();
+  const linkedIndicateurs = values.indicateur_ids.map(
     indicateurId =>
       indicateurs.find(indicateur => indicateur.id === indicateurId)!
   );
   return (
     <div>
-      {linkedIndicateurs.map(indicateur => (
-        <IndicateurReferentielCard
-          indicateur={indicateur}
-          key={indicateur.uid}
-        />
-      ))}
+      {linkedIndicateurs.map(indicateur => {
+        if (indicateur)
+          return (
+            <IndicateurReferentielCard
+              indicateur={indicateur}
+              key={indicateur.uid}
+            />
+          );
+        return <i>indicateur manquant</i>;
+      })}
     </div>
   );
 };
 
 const LinkedIndicateurPersonnaliseCards = () => {
-  const indicateurPersonnalises =
-    useAllStorables<IndicateurPersonnaliseStorable>(
-      indicateurPersonnaliseStore
-    );
+  // todo fetch indicateurs personnalisés
+  const indicateurPersonnalises: IndicateurPersonnaliseStorable[] = [];
 
-  const {values} = useFormikContext<FicheActionInterface>();
+  const {values} = useFormikContext<FicheActionRead>();
   const linkedIndicateursPersonnalises = values.indicateur_personnalise_ids.map(
-    indicateurId =>
-      indicateurPersonnalises.find(indicateur => indicateur.id === indicateurId)
+    // todo search in indicateurPersonnalises for matches with fiche indicateur_personnalise_ids
+    indicateurId => indicateurPersonnalises.find(indicateur => true)
   );
 
   return (

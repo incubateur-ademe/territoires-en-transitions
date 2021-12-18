@@ -7,15 +7,15 @@ export const usePlanActionList = (collectiviteId: number) => {
   const [plans, setPlans] = useState<PlanActionRead[]>([]);
 
   useEffect(() => {
-    const listener = async () => {
+    const fetch = async () => {
       const plans = await planActionReadEndpoint.getBy({
         collectivite_id: collectiviteId,
       });
       setPlans(plans);
     };
-    planActionWriteEndpoint.addListener(listener);
+    planActionWriteEndpoint.addListener(fetch);
     return () => {
-      planActionWriteEndpoint.removeListener(listener);
+      planActionWriteEndpoint.removeListener(fetch);
     };
   });
 

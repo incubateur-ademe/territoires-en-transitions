@@ -7,15 +7,16 @@ export const useFicheActionList = (collectiviteId: number) => {
   const [fiches, setFiches] = useState<FicheActionRead[]>([]);
 
   useEffect(() => {
-    const listener = async () => {
+    const fetch = async () => {
       const fiches = await ficheActionReadEndpoint.getBy({
         collectivite_id: collectiviteId,
       });
       setFiches(fiches);
     };
-    ficheActionWriteEndpoint.addListener(listener);
+    ficheActionWriteEndpoint.addListener(fetch);
+    fetch();
     return () => {
-      ficheActionWriteEndpoint.removeListener(listener);
+      ficheActionWriteEndpoint.removeListener(fetch);
     };
   });
 
@@ -26,7 +27,7 @@ export const useFicheAction = (collectiviteId: number, uid: string) => {
   const [fiche, setFiche] = useState<FicheActionRead | null>(null);
 
   useEffect(() => {
-    const listener = async () => {
+    const fetch = async () => {
       const fiches = await ficheActionReadEndpoint.getBy({
         collectivite_id: collectiviteId,
         fiche_action_uid: uid,
@@ -37,9 +38,10 @@ export const useFicheAction = (collectiviteId: number, uid: string) => {
         setFiche(fiches[0]!);
       }
     };
-    ficheActionWriteEndpoint.addListener(listener);
+    ficheActionWriteEndpoint.addListener(fetch);
+    fetch();
     return () => {
-      ficheActionWriteEndpoint.removeListener(listener);
+      ficheActionWriteEndpoint.removeListener(fetch);
     };
   });
 
