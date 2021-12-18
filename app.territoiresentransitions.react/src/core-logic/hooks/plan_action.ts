@@ -38,6 +38,7 @@ export const usePlanAction = (collectiviteId: number, uid: string) => {
       }
     };
     planActionWriteEndpoint.addListener(listener);
+    listener();
     return () => {
       planActionWriteEndpoint.removeListener(listener);
     };
