@@ -6,9 +6,9 @@ export class FicheActionWriteEndpoint extends DataLayerWriteEndpoint<FicheAction
   readonly name = 'fiche_action';
 
   async _write(
-    commentaire: FicheActionWrite
+    ficheAction: FicheActionWrite
   ): Promise<PostgrestResponse<FicheActionWrite>> {
-    return this._table.upsert([commentaire]);
+    return this._table.upsert([ficheAction]);
   }
 }
 
