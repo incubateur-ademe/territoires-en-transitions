@@ -59,7 +59,7 @@ create view named_collectivite
 as
 select collectivite_id, epci.nom as nom
 from collectivite
-         join epci on epci.collectivite_id = collectivite_id
+         join epci on epci.collectivite_id = collectivite.id
 order by nom;
 comment on view named_collectivite is 'All EPCIs with the necessary information to display in the client.';
 
@@ -799,12 +799,11 @@ create table fiche_action
     personne_referente          text                    not null,
     elu_referent                text                    not null,
     partenaires                 text                    not null,
-    budget_global               text                    not null,
+    budget_global               integer                 not null,
     commentaire                 text                    not null,
     date_fin                    text                    not null,
     date_debut                  text                    not null,
-    deleted                     boolean default false   not null,
-    en_retard                   boolean default false   not null,
+    en_retard                   boolean                 not null,
     -- relations to other tables
     action_ids                  action_id[]             not null,
     indicateur_ids              indicateur_id[]         not null,
