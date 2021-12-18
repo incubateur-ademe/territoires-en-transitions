@@ -1,8 +1,6 @@
-import {useAllFiches, useCollectiviteId, useStorable} from 'core-logic/hooks';
-import {PlanActionStorable} from 'storables/PlanActionStorable';
-import {planActionStore} from 'core-logic/api/hybridStores';
+import {useCollectiviteId, useFicheActionList} from 'core-logic/hooks';
 import {Link, useParams} from 'react-router-dom';
-import {Categorie, PlanActionTyped} from 'types/PlanActionTypedInterface';
+import {Categorie} from 'types/PlanActionTypedInterface';
 import {FicheCard} from './FicheCard';
 import {Spacer} from 'ui/shared';
 import {PlanNav} from './PlanNav';
@@ -17,6 +15,8 @@ import {PlanEditionForm} from './Forms/PlanEditionForm';
 import {PlanCreationForm} from './Forms/PlanCreationForm';
 import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaultDisplayCategorie';
 import {LazyDetailsWithChevron} from 'ui/shared/LazyDetails';
+import {usePlanAction} from 'core-logic/hooks/plan_action';
+import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
 
 /**
  * The title of a category
@@ -75,9 +75,10 @@ const CategoryLevel = (props: {nodes: CategorizedNode[]; level?: number}) => {
 /**
  * Displays plan categories.
  */
-const Plan = (props: {plan: PlanActionTyped}) => {
+const Plan = (props: {plan: PlanActionRead}) => {
   const collectiviteId = useCollectiviteId()!;
-  const fiches = useAllFiches(collectiviteId.toString());
+
+  const fiches = useFicheActionList(collectiviteId);
   const sorted = categorizeAndSortFiches(fiches, props.plan);
   const nested = nestCategorized(sorted);
 
@@ -87,7 +88,7 @@ const Plan = (props: {plan: PlanActionTyped}) => {
 /**
  * Button row next to plan title.
  */
-const PlanButtons = (props: {plan: PlanActionStorable & PlanActionTyped}) => {
+const PlanButtons = (props: {plan: PlanActionRead}) => {
   const [editing, setEditing] = useState<boolean>(false);
 
   const collectiviteId = useCollectiviteId()!;
@@ -119,11 +120,14 @@ const PlanButtons = (props: {plan: PlanActionStorable & PlanActionTyped}) => {
  * Plans d'action page contents
  */
 const PlanActions = function () {
-  const {collectiviteId, planUid} =
-    useParams<{collectiviteId: string; planUid: string}>();
+  const {planUid} = useParams<{planUid: string}>();
+  const collectiviteId = useCollectiviteId()!;
   const [creating, setCreating] = useState<boolean>(false);
-  const planId = PlanActionStorable.buildId(collectiviteId, planUid);
-  const plan = useStorable<PlanActionStorable>(planId, planActionStore);
+  const plan = usePlanAction(collectiviteId, planUid);
+
+  if (plan === null) {
+    return null;
+  }
 
   return (
     <main className="fr-container mt-9 mb-16">
@@ -141,14 +145,12 @@ const PlanActions = function () {
             <PlanCreationForm onSave={() => setCreating(false)} />
           </UiDialogButton>
         </div>
-        {plan && (
-          <PlanButtons plan={plan as PlanActionStorable & PlanActionTyped} />
-        )}
+        {plan && <PlanButtons plan={plan} />}
       </div>
 
       <PlanNav />
       <Spacer />
-      {plan && <Plan plan={plan as PlanActionTyped} />}
+      {plan && <Plan plan={plan} />}
     </main>
   );
 };

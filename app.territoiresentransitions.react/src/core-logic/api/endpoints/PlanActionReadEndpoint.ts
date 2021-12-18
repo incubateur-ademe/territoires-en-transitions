@@ -5,7 +5,7 @@ import {planActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteE
 
 export interface PlanGetParams {
   collectivite_id: number;
-  plan_action_id?: string;
+  plan_action_uid?: string;
 }
 
 class PlanActionReadEndpoint extends DataLayerReadCachedEndpoint<
@@ -17,10 +17,10 @@ class PlanActionReadEndpoint extends DataLayerReadCachedEndpoint<
   async _read(
     getParams: PlanGetParams
   ): Promise<PostgrestResponse<PlanActionRead>> {
-    if (getParams.plan_action_id)
+    if (getParams.plan_action_uid)
       return this._table
         .eq('collectivite_id', getParams.collectivite_id)
-        .eq('id', getParams.plan_action_id);
+        .eq('uid', getParams.plan_action_uid);
     return this._table.eq('collectivite_id', getParams.collectivite_id);
   }
 }

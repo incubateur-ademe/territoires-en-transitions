@@ -1,17 +1,14 @@
-import {
-  Categorie,
-  PlanActionStructure,
-  PlanActionTyped,
-} from 'types/PlanActionTypedInterface';
-import {FicheAction} from 'generated/models/fiche_action';
+import {Categorie, PlanActionStructure} from 'types/PlanActionTypedInterface';
 import {compareIndexes} from 'utils';
 import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaultDisplayCategorie';
+import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
+import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
 
 /**
  * Used to attach fiches to a category.
  */
 interface Categorized {
-  fiches: FicheAction[];
+  fiches: FicheActionRead[];
   categorie: Categorie;
 }
 
@@ -19,7 +16,7 @@ interface Categorized {
  * Used to display fiches in a category tree.
  */
 export interface CategorizedNode {
-  fiches?: FicheAction[];
+  fiches?: FicheActionRead[];
   categorie: Categorie;
   children: CategorizedNode[];
 }
@@ -36,8 +33,8 @@ export interface CategoryNode {
  * Sort categories then attach sorted fiches to categories.
  */
 export function categorizeAndSortFiches(
-  allFiches: FicheAction[],
-  plan: PlanActionTyped
+  allFiches: FicheActionRead[],
+  plan: PlanActionRead
 ): Categorized[] {
   // step 1: sort categories
   const categories: Categorie[] = [...plan.categories, defaultDisplayCategorie];
@@ -45,7 +42,7 @@ export function categorizeAndSortFiches(
   categories.sort((a, b) => compareIndexes(a.nom, b.nom));
   return categories.map((categorie: Categorie) => {
     // step 2: find fiches
-    const fiches: FicheAction[] = [];
+    const fiches: FicheActionRead[] = [];
     for (const {fiche_uid} of fichesByCategory.filter(
       fc => fc.category_uid === categorie.uid
     )) {
@@ -54,7 +51,7 @@ export function categorizeAndSortFiches(
     }
     // step 3: sort fiches
     fiches.sort((a, b) => compareIndexes(a.titre, b.titre));
-    fiches.sort((a, b) => compareIndexes(a.custom_id, b.custom_id));
+    fiches.sort((a, b) => compareIndexes(a.numerotation, b.numerotation));
     return {
       categorie: categorie,
       fiches: fiches,
