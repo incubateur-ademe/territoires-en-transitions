@@ -1,16 +1,16 @@
 import {DataLayerReadEndpoint} from 'core-logic/api/dataLayerEndpoint';
-import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
 import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read';
 import {ElsesCollectiviteRead} from 'generated/dataLayer';
+import {NamedCollectiviteRead} from 'generated/dataLayer/named_collectivite_read';
 
-class AllCollectiviteReadEndpoint extends DataLayerReadEndpoint<
-  AllCollectiviteRead,
+class NamedCollectiviteReadEndpoint extends DataLayerReadEndpoint<
+  NamedCollectiviteRead,
   {}
 > {
-  readonly name = 'all_collectivite';
+  readonly name = 'named_collectivite';
 
-  async _read(): Promise<PostgrestResponse<AllCollectiviteRead>> {
+  async _read(): Promise<PostgrestResponse<NamedCollectiviteRead>> {
     return this._table;
   }
 }
@@ -36,6 +36,7 @@ class ElsesCollectiviteReadEndpoint extends DataLayerReadEndpoint<
 export interface OwnedCollectiviteReadParams {
   collectivite_id?: number;
 }
+
 class OwnedCollectiviteReadEndpoint extends DataLayerReadEndpoint<
   OwnedCollectiviteRead,
   OwnedCollectiviteReadParams
@@ -50,7 +51,7 @@ class OwnedCollectiviteReadEndpoint extends DataLayerReadEndpoint<
   }
 }
 
-export const allCollectiviteReadEndpoint = new AllCollectiviteReadEndpoint();
+export const allCollectiviteReadEndpoint = new NamedCollectiviteReadEndpoint();
 export const elsesCollectiviteReadEndpoint =
   new ElsesCollectiviteReadEndpoint();
 export const ownedCollectiviteReadEndpoint =
