@@ -40,7 +40,7 @@ export class CurrentCollectiviteBloc {
     if (ownedFetched) {
       this._nom = ownedFetched.nom;
       this._collectiviteId = ownedFetched.collectivite_id;
-      this._roleName = ownedFetched.role_name;
+      this._roleName = ownedFetched.role_name as RoleName;
     } else {
       const elsesFetched = (
         await elsesCollectiviteReadEndpoint.getBy({
