@@ -37,7 +37,8 @@ insert into fiche_action
  date_debut,
  action_ids,
  indicateur_ids,
- indicateur_personnalise_ids)
+ indicateur_personnalise_ids,
+ en_retard)
 values (1,
         '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
         'pas_fait',
@@ -48,13 +49,14 @@ values (1,
         'référente',
         'référent',
         'partenaires',
-        '€',
+        0,
         'commentaire',
         'fin',
         'début',
         array ['cae']::action_id[],
         array ['ind0']::indicateur_id[],
-        array [1]::integer[]);
+        array [1]::integer[],
+        false);
 
 insert into plan_action
 (collectivite_id,
