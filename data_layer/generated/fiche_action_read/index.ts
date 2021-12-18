@@ -3,12 +3,11 @@
 export interface FicheActionRead {
   action_ids: string[];
   avancement: string;
-  budget_global: string;
+  budget_global: number;
   collectivite_id: number;
   commentaire: string;
   date_debut: string;
   date_fin: string;
-  deleted: boolean;
   description: string;
   elu_referent: string;
   en_retard: boolean;

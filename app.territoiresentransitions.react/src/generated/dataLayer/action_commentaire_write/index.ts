@@ -2,6 +2,6 @@
 
 export interface ActionCommentaireWrite {
   action_id: string;
-  commentaire: string;
   collectivite_id: number;
+  commentaire: string;
 }

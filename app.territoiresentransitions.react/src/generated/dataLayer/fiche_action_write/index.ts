@@ -3,16 +3,17 @@
 export interface FicheActionWrite {
   action_ids: string[];
   avancement: string;
-  budget_global: string;
+  budget_global: number;
   collectivite_id: number;
   commentaire: string;
   date_debut: string;
   date_fin: string;
   description: string;
   elu_referent: string;
+  en_retard: boolean;
   indicateur_ids: string[];
   indicateur_personnalise_ids: number[];
-  numeration: string;
+  numerotation: string;
   partenaires: string;
   personne_referente: string;
   structure_pilote: string;
