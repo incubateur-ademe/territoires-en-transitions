@@ -92,6 +92,7 @@ const _ConditionalSelectDialog = ({
 
   useEffect(() => {
     if (collectiviteId) {
+      console.log(collectiviteId);
       referentContact(collectiviteId).then(contact => {
         setReferentContactResponse(contact);
       });
@@ -123,9 +124,11 @@ export const JoinCurrentCollectiviteDialog = ({
   const [referentContactResponse, setReferentContactResponse] =
     useState<ReferentContactResponse | null>(null);
 
-  referentContact(collectiviteId).then(contact => {
-    setReferentContactResponse(contact);
-  });
+  useEffect(() => {
+    referentContact(collectiviteId).then(contact => {
+      setReferentContactResponse(contact);
+    });
+  }, [collectiviteId]);
 
   console.log(
     'JoinCurrentCollectiviteDialog : #',
