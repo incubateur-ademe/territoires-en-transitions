@@ -77,7 +77,7 @@ const CollectiviteNavigationDropdownTab = (props: {
       >
         <ul>
           {props.listPathsAndLabels.map(labelAndPathSuffix => (
-            <li className="fr-nav__item">
+            <li className="fr-nav__item" key={labelAndPathSuffix.label}>
               <Link
                 className={`fr-nav__link ${_activeTabStyle(
                   labelAndPathSuffix.path === activePath
