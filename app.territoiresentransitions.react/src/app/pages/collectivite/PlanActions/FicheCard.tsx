@@ -1,29 +1,27 @@
 import {useCollectiviteId} from 'core-logic/hooks';
 import {Link} from 'react-router-dom';
-import {FicheAction} from 'generated/models/fiche_action';
 
 import {avancementLabels} from 'app/labels';
 import {Avancement} from 'generated/dataLayer/action_statut_read';
+import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 
 const AvancementTag = ({avancement}: {avancement: Avancement}) => {
-  // if (avancement !== '')
   return (
     <div className="px-2 py-3 bg-white border-bf500 border-b-4">
       {avancementLabels[avancement]}
     </div>
   );
-  // return <></>;
 };
 
 type FicheCardProps = {
-  fiche: FicheAction;
+  fiche: FicheActionRead;
 };
 export const FicheCard = (props: FicheCardProps) => {
   const collectiviteId = useCollectiviteId();
   const fiche = props.fiche;
   const avancement = fiche.avancement as Avancement;
-  const formatedTitle = fiche.custom_id
-    ? `${fiche.custom_id} - ${fiche.titre}`
+  const formatedTitle = fiche.numerotation
+    ? `${fiche.numerotation} - ${fiche.titre}`
     : fiche.titre;
   return (
     <article className="bg-beige mb-5 px-4 py-2 flex flex-row items-center justify-between">

@@ -5,7 +5,7 @@ import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWrit
 
 export interface FicheGetParams {
   collectivite_id: number;
-  fiche_action_id?: string;
+  fiche_action_uid?: string;
 }
 
 class FicheActionReadEndpoint extends DataLayerReadCachedEndpoint<
@@ -17,10 +17,10 @@ class FicheActionReadEndpoint extends DataLayerReadCachedEndpoint<
   async _read(
     getParams: FicheGetParams
   ): Promise<PostgrestResponse<FicheActionRead>> {
-    if (getParams.fiche_action_id)
+    if (getParams.fiche_action_uid)
       return this._table
         .eq('collectivite_id', getParams.collectivite_id)
-        .eq('id', getParams.fiche_action_id);
+        .eq('uid', getParams.fiche_action_uid);
     return this._table.eq('collectivite_id', getParams.collectivite_id);
   }
 }

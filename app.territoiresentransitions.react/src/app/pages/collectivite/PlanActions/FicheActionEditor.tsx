@@ -1,32 +1,29 @@
 import {useHistory, useParams} from 'react-router-dom';
-import {useFiche} from 'core-logic/hooks/fiches';
-import {FicheActionStorable} from 'storables/FicheActionStorable';
+import {useFicheAction} from 'core-logic/hooks/fiche_action';
 import {
   FicheActionForm,
   FicheActionFormData,
-  PlanCategorieSelection,
 } from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
-import {FicheActionInterface} from 'generated/models/fiche_action';
-import {getFicheActionStoreForEpci} from 'core-logic/api/hybridStores';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
-import {useState} from 'react';
+import {useCollectiviteId} from 'core-logic/hooks';
+import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWriteEndpoint';
+import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
 
 /**
  * This is the main component of FicheActionPage, use to show a fiche.
  */
 const FicheActionEditor = () => {
-  const {collectiviteId, ficheUid} =
-    useParams<{collectiviteId: string; ficheUid: string}>();
-  const [planCategories, setPlanCategories] = useState<
-    PlanCategorieSelection[]
-  >([]);
-  const ficheActionStore = getFicheActionStoreForEpci(collectiviteId);
-  const ficheStorableId = FicheActionStorable.buildId(collectiviteId, ficheUid);
+  const {ficheUid} = useParams<{ficheUid: string}>();
   const history = useHistory();
-  const fiche = useFiche(ficheStorableId, collectiviteId);
+  const collectiviteId = useCollectiviteId()!;
+  const ficheAction = useFicheAction(collectiviteId, ficheUid);
 
-  const saveFiche = async (fiche: FicheActionInterface) => {
-    await ficheActionStore.store(new FicheActionStorable(fiche));
+  if (ficheAction === null) {
+    return null;
+  }
+
+  const saveFiche = async (fiche: FicheActionWrite) => {
+    await ficheActionWriteEndpoint.save(fiche);
   };
 
   const save = async (data: FicheActionFormData) => {
@@ -38,14 +35,14 @@ const FicheActionEditor = () => {
   return (
     <main className="fr-container pt-8">
       <h1>Ma fiche action</h1>
-      {fiche && (
+      {ficheAction && (
         <FicheActionForm
-          fiche={fiche}
-          planCategories={planCategories}
+          fiche={ficheAction}
+          planCategories={[]}
           onSave={save}
         />
       )}
-      {!fiche && <h2>Aucune fiche trouvée</h2>}
+      {!ficheAction && <h2>Aucune fiche trouvée</h2>}
     </main>
   );
 };

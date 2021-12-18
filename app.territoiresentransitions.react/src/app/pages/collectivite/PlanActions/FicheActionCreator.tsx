@@ -4,25 +4,28 @@ import {
   FicheActionFormData,
   PlanCategorieSelection,
 } from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
-import {FicheActionInterface} from 'generated/models/fiche_action';
 import {v4 as uuid} from 'uuid';
-import {getFicheActionStoreForEpci} from 'core-logic/api/hybridStores';
-import {FicheActionStorable} from 'storables/FicheActionStorable';
 import {searchActionById} from 'utils/actions';
 import {useQuery} from 'core-logic/hooks/query';
 import {actions} from 'generated/data/referentiels';
 import {RetourButton} from 'ui/shared';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
+import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
+import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWriteEndpoint';
+import {useCollectiviteId, useFicheAction} from 'core-logic/hooks';
 
 /**
  * Used to create a fiche, shows FicheActionForm.
  */
 const FicheActionCreator = () => {
-  const {collectiviteId} = useParams<{collectiviteId: string}>();
-
-  const ficheActionStore = getFicheActionStoreForEpci(collectiviteId);
-
+  const {ficheUid} = useParams<{ficheUid: string}>();
   const history = useHistory();
+  const collectiviteId = useCollectiviteId()!;
+  const ficheAction = useFicheAction(collectiviteId, ficheUid);
+
+  if (ficheAction === null) {
+    return null;
+  }
 
   const query = useQuery();
 
@@ -47,16 +50,17 @@ const FicheActionCreator = () => {
     });
   }
 
-  const fiche: FicheActionInterface = {
+  const fiche: FicheActionWrite = {
     uid: uuid(),
-    epci_id: collectiviteId,
-    referentiel_action_ids: referentiel_action_ids,
+    collectivite_id: collectiviteId,
     titre: titre,
     avancement: 'pas_faite',
-    custom_id: '',
-    referentiel_indicateur_ids: [],
+    numerotation: '',
     description: '',
-    budget: 0,
+
+    en_retard: false,
+    budget_global: 0,
+
     personne_referente: '',
     structure_pilote: '',
     partenaires: '',
@@ -64,12 +68,13 @@ const FicheActionCreator = () => {
     commentaire: '',
     date_debut: '',
     date_fin: '',
+    action_ids: referentiel_action_ids,
+    indicateur_ids: [],
     indicateur_personnalise_ids: [],
-    en_retard: false,
   };
 
-  const saveFiche = async (fiche: FicheActionInterface) => {
-    await ficheActionStore.store(new FicheActionStorable(fiche));
+  const saveFiche = async (fiche: FicheActionWrite) => {
+    await ficheActionWriteEndpoint.save(fiche);
   };
 
   const save = async (data: FicheActionFormData) => {

@@ -17,6 +17,9 @@ import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indic
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
 import {searchActionById} from 'utils/actions';
 import {PlanCategoriesSelectionField} from 'app/pages/collectivite/PlanActions/Forms/PlanCategoriesSelectionField';
+import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
+import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
+import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
 
 /**
  * Stores both plan and category uid, represents the user's selection of a
@@ -39,13 +42,10 @@ export interface planCategorieSelections {
 /**
  * Join categories data with fiche data as the form data that will be saved.
  */
-export type FicheActionFormData = planCategorieSelections &
-  FicheActionInterface;
-import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
-import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
+export type FicheActionFormData = planCategorieSelections & FicheActionWrite;
 
 type FicheActionFormProps = {
-  fiche: FicheActionInterface;
+  fiche: FicheActionWrite;
   planCategories: PlanCategorieSelection[];
   onSave: (data: FicheActionFormData) => void;
 };
@@ -140,9 +140,9 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
   const [state, setState] = useState<FormState>('ready');
 
   const validation = Yup.object({
-    epci_id: Yup.string().max(36).required(),
+    collectivite_id: Yup.string().max(36).required(),
     uid: Yup.string().max(36).required(),
-    custom_id: Yup.string().max(36),
+    numerotation: Yup.string().max(36),
     avancement: Yup.string().max(36).required(),
     en_retard: Yup.boolean().required(),
     referentiel_action_ids: Yup.array(),
@@ -201,7 +201,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
         <Form onKeyDown={onKeyDown}>
           <div className="max-w-2xl">
             <Field
-              name="custom_id"
+              name="numerotation"
               label="Numérotation de l'action"
               hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
               component={LabeledTextField}

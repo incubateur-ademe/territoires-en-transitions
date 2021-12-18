@@ -11,7 +11,7 @@ describe('Fiche action reading endpoint ', () => {
     const partialExpectedReadFicheAction = {
       collectivite_id: 1,
       avancement: 'pas_fait',
-      numeration: 'A0',
+      numerotation: 'A0',
       titre: 'titre',
       description: 'description',
       structure_pilote: 'pilote',
