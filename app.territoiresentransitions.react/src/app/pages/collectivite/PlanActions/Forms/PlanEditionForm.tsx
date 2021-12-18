@@ -1,4 +1,4 @@
-import {Categorie, PlanActionTyped} from 'types/PlanActionTypedInterface';
+import {Categorie} from 'types/PlanActionTypedInterface';
 import {
   CategoryNode,
   nestPlanCategories,
@@ -6,9 +6,9 @@ import {
 import React, {useState} from 'react';
 import {IconButton} from '@material-ui/core';
 import {LabeledTextInput} from 'ui';
-import {planActionStore} from 'core-logic/api/hybridStores';
-import {PlanActionStorable} from 'storables/PlanActionStorable';
 import {v4 as uuid} from 'uuid';
+import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
+import {planActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteEndpoint';
 
 /**
  * A title that is editable in place, as the title display is replaced with an
@@ -180,9 +180,7 @@ function EditableCategoryLevel(props: {
  *
  * @param props A plans storable, mutated in place and saved on user input.
  */
-export const PlanEditionForm = (props: {
-  plan: PlanActionStorable & PlanActionTyped;
-}) => {
+export const PlanEditionForm = (props: {plan: PlanActionRead}) => {
   const categories = nestPlanCategories(props.plan.categories);
   const [editing, setEditing] = useState<boolean>(false);
   const [adding, setAdding] = useState<boolean>(false);
@@ -192,7 +190,7 @@ export const PlanEditionForm = (props: {
         <InlineEditableTitle
           onSave={text => {
             props.plan.nom = text;
-            planActionStore.store(props.plan);
+            planActionWriteEndpoint.save(props.plan);
           }}
           text={props.plan.nom}
           // textClass="text-4xl"
@@ -219,7 +217,7 @@ export const PlanEditionForm = (props: {
             };
             setAdding(false);
             props.plan.categories.push(category);
-            planActionStore.store(props.plan);
+            planActionWriteEndpoint.save(props.plan);
           }}
           text="Axe"
           onStateChange={setEditing}
@@ -236,12 +234,12 @@ export const PlanEditionForm = (props: {
               return c.uid === categorie.uid;
             })!;
             existing.nom = categorie.nom;
-            planActionStore.store(plan);
+            planActionWriteEndpoint.save(props.plan);
           }}
           add={(categorie: Categorie) => {
             const plan = props.plan;
             plan.categories.push(categorie);
-            planActionStore.store(plan);
+            planActionWriteEndpoint.save(props.plan);
           }}
           level={1}
         />
