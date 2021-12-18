@@ -23,7 +23,7 @@ export const referentContact = async (
 ): Promise<any | null> => {
   // Promise<ReferentContactResponse | null> TODO : type me !
   const {data, error} = await supabase.rpc('referent_contact', {
-    collectivite_id,
+    id: collectivite_id,
   });
 
   if (error || !data) {
