@@ -11,12 +11,14 @@ from psycopg import Connection, Cursor
 business_tables = {"read": ["business_action_statut"], "write": ["score"]}
 client_tables = {
     "read": [
-        "epci",
+        "client_action_statut",
         "action_statut",
         "action_commentaire",
         "score",
-        "owned_epci",
-        "active_epci",
+        "named_collectivite",
+        "owned_collectivite",
+        "elses_collectivite",
+        "active_collectivite",
         "all_epci",
         "dcp",
         "fiche_action",
