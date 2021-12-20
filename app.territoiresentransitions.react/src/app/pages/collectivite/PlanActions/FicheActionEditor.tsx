@@ -8,6 +8,7 @@ import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
 import {useCollectiviteId} from 'core-logic/hooks';
 import {makeCollectiviteDefaultPlanActionPath} from 'app/paths';
 import {ficheActionRepository} from 'core-logic/api/repositories/FicheActionRepository';
+import {deleteObjectKey} from 'utils/deleteObjectKey';
 
 /**
  * This is the main component of FicheActionPage, use to show a fiche.
@@ -44,9 +45,3 @@ const FicheActionEditor = () => {
 };
 
 export default FicheActionEditor;
-
-const deleteObjectKey = (object: any, key: string) => {
-  const objectCopy = {...object};
-  delete objectCopy[key];
-  return objectCopy;
-};
