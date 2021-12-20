@@ -1,3 +1,4 @@
+from collections import Counter
 import math
 from typing import Dict, List
 
@@ -98,6 +99,15 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
         if len(all_identifiants) != len(set(all_identifiants)):
             raise MarkdownReferentielNodeInconsistent(
                 f"Tous les identifiants devraient être uniques. Doublons: "
+                + ", ".join(
+                    [
+                        identifiant
+                        for (identifiant, count) in dict(
+                            Counter(all_identifiants)
+                        ).items()
+                        if count > 1
+                    ]
+                )
             )
 
     def check_actions_children_percentages_sum_to_100(

@@ -138,7 +138,7 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
                 )
             except MarkdownIndicateurInconsistent as error:
                 errors.append(str(error))
-        return indicateurs, errors
+        return indicateurs, list(set(errors))
 
     def _to_entity(
         self,
