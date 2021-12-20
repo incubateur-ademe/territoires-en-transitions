@@ -6,10 +6,9 @@ import {Spacer} from 'ui/shared';
 import {useParams} from 'react-router-dom';
 import {useState} from 'react';
 import {referentielToName} from 'app/labels';
+import {indicateurViewParam, IndicateurViewParamOption} from 'app/paths';
 
-type View = 'cae' | 'eci' | 'crte' | 'perso';
-
-const viewTitles: Record<View, string> = {
+const viewTitles: Record<IndicateurViewParamOption, string> = {
   perso: 'Indicateurs personnalisés',
   cae: referentielToName.cae,
   eci: referentielToName.eci,
@@ -20,7 +19,7 @@ const viewTitles: Record<View, string> = {
  * Display the list of indicateurs for a given view
  */
 const ConditionnalIndicateurList = (props: {
-  view: View;
+  view: IndicateurViewParamOption;
   showOnlyIndicateurWithData: boolean;
 }) => {
   if (props.view === 'perso')
@@ -41,10 +40,10 @@ const ConditionnalIndicateurList = (props: {
  * IndicateursList show both indicateurs personnalisés and indicateurs référentiel.
  */
 const Indicateurs = () => {
-  const {view} = useParams<{
-    view?: View;
+  const {vue} = useParams<{
+    [indicateurViewParam]?: IndicateurViewParamOption;
   }>();
-  const current = view ?? 'eci';
+  const current = vue ?? 'eci';
 
   const [showOnlyIndicateurWithData, setShowOnlyIndicateurWithData] =
     useState(false);

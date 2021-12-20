@@ -9,7 +9,7 @@ import {
   CategorizedNode,
   nestCategorized,
 } from './sorting';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {UiDialogButton} from 'ui';
 import {PlanEditionForm} from './Forms/PlanEditionForm';
 import {PlanCreationForm} from './Forms/PlanCreationForm';
@@ -17,7 +17,10 @@ import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaul
 import {LazyDetailsWithChevron} from 'ui/shared/LazyDetails';
 import {usePlanAction} from 'core-logic/hooks/plan_action';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
-import {makeCollectiviteNouvelleFichePath} from 'app/paths';
+import {
+  makeCollectiviteNouvelleFicheUrl,
+  makeCollectivitePlanActionUrl,
+} from 'app/paths';
 
 /**
  * The title of a category
@@ -109,7 +112,7 @@ const PlanButtons = (props: {plan: PlanActionRead}) => {
 
       <Link
         className="fr-btn h-8"
-        to={makeCollectiviteNouvelleFichePath({
+        to={makeCollectiviteNouvelleFicheUrl({
           collectiviteId,
           planActionUid: props.plan.uid,
         })}

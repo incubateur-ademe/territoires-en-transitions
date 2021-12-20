@@ -43,7 +43,7 @@ export class AnyIndicateurValueInputBloc {
     this.fetch();
   }
   private fetch() {
-    console.log('collectiviteId : ', this._collectiviteId);
+    // console.log('collectiviteId : ', this._collectiviteId);
     this._endpoint
       .getBy({
         annee: this._year,
@@ -156,7 +156,7 @@ export const AnyIndicateurValues = ({
   const [index, setIndex] = useState<number>(4);
 
   const collectiviteId = useCollectiviteId();
-  if (collectiviteId === null) return null;
+  if (collectiviteId === null) return <h1>nope</h1>;
 
   const years = Array.from(
     {length: window},

@@ -12,7 +12,7 @@ import {
 } from 'core-logic/api/procedures/collectiviteProcedures';
 import {Spacer} from 'ui/shared';
 import {Link} from 'react-router-dom';
-import {makeCollectiviteTabPath} from 'app/paths';
+import {makeTableauBordUrl} from 'app/paths';
 
 const _JoinCollectiviteDialogContent = ({
   collectiviteId,
@@ -63,13 +63,7 @@ const _ClaimCollectiviteDialogContent = ({
     return (
       <div>
         <div>Vous avez activé la collectivité #{collectiviteId}</div>
-        <Link
-          className="fr-btn"
-          to={makeCollectiviteTabPath({
-            id: collectiviteId,
-            tab: 'tableau_bord',
-          })}
-        >
+        <Link className="fr-btn" to={makeTableauBordUrl({collectiviteId})}>
           Tableau de bord
         </Link>
       </div>

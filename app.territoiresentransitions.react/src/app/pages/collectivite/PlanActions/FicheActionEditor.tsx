@@ -6,7 +6,7 @@ import {
 } from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
 import {useCollectiviteId} from 'core-logic/hooks';
-import {makeCollectiviteDefaultPlanActionPath} from 'app/paths';
+import {makeCollectiviteDefaultPlanActionUrl} from 'app/paths';
 import {ficheActionRepository} from 'core-logic/api/repositories/FicheActionRepository';
 import {deleteObjectKey} from 'utils/deleteObjectKey';
 
@@ -26,7 +26,7 @@ const FicheActionEditor = () => {
   const onSave = async (data: FicheActionFormData) => {
     await ficheActionRepository.save(deleteObjectKey(data, 'planCategories')); // Formik object has all ficheActionWrite keys + `planCategories`
     await updatePlansOnFicheSave(data);
-    history.push(makeCollectiviteDefaultPlanActionPath({collectiviteId}));
+    history.push(makeCollectiviteDefaultPlanActionUrl({collectiviteId}));
   };
 
   return (

@@ -8,9 +8,9 @@ import {useParams} from 'react-router-dom';
 import {Spacer} from 'ui/shared';
 import {actions} from 'generated/data/referentiels';
 import {CurrentEpciGaugeProgressStat} from 'ui/referentiels';
+import {ReferentielParamOption, referentielParam} from 'app/paths';
 
-type View = 'cae' | 'eci';
-const viewTitles: Record<View, string> = {
+const viewTitles: Record<ReferentielParamOption, string> = {
   cae: 'Climat Air Énergie',
   eci: 'Économie Circulaire',
 };
@@ -20,7 +20,11 @@ const eciReferentiel = actions.find(action => action.id === 'eci')!;
 const caeReferentiel = actions.find(action => action.id === 'cae')!;
 // For ECI, main action is at level #1, here, we flatten the actions twice.
 
-const ConditionnalActionsReferentiels = ({view}: {view: View}) => {
+const ConditionnalActionsReferentiels = ({
+  view,
+}: {
+  view: ReferentielParamOption;
+}) => {
   if (view === 'cae') {
     const caeAxes = caeReferentiel ? caeReferentiel.actions : [];
     return <ReferentielClimatAirEnergie caeAxes={caeAxes} />;
@@ -30,7 +34,7 @@ const ConditionnalActionsReferentiels = ({view}: {view: View}) => {
   }
 };
 
-const ReferentielTitle = (props: {view: View}) => {
+const ReferentielTitle = (props: {view: ReferentielParamOption}) => {
   const referentiel = props.view === 'eci' ? eciReferentiel : caeReferentiel;
   return (
     <header className="flex flex-row items-center mb-6 space-x-10">
@@ -48,10 +52,10 @@ const ReferentielTitle = (props: {view: View}) => {
 };
 
 export const ActionsReferentiels = () => {
-  const {referentiel} = useParams<{
-    referentiel?: View;
+  const {referentielId} = useParams<{
+    [referentielParam]?: ReferentielParamOption;
   }>();
-  const current = referentiel ?? 'eci';
+  const current = referentielId ?? 'eci';
 
   return (
     <main className="fr-container mt-9 mb-16">
