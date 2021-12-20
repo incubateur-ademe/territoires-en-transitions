@@ -24,12 +24,7 @@ export const makeCollectiviteActionsPath = (props: {
   id: number;
   referentiel: 'eci' | 'cae';
   actionId: string;
-}) =>
-  // `${makeCollectiviteTabPath({
-  //   siren: props.id,
-  //   tab: 'referentiels',
-  // })}/action/${props.referentiel}/${props.actionId}`;
-  `/collectivite/${props.id}/action/${props.referentiel}/${props.actionId}`;
+}) => `/collectivite/${props.id}/action/${props.referentiel}/${props.actionId}`;
 
 export const makeCollectiviteIndicateursPath = ({
   id,
@@ -54,3 +49,9 @@ export const makeCollectivitePlanActionPath = (props: {
   planActionUid: string;
 }) =>
   `/collectivite/${props.collectiviteId}/plan_action/${props.planActionUid}`;
+
+export const makeCollectiviteNouvelleFichePath = (props: {
+  collectiviteId: number;
+  planActionUid: string;
+}) =>
+  `/collectivite/${props.collectiviteId}/nouvelle_fiche?plan_uid=${props.planActionUid}`;
