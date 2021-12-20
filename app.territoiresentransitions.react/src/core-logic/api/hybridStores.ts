@@ -36,7 +36,7 @@ import {
   PlanActionStorable,
 } from 'storables';
 
-export const defaultAuthorization = () => `Bearer`;
+export const defaultAuthorization = () => 'Bearer';
 
 export const indicateurResultatStore =
   new HybridStore<AnyIndicateurValueStorable>({
