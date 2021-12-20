@@ -9,19 +9,22 @@ const PlanNavChip = (props: {
   planUid: string;
   planNom: string;
   active: boolean;
-}) {
+}) => {
   return (
     <div className="mr-2">
       <Chip
         label={props.planNom}
         component="a"
-        href={`/epci/${props.collectiviteId}/plan_action/${props.planUid}`}
+        href={makeCollectivitePlanActionPath({
+          collectiviteId: props.collectiviteId,
+          planActionUid: props.planUid,
+        })}
         color={props.active ? 'primary' : 'default'}
         clickable
       />
     </div>
   );
-}
+};
 
 export const PlanNav = () => {
   const {planUid} = useParams<{planUid: string}>();
@@ -42,4 +45,4 @@ export const PlanNav = () => {
       ))}
     </nav>
   );
-}
+};

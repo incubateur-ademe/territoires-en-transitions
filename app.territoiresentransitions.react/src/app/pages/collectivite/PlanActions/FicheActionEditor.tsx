@@ -35,7 +35,7 @@ const FicheActionEditor = () => {
         <FicheActionForm
           fiche={ficheAction}
           planCategories={[]}
-          onSave={save}
+          onSave={onSave}
         />
       )}
       {!ficheAction && <h2>Aucune fiche trouvée</h2>}
@@ -44,3 +44,9 @@ const FicheActionEditor = () => {
 };
 
 export default FicheActionEditor;
+
+const deleteObjectKey = (object: any, key: string) => {
+  const objectCopy = {...object};
+  delete objectCopy[key];
+  return objectCopy;
+};

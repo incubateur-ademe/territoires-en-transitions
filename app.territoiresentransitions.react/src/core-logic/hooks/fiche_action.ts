@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
-import {ficheActionReadEndpoint} from 'core-logic/api/endpoints/FicheActionReadEndpoint';
 import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWriteEndpoint';
 import {ficheActionRepository} from 'core-logic/api/repositories/FicheActionRepository';
 

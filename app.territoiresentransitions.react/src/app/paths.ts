@@ -38,3 +38,19 @@ export const makeCollectiviteIndicateursPath = ({
   id: number;
   view: 'eci' | 'cae' | 'crte' | 'perso';
 }) => `${makeCollectiviteTabPath({id, tab: 'indicateurs'})}/${view}`;
+
+export const makeCollectiviteDefaultPlanActionPath = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  makeCollectivitePlanActionPath({
+    collectiviteId,
+    planActionUid: 'plan_collectivite',
+  });
+
+export const makeCollectivitePlanActionPath = (props: {
+  collectiviteId: number;
+  planActionUid: string;
+}) =>
+  `/collectivite/${props.collectiviteId}/plan_action/${props.planActionUid}`;
