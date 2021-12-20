@@ -20,7 +20,6 @@ export const ActionStatusAvancementRadioButton = ({
   actionId: string;
 }) => {
   const collectiviteId = useCollectiviteId()!;
-  console.log('collectiviteId: ', collectiviteId);
   const actionStatusAvancementBloc = new ActionStatusAvancementRadioButtonBloc({
     actionId,
     collectiviteId,

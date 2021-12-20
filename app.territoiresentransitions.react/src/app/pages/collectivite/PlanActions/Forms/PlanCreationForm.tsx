@@ -9,10 +9,7 @@ export const PlanCreationForm = (props: {onSave: () => void}) => {
 
   const handleSave = async () => {
     if (!nom) return;
-    await commands.plansCommands.createPlanAction(
-      collectiviteId.toString(),
-      nom
-    );
+    await commands.plansCommands.createPlanAction(collectiviteId, nom);
     props.onSave();
   };
 

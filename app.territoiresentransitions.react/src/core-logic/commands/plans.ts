@@ -1,19 +1,16 @@
-import {planActionStore} from 'core-logic/api/hybridStores';
-import {PlanActionStorable} from 'storables/PlanActionStorable';
 import {v4 as uuid} from 'uuid';
 import {FicheActionFormData} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {PlanActionStructure} from 'types/PlanActionTypedInterface';
+import {planActionRepository} from 'core-logic/api/repositories/PlanActionRepository';
 
-const createPlanAction = async (epci_id: string, nom: string) => {
-  await planActionStore.store(
-    new PlanActionStorable({
-      epci_id,
-      nom,
-      uid: uuid(),
-      fiches_by_category: [],
-      categories: [],
-    })
-  );
+const createPlanAction = async (collectivite_id: number, nom: string) => {
+  await planActionRepository.save({
+    collectivite_id,
+    nom,
+    uid: uuid(),
+    fiches_by_category: [],
+    categories: [],
+  });
 };
 
 export const plans = {
@@ -26,7 +23,9 @@ export const plans = {
  * @param data the data from FicheActionForm
  */
 export const updatePlansOnFicheSave = async (data: FicheActionFormData) => {
-  const plans = await planActionStore.retrieveAll();
+  const plans = await planActionRepository.fetchCollectivitePlanActionList({
+    collectiviteId: data.collectivite_id,
+  });
   const ficheUid = data.uid;
   const planCategories = data.planCategories;
 
@@ -43,6 +42,6 @@ export const updatePlansOnFicheSave = async (data: FicheActionFormData) => {
       });
     }
     plan.fiches_by_category = fichesByCategories;
-    await planActionStore.store(plan);
+    await planActionRepository.save(plan);
   }
 };

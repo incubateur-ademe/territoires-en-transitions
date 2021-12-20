@@ -53,9 +53,9 @@ values (1,
         'commentaire',
         'fin',
         'début',
-        array ['cae']::action_id[],
-        array ['ind0']::indicateur_id[],
-        array [1]::integer[],
+        array []::action_id[],
+        array []::indicateur_id[],
+        array []::integer[],
         false);
 
 insert into plan_action

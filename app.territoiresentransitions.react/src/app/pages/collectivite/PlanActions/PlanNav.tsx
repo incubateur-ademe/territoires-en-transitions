@@ -1,11 +1,11 @@
 import {Chip} from '@material-ui/core';
 import {useParams} from 'react-router-dom';
-import {useAllStorables} from 'core-logic/hooks';
-import {PlanActionStorable} from 'storables/PlanActionStorable';
-import {planActionStore} from 'core-logic/api/hybridStores';
+import {useCollectiviteId} from 'core-logic/hooks';
+import {usePlanActionList} from 'core-logic/hooks/plan_action';
+import {makeCollectivitePlanActionPath} from 'app/paths';
 
-function PlanNavChip(props: {
-  collectiviteId: string;
+const PlanNavChip = (props: {
+  collectiviteId: number;
   planUid: string;
   planNom: string;
   active: boolean;
@@ -23,10 +23,10 @@ function PlanNavChip(props: {
   );
 }
 
-export function PlanNav() {
-  const {collectiviteId, planUid} =
-    useParams<{collectiviteId: string; planUid: string}>();
-  const plans = useAllStorables<PlanActionStorable>(planActionStore);
+export const PlanNav = () => {
+  const {planUid} = useParams<{planUid: string}>();
+  const collectiviteId = useCollectiviteId()!;
+  const plans = usePlanActionList(collectiviteId);
   plans.sort((a, b) => a.nom.localeCompare(b.nom));
 
   return (

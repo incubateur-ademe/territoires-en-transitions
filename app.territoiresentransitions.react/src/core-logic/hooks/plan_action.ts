@@ -14,6 +14,7 @@ export const usePlanActionList = (collectiviteId: number) => {
       setPlans(plans);
     };
     planActionWriteEndpoint.addListener(fetch);
+    fetch();
     return () => {
       planActionWriteEndpoint.removeListener(fetch);
     };

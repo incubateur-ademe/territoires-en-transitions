@@ -7,9 +7,6 @@ import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/Indicat
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
 import {ActionReferentielAvancementCard} from 'ui/referentiels';
 import {actions} from 'generated/data/referentiels';
-import {indicateurs} from 'generated/data/indicateurs_referentiels';
-import {useAllStorables} from 'core-logic/hooks';
-import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import {Spacer} from 'ui/shared';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
@@ -20,6 +17,7 @@ import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/Ind
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
+import {IndicateurReferentiel} from 'generated/models';
 
 /**
  * Stores both plan and category uid, represents the user's selection of a
@@ -83,10 +81,8 @@ const LinkedActionsReferentielCards = () => {
 
 const LinkedIndicateurCards = () => {
   const {values} = useFormikContext<FicheActionRead>();
-  const linkedIndicateurs = values.indicateur_ids.map(
-    indicateurId =>
-      indicateurs.find(indicateur => indicateur.id === indicateurId)!
-  );
+  // todo use indicateur repo
+  const linkedIndicateurs: IndicateurReferentiel[] = [];
   return (
     <div>
       {linkedIndicateurs.map(indicateur => {
@@ -142,18 +138,18 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
   const [state, setState] = useState<FormState>('ready');
 
   const validation = Yup.object({
-    collectivite_id: Yup.string().max(36).required(),
+    // collectivite_id: Yup.string().max(36).required(),
     uid: Yup.string().max(36).required(),
     numerotation: Yup.string().max(36),
     avancement: Yup.string().max(36).required(),
     en_retard: Yup.boolean().required(),
-    referentiel_action_ids: Yup.array(),
-    referentiel_indicateur_ids: Yup.array(),
+    action_ids: Yup.array(),
+    indicateur_ids: Yup.array(),
     titre: Yup.string()
       .max(300, 'Ce champ doit faire au maximum 300 caractères')
       .required('Champ requis'),
     description: Yup.string(),
-    budget: Yup.number()
+    budget_global: Yup.number()
       .transform(
         (value, originalValue) => (/\s/.test(originalValue) ? NaN : value) // disallow whitespaces
       )
@@ -175,8 +171,8 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
       'Ce champ doit faire au maximum 300 caractères'
     ),
     commentaire: Yup.string(),
-    date_debut: Yup.date(),
-    date_fin: Yup.date(),
+    // date_debut: Yup.date(),
+    // date_fin: Yup.date(),
     indicateur_personnalise_ids: Yup.array(),
     planCategories: Yup.array().min(
       1,
@@ -196,7 +192,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
         ...props.fiche,
         planCategories: props.planCategories,
       }}
-      validationSchema={validation}
+      // validationSchema={validation}
       onSubmit={save}
     >
       {() => (
@@ -278,7 +274,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             <Spacer />
 
             <Field
-              name="budget"
+              name="budget_global"
               label="Budget global"
               hint="Ce champ ne doit comporter que des chiffres sans espaces"
               component={LabeledTextField}
@@ -312,7 +308,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
           </div>
 
           <Field
-            name="referentiel_action_ids"
+            name="action_ids"
             label="Actions des référentiels liées"
             component={ActionsField}
           />
@@ -321,7 +317,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
           <Spacer />
 
           <Field
-            name="referentiel_indicateur_ids"
+            name="indicateur_ids"
             label="Indicateurs des référentiels liés"
             component={IndicateursField}
           />

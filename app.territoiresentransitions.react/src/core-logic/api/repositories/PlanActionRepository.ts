@@ -4,11 +4,13 @@ import {PlanActionWrite} from 'generated/dataLayer/plan_action_write';
 import {planActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteEndpoint';
 
 class PlanActionRepository {
-  save(commentaire: PlanActionWrite): Promise<PlanActionWrite | null> {
-    return planActionWriteEndpoint.save(commentaire);
+  save(plan: PlanActionWrite): Promise<PlanActionWrite | null> {
+    return planActionWriteEndpoint.save(plan);
   }
 
-  async fetchAll(args: {collectiviteId: number}): Promise<PlanActionRead[]> {
+  async fetchCollectivitePlanActionList(args: {
+    collectiviteId: number;
+  }): Promise<PlanActionRead[]> {
     const results = await planActionReadEndpoint.getBy({
       collectivite_id: args.collectiviteId,
     });
