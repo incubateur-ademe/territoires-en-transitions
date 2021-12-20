@@ -13,7 +13,6 @@ import {
   indicateurResultatStore,
   indicateurObjectifStore,
   indicateurReferentielCommentaireStore,
-  planActionStore,
   indicateurPersonnaliseObjectifStore,
   indicateurPersonnaliseResultatStore,
 } from 'core-logic/api/hybridStores';
@@ -222,14 +221,6 @@ export function Toasters() {
         composer={makeComposer({
           storeSuccess: 'Le commentaire est enregistré',
           storeError: "Le commentaire n'a pas été enregistré",
-        })}
-      />
-
-      <EndpointToaster
-        endpoint={planActionStore.api}
-        composer={makeComposer({
-          storeSuccess: "Le plan d' action est enregistré",
-          storeError: "Le plan d' action n'a pas été enregistré",
         })}
       />
     </>

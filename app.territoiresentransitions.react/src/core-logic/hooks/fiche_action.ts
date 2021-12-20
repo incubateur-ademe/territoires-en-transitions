@@ -2,15 +2,17 @@ import {useEffect, useState} from 'react';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 import {ficheActionReadEndpoint} from 'core-logic/api/endpoints/FicheActionReadEndpoint';
 import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWriteEndpoint';
+import {ficheActionRepository} from 'core-logic/api/repositories/FicheActionRepository';
 
 export const useFicheActionList = (collectiviteId: number) => {
   const [fiches, setFiches] = useState<FicheActionRead[]>([]);
 
   useEffect(() => {
     const fetch = async () => {
-      const fiches = await ficheActionReadEndpoint.getBy({
-        collectivite_id: collectiviteId,
-      });
+      const fiches =
+        await ficheActionRepository.fetchCollectiviteFicheActionList({
+          collectiviteId: collectiviteId,
+        });
       setFiches(fiches);
     };
     ficheActionWriteEndpoint.addListener(fetch);
@@ -28,15 +30,11 @@ export const useFicheAction = (collectiviteId: number, uid: string) => {
 
   useEffect(() => {
     const fetch = async () => {
-      const fiches = await ficheActionReadEndpoint.getBy({
-        collectivite_id: collectiviteId,
-        fiche_action_uid: uid,
+      const fiche = await ficheActionRepository.fetchFicheAction({
+        collectiviteId: collectiviteId,
+        ficheActionUid: uid,
       });
-      if (fiches.length === 0) {
-        setFiche(null);
-      } else {
-        setFiche(fiches[0]!);
-      }
+      setFiche(fiche);
     };
     ficheActionWriteEndpoint.addListener(fetch);
     fetch();

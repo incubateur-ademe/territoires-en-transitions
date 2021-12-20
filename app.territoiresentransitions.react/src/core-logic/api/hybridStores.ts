@@ -243,11 +243,11 @@ export const actionMetaStore = new HybridStore<ActionMetaStorable>({
     new ActionMetaStorable(serialized as ActionMetaInterface),
 });
 
-export const planActionStore = new HybridStore<PlanActionStorable>({
-  host: ENV.backendHost,
-  endpoint: () => `v2/${PlanAction.pathname}/${getCurrentEpciSiren()}`,
-  authorization: defaultAuthorization,
-  serializer: storable => storable,
-  deserializer: serialized =>
-    new PlanActionStorable(serialized as PlanActionInterface),
-});
+// export const planActionStore = new HybridStore<PlanActionStorable>({
+//   host: ENV.backendHost,
+//   endpoint: () => `v2/${PlanAction.pathname}/${getCurrentEpciSiren()}`,
+//   authorization: defaultAuthorization,
+//   serializer: storable => storable,
+//   deserializer: serialized =>
+//     new PlanActionStorable(serialized as PlanActionInterface),
+// });

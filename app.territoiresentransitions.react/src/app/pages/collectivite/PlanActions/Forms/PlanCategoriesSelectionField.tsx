@@ -1,9 +1,8 @@
 import React, {FC, useEffect, useState} from 'react';
 import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
-import {useAllStorables} from 'core-logic/hooks';
+import {useAllStorables, useCollectiviteId} from 'core-logic/hooks';
 import {PlanActionStorable} from 'storables/PlanActionStorable';
-import {planActionStore} from 'core-logic/api/hybridStores';
 import {
   CategoryNode,
   nestPlanCategories,
@@ -12,14 +11,14 @@ import {
   PlanActionStructure,
   PlanActionTyped,
 } from 'types/PlanActionTypedInterface';
-import {Menu, MenuItem, Select} from '@material-ui/core';
+import {Menu, MenuItem} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
 import {PlanCategorieSelection} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import * as R from 'ramda';
-
-type PlanActionStorableTyped = PlanActionStorable & PlanActionStructure;
+import {usePlanActionList} from 'core-logic/hooks/plan_action';
+import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
 
 type LinkedPlanCategoriesFieldProps = {
   ficheUid: string;
@@ -64,14 +63,14 @@ const categoriesToItems = (
  * We use a custom element as mui "Select" does not work with nested components.
  */
 const PlanDropdown = (props: {
-  plan: PlanActionStorable;
+  plan: PlanActionRead;
   onSelect: (categorieUid: string, planUid: string) => void;
   children: React.ReactNode;
 }) => {
   const [opened, setOpened] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
-  const plan = props.plan as PlanActionStorable & PlanActionTyped;
+  const plan = props.plan as PlanActionTyped;
   const categories = nestPlanCategories(plan.categories);
 
   const menuId = plan.uid;
@@ -119,9 +118,8 @@ export const PlanCategoriesSelectionField: FC<
   form: {touched, errors, setFieldValue},
   ...props
 }) => {
-  const plans = useAllStorables<PlanActionStorable>(
-    planActionStore
-  ) as PlanActionStorableTyped[];
+  const collectiviteId = useCollectiviteId()!;
+  const plans = usePlanActionList(collectiviteId) as PlanActionTyped[];
   const [planCategories, setPlanCategories] = useState<
     PlanCategorieSelection[]
   >(field.value as PlanCategorieSelection[]);
@@ -172,7 +170,7 @@ export const PlanCategoriesSelectionField: FC<
   };
 
   // When plan is picked we update the input value.
-  const handlePlanSelection = (selectedPlans: PlanActionTyped[]) => {
+  const handlePlanSelection = (selectedPlans: PlanActionRead[]) => {
     const newValue: PlanCategorieSelection[] = selectedPlans.map(plan => {
       const matchingPlanCategorieInValue = planCategories.find(
         planCategorie => planCategorie.planUid === plan.uid
@@ -188,7 +186,7 @@ export const PlanCategoriesSelectionField: FC<
       setFieldValue(field.name, planCategories);
       setValueUpToDate(true);
     }
-  }, [plans.length, planCategories.length]);
+  }, [plans.length, planCategories.length, valueUpToDate]);
 
   return (
     <fieldset className="block">

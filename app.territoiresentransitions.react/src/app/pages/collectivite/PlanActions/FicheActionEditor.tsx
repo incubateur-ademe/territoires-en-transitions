@@ -6,8 +6,8 @@ import {
 } from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
 import {useCollectiviteId} from 'core-logic/hooks';
-import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWriteEndpoint';
-import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
+import {makeCollectiviteDefaultPlanActionPath} from 'app/paths';
+import {ficheActionRepository} from 'core-logic/api/repositories/FicheActionRepository';
 
 /**
  * This is the main component of FicheActionPage, use to show a fiche.
@@ -22,14 +22,10 @@ const FicheActionEditor = () => {
     return null;
   }
 
-  const saveFiche = async (fiche: FicheActionWrite) => {
-    await ficheActionWriteEndpoint.save(fiche);
-  };
-
-  const save = async (data: FicheActionFormData) => {
-    await saveFiche(data);
+  const onSave = async (data: FicheActionFormData) => {
+    await ficheActionRepository.save(deleteObjectKey(data, 'planCategories')); // Formik object has all ficheActionWrite keys + `planCategories`
     await updatePlansOnFicheSave(data);
-    history.push(`/collectivite/${collectiviteId}/plan_actions`);
+    history.push(makeCollectiviteDefaultPlanActionPath({collectiviteId}));
   };
 
   return (
