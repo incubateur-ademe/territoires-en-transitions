@@ -22,7 +22,6 @@ import {deleteObjectKey} from 'utils/deleteObjectKey';
  */
 const FicheActionCreator = () => {
   const {ficheUid} = useParams<{ficheUid: string}>();
-  const history = useHistory();
   const collectiviteId = useCollectiviteId()!;
   const ficheAction = useFicheAction(collectiviteId, ficheUid);
 

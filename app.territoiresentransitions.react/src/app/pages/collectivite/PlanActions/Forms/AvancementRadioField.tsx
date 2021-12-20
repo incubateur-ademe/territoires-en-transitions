@@ -7,6 +7,7 @@ import {Option, Options} from 'types';
 import {ficheActionAvancementLabels} from 'app/labels';
 import * as R from 'ramda';
 import {Avancement} from 'generated/dataLayer/action_statut_read';
+import {FicheActionAvancement} from 'generated/dataLayer/fiche_action_write';
 
 type AvancementRadioFieldProps = {
   id?: string;
@@ -22,7 +23,7 @@ export const AvancementRadioField: FC<AvancementRadioFieldProps & FieldProps> =
   ({field, form: {setFieldValue}, ...props}) => {
     const htmlId = props.id ?? uuid();
 
-    const avancements: Options<Avancement> = R.values(
+    const avancements: Options<FicheActionAvancement> = R.values(
       R.mapObjIndexed(
         (label, value) => ({value, label}),
         ficheActionAvancementLabels
