@@ -1,4 +1,8 @@
-import {makeCollectiviteTabPath} from 'app/paths';
+import {
+  makeCollectiviteDefaultPlanActionUrl,
+  makeCollectiviteIndicateursUrl,
+  makeCollectiviteReferentielUrl,
+} from 'app/paths';
 import {
   ElsesCollectiviteRead,
   OwnedCollectiviteRead,
@@ -29,27 +33,26 @@ export const SimpleCollectiviteCard = ({
       <div>
         <SimpleCollectiviteCardLink
           label="Plan d'actions"
-          linkTo={makeCollectiviteTabPath({
-            id: collectivite.collectivite_id,
-            tab: 'plans_actions',
+          linkTo={makeCollectiviteDefaultPlanActionUrl({
+            collectiviteId: collectivite.collectivite_id,
           })}
           id={collectivite.collectivite_id}
         />
         <div className="pb-3" />
         <SimpleCollectiviteCardLink
           label="Référentiels"
-          linkTo={makeCollectiviteTabPath({
-            id: collectivite.collectivite_id,
-            tab: 'referentiels',
+          linkTo={makeCollectiviteReferentielUrl({
+            collectiviteId: collectivite.collectivite_id,
+            referentielId: 'eci',
           })}
           id={collectivite.collectivite_id}
         />
         <div className="pb-3" />
         <SimpleCollectiviteCardLink
           label="Indicateurs"
-          linkTo={makeCollectiviteTabPath({
-            id: collectivite.collectivite_id,
-            tab: 'indicateurs',
+          linkTo={makeCollectiviteIndicateursUrl({
+            collectiviteId: collectivite.collectivite_id,
+            indicateurView: 'eci',
           })}
           id={collectivite.collectivite_id}
         />

@@ -5,8 +5,8 @@ import {ActionDescriptionExpandPanel} from 'ui/shared';
 import {ActionReferentielTitle} from './ActionReferentielTitle';
 import {referentielToName} from 'app/labels';
 import {referentielId} from 'utils/actions';
-import {makeCollectiviteActionsPath} from 'app/paths';
 import {currentCollectiviteBloc} from 'core-logic/observables';
+import {makeCollectiviteActionUrl} from 'app/paths';
 
 export const ActionReferentielTitleCard = ({
   action,
@@ -19,9 +19,9 @@ export const ActionReferentielTitleCard = ({
   return (
     <article className="bg-beige my-4">
       <Link
-        to={makeCollectiviteActionsPath({
-          id: collectiviteId!,
-          referentiel,
+        to={makeCollectiviteActionUrl({
+          collectiviteId: collectiviteId!,
+          referentielId: referentiel,
           actionId: action.id,
         })}
         className="LinkedCardHeader"

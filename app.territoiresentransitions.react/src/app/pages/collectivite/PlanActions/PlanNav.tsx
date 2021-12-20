@@ -2,7 +2,7 @@ import {Chip} from '@material-ui/core';
 import {useParams} from 'react-router-dom';
 import {useCollectiviteId} from 'core-logic/hooks';
 import {usePlanActionList} from 'core-logic/hooks/plan_action';
-import {makeCollectivitePlanActionPath} from 'app/paths';
+import {makeCollectivitePlanActionUrl} from 'app/paths';
 
 const PlanNavChip = (props: {
   collectiviteId: number;
@@ -15,7 +15,7 @@ const PlanNavChip = (props: {
       <Chip
         label={props.planNom}
         component="a"
-        href={makeCollectivitePlanActionPath({
+        href={makeCollectivitePlanActionUrl({
           collectiviteId: props.collectiviteId,
           planActionUid: props.planUid,
         })}
