@@ -13,6 +13,9 @@ import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
 import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWriteEndpoint';
 import {useCollectiviteId, useFicheAction} from 'core-logic/hooks';
+import {makeCollectiviteDefaultPlanActionPath} from 'app/paths';
+import {ficheActionRepository} from 'core-logic/api/repositories/FicheActionRepository';
+import {deleteObjectKey} from 'utils/deleteObjectKey';
 
 /**
  * Used to create a fiche, shows FicheActionForm.
@@ -28,6 +31,7 @@ const FicheActionCreator = () => {
   }
 
   const query = useQuery();
+  const history = useHistory();
 
   // handle action_id query parameter, used when the fiche is created from
   // an action.
@@ -54,7 +58,7 @@ const FicheActionCreator = () => {
     uid: uuid(),
     collectivite_id: collectiviteId,
     titre: titre,
-    avancement: 'pas_faite',
+    avancement: 'non_renseigne',
     numerotation: '',
     description: '',
 
@@ -73,14 +77,10 @@ const FicheActionCreator = () => {
     indicateur_personnalise_ids: [],
   };
 
-  const saveFiche = async (fiche: FicheActionWrite) => {
-    await ficheActionWriteEndpoint.save(fiche);
-  };
-
   const save = async (data: FicheActionFormData) => {
-    await saveFiche(data);
+    await ficheActionRepository.save(deleteObjectKey(data, 'planCategories')); // Formik object has all ficheActionWrite keys + `planCategories`
     await updatePlansOnFicheSave(data);
-    history.push(`/collectivite/${collectiviteId}/plan_actions`);
+    history.push(makeCollectiviteDefaultPlanActionPath({collectiviteId}));
   };
 
   return (
