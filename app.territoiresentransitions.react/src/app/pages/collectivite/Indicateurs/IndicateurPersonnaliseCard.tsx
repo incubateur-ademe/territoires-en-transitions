@@ -1,18 +1,16 @@
+import {AnyIndicateurLineChartExpandable} from 'app/pages/collectivite/Indicateurs/AnyIndicateurLineChartExpandable';
+import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
+import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
+import {
+  indicateurObjectifRepository,
+  indicateurResultatRepository,
+} from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {commands} from 'core-logic/commands';
+import {useCollectiviteId} from 'core-logic/hooks';
+// import {useIndicateurValuesForAllYears} from 'core-logic/hooks/indicateurs_values';
 import React from 'react';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
-import {commands} from 'core-logic/commands';
-import {
-  indicateurPersonnaliseResultatStore,
-  indicateurPersonnaliseObjectifStore,
-} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnaliseMetaTypedInterface';
-import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
-import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
-import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
-import {useCollectiviteId} from 'core-logic/hooks';
-import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
-import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
-import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
 import {Editable, Spacer} from 'ui/shared';
 
 const IndicateurPersonnaliseCommentaire = (props: {
@@ -76,12 +74,12 @@ const IndicateurPersonnaliseCardContent = (props: {
       {/*  editable={true}*/}
       {/*/>*/}
       <Spacer />
-      {/*<AnyIndicateurLineChartExpandable*/}
-      {/*  indicateur={props.indicateur}*/}
-      {/*  indicateurId={props.indicateur.uid}*/}
-      {/*  resultatStore={indicateurPersonnaliseResultatStore}*/}
-      {/*  objectifStore={indicateurPersonnaliseObjectifStore}*/}
-      {/*/>*/}
+      {/* <AnyIndicateurLineChartExpandable
+        indicateur={props.indicateur}
+        indicateurId={props.indicateur.uid}
+        resultatRepo={indicateurResultatRepository}
+        objectifRepo={indicateurObjectifRepository}
+      /> */}
     </div>
   );
 };
@@ -110,17 +108,18 @@ export const IndicateurPersonnaliseCard = ({
   hideIfNoValues?: boolean;
 }) => {
   const collectiviteId = useCollectiviteId()!;
-  const resultatValueStorables = useAnyIndicateurValueForAllYears(
-    indicateur.uid,
-    collectiviteId,
-    indicateurPersonnaliseResultatStore
-  );
-  const objectifValueStorables = useAnyIndicateurValueForAllYears(
-    indicateur.uid,
-    collectiviteId,
-    indicateurPersonnaliseObjectifStore
-  );
-
+  // const resultatValueStorables = useIndicateurValuesForAllYears(
+  //   collectiviteId,
+  //   indicateur.uid
+  // indicateurPersonnaliseResultatStore
+  // );
+  // const objectifValueStorables = useIndicateurValuesForAllYears(
+  //   collectiviteId,
+  //   indicateur.uid
+  // indicateurPersonnaliseObjectifStore
+  // );
+  const objectifValueStorables = [];
+  const resultatValueStorables = [];
   if (
     hideIfNoValues &&
     !resultatValueStorables.length &&

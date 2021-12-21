@@ -25,7 +25,7 @@ const AnyIndicateurValueInput = ({
 
   useEffect(() => {
     repo
-      .fetchIndicateurForUidForYear({collectiviteId, indicateurId, year})
+      .fetchIndicateurForIdForYear({collectiviteId, indicateurId, year})
       .then(indicateurValueRead => {
         setInputValue(indicateurValueRead?.valeur || '');
       });

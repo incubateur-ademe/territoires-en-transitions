@@ -4,7 +4,7 @@ import {refToEmoji} from 'utils/refToEmoji';
 import {ReferentielOfIndicateur} from 'types';
 
 export const indicateurIdRegexp =
-  '(?<ref>eci|cae|crte)-(?<number>[0-9]{1,3})(?<literal>.+)?';
+  '(?<ref>eci|cae|crte)_(?<number>[0-9]{1,3})(?<literal>.+)?';
 
 export const isIndicateurRelatedToAction = (
   indicateur: IndicateurReferentiel,
