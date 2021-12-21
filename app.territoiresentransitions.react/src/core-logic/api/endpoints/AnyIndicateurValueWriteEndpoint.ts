@@ -11,7 +11,7 @@ const makeAnyIndicateurValueWriteEndpoint = (
     async _write(
       indicateurValue: AnyIndicateurValueWrite
     ): Promise<PostgrestResponse<AnyIndicateurValueWrite>> {
-      return this._table.upsert([indicateurValue]);
+      return this._table.upsert([indicateurValue]); // {onConflict: 'valeur'}
     }
   }
   return new AnyIndicateurValueWriteEndpoint();

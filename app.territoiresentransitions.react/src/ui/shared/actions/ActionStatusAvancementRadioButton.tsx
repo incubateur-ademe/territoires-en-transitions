@@ -76,7 +76,6 @@ class ActionStatusAvancementRadioButtonBloc {
   }
 
   private setAvancement(avancement: Avancement) {
-    console.log(this.actionId, avancement);
     this.avancement = avancement;
   }
 
@@ -109,7 +108,6 @@ class ActionStatusAvancementRadioButtonBloc {
       .then(fetched => {
         if (fetched) {
           this.setAvancement(fetched.avancement);
-          console.log('fetched : ', fetched);
         }
       });
   }

@@ -66,7 +66,7 @@ const IndicateurPersonnaliseCardContent = (props: {
     <div>
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
-
+      <h1>IMPLEMENT ME !! </h1>
       {/*<AnyIndicateurEditableExpandPanel*/}
       {/*  repo={indicateurObjectifRepository}*/}
       {/*  indicateurUid={props.indicateur.uid}*/}

@@ -16,15 +16,29 @@ describe('Indicateur-resultat write endpoint', () => {
       indicateur_id: 'cae_10',
       collectivite_id: 1,
     };
-    const result = await endpoint.save(indicateurValue);
+    const insertResult = await endpoint.save(indicateurValue);
 
-    expect(result).not.toBeNull();
-    expect(result).toEqual(
+    expect(insertResult).not.toBeNull();
+    expect(insertResult).toEqual(
       expect.objectContaining({
         annee: 2020,
         valeur: 12.4,
         indicateur_id: 'cae_10',
         collectivite_id: 1,
+      })
+    );
+
+    // Save again (update)
+    const updateResult = await endpoint.save({
+      annee: 2020,
+      valeur: 18,
+      indicateur_id: 'cae_10',
+      collectivite_id: 1,
+    });
+    expect(updateResult).not.toBeNull();
+    expect(insertResult).toEqual(
+      expect.objectContaining({
+        valeur: 18,
       })
     );
   });

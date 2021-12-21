@@ -1,13 +1,24 @@
-import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
+import {
+  DataLayerReadCachedEndpoint,
+  DataLayerWriteEndpoint,
+} from 'core-logic/api/dataLayerEndpoint';
 import {PostgrestResponse} from '@supabase/supabase-js';
-import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
+import {
+  AnyIndicateurValueRead,
+  AnyIndicateurValueWrite,
+} from 'generated/dataLayer/any_indicateur_value_write';
+import {
+  indicateurObjectifWriteEndpoint,
+  indicateurResultatWriteEndpoint,
+} from 'core-logic/api/endpoints/AnyIndicateurValueWriteEndpoint';
 
 export interface AnyIndicateurValueGetParams {
   collectiviteId: number;
 }
 
 const makeAnyIndicateurValueReadEndpoint = (
-  table_name: string
+  table_name: string,
+  writeEndpoint: DataLayerWriteEndpoint<AnyIndicateurValueWrite>
 ): DataLayerReadCachedEndpoint<
   AnyIndicateurValueRead,
   AnyIndicateurValueGetParams
@@ -20,21 +31,26 @@ const makeAnyIndicateurValueReadEndpoint = (
     async _read(
       getParams: AnyIndicateurValueGetParams
     ): Promise<PostgrestResponse<AnyIndicateurValueRead>> {
-      console.log('AnyIndicateurValueReadEndpoint calls datalayer');
       return this._table.eq('collectivite_id', getParams.collectiviteId);
     }
   }
-  return new AnyIndicateurValueReadEndpoint([]);
+  return new AnyIndicateurValueReadEndpoint([writeEndpoint]);
 };
 
 export const makeNewIndicateurResultatReadEndpoint = () =>
-  makeAnyIndicateurValueReadEndpoint('indicateur_resultat');
+  makeAnyIndicateurValueReadEndpoint(
+    'indicateur_resultat',
+    indicateurResultatWriteEndpoint
+  );
 
 export const indicateurResultatReadEndpoint =
   makeNewIndicateurResultatReadEndpoint();
 
 export const makeNewIndicateurObjectifReadEndpoint = () =>
-  makeAnyIndicateurValueReadEndpoint('indicateur_objectif');
+  makeAnyIndicateurValueReadEndpoint(
+    'indicateur_objectif',
+    indicateurObjectifWriteEndpoint
+  );
 
 export const indicateurObjectifReadEndpoint =
   makeNewIndicateurObjectifReadEndpoint();
