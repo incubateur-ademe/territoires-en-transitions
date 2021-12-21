@@ -14,7 +14,6 @@ import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_val
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
 import {Editable, Spacer} from 'ui/shared';
-import {indicateurObjectifReadEndpoint} from 'core-logic/api/endpoints/AnyIndicateurValueReadEndpoint';
 
 const IndicateurPersonnaliseCommentaire = (props: {
   indicateur: IndicateurPersonnaliseTypedInterface;
@@ -70,19 +69,19 @@ const IndicateurPersonnaliseCardContent = (props: {
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
 
-      <AnyIndicateurEditableExpandPanel
-        readEndpoint={indicateurObjectifReadEndpoint}
-        indicateurId={props.indicateur.id}
-        title="Objectifs"
-        editable={true}
-      />
+      {/*<AnyIndicateurEditableExpandPanel*/}
+      {/*  repo={indicateurObjectifRepository}*/}
+      {/*  indicateurUid={props.indicateur.uid}*/}
+      {/*  title="Objectifs"*/}
+      {/*  editable={true}*/}
+      {/*/>*/}
       <Spacer />
-      <AnyIndicateurLineChartExpandable
-        indicateur={props.indicateur}
-        indicateurId={props.indicateur.id}
-        resultatStore={indicateurPersonnaliseResultatStore}
-        objectifStore={indicateurPersonnaliseObjectifStore}
-      />
+      {/*<AnyIndicateurLineChartExpandable*/}
+      {/*  indicateur={props.indicateur}*/}
+      {/*  indicateurId={props.indicateur.uid}*/}
+      {/*  resultatStore={indicateurPersonnaliseResultatStore}*/}
+      {/*  objectifStore={indicateurPersonnaliseObjectifStore}*/}
+      {/*/>*/}
     </div>
   );
 };
@@ -129,14 +128,14 @@ export const IndicateurPersonnaliseCard = ({
   )
     return null;
   return (
-    <AnyIndicateurCard
-      headerTitle={
-        <IndicateurPersonnaliseHeaderTitle indicateur={indicateur} />
-      }
-      indicateurId={indicateur.uid}
-      indicateurResultatStore={indicateurPersonnaliseResultatStore}
-    >
-      <IndicateurPersonnaliseCardContent indicateur={indicateur} />
-    </AnyIndicateurCard>
+    // <AnyIndicateurCard
+    //   headerTitle={
+    //     <IndicateurPersonnaliseHeaderTitle indicateur={indicateur} />
+    //   }
+    //   indicateurUid={indicateur.uid}
+    //   indicateurResultatStore={indicateurPersonnaliseResultatStore}
+    // >
+    <IndicateurPersonnaliseCardContent indicateur={indicateur} />
+    // </AnyIndicateurCard>
   );
 };

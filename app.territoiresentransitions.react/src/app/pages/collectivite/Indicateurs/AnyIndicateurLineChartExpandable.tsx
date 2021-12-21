@@ -152,7 +152,7 @@ export const AnyIndicateurLineChartExpandable = (props: {
     <details open>
       <summary className="title">Graphique</summary>
       <AnyIndicateurLineChart
-        indicateurUid={props.indicateur.id}
+        indicateurUid={props.indicateur.uid}
         unit={props.indicateur.unite}
         title={props.indicateur.nom}
         resultatStore={props.resultatStore}
