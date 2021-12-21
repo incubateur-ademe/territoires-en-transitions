@@ -42,7 +42,7 @@ export function categorizeAndSortFiches(
   categories.sort((a, b) => compareIndexes(a.nom, b.nom));
   categories.push(defaultDisplayCategorie);
   // step 2: categorize
-  const categorized = categories.map((categorie: Categorie) => {
+  return categories.map((categorie: Categorie) => {
     // step 2a: find fiches
     const fiches: FicheActionRead[] = [];
     for (const {fiche_uid} of fichesByCategory.filter(
@@ -59,19 +59,6 @@ export function categorizeAndSortFiches(
       fiches: fiches,
     };
   });
-  // Step 3: find orphans.
-  const adoptedFicheUids: string[] = [];
-  for (const cat of categorized) {
-    for (const fiche of cat.fiches) {
-      adoptedFicheUids.push(fiche.uid);
-    }
-  }
-  for (const fiche of allFiches) {
-    if (!adoptedFicheUids.includes(fiche.uid)) {
-      categorized[categorized.length - 1]!.fiches.push(fiche);
-    }
-  }
-  return categorized;
 }
 
 /**
