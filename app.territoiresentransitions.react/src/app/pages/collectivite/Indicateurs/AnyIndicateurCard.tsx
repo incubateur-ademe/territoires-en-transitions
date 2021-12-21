@@ -1,7 +1,4 @@
 import React, {useState} from 'react';
-import {AnyIndicateurValueStorable} from 'storables';
-
-import {HybridStore} from 'core-logic/api/hybridStore';
 import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {Chevron} from 'ui/shared/Chevron';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
