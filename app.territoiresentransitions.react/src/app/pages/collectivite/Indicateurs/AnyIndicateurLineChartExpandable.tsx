@@ -1,12 +1,13 @@
 import {Line} from 'react-chartjs-2';
-import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 import {useCollectiviteId} from 'core-logic/hooks';
-import {HybridStore} from 'core-logic/api/hybridStore';
-import {AnyIndicateurValueStorable} from 'storables';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import type {ChartData, ChartDataset} from 'chart.js';
 import {Spacer} from 'ui/shared';
+import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
+import {useIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values_v2';
+import {useEffect, useState} from 'react';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
@@ -15,16 +16,16 @@ const range = (start: number, end: number) => {
 
 const getDataset = (
   yearRange: number[],
-  indicateurValues: AnyIndicateurValueStorable[],
+  indicateurValues: AnyIndicateurValueRead[],
   label: string,
   color: string,
   kwargs?: Partial<ChartDataset>
 ): ChartDataset => {
   const data = yearRange.map(year => {
     const storableForYear = indicateurValues.find(
-      storable => storable.year === year
+      values => values.annee === year
     );
-    return storableForYear ? storableForYear.value : NaN;
+    return storableForYear ? storableForYear.valeur : NaN;
   });
   const datastet = {
     label,
@@ -45,38 +46,66 @@ const getDataset = (
 };
 
 const AnyIndicateurLineChart = (props: {
-  indicateurUid: string;
+  indicateurId: string;
   unit: string;
   title: string;
-  resultatStore: HybridStore<AnyIndicateurValueStorable>;
-  objectifStore: HybridStore<AnyIndicateurValueStorable>;
+  resultatRepo: AnyIndicateurRepository;
+  objectifRepo: AnyIndicateurRepository;
 }) => {
   const collectiviteId = useCollectiviteId()!;
-  const resultatValueStorables = useAnyIndicateurValueForAllYears(
-    props.indicateurUid,
-    collectiviteId,
-    props.resultatStore
-  );
-  const objectifValueStorables = useAnyIndicateurValueForAllYears(
-    props.indicateurUid,
-    collectiviteId,
-    props.objectifStore
-  );
 
-  if (!resultatValueStorables.length && !objectifValueStorables.length)
+  const resultatValues = useIndicateurValuesForAllYears({
+    collectiviteId,
+    indicateurId: props.indicateurId,
+  });
+  const objectifValues = useIndicateurValuesForAllYears({
+    collectiviteId,
+    indicateurId: props.indicateurId,
+  });
+
+  // // Hook for indicateur resultat values
+  // const [resultatValues, setResultatValues] = useState<
+  //   AnyIndicateurValueRead[]
+  // >([]);
+  // useEffect(() => {
+  //   props.resultatRepo
+  //     .fetchIndicateurForId({
+  //       indicateurId: props.indicateurId,
+  //       collectiviteId,
+  //     })
+  //     .then(fetchedResultatValues => {
+  //       setResultatValues(fetchedResultatValues);
+  //     });
+  // });
+
+  // // Hook for indicateur objectif values
+  // const [objectifValues, setObjectifValues] = useState<
+  //   AnyIndicateurValueRead[]
+  // >([]);
+  // useEffect(() => {
+  //   console.log('useEffect in AnyIndicateurLineChart');
+  //   props.objectifRepo
+  //     .fetchIndicateurForId({
+  //       indicateurId: props.indicateurId,
+  //       collectiviteId,
+  //     })
+  //     .then(fetchedObjectifValues => {
+  //       setObjectifValues(fetchedObjectifValues);
+  //     });
+  // });
+
+  if (!resultatValues.length && !objectifValues.length)
     return <>Aucune donnée n'est renseignée.</>;
 
   const firstYear = Math.min(
-    resultatValueStorables.length ? resultatValueStorables[0].year : Infinity,
-    objectifValueStorables.length ? objectifValueStorables[0].year : Infinity
+    resultatValues.length ? resultatValues[0].annee : Infinity,
+    objectifValues.length ? objectifValues[0].annee : Infinity
   );
   const lastYear = Math.max(
-    resultatValueStorables.length
-      ? resultatValueStorables[resultatValueStorables.length - 1].year
+    resultatValues.length
+      ? resultatValues[resultatValues.length - 1].annee
       : -1,
-    objectifValueStorables.length
-      ? objectifValueStorables[objectifValueStorables.length - 1].year
-      : -1
+    objectifValues.length ? objectifValues[objectifValues.length - 1].annee : -1
   );
 
   const yearRange = range(firstYear, lastYear);
@@ -85,13 +114,13 @@ const AnyIndicateurLineChart = (props: {
   const data: ChartData = {
     labels,
     datasets: [
-      getDataset(yearRange, resultatValueStorables, 'Résultats', '#000091'),
-      getDataset(yearRange, objectifValueStorables, 'Objectifs', '#6a6a6a', {
+      getDataset(yearRange, resultatValues, 'Résultats', '#000091'),
+      getDataset(yearRange, objectifValues, 'Objectifs', '#6a6a6a', {
         borderDash: [2, 3],
       }),
     ],
   };
-  const canvasId = `chart-${props.indicateurUid}`;
+  const canvasId = `chart-${props.indicateurId}`;
   return (
     <div>
       <div className="w-2/3 h-72 pb-7">
@@ -145,18 +174,18 @@ const AnyIndicateurLineChart = (props: {
 export const AnyIndicateurLineChartExpandable = (props: {
   indicateur: IndicateurPersonnaliseStorable | IndicateurReferentiel;
   indicateurId: string; // TODO : this should be infered by props.indicateur but there's a mikmak with uid (for indic perso) and id (for indic ref) ...
-  resultatStore: HybridStore<AnyIndicateurValueStorable>;
-  objectifStore: HybridStore<AnyIndicateurValueStorable>;
+  resultatRepo: AnyIndicateurRepository;
+  objectifRepo: AnyIndicateurRepository;
 }) => (
   <div className="CrossExpandPanel">
     <details open>
       <summary className="title">Graphique</summary>
       <AnyIndicateurLineChart
-        indicateurUid={props.indicateur.uid}
+        indicateurId={props.indicateur.uid}
         unit={props.indicateur.unite}
         title={props.indicateur.nom}
-        resultatStore={props.resultatStore}
-        objectifStore={props.objectifStore}
+        resultatRepo={props.resultatRepo}
+        objectifRepo={props.objectifRepo}
       />
     </details>
   </div>

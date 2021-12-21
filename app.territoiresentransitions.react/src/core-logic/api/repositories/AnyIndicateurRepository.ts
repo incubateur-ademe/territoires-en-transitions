@@ -42,7 +42,7 @@ export class AnyIndicateurRepository {
     return this.writeEndpoint.save(anyIndicateur);
   }
 
-  async fetchIndicateurForUidForYear(args: {
+  async fetchIndicateurForIdForYear(args: {
     collectiviteId: number;
     indicateurId: string;
     year: number;
@@ -56,6 +56,17 @@ export class AnyIndicateurRepository {
           indicateurValue.annee === args.year &&
           indicateurValue.indicateur_id === args.indicateurId
       ) ?? null
+    );
+  }
+  async fetchIndicateurForId(args: {
+    collectiviteId: number;
+    indicateurId: string;
+  }): Promise<AnyIndicateurValueRead[]> {
+    const allIndicateurValues = await this.readEndpoint.getBy({
+      collectiviteId: args.collectiviteId,
+    });
+    return allIndicateurValues.filter(
+      indicateurValue => indicateurValue.indicateur_id === args.indicateurId
     );
   }
 }

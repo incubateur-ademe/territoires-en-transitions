@@ -4,13 +4,9 @@ import {commands} from 'core-logic/commands';
 import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
-import {
-  indicateurObjectifStore,
-  indicateurResultatStore,
-} from 'core-logic/api/hybridStores';
+
 import {useCollectiviteId} from 'core-logic/hooks';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
-import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_values';
 import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {Editable} from 'ui/shared';
@@ -76,13 +72,12 @@ export const IndicateurReferentielCardContent = (props: {
         title="Objectifs"
         editable={true}
       />
-
-      {/*<AnyIndicateurLineChartExpandable*/}
-      {/*  indicateur={props.indicateur}*/}
-      {/*  indicateurId={props.indicateur.id}*/}
-      {/*  resultatStore={indicateurResultatStore}*/}
-      {/*  objectifStore={indicateurObjectifStore}*/}
-      {/*/>*/}
+      <AnyIndicateurLineChartExpandable
+        indicateur={props.indicateur}
+        indicateurId={props.indicateur.uid}
+        resultatRepo={indicateurResultatRepository}
+        objectifRepo={indicateurObjectifRepository}
+      />
     </div>
   );
 };
@@ -100,16 +95,16 @@ export const IndicateurReferentielCard = ({
   hideIfNoValues?: boolean;
 }) => {
   const collectiviteId = useCollectiviteId()!;
-  const resultatValueStorables = useAnyIndicateurValueForAllYears(
-    indicateur.uid,
-    collectiviteId,
-    indicateurResultatStore
-  );
-  const objectifValueStorables = useAnyIndicateurValueForAllYears(
-    indicateur.uid,
-    collectiviteId,
-    indicateurObjectifStore
-  );
+  const objectifValueStorables = [];
+  const resultatValueStorables = [];
+  // const resultatValueStorables = useIndicateurValuesForAllYears(
+  //   collectiviteId,
+  //   indicateur.uid
+  // );
+  // const objectifValueStorables = useIndicateurValuesForAllYears(
+  //   collectiviteId,
+  //   indicateur.uid
+  // );
 
   if (
     hideIfNoValues &&
