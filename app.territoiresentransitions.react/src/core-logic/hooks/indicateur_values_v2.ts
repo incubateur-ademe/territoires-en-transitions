@@ -14,6 +14,7 @@ export const useIndicateurValuesForAllYears = ({
 
   useEffect(() => {
     const fetch = async () => {
+      console.log('hoooook : fetch !! ');
       const fetched = await indicateurResultatRepository.fetchIndicateurForId({
         collectiviteId,
         indicateurId,
@@ -25,28 +26,7 @@ export const useIndicateurValuesForAllYears = ({
     return () => {
       indicateurResultatRepository.writeEndpoint.removeListener(fetch);
     };
-  });
+  }, [indicateurValuesForAllYears.length]);
   console.log('indicateurValuesForAllYears : ', indicateurValuesForAllYears);
   return indicateurValuesForAllYears;
 };
-
-// export const useFicheAction = (collectiviteId: number, uid: string) => {
-//   const [fiche, setFiche] = useState<FicheActionRead | null>(null);
-
-//   useEffect(() => {
-//     const fetch = async () => {
-//       const fiche = await indicateurRepo.fetchFicheAction({
-//         collectiviteId: collectiviteId,
-//         ficheActionUid: uid,
-//       });
-//       setFiche(fiche);
-//     };
-//     ficheActionWriteEndpoint.addListener(fetch);
-//     fetch();
-//     return () => {
-//       ficheActionWriteEndpoint.removeListener(fetch);
-//     };
-//   });
-
-//   return fiche;
-// };
