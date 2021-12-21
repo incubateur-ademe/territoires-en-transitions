@@ -20,6 +20,7 @@ const makeAnyIndicateurValueReadEndpoint = (
     async _read(
       getParams: AnyIndicateurValueGetParams
     ): Promise<PostgrestResponse<AnyIndicateurValueRead>> {
+      console.log('AnyIndicateurValueReadEndpoint calls datalayer');
       return this._table.eq('collectivite_id', getParams.collectiviteId);
     }
   }

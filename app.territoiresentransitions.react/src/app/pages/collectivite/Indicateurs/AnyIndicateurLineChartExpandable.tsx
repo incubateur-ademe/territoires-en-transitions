@@ -7,7 +7,6 @@ import {Spacer} from 'ui/shared';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
 import {useIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values_v2';
-import {useEffect, useState} from 'react';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
@@ -62,37 +61,6 @@ const AnyIndicateurLineChart = (props: {
     collectiviteId,
     indicateurId: props.indicateurId,
   });
-
-  // // Hook for indicateur resultat values
-  // const [resultatValues, setResultatValues] = useState<
-  //   AnyIndicateurValueRead[]
-  // >([]);
-  // useEffect(() => {
-  //   props.resultatRepo
-  //     .fetchIndicateurForId({
-  //       indicateurId: props.indicateurId,
-  //       collectiviteId,
-  //     })
-  //     .then(fetchedResultatValues => {
-  //       setResultatValues(fetchedResultatValues);
-  //     });
-  // });
-
-  // // Hook for indicateur objectif values
-  // const [objectifValues, setObjectifValues] = useState<
-  //   AnyIndicateurValueRead[]
-  // >([]);
-  // useEffect(() => {
-  //   console.log('useEffect in AnyIndicateurLineChart');
-  //   props.objectifRepo
-  //     .fetchIndicateurForId({
-  //       indicateurId: props.indicateurId,
-  //       collectiviteId,
-  //     })
-  //     .then(fetchedObjectifValues => {
-  //       setObjectifValues(fetchedObjectifValues);
-  //     });
-  // });
 
   if (!resultatValues.length && !objectifValues.length)
     return <>Aucune donnée n'est renseignée.</>;

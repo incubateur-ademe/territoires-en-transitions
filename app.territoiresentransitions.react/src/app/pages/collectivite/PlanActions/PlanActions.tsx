@@ -17,10 +17,7 @@ import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaul
 import {LazyDetailsWithChevron} from 'ui/shared/LazyDetails';
 import {usePlanAction} from 'core-logic/hooks/plan_action';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
-import {
-  makeCollectiviteNouvelleFicheUrl,
-  makeCollectivitePlanActionUrl,
-} from 'app/paths';
+import {makeCollectiviteNouvelleFicheUrl} from 'app/paths';
 
 /**
  * The title of a category
