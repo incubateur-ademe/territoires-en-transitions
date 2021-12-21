@@ -7,8 +7,8 @@ import React, {useState} from 'react';
 import {IconButton} from '@material-ui/core';
 import {LabeledTextInput} from 'ui';
 import {v4 as uuid} from 'uuid';
-import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
 import {planActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteEndpoint';
+import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
 
 /**
  * A title that is editable in place, as the title display is replaced with an
@@ -17,6 +17,7 @@ import {planActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteE
 const InlineEditableTitle = (props: {
   text: string;
   onSave: (text: string) => void;
+  remove?: () => void;
   level: number;
   // textClass?: string;
   onStateChange?: (editing: boolean) => void;
@@ -44,6 +45,18 @@ const InlineEditableTitle = (props: {
           >
             <div className="fr-fi-edit-fill" />
           </IconButton>
+
+          {props.remove !== undefined && (
+            <IconButton
+              aria-label="supprimer"
+              onClick={e => {
+                e.preventDefault();
+                props.remove!();
+              }}
+            >
+              <div className="fr-fi-delete-fill" />
+            </IconButton>
+          )}
         </>
       )}
       {editing && (
@@ -82,6 +95,7 @@ function EditableCategoryTitle(props: {
   level: number;
   update: (categorie: Categorie) => void;
   add?: (categorie: Categorie) => void;
+  remove?: (categorie: Categorie) => void;
 }) {
   const [editing, setEditing] = useState<boolean>(false);
   const [adding, setAdding] = useState<boolean>(false);
@@ -97,6 +111,13 @@ function EditableCategoryTitle(props: {
               props.categorie.nom = text;
               props.update(props.categorie);
             }}
+            remove={
+              props.remove
+                ? () => {
+                    props.remove!(props.categorie);
+                  }
+                : undefined
+            }
             text={props.categorie.nom}
             onStateChange={setEditing}
             level={props.level}
@@ -143,6 +164,7 @@ function EditableCategoryLevel(props: {
   nodes: CategoryNode[];
   update: (categorie: Categorie) => void;
   add: (categorie: Categorie) => void;
+  remove: (categorie: Categorie) => void;
   level?: number;
 }) {
   const level = props.level ?? 0;
@@ -155,14 +177,15 @@ function EditableCategoryLevel(props: {
               categorie={node.categorie}
               update={props.update}
               add={level < 2 ? props.add : undefined}
+              remove={node.children.length > 0 ? undefined : props.remove}
               level={level}
             />
-
             {node.children && (
               <div className="ml-5">
                 <EditableCategoryLevel
                   nodes={node.children}
                   update={props.update}
+                  remove={props.remove}
                   add={props.add}
                   level={level + 1}
                 />
@@ -239,11 +262,42 @@ export const PlanEditionForm = (props: {plan: PlanActionRead}) => {
           add={(categorie: Categorie) => {
             const plan = props.plan;
             plan.categories.push(categorie);
-            planActionWriteEndpoint.save(props.plan);
+            planActionWriteEndpoint.save(plan);
+          }}
+          remove={(categorie: Categorie) => {
+            if (confirm(categoryDeletionMessage(categorie))) {
+              const plan = props.plan;
+              plan.categories = plan.categories.filter(
+                (c: Categorie) => c.uid !== categorie.uid
+              );
+              plan.fiches_by_category = plan.fiches_by_category.map(
+                (fc: {
+                  category_uid?: string | undefined;
+                  fiche_uid: string;
+                }) => {
+                  if (fc.category_uid === categorie.uid) {
+                    return {fiche_uid: fc.fiche_uid};
+                  }
+                  return {
+                    fiche_uid: fc.fiche_uid,
+                    category_uid: fc.category_uid,
+                  };
+                }
+              );
+              planActionWriteEndpoint.save(plan);
+            }
           }}
           level={1}
         />
       </div>
     </div>
+  );
+};
+
+const categoryDeletionMessage = (categorie: Categorie) => {
+  return (
+    `Supprimer la catégorie ${categorie.nom}.\n\n` +
+    `Les fiches appartenant à ${categorie.nom} ou a ses sous catégories seront ` +
+    'rattachées à la catégorie "Fiches actions non classées".'
   );
 };
