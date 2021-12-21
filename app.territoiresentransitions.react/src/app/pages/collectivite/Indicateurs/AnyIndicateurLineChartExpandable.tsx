@@ -4,9 +4,13 @@ import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import type {ChartData, ChartDataset} from 'chart.js';
 import {Spacer} from 'ui/shared';
-import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {
+  AnyIndicateurRepository,
+  indicateurObjectifRepository,
+  indicateurResultatRepository,
+} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
-import {useIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values_v2';
+import {useIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
@@ -56,10 +60,12 @@ const AnyIndicateurLineChart = (props: {
   const resultatValues = useIndicateurValuesForAllYears({
     collectiviteId,
     indicateurId: props.indicateurId,
+    repo: indicateurResultatRepository,
   });
   const objectifValues = useIndicateurValuesForAllYears({
     collectiviteId,
     indicateurId: props.indicateurId,
+    repo: indicateurObjectifRepository,
   });
 
   if (!resultatValues.length && !objectifValues.length)

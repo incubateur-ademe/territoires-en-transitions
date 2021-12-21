@@ -1,32 +1,32 @@
-import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
 import {useEffect, useState} from 'react';
 
-export const useIndicateurValuesForAllYears = ({
+export const useAnyIndicateurValuesForAllYears = ({
   collectiviteId,
   indicateurId,
+  repo,
 }: {
   collectiviteId: number;
   indicateurId: string;
+  repo: AnyIndicateurRepository;
 }) => {
   const [indicateurValuesForAllYears, setIndicateurValuesForAllYears] =
     useState<AnyIndicateurValueRead[]>([]);
 
   useEffect(() => {
     const fetch = async () => {
-      console.log('hoooook : fetch !! ');
-      const fetched = await indicateurResultatRepository.fetchIndicateurForId({
+      const fetched = await repo.fetchIndicateurForId({
         collectiviteId,
         indicateurId,
       });
       setIndicateurValuesForAllYears(fetched);
     };
-    indicateurResultatRepository.writeEndpoint.addListener(fetch);
+    repo.writeEndpoint.addListener(fetch);
     fetch();
     return () => {
-      indicateurResultatRepository.writeEndpoint.removeListener(fetch);
+      repo.writeEndpoint.removeListener(fetch);
     };
-  }, [indicateurValuesForAllYears.length]);
-  console.log('indicateurValuesForAllYears : ', indicateurValuesForAllYears);
+  }, [JSON.stringify(indicateurValuesForAllYears)]);
   return indicateurValuesForAllYears;
 };

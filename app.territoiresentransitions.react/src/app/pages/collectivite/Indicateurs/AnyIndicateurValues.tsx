@@ -31,7 +31,7 @@ const AnyIndicateurValueInput = ({
       });
   }, []);
 
-  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const convertToFloatAndStore = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
 
     const floatValue = parseFloat(inputValue.replace(',', '.'));
@@ -42,7 +42,7 @@ const AnyIndicateurValueInput = ({
       annee: year,
     });
 
-    setInputValue(floatValue ? floatValue.toString() : '');
+    setInputValue(!isNaN(floatValue) ? floatValue.toString() : '');
   };
 
   return (
@@ -53,7 +53,10 @@ const AnyIndicateurValueInput = ({
           borderColor === 'blue' ? 'border-bf500' : 'border-gray-500'
         }`}
         value={inputValue}
-        onChange={handleChange}
+        onChange={(event: React.FormEvent<HTMLInputElement>) =>
+          setInputValue(event.currentTarget.value)
+        }
+        onBlur={convertToFloatAndStore}
       />
     </label>
   );
