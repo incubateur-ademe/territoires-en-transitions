@@ -19,6 +19,7 @@ const makeAnyIndicateurValueWriteEndpoint = (
 
 export const makeNewIndicateurResultatWriteEndpoint = () =>
   makeAnyIndicateurValueWriteEndpoint('indicateur_resultat');
+
 export const indicateurResultatWriteEndpoint =
   makeNewIndicateurResultatWriteEndpoint();
 

@@ -13,7 +13,7 @@ describe('Indicateur-resultat write endpoint', () => {
     const indicateurValue: AnyIndicateurValueWrite = {
       annee: 2020,
       valeur: 12.4,
-      indicateur_id: 'cae_10',
+      indicateur_id: 'cae_8',
       collectivite_id: 1,
     };
     const result = await endpoint.save(indicateurValue);
@@ -23,7 +23,7 @@ describe('Indicateur-resultat write endpoint', () => {
       expect.objectContaining({
         annee: 2020,
         valeur: 12.4,
-        indicateur_id: 'cae_10',
+        indicateur_id: 'cae_8',
         collectivite_id: 1,
       })
     );
