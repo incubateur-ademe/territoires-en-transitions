@@ -5,14 +5,13 @@ describe('Indicateur-resultat reading endpoint should retrieve data-layer defaul
   const endpoint = makeNewIndicateurResultatReadEndpoint();
 
   it(
-    'Retrieves at least one resutat when collectivite_id and indicateur_id with resultat' +
+    'Retrieves at least one resutat when collectivite_id with resultat' +
       ' are given',
     async () => {
       const results = await endpoint.getBy({
         collectiviteId: 1,
-        indicateurId: 'cae_8',
       });
-      expect(results.length).toBeGreaterThanOrEqual(1);
+      expect(results).toHaveLength(2);
       expect(results[0]).toEqual(
         expect.objectContaining({
           indicateur_id: 'cae_8',
@@ -29,7 +28,6 @@ describe('Indicateur-resultat reading endpoint should retrieve data-layer defaul
     async () => {
       const results = await endpoint.getBy({
         collectiviteId: 2,
-        indicateurId: 'cae_8',
       });
       expect(results.length).toEqual(0);
     }
