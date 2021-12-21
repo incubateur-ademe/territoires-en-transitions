@@ -1,10 +1,5 @@
-import {AnyIndicateurLineChartExpandable} from 'app/pages/collectivite/Indicateurs/AnyIndicateurLineChartExpandable';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
-import {
-  indicateurObjectifRepository,
-  indicateurResultatRepository,
-} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {commands} from 'core-logic/commands';
 import {useCollectiviteId} from 'core-logic/hooks';
 // import {useIndicateurValuesForAllYears} from 'core-logic/hooks/indicateurs_values';

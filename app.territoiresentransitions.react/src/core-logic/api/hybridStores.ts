@@ -27,55 +27,12 @@ import {
   ActionStatusStorable,
   ActionMetaStorable,
   ActionReferentielScoreStorable,
-  AnyIndicateurValueStorable,
   EpciStorable,
   IndicateurPersonnaliseStorable,
   IndicateurReferentielCommentaireStorable,
 } from 'storables';
 
 export const defaultAuthorization = () => 'Bearer';
-
-export const indicateurResultatStore =
-  new HybridStore<AnyIndicateurValueStorable>({
-    host: ENV.backendHost,
-    endpoint: () => `v2/indicateur_resultat/${getCurrentEpciSiren()}`,
-    authorization: defaultAuthorization,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
-  });
-
-export const indicateurObjectifStore =
-  new HybridStore<AnyIndicateurValueStorable>({
-    host: ENV.backendHost,
-    endpoint: () => `v2/indicateur_objectif/${getCurrentEpciSiren()}`,
-    authorization: defaultAuthorization,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
-  });
-
-export const indicateurPersonnaliseResultatStore =
-  new HybridStore<AnyIndicateurValueStorable>({
-    host: ENV.backendHost,
-    endpoint: () =>
-      `v2/indicateur_personnalise_resultat/${getCurrentEpciSiren()}`,
-    authorization: defaultAuthorization,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
-  });
-
-export const indicateurPersonnaliseObjectifStore =
-  new HybridStore<AnyIndicateurValueStorable>({
-    host: ENV.backendHost,
-    endpoint: () =>
-      `v2/indicateur_personnalise_objectif/${getCurrentEpciSiren()}`,
-    authorization: defaultAuthorization,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
-  });
 
 export const actionStatusStore = new HybridStore<ActionStatusStorable>({
   host: ENV.backendHost,

@@ -1,10 +1,6 @@
 import {Storable} from './storable';
+import {IndicateurPersonnaliseInterface} from 'generated/models';
 import {
-  AnyIndicateurValueInterface,
-  IndicateurPersonnaliseInterface,
-} from 'generated/models';
-import {
-  AnyIndicateurValueStorable,
   UtilisateurConnecteLocalStorable,
   IndicateurPersonnaliseStorable,
   UtilisateurConnecteInterface,
@@ -144,14 +140,6 @@ export const indicateurPersonnaliseStore =
       new IndicateurPersonnaliseStorable(
         serialized as IndicateurPersonnaliseInterface
       ),
-  });
-
-export const indicateurPersonnaliseResultatStore =
-  new LocalStore<AnyIndicateurValueStorable>({
-    pathname: AnyIndicateurValueStorable.pathname,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new AnyIndicateurValueStorable(serialized as AnyIndicateurValueInterface),
   });
 
 export const utilisateurConnecteStore =

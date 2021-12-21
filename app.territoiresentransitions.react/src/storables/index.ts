@@ -1,4 +1,3 @@
-export * from './AnyIndicateurStorable';
 export * from './ActionStatusStorable';
 export * from './ActionReferentielScoreStorable';
 export * from './IndicateurReferentielCommentaireStorable';
