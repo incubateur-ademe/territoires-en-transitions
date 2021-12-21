@@ -21,3 +21,9 @@ export const makeNewIndicateurResultatWriteEndpoint = () =>
   makeAnyIndicateurValueWriteEndpoint('indicateur_resultat');
 export const indicateurResultatWriteEndpoint =
   makeNewIndicateurResultatWriteEndpoint();
+
+export const makeNewIndicateurObjectifWriteEndpoint = () =>
+  makeAnyIndicateurValueWriteEndpoint('indicateur_objectif');
+
+export const indicateurObjectifWriteEndpoint =
+  makeNewIndicateurObjectifWriteEndpoint();

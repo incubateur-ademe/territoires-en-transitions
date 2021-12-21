@@ -2,8 +2,8 @@ import {IndicateurReferentiel} from '../models/indicateur_referentiel';
 
 export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
-    id: 'cae-1a',
-    uid: 'cae-1a',
+    id: 'cae_1a',
+    uid: 'cae_1a',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: '\u00c9missions de gaz \u00e0 effet de serre globales annuelles du territoire (teq CO2)',
@@ -14,8 +14,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-1b',
-    uid: 'cae-1b',
+    id: 'cae_1b',
+    uid: 'cae_1b',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Emissions de gaz \u00e0 effet de serre annuelles du territoire par habitant (teq CO2/hab)',
@@ -26,8 +26,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-1c',
-    uid: 'cae-1c',
+    id: 'cae_1c',
+    uid: 'cae_1c',
     valeur: '',
     action_ids: ['cae__1.2.4'],
     nom: 'Emissions de gaz \u00e0 effet de serre du r\u00e9sidentiel (teq CO2)',
@@ -38,8 +38,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-1d',
-    uid: 'cae-1d',
+    id: 'cae_1d',
+    uid: 'cae_1d',
     valeur: '',
     action_ids: ['cae__6.3.1'],
     nom: 'Emissions de gaz \u00e0 effet de serre du tertiaire (teq CO2)',
@@ -50,8 +50,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-1e',
-    uid: 'cae-1e',
+    id: 'cae_1e',
+    uid: 'cae_1e',
     valeur: '',
     action_ids: ['cae__1.2.2'],
     nom: 'Emissions de gaz \u00e0 effet de serre du transport routier (teq CO2)',
@@ -62,8 +62,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-1f',
-    uid: 'cae-1f',
+    id: 'cae_1f',
+    uid: 'cae_1f',
     valeur: '',
     action_ids: ['cae__1.2.2'],
     nom: 'Emissions de gaz \u00e0 effet de serre de secteurs "autres transports" (teq CO2)',
@@ -74,8 +74,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-1g',
-    uid: 'cae-1g',
+    id: 'cae_1g',
+    uid: 'cae_1g',
     valeur: '',
     action_ids: ['cae__6.4.1'],
     nom: 'Emissions de gaz \u00e0 effet de serre de l\u0027agriculture (teq CO2)',
@@ -86,8 +86,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-1h',
-    uid: 'cae-1h',
+    id: 'cae_1h',
+    uid: 'cae_1h',
     valeur: '',
     action_ids: ['cae__1.2.3'],
     nom: 'Emissions de gaz \u00e0 effet de serre des d\u00e9chets (teq CO2)',
@@ -98,8 +98,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-1i',
-    uid: 'cae-1i',
+    id: 'cae_1i',
+    uid: 'cae_1i',
     valeur: '',
     action_ids: ['cae__6.3.1'],
     nom: 'Emissions de gaz \u00e0 effet de serre de l\u0027industrie hors branche \u00e9nergie (teq CO2)',
@@ -110,8 +110,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-1j',
-    uid: 'cae-1j',
+    id: 'cae_1j',
+    uid: 'cae_1j',
     valeur: '',
     action_ids: ['cae__6.3.1'],
     nom: 'Emissions de gaz \u00e0 effet de serre de l\u0027industrie branche \u00e9nergie (teq CO2)',
@@ -122,8 +122,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2a',
-    uid: 'cae-2a',
+    id: 'cae_2a',
+    uid: 'cae_2a',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh)',
@@ -134,8 +134,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2b',
-    uid: 'cae-2b',
+    id: 'cae_2b',
+    uid: 'cae_2b',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique annuelle du territoire par habitant (MWh/hab.an)',
@@ -146,8 +146,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2c',
-    uid: 'cae-2c',
+    id: 'cae_2c',
+    uid: 'cae_2c',
     valeur: '',
     action_ids: ['cae__3.2.2'],
     nom: 'Consommation \u00e9nerg\u00e9tique annuelle du territoire pour la chaleur et le rafra\u00eechissement (GWh)',
@@ -158,8 +158,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2d',
-    uid: 'cae-2d',
+    id: 'cae_2d',
+    uid: 'cae_2d',
     valeur: '',
     action_ids: ['cae__3.2.3'],
     nom: 'Consommation \u00e9nerg\u00e9tique annuelle du territoire pour l\u0027\u00e9lectricit\u00e9 (GWh)',
@@ -170,8 +170,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2e',
-    uid: 'cae-2e',
+    id: 'cae_2e',
+    uid: 'cae_2e',
     valeur: '',
     action_ids: ['cae__1.2.4'],
     nom: 'Consommation \u00e9nerg\u00e9tique du r\u00e9sidentiel  (GWh)',
@@ -182,8 +182,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2f',
-    uid: 'cae-2f',
+    id: 'cae_2f',
+    uid: 'cae_2f',
     valeur: '',
     action_ids: ['cae__6.3.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique du tertiaire (GWh)',
@@ -194,8 +194,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2g',
-    uid: 'cae-2g',
+    id: 'cae_2g',
+    uid: 'cae_2g',
     valeur: '',
     action_ids: ['cae__1.2.2'],
     nom: 'Consommation \u00e9nerg\u00e9tique  du transport routier(GWh)',
@@ -206,8 +206,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2h',
-    uid: 'cae-2h',
+    id: 'cae_2h',
+    uid: 'cae_2h',
     valeur: '',
     action_ids: ['cae__1.2.2'],
     nom: 'Consommation \u00e9nerg\u00e9tique du secteur "autres transports" (teq CO2)',
@@ -218,8 +218,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2i',
-    uid: 'cae-2i',
+    id: 'cae_2i',
+    uid: 'cae_2i',
     valeur: '',
     action_ids: ['cae__6.4.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique de l\u0027agriculture (GWh)',
@@ -230,8 +230,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2j',
-    uid: 'cae-2j',
+    id: 'cae_2j',
+    uid: 'cae_2j',
     valeur: '',
     action_ids: ['cae__1.2.3'],
     nom: 'Consommation \u00e9nerg\u00e9tique des d\u00e9chets (GWh)',
@@ -242,8 +242,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-2k',
-    uid: 'cae-2k',
+    id: 'cae_2k',
+    uid: 'cae_2k',
     valeur: '',
     action_ids: ['cae__6.3.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique de l\u0027industrie hors branche \u00e9nergie (GWh)',
@@ -254,8 +254,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-3a',
-    uid: 'cae-3a',
+    id: 'cae_3a',
+    uid: 'cae_3a',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Production d\u2019\u00e9nergie renouvelable globale du territoire (MWh)',
@@ -266,8 +266,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-3b',
-    uid: 'cae-3b',
+    id: 'cae_3b',
+    uid: 'cae_3b',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Production d\u2019\u00e9nergie renouvelable globale du territoire (% de la consommation)',
@@ -278,8 +278,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-4a',
-    uid: 'cae-4a',
+    id: 'cae_4a',
+    uid: 'cae_4a',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de Nox (tonnes)',
@@ -290,8 +290,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-4b',
-    uid: 'cae-4b',
+    id: 'cae_4b',
+    uid: 'cae_4b',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de PM10 (tonnes)',
@@ -302,8 +302,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-4c',
-    uid: 'cae-4c',
+    id: 'cae_4c',
+    uid: 'cae_4c',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de PM2,5 (tonnes)',
@@ -314,8 +314,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-4d',
-    uid: 'cae-4d',
+    id: 'cae_4d',
+    uid: 'cae_4d',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de COV (tonnes)',
@@ -326,8 +326,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-4e',
-    uid: 'cae-4e',
+    id: 'cae_4e',
+    uid: 'cae_4e',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de SO2  (tonnes)',
@@ -338,8 +338,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-4f',
-    uid: 'cae-4f',
+    id: 'cae_4f',
+    uid: 'cae_4f',
     valeur: '',
     action_ids: ['cae__1.1.1'],
     nom: 'Emissions annuelles de NH3 (tonnes)',
@@ -350,8 +350,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-5',
-    uid: 'cae-5',
+    id: 'cae_5',
+    uid: 'cae_5',
     valeur: '',
     action_ids: ['cae__1.2.2'],
     nom: 'Part modale de la voiture (en nombre de d\u00e9placements)',
@@ -362,8 +362,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-6a',
-    uid: 'cae-6a',
+    id: 'cae_6a',
+    uid: 'cae_6a',
     valeur: '',
     action_ids: ['cae__1.2.3'],
     nom: 'Production de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats) par habitant (kg/hab.an)',
@@ -374,8 +374,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-6b',
-    uid: 'cae-6b',
+    id: 'cae_6b',
+    uid: 'cae_6b',
     valeur: '',
     action_ids: ['cae__1.2.3'],
     nom: 'Production Ordures m\u00e9nag\u00e8res r\u00e9siduelles (kg/hab)',
@@ -386,8 +386,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-6c',
-    uid: 'cae-6c',
+    id: 'cae_6c',
+    uid: 'cae_6c',
     valeur: '',
     action_ids: ['cae__1.2.3'],
     nom: 'Production de d\u00e9chets collect\u00e9s s\u00e9lectivement, soit en porte-\u00e0-porte, soit en apport volontaire (kg/hab)',
@@ -398,8 +398,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-6d',
-    uid: 'cae-6d',
+    id: 'cae_6d',
+    uid: 'cae_6d',
     valeur: '',
     action_ids: ['cae__1.2.3'],
     nom: 'Production de d\u00e9chets occasionnels (kg/hab)',
@@ -410,8 +410,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-7',
-    uid: 'cae-7',
+    id: 'cae_7',
+    uid: 'cae_7',
     valeur: '',
     action_ids: ['cae__1.2.3'],
     nom: 'Recyclage mati\u00e8re et organique des d\u00e9chets m\u00e9nagers et assimil\u00e9s (%)',
@@ -422,8 +422,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-8',
-    uid: 'cae-8',
+    id: 'cae_8',
+    uid: 'cae_8',
     valeur: '',
     action_ids: ['citergie__1.2.4', 'citergie__6.5.4'],
     nom: 'Nombre de logements r\u00e9nov\u00e9s \u00e9nerg\u00e9tiquement (nb logements r\u00e9nov\u00e9s/100 logements existants)',
@@ -434,8 +434,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-9',
-    uid: 'cae-9',
+    id: 'cae_9',
+    uid: 'cae_9',
     valeur: '',
     action_ids: ['citergie__1.3.1'],
     nom: 'Compacit\u00e9 des formes urbaines',
@@ -446,8 +446,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-10',
-    uid: 'cae-10',
+    id: 'cae_10',
+    uid: 'cae_10',
     valeur: '',
     action_ids: ['citergie__1.3.1'],
     nom: 'Part des surfaces agricoles et naturelles (%)',
@@ -458,8 +458,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-11',
-    uid: 'cae-11',
+    id: 'cae_11',
+    uid: 'cae_11',
     valeur: '',
     action_ids: ['citergie__1.3.1'],
     nom: 'Surface annuelle artificialis\u00e9e (ha/an)',
@@ -470,8 +470,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-12',
-    uid: 'cae-12',
+    id: 'cae_12',
+    uid: 'cae_12',
     valeur: '',
     action_ids: ['citergie__2.1.1'],
     nom: 'Part de b\u00e2timents publics ayant fait l\u0027objet d\u0027un diagnostic \u00e9nerg\u00e9tique',
@@ -482,8 +482,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-13a',
-    uid: 'cae-13a',
+    id: 'cae_13a',
+    uid: 'cae_13a',
     valeur: '',
     action_ids: ['citergie__2.1.1'],
     nom: 'D\u00e9penses \u00e9nerg\u00e9tiques de la collectivit\u00e9 (euros)',
@@ -494,8 +494,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-13b',
-    uid: 'cae-13b',
+    id: 'cae_13b',
+    uid: 'cae_13b',
     valeur: '',
     action_ids: ['citergie__2.1.1'],
     nom: 'D\u00e9penses  \u00e9nerg\u00e9tiques - b\u00e2timents (euros)',
@@ -506,8 +506,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-13c',
-    uid: 'cae-13c',
+    id: 'cae_13c',
+    uid: 'cae_13c',
     valeur: '',
     action_ids: ['citergie__4.1.2'],
     nom: 'D\u00e9penses \u00e9nerg\u00e9tiques - v\u00e9hicules (euros)',
@@ -518,8 +518,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-13d',
-    uid: 'cae-13d',
+    id: 'cae_13d',
+    uid: 'cae_13d',
     valeur: '',
     action_ids: ['citergie__2.3.5'],
     nom: 'D\u00e9penses \u00e9nerg\u00e9tiques - \u00e9clairage public  (euros)',
@@ -530,8 +530,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-14a',
-    uid: 'cae-14a',
+    id: 'cae_14a',
+    uid: 'cae_14a',
     valeur: '',
     action_ids: ['citergie__2.2.1', 'citergie__2.2.2'],
     nom: 'Consommation d\u0027\u00e9nergie finale des b\u00e2timents publics (MWh)',
@@ -542,8 +542,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-14b',
-    uid: 'cae-14b',
+    id: 'cae_14b',
+    uid: 'cae_14b',
     valeur: '',
     action_ids: ['citergie__2.2.1', 'citergie__2.2.2'],
     nom: 'Consommation d\u0027\u00e9nergie finale des b\u00e2timents publics (rapport\u00e9 au nb d\u0027habitant, en kWh/hab)',
@@ -554,8 +554,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-14c',
-    uid: 'cae-14c',
+    id: 'cae_14c',
+    uid: 'cae_14c',
     valeur: '',
     action_ids: ['citergie__2.2.1', 'citergie__2.2.2'],
     nom: 'Consommation d\u0027\u00e9nergie finale des b\u00e2timents publics (rapport\u00e9 \u00e0 la surface du patrimoine, en kWh/m\u00b2)',
@@ -566,8 +566,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-15a',
-    uid: 'cae-15a',
+    id: 'cae_15a',
+    uid: 'cae_15a',
     valeur: '',
     action_ids: ['citergie__2.2.1', 'citergie__2.2.2'],
     nom: 'Part de b\u00e2timents publics de classe F ou G selon le DPE pour l\u0027\u00e9nergie (ou \u00e9quivalent)',
@@ -578,8 +578,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-15a_dom',
-    uid: 'cae-15a_dom',
+    id: 'cae_15a_dom',
+    uid: 'cae_15a_dom',
     valeur: '',
     action_ids: ['citergie__2.2.1', 'citergie__2.2.2'],
     nom: 'Part de b\u00e2timents \u003e=701 kWhep/m\u00b2.an (calcul DPE ou \u00e9quivalent) (DOM)',
@@ -590,8 +590,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-15b',
-    uid: 'cae-15b',
+    id: 'cae_15b',
+    uid: 'cae_15b',
     valeur: '',
     action_ids: ['citergie__2.2.1', 'citergie__2.2.2'],
     nom: 'Part de b\u00e2timents publics de classe A ou B selon le DPE pour l\u0027\u00e9nergie (ou \u00e9quivalent)',
@@ -602,8 +602,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-15b_dom',
-    uid: 'cae-15b_dom',
+    id: 'cae_15b_dom',
+    uid: 'cae_15b_dom',
     valeur: '',
     action_ids: ['citergie__2.2.1', 'citergie__2.2.2'],
     nom: 'Part de b\u00e2timents =\u003c100 kWhep/m\u00b2.an (calcul DPE ou \u00e9quivalent) (DOM)',
@@ -614,8 +614,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-16a',
-    uid: 'cae-16a',
+    id: 'cae_16a',
+    uid: 'cae_16a',
     valeur: '',
     action_ids: ['citergie__2.2.3'],
     nom: 'Consommation de chaleur/rafraichissement renouvelable et de r\u00e9cup\u00e9ration - patrimoine collectivit\u00e9   (MWh)',
@@ -626,8 +626,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-16b',
-    uid: 'cae-16b',
+    id: 'cae_16b',
+    uid: 'cae_16b',
     valeur: '',
     action_ids: ['citergie__2.2.3'],
     nom: 'Taux de couverture par les \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration des besoins en chaleur et rafraichissement - patrimoine collectivit\u00e9 (%)',
@@ -638,8 +638,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-17a',
-    uid: 'cae-17a',
+    id: 'cae_17a',
+    uid: 'cae_17a',
     valeur: '',
     action_ids: ['citergie__2.2.4'],
     nom: 'Production d\u0027\u00e9lectricit\u00e9 renouvelable - patrimoine collectivit\u00e9 (MWh)',
@@ -650,8 +650,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-17b',
-    uid: 'cae-17b',
+    id: 'cae_17b',
+    uid: 'cae_17b',
     valeur: '',
     action_ids: ['citergie__2.2.4'],
     nom: 'Taux de production d\u0027\u00e9lectricit\u00e9 renouvelable  - patrimoine collectivit\u00e9 (%)',
@@ -662,8 +662,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-18',
-    uid: 'cae-18',
+    id: 'cae_18',
+    uid: 'cae_18',
     valeur: '',
     action_ids: ['citergie__2.2.4'],
     nom: 'Part des achats d\u2019\u00e9lectricit\u00e9 renouvelable de la collectivit\u00e9 (%)',
@@ -674,8 +674,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-19a_hors_dom',
-    uid: 'cae-19a_hors_dom',
+    id: 'cae_19a_hors_dom',
+    uid: 'cae_19a_hors_dom',
     valeur: '',
     action_ids: ['citergie__2.2.5'],
     nom: 'Part de b\u00e2timents de classe F ou G selon le DPE pour les GES (ou \u00e9quivalent) (hors DOM)',
@@ -686,8 +686,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-19b_hors_dom',
-    uid: 'cae-19b_hors_dom',
+    id: 'cae_19b_hors_dom',
+    uid: 'cae_19b_hors_dom',
     valeur: '',
     action_ids: ['citergie__2.2.5'],
     nom: 'Part de b\u00e2timents de classe A ou B selon le DPE pour les GES (ou \u00e9quivalent)  (hors DOM)',
@@ -698,8 +698,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-20',
-    uid: 'cae-20',
+    id: 'cae_20',
+    uid: 'cae_20',
     valeur: '',
     action_ids: ['citergie__2.3.1'],
     nom: 'Consommation de l\u2019\u00e9clairage public  (kWh/hab.an)',
@@ -710,8 +710,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-21a',
-    uid: 'cae-21a',
+    id: 'cae_21a',
+    uid: 'cae_21a',
     valeur: '',
     action_ids: ['citergie__2.3.2'],
     nom: 'Consommation moyenne d\u0027eau dans les b\u00e2timents de la collectivit\u00e9 (l/m\u00b2.an)',
@@ -722,8 +722,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-21b',
-    uid: 'cae-21b',
+    id: 'cae_21b',
+    uid: 'cae_21b',
     valeur: '',
     action_ids: ['citergie__2.3.2'],
     nom: 'Consommation moyenne d\u0027eau dans les b\u00e2timents "enseignement/cr\u00e8che" (l/m\u00b2.an)',
@@ -734,8 +734,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-21c',
-    uid: 'cae-21c',
+    id: 'cae_21c',
+    uid: 'cae_21c',
     valeur: '',
     action_ids: ['citergie__2.3.2'],
     nom: 'Consommation moyenne d\u0027eau dans les b\u00e2timents "administration" (l/m\u00b2.an)',
@@ -746,8 +746,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-21d',
-    uid: 'cae-21d',
+    id: 'cae_21d',
+    uid: 'cae_21d',
     valeur: '',
     action_ids: ['citergie__2.3.2'],
     nom: 'Consommation moyenne d\u0027eau dans les b\u00e2timents"culture/sport" (l/m\u00b2.an)',
@@ -758,8 +758,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-22',
-    uid: 'cae-22',
+    id: 'cae_22',
+    uid: 'cae_22',
     valeur: '',
     action_ids: ['citergie__3.2.2'],
     nom: 'Taux d\u0027\u00e9nergie renouvelable et de r\u00e9cup\u00e9ration (ENR\u0026R) des r\u00e9seaux de chaleur sur le territoire (en %)',
@@ -770,8 +770,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-23',
-    uid: 'cae-23',
+    id: 'cae_23',
+    uid: 'cae_23',
     valeur: '',
     action_ids: ['citergie__3.2.2'],
     nom: 'Taux de couverture des besoins de chaleur du territoire (r\u00e9sidentiel et tertiaire) par les r\u00e9seaux de chaleur ENR\u0026R (en %)',
@@ -782,8 +782,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-24a',
-    uid: 'cae-24a',
+    id: 'cae_24a',
+    uid: 'cae_24a',
     valeur: '',
     action_ids: ['citergie__3.2.2'],
     nom: 'Production de chaleur/froid renouvelable  (MWh)',
@@ -794,8 +794,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-24b',
-    uid: 'cae-24b',
+    id: 'cae_24b',
+    uid: 'cae_24b',
     valeur: '',
     action_ids: ['citergie__3.2.2'],
     nom: 'Taux de production d\u0027\u00e9nergie renouvelable pour la chaleur et le rafra\u00eechissement sur le territoire (en %)',
@@ -806,8 +806,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-25a',
-    uid: 'cae-25a',
+    id: 'cae_25a',
+    uid: 'cae_25a',
     valeur: '',
     action_ids: ['citergie__3.2.3'],
     nom: 'Production d\u0027\u00e9lectricit\u00e9 renouvelable  (MWh)',
@@ -818,8 +818,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-25b',
-    uid: 'cae-25b',
+    id: 'cae_25b',
+    uid: 'cae_25b',
     valeur: '',
     action_ids: ['citergie__3.2.3'],
     nom: 'Taux de production d\u0027\u00e9lectricit\u00e9 renouvelable sur le territoire (%)',
@@ -830,8 +830,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-26',
-    uid: 'cae-26',
+    id: 'cae_26',
+    uid: 'cae_26',
     valeur: '',
     action_ids: ['citergie__3.2.3'],
     nom: 'Puissance photovolta\u00efque install\u00e9e sur le territoire (Wc/hab)',
@@ -842,8 +842,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-27',
-    uid: 'cae-27',
+    id: 'cae_27',
+    uid: 'cae_27',
     valeur: '',
     action_ids: ['citergie__3.2.3'],
     nom: 'Mix \u00e9nerg\u00e9tique propos\u00e9 par les r\u00e9gies et SEM fournisseur d\u0027\u00e9lectricit\u00e9 (%)',
@@ -854,8 +854,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-28a',
-    uid: 'cae-28a',
+    id: 'cae_28a',
+    uid: 'cae_28a',
     valeur: '',
     action_ids: ['citergie__3.3.1'],
     nom: 'Consommation \u00e9nerg\u00e9tique du syst\u00e8me d\u0027alimentation en eau potable (captage/traitement/distribution) en kWh/hab',
@@ -866,8 +866,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-28b',
-    uid: 'cae-28b',
+    id: 'cae_28b',
+    uid: 'cae_28b',
     valeur: '',
     action_ids: ['citergie__3.3.1'],
     nom: 'Rendement du syst\u00e8me d\u0027alimentation en eau potable (captage/traitement/distribution) en m3 brut/m3 vendu',
@@ -878,8 +878,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-29',
-    uid: 'cae-29',
+    id: 'cae_29',
+    uid: 'cae_29',
     valeur: '',
     action_ids: ['citergie__3.3.2'],
     nom: 'Consommation \u00e9nerg\u00e9tique des STEP kWh/kgDBO5 \u00e9limin\u00e9',
@@ -890,8 +890,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-30',
-    uid: 'cae-30',
+    id: 'cae_30',
+    uid: 'cae_30',
     valeur: '',
     action_ids: ['citergie__3.3.4'],
     nom: 'Quantit\u00e9 annuelle d\u0027engrais/m2 d\u0027espaces verts',
@@ -902,8 +902,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-31',
-    uid: 'cae-31',
+    id: 'cae_31',
+    uid: 'cae_31',
     valeur: '',
     action_ids: ['citergie__3.3.4'],
     nom: 'Quantit\u00e9 annuelle d\u0027eau/m2 d\u0027espaces verts',
@@ -914,8 +914,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-32',
-    uid: 'cae-32',
+    id: 'cae_32',
+    uid: 'cae_32',
     valeur: '',
     action_ids: ['citergie__3.3.5'],
     nom: 'Rendement \u00e9nerg\u00e9tique UIOM en % (valorisation \u00e9nerg\u00e9tique \u00e9lectricit\u00e9 et chaleur)',
@@ -927,8 +927,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-33',
-    uid: 'cae-33',
+    id: 'cae_33',
+    uid: 'cae_33',
     valeur: '',
     action_ids: ['citergie__3.3.5'],
     nom: 'Energie produite par la valorisation des biod\u00e9chets en kWh/an (\u00e0 d\u00e9faut kg/hab.an de biod\u00e9chets collect\u00e9s de mani\u00e8re s\u00e9parative -m\u00e9thanisation et/ou compostage)',
@@ -940,8 +940,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-34',
-    uid: 'cae-34',
+    id: 'cae_34',
+    uid: 'cae_34',
     valeur: '',
     action_ids: ['citergie__3.3.5'],
     nom: 'Taux de valorisation \u00e9nerg\u00e9tique du biogaz des centres de stockage des d\u00e9chets (en %)',
@@ -952,8 +952,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-35',
-    uid: 'cae-35',
+    id: 'cae_35',
+    uid: 'cae_35',
     valeur: '',
     action_ids: ['citergie__4.1.1', 'citergie__4.3.1'],
     nom: 'Part modale pi\u00e9ton',
@@ -964,8 +964,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-36',
-    uid: 'cae-36',
+    id: 'cae_36',
+    uid: 'cae_36',
     valeur: '',
     action_ids: ['citergie__4.1.1', 'citergie__4.3.2'],
     nom: 'Part modale v\u00e9lo',
@@ -976,8 +976,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-37',
-    uid: 'cae-37',
+    id: 'cae_37',
+    uid: 'cae_37',
     valeur: '',
     action_ids: ['citergie__4.1.1', 'citergie__4.3.3'],
     nom: 'Part modale TC',
@@ -988,8 +988,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-38',
-    uid: 'cae-38',
+    id: 'cae_38',
+    uid: 'cae_38',
     valeur: '',
     action_ids: ['citergie__4.1.1', 'citergie__4.3.3', 'citergie__4.3.4'],
     nom: 'Indicateur alternatif \u00e0 la part modale TC (\u00e0 d\u00e9finir par la collectivit\u00e9 et son conseiller le cas \u00e9ch\u00e9ant)',
@@ -1001,8 +1001,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-39',
-    uid: 'cae-39',
+    id: 'cae_39',
+    uid: 'cae_39',
     valeur: '',
     action_ids: ['citergie__4.1.1'],
     nom: 'Part de la population active couverte par un PDE/PDA (%)',
@@ -1013,8 +1013,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-40a',
-    uid: 'cae-40a',
+    id: 'cae_40a',
+    uid: 'cae_40a',
     valeur: '',
     action_ids: ['citergie__4.1.2'],
     nom: 'Consommation annuelle d\u0027\u00e9nergie des v\u00e9hicules (VP) de la collectivit\u00e9 (kWh/an.employ\u00e9)',
@@ -1025,8 +1025,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-40b',
-    uid: 'cae-40b',
+    id: 'cae_40b',
+    uid: 'cae_40b',
     valeur: '',
     action_ids: ['citergie__4.1.2'],
     nom: 'Consommation annuelle d\u0027\u00e9nergie des v\u00e9hicules (VP) de la collectivit\u00e9 (kWh/an.km)',
@@ -1037,8 +1037,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-41',
-    uid: 'cae-41',
+    id: 'cae_41',
+    uid: 'cae_41',
     valeur: '',
     action_ids: ['citergie__4.1.2'],
     nom: 'Part modale des d\u00e9placements alternatifs \u00e0 la voiture individuelle pour les d\u00e9placements  domicile-travail des agents de la collectivit\u00e9 (%)',
@@ -1049,8 +1049,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-42',
-    uid: 'cae-42',
+    id: 'cae_42',
+    uid: 'cae_42',
     valeur: '',
     action_ids: ['citergie__4.2.1'],
     nom: 'Nombre de places de stationnement public pour les voitures par habitant (nb/hab)',
@@ -1061,8 +1061,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-43',
-    uid: 'cae-43',
+    id: 'cae_43',
+    uid: 'cae_43',
     valeur: '',
     action_ids: ['citergie__4.3.1', 'citergie__4.2.2'],
     nom: 'Part de voiries \u00ab\u00a0apais\u00e9es\u00a0\u00bb (%)',
@@ -1073,8 +1073,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-44',
-    uid: 'cae-44',
+    id: 'cae_44',
+    uid: 'cae_44',
     valeur: '',
     action_ids: ['citergie__4.3.2'],
     nom: 'Part de voiries am\u00e9nag\u00e9es pour les cycles (%  Ou \u00e0 d\u00e9faut km/1000hab)',
@@ -1085,8 +1085,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-45',
-    uid: 'cae-45',
+    id: 'cae_45',
+    uid: 'cae_45',
     valeur: '',
     action_ids: ['citergie__4.3.2'],
     nom: 'Nombre de places de stationnement v\u00e9lo, hors pince-roues (nb / 100 habitants)',
@@ -1097,8 +1097,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-46',
-    uid: 'cae-46',
+    id: 'cae_46',
+    uid: 'cae_46',
     valeur: '',
     action_ids: ['citergie__4.3.3'],
     nom: 'Fr\u00e9quentation des TC (voyages/hab)',
@@ -1109,8 +1109,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-47',
-    uid: 'cae-47',
+    id: 'cae_47',
+    uid: 'cae_47',
     valeur: '',
     action_ids: ['citergie__4.3.3'],
     nom: 'Maillage du territoire par le r\u00e9seau TC',
@@ -1121,8 +1121,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-48',
-    uid: 'cae-48',
+    id: 'cae_48',
+    uid: 'cae_48',
     valeur: '',
     action_ids: ['citergie__5.1.1'],
     nom: 'Part d\u0027ETP de la collectivit\u00e9 \u00a0d\u00e9di\u00e9 \u00e0 la mise en \u0153uvre de la politique climat air \u00e9nergie ( %)',
@@ -1133,8 +1133,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-49a',
-    uid: 'cae-49a',
+    id: 'cae_49a',
+    uid: 'cae_49a',
     valeur: '',
     action_ids: ['citergie__5.2.1'],
     nom: 'Budget associ\u00e9 \u00e0 la politique climat-air-\u00e9nergie (euros/hab.an)',
@@ -1145,8 +1145,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-49b',
-    uid: 'cae-49b',
+    id: 'cae_49b',
+    uid: 'cae_49b',
     valeur: '',
     action_ids: ['citergie__5.2.1'],
     nom: 'Budget \u00e9tudes/expertises MDE/ENR/qualit\u00e9 de l\u0027air/adaptation au changement climatique (euros)',
@@ -1157,8 +1157,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-49c',
-    uid: 'cae-49c',
+    id: 'cae_49c',
+    uid: 'cae_49c',
     valeur: '',
     action_ids: ['citergie__5.2.1'],
     nom: 'Budget actions communication/sensibilisation climat-air-\u00e9nergie  (euros)',
@@ -1169,8 +1169,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-49d',
-    uid: 'cae-49d',
+    id: 'cae_49d',
+    uid: 'cae_49d',
     valeur: '',
     action_ids: ['citergie__6.5.5'],
     nom: 'Montant des aides financi\u00e8res accord\u00e9es aux particuliers et acteurs priv\u00e9s (euros)',
@@ -1181,8 +1181,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-49d',
-    uid: 'cae-49d',
+    id: 'cae_49d',
+    uid: 'cae_49d',
     valeur: '',
     action_ids: ['citergie__6.5.5'],
     nom: 'Montant des aides financi\u00e8res accord\u00e9es aux particuliers et acteurs priv\u00e9s (euros/hab.an)',
@@ -1192,8 +1192,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-49e',
-    uid: 'cae-49e',
+    id: 'cae_49e',
+    uid: 'cae_49e',
     valeur: '',
     action_ids: ['citergie__6.5.5'],
     nom: 'Budget projets de coop\u00e9ration  (euros)',
@@ -1204,8 +1204,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-49f',
-    uid: 'cae-49f',
+    id: 'cae_49f',
+    uid: 'cae_49f',
     valeur: '',
     action_ids: ['citergie__4.3.2'],
     nom: 'Budget politique cyclable  (euros)',
@@ -1216,8 +1216,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-49f',
-    uid: 'cae-49f',
+    id: 'cae_49f',
+    uid: 'cae_49f',
     valeur: '',
     action_ids: ['citergie__4.3.2'],
     nom: 'Budget politique cyclable  (euros/hab.an)',
@@ -1228,8 +1228,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-49g',
-    uid: 'cae-49g',
+    id: 'cae_49g',
+    uid: 'cae_49g',
     valeur: '',
     action_ids: ['citergie__4.3.2'],
     nom: 'Budget travaux r\u00e9novation \u00e9nerg\u00e9tique patrimoine public  (euros)',
@@ -1240,8 +1240,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-49h',
-    uid: 'cae-49h',
+    id: 'cae_49h',
+    uid: 'cae_49h',
     valeur: '',
     action_ids: ['citergie__4.3.2'],
     nom: 'Budget installations ENR publiques  (euros)',
@@ -1252,8 +1252,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-50',
-    uid: 'cae-50',
+    id: 'cae_50',
+    uid: 'cae_50',
     valeur: '',
     action_ids: ['citergie__5.2.1'],
     nom: 'Valorisation des CEE (kWhcumac  valoris\u00e9/an)',
@@ -1264,8 +1264,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-51',
-    uid: 'cae-51',
+    id: 'cae_51',
+    uid: 'cae_51',
     valeur: '',
     action_ids: ['citergie__5.2.2'],
     nom: 'Part des march\u00e9s int\u00e9grant des clauses environnementales (%)',
@@ -1276,8 +1276,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-52',
-    uid: 'cae-52',
+    id: 'cae_52',
+    uid: 'cae_52',
     valeur: '',
     action_ids: ['citergie__6.1.1'],
     nom: 'Part du budget consacr\u00e9 \u00e0 des projets de coop\u00e9ration d\u00e9centralis\u00e9e en lien avec le climat, l\u2019air ou l\u2019\u00e9nergie (%)',
@@ -1288,8 +1288,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-53',
-    uid: 'cae-53',
+    id: 'cae_53',
+    uid: 'cae_53',
     valeur: '',
     action_ids: ['citergie__6.1.1'],
     nom: 'Part du budget consacr\u00e9 aux projets de coop\u00e9ration significatifs et multi-acteurs par an sur le climat, l\u2019air et l\u2019\u00e9nergie (%)',
@@ -1300,8 +1300,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-54',
-    uid: 'cae-54',
+    id: 'cae_54',
+    uid: 'cae_54',
     valeur: '',
     action_ids: ['citergie__6.1.3'],
     nom: 'Nombre de manifestations/actions par an sur le climat l\u0027air et l\u0027\u00e9nergie',
@@ -1312,8 +1312,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-55',
-    uid: 'cae-55',
+    id: 'cae_55',
+    uid: 'cae_55',
     valeur: '',
     action_ids: ['citergie__6.2.1'],
     nom: 'Nombre de m\u00e9nages demandeurs et b\u00e9n\u00e9ficiaires du FSL pour l\u2019aide au paiement des factures d\u2019\u00e9nergie sur le territoire',
@@ -1324,8 +1324,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-56',
-    uid: 'cae-56',
+    id: 'cae_56',
+    uid: 'cae_56',
     valeur: '',
     action_ids: ['citergie__6.2.1'],
     nom: 'Nombre de dossiers \u00ab\u00a0Habiter mieux\u00a0\u00bb d\u00e9pos\u00e9s \u00e0 l\u2019Anah sur le territoire',
@@ -1336,8 +1336,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-57',
-    uid: 'cae-57',
+    id: 'cae_57',
+    uid: 'cae_57',
     valeur: '',
     action_ids: ['citergie__6.3.2'],
     nom: 'Taux d\u2019h\u00e9bergements labellis\u00e9s Ecolabel europ\u00e9en (ou \u00e9quivalent)',
@@ -1348,8 +1348,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-58',
-    uid: 'cae-58',
+    id: 'cae_58',
+    uid: 'cae_58',
     valeur: '',
     action_ids: ['citergie__6.4.1'],
     nom: 'Emissions directes de polluants atmosph\u00e9riques du secteur agriculture par ha (tonne/ha)',
@@ -1360,8 +1360,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-59',
-    uid: 'cae-59',
+    id: 'cae_59',
+    uid: 'cae_59',
     valeur: '',
     action_ids: ['citergie__6.4.1'],
     nom: 'Part de surface agricole certifi\u00e9e agriculture biologique ou en conversion et haute valeur environnementale (%)',
@@ -1372,8 +1372,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-60',
-    uid: 'cae-60',
+    id: 'cae_60',
+    uid: 'cae_60',
     valeur: '',
     action_ids: ['citergie__6.4.1'],
     nom: 'Part de produits biologiques dans la restauration collective publique (%)',
@@ -1384,8 +1384,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-61',
-    uid: 'cae-61',
+    id: 'cae_61',
+    uid: 'cae_61',
     valeur: '',
     action_ids: ['citergie__6.4.1'],
     nom: 'Quantit\u00e9 moyenne de viande par repas dans la restauration collective publique (g/repas)',
@@ -1396,8 +1396,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-62',
-    uid: 'cae-62',
+    id: 'cae_62',
+    uid: 'cae_62',
     valeur: '',
     action_ids: ['citergie__6.4.2'],
     nom: 'Part de surface foresti\u00e8re certifi\u00e9e (%)',
@@ -1408,8 +1408,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-63a',
-    uid: 'cae-63a',
+    id: 'cae_63a',
+    uid: 'cae_63a',
     valeur: '',
     action_ids: ['citergie__6.4.2', 'citergie__6.4.1'],
     nom: 'S\u00e9questration nette de dioxyde de carbone des sols et de la for\u00eat (teq CO2)',
@@ -1420,8 +1420,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-63b',
-    uid: 'cae-63b',
+    id: 'cae_63b',
+    uid: 'cae_63b',
     valeur: '',
     action_ids: ['citergie__6.4.2'],
     nom: 'S\u00e9questration de la for\u00eat  (teq CO2)',
@@ -1432,8 +1432,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-63c',
-    uid: 'cae-63c',
+    id: 'cae_63c',
+    uid: 'cae_63c',
     valeur: '',
     action_ids: ['citergie__6.4.1'],
     nom: 'S\u00e9questration dans les terres agricoles et les prairies (teq CO2)',
@@ -1444,8 +1444,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-63d',
-    uid: 'cae-63d',
+    id: 'cae_63d',
+    uid: 'cae_63d',
     valeur: '',
     action_ids: ['citergie__6.4.1'],
     nom: 'S\u00e9questration dans les autres sols (teq CO2)',
@@ -1456,8 +1456,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-64',
-    uid: 'cae-64',
+    id: 'cae_64',
+    uid: 'cae_64',
     valeur: '',
     action_ids: ['citergie__6.5.3'],
     nom: 'Part d\u0027\u00e9tablissements scolaires couverts par un PDES ou un p\u00e9dibus/v\u00e9lobus',
@@ -1468,8 +1468,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'cae-65',
-    uid: 'cae-65',
+    id: 'cae_65',
+    uid: 'cae_65',
     valeur: '',
     action_ids: ['citergie__6.5.4'],
     nom: 'Nombre d\u0027heures de consultations et de conseils sur la th\u00e9matique climat air \u00e9nergie pour 100 hab / an',
@@ -1482,7 +1482,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-1.1',
     uid: 'crte-1.1',
-    valeur: 'cae-1a',
+    valeur: 'cae_1a',
     action_ids: [],
     nom: 'Emissions de GES annuelles du territoire (TeqCO2 / an)',
     description:
@@ -1494,7 +1494,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-1.2',
     uid: 'crte-1.2',
-    valeur: 'cae-1b',
+    valeur: 'cae_1b',
     action_ids: [],
     nom: 'Emissions de GES annuelles par habitant (TeqCO2 / an / hab)',
     description:
@@ -1506,7 +1506,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-2.1',
     uid: 'crte-2.1',
-    valeur: 'cae-2a',
+    valeur: 'cae_2a',
     action_ids: [],
     nom: 'Consommation \u00e9nerg\u00e9tique finale annuelle (GWh)',
     description:
@@ -1518,7 +1518,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-1.2',
     uid: 'crte-1.2',
-    valeur: 'cae-2b',
+    valeur: 'cae_2b',
     action_ids: [],
     nom: 'Consommation \u00e9nerg\u00e9tique finale annuelle (MWh/hab)',
     description:
@@ -1566,7 +1566,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-4.2',
     uid: 'crte-4.2',
-    valeur: 'cae-59',
+    valeur: 'cae_59',
     action_ids: [],
     nom: 'Part de la surface agricole utile en agriculture biologique (%)',
     description:
@@ -1638,7 +1638,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-10.1',
     uid: 'crte-10.1',
-    valeur: 'cae-6a',
+    valeur: 'cae_6a',
     action_ids: [],
     nom: 'Collecte annuelle de d\u00e9chets m\u00e9nagers et assimil\u00e9s avec gravats',
     description:
@@ -1650,7 +1650,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-10.2',
     uid: 'crte-10.2',
-    valeur: 'cae-6a',
+    valeur: 'cae_6a',
     action_ids: [],
     nom: 'Collecte annuelle de d\u00e9chets m\u00e9nagers et assimil\u00e9s hors gravats (kg/hab)',
     description:
@@ -1662,7 +1662,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-11.1',
     uid: 'crte-11.1',
-    valeur: 'cae-4e',
+    valeur: 'cae_4e',
     action_ids: [],
     nom: 'Emissions annuelles de SO2 du territoire (tonnes)',
     description:
@@ -1674,7 +1674,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-11.1',
     uid: 'crte-11.1',
-    valeur: 'cae-4a',
+    valeur: 'cae_4a',
     action_ids: [],
     nom: 'Emissions annuelles de NOx du territoire (tonnes)',
     description:
@@ -1686,7 +1686,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-11.1',
     uid: 'crte-11.1',
-    valeur: 'cae-4d',
+    valeur: 'cae_4d',
     action_ids: [],
     nom: 'Emissions annuelles de COVNM du territoire (tonnes)',
     description:
@@ -1698,7 +1698,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-11.1',
     uid: 'crte-11.1',
-    valeur: 'cae-4c',
+    valeur: 'cae_4c',
     action_ids: [],
     nom: 'Emissions annuelles de PM2,5 du territoire (tonnes)',
     description:
@@ -1734,7 +1734,7 @@ export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({
     id: 'crte-13.1',
     uid: 'crte-13.1',
-    valeur: 'cae-11',
+    valeur: 'cae_11',
     action_ids: [],
     nom: 'Artificialisation des espaces naturels, agricoles, forestiers (ha)',
     description:
@@ -1744,8 +1744,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-001',
-    uid: 'eci-001',
+    id: 'eci_1',
+    uid: 'eci_1',
     valeur: '',
     action_ids: ['eci_1.1'],
     nom: 'Part du budget consacr\u00e9e \u00e0 la politique Economie Circulaire dans le budget global (%)',
@@ -1756,8 +1756,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-002',
-    uid: 'eci-002',
+    id: 'eci_2',
+    uid: 'eci_2',
     valeur: '',
     action_ids: ['eci_1.2'],
     nom: 'Part des services de la collectivit\u00e9 form\u00e9s \u00e0 l\u0027Economie Circulaire (%)',
@@ -1768,8 +1768,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-003',
-    uid: 'eci-003',
+    id: 'eci_3',
+    uid: 'eci_3',
     valeur: '',
     action_ids: ['eci_1.2'],
     nom: 'Part de formations Economie Circulaire dans le programme de formation de la collectivit\u00e9 (nombre)',
@@ -1780,8 +1780,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-005',
-    uid: 'eci-005',
+    id: 'eci_5',
+    uid: 'eci_5',
     valeur: '',
     action_ids: ['eci_2.1'],
     nom: 'Production de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats) par habitant (kg/hab.an)',
@@ -1792,8 +1792,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-006',
-    uid: 'eci-006',
+    id: 'eci_6',
+    uid: 'eci_6',
     valeur: '',
     action_ids: ['eci_2.2'],
     nom: 'Part de d\u00e9chets soumis \u00e0 la collecte s\u00e9par\u00e9e dans les Ordures M\u00e9nagers et Assimil\u00e9s (OMR) et la benne tout venant d\u00e9chetterie (%)',
@@ -1804,8 +1804,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-007',
-    uid: 'eci-007',
+    id: 'eci_7',
+    uid: 'eci_7',
     valeur: '',
     action_ids: ['eci_2.3'],
     nom: 'Part des DMA envoy\u00e9e pour la r\u00e9utilisation, le recyclage et la valorisation organique ou \u00e9nerg\u00e9tique (%)',
@@ -1816,8 +1816,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-008',
-    uid: 'eci-008',
+    id: 'eci_8',
+    uid: 'eci_8',
     valeur: '',
     action_ids: ['eci_2.3'],
     nom: 'Taux de mise en d\u00e9charge de DMA (%)',
@@ -1828,8 +1828,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-009',
-    uid: 'eci-009',
+    id: 'eci_9',
+    uid: 'eci_9',
     valeur: '',
     action_ids: ['eci_2.4'],
     nom: 'Part de DMA b\u00e9n\u00e9ficiant d\u0027un mode de transport \u00e0 faible impact (%)',
@@ -1840,8 +1840,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-010',
-    uid: 'eci-010',
+    id: 'eci_10',
+    uid: 'eci_10',
     valeur: '',
     action_ids: ['eci_2.4'],
     nom: 'Emissions GES des Installations de Stockage de D\u00e9chets Non-Dangereux (ISDND) (eqtCO2/tonne de d\u00e9chets entrant)',
@@ -1852,8 +1852,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-011',
-    uid: 'eci-011',
+    id: 'eci_11',
+    uid: 'eci_11',
     valeur: '',
     action_ids: ['eci_2.4'],
     nom: 'Emissions GES\u00a0de la collecte des DMA sur le territoire (eqtCO2/tonne de d\u00e9chets)',
@@ -1864,8 +1864,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-012',
-    uid: 'eci-012',
+    id: 'eci_12',
+    uid: 'eci_12',
     valeur: '',
     action_ids: ['eci_2.5'],
     nom: 'Nombre de fili\u00e8res anim\u00e9s par la collectivit\u00e9 ou ses partenaires pour la prise en charge des d\u00e9chets (BTP, DAE\u2026) (nombre)',
@@ -1876,8 +1876,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-013',
-    uid: 'eci-013',
+    id: 'eci_13',
+    uid: 'eci_13',
     valeur: '',
     action_ids: ['eci_3.1'],
     nom: 'Nombre de boucles locales d\u0027\u00e9conomie circulaire mises en place dans les 4 derni\u00e8res ann\u00e9es  (nombre)',
@@ -1888,8 +1888,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-014',
-    uid: 'eci-014',
+    id: 'eci_14',
+    uid: 'eci_14',
     valeur: '',
     action_ids: ['eci_3.2'],
     nom: 'Pourcentage de contrat d\u0027achats publiques de la collectivit\u00e9 comportant au moins une consid\u00e9ration environnementale (%)',
@@ -1900,8 +1900,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-015',
-    uid: 'eci-015',
+    id: 'eci_15',
+    uid: 'eci_15',
     valeur: '',
     action_ids: ['eci_3.2'],
     nom: 'Part de biens ou de constructions temporaires acquis annuellement par la collectivit\u00e9 issus du r\u00e9emploi ou de la r\u00e9utilisation ou int\u00e8grent des mati\u00e8res recycl\u00e9es (%)',
@@ -1912,8 +1912,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-017',
-    uid: 'eci-017',
+    id: 'eci_17',
+    uid: 'eci_17',
     valeur: '',
     action_ids: ['eci_3.4'],
     nom: 'Part d\u0027entreprises et d\u0027\u00e9tablissements ayant \u00e9t\u00e9 form\u00e9es \u00e0 l\u0027\u00e9coconception durant les 4 derni\u00e8res ann\u00e9es (%)',
@@ -1924,8 +1924,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-018',
-    uid: 'eci-018',
+    id: 'eci_18',
+    uid: 'eci_18',
     valeur: '',
     action_ids: ['eci_3.5'],
     nom: 'Nombre de synergies d\u0027Ecologie Industrielle et Territoriale (EIT) op\u00e9rationnelles sur le territoire (nombre)',
@@ -1936,8 +1936,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-019',
-    uid: 'eci-019',
+    id: 'eci_19',
+    uid: 'eci_19',
     valeur: '',
     action_ids: ['eci_3.5'],
     nom: 'Nombre d\u0027entreprises engag\u00e9es dans les synergie d\u0027EIT (nombre)',
@@ -1948,8 +1948,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-020',
-    uid: 'eci-020',
+    id: 'eci_20',
+    uid: 'eci_20',
     valeur: '',
     action_ids: [],
     nom: 'Part de l\u2019alimentation sous signe de qualit\u00e9 en restauration collective sous la comp\u00e9tence de la collectivit\u00e9 (%)',
@@ -1960,8 +1960,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-021',
-    uid: 'eci-021',
+    id: 'eci_21',
+    uid: 'eci_21',
     valeur: '',
     action_ids: [],
     nom: 'Gaspillage alimentaire de la restauration collective sous la comp\u00e9tence de la collectivit\u00e9 (g/repas servi)',
@@ -1972,8 +1972,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-022',
-    uid: 'eci-022',
+    id: 'eci_22',
+    uid: 'eci_22',
     valeur: '',
     action_ids: [],
     nom: 'Part des restaurants collectif sous la comp\u00e9tence de la collectivit\u00e9 engag\u00e9e dans une d\u00e9marche de r\u00e9duction du gaspillage alimentaire (%)',
@@ -1984,8 +1984,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-023',
-    uid: 'eci-023',
+    id: 'eci_23',
+    uid: 'eci_23',
     valeur: '',
     action_ids: [],
     nom: 'Ratio d\u0027\u00e9volution de terres artificialis\u00e9s vs. terres agricoles et/ou naturelles et/ou foresti\u00e8res (%)',
@@ -1996,8 +1996,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-024',
-    uid: 'eci-024',
+    id: 'eci_24',
+    uid: 'eci_24',
     valeur: '',
     action_ids: [],
     nom: 'Proportion d\u0027\u00e9nergie fossile consomm\u00e9 par rapport aux \u00e9nergies renouvelables consomm\u00e9es (%)',
@@ -2008,8 +2008,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-025',
-    uid: 'eci-025',
+    id: 'eci_25',
+    uid: 'eci_25',
     valeur: '',
     action_ids: [],
     nom: 'Part des sources d\u0027\u00e9nergie renouvelable (ENR) locales (%)',
@@ -2020,8 +2020,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-026',
-    uid: 'eci-026',
+    id: 'eci_26',
+    uid: 'eci_26',
     valeur: '',
     action_ids: [],
     nom: 'Perte en eau du r\u00e9seau (%)',
@@ -2032,8 +2032,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-027',
-    uid: 'eci-027',
+    id: 'eci_27',
+    uid: 'eci_27',
     valeur: '',
     action_ids: [],
     nom: 'Part d\u0027eau potable \u00e9conomis\u00e9e (%)',
@@ -2044,8 +2044,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-028',
-    uid: 'eci-028',
+    id: 'eci_28',
+    uid: 'eci_28',
     valeur: '',
     action_ids: [],
     nom: 'Proportion de l\u0027activit\u00e9 de r\u00e9emploi et/ou de r\u00e9utilisation dans l\u0027activit\u00e9 \u00e9conomique (%)',
@@ -2056,8 +2056,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-029',
-    uid: 'eci-029',
+    id: 'eci_29',
+    uid: 'eci_29',
     valeur: '',
     action_ids: [],
     nom: 'Proportion de l\u0027activit\u00e9 de l\u0027allongement de la dur\u00e9e d\u0027usage dans l\u0027activit\u00e9 \u00e9conomique (%)',
@@ -2068,8 +2068,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-030',
-    uid: 'eci-030',
+    id: 'eci_30',
+    uid: 'eci_30',
     valeur: '',
     action_ids: ['eci_1.2.2'],
     nom: 'Part des comp\u00e9tences obligatoires et facultatives exerc\u00e9es par la collectivit\u00e9 (mobilit\u00e9, urbanisme, etc.) pour lesquelles l\u2019\u00e9quipe Economie Circulaire a co-construit au moins une action favorisant l\u2019Economie Circulaire dans les 4 derni\u00e8res ann\u00e9es',
@@ -2080,8 +2080,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-031',
-    uid: 'eci-031',
+    id: 'eci_31',
+    uid: 'eci_31',
     valeur: '',
     action_ids: ['eci_1.2.3'],
     nom: 'Part des strat\u00e9gies ou des politiques dans lesquelles l\u2019\u00e9quipe Economie Circulaire a \u00e9t\u00e9 associ\u00e9e pour leur conception',
@@ -2092,8 +2092,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-032',
-    uid: 'eci-032',
+    id: 'eci_32',
+    uid: 'eci_32',
     valeur: '',
     action_ids: ['eci_4.2.4'],
     nom: 'Part de la population de la collectivit\u00e9 couverte par la Tarification Incitative',
@@ -2104,8 +2104,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-033',
-    uid: 'eci-033',
+    id: 'eci_33',
+    uid: 'eci_33',
     valeur: '',
     action_ids: ['eci_3.6'],
     nom: 'Nombre d\u0027actions de la collectivit\u00e9 en \u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration (nombre)',
@@ -2116,8 +2116,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-034',
-    uid: 'eci-034',
+    id: 'eci_34',
+    uid: 'eci_34',
     valeur: '',
     action_ids: ['eci_3.6'],
     nom: 'Nombre d\u0027entreprises ou etablissements sencibilis\u00e9es ou accompagn\u00e9es sur les questions de l\u0027\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration (nombre)',
@@ -2128,8 +2128,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-035',
-    uid: 'eci-035',
+    id: 'eci_35',
+    uid: 'eci_35',
     valeur: '',
     action_ids: ['eci_3.7'],
     nom: 'Nombre de projets de recherche, d\u0027innovation ou d\u0027exp\u00e9rimentation accompagn\u00e9s financi\u00e8rement ou non-financi\u00e8rement par la collectivit\u00e9 (nombre)',
@@ -2140,8 +2140,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-036',
-    uid: 'eci-036',
+    id: 'eci_36',
+    uid: 'eci_36',
     valeur: '',
     action_ids: ['eci_3.7'],
     nom: 'Effet de levier d\u0027accompagnement financier des projets de recherche, d\u0027innovation et d\u0027exp\u00e9rimentation en mati\u00e8re d\u0027Economie Circulaire  (1\u20ac public pour X \u20ac priv\u00e9)',
@@ -2152,8 +2152,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'eci-037',
-    uid: 'eci-037',
+    id: 'eci_37',
+    uid: 'eci_37',
     valeur: '',
     action_ids: ['eci_4.1'],
     nom: 'D\u00e9pense annuelle consacr\u00e9e \u00e0 la gestion des d\u00e9chets (\u20ac/habitant)',

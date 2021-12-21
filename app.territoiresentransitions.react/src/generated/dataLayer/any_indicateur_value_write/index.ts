@@ -6,3 +6,10 @@ export interface AnyIndicateurValueWrite {
   collectivite_id: number;
   indicateur_id: string;
 }
+
+export interface AnyIndicateurValueRead {
+  valeur: number;
+  annee: number;
+  collectivite_id: number;
+  indicateur_id: string;
+}

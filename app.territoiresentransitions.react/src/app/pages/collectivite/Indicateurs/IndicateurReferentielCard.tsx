@@ -14,7 +14,10 @@ import {useAnyIndicateurValueForAllYears} from 'core-logic/hooks/indicateurs_val
 import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {Editable} from 'ui/shared';
-import {indicateurObjectifReadEndpoint} from 'core-logic/api/endpoints/AnyIndicateurValueReadEndpoint';
+import {
+  indicateurObjectifRepository,
+  indicateurResultatRepository,
+} from 'core-logic/api/repositories/AnyIndicateurRepository';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   const [value, setValue] = React.useState('');
@@ -68,18 +71,18 @@ export const IndicateurReferentielCardContent = (props: {
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <Commentaire indicateur={props.indicateur} />
       <AnyIndicateurEditableExpandPanel
-        readEndpoint={indicateurObjectifReadEndpoint}
-        indicateurId={props.indicateur.id}
+        repo={indicateurObjectifRepository}
+        indicateurUid={props.indicateur.uid}
         title="Objectifs"
         editable={true}
       />
 
-      <AnyIndicateurLineChartExpandable
-        indicateur={props.indicateur}
-        indicateurId={props.indicateur.id}
-        resultatStore={indicateurResultatStore}
-        objectifStore={indicateurObjectifStore}
-      />
+      {/*<AnyIndicateurLineChartExpandable*/}
+      {/*  indicateur={props.indicateur}*/}
+      {/*  indicateurId={props.indicateur.id}*/}
+      {/*  resultatStore={indicateurResultatStore}*/}
+      {/*  objectifStore={indicateurObjectifStore}*/}
+      {/*/>*/}
     </div>
   );
 };
@@ -120,8 +123,8 @@ export const IndicateurReferentielCard = ({
       headerTitle={
         <IndicateurReferentielCardHeaderTitle indicateur={indicateur} />
       }
-      indicateurId={indicateur.uid}
-      indicateurResultatStore={indicateurResultatStore}
+      indicateurUid={indicateur.uid}
+      indicateurResultatRepo={indicateurResultatRepository}
     >
       <IndicateurReferentielCardContent indicateur={indicateur} />
     </AnyIndicateurCard>

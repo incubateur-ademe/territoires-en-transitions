@@ -1,37 +1,32 @@
-import {DataLayerReadEndpoint} from 'core-logic/api/dataLayerEndpoint';
+import {
+  DataLayerReadCachedEndpoint,
+  DataLayerReadEndpoint,
+} from 'core-logic/api/dataLayerEndpoint';
 import {PostgrestResponse} from '@supabase/supabase-js';
-import {AnyIndicateurValueWrite} from 'generated/dataLayer/any_indicateur_value_write';
+import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
 
 export interface AnyIndicateurValueGetParams {
   collectiviteId: number;
-  indicateurId: string;
-  annee?: number;
 }
 
 const makeAnyIndicateurValueReadEndpoint = (
   table_name: string
-): DataLayerReadEndpoint<
-  AnyIndicateurValueWrite,
+): DataLayerReadCachedEndpoint<
+  AnyIndicateurValueRead,
   AnyIndicateurValueGetParams
 > => {
-  class AnyIndicateurValueReadEndpoint extends DataLayerReadEndpoint<
-    AnyIndicateurValueWrite,
+  class AnyIndicateurValueReadEndpoint extends DataLayerReadCachedEndpoint<
+    AnyIndicateurValueRead,
     AnyIndicateurValueGetParams
   > {
     readonly name = table_name;
     async _read(
       getParams: AnyIndicateurValueGetParams
-    ): Promise<PostgrestResponse<AnyIndicateurValueWrite>> {
-      if (getParams.annee)
-        return this._table
-          .eq('collectivite_id', getParams.collectiviteId)
-          .eq('annee', getParams.annee);
-      return this._table
-        .eq('collectivite_id', getParams.collectiviteId)
-        .eq('indicateur_id', getParams.indicateurId);
+    ): Promise<PostgrestResponse<AnyIndicateurValueRead>> {
+      return this._table.eq('collectivite_id', getParams.collectiviteId);
     }
   }
-  return new AnyIndicateurValueReadEndpoint();
+  return new AnyIndicateurValueReadEndpoint([]);
 };
 
 export const makeNewIndicateurResultatReadEndpoint = () =>
