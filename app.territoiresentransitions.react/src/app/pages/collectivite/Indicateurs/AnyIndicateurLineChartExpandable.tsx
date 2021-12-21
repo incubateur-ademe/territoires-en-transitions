@@ -10,7 +10,7 @@ import {
   indicateurResultatRepository,
 } from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
-import {useIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
+import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
@@ -57,12 +57,12 @@ const AnyIndicateurLineChart = (props: {
 }) => {
   const collectiviteId = useCollectiviteId()!;
 
-  const resultatValues = useIndicateurValuesForAllYears({
+  const resultatValues = useAnyIndicateurValuesForAllYears({
     collectiviteId,
     indicateurId: props.indicateurId,
     repo: indicateurResultatRepository,
   });
-  const objectifValues = useIndicateurValuesForAllYears({
+  const objectifValues = useAnyIndicateurValuesForAllYears({
     collectiviteId,
     indicateurId: props.indicateurId,
     repo: indicateurObjectifRepository,
