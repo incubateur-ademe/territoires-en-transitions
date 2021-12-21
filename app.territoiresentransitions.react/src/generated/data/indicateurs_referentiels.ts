@@ -1516,8 +1516,8 @@ export const indicateurs: IndicateurReferentiel[] = [
   }),
 
   new IndicateurReferentiel({
-    id: 'crte-1.2',
-    uid: 'crte-1.2',
+    id: 'crte-2.1.hab',
+    uid: 'crte-2.1.hab',
     valeur: 'cae-2b',
     action_ids: [],
     nom: 'Consommation \u00e9nerg\u00e9tique finale annuelle (MWh/hab)',

@@ -40,11 +40,13 @@ export function categorizeAndSortFiches(
   plan: PlanActionTyped
 ): Categorized[] {
   // step 1: sort categories
-  const categories: Categorie[] = [...plan.categories, defaultDisplayCategorie];
+  const categories: Categorie[] = [...plan.categories];
   const fichesByCategory = (plan as PlanActionStructure).fiches_by_category;
   categories.sort((a, b) => compareIndexes(a.nom, b.nom));
-  return categories.map((categorie: Categorie) => {
-    // step 2: find fiches
+  categories.push(defaultDisplayCategorie);
+  // step 2: categorize
+  const categorized = categories.map((categorie: Categorie) => {
+    // step 2a: find fiches
     const fiches: FicheAction[] = [];
     for (const {fiche_uid} of fichesByCategory.filter(
       fc => (fc.category_uid ?? '') === categorie.uid
@@ -52,7 +54,7 @@ export function categorizeAndSortFiches(
       const fiche = allFiches.find(f => f.uid === fiche_uid);
       if (fiche) fiches.push(fiche);
     }
-    // step 3: sort fiches
+    // step 2b: sort fiches
     fiches.sort((a, b) => compareIndexes(a.titre, b.titre));
     fiches.sort((a, b) => compareIndexes(a.custom_id, b.custom_id));
     return {
@@ -60,6 +62,19 @@ export function categorizeAndSortFiches(
       fiches: fiches,
     };
   });
+  // Step 3: find orphans.
+  const adoptedFicheUids: string[] = [];
+  for (const cat of categorized) {
+    for (const fiche of cat.fiches) {
+      adoptedFicheUids.push(fiche.uid);
+    }
+  }
+  for (const fiche of allFiches) {
+    if (!adoptedFicheUids.includes(fiche.uid)) {
+      categorized[categorized.length - 1]!.fiches.push(fiche);
+    }
+  }
+  return categorized;
 }
 
 /**
