@@ -29,11 +29,8 @@ import {
   ActionReferentielScoreStorable,
   AnyIndicateurValueStorable,
   EpciStorable,
-  FicheActionStorable,
-  FicheActionCategorieStorable,
   IndicateurPersonnaliseStorable,
   IndicateurReferentielCommentaireStorable,
-  PlanActionStorable,
 } from 'storables';
 
 export const defaultAuthorization = () => 'Bearer';
@@ -88,67 +85,6 @@ export const actionStatusStore = new HybridStore<ActionStatusStorable>({
   deserializer: serialized =>
     new ActionStatusStorable(serialized as ActionStatusInterface),
 });
-
-const makeFicheActionStoreForEpci = (collectiviteId: string) => {
-  return new HybridStore<FicheActionStorable>({
-    host: ENV.backendHost,
-    endpoint: () => `v2/${FicheAction.pathname}/${collectiviteId}`,
-    authorization: defaultAuthorization,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new FicheActionStorable(serialized as FicheActionInterface),
-  });
-};
-
-const ficheActionStoreForEpci: Record<
-  string,
-  HybridStore<FicheActionStorable>
-> = {};
-
-export const getFicheActionStoreForEpci = (collectiviteId: string) => {
-  if (!ficheActionStoreForEpci[collectiviteId]) {
-    ficheActionStoreForEpci[collectiviteId] =
-      makeFicheActionStoreForEpci(collectiviteId);
-  }
-  return ficheActionStoreForEpci[collectiviteId];
-};
-
-const makePlanActionStoreForEpci = (collectiviteId: string) => {
-  return new HybridStore<PlanActionStorable>({
-    host: ENV.backendHost,
-    endpoint: () => `v2/${PlanAction.pathname}/${collectiviteId}`,
-    authorization: defaultAuthorization,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new PlanActionStorable(serialized as PlanActionInterface),
-  });
-};
-
-const planActionStoreForEpci: Record<
-  string,
-  HybridStore<PlanActionStorable>
-> = {};
-
-export const getPlanActionStoreForEpci = (collectiviteId: string) => {
-  if (!planActionStoreForEpci[collectiviteId]) {
-    planActionStoreForEpci[collectiviteId] =
-      makePlanActionStoreForEpci(collectiviteId);
-  }
-  return planActionStoreForEpci[collectiviteId];
-};
-
-export const ficheActionCategorieStore =
-  new HybridStore<FicheActionCategorieStorable>({
-    host: ENV.backendHost,
-    endpoint: () =>
-      `v2/${FicheActionCategorie.pathname}/${getCurrentEpciSiren()}`,
-    authorization: defaultAuthorization,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new FicheActionCategorieStorable(
-        serialized as FicheActionCategorieInterface
-      ),
-  });
 
 export const indicateurPersonnaliseStore =
   new HybridStore<IndicateurPersonnaliseStorable>({

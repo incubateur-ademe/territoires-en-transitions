@@ -1,20 +1,10 @@
 import {Storable} from './storable';
 import {
-  ActionCustom,
-  ActionCustomInterface,
-  ActionStatus,
-  ActionStatusInterface,
   AnyIndicateurValueInterface,
-  FicheActionCategorieInterface,
-  FicheActionInterface,
   IndicateurPersonnaliseInterface,
 } from 'generated/models';
 import {
-  ActionStatusStorable,
   AnyIndicateurValueStorable,
-  ActionCustomStorable,
-  FicheActionStorable,
-  FicheActionCategorieStorable,
   UtilisateurConnecteLocalStorable,
   IndicateurPersonnaliseStorable,
   UtilisateurConnecteInterface,
@@ -145,37 +135,6 @@ export class LocalStore<T extends Storable> extends ChangeNotifier {
     return Object.values(store).reduce(reducer, []) as Array<T>;
   }
 }
-
-export const actionCustomStore = new LocalStore<ActionCustomStorable>({
-  pathname: ActionCustom.pathname,
-  serializer: storable => storable,
-  deserializer: serialized =>
-    new ActionCustomStorable(serialized as ActionCustomInterface),
-});
-
-export const actionStatusStore = new LocalStore<ActionStatusStorable>({
-  pathname: ActionStatus.pathname,
-  serializer: storable => storable,
-  deserializer: serialized =>
-    new ActionStatusStorable(serialized as ActionStatusInterface),
-});
-
-export const ficheActionStore = new LocalStore<FicheActionStorable>({
-  pathname: FicheActionStorable.pathname,
-  serializer: storable => storable,
-  deserializer: serialized =>
-    new FicheActionStorable(serialized as FicheActionInterface),
-});
-
-export const ficheActionCategorieStore =
-  new LocalStore<FicheActionCategorieStorable>({
-    pathname: FicheActionCategorieStorable.pathname,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new FicheActionCategorieStorable(
-        serialized as FicheActionCategorieInterface
-      ),
-  });
 
 export const indicateurPersonnaliseStore =
   new LocalStore<IndicateurPersonnaliseStorable>({

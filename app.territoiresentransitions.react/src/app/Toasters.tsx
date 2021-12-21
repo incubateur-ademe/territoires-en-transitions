@@ -7,8 +7,6 @@ import {
   actionMetaStore,
   actionStatusStore,
   epciStore,
-  ficheActionCategorieStore,
-  getFicheActionStoreForEpci,
   indicateurPersonnaliseStore,
   indicateurResultatStore,
   indicateurObjectifStore,
@@ -112,7 +110,6 @@ function makeComposer(messages: {
 }
 
 export function Toasters() {
-  const ficheActionStore = getFicheActionStoreForEpci(getCurrentEpciSiren()!);
   return (
     <>
       <EndpointToaster
@@ -154,20 +151,6 @@ export function Toasters() {
         composer={makeComposer({
           storeSuccess: "Le statut de l'action est enregistré",
           storeError: "Le statut de l'action n'a pas été enregistré",
-        })}
-      />
-      <EndpointToaster
-        endpoint={ficheActionStore.api}
-        composer={makeComposer({
-          storeSuccess: 'La fiche est enregistrée',
-          storeError: "La fiche n'a pas été enregistrée",
-        })}
-      />
-      <EndpointToaster
-        endpoint={ficheActionCategorieStore.api}
-        composer={makeComposer({
-          storeSuccess: 'La catégorie est enregistrée',
-          storeError: "La catégorie n'a pas été enregistrée",
         })}
       />
 
