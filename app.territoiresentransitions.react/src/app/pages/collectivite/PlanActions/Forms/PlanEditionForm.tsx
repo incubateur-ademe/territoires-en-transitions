@@ -43,7 +43,7 @@ const InlineEditableTitle = (props: {
               onStateChange(true);
             }}
           >
-            <div className="fr-fi-edit-fill" />
+            <div className="fr-fi-edit-fill">e</div>
           </IconButton>
 
           {props.remove !== undefined && (
@@ -54,7 +54,7 @@ const InlineEditableTitle = (props: {
                 props.remove!();
               }}
             >
-              <div className="fr-fi-delete-fill" />
+              <div className="fr-fi-delete-fill">d</div>
             </IconButton>
           )}
         </>
@@ -70,7 +70,7 @@ const InlineEditableTitle = (props: {
             }}
           />
           <IconButton
-            aria-label="enregister"
+            aria-label="enregistrer"
             onClick={e => {
               e.preventDefault();
               setEditing(false);
@@ -78,7 +78,7 @@ const InlineEditableTitle = (props: {
               props.onSave(text);
             }}
           >
-            <div className="fr-fi-save-fill" />
+            <div className="fr-fi-save-fill">s</div>
           </IconButton>
         </div>
       )}
