@@ -1,8 +1,6 @@
 import React, {FC, useEffect, useState} from 'react';
 import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
-import {useAllStorables, useCollectiviteId} from 'core-logic/hooks';
-import {PlanActionStorable} from 'storables/PlanActionStorable';
 import {
   CategoryNode,
   nestPlanCategories,
@@ -19,6 +17,7 @@ import TextField from '@material-ui/core/TextField';
 import * as R from 'ramda';
 import {usePlanActionList} from 'core-logic/hooks/plan_action';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
+import {useCollectiviteId} from 'core-logic/hooks';
 
 type LinkedPlanCategoriesFieldProps = {
   ficheUid: string;

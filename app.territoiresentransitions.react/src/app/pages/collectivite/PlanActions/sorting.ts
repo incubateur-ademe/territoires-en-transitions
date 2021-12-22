@@ -37,19 +37,21 @@ export function categorizeAndSortFiches(
   plan: PlanActionRead
 ): Categorized[] {
   // step 1: sort categories
-  const categories: Categorie[] = [...plan.categories, defaultDisplayCategorie];
+  const categories: Categorie[] = [...plan.categories];
   const fichesByCategory = (plan as PlanActionStructure).fiches_by_category;
   categories.sort((a, b) => compareIndexes(a.nom, b.nom));
+  categories.push(defaultDisplayCategorie);
+  // step 2: categorize
   return categories.map((categorie: Categorie) => {
-    // step 2: find fiches
+    // step 2a: find fiches
     const fiches: FicheActionRead[] = [];
     for (const {fiche_uid} of fichesByCategory.filter(
-      fc => fc.category_uid === categorie.uid
+      fc => (fc.category_uid ?? '') === categorie.uid
     )) {
       const fiche = allFiches.find(f => f.uid === fiche_uid);
       if (fiche) fiches.push(fiche);
     }
-    // step 3: sort fiches
+    // step 2b: sort fiches
     fiches.sort((a, b) => compareIndexes(a.titre, b.titre));
     fiches.sort((a, b) => compareIndexes(a.numerotation, b.numerotation));
     return {
