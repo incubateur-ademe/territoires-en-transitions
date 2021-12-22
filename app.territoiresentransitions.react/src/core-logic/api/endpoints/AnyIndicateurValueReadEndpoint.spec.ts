@@ -11,7 +11,7 @@ describe('Indicateur-resultat reading endpoint should retrieve data-layer defaul
       const results = await endpoint.getBy({
         collectiviteId: 1,
       });
-      expect(results).toHaveLength(2);
+      expect(results).toHaveLength(1);
       expect(results[0]).toEqual(
         expect.objectContaining({
           indicateur_id: 'cae_8',

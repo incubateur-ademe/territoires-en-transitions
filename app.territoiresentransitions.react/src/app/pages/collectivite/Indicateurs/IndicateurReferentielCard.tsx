@@ -1,7 +1,5 @@
 import React, {useEffect} from 'react';
 import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
-import {commands} from 'core-logic/commands';
-import {IndicateurReferentielCommentaireStorable} from 'storables/IndicateurReferentielCommentaireStorable';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 
@@ -14,31 +12,29 @@ import {
   indicateurObjectifRepository,
   indicateurResultatRepository,
 } from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {indicateurCommentaireRepository} from 'core-logic/api/repositories/IndicateurCommentaireRepository';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
+  const indicateurId = props.indicateur.id;
   const [value, setValue] = React.useState('');
   const collectiviteId = useCollectiviteId()!;
 
-  const id = IndicateurReferentielCommentaireStorable.buildId(
-    collectiviteId.toString(),
-    props.indicateur.id
-  );
-
   useEffect(() => {
-    commands.indicateurCommands
-      .getIndicateurReferentielCommentaire(id)
-      .then(storable => setValue(storable?.value ?? ''));
+    indicateurCommentaireRepository
+      .fetchCommentaireForId({
+        collectiviteId,
+        indicateurId,
+      })
+      .then(commentaireRead => setValue(commentaireRead?.commentaire ?? ''));
   }, [value, collectiviteId]);
 
   const handleSave = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const inputValue = event.currentTarget.value;
-    commands.indicateurCommands.storeIndicateurReferentielCommentaire(
-      new IndicateurReferentielCommentaireStorable({
-        epci_id: collectiviteId.toString(),
-        indicateur_id: props.indicateur.id,
-        value: inputValue,
-      })
-    );
+    indicateurCommentaireRepository.save({
+      collectivite_id: collectiviteId,
+      indicateur_id: indicateurId,
+      commentaire: inputValue,
+    });
   };
 
   return (
