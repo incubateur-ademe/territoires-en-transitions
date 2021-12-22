@@ -1,8 +1,5 @@
-import {HybridStore} from './hybridStore';
-import {ENV} from 'environmentVariables';
 import {getCurrentEpciSiren} from 'core-logic/api/currentEpci';
-import {Referentiel} from 'types';
-
+import {ENV} from 'environmentVariables';
 import {
   ActionMeta,
   ActionMetaInterface,
@@ -11,26 +8,18 @@ import {
   ActionStatusInterface,
   Epci,
   EpciInterface,
-  FicheActionCategorie,
-  FicheActionCategorieInterface,
-  FicheAction,
-  FicheActionInterface,
   IndicateurPersonnalise,
   IndicateurPersonnaliseInterface,
-  IndicateurReferentielCommentaire,
-  IndicateurReferentielCommentaireInterface,
-  AnyIndicateurValueInterface,
-  PlanAction,
-  PlanActionInterface,
 } from 'generated/models';
 import {
-  ActionStatusStorable,
   ActionMetaStorable,
   ActionReferentielScoreStorable,
+  ActionStatusStorable,
   EpciStorable,
   IndicateurPersonnaliseStorable,
-  IndicateurReferentielCommentaireStorable,
 } from 'storables';
+import {Referentiel} from 'types';
+import {HybridStore} from './hybridStore';
 
 export const defaultAuthorization = () => 'Bearer';
 
@@ -53,21 +42,6 @@ export const indicateurPersonnaliseStore =
     deserializer: serialized =>
       new IndicateurPersonnaliseStorable(
         serialized as IndicateurPersonnaliseInterface
-      ),
-  });
-
-export const indicateurReferentielCommentaireStore =
-  new HybridStore<IndicateurReferentielCommentaireStorable>({
-    host: ENV.backendHost,
-    endpoint: () =>
-      `v2/${
-        IndicateurReferentielCommentaire.pathname
-      }/${getCurrentEpciSiren()}`,
-    authorization: defaultAuthorization,
-    serializer: storable => storable,
-    deserializer: serialized =>
-      new IndicateurReferentielCommentaireStorable(
-        serialized as IndicateurReferentielCommentaireInterface
       ),
   });
 

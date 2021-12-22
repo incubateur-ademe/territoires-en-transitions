@@ -13,6 +13,7 @@ import {
   indicateurResultatRepository,
 } from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {indicateurCommentaireRepository} from 'core-logic/api/repositories/IndicateurCommentaireRepository';
+import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
 
 const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
   const indicateurId = props.indicateur.id;
@@ -91,16 +92,17 @@ export const IndicateurReferentielCard = ({
   hideIfNoValues?: boolean;
 }) => {
   const collectiviteId = useCollectiviteId()!;
-  const objectifValueStorables = [];
-  const resultatValueStorables = [];
-  // const resultatValueStorables = useIndicateurValuesForAllYears(
-  //   collectiviteId,
-  //   indicateur.uid
-  // );
-  // const objectifValueStorables = useIndicateurValuesForAllYears(
-  //   collectiviteId,
-  //   indicateur.uid
-  // );
+
+  const resultatValueStorables = useAnyIndicateurValuesForAllYears({
+    collectiviteId,
+    indicateurId: indicateur.id,
+    repo: indicateurResultatRepository,
+  });
+  const objectifValueStorables = useAnyIndicateurValuesForAllYears({
+    collectiviteId,
+    indicateurId: indicateur.id,
+    repo: indicateurObjectifRepository,
+  });
 
   if (
     hideIfNoValues &&
