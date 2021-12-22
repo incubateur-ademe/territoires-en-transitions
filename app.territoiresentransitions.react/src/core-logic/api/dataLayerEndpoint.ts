@@ -52,6 +52,9 @@ export abstract class DataLayerReadEndpoint<
 
   /**
    * Default response handler.
+   *
+   * Returns response data on success and an empty list on failure.
+   * Saves last response and last event.
    */
   handleResponse(response: PostgrestResponse<T>): T[] {
     this._lastResponse = response;
@@ -64,7 +67,6 @@ export abstract class DataLayerReadEndpoint<
         status: response.status,
       };
       this.notifyListeners();
-      console.log('Error when reading:', response);
 
       return [];
     }
@@ -81,7 +83,7 @@ export abstract class DataLayerReadEndpoint<
 }
 
 /**
- *
+ * Data layer read only endpoint that cache results.
  */
 export abstract class DataLayerReadCachedEndpoint<
   T,
@@ -105,7 +107,7 @@ export abstract class DataLayerReadCachedEndpoint<
   /**
    * Get a list of T using getParams.
    *
-   * Uses query.
+   * Results are memoized by params.
    */
   async getBy(getParams: GetParams): Promise<T[]> {
     const key = JSON.stringify(getParams);
@@ -166,6 +168,10 @@ export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
 
   /**
    * Default response handler.
+   *
+   * Returns response data on success (usually the insert data)
+   * and null on failure.
+   * Saves last response and last event.
    */
   handleResponse(response: PostgrestResponse<T>): T | null {
     this._lastResponse = response;
@@ -173,12 +179,11 @@ export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
     if (response.error !== null) {
       this._lastEvent = {
         outcome: 'error',
-        intent: 'retrieve',
+        intent: 'store',
         stored: null,
         status: response.status,
       };
       this.notifyListeners();
-      console.log('Error when writting:', response);
       return null;
     }
 
