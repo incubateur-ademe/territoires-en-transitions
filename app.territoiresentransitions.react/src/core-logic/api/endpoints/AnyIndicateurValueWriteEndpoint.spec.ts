@@ -36,6 +36,7 @@ describe('Indicateur-resultat write endpoint', () => {
       collectivite_id: 1,
     });
     expect(updateResult).not.toBeNull();
+    // FIX ME !
     expect(insertResult).toEqual(
       expect.objectContaining({
         valeur: 18,

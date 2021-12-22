@@ -1,10 +1,11 @@
 import '@testing-library/jest-dom/extend-expect';
-import {indicateurCommentaireReadEndpoint} from 'core-logic/api/endpoints/indicateurCommentaireReadEndpoint';
+import {indicateurCommentaireReadEndpoint} from 'core-logic/api/endpoints/IndicateurCommentaireReadEndpoint';
 
 describe('Indicateur-commentaire reading endpoint ', () => {
   it('should retrieve data-layer default commentaire for collectivite #1 ', async () => {
     const results = await indicateurCommentaireReadEndpoint.getBy({
       collectivite_id: 1,
+      indicateur_id: 'cae_8',
     });
 
     expect(results).toHaveLength(1);
