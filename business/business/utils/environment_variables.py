@@ -63,7 +63,7 @@ def get_env_variables() -> EnvironmentVariables:
 
     return EnvironmentVariables(
         referentiels_repository=get_env_variable(
-            "REFERENRIELS_REPOSITORY", referentiels_repository_options
+            "REFERENTIELS_REPOSITORY", referentiels_repository_options
         ),
         labelisation_repositories=get_env_variable(
             "LABELISATION_REPOSITORIES", labelisation_repositories_options

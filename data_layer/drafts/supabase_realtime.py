@@ -1,7 +1,11 @@
+import os
+import dotenv
 from realtime_py.connection import Socket
 
-SUPABASE_ID = ""
-API_KEY = ""
+dotenv.load_dotenv()
+
+SUPABASE_WS = os.getenv("SUPABASE_WS")
+API_KEY = os.getenv("SUPABASE_KEY")
 
 
 def insert_root_handler(payload):
@@ -9,8 +13,8 @@ def insert_root_handler(payload):
     # *:  {'columns': [{'flags': ['key'], 'name': 'id', 'type': 'int4', 'type_modifier': 4294967295}, {'flags': [], 'name': 'epci_id', 'type': 'int4', 'type_modifier': 4294967295}, {'flags': [], 'name': 'modified_by', 'type': 'uuid', 'type_modifier': 4294967295}, {'flags': [], 'name': 'referentiel', 'type': 'referentiel', 'type_modifier': 4294967295}, {'flags': [], 'name': 'action_id', 'type': 'text', 'type_modifier': 4294967295}, {'flags': [], 'name': 'avancement', 'type': 'avancement', 'type_modifier': 4294967295}, {'flags': [], 'name': 'concerne', 'type': 'bool', 'type_modifier': 4294967295}, {'flags': [], 'name': 'modified_at', 'type': 'timestamptz', 'type_modifier': 4294967295}], 'commit_timestamp': '2021-10-28T12:57:43Z', 'record': {'action_id': '1.1.1.2', 'avancement': 'fait', 'concerne': 't', 'epci_id': '1', 'id': '56', 'modified_at': '2021-10-28T12:57:43.041463Z', 'modified_by': '2f74a871-b601-4d0e-930d-8b5460ae0270', 'referentiel': 'eci'}, 'schema': 'public', 'table': 'store_action_statut', 'type': 'INSERT'}
 
 
-def insert_table_handler(payload):
-    print("store_action_statut: ", payload)
+def insert_score_handler(payload):
+    print("store score: ", payload)
     # store_action_statut:  {'columns': [{'flags': ['key'], 'name': 'id', 'type': 'int4', 'type_modifier': 4294967295}, {'flags': [], 'name': 'epci_id', 'type': 'int4', 'type_modifier': 4294967295}, {'flags': [], 'name': 'modified_by', 'type': 'uuid', 'type_modifier': 4294967295}, {'flags': [], 'name': 'referentiel', 'type': 'referentiel', 'type_modifier': 4294967295}, {'flags': [], 'name': 'action_id', 'type': 'text', 'type_modifier': 4294967295}, {'flags': [], 'name': 'avancement', 'type': 'avancement', 'type_modifier': 4294967295}, {'flags': [], 'name': 'concerne', 'type': 'bool', 'type_modifier': 4294967295}, {'flags': [], 'name': 'modified_at', 'type': 'timestamptz', 'type_modifier': 4294967295}], 'commit_timestamp': '2021-10-28T12:57:43Z', 'record': {'action_id': '1.1.1.2', 'avancement': 'fait', 'concerne': 't', 'epci_id': '1', 'id': '56', 'modified_at': '2021-10-28T12:57:43.041463Z', 'modified_by': '2f74a871-b601-4d0e-930d-8b5460ae0270', 'referentiel': 'eci'}, 'schema': 'public', 'table': 'store_action_statut', 'type': 'INSERT'}
 
 
@@ -20,17 +24,17 @@ def insert_event_table_handler(payload):
 
 
 if __name__ == "__main__":
-    URL = f"ws://{SUPABASE_ID}.supabase.co/realtime/v1/websocket?apikey={API_KEY}&vsn=1.0.0"
-    s = Socket(URL)
+    SUPABASE_URL = f"{SUPABASE_WS}/realtime/v1/websocket?apikey={API_KEY}&vsn=1.0.0"
+    s = Socket(SUPABASE_URL)
     s.connect()
 
-    channel_1 = s.set_channel("realtime:*")
-    channel_1.join().on("INSERT", insert_root_handler)
+    # channel_1 = s.set_channel("realtime:*")
+    # channel_1.join().on("INSERT", insert_root_handler)
 
-    channel_2 = s.set_channel("realtime:public:store_action_statut")
-    channel_2.join().on("INSERT", insert_table_handler)
+    channel_2 = s.set_channel("realtime:public:score")
+    channel_2.join().on("INSERT", insert_score_handler)
 
-    channel_3 = s.set_channel("realtime:public:epci_action_statut_update")
-    channel_3.join().on("INSERT", insert_event_table_handler)
+    # channel_3 = s.set_channel("realtime:public:epci_action_statut_update")
+    # channel_3.join().on("INSERT", insert_event_table_handler)
 
     s.listen()

@@ -37,7 +37,7 @@ describe('Score socket ', () => {
     const clientScores: ClientScoreBatchRead[] = [
       {
         id: 1,
-        epci_id: 1,
+        collectivite_id: 1,
         referentiel: 'cae',
         scores: [scoreRead1, scoreRead2],
         score_created_at: '2020-01-01',

@@ -1,6 +1,6 @@
 -- Set up reatime 
 -- create publication supabase_realtime; -- defaults to empty publication
-create publication supabase_realtime;
+create publication supabase_realtime for all tables;
 
 -- Supabase super admin
 create user supabase_admin;
