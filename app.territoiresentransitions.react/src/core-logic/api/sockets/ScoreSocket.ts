@@ -5,7 +5,7 @@ import {Referentiel} from 'types';
 export interface ClientScoreBatchRead {
   // TODO : move elsewhere.
   id: number;
-  epci_id: number;
+  collectivite_id: number;
   referentiel: Referentiel;
   scores: ScoreRead[];
   score_created_at: string;

@@ -64,10 +64,13 @@ def get_config(socket: Optional[Socket]):  # TODO variabilize all instantiations
 # SUPABASE_ID = ""
 # API_KEY = ""
 def get_connected_socket() -> Optional[Socket]:
-    SUPABASE_WS_URL = os.getenv("SUPABASE_WS_URL")
-    if not SUPABASE_WS_URL:
+    SUPABASE_WS = os.getenv("SUPABASE_WS")
+    API_KEY = os.getenv("API_KEY")
+    if not SUPABASE_WS or not API_KEY:
         return None
-    socket = Socket(SUPABASE_WS_URL)
+
+    SUPABASE_URL = f"{SUPABASE_WS}/realtime/v1/websocket?apikey={API_KEY}&vsn=1.0.0"
+    socket = Socket(SUPABASE_URL)
     socket.connect()
     return socket
 
