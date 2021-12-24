@@ -1,11 +1,16 @@
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
+import {AnyIndicateurLineChartExpandable} from 'app/pages/collectivite/Indicateurs/AnyIndicateurLineChartExpandable';
+import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
-import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {
+  indicateurPersonnaliseObjectifRepository,
+  indicateurPersonnaliseResultatRepository,
+} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {indicateurPersonnaliseDefinitionRepository} from 'core-logic/api/repositories/IndicateurPersonnaliseDefinitionRepository';
 import {useCollectiviteId} from 'core-logic/hooks';
+import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
 import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
-// import {useIndicateurValuesForAllYears} from 'core-logic/hooks/indicateurs_values';
 import React from 'react';
 import {Editable, Spacer} from 'ui/shared';
 
@@ -60,20 +65,20 @@ const IndicateurPersonnaliseCardContent = (props: {
     <div>
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
-      <h1>IMPLEMENT ME !! </h1>
-      {/*<AnyIndicateurEditableExpandPanel*/}
-      {/*  repo={indicateurObjectifRepository}*/}
-      {/*  indicateurUid={props.indicateur.uid}*/}
-      {/*  title="Objectifs"*/}
-      {/*  editable={true}*/}
-      {/*/>*/}
+      <AnyIndicateurEditableExpandPanel
+        repo={indicateurPersonnaliseObjectifRepository}
+        indicateurId={props.indicateur.id}
+        title="Objectifs"
+        editable={true}
+      />
       <Spacer />
-      {/* <AnyIndicateurLineChartExpandable
-        indicateur={props.indicateur}
-        indicateurId={props.indicateur.uid}
-        resultatRepo={indicateurResultatRepository}
-        objectifRepo={indicateurObjectifRepository}
-      /> */}
+      <AnyIndicateurLineChartExpandable
+        title={props.indicateur.titre}
+        unite={props.indicateur.unite}
+        indicateurId={props.indicateur.id}
+        resultatRepo={indicateurPersonnaliseResultatRepository}
+        objectifRepo={indicateurPersonnaliseObjectifRepository}
+      />
     </div>
   );
 };
@@ -82,13 +87,7 @@ const IndicateurPersonnaliseHeaderTitle = (props: {
   indicateur: IndicateurPersonnaliseDefinitionRead;
 }) => (
   <div className="flex justify-between w-full">
-    <div>
-      {' '}
-      {`${props.indicateur.id ? `${props.indicateur.id} - ` : ''}${
-        // TODO : should be identifiant !
-        props.indicateur.titre
-      }`}
-    </div>
+    <div>{props.indicateur.titre}</div>
     <div className="mr-4">
       <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
     </div>
@@ -103,23 +102,18 @@ export const IndicateurPersonnaliseCard = ({
   hideIfNoValues?: boolean;
 }) => {
   const collectiviteId = useCollectiviteId()!;
-  // const resultatValueStorables = useIndicateurValuesForAllYears(
-  //   collectiviteId,
-  //   indicateur.uid
-  // indicateurPersonnaliseResultatStore
-  // );
-  // const objectifValueStorables = useIndicateurValuesForAllYears(
-  //   collectiviteId,
-  //   indicateur.uid
-  // indicateurPersonnaliseObjectifStore
-  // );
-  const objectifValueStorables = [];
-  const resultatValueStorables = [];
-  if (
-    hideIfNoValues &&
-    !resultatValueStorables.length &&
-    !objectifValueStorables.length
-  )
+  const resultatValues = useAnyIndicateurValuesForAllYears({
+    collectiviteId,
+    indicateurId: indicateur.id,
+    repo: indicateurPersonnaliseResultatRepository,
+  });
+  const objectifValues = useAnyIndicateurValuesForAllYears({
+    collectiviteId,
+    indicateurId: indicateur.id,
+    repo: indicateurPersonnaliseObjectifRepository,
+  });
+
+  if (hideIfNoValues && !resultatValues.length && !objectifValues.length)
     return null;
   return (
     <AnyIndicateurCard
@@ -127,7 +121,7 @@ export const IndicateurPersonnaliseCard = ({
         <IndicateurPersonnaliseHeaderTitle indicateur={indicateur} />
       }
       indicateurId={indicateur.id}
-      indicateurResultatRepo={indicateurResultatRepository} // TODO : should be indicateurPersonnaliseResultatRepository !
+      indicateurResultatRepo={indicateurPersonnaliseResultatRepository}
     >
       <IndicateurPersonnaliseCardContent indicateur={indicateur} />
     </AnyIndicateurCard>

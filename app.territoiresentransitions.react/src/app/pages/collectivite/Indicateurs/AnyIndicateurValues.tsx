@@ -25,7 +25,7 @@ const AnyIndicateurValueInput = ({
 
   useEffect(() => {
     repo
-      .fetchIndicateurForIdForYear({collectiviteId, indicateurId, year})
+      .fetchIndicateurValueForIdForYear({collectiviteId, indicateurId, year})
       .then(indicateurValueRead => {
         setInputValue(indicateurValueRead?.valeur || '');
       });
@@ -116,7 +116,7 @@ export const AnyIndicateurValues = (props: {
  * Expand Panel with range of value inputs as details
  */
 export const AnyIndicateurEditableExpandPanel = (props: {
-  indicateurId: string;
+  indicateurId: string | number;
   repo: AnyIndicateurRepository;
   title: string;
   editable?: boolean;

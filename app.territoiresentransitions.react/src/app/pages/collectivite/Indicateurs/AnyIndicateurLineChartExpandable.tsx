@@ -1,16 +1,10 @@
-import {Line} from 'react-chartjs-2';
-import {useCollectiviteId} from 'core-logic/hooks';
-import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
-import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import type {ChartData, ChartDataset} from 'chart.js';
-import {Spacer} from 'ui/shared';
-import {
-  AnyIndicateurRepository,
-  indicateurObjectifRepository,
-  indicateurResultatRepository,
-} from 'core-logic/api/repositories/AnyIndicateurRepository';
-import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
+import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {useCollectiviteId} from 'core-logic/hooks';
 import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
+import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
+import {Line} from 'react-chartjs-2';
+import {Spacer} from 'ui/shared';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
@@ -25,10 +19,10 @@ const getDataset = (
   kwargs?: Partial<ChartDataset>
 ): ChartDataset => {
   const data = yearRange.map(year => {
-    const storableForYear = indicateurValues.find(
+    const valuesForYear = indicateurValues.find(
       values => values.annee === year
     );
-    return storableForYear ? storableForYear.valeur : NaN;
+    return valuesForYear ? valuesForYear.valeur : NaN;
   });
   const datastet = {
     label,
@@ -49,7 +43,7 @@ const getDataset = (
 };
 
 const AnyIndicateurLineChart = (props: {
-  indicateurId: string;
+  indicateurId: string | number;
   unit: string;
   title: string;
   resultatRepo: AnyIndicateurRepository;
@@ -60,26 +54,35 @@ const AnyIndicateurLineChart = (props: {
   const resultatValues = useAnyIndicateurValuesForAllYears({
     collectiviteId,
     indicateurId: props.indicateurId,
-    repo: indicateurResultatRepository,
+    repo: props.resultatRepo,
   });
   const objectifValues = useAnyIndicateurValuesForAllYears({
     collectiviteId,
     indicateurId: props.indicateurId,
-    repo: indicateurObjectifRepository,
+    repo: props.objectifRepo,
   });
 
   if (!resultatValues.length && !objectifValues.length)
     return <>Aucune donnée n'est renseignée.</>;
 
+  const sortedResultatValuesYears = resultatValues
+    .map(value => value.annee)
+    .sort();
+  const sortedObjectifValuesYears = objectifValues
+    .map(value => value.annee)
+    .sort();
+
   const firstYear = Math.min(
-    resultatValues.length ? resultatValues[0].annee : Infinity,
-    objectifValues.length ? objectifValues[0].annee : Infinity
+    sortedResultatValuesYears.length ? sortedResultatValuesYears[0] : Infinity,
+    sortedObjectifValuesYears.length ? sortedObjectifValuesYears[0] : Infinity
   );
   const lastYear = Math.max(
-    resultatValues.length
-      ? resultatValues[resultatValues.length - 1].annee
+    sortedResultatValuesYears.length
+      ? sortedResultatValuesYears[sortedResultatValuesYears.length - 1]
       : -1,
-    objectifValues.length ? objectifValues[objectifValues.length - 1].annee : -1
+    sortedObjectifValuesYears.length
+      ? sortedObjectifValuesYears[sortedObjectifValuesYears.length - 1]
+      : -1
   );
 
   const yearRange = range(firstYear, lastYear);
@@ -146,8 +149,9 @@ const AnyIndicateurLineChart = (props: {
 };
 
 export const AnyIndicateurLineChartExpandable = (props: {
-  indicateur: IndicateurPersonnaliseStorable | IndicateurReferentiel;
-  indicateurId: string; // TODO : this should be infered by props.indicateur but there's a mikmak with uid (for indic perso) and id (for indic ref) ...
+  title: string;
+  unite: string;
+  indicateurId: string | number;
   resultatRepo: AnyIndicateurRepository;
   objectifRepo: AnyIndicateurRepository;
 }) => (
@@ -155,9 +159,9 @@ export const AnyIndicateurLineChartExpandable = (props: {
     <details open>
       <summary className="title">Graphique</summary>
       <AnyIndicateurLineChart
-        indicateurId={props.indicateur.uid}
-        unit={props.indicateur.unite}
-        title={props.indicateur.nom}
+        indicateurId={props.indicateurId}
+        unit={props.unite}
+        title={props.title}
         resultatRepo={props.resultatRepo}
         objectifRepo={props.objectifRepo}
       />

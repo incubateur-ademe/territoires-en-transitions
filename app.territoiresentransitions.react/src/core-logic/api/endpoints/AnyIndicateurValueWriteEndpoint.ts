@@ -17,6 +17,12 @@ const makeAnyIndicateurValueWriteEndpoint = (
   return new AnyIndicateurValueWriteEndpoint();
 };
 
+export const makeNewIndicateurPersonnaliseResultatWriteEndpoint = () =>
+  makeAnyIndicateurValueWriteEndpoint('indicateur_personnalise_resultat');
+
+export const makeNewIndicateurPersonnaliseObjectifWriteEndpoint = () =>
+  makeAnyIndicateurValueWriteEndpoint('indicateur_personnalise_objectif');
+
 export const makeNewIndicateurResultatWriteEndpoint = () =>
   makeAnyIndicateurValueWriteEndpoint('indicateur_resultat');
 
@@ -28,3 +34,9 @@ export const makeNewIndicateurObjectifWriteEndpoint = () =>
 
 export const indicateurObjectifWriteEndpoint =
   makeNewIndicateurObjectifWriteEndpoint();
+
+export const indicateurPersonnaliseResultatWriteEndpoint =
+  makeNewIndicateurPersonnaliseResultatWriteEndpoint();
+
+export const indicateurPersonnaliseObjectifWriteEndpoint =
+  makeNewIndicateurPersonnaliseObjectifWriteEndpoint();
