@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 
@@ -14,9 +13,10 @@ import {
 } from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {indicateurCommentaireRepository} from 'core-logic/api/repositories/IndicateurCommentaireRepository';
 import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
+import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 
-const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
-  const indicateurId = props.indicateur.id;
+const Commentaire = (props: {definition: IndicateurDefinitionRead}) => {
+  const indicateurId = props.definition.id;
   const [value, setValue] = React.useState('');
   const collectiviteId = useCollectiviteId()!;
 
@@ -57,22 +57,22 @@ const Commentaire = (props: {indicateur: IndicateurReferentiel}) => {
 };
 
 export const IndicateurReferentielCardContent = (props: {
-  indicateur: IndicateurReferentiel;
+  definition: IndicateurDefinitionRead;
 }) => {
   return (
     <div>
-      <IndicateurDescriptionPanel description={props.indicateur.description} />
-      <Commentaire indicateur={props.indicateur} />
+      <IndicateurDescriptionPanel description={props.definition.description} />
+      <Commentaire definition={props.definition} />
       <AnyIndicateurEditableExpandPanel
         repo={indicateurObjectifRepository}
-        indicateurId={props.indicateur.uid}
+        indicateurId={props.definition.id}
         title="Objectifs"
         editable={true}
       />
       <AnyIndicateurLineChartExpandable
-        title={props.indicateur.nom}
-        unite={props.indicateur.unite}
-        indicateurId={props.indicateur.id}
+        title={props.definition.nom}
+        unite={props.definition.unite}
+        indicateurId={props.definition.id}
         resultatRepo={indicateurResultatRepository}
         objectifRepo={indicateurObjectifRepository}
       />
@@ -81,14 +81,14 @@ export const IndicateurReferentielCardContent = (props: {
 };
 
 const IndicateurReferentielCardHeaderTitle = (props: {
-  indicateur: IndicateurReferentiel;
-}) => <div>{inferIndicateurReferentielAndTitle(props.indicateur)}</div>;
+  definition: IndicateurDefinitionRead;
+}) => <div>{inferIndicateurReferentielAndTitle(props.definition)}</div>;
 
 export const IndicateurReferentielCard = ({
-  indicateur,
+  definition,
   hideIfNoValues = false,
 }: {
-  indicateur: IndicateurReferentiel;
+  definition: IndicateurDefinitionRead;
   startOpen?: boolean;
   hideIfNoValues?: boolean;
 }) => {
@@ -96,12 +96,12 @@ export const IndicateurReferentielCard = ({
 
   const resultatValues = useAnyIndicateurValuesForAllYears({
     collectiviteId,
-    indicateurId: indicateur.id,
+    indicateurId: definition.id,
     repo: indicateurResultatRepository,
   });
   const objectifValues = useAnyIndicateurValuesForAllYears({
     collectiviteId,
-    indicateurId: indicateur.id,
+    indicateurId: definition.id,
     repo: indicateurObjectifRepository,
   });
 
@@ -111,12 +111,12 @@ export const IndicateurReferentielCard = ({
   return (
     <AnyIndicateurCard
       headerTitle={
-        <IndicateurReferentielCardHeaderTitle indicateur={indicateur} />
+        <IndicateurReferentielCardHeaderTitle definition={definition} />
       }
-      indicateurId={indicateur.uid}
+      indicateurId={definition.id}
       indicateurResultatRepo={indicateurResultatRepository}
     >
-      <IndicateurReferentielCardContent indicateur={indicateur} />
+      <IndicateurReferentielCardContent definition={definition} />
     </AnyIndicateurCard>
   );
 };

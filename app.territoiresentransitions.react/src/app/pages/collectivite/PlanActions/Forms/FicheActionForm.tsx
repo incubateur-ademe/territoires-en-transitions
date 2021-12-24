@@ -16,11 +16,10 @@ import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/Ind
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
-import {IndicateurReferentiel} from 'generated/models';
-import {IndicateurPersonnaliseDefinitionWriteEndpoint} from 'core-logic/api/endpoints/IndicateurPersonnaliseDefinitionWriteEndpoint';
 import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
 import {useIndicateurPersonnaliseDefinitionList} from 'core-logic/hooks/indicateur_personnalise_definition';
 import {useCollectiviteId} from 'core-logic/hooks';
+import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 
 /**
  * Stores both plan and category uid, represents the user's selection of a
@@ -85,15 +84,15 @@ const LinkedActionsReferentielCards = () => {
 const LinkedIndicateurCards = () => {
   const {values} = useFormikContext<FicheActionRead>();
   // todo use indicateur repo
-  const linkedIndicateurs: IndicateurReferentiel[] = [];
+  const linkedIndicateurDefinitions: IndicateurDefinitionRead[] = [];
   return (
     <div>
-      {linkedIndicateurs.map(indicateur => {
-        if (indicateur)
+      {linkedIndicateurDefinitions.map(definition => {
+        if (definition)
           return (
             <IndicateurReferentielCard
-              indicateur={indicateur}
-              key={indicateur.uid}
+              definition={definition}
+              key={definition.id}
             />
           );
         return <i>indicateur manquant</i>;

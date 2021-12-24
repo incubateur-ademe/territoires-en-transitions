@@ -8,20 +8,22 @@ import {
 import 'app/DesignSystem/buttons.css';
 import {Spacer} from 'ui/shared';
 import {isIndicateurRelatedToAction} from 'utils/indicateurs';
-import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 import {searchActionById} from 'utils/actions';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
+import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 
 const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   const action = searchActionById(actionId, referentielActions);
   if (!action) {
     return <Link to="./referentiels" />;
   }
-  const relatedIndicateurs = indicateurs.filter(indicateur =>
-    isIndicateurRelatedToAction(indicateur, action)
-  );
+  // TODO !
+  const relatedIndicateurDefinitions: IndicateurDefinitionRead[] = [];
+  // const relatedIndicateurs = indicateurs.filter(indicateur =>
+  //   isIndicateurRelatedToAction(indicateur, action)
+  // );
   return (
     <div className="fr-container">
       <div className="mt-8 mb-16">
@@ -59,14 +61,14 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
       <Spacer />
       <section>
         <h2 className="fr-h2">Les indicateurs</h2>
-        {relatedIndicateurs.length === 0 && (
+        {relatedIndicateurDefinitions.length === 0 && (
           <p>Cette action ne comporte pas d'indicateur</p>
         )}
 
-        {relatedIndicateurs.map(indicateur => (
+        {relatedIndicateurDefinitions.map(definition => (
           <IndicateurReferentielCard
-            key={indicateur.id}
-            indicateur={indicateur}
+            key={definition.id}
+            definition={definition}
           />
         ))}
       </section>

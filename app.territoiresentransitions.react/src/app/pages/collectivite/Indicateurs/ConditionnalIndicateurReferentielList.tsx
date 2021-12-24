@@ -1,9 +1,9 @@
-import {indicateurs} from 'generated/data/indicateurs_referentiels';
-import {IndicateurReferentielCard} from './IndicateurReferentielCard';
+import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
+import FuzzySearch from 'fuzzy-search';
+import {useEffect, useState} from 'react';
 import {ReferentielOfIndicateur} from 'types';
 import {UiSearchBar} from 'ui/UiSearchBar';
-import {useState} from 'react';
-import FuzzySearch from 'fuzzy-search';
+import {IndicateurReferentielCard} from './IndicateurReferentielCard';
 
 /**
  * Display the list of indicateurs for a given referentiel
@@ -12,27 +12,36 @@ export const ConditionnalIndicateurReferentielList = (props: {
   referentiel: ReferentielOfIndicateur;
   showOnlyIndicateurWithData: boolean;
 }) => {
-  const referentielIndicateurs = indicateurs.filter(indicateur => {
-    return indicateur.id.startsWith(props.referentiel);
-  });
-
-  const nomSearcher = new FuzzySearch(referentielIndicateurs, ['nom'], {
+  const indicateurDefinitions = useAllIndicateurDefinitionsForGroup(
+    props.referentiel
+  );
+  const nomSearcher = new FuzzySearch(indicateurDefinitions, ['nom'], {
     sort: true,
   });
-  const idSearcher = new FuzzySearch(referentielIndicateurs, ['id'], {
-    sort: false,
-  });
-
-  const [filteredIndicateurs, setFilteredIndicateurs] = useState(
-    referentielIndicateurs
+  const identifiantSearcher = new FuzzySearch(
+    indicateurDefinitions,
+    ['identifiant'],
+    {
+      sort: false,
+    }
   );
 
-  const search = (query: string) => {
-    if (query === '') return setFilteredIndicateurs(referentielIndicateurs);
-    if (/^\d/.test(query))
-      return setFilteredIndicateurs(idSearcher.search(query));
+  const [filteredIndicateurDefinitions, setFilteredIndicateurDefinitions] =
+    useState(indicateurDefinitions);
 
-    return setFilteredIndicateurs(nomSearcher.search(query));
+  useEffect(
+    () => setFilteredIndicateurDefinitions(indicateurDefinitions),
+    [indicateurDefinitions]
+  );
+  const search = (query: string) => {
+    if (query === '')
+      return setFilteredIndicateurDefinitions(indicateurDefinitions);
+    if (/^\d/.test(query))
+      return setFilteredIndicateurDefinitions(
+        identifiantSearcher.search(query)
+      );
+
+    return setFilteredIndicateurDefinitions(nomSearcher.search(query));
   };
 
   return (
@@ -41,11 +50,11 @@ export const ConditionnalIndicateurReferentielList = (props: {
         <UiSearchBar search={search} />
       </div>
       <section className="flex flex-col">
-        {filteredIndicateurs.map(indicateur => {
+        {filteredIndicateurDefinitions.map(definition => {
           return (
             <IndicateurReferentielCard
-              indicateur={indicateur}
-              key={indicateur.uid}
+              definition={definition}
+              key={definition.id}
               hideIfNoValues={props.showOnlyIndicateurWithData}
             />
           );
