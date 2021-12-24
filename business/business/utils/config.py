@@ -29,6 +29,9 @@ from business.evaluation.domain.ports.action_score_repo import (
     AbstractActionScoreRepository,
     InMemoryActionScoreRepository,
 )
+from business.evaluation.adapters.postgres_action_statut_repo import (
+    PostgresActionStatutRepository,
+)
 from business.evaluation.domain.ports.action_status_repo import (
     AbstractActionStatutRepository,
     InMemoryActionStatutRepository,
@@ -104,6 +107,10 @@ class Config:
     def get_statuts_repo(self) -> AbstractActionStatutRepository:
         if self.ENV.labelisation_repositories == "IN_MEMORY":
             return InMemoryActionStatutRepository()
+        elif self.ENV.labelisation_repositories == "POSTGRES":
+            return PostgresActionStatutRepository(
+                connection=self.get_postgres_connection()
+            )
         else:
             raise NotImplementedError(
                 f"Statuts repo adapter {self.ENV.labelisation_repositories} not yet implemented."

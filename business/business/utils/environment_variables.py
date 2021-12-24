@@ -27,17 +27,17 @@ def get_env_variable(
     return variable
 
 
-ReferetielsRepository = Literal["JSON", "SUPABASE", "SQL"]
+ReferetielsRepository = Literal["JSON", "POSTGRES", "SQL"]
 referentiels_repository_options: List[ReferetielsRepository] = [
     "JSON",
-    "SUPABASE",
+    "POSTGRES",
     "SQL",
 ]
 
-LabelisationRepositories = Literal["IN_MEMORY", "SUPABASE"]
+LabelisationRepositories = Literal["IN_MEMORY", "POSTGRES"]
 labelisation_repositories_options: List[LabelisationRepositories] = [
     "IN_MEMORY",
-    "SUPABASE",
+    "POSTGRES",
 ]
 
 Realtime = Literal["REPLAY", "SUPABASE"]
