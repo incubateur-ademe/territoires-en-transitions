@@ -16,21 +16,21 @@ export interface AnyIndicateurValueGetParams {
   collectiviteId: number;
 }
 
-const makeAnyIndicateurValueReadEndpoint = (
+const makeAnyIndicateurValueReadEndpoint = <T extends string | number>(
   table_name: string,
-  writeEndpoint: DataLayerWriteEndpoint<AnyIndicateurValueWrite>
+  writeEndpoint: DataLayerWriteEndpoint<AnyIndicateurValueWrite<T>>
 ): DataLayerReadCachedEndpoint<
-  AnyIndicateurValueRead,
+  AnyIndicateurValueRead<T>,
   AnyIndicateurValueGetParams
 > => {
   class AnyIndicateurValueReadEndpoint extends DataLayerReadCachedEndpoint<
-    AnyIndicateurValueRead,
+    AnyIndicateurValueRead<T>,
     AnyIndicateurValueGetParams
   > {
     readonly name = table_name;
     async _read(
       getParams: AnyIndicateurValueGetParams
-    ): Promise<PostgrestResponse<AnyIndicateurValueRead>> {
+    ): Promise<PostgrestResponse<AnyIndicateurValueRead<T>>> {
       return this._table.eq('collectivite_id', getParams.collectiviteId);
     }
   }
@@ -38,7 +38,7 @@ const makeAnyIndicateurValueReadEndpoint = (
 };
 
 export const makeNewIndicateurResultatReadEndpoint = () =>
-  makeAnyIndicateurValueReadEndpoint(
+  makeAnyIndicateurValueReadEndpoint<string>(
     'indicateur_resultat',
     indicateurResultatWriteEndpoint
   );

@@ -3,7 +3,7 @@ import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicat
 import {Chevron} from 'ui/shared/Chevron';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 
-export const AnyIndicateurCard = ({
+export function AnyIndicateurCard<T extends string | number>({
   children,
   headerTitle,
   indicateurId,
@@ -12,8 +12,8 @@ export const AnyIndicateurCard = ({
   headerTitle: React.ReactElement;
   children: React.ReactElement;
   indicateurId: string | number;
-  indicateurResultatRepo: AnyIndicateurRepository;
-}) => {
+  indicateurResultatRepo: AnyIndicateurRepository<T>;
+}) {
   const [opened, setOpened] = useState(false);
   return (
     <div className="mt-2  px-5 py-4 bg-beige mb-5 ">
@@ -41,4 +41,4 @@ export const AnyIndicateurCard = ({
       </section>
     </div>
   );
-};
+}
