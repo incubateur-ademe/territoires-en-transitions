@@ -4,7 +4,7 @@ import {
   elsesCollectiviteReadEndpoint,
   ownedCollectiviteReadEndpoint,
 } from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
-import {supabase} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {ElsesCollectiviteRead} from 'generated/dataLayer';
 import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read';
 
@@ -35,7 +35,7 @@ describe('Elses Collectivite reading endpoint should retrieve only claimed Colle
     expect(results).toEqual(expected);
   });
   it("should retrieve else's active Collectivite (2) if no id is given", async () => {
-    await supabase.auth.signIn(yoloCredentials);
+    await supabaseClient.auth.signIn(yoloCredentials);
     const results = await elsesCollectiviteReadEndpoint.getBy({});
     expect(results.length).toEqual(2);
   });
@@ -43,7 +43,7 @@ describe('Elses Collectivite reading endpoint should retrieve only claimed Colle
 
 describe('Owned Collectivite reading endpoint ', () => {
   it('should retrieve 2 Collectivites for Yolo (referent and agent)', async () => {
-    await supabase.auth.signIn(yoloCredentials);
+    await supabaseClient.auth.signIn(yoloCredentials);
     const results = await ownedCollectiviteReadEndpoint.getBy({});
     const expectedResults: OwnedCollectiviteRead[] = [
       {
@@ -59,7 +59,7 @@ describe('Owned Collectivite reading endpoint ', () => {
     expect(results).toEqual(expectedResults);
   });
   it('should retrieve 0 Collectivite for Yulu', async () => {
-    await supabase.auth.signIn(yuluCredentials);
+    await supabaseClient.auth.signIn(yuluCredentials);
     const results = await ownedCollectiviteReadEndpoint.getBy({});
     expect(results).toEqual([]);
   });

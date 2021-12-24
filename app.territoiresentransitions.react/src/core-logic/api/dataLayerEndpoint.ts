@@ -1,5 +1,5 @@
 import {ChangeNotifier} from 'core-logic/api/reactivity';
-import {supabase} from './supabase';
+import {supabaseClient} from './supabase';
 import {PostgrestResponse} from '@supabase/supabase-js';
 
 export interface DataEvent<T> {
@@ -29,7 +29,7 @@ export abstract class DataLayerReadEndpoint<
   }
 
   get _table() {
-    return supabase.from(this.name).select();
+    return supabaseClient.from(this.name).select();
   }
 
   /**
@@ -143,7 +143,7 @@ export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
   }
 
   get _table() {
-    return supabase.from(this.name);
+    return supabaseClient.from(this.name);
   }
 
   get _select() {

@@ -1,4 +1,4 @@
-import {supabase} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {DcpWrite} from 'generated/dataLayer/dcp_write';
 export interface InscriptionUtilisateur {
   email: string;
@@ -17,7 +17,7 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
 
   // todo test signup with existing user email.
 
-  const signedUp = await supabase.auth.signUp({
+  const signedUp = await supabaseClient.auth.signUp({
     email: inscription.email,
     password: inscription.password,
   });
@@ -31,5 +31,5 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
     nom: inscription.nom,
     user_id: signedUp.user.id,
   };
-  await supabase.from('dcp').insert([dcp]);
+  await supabaseClient.from('dcp').insert([dcp]);
 };

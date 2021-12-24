@@ -1,5 +1,5 @@
 import {makeAutoObservable} from 'mobx';
-import {supabase} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 
 export class AuthBloc {
   private _userId: string | null = null;
@@ -7,14 +7,14 @@ export class AuthBloc {
 
   constructor() {
     makeAutoObservable(this);
-    const connectedUser = supabase.auth.user();
+    const connectedUser = supabaseClient.auth.user();
     if (connectedUser) {
       this._userId = connectedUser.id;
     }
   }
 
   connect({email, password}: {email: string; password: string}) {
-    supabase.auth
+    supabaseClient.auth
       .signIn({email, password})
       .then(session => {
         if (session.user) {
@@ -33,7 +33,7 @@ export class AuthBloc {
   }
 
   disconnect() {
-    supabase.auth.signOut().then(response => {
+    supabaseClient.auth.signOut().then(response => {
       if (response.error === null) {
         this._userId = null;
       } else this._authError = response.error.message;
