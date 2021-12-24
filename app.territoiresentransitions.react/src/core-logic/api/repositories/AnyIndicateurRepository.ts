@@ -9,10 +9,14 @@ import {
 import {
   AnyIndicateurValueGetParams,
   indicateurObjectifReadEndpoint,
+  indicateurPersonnaliseObjectifReadEndpoint,
+  indicateurPersonnaliseResultatReadEndpoint,
   indicateurResultatReadEndpoint,
 } from 'core-logic/api/endpoints/AnyIndicateurValueReadEndpoint';
 import {
   indicateurObjectifWriteEndpoint,
+  indicateurPersonnaliseObjectifWriteEndpoint,
+  indicateurPersonnaliseResultatWriteEndpoint,
   indicateurResultatWriteEndpoint,
 } from 'core-logic/api/endpoints/AnyIndicateurValueWriteEndpoint';
 
@@ -42,7 +46,7 @@ export class AnyIndicateurRepository {
     return this.writeEndpoint.save(anyIndicateur);
   }
 
-  async fetchIndicateurForIdForYear(args: {
+  async fetchIndicateurValueForIdForYear(args: {
     collectiviteId: number;
     indicateurId: string | number;
     year: number;
@@ -58,13 +62,14 @@ export class AnyIndicateurRepository {
       ) ?? null
     );
   }
-  async fetchIndicateurForId(args: {
+  async fetchIndicateurValuesForId(args: {
     collectiviteId: number;
-    indicateurId: string;
+    indicateurId: string | number;
   }): Promise<AnyIndicateurValueRead[]> {
     const allIndicateurValues = await this.readEndpoint.getBy({
       collectiviteId: args.collectiviteId,
     });
+
     return allIndicateurValues.filter(
       indicateurValue => indicateurValue.indicateur_id === args.indicateurId
     );
@@ -80,3 +85,15 @@ export const indicateurObjectifRepository = new AnyIndicateurRepository({
   readEndpoint: indicateurObjectifReadEndpoint,
   writeEndpoint: indicateurObjectifWriteEndpoint,
 });
+
+export const indicateurPersonnaliseResultatRepository =
+  new AnyIndicateurRepository({
+    readEndpoint: indicateurPersonnaliseResultatReadEndpoint,
+    writeEndpoint: indicateurPersonnaliseResultatWriteEndpoint,
+  });
+
+export const indicateurPersonnaliseObjectifRepository =
+  new AnyIndicateurRepository({
+    readEndpoint: indicateurPersonnaliseObjectifReadEndpoint,
+    writeEndpoint: indicateurPersonnaliseObjectifWriteEndpoint,
+  });

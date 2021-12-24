@@ -8,7 +8,7 @@ export const useAnyIndicateurValuesForAllYears = ({
   repo,
 }: {
   collectiviteId: number;
-  indicateurId: string;
+  indicateurId: string | number;
   repo: AnyIndicateurRepository;
 }) => {
   const [indicateurValuesForAllYears, setIndicateurValuesForAllYears] =
@@ -16,7 +16,7 @@ export const useAnyIndicateurValuesForAllYears = ({
 
   useEffect(() => {
     const fetch = async () => {
-      const fetched = await repo.fetchIndicateurForId({
+      const fetched = await repo.fetchIndicateurValuesForId({
         collectiviteId,
         indicateurId,
       });

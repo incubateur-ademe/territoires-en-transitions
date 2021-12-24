@@ -24,7 +24,7 @@ export const IndicateurPersonnaliseForm = (props: {
     const [state, setState] = useState<FormState>('ready');
     const validation = Yup.object({
       collectivite_id: Yup.number().required(),
-      // identifiant: Yup.string().max(36),
+      identifiant: Yup.string().max(36),
       titre: Yup.string()
         .max(300, 'Ce champ doit faire au maximum 300 caractères')
         .required(),

@@ -728,7 +728,7 @@ comment on function action_down_to_tache is 'Returns referentiel action summary 
 --------------------------------
 create table abstract_any_indicateur_value
 (
-    valeur float   not null,
+    valeur float,
     annee  integer not null
 ) inherits (absract_modified_at);
 
