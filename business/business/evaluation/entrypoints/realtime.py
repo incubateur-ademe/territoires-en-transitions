@@ -57,19 +57,21 @@ def get_config(socket: Optional[Socket]):  # TODO variabilize all instantiations
         domain_message_bus,
         socket=socket,
     )
-    prepare_bus(config.domain_message_bus, config.prepare_use_cases(), EVENT_HANDLERS)
+    prepare_bus(config, EVENT_HANDLERS)
     return config
 
 
 # SUPABASE_ID = ""
 # API_KEY = ""
-def get_connected_socket() -> Optional[Socket]:
+def get_connected_socket() -> Socket:
     SUPABASE_WS = os.getenv("SUPABASE_WS")
-    API_KEY = os.getenv("API_KEY")
-    if not SUPABASE_WS or not API_KEY:
-        return None
+    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+    if not SUPABASE_WS or not SUPABASE_KEY:
+        raise EnvironmentError("SUPABASE_WS and SUPABASE_KEY should be specified ")
 
-    SUPABASE_URL = f"{SUPABASE_WS}/realtime/v1/websocket?apikey={API_KEY}&vsn=1.0.0"
+    SUPABASE_URL = (
+        f"{SUPABASE_WS}/realtime/v1/websocket?apikey={SUPABASE_KEY}&vsn=1.0.0"
+    )
     socket = Socket(SUPABASE_URL)
     socket.connect()
     return socket
