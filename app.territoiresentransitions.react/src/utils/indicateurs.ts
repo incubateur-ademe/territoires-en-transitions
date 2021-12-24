@@ -1,20 +1,20 @@
-import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {refToEmoji} from 'utils/refToEmoji';
 import {ReferentielOfIndicateur} from 'types';
+import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 
 export const indicateurIdRegexp =
   '(?<ref>eci|cae|crte)_(?<number>[0-9]{1,3})(?<literal>.+)?';
 
 export const isIndicateurRelatedToAction = (
-  indicateur: IndicateurReferentiel,
+  definition: IndicateurDefinitionRead,
   action: ActionReferentiel
-): boolean => indicateur.action_ids.includes(action.id);
+): boolean => true; // TODO ! //definition.action_ids.includes(action.id);
 
 export const inferIndicateurReferentielAndTitle = (
-  indicateur: IndicateurReferentiel
+  definition: IndicateurDefinitionRead
 ) => {
-  const indicateurId = indicateur.id;
+  const indicateurId = definition.id;
   const id_groups = indicateurId.match(indicateurIdRegexp)?.groups;
   if (!id_groups) return indicateurId;
   const ref = id_groups['ref'] as ReferentielOfIndicateur;
@@ -25,5 +25,5 @@ export const inferIndicateurReferentielAndTitle = (
           id_groups['literal'] ? '.' + id_groups['literal'] : ''
         }`;
 
-  return `${refToEmoji[ref]} ${nomenclature} - ${indicateur.nom}`;
+  return `${refToEmoji[ref]} ${nomenclature} - ${definition.nom}`;
 };
