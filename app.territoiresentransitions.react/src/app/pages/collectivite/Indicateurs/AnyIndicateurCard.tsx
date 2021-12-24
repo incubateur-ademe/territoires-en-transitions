@@ -6,12 +6,12 @@ import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateur
 export const AnyIndicateurCard = ({
   children,
   headerTitle,
-  indicateurUid,
+  indicateurId,
   indicateurResultatRepo,
 }: {
   headerTitle: React.ReactElement;
   children: React.ReactElement;
-  indicateurUid: string;
+  indicateurId: string | number;
   indicateurResultatRepo: AnyIndicateurRepository;
 }) => {
   const [opened, setOpened] = useState(false);
@@ -33,7 +33,7 @@ export const AnyIndicateurCard = ({
           <div className="text-lg ml-7 mb-2">Résultats</div>
           <AnyIndicateurValues
             repo={indicateurResultatRepo}
-            indicateurUid={indicateurUid}
+            indicateurId={indicateurId}
             borderColor="blue"
           />
         </header>

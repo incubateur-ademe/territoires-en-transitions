@@ -6,3 +6,7 @@ psql --host localhost --port 50001 --dbname postgres --user postgres --file "./p
 psql --host localhost --port 50001 --dbname postgres --user postgres --file "./postgres/fakes/15-insert_fake_indicateur_resultat_and_objectif.sql"
 psql --host localhost --port 50001 --dbname postgres --user postgres --file "./postgres/fakes/16-insert_fake_plan_action.sql"
 psql --host localhost --port 50001 --dbname postgres --user postgres --file "./postgres/fakes/17-insert_fake_indicateur_commentaire.sql"
+psql --host localhost --port 50001 --dbname postgres --user postgres --file "./postgres/fakes/18-insert_fake_indicateur_personnalise_and_values.sql"
+
+
+

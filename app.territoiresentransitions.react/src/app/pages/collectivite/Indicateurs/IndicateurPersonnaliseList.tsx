@@ -1,30 +1,31 @@
-import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
-import {IndicateurPersonnaliseCreationDialog} from './IndicateurPersonnaliseCreationDialog';
-import {useAllStorables} from 'core-logic/hooks';
-import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
+import {useCollectiviteId} from 'core-logic/hooks';
+import {useIndicateurPersonnaliseDefinitionList} from 'core-logic/hooks/indicateur_personnalise_definition';
 import FuzzySearch from 'fuzzy-search';
+import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
 import {useState} from 'react';
 import {UiSearchBar} from 'ui/UiSearchBar';
+import {IndicateurPersonnaliseCreationDialog} from './IndicateurPersonnaliseCreationDialog';
 
 export const IndicateurPersonnaliseList = ({
   showOnlyIndicateurWithData = false,
 }) => {
+  const collectiviteId = useCollectiviteId()!;
+
   const [filteredIndicateurs, setFilteredIndicateurs] =
-    useState<IndicateurPersonnaliseStorable[]>();
+    useState<IndicateurPersonnaliseDefinitionRead[]>();
 
-  const indicateurs = useAllStorables<IndicateurPersonnaliseStorable>(
-    indicateurPersonnaliseStore
-  );
-  indicateurs.sort((a, b) => a.nom.localeCompare(b.nom));
+  const indicateurs = useIndicateurPersonnaliseDefinitionList(collectiviteId);
 
-  const nomSearcher = new FuzzySearch(indicateurs, ['nom'], {
+  indicateurs.sort((a, b) => a.titre.localeCompare(b.titre));
+
+  const titreSearcher = new FuzzySearch(indicateurs, ['titre'], {
     sort: true,
   });
 
   const search = (query: string) => {
     if (query === '') return setFilteredIndicateurs(undefined);
-    return setFilteredIndicateurs(nomSearcher.search(query));
+    return setFilteredIndicateurs(titreSearcher.search(query));
   };
 
   return (
@@ -39,7 +40,7 @@ export const IndicateurPersonnaliseList = ({
         {(filteredIndicateurs || indicateurs).map(indicateur => (
           <IndicateurPersonnaliseCard
             indicateur={indicateur}
-            key={indicateur.uid}
+            key={indicateur.id}
             hideIfNoValues={showOnlyIndicateurWithData}
           />
         ))}

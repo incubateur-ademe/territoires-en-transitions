@@ -4,12 +4,12 @@ export interface AnyIndicateurValueWrite {
   valeur: number;
   annee: number;
   collectivite_id: number;
-  indicateur_id: string;
+  indicateur_id: string | number; // string for indic referentiel, number for indic perso
 }
 
 export interface AnyIndicateurValueRead {
   valeur: number;
   annee: number;
   collectivite_id: number;
-  indicateur_id: string;
+  indicateur_id: string | number; // string for indic referentiel, number for indic perso
 }

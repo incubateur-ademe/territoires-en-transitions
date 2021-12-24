@@ -44,7 +44,7 @@ export class AnyIndicateurRepository {
 
   async fetchIndicateurForIdForYear(args: {
     collectiviteId: number;
-    indicateurId: string;
+    indicateurId: string | number;
     year: number;
   }): Promise<AnyIndicateurValueRead | null> {
     const allIndicateurValues = await this.readEndpoint.getBy({
