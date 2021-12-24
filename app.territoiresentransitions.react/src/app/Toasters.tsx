@@ -11,6 +11,13 @@ import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWrit
 import {actionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
 import {actionCommentaireWriteEndpoint} from 'core-logic/api/endpoints/ActionCommentaireWriteEndpoint';
 import {indicateurPersonnaliseDefinitionWriteEndpoint} from 'core-logic/api/endpoints/IndicateurPersonnaliseDefinitionWriteEndpoint';
+import {
+  indicateurObjectifWriteEndpoint,
+  indicateurPersonnaliseObjectifWriteEndpoint,
+  indicateurPersonnaliseResultatWriteEndpoint,
+  indicateurResultatWriteEndpoint,
+} from 'core-logic/api/endpoints/AnyIndicateurValueWriteEndpoint';
+import {indicateurCommentaireWriteEndpoint} from 'core-logic/api/endpoints/IndicateurCommentaireWriteEndpoint';
 
 type Composer<T> = (
   response: PostgrestResponse<T> | null,
@@ -148,72 +155,68 @@ export const Toasters = () => {
         })}
       />
 
-      {/* todo missing endpoints */}
+      <EndpointToaster
+        endpoint={indicateurResultatWriteEndpoint}
+        composer={makeComposer({
+          storeSuccess:
+            "Le résultat de l'indicateur référentiel est enregistré",
+          storeError:
+            "Le résultat de l'indicateur référentiel  n'a pas été enregistré",
+        })}
+      />
 
-      {/*<EndpointToaster*/}
-      {/*  endpoint={indicateurResultatStore.api}*/}
-      {/*  composer={makeComposer({*/}
-      {/*    storeSuccess: "La valeur résultat de l'indicateur est enregistrée",*/}
-      {/*    storeError:*/}
-      {/*      "La valeur résultat de l'indicateur n'a pas été enregistrée",*/}
-      {/*  })}*/}
-      {/*/>*/}
-      {/*<EndpointToaster*/}
-      {/*  endpoint={indicateurPersonnaliseResultatStore.api}*/}
-      {/*  composer={makeComposer({*/}
-      {/*    storeSuccess:*/}
-      {/*      "La valeur résultat de l'indicateur personnalisé est enregistrée",*/}
-      {/*    storeError:*/}
-      {/*      "La valeur résultat de l'indicateur personnalisé n'a pas été enregistrée",*/}
-      {/*  })}*/}
-      {/*/>*/}
-      {/*<EndpointToaster*/}
-      {/*  endpoint={indicateurObjectifStore.api}*/}
-      {/*  composer={makeComposer({*/}
-      {/*    storeSuccess: "La valeur objectif de l'indicateur est enregistrée",*/}
-      {/*    storeError:*/}
-      {/*      "La valeur objectif de l'indicateur n'a pas été enregistrée",*/}
-      {/*  })}*/}
-      {/*/>*/}
-      {/*<EndpointToaster*/}
-      {/*  endpoint={indicateurPersonnaliseObjectifStore.api}*/}
-      {/*  composer={makeComposer({*/}
-      {/*    storeSuccess:*/}
-      {/*      "La valeur objectif de l'indicateur personnalisé est enregistrée",*/}
-      {/*    storeError:*/}
-      {/*      "La valeur objectif de l'indicateur personnalisé n'a pas été enregistrée",*/}
-      {/*  })}*/}
-      {/*/>*/}
+      <EndpointToaster
+        endpoint={indicateurObjectifWriteEndpoint}
+        composer={makeComposer({
+          storeSuccess: "L'objectif de l'indicateur référentiel est enregistré",
+          storeError:
+            "L'objectif de l'indicateur référentiel  n'a pas été enregistré",
+        })}
+      />
 
-      {/*<EndpointToaster*/}
-      {/*  endpoint={indicateurPersonnaliseStore.api}*/}
-      {/*  composer={makeComposer({*/}
-      {/*    storeSuccess: "L'indicateur est enregistré",*/}
-      {/*    storeError: "L'indicateur n'a pas été enregistré",*/}
-      {/*  })}*/}
-      {/*/>*/}
+      <EndpointToaster
+        endpoint={indicateurPersonnaliseResultatWriteEndpoint}
+        composer={makeComposer({
+          storeSuccess:
+            "Le résultat de l'indicateur personnalisé est enregistré",
+          storeError:
+            "Le résultat de l'indicateur personnalisé  n'a pas été enregistré",
+        })}
+      />
 
-      {/*<EndpointToaster*/}
-      {/*  endpoint={indicateurPersonnaliseObjectifStore.api}*/}
-      {/*  composer={makeComposer({*/}
-      {/*    storeSuccess: "La valeur de l'objectif est enregistrée",*/}
-      {/*    storeError: "La valeur de l'objectif n'a pas été enregistrée",*/}
-      {/*  })}*/}
-      {/*/>*/}
-      {/*<EndpointToaster*/}
-      {/*  endpoint={indicateurReferentielCommentaireStore.api}*/}
-      {/*  composer={makeComposer({*/}
-      {/*    storeSuccess: 'Le commentaire est enregistré',*/}
-      {/*    storeError: "Le commentaire n'a pas été enregistré",*/}
-      {/*  })}*/}
-      {/*/>*/}
-      {/*<EndpointToaster*/}
-      {/*  endpoint={actionMetaStore.api}*/}
-      {/*  composer={makeComposer({*/}
-      {/*    storeSuccess: 'Le commentaire est enregistré',*/}
-      {/*    storeError: "Le commentaire n'a pas été enregistré",*/}
-      {/*  })}*/}
-      {/*/>*/}
+      <EndpointToaster
+        endpoint={indicateurPersonnaliseObjectifWriteEndpoint}
+        composer={makeComposer({
+          storeSuccess:
+            "L'objectif de l'indicateur personnalisé est enregistré",
+          storeError:
+            "L'objectif de l'indicateur personnalisé  n'a pas été enregistré",
+        })}
+      />
+
+      <EndpointToaster
+        endpoint={indicateurCommentaireWriteEndpoint}
+        composer={makeComposer({
+          storeSuccess: "Le commentaire de l'indicateur est enregistré",
+          storeError: "Le commentaire de l'indicateur  n'a pas été enregistré",
+        })}
+      />
+
+      <EndpointToaster
+        endpoint={actionCommentaireWriteEndpoint}
+        composer={makeComposer({
+          storeSuccess: "Le commentaire de l'action est enregistré",
+          storeError: "Le commentaire de l'action n'a pas été enregistré",
+        })}
+      />
+
+      <EndpointToaster
+        endpoint={actionStatutWriteEndpoint}
+        composer={makeComposer({
+          storeSuccess: "Le statut de l'action est enregistré",
+          storeError: "Le statut de l'action n'a pas été enregistré",
+        })}
+      />
     </>
   );
 };
