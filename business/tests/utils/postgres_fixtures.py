@@ -1,10 +1,13 @@
+import os
+from dotenv import load_dotenv
 import psycopg
 from psycopg.rows import dict_row
 import pytest
 
 from business.utils.get_postgres_connection_params import get_postgres_connection_params
 
-test_postgres_url = f"postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:50001/postgres"  # NB : port 50001 should be specified in docker-compose variables !
+load_dotenv()
+test_postgres_url = os.getenv("POSTGRES_URL", "missing_postgres_url")
 
 
 @pytest.fixture()
