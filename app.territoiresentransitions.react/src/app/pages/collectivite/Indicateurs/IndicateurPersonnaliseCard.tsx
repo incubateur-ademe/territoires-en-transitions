@@ -1,41 +1,40 @@
+import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
 import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
-import {commands} from 'core-logic/commands';
+import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {indicateurPersonnaliseDefinitionRepository} from 'core-logic/api/repositories/IndicateurPersonnaliseDefinitionRepository';
 import {useCollectiviteId} from 'core-logic/hooks';
+import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
 // import {useIndicateurValuesForAllYears} from 'core-logic/hooks/indicateurs_values';
 import React from 'react';
-import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
-import {IndicateurPersonnaliseTypedInterface} from 'types/IndicateurPersonnaliseMetaTypedInterface';
 import {Editable, Spacer} from 'ui/shared';
 
 const IndicateurPersonnaliseCommentaire = (props: {
-  indicateur: IndicateurPersonnaliseTypedInterface;
+  indicateur: IndicateurPersonnaliseDefinitionRead;
 }) => {
-  const [value, setValue] = React.useState(props.indicateur.meta.commentaire);
+  const [value, setValue] = React.useState(props.indicateur.commentaire);
   const [initialValue, setInitialValue] = React.useState(
-    props.indicateur.meta.commentaire
+    props.indicateur.commentaire
   );
-  if (props.indicateur.meta.commentaire !== initialValue) {
+  if (props.indicateur.commentaire !== initialValue) {
     // We use an initial value to update the field value on indicateur change.
-    setValue(props.indicateur.meta.commentaire);
-    setInitialValue(props.indicateur.meta.commentaire);
+    setValue(props.indicateur.commentaire);
+    setInitialValue(props.indicateur.commentaire);
   }
 
-  function handleChange(event: React.FormEvent<HTMLTextAreaElement>) {
+  const handleChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const inputValue = event.currentTarget.value;
     setValue(inputValue);
-  }
+  };
 
-  function handleSave(event: React.FormEvent<HTMLTextAreaElement>) {
+  const handleSave = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const inputValue = event.currentTarget.value;
     const data = {
       ...props.indicateur,
     };
-    data.meta['commentaire'] = inputValue;
-    commands.indicateurCommands
-      .storeIndicateurPersonnalise(new IndicateurPersonnaliseStorable(data))
-      .then(storable => setValue(storable.meta['commentaire']));
-  }
+    data['commentaire'] = inputValue;
+    indicateurPersonnaliseDefinitionRepository.save(data);
+  };
 
   return (
     <div className="CrossExpandPanel">
@@ -55,7 +54,7 @@ const IndicateurPersonnaliseCommentaire = (props: {
 };
 
 const IndicateurPersonnaliseCardContent = (props: {
-  indicateur: IndicateurPersonnaliseStorable;
+  indicateur: IndicateurPersonnaliseDefinitionRead;
 }) => {
   return (
     <div>
@@ -80,14 +79,15 @@ const IndicateurPersonnaliseCardContent = (props: {
 };
 
 const IndicateurPersonnaliseHeaderTitle = (props: {
-  indicateur: IndicateurPersonnaliseStorable;
+  indicateur: IndicateurPersonnaliseDefinitionRead;
 }) => (
   <div className="flex justify-between w-full">
     <div>
       {' '}
-      {`${
-        props.indicateur.custom_id ? `${props.indicateur.custom_id} - ` : ''
-      }${props.indicateur.nom}`}
+      {`${props.indicateur.id ? `${props.indicateur.id} - ` : ''}${
+        // TODO : should be identifiant !
+        props.indicateur.titre
+      }`}
     </div>
     <div className="mr-4">
       <IndicateurPersonnaliseEditionDialog indicateur={props.indicateur} />
@@ -99,7 +99,7 @@ export const IndicateurPersonnaliseCard = ({
   indicateur,
   hideIfNoValues = false,
 }: {
-  indicateur: IndicateurPersonnaliseStorable;
+  indicateur: IndicateurPersonnaliseDefinitionRead;
   hideIfNoValues?: boolean;
 }) => {
   const collectiviteId = useCollectiviteId()!;
@@ -122,14 +122,14 @@ export const IndicateurPersonnaliseCard = ({
   )
     return null;
   return (
-    // <AnyIndicateurCard
-    //   headerTitle={
-    //     <IndicateurPersonnaliseHeaderTitle indicateur={indicateur} />
-    //   }
-    //   indicateurUid={indicateur.uid}
-    //   indicateurResultatStore={indicateurPersonnaliseResultatStore}
-    // >
-    <IndicateurPersonnaliseCardContent indicateur={indicateur} />
-    // </AnyIndicateurCard>
+    <AnyIndicateurCard
+      headerTitle={
+        <IndicateurPersonnaliseHeaderTitle indicateur={indicateur} />
+      }
+      indicateurId={indicateur.id}
+      indicateurResultatRepo={indicateurResultatRepository} // TODO : should be indicateurPersonnaliseResultatRepository !
+    >
+      <IndicateurPersonnaliseCardContent indicateur={indicateur} />
+    </AnyIndicateurCard>
   );
 };

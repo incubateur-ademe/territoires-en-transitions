@@ -10,6 +10,7 @@ import {planActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteE
 import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWriteEndpoint';
 import {actionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
 import {actionCommentaireWriteEndpoint} from 'core-logic/api/endpoints/ActionCommentaireWriteEndpoint';
+import {indicateurPersonnaliseDefinitionWriteEndpoint} from 'core-logic/api/endpoints/IndicateurPersonnaliseDefinitionWriteEndpoint';
 
 type Composer<T> = (
   response: PostgrestResponse<T> | null,
@@ -80,10 +81,10 @@ class EndpointToaster<T> extends React.Component<
   }
 }
 
-function makeComposer(messages: {
+const makeComposer = (messages: {
   storeSuccess: string;
   storeError: string;
-}): Composer<unknown> {
+}): Composer<unknown> => {
   return (response, event, onClose) => {
     if (event?.intent === 'store')
       return (
@@ -105,9 +106,9 @@ function makeComposer(messages: {
 
     return null;
   };
-}
+};
 
-export function Toasters() {
+export const Toasters = () => {
   return (
     <>
       <EndpointToaster
@@ -136,6 +137,14 @@ export function Toasters() {
         composer={makeComposer({
           storeSuccess: "Le plan d'action est enregistré",
           storeError: "Le plan d'action n'a pas été enregistré",
+        })}
+      />
+
+      <EndpointToaster
+        endpoint={indicateurPersonnaliseDefinitionWriteEndpoint}
+        composer={makeComposer({
+          storeSuccess: "L'indicateur personnalisé est enregistré",
+          storeError: "L'indicateur personnalisé n'a pas été enregistré",
         })}
       />
 
@@ -207,4 +216,4 @@ export function Toasters() {
       {/*/>*/}
     </>
   );
-}
+};

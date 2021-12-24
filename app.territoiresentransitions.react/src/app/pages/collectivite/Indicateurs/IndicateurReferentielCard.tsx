@@ -65,7 +65,7 @@ export const IndicateurReferentielCardContent = (props: {
       <Commentaire indicateur={props.indicateur} />
       <AnyIndicateurEditableExpandPanel
         repo={indicateurObjectifRepository}
-        indicateurUid={props.indicateur.uid}
+        indicateurId={props.indicateur.uid}
         title="Objectifs"
         editable={true}
       />
@@ -116,7 +116,7 @@ export const IndicateurReferentielCard = ({
       headerTitle={
         <IndicateurReferentielCardHeaderTitle indicateur={indicateur} />
       }
-      indicateurUid={indicateur.uid}
+      indicateurId={indicateur.uid}
       indicateurResultatRepo={indicateurResultatRepository}
     >
       <IndicateurReferentielCardContent indicateur={indicateur} />

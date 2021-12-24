@@ -16,7 +16,7 @@ const AnyIndicateurValueInput = ({
   borderColor = 'gray',
 }: {
   year: number;
-  indicateurId: string;
+  indicateurId: string | number;
   repo: AnyIndicateurRepository;
   borderColor?: 'blue' | 'gray';
 }) => {
@@ -66,7 +66,7 @@ const AnyIndicateurValueInput = ({
  * Display a range of inputs for every indicateur yearly values.
  */
 export const AnyIndicateurValues = (props: {
-  indicateurUid: string;
+  indicateurId: string | number;
   repo: AnyIndicateurRepository;
   borderColor?: 'blue' | 'gray';
 }) => {
@@ -95,8 +95,8 @@ export const AnyIndicateurValues = (props: {
           <AnyIndicateurValueInput
             year={year}
             repo={props.repo}
-            indicateurId={props.indicateurUid}
-            key={`${props.indicateurUid}-${year}`}
+            indicateurId={props.indicateurId}
+            key={`${props.indicateurId}-${year}`}
             borderColor={props.borderColor}
           />
         ))}
@@ -116,7 +116,7 @@ export const AnyIndicateurValues = (props: {
  * Expand Panel with range of value inputs as details
  */
 export const AnyIndicateurEditableExpandPanel = (props: {
-  indicateurUid: string;
+  indicateurId: string;
   repo: AnyIndicateurRepository;
   title: string;
   editable?: boolean;
@@ -135,7 +135,7 @@ export const AnyIndicateurEditableExpandPanel = (props: {
         <AnyIndicateurValues
           borderColor={props.borderColor}
           repo={props.repo}
-          indicateurUid={props.indicateurUid}
+          indicateurId={props.indicateurId}
         />
       </div>
     </details>

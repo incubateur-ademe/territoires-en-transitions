@@ -15,7 +15,7 @@ const defaultProps = {
 };
 
 export const UiDialogButton = (props: UiDialogButtonProps) => (
-  <div>
+  <div onClick={event => event.stopPropagation()}>
     <button
       className={
         `${props.useFrBtn ? 'fr-btn ' : ''}` + `${props.buttonClasses ?? ''}`

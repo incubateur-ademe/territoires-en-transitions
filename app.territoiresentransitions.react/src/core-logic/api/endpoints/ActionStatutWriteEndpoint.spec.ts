@@ -13,7 +13,7 @@ describe('Action-statut write endpoint', () => {
     const statut: ActionStatutWrite = {
       concerne: true,
       avancement: 'fait',
-      action_id: 'cae_1.1.1.1.2',
+      action_id: 'cae_1.1.1.1.1',
       collectivite_id: 1,
     };
     const result = await endpoint.save(statut);
@@ -21,7 +21,7 @@ describe('Action-statut write endpoint', () => {
     expect(result).not.toBeNull();
     expect(result).toEqual(
       expect.objectContaining({
-        action_id: 'cae_1.1.1.1.2',
+        action_id: 'cae_1.1.1.1.1',
         collectivite_id: 1,
         concerne: true,
         avancement: 'fait',
@@ -29,14 +29,13 @@ describe('Action-statut write endpoint', () => {
     );
   });
 
-  it('Saving a statut with unknown epci should fail', async () => {
-    await supabase.auth.signIn({email: 'yolo@dodo.com', password: 'yolododo'});
+  it('Saving a statut with readonly collectivite should fail', async () => {
     const endpoint = new ActionStatutWriteEndpoint();
     const statut: ActionStatutWrite = {
       concerne: true,
       avancement: 'fait',
       action_id: 'cae_1.2.3.4',
-      collectivite_id: 10000,
+      collectivite_id: 8, // Yili has no rights on this collectivite
     };
     const result = await endpoint.save(statut);
     expect(result).toEqual(null);

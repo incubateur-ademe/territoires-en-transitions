@@ -7,7 +7,6 @@ import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/Indicat
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
 import {ActionReferentielAvancementCard} from 'ui/referentiels';
 import {actions} from 'generated/data/referentiels';
-import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import {Spacer} from 'ui/shared';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
@@ -18,6 +17,10 @@ import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/Indi
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 import {IndicateurReferentiel} from 'generated/models';
+import {IndicateurPersonnaliseDefinitionWriteEndpoint} from 'core-logic/api/endpoints/IndicateurPersonnaliseDefinitionWriteEndpoint';
+import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
+import {useIndicateurPersonnaliseDefinitionList} from 'core-logic/hooks/indicateur_personnalise_definition';
+import {useCollectiviteId} from 'core-logic/hooks';
 
 /**
  * Stores both plan and category uid, represents the user's selection of a
@@ -100,13 +103,14 @@ const LinkedIndicateurCards = () => {
 };
 
 const LinkedIndicateurPersonnaliseCards = () => {
-  // todo fetch indicateurs personnalisés
-  const indicateurPersonnalises: IndicateurPersonnaliseStorable[] = [];
+  const collectivieId = useCollectiviteId()!;
+  const indicateurPersonnalises: IndicateurPersonnaliseDefinitionRead[] =
+    useIndicateurPersonnaliseDefinitionList(collectivieId);
 
   const {values} = useFormikContext<FicheActionRead>();
   const linkedIndicateursPersonnalises = values.indicateur_personnalise_ids.map(
-    // todo search in indicateurPersonnalises for matches with fiche indicateur_personnalise_ids
-    indicateurId => indicateurPersonnalises.find(indicateur => true)
+    indicateurId =>
+      indicateurPersonnalises.find(indicateur => indicateur.id === indicateurId)
   );
 
   return (
@@ -116,7 +120,7 @@ const LinkedIndicateurPersonnaliseCards = () => {
           return (
             <IndicateurPersonnaliseCard
               indicateur={indicateur}
-              key={indicateur.uid}
+              key={indicateur.id}
             />
           );
         return <></>;

@@ -772,15 +772,15 @@ create table indicateur_personnalise_definition
 create table indicateur_personnalise_resultat
 (
     collectivite_id            integer references collectivite,
-    indicateur_personnalise_id integer references indicateur_personnalise_definition not null,
-    primary key (indicateur_personnalise_id, annee)
+    indicateur_id integer references indicateur_personnalise_definition not null,
+    primary key (indicateur_id, annee)
 ) inherits (abstract_any_indicateur_value);
 
 create table indicateur_personnalise_objectif
 (
     collectivite_id            integer references collectivite,
-    indicateur_personnalise_id integer references indicateur_personnalise_definition not null,
-    primary key (indicateur_personnalise_id, annee)
+    indicateur_id integer references indicateur_personnalise_definition not null,
+    primary key (indicateur_id, annee)
 ) inherits (abstract_any_indicateur_value);
 
 create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours');
