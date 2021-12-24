@@ -1,7 +1,7 @@
-import {supabase} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 
 export const claimCollectivite = async (id: number): Promise<boolean> => {
-  const {data, error} = await supabase.rpc('claim_collectivite', {
+  const {data, error} = await supabaseClient.rpc('claim_collectivite', {
     id,
   });
 
@@ -22,7 +22,7 @@ export const referentContact = async (
   collectivite_id: number
 ): Promise<any | null> => {
   // Promise<ReferentContactResponse | null> TODO : type me !
-  const {data, error} = await supabase.rpc('referent_contact', {
+  const {data, error} = await supabaseClient.rpc('referent_contact', {
     id: collectivite_id,
   });
 

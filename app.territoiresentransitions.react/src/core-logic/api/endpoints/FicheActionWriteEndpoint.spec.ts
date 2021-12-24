@@ -1,12 +1,12 @@
 import '@testing-library/jest-dom/extend-expect';
 import {FicheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWriteEndpoint';
-import {supabase} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
 import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('Fiche action write endpoint', () => {
   beforeEach(async () => {
-    await supabase.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signIn(yiliCredentials);
   });
 
   it('Should return an equivalent fiche when saving a fiche ', async () => {

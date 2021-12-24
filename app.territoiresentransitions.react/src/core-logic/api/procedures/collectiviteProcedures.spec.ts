@@ -2,11 +2,14 @@ import {
   claimCollectivite,
   referentContact,
 } from 'core-logic/api/procedures/collectiviteProcedures';
-import {supabase} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 
 describe('Claim and remove collectivite Remote Procedure Call ', () => {
   it('should return true when user is first to claim this collectivite', async () => {
-    await supabase.auth.signIn({email: 'yili@didi.com', password: 'yilididi'});
+    await supabaseClient.auth.signIn({
+      email: 'yili@didi.com',
+      password: 'yilididi',
+    });
 
     const procedureResponse = await claimCollectivite(20);
     expect(procedureResponse).toBe(true);
