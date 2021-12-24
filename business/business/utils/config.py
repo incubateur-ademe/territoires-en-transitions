@@ -1,6 +1,8 @@
 import abc
 from pathlib import Path
 from typing import List, Optional
+import os
+from dotenv import load_dotenv
 
 from realtime_py import Socket
 
@@ -13,6 +15,9 @@ from business.evaluation.adapters.supabase_realtime import SupabaseRealtime
 from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
+)
+from business.evaluation.adapters.postgres_action_score_repo import (
+    PostgresActionScoreRepository,
 )
 from business.referentiel.adapters.sql_referentiel_repo import SqlReferentielRepository
 from business.evaluation.domain.ports.realtime import (
@@ -29,11 +34,14 @@ from business.evaluation.domain.ports.action_status_repo import (
     InMemoryActionStatutRepository,
 )
 from business.evaluation.domain.use_cases import *
+from business.utils.get_postgres_connection_params import get_postgres_connection_params
 from business.utils.use_case import UseCase
 from .environment_variables import (
     EnvironmentVariables,
     get_env_variables,
 )
+
+load_dotenv()
 
 
 class PrepareBusError(Exception):
@@ -52,6 +60,15 @@ class Config:
     @abc.abstractmethod
     def prepare_use_cases(self) -> List[UseCase]:
         raise NotImplementedError
+
+    def get_postgres_connection(self):
+        import psycopg
+
+        postgres_url = os.getenv("POSTGRES_URL")
+        if postgres_url is None:
+            raise EnvironmentError("Missing POSTGRES_URL env variable. ")
+        connection = psycopg.connect(**get_postgres_connection_params(postgres_url))
+        return connection
 
     def get_referentiel_repo(self) -> AbstractReferentielRepository:
         if self.ENV.referentiels_repository == "JSON":
@@ -75,6 +92,10 @@ class Config:
     def get_scores_repo(self) -> AbstractActionScoreRepository:
         if self.ENV.labelisation_repositories == "IN_MEMORY":
             return InMemoryActionScoreRepository()
+        elif self.ENV.labelisation_repositories == "POSTGRES":
+            return PostgresActionScoreRepository(
+                connection=self.get_postgres_connection()
+            )
         else:
             raise NotImplementedError(
                 f"Scores repo adapter {self.ENV.labelisation_repositories} not yet implemented."
