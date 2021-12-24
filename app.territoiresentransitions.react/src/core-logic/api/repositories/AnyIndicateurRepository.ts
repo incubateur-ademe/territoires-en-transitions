@@ -60,7 +60,7 @@ export class AnyIndicateurRepository<T extends string | number> {
   }
   async fetchIndicateurForId(args: {
     collectiviteId: number;
-    indicateurId: string;
+    indicateurId: T;
   }): Promise<AnyIndicateurValueRead<T>[]> {
     const allIndicateurValues = await this.readEndpoint.getBy({
       collectiviteId: args.collectiviteId,

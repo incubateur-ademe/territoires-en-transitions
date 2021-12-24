@@ -17,13 +17,13 @@ const range = (start: number, end: number) => {
   return Array.from({length}, (_, i) => start + i);
 };
 
-const getDataset = (
+function getDataset<T extends string | number>(
   yearRange: number[],
-  indicateurValues: AnyIndicateurValueRead[],
+  indicateurValues: AnyIndicateurValueRead<T>[],
   label: string,
   color: string,
   kwargs?: Partial<ChartDataset>
-): ChartDataset => {
+): ChartDataset {
   const data = yearRange.map(year => {
     const storableForYear = indicateurValues.find(
       values => values.annee === year
@@ -46,15 +46,15 @@ const getDataset = (
   };
 
   return datastet;
-};
+}
 
-const AnyIndicateurLineChart = (props: {
+function AnyIndicateurLineChart<T extends string | number>(props: {
   indicateurId: string;
   unit: string;
   title: string;
-  resultatRepo: AnyIndicateurRepository;
-  objectifRepo: AnyIndicateurRepository;
-}) => {
+  resultatRepo: AnyIndicateurRepository<T>;
+  objectifRepo: AnyIndicateurRepository<T>;
+}) {
   const collectiviteId = useCollectiviteId()!;
 
   const resultatValues = useAnyIndicateurValuesForAllYears({
@@ -143,24 +143,28 @@ const AnyIndicateurLineChart = (props: {
       </a>
     </div>
   );
-};
+}
 
-export const AnyIndicateurLineChartExpandable = (props: {
+export function AnyIndicateurLineChartExpandable<
+  T extends string | number
+>(props: {
   indicateur: IndicateurPersonnaliseStorable | IndicateurReferentiel;
   indicateurId: string; // TODO : this should be infered by props.indicateur but there's a mikmak with uid (for indic perso) and id (for indic ref) ...
-  resultatRepo: AnyIndicateurRepository;
-  objectifRepo: AnyIndicateurRepository;
-}) => (
-  <div className="CrossExpandPanel">
-    <details open>
-      <summary className="title">Graphique</summary>
-      <AnyIndicateurLineChart
-        indicateurId={props.indicateur.uid}
-        unit={props.indicateur.unite}
-        title={props.indicateur.nom}
-        resultatRepo={props.resultatRepo}
-        objectifRepo={props.objectifRepo}
-      />
-    </details>
-  </div>
-);
+  resultatRepo: AnyIndicateurRepository<T>;
+  objectifRepo: AnyIndicateurRepository<T>;
+}) {
+  return (
+    <div className="CrossExpandPanel">
+      <details open>
+        <summary className="title">Graphique</summary>
+        <AnyIndicateurLineChart
+          indicateurId={props.indicateur.uid}
+          unit={props.indicateur.unite}
+          title={props.indicateur.nom}
+          resultatRepo={props.resultatRepo}
+          objectifRepo={props.objectifRepo}
+        />
+      </details>
+    </div>
+  );
+}

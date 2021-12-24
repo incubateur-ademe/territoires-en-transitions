@@ -9,17 +9,17 @@ import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateur
 /**
  * Use IndicateurValuesStorageInterface + year to read/write an indicateur value
  */
-const AnyIndicateurValueInput = ({
+function AnyIndicateurValueInput<T extends string | number>({
   year,
   indicateurId,
   repo,
   borderColor = 'gray',
 }: {
   year: number;
-  indicateurId: string | number;
-  repo: AnyIndicateurRepository;
+  indicateurId: T;
+  repo: AnyIndicateurRepository<T>;
   borderColor?: 'blue' | 'gray';
-}) => {
+}) {
   const collectiviteId = useCollectiviteId()!;
   const [inputValue, setInputValue] = useState<string | number>('');
 
@@ -60,16 +60,16 @@ const AnyIndicateurValueInput = ({
       />
     </label>
   );
-};
+}
 
 /**
  * Display a range of inputs for every indicateur yearly values.
  */
-export const AnyIndicateurValues = (props: {
+export function AnyIndicateurValues<T extends string | number>(props: {
   indicateurId: string | number;
-  repo: AnyIndicateurRepository;
+  repo: AnyIndicateurRepository<T>;
   borderColor?: 'blue' | 'gray';
-}) => {
+}) {
   const min = 2008;
   const stride = 2;
   const window = 7;
@@ -110,34 +110,38 @@ export const AnyIndicateurValues = (props: {
       />
     </div>
   );
-};
+}
 
 /**
  * Expand Panel with range of value inputs as details
  */
-export const AnyIndicateurEditableExpandPanel = (props: {
+export function AnyIndicateurEditableExpandPanel<
+  T extends string | number
+>(props: {
   indicateurId: string;
-  repo: AnyIndicateurRepository;
+  repo: AnyIndicateurRepository<T>;
   title: string;
   editable?: boolean;
   borderColor?: 'blue' | 'gray';
-}) => (
-  <div className="CrossExpandPanel">
-    <details>
-      <summary className="title">
-        {props.editable ? (
-          <Editable text={props.title} />
-        ) : (
-          <div>{props.title}</div>
-        )}
-      </summary>{' '}
-      <div>
-        <AnyIndicateurValues
-          borderColor={props.borderColor}
-          repo={props.repo}
-          indicateurId={props.indicateurId}
-        />
-      </div>
-    </details>
-  </div>
-);
+}) {
+  return (
+    <div className="CrossExpandPanel">
+      <details>
+        <summary className="title">
+          {props.editable ? (
+            <Editable text={props.title} />
+          ) : (
+            <div>{props.title}</div>
+          )}
+        </summary>{' '}
+        <div>
+          <AnyIndicateurValues
+            borderColor={props.borderColor}
+            repo={props.repo}
+            indicateurId={props.indicateurId}
+          />
+        </div>
+      </details>
+    </div>
+  );
+}
