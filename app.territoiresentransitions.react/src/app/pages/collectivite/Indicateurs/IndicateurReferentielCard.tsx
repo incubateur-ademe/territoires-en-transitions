@@ -93,22 +93,18 @@ export const IndicateurReferentielCard = ({
 }) => {
   const collectiviteId = useCollectiviteId()!;
 
-  const resultatValueStorables = useAnyIndicateurValuesForAllYears<string>({
+  const resultatValues = useAnyIndicateurValuesForAllYears({
     collectiviteId,
     indicateurId: indicateur.id,
     repo: indicateurResultatRepository,
   });
-  const objectifValueStorables = useAnyIndicateurValuesForAllYears<string>({
+  const objectifValues = useAnyIndicateurValuesForAllYears({
     collectiviteId,
     indicateurId: indicateur.id,
     repo: indicateurObjectifRepository,
   });
 
-  if (
-    hideIfNoValues &&
-    !resultatValueStorables.length &&
-    !objectifValueStorables.length
-  )
+  if (hideIfNoValues && !resultatValues.length && !objectifValues.length)
     return null;
 
   return (

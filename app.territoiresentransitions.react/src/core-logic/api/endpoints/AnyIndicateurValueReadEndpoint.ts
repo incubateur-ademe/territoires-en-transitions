@@ -10,6 +10,8 @@ import {
 import {
   indicateurObjectifWriteEndpoint,
   indicateurResultatWriteEndpoint,
+  indicateurPersonnaliseObjectifWriteEndpoint,
+  indicateurPersonnaliseResultatWriteEndpoint,
 } from 'core-logic/api/endpoints/AnyIndicateurValueWriteEndpoint';
 
 export interface AnyIndicateurValueGetParams {
@@ -42,15 +44,18 @@ export const makeNewIndicateurResultatReadEndpoint = () =>
     'indicateur_resultat',
     indicateurResultatWriteEndpoint
   );
-
-export const indicateurResultatReadEndpoint =
-  makeNewIndicateurResultatReadEndpoint();
-
-export const makeNewIndicateurObjectifReadEndpoint = () =>
+export const indicateurObjectifReadEndpoint =
   makeAnyIndicateurValueReadEndpoint(
     'indicateur_objectif',
     indicateurObjectifWriteEndpoint
   );
-
-export const indicateurObjectifReadEndpoint =
-  makeNewIndicateurObjectifReadEndpoint();
+export const indicateurPersonnaliseResultatReadEndpoint =
+  makeAnyIndicateurValueReadEndpoint(
+    'indicateur_personnalise_resultat',
+    indicateurPersonnaliseResultatWriteEndpoint
+  );
+export const indicateurPersonnaliseObjectifReadEndpoint =
+  makeAnyIndicateurValueReadEndpoint(
+    'indicateur_personnalise_objectif',
+    indicateurPersonnaliseObjectifWriteEndpoint
+  );

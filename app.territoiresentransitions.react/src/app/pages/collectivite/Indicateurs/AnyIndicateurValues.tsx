@@ -25,7 +25,7 @@ function AnyIndicateurValueInput<T extends string | number>({
 
   useEffect(() => {
     repo
-      .fetchIndicateurForIdForYear({collectiviteId, indicateurId, year})
+      .fetchIndicateurValueForIdForYear({collectiviteId, indicateurId, year})
       .then(indicateurValueRead => {
         setInputValue(indicateurValueRead?.valeur || '');
       });
@@ -56,6 +56,7 @@ function AnyIndicateurValueInput<T extends string | number>({
         onChange={(event: React.FormEvent<HTMLInputElement>) =>
           setInputValue(event.currentTarget.value)
         }
+        type="number"
         onBlur={convertToFloatAndStore}
       />
     </label>

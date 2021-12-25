@@ -9,10 +9,14 @@ import {
 import {
   AnyIndicateurValueGetParams,
   indicateurObjectifReadEndpoint,
+  indicateurPersonnaliseObjectifReadEndpoint,
+  indicateurPersonnaliseResultatReadEndpoint,
   indicateurResultatReadEndpoint,
 } from 'core-logic/api/endpoints/AnyIndicateurValueReadEndpoint';
 import {
   indicateurObjectifWriteEndpoint,
+  indicateurPersonnaliseObjectifWriteEndpoint,
+  indicateurPersonnaliseResultatWriteEndpoint,
   indicateurResultatWriteEndpoint,
 } from 'core-logic/api/endpoints/AnyIndicateurValueWriteEndpoint';
 
@@ -58,7 +62,7 @@ export class AnyIndicateurRepository<T extends string | number> {
       ) ?? null
     );
   }
-  async fetchIndicateurForId(args: {
+  async fetchIndicateurValuesForId(args: {
     collectiviteId: number;
     indicateurId: T;
   }): Promise<AnyIndicateurValueRead<T>[]> {
@@ -84,3 +88,15 @@ export const indicateurObjectifRepository = new AnyIndicateurRepository<string>(
     writeEndpoint: indicateurObjectifWriteEndpoint,
   }
 );
+
+export const indicateurPersonnaliseResultatRepository =
+  new AnyIndicateurRepository({
+    readEndpoint: indicateurPersonnaliseResultatReadEndpoint,
+    writeEndpoint: indicateurPersonnaliseResultatWriteEndpoint,
+  });
+
+export const indicateurPersonnaliseObjectifRepository =
+  new AnyIndicateurRepository({
+    readEndpoint: indicateurPersonnaliseObjectifReadEndpoint,
+    writeEndpoint: indicateurPersonnaliseObjectifWriteEndpoint,
+  });

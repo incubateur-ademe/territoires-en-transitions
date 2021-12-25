@@ -16,7 +16,7 @@ export function useAnyIndicateurValuesForAllYears<T extends string | number>({
 
   useEffect(() => {
     const fetch = async () => {
-      const fetched = await repo.fetchIndicateurForId({
+      const fetched = await repo.fetchIndicateurValuesForId({
         collectiviteId,
         indicateurId,
       });

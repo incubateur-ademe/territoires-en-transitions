@@ -1,16 +1,10 @@
-import {Line} from 'react-chartjs-2';
-import {useCollectiviteId} from 'core-logic/hooks';
-import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
-import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
 import type {ChartData, ChartDataset} from 'chart.js';
-import {Spacer} from 'ui/shared';
-import {
-  AnyIndicateurRepository,
-  indicateurObjectifRepository,
-  indicateurResultatRepository,
-} from 'core-logic/api/repositories/AnyIndicateurRepository';
-import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
+import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {useCollectiviteId} from 'core-logic/hooks';
 import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
+import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
+import {Line} from 'react-chartjs-2';
+import {Spacer} from 'ui/shared';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
@@ -25,10 +19,10 @@ function getDataset<T extends string | number>(
   kwargs?: Partial<ChartDataset>
 ): ChartDataset {
   const data = yearRange.map(year => {
-    const storableForYear = indicateurValues.find(
+    const valuesForYear = indicateurValues.find(
       values => values.annee === year
     );
-    return storableForYear ? storableForYear.valeur : NaN;
+    return valuesForYear ? valuesForYear.valeur : NaN;
   });
   const datastet = {
     label,
@@ -60,26 +54,35 @@ function AnyIndicateurLineChart<T extends string | number>(props: {
   const resultatValues = useAnyIndicateurValuesForAllYears({
     collectiviteId,
     indicateurId: props.indicateurId,
-    repo: indicateurResultatRepository,
+    repo: props.resultatRepo,
   });
   const objectifValues = useAnyIndicateurValuesForAllYears({
     collectiviteId,
     indicateurId: props.indicateurId,
-    repo: indicateurObjectifRepository,
+    repo: props.objectifRepo,
   });
 
   if (!resultatValues.length && !objectifValues.length)
     return <>Aucune donnée n'est renseignée.</>;
 
+  const sortedResultatValuesYears = resultatValues
+    .map(value => value.annee)
+    .sort();
+  const sortedObjectifValuesYears = objectifValues
+    .map(value => value.annee)
+    .sort();
+
   const firstYear = Math.min(
-    resultatValues.length ? resultatValues[0].annee : Infinity,
-    objectifValues.length ? objectifValues[0].annee : Infinity
+    sortedResultatValuesYears.length ? sortedResultatValuesYears[0] : Infinity,
+    sortedObjectifValuesYears.length ? sortedObjectifValuesYears[0] : Infinity
   );
   const lastYear = Math.max(
-    resultatValues.length
-      ? resultatValues[resultatValues.length - 1].annee
+    sortedResultatValuesYears.length
+      ? sortedResultatValuesYears[sortedResultatValuesYears.length - 1]
       : -1,
-    objectifValues.length ? objectifValues[objectifValues.length - 1].annee : -1
+    sortedObjectifValuesYears.length
+      ? sortedObjectifValuesYears[sortedObjectifValuesYears.length - 1]
+      : -1
   );
 
   const yearRange = range(firstYear, lastYear);
