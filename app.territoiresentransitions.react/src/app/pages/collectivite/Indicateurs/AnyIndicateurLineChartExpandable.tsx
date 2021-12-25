@@ -5,6 +5,8 @@ import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_val
 import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
 import {Line} from 'react-chartjs-2';
 import {Spacer} from 'ui/shared';
+import {IndicateurPersonnaliseStorable} from 'storables';
+import {IndicateurReferentiel} from 'generated/models';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
@@ -43,7 +45,7 @@ function getDataset<T extends string | number>(
 }
 
 function AnyIndicateurLineChart<T extends string | number>(props: {
-  indicateurId: string;
+  indicateurId: T;
   unit: string;
   title: string;
   resultatRepo: AnyIndicateurRepository<T>;
@@ -51,12 +53,12 @@ function AnyIndicateurLineChart<T extends string | number>(props: {
 }) {
   const collectiviteId = useCollectiviteId()!;
 
-  const resultatValues = useAnyIndicateurValuesForAllYears({
+  const resultatValues = useAnyIndicateurValuesForAllYears<T>({
     collectiviteId,
     indicateurId: props.indicateurId,
     repo: props.resultatRepo,
   });
-  const objectifValues = useAnyIndicateurValuesForAllYears({
+  const objectifValues = useAnyIndicateurValuesForAllYears<T>({
     collectiviteId,
     indicateurId: props.indicateurId,
     repo: props.objectifRepo,
@@ -151,8 +153,9 @@ function AnyIndicateurLineChart<T extends string | number>(props: {
 export function AnyIndicateurLineChartExpandable<
   T extends string | number
 >(props: {
-  indicateur: IndicateurPersonnaliseStorable | IndicateurReferentiel;
-  indicateurId: string; // TODO : this should be infered by props.indicateur but there's a mikmak with uid (for indic perso) and id (for indic ref) ...
+  title: string;
+  unite: string;
+  indicateurId: T;
   resultatRepo: AnyIndicateurRepository<T>;
   objectifRepo: AnyIndicateurRepository<T>;
 }) {
@@ -160,10 +163,10 @@ export function AnyIndicateurLineChartExpandable<
     <div className="CrossExpandPanel">
       <details open>
         <summary className="title">Graphique</summary>
-        <AnyIndicateurLineChart
-          indicateurId={props.indicateur.uid}
-          unit={props.indicateur.unite}
-          title={props.indicateur.nom}
+        <AnyIndicateurLineChart<T>
+          indicateurId={props.indicateurId}
+          unit={props.unite}
+          title={props.title}
           resultatRepo={props.resultatRepo}
           objectifRepo={props.objectifRepo}
         />

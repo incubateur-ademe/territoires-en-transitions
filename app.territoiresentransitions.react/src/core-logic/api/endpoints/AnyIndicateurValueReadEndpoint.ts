@@ -39,23 +39,23 @@ const makeAnyIndicateurValueReadEndpoint = <T extends string | number>(
   return new AnyIndicateurValueReadEndpoint([writeEndpoint]);
 };
 
-export const makeNewIndicateurResultatReadEndpoint = () =>
+export const indicateurResultatReadEndpoint =
   makeAnyIndicateurValueReadEndpoint<string>(
     'indicateur_resultat',
     indicateurResultatWriteEndpoint
   );
 export const indicateurObjectifReadEndpoint =
-  makeAnyIndicateurValueReadEndpoint(
+  makeAnyIndicateurValueReadEndpoint<string>(
     'indicateur_objectif',
     indicateurObjectifWriteEndpoint
   );
 export const indicateurPersonnaliseResultatReadEndpoint =
-  makeAnyIndicateurValueReadEndpoint(
+  makeAnyIndicateurValueReadEndpoint<number>(
     'indicateur_personnalise_resultat',
     indicateurPersonnaliseResultatWriteEndpoint
   );
 export const indicateurPersonnaliseObjectifReadEndpoint =
-  makeAnyIndicateurValueReadEndpoint(
+  makeAnyIndicateurValueReadEndpoint<number>(
     'indicateur_personnalise_objectif',
     indicateurPersonnaliseObjectifWriteEndpoint
   );

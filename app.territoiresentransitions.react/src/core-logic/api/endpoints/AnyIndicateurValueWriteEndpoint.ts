@@ -20,10 +20,14 @@ const makeAnyIndicateurValueWriteEndpoint = <T extends string | number>(
 };
 
 export const makeNewIndicateurPersonnaliseResultatWriteEndpoint = () =>
-  makeAnyIndicateurValueWriteEndpoint('indicateur_personnalise_resultat');
+  makeAnyIndicateurValueWriteEndpoint<number>(
+    'indicateur_personnalise_resultat'
+  );
 
 export const makeNewIndicateurPersonnaliseObjectifWriteEndpoint = () =>
-  makeAnyIndicateurValueWriteEndpoint('indicateur_personnalise_objectif');
+  makeAnyIndicateurValueWriteEndpoint<number>(
+    'indicateur_personnalise_objectif'
+  );
 
 export const makeNewIndicateurResultatWriteEndpoint = () =>
   makeAnyIndicateurValueWriteEndpoint<string>('indicateur_resultat');

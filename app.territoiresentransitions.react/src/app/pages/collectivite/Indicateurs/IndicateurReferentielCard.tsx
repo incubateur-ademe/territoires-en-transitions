@@ -70,8 +70,9 @@ export const IndicateurReferentielCardContent = (props: {
         editable={true}
       />
       <AnyIndicateurLineChartExpandable<string>
-        indicateur={props.indicateur}
-        indicateurId={props.indicateur.uid}
+        title={props.indicateur.nom}
+        unite={props.indicateur.unite}
+        indicateurId={props.indicateur.id}
         resultatRepo={indicateurResultatRepository}
         objectifRepo={indicateurObjectifRepository}
       />

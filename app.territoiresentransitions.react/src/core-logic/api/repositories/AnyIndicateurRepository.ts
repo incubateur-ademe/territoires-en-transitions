@@ -46,9 +46,9 @@ export class AnyIndicateurRepository<T extends string | number> {
     return this.writeEndpoint.save(anyIndicateur);
   }
 
-  async fetchIndicateurForIdForYear(args: {
+  async fetchIndicateurValueForIdForYear(args: {
     collectiviteId: number;
-    indicateurId: string | number;
+    indicateurId: T;
     year: number;
   }): Promise<AnyIndicateurValueRead<T> | null> {
     const allIndicateurValues = await this.readEndpoint.getBy({

@@ -119,7 +119,7 @@ export function AnyIndicateurValues<T extends string | number>(props: {
 export function AnyIndicateurEditableExpandPanel<
   T extends string | number
 >(props: {
-  indicateurId: string;
+  indicateurId: T;
   repo: AnyIndicateurRepository<T>;
   title: string;
   editable?: boolean;

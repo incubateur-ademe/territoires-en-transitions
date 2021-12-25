@@ -65,14 +65,14 @@ const IndicateurPersonnaliseCardContent = (props: {
     <div>
       <IndicateurDescriptionPanel description={props.indicateur.description} />
       <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
-      <AnyIndicateurEditableExpandPanel
+      <AnyIndicateurEditableExpandPanel<number>
         repo={indicateurPersonnaliseObjectifRepository}
         indicateurId={props.indicateur.id}
         title="Objectifs"
         editable={true}
       />
       <Spacer />
-      <AnyIndicateurLineChartExpandable
+      <AnyIndicateurLineChartExpandable<number>
         title={props.indicateur.titre}
         unite={props.indicateur.unite}
         indicateurId={props.indicateur.id}
