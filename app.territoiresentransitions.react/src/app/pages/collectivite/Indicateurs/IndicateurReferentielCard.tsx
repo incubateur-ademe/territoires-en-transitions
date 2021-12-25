@@ -69,7 +69,7 @@ export const IndicateurReferentielCardContent = (props: {
         title="Objectifs"
         editable={true}
       />
-      <AnyIndicateurLineChartExpandable
+      <AnyIndicateurLineChartExpandable<string>
         indicateur={props.indicateur}
         indicateurId={props.indicateur.uid}
         resultatRepo={indicateurResultatRepository}
@@ -93,12 +93,12 @@ export const IndicateurReferentielCard = ({
 }) => {
   const collectiviteId = useCollectiviteId()!;
 
-  const resultatValueStorables = useAnyIndicateurValuesForAllYears({
+  const resultatValueStorables = useAnyIndicateurValuesForAllYears<string>({
     collectiviteId,
     indicateurId: indicateur.id,
     repo: indicateurResultatRepository,
   });
-  const objectifValueStorables = useAnyIndicateurValuesForAllYears({
+  const objectifValueStorables = useAnyIndicateurValuesForAllYears<string>({
     collectiviteId,
     indicateurId: indicateur.id,
     repo: indicateurObjectifRepository,
