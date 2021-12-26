@@ -23,7 +23,7 @@ from business.referentiel.adapters.sql_referentiel_repo import SqlReferentielRep
 from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
     AbstractRealtime,
-    EpciActionStatutUpdateConverter,
+    CollectiviteActionStatutUpdateConverter,
 )
 from business.evaluation.domain.ports.action_score_repo import (
     AbstractActionScoreRepository,
@@ -118,7 +118,9 @@ class Config:
 
     def get_realtime(self, socket: Optional[Socket]) -> AbstractRealtime:
 
-        converters: List[AbstractConverter] = [EpciActionStatutUpdateConverter()]
+        converters: List[AbstractConverter] = [
+            CollectiviteActionStatutUpdateConverter()
+        ]
 
         if self.ENV.realtime == "REPLAY":
             return ReplayRealtime(self.domain_message_bus, converters=converters)

@@ -1,7 +1,7 @@
 from typing import List
 from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
-    EpciActionStatutUpdateConverter,
+    CollectiviteActionStatutUpdateConverter,
 )
 import pytest
 
@@ -40,7 +40,7 @@ def bus() -> InMemoryDomainMessageBus:
 
 @pytest.fixture
 def realtime(bus) -> ReplayRealtime:
-    converters: List[AbstractConverter] = [EpciActionStatutUpdateConverter()]
+    converters: List[AbstractConverter] = [CollectiviteActionStatutUpdateConverter()]
     return ReplayRealtime(bus, converters=converters)
 
 
