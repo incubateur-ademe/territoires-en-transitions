@@ -3,54 +3,9 @@ import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import {indicateurs} from 'generated/data/indicateurs_referentiels';
-import {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
 import {shortenLabel} from './utils';
-import {
-  indicateurIdRegexp,
-  inferIndicateurReferentielAndTitle,
-} from 'utils/indicateurs';
-
-const indicateursById = () => {
-  const results = new Map<string, IndicateurReferentiel>();
-  indicateurs.forEach(indicateur => results.set(indicateur.id, indicateur));
-  return results;
-};
-
-const sortIndicateurIds = (indicateursIds: string[]): string[] =>
-  indicateursIds.sort((a, b) => {
-    const a_groups = a.match(indicateurIdRegexp)?.groups;
-    const b_groups = a.match(indicateurIdRegexp)?.groups;
-
-    if (!a_groups || !b_groups) return a.localeCompare(b);
-    const a_number = Number(a_groups['number']);
-    const b_number = Number(b_groups['number']);
-
-    if (a_number !== b_number) {
-      return a_number > b_number ? 1 : -1;
-    }
-
-    return (a_groups['literal'] ?? '').localeCompare(b_groups['literal'] ?? '');
-  });
-
-const allIndicateurs = indicateursById();
-const allIndicateurIds = indicateurs.map(indicateur => indicateur.id);
-const allSortedIndicateurIds = [
-  ...sortIndicateurIds(
-    allIndicateurIds.filter(indicateurId => indicateurId.startsWith('cae'))
-  ),
-  ...sortIndicateurIds(
-    allIndicateurIds.filter(indicateurId => indicateurId.startsWith('eci'))
-  ),
-  ...sortIndicateurIds(
-    allIndicateurIds.filter(indicateurId => indicateurId.startsWith('crte'))
-  ),
-];
-
-const renderIndicateurOption = (id: string) => {
-  const indicateur = allIndicateurs.get(id)!;
-  return inferIndicateurReferentielAndTitle(indicateur);
-};
+import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
+import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
 
 type IndicateursFieldProps = {
   label: string;
@@ -71,6 +26,21 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
   const isTouched = touched[field.name];
+  const allSortedIndicateurDefinitions = [
+    ...useAllIndicateurDefinitionsForGroup('cae'),
+    ...useAllIndicateurDefinitionsForGroup('eci'),
+    ...useAllIndicateurDefinitionsForGroup('crte'),
+  ];
+  const allSortedIndicateurIds = allSortedIndicateurDefinitions.map(
+    definition => definition.id
+  );
+
+  const renderIndicateurOption = (id: string) => {
+    const indicateur = allSortedIndicateurDefinitions.find(
+      definition => definition.id === id
+    )!;
+    return inferIndicateurReferentielAndTitle(indicateur);
+  };
 
   return (
     <fieldset className="block">
