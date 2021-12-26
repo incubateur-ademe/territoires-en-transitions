@@ -42,6 +42,9 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
             for indicateur_def in self._indicateurs:
                 sql = f"insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('{indicateur_def.indicateur_id}', '{indicateur_def.indicateur_group}', '{indicateur_def.identifiant}', {f'{indicateur_def.values_refers_to}' if indicateur_def.values_refers_to else 'null'}, '{self.format_text(indicateur_def.nom)}', '{self.format_text(indicateur_def.description)}', '{self.format_text(indicateur_def.unite)}', {str(indicateur_def.obligation_eci).lower()} ,   null);"
                 f.write(f"{sql}\n")
+                for linked_action_id in indicateur_def.action_ids:
+                    sql = f"insert into indicateur_action(indicateur_id, action_id) values ('{indicateur_def.indicateur_id}', '{linked_action_id}');"
+                    f.write(f"{sql}\n")
 
     def actions_to_sql(self):
         self.write_sql_for_action_relation()
