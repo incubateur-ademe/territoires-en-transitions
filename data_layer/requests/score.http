@@ -1,0 +1,47 @@
+### Authenticate as a user
+POST {{api}}/auth/v1/token?grant_type=password
+apikey: {{anon}}
+Content-Type: application/json
+
+{
+  "email": "{{yolo_mail}}",
+  "password": "{{yolo_pass}}"
+}
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.log('token is ' + response.body['access_token']);
+    client.global.set("auth_token", response.body['access_token']);
+%}
+
+
+
+### Insert a score
+POST {{api}}/rest/v1/plan_action
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Prefer: return=representation
+Prefer: resolution=merge-duplicates
+Content-Type: application/json
+
+{
+  "id": 1,
+  "collectivite_id": 1,
+  "uid": "plan_collectivite",
+  "nom": "Plan d'actions de la collectivité",
+  "categories": [
+    {
+      "nom": "1. Yolo",
+      "uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
+    }
+  ],
+  "fiches_by_category": [
+    {
+      "fiche_uid": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
+      "category_uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
+    }
+  ]
+}
