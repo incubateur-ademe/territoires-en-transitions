@@ -11,6 +11,9 @@ import {
   pointsTextFromScore,
   ProgressState,
 } from 'utils/progressStat';
+import {observer} from 'mobx-react-lite';
+import {ScoreBloc} from 'core-logic/observables/scoreBloc';
+import {ScoreRead} from 'generated/dataLayer/client_scores_read';
 
 const useStyle = makeStyles(
   R.mapObjIndexed(
@@ -25,12 +28,13 @@ const TextProgressStatStatic = ({
   score,
   showPoints,
 }: {
-  score: ActionReferentielScoreStorable | null;
+  score: ScoreRead | null;
   showPoints: boolean;
 }) => {
+  console.log('score in TextProgressStatStatic', score);
   const percentageText = percentageTextFromScore(score);
 
-  if (score?.avancement === 'non_concernee') {
+  if (score?.concernee === false) {
     return <span className="text-gray-700"> non concernée</span>;
   }
   return showPoints ? (
@@ -45,47 +49,53 @@ const TextProgressStatStatic = ({
   );
 };
 
-export const ProgressStatStatic = ({
-  action,
-  position,
-  className,
-  showPoints,
-}: {
-  action: ActionReferentiel;
-  position: 'left' | 'right';
-  className?: string;
-  showPoints: boolean;
-}) => {
-  const classes = useStyle();
+export const ProgressStatStatic = observer(
+  ({
+    action,
+    position,
+    className,
+    showPoints,
+    scoreBloc,
+  }: {
+    action: ActionReferentiel;
+    position: 'left' | 'right';
+    className?: string;
+    showPoints: boolean;
+    scoreBloc: ScoreBloc;
+  }) => {
+    const classes = useStyle();
 
-  const storableId = ActionReferentielScoreStorable.buildId(action.id);
-  const score = useActionReferentielScore(storableId);
+    // const storableId = ActionReferentielScoreStorable.buildId(action.id);
+    // const score = useActionReferentielScore(storableId);
+    const score = scoreBloc.getScore(action.id);
+    console.log('ProgressStatStatic observed score: ', score);
 
-  useEffect(() => {
-    const state = inferStateFromScore(score);
-    setState(state);
-  }, [score]);
+    useEffect(() => {
+      const state = inferStateFromScore(score);
+      setState(state);
+    }, [score]);
 
-  const [state, setState] = useState<ProgressState>('nc');
+    const [state, setState] = useState<ProgressState>('nc');
 
-  const positionDependentStyle =
-    position === 'left'
-      ? 'bl-8 pl-3 border-l-8'
-      : 'bl-0 br-8 pl-2 pr-3 border-r-8';
+    const positionDependentStyle =
+      position === 'left'
+        ? 'bl-8 pl-3 border-l-8'
+        : 'bl-0 br-8 pl-2 pr-3 border-r-8';
 
-  return (
-    <div
-      className={`py-1 text-base font-normal bg-white  bg-y ${classes[state]} ${
-        className ? className : ''
-      } ${positionDependentStyle}`}
-    >
-      <TextProgressStatStatic score={score} showPoints={showPoints} />
-    </div>
-  );
-};
+    return (
+      <div
+        className={`py-1 text-base font-normal bg-white  bg-y ${
+          classes[state]
+        } ${className ? className : ''} ${positionDependentStyle}`}
+      >
+        <TextProgressStatStatic score={score} showPoints={showPoints} />
+      </div>
+    );
+  }
+);
 
-const Gauge = (props: {score: ActionReferentielScoreStorable | null}) => {
-  const makeStyle = (score: ActionReferentielScoreStorable | null) => {
+const Gauge = (props: {score: ScoreRead | null}) => {
+  const makeStyle = (score: ScoreRead | null) => {
     const state = inferStateFromScore(score);
     const color = progressStateColors[state];
     return {
@@ -110,7 +120,7 @@ export const UiGaugeProgressStat = ({
   size,
   showPoints,
 }: {
-  score: ActionReferentielScoreStorable | null;
+  score: ScoreRead | null;
   size: 'xs' | 'sm';
   showPoints: boolean;
 }) => {
@@ -131,15 +141,18 @@ export const UiGaugeProgressStat = ({
   );
 };
 
-export const CurrentEpciGaugeProgressStat = ({
-  action,
-  size,
-}: {
-  action: ActionReferentiel;
-  size: 'sm' | 'xs';
-}) => {
-  const storableId = ActionReferentielScoreStorable.buildId(action.id);
-  const score = useActionReferentielScore(storableId);
-
-  return <UiGaugeProgressStat score={score} size={size} showPoints={true} />;
-};
+export const CurrentEpciGaugeProgressStat = observer(
+  ({
+    action,
+    size,
+    scoreBloc,
+  }: {
+    action: ActionReferentiel;
+    size: 'sm' | 'xs';
+    scoreBloc: ScoreBloc;
+  }) => {
+    const score = scoreBloc.getScore(action.id);
+    console.log('CurrentEpciGaugeProgressStat observed score: ', score);
+    return <UiGaugeProgressStat score={score} size={size} showPoints={true} />;
+  }
+);

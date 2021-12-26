@@ -6,6 +6,7 @@ import {
   ActionStatusAvancementRadioButton,
   ActionExemplesExpandPanel,
 } from 'ui/shared';
+import {scoreBloc} from 'core-logic/observables/scoreBloc';
 
 /**
  * Displays an actions and it's children indented below.
@@ -73,6 +74,7 @@ export const ActionReferentielAvancementCard = ({
           position="right"
           className={`${displayProgressStat ? '' : 'hidden'}`}
           showPoints={true}
+          scoreBloc={scoreBloc}
         />
       </div>
       {/* <div className="flex justify-between my-6"> */}

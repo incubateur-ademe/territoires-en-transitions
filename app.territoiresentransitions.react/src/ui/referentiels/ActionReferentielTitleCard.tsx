@@ -7,6 +7,7 @@ import {referentielToName} from 'app/labels';
 import {referentielId} from 'utils/actions';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {makeCollectiviteActionUrl} from 'app/paths';
+import {scoreBloc} from 'core-logic/observables/scoreBloc';
 
 export const ActionReferentielTitleCard = ({
   action,
@@ -37,6 +38,7 @@ export const ActionReferentielTitleCard = ({
             action={action}
             position="right"
             showPoints={true}
+            scoreBloc={scoreBloc}
           />
         </div>
         <div className="p-4 flex justify-between">
