@@ -3,20 +3,20 @@ import {
   makeNewIndicateurPersonnaliseResultatWriteEndpoint,
   makeNewIndicateurResultatWriteEndpoint,
 } from 'core-logic/api/endpoints/AnyIndicateurValueWriteEndpoint';
-import {supabase} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {yiliCredentials, yuluCredentials} from 'test_utils/collectivites';
 import {AnyIndicateurValueWrite} from '../../../generated/dataLayer/any_indicateur_value_write';
 
 // NB : We're testing the behavior for resultat endpoints only (referentiel & perso), since the objectif is very similar (but we could do both to ensure there's no mistake on table name)
 describe('Indicateur-resultat write endpoint', () => {
   beforeAll(async () => {
-    await supabase.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signIn(yiliCredentials);
   });
   it('Should be able to save an update an indicateur resultat for an editable collectivite', async () => {
     const endpoint = makeNewIndicateurResultatWriteEndpoint();
-    const indicateurValue: AnyIndicateurValueWrite = {
+    const indicateurValue: AnyIndicateurValueWrite<string> = {
       annee: 2020,
-      valeur: 12.4,
+      valeur: 20.4,
       indicateur_id: 'cae_10',
       collectivite_id: 1,
     };
@@ -26,7 +26,7 @@ describe('Indicateur-resultat write endpoint', () => {
     expect(insertResult).toEqual(
       expect.objectContaining({
         annee: 2020,
-        valeur: 12.4,
+        valeur: 20.4,
         indicateur_id: 'cae_10',
         collectivite_id: 1,
       })
@@ -41,7 +41,7 @@ describe('Indicateur-resultat write endpoint', () => {
     });
     expect(updateResult).not.toBeNull();
     // FIX ME !
-    expect(insertResult).toEqual(
+    expect(updateResult).toEqual(
       expect.objectContaining({
         valeur: 18,
       })
@@ -52,7 +52,7 @@ describe('Indicateur-resultat write endpoint', () => {
 
   it('Saving an indicateur resultat value for a collectivite readonly should fail', async () => {
     const endpoint = makeNewIndicateurResultatWriteEndpoint();
-    const indicateurValue: AnyIndicateurValueWrite = {
+    const indicateurValue: AnyIndicateurValueWrite<string> = {
       annee: 2020,
       valeur: 12.4,
       indicateur_id: 'cae_10',
@@ -66,11 +66,11 @@ describe('Indicateur-resultat write endpoint', () => {
 
 describe('Indicateur personnalise resultat write endpoint', () => {
   beforeAll(async () => {
-    await supabase.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signIn(yiliCredentials);
   });
   it('Should be able to save an update an indicateur personnalise resultat for an editable collectivite', async () => {
     const endpoint = makeNewIndicateurPersonnaliseResultatWriteEndpoint();
-    const indicateurValue: AnyIndicateurValueWrite = {
+    const indicateurValue: AnyIndicateurValueWrite<number> = {
       annee: 2020,
       valeur: 20.2,
       indicateur_id: 0,
@@ -89,10 +89,10 @@ describe('Indicateur personnalise resultat write endpoint', () => {
     );
   });
   it('Saving an indicateur perso resultat value for a collectivite readonly should fail', async () => {
-    await supabase.auth.signOut(); // Yili signs out
-    await supabase.auth.signIn(yuluCredentials);
-    const endpoint = makeNewIndicateurResultatWriteEndpoint();
-    const indicateurValue: AnyIndicateurValueWrite = {
+    await supabaseClient.auth.signOut(); // Yili signs out
+    await supabaseClient.auth.signIn(yuluCredentials);
+    const endpoint = makeNewIndicateurPersonnaliseResultatWriteEndpoint();
+    const indicateurValue: AnyIndicateurValueWrite<number> = {
       annee: 2020,
       valeur: 12.4,
       indicateur_id: 0,
