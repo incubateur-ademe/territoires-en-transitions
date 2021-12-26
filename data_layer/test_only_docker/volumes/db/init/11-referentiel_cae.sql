@@ -9470,18 +9470,25 @@ A titre indicatif,  [valeur limite ; valeur cible] pour la part de déplacements
 (source : analyse de rapport d’études et de recherches sur l’intermodalité, CEREMA – IFSTTAR, 2015 et 2016, tendances observées depuis 1985 dans le cadre des EMD)
 
 ', 'à définir par la collectivité et son conseiller le cas échéant', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_38', 'cae_4.1.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_38', 'cae_4.3.3');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_38', 'cae_4.3.4');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_28a', 'cae', '28.a', null, 'Consommation énergétique du système d''alimentation en eau potable (captage/traitement/distribution) en kWh/hab', 'Le système d''alimentation en eau potable est très dépendant de l''état de la ressource en eau sur le territoire. L''évaluation des effets se fait donc de manière relative, sur plusieurs années, en étant vigilant sur les conditions climatiques de l''année étudiée. L''indicateur peut être en kWh/hab.
 
 ', 'captage/traitement/distribution', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_28a', 'cae_3.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_28b', 'cae', '28.b', null, 'Rendement du système d''alimentation en eau potable (captage/traitement/distribution) en m3 brut/m3 vendu', 'Le système d''alimentation en eau potable est très dépendant de l''état de la ressource en eau sur le territoire. L''évaluation des effets se fait donc de manière relative, sur plusieurs années, en étant vigilant sur les conditions climatiques de l''année étudiée. L''indicateur est en m3 brut/m3 vendu pour mesurer les pertes (la cible étant dans ce cas de se rapprocher de 1).
 
 ', 'captage/traitement/distribution', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_28b', 'cae_3.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_8', 'cae', '8.None', null, 'Nombre de logements rénovés énergétiquement (nb logements rénovés/100 logements existants)', 'L''indicateur mesure le nombre annuel de logements rénovés via les dispositifs de subventionnement et d’accompagnement dont la collectivité est partenaire, ramené au nombre de logements du territoire (pour 100 logements). Pour rappel l’objectif national du plan de rénovation énergétique de l’habitat est de 500 000 logements rénovés par an en 2017, soit 1,4 logements rénovés pour 100 logements existants (35,425 millions de logements en 2016 selon l’INSEE).
 
 ', 'nb logements rénovés/100 logements existants', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_8', 'cae_1.2.4');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_59', 'cae', '59.None', null, 'Part de surface agricole certifiée agriculture biologique ou en conversion et haute valeur environnementale (%)', 'L''indicateur mesure le pourcentage % de SAU impliquée dans une démarche de certification environnementale (par rapport à la SAU totale) : agriculture biologique (certifiée et en conversion) et haute valeur environnementale (HVE). L''agriculture raisonnée (ou niveau 2 de certification environnementale selon les décrets et arrêtés du 20 et 21 juin 2011) n''est pas prise en compte. Pour la France métropole, la valeur limite est basée sur la valeur moyenne française des surfaces labellisées AB en 2016 (5,7% - Agence bio) et la valeur cible est basée sur l’objectif 2020 fixé dans la loi Grenelle I (20%).
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_59', 'cae_6.4.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49a', 'cae', '49.a', null, 'Budget associé à la politique climat-air-énergie (euros/hab.an)', 'L''indicateur suit et totalise les budgets annuels associés aux actions les plus clairement identifiables de la politique climat-air-énergie de la collectivité, en fonctionnement et en investissement. L''indicateur doit exister et être suivi annuellement pour être valorisé (pas de valeur limite ou cible). Pour faciliter la comparaison au fil du temps et entre collectivités, le budget est rapporté au nombre d''habitant et la décomposition suivante peut être utilisée :
 
 - études/expertises concernant la maîtrise de l’énergie et la baisse des émissions de GES dans les différents secteurs consommateurs et émetteurs, les énergies renouvelables, l''adaptation au changement climatique, la qualité de l''air
@@ -9501,16 +9508,19 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 A noter : Dans une approche véritablement transversale et intégrée, l''ensemble des budgets des différents services contribuent à la politique climat-air-énergie, mais dans une proportion difficilement quantifiable.  Les budgets associés aux services déchets/eau/assainissement/transports publics/voirie, sont notamment associés à cette politique, mais répondent à des objectifs plus larges.
 
 ', 'euros/hab.an', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_49a', 'cae_5.2.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49b', 'cae', '49.b', null, 'Budget études/expertises MDE/ENR/qualité de l''air/adaptation au changement climatique (euros)', 'Composante de l''indicateur 49a:
 
 Budget associé à la politique climat-air-énergie (euros/hab.an)
 
 ', 'euros', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_49b', 'cae_5.2.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49c', 'cae', '49.c', null, 'Budget actions communication/sensibilisation climat-air-énergie  (euros)', 'Composante de l''indicateur 49a:
 
 Budget associé à la politique climat-air-énergie (euros/hab.an)
 
 ', 'euros', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_49c', 'cae_5.2.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49d', 'cae', '49.d', null, 'Montant des aides financières accordées aux particuliers et acteurs privés (euros)', 'Composante de l''indicateur 49a:
 
 Budget associé à la politique climat-air-énergie (euros/hab.an)
@@ -9533,22 +9543,27 @@ Budget associé à la politique climat-air-énergie (euros/hab.an)
 . L’indicateur mesure le budget global dédié par la collectivité au développement de la pratique cyclable sur son territoire : études, infrastructures et services.
 
 ', 'euros', false ,   null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49f.hab', 'cae', '49.f.hab', null, 'Budget politique cyclable  (euros/hab.an)', 'Déclinaison par habitant.  Pour les collectivités compétentes en la matière, des valeurs de références ramenées au nombre d''habitants sont données à titre indicatif : valeur limite 5 euros/hab.an, valeur cible 10 euros/hab.an (source observatoire des mobilités actives, ADEME 2016)
+insert into indicateur_action(indicateur_id, action_id) values ('cae_49f', 'cae_4.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49f.hab', 'cae', '49.f', null, 'Budget politique cyclable  (euros/hab.an)', 'Déclinaison par habitant.  Pour les collectivités compétentes en la matière, des valeurs de références ramenées au nombre d''habitants sont données à titre indicatif : valeur limite 5 euros/hab.an, valeur cible 10 euros/hab.an (source observatoire des mobilités actives, ADEME 2016)
 
 ', 'euros/hab.an', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_49f.hab', 'cae_4.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49g', 'cae', '49.g', null, 'Budget travaux rénovation énergétique patrimoine public  (euros)', 'Composante de l''indicateur 49a:
 
 Budget associé à la politique climat-air-énergie (euros/hab.an)
 
 ', 'euros', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_49g', 'cae_4.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49h', 'cae', '49.h', null, 'Budget installations ENR publiques  (euros)', 'Composante de l''indicateur 49a:
 
 Budget associé à la politique climat-air-énergie (euros/hab.an)
 
 ', 'euros', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_49h', 'cae_4.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_18', 'cae', '18.None', null, 'Part des achats d’électricité renouvelable de la collectivité (%)', 'L''indicateur mesure le rapport entre les achats d''électricité renouvelable et le montant total des achats d''électricité de la collectivité pour les bâtiments et équipements de la collectivité (y compris services publics eaux, assainissement, déchets et éclairage public s’ils sont de la compétence de la collectivité) (en kWh ou MWh). La cible est de 100%
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_18', 'cae_2.2.4');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_9', 'cae', '9.None', null, 'Compacité des formes urbaines', 'Trois indicateurs au choix :
 
 - Rapport annuel entre nouvelle surface construite ou réhabilitée sur des sites en reconversion (sites déjà urbanisés : friches industrielles, dents creuses, habitat insalubre...) / nouvelle surface construite en extension (en limite d''urbanisation ou sur des espaces naturels ou agricoles). La comptabilisation se fait sur la base des permis de construire. Pour une agglomération, le ratio de 2 (soit 1/3 en extension et 2/3 en renouvellement) est une bonne performance ; pour une ville-centre les objectifs visés pourront être plus élevés.
@@ -9558,21 +9573,27 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 - Part du foncier en friche : L’indicateur permet d’identifier et caractériser les gisements fonciers locaux qualifiés comme étant « en friche ». Les enjeux sont d’effectuer une veille foncière, d’anticiper la formation de friches et d’étudier la mutabilité des espaces en friche. Compacité des formes urbaines
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_9', 'cae_1.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_58', 'cae', '58.None', null, 'Emissions directes de polluants atmosphériques du secteur agriculture par ha (tonne/ha)', 'Indicateur exigé dans la règlementation PCAET (diagnostic). Arrêté du 4 août 2016 relatif au plan climat-air-énergie territorial. Ramené à l’hectare pour comparaison.
 
 ', 'tonne/ha', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_58', 'cae_6.4.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_48', 'cae', '48.None', null, 'Part d''ETP de la collectivité  dédié à la mise en œuvre de la politique climat air énergie ( %)', 'L’indicateur mesure le nombre de personnes en équivalent temps plein dédiées à la mise en œuvre de la politique climat-air-énergie. Pour être comptabilisé à 100%, l’intitulé du poste doit clairement se référer à cette politique (e : chargé de mission énergie, plan climat, mobilité douce…) ; pour des postes mixtes (ex : chargé de mission bâtiments), le poste ne doit pas être compté entièrement dans l’indicateur, mais uniquement l’estimation du % des tâches en lien avec la politique climat-air-énergie. Le personnel externe (prestataires) ne doit pas être pris en compte. Pour faciliter la comparaison, le nombre d’ETP est ramené au nombre total d''ETP de la collectivité.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_48', 'cae_5.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_19a_hors_dom', 'cae', '19.a_hors_dom', null, 'Part de bâtiments de classe F ou G selon le DPE pour les GES (ou équivalent) (hors DOM)', 'En France métropolitaine, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE,  dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes F et G selon le DPE pour les GES. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. L''indicateur permet de mesurer l''effort de la collectivité pour la rénovation de ces bâtiments les plus émetteurs. L''objectif est de ne plus avoir de patrimoine dans ces classes (valeur limite : 10%).
 
 ', 'ou équivalent', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_19a_hors_dom', 'cae_2.2.5');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_19b_hors_dom', 'cae', '19.b_hors_dom', null, 'Part de bâtiments de classe A ou B selon le DPE pour les GES (ou équivalent)  (hors DOM)', 'En France métropolitaine, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE, dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes A et B selon le DPE pour les GES. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. La cible est d''atteindre 30% du parc dans les classes A et B (mais valorisation progressive à partir de 0%).
 
 ', 'ou équivalent', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_19b_hors_dom', 'cae_2.2.5');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_39', 'cae', '39.None', null, 'Part de la population active couverte par un PDE/PDA (%)', 'L''indicateur comptabilise le nombre d''employés couverts par un Plan de Déplacements Entreprise (PDE) et Administration (PDA) sur le territoire et le rapporte à la population active du territoire. Ce chiffre doit être en augmentation chaque année. Des valeurs indicatives limites et cibles sont données, basées sur des données ADEME (enquête nationale 2009 et Poitou-Charentes 2012) et les meilleurs scores des collectivités Cit''ergie.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_39', 'cae_4.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_29', 'cae', '29.None', null, 'Consommation énergétique des STEP kWh/kgDBO5 éliminé', 'L''indicateur de consommation énergétique des STEP (station d''épuration) s''exprime en kWh/kg de DBO5 (demande biologique en oxygène mesuré à 5 jours) éliminés, plus fiables que les indicateurs en kWh/m3 d''eau traité. La composition des eaux entrantes influe en effet sur les consommations énergétiques de la station sans pour autant refléter ses performances. Le privilège est donc donné à cet indicateur, qui se situe habituellement se situe, selon la filière, autour des valeurs suivantes : BA (boues activées) entre 2 et 4, SBR (réacteur biologique séquencé) autour de 4 et BRM (bioréacteur à membranes) autour de 5 (dires d''experts). L''énergie est mesurée en énergie finale. Dans le cas d''une moyenne entre plusieurs STEP, pondérer selon les équivalents habitants.
 
 - Valeur limite : BA 4, SBR 5, BRM 7
@@ -9580,34 +9601,42 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 - Valeur cible : BA 2, SBR 3, BRM 4
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_29', 'cae_3.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_32', 'cae', '32.None', null, 'Rendement énergétique UIOM en % (valorisation énergétique électricité et chaleur)', 'Le rendement de l''UIOM (unité d''incinération des ordures ménagères) est calculé selon la formule permettant la modulation du taux de la TGAP (arrêté du 7 décembre 2016 modifiant l''arrêté du 20 septembre 2002 relatif aux installations d''incinération et de coïncinération de déchets non dangereux et aux installations incinérant des déchets d''activités de soins à risques infectieux). Le niveau de performance énergétique choisi comme valeur cible est celui utilisé à l''article 266 nonies du code des douanes pour bénéficier d’une TGAP réduite.
 
 - Valeur limite et cible : 65%
 
 ', 'valorisation énergétique électricité et chaleur', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_32', 'cae_3.3.5');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63a', 'cae', '63.a', null, 'Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)', 'L''indicateur suit une estimation de la séquestration nette de dioxyde de carbone, identifiant au moins les sols agricoles et la forêt, en tenant compte des changements d’affectation des terres (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial).
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_63a', 'cae_6.4.2');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_63a', 'cae_6.4.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63b', 'cae', '63.b', null, 'Séquestration de la forêt  (teq CO2)', 'Composante de l''indicateur 63a:
 
 Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_63b', 'cae_6.4.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63c', 'cae', '63.c', null, 'Séquestration dans les terres agricoles et les prairies (teq CO2)', 'Composante de l''indicateur 63a:
 
 Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_63c', 'cae_6.4.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63d', 'cae', '63.d', null, 'Séquestration dans les autres sols (teq CO2)', 'Composante de l''indicateur 63a:
 
 Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_63d', 'cae_6.4.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_57', 'cae', '57.None', null, 'Taux d’hébergements labellisés Ecolabel européen (ou équivalent)', 'Nombre d''hébergements labellisés Ecolabel Européen / Total d''hébergements touristiques sur le territoire
 
 (Indicateur complémentaire : Nombre d’hébergements labellisés Ecolabel Européen)
 
 ', 'ou équivalent', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_57', 'cae_6.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6a', 'cae', '6.a', null, 'Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)', 'Les déchets ménagers et assimilés comprennent les ordures ménagères résiduelles, les collectes sélectives et les déchets collectés en déchèteries (y compris déchets et gravats), soit la totalité des déchets des ménages et des non ménages pris en charge par le service public. Les déchets produits par les services municipaux (déchets de l’assainissement collectif, déchets de nettoyage des rues, de marché, …) ne relèvent pas de ce périmètre.  Le calcul ne considère que les services de collecte opérationnels, c''est-à-dire ceux qui ont fonctionné au moins une journée au cours de l''année de référence du calcul et les déchèteries opérationnelles, c''est-à-dire des déchèteries qui ont été ouvertes au moins une journée au cours de l''année de référence du calcul.
 
 La valeur limite est issue des chiffres-clés déchets de l’ADEME, édition 2016, basé sur l’enquête Collecte 2013 et la valeur cible des 47 territoires pionniers en France.
@@ -9617,6 +9646,7 @@ La valeur limite est issue des chiffres-clés déchets de l’ADEME, édition 20
 - Valeur cible : 480 kg/hab.an
 
 ', 'avec déblais et gravats', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_6a', 'cae_1.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6b', 'cae', '6.b', null, 'Production Ordures ménagères résiduelles (kg/hab)', 'Composante de l''indicateur 6a:
 
 Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)
@@ -9628,6 +9658,7 @@ Production de déchets ménagers et assimilés (avec déblais et gravats) par ha
 - Valeur cible : 120 kg/hab.an
 
 ', 'kg/hab', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_6b', 'cae_1.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6c', 'cae', '6.c', null, 'Production de déchets collectés sélectivement, soit en porte-à-porte, soit en apport volontaire (kg/hab)', 'Composante de l''indicateur 6a:
 
 Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)
@@ -9635,6 +9666,7 @@ Production de déchets ménagers et assimilés (avec déblais et gravats) par ha
 : emballages, déchets fermentescibles, verre…
 
 ', 'kg/hab', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_6c', 'cae_1.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6d', 'cae', '6.d', null, 'Production de déchets occasionnels (kg/hab)', 'Composante de l''indicateur 6a:
 
 Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)
@@ -9642,6 +9674,7 @@ Production de déchets ménagers et assimilés (avec déblais et gravats) par ha
 : encombrants, déchets verts, déblais et gravats…
 
 ', 'kg/hab', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_6d', 'cae_1.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_16a', 'cae', '16.a', null, 'Consommation de chaleur/rafraichissement renouvelable et de récupération - patrimoine collectivité   (MWh)', 'Pour les bâtiments et équipements publics, l''indicateur mesure  la consommation de chaleur/rafraichissement issue d’energie renouvelable et de récupération. Le patrimoine en DSP est inclus si possible ainsi que les services publics eau/assainissement/déchets lorsqu''ils sont de la compétence de la collectivité.
 
 Pour les collectivités compétentes, la récupération de chaleur des UIOM ainsi que sur les eaux usées/épurées peut ainsi être prise en compte pour la part autoconsommée sur place (bâtiments de la collectivité et process). Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/eau, sol/sol avec une efficacité énergétique ≥ 126 % (PAC basse température) et une efficacité énergétique ≥ 111 % (PAC moyenne ou haute température).
@@ -9649,6 +9682,7 @@ Pour les collectivités compétentes, la récupération de chaleur des UIOM ains
 Pour les bâtiments publics desservis par des réseaux de chaleur, le taux d’EnR&R du réseau est défini réglementairement et s’apprécie au regard du bulletin officiel des impôts vis-a-vis de la TVA réduite (BOI-TVA-LIQ-30 chapitre 2.140). La co-génération fossile n’est pas prise en compte.
 
 ', 'MWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_16a', 'cae_2.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_16b', 'cae', '16.b', null, 'Taux de couverture par les énergies renouvelables et de récupération des besoins en chaleur et rafraichissement - patrimoine collectivité (%)', 'Déclinaison de l''indicateur 16a:
 
 Consommation de chaleur/rafraichissement renouvelable et de récupération - patrimoine collectivité   (MWh)
@@ -9660,18 +9694,23 @@ Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/ea
 Pour les bâtiments publics desservis par des réseaux de chaleur, le taux d’EnR&R du réseau est défini réglementairement et s’apprécie au regard du bulletin officiel des impôts vis-a-vis de la TVA réduite (BOI-TVA-LIQ-30 chapitre 2.140). La co-génération fossile n’est pas prise en compte.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_16b', 'cae_2.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_47', 'cae', '47.None', null, 'Maillage du territoire par le réseau TC', 'L''indicateur a pour objectif de mesurer le maillage du territoire par les TC : nombre moyen d''arrêts par km du réseau de transport en commun, nb arrêts/hab, km de réseau/hab ou par ha de territoire, % de population desservie dans un rayon de 300-500 mètres... L''indicateur est basé sur une moyenne tous modes de TC confondus.
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_47', 'cae_4.3.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_22', 'cae', '22.None', null, 'Taux d''énergie renouvelable et de récupération (ENR&R) des réseaux de chaleur sur le territoire (en %)', 'Il s''agit de mesurer la part d''énergie renouvelable et de récupération (ENR&R) du réseau de chaleur de la collectivité. La méthodologie de calcul doit être conforme à celle élaborée par le SNCU, reprise réglementairement dans le cadre de l''instruction fiscale ou le classement du réseau de chaleur. En présence de plusieurs réseaux de chaleur, une moyenne doit être réalisée. La valeur cible est fixée à 75%.
 
 ', 'ENR&R', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_22', 'cae_3.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2a', 'cae', '2.a', null, 'Consommation énergétique globale annuelle du territoire (GWh)', 'Cet indicateur estime la consommation énergétique finale annuelle du territoire, selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial).
 
 ', 'GWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2a', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2b', 'cae', '2.b', null, 'Consommation énergétique annuelle du territoire par habitant (MWh/hab.an)', 'Pour faciliter les comparaisons, l’indicateur est ramené au nombre d’habitants (population municipale selon l’INSEE). Préciser l''année de référence en commentaire. L''évaluation est basée sur l''évolution de l''indicateur.
 
 ', 'MWh/hab.an', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2b', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2c', 'cae', '2.c', null, 'Consommation énergétique annuelle du territoire pour la chaleur et le rafraîchissement (GWh)', 'Décomposition par usage de l''indicateur 2a:
 
 Consommation énergétique globale annuelle du territoire (GWh)
@@ -9679,6 +9718,7 @@ Consommation énergétique globale annuelle du territoire (GWh)
 - utile aux calculs des taux de production ENR (dénominateur).
 
 ', 'GWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2c', 'cae_3.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2d', 'cae', '2.d', null, 'Consommation énergétique annuelle du territoire pour l''électricité (GWh)', 'Décomposition par usage de l''indicateur 2a:
 
 Consommation énergétique globale annuelle du territoire (GWh)
@@ -9686,49 +9726,60 @@ Consommation énergétique globale annuelle du territoire (GWh)
 - utile aux calculs des taux de production ENR (dénominateur).
 
 ', 'GWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2d', 'cae_3.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2e', 'cae', '2.e', null, 'Consommation énergétique du résidentiel  (GWh)', 'Décomposition par secteur réglementaire de l''indicateur global 2a:
 
 Consommation énergétique globale annuelle du territoire (GWh).
 
 ', 'GWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2e', 'cae_1.2.4');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2f', 'cae', '2.f', null, 'Consommation énergétique du tertiaire (GWh)', 'Décomposition par secteur réglementaire de l''indicateur global 2a:
 
 Consommation énergétique globale annuelle du territoire (GWh).
 
 ', 'GWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2f', 'cae_6.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2g', 'cae', '2.g', null, 'Consommation énergétique  du transport routier(GWh)', 'Décomposition par secteur réglementaire de l''indicateur global 2a:
 
 Consommation énergétique globale annuelle du territoire (GWh).
 
 ', 'GWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2g', 'cae_1.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2h', 'cae', '2.h', null, 'Consommation énergétique du secteur "autres transports" (teq CO2)', 'Décomposition par secteur réglementaire de l''indicateur global 2a:
 
 Consommation énergétique globale annuelle du territoire (GWh).
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2h', 'cae_1.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2i', 'cae', '2.i', null, 'Consommation énergétique de l''agriculture (GWh)', 'Décomposition par secteur réglementaire de l''indicateur global 2a:
 
 Consommation énergétique globale annuelle du territoire (GWh).
 
 ', 'GWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2i', 'cae_6.4.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2j', 'cae', '2.j', null, 'Consommation énergétique des déchets (GWh)', 'Décomposition par secteur réglementaire de l''indicateur global 2a:
 
 Consommation énergétique globale annuelle du territoire (GWh).
 
 ', 'GWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2j', 'cae_1.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2k', 'cae', '2.k', null, 'Consommation énergétique de l''industrie hors branche énergie (GWh)', 'Décomposition par secteur réglementaire de l''indicateur global 2a:
 
 Consommation énergétique globale annuelle du territoire (GWh).
 
 ', 'GWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_2k', 'cae_6.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_53', 'cae', '53.None', null, 'Part du budget consacré aux projets de coopération significatifs et multi-acteurs par an sur le climat, l’air et l’énergie (%)', 'L''indicateur mesure le montant des dépenses engagées pour les projets de coopération significatifs et multi-acteurs par an sur le climat, l’air et l’énergie (hors coopération décentralisée), rapporté au budget total (investissement et fonctionnement) de la collectivité.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_53', 'cae_6.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_36', 'cae', '36.None', null, 'Part modale vélo', 'La part modale est une part modale en nombre de déplacements.
 
 Les valeurs limites et cibles sont données à titre indicatif pour le conseiller, qui doit également juger de l''évolution de la part modale au fil du temps et selon le territoire. En France, la moyenne est de 3%, les meilleures collectivités françaises atteignent 10% des déplacements. En Allemagne les parts modales atteignent 25% dans plusieurs villes. A défaut de posséder les parts modales issues d''une enquête ménages, les collectivités peuvent utiliser les données INSEE donnant les parts modales des déplacements domicile-travail pour la population active (tableau NAV2A ou NAV2B).
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_36', 'cae_4.1.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_36', 'cae_4.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_26', 'cae', '26.None', null, 'Puissance photovoltaïque installée sur le territoire (Wc/hab)', 'L''installation de panneaux solaires photovoltaïques est possible dans toutes les collectivités. Un indicateur en puissance installée plutôt qu''en production permet de ne pas prendre en compte les différences d''ensoleillement des territoires. Les valeurs cibles sont établies à partir des données collectées dans le cadre des démarches Cit''ergie.
 
 Les valeurs cibles sont les suivantes :
@@ -9740,12 +9791,16 @@ Les valeurs cibles sont les suivantes :
 - pour les collectivités < 50 000 habitants : 60 Wc/hab (Métropole) - 180 Wc/hab (DOM-ROM)
 
 ', 'Wc/hab', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_26', 'cae_3.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_43', 'cae', '43.None', null, 'Part de voiries « apaisées » (%)', 'L’indicateur mesure la part des voiries où un dispositif règlementaire permet l’apaisement de la circulation (réduction des vitesses en dessous de 50 km/heures ou limitation de la circulation) par rapport au linéaire total de voirie de la collectivité. Les dispositifs pris en compte sont les zones de rencontre, les zones 30, les aires piétonnes, les zones de circulation restreinte.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_43', 'cae_4.3.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_43', 'cae_4.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_12', 'cae', '12.None', null, 'Part de bâtiments publics ayant fait l''objet d''un diagnostic énergétique', 'L''indicateur mesure la part de bâtiments publics (de préférence en surface, et par défaut en nombre) ayant fait l''objet d''un diagnostic énergétique (à minima de type DPE, et de préférence un audit énergétique plus poussé). Le périmètre des bâtiments pris en compte est le plus large possible : celui dont elle est propriétaire ou celui dont elle est locataire ; les diagnostics pouvant être portés et financés par le propriétaire ou l''utilisateur. Si le suivi est effectué conjointement au niveau communal et intercommunal, l''indicateur peut-être décomposé en deux volets : part de bâtiments communaux ayant fait l''objet d''un diagnostic énergétique et part de bâtiments intercommunaux ayant fait l''objet d''un diagnostic énergétique.
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_12', 'cae_2.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_3a', 'cae', '3.a', null, 'Production d’énergie renouvelable globale du territoire (MWh)', 'Cet indicateur mesure la production d’énergie renouvelable totale sur le territoire, selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial), c''est à dire incluant les filières de production:
 
 - d’électricité: éolien  terrestre, solaire  photovoltaïque, solaire  thermodynamique,  hydraulique,  biomasse  solide, biogaz, géothermie
@@ -9757,19 +9812,24 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 Préciser l''année de référence en commentaire.
 
 ', 'MWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_3a', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_3b', 'cae', '3.b', null, 'Production d’énergie renouvelable globale du territoire (% de la consommation)', 'Déclinaison en % de la consommation énergétique du territoire de l''indicateur 3a:
 
 Production d’énergie renouvelable globale du territoire (MWh).
 
 ', '% de la consommation', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_3b', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_52', 'cae', '52.None', null, 'Part du budget consacré à des projets de coopération décentralisée en lien avec le climat, l’air ou l’énergie (%)', 'L''indicateur mesure le montant des subventions ou investissements consentis pour les projets de coopération décentralisée, en lien avec le climat, l’air et l’énergie, rapporté au budget total (investissement et fonctionnement) de la collectivité. Pour information, l''aide publique au développement en France est estimée à 0,38% du RNB en 2017, toutes thématiques confondues (santé, éducation, alimentaire, eau, climat...). Lors du sommet du millénaire de 2000, l''objectif fixé par la commission européenne était d''atteindre 0,7 % du RNB en 2015.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_52', 'cae_6.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_37', 'cae', '37.None', null, 'Part modale TC', 'La part modale est une part modale en nombre de déplacements.
 
 Il s’agit (si possible) des transports en commun en général : bus urbain, car interurbain, tram, métro, train..., pas uniquement les TCU (transport collectif urbain). La rentabilité économique du système est prise en compte dans la réduction de potentiel. Les valeurs limites et cibles (début de valorisation entre 5 et 10% selon les infrastructures en place, cible >20% -région parisienne) sont données à titre indicatif pour le conseiller, qui doit également juger de l''évolution de la part modale au fil du temps et de l''offre TC sur le territoire. A défaut de posséder les parts modales issues d''une enquête ménages, les collectivités peuvent utiliser les données INSEE donnant les parts modales des déplacements domicile-travail  pour la population active (tableau NAV2A ou NAV2B).
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_37', 'cae_4.1.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_37', 'cae_4.3.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_27', 'cae', '27.None', null, 'Mix énergétique proposé par les régies et SEM fournisseur d''électricité (%)', 'Les SEM et régies peuvent, en plus de leur propre production d’énergies renouvelables, acheter de l''électricité renouvelable ou verte (labellisée) pour compléter leur offre. Les objectifs fixés (production et achat) sont basés sur les objectifs 2030 de la loi de transition énergétique.
 
 Valeur cible :
@@ -9779,9 +9839,11 @@ Valeur cible :
 - 100% (DOM)
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_27', 'cae_3.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_42', 'cae', '42.None', null, 'Nombre de places de stationnement public pour les voitures par habitant (nb/hab)', 'L''indicateur mesure le nombre de places de stationnement public pour les voitures par habitant (stationnements publics gratuit ou payant, sur voirie ou dans des ouvrages, exploité en régie par la collectivité –commune ou EPCI- ou délégué). Si le périmètre suivi est partiel, l’indiquer en commentaire.
 
 ', 'nb/hab', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_42', 'cae_4.2.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13a', 'cae', '13.a', null, 'Dépenses énergétiques de la collectivité (euros)', 'L''indicateur mesure les dépenses d’énergie payées directement par la collectivité, c’est-à-dire celles payées par la collectivité aux fournisseurs et aux exploitants (uniquement le poste combustibles P1 dans ce dernier cas) pour le patrimoine bâti, l’éclairage public et les carburants des véhicules.
 
 Les trois postes de dépenses sont également suivis indépendamment.
@@ -9789,16 +9851,19 @@ Les trois postes de dépenses sont également suivis indépendamment.
 Rapportées au nombre d''habitants, pour les communes, les valeurs peuvent-être comparées avec des valeurs de références  tirées de l''enquête ADEME-AITF-EDF-GDF "Energie et patrimoine communal 2012".
 
 ', 'euros', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_13a', 'cae_2.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13b', 'cae', '13.b', null, 'Dépenses  énergétiques - bâtiments (euros)', 'Composante de l''indicateur de dépenses énergétiques de la collectivités pour les bâtiments
 
 L''indicateur mesure les dépenses d’énergie payées directement par la collectivité, c’est-à-dire celles payées par la collectivité aux fournisseurs et aux exploitants (uniquement le poste combustibles P1 dans ce dernier cas) pour les bâtiments (patrimoine bâti)
 
 ', 'euros', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_13b', 'cae_2.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13c', 'cae', '13.c', null, 'Dépenses énergétiques - véhicules (euros)', 'Composante de l''indicateur de dépenses énergétiques de la collectivité pour les carburants des véhicules
 
 L''indicateur mesure les dépenses d’énergie payées directement par la collectivité, c’est-à-dire celles payées par la collectivité aux fournisseurs et aux exploitants (uniquement le poste combustibles P1 dans ce dernier cas) pour les carburants des véhicules
 
 ', 'euros', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_13c', 'cae_4.1.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13d', 'cae', '13.d', null, 'Dépenses énergétiques - éclairage public  (euros)', 'Composante de l''indicateur de dépenses énergétiques de la collectivité pour l''éclairage public
 
 L''indicateur mesure les dépenses d’énergie payées directement par la collectivité, c’est-à-dire celles payées par la collectivité aux fournisseurs et aux exploitants (uniquement le poste combustibles P1 dans ce dernier cas)  pour l''éclairage public
@@ -9811,20 +9876,25 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 - 99 kg/habitant desservi pour la collecte de déchets alimentaires et déchets verts.
 
 ', 'à défaut kg/hab.an de biodéchets collectés de manière séparative -méthanisation et/ou compostage-', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_33', 'cae_3.3.5');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_62', 'cae', '62.None', null, 'Part de surface forestière certifiée (%)', 'L''indicateur mesure le % de surfaces forestières certifiées FSC ou PEFC (par rapport à la surface forestière totale). Les objectifs sont basés sur les valeurs moyennes françaises et des dires d''experts  ADEME.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_62', 'cae_6.4.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_56', 'cae', '56.None', null, 'Nombre de dossiers « Habiter mieux » déposés à l’Anah sur le territoire', 'L’indicateur mesure le nombre de dossier déposés chaque année auprès de l’ANAH dans le cadre du programme Habiter mieux. Ce programme vise les propriétaires occupants (sous conditions de ressources) et les propriétaires bailleurs.
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_56', 'cae_6.2.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_7', 'cae', '7.None', null, 'Recyclage matière et organique des déchets ménagers et assimilés (%)', 'Il s’agit de la part (en poids) des déchets ménagers et assimilés (DMA, cf. définition ci-dessus) orientés vers le recyclage matière et organique. Le recyclage consiste en toute opération de valorisation par laquelle les déchets, y compris organiques, sont retraités en substances, matières ou produits pour resservir à leur fonction initiale ou à d’autres fins (définition du code de l’environnement). La valorisation énergétique n''est pas prise en compte ici.
 
 NB : On mesure les déchets « orientés vers le recyclage », les refus de tri ne sont donc pas déduits. Ne sont pas considérés ici comme « orientés vers le recyclage » les déchets entrant dans des installations de tri mécanobiologique. Pour ces derniers, seuls les flux sortant orientés vers la valorisation organique (compostage ou méthanisation) ou vers le recyclage matière (métaux récupérés) sont à intégrer dans les flux « orientés vers le recyclage ». Les mâchefers valorisés ainsi que les métaux récupérés sur mâchefers ne sont pas intégrés.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_7', 'cae_1.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_17a', 'cae', '17.a', null, 'Production d''électricité renouvelable - patrimoine collectivité (MWh)', 'L''indicateur mesure la production d''électricité d''origine renouvelable (installations financées en totalité ou en majorité par la collectivité et de sa compétence : éolien, photovoltaïque, hydraulique, marémotrice, géothermie haute température, électricité issue de l''incinération des déchets à hauteur de 50%, cogénération biomasse/biogaz...).
 
 ', 'MWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_17a', 'cae_2.2.4');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_17b', 'cae', '17.b', null, 'Taux de production d''électricité renouvelable  - patrimoine collectivité (%)', 'Déclinaison de l''indicateur 17a:
 
 Production d''électricité renouvelable - patrimoine collectivité (MWh)
@@ -9832,6 +9902,7 @@ Production d''électricité renouvelable - patrimoine collectivité (MWh)
 . L''indicateur mesure le rapport de la production d''électricité d''origine renouvelable (installations financées en totalité ou en majorité par la collectivité et de sa compétence : éolien, photovoltaïque, hydraulique, marémotrice, géothermie haute température, électricité issue de l''incinération des déchets à hauteur de 50%, cogénération biomasse/biogaz...) sur la consommation totale d''électricité des bâtiments et équipements communaux (y compris l''éclairage public et les services industriels de la compétence de la collectivité) en énergie finale. Le patrimoine en DSP est inclus si possible.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_17b', 'cae_2.2.4');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_46', 'cae', '46.None', null, 'Fréquentation des TC (voyages/hab)', 'Il s''agit du nombre moyen de voyages en transport en commun effectué chaque année par un habitant. Source de l''indicateur : L''année 2007 des transports urbains, GART – Enquête annuelle sur les transports urbains (CERTU-DGITMGART-UTP) sur 192 réseaux.
 
 - Valeur limite : 32 (<100 000 hab) et 64 (>100 000 hab)
@@ -9839,6 +9910,7 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 - Valeur cible : 114 (<100 000 hab) et 140 (>100 000 hab)
 
 ', 'voyages/hab', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_46', 'cae_4.3.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_23', 'cae', '23.None', null, 'Taux de couverture des besoins de chaleur du territoire (résidentiel et tertiaire) par les réseaux de chaleur ENR&R (en %)', 'Cet indicateur est le ratio entre la consommation d''énergie pour le chauffage assurée par le(s) réseau(x) de chaleur ENR&R et la consommation totale d''énergie pour le chauffage du territoire (pour le résidentiel et le tertiaire, donc hors industrie).
 
 La valeur limite (10%) est basée sur le taux moyen de couverture des besoins de chaleur par les réseaux de chaleur en Europe (source : AMORCE).
@@ -9846,9 +9918,11 @@ La valeur limite (10%) est basée sur le taux moyen de couverture des besoins de
 - ATTENTION: Les réseaux de chaleur 100% fossiles ne sont pas pris en compte ici.
 
 ', 'résidentiel et tertiaire', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_23', 'cae_3.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_51', 'cae', '51.None', null, 'Part des marchés intégrant des clauses environnementales (%)', 'Part des marchés (en nombre) intégrant des clauses environnementales dans les spécifications techniques ou les critères d’attribution en augmentation
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_51', 'cae_5.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_34', 'cae', '34.None', null, 'Taux de valorisation énergétique du biogaz des centres de stockage des déchets (en %)', 'L''indicateur mesure la part de biogaz valorisé par le centre de stockage des déchets.
 
 - Valeur limite: 75% (fixée par le seuil de valorisation permettant la modulation de la TGAP)
@@ -9856,6 +9930,7 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 - Valeur cible : 100%
 
 ', 'en %', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_34', 'cae_3.3.5');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_65', 'cae', '65.None', null, 'Nombre d''heures de consultations et de conseils sur la thématique climat air énergie pour 100 hab / an', 'Nombre d''heures de consultations et de conseil sur l''énergie et la construction pour 100 hab / an
 
 - Valeur limite = 10 min /100 hab
@@ -9870,6 +9945,7 @@ Par convention, 50% de la chaleur produite par l’incinération des déchets es
 - ATTENTION: La cogénération à partir d''énergie fossile n''est pas prise en compte.
 
 ', 'MWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_24a', 'cae_3.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_24b', 'cae', '24.b', null, 'Taux de production d''énergie renouvelable pour la chaleur et le rafraîchissement sur le territoire (en %)', 'Cet indicateur mesure la production de chaleur et de rafraichissement  renouvelable sur le territoire (initiative publique et privée), divisée par les consommations totales de chaleur et de froid du territoire (en énergie finale). Les énergies renouvelables prise en compte sont celles citées selon les filières citées dans le Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial :  biomasse  solide,  pompes  à  chaleur,  géothermie,  solaire  thermique,  biogaz. Par convention, 50% de la chaleur produite par l’incinération des déchets est considérée issue de déchets urbains renouvelables (source DGEC, dans ses bilans). Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/eau, sol/sol  avec une efficacité énergétique ≥ 126 % (PAC basse température) et une efficacité énergétique ≥ 111 % (PAC moyenne ou haute température) (exigences du crédit d’impôt pour la transition énergétique 2018). La cogénération à partir d''énergie fossile n''est pas prise en compte.
 
 Pour connaître cet indicateur, la collectivité doit avoir effectué un bilan de ses consommations et production d''ENR tel que décrit à l''action 1.1.2:
@@ -9879,39 +9955,51 @@ Réaliser le diagnostic Climat-Air-Energie du territoire
 . - Valeur cible : 38% en Métropole, 75% dans les DOM
 
 ', 'en %', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_24b', 'cae_3.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_10', 'cae', '10.None', null, 'Part des surfaces agricoles et naturelles (%)', 'Il s''agit de la mesure de la consommation ou de la réintroduction d''espaces naturels et agricoles au fil des ans grâce au suivi des surfaces réservées à ces usages dans les PLU, mesuré en pourcentage de la surface totale de la collectivité (ha cumulé des zones N et A/ha total). Ces surfaces sont non imperméabilisées, capteuses de CO2, productrices de ressources alimentaires, énergétiques, et de biodiversité. La valeur obtenue doit être comparée avec l''indicateur issu de la précédente version du document d''urbanisme de la collectivité.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_10', 'cae_1.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_41', 'cae', '41.None', null, 'Part modale des déplacements alternatifs à la voiture individuelle pour les déplacements  domicile-travail des agents de la collectivité (%)', 'Via une enquête réalisée auprès des agents, l’indicateur mesure la part modale (en nombre de déplacements) cumulée des déplacements alternatifs à la voiture individuelle (somme des parts modales marche, vélo, transport en commun, co-voiturage) dans les déplacements domicile-travail des agents. L’indicateur est décliné si possible également en kilomètres parcourus.
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_41', 'cae_4.1.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_61', 'cae', '61.None', null, 'Quantité moyenne de viande par repas dans la restauration collective publique (g/repas)', 'L’indicateur mesure le ratio moyen de viande par repas : la quantité totale annuelle de viande achetée dans la restauration collectivité publique (maîtrisée par la collectivité) est divisée par le nombre de repas servi sur l’année.
 
 ', 'g/repas', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_61', 'cae_6.4.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_30', 'cae', '30.None', null, 'Quantité annuelle d''engrais/m2 d''espaces verts', 'L''objectif est de mesurer les efforts de la collectivité en matière de limitation des engrais sur ses espaces verts. La quantité annuelle d''engrais apportée est divisée par la surface d''espaces verts gérés par la collectivité. L''unité de l''indicateur est fixé selon les possibilités de la collectivité et les produits employés : unité d''azote/m2, kg/m2, litre/m2, euros/m2...
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_30', 'cae_3.3.4');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4a', 'cae', '4.a', null, 'Emissions annuelles de Nox (tonnes)', 'Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.
 
 ', 'tonnes', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_4a', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4b', 'cae', '4.b', null, 'Emissions annuelles de PM10 (tonnes)', 'Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.
 
 ', 'tonnes', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_4b', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4c', 'cae', '4.c', null, 'Emissions annuelles de PM2,5 (tonnes)', 'Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.
 
 ', 'tonnes', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_4c', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4d', 'cae', '4.d', null, 'Emissions annuelles de COV (tonnes)', 'Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.
 
 ', 'tonnes', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_4d', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4e', 'cae', '4.e', null, 'Emissions annuelles de SO2  (tonnes)', 'Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.
 
 ', 'tonnes', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_4e', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4f', 'cae', '4.f', null, 'Emissions annuelles de NH3 (tonnes)', 'Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.
 
 ', 'tonnes', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_4f', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_55', 'cae', '55.None', null, 'Nombre de ménages demandeurs et bénéficiaires du FSL pour l’aide au paiement des factures d’énergie sur le territoire', 'L’indicateur mesure annuellement le nombre de ménages demandeurs et bénéficiaires du fond de solidarité logement (FSL) pour l’aide au paiement des factures d’énergie sur le territoire. Il peut être obtenu auprès des Conseils Départementaux qui gèrent ce fond (indicateur suivi au niveau national par l’office national de la précarité énergétique).
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_55', 'cae_6.2.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_45', 'cae', '45.None', null, 'Nombre de places de stationnement vélo, hors pince-roues (nb / 100 habitants)', 'L''indicateur mesure le nombre de places de stationnement vélo pour 100 habitants : arceaux sur l’espace public, consignes ou boxes à vélos, stationnements vélos en gare, en parking automobiles... Attention, les stationnements de type râtelier vélo ou « pince-roues » sur l’espace public, qui ne permettent pas une accroche sécuritaire, ne sont pas pris en compte.
 
 - Valeurs limites : 2 (commune) et 1 (EPCI)
@@ -9921,15 +10009,22 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 - ATTENTION: pour les collectivités rurales, se focaliser sur la présence d’abris et de stationnements proposés aux endroits clés (centres bourgs, autour des écoles et pôles d’activités, lieux publics de rencontre, commerces, etc).
 
 ', 'nb / 100 habitants', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_45', 'cae_4.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_14a', 'cae', '14.a', null, 'Consommation d''énergie finale des bâtiments publics (MWh)', 'L''indicateur mesure la consommation énergétique totale (toute énergie, tout usage) du patrimoine bâti à la charge directe de la commune, en énergie finale. Les piscines et patinoires, si elles sont à la charge de la collectivité sont prises en compte, mais pas les services publics eau, assainissement, déchets, ni l''éclairage public.
 
 ', 'MWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_14a', 'cae_2.2.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_14a', 'cae_2.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_14b', 'cae', '14.b', null, 'Consommation d''énergie finale des bâtiments publics (rapporté au nb d''habitant, en kWh/hab)', 'L''indicateur mesure la consommation énergétique totale (toute énergie, tout usage) du patrimoine bâti à la charge directe de la commune, en énergie finale, rapportée par habitant et comparée à la valeur moyenne française (tirée de l''enquête ADEME-AITF-EDF-GDF "Energie et patrimoine communal 2012") selon la taille de la collectivité. Les piscines et patinoires, si elles sont à la charge de la collectivité sont prises en compte, mais pas les services publics eau, assainissement, déchets, ni l''éclairage public. Pour les EPCI, l''indicateur en kWh/m².an est plus pertinent.
 
 ', 'rapporté au nb d''habitant, en kWh/hab', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_14b', 'cae_2.2.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_14b', 'cae_2.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_14c', 'cae', '14.c', null, 'Consommation d''énergie finale des bâtiments publics (rapporté à la surface du patrimoine, en kWh/m²)', 'L''indicateur mesure la consommation énergétique totale (toute énergie, tout usage) du patrimoine bâti à la charge directe de la commune, en énergie finale, rapportée par rapport à la surface. Les piscines et patinoires, si elles sont à la charge de la collectivité sont prises en compte, mais pas les services publics eau, assainissement, déchets, ni l''éclairage public.
 
 ', 'rapporté à la surface du patrimoine, en kWh/m²', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_14c', 'cae_2.2.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_14c', 'cae_2.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_20', 'cae', '20.None', null, 'Consommation de l’éclairage public  (kWh/hab.an)', 'L’indicateur est en énergie finale et inclut les consommations pour la signalisation et l’éclairage du mobilier urbain (ex : abri-bus). La valeur limite est inspirée (valeur moyenne arrondie) de l’enquête ADEME-AITF-EDF-GDF « Energie et patrimoine communal 2012 », en énergie finale. La valeur cible correspond aux meilleures scores obtenues par des collectivités Cit’ergie.
 
 Pour les EPCI, l’indicateur n’est renseigné que si la compétence a été transférée totalement (pas uniquement sur les zones communautaires).
@@ -9939,12 +10034,15 @@ Pour les EPCI, l’indicateur n’est renseigné que si la compétence a été t
 - Valeur cible : 60 kWh/hab
 
 ', 'kWh/hab.an', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_20', 'cae_2.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_60', 'cae', '60.None', null, 'Part de produits biologiques dans la restauration collective publique (%)', 'L’indicateur mesure la part des achats (en euros) labellisés « agriculture biologique » dans les achats totaux d’alimentation de la restauration collective publique (maîtrisée par la collectivité).  Pour la France métropole, la valeur limite est basée sur la part nationale des achats biologiques dans la restauration collective à caractère social en 2015 (3,2% - Agence Bio) et la valeur cible sur l’objectif 2022 du projet de loi pour l’équilibre des relations commerciales dans le secteur agricole et alimentaire et une alimentation saine et durable (20%).
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_60', 'cae_6.4.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_31', 'cae', '31.None', null, 'Quantité annuelle d''eau/m2 d''espaces verts', 'L''objectif est de mesurer les efforts de la collectivité en matière de limitation des consommations d''eau pour l''arrosage de ses espaces verts. Le volume annuel d''eau est divisé par la surface d''espaces verts gérés par la collectivité. L''unité de l''indicateur est en m3/m2. Les espaces verts sont entendus au sens large, à savoir : parcs et jardins, espaces sportifs végétalisés, ronds-points ou accotement enherbées de la compétence de la collectivité.
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_31', 'cae_3.3.4');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_5', 'cae', '5.None', null, 'Part modale de la voiture (en nombre de déplacements)', 'L''objectif de cet indicateur est de juger de l''impact des mesures de planification des déplacements sur l''utilisation de la voiture sur le territoire, via le suivi de la part modale de la voiture (nombre de déplacements en voiture/nombre de déplacements). Pour information, des valeurs limites et cibles indicatives de parts modales sont données, basées sur les moyennes nationales et les meilleurs scores atteints par des collectivités Cit''ergie. Mais le conseiller doit apprécier les efforts de la collectivité, en fonction du contexte territorial, et les progrès réalisés sur l''indicateur.
 
 - Valeur limite : 65 % (ville dans une aire urbaine) / 75% (EPCI ou ville hors aire urbaine)
@@ -9952,6 +10050,7 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 - Valeur cible : 40 % (ville dans une aire urbaine) / 50 % (EPCI ou ville hors aire urbaine)
 
 ', 'en nombre de déplacements', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_5', 'cae_1.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_54', 'cae', '54.None', null, 'Nombre de manifestations/actions par an sur le climat l''air et l''énergie', 'Il s''agit du nombre de manifestions/actions de communication menées sur le thème de l''énergie et du climat. L''évaluation est différenciée selon la taille de la collectivité. Cet indicateur fait partie d''un ensemble (indicateurs qualitatifs et quantitatifs).
 
 Valeur limite : 2 (< 3 000 hab) ; 5 (> 3 000 hab) ; 10 (> 50 000 hab)
@@ -9959,6 +10058,7 @@ Valeur limite : 2 (< 3 000 hab) ; 5 (> 3 000 hab) ; 10 (> 50 000 hab)
 Les actions importantes peuvent être comptées comme équivalentes à deux actions.
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_54', 'cae_6.1.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_44', 'cae', '44.None', null, 'Part de voiries aménagées pour les cycles (%  Ou à défaut km/1000hab)', 'L''indicateur mesure le kilométrage de voiries aménagées (pistes le long de la voirie, bandes cyclables et couloirs bus autorisés aux vélos, les zones 30, les aires piétonnes…) sur le kilométrage total de voirie. Les aménagements à double-sens compte pour 1, les sens unique pour 0,5 ; les aménagements hors voirie ne sont pas pris en compte (voies vertes, pistes ne suivant pas le tracé de la voirie, allées de parcs, ...). A défaut, un indicateur en km/1000 habitants pourra être utilisé. Les valeurs de références sont basées sur un traitement des données du Club des villes et territoires cyclables, dans le cadre de l’Observatoire des mobilités actives, enquête 2015-2016.
 
 - Valeurs limites :  25% ou 1 km/1000 hab (ville) et 20% ou 0,8 km/1000 hab(EPCI)
@@ -9966,41 +10066,55 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 - Valeurs cibles (objectifs) :  50% ou 2 km/1000 hab  (ville) et 40% ou 1,5 km/1000 hab (EPCI)
 
 ', '%  Ou à défaut km/1000hab', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_44', 'cae_4.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15a', 'cae', '15.a', null, 'Part de bâtiments publics de classe F ou G selon le DPE pour l''énergie (ou équivalent)', 'En France métropolitaine, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE,  dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes F et G selon le DPE pour l''énergie. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. L''indicateur permet de mesurer l''effort de la collectivité pour la rénovation de ces bâtiments les plus émetteurs. L''objectif est de ne plus avoir de patrimoine dans ces classes (valeur limite : 10%).
 
 ', 'ou équivalent', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_15a', 'cae_2.2.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_15a', 'cae_2.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15a_dom', 'cae', '15.a_dom', null, 'Part de bâtiments >=701 kWhep/m².an (calcul DPE ou équivalent) (DOM)', 'Dans les DOM, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments dont la collectivité est propriétaire  (ou mis à disposition avec transfert des droits patrimoniaux) dont la consommation d''énergie primaire est supérieure ou égale à 701 kWhep/m². Les modalités de calcul sont celles du Diagnostic de Performance Energétique s''il existe dans le DOM concerné ou toute démarche équivalente. Les piscines/patinoires sont exclues.
 
 ', 'calcul DPE ou équivalent', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_15a_dom', 'cae_2.2.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_15a_dom', 'cae_2.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15b', 'cae', '15.b', null, 'Part de bâtiments publics de classe A ou B selon le DPE pour l''énergie (ou équivalent)', 'En France métropolitaire, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE,  dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes A et B selon le DPE pour l''énergie. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. La cible est d''atteindre 30% du parc dans les classes A et B (mais valorisation progressive à partir de 0%).
 
 ', 'ou équivalent', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_15b', 'cae_2.2.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_15b', 'cae_2.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15b_dom', 'cae', '15.b_dom', null, 'Part de bâtiments =<100 kWhep/m².an (calcul DPE ou équivalent) (DOM)', 'Dans les DOM, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments dont la collectivité est propriétaire  (ou mis à disposition avec transfert des droits patrimoniaux) dont la consommation d''énergie primaire est inférieure ou égale à 100 kWhep/m². Les modalités de calcul sont celles du Diagnostic de Performance Energétique s''il existe dans le DOM concerné ou toute démarche équivalente. Les piscines/patinoires sont exclues.
 
 ', 'calcul DPE ou équivalent', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_15b_dom', 'cae_2.2.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_15b_dom', 'cae_2.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21a', 'cae', '21.a', null, 'Consommation moyenne d''eau dans les bâtiments de la collectivité (l/m².an)', 'L''objectif est de mesurer l''impact des mesures de limitation des consommations d''eau au fil des ans dans les bâtiments de la collectivités (hors piscine).
 
 Des valeurs moyennes comparatives pour 3 catégories de bâtiments (dans la catégorie "culture/sport", les piscines ne sont pas comptées) sont proposées pour aider le conseiller à situer la collectivité (regroupement effectué à partir de valeurs recueillies via Display, 2012).
 
 ', 'l/m².an', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_21a', 'cae_2.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21b', 'cae', '21.b', null, 'Consommation moyenne d''eau dans les bâtiments "enseignement/crèche" (l/m².an)', 'Composante de l''indicateur 21a:
 
 Consommation moyenne d''eau dans les bâtiments de la collectivité (l/m².an).
 
 ', 'l/m².an', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_21b', 'cae_2.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21c', 'cae', '21.c', null, 'Consommation moyenne d''eau dans les bâtiments "administration" (l/m².an)', 'Composante de l''indicateur 21a:
 
 Consommation moyenne d''eau dans les bâtiments de la collectivité (l/m².an).
 
 ', 'l/m².an', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_21c', 'cae_2.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21d', 'cae', '21.d', null, 'Consommation moyenne d''eau dans les bâtiments"culture/sport" (l/m².an)', 'Composante de l''indicateur 21a:
 
 Consommation moyenne d''eau dans les bâtiments de la collectivité (l/m².an).
 
 ', 'l/m².an', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_21d', 'cae_2.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_50', 'cae', '50.None', null, 'Valorisation des CEE (kWhcumac  valorisé/an)', 'Les kWhcumac valorisés chaque année par la collectivité sont calculés selon les modalités règlementaires du dispositif des certificats d''économie d''énergie. Il s''agit de ceux dont la rente revient à la collectivité.
 
 ', 'kWhcumac  valorisé/an', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_50', 'cae_5.2.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1a', 'cae', '1.a', null, 'Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)', 'Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2.
 
 L''indicateur, issu d''un diagnostic d''émissions de gaz à effet de serre mesure la quantité totale d''émissions annuelle des différents secteurs d''activités et des habitants du territoire, selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial).
@@ -10010,6 +10124,7 @@ A savoir : les  émissions  directes  produites par l''ensemble des secteurs ré
 Il ne s''agit pas du bilan GES "Patrimoine et compétences".
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_1a', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1b', 'cae', '1.b', null, 'Emissions de gaz à effet de serre annuelles du territoire par habitant (teq CO2/hab)', 'Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 par habitant.
 
 Pour faciliter les comparaisons, l’indicateur est ramené au nombre d’habitants (population municipale selon l’INSEE).
@@ -10019,6 +10134,7 @@ Pour rappel, objectifs nationaux : division par 4 (-75 %) des émissions de gaz 
 L''évaluation est basée sur l''évolution de l''indicateur.
 
 ', 'teq CO2/hab', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_1b', 'cae_1.1.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1c', 'cae', '1.c', null, 'Emissions de gaz à effet de serre du résidentiel (teq CO2)', 'Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur résidentiel.
 
 Décomposition par secteur réglementaire de l''indicateur global
@@ -10026,6 +10142,7 @@ Décomposition par secteur réglementaire de l''indicateur global
 Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_1c', 'cae_1.2.4');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1d', 'cae', '1.d', null, 'Emissions de gaz à effet de serre du tertiaire (teq CO2)', 'Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur tertiaire.
 
 Décomposition par secteur réglementaire de l''indicateur global
@@ -10033,6 +10150,7 @@ Décomposition par secteur réglementaire de l''indicateur global
 Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_1d', 'cae_6.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1e', 'cae', '1.e', null, 'Emissions de gaz à effet de serre du transport routier (teq CO2)', 'Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur du transport routier.
 
 Décomposition par secteur réglementaire de l''indicateur global
@@ -10040,6 +10158,7 @@ Décomposition par secteur réglementaire de l''indicateur global
 Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_1e', 'cae_1.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1f', 'cae', '1.f', null, 'Emissions de gaz à effet de serre de secteurs "autres transports" (teq CO2)', 'Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur des autres transport (hors routier).
 
 Décomposition par secteur réglementaire de l''indicateur global
@@ -10047,6 +10166,7 @@ Décomposition par secteur réglementaire de l''indicateur global
 Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_1f', 'cae_1.2.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1g', 'cae', '1.g', null, 'Emissions de gaz à effet de serre de l''agriculture (teq CO2)', 'Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur de l''agriculture.
 
 Décomposition par secteur réglementaire de l''indicateur global
@@ -10054,6 +10174,7 @@ Décomposition par secteur réglementaire de l''indicateur global
 Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_1g', 'cae_6.4.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1h', 'cae', '1.h', null, 'Emissions de gaz à effet de serre des déchets (teq CO2)', 'Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur des déchets.
 
 Décomposition par secteur réglementaire de l''indicateur global
@@ -10061,6 +10182,7 @@ Décomposition par secteur réglementaire de l''indicateur global
 Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_1h', 'cae_1.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1i', 'cae', '1.i', null, 'Emissions de gaz à effet de serre de l''industrie hors branche énergie (teq CO2)', 'Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur de l''industrie hors branche énergie.
 
 Décomposition par secteur réglementaire de l''indicateur global
@@ -10068,6 +10190,7 @@ Décomposition par secteur réglementaire de l''indicateur global
 Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_1i', 'cae_6.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1j', 'cae', '1.j', null, 'Emissions de gaz à effet de serre de l''industrie branche énergie (teq CO2)', 'Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur de l''industrie branche énergie (hors production d''électricité, de chaleur et de froid pour les émissions de gaz à effet de serre, dont les émissions correspondantes sont comptabilisées au stade de la consommation).
 
 Décomposition par secteur réglementaire de l''indicateur global
@@ -10075,17 +10198,22 @@ Décomposition par secteur réglementaire de l''indicateur global
 Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)
 
 ', 'teq CO2', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_1j', 'cae_6.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_35', 'cae', '35.None', null, 'Part modale piéton', 'La part modale est une part modale en nombre de déplacements.
 
 Les valeurs limites et cibles (selon le nombre d''habitants, limite de 15-25%, cible de 25-35%) sont données à titre indicatif pour le conseiller, qui doit également juger de l''évolution de la part modale au fil du temps et des caractéristiques du territoire (ville centre dense favorisant la marche ou territoire étendu d''une agglomération...). A défaut de posséder les parts modales issues d''une enquête ménages, les collectivités peuvent utiliser les données INSEE donnant les parts modales des déplacements domicile-travail pour la population active (tableau NAV2A ou NAV2B).
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_35', 'cae_4.1.1');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_35', 'cae_4.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_64', 'cae', '64.None', null, 'Part d''établissements scolaires couverts par un PDES ou un pédibus/vélobus', 'L''indicateur comptabilise le nombre d''établissement scolaires (écoles primaires, collèges, lycées) couverts par un Plan de Déplacements Etablissements Scolaires ou un pédibus/vélobus (pour les écoles primaires principalement) sur le territoire et le rapporte au nombre total d''établissements scolaires. Ce chiffre doit être en augmentation chaque année. Des valeurs indicatives limites (10%) et cibles (30%) sont données, basées sur des données ADEME et les meilleurs scores des collectivités Cit''ergie.
 
 ', 'Non trouvé', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_64', 'cae_6.5.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_25a', 'cae', '25.a', null, 'Production d''électricité renouvelable  (MWh)', 'Cet indicateur mesure la production d''électricité renouvelable sur le territoire (initiative publique et privée). Les énergies renouvelables prise en compte sont celles citées selon les filières citées dans le Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial :  éolien terrestre, solaire PV, solaire thermodynamique, hydraulique, biomasse solide, biogaz, géothermie.
 
 ', 'MWh', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_25a', 'cae_3.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_25b', 'cae', '25.b', null, 'Taux de production d''électricité renouvelable sur le territoire (%)', 'Cet indicateur mesure la production d''électricité renouvelable sur le territoire, par la collectivité, ses partenaires et les particuliers, rapporté à la consommation totale d''électricité du territoire (énergie finale). Les énergies renouvelables considérées sont celles citées dans le décret Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial  (éolien  terrestre,  solaire  photovoltaïque,  solaire  thermodynamique,  hydraulique,  biomasse  solide, biogaz,  géothermie). L''électricité produite par cogénération via incinération des déchets en mélange compte pour 50% comme une énergie renouvelable (biomasse solide). La cogénération à partir d''énergie fossile n''est pas prise en compte.
 
 La collectivité doit avoir effectué un bilan de ses consommations et productions d''ENR tel que décrit à l''action 1.1.2:
@@ -10099,14 +10227,18 @@ Réaliser le diagnostic Climat-Air-Energie du territoire
 - Valeur cible pour les DOM : 75%
 
 ', '%', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_25b', 'cae_3.2.3');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_11', 'cae', '11.None', null, 'Surface annuelle artificialisée (ha/an)', 'L’indicateur mesure les surfaces artificialisées chaque année a minima par l’habitat et les activités, et dans la mesure du possible également pour les autres motifs (infrastructures routières, etc.). Si l’indicateur n’est pas disponible annuellement, il s’agit de la moyenne annuelle sur une période plus large, établi à l’occasion de l’élaboration ou de la révision du PLU ou du SCOT (évaluation règlementaire de la consommation d''espaces naturels, agricoles et forestiers).
 
 ', 'ha/an', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_11', 'cae_1.3.1');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_40a', 'cae', '40.a', null, 'Consommation annuelle d''énergie des véhicules (VP) de la collectivité (kWh/an.employé)', 'L''indicateur mesure la consommation d''énergie en kWh (gazole, essence, GPL, GNV, électricité, biogaz, agro-carburants...) des véhicules de type "véhicule particulier" pour le fonctionnement de la collectivité, divisé par le nombre d''agents et/ou par kilomètre effectué. Facteurs de conversion simplifiés : gazole et essence 10 kWh/L, GPL 7 kWh/L, GNV 11 kWh/m3.
 
 ', 'VP', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_40a', 'cae_4.1.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_40b', 'cae', '40.b', null, 'Consommation annuelle d''énergie des véhicules (VP) de la collectivité (kWh/an.km)', 'déclinaison par kilomètre de l''indicateur 40a:
 
 Consommation annuelle d''énergie des véhicules (VP) de la collectivité (kWh/an.employé)
 
 ', 'VP', false ,   null);
+insert into indicateur_action(indicateur_id, action_id) values ('cae_40b', 'cae_4.1.2');
