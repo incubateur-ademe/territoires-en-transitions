@@ -1,9 +1,6 @@
-import {RealtimeClient} from '@supabase/realtime-js';
 import {ScoreSocket} from 'core-logic/api/sockets/ScoreSocket';
 import {SupabaseScoreController} from 'core-logic/api/sockets/SupabaseScoreController';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {ScoreRead} from 'generated/dataLayer/score_read';
-import {Server as WebSocketServer} from 'mock-socket';
 import {sleep} from 'utils/sleep';
 
 describe('Supabase Score Controller ', () => {

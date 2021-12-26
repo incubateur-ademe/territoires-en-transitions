@@ -20,6 +20,7 @@ export class SupabaseScoreController extends ScoreController {
   }
 
   listen() {
+    console.log('Supabase score controller listen ! ');
     this.subscribe();
   }
 
