@@ -1,16 +1,14 @@
 -- 1. insert scores
-insert into score
-values (default,
-        1,
-        'cae_1.2.3',
-        0,
-        10,
-        10,
-        true,
-        10,
-        10,
-        7,
-        '2021-01-01'::timestamptz);
+
+truncate score;
+
+insert into score(collectivite_id, action_id, points, potentiel, referentiel_points, concerne, previsionnel,
+                  total_taches_count, completed_taches_count)
+values (1, 'cae_1.1.1.1.1', 50, 90, 100, true, 100, 0, 0);
+
+select * from client_scores;
+
+delete from score where collectivite_id=1 and action_id= 'cae_1.1.1.1.1';
 
 -- 2. check get_score_batches_for_epci
 select *
