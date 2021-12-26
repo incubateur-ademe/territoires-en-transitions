@@ -6,6 +6,9 @@ import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definitio
 export const indicateurIdRegexp =
   '(?<ref>eci|cae|crte)_(?<number>[0-9]{1,3})(?<literal>.+)?';
 
+export const indicateurIdentifiantRegexp =
+  '(?<number>[0-9]{1,3})(?<literal>.+)?';
+
 export const isIndicateurRelatedToAction = (
   definition: IndicateurDefinitionRead,
   action: ActionReferentiel
@@ -27,3 +30,24 @@ export const inferIndicateurReferentielAndTitle = (
 
   return `${refToEmoji[ref]} ${nomenclature} - ${definition.nom}`;
 };
+
+export const sortIndicateurDefinitionsByIdentifiant = (
+  definitions: IndicateurDefinitionRead[]
+): IndicateurDefinitionRead[] =>
+  definitions.sort((def_a, def_b) => {
+    const identifiant_a = def_a.identifiant;
+    const identifiant_b = def_b.identifiant;
+    const a_groups = identifiant_a.match(indicateurIdentifiantRegexp)?.groups;
+    const b_groups = identifiant_b.match(indicateurIdentifiantRegexp)?.groups;
+    console.log(a_groups, b_groups);
+    if (!a_groups || !b_groups)
+      return identifiant_a.localeCompare(identifiant_b);
+    const a_number = Number(a_groups['number']);
+    const b_number = Number(b_groups['number']);
+
+    if (a_number !== b_number) {
+      return a_number > b_number ? 1 : -1;
+    }
+
+    return (a_groups['literal'] ?? '').localeCompare(b_groups['literal'] ?? '');
+  });

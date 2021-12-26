@@ -1,6 +1,7 @@
 import {indicateurDefinitionReadEndpoint} from 'core-logic/api/endpoints/IndicateurDefinitionReadEndpoint';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 import {useEffect, useState} from 'react';
+import {sortIndicateurDefinitionsByIdentifiant} from 'utils/indicateurs';
 
 export const useAllIndicateurDefinitions = () => {
   const [indicateurDefinitions, setIndicateurDefinitions] = useState<
@@ -28,7 +29,12 @@ export const useAllIndicateurDefinitionsForGroup = (
       .getBy({
         indicateur_group: group,
       })
-      .then(definitions => setIndicateurDefinitions(definitions));
+      .then(definitions => {
+        // TODO : sorting should be done in datalayer (using a view @florian ? )
+        const sortedDefinitions =
+          sortIndicateurDefinitionsByIdentifiant(definitions);
+        return setIndicateurDefinitions(sortedDefinitions);
+      });
   }, []);
 
   return indicateurDefinitions;
