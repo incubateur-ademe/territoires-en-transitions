@@ -20,37 +20,37 @@ import {
   indicateurResultatWriteEndpoint,
 } from 'core-logic/api/endpoints/AnyIndicateurValueWriteEndpoint';
 
-export class AnyIndicateurRepository {
+export class AnyIndicateurRepository<T extends string | number> {
   readEndpoint: DataLayerReadEndpoint<
-    AnyIndicateurValueRead,
+    AnyIndicateurValueRead<T>,
     AnyIndicateurValueGetParams
   >;
-  writeEndpoint: DataLayerWriteEndpoint<AnyIndicateurValueWrite>;
+  writeEndpoint: DataLayerWriteEndpoint<AnyIndicateurValueWrite<T>>;
 
   constructor({
     readEndpoint,
     writeEndpoint,
   }: {
     readEndpoint: DataLayerReadEndpoint<
-      AnyIndicateurValueRead,
+      AnyIndicateurValueRead<T>,
       AnyIndicateurValueGetParams
     >;
-    writeEndpoint: DataLayerWriteEndpoint<AnyIndicateurValueWrite>;
+    writeEndpoint: DataLayerWriteEndpoint<AnyIndicateurValueWrite<T>>;
   }) {
     this.readEndpoint = readEndpoint;
     this.writeEndpoint = writeEndpoint;
   }
   save(
-    anyIndicateur: AnyIndicateurValueWrite
-  ): Promise<AnyIndicateurValueWrite | null> {
+    anyIndicateur: AnyIndicateurValueWrite<T>
+  ): Promise<AnyIndicateurValueWrite<T> | null> {
     return this.writeEndpoint.save(anyIndicateur);
   }
 
   async fetchIndicateurValueForIdForYear(args: {
     collectiviteId: number;
-    indicateurId: string | number;
+    indicateurId: T;
     year: number;
-  }): Promise<AnyIndicateurValueRead | null> {
+  }): Promise<AnyIndicateurValueRead<T> | null> {
     const allIndicateurValues = await this.readEndpoint.getBy({
       collectiviteId: args.collectiviteId,
     });
@@ -64,27 +64,30 @@ export class AnyIndicateurRepository {
   }
   async fetchIndicateurValuesForId(args: {
     collectiviteId: number;
-    indicateurId: string | number;
-  }): Promise<AnyIndicateurValueRead[]> {
+    indicateurId: T;
+  }): Promise<AnyIndicateurValueRead<T>[]> {
     const allIndicateurValues = await this.readEndpoint.getBy({
       collectiviteId: args.collectiviteId,
     });
-
     return allIndicateurValues.filter(
       indicateurValue => indicateurValue.indicateur_id === args.indicateurId
     );
   }
 }
 
-export const indicateurResultatRepository = new AnyIndicateurRepository({
-  readEndpoint: indicateurResultatReadEndpoint,
-  writeEndpoint: indicateurResultatWriteEndpoint,
-});
+export const indicateurResultatRepository = new AnyIndicateurRepository<string>(
+  {
+    readEndpoint: indicateurResultatReadEndpoint,
+    writeEndpoint: indicateurResultatWriteEndpoint,
+  }
+);
 
-export const indicateurObjectifRepository = new AnyIndicateurRepository({
-  readEndpoint: indicateurObjectifReadEndpoint,
-  writeEndpoint: indicateurObjectifWriteEndpoint,
-});
+export const indicateurObjectifRepository = new AnyIndicateurRepository<string>(
+  {
+    readEndpoint: indicateurObjectifReadEndpoint,
+    writeEndpoint: indicateurObjectifWriteEndpoint,
+  }
+);
 
 export const indicateurPersonnaliseResultatRepository =
   new AnyIndicateurRepository({

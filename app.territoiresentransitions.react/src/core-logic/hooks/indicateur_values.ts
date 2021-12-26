@@ -2,17 +2,17 @@ import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateur
 import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
 import {useEffect, useState} from 'react';
 
-export const useAnyIndicateurValuesForAllYears = ({
+export function useAnyIndicateurValuesForAllYears<T extends string | number>({
   collectiviteId,
   indicateurId,
   repo,
 }: {
   collectiviteId: number;
-  indicateurId: string | number;
-  repo: AnyIndicateurRepository;
-}) => {
+  indicateurId: T;
+  repo: AnyIndicateurRepository<T>;
+}) {
   const [indicateurValuesForAllYears, setIndicateurValuesForAllYears] =
-    useState<AnyIndicateurValueRead[]>([]);
+    useState<AnyIndicateurValueRead<T>[]>([]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -29,4 +29,4 @@ export const useAnyIndicateurValuesForAllYears = ({
     };
   }, [JSON.stringify(indicateurValuesForAllYears)]);
   return indicateurValuesForAllYears;
-};
+}

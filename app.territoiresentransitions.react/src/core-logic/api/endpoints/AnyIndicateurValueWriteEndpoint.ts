@@ -2,15 +2,17 @@ import {DataLayerWriteEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {AnyIndicateurValueWrite} from 'generated/dataLayer/any_indicateur_value_write';
 import {PostgrestResponse} from '@supabase/supabase-js';
 
-const makeAnyIndicateurValueWriteEndpoint = (
+const makeAnyIndicateurValueWriteEndpoint = <T extends string | number>(
   tableName: string
-): DataLayerWriteEndpoint<AnyIndicateurValueWrite> => {
-  class AnyIndicateurValueWriteEndpoint extends DataLayerWriteEndpoint<AnyIndicateurValueWrite> {
+): DataLayerWriteEndpoint<AnyIndicateurValueWrite<T>> => {
+  class AnyIndicateurValueWriteEndpoint extends DataLayerWriteEndpoint<
+    AnyIndicateurValueWrite<T>
+  > {
     readonly name = tableName;
 
     async _write(
-      indicateurValue: AnyIndicateurValueWrite
-    ): Promise<PostgrestResponse<AnyIndicateurValueWrite>> {
+      indicateurValue: AnyIndicateurValueWrite<T>
+    ): Promise<PostgrestResponse<AnyIndicateurValueWrite<T>>> {
       return this._table.upsert([indicateurValue]); // {onConflict: 'valeur'}
     }
   }
@@ -18,19 +20,23 @@ const makeAnyIndicateurValueWriteEndpoint = (
 };
 
 export const makeNewIndicateurPersonnaliseResultatWriteEndpoint = () =>
-  makeAnyIndicateurValueWriteEndpoint('indicateur_personnalise_resultat');
+  makeAnyIndicateurValueWriteEndpoint<number>(
+    'indicateur_personnalise_resultat'
+  );
 
 export const makeNewIndicateurPersonnaliseObjectifWriteEndpoint = () =>
-  makeAnyIndicateurValueWriteEndpoint('indicateur_personnalise_objectif');
+  makeAnyIndicateurValueWriteEndpoint<number>(
+    'indicateur_personnalise_objectif'
+  );
 
 export const makeNewIndicateurResultatWriteEndpoint = () =>
-  makeAnyIndicateurValueWriteEndpoint('indicateur_resultat');
+  makeAnyIndicateurValueWriteEndpoint<string>('indicateur_resultat');
 
 export const indicateurResultatWriteEndpoint =
   makeNewIndicateurResultatWriteEndpoint();
 
 export const makeNewIndicateurObjectifWriteEndpoint = () =>
-  makeAnyIndicateurValueWriteEndpoint('indicateur_objectif');
+  makeAnyIndicateurValueWriteEndpoint<string>('indicateur_objectif');
 
 export const indicateurObjectifWriteEndpoint =
   makeNewIndicateurObjectifWriteEndpoint();

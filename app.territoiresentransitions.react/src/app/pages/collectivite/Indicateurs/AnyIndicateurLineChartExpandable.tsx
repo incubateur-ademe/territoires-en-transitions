@@ -5,19 +5,21 @@ import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_val
 import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
 import {Line} from 'react-chartjs-2';
 import {Spacer} from 'ui/shared';
+import {IndicateurPersonnaliseStorable} from 'storables';
+import {IndicateurReferentiel} from 'generated/models';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
   return Array.from({length}, (_, i) => start + i);
 };
 
-const getDataset = (
+function getDataset<T extends string | number>(
   yearRange: number[],
-  indicateurValues: AnyIndicateurValueRead[],
+  indicateurValues: AnyIndicateurValueRead<T>[],
   label: string,
   color: string,
   kwargs?: Partial<ChartDataset>
-): ChartDataset => {
+): ChartDataset {
   const data = yearRange.map(year => {
     const valuesForYear = indicateurValues.find(
       values => values.annee === year
@@ -40,23 +42,23 @@ const getDataset = (
   };
 
   return datastet;
-};
+}
 
-const AnyIndicateurLineChart = (props: {
-  indicateurId: string | number;
+function AnyIndicateurLineChart<T extends string | number>(props: {
+  indicateurId: T;
   unit: string;
   title: string;
-  resultatRepo: AnyIndicateurRepository;
-  objectifRepo: AnyIndicateurRepository;
-}) => {
+  resultatRepo: AnyIndicateurRepository<T>;
+  objectifRepo: AnyIndicateurRepository<T>;
+}) {
   const collectiviteId = useCollectiviteId()!;
 
-  const resultatValues = useAnyIndicateurValuesForAllYears({
+  const resultatValues = useAnyIndicateurValuesForAllYears<T>({
     collectiviteId,
     indicateurId: props.indicateurId,
     repo: props.resultatRepo,
   });
-  const objectifValues = useAnyIndicateurValuesForAllYears({
+  const objectifValues = useAnyIndicateurValuesForAllYears<T>({
     collectiviteId,
     indicateurId: props.indicateurId,
     repo: props.objectifRepo,
@@ -146,25 +148,29 @@ const AnyIndicateurLineChart = (props: {
       </a>
     </div>
   );
-};
+}
 
-export const AnyIndicateurLineChartExpandable = (props: {
+export function AnyIndicateurLineChartExpandable<
+  T extends string | number
+>(props: {
   title: string;
   unite: string;
-  indicateurId: string | number;
-  resultatRepo: AnyIndicateurRepository;
-  objectifRepo: AnyIndicateurRepository;
-}) => (
-  <div className="CrossExpandPanel">
-    <details open>
-      <summary className="title">Graphique</summary>
-      <AnyIndicateurLineChart
-        indicateurId={props.indicateurId}
-        unit={props.unite}
-        title={props.title}
-        resultatRepo={props.resultatRepo}
-        objectifRepo={props.objectifRepo}
-      />
-    </details>
-  </div>
-);
+  indicateurId: T;
+  resultatRepo: AnyIndicateurRepository<T>;
+  objectifRepo: AnyIndicateurRepository<T>;
+}) {
+  return (
+    <div className="CrossExpandPanel">
+      <details open>
+        <summary className="title">Graphique</summary>
+        <AnyIndicateurLineChart<T>
+          indicateurId={props.indicateurId}
+          unit={props.unite}
+          title={props.title}
+          resultatRepo={props.resultatRepo}
+          objectifRepo={props.objectifRepo}
+        />
+      </details>
+    </div>
+  );
+}
