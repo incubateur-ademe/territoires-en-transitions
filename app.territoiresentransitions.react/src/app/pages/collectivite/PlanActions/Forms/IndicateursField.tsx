@@ -5,26 +5,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import {shortenLabel} from './utils';
 import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
-import {
-  indicateurIdRegexp,
-  inferIndicateurReferentielAndTitle,
-} from 'utils/indicateurs';
-
-const sortIndicateurIds = (indicateursIds: string[]): string[] =>
-  indicateursIds.sort((a, b) => {
-    const a_groups = a.match(indicateurIdRegexp)?.groups;
-    const b_groups = a.match(indicateurIdRegexp)?.groups;
-
-    if (!a_groups || !b_groups) return a.localeCompare(b);
-    const a_number = Number(a_groups['number']);
-    const b_number = Number(b_groups['number']);
-
-    if (a_number !== b_number) {
-      return a_number > b_number ? 1 : -1;
-    }
-
-    return (a_groups['literal'] ?? '').localeCompare(b_groups['literal'] ?? '');
-  });
+import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
 
 type IndicateursFieldProps = {
   label: string;
@@ -50,8 +31,8 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
     ...useAllIndicateurDefinitionsForGroup('eci'),
     ...useAllIndicateurDefinitionsForGroup('crte'),
   ];
-  const allSortedIndicateurIds = sortIndicateurIds(
-    allSortedIndicateurDefinitions.map(definition => definition.id)
+  const allSortedIndicateurIds = allSortedIndicateurDefinitions.map(
+    definition => definition.id
   );
 
   const renderIndicateurOption = (id: string) => {
