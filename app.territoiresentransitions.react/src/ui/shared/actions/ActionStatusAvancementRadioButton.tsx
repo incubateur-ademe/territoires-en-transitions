@@ -37,6 +37,7 @@ const _ActionStatusAvancementRadioButton = observer(
     actionStatusAvancementBloc: ActionStatusAvancementRadioButtonBloc;
   }) => {
     const avancement = actionStatusAvancementBloc.avancement;
+    console.log(avancement);
     return (
       <AvancementRadioButton
         avancements={avancements}

@@ -9,6 +9,7 @@ import {Spacer} from 'ui/shared';
 import {actions} from 'generated/data/referentiels';
 import {CurrentEpciGaugeProgressStat} from 'ui/referentiels';
 import {ReferentielParamOption, referentielParam} from 'app/paths';
+import {scoreBloc} from 'core-logic/observables/scoreBloc';
 
 const viewTitles: Record<ReferentielParamOption, string> = {
   cae: 'Climat Air Énergie',
@@ -45,7 +46,11 @@ const ReferentielTitle = (props: {view: ReferentielParamOption}) => {
           position="left"
           showPoints={true}
         /> */}
-        <CurrentEpciGaugeProgressStat action={referentiel} size="sm" />
+        <CurrentEpciGaugeProgressStat
+          action={referentiel}
+          size="sm"
+          scoreBloc={scoreBloc}
+        />
       </div>
     </header>
   );

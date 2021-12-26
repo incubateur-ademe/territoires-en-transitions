@@ -1,12 +1,10 @@
-import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
+import {ScoreRead} from 'generated/dataLayer/client_scores_read';
 
 export type ProgressState = 'nc' | 'alert' | 'warning' | 'ok' | 'good' | 'best';
 
-export const inferStateFromScore = (
-  score: ActionReferentielScoreStorable | null
-): ProgressState => {
-  const percentage: number = score ? score.percentage * 100 : 0;
-  if (score && score.avancement.includes('non_concernee')) {
+export const inferStateFromScore = (score: ScoreRead | null): ProgressState => {
+  const percentage: number = score ? (score.points / score.potentiel) * 100 : 0;
+  if (score && !!score.concernee) {
     return 'nc';
   } else if (percentage < 34) {
     return 'alert';
@@ -29,11 +27,8 @@ export const toFixed = (n: number) => {
   else return n.toFixed(2);
 };
 
-export const percentageTextFromScore = (
-  score: ActionReferentielScoreStorable | null
-) => (score ? `${toFixed(score.percentage * 100)}% ` : '0% ');
+export const percentageTextFromScore = (score: ScoreRead | null) =>
+  score ? `${toFixed((score.points / score.potentiel) * 100)}% ` : '0% ';
 
-export const pointsTextFromScore = (
-  score: ActionReferentielScoreStorable | null
-) =>
+export const pointsTextFromScore = (score: ScoreRead | null) =>
   score ? `(${toFixed(score.points)}/${toFixed(score.potentiel)})` : '(../..)';

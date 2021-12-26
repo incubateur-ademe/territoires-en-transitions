@@ -7,6 +7,7 @@ import {
   CurrentEpciGaugeProgressStat,
 } from 'ui/referentiels';
 import {Chevron} from 'ui/shared/Chevron';
+import {scoreBloc} from 'core-logic/observables/scoreBloc';
 
 /**
  * An expandable action used for "axes" and "orientations, shows Scores.
@@ -22,7 +23,11 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center w-full">
               <div className="px-3 w-1/12 ">
-                <CurrentEpciGaugeProgressStat action={action} size="xs" />
+                <CurrentEpciGaugeProgressStat
+                  action={action}
+                  size="xs"
+                  scoreBloc={scoreBloc}
+                />
               </div>
               <div className="flex items-center mr-6">
                 <ActionReferentielTitle

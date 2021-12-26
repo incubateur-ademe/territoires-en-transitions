@@ -7,12 +7,12 @@ import {
 } from 'ui/referentiels';
 import 'app/DesignSystem/buttons.css';
 import {Spacer} from 'ui/shared';
-import {isIndicateurRelatedToAction} from 'utils/indicateurs';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 import {searchActionById} from 'utils/actions';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
+import {scoreBloc} from 'core-logic/observables/scoreBloc';
 
 const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   const action = searchActionById(actionId, referentielActions);
@@ -40,6 +40,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
           position="left"
           className="w-full mb-10"
           showPoints={true}
+          scoreBloc={scoreBloc}
         />
         <div className="w-2/3">
           <DescriptionContextAndRessourcesDialogButton action={action} />

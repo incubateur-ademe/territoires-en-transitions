@@ -69,6 +69,9 @@ export class CurrentCollectiviteBloc {
   get readonly(): boolean {
     return this.currentCollectivite !== null && this._roleName === null;
   }
+  get collectiviteId(): number | null {
+    return this._collectiviteId;
+  }
 }
 
 export const currentCollectiviteBloc = new CurrentCollectiviteBloc();
