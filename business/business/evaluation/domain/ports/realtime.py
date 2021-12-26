@@ -10,9 +10,9 @@ from business.core.domain.models.event import DomainEvent
 from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
 from business.evaluation.domain.models import events
 
-RealtimeTopic = Literal["epci_action_statut_update"]
+RealtimeTopic = Literal["collectivite_action_statut_update"]
 
-epci_action_statut_update: RealtimeTopic = "epci_action_statut_update"
+collectivite_action_statut_update: RealtimeTopic = "collectivite_action_statut_update"
 
 
 class AbstractConverter(abc.ABC):
@@ -25,13 +25,15 @@ class AbstractConverter(abc.ABC):
         pass
 
 
-DataLayerTable = Literal["epci_action_statut_update_event"]
-epci_action_statut_update_table: DataLayerTable = "epci_action_statut_update_event"
+DataLayerTable = Literal["collectivite_action_statut_update_event"]
+collectivite_action_statut_update_table: DataLayerTable = (
+    "collectivite_action_statut_update_event"
+)
 
 
-class EpciActionStatutUpdateConverter(AbstractConverter):
+class CollectiviteActionStatutUpdateConverter(AbstractConverter):
     def __init__(self) -> None:
-        self.table = epci_action_statut_update_table
+        self.table = collectivite_action_statut_update_table
         self.schema = marshmallow_dataclass.class_schema(
             events.ActionStatutUpdatedForCollectivite
         )()

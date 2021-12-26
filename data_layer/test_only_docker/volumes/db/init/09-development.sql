@@ -514,7 +514,7 @@ create policy "Insert for authenticated user"
 --------------------------------
 ----------- EVENTS -------------
 --------------------------------
-create table epci_action_statut_update_event
+create table collectivite_action_statut_update_event
 (
     collectivite_id integer references collectivite                    not null,
     referentiel     referentiel                                        not null,
@@ -528,7 +528,7 @@ declare
     relation action_relation%ROWTYPE;
 begin
     select * into relation from action_relation where id = NEW.action_id limit 1;
-    insert into epci_action_statut_update_event values (NEW.collectivite_id, relation.referentiel, default);
+    insert into collectivite_action_statut_update_event values (NEW.collectivite_id, relation.referentiel, default);
     return null;
 end;
 $$ language plpgsql;
@@ -543,17 +543,17 @@ execute procedure after_action_statut_insert_write_event();
 --------------------------------
 ---------- PROCESSING ----------
 --------------------------------
-create view unprocessed_epci_action_statut_update_event
+create view unprocessed_collectivite_action_statut_update_event
 as
-select epci_action_statut_update_event.collectivite_id, referentiel, created_at
-from epci_action_statut_update_event
+select collectivite_action_statut_update_event.collectivite_id, referentiel, created_at
+from collectivite_action_statut_update_event
          join (
     select collectivite_id, max(created_at) as date
     from score
     group by collectivite_id
 )
-    as latest_epci_score on epci_action_statut_update_event.collectivite_id = latest_epci_score.collectivite_id
-where epci_action_statut_update_event.created_at > latest_epci_score.date;
+    as latest_epci_score on collectivite_action_statut_update_event.collectivite_id = latest_epci_score.collectivite_id
+where collectivite_action_statut_update_event.created_at > latest_epci_score.date;
 
 --------------------------------
 ----------- LOGGING ------------

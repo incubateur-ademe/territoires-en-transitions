@@ -27,6 +27,6 @@ def prepare_bus(
                 ][0]
             except IndexError:
                 raise PrepareBusError(
-                    f"No use case of type {use_case} declared. cannot add event handler for {event_type}"
+                    f"No use case of type {type_use_case} declared. cannot add event handler for {event_type}"
                 )
             bus.subscribe_to_event(event_type, use_case.execute)

@@ -7,7 +7,7 @@ from business.core.domain.ports.domain_message_bus import (
 from business.evaluation.adapters.replay_realtime import ReplayRealtime
 from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
-    EpciActionStatutUpdateConverter,
+    CollectiviteActionStatutUpdateConverter,
 )
 from business.evaluation.domain.models import events
 
@@ -16,7 +16,7 @@ from tests.utils.spy_on_event import spy_on_event
 
 def test_domain_event_published_on_replay_correct_realtime_status_update_observer():
     bus = InMemoryDomainMessageBus()
-    converters: List[AbstractConverter] = [EpciActionStatutUpdateConverter()]
+    converters: List[AbstractConverter] = [CollectiviteActionStatutUpdateConverter()]
     realtime = ReplayRealtime(bus, converters=converters)
     realtime.set_events_to_emit(
         [
@@ -47,7 +47,7 @@ def test_domain_event_published_on_replay_correct_realtime_status_update_observe
 
 def test_failure_published_when_realtime_event_has_unknown_referentiel():
     bus = InMemoryDomainMessageBus()
-    converters: List[AbstractConverter] = [EpciActionStatutUpdateConverter()]
+    converters: List[AbstractConverter] = [CollectiviteActionStatutUpdateConverter()]
     realtime = ReplayRealtime(bus, converters=converters)
 
     realtime.set_events_to_emit(
@@ -75,7 +75,7 @@ def test_failure_published_when_realtime_event_has_unknown_referentiel():
 
 def test_realtime_event_has_wrong_record_format():
     bus = InMemoryDomainMessageBus()
-    converters: List[AbstractConverter] = [EpciActionStatutUpdateConverter()]
+    converters: List[AbstractConverter] = [CollectiviteActionStatutUpdateConverter()]
     realtime = ReplayRealtime(bus, converters=converters)
 
     realtime.set_events_to_emit(
