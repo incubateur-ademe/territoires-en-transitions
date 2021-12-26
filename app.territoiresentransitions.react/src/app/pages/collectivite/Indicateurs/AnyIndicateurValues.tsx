@@ -56,7 +56,6 @@ const AnyIndicateurValueInput = ({
         onChange={(event: React.FormEvent<HTMLInputElement>) =>
           setInputValue(event.currentTarget.value)
         }
-        type="number"
         onBlur={convertToFloatAndStore}
       />
     </label>
