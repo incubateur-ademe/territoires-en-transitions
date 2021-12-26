@@ -13,7 +13,14 @@ const makeAnyIndicateurValueWriteEndpoint = <T extends string | number>(
     async _write(
       indicateurValue: AnyIndicateurValueWrite<T>
     ): Promise<PostgrestResponse<AnyIndicateurValueWrite<T>>> {
-      return this._table.upsert([indicateurValue]); // {onConflict: 'valeur'}
+      return this._table.upsert(
+        [indicateurValue],
+
+        {
+          onConflict: 'collectivite_id,annee,indicateur_id',
+        }
+      ); // {onConflict:
+      // 'valeur'}
     }
   }
   return new AnyIndicateurValueWriteEndpoint();
