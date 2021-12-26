@@ -57,6 +57,8 @@ function AnyIndicateurValueInput<T extends string | number>({
           setInputValue(event.currentTarget.value)
         }
         onBlur={convertToFloatAndStore}
+        type="number"
+        lang="fr"
       />
     </label>
   );
