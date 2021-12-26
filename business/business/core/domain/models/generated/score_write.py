@@ -10,7 +10,7 @@ from typing import Any, Dict, Optional, Union, get_args, get_origin
 class ScoreWrite:
     action_id: "str"
     completed_taches_count: "int"
-    concernee: "bool"
+    concerne: "bool"
     collectivite_id: "int"
     points: "float"
     potentiel: "float"
@@ -23,7 +23,7 @@ class ScoreWrite:
         return cls(
             _from_json_data(str, data.get("action_id")),
             _from_json_data(int, data.get("completed_taches_count")),
-            _from_json_data(bool, data.get("concernee")),
+            _from_json_data(bool, data.get("concerne")),
             _from_json_data(int, data.get("collectivite_id")),
             _from_json_data(float, data.get("points")),
             _from_json_data(float, data.get("potentiel")),
@@ -36,7 +36,7 @@ class ScoreWrite:
         data: Dict[str, Any] = {}
         data["action_id"] = _to_json_data(self.action_id)
         data["completed_taches_count"] = _to_json_data(self.completed_taches_count)
-        data["concernee"] = _to_json_data(self.concernee)
+        data["concerne"] = _to_json_data(self.concerne)
         data["collectivite_id"] = _to_json_data(self.collectivite_id)
         data["points"] = _to_json_data(self.points)
         data["potentiel"] = _to_json_data(self.potentiel)

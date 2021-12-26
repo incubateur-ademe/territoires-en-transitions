@@ -34,7 +34,7 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
                     potentiel=score.potentiel,
                     previsionnel=score.previsionnel,
                     referentiel_points=score.referentiel_points,
-                    concernee=score.concerne,
+                    concerne=score.concerne,
                 )
             )
             columns = " ,".join(list(score_as_dict.keys()))

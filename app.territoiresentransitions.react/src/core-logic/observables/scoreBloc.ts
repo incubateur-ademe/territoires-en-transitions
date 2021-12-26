@@ -14,23 +14,27 @@ export type CurrentCollectiviteObserved = {
 // Should observe "CollectiviteId" of collectiviteBloc and ActionStatutWriteEndpoint
 // so that you start the connection on first status written
 export class ScoreBloc {
-  private _collectiviteId: number | null = null;
   private _scores: ScoreRead[] = [];
   private _scoreController: ScoreController | null = null;
-  private _scoreSocket: ScoreSocket | null = null;
 
   constructor() {
     makeAutoObservable(this);
-    if (currentCollectiviteBloc.collectiviteId !== null)
+    if (currentCollectiviteBloc.collectiviteId !== null) {
       this.fetchScoresForCollectivite(currentCollectiviteBloc.collectiviteId);
+      this.openScoreSocketAndListenScoreController(
+        currentCollectiviteBloc.collectiviteId
+      );
+    }
 
     // listen to currentCollectiviteBloc changes
     reaction(
       () => currentCollectiviteBloc.collectiviteId,
       collectiviteId => {
         console.log('bloc reaction collectiviteId , ', collectiviteId);
-        if (collectiviteId !== null)
+        if (collectiviteId !== null) {
           this.fetchScoresForCollectivite(collectiviteId);
+          this.openScoreSocketAndListenScoreController(collectiviteId);
+        }
       }
     );
   }
@@ -53,21 +57,23 @@ export class ScoreBloc {
     console.log('fetchScoresForCollectivite ', this._scores);
   }
 
-  openScoreSocketAndListenScoreController() {
+  openScoreSocketAndListenScoreController(collectiviteId: number) {
     if (this._scoreController !== null) this._scoreController.dispose();
-    else if (this._collectiviteId === null) return;
-    else {
-      this._scoreController = new SupabaseScoreController({
-        supabaseClient,
-      });
-      this._scoreSocket = new ScoreSocket({
-        controller: this._scoreController,
-        collectiviteId: this._collectiviteId,
-      });
-      this._scoreController.listen();
-      this._scoreController;
-    }
+
+    this._scoreController = new SupabaseScoreController({
+      supabaseClient,
+    });
+    const socket = new ScoreSocket({
+      controller: this._scoreController,
+      collectiviteId,
+    });
+    this._scoreController.listen();
+    socket.scoreObservable.subscribe(observedScores => {
+      console.log('observedScores: ', observedScores);
+      this._scores = observedScores;
+    });
   }
+
   getScore(action_id: string) {
     const score = this._scores.find(() =>
       this._scores.find(score => score.action_id === action_id)
