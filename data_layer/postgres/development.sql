@@ -369,17 +369,18 @@ from action_statut
 --------------------------------
 create table score
 (
-    id                     serial primary key,
+    -- id                     serial primary key,
     collectivite_id        integer references collectivite        not null,
     action_id              action_id references action_relation   not null,
     points                 real                                   not null,
     potentiel              real                                   not null,
     referentiel_points     real                                   not null,
-    concernee              bool                                   not null,
+    concerne               bool                                   not null,
     previsionnel           real                                   not null,
     total_taches_count     int                                    not null,
     completed_taches_count int                                    not null,
-    created_at             timestamp with time zone default Now() not null
+    created_at             timestamp with time zone default Now() not null,
+    primary key (collectivite_id, action_id)
 );
 
 comment on table score is 'Score data is created by the business';
@@ -388,11 +389,12 @@ comment on column score.created_at is
 
 create table client_scores
 (
-    id               serial primary key,
+    -- id               serial primary key,
     collectivite_id  integer references collectivite not null,
     referentiel      referentiel                     not null,
     scores           jsonb                           not null,
-    score_created_at timestamp with time zone        not null
+    score_created_at timestamp with time zone        not null,
+    primary key (collectivite_id, referentiel)
 );
 comment on table client_scores is 'Client score data is generated from score on trigger';
 comment on column client_scores.score_created_at is 'Equal score.created_at.';
@@ -416,11 +418,11 @@ select score.collectivite_id,
        jsonb_agg(
                jsonb_build_object(
                        'action_id', action_id,
-                       'point', points,
+                       'points', points,
                        'potentiel', potentiel,
                        'referentiel', action_relation.referentiel,
                        'referentiel_points', referentiel_points,
-                       'concernee', concernee,
+                       'concerne', concerne,
                        'previsionnel', previsionnel,
                        'total_taches_count', total_taches_count,
                        'completed_taches_count', completed_taches_count
@@ -461,7 +463,9 @@ begin
 
     if existingClientScoreCount
     then
-        -- insert client score
+        -- remove existing client scores
+        delete from client_scores where collectivite_id = NEW.collectivite_id;
+        -- insert client scores
         insert into client_scores (collectivite_id, referentiel, scores, score_created_at)
         select batches.collectivite_id,
                batches.referentiel,
@@ -559,10 +563,10 @@ create table action_statut_log
     logged_at timestamp with time zone default CURRENT_TIMESTAMP not null
 ) inherits (action_statut);
 
-create table score_log
-(
-    logged_at timestamp with time zone default CURRENT_TIMESTAMP not null
-) inherits (score);
+-- create table score_log
+-- (
+--     logged_at timestamp with time zone default CURRENT_TIMESTAMP not null
+-- ) inherits (score);
 
 
 create function before_action_statut_update_write_log() returns trigger as
@@ -728,7 +732,7 @@ comment on function action_down_to_tache is 'Returns referentiel action summary 
 --------------------------------
 create table abstract_any_indicateur_value
 (
-    valeur float   not null,
+    valeur float,
     annee  integer not null
 ) inherits (absract_modified_at);
 
@@ -772,15 +776,15 @@ create table indicateur_personnalise_definition
 create table indicateur_personnalise_resultat
 (
     collectivite_id            integer references collectivite,
-    indicateur_personnalise_id integer references indicateur_personnalise_definition not null,
-    primary key (indicateur_personnalise_id, annee)
+    indicateur_id integer references indicateur_personnalise_definition not null,
+    primary key (indicateur_id, annee)
 ) inherits (abstract_any_indicateur_value);
 
 create table indicateur_personnalise_objectif
 (
     collectivite_id            integer references collectivite,
-    indicateur_personnalise_id integer references indicateur_personnalise_definition not null,
-    primary key (indicateur_personnalise_id, annee)
+    indicateur_id integer references indicateur_personnalise_definition not null,
+    primary key (indicateur_id, annee)
 ) inherits (abstract_any_indicateur_value);
 
 create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours');

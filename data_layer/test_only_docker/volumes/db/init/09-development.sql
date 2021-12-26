@@ -463,7 +463,9 @@ begin
 
     if existingClientScoreCount
     then
-        -- insert client score
+        -- remove existing client scores
+        delete from client_scores where collectivite_id = NEW.collectivite_id;
+        -- insert client scores
         insert into client_scores (collectivite_id, referentiel, scores, score_created_at)
         select batches.collectivite_id,
                batches.referentiel,
@@ -561,10 +563,10 @@ create table action_statut_log
     logged_at timestamp with time zone default CURRENT_TIMESTAMP not null
 ) inherits (action_statut);
 
-create table score_log
-(
-    logged_at timestamp with time zone default CURRENT_TIMESTAMP not null
-) inherits (score);
+-- create table score_log
+-- (
+--     logged_at timestamp with time zone default CURRENT_TIMESTAMP not null
+-- ) inherits (score);
 
 
 create function before_action_statut_update_write_log() returns trigger as
