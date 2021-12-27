@@ -8,7 +8,9 @@ export class IndicateurCommentaireWriteEndpoint extends DataLayerWriteEndpoint<I
   async _write(
     commentaire: IndicateurCommentaireWrite
   ): Promise<PostgrestResponse<IndicateurCommentaireWrite>> {
-    return this._table.upsert([commentaire]);
+    return this._table.upsert([commentaire], {
+      onConflict: 'collectivite_id,indicateur_id',
+    });
   }
 }
 

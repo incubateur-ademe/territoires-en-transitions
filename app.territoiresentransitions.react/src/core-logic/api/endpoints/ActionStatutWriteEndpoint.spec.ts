@@ -8,25 +8,24 @@ describe('Action-statut write endpoint', () => {
   beforeAll(async () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
-  it('Saving a statut should return an equivalent statut', async () => {
+  it('Should be able to save and update a statut', async () => {
     const endpoint = new ActionStatutWriteEndpoint();
     const statut: ActionStatutWrite = {
       concerne: true,
-      avancement: 'fait',
+      avancement: 'programme',
       action_id: 'cae_1.1.1.1.1',
       collectivite_id: 1,
     };
+    // 1. Create
     const result = await endpoint.save(statut);
-
     expect(result).not.toBeNull();
-    expect(result).toEqual(
-      expect.objectContaining({
-        action_id: 'cae_1.1.1.1.1',
-        collectivite_id: 1,
-        concerne: true,
-        avancement: 'fait',
-      })
-    );
+    expect(result).toEqual(expect.objectContaining(statut));
+
+    // 2. Update
+    const updatedStatut = {...statut, avancement: 'pas_fait'};
+    const updateResult = await endpoint.save(statut);
+    expect(updateResult).not.toBeNull();
+    expect(updateResult).toEqual(expect.objectContaining(updatedStatut));
   });
 
   it('Saving a statut with readonly collectivite should fail', async () => {

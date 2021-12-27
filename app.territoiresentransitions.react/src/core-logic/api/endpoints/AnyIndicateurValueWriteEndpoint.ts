@@ -19,8 +19,7 @@ const makeAnyIndicateurValueWriteEndpoint = <T extends string | number>(
         {
           onConflict: 'collectivite_id,annee,indicateur_id',
         }
-      ); // {onConflict:
-      // 'valeur'}
+      );
     }
   }
   return new AnyIndicateurValueWriteEndpoint();
