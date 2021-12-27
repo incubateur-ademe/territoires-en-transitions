@@ -23,7 +23,7 @@ describe('Action-statut write endpoint', () => {
 
     // 2. Update
     const updatedStatut = {...statut, avancement: 'pas_fait'};
-    const updateResult = await endpoint.save(statut);
+    const updateResult = await endpoint.save(updatedStatut);
     expect(updateResult).not.toBeNull();
     expect(updateResult).toEqual(expect.objectContaining(updatedStatut));
   });

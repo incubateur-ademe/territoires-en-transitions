@@ -24,7 +24,7 @@ describe('Action-commentaire write endpoint', () => {
 
     // update
     const updatedCommentaire = {...commentaire, commentaire: 'yoloooo !! '};
-    const updatedResult = await endpoint.save(commentaire);
+    const updatedResult = await endpoint.save(updatedCommentaire);
     expect(updatedResult).not.toBeNull();
     expect(updatedResult).toEqual(expect.objectContaining(updatedCommentaire));
   });

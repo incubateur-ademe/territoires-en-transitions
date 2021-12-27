@@ -12,20 +12,6 @@ create table action_commentaire
 
 );
 
-alter table action_commentaire
-    enable row level security;
-
-create policy "Enable select"
-    on action_commentaire
-    for select
-    using (true);
-
-create policy "Insert for authenticated user"
-    on action_commentaire
-    for insert
-    with check (true);
-
-
 create table abstract_any_indicateur_value
 (
     valeur float,
