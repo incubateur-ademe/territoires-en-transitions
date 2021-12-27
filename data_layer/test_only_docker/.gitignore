@@ -1,3 +1,5 @@
 volumes/supabase_postgres/data
 volumes/storage
-# .env
+.env
+volumes/db/init/1*.sql
+volumes/db/init/2*.sql
