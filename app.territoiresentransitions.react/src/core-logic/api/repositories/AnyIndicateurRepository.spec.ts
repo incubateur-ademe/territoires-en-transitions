@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/extend-expect';
-import {supabase} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {AnyIndicateurValueWrite} from 'generated/dataLayer/any_indicateur_value_write';
 import {yoloCredentials} from 'test_utils/collectivites';
 import {
@@ -29,10 +29,10 @@ describe('Indicateur resultat repo should retrieve data-layer default values', (
 
 describe('Any indicateur repositories can save values', () => {
   beforeAll(async () => {
-    await supabase.auth.signIn(yoloCredentials);
+    await supabaseClient.auth.signIn(yoloCredentials);
   });
   it('Saves indicateur referentiel resultat value and retrieve it ', async () => {
-    const valueToSave: AnyIndicateurValueWrite = {
+    const valueToSave: AnyIndicateurValueWrite<string> = {
       annee: 2020,
       valeur: 88,
       collectivite_id: 2,
@@ -53,7 +53,7 @@ describe('Any indicateur repositories can save values', () => {
   });
 
   it('Saves indicateur personnalise resultat value and retrieve it ', async () => {
-    const valueToSave: AnyIndicateurValueWrite = {
+    const valueToSave: AnyIndicateurValueWrite<number> = {
       annee: 2020,
       valeur: 77,
       collectivite_id: 2,
@@ -67,11 +67,13 @@ describe('Any indicateur repositories can save values', () => {
 
     // Retrieve
     const retrieved =
-      await indicateurResultatRepository.fetchIndicateurValueForIdForYear({
-        indicateurId: 0,
-        year: 2020,
-        collectiviteId: 2,
-      });
+      await indicateurPersonnaliseResultatRepository.fetchIndicateurValueForIdForYear(
+        {
+          indicateurId: 0,
+          year: 2020,
+          collectiviteId: 2,
+        }
+      );
     expect(retrieved).not.toBeNull();
   });
 });
