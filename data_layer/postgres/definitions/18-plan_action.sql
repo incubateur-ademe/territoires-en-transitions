@@ -3,9 +3,8 @@ create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours');
 -- fiche action
 create table fiche_action
 (
-    id                          serial primary key,
+    uid                         uuid                    primary key,
     collectivite_id             integer references collectivite,
-    uid                         uuid                    not null,
     avancement                  fiche_action_avancement not null,
     numerotation                text                    not null,
     titre                       text                    not null,
@@ -126,9 +125,8 @@ comment on function after_fiche_action_write_save_relationships is
 -- plan d'action
 create table plan_action
 (
-    id                 serial primary key,
+    uid                uuid                                            primary key,
     collectivite_id    integer references collectivite,
-    uid                varchar(36)                                        not null,
     nom                varchar(300)                                       not null,
     categories         jsonb                                              not null,
     fiches_by_category jsonb                                              not null,

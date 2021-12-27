@@ -65,7 +65,7 @@ insert into plan_action
  categories,
  fiches_by_category)
 values (1,
-        'plan_collectivite',
+        '29770546-f389-4d4f-bfdb-b0c94a1bd0f9',
         'Plan d''actions de la collectivité',
         '[
           {
