@@ -1,12 +1,12 @@
 import '@testing-library/jest-dom/extend-expect';
 import {IndicateurPersonnaliseDefinitionWriteEndpoint} from 'core-logic/api/endpoints/IndicateurPersonnaliseDefinitionWriteEndpoint';
-import {supabase} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {IndicateurPersonnaliseDefinitionWrite} from 'generated/dataLayer/indicateur_personnalise_definition_write';
 import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('Indicateur perso definition write endpoint', () => {
   beforeEach(async () => {
-    await supabase.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signIn(yiliCredentials);
   });
 
   it('Should return an equivalent object when saving an indicateur perso definition when connected', async () => {

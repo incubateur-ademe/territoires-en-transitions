@@ -84,7 +84,10 @@ def test_can_add_referentiel_indicateurs(postgres_connection):
     repo = SqlReferentielRepository(sql_path)
 
     indicateur_def = make_indicateur(
-        indicateur_id="indicateur_1", indicateur_group="eci", description="l'ademe !"
+        indicateur_id="indicateur_1",
+        indicateur_group="eci",
+        description="l'ademe !",
+        action_ids=["eci_1"],
     )
 
     repo.add_indicateurs([indicateur_def])
@@ -93,9 +96,14 @@ def test_can_add_referentiel_indicateurs(postgres_connection):
         file_content = file.read()
     assert (
         file_content
-        == "insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('indicateur_1', 'eci', '', null, '', 'l''ademe !', '', false ,   null);\n"
+        == "insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('indicateur_1', 'eci', '', null, '', 'l''ademe !', '', false ,   null);\ninsert into indicateur_action(indicateur_id, action_id) values ('indicateur_1', 'eci_1');\n"
     )
 
     # check that sql can be executed and referentiel indicateurs can be added
     test_cursor = postgres_connection.cursor(row_factory=dict_row)
+    # first, insert an action_relation
+    test_cursor.execute(
+        "insert into action_relation(id, referentiel, parent) values ('eci_1', 'eci', null);"
+    )
+    # then execute
     test_cursor.execute(file_content)
