@@ -148,34 +148,6 @@ comment on function referent_contact is
     'Returns the contact information of the Collectivité referent given the siren.';
 
 
--- create function accept_invitation(invitation_id uuid);
--- create function create_invitation();
-
-create view owned_collectivite
-as
-with current_droits as (
-    select *
-    from private_utilisateur_droit
-    where user_id = auth.uid()
-)
-select named_collectivite.collectivite_id as collectivite_id, named_collectivite.nom, role_name
-from current_droits
-         join named_collectivite on named_collectivite.collectivite_id = current_droits.collectivite_id
-         join epci on named_collectivite.collectivite_id = epci.collectivite_id
-order by nom;
-
-
-create or replace view elses_collectivite
-as
-select active_collectivite.collectivite_id, active_collectivite.nom
-from active_collectivite
-         full outer join owned_collectivite on
-        owned_collectivite.collectivite_id = active_collectivite.collectivite_id
-where auth.uid() is null -- return all active collectivités if auth.user is null
-   or owned_collectivite.collectivite_id is not null;
-comment on view elses_collectivite is 'Collectivités not belonging to the authenticated user';
-
-
 -- todo create function accept_invitation(invitation_id uuid);
 -- todo create function create_invitation();
 
@@ -191,7 +163,6 @@ from current_droits
          join named_collectivite on named_collectivite.collectivite_id = current_droits.collectivite_id
          join epci on named_collectivite.collectivite_id = epci.collectivite_id
 order by nom;
-comment on view owned_collectivite is 'Collectivités belonging to the authenticated user';
 
 
 create or replace view elses_collectivite

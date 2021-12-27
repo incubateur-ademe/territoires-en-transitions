@@ -119,3 +119,20 @@ create constraint trigger after_score_write
     for each row
 execute procedure after_score_update_insert_client_scores();
 
+
+--------------------------------
+---------- PROCESSING ----------
+--------------------------------
+create view unprocessed_collectivite_action_statut_update_event
+as
+select collectivite_action_statut_update_event.collectivite_id, referentiel, created_at
+from collectivite_action_statut_update_event
+         join (
+    select collectivite_id, max(created_at) as date
+    from score
+    group by collectivite_id
+)
+    as latest_epci_score on collectivite_action_statut_update_event.collectivite_id = latest_epci_score.collectivite_id
+where collectivite_action_statut_update_event.created_at > latest_epci_score.date;
+comment on view unprocessed_collectivite_action_statut_update_event is
+    'To be used by business to compute only what is necessary.';
