@@ -62,12 +62,12 @@ select score.collectivite_id,
                        'completed_taches_count', completed_taches_count
                    )
            ) as scores,
-       created_at
+       max(created_at)
 from score
          join action_relation on
-        action_id = action_relation.id
+    action_id = action_relation.id
 where score.collectivite_id = $1
-group by score.collectivite_id, action_relation.referentiel, created_at;
+group by score.collectivite_id, action_relation.referentiel;
 $$ language sql;
 
 
