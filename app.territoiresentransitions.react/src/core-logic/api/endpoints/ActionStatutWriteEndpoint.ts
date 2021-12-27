@@ -8,7 +8,9 @@ export class ActionStatutWriteEndpoint extends DataLayerWriteEndpoint<ActionStat
   async _write(
     statut: ActionStatutWrite
   ): Promise<PostgrestResponse<ActionStatutWrite>> {
-    return this._table.upsert([statut]);
+    return this._table.upsert([statut], {
+      onConflict: 'collectivite_id,action_id',
+    });
   }
 }
 

@@ -3,9 +3,8 @@ create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours');
 -- fiche action
 create table fiche_action
 (
-    id                          serial primary key,
+    uid                         uuid                    primary key,
     collectivite_id             integer references collectivite,
-    uid                         uuid                    not null,
     avancement                  fiche_action_avancement not null,
     numerotation                text                    not null,
     titre                       text                    not null,
@@ -28,70 +27,70 @@ comment on table fiche_action is 'Fiche action used by the client';
 
 create table fiche_action_action
 (
-    fiche_action_id integer references fiche_action,
+    fiche_action_uid uuid references fiche_action,
     action_id       action_id references action_relation,
-    primary key (fiche_action_id, action_id)
+    primary key (fiche_action_uid, action_id)
 );
 comment on table fiche_action is
     'Many-to-many relationship between fiche action and referentiel action';
 
 create table fiche_action_indicateur
 (
-    fiche_action_id integer references fiche_action,
+    fiche_action_uid uuid references fiche_action,
     indicateur_id   indicateur_id references indicateur_definition,
-    primary key (fiche_action_id, indicateur_id)
+    primary key (fiche_action_uid, indicateur_id)
 );
 comment on table fiche_action_indicateur is
     'Many-to-many relationship between fiche action and referentiel indicateur';
 
 create table fiche_action_indicateur_personnalise
 (
-    fiche_action_id            integer references fiche_action,
+    fiche_action_uid            uuid references fiche_action,
     indicateur_personnalise_id integer references indicateur_personnalise_definition,
-    primary key (fiche_action_id, indicateur_personnalise_id)
+    primary key (fiche_action_uid, indicateur_personnalise_id)
 );
 comment on table fiche_action_indicateur_personnalise is
     'Many-to-many relationship between fiche action and indicateur personnalisé';
 
 
 create or replace function update_fiche_relationships(
-    fiche_action_id integer,
+    fiche_action_uid uuid,
     action_ids action_id[],
     indicateur_ids indicateur_id[],
     indicateur_personnalise_ids integer[]
 ) returns void as
 $$
 declare
-    id integer;
+    uid uuid;
     i  action_id;
     j  indicateur_id;
     k  integer;
 begin
     -- the name fiche_action_id is ambiguous as it can refer to a column.
-    select update_fiche_relationships.fiche_action_id into id;
+    select update_fiche_relationships.fiche_action_uid into uid;
 
     -- clear previous relationships
-    delete from fiche_action_action where fiche_action_action.fiche_action_id = id;
-    delete from fiche_action_indicateur where fiche_action_indicateur.fiche_action_id = id;
-    delete from fiche_action_indicateur_personnalise where fiche_action_indicateur_personnalise.fiche_action_id = id;
+    delete from fiche_action_action where fiche_action_action.fiche_action_uid = uid;
+    delete from fiche_action_indicateur where fiche_action_indicateur.fiche_action_uid = uid;
+    delete from fiche_action_indicateur_personnalise where fiche_action_indicateur_personnalise.fiche_action_uid = uid;
 
     -- write relationships
     foreach i in array action_ids
         loop
-            insert into fiche_action_action (fiche_action_id, action_id)
-            values (id, i);
+            insert into fiche_action_action (fiche_action_uid, action_id)
+            values (uid, i);
         end loop;
 
     foreach j in array indicateur_ids
         loop
-            insert into fiche_action_indicateur (fiche_action_id, indicateur_id)
-            values (id, j);
+            insert into fiche_action_indicateur (fiche_action_uid, indicateur_id)
+            values (uid, j);
         end loop;
 
     foreach k in array indicateur_personnalise_ids
         loop
-            insert into fiche_action_indicateur_personnalise (fiche_action_id, indicateur_personnalise_id)
-            values (id, k);
+            insert into fiche_action_indicateur_personnalise (fiche_action_uid, indicateur_personnalise_id)
+            values (uid, k);
         end loop;
 end;
 $$
@@ -104,7 +103,7 @@ create or replace function after_fiche_action_write_save_relationships() returns
 $$
 begin
     perform update_fiche_relationships(
-            new.id,
+            new.uid,
             new.action_ids,
             new.indicateur_ids,
             new.indicateur_personnalise_ids
@@ -126,9 +125,8 @@ comment on function after_fiche_action_write_save_relationships is
 -- plan d'action
 create table plan_action
 (
-    id                 serial primary key,
+    uid                uuid                                            primary key,
     collectivite_id    integer references collectivite,
-    uid                varchar(36)                                        not null,
     nom                varchar(300)                                       not null,
     categories         jsonb                                              not null,
     fiches_by_category jsonb                                              not null,

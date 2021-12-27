@@ -3,27 +3,14 @@
 --------------------------------
 create table action_commentaire
 (
-    id              serial primary key,
     collectivite_id integer references collectivite                      not null,
     action_id       action_id references action_relation                 not null,
     commentaire     text                                                 not null,
     modified_by     uuid references auth.users default auth.uid()        not null,
-    modified_at     timestamp with time zone   default CURRENT_TIMESTAMP not null
+    modified_at     timestamp with time zone   default CURRENT_TIMESTAMP not null,
+    primary key (collectivite_id, action_id)
+
 );
-
-alter table action_commentaire
-    enable row level security;
-
-create policy "Enable select"
-    on action_commentaire
-    for select
-    using (true);
-
-create policy "Insert for authenticated user"
-    on action_commentaire
-    for insert
-    with check (true);
-
 
 create table abstract_any_indicateur_value
 (
@@ -72,13 +59,13 @@ create table indicateur_personnalise_resultat
 (
     collectivite_id            integer references collectivite,
     indicateur_id integer references indicateur_personnalise_definition not null,
-    primary key (indicateur_id, annee)
+    primary key (indicateur_id, annee, collectivite_id)
 ) inherits (abstract_any_indicateur_value);
 
 create table indicateur_personnalise_objectif
 (
     collectivite_id            integer references collectivite,
     indicateur_id integer references indicateur_personnalise_definition not null,
-    primary key (indicateur_id, annee)
+    primary key (indicateur_id, annee, collectivite_id)
 ) inherits (abstract_any_indicateur_value);
 

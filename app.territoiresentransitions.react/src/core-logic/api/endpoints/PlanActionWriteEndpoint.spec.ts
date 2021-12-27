@@ -9,11 +9,11 @@ describe('Plan action write endpoint', () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
 
-  it('Should return an equivalent plan when saving a plan ', async () => {
+  it('Should be able to save and update a plan ', async () => {
     const endpoint = new PlanActionWriteEndpoint();
     const plan: PlanActionWrite = {
       collectivite_id: 1,
-      uid: 'plan_collectivite',
+      uid: 'ez399348-6ab9-4dc7-bf62-41b9a17ea5fu',
       nom: "Plan d'actions de la collectivité",
       categories: [
         {
@@ -28,14 +28,22 @@ describe('Plan action write endpoint', () => {
         },
       ],
     };
-    const actualCommentaireWrite = await endpoint.save(plan);
-    expect(actualCommentaireWrite).not.toBeNull();
+    // 1. Create
+    const creationResult = await endpoint.save(plan);
+    expect(creationResult).not.toBeNull();
+    expect(creationResult).toEqual(expect.objectContaining(plan));
+    // 2. Update
+    const updatedPlan = {...plan, nom: 'Nouveau nom '};
+    const updateResult = await endpoint.save(plan);
+    expect(updateResult).not.toBeNull();
+    expect(updateResult).toEqual(expect.objectContaining(updatedPlan));
   });
 
-  it('Should fail when saving a commentaire with bad epci', async () => {
+  // TODO : fixme (#RLS)
+  it('Should fail when collectivite is readonly', async () => {
     const endpoint = new PlanActionWriteEndpoint();
     const plan: PlanActionWrite = {
-      collectivite_id: 10000,
+      collectivite_id: 8, // Yili has no right in collectivite #8
       uid: 'plan_collectivite',
       nom: "Plan d'actions de la collectivité",
       categories: [],

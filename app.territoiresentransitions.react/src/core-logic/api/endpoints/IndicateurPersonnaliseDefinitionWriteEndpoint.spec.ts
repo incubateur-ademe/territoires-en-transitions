@@ -9,21 +9,27 @@ describe('Indicateur perso definition write endpoint', () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
 
-  it('Should return an equivalent object when saving an indicateur perso definition when connected', async () => {
+  it('Should allow saving and updating an indicateur perso definition when connected', async () => {
     const endpoint = new IndicateurPersonnaliseDefinitionWriteEndpoint();
-    const indicateur_perso_def: IndicateurPersonnaliseDefinitionWrite = {
+    const def: IndicateurPersonnaliseDefinitionWrite = {
       collectivite_id: 2,
       commentaire: 'La vie est belle',
       description: "C'est important !",
       titre: 'Le bonheur',
       unite: 'heures',
     };
-    const actualIndicateurWrite = await endpoint.save(indicateur_perso_def);
-    expect(actualIndicateurWrite).not.toBeNull();
-    console.log('actualIndicateurWrite ', actualIndicateurWrite);
+    // 1. create
+    const createResult = await endpoint.save(def);
+    expect(createResult).not.toBeNull();
+    expect(createResult).toEqual(expect.objectContaining(def));
+    // 2. update
+    const updatedDef = {...def, titre: 'La vie'};
+    const updateResult = await endpoint.save(updatedDef);
+    expect(updateResult).not.toBeNull();
+    expect(updateResult).toEqual(expect.objectContaining(updatedDef));
   });
 
-  // Fix me.
+  // Fix me (#RLS).
   it('Should fail when connected user has no edition rights on collectivite (readonly)', async () => {
     const endpoint = new IndicateurPersonnaliseDefinitionWriteEndpoint();
     const indicateur_perso_def: IndicateurPersonnaliseDefinitionWrite = {

@@ -32,7 +32,7 @@ describe('Indicateur-resultat write endpoint', () => {
       })
     );
 
-    // Save again (update)
+    // Update
     const updateResult = await endpoint.save({
       annee: 2020,
       valeur: 18,
@@ -40,7 +40,6 @@ describe('Indicateur-resultat write endpoint', () => {
       collectivite_id: 1,
     });
     expect(updateResult).not.toBeNull();
-    // FIX ME !
     expect(updateResult).toEqual(
       expect.objectContaining({
         valeur: 18,
@@ -48,8 +47,7 @@ describe('Indicateur-resultat write endpoint', () => {
     );
   });
 
-  // TODO : Fix me !
-
+  // TODO : Fix me ! (#RLS)
   it('Saving an indicateur resultat value for a collectivite readonly should fail', async () => {
     const endpoint = makeNewIndicateurResultatWriteEndpoint();
     const indicateurValue: AnyIndicateurValueWrite<string> = {
@@ -68,7 +66,7 @@ describe('Indicateur personnalise resultat write endpoint', () => {
   beforeAll(async () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
-  it('Should be able to save an update an indicateur personnalise resultat for an editable collectivite', async () => {
+  it('Should be able to save and update an indicateur personnalise resultat for an editable collectivite', async () => {
     const endpoint = makeNewIndicateurPersonnaliseResultatWriteEndpoint();
     const indicateurValue: AnyIndicateurValueWrite<number> = {
       annee: 2020,
@@ -79,14 +77,7 @@ describe('Indicateur personnalise resultat write endpoint', () => {
     const insertResult = await endpoint.save(indicateurValue);
 
     expect(insertResult).not.toBeNull();
-    expect(insertResult).toEqual(
-      expect.objectContaining({
-        annee: 2020,
-        valeur: 20.2,
-        indicateur_id: 0,
-        collectivite_id: 1,
-      })
-    );
+    expect(insertResult).toEqual(expect.objectContaining(indicateurValue));
   });
   it('Saving an indicateur perso resultat value for a collectivite readonly should fail', async () => {
     await supabaseClient.auth.signOut(); // Yili signs out

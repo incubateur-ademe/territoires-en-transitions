@@ -9,21 +9,31 @@ describe('Action-commentaire write endpoint', () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
 
-  it('Should return an equivalent commentaire when saving a commentaire ', async () => {
+  it('Should be able to save and update a commentaire ', async () => {
     const endpoint = new ActionCommentaireWriteEndpoint();
     const commentaire: ActionCommentaireWrite = {
       collectivite_id: 1,
       action_id: 'cae_1.1.1.1.2',
       commentaire: 'yolo',
     };
-    const actualCommentaireWrite = await endpoint.save(commentaire);
-    expect(actualCommentaireWrite).not.toBeNull();
+
+    // create
+    const createResult = await endpoint.save(commentaire);
+    expect(createResult).not.toBeNull();
+    expect(createResult).toEqual(expect.objectContaining(commentaire));
+
+    // update
+    const updatedCommentaire = {...commentaire, commentaire: 'yoloooo !! '};
+    const updatedResult = await endpoint.save(updatedCommentaire);
+    expect(updatedResult).not.toBeNull();
+    expect(updatedResult).toEqual(expect.objectContaining(updatedCommentaire));
   });
 
-  it('Should fail when saving a commentaire with bad epci', async () => {
+  // TODO : fixme (#RLS)
+  it('Should fail when saving a commentaire with readonly collectivite', async () => {
     const endpoint = new ActionCommentaireWriteEndpoint();
     const commentaire: ActionCommentaireWrite = {
-      collectivite_id: 10000,
+      collectivite_id: 8, // Yili has no rights on collectivite #8
       action_id: 'cae_1.1.1.1.2',
       commentaire: 'yolo',
     };

@@ -9,20 +9,27 @@ describe('Indicateur-commentaire write endpoint', () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
   const endpoint = new IndicateurCommentaireWriteEndpoint();
-  it('Should return an equivalent commentaire when saving a commentaire ', async () => {
+  it('Should be able to create and update a commentaire ', async () => {
     const commentaire: IndicateurCommentaireWrite = {
       collectivite_id: 1,
       indicateur_id: 'cae_10',
       commentaire: 'yolo',
     };
-    const actualCommentaireWrite = await endpoint.save(commentaire);
-    expect(actualCommentaireWrite).not.toBeNull();
+    // 1. create
+    const createResult = await endpoint.save(commentaire);
+    expect(createResult).not.toBeNull();
+    expect(createResult).toEqual(expect.objectContaining(commentaire));
+    // 2. update
+    const updatedCommentaire = {...commentaire, commentaire: 'yolo !! :) '};
+    const updateResult = await endpoint.save(updatedCommentaire);
+    expect(updateResult).not.toBeNull();
+    expect(updateResult).toEqual(expect.objectContaining(updatedCommentaire));
   });
 
-  it('Should fail if user is not connected', async () => {
-    await supabaseClient.auth.signOut();
+  // TODO : fixme (#RLS)
+  it('Should fail if collectivite is readonly', async () => {
     const commentaire: IndicateurCommentaireWrite = {
-      collectivite_id: 1,
+      collectivite_id: 8, // Yili has no right on collectivite #8
       indicateur_id: 'cae_10',
       commentaire: 'yolo',
     };
