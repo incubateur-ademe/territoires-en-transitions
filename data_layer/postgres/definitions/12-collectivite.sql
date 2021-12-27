@@ -12,6 +12,14 @@ create table collectivite
 );
 comment on table collectivite is 'Collectivite base table';
 
+alter table collectivite
+    enable row level security;
+
+create policy collectivite_read_for_all
+    on collectivite
+    for select
+    using (true);
+
 create table epci
 (
     id              serial primary key,
@@ -21,6 +29,14 @@ create table epci
     nature          nature       not null
 );
 comment on table epci is 'Établissement public de coopération intercommunale';
+
+alter table epci
+    enable row level security;
+
+create policy epci_read_for_all
+    on epci
+    for select
+    using (true);
 
 create view named_collectivite
 as
