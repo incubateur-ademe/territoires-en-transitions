@@ -1,0 +1,1 @@
+sh insert_definitions.sh ; sh insert_content.sh ; sh insert_fakes.sh
