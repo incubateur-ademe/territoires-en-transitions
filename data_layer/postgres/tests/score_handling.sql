@@ -6,6 +6,13 @@ insert into score(collectivite_id, action_id, points, potentiel, referentiel_poi
                   total_taches_count, completed_taches_count)
 values (1, 'cae_1.1.1.1.1', 50, 90, 100, true, 100, 0, 0);
 
+insert into score(collectivite_id, action_id, points, potentiel, referentiel_points, concerne, previsionnel,
+                  total_taches_count, completed_taches_count)
+values (1, 'cae_2.1.1.1.3', 50, 90, 100, true, 100, 0, 0);
+
+
+select * from score;
+
 select * from client_scores;
 
 delete from score where collectivite_id=1 and action_id= 'cae_1.1.1.1.1';
