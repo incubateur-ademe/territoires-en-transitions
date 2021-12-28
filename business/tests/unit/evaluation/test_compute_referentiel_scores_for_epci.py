@@ -111,7 +111,7 @@ def test_notation_when_one_tache_is_fait():
     assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
-    assert len(actual_scores) == 4
+    assert len(actual_scores) == 7
 
     scores_by_id = {score.action_id: score for score in actual_scores}
 
@@ -138,8 +138,8 @@ def test_notation_when_one_tache_is_fait():
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
-        points=0,
-        previsionnel=0,
+        points=None,
+        previsionnel=None,
         potentiel=70,
         referentiel_points=70,
         completed_taches_count=0,
@@ -172,7 +172,7 @@ def test_notation_when_one_tache_is_programmee():
     assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
-    assert len(actual_scores) == 4
+    assert len(actual_scores) == 7
 
     scores_by_id = {score.action_id: score for score in actual_scores}
 
@@ -199,8 +199,8 @@ def test_notation_when_one_tache_is_programmee():
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
-        points=0,
-        previsionnel=0,
+        points=None,
+        previsionnel=None,
         potentiel=70,
         referentiel_points=70,
         completed_taches_count=0,
@@ -233,7 +233,7 @@ def test_notation_when_one_tache_is_pas_fait():
     assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
-    assert len(actual_scores) == 4
+    assert len(actual_scores) == 7
 
     scores_by_id = {score.action_id: score for score in actual_scores}
 
@@ -260,8 +260,8 @@ def test_notation_when_one_tache_is_pas_fait():
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
-        points=0,
-        previsionnel=0,
+        points=None,
+        previsionnel=None,
         potentiel=70,
         referentiel_points=70,
         completed_taches_count=0,
@@ -294,7 +294,7 @@ def test_notation_when_one_tache_non_concerne():
     assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
-    assert len(actual_scores) == 4
+    assert len(actual_scores) == 7
 
     scores_by_id = {score.action_id: score for score in actual_scores}
 
@@ -316,13 +316,13 @@ def test_notation_when_one_tache_non_concerne():
         referentiel_points=30,
         completed_taches_count=1,
         total_taches_count=2,
-        concerne=False,
+        concerne=True,
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
-        points=0,
-        previsionnel=0,
+        points=None,
+        previsionnel=None,
         potentiel=70,
         referentiel_points=70,
         completed_taches_count=0,
@@ -360,7 +360,7 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernes():
     assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
-    assert len(actual_scores) == 5
+    assert len(actual_scores) == 7
 
     scores_by_id = {score.action_id: score for score in actual_scores}
 
@@ -398,8 +398,8 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernes():
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
-        points=0,
-        previsionnel=0,
+        points=None,
+        previsionnel=None,
         potentiel=70,
         referentiel_points=70,
         completed_taches_count=0,
@@ -414,6 +414,67 @@ def test_notation_when_all_taches_of_a_sous_action_are_non_concernes():
         potentiel=70,
         referentiel_points=100,
         completed_taches_count=2,
+        total_taches_count=4,
+        concerne=True,
+    )
+
+
+def test_notation_should_not_redistribute_points_on_taches_regementaires():
+    statuses: List[ActionStatut] = [
+        ActionStatut(
+            action_id=ActionId("eci_2.1"),
+            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            concerne=False,
+        ),
+    ]
+    converted_events, failure_events = prepare_use_case(statuses)
+    assert len(converted_events) == 1
+    assert len(failure_events) == 0
+
+    actual_scores = converted_events[0].scores
+    assert len(actual_scores) == 7
+
+    scores_by_id = {score.action_id: score for score in actual_scores}
+
+    assert scores_by_id[ActionId("eci_2.0")] == ActionScore(
+        action_id=ActionId("eci_2.0"),
+        points=None,
+        previsionnel=None,
+        potentiel=0,
+        referentiel_points=0,
+        completed_taches_count=0,
+        total_taches_count=1,
+        concerne=True,
+    )
+    assert scores_by_id[ActionId("eci_2.1")] == ActionScore(
+        action_id=ActionId("eci_2.1"),
+        points=0,
+        previsionnel=0,
+        potentiel=0,
+        referentiel_points=70,
+        completed_taches_count=1,
+        total_taches_count=1,
+        concerne=False,
+    )
+
+    assert scores_by_id[ActionId("eci_2")] == ActionScore(
+        action_id=ActionId("eci_2"),
+        points=0,
+        previsionnel=0,
+        potentiel=0,
+        referentiel_points=70,
+        completed_taches_count=1,
+        total_taches_count=2,
+        concerne=True,
+    )
+
+    assert scores_by_id[ActionId("eci")] == ActionScore(
+        action_id=ActionId("eci"),
+        points=0,
+        previsionnel=0,
+        potentiel=30,
+        referentiel_points=100,
+        completed_taches_count=1,
         total_taches_count=4,
         concerne=True,
     )

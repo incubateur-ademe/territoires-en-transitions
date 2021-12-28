@@ -16,8 +16,7 @@ from business.core.domain.ports.domain_message_bus import AbstractDomainMessageB
 from business.utils.action_id import ActionId
 from business.utils.use_case import UseCase
 from business.utils.action_points_tree import (
-    ActionPointsNode,
-    ActionsPointsTree,
+    ActionPointTree,
     ActionsPointsTreeError,
 )
 
@@ -36,7 +35,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         self.bus = bus
         self.statuses_repo = statuses_repo
         self.referentiel_repo = referentiel_repo
-        self.points_trees: Dict[Referentiel, ActionsPointsTree] = {}
+        self.points_trees: Dict[Referentiel, ActionPointTree] = {}
 
     def execute(self, command: events.ActionStatutUpdatedForCollectivite):
         point_tree = self.points_trees.get(command.referentiel)
@@ -69,7 +68,6 @@ class ComputeReferentielScoresForCollectivite(UseCase):
 
         scores: Dict[str, ActionScore] = {}
 
-        # TODO : optimize this part
         point_tree.map_on_taches(
             lambda tache: self.update_scores_from_tache_given_statuses(
                 point_tree,
@@ -94,13 +92,13 @@ class ComputeReferentielScoresForCollectivite(UseCase):
 
     def update_scores_from_tache_given_statuses(
         self,
-        points_tree: ActionsPointsTree,
+        point_tree: ActionPointTree,
         scores: Dict[str, ActionScore],
         tache_id: ActionId,
         status_by_action_id: Dict[str, ActionStatut],
         actions_non_concernes_ids: List[str],
     ):
-        tache_points = points_tree.get_action_point(tache_id)
+        tache_points = point_tree.get_action_point(tache_id)
         referentiel_points = tache_points
         # sibling_taches = sous_action.actions
         # for tache in sibling_taches:
@@ -125,7 +123,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             )
             return
 
-        if tache_status:
+        if tache_status and tache_status.is_renseigne:
             tache_points = (
                 tache_potentiel if tache_concerne and tache_status.is_done else 0.0
             )
@@ -135,20 +133,25 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 and (tache_status.is_done or tache_status.will_be_done)
                 else 0.0
             )
-            scores[tache_id] = ActionScore(
-                action_id=tache_id,
-                points=tache_points,
-                potentiel=tache_potentiel,
-                previsionnel=tache_previsionnel,
-                completed_taches_count=1,
-                total_taches_count=1,
-                referentiel_points=referentiel_points,
-                concerne=tache_concerne,
-            )
+            completed_taches_count = 1
+        else:
+            tache_points = tache_previsionnel = None
+            completed_taches_count = 0
+
+        scores[tache_id] = ActionScore(
+            action_id=tache_id,
+            points=tache_points,
+            potentiel=tache_potentiel,
+            previsionnel=tache_previsionnel,
+            completed_taches_count=completed_taches_count,
+            total_taches_count=1,
+            referentiel_points=referentiel_points,
+            concerne=tache_concerne,
+        )
 
     def update_scores_for_action_given_children_scores(
         self,
-        point_tree: ActionsPointsTree,
+        point_tree: ActionPointTree,
         scores: Dict[str, ActionScore],
         action_id: ActionId,
     ):
@@ -158,20 +161,46 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         action_children_with_scores = [
             child_id for child_id in action_children if child_id in scores
         ]
-        points = sum(
-            [scores[child_id].points for child_id in action_children_with_scores]
+
+        points = (
+            None
+            if all(
+                [
+                    scores[child_id].points is None
+                    for child_id in action_children_with_scores
+                ]
+            )
+            else sum(
+                [
+                    scores[child_id].points or 0.0
+                    for child_id in action_children_with_scores
+                ]
+            )
+        )
+        previsionnel = (
+            None
+            if all(
+                [
+                    scores[child_id].previsionnel is None
+                    for child_id in action_children_with_scores
+                ]
+            )
+            else sum(
+                [
+                    scores[child_id].previsionnel or 0.0
+                    for child_id in action_children_with_scores
+                ]
+            )
         )
         potentiel = sum(
             [
-                scores[child_id].potentiel
+                scores[child_id].potentiel or 0.0
                 if child_id in scores
                 else point_tree.get_action_point(child_id)
                 for child_id in action_children
             ]
         )
-        previsionnel = sum(
-            [scores[child_id].previsionnel for child_id in action_children_with_scores]
-        )
+
         concerne = (
             any([scores[child_id].concerne for child_id in action_children_with_scores])
             if action_children_with_scores
@@ -201,11 +230,11 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             concerne=concerne,
         )
 
-    def build_points_tree(self, referentiel: Referentiel) -> ActionsPointsTree:
+    def build_points_tree(self, referentiel: Referentiel) -> ActionPointTree:
         ref_points = self.referentiel_repo.get_all_points_from_referentiel(
             referentiel=referentiel
         )
         ref_children = self.referentiel_repo.get_all_children_from_referentiel(
             referentiel=referentiel
         )
-        return ActionsPointsTree(ref_points, ref_children)
+        return ActionPointTree(ref_points, ref_children)

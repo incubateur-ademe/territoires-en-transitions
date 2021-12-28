@@ -28,7 +28,7 @@ def flatten_list(l: List) -> List:
     return [item for sublist in l for item in sublist]
 
 
-class ActionsPointsTree:
+class ActionPointTree:
     def __init__(
         self, actions_points: List[ActionPoints], actions_children: List[ActionChildren]
     ) -> None:
