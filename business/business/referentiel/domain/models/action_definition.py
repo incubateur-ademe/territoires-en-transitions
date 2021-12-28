@@ -2,14 +2,14 @@ from typing import Optional
 
 from dataclasses import dataclass
 
-from business.core.domain.models.referentiel import Referentiel
+from business.core.domain.models.referentiel import ActionReferentiel
 from business.utils.action_id import ActionId
 
 
 @dataclass
 class ActionDefinition:
     action_id: ActionId
-    referentiel: Referentiel
+    referentiel: ActionReferentiel
     identifiant: str
     nom: str
     thematique_id: str
@@ -23,5 +23,5 @@ class ActionDefinition:
 
 @dataclass
 class ReferentielActionId:
-    referentiel: Referentiel
+    referentiel: ActionReferentiel
     action_id: ActionId

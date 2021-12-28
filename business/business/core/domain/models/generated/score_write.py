@@ -12,9 +12,9 @@ class ScoreWrite:
     completed_taches_count: "int"
     concerne: "bool"
     collectivite_id: "int"
-    points: "float"
-    potentiel: "float"
-    previsionnel: "float"
+    points: Optional[float]
+    potentiel: float
+    previsionnel: Optional[float]
     referentiel_points: "float"
     total_taches_count: "int"
 

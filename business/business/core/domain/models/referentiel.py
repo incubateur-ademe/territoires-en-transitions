@@ -1,4 +1,5 @@
 from typing import Literal
 
 
-Referentiel = Literal["eci", "cae", "crte"]
+ActionReferentiel = Literal["eci", "cae"]
+IndicateurGroups= Literal["eci", "cae", "crte"]

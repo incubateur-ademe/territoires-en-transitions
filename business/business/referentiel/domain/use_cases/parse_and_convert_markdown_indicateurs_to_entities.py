@@ -14,7 +14,7 @@ from business.referentiel.domain.models.indicateur import (
     IndicateurId,
 )
 from business.referentiel.domain.models import events
-from business.core.domain.models.referentiel import Referentiel
+from business.core.domain.models.referentiel import ActionReferentiel
 from business.core.domain.ports.domain_message_bus import (
     AbstractDomainMessageBus,
 )

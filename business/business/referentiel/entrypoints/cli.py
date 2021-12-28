@@ -61,7 +61,7 @@ def store_referentiels(
     markdown_folder: str,
     actions: bool,
     indicateurs: bool,
-    referentiel: Referentiel,
+    referentiel: ActionReferentiel,
 ):
     """Parse, convert and store referentiels actions and indicateurs given IN/OUT folders.
     Note that we consider that the given markdown folder is organized as follow:
@@ -125,7 +125,7 @@ def store_referentiels_command(
     markdown_folder: str,
     actions: bool,
     indicateurs: bool,
-    referentiel: Referentiel,
+    referentiel: ActionReferentiel,
 ):
     """Parse, convert and store referentiels actions and indicateurs given IN/OUT folders.
     Note that we consider that the given markdown folder is organized as follow:

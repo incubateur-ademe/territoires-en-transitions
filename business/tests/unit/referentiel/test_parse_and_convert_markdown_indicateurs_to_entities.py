@@ -9,7 +9,7 @@ from business.core.domain.ports.domain_message_bus import (
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
     InMemoryReferentielRepository,
-    Referentiel,
+    ActionReferentiel,
 )
 from business.referentiel.domain.use_cases.parse_and_convert_markdown_indicateurs_to_entities import (
     ParseAndConvertMarkdownIndicateursToEntities,
@@ -23,7 +23,7 @@ from tests.utils.spy_on_event import spy_on_event
 def prepare_use_case(
     folder_path: str,
     referentiel_repo: Optional[AbstractReferentielRepository] = None,
-    referentiel: Referentiel = "cae",
+    referentiel: ActionReferentiel = "cae",
 ):
     test_command = events.ParseAndConvertMarkdownIndicateursToEntitiesTriggered(
         folder_path=folder_path, referentiel=referentiel

@@ -2,19 +2,21 @@ from __future__ import annotations
 from typing import Callable, Dict, List
 
 from pydantic import BaseModel
+from tqdm import tqdm
 
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_points import ActionPoints
 from business.referentiel.domain.models.action_definition import ActionId
+from business.utils.timeit import timeit
 
 # TODO: can it inherit also from ActionPoints model ?
-class ActionPointsNode(BaseModel):
+class RecursivePointNode(BaseModel):
     action_id: ActionId
     value: float
-    children: List[ActionPointsNode]
+    children: List[RecursivePointNode]
 
 
-ActionPointsNode.update_forward_refs()
+RecursivePointNode.update_forward_refs()
 
 
 class ActionsPointsTreeError(Exception):
@@ -25,14 +27,23 @@ def flatten_list(l: List) -> List:
     return [item for sublist in l for item in sublist]
 
 
-class ActionsPointsTree:
+class ActionPointTree:
     def __init__(
         self, actions_points: List[ActionPoints], actions_children: List[ActionChildren]
     ) -> None:
         self.root_node = self.build_root_node(actions_points, actions_children)
-        self.forward_nodes = self._build_forward_nodes(self.root_node)
-        self.backward_nodes = self.forward_nodes[::-1]
-        self.taches = self.get_taches()
+        self._forward_action_ids = self._build_forward_action_ids(self.root_node)
+        self._backward_action_ids = self._forward_action_ids[::-1]
+
+        self._points_by_id = {
+            action_point.action_id: action_point.value
+            for action_point in actions_points
+        }
+        self._children_by_id = {
+            action_children.action_id: action_children.children_ids
+            for action_children in actions_children
+        }
+        self._tache_ids = self.get_tache_ids()
 
     @staticmethod
     def _find_root_action_point_id(actions_children: List[ActionChildren]) -> ActionId:
@@ -44,9 +55,23 @@ class ActionsPointsTree:
                 return action_children.action_id
         raise ActionsPointsTreeError("No root action found. ")
 
+    def get_action_point(self, action_id: ActionId) -> float:
+        return self._points_by_id[action_id]
+
+    def get_action_children(self, action_id: ActionId) -> List[ActionId]:
+        return self._children_by_id.get(action_id, [])
+
+    def get_action_siblings(self, action_id: ActionId) -> List[ActionId]:
+        action_parent = [
+            parent_id
+            for parent_id, children in self._children_by_id.items()
+            if action_id in children
+        ]
+        return self.get_action_children(action_parent[0]) if action_parent else []
+
     def build_root_node(
         self, actions_points: List[ActionPoints], actions_children: List[ActionChildren]
-    ) -> ActionPointsNode:
+    ) -> RecursivePointNode:
         root_action_point_id = self._find_root_action_point_id(actions_children)
         action_points_by_id: Dict[ActionId, ActionPoints] = {
             action_points.action_id: action_points for action_points in actions_points
@@ -57,7 +82,7 @@ class ActionsPointsTree:
         }
         # Construct ActionPointsNode without children
         nodes_by_action_ids = {
-            action_points.action_id: ActionPointsNode(
+            action_points.action_id: RecursivePointNode(
                 action_id=action_points.action_id,
                 value=action_points.value,
                 children=[],
@@ -73,36 +98,54 @@ class ActionsPointsTree:
             ]
         return nodes_by_action_ids[root_action_point_id]
 
-    def get_taches(self) -> List[ActionPointsNode]:
-        taches = []
-        for node in self.backward_nodes:
-            if self.is_leaf(node):
-                taches.append(node)
-        return taches
+    def get_tache_ids(self) -> List[ActionId]:
+        tache_ids = []
+        for action_id in self._backward_action_ids:
+            if self.is_leaf(action_id):
+                tache_ids.append(action_id)
+        return tache_ids
+
+    def is_leaf(self, action_id: ActionId):
+        return self.get_action_children(action_id) == []
+
+    @timeit("map on taches")
+    def map_on_taches(self, callback: Callable[[ActionId], None]):
+        for tache_id in tqdm(self._tache_ids):
+            callback(tache_id)
+
+    @timeit("map from sous actions to root")
+    def map_from_sous_actions_to_root(self, callback: Callable[[ActionId], None]):
+        for action_id in tqdm(self._backward_action_ids):
+            if action_id not in self._tache_ids:
+                callback(action_id)
+
+    @timeit("map from taches to root")
+    def map_from_taches_to_root(self, callback: Callable[[ActionId], None]):
+        for action_id in tqdm(self._backward_action_ids):
+            callback(action_id)
 
     @staticmethod
-    def is_leaf(action: ActionPointsNode):
-        return action.children == []
+    def _build_forward_action_ids(node: RecursivePointNode) -> List[ActionId]:
+        forward_action_ids: List[ActionId] = []
 
-    def map_on_taches(self, callback: Callable[[ActionPointsNode], None]):
-        for tache in self.taches:
-            callback(tache)
-
-    def map_from_sous_actions_to_root(
-        self, callback: Callable[[ActionPointsNode], None]
-    ):
-        for node in self.backward_nodes:
-            if node not in self.taches:
-                callback(node)
-
-    @staticmethod
-    def _build_forward_nodes(node: ActionPointsNode) -> List[ActionPointsNode]:
-        forward_nodes: List[ActionPointsNode] = []
-
-        def _append_node(node: ActionPointsNode):
-            forward_nodes.append(node)
+        def _append_node(node: RecursivePointNode):
+            forward_action_ids.append(node.action_id)
             if node.children:
                 list(map(_append_node, node.children))
 
         _append_node(node)
-        return forward_nodes
+        return forward_action_ids
+
+    @staticmethod
+    def _build_nodes_by_id(
+        node: RecursivePointNode,
+    ) -> Dict[ActionId, RecursivePointNode]:
+        nodes_by_id: Dict[ActionId, RecursivePointNode] = {}
+
+        def _append_node(node: RecursivePointNode):
+            nodes_by_id[node.action_id] = node
+            if node.children:
+                list(map(_append_node, node.children))
+
+        _append_node(node)
+        return nodes_by_id

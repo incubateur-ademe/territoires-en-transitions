@@ -6,7 +6,7 @@ from ..models.action_children import ActionChildren
 from ..models.action_definition import ActionDefinition
 from ..models.action_points import ActionPoints
 from ..models.indicateur import Indicateur, IndicateurId
-from business.core.domain.models.referentiel import Referentiel
+from business.core.domain.models.referentiel import ActionReferentiel
 from business.utils.action_id import ActionId
 
 
@@ -25,25 +25,25 @@ class AbstractReferentielRepository(abc.ABC):
 
     @abc.abstractmethod
     def get_all_definitions_from_referentiel(
-        self, referentiel: Referentiel
+        self, referentiel: ActionReferentiel
     ) -> List[ActionDefinition]:
         raise NotImplementedError
 
     @abc.abstractmethod
     def get_all_points_from_referentiel(
-        self, referentiel: Referentiel
+        self, referentiel: ActionReferentiel
     ) -> List[ActionPoints]:
         raise NotImplementedError
 
     @abc.abstractmethod
     def get_all_children_from_referentiel(
-        self, referentiel: Referentiel
+        self, referentiel: ActionReferentiel
     ) -> List[ActionChildren]:
         raise NotImplementedError
 
     @abc.abstractmethod
     def get_all_action_ids_from_referentiel(
-        self, referentiel: Referentiel
+        self, referentiel: ActionReferentiel
     ) -> List[ActionId]:
         raise NotImplementedError
 
@@ -75,7 +75,7 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         definition_entities: List[ActionDefinition] = None,
         points_entities: List[ActionPoints] = None,
     ) -> None:
-        self._actions_by_ref: Dict[Referentiel, ReferentielEntities] = {}
+        self._actions_by_ref: Dict[ActionReferentiel, ReferentielEntities] = {}
         self._indicateurs: List[Indicateur] = []
         if children_entities and definition_entities and points_entities:
             self.add_referentiel_actions(
@@ -98,28 +98,28 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         self._actions_by_ref[referentiel].points += points
 
     def get_all_definitions_from_referentiel(
-        self, referentiel: Referentiel
+        self, referentiel: ActionReferentiel
     ) -> List[ActionDefinition]:
         if referentiel not in self._actions_by_ref:
             return []
         return self._actions_by_ref[referentiel].definitions
 
     def get_all_points_from_referentiel(
-        self, referentiel: Referentiel
+        self, referentiel: ActionReferentiel
     ) -> List[ActionPoints]:
         if referentiel not in self._actions_by_ref:
             return []
         return self._actions_by_ref[referentiel].points
 
     def get_all_children_from_referentiel(
-        self, referentiel: Referentiel
+        self, referentiel: ActionReferentiel
     ) -> List[ActionChildren]:
         if referentiel not in self._actions_by_ref:
             return []
         return self._actions_by_ref[referentiel].children
 
     def get_all_action_ids_from_referentiel(
-        self, referentiel: Referentiel
+        self, referentiel: ActionReferentiel
     ) -> List[ActionId]:
         referentiel_entities = self._actions_by_ref.get(referentiel)
         if referentiel_entities is None:

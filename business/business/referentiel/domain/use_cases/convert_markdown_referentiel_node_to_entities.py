@@ -6,7 +6,7 @@ from ..models.action_children import ActionChildren
 from ..models.action_definition import ActionDefinition
 from ..models.markdown_action_node import MarkdownActionNode
 from ..models.action_points import ActionPoints
-from business.core.domain.models.referentiel import Referentiel
+from business.core.domain.models.referentiel import ActionReferentiel
 from business.utils.action_id import ActionId
 
 from business.core.domain.ports.domain_message_bus import (
@@ -40,7 +40,7 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
             )
             return
 
-        self.referentiel: Referentiel = self.referentiel_node.referentiel
+        self.referentiel: ActionReferentiel = self.referentiel_node.referentiel
 
         try:
             self.check_all_identifiant_are_unique()
