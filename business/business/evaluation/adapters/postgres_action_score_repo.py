@@ -41,7 +41,12 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
             values_to_interpolate = " ,".join(
                 [f"%({column})s" for column in score_as_dict.keys()]
             )
-            sql = f"insert into score ({columns}) values ({values_to_interpolate});"
+            do_update_set = ", ".join(
+                [f"{column}=%({column})s" for column in score_as_dict.keys()]
+            )
+
+            sql = f"insert into score ({columns}) values ({values_to_interpolate}) on conflict on constraint score_pkey do update set {do_update_set}, created_at = now();"
+
             try:
                 self.cursor.execute(sql, score_as_dict)
             except errors.ForeignKeyViolation as error:

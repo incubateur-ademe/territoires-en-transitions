@@ -18,7 +18,7 @@ def test_cannot_write_if_collectivite_or_action_does_not_exist(postgres_connecti
         )
 
 
-def test_adding_entities_for_different_collectivites_to_repo_should_write_in_postgres(
+def test_adding_and_updating_entities_for_different_collectivites_to_repo_should_write_in_postgres(
     postgres_connection, autoclear_cursor
 ):
     test_cursor = autoclear_cursor
@@ -49,7 +49,20 @@ def test_adding_entities_for_different_collectivites_to_repo_should_write_in_pos
     repo.add_entities_for_collectivite(
         collectivite_id=2, entities=[make_action_score("cae_1.1", points=90)]
     )
-    test_cursor.execute("select action_id from score where collectivite_id=2;")
+    test_cursor.execute("select action_id, points from score where collectivite_id=2;")
     collectivite_1_action_id_with_scores = test_cursor.fetchall()
     assert len(collectivite_1_action_id_with_scores) == 1
-    assert collectivite_1_action_id_with_scores == [{"action_id": "cae_1.1"}]
+    assert collectivite_1_action_id_with_scores == [
+        {"action_id": "cae_1.1", "points": 90}
+    ]
+
+    # update score for cae_1.1
+    repo.add_entities_for_collectivite(
+        collectivite_id=2, entities=[make_action_score("cae_1.1", points=95)]
+    )
+    test_cursor.execute("select action_id, points from score where collectivite_id=2;")
+    collectivite_1_action_id_with_scores = test_cursor.fetchall()
+    assert len(collectivite_1_action_id_with_scores) == 1
+    assert collectivite_1_action_id_with_scores == [
+        {"action_id": "cae_1.1", "points": 95}
+    ]
