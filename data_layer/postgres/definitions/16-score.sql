@@ -57,8 +57,8 @@ as
 $$
 select score.collectivite_id,
        action_relation.referentiel,
-       jsonb_agg(
-               jsonb_build_object(
+       json_agg(
+               json_build_object(
                        'action_id', action_id,
                        'points', points,
                        'potentiel', potentiel,
