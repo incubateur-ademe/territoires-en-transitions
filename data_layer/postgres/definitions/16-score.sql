@@ -25,7 +25,7 @@ alter table score
     enable row level security;
 
 create policy allow_read
-    on action_statut
+    on score
     for select
     using (is_any_role_on(collectivite_id));
 
@@ -133,14 +133,14 @@ execute procedure after_score_update_insert_client_scores();
 --------------------------------
 create view unprocessed_collectivite_action_statut_update_event
 as
-select collectivite_action_statut_update_event.collectivite_id, referentiel, created_at
-from collectivite_action_statut_update_event
+select action_statut_update_event.collectivite_id, referentiel, created_at
+from action_statut_update_event
          join (
     select collectivite_id, max(created_at) as date
     from score
     group by collectivite_id
 )
-    as latest_epci_score on collectivite_action_statut_update_event.collectivite_id = latest_epci_score.collectivite_id
-where collectivite_action_statut_update_event.created_at > latest_epci_score.date;
+    as latest_epci_score on action_statut_update_event.collectivite_id = latest_epci_score.collectivite_id
+where action_statut_update_event.created_at > latest_epci_score.date;
 comment on view unprocessed_collectivite_action_statut_update_event is
     'To be used by business to compute only what is necessary.';

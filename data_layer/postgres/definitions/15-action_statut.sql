@@ -35,13 +35,6 @@ create policy allow_update
     using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
                               collectivite_id));
 
-drop policy allow_insert
-    on action_statut;
-
-drop policy allow_update
-    on action_statut;
-
-
 create view client_action_statut
 as
 select collectivite_id,
@@ -65,16 +58,17 @@ from action_statut
 --------------------------------
 ----------- EVENTS -------------
 --------------------------------
-create table collectivite_action_statut_update_event
+create table action_statut_update_event
 (
     collectivite_id integer references collectivite                    not null,
     referentiel     referentiel                                        not null,
-    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
+    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null,
+    primary key (collectivite_id, referentiel)
 );
-comment on table collectivite_action_statut_update_event is
+comment on table action_statut_update_event is
     'Used by business only to trigger score computation';
 
-alter table collectivite_action_statut_update_event
+alter table action_statut_update_event
     -- Disallow all since business use a privileged postgres access (for now).
     enable row level security;
 
@@ -84,13 +78,15 @@ declare
     relation action_relation%ROWTYPE;
 begin
     select * into relation from action_relation where id = NEW.action_id limit 1;
-    insert into collectivite_action_statut_update_event values (NEW.collectivite_id, relation.referentiel, default);
+    insert into action_statut_update_event values (NEW.collectivite_id, relation.referentiel, default)
+    on conflict on constraint action_statut_update_event_pkey
+    do update set created_at = now();
     return null;
 end;
 $$ language plpgsql security definer;
 
 create trigger after_action_statut_insert
-    after insert
+    after insert or update
     on action_statut
     for each row
 execute procedure after_action_statut_insert_write_event();

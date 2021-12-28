@@ -33,7 +33,7 @@ Content-Type: application/json
 
 {
   "collectivite_id": 1,
-  "action_id": "cae_1.1.1.1.1",
+  "action_id": "eci_1.1.1.1",
   "avancement": "fait",
   "concerne": true
 }
