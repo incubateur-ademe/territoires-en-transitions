@@ -27,7 +27,7 @@ create policy allow_insert
     on action_statut
     for insert
     with check (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                              collectivite_id));
+                                   collectivite_id));
 
 create policy allow_update
     on action_statut
@@ -60,10 +60,10 @@ from action_statut
 --------------------------------
 create table action_statut_update_event
 (
+    id              serial primary key,
     collectivite_id integer references collectivite                    not null,
     referentiel     referentiel                                        not null,
-    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null,
-    primary key (collectivite_id, referentiel)
+    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 comment on table action_statut_update_event is
     'Used by business only to trigger score computation';
@@ -78,9 +78,7 @@ declare
     relation action_relation%ROWTYPE;
 begin
     select * into relation from action_relation where id = NEW.action_id limit 1;
-    insert into action_statut_update_event values (NEW.collectivite_id, relation.referentiel, default)
-    on conflict on constraint action_statut_update_event_pkey
-    do update set created_at = now();
+    insert into action_statut_update_event values (default, NEW.collectivite_id, relation.referentiel, default);
     return null;
 end;
 $$ language plpgsql security definer;
