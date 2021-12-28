@@ -1,13 +1,17 @@
-import {DataLayerReadEndpoint} from 'core-logic/api/dataLayerEndpoint';
+import {
+  DataLayerReadCachedEndpoint,
+  DataLayerReadEndpoint,
+} from 'core-logic/api/dataLayerEndpoint';
 import {ActionCommentaireRead} from 'generated/dataLayer/action_commentaire_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
+import {actionCommentaireWriteEndpoint} from 'core-logic/api/endpoints/ActionCommentaireWriteEndpoint';
 
 export interface CommentaireGetParams {
   collectivite_id: number;
   action_id?: string;
 }
 
-class ActionCommentaireReadEndpoint extends DataLayerReadEndpoint<
+class ActionCommentaireReadEndpoint extends DataLayerReadCachedEndpoint<
   ActionCommentaireRead,
   CommentaireGetParams
 > {
@@ -24,5 +28,6 @@ class ActionCommentaireReadEndpoint extends DataLayerReadEndpoint<
   }
 }
 
-export const actionCommentaireReadEndpoint =
-  new ActionCommentaireReadEndpoint();
+export const actionCommentaireReadEndpoint = new ActionCommentaireReadEndpoint([
+  actionCommentaireWriteEndpoint,
+]);

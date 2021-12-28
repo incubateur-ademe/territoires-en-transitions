@@ -58,6 +58,8 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             command.collectivite_id, command.referentiel
         )
 
+        print("\nFetched statuses from datalayer : ", statuses)
+
         status_by_action_id: Dict[str, ActionStatut] = {
             action_status.action_id: action_status
             for action_status in statuses
@@ -142,6 +144,9 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 if tache_concerne
                 and (tache_status.is_done or tache_status.will_be_done)
                 else 0.0
+            )
+            print(
+                f"\n For tache {tache_id}, points is {tache_points} and previsionnel is {tache_previsionnel}, avancement is {tache_status.avancement}, is_done is {tache_status.is_done}, will be potentiel is {tache_potentiel}, concerne is {tache_concerne}."
             )
             completed_taches_count = 1
         else:

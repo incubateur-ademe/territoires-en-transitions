@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
-from typing import Any, Dict, Optional, Union, get_args, get_origin
+from typing import Any, Dict, Union, get_args, get_origin
 
 
 class ActionStatutAvancement(Enum):

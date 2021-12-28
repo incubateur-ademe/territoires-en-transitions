@@ -10,7 +10,11 @@ from business.core.domain.models.referentiel import ActionReferentiel
 from business.evaluation.domain.ports.action_status_repo import (
     AbstractActionStatutRepository,
 )
-from business.evaluation.domain.models.action_statut import ActionStatut, ActionId
+from business.evaluation.domain.models.action_statut import (
+    ActionStatut,
+    ActionId,
+    ActionStatutAvancement,
+)
 from business.core.domain.models.generated.business_action_statut_read import (
     BusinessActionStatutRead,
 )
@@ -37,7 +41,7 @@ class PostgresActionStatutRepository(
         return [
             ActionStatut(
                 action_id=ActionId(reading.action_id),
-                avancement=reading.avancement,
+                avancement=ActionStatutAvancement(reading.avancement),
                 concerne=reading.concerne,
             )
             for reading in readings
