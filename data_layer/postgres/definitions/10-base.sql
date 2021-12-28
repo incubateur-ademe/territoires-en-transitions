@@ -1,5 +1,3 @@
-set search_path to public;
-
 create table absract_modified_at
 (
     modified_at timestamp with time zone default CURRENT_TIMESTAMP not null
