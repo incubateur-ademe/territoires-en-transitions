@@ -18,9 +18,23 @@ Content-Type: application/json
 %}
 
 
-
-### List score
-GET {{api}}/rest/v1/score
+### List action relation
+GET {{api}}/rest/v1/action_statut?select=*
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
+
+### List action down to tache
+POST {{api}}/rest/v1/action_statut
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "action_id": "cae_1.1.1.1.3",
+  "avancement": "fait",
+  "concerne": true,
+  "modified_by": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
+  "modified_at": "2021-12-28T13:34:34.827486+00:00"
+}

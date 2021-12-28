@@ -17,9 +17,17 @@ create table score
     primary key (collectivite_id, action_id)
 );
 
-comment on table score is 'Score data is created by the business';
+comment on table score is 'Score data is created only by the business';
 comment on column score.created_at is
     'Used to group scores in batches because rows created during a transaction have the same values';
+
+alter table score
+    enable row level security;
+
+create policy allow_read
+    on action_statut
+    for select
+    using (is_any_role_on(collectivite_id));
 
 create table client_scores
 (

@@ -21,6 +21,15 @@ comment on table action_relation is
     'Relation between an action and its parent. '
         'Parent must be inserted before its child; child must be deleted before its parent.';
 
+alter table action_relation
+    enable row level security;
+
+create policy allow_read
+    on action_relation
+    for select
+    using (true);
+
+
 create or replace view action_children
 as
 select referentiel, id, parent, children.ids as children
@@ -49,6 +58,14 @@ create table indicateur_parent
 );
 comment on table indicateur_parent is 'An optional parent used to group indicateurs together.';
 
+alter table indicateur_parent
+    enable row level security;
+
+create policy allow_read
+    on indicateur_parent
+    for select
+    using (true);
+
 
 create domain indicateur_id as varchar(30);
 create table indicateur_definition
@@ -65,6 +82,15 @@ create table indicateur_definition
 ) inherits (absract_modified_at);
 comment on table indicateur_definition is 'Indicateur definition from markdown. Populated by business';
 
+alter table indicateur_definition
+    enable row level security;
+
+create policy allow_read
+    on indicateur_definition
+    for select
+    using (true);
+
+
 create table indicateur_action
 (
     indicateur_id indicateur_id references indicateur_definition
@@ -74,6 +100,14 @@ create table indicateur_action
     primary key (indicateur_id, action_id)
 ) inherits (absract_modified_at);
 comment on table indicateur_action is 'Indicateur <-> Action many-to-many relationship';
+
+alter table indicateur_action
+    enable row level security;
+
+create policy allow_read
+    on indicateur_action
+    for select
+    using (true);
 
 
 --------------------------------
@@ -95,6 +129,14 @@ create table action_definition
 comment on table action_definition is 'Action definition from markdown. Populated by business';
 
 
+alter table action_definition
+    enable row level security;
+
+create policy allow_read
+    on action_definition
+    for select
+    using (true);
+
 create view action_definition_summary
 as
 select action_id,
@@ -115,6 +157,15 @@ create table action_computed_points
 ) inherits (absract_modified_at);
 comment on table action_computed_points is
     'Action points computed by the business';
+
+alter table action_computed_points
+    enable row level security;
+
+create policy allow_read
+    on action_computed_points
+    for select
+    using (true);
+
 
 create or replace function referentiel_down_to_action(
     referentiel referentiel
@@ -170,4 +221,4 @@ begin
             >= referentiel_action_depth - 1;
 end
 $$ language plpgsql;
-comment on function action_down_to_tache is 'Returns referentiel action summary down to the action level';
+comment on function action_down_to_tache is 'Returns referentiel action summary down to the tache level';

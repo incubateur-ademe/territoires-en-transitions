@@ -18,7 +18,7 @@ Content-Type: application/json
 %}
 
 
-### List owned collectivite
+### List droits
 GET {{api}}/rest/v1/private_utilisateur_droit?select=*
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
@@ -63,6 +63,17 @@ Content-Type: application/json
   "id": 9
 }
 
+
+### Is amongst role of
+POST {{api}}/rest/v1/rpc/is_amongst_role_on
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "role_list": ["agent", "referent"],
+  "id": 9
+}
 
 ### Is authenticated
 POST {{api}}/rest/v1/rpc/is_authenticated

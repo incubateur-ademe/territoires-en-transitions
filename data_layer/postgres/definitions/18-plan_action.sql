@@ -3,9 +3,8 @@ create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours');
 -- fiche action
 create table fiche_action
 (
-    id                          serial primary key,
+    uid                         uuid                    primary key,
     collectivite_id             integer references collectivite,
-    uid                         uuid                    not null,
     avancement                  fiche_action_avancement not null,
     numerotation                text                    not null,
     titre                       text                    not null,
@@ -28,27 +27,27 @@ comment on table fiche_action is 'Fiche action used by the client';
 
 create table fiche_action_action
 (
-    fiche_action_id integer references fiche_action,
+    fiche_action_uid uuid references fiche_action,
     action_id       action_id references action_relation,
-    primary key (fiche_action_id, action_id)
+    primary key (fiche_action_uid, action_id)
 );
 comment on table fiche_action is
     'Many-to-many relationship between fiche action and referentiel action';
 
 create table fiche_action_indicateur
 (
-    fiche_action_id integer references fiche_action,
+    fiche_action_uid uuid references fiche_action,
     indicateur_id   indicateur_id references indicateur_definition,
-    primary key (fiche_action_id, indicateur_id)
+    primary key (fiche_action_uid, indicateur_id)
 );
 comment on table fiche_action_indicateur is
     'Many-to-many relationship between fiche action and referentiel indicateur';
 
 create table fiche_action_indicateur_personnalise
 (
-    fiche_action_id            integer references fiche_action,
+    fiche_action_uid            uuid references fiche_action,
     indicateur_personnalise_id integer references indicateur_personnalise_definition,
-    primary key (fiche_action_id, indicateur_personnalise_id)
+    primary key (fiche_action_uid, indicateur_personnalise_id)
 );
 comment on table fiche_action_indicateur_personnalise is
     'Many-to-many relationship between fiche action and indicateur personnalisé';

@@ -27,29 +27,71 @@ create policy allow_read
 --------------------------------
 -------- RLS HELPERS -----------
 --------------------------------
+
 create or replace function
-    is_referent_of(id integer)
+    is_any_role_on(id integer)
     returns boolean
 as
 $$
 select count(*) > 0
 from private_utilisateur_droit
-where private_utilisateur_droit.collectivite_id = is_referent_of.id
-  and role_name = 'referent'
-    and active
+where private_utilisateur_droit.collectivite_id = is_any_role_on.id and
+    private_utilisateur_droit.user_id = auth.uid()
+  and active
+$$ language sql;
+comment on function is_any_role_on is
+    'Returns true if current user have a any role on a collectivité id';
+
+
+create or replace function
+    is_amongst_role_on(role_list role_name[], id integer)
+    returns boolean
+as
+$$
+select count(*) > 0
+from private_utilisateur_droit
+where private_utilisateur_droit.collectivite_id = is_amongst_role_on.id
+  and role_name = any (is_amongst_role_on.role_list)
+  and private_utilisateur_droit.user_id = auth.uid()
+  and active
+$$ language sql;
+comment on function is_amongst_role_on is
+    'Returns true if current user is amongst role list on a collectivité id';
+
+
+create or replace function
+    is_role_on(role role_name, id integer)
+    returns boolean
+as
+$$
+select count(*) > 0
+from private_utilisateur_droit
+where private_utilisateur_droit.collectivite_id = is_role_on.id
+  and private_utilisateur_droit.user_id = auth.uid()
+  and role_name = is_role_on.role
+  and active
+$$ language sql;
+comment on function is_role_on is
+    'Returns true if current user have a given role on a collectivité id';
+
+create or replace function
+    is_referent_of(id integer)
+    returns boolean
+as
+$$
+select is_role_on('referent', is_referent_of.id)
 $$ language sql;
 comment on function is_referent_of is
     'Returns true if current user is a referent of collectivite id';
-
 
 create or replace function
     is_authenticated()
     returns boolean
 as
 $$
-    begin
-        return auth.role() = 'authenticated';
-    end;
+begin
+    return auth.role() = 'authenticated';
+end;
 $$ language plpgsql;
 comment on function is_authenticated is
     'Returns true if current user is authenticated.';
