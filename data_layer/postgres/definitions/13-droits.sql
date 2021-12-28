@@ -132,7 +132,7 @@ from active_collectivite
          full outer join owned_collectivite on
         owned_collectivite.collectivite_id = active_collectivite.collectivite_id
 where auth.uid() is null -- return all active collectivités if auth.user is null
-   or owned_collectivite.collectivite_id is not null;
+   or owned_collectivite.collectivite_id is null;
 comment on view elses_collectivite is 'Collectivités not belonging to the authenticated user';
 
 
