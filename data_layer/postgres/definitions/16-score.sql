@@ -6,14 +6,15 @@ create table score
     -- id                     serial primary key,
     collectivite_id        integer references collectivite        not null,
     action_id              action_id references action_relation   not null,
-    points                 real                                  ,
+    points                 real,
     potentiel              real                                   not null,
     referentiel_points     real                                   not null,
     concerne               bool                                   not null,
-    previsionnel           real                                   ,
+    previsionnel           real,
     total_taches_count     int                                    not null,
     completed_taches_count int                                    not null,
     created_at             timestamp with time zone default Now() not null,
+    processed              boolean                  default false not null,
     primary key (collectivite_id, action_id)
 );
 
@@ -34,7 +35,7 @@ create table client_scores
     -- id               serial primary key,
     collectivite_id  integer references collectivite not null,
     referentiel      referentiel                     not null,
-    scores           jsonb                           not null,
+    scores           json                            not null,
     score_created_at timestamp with time zone        not null,
     primary key (collectivite_id, referentiel)
 );
@@ -50,7 +51,7 @@ create or replace function
             (
                 collectivite_id int,
                 referentiel     referentiel,
-                scores          jsonb,
+                scores          json,
                 created_at      timestamptz
             )
 as
@@ -79,54 +80,22 @@ group by score.collectivite_id, action_relation.referentiel;
 $$ language sql;
 
 
-create or replace function
-    should_create_client_scores_for_epci(
-    collectivite_id integer,
-    created timestamp with time zone
-) returns bool
-as
+create or replace function insert_client_scores_for_collectivite(
+    id integer
+) returns void as
 $$
-select count(*) > 0
-from score
-where score.collectivite_id = $1
-  and score.created_at = $2;
-$$ language sql;
-
-
-
-create or replace function after_score_update_insert_client_scores() returns trigger as
-$$
-declare
-    existingClientScoreCount bool;
 begin
-    -- find existing client scores
-    select should_create_client_scores_for_epci(NEW.collectivite_id, NEW.created_at)
-    into existingClientScoreCount;
-
-    if existingClientScoreCount
-    then
-        -- remove existing client scores
-        delete from client_scores where collectivite_id = NEW.collectivite_id;
-        -- insert client scores
-        insert into client_scores (collectivite_id, referentiel, scores, score_created_at)
-        select batches.collectivite_id,
-               batches.referentiel,
-               batches.scores,
-               batches.created_at
-        from get_score_batches_for_epci(NEW.collectivite_id) as batches;
-    end if;
-    return null;
+    -- remove existing client scores
+    delete from client_scores where collectivite_id = id;
+    -- insert client scores
+    insert into client_scores (collectivite_id, referentiel, scores, score_created_at)
+    select batches.collectivite_id,
+           batches.referentiel,
+           batches.scores,
+           batches.created_at
+    from get_score_batches_for_epci(id) as batches;
 end;
 $$ language plpgsql;
-
-create constraint trigger after_score_write
-    after update or insert
-    on score
-    deferrable
-        initially deferred
-    for each row
-execute procedure after_score_update_insert_client_scores();
-
 
 --------------------------------
 ---------- PROCESSING ----------

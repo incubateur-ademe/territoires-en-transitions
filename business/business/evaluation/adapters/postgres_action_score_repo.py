@@ -52,4 +52,8 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
             except errors.ForeignKeyViolation as error:
                 raise PostgresRepositoryError(str(error))
 
+        try:
+            self.cursor.execute(f"select insert_client_scores_for_collectivite({collectivite_id});")
+        except errors.ForeignKeyViolation as error:
+            raise PostgresRepositoryError(str(error))
         self.connection.commit()
