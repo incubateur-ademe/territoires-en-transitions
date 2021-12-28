@@ -27,14 +27,19 @@ create policy allow_insert
     on action_statut
     for insert
     with check (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                                   collectivite_id));
+                              collectivite_id));
 
 create policy allow_update
     on action_statut
     for update
-    with check (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                                   collectivite_id));
+    using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
+                              collectivite_id));
 
+drop policy allow_insert
+    on action_statut;
+
+drop policy allow_update
+    on action_statut;
 
 
 create view client_action_statut
