@@ -1,3 +1,6 @@
+--------------------------------
+----------- TABLES -------------
+--------------------------------
 create type role_name as enum ('agent', 'referent', 'conseiller', 'auditeur');
 
 create table private_utilisateur_droit
@@ -11,15 +14,50 @@ create table private_utilisateur_droit
     modified_at     timestamp with time zone default CURRENT_TIMESTAMP not null
 );
 
-create table private_epci_invitation
-(
-    id              serial primary key,
-    role_name       role_name                                          not null,
-    collectivite_id integer references collectivite                    not null,
-    created_by      uuid references auth.users,
-    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
-);
+alter table private_utilisateur_droit
+    enable row level security;
 
+create policy allow_read
+    on private_utilisateur_droit
+    for select
+    using (true);
+
+
+
+--------------------------------
+-------- RLS HELPERS -----------
+--------------------------------
+create or replace function
+    is_referent_of(id integer)
+    returns boolean
+as
+$$
+select count(*) > 0
+from private_utilisateur_droit
+where private_utilisateur_droit.collectivite_id = is_referent_of.id
+  and role_name = 'referent'
+    and active
+$$ language sql;
+comment on function is_referent_of is
+    'Returns true if current user is a referent of collectivite id';
+
+
+create or replace function
+    is_authenticated()
+    returns boolean
+as
+$$
+    begin
+        return auth.role() = 'authenticated';
+    end;
+$$ language plpgsql;
+comment on function is_authenticated is
+    'Returns true if current user is authenticated.';
+
+
+--------------------------------
+------------ VIEWS -------------
+--------------------------------
 create or replace view active_collectivite as
 select named_collectivite.collectivite_id, nom
 from named_collectivite
@@ -30,7 +68,35 @@ where private_utilisateur_droit.id is not null
 group by named_collectivite.collectivite_id, nom
 order by nom;
 
+create view owned_collectivite
+as
+with current_droits as (
+    select *
+    from private_utilisateur_droit
+    where user_id = auth.uid()
+      and active
+)
+select named_collectivite.collectivite_id as collectivite_id, named_collectivite.nom, role_name
+from current_droits
+         join named_collectivite on named_collectivite.collectivite_id = current_droits.collectivite_id
+         join epci on named_collectivite.collectivite_id = epci.collectivite_id
+order by nom;
 
+
+create or replace view elses_collectivite
+as
+select active_collectivite.collectivite_id, active_collectivite.nom
+from active_collectivite
+         full outer join owned_collectivite on
+        owned_collectivite.collectivite_id = active_collectivite.collectivite_id
+where auth.uid() is null -- return all active collectivités if auth.user is null
+   or owned_collectivite.collectivite_id is not null;
+comment on view elses_collectivite is 'Collectivités not belonging to the authenticated user';
+
+
+--------------------------------
+------- OWNERSHIP RPCs ---------
+--------------------------------
 create or replace function claim_collectivite(id integer) returns json
 as
 $$
@@ -41,16 +107,18 @@ begin
     select id into claimed_collectivite_id;
 
     -- compute collectivite_already_claimed, which is true if a droit exist for claimed collectivite
-    select count(*) > 0
-    from private_utilisateur_droit
-    where private_utilisateur_droit.collectivite_id = claimed_collectivite_id
+    select is_referent_of(claimed_collectivite_id)
     into collectivite_already_claimed;
 
     if not collectivite_already_claimed
     then
         -- current user can claim collectivite as its own
         -- create a droit for current user on collectivite
-        insert into private_utilisateur_droit(user_id, collectivite_id, role_name, active)
+        delete
+        from private_utilisateur_droit
+        where is_referent_of(claimed_collectivite_id);
+        insert
+        into private_utilisateur_droit(user_id, collectivite_id, role_name, active)
         values (auth.uid(), claimed_collectivite_id, 'referent', true);
         -- return a success message
         perform set_config('response.status', '200', true);
@@ -62,7 +130,7 @@ begin
         return json_build_object('message', 'La collectivité dispose déjà d''un référent.');
     end if;
 end
-$$ language plpgsql;
+$$ language plpgsql security definer;
 comment on function claim_collectivite is
     'Claims an EPCI : '
         'will succeed with a code 200 if this EPCI does not have referent yet.'
@@ -102,7 +170,7 @@ begin
         return json_build_object('message', 'Vous avez quitté la collectivité.');
     end if;
 end
-$$ language plpgsql;
+$$ language plpgsql security definer;
 comment on function quit_collectivite is
     'Unclaims an Collectivité: '
         'Will succeed with a code 200 if user have a droit on this collectivité.'
@@ -124,8 +192,7 @@ begin
     -- select referent user id
     select user_id
     from private_utilisateur_droit
-    where collectivite_id = requested_collectivite_id
-      and role_name = 'referent'
+    where is_referent_of(requested_collectivite_id)
     into referent_id;
 
     if referent_id is null
@@ -133,7 +200,7 @@ begin
         perform set_config('response.status', '404', true);
         return json_build_object('message', 'Cette collectivité n''a pas de référent.');
     else
-        -- retrieve contact information of referent_id TODO
+        -- retrieve contact information of referent_id
         select email, nom, prenom
         from dcp
         where user_id = referent_id
@@ -148,29 +215,18 @@ comment on function referent_contact is
     'Returns the contact information of the Collectivité referent given the siren.';
 
 
+
+--------------------------------
+------- INVITATION FLOW --------
+--------------------------------
 -- todo create function accept_invitation(invitation_id uuid);
 -- todo create function create_invitation();
-
-create view owned_collectivite
-as
-with current_droits as (
-    select *
-    from private_utilisateur_droit
-    where user_id = auth.uid()
-)
-select named_collectivite.collectivite_id as collectivite_id, named_collectivite.nom, role_name
-from current_droits
-         join named_collectivite on named_collectivite.collectivite_id = current_droits.collectivite_id
-         join epci on named_collectivite.collectivite_id = epci.collectivite_id
-order by nom;
-
-
-create or replace view elses_collectivite
-as
-select active_collectivite.collectivite_id, active_collectivite.nom
-from active_collectivite
-         full outer join owned_collectivite on
-        owned_collectivite.collectivite_id = active_collectivite.collectivite_id
-where auth.uid() is null -- return all active collectivités if auth.user is null
-   or owned_collectivite.collectivite_id is not null;
-comment on view elses_collectivite is 'Collectivités not belonging to the authenticated user';
+-- todo
+-- create table private_epci_invitation
+-- (
+--     id              serial primary key,
+--     role_name       role_name                                          not null,
+--     collectivite_id integer references collectivite                    not null,
+--     created_by      uuid references auth.users,
+--     created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
+-- );
