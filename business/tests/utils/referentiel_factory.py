@@ -11,14 +11,14 @@ from business.referentiel.domain.models.indicateur import (
     IndicateurGroup,
     IndicateurId,
 )
-from business.core.domain.models.referentiel import Referentiel
+from business.core.domain.models.referentiel import ActionReferentiel
 from business.referentiel.domain.models.markdown_action_node import MarkdownActionNode
 from business.utils.action_id import retrieve_referentiel
 
 
 def make_action_definition(
     action_id: str,
-    referentiel: Optional[Referentiel] = None,
+    referentiel: Optional[ActionReferentiel] = None,
     identifiant: str = "",
     nom: str = "",
     thematique_id: str = "",
@@ -66,7 +66,7 @@ def make_markdown_action_node(
     points: Optional[float] = None,
     pourcentage: Optional[float] = None,
     actions: List[MarkdownActionNode] = [],
-    referentiel: Referentiel = "eci",
+    referentiel: ActionReferentiel = "eci",
 ):
     return MarkdownActionNode(
         identifiant=identifiant,
@@ -121,7 +121,7 @@ def set_markdown_action_node_children_with_points(
 
 
 def make_dummy_referentiel(
-    action_ids: List[str], referentiel: Referentiel = "eci"
+    action_ids: List[str], referentiel: ActionReferentiel = "eci"
 ) -> Tuple[List[ActionChildren], List[ActionDefinition], List[ActionPoints]]:
     definitions = [
         make_action_definition(

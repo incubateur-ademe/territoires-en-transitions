@@ -133,4 +133,4 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
         == "cae"
     )
 
-    assert duration_ms < 1000, "Computation should last less than one minute"
+    assert duration_ms < 1000, "Computation took more than one second"

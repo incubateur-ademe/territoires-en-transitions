@@ -5,7 +5,7 @@ from typing import List
 from .action_definition import ActionDefinition
 from .action_children import ActionChildren
 from .action_points import ActionPoints
-from business.core.domain.models.referentiel import Referentiel
+from business.core.domain.models.referentiel import ActionReferentiel
 from business.core.domain.models.event import DomainEvent, DomainFailureEvent
 from .markdown_action_node import MarkdownActionNode
 from .indicateur import Indicateur
@@ -31,7 +31,7 @@ class MarkdownReferentielNodeConvertedToEntities(DomainEvent):
     definitions: List[ActionDefinition]
     points: List[ActionPoints]
     children: List[ActionChildren]
-    referentiel: Referentiel
+    referentiel: ActionReferentiel
 
 
 @dataclass
@@ -41,12 +41,12 @@ class MarkdownReferentielNodeInconsistencyFound(DomainFailureEvent):  # FAILURE
 
 @dataclass
 class ReferentielActionsStored(DomainEvent):
-    referentiel: Referentiel
+    referentiel: ActionReferentiel
 
 
 @dataclass
 class ReferentielIndicateursStored(DomainEvent):
-    referentiel: Referentiel
+    referentiel: ActionReferentiel
 
 
 @dataclass
@@ -56,13 +56,13 @@ class ReferentielStorageFailed(DomainFailureEvent):
 
 @dataclass
 class IndicateurStored(DomainEvent):
-    referentiel: Referentiel
+    referentiel: ActionReferentiel
 
 
 @dataclass
 class IndicateurMarkdownConvertedToEntities(DomainEvent):
     indicateurs: List[Indicateur]
-    referentiel: Referentiel
+    referentiel: ActionReferentiel
 
 
 @dataclass
@@ -77,11 +77,11 @@ class IndicateurEntitiesStored(DomainEvent):
 
 @dataclass
 class ExtractReferentielActionsToCsvTriggered(DomainEvent):
-    referentiel: Referentiel
+    referentiel: ActionReferentiel
     csv_path: Path
 
 
 @dataclass
 class ParseAndConvertMarkdownIndicateursToEntitiesTriggered(DomainEvent):
     folder_path: str
-    referentiel: Referentiel
+    referentiel: ActionReferentiel

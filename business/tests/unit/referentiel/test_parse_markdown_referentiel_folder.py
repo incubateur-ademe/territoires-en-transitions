@@ -141,7 +141,7 @@ def test_build_markdown_action_node_when_referentiel_is_unknown():
 
     assert (
         failure_events[0].reason
-        == "1 validation error for MarkdownActionNode\nreferentiel\n  unexpected value; permitted: 'eci', 'cae', 'crte' (type=value_error.const; given=some_new_fancy_referentiel; permitted=('eci', 'cae', 'crte'))"
+        == "1 validation error for MarkdownActionNode\nreferentiel\n  unexpected value; permitted: 'eci', 'cae' (type=value_error.const; given=some_new_fancy_referentiel; permitted=('eci', 'cae'))"
     )
 
 

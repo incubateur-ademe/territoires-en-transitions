@@ -2,7 +2,7 @@ import abc
 from typing import List
 
 from business.evaluation.domain.models.action_statut import ActionStatut
-from business.core.domain.models.referentiel import Referentiel
+from business.core.domain.models.referentiel import ActionReferentiel
 
 
 class AbstractActionStatutRepository(abc.ABC):
@@ -11,7 +11,7 @@ class AbstractActionStatutRepository(abc.ABC):
 
     @abc.abstractmethod
     def get_all_for_collectivite(
-        self, collectivite_id: int, referentiel: Referentiel
+        self, collectivite_id: int, referentiel: ActionReferentiel
     ) -> List[ActionStatut]:
         raise NotImplementedError
 
@@ -21,7 +21,7 @@ class InMemoryActionStatutRepository(AbstractActionStatutRepository):
         self._entities = entities or []
 
     def get_all_for_collectivite(
-        self, collectivite_id: int, referentiel: Referentiel
+        self, collectivite_id: int, referentiel: ActionReferentiel
     ) -> List[ActionStatut]:
         return self._entities
 

@@ -3,12 +3,12 @@ from typing import Dict, Optional
 
 from psycopg import Cursor
 
-from business.utils.action_id import ActionId, Referentiel
+from business.utils.action_id import ActionId, ActionReferentiel
 
 
 def insert_action_relation(
     cursor: Cursor,
-    referentiel: Referentiel,
+    referentiel: ActionReferentiel,
     action_id: ActionId,
     parent_id: Optional[ActionId],
 ):
@@ -30,7 +30,7 @@ def insert_action_relation(
 
 def insert_referentiel(
     cursor: Cursor,
-    referentiel: Referentiel,
+    referentiel: ActionReferentiel,
     parent_by_action_id: Dict[ActionId, Optional[ActionId]],
 ):
     for action_id, parent_action_id in parent_by_action_id.items():

@@ -1,5 +1,4 @@
 from __future__ import annotations
-from re import A
 from typing import Callable, Dict, List
 
 from pydantic import BaseModel
@@ -56,11 +55,19 @@ class ActionPointTree:
                 return action_children.action_id
         raise ActionsPointsTreeError("No root action found. ")
 
-    def get_action_point(self, action_id: ActionId):
+    def get_action_point(self, action_id: ActionId) -> float:
         return self._points_by_id[action_id]
 
-    def get_action_children(self, action_id: ActionId):
+    def get_action_children(self, action_id: ActionId) -> List[ActionId]:
         return self._children_by_id.get(action_id, [])
+
+    def get_action_siblings(self, action_id: ActionId) -> List[ActionId]:
+        action_parent = [
+            parent_id
+            for parent_id, children in self._children_by_id.items()
+            if action_id in children
+        ]
+        return self.get_action_children(action_parent[0]) if action_parent else []
 
     def build_root_node(
         self, actions_points: List[ActionPoints], actions_children: List[ActionChildren]
@@ -111,6 +118,11 @@ class ActionPointTree:
         for action_id in tqdm(self._backward_action_ids):
             if action_id not in self._tache_ids:
                 callback(action_id)
+
+    @timeit("map from taches to root")
+    def map_from_taches_to_root(self, callback: Callable[[ActionId], None]):
+        for action_id in tqdm(self._backward_action_ids):
+            callback(action_id)
 
     @staticmethod
     def _build_forward_action_ids(node: RecursivePointNode) -> List[ActionId]:

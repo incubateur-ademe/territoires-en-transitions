@@ -6,7 +6,7 @@ from psycopg.rows import class_row
 from business.utils.postgres_repo import (
     PostgresRepository,
 )
-from business.core.domain.models.referentiel import Referentiel
+from business.core.domain.models.referentiel import ActionReferentiel
 from business.evaluation.domain.ports.action_status_repo import (
     AbstractActionStatutRepository,
 )
@@ -27,7 +27,7 @@ class PostgresActionStatutRepository(
         return connection.cursor(row_factory=class_row(BusinessActionStatutRead))
 
     def get_all_for_collectivite(
-        self, collectivite_id: int, referentiel: Referentiel
+        self, collectivite_id: int, referentiel: ActionReferentiel
     ) -> List[ActionStatut]:
         self.cursor.execute(
             "select * from business_action_statut where collectivite_id=%(collectivite_id)s and referentiel=%(referentiel)s;",

@@ -2,21 +2,21 @@ from dataclasses import dataclass
 from typing import List
 
 from business.evaluation.domain.models.action_score import ActionScore
-from business.core.domain.models.referentiel import Referentiel
+from business.core.domain.models.referentiel import ActionReferentiel
 from business.core.domain.models.event import DomainEvent, DomainFailureEvent
 
 
 @dataclass
 class ActionStatutUpdatedForCollectivite(DomainEvent):
     collectivite_id: int
-    referentiel: Referentiel
+    referentiel: ActionReferentiel
     created_at: str
 
 
 @dataclass
 class ReferentielScoresForCollectiviteComputed(DomainEvent):
     collectivite_id: int
-    referentiel: Referentiel
+    referentiel: ActionReferentiel
     scores: List[ActionScore]
 
 
