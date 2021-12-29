@@ -53,6 +53,12 @@ GET {{api}}/rest/v1/fiche_action?select=*
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
 ### Insert a fiche
 POST {{api}}/rest/v1/fiche_action
 apikey: {{anon}}
@@ -61,7 +67,7 @@ Prefer: return=representation
 Content-Type: application/json
 
 {
-  "uid": "55440546-f389-4d4f-bfdb-b0c94a1bd0f9",
+  "uid": "55640546-f389-4d4f-bfdb-b0c94a1bd0f9",
   "collectivite_id": 1,
   "avancement": "pas_fait",
   "numerotation": "A1",
@@ -86,3 +92,9 @@ Content-Type: application/json
     1
   ]
 }
+
+> {%
+    client.test("Insert executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}

@@ -23,6 +23,11 @@ GET {{api}}/rest/v1/private_utilisateur_droit?select=*
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
+### List droits of collectivité 1
+GET {{api}}/rest/v1/private_utilisateur_droit?collectivite_id=eq.1&select=*
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
 ### Claim a collectivite
 POST {{api}}/rest/v1/rpc/claim_collectivite
 apikey: {{anon}}
