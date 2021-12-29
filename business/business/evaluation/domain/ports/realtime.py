@@ -25,10 +25,8 @@ class AbstractConverter(abc.ABC):
         pass
 
 
-DataLayerTable = Literal["collectivite_action_statut_update_event"]
-collectivite_action_statut_update_table: DataLayerTable = (
-    "collectivite_action_statut_update_event"
-)
+DataLayerTable = Literal["action_statut_update_event"]
+collectivite_action_statut_update_table: DataLayerTable = "action_statut_update_event"
 
 
 class CollectiviteActionStatutUpdateConverter(AbstractConverter):
