@@ -77,21 +77,26 @@ export class ScoreBloc {
     });
     this._scoreController.listen();
     socket.scoreObservable.subscribe(observedScores => {
-      const eciScores = observedScores.filter(
-        score => score.referentiel === 'eci'
-      );
-      if (eciScores.length) this._scores.eci = eciScores;
-      const caeScores = observedScores.filter(
-        score => score.referentiel === 'eci'
-      );
-      if (caeScores.length) {
-        console.log('received cae new scores ', caeScores.length);
-        this._scores.cae = caeScores;
-        console.log(
-          'cae_1.1.1.3.3: ',
-          caeScores.find(score => score.action_id === 'cae_1.1.1.3.3')
-        );
-      }
+      if (currentCollectiviteBloc.collectiviteId)
+        this.fetchScoresForCollectivite(currentCollectiviteBloc.collectiviteId);
+
+      // TODO : use observedScores, this is just a temporary hack.
+
+      // const eciScores = observedScores.filter(
+      //   score => score.referentiel === 'eci'
+      // );
+      // if (eciScores.length) this._scores.eci = eciScores;
+      // const caeScores = observedScores.filter(
+      //   score => score.referentiel === 'eci'
+      // );
+      // if (caeScores.length) {
+      //   console.log('received cae new scores ', caeScores.length);
+      //   this._scores.cae = caeScores;
+      //   console.log(
+      //     'cae_1.1.1.3.3: ',
+      //     caeScores.find(score => score.action_id === 'cae_1.1.1.3.3')
+      //   );
+      // }
     });
   }
 
