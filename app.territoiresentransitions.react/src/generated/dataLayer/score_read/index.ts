@@ -2,6 +2,7 @@
 
 export interface ScoreRead {
   action_id: string;
+  referentiel: 'eci' | 'cae';
   collectivite_id: number;
   completed_taches_count: number;
   concernee: boolean;
