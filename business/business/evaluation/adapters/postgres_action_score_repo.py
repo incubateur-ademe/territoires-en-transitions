@@ -14,12 +14,14 @@ from business.evaluation.domain.ports.action_score_repo import (
 from business.core.domain.models.generated.score_write import (
     ScoreWrite as PgScoreWrite,
 )
+from business.utils.timeit import timeit
 
 
 class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepository):
     def __init__(self, connection: Connection) -> None:
         PostgresRepository.__init__(self, connection)
 
+    @timeit("[postgres] add_entities_for_collectivite")
     def add_entities_for_collectivite(
         self, collectivite_id: int, entities: List[ActionScore]
     ):
@@ -53,7 +55,9 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
                 raise PostgresRepositoryError(str(error))
 
         try:
-            self.cursor.execute(f"select insert_client_scores_for_collectivite({collectivite_id});")
+            self.cursor.execute(
+                f"select insert_client_scores_for_collectivite({collectivite_id});"
+            )
         except errors.ForeignKeyViolation as error:
             raise PostgresRepositoryError(str(error))
         self.connection.commit()

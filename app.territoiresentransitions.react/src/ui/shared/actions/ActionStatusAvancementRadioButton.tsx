@@ -1,6 +1,6 @@
 import {avancementLabels} from 'app/labels';
 import * as R from 'ramda';
-import type {Option, Options} from 'types';
+import type {Option} from 'types';
 import {AvancementRadioButton} from 'ui/shared/AvancementRadioButton';
 
 import {Avancement} from 'generated/dataLayer/action_statut_read';
@@ -9,7 +9,7 @@ import {makeAutoObservable} from 'mobx';
 import {observer} from 'mobx-react-lite';
 import {useCollectiviteId} from 'core-logic/hooks';
 
-const avancements: Options<Avancement> = R.values(
+const avancements = R.values(
   R.mapObjIndexed((label, value) => ({value, label}), avancementLabels)
 );
 
@@ -37,7 +37,6 @@ const _ActionStatusAvancementRadioButton = observer(
     actionStatusAvancementBloc: ActionStatusAvancementRadioButtonBloc;
   }) => {
     const avancement = actionStatusAvancementBloc.avancement;
-    console.log(avancement);
     return (
       <AvancementRadioButton
         avancements={avancements}

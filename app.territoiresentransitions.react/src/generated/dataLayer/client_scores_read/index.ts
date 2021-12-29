@@ -2,11 +2,11 @@ export interface ScoreRead {
   // id: number;
   // collectivite_id: number;
   action_id: string;
-  points?: number;
+  points: number | null;
   potentiel: number;
   referentiel_points: number;
   concernee: boolean;
-  previsionnel?: number;
+  previsionnel: number | null;
   total_taches_count: number;
   completed_taches_count: number;
   created_at: string;

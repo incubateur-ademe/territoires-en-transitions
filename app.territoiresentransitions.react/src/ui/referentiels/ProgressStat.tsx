@@ -1,5 +1,3 @@
-import {useActionReferentielScore} from 'core-logic/hooks/actionReferentielScore';
-import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core';
@@ -14,6 +12,7 @@ import {
 import {observer} from 'mobx-react-lite';
 import {ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {ScoreRead} from 'generated/dataLayer/client_scores_read';
+import {referentielId} from 'utils/actions';
 
 const useStyle = makeStyles(
   R.mapObjIndexed(
@@ -31,7 +30,6 @@ const TextProgressStatStatic = ({
   score: ScoreRead | null;
   showPoints: boolean;
 }) => {
-  console.log('score in TextProgressStatStatic', score);
   const percentageText = percentageTextFromScore(score);
 
   if (score?.concernee === false) {
@@ -67,8 +65,7 @@ export const ProgressStatStatic = observer(
 
     // const storableId = ActionReferentielScoreStorable.buildId(action.id);
     // const score = useActionReferentielScore(storableId);
-    const score = scoreBloc.getScore(action.id);
-    console.log('ProgressStatStatic observed score: ', score);
+    const score = scoreBloc.getScore(action.id, referentielId(action.id));
 
     useEffect(() => {
       const state = inferStateFromScore(score);
@@ -98,6 +95,7 @@ const Gauge = (props: {score: ScoreRead | null}) => {
   const makeStyle = (score: ScoreRead | null) => {
     const state = inferStateFromScore(score);
     const color = progressStateColors[state];
+    console.log(state, color);
     return {
       width: percentageTextFromScore(score),
       backgroundColor: color,
@@ -151,8 +149,7 @@ export const CurrentEpciGaugeProgressStat = observer(
     size: 'sm' | 'xs';
     scoreBloc: ScoreBloc;
   }) => {
-    const score = scoreBloc.getScore(action.id);
-    console.log('CurrentEpciGaugeProgressStat observed score: ', score);
+    const score = scoreBloc.getScore(action.id, referentielId(action.id));
     return <UiGaugeProgressStat score={score} size={size} showPoints={true} />;
   }
 );

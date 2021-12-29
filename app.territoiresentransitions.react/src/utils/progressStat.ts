@@ -1,11 +1,18 @@
 import {ScoreRead} from 'generated/dataLayer/client_scores_read';
 
-export type ProgressState = 'nc' | 'alert' | 'warning' | 'ok' | 'good' | 'best';
+export type ProgressState =
+  | 'non_renseigne'
+  | 'nc'
+  | 'alert'
+  | 'warning'
+  | 'ok'
+  | 'good'
+  | 'best';
 
 export const inferStateFromScore = (score: ScoreRead | null): ProgressState => {
-  const percentage: number =
-    score && score.points ? (score.points / score.potentiel) * 100 : 0;
-  if (score && !!score.concernee) {
+  if (score === null || score.points === null) return 'non_renseigne';
+  const percentage: number = (score.points / score.potentiel) * 100;
+  if (score.concernee === false) {
     return 'nc';
   } else if (percentage < 34) {
     return 'alert';
@@ -33,7 +40,9 @@ export const percentageTextFromScore = (score: ScoreRead | null) =>
     ? `${toFixed((score.points / score.potentiel) * 100)}% `
     : '0% ';
 
-export const pointsTextFromScore = (score: ScoreRead | null) =>
-  score && score.points
-    ? `(${toFixed(score.points)}/${toFixed(score.potentiel)})`
-    : '(../..)';
+export const pointsTextFromScore = (score: ScoreRead | null) => {
+  if (!score) return null;
+  const textPoints = score.points ? toFixed(score.points) : '..';
+  const textPotentiel = score.potentiel ? toFixed(score.potentiel) : '..';
+  return `(${textPoints}/${textPotentiel})`;
+};

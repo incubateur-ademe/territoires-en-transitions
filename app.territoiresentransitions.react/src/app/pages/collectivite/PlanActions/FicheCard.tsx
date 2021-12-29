@@ -6,6 +6,7 @@ import {Avancement} from 'generated/dataLayer/action_statut_read';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 
 const AvancementTag = ({avancement}: {avancement: Avancement}) => {
+  if (avancement === 'non_renseigne') return null;
   return (
     <div className="px-2 py-3 bg-white border-bf500 border-b-4">
       {avancementLabels[avancement]}
