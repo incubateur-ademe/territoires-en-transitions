@@ -75,9 +75,7 @@ export class ScoreBloc {
   }
 
   getScore(action_id: string) {
-    const score = this._scores.find(() =>
-      this._scores.find(score => score.action_id === action_id)
-    );
+    const score = this._scores.find(score => score.action_id === action_id);
     return score ? {...score} : null;
   }
 }

@@ -105,7 +105,7 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
                     "collectivite_id": 1,
                     "created_at": "2020-01-01T12",
                 },
-                "table": "collectivite_action_statut_update_event",
+                "table": "action_statut_update_event",
             }
         ]
     )

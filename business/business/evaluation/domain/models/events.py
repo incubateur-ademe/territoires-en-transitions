@@ -11,6 +11,7 @@ class ActionStatutUpdatedForCollectivite(DomainEvent):
     collectivite_id: int
     referentiel: ActionReferentiel
     created_at: str
+    id: int
 
 
 @dataclass
