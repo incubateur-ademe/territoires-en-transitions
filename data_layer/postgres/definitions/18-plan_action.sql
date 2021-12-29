@@ -25,6 +25,25 @@ create table fiche_action
 ) inherits (absract_modified_at);
 comment on table fiche_action is 'Fiche action used by the client';
 
+alter table fiche_action
+    enable row level security;
+
+create policy allow_read
+    on fiche_action
+    for select
+    using (is_any_role_on(collectivite_id));
+
+create policy allow_insert
+    on fiche_action
+    for insert
+    with check (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
+                                   collectivite_id));
+create policy allow_update
+    on fiche_action
+    for update
+    using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
+                              collectivite_id));
+
 create table fiche_action_action
 (
     fiche_action_uid uuid references fiche_action,
@@ -33,6 +52,12 @@ create table fiche_action_action
 );
 comment on table fiche_action is
     'Many-to-many relationship between fiche action and referentiel action';
+alter table fiche_action_action
+    enable row level security;
+create policy allow_read
+    on fiche_action_action
+    for select
+    using (true);
 
 create table fiche_action_indicateur
 (
@@ -42,6 +67,12 @@ create table fiche_action_indicateur
 );
 comment on table fiche_action_indicateur is
     'Many-to-many relationship between fiche action and referentiel indicateur';
+alter table fiche_action_indicateur
+    enable row level security;
+create policy allow_read
+    on fiche_action_indicateur
+    for select
+    using (true);
 
 create table fiche_action_indicateur_personnalise
 (
@@ -51,6 +82,12 @@ create table fiche_action_indicateur_personnalise
 );
 comment on table fiche_action_indicateur_personnalise is
     'Many-to-many relationship between fiche action and indicateur personnalisé';
+alter table fiche_action_indicateur_personnalise
+    enable row level security;
+create policy allow_read
+    on fiche_action_indicateur_personnalise
+    for select
+    using (true);
 
 
 create or replace function update_fiche_relationships(
@@ -94,7 +131,7 @@ begin
         end loop;
 end;
 $$
-    language plpgsql;
+    language plpgsql security definer ;
 comment on function update_fiche_relationships is
     'Update fiche action relationships with actions, indicateurs and indicateurs personnalisés';
 
@@ -133,3 +170,22 @@ create table plan_action
     created_at         timestamp with time zone default CURRENT_TIMESTAMP not null,
     modified_at        timestamp with time zone default CURRENT_TIMESTAMP not null
 );
+
+alter table plan_action
+    enable row level security;
+
+create policy allow_read
+    on plan_action
+    for select
+    using (is_any_role_on(collectivite_id));
+
+create policy allow_insert
+    on plan_action
+    for insert
+    with check (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
+                                   collectivite_id));
+create policy allow_update
+    on plan_action
+    for update
+    using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
+                              collectivite_id));

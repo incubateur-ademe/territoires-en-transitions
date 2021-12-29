@@ -1,7 +1,7 @@
 --------------------------------
 ----------- TABLES -------------
 --------------------------------
-create type role_name as enum ('agent', 'referent', 'conseiller', 'auditeur');
+create type role_name as enum ('agent', 'referent', 'conseiller', 'auditeur', 'aucun');
 
 create table private_utilisateur_droit
 (
@@ -22,12 +22,9 @@ create policy allow_read
     for select
     using (true);
 
-
-
 --------------------------------
 -------- RLS HELPERS -----------
 --------------------------------
-
 create or replace function
     is_any_role_on(id integer)
     returns boolean

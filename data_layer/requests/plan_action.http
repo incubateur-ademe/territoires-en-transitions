@@ -31,8 +31,8 @@ Prefer: return=representation
 Content-Type: application/json
 
 {
+  "uid": "29770546-f389-4d4f-bfdb-b0c94a1bd0f0",
   "collectivite_id": 1,
-  "uid": "plan_collectivite",
   "nom": "Plan d'actions de la collectivité",
   "categories": [
     {
@@ -61,9 +61,9 @@ Prefer: return=representation
 Content-Type: application/json
 
 {
+  "uid": "55440546-f389-4d4f-bfdb-b0c94a1bd0f9",
   "collectivite_id": 1,
   "avancement": "pas_fait",
-  "uid": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
   "numerotation": "A1",
   "titre": "titre http",
   "description": "description",
@@ -71,10 +71,11 @@ Content-Type: application/json
   "personne_referente": "référente",
   "elu_referent": "référent",
   "partenaires": "partenaires",
-  "budget_global": "€",
+  "budget_global": 150,
   "commentaire": "commentaire",
   "date_fin": "fin",
   "date_debut": "début",
+  "en_retard": true,
   "action_ids": [
     "cae"
   ],
