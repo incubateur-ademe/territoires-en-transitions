@@ -17,6 +17,8 @@ business = {editable = true, path = "."}
 python-dotenv = "*"
 pandas = "*"
 openpyxl = "*"
+tqdm = "*"
+realtime-py = "*"
 
 [dev-packages]
 
