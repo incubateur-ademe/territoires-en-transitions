@@ -1,9 +1,8 @@
 import {makeStyles} from '@material-ui/core';
 import {progressStateColors} from 'app/theme';
-import {ScoreRead} from 'generated/dataLayer/client_scores_read';
 import * as R from 'ramda';
-import {ActionReferentielScoreStorable} from 'storables/ActionReferentielScoreStorable';
 import {inferStateFromScore, percentageTextFromScore} from 'utils/progressStat';
+import {ActionScore} from 'types/ClientScore';
 
 const useStyle = makeStyles(
   R.mapObjIndexed(
@@ -14,7 +13,7 @@ const useStyle = makeStyles(
   )
 );
 
-export const RootProgressStat = (props: {score: ScoreRead | null}) => {
+export const RootProgressStat = (props: {score: ActionScore | null}) => {
   const classes = useStyle();
   const state = inferStateFromScore(props.score);
 

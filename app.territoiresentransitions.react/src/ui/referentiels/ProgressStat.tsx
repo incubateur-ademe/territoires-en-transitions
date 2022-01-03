@@ -11,8 +11,8 @@ import {
 } from 'utils/progressStat';
 import {observer} from 'mobx-react-lite';
 import {ScoreBloc} from 'core-logic/observables/scoreBloc';
-import {ScoreRead} from 'generated/dataLayer/client_scores_read';
 import {referentielId} from 'utils/actions';
+import {ActionScore} from 'types/ClientScore';
 
 const useStyle = makeStyles(
   R.mapObjIndexed(
@@ -27,12 +27,12 @@ const TextProgressStatStatic = ({
   score,
   showPoints,
 }: {
-  score: ScoreRead | null;
+  score: ActionScore | null;
   showPoints: boolean;
 }) => {
   const percentageText = percentageTextFromScore(score);
 
-  if (score?.concernee === false) {
+  if (score?.concerne === false) {
     return <span className="text-gray-700"> non concernée</span>;
   }
   return showPoints ? (
@@ -91,8 +91,8 @@ export const ProgressStatStatic = observer(
   }
 );
 
-const Gauge = (props: {score: ScoreRead | null}) => {
-  const makeStyle = (score: ScoreRead | null) => {
+const Gauge = (props: {score: ActionScore | null}) => {
+  const makeStyle = (score: ActionScore | null) => {
     const state = inferStateFromScore(score);
     const color = progressStateColors[state];
     console.log(state, color);
@@ -118,7 +118,7 @@ export const UiGaugeProgressStat = ({
   size,
   showPoints,
 }: {
-  score: ScoreRead | null;
+  score: ActionScore | null;
   size: 'xs' | 'sm';
   showPoints: boolean;
 }) => {
