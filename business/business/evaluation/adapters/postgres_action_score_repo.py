@@ -26,9 +26,8 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
     ):
         if not entities:
             return
-        referentiel = entities[0].action_id.split("_")[
-            0
-        ]  # TODO : WIP, should be in command
+
+        referentiel = entities[0].referentiel
         client_scores_json = json.dumps([asdict(score) for score in entities])
 
         sql = f"insert into client_scores(collectivite_id, referentiel, scores, score_created_at) values({collectivite_id}, '{referentiel}', '{client_scores_json}', now()) on conflict on constraint client_scores_pkey do update set scores='{client_scores_json}', score_created_at=now();"
