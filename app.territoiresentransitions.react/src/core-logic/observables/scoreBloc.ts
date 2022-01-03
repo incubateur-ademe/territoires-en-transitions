@@ -5,7 +5,6 @@ import {SupabaseScoreController} from 'core-logic/api/sockets/SupabaseScoreContr
 import {supabaseClient} from 'core-logic/api/supabase';
 import {clientScoresReadEndpoint} from 'core-logic/api/endpoints/ClientScoresReadEndpoint';
 import {currentCollectiviteBloc} from 'core-logic/observables';
-import {checkIfStateModificationsAreAllowed} from 'mobx/dist/internal';
 
 export type CurrentCollectiviteObserved = {
   nom: string;
@@ -62,6 +61,16 @@ export class ScoreBloc {
               scoresRead => scoresRead.referentiel === 'cae'
             )?.scores ?? [];
         }
+        console.log(
+          'eci -> ',
+          this._scores.eci.length,
+          '\ncae -> ',
+          this._scores.cae.length
+        );
+        console.log(
+          'cae_1.1.1.1.1 -> ',
+          this._scores.cae.find(score => score.action_id === 'cae_1.1.1.1.1')
+        );
       });
   }
 
@@ -77,26 +86,17 @@ export class ScoreBloc {
     });
     this._scoreController.listen();
     socket.scoreObservable.subscribe(observedScores => {
-      if (currentCollectiviteBloc.collectiviteId)
-        this.fetchScoresForCollectivite(currentCollectiviteBloc.collectiviteId);
+      const eciScores = observedScores.filter(
+        score => score.referentiel === 'eci'
+      );
+      if (eciScores.length) this._scores.eci = eciScores;
 
-      // TODO : use observedScores, this is just a temporary hack.
-
-      // const eciScores = observedScores.filter(
-      //   score => score.referentiel === 'eci'
-      // );
-      // if (eciScores.length) this._scores.eci = eciScores;
-      // const caeScores = observedScores.filter(
-      //   score => score.referentiel === 'eci'
-      // );
-      // if (caeScores.length) {
-      //   console.log('received cae new scores ', caeScores.length);
-      //   this._scores.cae = caeScores;
-      //   console.log(
-      //     'cae_1.1.1.3.3: ',
-      //     caeScores.find(score => score.action_id === 'cae_1.1.1.3.3')
-      //   );
-      // }
+      const caeScores = observedScores.filter(
+        score => score.referentiel === 'cae'
+      );
+      if (caeScores.length) {
+        this._scores.cae = caeScores;
+      }
     });
   }
 
