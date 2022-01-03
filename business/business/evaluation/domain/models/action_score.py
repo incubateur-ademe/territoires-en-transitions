@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from typing import Optional
+
 from business.utils.action_id import ActionId
+from business.core.domain.models.referentiel import ActionReferentiel
 
 
 @dataclass  # TODO : decide how to type this output for client !
@@ -15,3 +16,4 @@ class ActionScore:
     concerne: bool
     total_taches_count: int
     completed_taches_count: int
+    referentiel: ActionReferentiel

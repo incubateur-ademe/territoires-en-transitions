@@ -12,9 +12,7 @@ from business.evaluation.domain.models.action_score import ActionScore
 from business.evaluation.domain.ports.action_score_repo import (
     AbstractActionScoreRepository,
 )
-from business.core.domain.models.generated.score_write import (
-    ScoreWrite as PgScoreWrite,  # TODO : use me and add referentiel
-)
+
 from business.utils.timeit import timeit
 
 
@@ -26,12 +24,12 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
     def add_entities_for_collectivite(
         self, collectivite_id: int, entities: List[ActionScore]
     ):
+        if not entities:
+            return
         referentiel = entities[0].action_id.split("_")[
             0
         ]  # TODO : WIP, should be in command
-        client_scores_json = json.dumps(
-            [{**asdict(score), "referentiel": referentiel} for score in entities]
-        )
+        client_scores_json = json.dumps([asdict(score) for score in entities])
 
         sql = f"insert into client_scores(collectivite_id, referentiel, scores, score_created_at) values({collectivite_id}, '{referentiel}', '{client_scores_json}', now()) on conflict on constraint client_scores_pkey do update set scores='{client_scores_json}', score_created_at=now();"
 
