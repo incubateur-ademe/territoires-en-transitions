@@ -153,3 +153,86 @@ export const CurrentEpciGaugeProgressStat = observer(
     return <UiGaugeProgressStat score={score} size={size} showPoints={true} />;
   }
 );
+
+export const ProgressBarStatic = observer(
+  ({action, scoreBloc}: {action: ActionReferentiel; scoreBloc: ScoreBloc}) => {
+    const classes = useStyle();
+
+    // const storableId = ActionReferentielScoreStorable.buildId(action.id);
+    // const score = useActionReferentielScore(storableId);
+    const score = scoreBloc.getScore(action.id, referentielId(action.id));
+    if (score === null) return null;
+
+    const max_point = Math.max(score.point_referentiel, score.point_potentiel);
+    function percentage(x: number): number {
+      return (100 * x) / max_point;
+    }
+    const fait_width = percentage(score.point_fait);
+    const programme_width = percentage(score.point_programme) + fait_width;
+    const pas_fait_width = percentage(score.point_pas_fait) + programme_width;
+
+    return (
+      <div style={{display: 'flex', flexDirection: 'column'}}>
+        <div
+          style={{
+            minWidth: 100,
+            minHeight: 10,
+            backgroundColor: '#565656',
+            position: 'relative',
+          }}
+        >
+          <div
+            style={{
+              minWidth: `${pas_fait_width}%`,
+              backgroundColor: '#FD0606',
+              minHeight: '100%',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+            }}
+          />
+          <div
+            style={{
+              minWidth: `${programme_width}%`,
+              backgroundColor: '#FDE406',
+              minHeight: '100%',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+            }}
+          />
+          <div
+            style={{
+              minWidth: `${fait_width}%`,
+              backgroundColor: '#04C200',
+              minHeight: '100%',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+            }}
+          />
+        </div>
+        <ul className="toolip">
+          <li>
+            <em>fait:</em> {score.point_fait}pts
+          </li>
+          <li>
+            <em>programmé:</em> {score.point_programme}pts
+          </li>
+          <li>
+            <em>pas fait:</em> {score.point_pas_fait}pts
+          </li>
+          <li>
+            <em>non renseigné:</em> {score.point_non_renseigne}pts
+          </li>
+          <li>
+            <em>potentiel:</em> {score.point_potentiel}pts
+          </li>
+          <li>
+            <em>referentiel:</em> {score.point_referentiel}pts
+          </li>
+        </ul>
+      </div>
+    );
+  }
+);
