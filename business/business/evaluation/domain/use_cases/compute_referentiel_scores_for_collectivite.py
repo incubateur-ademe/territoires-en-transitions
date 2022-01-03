@@ -112,55 +112,68 @@ class ComputeReferentielScoresForCollectivite(UseCase):
     ):
 
         tache_points = point_tree.get_action_point(tache_id)
-        referentiel_points = tache_points
+        point_referentiel = tache_points
 
         # TODO : find a softer way to tell that points cannot be None once they have been filled by referentiel constructor.
         assert tache_points is not None
 
         # tache_potentiel = tache_points  # TODO : handle concerne/non-concerne here
-        tache_potentiel = potentiels[tache_id]
+        tache_point_potentiel = potentiels[tache_id]
         tache_status = status_by_action_id.get(tache_id)
         tache_concerne = tache_id not in actions_non_concernes_ids
 
         if not tache_concerne:
             scores[tache_id] = ActionScore(
                 action_id=tache_id,
-                points=0,
-                potentiel=tache_potentiel,
-                previsionnel=0,
+                point_fait=0,
+                point_pas_fait=0,
+                point_programme=0,
+                point_non_renseigne=tache_point_potentiel,
+                point_potentiel=tache_point_potentiel,
                 total_taches_count=1,
                 completed_taches_count=1,
-                referentiel_points=referentiel_points,
+                point_referentiel=point_referentiel,
                 concerne=tache_concerne,
             )
             return
 
         if tache_status and tache_status.is_renseigne:
-            tache_points = (
-                tache_potentiel if tache_concerne and tache_status.is_done else 0.0
-            )
-            tache_previsionnel = (
-                tache_potentiel
-                if tache_concerne
-                and (tache_status.is_done or tache_status.will_be_done)
+            point_fait = (
+                tache_point_potentiel
+                if tache_concerne and tache_status.is_fait
                 else 0.0
             )
+            point_programme = (
+                tache_point_potentiel
+                if tache_concerne and tache_status.is_programme
+                else 0.0
+            )
+            point_pas_fait = (
+                tache_point_potentiel
+                if tache_concerne and tache_status.is_pas_fait
+                else 0.0
+            )
+            point_non_renseigne = 0.0
+
             print(
-                f"\n For tache {tache_id}, points is {tache_points} and previsionnel is {tache_previsionnel}, avancement is {tache_status.avancement}, is_done is {tache_status.is_done}, will be potentiel is {tache_potentiel}, concerne is {tache_concerne}."
+                f"\n For tache {tache_id}, point_fait is {point_fait}, point_fait is {point_programme}, point_pas_fait is {point_pas_fait}, avancement is {tache_status.avancement}, concerne is {tache_concerne}."
             )
             completed_taches_count = 1
         else:
-            tache_points = tache_previsionnel = None
+            point_pas_fait = point_programme = point_fait = 0.0
+            point_non_renseigne = tache_point_potentiel
             completed_taches_count = 0
 
         scores[tache_id] = ActionScore(
             action_id=tache_id,
-            points=tache_points,
-            potentiel=tache_potentiel,
-            previsionnel=tache_previsionnel,
+            point_pas_fait=point_pas_fait,
+            point_programme=point_programme,
+            point_non_renseigne=point_non_renseigne,
+            point_fait=point_fait,
+            point_potentiel=tache_point_potentiel,
+            point_referentiel=point_referentiel,
             completed_taches_count=completed_taches_count,
             total_taches_count=1,
-            referentiel_points=referentiel_points,
             concerne=tache_concerne,
         )
 
@@ -172,44 +185,36 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         action_id: ActionId,
     ):
         action_children = point_tree.get_action_children(action_id)
-        action_referentiel_points = point_tree.get_action_point(action_id)
+        action_point_referentiel = point_tree.get_action_point(action_id)
 
         action_children_with_scores = [
             child_id for child_id in action_children if child_id in scores
         ]
 
-        points = (
-            None
-            if all(
-                [
-                    scores[child_id].points is None
-                    for child_id in action_children_with_scores
-                ]
-            )
-            else sum(
-                [
-                    scores[child_id].points or 0.0
-                    for child_id in action_children_with_scores
-                ]
-            )
-        )
-        previsionnel = (
-            None
-            if all(
-                [
-                    scores[child_id].previsionnel is None
-                    for child_id in action_children_with_scores
-                ]
-            )
-            else sum(
-                [
-                    scores[child_id].previsionnel or 0.0
-                    for child_id in action_children_with_scores
-                ]
-            )
+        point_pas_fait = sum(
+            [
+                scores[child_id].point_pas_fait
+                for child_id in action_children_with_scores
+            ]
         )
 
-        potentiel = potentiels[action_id]
+        point_fait = sum(
+            [scores[child_id].point_fait for child_id in action_children_with_scores]
+        )
+
+        point_programme = sum(
+            [
+                scores[child_id].point_programme
+                for child_id in action_children_with_scores
+            ]
+        )
+        point_non_renseigne = sum(
+            [
+                scores[child_id].point_non_renseigne
+                for child_id in action_children_with_scores
+            ]
+        )
+        point_potentiel = potentiels[action_id]
         concerne = (
             any([scores[child_id].concerne for child_id in action_children_with_scores])
             if action_children_with_scores
@@ -230,12 +235,14 @@ class ComputeReferentielScoresForCollectivite(UseCase):
 
         scores[action_id] = ActionScore(
             action_id=action_id,
-            points=points,
-            potentiel=potentiel,
-            previsionnel=previsionnel,
+            point_fait=point_fait,
+            point_pas_fait=point_pas_fait,
+            point_programme=point_programme,
+            point_non_renseigne=point_non_renseigne,
+            point_potentiel=point_potentiel,
             completed_taches_count=completed_taches_count,
             total_taches_count=total_taches_count,
-            referentiel_points=action_referentiel_points,
+            point_referentiel=action_point_referentiel,
             concerne=concerne,
         )
 
