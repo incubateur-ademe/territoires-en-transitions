@@ -3,7 +3,7 @@ import {
   InMemoryScoreController,
   ScoreSocket,
 } from './ScoreSocket';
-import type {ScoreRead} from 'generated/dataLayer/score_read';
+import type {ActionScore} from 'generated/dataLayer/score_read/ActionScore';
 import {takeUntil} from 'rxjs/operators';
 import {timer} from 'rxjs';
 
@@ -13,7 +13,7 @@ const makeScoreRead = ({
 }: {
   collectiviteId?: number;
   action_id?: string;
-}): ScoreRead => {
+}): ActionScore => {
   return {
     id: 1,
     collectivite_id: collectiviteId,
