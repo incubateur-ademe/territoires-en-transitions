@@ -179,6 +179,7 @@ export const ProgressBarStatic = observer(
             minHeight: 10,
             backgroundColor: '#565656',
             position: 'relative',
+            borderRadius: 5,
           }}
         >
           <div
@@ -189,6 +190,7 @@ export const ProgressBarStatic = observer(
               position: 'absolute',
               top: 0,
               left: 0,
+              borderRadius: 5,
             }}
           />
           <div
@@ -199,6 +201,7 @@ export const ProgressBarStatic = observer(
               position: 'absolute',
               top: 0,
               left: 0,
+              borderRadius: 5,
             }}
           />
           <div
@@ -209,6 +212,7 @@ export const ProgressBarStatic = observer(
               position: 'absolute',
               top: 0,
               left: 0,
+              borderRadius: 5,
             }}
           />
         </div>
