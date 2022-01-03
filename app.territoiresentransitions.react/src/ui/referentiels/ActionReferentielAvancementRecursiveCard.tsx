@@ -7,6 +7,7 @@ import {
   ActionExemplesExpandPanel,
 } from 'ui/shared';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
+import {ActionStatusDropdown} from 'ui/shared/actions/ActionStatusDropdown';
 
 /**
  * Displays an actions and it's children indented below.
@@ -83,7 +84,7 @@ export const ActionReferentielAvancementCard = ({
       {/* <AddFicheActionButton actionId={action.id} /> */}
       {/* </div> */}
       <div className={` ${!isTache ? 'hidden' : ''}`}>
-        <ActionStatusAvancementRadioButton actionId={action.id} />
+        <ActionStatusDropdown actionId={action.id} />
       </div>
       {/* </div> */}
       <div className="w-1/2">
