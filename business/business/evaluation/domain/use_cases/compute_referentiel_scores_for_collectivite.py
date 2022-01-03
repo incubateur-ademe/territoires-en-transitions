@@ -85,12 +85,13 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 tache,
                 status_by_action_id,
                 actions_non_concernes_ids,
+                command.referentiel,
             )
         )
         # 3. Infer all action points based on their children's
         point_tree.map_from_sous_actions_to_root(
             lambda action_id: self.update_scores_for_action_given_children_scores(
-                point_tree, scores, potentiels, action_id
+                point_tree, scores, potentiels, action_id, command.referentiel
             )
         )
         self.bus.publish_event(
@@ -109,6 +110,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         tache_id: ActionId,
         status_by_action_id: Dict[str, ActionStatut],
         actions_non_concernes_ids: List[ActionId],
+        referentiel: ActionReferentiel,
     ):
 
         tache_points = point_tree.get_action_point(tache_id)
@@ -134,6 +136,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 completed_taches_count=1,
                 point_referentiel=point_referentiel,
                 concerne=tache_concerne,
+                referentiel=referentiel,
             )
             return
 
@@ -175,6 +178,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             completed_taches_count=completed_taches_count,
             total_taches_count=1,
             concerne=tache_concerne,
+            referentiel=referentiel,
         )
 
     def update_scores_for_action_given_children_scores(
@@ -183,6 +187,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         scores: Dict[ActionId, ActionScore],
         potentiels: Dict[ActionId, float],
         action_id: ActionId,
+        referentiel: ActionReferentiel,
     ):
         action_children = point_tree.get_action_children(action_id)
         action_point_referentiel = point_tree.get_action_point(action_id)
@@ -244,6 +249,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             total_taches_count=total_taches_count,
             point_referentiel=action_point_referentiel,
             concerne=concerne,
+            referentiel=referentiel,
         )
 
     def _build_points_tree(self, referentiel: ActionReferentiel) -> ActionPointTree:
