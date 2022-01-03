@@ -8,6 +8,7 @@ RUN mkdir -p /business
 WORKDIR /business
 
 COPY . .
+COPY .env.docker .env
 RUN pip install pipenv
 RUN pipenv install 
 # RUN pip install --upgrade pip
