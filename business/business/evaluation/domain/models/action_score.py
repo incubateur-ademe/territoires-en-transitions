@@ -3,7 +3,7 @@ from typing import Optional
 from business.utils.action_id import ActionId
 
 
-@dataclass
+@dataclass  # TODO : decide how to type this output for client !
 class ActionScore:
     action_id: ActionId  # eg.  "eci_1.0"
     points: Optional[float]
