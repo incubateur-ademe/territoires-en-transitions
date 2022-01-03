@@ -1,10 +1,10 @@
 import {makeAutoObservable, reaction} from 'mobx';
-import {ScoreRead} from '../../generated/dataLayer/client_scores_read';
 import {ScoreController, ScoreSocket} from 'core-logic/api/sockets/ScoreSocket';
 import {SupabaseScoreController} from 'core-logic/api/sockets/SupabaseScoreController';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {clientScoresReadEndpoint} from 'core-logic/api/endpoints/ClientScoresReadEndpoint';
 import {currentCollectiviteBloc} from 'core-logic/observables';
+import {ActionScore} from 'types/ClientScore';
 
 export type CurrentCollectiviteObserved = {
   nom: string;
@@ -14,7 +14,10 @@ export type CurrentCollectiviteObserved = {
 // Should observe "CollectiviteId" of collectiviteBloc and ActionStatutWriteEndpoint
 // so that you start the connection on first status written
 export class ScoreBloc {
-  private _scores: {eci: ScoreRead[]; cae: ScoreRead[]} = {eci: [], cae: []};
+  private _scores: {eci: ActionScore[]; cae: ActionScore[]} = {
+    eci: [],
+    cae: [],
+  };
   private _scoreController: ScoreController | null = null;
 
   constructor() {

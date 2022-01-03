@@ -49,14 +49,14 @@ src
 
 - **app** : this is where the actual app is built. It uses the functionalities and components from `core-logic` and `ui`.
 
-In each of these folders, we have an `index.ts` which purpose is to reference every exposed functionalities. So when a new component is created, it should be referenced here. When working in `app` folder, all that we can import from `ui` should be able to be import with the following line:
+In each of these folders, we have an `ClientScore.ts` which purpose is to reference every exposed functionalities. So when a new component is created, it should be referenced here. When working in `app` folder, all that we can import from `ui` should be able to be import with the following line:
 
 ##### `import {ComponentA, ComponentB} from "ui"`
 
 We should never need to do:
 ##### `import {ComponentA, ComponentB} from "ui/map/Map"`
 
-If the components looks unavailable, it has probably been forgotten in the `index.ts`.
+If the components looks unavailable, it has probably been forgotten in the `ClientScore.ts`.
 
 It is the same when importing from `core-logic`, `interface` and `utils`
 

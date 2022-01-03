@@ -3,6 +3,7 @@ import {ActionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWr
 import {supabaseClient} from 'core-logic/api/supabase';
 import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
 import {yiliCredentials} from 'test_utils/collectivites';
+import {Avancement} from 'generated/dataLayer/action_statut_read';
 
 describe('Action-statut write endpoint', () => {
   beforeAll(async () => {
@@ -22,7 +23,7 @@ describe('Action-statut write endpoint', () => {
     expect(result).toEqual(expect.objectContaining(statut));
 
     // 2. Update
-    const updatedStatut = {...statut, avancement: 'pas_fait'};
+    const updatedStatut = {...statut, avancement: 'pas_fait' as Avancement};
     const updateResult = await endpoint.save(updatedStatut);
     expect(updateResult).not.toBeNull();
     expect(updateResult).toEqual(expect.objectContaining(updatedStatut));

@@ -1,6 +1,6 @@
 import {BehaviorSubject, Observable} from 'rxjs';
-import {ActionScore} from 'generated/dataLayer/score_read/ActionScore';
 import {Referentiel} from 'types';
+import {ActionScore} from 'types/ClientScore';
 
 export interface ClientScoreBatchRead {
   // TODO : move elsewhere.

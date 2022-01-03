@@ -3,36 +3,38 @@ import {
   InMemoryScoreController,
   ScoreSocket,
 } from './ScoreSocket';
-import type {ActionScore} from 'generated/dataLayer/score_read/ActionScore';
 import {takeUntil} from 'rxjs/operators';
 import {timer} from 'rxjs';
+import {ActionScore} from 'types/ClientScore';
+import {Referentiel} from 'types';
 
 const makeScoreRead = ({
-  collectiviteId = 1,
+  referentiel = 'cae',
   action_id = 'cae_1',
 }: {
   collectiviteId?: number;
   action_id?: string;
+  referentiel: Referentiel;
 }): ActionScore => {
   return {
-    id: 1,
-    collectivite_id: collectiviteId,
+    referentiel: referentiel,
     action_id: action_id,
-    completed_taches_count: 10,
+    point_fait: 100,
+    point_programme: 100,
+    point_pas_fait: 100,
+    point_non_renseigne: 100,
+    point_potentiel: 100,
+    point_referentiel: 100,
+    concerne: true,
     total_taches_count: 12,
-    concernee: true,
-    points: 100,
-    potentiel: 100,
-    previsionnel: 100,
-    referentiel_points: 100,
-    created_at: '2021-01-01',
+    completed_taches_count: 10,
   };
 };
 
 describe('Score socket ', () => {
   it('Should expose ReadScores when Client Scores payloads are published', async () => {
-    const scoreRead1 = makeScoreRead({collectiviteId: 1, action_id: 'cae_1'});
-    const scoreRead2 = makeScoreRead({collectiviteId: 1, action_id: 'cae_2'});
+    const scoreRead1 = makeScoreRead({action_id: 'cae_1', referentiel: 'cae'});
+    const scoreRead2 = makeScoreRead({action_id: 'cae_2', referentiel: 'cae'});
 
     const clientScores: ClientScoreBatchRead[] = [
       {
