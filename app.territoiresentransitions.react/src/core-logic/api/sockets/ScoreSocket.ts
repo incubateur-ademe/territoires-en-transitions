@@ -1,5 +1,5 @@
 import {BehaviorSubject, Observable} from 'rxjs';
-import {ScoreRead} from 'generated/dataLayer/score_read';
+import {ActionScore} from 'generated/dataLayer/score_read/ActionScore';
 import {Referentiel} from 'types';
 
 export interface ClientScoreBatchRead {
@@ -7,14 +7,14 @@ export interface ClientScoreBatchRead {
   id: number;
   collectivite_id: number;
   referentiel: Referentiel;
-  scores: ScoreRead[];
+  scores: ActionScore[];
   score_created_at: string;
 }
 export class ScoreSocket {
   collectiviteId: number;
-  _scores = new BehaviorSubject<ScoreRead[]>([]);
+  _scores = new BehaviorSubject<ActionScore[]>([]);
 
-  get scoreObservable(): Observable<ScoreRead[]> {
+  get scoreObservable(): Observable<ActionScore[]> {
     return this._scores.pipe();
   }
 
