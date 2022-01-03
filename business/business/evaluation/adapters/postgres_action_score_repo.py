@@ -1,3 +1,4 @@
+from dataclasses import asdict
 import json
 from typing import List
 
@@ -29,21 +30,7 @@ class PostgresActionScoreRepository(AbstractActionScoreRepository, PostgresRepos
             0
         ]  # TODO : WIP, should be in command
         client_scores_json = json.dumps(
-            [
-                dict(
-                    collectivite_id=collectivite_id,
-                    action_id=score.action_id,
-                    completed_taches_count=score.completed_taches_count,
-                    total_taches_count=score.total_taches_count,
-                    points=score.points,
-                    potentiel=score.potentiel,
-                    previsionnel=score.previsionnel,
-                    referentiel_points=score.referentiel_points,
-                    concerne=score.concerne,
-                    referentiel=referentiel,
-                )
-                for score in entities
-            ]
+            [{**asdict(score), "referentiel": referentiel} for score in entities]
         )
 
         sql = f"insert into client_scores(collectivite_id, referentiel, scores, score_created_at) values({collectivite_id}, '{referentiel}', '{client_scores_json}', now()) on conflict on constraint client_scores_pkey do update set scores='{client_scores_json}', score_created_at=now();"
