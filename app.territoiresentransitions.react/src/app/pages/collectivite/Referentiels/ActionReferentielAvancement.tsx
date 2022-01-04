@@ -2,13 +2,12 @@ import {actions as referentielActions} from 'generated/data/referentiels';
 import {Link} from 'react-router-dom';
 import {
   ActionReferentielAvancementRecursiveCard,
-  ActionReferentielTitle,
-  ActionProgressBar,
+  ActionReferentielDisplayTitle,
+  ProgressBarStatic,
 } from 'ui/referentiels';
 import 'app/DesignSystem/buttons.css';
-import {AddFicheActionButton, Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
-import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 import {searchActionById} from 'utils/actions';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
@@ -16,6 +15,7 @@ import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurActionReadEndpoint';
 import {useEffect, useState} from 'react';
 import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
+import {OrientationFilAriane} from 'app/pages/collectivite/Referentiels/FilAriane';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -53,15 +53,11 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   return (
     <div className="fr-container">
       <div className="mt-8 mb-16">
-        <OrientationQuickNav action={action} />
-        <div className="pt-8 flex justify-between items-center">
-          <ActionReferentielTitle
-            className="fr-h1 mb-3 w-9/12 text-gray-900"
-            action={action}
-          />
-          <AddFicheActionButton actionId={action.id} />
+        <OrientationFilAriane action={action} />
+        <div className="pt-8 flex flex-row">
+          <ActionReferentielDisplayTitle action={action} />
+          <ProgressBarStatic action={action} scoreBloc={scoreBloc} />
         </div>
-        <ActionProgressBar action={action} scoreBloc={scoreBloc} />
         <div className="w-2/3">
           <DescriptionContextAndRessourcesDialogButton action={action} />
         </div>
