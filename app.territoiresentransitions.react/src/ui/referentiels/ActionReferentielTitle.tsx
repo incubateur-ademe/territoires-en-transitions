@@ -58,7 +58,8 @@ const ActionPotentiel = observer(
 
     if (score === null) return null;
     const potentiel = toFixed(score?.point_potentiel);
-    return <div className="font-normal">({potentiel} points)</div>;
+    const text = score?.point_potentiel ? `${potentiel} points` : '0 point';
+    return <span className="font-normal">({text})</span>;
   }
 );
 
@@ -85,8 +86,9 @@ export const ActionReferentielDisplayTitle = ({
       >
         {action.identifiant}
       </div>
-      <div>{action.nom}</div>
-      <ActionPotentiel action={action} scoreBloc={scoreBloc} />
+      <div>
+        {action.nom} <ActionPotentiel action={action} scoreBloc={scoreBloc} />
+      </div>
     </div>
   );
 };

@@ -6,7 +6,7 @@ import {
   ActionReferentielDisplayTitle,
 } from 'ui/referentiels';
 import 'app/DesignSystem/buttons.css';
-import {Spacer} from 'ui/shared';
+import {ActionCommentaire, Spacer} from 'ui/shared';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 import {searchActionById} from 'utils/actions';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
@@ -67,6 +67,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
             <DescriptionContextAndRessourcesDialogButton action={action} />
             <span className="bg-yellow-200">
               description génerale de l'avancement (champ commentaire)
+              <ActionCommentaire actionId={action.id} />
             </span>
           </div>
           <div className="w-1/6">
