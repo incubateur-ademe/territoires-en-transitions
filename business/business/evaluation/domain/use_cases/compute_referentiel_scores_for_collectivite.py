@@ -1,4 +1,5 @@
 import math
+import logging
 from typing import Dict, List, Optional
 
 from business.evaluation.domain.models import events
@@ -20,6 +21,8 @@ from business.utils.action_points_tree import (
     ActionPointTree,
     ActionsPointsTreeError,
 )
+
+logger = logging.getLogger()
 
 
 class ComputeReferentielscoresError(Exception):
@@ -381,20 +384,36 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             action_referentiel_points = point_tree.get_action_point(action_id)
             if action_potentiel != action_referentiel_points:
                 children = point_tree.get_action_children(action_id)
-                for child_id in children:
-                    new_child_potentiel = (
-                        potentiels[child_id]
-                        / action_referentiel_points
-                        * action_potentiel
-                    )
-                    potentiels[child_id] = new_child_potentiel
-                children_potentiel_sum = sum(
+                if not children:
+                    return
+                children_potentiel_sum_before_resize = sum(
                     [potentiels[child_id] for child_id in children]
                 )
-                if children:
-                    assert math.isclose(
-                        action_potentiel, children_potentiel_sum, rel_tol=0.01
-                    ), f"Children potentiels should sum up to parent potentiel, got action {action_id} with potentiel {action_potentiel} and its children's potentiels sum to {children_potentiel_sum}"
+                if not math.isclose(
+                    action_potentiel,
+                    children_potentiel_sum_before_resize,
+                    rel_tol=0.01,
+                ):
+
+                    for child_id in children:
+                        new_child_potentiel = (
+                            potentiels[child_id]
+                            / action_referentiel_points
+                            * action_potentiel
+                        )
+                        potentiels[child_id] = new_child_potentiel
+                    children_potentiel_sum = sum(
+                        [potentiels[child_id] for child_id in children]
+                    )
+                    if not math.isclose(
+                        action_potentiel,
+                        children_potentiel_sum,
+                        rel_tol=0.01,  # TODO : should not happen. fix me.
+                    ):
+                        logger.warn(
+                            f"Children potentiels should sum up to parent potentiel, got action {action_id} with potentiel {action_potentiel} and its children's potentiels sum to {children_potentiel_sum}"
+                        )
+                        # breakpoint()
 
         point_tree.map_from_action_to_taches(
             lambda action_id: _resize_children_potentiels(

@@ -45,7 +45,7 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
   );
 
   return (
-    <div className="flex gap-6 items-center">
+    <div className="flex gap-6 items-center justify-between">
       <div className="text-sm font-bold">{toFixed(fait_width)} %</div>
       <div className="flex">
         <div
@@ -112,10 +112,10 @@ const _formatAvancementScore = (
   preffixIfSome: string,
   suffixIfSome: string
 ): string => {
-  const avancementPercentage = toFixed(
-    (avancementPoint / potentielPoint) * 100
-  );
-  return avancementPoint
+  const avancementPercentage = potentielPoint
+    ? toFixed((avancementPoint / potentielPoint) * 100)
+    : 0;
+  return avancementPercentage
     ? `${preffixIfSome}${avancementPercentage}%${suffixIfSome}`
     : '';
 };
