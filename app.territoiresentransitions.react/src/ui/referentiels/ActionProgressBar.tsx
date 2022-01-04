@@ -1,6 +1,6 @@
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {Tooltip} from '@material-ui/core';
-import {toFixed} from 'utils/progressStat';
+import {toFixed} from 'utils/toFixed';
 import {observer} from 'mobx-react-lite';
 import {ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {referentielId} from 'utils/actions';
@@ -45,7 +45,8 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
   );
 
   return (
-    <div>
+    <div className="flex gap-6 items-center">
+      <div className="text-sm font-bold">{toFixed(fait_width)} %</div>
       <div className="flex">
         <div
           style={{
@@ -102,8 +103,8 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
           />
         </div>
       </div>
-      <div>
-        <div>
+      {/* <div> */}
+      {/* <div>
           {' '}
           <span className="text-base">{toFixed(fait_width)}%</span>{' '}
           <span className="text-sm font-light">réalisé</span>
@@ -113,70 +114,61 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
           <span className="text-base">{toFixed(programme_width)}%</span>{' '}
           <span className="text-sm font-light">prévisionnel</span>
         </div>{' '}
-      </div>
+      </div> */}
     </div>
   );
 };
-const _formatScoreWithLabelAndPercentage = (
+const _formatAvancementScore = (
   avancementPoint: number,
   potentielPoint: number,
-  suffixIfSome: string,
-  labelIfZero: string
+  preffixIfSome: string,
+  suffixIfSome: string
 ): string => {
-  const avancementPercentage = potentielPoint
-    ? toFixed((avancementPoint / potentielPoint) * 100)
-    : 0;
-  return (
-    (avancementPoint
-      ? `${toFixed(avancementPoint)} ${suffixIfSome}`
-      : labelIfZero) + ` (${avancementPercentage}%)`
+  const avancementPercentage = toFixed(
+    (avancementPoint / potentielPoint) * 100
   );
+  return avancementPoint
+    ? `${preffixIfSome}${avancementPercentage}%${suffixIfSome}`
+    : '';
 };
 
-const _ProgressBarTooltipContent = ({score}: {score: ActionScore}) => (
-  <ul>
-    <li>{toFixed(score.point_referentiel)} points selon le référentiel</li>
-    <li>
-      {toFixed(score.point_potentiel)} points après redistribution
-      {score.point_potentiel ? ' dont :' : ''}
-    </li>
-    {score.point_potentiel ? (
-      <ul className="mt-0 pt-0">
-        <li>
-          {`${_formatScoreWithLabelAndPercentage(
-            score.point_fait,
-            score.point_potentiel,
-            'points faits',
-            'aucun point fait'
-          )}`}
-        </li>
-        <li>
-          {`${_formatScoreWithLabelAndPercentage(
-            score.point_programme,
-            score.point_potentiel,
-            'points programmés',
-            'aucun point programmé'
-          )}`}
-        </li>
-        <li>
-          {`${_formatScoreWithLabelAndPercentage(
-            score.point_pas_fait,
-            score.point_potentiel,
-            'points pas faits',
-            'aucun point pas fait'
-          )}`}
-        </li>
-        <li>
-          {`${_formatScoreWithLabelAndPercentage(
-            score.point_non_renseigne,
-            score.point_potentiel,
-            'points non renseignés',
-            'aucun point non renseigné'
-          )}`}
-        </li>
-      </ul>
-    ) : (
-      ''
-    )}
-  </ul>
-);
+const _ProgressBarTooltipContent = ({score}: {score: ActionScore}) => {
+  const point_non_concerne = Math.max(
+    score.point_referentiel - score.point_potentiel,
+    0
+  );
+  return (
+    <div className="text-base">
+      {_formatAvancementScore(
+        score.point_fait,
+        score.point_potentiel,
+        'fait: ',
+        ' / '
+      )}
+      {_formatAvancementScore(
+        score.point_programme,
+        score.point_potentiel,
+        'programmé: ',
+        ' / '
+      )}
+      {_formatAvancementScore(
+        score.point_pas_fait,
+        score.point_potentiel,
+        'pas-fait: ',
+        ' / '
+      )}
+      {_formatAvancementScore(
+        point_non_concerne,
+        score.point_potentiel,
+        'non concerné: ',
+        ' / '
+      )}
+      {_formatAvancementScore(
+        score.point_non_renseigne,
+        score.point_potentiel,
+        'non renseigné: ',
+        '.'
+      )}
+    </div>
+  );
+};
