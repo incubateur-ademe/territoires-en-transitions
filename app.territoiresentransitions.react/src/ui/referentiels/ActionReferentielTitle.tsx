@@ -1,7 +1,11 @@
+import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
 import type {
   ActionReferentiel,
   ActionType,
 } from 'generated/models/action_referentiel';
+import {observer} from 'mobx-react-lite';
+import {referentielId} from 'utils/actions';
+import {toFixed} from 'utils/toFixed';
 
 /**
  * @deprecated since new UI, use ActionReferentielDisplayTitle
@@ -43,6 +47,16 @@ const pillParams: Record<ActionType, PillParams> = {
   tache: {color: '#E8EBF3', textColor: 'black', filled: false, height: 20},
 };
 
+const ActionPotentiel = observer(
+  ({action, scoreBloc}: {action: ActionReferentiel; scoreBloc: ScoreBloc}) => {
+    const score = scoreBloc.getScore(action.id, referentielId(action.id));
+
+    if (score === null) return null;
+    const potentiel = toFixed(score?.point_potentiel);
+    return <div className="font-normal">({potentiel} points)</div>;
+  }
+);
+
 export const ActionReferentielDisplayTitle = ({
   action,
 }: {
@@ -51,9 +65,9 @@ export const ActionReferentielDisplayTitle = ({
   const pill = pillParams[action.type];
 
   return (
-    <div className="flex flex-row align-middle items-center font-bold">
+    <div className="flex flex-row align-middle items-center font-bold gap-2">
       <div
-        className="content-center mr-2"
+        className="content-center"
         style={{
           color: pill.textColor,
           backgroundColor: pill.filled ? pill.color : 'white',
@@ -67,6 +81,7 @@ export const ActionReferentielDisplayTitle = ({
         {action.identifiant}
       </div>
       <div>{action.nom}</div>
+      <ActionPotentiel action={action} scoreBloc={scoreBloc} />
     </div>
   );
 };
