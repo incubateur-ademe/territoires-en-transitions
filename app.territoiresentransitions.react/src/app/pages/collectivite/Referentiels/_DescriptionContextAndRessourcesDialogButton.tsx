@@ -51,7 +51,7 @@ export const DescriptionContextAndRessourcesDialogButton = ({
         className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-information-fill fr-btn--icon-left"
         onClick={() => setOpened(true)}
       >
-        Description, Contexte & Ressources
+        Contexte, exemples et ressources
       </button>
       <Dialog
         open={opened}
