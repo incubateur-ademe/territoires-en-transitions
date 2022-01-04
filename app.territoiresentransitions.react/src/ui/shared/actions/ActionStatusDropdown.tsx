@@ -1,10 +1,15 @@
-import {Avancement} from 'generated/dataLayer/action_statut_read';
+import {
+  ActionStatutRead,
+  Avancement,
+} from 'generated/dataLayer/action_statut_read';
 import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
 import {makeAutoObservable} from 'mobx';
 import {observer} from 'mobx-react-lite';
 import {useCollectiviteId} from 'core-logic/hooks';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {MenuItem, Select} from '@material-ui/core';
+import {avancementColors} from 'app/colors';
+import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
 
 export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
   const collectiviteId = useCollectiviteId()!;
@@ -29,7 +34,7 @@ interface SelectableStatut {
 
 const faitStatut: SelectableStatut = {
   value: 1,
-  color: '#04C200',
+  color: avancementColors.fait,
   concerne: true,
   avancement: 'fait',
   label: 'Fait',
@@ -37,7 +42,7 @@ const faitStatut: SelectableStatut = {
 
 const programmeStatut: SelectableStatut = {
   value: 2,
-  color: '#FDE406',
+  color: avancementColors.programme,
   concerne: true,
   avancement: 'programme',
   label: 'Programmé',
@@ -45,7 +50,7 @@ const programmeStatut: SelectableStatut = {
 
 const pasFaitStatut: SelectableStatut = {
   value: 3,
-  color: '#FD0606',
+  color: avancementColors.pas_fait,
   concerne: true,
   avancement: 'pas_fait',
   label: 'Pas fait',
@@ -53,7 +58,7 @@ const pasFaitStatut: SelectableStatut = {
 
 const nonRenseigneStatut: SelectableStatut = {
   value: -1,
-  color: '#000000',
+  color: avancementColors.non_renseigne,
   concerne: true,
   avancement: 'non_renseigne',
   label: 'Non renseigné',
@@ -61,11 +66,19 @@ const nonRenseigneStatut: SelectableStatut = {
 
 const nonConcerneStatut: SelectableStatut = {
   value: 5,
-  color: '#757575',
+  color: avancementColors.non_concerne,
   concerne: false,
   avancement: 'non_renseigne',
   label: 'Non concerné',
 };
+
+const selectables = [
+  nonRenseigneStatut,
+  faitStatut,
+  programmeStatut,
+  pasFaitStatut,
+  nonConcerneStatut,
+];
 
 const _ActionStatusAvancementRadioButton = observer(
   ({
@@ -81,7 +94,9 @@ const _ActionStatusAvancementRadioButton = observer(
     const handleChange = (event: {target: any}) => {
       actionStatusAvancementBloc
         .pickStatutValue(event.target.value)
-        .then(() => setValue(actionStatusAvancementBloc.statut.value));
+        .then(() => {
+          return setValue(actionStatusAvancementBloc.statut.value);
+        });
     };
 
     return (
@@ -91,7 +106,7 @@ const _ActionStatusAvancementRadioButton = observer(
         displayEmpty
         inputProps={{'aria-label': 'Without label'}}
       >
-        {actionStatusAvancementBloc.selectables.map(statut => (
+        {selectables.map(statut => (
           <MenuItem key={statut.value} value={statut.value}>
             <span style={{color: statut.color}}>&#9679;</span>{' '}
             <>{statut.label}</>
@@ -109,14 +124,6 @@ class ActionStatusAvancementRadioButtonBloc {
   private concerne = true;
   private _statut: SelectableStatut = nonRenseigneStatut;
 
-  public selectables = [
-    nonRenseigneStatut,
-    faitStatut,
-    programmeStatut,
-    pasFaitStatut,
-    nonConcerneStatut,
-  ];
-
   constructor({
     actionId,
     collectiviteId,
@@ -130,8 +137,8 @@ class ActionStatusAvancementRadioButtonBloc {
     this.fetch();
   }
 
-  public async pickStatutValue(value: number | null) {
-    const statut = this.selectables.find(s => s.value === value)!;
+  public async pickStatutValue(value: number) {
+    const statut = ActionStatusAvancementRadioButtonBloc.statutByValue(value);
     this._statut = statut;
     this.avancement = statut.avancement;
     this.concerne = statut.concerne;
@@ -140,17 +147,6 @@ class ActionStatusAvancementRadioButtonBloc {
 
   get statut(): SelectableStatut {
     return this._statut;
-  }
-
-  private setAvancement(avancement: Avancement) {
-    this._statut =
-      this.selectables.find(s => s.avancement === avancement) ??
-      nonRenseigneStatut;
-    this.avancement = avancement;
-  }
-
-  private setConcerne(concerne: boolean) {
-    this.concerne = concerne;
   }
 
   private saveStatut() {
@@ -163,8 +159,8 @@ class ActionStatusAvancementRadioButtonBloc {
       })
       .then(saved => {
         if (saved) {
-          this.setAvancement(saved.avancement);
-          this.setConcerne(saved.concerne);
+          this._statut =
+            ActionStatusAvancementRadioButtonBloc.statutByEntity(saved);
         }
       });
   }
@@ -177,8 +173,21 @@ class ActionStatusAvancementRadioButtonBloc {
       })
       .then(fetched => {
         if (fetched) {
-          this.setAvancement(fetched.avancement);
+          this._statut =
+            ActionStatusAvancementRadioButtonBloc.statutByEntity(fetched);
         }
       });
+  }
+
+  public static statutByValue(value: number): SelectableStatut {
+    return selectables.find(s => s.value === value)!;
+  }
+
+  public static statutByEntity(
+    entity: ActionStatutWrite | ActionStatutRead
+  ): SelectableStatut {
+    return selectables.find(
+      s => s.concerne === entity.concerne && s.avancement === entity.avancement
+    )!;
   }
 }

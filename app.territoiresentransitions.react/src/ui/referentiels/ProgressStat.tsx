@@ -1,6 +1,6 @@
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useEffect, useState} from 'react';
-import {makeStyles} from '@material-ui/core';
+import {makeStyles, Tooltip} from '@material-ui/core';
 import {progressStateColors} from 'app/theme';
 import * as R from 'ramda';
 import {
@@ -8,11 +8,13 @@ import {
   percentageTextFromScore,
   pointsTextFromScore,
   ProgressState,
+  toFixed,
 } from 'utils/progressStat';
 import {observer} from 'mobx-react-lite';
 import {ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {referentielId} from 'utils/actions';
 import {ActionScore} from 'types/ClientScore';
+import {avancementColors} from 'app/colors';
 
 const useStyle = makeStyles(
   R.mapObjIndexed(
@@ -139,7 +141,7 @@ export const UiGaugeProgressStat = ({
   );
 };
 
-export const CurrentEpciGaugeProgressStat = observer(
+export const ActionProgressBar = observer(
   ({
     action,
     size,
@@ -156,28 +158,50 @@ export const CurrentEpciGaugeProgressStat = observer(
 
 export const ProgressBarStatic = observer(
   ({action, scoreBloc}: {action: ActionReferentiel; scoreBloc: ScoreBloc}) => {
-    const classes = useStyle();
-
-    // const storableId = ActionReferentielScoreStorable.buildId(action.id);
-    // const score = useActionReferentielScore(storableId);
     const score = scoreBloc.getScore(action.id, referentielId(action.id));
-    if (score === null) return null;
 
-    const max_point = Math.max(score.point_referentiel, score.point_potentiel);
-    function percentage(x: number): number {
-      return (100 * x) / max_point;
-    }
-    const fait_width = percentage(score.point_fait);
-    const programme_width = percentage(score.point_programme) + fait_width;
-    const pas_fait_width = percentage(score.point_pas_fait) + programme_width;
+    if (score === null) return null;
+    console.log('score', score);
 
     return (
-      <div style={{display: 'flex', flexDirection: 'column'}}>
+      <Tooltip
+        title={
+          <div style={{whiteSpace: 'pre-line'}}>
+            {<_ProgressBarTooltipContent score={score} />}
+          </div>
+        }
+      >
+        <div>
+          <_ColoredBar score={score} />
+        </div>
+      </Tooltip>
+    );
+  }
+);
+
+const _ColoredBar = ({score}: {score: ActionScore}) => {
+  const max_point = Math.max(score.point_referentiel, score.point_potentiel);
+
+  const percentageAgainstMaxPoints = (x: number): number =>
+    (100 * x) / max_point;
+  const fait_width = percentageAgainstMaxPoints(score.point_fait);
+  const programme_width =
+    percentageAgainstMaxPoints(score.point_programme) + fait_width;
+  const pas_fait_width =
+    percentageAgainstMaxPoints(score.point_pas_fait) + programme_width;
+
+  const non_concerne_width = percentageAgainstMaxPoints(
+    Math.max(score.point_referentiel - score.point_potentiel, 0)
+  );
+
+  return (
+    <div>
+      <div className="flex">
         <div
           style={{
             minWidth: 100,
             minHeight: 10,
-            backgroundColor: '#565656',
+            backgroundColor: avancementColors.non_renseigne,
             position: 'relative',
             borderRadius: 5,
           }}
@@ -185,7 +209,7 @@ export const ProgressBarStatic = observer(
           <div
             style={{
               minWidth: `${pas_fait_width}%`,
-              backgroundColor: '#FD0606',
+              backgroundColor: avancementColors.pas_fait,
               minHeight: '100%',
               position: 'absolute',
               top: 0,
@@ -196,7 +220,7 @@ export const ProgressBarStatic = observer(
           <div
             style={{
               minWidth: `${programme_width}%`,
-              backgroundColor: '#FDE406',
+              backgroundColor: avancementColors.programme,
               minHeight: '100%',
               position: 'absolute',
               top: 0,
@@ -207,7 +231,18 @@ export const ProgressBarStatic = observer(
           <div
             style={{
               minWidth: `${fait_width}%`,
-              backgroundColor: '#04C200',
+              backgroundColor: avancementColors.fait,
+              minHeight: '100%',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              borderRadius: 5,
+            }}
+          />
+          <div
+            style={{
+              minWidth: `${non_concerne_width}%`,
+              backgroundColor: avancementColors.non_concerne,
               minHeight: '100%',
               position: 'absolute',
               top: 0,
@@ -216,27 +251,82 @@ export const ProgressBarStatic = observer(
             }}
           />
         </div>
-        <ul className="toolip">
-          <li>
-            <em>fait:</em> {score.point_fait}pts
-          </li>
-          <li>
-            <em>programmé:</em> {score.point_programme}pts
-          </li>
-          <li>
-            <em>pas fait:</em> {score.point_pas_fait}pts
-          </li>
-          <li>
-            <em>non renseigné:</em> {score.point_non_renseigne}pts
-          </li>
-          <li>
-            <em>potentiel:</em> {score.point_potentiel}pts
-          </li>
-          <li>
-            <em>referentiel:</em> {score.point_referentiel}pts
-          </li>
-        </ul>
       </div>
-    );
-  }
+      <div>
+        <div>
+          {' '}
+          <span className="text-base">{toFixed(fait_width)}%</span>{' '}
+          <span className="text-sm font-light">réalisé</span>
+        </div>{' '}
+        <div>
+          {' '}
+          <span className="text-base">{toFixed(programme_width)}%</span>{' '}
+          <span className="text-sm font-light">prévisionnel</span>
+        </div>{' '}
+      </div>
+    </div>
+  );
+};
+const _formatScoreWithLabelAndPercentage = (
+  avancementPoint: number,
+  potentielPoint: number,
+  suffixIfSome: string,
+  labelIfZero: string
+): string => {
+  const avancementPercentage = potentielPoint
+    ? toFixed((avancementPoint / potentielPoint) * 100)
+    : 0;
+  return (
+    (avancementPoint
+      ? `${toFixed(avancementPoint)} ${suffixIfSome}`
+      : labelIfZero) + ` (${avancementPercentage}%)`
+  );
+};
+
+const _ProgressBarTooltipContent = ({score}: {score: ActionScore}) => (
+  <ul>
+    <li>{toFixed(score.point_referentiel)} points selon le référentiel</li>
+    <li>
+      {toFixed(score.point_potentiel)} points après redistribution
+      {score.point_potentiel ? ' dont :' : ''}
+    </li>
+    {score.point_potentiel ? (
+      <ul className="mt-0 pt-0">
+        <li>
+          {`${_formatScoreWithLabelAndPercentage(
+            score.point_fait,
+            score.point_potentiel,
+            'points faits',
+            'aucun point fait'
+          )}`}
+        </li>
+        <li>
+          {`${_formatScoreWithLabelAndPercentage(
+            score.point_programme,
+            score.point_potentiel,
+            'points programmés',
+            'aucun point programmé'
+          )}`}
+        </li>
+        <li>
+          {`${_formatScoreWithLabelAndPercentage(
+            score.point_pas_fait,
+            score.point_potentiel,
+            'points pas faits',
+            'aucun point pas fait'
+          )}`}
+        </li>
+        <li>
+          {`${_formatScoreWithLabelAndPercentage(
+            score.point_non_renseigne,
+            score.point_potentiel,
+            'points non renseignés',
+            'aucun point non renseigné'
+          )}`}
+        </li>
+      </ul>
+    ) : (
+      ''
+    )}
+  </ul>
 );
