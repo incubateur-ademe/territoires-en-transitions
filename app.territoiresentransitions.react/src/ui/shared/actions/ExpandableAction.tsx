@@ -4,7 +4,7 @@ import {LazyDetails} from 'ui/shared/LazyDetails';
 import {
   ActionReferentielTitle,
   ActionReferentielTitleCard,
-  CurrentEpciGaugeProgressStat,
+  ActionProgressBar,
 } from 'ui/referentiels';
 import {Chevron} from 'ui/shared/Chevron';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
@@ -23,7 +23,7 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center w-full">
               <div className="px-3 w-1/12 ">
-                <CurrentEpciGaugeProgressStat
+                <ActionProgressBar
                   action={action}
                   size="xs"
                   scoreBloc={scoreBloc}

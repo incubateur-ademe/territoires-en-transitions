@@ -7,7 +7,7 @@ import {useParams} from 'react-router-dom';
 
 import {Spacer} from 'ui/shared';
 import {actions} from 'generated/data/referentiels';
-import {CurrentEpciGaugeProgressStat} from 'ui/referentiels';
+import {ActionProgressBar} from 'ui/referentiels';
 import {ReferentielParamOption, referentielParam} from 'app/paths';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 
@@ -46,7 +46,7 @@ const ReferentielTitle = (props: {view: ReferentielParamOption}) => {
           position="left"
           showPoints={true}
         /> */}
-        <CurrentEpciGaugeProgressStat
+        <ActionProgressBar
           action={referentiel}
           size="sm"
           scoreBloc={scoreBloc}

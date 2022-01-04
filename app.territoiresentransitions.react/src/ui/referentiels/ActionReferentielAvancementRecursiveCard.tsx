@@ -1,9 +1,8 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ProgressBarStatic, ProgressStatStatic} from '.';
+import {ProgressBarStatic} from '.';
 import {
   ActionDescriptionExpandPanel,
   ActionCommentaire,
-  ActionStatusAvancementRadioButton,
   ActionExemplesExpandPanel,
 } from 'ui/shared';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
