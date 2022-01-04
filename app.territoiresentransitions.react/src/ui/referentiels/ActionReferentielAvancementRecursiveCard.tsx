@@ -1,5 +1,5 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ProgressBarStatic} from '.';
+import {ActionProgressBar} from '.';
 import {
   ActionDescriptionExpandPanel,
   ActionCommentaire,
@@ -69,7 +69,7 @@ export const ActionReferentielAvancementCard = ({
             {action.nom}
           </h3>
         </div>
-        <ProgressBarStatic action={action} scoreBloc={scoreBloc} />
+        <ActionProgressBar action={action} scoreBloc={scoreBloc} />
       </div>
       {/* <div className="flex justify-between my-6"> */}
       {/* {' '} */}

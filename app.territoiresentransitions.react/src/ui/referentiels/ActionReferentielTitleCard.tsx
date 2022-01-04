@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ProgressStatStatic} from 'ui/referentiels';
+import {ActionProgressBar} from 'ui/referentiels';
 import {ActionDescriptionExpandPanel} from 'ui/shared';
 import {ActionReferentielTitle} from './ActionReferentielTitle';
 import {referentielToName} from 'app/labels';
@@ -33,13 +33,7 @@ export const ActionReferentielTitleCard = ({
               {referentielToName[referentiel]}
             </span>
           </div>
-          <ProgressStatStatic
-            className="w-100"
-            action={action}
-            position="right"
-            showPoints={true}
-            scoreBloc={scoreBloc}
-          />
+          <ActionProgressBar action={action} scoreBloc={scoreBloc} />
         </div>
         <div className="p-4 flex justify-between">
           <ActionReferentielTitle action={action} />

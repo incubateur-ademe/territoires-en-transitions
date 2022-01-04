@@ -23,11 +23,7 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center w-full">
               <div className="px-3 w-1/12 ">
-                <ActionProgressBar
-                  action={action}
-                  size="xs"
-                  scoreBloc={scoreBloc}
-                />
+                <ActionProgressBar action={action} scoreBloc={scoreBloc} />
               </div>
               <div className="flex items-center mr-6">
                 <ActionReferentielTitle

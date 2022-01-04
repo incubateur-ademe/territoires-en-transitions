@@ -7,9 +7,9 @@ import {useParams} from 'react-router-dom';
 
 import {Spacer} from 'ui/shared';
 import {actions} from 'generated/data/referentiels';
-import {ActionProgressBar} from 'ui/referentiels';
 import {ReferentielParamOption, referentielParam} from 'app/paths';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
+import {ActionProgressBar} from 'ui/referentiels';
 
 const viewTitles: Record<ReferentielParamOption, string> = {
   cae: 'Climat Air Énergie',
@@ -41,16 +41,7 @@ const ReferentielTitle = (props: {view: ReferentielParamOption}) => {
     <header className="flex flex-row items-center mb-6 space-x-10">
       <h2 className="fr-h2">{viewTitles[props.view]}</h2>
       <div>
-        {/* <ProgressStatStatic
-          action={referentiel}
-          position="left"
-          showPoints={true}
-        /> */}
-        <ActionProgressBar
-          action={referentiel}
-          size="sm"
-          scoreBloc={scoreBloc}
-        />
+        <ActionProgressBar action={referentiel} scoreBloc={scoreBloc} />
       </div>
     </header>
   );
