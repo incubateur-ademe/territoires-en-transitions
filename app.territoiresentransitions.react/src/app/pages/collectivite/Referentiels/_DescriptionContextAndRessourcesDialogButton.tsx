@@ -8,30 +8,14 @@ import {
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useState} from 'react';
 import Dialog from '@material-ui/core/Dialog';
-import {addTargetToContentAnchors} from 'utils/content';
 
-const DescriptionBlock = ({description}: {description?: string}) => {
-  if (!description) return <></>;
-  return (
-    <div>
-      <div className="font-bold pb-2 text-lg">Description</div>
-      <div
-        className="htmlContent"
-        dangerouslySetInnerHTML={{
-          __html: addTargetToContentAnchors(description),
-        }}
-      />
-    </div>
-  );
-};
-const DescriptionContextAndRessourcesDialogContent = ({
+const ContexteExemplesAndRessourcesDialogContent = ({
   action,
 }: {
   action: ActionReferentiel;
 }) => (
   <div className="p-7 flex flex-col">
     <h4 className="pb-4"> {action.nom} </h4>
-    <DescriptionBlock description={action.description} />
     <ActionContexteExpandPanel action={action} />
     <ActionExemplesExpandPanel action={action} />
     <ActionRessourcesExpandPanel action={action} />
@@ -59,7 +43,7 @@ export const DescriptionContextAndRessourcesDialogButton = ({
         maxWidth="md"
         fullWidth={true}
       >
-        <DescriptionContextAndRessourcesDialogContent action={action} />
+        <ContexteExemplesAndRessourcesDialogContent action={action} />
       </Dialog>
     </div>
   );
