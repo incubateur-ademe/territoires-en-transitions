@@ -1,3 +1,4 @@
+import math
 from typing import Dict, List, Optional
 
 from business.evaluation.domain.models import events
@@ -114,12 +115,13 @@ class ComputeReferentielScoresForCollectivite(UseCase):
     ):
 
         tache_points = point_tree.get_action_point(tache_id)
-        point_referentiel = tache_points
 
         # TODO : find a softer way to tell that points cannot be None once they have been filled by referentiel constructor.
         assert tache_points is not None
 
-        # tache_potentiel = tache_points  # TODO : handle concerne/non-concerne here
+        # if tache_id == "eci_2.1.1":
+        #     breakpoint()
+
         tache_point_potentiel = potentiels[tache_id]
         tache_status = status_by_action_id.get(tache_id)
         tache_concerne = tache_id not in actions_non_concernes_ids
@@ -134,7 +136,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 point_potentiel=tache_point_potentiel,
                 total_taches_count=1,
                 completed_taches_count=1,
-                point_referentiel=point_referentiel,
+                point_referentiel=tache_points,
                 concerne=tache_concerne,
                 referentiel=referentiel,
             )
@@ -174,7 +176,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             point_non_renseigne=point_non_renseigne,
             point_fait=point_fait,
             point_potentiel=tache_point_potentiel,
-            point_referentiel=point_referentiel,
+            point_referentiel=tache_points,
             completed_taches_count=completed_taches_count,
             total_taches_count=1,
             concerne=tache_concerne,
@@ -323,8 +325,6 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             if not action_status.concerne
         ]
 
-        scores: Dict[ActionId, ActionScore] = {}
-
         # 1. First, calculate all potentiels after 'non concernee' action's points redistribution
         actions_non_concernes_ids = taches_non_concernes_ids
         point_tree.map_from_taches_to_root(
@@ -342,16 +342,10 @@ class ComputeReferentielScoresForCollectivite(UseCase):
     ) -> Dict[ActionId, float]:
         potentiels = {}
 
-        def _add_action_potentiel(
+        def _add_action_potentiel_after_redistribution(
             action_id: ActionId,
-            potentiels: Dict[ActionId, float],
-            actions_non_concernes_ids: List[ActionId],
-            point_tree: ActionPointTree,
-            action_level: int,
         ):
-            this_level = len(
-                action_id.split(".")
-            )  # TODO : find better way to infer level (this should rather be ActionTree responsability)
+            this_level = point_tree.get_action_level(action_id)
             children = point_tree.get_action_children(action_id)
 
             if not children:  # tache
@@ -380,12 +374,35 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 potentiels[action_id] = original_action_potentiel
 
         point_tree.map_from_taches_to_root(
-            lambda action_id: _add_action_potentiel(
+            lambda action_id: _add_action_potentiel_after_redistribution(
                 action_id,
-                potentiels,
-                actions_non_concernes_ids,
-                point_tree,
-                action_level,
             )
+        )
+
+        def _reverberate_potentiel_on_children(action_id: ActionId):
+            action_potentiel = potentiels[action_id]
+            action_referentiel_points = point_tree.get_action_point(action_id)
+            if action_potentiel != action_referentiel_points:
+                children = point_tree.get_action_children(action_id)
+                for child_id in children:
+                    new_child_potentiel = (
+                        potentiels[child_id]
+                        / action_referentiel_points
+                        * action_potentiel
+                    )
+                    potentiels[child_id] = new_child_potentiel
+                children_potentiel_sum = sum(
+                    [potentiels[child_id] for child_id in children]
+                )
+                if children:
+                    assert math.isclose(
+                        action_potentiel, children_potentiel_sum, rel_tol=0.01
+                    ), f"Children potentiels should sum up to parent potentiel, got action {action_id} with potentiel {action_potentiel} and its children's potentiels sum to {children_potentiel_sum}"
+
+        point_tree.map_from_action_to_taches(
+            lambda action_id: _reverberate_potentiel_on_children(
+                action_id,
+            ),
+            action_level,
         )
         return potentiels
