@@ -1,9 +1,9 @@
 import {actions as referentielActions} from 'generated/data/referentiels';
 import {Link} from 'react-router-dom';
 import {
+  ActionProgressBar,
   ActionReferentielAvancementRecursiveCard,
   ActionReferentielDisplayTitle,
-  ProgressBarStatic,
 } from 'ui/referentiels';
 import 'app/DesignSystem/buttons.css';
 import {Spacer} from 'ui/shared';
@@ -16,6 +16,7 @@ import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurA
 import {useEffect, useState} from 'react';
 import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
 import {OrientationFilAriane} from 'app/pages/collectivite/Referentiels/FilAriane';
+import {addTargetToContentAnchors} from 'utils/content';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -54,14 +55,25 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
     <div className="fr-container">
       <div className="mt-8 mb-16">
         <OrientationFilAriane action={action} />
-        <div className="pt-8 flex flex-row">
-          <ActionReferentielDisplayTitle action={action} />
-          <ProgressBarStatic action={action} scoreBloc={scoreBloc} />
-        </div>
-        <div className="w-2/3">
-          <DescriptionContextAndRessourcesDialogButton action={action} />
+        <div className="pt-8 flex flex-row justify-between">
+          <div className="flex flex-col">
+            <ActionReferentielDisplayTitle action={action} />
+            <div
+              className="htmlContent"
+              dangerouslySetInnerHTML={{
+                __html: addTargetToContentAnchors(action.description ?? ''),
+              }}
+            />
+            <DescriptionContextAndRessourcesDialogButton action={action} />
+            <span className="bg-yellow-200">
+              description génerale de l'avancement (champ commentaire)
+            </span>
+          </div>
+          <ActionProgressBar action={action} scoreBloc={scoreBloc} />
         </div>
       </div>
+
+      <span className="bg-yellow-200">onglets [actions/indicateurs]</span>
 
       <section>
         {action.actions.map(action => (
