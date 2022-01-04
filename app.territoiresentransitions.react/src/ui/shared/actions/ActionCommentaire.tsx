@@ -1,21 +1,16 @@
-import React from 'react';
 import '../CrossExpandPanel.css';
 import {makeAutoObservable} from 'mobx';
 import {actionCommentaireRepository} from 'core-logic/api/repositories/ActionCommentaireRepository';
 import {observer} from 'mobx-react-lite';
 import {currentCollectiviteBloc} from 'core-logic/observables';
+import {useCollectiviteId} from 'core-logic/hooks';
 
 export const ActionCommentaire = ({actionId}: {actionId: string}) => {
-  const collectiviteId = 1; // TODO !
+  const collectiviteId = useCollectiviteId()!;
   const observable = new ActionCommentaireFieldBloc({actionId, collectiviteId});
   return (
-    <div className={' border-gray-300'}>
-      <div className="CrossExpandPanel">
-        <details>
-          <summary className="title">Commentaire</summary>
-          <ActionCommentaireField observable={observable} />
-        </details>
-      </div>
+    <div className="border-gray-300 my-3">
+      <ActionCommentaireField observable={observable} />
     </div>
   );
 };
@@ -23,7 +18,8 @@ export const ActionCommentaire = ({actionId}: {actionId: string}) => {
 const ActionCommentaireField = observer(
   ({observable}: {observable: ActionCommentaireFieldBloc}) => (
     <textarea
-      value={observable.fieldValue}
+      name="commentaire"
+      value={observable.fieldValue ?? ''}
       onChange={event => observable.setFieldValue(event.currentTarget.value)}
       onBlur={_ => observable.saveFieldValue()}
       className="fr-input mt-2 w-full bg-white p-3 mr-5"
@@ -35,7 +31,7 @@ const ActionCommentaireField = observer(
 class ActionCommentaireFieldBloc {
   private readonly collectiviteId: number;
   private readonly actionId: string;
-  fieldValue = '';
+  fieldValue: string | null = null;
 
   constructor({
     actionId,
@@ -50,7 +46,7 @@ class ActionCommentaireFieldBloc {
     this.fetch();
   }
 
-  setFieldValue(fieldValue: string) {
+  setFieldValue(fieldValue: string | null) {
     this.fieldValue = fieldValue;
   }
 
@@ -58,7 +54,7 @@ class ActionCommentaireFieldBloc {
     actionCommentaireRepository.save({
       action_id: this.actionId,
       collectivite_id: this.collectiviteId,
-      commentaire: this.fieldValue,
+      commentaire: this.fieldValue ?? '',
     });
   }
 
@@ -69,7 +65,9 @@ class ActionCommentaireFieldBloc {
         actionId: this.actionId,
       })
       .then(fetched => {
-        this.setFieldValue(fetched?.commentaire ?? '');
+        this.setFieldValue(
+          fetched?.commentaire !== '' ? fetched?.commentaire ?? null : null
+        );
       });
   }
 }
