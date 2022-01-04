@@ -1,10 +1,6 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {ActionProgressBar, ActionReferentielDisplayTitle} from '.';
-import {
-  ActionDescriptionExpandPanel,
-  ActionCommentaire,
-  ActionExemplesExpandPanel,
-} from 'ui/shared';
+import {ActionCommentaire, ActionExemplesExpandPanel} from 'ui/shared';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionStatusDropdown} from 'ui/shared/actions/ActionStatusDropdown';
 import {addTargetToContentAnchors} from 'utils/content';
