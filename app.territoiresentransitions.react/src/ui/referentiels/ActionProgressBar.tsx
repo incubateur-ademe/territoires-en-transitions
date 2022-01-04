@@ -103,18 +103,6 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
           />
         </div>
       </div>
-      {/* <div> */}
-      {/* <div>
-          {' '}
-          <span className="text-base">{toFixed(fait_width)}%</span>{' '}
-          <span className="text-sm font-light">réalisé</span>
-        </div>{' '}
-        <div>
-          {' '}
-          <span className="text-base">{toFixed(programme_width)}%</span>{' '}
-          <span className="text-sm font-light">prévisionnel</span>
-        </div>{' '}
-      </div> */}
     </div>
   );
 };
