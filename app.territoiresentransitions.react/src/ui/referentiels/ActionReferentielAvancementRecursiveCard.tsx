@@ -22,25 +22,20 @@ import {addTargetToContentAnchors} from 'utils/content';
 const ActionReferentielRecursiveCard = ({
   action,
   card,
-  marginLeft,
 }: {
   action: ActionReferentiel;
   card: ({action}: {action: ActionReferentiel}) => JSX.Element;
-  marginLeft?: number;
 }) => {
-  const ml = marginLeft ?? 0;
-  if (action.actions.length === 0)
-    return <div className={`ml-${ml}`}> {card({action})}</div>;
+  if (action.actions.length === 0) return <div> {card({action})}</div>;
   else
     return (
       <div>
-        <div className={`ml-${ml}`}> {card({action})}</div>{' '}
+        <div> {card({action})}</div>{' '}
         {action.actions.map(action => (
           <ActionReferentielRecursiveCard
             key={action.id}
             action={action}
             card={card}
-            marginLeft={ml + 20}
           />
         ))}
       </div>
@@ -56,26 +51,28 @@ export const ActionReferentielAvancementCard = ({
   displayAddFicheActionButton: boolean;
   action: ActionReferentiel;
 }) => {
-  const isTache = action.actions.length === 0;
+  const isLeaf = action.actions.length === 0;
   return (
-    <article className={` bg-beige my-8 p-4 ${isTache ? '' : 'border-l-4'}`}>
-      <div className="flex justify-between items-center">
-        <ActionReferentielDisplayTitle action={action} />
-        <ActionProgressBar action={action} scoreBloc={scoreBloc} />
-      </div>
-      <div className={` ${!isTache ? 'hidden' : ''}`}>
-        <ActionStatusDropdown actionId={action.id} />
-      </div>
-      {/* </div> */}
-      <div className="w-1/2">
-        <div
-          className="htmlContent"
-          dangerouslySetInnerHTML={{
-            __html: addTargetToContentAnchors(action.description ?? ''),
-          }}
-        />
-        <ActionExemplesExpandPanel action={action} />
-        <ActionCommentaire actionId={action.id} />{' '}
+    <article>
+      <div className="flex flex-row">
+        <div>
+          <ActionReferentielDisplayTitle action={action} />
+          <div className="flex flex-col">
+            <div
+              className="htmlContent"
+              dangerouslySetInnerHTML={{
+                __html: addTargetToContentAnchors(action.description ?? ''),
+              }}
+            />
+            <ActionExemplesExpandPanel action={action} />
+            <ActionCommentaire actionId={action.id} />{' '}
+          </div>
+        </div>
+
+        <div className="flex flex-col w-1/5">
+          <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+          {isLeaf && <ActionStatusDropdown actionId={action.id} />}
+        </div>
       </div>
     </article>
   );
