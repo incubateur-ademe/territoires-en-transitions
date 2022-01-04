@@ -1,5 +1,5 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ActionProgressBar} from '.';
+import {ActionProgressBar, ActionReferentielDisplayTitle} from '.';
 import {
   ActionDescriptionExpandPanel,
   ActionCommentaire,
@@ -7,6 +7,7 @@ import {
 } from 'ui/shared';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionStatusDropdown} from 'ui/shared/actions/ActionStatusDropdown';
+import {addTargetToContentAnchors} from 'utils/content';
 
 /**
  * Displays an actions and it's children indented below.
@@ -57,31 +58,22 @@ export const ActionReferentielAvancementCard = ({
 }) => {
   const isTache = action.actions.length === 0;
   return (
-    <article
-      className={` bg-beige my-8 p-4 border-bf500  ${
-        isTache ? '' : 'border-l-4'
-      }`}
-    >
+    <article className={` bg-beige my-8 p-4 ${isTache ? '' : 'border-l-4'}`}>
       <div className="flex justify-between items-center">
-        <div className="w-4/5">
-          <h3 className="text-lg font-normal">
-            <span>{action.id_nomenclature} - </span>
-            {action.nom}
-          </h3>
-        </div>
+        <ActionReferentielDisplayTitle action={action} />
         <ActionProgressBar action={action} scoreBloc={scoreBloc} />
       </div>
-      {/* <div className="flex justify-between my-6"> */}
-      {/* {' '} */}
-      {/* <div className={` ${!displayAddFicheActionButton ? 'hidden' : ''}`}> */}
-      {/* <AddFicheActionButton actionId={action.id} /> */}
-      {/* </div> */}
       <div className={` ${!isTache ? 'hidden' : ''}`}>
         <ActionStatusDropdown actionId={action.id} />
       </div>
       {/* </div> */}
       <div className="w-1/2">
-        <ActionDescriptionExpandPanel action={action} />
+        <div
+          className="htmlContent"
+          dangerouslySetInnerHTML={{
+            __html: addTargetToContentAnchors(action.description ?? ''),
+          }}
+        />
         <ActionExemplesExpandPanel action={action} />
         <ActionCommentaire actionId={action.id} />{' '}
       </div>

@@ -30,20 +30,25 @@ interface PillParams {
 }
 
 const pillParams: Record<ActionType, PillParams> = {
-  'sous-action': {
+  domaine: {
     color: '#000091',
-    textColor: 'white',
+    textColor: '#000091',
     filled: false,
     height: 20,
   },
   'sous-domaine': {
     color: '#000091',
-    textColor: 'white',
+    textColor: '#000091',
     filled: false,
     height: 20,
   },
   action: {color: '#000091', textColor: 'white', filled: true, height: 20},
-  domaine: {color: '#919BAC', textColor: 'black', filled: false, height: 20},
+  'sous-action': {
+    color: '#919BAC',
+    textColor: 'black',
+    filled: false,
+    height: 20,
+  },
   tache: {color: '#E8EBF3', textColor: 'black', filled: false, height: 20},
 };
 
@@ -80,7 +85,9 @@ export const ActionReferentielDisplayTitle = ({
       >
         {action.identifiant}
       </div>
-      <div>{action.nom}</div>
+      <div>
+        {action.type} {action.nom}
+      </div>
       <ActionPotentiel action={action} scoreBloc={scoreBloc} />
     </div>
   );
