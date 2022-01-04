@@ -56,7 +56,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
       <div className="mt-8 mb-16">
         <OrientationFilAriane action={action} />
         <div className="pt-8 flex flex-row justify-between">
-          <div className="flex flex-col">
+          <div className="flex flex-col w-4/5">
             <ActionReferentielDisplayTitle action={action} />
             <div
               className="htmlContent"
@@ -69,7 +69,9 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
               description génerale de l'avancement (champ commentaire)
             </span>
           </div>
-          <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+          <div className="w-1/6">
+            <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+          </div>
         </div>
       </div>
 

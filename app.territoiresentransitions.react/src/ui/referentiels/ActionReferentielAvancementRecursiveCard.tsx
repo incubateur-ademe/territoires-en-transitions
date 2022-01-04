@@ -49,28 +49,27 @@ export const ActionReferentielAvancementCard = ({
 }) => {
   const isLeaf = action.actions.length === 0;
   return (
-    <article>
-      <div className="flex flex-row">
-        <div>
-          <ActionReferentielDisplayTitle action={action} />
-          <div className="flex flex-col">
-            <div
-              className="htmlContent"
-              dangerouslySetInnerHTML={{
-                __html: addTargetToContentAnchors(action.description ?? ''),
-              }}
-            />
-            <ActionExemplesExpandPanel action={action} />
-            <ActionCommentaire actionId={action.id} />{' '}
-          </div>
-        </div>
-
-        <div className="flex flex-col w-1/5">
-          <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+    <div className="pt-8 flex flex-row justify-between">
+      <div className="flex flex-col w-4/5">
+        <ActionReferentielDisplayTitle action={action} />
+        <div
+          className="htmlContent"
+          dangerouslySetInnerHTML={{
+            __html: addTargetToContentAnchors(action.description ?? ''),
+          }}
+        />
+        <ActionExemplesExpandPanel action={action} />
+        <ActionCommentaire actionId={action.id} />
+      </div>
+      <div className="w-1/6 pl-4">
+        <div className="w-full flex flex-col">
+          {!isLeaf && (
+            <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+          )}
           {isLeaf && <ActionStatusDropdown actionId={action.id} />}
         </div>
       </div>
-    </article>
+    </div>
   );
 };
 

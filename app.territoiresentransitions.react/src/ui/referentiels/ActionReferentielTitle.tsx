@@ -32,14 +32,14 @@ interface PillParams {
 const pillParams: Record<ActionType, PillParams> = {
   domaine: {
     color: '#000091',
-    textColor: 'white',
+    textColor: '#000091',
     filled: false,
     height: 20,
   },
   'sous-domaine': {
     color: '#000091',
-    textColor: 'white',
-    filled: true,
+    textColor: '#000091',
+    filled: false,
     height: 20,
   },
   action: {color: '#000091', textColor: 'white', filled: true, height: 20},
@@ -49,7 +49,7 @@ const pillParams: Record<ActionType, PillParams> = {
     filled: true,
     height: 20,
   },
-  tache: {color: '#E8EBF3', textColor: 'black', filled: false, height: 20},
+  tache: {color: '#E8EBF3', textColor: 'black', filled: true, height: 20},
 };
 
 const ActionPotentiel = observer(
@@ -75,7 +75,7 @@ export const ActionReferentielDisplayTitle = ({
         className="content-center font-normal"
         style={{
           color: pill.textColor,
-          backgroundColor: pill.filled ? pill.color : 'white',
+          backgroundColor: pill.filled ? pill.color : 'red',
           borderRadius: pill.height,
           minHeight: pill.height,
           paddingLeft: pill.height * 0.5,
