@@ -559,12 +559,16 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires():
 deeper_referentiel = copy.deepcopy(referentiel_repo)
 action_childrens = [
     make_action_children(f"eci_2.2", ["eci_2.2.1", "eci_2.2.2", "eci_2.2.3"]),
+    make_action_children(f"eci_2.1", ["eci_2.1.0", "eci_2.1.1", "eci_2.1.2"]),
 ]
 
 action_points = [
     make_action_points(action_id=f"eci_2.2.1", points=2),
     make_action_points(action_id=f"eci_2.2.2", points=1.5),
     make_action_points(action_id=f"eci_2.2.3", points=1.5),
+    make_action_points(action_id=f"eci_2.1.0", points=0),
+    make_action_points(action_id=f"eci_2.1.1", points=40),
+    make_action_points(action_id=f"eci_2.1.2", points=25),
 ]
 
 deeper_referentiel.add_referentiel_actions(
@@ -574,6 +578,9 @@ deeper_referentiel.add_referentiel_actions(
             "eci_2.2.1",
             "eci_2.2.2",
             "eci_2.2.3",
+            "eci_2.1.0",
+            "eci_2.1.1",
+            "eci_2.1.2",
         ]
     ],
     points=action_points,
@@ -612,7 +619,7 @@ def test_notation_should_redistribute_non_concernee_points_if_level_is_greater_t
     assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
-    assert len(actual_scores) == 11
+    assert len(actual_scores) == 14
 
     scores_by_id = {score.action_id: score for score in actual_scores}
 
@@ -630,31 +637,70 @@ def test_notation_should_redistribute_non_concernee_points_if_level_is_greater_t
         referentiel="eci",
     )
     # point_fait of 2.2 is redistributed on 2.1
-    assert scores_by_id[ActionId("eci_2.1")] == ActionScore(
-        action_id=ActionId("eci_2.1"),
+    # assert scores_by_id[ActionId("eci_2.1")] == ActionScore(
+    #     action_id=ActionId("eci_2.1"),
+    #     point_fait=0,
+    #     point_programme=0,
+    #     point_pas_fait=0,
+    #     point_non_renseigne=70,
+    #     point_potentiel=70,
+    #     point_referentiel=65,
+    #     completed_taches_count=0,
+    #     total_taches_count=3,
+    #     concerne=True,
+    #     referentiel="eci",
+    # )
+
+    assert scores_by_id[ActionId("eci_2.1.0")] == ActionScore(
+        action_id=ActionId("eci_2.1.0"),
         point_fait=0,
         point_programme=0,
         point_pas_fait=0,
-        point_non_renseigne=70,
-        point_potentiel=70,
-        point_referentiel=65,
+        point_non_renseigne=0,
+        point_potentiel=0,
+        point_referentiel=0,
         completed_taches_count=0,
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
     )
-
+    assert scores_by_id[ActionId("eci_2.1.1")] == ActionScore(
+        action_id=ActionId("eci_2.1.1"),
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=40 / 65 * 70,
+        point_potentiel=40 / 65 * 70,
+        point_referentiel=40,
+        completed_taches_count=0,
+        total_taches_count=1,
+        concerne=True,
+        referentiel="eci",
+    )
+    assert scores_by_id[ActionId("eci_2.1.2")] == ActionScore(
+        action_id=ActionId("eci_2.1.2"),
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=25 / 65 * 70,
+        point_potentiel=25 / 65 * 70,
+        point_referentiel=25,
+        completed_taches_count=0,
+        total_taches_count=1,
+        concerne=True,
+        referentiel="eci",
+    )
     # axe 2 point_fait should remain unchanged
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
         point_fait=0,
-        point_programme=0,
         point_pas_fait=0,
+        point_programme=0,
         point_non_renseigne=70,
         point_potentiel=70,
         point_referentiel=70,
         completed_taches_count=3,
-        total_taches_count=5,
+        total_taches_count=7,
         concerne=True,
         referentiel="eci",
     )
@@ -669,11 +715,7 @@ def test_notation_should_redistribute_non_concernee_points_if_level_is_greater_t
         point_potentiel=100,
         point_referentiel=100,
         completed_taches_count=4,
-        total_taches_count=7,
+        total_taches_count=9,
         concerne=True,
         referentiel="eci",
     )
-
-
-# def test_notation_should_lower_root_potential_if_level_is_smaller_than_action_level():
-#     referentiel_repo

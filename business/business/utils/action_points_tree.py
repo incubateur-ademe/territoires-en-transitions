@@ -55,6 +55,12 @@ class ActionPointTree:
                 return action_children.action_id
         raise ActionsPointsTreeError("No root action found. ")
 
+    @staticmethod
+    def get_action_level(action_id: ActionId):
+        if len(action_id.split("_")) == 1:
+            return 0
+        return len(action_id.split("."))  # TODO : find better way to infer level
+
     def get_action_point(self, action_id: ActionId) -> float:
         return self._points_by_id[action_id]
 
@@ -123,6 +129,15 @@ class ActionPointTree:
     def map_from_taches_to_root(self, callback: Callable[[ActionId], None]):
         for action_id in tqdm(self._backward_action_ids):
             callback(action_id)
+
+    @timeit("map from actions to taches")
+    def map_from_action_to_taches(
+        self, callback: Callable[[ActionId], None], action_level: int
+    ):
+        for action_id in tqdm(self._forward_action_ids):
+            this_level = this_level = self.get_action_level(action_id)
+            if this_level >= action_level:
+                callback(action_id)
 
     @staticmethod
     def _build_forward_action_ids(node: RecursivePointNode) -> List[ActionId]:
