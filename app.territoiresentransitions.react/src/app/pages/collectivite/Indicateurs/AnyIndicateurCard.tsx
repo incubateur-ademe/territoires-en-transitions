@@ -16,7 +16,7 @@ export function AnyIndicateurCard<T extends string | number>({
 }) {
   const [opened, setOpened] = useState(false);
   return (
-    <div className="mt-2  px-5 py-4 bg-beige mb-5 ">
+    <div className="mt-2  px-5 py-4 mb-5 ">
       <section className="flex flex-col">
         <header className="w-full cursor-pointer mb-5">
           <div

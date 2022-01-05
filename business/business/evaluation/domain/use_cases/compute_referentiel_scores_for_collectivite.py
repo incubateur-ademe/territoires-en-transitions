@@ -413,7 +413,6 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                         message = f"Children potentiels should sum up to parent potentiel, got action {action_id} with potentiel {action_potentiel} and its children's potentiels sum to {children_potentiel_sum}"
                         logger.warn(message)
                         raise Exception(message)
-                        # breakpoint()
 
         point_tree.map_from_action_to_taches(
             lambda action_id: _resize_children_potentiels(
