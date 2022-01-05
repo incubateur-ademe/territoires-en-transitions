@@ -2,7 +2,7 @@ import abc
 from typing import List
 
 from business.core.domain.models.generated.unprocessed_action_statut_update_event_read import (
-    ActionStatutUpdateEventRead,
+    UnprocessedActionStatutUpdateEventRead,
 )
 
 
@@ -11,7 +11,7 @@ class AbstractActionStatutUpdateEventRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_unprocessed_events(self) -> List[ActionStatutUpdateEventRead]:
+    def get_unprocessed_events(self) -> List[UnprocessedActionStatutUpdateEventRead]:
         raise NotImplementedError
 
 
@@ -19,9 +19,9 @@ class InMemoryActionStatutUpdateEventRepository(
     AbstractActionStatutUpdateEventRepository
 ):
     def __init__(
-        self, unprocessed_events: List[ActionStatutUpdateEventRead] = None
+        self, unprocessed_events: List[UnprocessedActionStatutUpdateEventRead] = None
     ) -> None:
         self._unprocessed_events = unprocessed_events or []
 
-    def get_unprocessed_events(self) -> List[ActionStatutUpdateEventRead]:
+    def get_unprocessed_events(self) -> List[UnprocessedActionStatutUpdateEventRead]:
         return self._unprocessed_events
