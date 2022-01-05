@@ -26,7 +26,6 @@ class CatchUpUnprocessedActionStatusUpdateEvents(UseCase):
             self.bus.publish_event(
                 ActionStatutUpdatedForCollectivite(
                     collectivite_id=event.collectivite_id,
-                    created_at=event.created_at,
                     referentiel=event.referentiel,
                 )
             )

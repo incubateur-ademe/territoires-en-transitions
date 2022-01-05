@@ -7,6 +7,9 @@ import rx.operators as op
 from rx.subject.subject import Subject
 
 from business.core.domain.models.event import DomainEvent
+from business.core.domain.models.generated.action_statut_update_event import (
+    ActionStatutUpdateEvent,
+)
 from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
 from business.evaluation.domain.models import events
 
@@ -32,17 +35,20 @@ collectivite_action_statut_update_table: DataLayerTable = "action_statut_update_
 class CollectiviteActionStatutUpdateConverter(AbstractConverter):
     def __init__(self) -> None:
         self.table = collectivite_action_statut_update_table
-        self.schema = marshmallow_dataclass.class_schema(
-            events.ActionStatutUpdatedForCollectivite
-        )()
+        self.schema = marshmallow_dataclass.class_schema(ActionStatutUpdateEvent)()
 
     def filter(self, data: dict) -> bool:
         return data.get("table") == self.table
 
     def convert(self, data: dict) -> DomainEvent:
         try:
-            event = self.schema.load(data.get("record", {}))
-            return event
+            raw_event: ActionStatutUpdateEvent = self.schema.load(
+                data.get("record", {})
+            )
+            return events.ActionStatutUpdatedForCollectivite(
+                collectivite_id=raw_event.collectivite_id,
+                referentiel=raw_event.referentiel,
+            )
         except ValidationError as marshmallow_validation_error:
             return events.RealtimeEventWithWrongFormatObserved(
                 f"Realtime event with wrong format: {marshmallow_validation_error}"
