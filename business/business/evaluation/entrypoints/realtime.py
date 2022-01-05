@@ -37,6 +37,9 @@ class EvaluationConfig(Config):
         self.referentiel_repo = self.get_referentiel_repo()
         self.score_repo = self.get_scores_repo()
         self.statuses_repo = self.get_statuts_repo()
+        self.action_statut_update_event_repo = (
+            self.get_action_statut_update_event_repo()
+        )
         self.realtime = self.get_realtime(socket) or realtime
 
     def prepare_use_cases(self) -> List[UseCase]:
@@ -48,6 +51,12 @@ class EvaluationConfig(Config):
                 self.domain_message_bus, score_repo=self.score_repo
             ),
         ]
+
+    def prepare_catch_up_unprocessed_action_status_update_events(self):
+        return CatchUpUnprocessedActionStatusUpdateEvents(
+            self.domain_message_bus,
+            action_statut_update_event_repo=self.action_statut_update_event_repo,
+        )
 
 
 def get_config(socket: Optional[Socket]):  # TODO variabilize all instantiations !
@@ -82,5 +91,14 @@ def get_connected_socket() -> Socket:
 if __name__ == "__main__":
     socket = get_connected_socket()
     config = get_config(socket)
+
+    # First, launch realtime observer
     config.realtime.start()
+
+    # Then, catch up unprocessed action status event
+    catch_up_unprocessed_action_status_update_events = (
+        config.prepare_catch_up_unprocessed_action_status_update_events()
+    )
+    catch_up_unprocessed_action_status_update_events.execute()
+
     socket.listen()

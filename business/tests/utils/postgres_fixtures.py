@@ -25,7 +25,7 @@ def cursor(postgres_connection: psycopg.Connection, request):
 
 def clear_cursor(cursor: psycopg.Cursor):
     tables = [
-        "score, action_relation",
+        "action_relation",
         "auth.users",
         "indicateur_definition",
         "action_definition",

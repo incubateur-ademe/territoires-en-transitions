@@ -46,7 +46,7 @@ def insert_user(cursor: Cursor, user_id: str):
     )
 
 
-def insert_action_statut_for_epci(
+def insert_action_statut_for_collectivite(
     cursor: Cursor,
     *,
     collectivite_id: int,
