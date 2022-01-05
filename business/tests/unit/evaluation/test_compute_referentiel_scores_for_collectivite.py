@@ -91,7 +91,6 @@ def prepare_use_case(
     trigger = trigger or events.ActionStatutUpdatedForCollectivite(
         collectivite_id=1,
         referentiel=test_referentiel,
-        created_at="2020-01-01T12",
     )
     use_case.execute(trigger)
 
@@ -100,7 +99,7 @@ def prepare_use_case(
 
 def test_notation_fails_when_referentiel_is_empty():
     trigger = events.ActionStatutUpdatedForCollectivite(
-        collectivite_id=1, referentiel="cae", created_at="2020-01-01T12"
+        collectivite_id=1, referentiel="cae"
     )
     statuses = []
     converted_events, failure_events = prepare_use_case(statuses, trigger)

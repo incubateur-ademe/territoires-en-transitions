@@ -10,7 +10,6 @@ from business.core.domain.models.event import DomainEvent, DomainFailureEvent
 class ActionStatutUpdatedForCollectivite(DomainEvent):
     collectivite_id: int
     referentiel: ActionReferentiel
-    created_at: str
 
 
 @dataclass
