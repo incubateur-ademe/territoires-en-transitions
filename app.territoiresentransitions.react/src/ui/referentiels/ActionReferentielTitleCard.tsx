@@ -4,16 +4,12 @@ import {
   ActionProgressBar,
   ActionReferentielDisplayTitle,
 } from 'ui/referentiels';
-import {referentielToName} from 'app/labels';
 import {referentielId} from 'utils/actions';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {makeCollectiviteActionUrl} from 'app/paths';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
-import {
-  ArrowNarrowLeftIcon,
-  ArrowNarrowRightIcon,
-} from '@heroicons/react/solid';
+import {ArrowNarrowRightIcon} from '@heroicons/react/solid';
 
 /**
  * Used on referentiels page, links to action page.

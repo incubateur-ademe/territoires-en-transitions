@@ -23,7 +23,6 @@ def test_build_markdown_action_node_from_ok_folder():
 
     assert len(failure_events) == 0
     assert len(parsed_events) == 1
-
     expected_event = events.MarkdownReferentielFolderParsed(
         referentiel_node=MarkdownActionNode(
             referentiel="eci",
@@ -54,10 +53,10 @@ def test_build_markdown_action_node_from_ok_folder():
                             identifiant="1.1",
                             nom="Titre de l'action 1.1",
                             thematique_id="",
-                            description="Description de l'action 1.1\n\n",
-                            contexte="Contexte de l'action 1.1.\n\nAprès être allé à la ligne !\n\n",
-                            exemples="Exemples de l'action 1.1\n\n",
-                            ressources="Ressources de l'action 1.1\n\n",
+                            description="<p><strong>Première partie</strong></p>\n<p>Description de l'action 1.1</p>\n",
+                            contexte="<p>Contexte de l'action 1.1.</p>\n<p>Après être allé à la ligne !</p>\n",
+                            exemples="<p>Exemples de l'action 1.1</p>\n",
+                            ressources="<p>Ressources de l'action 1.1</p>\n",
                             points=30.0,
                             pourcentage=None,
                             actions=[
@@ -66,10 +65,10 @@ def test_build_markdown_action_node_from_ok_folder():
                                     identifiant="1.1.1",
                                     nom="Titre de l'action 1.1.1",
                                     thematique_id="",
-                                    description="Description de l'action 1.1.1\n\n",
-                                    contexte="Contexte de l'action 1.1.1\n\n",
-                                    exemples="Exemples de l'action 1.1.1\n\n",
-                                    ressources="Ressources de l'action 1.1.1\n\n",
+                                    description="<p>Description de l'action 1.1.1</p>\n",
+                                    contexte="<p>Contexte de l'action 1.1.1</p>\n",
+                                    exemples="<p>Exemples de l'action 1.1.1</p>\n",
+                                    ressources="<p>Ressources de l'action 1.1.1</p>\n",
                                     points=20.0,
                                     pourcentage=None,
                                     actions=[
