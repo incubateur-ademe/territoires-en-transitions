@@ -18,17 +18,23 @@ comment on column client_scores.score_created_at is 'Equal score.created_at.';
 --------------------------------
 create or replace view unprocessed_action_statut_update_event
 as
-select action_statut_update_event.collectivite_id, action_statut_update_event.referentiel, max_date as score_created_at
-from action_statut_update_event
-         join (
-    select collectivite_id, max(score_created_at) as max_date
+with latest_score as (
+    select collectivite_id, referentiel, max(score_created_at) as max_date
     from client_scores
     group by collectivite_id, referentiel
-)
-    as latest_epci_score on action_statut_update_event.collectivite_id = latest_epci_score.collectivite_id
-where action_statut_update_event.created_at > latest_epci_score.max_date
-group by action_statut_update_event.collectivite_id, action_statut_update_event.referentiel, max_date;
+),
+     latest_event as (
+         select collectivite_id, referentiel, max(created_at) as max_date
+         from action_statut_update_event
+         group by collectivite_id, referentiel
+     )
+select latest_event.collectivite_id, latest_event.referentiel, latest_event.max_date as created_at
+from latest_event
+ full join latest_score on latest_event.referentiel = latest_score.referentiel
+ and latest_event.collectivite_id = latest_score.collectivite_id
+  where latest_event.max_date > latest_score.max_date or  latest_score.max_date is null;
 
 comment on view unprocessed_action_statut_update_event is
     'To be used by business to compute only what is necessary.';
+
 
