@@ -14,7 +14,7 @@ from business.utils.prepare_bus import prepare_bus
 from business.utils.config import Config
 from business.utils.environment_variables import (
     EnvironmentVariables,
-    ReferetielsRepository,
+    ReferentielsRepository,
 )
 
 # 1. Define message handlers (orchestration)
@@ -56,7 +56,7 @@ class ReferentielConfig(Config):
 
 
 def store_referentiels(
-    repo_option: ReferetielsRepository,
+    repo_option: ReferentielsRepository,
     to_json: Optional[str],
     markdown_folder: str,
     actions: bool,
@@ -120,7 +120,7 @@ def store_referentiels(
 @click.option("--markdown-folder", default="../markdown")
 @click.option("--referentiel")
 def store_referentiels_command(
-    repo_option: ReferetielsRepository,
+    repo_option: ReferentielsRepository,
     to_file: Optional[str],
     markdown_folder: str,
     actions: bool,
