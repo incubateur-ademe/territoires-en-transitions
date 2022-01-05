@@ -147,10 +147,9 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
     ) -> Indicateur:
         refered_indicateur_id = md_indicateur.valeur
         if refered_indicateur_id and refered_indicateur_id not in repo_indicateur_ids:
-            pass
-            # raise MarkdownIndicateurInconsistent(
-            #     f"L'indicateur {md_indicateur.id} référence dans `valeur` un id d'indicateur qui n'existe pas dans la base de données: {refered_indicateur_id}"
-            # )
+            raise MarkdownIndicateurInconsistent(
+                f"L'indicateur {md_indicateur.id} référence dans `valeur` un id d'indicateur qui n'existe pas dans la base de données: {refered_indicateur_id}"
+            )
         refered_action_ids = self._infer_action_ids(md_indicateur.actions or [])
         if not all(
             [
@@ -158,10 +157,9 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
                 for refered_action_id in refered_action_ids
             ]
         ):
-            pass
-            # raise MarkdownIndicateurInconsistent(
-            #     f"L'indicateur {md_indicateur.id} référence des actions qui n'existent pas dans la base de donnée: {', '.join([action_id for action_id in refered_action_ids if action_id not in repo_action_ids])}."
-            # )
+            raise MarkdownIndicateurInconsistent(
+                f"L'indicateur {md_indicateur.id} référence des actions qui n'existent pas dans la base de donnée: {', '.join([action_id for action_id in refered_action_ids if action_id not in repo_action_ids])}."
+            )
 
         return Indicateur(
             indicateur_id=IndicateurId(md_indicateur.id),
