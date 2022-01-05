@@ -50,10 +50,10 @@ const Indicateurs = () => {
 
   return (
     <>
-      <div className="flex  justify-between">
+      <div className="flex justify-end">
         <div className="mr-2 font-light">
-          <div className="flex justify-end ">
-            <div className="flex items-center">
+          <div className="flex justify-end mt-24">
+            <div className="flex">
               {'Afficher uniquement les indicateurs renseignés'}
               <Switch
                 color="primary"
@@ -67,7 +67,6 @@ const Indicateurs = () => {
           </div>
         </div>
       </div>
-      <Spacer />
       <h2 className="fr-h2">{viewTitles[current]}</h2>
       <ConditionnalIndicateurList
         view={current}
