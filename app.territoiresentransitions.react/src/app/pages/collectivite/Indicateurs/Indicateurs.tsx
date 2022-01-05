@@ -2,7 +2,6 @@ import {IndicateurPersonnaliseList} from 'app/pages/collectivite/Indicateurs/Ind
 import {ConditionnalIndicateurReferentielList} from './ConditionnalIndicateurReferentielList';
 
 import {Switch} from '@material-ui/core';
-import {Spacer} from 'ui/shared';
 import {useParams} from 'react-router-dom';
 import {useState} from 'react';
 import {referentielToName} from 'app/labels';

@@ -3,6 +3,7 @@ import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicat
 import {Chevron} from 'ui/shared/Chevron';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {Spacer} from 'ui/shared';
+import {RenderMarkdownText} from 'ui/shared/RenderMarkdownText';
 
 export function AnyIndicateurCard<T extends string | number>({
   children,
@@ -32,10 +33,11 @@ export function AnyIndicateurCard<T extends string | number>({
             {headerTitle}
             <Chevron direction={opened ? 'down' : 'left'} />
           </div>
-          <div
+          <RenderMarkdownText text={description} />
+          {/* <div
             className="content"
             dangerouslySetInnerHTML={{__html: description}}
-          />
+          /> */}
           <Spacer />
           <div className="text-lg ml-7 mb-2">Résultats</div>
           <AnyIndicateurValues
