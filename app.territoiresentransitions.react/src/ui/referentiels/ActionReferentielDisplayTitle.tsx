@@ -40,7 +40,7 @@ export const ActionPotentiel = observer(
     if (score === null) return null;
     const potentiel = toFixed(score?.point_potentiel);
     const text = score?.point_potentiel ? `${potentiel} points` : '0 point';
-    return <span className="font-normal">({text})</span>;
+    return <span className="font-normal whitespace-nowrap">({text})</span>;
   }
 );
 export const ActionReferentielDisplayTitle = ({

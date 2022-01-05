@@ -8,7 +8,6 @@ export const Chevron = (props: {direction: 'left' | 'down'}) => {
   return (
     <div
       className={
-        'bg-yellow-200 ' +
         'transition-transform duration-300 transform ' +
         'origin-right text-2xl scale-150' +
         (props.direction === 'down'
@@ -18,8 +17,6 @@ export const Chevron = (props: {direction: 'left' | 'down'}) => {
       aria-hidden={true}
     >
       <span className="fr-fi-arrow-right-s-line" aria-hidden={true} />
-      {/* */}
-      {'>'}
     </div>
   );
 };
