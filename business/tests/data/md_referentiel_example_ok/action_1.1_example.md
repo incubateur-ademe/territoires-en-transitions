@@ -4,6 +4,7 @@ identifiant: 1.1
 points:  30
 ```
 ## Description
+**Première partie**
 Description de l'action 1.1 
 
 ## Contexte

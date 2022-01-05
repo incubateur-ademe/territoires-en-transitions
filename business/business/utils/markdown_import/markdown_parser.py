@@ -12,6 +12,7 @@ from .markdown_utils import (
     is_heading,
     is_yaml,
 )
+from mistletoe import HTMLRenderer
 
 NodeWriter = Callable[[BlockToken, dict], None]
 
@@ -34,13 +35,21 @@ def make_head_writer(title_key: str, name_level: int) -> NodeWriter:
     return head_writer
 
 
+def render_text_to_html(
+    text: str,
+):
+    """Renders text markdown to html."""
+    renderer = HTMLRenderer()
+    return renderer.render(Document(text))
+
+
 def make_section_writer(title: str) -> NodeWriter:
     def section_writer(token: BlockToken, node: dict) -> None:
         """Save leaf description as an HTML string"""
         if is_keyword(token, title):
             node[title.lower()] = ""
         elif title.lower() in node.keys():
-            node[title.lower()] += token_to_string(token)
+            node[title.lower()] += render_text_to_html(token_to_string(token))
 
     return section_writer
 
