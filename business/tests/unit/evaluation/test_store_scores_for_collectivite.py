@@ -18,9 +18,9 @@ def test_can_store_scores():
     use_case = StoreScoresForCollectivite(bus, score_repo)
 
     scores = [
-        make_action_score("eci", points=20),
-        make_action_score("eci_1", points=15),
-        make_action_score("eci_2", points=5),
+        make_action_score("eci", point_referentiel=20),
+        make_action_score("eci_1", point_referentiel=15),
+        make_action_score("eci_2", point_referentiel=5),
     ]
     trigger = events.ReferentielScoresForCollectiviteComputed(
         referentiel="eci", collectivite_id=1, scores=scores
