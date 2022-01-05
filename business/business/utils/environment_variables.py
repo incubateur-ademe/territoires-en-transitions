@@ -27,8 +27,8 @@ def get_env_variable(
     return variable
 
 
-ReferetielsRepository = Literal["JSON", "POSTGRES", "SQL"]
-referentiels_repository_options: List[ReferetielsRepository] = [
+ReferentielsRepository = Literal["JSON", "POSTGRES", "SQL"]
+referentiels_repository_options: List[ReferentielsRepository] = [
     "JSON",
     "POSTGRES",
     "SQL",
@@ -46,7 +46,7 @@ realtime_options: List[Realtime] = ["REPLAY", "SUPABASE"]
 
 @dataclass
 class EnvironmentVariables:
-    referentiels_repository: Optional[ReferetielsRepository] = None
+    referentiels_repository: Optional[ReferentielsRepository] = None
     labelisation_repositories: Optional[LabelisationRepositories] = None
     realtime: Optional[Realtime] = None
     referentiels_repo_file: Optional[str] = None
