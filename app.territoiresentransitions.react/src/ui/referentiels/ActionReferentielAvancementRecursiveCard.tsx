@@ -1,9 +1,10 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ActionProgressBar, ActionReferentielDisplayTitle} from '.';
 import {ActionCommentaire, ActionExemplesExpandPanel} from 'ui/shared';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionStatusDropdown} from 'ui/shared/actions/ActionStatusDropdown';
-import {addTargetToContentAnchors} from 'utils/content';
+import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
+import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
+import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
 
 /**
  * Displays an actions and it's children indented below.
@@ -39,8 +40,6 @@ const ActionReferentielRecursiveCard = ({
 };
 
 export const ActionReferentielAvancementCard = ({
-  displayProgressStat,
-  displayAddFicheActionButton,
   action,
 }: {
   displayProgressStat: boolean;
@@ -52,12 +51,7 @@ export const ActionReferentielAvancementCard = ({
     <div className="pt-8 flex flex-row justify-between">
       <div className="flex flex-col w-4/5">
         <ActionReferentielDisplayTitle action={action} />
-        <div
-          className="htmlContent"
-          dangerouslySetInnerHTML={{
-            __html: addTargetToContentAnchors(action.description ?? ''),
-          }}
-        />
+        <ActionReferentielDescription action={action} />
         <ActionExemplesExpandPanel action={action} />
         <ActionCommentaire action={action} />
       </div>

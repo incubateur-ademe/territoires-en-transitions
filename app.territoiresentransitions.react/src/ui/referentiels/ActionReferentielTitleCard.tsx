@@ -1,14 +1,19 @@
 import {Link} from 'react-router-dom';
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ActionProgressBar} from 'ui/referentiels';
-import {ActionDescriptionExpandPanel} from 'ui/shared';
-import {ActionReferentielTitle} from './ActionReferentielTitle';
+import {
+  ActionProgressBar,
+  ActionReferentielDisplayTitle,
+} from 'ui/referentiels';
 import {referentielToName} from 'app/labels';
 import {referentielId} from 'utils/actions';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {makeCollectiviteActionUrl} from 'app/paths';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
+import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
 
+/**
+ * Used on referentiels page, links to action page.
+ */
 export const ActionReferentielTitleCard = ({
   action,
 }: {
@@ -18,30 +23,25 @@ export const ActionReferentielTitleCard = ({
     currentCollectiviteBloc.currentCollectivite?.collectivite_id;
   const referentiel = referentielId(action.id);
   return (
-    <article className="bg-beige my-4">
-      <Link
-        to={makeCollectiviteActionUrl({
-          collectiviteId: collectiviteId!,
-          referentielId: referentiel,
-          actionId: action.id,
-        })}
-        className="LinkedCardHeader"
-      >
-        <div className="flex p-4 justify-between">
-          <div>
-            <span className="inline-block text-xs font-thin">
-              {referentielToName[referentiel]}
-            </span>
-          </div>
+    <article>
+      <div className="pt-8 flex flex-row justify-between">
+        <div className="flex flex-col w-4/5">
+          <Link
+            to={makeCollectiviteActionUrl({
+              collectiviteId: collectiviteId!,
+              referentielId: referentiel,
+              actionId: action.id,
+            })}
+            className="flex flex-row justify-between bg-yellow-200"
+          >
+            <ActionReferentielDisplayTitle action={action} />
+            <div>-&gt;</div>
+          </Link>
+          <ActionReferentielDescription action={action} />
+        </div>
+        <div className="w-1/6 pl-4">
           <ActionProgressBar action={action} scoreBloc={scoreBloc} />
         </div>
-        <div className="p-4 flex justify-between">
-          <ActionReferentielTitle action={action} />
-          <div className="fr-fi-arrow-right-line text-bf500" />
-        </div>
-      </Link>
-      <div className="p-4 w-2/3">
-        <ActionDescriptionExpandPanel action={action} />
       </div>
     </article>
   );
