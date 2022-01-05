@@ -10,6 +10,10 @@ import {currentCollectiviteBloc} from 'core-logic/observables';
 import {makeCollectiviteActionUrl} from 'app/paths';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
+import {
+  ArrowNarrowLeftIcon,
+  ArrowNarrowRightIcon,
+} from '@heroicons/react/solid';
 
 /**
  * Used on referentiels page, links to action page.
@@ -32,10 +36,10 @@ export const ActionReferentielTitleCard = ({
               referentielId: referentiel,
               actionId: action.id,
             })}
-            className="flex flex-row justify-between bg-yellow-200"
+            className="flex flex-row justify-between items-center border-0"
           >
             <ActionReferentielDisplayTitle action={action} />
-            <div>-&gt;</div>
+            <ArrowNarrowRightIcon className="w-5 h-5" />
           </Link>
           <ActionReferentielDescription action={action} />
         </div>

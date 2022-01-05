@@ -35,3 +35,7 @@ details > .content p {
 .ActionExpandPanelAdemeContent summary.title {
   font-size: 18px;
 }
+
+main a[href] {
+  box-shadow: none;
+}

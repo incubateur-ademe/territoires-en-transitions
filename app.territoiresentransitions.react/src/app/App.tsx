@@ -15,11 +15,8 @@ import Home from 'app/pages/Home';
 import {useConnected} from 'core-logic/hooks';
 
 import {ConnectedRedirector} from 'app/Redirector';
-import 'app/app.css';
-import 'app/DesignSystem/core.css';
-import 'app/DesignSystem/variables.css';
-
 import '@gouvfr/dsfr/dist/dsfr/dsfr.css';
+import 'app/app.css';
 
 import {Toasters} from 'app/Toasters';
 import {ScrollToTop} from 'app/ScrollToTop';
