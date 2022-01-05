@@ -32,7 +32,6 @@ import {
   authBasePath,
   myCollectivitesPath,
 } from 'app/paths';
-// import {SideMenu, SideMenuItem, SideMenuLink} from '@dataesr/react-dsfr';
 
 const theme = createTheme({
   palette: {

@@ -17,6 +17,7 @@ import {useEffect, useState} from 'react';
 import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
 import {OrientationFilAriane} from 'app/pages/collectivite/Referentiels/FilAriane';
 import {addTargetToContentAnchors} from 'utils/content';
+import {Tabs, Tab} from '@dataesr/react-dsfr';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -65,10 +66,8 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
               }}
             />
             <DescriptionContextAndRessourcesDialogButton action={action} />
-            <span className="bg-yellow-200">
-              description génerale de l'avancement (champ commentaire)
-              <ActionCommentaire actionId={action.id} />
-            </span>
+
+            <ActionCommentaire action={action} />
           </div>
           <div className="w-1/6">
             <ActionProgressBar action={action} scoreBloc={scoreBloc} />
@@ -76,33 +75,34 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
         </div>
       </div>
 
-      <span className="bg-yellow-200">onglets [actions/indicateurs]</span>
+      <Tabs>
+        <Tab label="Actions">
+          <section>
+            {action.actions.map(action => (
+              <ActionReferentielAvancementRecursiveCard
+                action={action}
+                key={action.id}
+                displayAddFicheActionButton={true}
+                displayProgressStat={true}
+              />
+            ))}
+          </section>
+        </Tab>
+        <Tab label="Indicateurs">
+          <section>
+            {actionLinkedIndicateurDefinitions.length === 0 && (
+              <p>Cette action ne comporte pas d'indicateur</p>
+            )}
 
-      <section>
-        {action.actions.map(action => (
-          <ActionReferentielAvancementRecursiveCard
-            action={action}
-            key={action.id}
-            displayAddFicheActionButton={true}
-            displayProgressStat={true}
-          />
-        ))}
-      </section>
-
-      <Spacer />
-      <section>
-        <h2 className="fr-h2">Les indicateurs</h2>
-        {actionLinkedIndicateurDefinitions.length === 0 && (
-          <p>Cette action ne comporte pas d'indicateur</p>
-        )}
-
-        {actionLinkedIndicateurDefinitions.map(definition => (
-          <IndicateurReferentielCard
-            key={definition.id}
-            definition={definition}
-          />
-        ))}
-      </section>
+            {actionLinkedIndicateurDefinitions.map(definition => (
+              <IndicateurReferentielCard
+                key={definition.id}
+                definition={definition}
+              />
+            ))}
+          </section>
+        </Tab>
+      </Tabs>
     </div>
   );
 };

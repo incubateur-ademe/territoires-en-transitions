@@ -91,7 +91,9 @@ export class ActionReferentiel {
       ? 'Climat Air Energie'
       : 'Économie Circulaire';
   }
-
+  get displayName(): string {
+    return `${this.identifiant} - ${this.nom}`;
+  }
   /**
    * Identifiant as in the markdown.
    */

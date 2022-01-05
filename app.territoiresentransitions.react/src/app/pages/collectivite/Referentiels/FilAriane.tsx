@@ -1,30 +1,18 @@
-import React, {useState} from 'react';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
-import {useHistory} from 'react-router-dom';
-import {useCollectiviteId} from 'core-logic/hooks';
-import {
-  actionIdDepth,
-  actionPath,
-  displayName,
-  referentielMesureDepth,
-  searchActionSiblingsOfId,
-  searchParents,
-} from 'utils/actions';
-import {actions as referentielActions} from 'generated/data/referentiels';
-import {Menu, MenuItem} from '@material-ui/core';
-import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
+import {Link} from 'react-router-dom';
 
 /**
  * The nav bar at the to of an orientation page, made of several
  * OrientationSwitcher
  */
-export const OrientationFilAriane = (props: {action: ActionReferentiel}) => {
+export const OrientationFilAriane = ({action}: {action: ActionReferentiel}) => {
   return (
-    <nav className="flex flex-row bg-yellow-200">
-      {props.action.id.startsWith('cae')
-        ? 'Climat Air Energie '
-        : 'Economie circulaire '}
-      / {props.action.nom}
-    </nav>
+    <div className="flex gap-4 bg-yellow-200">
+      <Link to={'#'}>{action.referentielDisplayName}</Link>
+      <div> &gt; </div>
+      <Link to={'#'}>
+        <div className="truncate w-2/3">{action.displayName}</div>
+      </Link>
+    </div>
   );
 };

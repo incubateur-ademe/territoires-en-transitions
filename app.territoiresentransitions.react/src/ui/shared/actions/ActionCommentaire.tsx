@@ -2,27 +2,47 @@ import '../CrossExpandPanel.css';
 import {makeAutoObservable} from 'mobx';
 import {actionCommentaireRepository} from 'core-logic/api/repositories/ActionCommentaireRepository';
 import {observer} from 'mobx-react-lite';
-import {currentCollectiviteBloc} from 'core-logic/observables';
 import {useCollectiviteId} from 'core-logic/hooks';
+import {ActionReferentiel} from 'generated/models';
+import {TextInput} from '@dataesr/react-dsfr';
+import {currentCollectiviteBloc} from 'core-logic/observables';
 
-export const ActionCommentaire = ({actionId}: {actionId: string}) => {
+export const ActionCommentaire = ({action}: {action: ActionReferentiel}) => {
   const collectiviteId = useCollectiviteId()!;
-  const observable = new ActionCommentaireFieldBloc({actionId, collectiviteId});
+  const observable = new ActionCommentaireFieldBloc({
+    actionId: action.id,
+    collectiviteId,
+  });
   return (
     <div className="border-gray-300 my-3">
-      <ActionCommentaireField observable={observable} />
+      <ActionCommentaireField
+        observable={observable}
+        label={
+          action.type === 'action'
+            ? "Description génerale de l'état d'avancement"
+            : 'Commentaire'
+        }
+      />
     </div>
   );
 };
 
 const ActionCommentaireField = observer(
-  ({observable}: {observable: ActionCommentaireFieldBloc}) => (
-    <textarea
-      name="commentaire"
+  ({
+    observable,
+    label,
+  }: {
+    observable: ActionCommentaireFieldBloc;
+    label: string;
+  }) => (
+    <TextInput
+      textarea
       value={observable.fieldValue ?? ''}
-      onChange={event => observable.setFieldValue(event.currentTarget.value)}
-      onBlur={_ => observable.saveFieldValue()}
-      className="fr-input mt-2 w-full bg-white p-3 mr-5"
+      onChange={(event: {currentTarget: any}) =>
+        observable.setFieldValue(event.currentTarget.value)
+      }
+      onBlur={() => observable.saveFieldValue()}
+      label={label}
       disabled={currentCollectiviteBloc.readonly}
     />
   )

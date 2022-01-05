@@ -59,7 +59,7 @@ export const ActionReferentielAvancementCard = ({
           }}
         />
         <ActionExemplesExpandPanel action={action} />
-        <ActionCommentaire actionId={action.id} />
+        <ActionCommentaire action={action} />
       </div>
       <div className="w-1/6 pl-4">
         <div className="w-full flex flex-col">
