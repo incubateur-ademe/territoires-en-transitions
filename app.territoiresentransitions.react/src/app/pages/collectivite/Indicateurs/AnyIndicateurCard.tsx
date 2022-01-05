@@ -2,16 +2,19 @@ import React, {useState} from 'react';
 import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {Chevron} from 'ui/shared/Chevron';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {Spacer} from 'ui/shared';
 
 export function AnyIndicateurCard<T extends string | number>({
   children,
   headerTitle,
   indicateurId,
   indicateurResultatRepo,
+  description,
 }: {
   headerTitle: React.ReactElement;
   children: React.ReactElement;
   indicateurId: string | number;
+  description: string;
   indicateurResultatRepo: AnyIndicateurRepository<T>;
 }) {
   const [opened, setOpened] = useState(false);
@@ -29,7 +32,11 @@ export function AnyIndicateurCard<T extends string | number>({
             {headerTitle}
             <Chevron direction={opened ? 'down' : 'left'} />
           </div>
-
+          <div
+            className="content"
+            dangerouslySetInnerHTML={{__html: description}}
+          />
+          <Spacer />
           <div className="text-lg ml-7 mb-2">Résultats</div>
           <AnyIndicateurValues
             repo={indicateurResultatRepo}

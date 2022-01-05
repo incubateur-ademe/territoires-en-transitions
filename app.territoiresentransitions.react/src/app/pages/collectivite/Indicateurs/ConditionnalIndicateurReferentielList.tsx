@@ -45,8 +45,8 @@ export const ConditionnalIndicateurReferentielList = (props: {
   };
 
   return (
-    <div className="app mx-5 mt-5">
-      <div className="float-right">
+    <div className="app mx-5 mt-5 ">
+      <div className="-mt-44 float-right">
         <UiSearchBar search={search} />
       </div>
       <section className="flex flex-col">

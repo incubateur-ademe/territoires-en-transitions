@@ -1,12 +1,11 @@
 import React, {useEffect} from 'react';
-import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
-import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
+import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 
 import {useCollectiviteId} from 'core-logic/hooks';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
-import {Editable} from 'ui/shared';
+import {Spacer} from 'ui/shared';
 import {
   indicateurObjectifRepository,
   indicateurResultatRepository,
@@ -14,6 +13,7 @@ import {
 import {indicateurCommentaireRepository} from 'core-logic/api/repositories/IndicateurCommentaireRepository';
 import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
+import {AnyIndicateurCommentaire} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCommentaire';
 
 const Commentaire = (props: {definition: IndicateurDefinitionRead}) => {
   const indicateurId = props.definition.id;
@@ -38,22 +38,7 @@ const Commentaire = (props: {definition: IndicateurDefinitionRead}) => {
     });
   };
 
-  return (
-    <div className="CrossExpandPanel">
-      <details>
-        <summary>
-          <Editable text="Commentaire" />
-        </summary>
-        <div>
-          <textarea
-            defaultValue={value}
-            onBlur={handleSave}
-            className="fr-input mt-2 w-4/5 bg-white p-3 border-b-2 border-gray-500 mr-5"
-          />
-        </div>
-      </details>
-    </div>
-  );
+  return <AnyIndicateurCommentaire handleSave={handleSave} value={value} />;
 };
 
 export const IndicateurReferentielCardContent = (props: {
@@ -61,14 +46,14 @@ export const IndicateurReferentielCardContent = (props: {
 }) => {
   return (
     <div>
-      <IndicateurDescriptionPanel description={props.definition.description} />
-      <Commentaire definition={props.definition} />
-      <AnyIndicateurEditableExpandPanel
+      <div className="text-lg ml-7 mb-2">Objectifs</div>
+      <AnyIndicateurValues
         repo={indicateurObjectifRepository}
         indicateurId={props.definition.id}
-        title="Objectifs"
-        editable={true}
+        borderColor="blue"
       />
+      <Spacer />
+      <Commentaire definition={props.definition} />
       <AnyIndicateurLineChartExpandable
         title={props.definition.nom}
         unite={props.definition.unite}
@@ -115,6 +100,7 @@ export const IndicateurReferentielCard = ({
       }
       indicateurId={definition.id}
       indicateurResultatRepo={indicateurResultatRepository}
+      description={definition.description}
     >
       <IndicateurReferentielCardContent definition={definition} />
     </AnyIndicateurCard>

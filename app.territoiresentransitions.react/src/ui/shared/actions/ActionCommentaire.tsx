@@ -20,7 +20,12 @@ export const ActionCommentaire = ({action}: {action: ActionReferentiel}) => {
         label={
           action.type === 'action'
             ? "Description génerale de l'état d'avancement"
-            : 'Commentaire'
+            : "Précisions sur l'état d'avancement"
+        }
+        hint={
+          action.type === 'action'
+            ? "Vous pouvez préciser ici l'avancement général de cette action"
+            : null
         }
       />
     </div>
@@ -31,9 +36,11 @@ const ActionCommentaireField = observer(
   ({
     observable,
     label,
+    hint,
   }: {
     observable: ActionCommentaireFieldBloc;
     label: string;
+    hint: string | null;
   }) => (
     <TextInput
       textarea
@@ -43,6 +50,7 @@ const ActionCommentaireField = observer(
       }
       onBlur={() => observable.saveFieldValue()}
       label={label}
+      hint={hint}
       disabled={currentCollectiviteBloc.readonly}
     />
   )
