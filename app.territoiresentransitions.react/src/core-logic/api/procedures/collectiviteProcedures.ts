@@ -16,7 +16,7 @@ export type ReferentContactResponse = {
   email: string;
   nom: string;
   prenom: string;
-}; // TODO : shuold be generated
+}; // TODO : should be generated
 
 export const referentContact = async (
   collectivite_id: number
