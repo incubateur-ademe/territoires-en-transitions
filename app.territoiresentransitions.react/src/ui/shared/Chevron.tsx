@@ -9,10 +9,10 @@ export const Chevron = (props: {direction: 'left' | 'down'}) => {
     <div
       className={
         'transition-transform duration-300 transform ' +
-        'origin-right text-2xl scale-150' +
+        'origin-right text-2xl scale-100' +
         (props.direction === 'down'
           ? ' rotate-90 translate-y-4 -translate-x-2'
-          : ' rotate-0 -translate-y-2 translate-x-0')
+          : ' rotate-0 -translate-y-0 translate-x-0')
       }
       aria-hidden={true}
     >
