@@ -59,9 +59,15 @@ export const ActionReferentielAvancementCard = ({
       <div className="w-1/6 pl-4">
         <div className="w-full flex flex-col">
           {!isLeaf && (
-            <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+            <div className="pt-4">
+              <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+            </div>
           )}
-          {isLeaf && <ActionStatusDropdown actionId={action.id} />}
+          {isLeaf && (
+            <div className="pt-2 flex justify-end">
+              <ActionStatusDropdown actionId={action.id} />
+            </div>
+          )}
         </div>
       </div>
     </div>
