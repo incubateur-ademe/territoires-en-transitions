@@ -43,7 +43,7 @@ const InlineEditableTitle = (props: {
               onStateChange(true);
             }}
           >
-            <div className="fr-fi-edit-fill">e</div>
+            <div className="fr-fi-edit-fill" />
           </IconButton>
 
           {props.remove !== undefined && (
@@ -54,7 +54,7 @@ const InlineEditableTitle = (props: {
                 props.remove!();
               }}
             >
-              <div className="fr-fi-delete-fill">d</div>
+              <div className="fr-fi-delete-fill" />
             </IconButton>
           )}
         </>
@@ -78,7 +78,7 @@ const InlineEditableTitle = (props: {
               props.onSave(text);
             }}
           >
-            <div className="fr-fi-save-fill">s</div>
+            <div className="fr-fi-save-fill" />
           </IconButton>
         </div>
       )}
