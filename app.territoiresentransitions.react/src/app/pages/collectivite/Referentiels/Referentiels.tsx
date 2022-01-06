@@ -7,7 +7,7 @@ import {actions} from 'generated/data/referentiels';
 import {ReferentielParamOption, referentielParam} from 'app/paths';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionProgressBar} from 'ui/referentiels';
-import {OrientationFilAriane} from 'app/pages/collectivite/Referentiels/FilAriane';
+import {ReferentielFilAriane} from 'app/pages/collectivite/Referentiels/FilAriane';
 
 const eciReferentiel = actions.find(action => action.id === 'eci')!;
 const caeReferentiel = actions.find(action => action.id === 'cae')!;
@@ -30,11 +30,8 @@ const ReferentielHead = (props: {view: ReferentielParamOption}) => {
   const referentiel = props.view === 'eci' ? eciReferentiel : caeReferentiel;
   return (
     <>
-      <nav>
-        <span className="bg-yellow-200">
-          {referentiel.referentielDisplayName}
-        </span>
-      </nav>
+      <ReferentielFilAriane action={referentiel} />
+      <Spacer />
       <header className="flex flex-row mb-6 items-center justify-between">
         <h2 className="fr-h2">{referentiel.referentielDisplayName}</h2>
         <ActionProgressBar action={referentiel} scoreBloc={scoreBloc} />

@@ -34,10 +34,6 @@ export function AnyIndicateurCard<T extends string | number>({
             <Chevron direction={opened ? 'down' : 'left'} />
           </div>
           <RenderMarkdownText text={description} />
-          {/* <div
-            className="content"
-            dangerouslySetInnerHTML={{__html: description}}
-          /> */}
           <Spacer />
           <div className="text-lg ml-7 mb-2">Résultats</div>
           <AnyIndicateurValues

@@ -15,7 +15,7 @@ import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurActionReadEndpoint';
 import {useEffect, useState} from 'react';
 import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
-import {OrientationFilAriane} from 'app/pages/collectivite/Referentiels/FilAriane';
+import {ActionFilAriane} from 'app/pages/collectivite/Referentiels/FilAriane';
 import {addTargetToContentAnchors} from 'utils/content';
 import {Tabs, Tab} from '@dataesr/react-dsfr';
 
@@ -55,7 +55,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   return (
     <div className="fr-container">
       <div className="mt-8 mb-16">
-        <OrientationFilAriane action={action} />
+        <ActionFilAriane action={action} />
         <div className="pt-8 flex flex-row justify-between">
           <div className="flex flex-col w-4/5">
             <ActionReferentielDisplayTitle action={action} />
