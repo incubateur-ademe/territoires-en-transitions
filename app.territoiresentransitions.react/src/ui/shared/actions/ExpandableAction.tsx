@@ -21,9 +21,11 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
       <LazyDetails
         summary={
           <div className="flex flex-row items-center justify-between mt-3">
-            <div className="flex flex-row w-4/5">
+            <div className="flex flex-row w-4/5 items-center">
               <ActionReferentielDisplayTitle action={action} />
-              <Chevron direction={opened ? 'down' : 'left'} />
+              <div className="pt-1 pl-2">
+                <Chevron direction={opened ? 'down' : 'left'} />
+              </div>
             </div>
             <div className="w-1/6">
               <ActionProgressBar action={action} scoreBloc={scoreBloc} />

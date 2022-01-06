@@ -10,12 +10,10 @@ import {FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import StatisticsPage from 'app/pages/statistics/StatisticsPage';
-
 import Home from 'app/pages/Home';
 import {useConnected} from 'core-logic/hooks';
-
 import {ConnectedRedirector} from 'app/Redirector';
-import '@gouvfr/dsfr/dist/dsfr/dsfr.css';
+
 import 'app/app.css';
 
 import {Toasters} from 'app/Toasters';
