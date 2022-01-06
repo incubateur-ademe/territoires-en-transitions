@@ -1,5 +1,5 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ActionCommentaire, ActionExemplesExpandPanel} from 'ui/shared';
+import {ActionCommentaire, ActionExemplesExpandPanel, Spacer} from 'ui/shared';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionStatusDropdown} from 'ui/shared/actions/ActionStatusDropdown';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
@@ -51,6 +51,7 @@ export const ActionReferentielAvancementCard = ({
     <div className="pt-8 flex flex-row justify-between">
       <div className="flex flex-col w-4/5">
         <ActionReferentielDisplayTitle action={action} />
+        <Spacer size={1} />
         <ActionReferentielDescription action={action} />
         <ActionExemplesExpandPanel action={action} />
         <ActionCommentaire action={action} />

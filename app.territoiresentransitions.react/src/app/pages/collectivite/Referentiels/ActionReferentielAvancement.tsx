@@ -66,7 +66,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
               }}
             />
             <DescriptionContextAndRessourcesDialogButton action={action} />
-
+            <Spacer size={1} />
             <ActionCommentaire action={action} />
           </div>
           <div className="w-1/6">
