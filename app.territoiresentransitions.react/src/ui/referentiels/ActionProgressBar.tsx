@@ -45,9 +45,9 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
   );
 
   return (
-    <div className="flex gap-6 items-center justify-between">
+    <div className="flex gap-3 items-center justify-end">
       <div className="text-sm font-bold">{toFixed(fait_width)} %</div>
-      <div className="flex">
+      <div className="flex pt-1">
         <div
           style={{
             minWidth: 100,

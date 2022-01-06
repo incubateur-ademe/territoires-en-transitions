@@ -68,8 +68,9 @@ export const ActionReferentielDisplayTitle = ({
       >
         <div className="pb-1">{action.identifiant}</div>
       </div>
-      <div>
-        {action.nom} <ActionPotentiel action={action} scoreBloc={scoreBloc} />
+      <div className="py-2">
+        <span className="fr-text--lg">{action.nom} </span>
+        <ActionPotentiel action={action} scoreBloc={scoreBloc} />
       </div>
     </div>
   );
