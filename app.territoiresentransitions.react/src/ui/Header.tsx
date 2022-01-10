@@ -25,11 +25,11 @@ const HeaderObserver = observer(
     <>
       <CollectiviteRedirector />
       <header role="banner" className="header fr-header ">
-        {authBloc.userId}, {authBloc.connected ? 'connected' : 'not connected'},{' '}
+        {/* {authBloc.userId}, {authBloc.connected ? 'connected' : 'not connected'},{' '}
         with role{' '}
         {currentCollectiviteBloc.readonly
           ? 'readonly'
-          : currentCollectiviteBloc.currentCollectivite?.role_name}
+          : currentCollectiviteBloc.currentCollectivite?.role_name} */}
         <div className="fr-header__body">
           <div className="fr-container">
             <div className="fr-header__body-row header__row">
