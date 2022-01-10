@@ -47,7 +47,6 @@ describe('Indicateur-resultat write endpoint', () => {
     );
   });
 
-  // TODO : Fix me ! (#RLS)
   it('Saving an indicateur resultat value for a collectivite readonly should fail', async () => {
     const endpoint = makeNewIndicateurResultatWriteEndpoint();
     const indicateurValue: AnyIndicateurValueWrite<string> = {

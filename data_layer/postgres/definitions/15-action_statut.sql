@@ -15,6 +15,25 @@ create table action_statut
     primary key (collectivite_id, action_id)
 );
 
+alter table action_statut
+    enable row level security;
+
+create policy allow_read
+    on action_statut
+    for select
+    using (is_any_role_on(collectivite_id));
+
+create policy allow_insert
+    on action_statut
+    for insert
+    with check (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
+                                   collectivite_id));
+
+create policy allow_update
+    on action_statut
+    for update
+    using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
+                                   collectivite_id));
 
 
 create view client_action_statut
