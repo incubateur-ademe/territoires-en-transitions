@@ -98,3 +98,44 @@ Content-Type: application/json
         client.assert(response.status === 201, "Response status is not 201");
     });
 %}
+
+
+### Insert a fiche on a collectivité that is not ours
+POST {{api}}/rest/v1/fiche_action
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Prefer: return=representation
+Content-Type: application/json
+
+{
+  "uid": "55640546-f389-4d4f-bfdb-b0c94a1bd0f9",
+  "collectivite_id": 10,
+  "avancement": "pas_fait",
+  "numerotation": "A1",
+  "titre": "titre http",
+  "description": "description",
+  "structure_pilote": "pilote",
+  "personne_referente": "référente",
+  "elu_referent": "référent",
+  "partenaires": "partenaires",
+  "budget_global": 150,
+  "commentaire": "commentaire",
+  "date_fin": "fin",
+  "date_debut": "début",
+  "en_retard": true,
+  "action_ids": [
+    "cae"
+  ],
+  "indicateur_ids": [
+    "ind0"
+  ],
+  "indicateur_personnalise_ids": [
+    1
+  ]
+}
+
+> {%
+    client.test("Insert did not work as expected", function() {
+        client.assert(response.status === 403, "Response status is not 403");
+    });
+%}
