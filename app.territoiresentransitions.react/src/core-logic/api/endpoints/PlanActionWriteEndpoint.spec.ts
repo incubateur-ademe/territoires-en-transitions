@@ -50,6 +50,7 @@ describe('Plan action write endpoint', () => {
       fiches_by_category: [],
     };
     const result = await endpoint.save(plan);
+    expect(endpoint.lastResponse?.status).toBe(403);
     expect(result).toEqual(null);
   });
 });

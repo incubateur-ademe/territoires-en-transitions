@@ -37,7 +37,7 @@ describe('Elses Collectivite reading endpoint should retrieve only claimed Colle
   it("should retrieve else's active Collectivite (2) if no id is given", async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
     const results = await elsesCollectiviteReadEndpoint.getBy({});
-    expect(results.length).toEqual(2);
+    expect(results).toHaveLength(3);
   });
 });
 

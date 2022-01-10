@@ -24,15 +24,15 @@ describe(
   'Action-Commentaire repo can save (or update) commentaire of known' +
     ' actionId, when user is authentified ',
   () => {
-    it('inserts commentaire on action cae_1.2.3', async () => {
+    it('inserts commentaire on action cae_1.2.3.1', async () => {
       const result = await actionCommentaireRepository.save({
         collectivite_id: 1,
-        action_id: 'cae_1.2.3',
+        action_id: 'cae_1.2.3.1',
         commentaire: 'un nouveau commentaire',
       });
       expect(result).not.toBeNull();
       expect(result!.collectivite_id).toEqual(1);
-      expect(result!.action_id).toEqual('cae_1.2.3');
+      expect(result!.action_id).toEqual('cae_1.2.3.1');
       expect(result!.commentaire).toEqual('un nouveau commentaire');
     });
   }
