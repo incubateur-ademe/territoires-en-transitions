@@ -34,6 +34,7 @@ describe('Indicateur-commentaire write endpoint', () => {
       commentaire: 'yolo',
     };
     const result = await endpoint.save(commentaire);
+    expect(endpoint.lastResponse?.status).toBe(403);
     expect(result).toEqual(null);
   });
 });

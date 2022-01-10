@@ -4,7 +4,7 @@ import {actionStatutReadEndpoint} from 'core-logic/api/endpoints/ActionStatutRea
 describe('Action-statut reading endpoint should retrieve data-layer default statuses', () => {
   it('Retrieves at least one status when collectivite_id is given', async () => {
     const results = await actionStatutReadEndpoint.getBy({collectivite_id: 1});
-
+    expect(actionStatutReadEndpoint.lastResponse?.status).toBe(200);
     expect(results.length).toBeGreaterThanOrEqual(1);
     expect(results[0].collectivite_id).toEqual(1);
   });

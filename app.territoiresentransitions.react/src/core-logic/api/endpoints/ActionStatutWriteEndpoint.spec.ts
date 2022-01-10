@@ -38,6 +38,7 @@ describe('Action-statut write endpoint', () => {
       collectivite_id: 8, // Yili has no rights on this collectivite
     };
     const result = await endpoint.save(statut);
+    expect(endpoint.lastResponse?.status).toBe(403);
     expect(result).toEqual(null);
   });
 });

@@ -47,7 +47,6 @@ describe('Indicateur-resultat write endpoint', () => {
     );
   });
 
-  // TODO : Fix me ! (#RLS)
   it('Saving an indicateur resultat value for a collectivite readonly should fail', async () => {
     const endpoint = makeNewIndicateurResultatWriteEndpoint();
     const indicateurValue: AnyIndicateurValueWrite<string> = {
@@ -90,7 +89,7 @@ describe('Indicateur personnalise resultat write endpoint', () => {
       collectivite_id: 1, // Yulu has no right on collectivite #1
     };
     const insertResult = await endpoint.save(indicateurValue);
-
+    expect(endpoint.lastResponse?.status).toBe(403);
     expect(insertResult).toBeNull();
   });
 });

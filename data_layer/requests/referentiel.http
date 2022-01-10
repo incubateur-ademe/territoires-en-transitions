@@ -23,6 +23,12 @@ GET {{api}}/rest/v1/action_relation?select=*
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
 
 ### List action down to tache
 POST {{api}}/rest/v1/rpc/action_down_to_tache
@@ -34,3 +40,9 @@ Content-Type: application/json
   "referentiel": "eci",
   "action_id": "eci_1.1.1"
 }
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

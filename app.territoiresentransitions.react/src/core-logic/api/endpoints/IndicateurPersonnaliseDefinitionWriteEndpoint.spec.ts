@@ -40,6 +40,7 @@ describe('Indicateur perso definition write endpoint', () => {
       unite: '',
     };
     const result = await endpoint.save(indicateur_perso_def);
+    expect(endpoint.lastResponse?.status).toBe(403);
     expect(result).toBeNull();
   });
 });

@@ -10,6 +10,7 @@ describe('Indicateur-resultat reading endpoint should retrieve data-layer defaul
     const results = await indicateurResultatReadEndpoint.getBy({
       collectiviteId: 1,
     });
+    expect(indicateurResultatReadEndpoint.lastResponse?.status).toBe(200);
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual(
       expect.objectContaining({

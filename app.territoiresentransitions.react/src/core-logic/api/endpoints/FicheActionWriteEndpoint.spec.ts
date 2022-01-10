@@ -51,6 +51,7 @@ describe('Fiche action write endpoint', () => {
     const endpoint = new FicheActionWriteEndpoint();
     const fiche_with_collectivite_8 = {...fiche, collectivite_id: 8}; // Yili has no rights on collectivite 8
     const result = await endpoint.save(fiche_with_collectivite_8);
+    expect(endpoint.lastResponse?.status).toBe(403);
     expect(result).toBeNull();
   });
 });

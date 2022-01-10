@@ -33,7 +33,8 @@ create policy allow_update
     on action_statut
     for update
     using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                              collectivite_id));
+                                   collectivite_id));
+
 
 create view client_action_statut
 as

@@ -6,7 +6,7 @@ describe('Action-commentaire reading endpoint ', () => {
     const results = await actionCommentaireReadEndpoint.getBy({
       collectivite_id: 1,
     });
-
+    expect(actionCommentaireReadEndpoint.lastResponse?.status).toBe(200);
     expect(results.length).toBeGreaterThanOrEqual(1);
     const partialExpectedReadCommentaire = {
       collectivite_id: 1,
