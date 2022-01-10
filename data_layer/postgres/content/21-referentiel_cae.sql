@@ -9108,9 +9108,11 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 </ul>
 ', 'euros', false ,   null);
 insert into indicateur_action(indicateur_id, action_id) values ('cae_49f', 'cae_4.3.2');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49f', 'cae', '49.f', null, 'Budget politique cyclable  (euros/hab.an)', '<p>Déclinaison par habitant.  Pour les collectivités compétentes en la matière, des valeurs de références ramenées au nombre d''habitants sont données à titre indicatif : valeur limite 5 euros/hab.an, valeur cible 10 euros/hab.an (source observatoire des mobilités actives, ADEME 2016)</p>
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite,
+                                  obligation_eci, parent) values ('cae_49f.hab', 'cae', '49.f', null, 'Budget ' ||
+                                                                                                     'politique cyclable  (euros/hab.an)', '<p>Déclinaison par habitant.  Pour les collectivités compétentes en la matière, des valeurs de références ramenées au nombre d''habitants sont données à titre indicatif : valeur limite 5 euros/hab.an, valeur cible 10 euros/hab.an (source observatoire des mobilités actives, ADEME 2016)</p>
 ', 'euros/hab.an', false ,   null);
-insert into indicateur_action(indicateur_id, action_id) values ('cae_49f', 'cae_4.3.2');
+insert into indicateur_action(indicateur_id, action_id) values ('cae_49f.hab', 'cae_4.3.2');
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49g', 'cae', '49.g', null, 'Budget travaux rénovation énergétique patrimoine public  (euros)', '<p>Composante de l''indicateur 49a:</p>
 <p>Budget associé à la politique climat-air-énergie (euros/hab.an)</p>
 ', 'euros', false ,   null);
