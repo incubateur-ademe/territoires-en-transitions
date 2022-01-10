@@ -11,7 +11,7 @@ import {actions} from 'generated/data/referentiels';
 import {RetourButton} from 'ui/shared';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
-import {useCollectiviteId, useFicheAction} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks';
 import {makeCollectiviteDefaultPlanActionUrl} from 'app/paths';
 import {ficheActionRepository} from 'core-logic/api/repositories/FicheActionRepository';
 import {deleteObjectKey} from 'utils/deleteObjectKey';
@@ -20,14 +20,7 @@ import {deleteObjectKey} from 'utils/deleteObjectKey';
  * Used to create a fiche, shows FicheActionForm.
  */
 const FicheActionCreator = () => {
-  const {ficheUid} = useParams<{ficheUid: string}>();
   const collectiviteId = useCollectiviteId()!;
-  const ficheAction = useFicheAction(collectiviteId, ficheUid);
-
-  if (ficheAction === null) {
-    return null;
-  }
-
   const query = useQuery();
   const history = useHistory();
 

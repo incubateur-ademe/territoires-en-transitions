@@ -13,7 +13,7 @@ describe('Plan action write endpoint', () => {
     const endpoint = new PlanActionWriteEndpoint();
     const plan: PlanActionWrite = {
       collectivite_id: 1,
-      uid: 'ez399348-6ab9-4dc7-bf62-41b9a17ea5fu',
+      uid: 'f000cf22-e00f-4457-a312-d91a796df993',
       nom: "Plan d'actions de la collectivité",
       categories: [
         {
@@ -44,7 +44,7 @@ describe('Plan action write endpoint', () => {
     const endpoint = new PlanActionWriteEndpoint();
     const plan: PlanActionWrite = {
       collectivite_id: 8, // Yili has no right in collectivite #8
-      uid: 'plan_collectivite',
+      uid: 'f111cf22-e00f-4457-a312-d91a796df993',
       nom: "Plan d'actions de la collectivité",
       categories: [],
       fiches_by_category: [],

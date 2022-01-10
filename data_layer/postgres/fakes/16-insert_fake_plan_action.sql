@@ -66,7 +66,7 @@ insert into plan_action
  fiches_by_category)
 values (1,
         '29770546-f389-4d4f-bfdb-b0c94a1bd0f9',
-        'Plan d''actions de la collectivité',
+        'Plan d''action de test',
         '[
           {
             "nom": "1. Yolo",

@@ -8,7 +8,7 @@ export class FicheActionWriteEndpoint extends DataLayerWriteEndpoint<FicheAction
   async _write(
     ficheAction: FicheActionWrite
   ): Promise<PostgrestResponse<FicheActionWrite>> {
-    return this._table.upsert([ficheAction]);
+    return this._table.upsert([ficheAction], {onConflict: 'uid'});
   }
 }
 
