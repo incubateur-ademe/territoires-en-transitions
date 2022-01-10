@@ -21,7 +21,7 @@ describe('Claim and remove collectivite Remote Procedure Call ', () => {
 describe('Request referent_contact', () => {
   it('should return referent contact of owned collectivite if exists', async () => {
     const procedureResponse = await referentContact(1);
-    expect(procedureResponse).toBeDefined();
+    expect(procedureResponse).not.toBeNull();
     expect(procedureResponse).toEqual({
       prenom: 'Yolo',
       nom: 'Dodo',

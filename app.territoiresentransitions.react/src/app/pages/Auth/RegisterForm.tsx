@@ -102,9 +102,13 @@ const RegistrationForm = () => {
                 component={LabeledTextField}
               />
               <Spacer size={2} />
-              <Field name="nom" label="Prénom" component={LabeledTextField} />
+              <Field
+                name="prenom"
+                label="Prénom"
+                component={LabeledTextField}
+              />
               <Spacer size={2} />
-              <Field name="prenom" label="Nom" component={LabeledTextField} />
+              <Field name="nom" label="Nom" component={LabeledTextField} />
               <Spacer size={2} />
               <label>
                 <Field type="checkbox" name="vie_privee_conditions" />

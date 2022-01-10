@@ -231,7 +231,7 @@ begin
     -- select referent user id
     select user_id
     from private_utilisateur_droit
-    where is_referent_of(requested_collectivite_id)
+    where active and collectivite_id = requested_collectivite_id and role_name = 'referent'
     into referent_id;
 
     if referent_id is null

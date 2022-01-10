@@ -21,15 +21,17 @@ const _JoinCollectiviteDialogContent = ({
 }: {
   collectivite: AllCollectiviteRead;
   referentContactResponse: ReferentContactResponse;
-}) => (
-  <div>
-    <div className="flex justify-center mt-8">
-      Pour rejoindre "{collectivite.nom}", contactez le référent{' '}
-      {referentContactResponse.prenom} {referentContactResponse.nom} par mail{' '}
-      {referentContactResponse.email}
+}) => {
+  return (
+    <div>
+      <div className="flex justify-center mt-8">
+        Pour rejoindre "{collectivite.nom}", contactez le référent{' '}
+        {referentContactResponse.prenom} {referentContactResponse.nom} par mail{' '}
+        {referentContactResponse.email}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const _ClaimCollectiviteDialogContent = ({
   collectivite,
