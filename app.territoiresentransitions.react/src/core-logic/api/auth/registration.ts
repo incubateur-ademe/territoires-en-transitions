@@ -12,7 +12,6 @@ export const politique_vie_privee =
   'https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel';
 
 export const registerUser = async (inscription: InscriptionUtilisateur) => {
-  console.log('registerUser ', inscription);
   if (!inscription.vie_privee_conditions)
     throw 'La politique de protection des données personnelles doit être acceptée. ';
 
@@ -23,7 +22,7 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
     password: inscription.password,
   });
 
-  if (!signedUp.user || signedUp.error) throw signedUp.error;
+  if (!signedUp.user || signedUp.error) throw signedUp.error?.message;
 
   // todo later save DCPs
   const dcp: DcpWrite = {

@@ -35,14 +35,21 @@ export const SignInPage = () => {
         >
           {() => (
             <Form>
-              <Field name="email" label="Email" component={LabeledTextField} />
-              <div className="p-5" />
+              <Field
+                name="email"
+                label="Email"
+                type="text"
+                component={LabeledTextField}
+              />
+              <Spacer size={2} />
               <Field
                 name="password"
                 label="Mot de passe"
+                type="password"
                 component={LabeledTextField}
               />
-              <Spacer />
+
+              <Spacer size={2} />
               <div className="flex flex-row-reverse gap-3">
                 <ValiderButton />
                 <RegisterLink />

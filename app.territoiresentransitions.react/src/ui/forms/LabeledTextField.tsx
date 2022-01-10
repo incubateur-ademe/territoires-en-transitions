@@ -7,7 +7,7 @@ type LabeledTextInputProps = {
   id?: string;
   hint?: string;
   maxLength?: number;
-  type?: 'area' | 'text';
+  type?: 'area' | 'text' | 'password';
 };
 
 /**
@@ -24,14 +24,13 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
   const isTouched = touched[field.name];
-
+  const inputType = props.type ?? 'text';
   return (
     <div>
       <label className="fr-label" htmlFor={htmlId}>
         {props.label}
         <slot />
       </label>
-
       {!errorMessage && props.hint && (
         <div className="mt-2 text-sm opacity-80">{props.hint}</div>
       )}
@@ -40,8 +39,16 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
           {errorMessage}
         </div>
       )}
-
-      {props.type !== 'area' && (
+      {inputType === 'password' && (
+        <input
+          type="password"
+          id={htmlId}
+          className="fr-input mt-2 w-full bg-red p-3 border-b-2 border-red-500"
+          maxLength={props.maxLength}
+          {...field}
+        />
+      )}
+      {inputType === 'text' && (
         <input
           id={htmlId}
           className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
@@ -49,8 +56,7 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
           {...field}
         />
       )}
-
-      {props.type === 'area' && (
+      {inputType === 'area' && (
         <textarea
           id={htmlId}
           className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"

@@ -22,27 +22,26 @@ const RegistrationForm = () => {
 
   if (state === 'failure') {
     return (
-      <main className="mx-auto max-w-2xl">
-        <h1 className="text-2xl">Erreur</h1>
+      <section className="max-w-2xl mx-auto p-5 text-center">
         <Spacer />
-        <p>Le compte n'a pas pu être créé.</p>
+        <p>Le compte n'a pas pu être créé... </p>
         {errorMessage && <p>{errorMessage}</p>}
         {!errorMessage && <p>Erreur indéterminée</p>}
         <Spacer />
-      </main>
+      </section>
     );
   } else if (state === 'success') {
     return (
-      <main className="mx-auto max-w-2xl text-center">
+      <section className="max-w-2xl mx-auto p-5 text-center">
         <Spacer />
-        <div>Votre compte a bien été créé ! </div>
+        <p>Votre compte a bien été créé ! </p>
         <Spacer />
         <div>
           <Link to={signInPath} className="fr-btn">
             Se connecter
           </Link>
         </div>
-      </main>
+      </section>
     );
   }
 
@@ -83,71 +82,54 @@ const RegistrationForm = () => {
   };
 
   return (
-    <main className="fr-container ">
-      <div className="max-w-3xl pt-8 mx-auto">
+    <section className="max-w-2xl mx-auto p-5">
+      <Spacer />
+      <h2 className="fr-h2 flex justify-center">Créer un compte</h2>
+      <div className="mx-auto">
         <Formik<InscriptionUtilisateur>
           initialValues={initialData}
           validationSchema={validation}
           onSubmit={register}
         >
           {() => (
-            <>
-              <Spacer />
-              <h2 className="fr-h2 flex justify-center">Créer un compte</h2>
-              <Form>
-                <div className="max-w-2xl">
-                  <div className="pb-10" />
-                  <Field
-                    name="email"
-                    label="Email"
-                    component={LabeledTextField}
-                  />
-                  <div className="p-5" />
-                  <Field
-                    name="password"
-                    label="Mot de passe"
-                    component={LabeledTextField}
-                  />
-
-                  <div className="p-5" />
-                  <Field
-                    name="nom"
-                    label="Prénom"
-                    component={LabeledTextField}
-                  />
-                  <div className="p-5" />
-                  <Field
-                    name="prenom"
-                    label="Nom"
-                    component={LabeledTextField}
-                  />
-                </div>
-                <div className="p-5" />
-                <label>
-                  <Field type="checkbox" name="vie_privee_conditions" />
-                  <span className="ml-2">
-                    J'accepte la{' '}
-                    <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className=" text-blue-600"
-                      href={politique_vie_privee}
-                    >
-                      politique de protection des données à caractère personnel
-                      de l'ADEME
-                    </a>
-                  </span>{' '}
-                </label>
-                <div className="p-5" />
-                <div className="max-w-2xl flex flex-row-reverse">
-                  <ValiderButton />
-                </div>
-              </Form>
-            </>
+            <Form>
+              <Field name="email" label="Email" component={LabeledTextField} />
+              <Spacer size={2} />
+              <Field
+                name="password"
+                label="Mot de passe"
+                type="password"
+                component={LabeledTextField}
+              />
+              <Spacer size={2} />
+              <Field name="nom" label="Prénom" component={LabeledTextField} />
+              <Spacer size={2} />
+              <Field name="prenom" label="Nom" component={LabeledTextField} />
+              <Spacer size={2} />
+              <label>
+                <Field type="checkbox" name="vie_privee_conditions" />
+                <span className="ml-2">
+                  J'accepte la{' '}
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className=" text-blue-600"
+                    href={politique_vie_privee}
+                  >
+                    politique de protection des données à caractère personnel de
+                    l'ADEME
+                  </a>
+                </span>{' '}
+              </label>
+              <Spacer size={2} />
+              <div className="max-w-2xl flex flex-row-reverse">
+                <ValiderButton />
+              </div>
+            </Form>
           )}
         </Formik>
       </div>
-    </main>
+    </section>
   );
 };
 
