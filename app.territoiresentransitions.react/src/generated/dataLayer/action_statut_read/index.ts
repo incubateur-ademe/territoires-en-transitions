@@ -10,4 +10,4 @@ export interface ActionStatutRead {
   modified_by: string;
 }
 
-export type Avancement = ActionStatutRead['avancement'];
+export type ActionAvancement = ActionStatutRead['avancement'];

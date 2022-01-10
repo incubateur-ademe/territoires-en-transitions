@@ -154,7 +154,7 @@ export const SelectCollectiviteDialog = () => {
       opened={opened}
       setOpened={setOpened}
     >
-      <div className="py-7">
+      <div className="py-7 min-h-[400px]">
         <div className="flex flex-row justify-center">
           <AutocompleteInput
             label="Sélectionner votre collectivité"

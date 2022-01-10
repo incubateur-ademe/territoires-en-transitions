@@ -1,6 +1,6 @@
 import {
   ActionStatutRead,
-  Avancement,
+  ActionAvancement,
 } from 'generated/dataLayer/action_statut_read';
 import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
 import {makeAutoObservable} from 'mobx';
@@ -8,7 +8,7 @@ import {observer} from 'mobx-react-lite';
 import {useCollectiviteId} from 'core-logic/hooks';
 import {useEffect, useState} from 'react';
 import {MenuItem, Select} from '@material-ui/core';
-import {avancementColors} from 'app/colors';
+import {actionAvancementColors} from 'app/theme';
 import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 
@@ -29,13 +29,13 @@ interface SelectableStatut {
   value: number;
   color: string;
   concerne: boolean;
-  avancement: Avancement;
+  avancement: ActionAvancement;
   label: string;
 }
 
 const faitStatut: SelectableStatut = {
   value: 1,
-  color: avancementColors.fait,
+  color: actionAvancementColors.fait,
   concerne: true,
   avancement: 'fait',
   label: 'Fait',
@@ -43,7 +43,7 @@ const faitStatut: SelectableStatut = {
 
 const programmeStatut: SelectableStatut = {
   value: 2,
-  color: avancementColors.programme,
+  color: actionAvancementColors.programme,
   concerne: true,
   avancement: 'programme',
   label: 'Programmé',
@@ -51,7 +51,7 @@ const programmeStatut: SelectableStatut = {
 
 const pasFaitStatut: SelectableStatut = {
   value: 3,
-  color: avancementColors.pas_fait,
+  color: actionAvancementColors.pas_fait,
   concerne: true,
   avancement: 'pas_fait',
   label: 'Pas fait',
@@ -59,7 +59,7 @@ const pasFaitStatut: SelectableStatut = {
 
 const nonRenseigneStatut: SelectableStatut = {
   value: -1,
-  color: avancementColors.non_renseigne,
+  color: actionAvancementColors.non_renseigne,
   concerne: true,
   avancement: 'non_renseigne',
   label: 'Non renseigné',
@@ -67,7 +67,7 @@ const nonRenseigneStatut: SelectableStatut = {
 
 const nonConcerneStatut: SelectableStatut = {
   value: 5,
-  color: avancementColors.non_concerne,
+  color: actionAvancementColors.non_concerne,
   concerne: false,
   avancement: 'non_renseigne',
   label: 'Non concerné',
@@ -122,7 +122,7 @@ const _ActionStatusAvancementRadioButton = observer(
 class ActionStatusAvancementRadioButtonBloc {
   private actionId: string;
   private collectiviteId: number;
-  private avancement: Avancement = 'non_renseigne';
+  private avancement: ActionAvancement = 'non_renseigne';
   private concerne = true;
   private _statut: SelectableStatut = nonRenseigneStatut;
 

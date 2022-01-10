@@ -1,15 +1,15 @@
 import {useCollectiviteId} from 'core-logic/hooks';
 import {Link} from 'react-router-dom';
 
-import {avancementLabels} from 'app/labels';
-import {Avancement} from 'generated/dataLayer/action_statut_read';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
+import {ficheActionAvancementLabels} from 'app/labels';
+import {FicheActionAvancement} from 'generated/dataLayer/fiche_action_write';
 
-const AvancementTag = ({avancement}: {avancement: Avancement}) => {
+const AvancementTag = ({avancement}: {avancement: FicheActionAvancement}) => {
   if (avancement === 'non_renseigne') return null;
   return (
     <div className="px-2 py-3 bg-white border-bf500 border-b-4">
-      {avancementLabels[avancement]}
+      {ficheActionAvancementLabels[avancement]}
     </div>
   );
 };
@@ -20,7 +20,7 @@ type FicheCardProps = {
 export const FicheCard = (props: FicheCardProps) => {
   const collectiviteId = useCollectiviteId();
   const fiche = props.fiche;
-  const avancement = fiche.avancement as Avancement;
+  const avancement = fiche.avancement;
   const formatedTitle = fiche.numerotation
     ? `${fiche.numerotation} - ${fiche.titre}`
     : fiche.titre;

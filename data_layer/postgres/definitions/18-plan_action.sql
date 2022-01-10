@@ -1,4 +1,4 @@
-create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours');
+create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours', 'non_renseigne');
 
 -- fiche action
 create table fiche_action

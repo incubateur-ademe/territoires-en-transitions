@@ -1,5 +1,5 @@
-import type {FicheActionAvancement, ReferentielOfIndicateur} from 'types';
-import {Avancement} from 'generated/dataLayer/action_statut_read';
+import {FicheActionAvancement} from 'generated/dataLayer/fiche_action_write';
+import type {ReferentielOfIndicateur} from 'types';
 
 // Define all labels from app
 export const referentielToName: Record<ReferentielOfIndicateur, string> = {
@@ -12,26 +12,20 @@ type OmitLiteral<
   Literals extends string | number,
   ExcludedLiterals extends Literals
 > = keyof Omit<{[Key in Literals]: never}, ExcludedLiterals>;
-export type RadioButtonActionAvancement = OmitLiteral<
-  Avancement,
+
+export type FicheActionAvancementRenseigne = OmitLiteral<
+  FicheActionAvancement,
   'non_renseigne'
 >;
 
-export const avancementLabels: Record<RadioButtonActionAvancement, string> = {
+export const ficheActionAvancementLabels: Record<
+  FicheActionAvancementRenseigne,
+  string
+> = {
   pas_fait: 'Pas faite',
-  programme: 'Programmée',
+  en_cours: 'En cours',
   fait: 'Faite',
 };
-
-export type RadioButtonFicheAvancement = Exclude<
-  'non_renseigne',
-  FicheActionAvancement
->;
-
-export const ficheActionAvancementLabels: Record<
-  RadioButtonFicheAvancement,
-  string
-> = avancementLabels;
 
 export const epciCard_AxisShortLabel: Record<string, string> = {
   eci_1: 'Stratégie globale',

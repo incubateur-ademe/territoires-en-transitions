@@ -90,43 +90,70 @@ const Plan = (props: {plan: PlanActionRead}) => {
  * Button row next to plan title.
  */
 const PlanButtons = (props: {plan: PlanActionRead}) => {
-  const [editing, setEditing] = useState<boolean>(false);
-
-  const collectiviteId = useCollectiviteId()!;
-
   return (
-    <div className="flex flex-row items-center justify-end w-full">
-      <UiDialogButton
-        title="Modifier l'arborescence"
-        opened={editing}
-        setOpened={setEditing}
-        buttonClasses="fr-btn--secondary"
-      >
-        <Spacer />
-        <PlanEditionForm plan={props.plan} />
-      </UiDialogButton>
-      <div className="mr-2" />
-
-      <Link
-        className="fr-btn h-8"
-        to={makeCollectiviteNouvelleFicheUrl({
-          collectiviteId,
-          planActionUid: props.plan.uid,
-        })}
-      >
-        Ajouter une fiche action
-      </Link>
+    <div className="flex flex-row items-center justify-end w-full gap-4">
+      <CreatePlanActionDialogButton />
+      <Spacer size={1} />
+      <ModifierArboDialogButton plan={props.plan} />
+      <Spacer size={1} />
+      <AddFicheActionLink plan={props.plan} />
     </div>
   );
 };
 
+const ModifierArboDialogButton = (props: {plan: PlanActionRead}) => {
+  const [editing, setEditing] = useState<boolean>(false);
+
+  return (
+    <UiDialogButton
+      title="Modifier l'arborescence"
+      opened={editing}
+      setOpened={setEditing}
+      buttonClasses="fr-btn--secondary"
+    >
+      <Spacer />
+      <PlanEditionForm plan={props.plan} />
+    </UiDialogButton>
+  );
+};
+
+const CreatePlanActionDialogButton = () => {
+  const [creating, setCreating] = useState<boolean>(false);
+
+  return (
+    <UiDialogButton
+      title="Créer un plan d'action"
+      opened={creating}
+      setOpened={setCreating}
+      useFrBtn={true}
+      buttonClasses="whitespace-nowrap pt-2 fr-btn--secondary"
+    >
+      <Spacer />
+      <PlanCreationForm onSave={() => setCreating(false)} />
+    </UiDialogButton>
+  );
+};
+
+const AddFicheActionLink = (props: {plan: PlanActionRead}) => {
+  const collectiviteId = useCollectiviteId()!;
+  return (
+    <Link
+      className="fr-btn h-8"
+      to={makeCollectiviteNouvelleFicheUrl({
+        collectiviteId,
+        planActionUid: props.plan.uid,
+      })}
+    >
+      Ajouter une fiche action
+    </Link>
+  );
+};
 /**
  * Plans d'action page contents
  */
-const PlanActions = function () {
+const PlanActions = () => {
   const {planUid} = useParams<{planUid: string}>();
   const collectiviteId = useCollectiviteId()!;
-  const [creating, setCreating] = useState<boolean>(false);
   const plan = usePlanAction(collectiviteId, planUid);
 
   if (plan === null) {
@@ -138,16 +165,6 @@ const PlanActions = function () {
       <div className="flex flex-row items-center w-full">
         <div className="flex flex-row items-center">
           <h1 className="fr-h1 mb-3 whitespace-nowrap mr-4">Plans d'actions</h1>
-          <UiDialogButton
-            title="Créer un plan d'action"
-            opened={creating}
-            setOpened={setCreating}
-            useFrBtn={false}
-            buttonClasses="whitespace-nowrap pt-2"
-          >
-            <Spacer />
-            <PlanCreationForm onSave={() => setCreating(false)} />
-          </UiDialogButton>
         </div>
         {plan && <PlanButtons plan={plan} />}
       </div>

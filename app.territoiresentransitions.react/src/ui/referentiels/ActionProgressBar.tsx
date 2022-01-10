@@ -5,7 +5,7 @@ import {observer} from 'mobx-react-lite';
 import {ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {referentielId} from 'utils/actions';
 import {ActionScore} from 'types/ClientScore';
-import {avancementColors} from 'app/colors';
+import {actionAvancementColors} from 'app/theme';
 
 export const ActionProgressBar = observer(
   ({action, scoreBloc}: {action: ActionReferentiel; scoreBloc: ScoreBloc}) => {
@@ -52,7 +52,7 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
           style={{
             minWidth: 100,
             minHeight: 10,
-            backgroundColor: avancementColors.non_renseigne,
+            backgroundColor: actionAvancementColors.non_renseigne,
             position: 'relative',
             borderRadius: 5,
           }}
@@ -60,7 +60,7 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
           <div
             style={{
               minWidth: `${pas_fait_width}%`,
-              backgroundColor: avancementColors.pas_fait,
+              backgroundColor: actionAvancementColors.pas_fait,
               minHeight: '100%',
               position: 'absolute',
               top: 0,
@@ -71,7 +71,7 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
           <div
             style={{
               minWidth: `${programme_width}%`,
-              backgroundColor: avancementColors.programme,
+              backgroundColor: actionAvancementColors.programme,
               minHeight: '100%',
               position: 'absolute',
               top: 0,
@@ -82,7 +82,7 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
           <div
             style={{
               minWidth: `${fait_width}%`,
-              backgroundColor: avancementColors.fait,
+              backgroundColor: actionAvancementColors.fait,
               minHeight: '100%',
               position: 'absolute',
               top: 0,
@@ -93,7 +93,7 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
           <div
             style={{
               minWidth: `${non_concerne_width}%`,
-              backgroundColor: avancementColors.non_concerne,
+              backgroundColor: actionAvancementColors.non_concerne,
               minHeight: '100%',
               position: 'absolute',
               top: 0,

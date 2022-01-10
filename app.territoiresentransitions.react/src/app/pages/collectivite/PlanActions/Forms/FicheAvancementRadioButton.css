@@ -1,14 +1,14 @@
-.AvancementRadioButton fieldset {
+.FicheAvancementRadioButton fieldset {
   display: flex;
   border: none;
 }
 
-.AvancementRadioButton [type='radio'] {
+.FicheAvancementRadioButton [type='radio'] {
   position: absolute;
   left: -9999px;
 }
 
-.AvancementRadioButton [type='radio'] + label {
+.FicheAvancementRadioButton [type='radio'] + label {
   position: relative;
   display: flex;
   align-items: center;
@@ -18,7 +18,7 @@
   cursor: pointer;
 }
 
-.AvancementRadioButton label.checked {
+.FicheAvancementRadioButton label.checked {
   color: #000091;
   background-color: #fff;
   border-top: solid;

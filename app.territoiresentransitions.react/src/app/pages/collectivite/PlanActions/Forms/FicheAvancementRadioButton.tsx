@@ -1,24 +1,24 @@
-import './AvancementRadioButton.css';
+import './FicheAvancementRadioButton.css';
 import type {Option} from 'types';
 import {currentCollectiviteBloc} from 'core-logic/observables';
-import {RadioButtonActionAvancement} from 'app/labels';
+import {FicheActionAvancementRenseigne} from 'app/labels';
 
 // TODO / Question : Fiche action and Ref actions have the same avancement options ?
-export const AvancementRadioButton = (props: {
-  avancements: Option<RadioButtonActionAvancement>[];
+export const FicheAvancementRadioButton = (props: {
+  avancements: Option<FicheActionAvancementRenseigne>[];
   optionIsChecked: ({
     option,
   }: {
-    option: Option<RadioButtonActionAvancement>;
+    option: Option<FicheActionAvancementRenseigne>;
   }) => boolean;
   onClick: ({
     option,
   }: {
-    option: Option<RadioButtonActionAvancement>;
+    option: Option<FicheActionAvancementRenseigne>;
   }) => Promise<void>;
 }) => {
   return (
-    <div className="AvancementRadioButton">
+    <div className="FicheAvancementRadioButton">
       <fieldset disabled={currentCollectiviteBloc.readonly}>
         {props.avancements.map(option => {
           const checked = props.optionIsChecked({option});

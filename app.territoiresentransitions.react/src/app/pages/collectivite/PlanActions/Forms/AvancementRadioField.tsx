@@ -1,14 +1,14 @@
 import {FC} from 'react';
 import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
-import {AvancementRadioButton} from 'ui/shared/AvancementRadioButton';
 
 import {Option, Options} from 'types';
 import {
   ficheActionAvancementLabels,
-  RadioButtonActionAvancement,
+  FicheActionAvancementRenseigne,
 } from 'app/labels';
 import * as R from 'ramda';
+import {FicheAvancementRadioButton} from 'app/pages/collectivite/PlanActions/Forms/FicheAvancementRadioButton';
 
 type AvancementRadioFieldProps = {
   id?: string;
@@ -24,7 +24,7 @@ export const AvancementRadioField: FC<AvancementRadioFieldProps & FieldProps> =
   ({field, form: {setFieldValue}, ...props}) => {
     const htmlId = props.id ?? uuid();
 
-    const avancements: Options<RadioButtonActionAvancement> = R.values(
+    const avancements: Options<FicheActionAvancementRenseigne> = R.values(
       R.mapObjIndexed(
         (label, value) => ({value, label}),
         ficheActionAvancementLabels
@@ -34,12 +34,12 @@ export const AvancementRadioField: FC<AvancementRadioFieldProps & FieldProps> =
     const optionIsChecked = ({
       option,
     }: {
-      option: Option<RadioButtonActionAvancement>;
+      option: Option<FicheActionAvancementRenseigne>;
     }) => field.value === option.value;
     const onClick = async ({
       option,
     }: {
-      option: Option<RadioButtonActionAvancement>;
+      option: Option<FicheActionAvancementRenseigne>;
     }) => {
       if (field.value === option.value)
         setFieldValue(field.name, 'non_renseigne');
@@ -55,7 +55,7 @@ export const AvancementRadioField: FC<AvancementRadioFieldProps & FieldProps> =
           <slot />
         </label>
         <div className="pt-2">
-          <AvancementRadioButton
+          <FicheAvancementRadioButton
             avancements={avancements}
             optionIsChecked={optionIsChecked}
             onClick={onClick}
