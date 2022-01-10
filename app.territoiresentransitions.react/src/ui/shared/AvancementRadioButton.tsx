@@ -19,7 +19,7 @@ export const AvancementRadioButton = (props: {
 }) => {
   return (
     <div className="AvancementRadioButton">
-      <fieldset>
+      <fieldset disabled={currentCollectiviteBloc.readonly}>
         {props.avancements.map(option => {
           const checked = props.optionIsChecked({option});
           return (

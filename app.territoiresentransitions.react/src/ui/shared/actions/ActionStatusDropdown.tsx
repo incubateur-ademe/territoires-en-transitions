@@ -10,6 +10,7 @@ import {useEffect, useState} from 'react';
 import {MenuItem, Select} from '@material-ui/core';
 import {avancementColors} from 'app/colors';
 import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
+import {currentCollectiviteBloc} from 'core-logic/observables';
 
 export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
   const collectiviteId = useCollectiviteId()!;
@@ -105,6 +106,7 @@ const _ActionStatusAvancementRadioButton = observer(
         onChange={handleChange}
         displayEmpty
         inputProps={{'aria-label': 'Without label'}}
+        disabled={currentCollectiviteBloc.readonly}
       >
         {selectables.map(statut => (
           <MenuItem key={statut.value} value={statut.value}>

@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useCollectiviteId} from 'core-logic/hooks';
 import {Editable} from 'ui/shared';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
+import {currentCollectiviteBloc} from 'core-logic/observables';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
@@ -59,6 +60,7 @@ function AnyIndicateurValueInput<T extends string | number>({
         onBlur={convertToFloatAndStore}
         type="number"
         lang="fr"
+        disabled={currentCollectiviteBloc.readonly}
       />
     </label>
   );
