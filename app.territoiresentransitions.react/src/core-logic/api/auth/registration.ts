@@ -12,8 +12,9 @@ export const politique_vie_privee =
   'https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel';
 
 export const registerUser = async (inscription: InscriptionUtilisateur) => {
+  console.log('registerUser ', inscription);
   if (!inscription.vie_privee_conditions)
-    throw 'cannot register user without vie_privee_conditions';
+    throw 'La politique de protection des données personnelles doit être acceptée. ';
 
   // todo test signup with existing user email.
 

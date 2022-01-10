@@ -68,17 +68,17 @@ const RegistrationForm = () => {
       .min(8, 'Ce champ doit faire au minimum 8 caractères')
       .max(300, 'Ce champ doit faire au maximum 300 caractères')
       .required('Champ requis'),
-    // vie_privee_conditions: Yup.boolean().isTrue('Champ requis'),
+    vie_privee_conditions: Yup.boolean().isTrue('Champ requis'),
   });
 
   const register = (data: InscriptionUtilisateur) => {
     registerUser(data)
+      .then(_ => {
+        setState('success');
+      })
       .catch(reason => {
         setState('failure');
         setErrorMessage(`${reason}`);
-      })
-      .then(_ => {
-        setState('success');
       });
   };
 
@@ -126,7 +126,7 @@ const RegistrationForm = () => {
                     politique de protection des données à caractère personnel de
                     l'ADEME
                   </a>
-                </span>
+                </span>{' '}
               </label>
               <div className="p-5" />
               <div className="max-w-2xl flex flex-row-reverse">
