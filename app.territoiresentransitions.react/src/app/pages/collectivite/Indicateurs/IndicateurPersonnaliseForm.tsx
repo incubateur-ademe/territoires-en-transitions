@@ -7,15 +7,6 @@ import {ValiderButton} from 'ui/shared';
 
 type FormState = 'ready' | 'saving';
 
-/**
- * Prevents enter key submitting the form.
- */
-const onKeyDown = (event: React.KeyboardEvent) => {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-  }
-};
-
 export const IndicateurPersonnaliseForm = (props: {
   indicateur: IndicateurPersonnaliseDefinitionWrite;
   onSave: (data: IndicateurPersonnaliseDefinitionWrite) => void;
@@ -46,7 +37,7 @@ export const IndicateurPersonnaliseForm = (props: {
         validationSchema={validation}
         onSubmit={save}
       >
-        <Form onKeyDown={onKeyDown}>
+        <Form>
           <Field name="titre" label="Titre" component={LabeledTextField} />
           <div className="p-5" />
 

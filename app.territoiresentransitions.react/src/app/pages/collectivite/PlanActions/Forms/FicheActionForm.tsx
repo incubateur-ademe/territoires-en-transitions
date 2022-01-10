@@ -55,7 +55,7 @@ type FormState = 'ready' | 'saving';
 /**
  * Prevents enter key submitting the form.
  */
-function onKeyDown(event: React.KeyboardEvent) {
+function preventSubmit(event: React.KeyboardEvent) {
   if (event.key === 'Enter') {
     event.preventDefault();
   }
@@ -199,7 +199,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
       onSubmit={save}
     >
       {() => (
-        <Form onKeyDown={onKeyDown}>
+        <Form>
           <div className="max-w-2xl">
             <Field
               name="numerotation"
