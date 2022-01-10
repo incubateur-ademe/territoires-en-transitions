@@ -1,7 +1,7 @@
 import {allCollectiviteReadEndpoint} from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
 import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 import React, {useEffect, useState} from 'react';
-import {SelectInput, UiDialogButton} from 'ui';
+import {AutocompleteInput, UiDialogButton} from 'ui';
 import {
   OwnedCollectiviteBloc,
   ownedCollectiviteBloc,
@@ -156,7 +156,7 @@ export const SelectCollectiviteDialog = () => {
     >
       <div className="py-7">
         <div className="flex flex-row justify-center">
-          <SelectInput
+          <AutocompleteInput
             label="Sélectionner votre collectivité"
             options={allCollectiviteReads.map(
               (collectiviteRead: AllCollectiviteRead) => {
@@ -166,8 +166,12 @@ export const SelectCollectiviteDialog = () => {
                 };
               }
             )}
-            defaultValue=""
             onChange={collectiviteId => {
+              if (!collectiviteId) {
+                setSelectedCollectivite(undefined);
+                return;
+              }
+
               const parsedCollectiviteId = parseInt(collectiviteId);
               if (
                 parsedCollectiviteId !== selectedCollectivite?.collectivite_id
