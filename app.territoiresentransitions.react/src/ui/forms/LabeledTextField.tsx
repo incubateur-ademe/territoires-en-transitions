@@ -1,5 +1,5 @@
 import {v4 as uuid} from 'uuid';
-import {FC} from 'react';
+import React, {FC} from 'react';
 import {FieldProps} from 'formik';
 
 type LabeledTextInputProps = {
@@ -8,6 +8,15 @@ type LabeledTextInputProps = {
   hint?: string;
   maxLength?: number;
   type?: 'area' | 'text';
+};
+
+/**
+ * Prevents enter key submitting the form.
+ */
+const preventSubmit = (event: React.KeyboardEvent) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+  }
 };
 
 /**
@@ -46,6 +55,7 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
           id={htmlId}
           className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
           maxLength={props.maxLength}
+          onKeyDown={preventSubmit}
           {...field}
         />
       )}

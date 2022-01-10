@@ -31,7 +31,7 @@ const FicheActionEditor = () => {
 
   return (
     <main className="fr-container pt-8">
-      <h1>Ma fiche action</h1>
+      <h1 className="fr-h2">Ma fiche action</h1>
       {ficheAction && (
         <FicheActionForm
           fiche={ficheAction}
