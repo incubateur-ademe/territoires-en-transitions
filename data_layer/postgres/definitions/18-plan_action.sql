@@ -3,7 +3,7 @@ create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours');
 -- fiche action
 create table fiche_action
 (
-    uid                         uuid                    primary key,
+    uid                         uuid primary key,
     collectivite_id             integer references collectivite,
     avancement                  fiche_action_avancement not null,
     numerotation                text                    not null,
@@ -47,7 +47,7 @@ create policy allow_update
 create table fiche_action_action
 (
     fiche_action_uid uuid references fiche_action,
-    action_id       action_id references action_relation,
+    action_id        action_id references action_relation,
     primary key (fiche_action_uid, action_id)
 );
 comment on table fiche_action is
@@ -62,7 +62,7 @@ create policy allow_read
 create table fiche_action_indicateur
 (
     fiche_action_uid uuid references fiche_action,
-    indicateur_id   indicateur_id references indicateur_definition,
+    indicateur_id    indicateur_id references indicateur_definition,
     primary key (fiche_action_uid, indicateur_id)
 );
 comment on table fiche_action_indicateur is
@@ -76,7 +76,7 @@ create policy allow_read
 
 create table fiche_action_indicateur_personnalise
 (
-    fiche_action_uid            uuid references fiche_action,
+    fiche_action_uid           uuid references fiche_action,
     indicateur_personnalise_id integer references indicateur_personnalise_definition,
     primary key (fiche_action_uid, indicateur_personnalise_id)
 );
@@ -99,9 +99,9 @@ create or replace function update_fiche_relationships(
 $$
 declare
     uid uuid;
-    i  action_id;
-    j  indicateur_id;
-    k  integer;
+    i   action_id;
+    j   indicateur_id;
+    k   integer;
 begin
     -- the name fiche_action_id is ambiguous as it can refer to a column.
     select update_fiche_relationships.fiche_action_uid into uid;
@@ -162,7 +162,7 @@ comment on function after_fiche_action_write_save_relationships is
 -- plan d'action
 create table plan_action
 (
-    uid                uuid                                            primary key,
+    uid                uuid primary key,
     collectivite_id    integer references collectivite,
     nom                varchar(300)                                       not null,
     categories         jsonb                                              not null,
@@ -189,3 +189,29 @@ create policy allow_update
     for update
     using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
                               collectivite_id));
+
+
+-- plan d'action par défaut
+create or replace function after_epci_write_insert_default_plan() returns trigger as
+$$
+    begin
+insert into plan_action
+(collectivite_id,
+ uid,
+ nom,
+ categories,
+ fiches_by_category)
+values (new.collectivite_id,
+        gen_random_uuid(),
+        'Plan d''action de la collectivité',
+        '[]',
+        '[]');
+return new;
+end;
+$$ language plpgsql;
+
+create trigger after_epci_write
+    after insert
+    on epci
+    for each row
+execute procedure after_epci_write_insert_default_plan();
