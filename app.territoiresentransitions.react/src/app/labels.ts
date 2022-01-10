@@ -8,16 +8,28 @@ export const referentielToName: Record<ReferentielOfIndicateur, string> = {
   crte: 'Contrat Relance Transition Écologique',
 };
 
-export const avancementLabels: Record<Avancement, string> = {
-  //non_concerne: 'Non concernée',
+type OmitLiteral<
+  Literals extends string | number,
+  ExcludedLiterals extends Literals
+> = keyof Omit<{[Key in Literals]: never}, ExcludedLiterals>;
+export type RadioButtonActionAvancement = OmitLiteral<
+  Avancement,
+  'non_renseigne'
+>;
+
+export const avancementLabels: Record<RadioButtonActionAvancement, string> = {
   pas_fait: 'Pas faite',
   programme: 'Programmée',
   fait: 'Faite',
-  non_renseigne: 'Non renseignée',
 };
 
+export type RadioButtonFicheAvancement = Exclude<
+  'non_renseigne',
+  FicheActionAvancement
+>;
+
 export const ficheActionAvancementLabels: Record<
-  FicheActionAvancement,
+  RadioButtonFicheAvancement,
   string
 > = avancementLabels;
 

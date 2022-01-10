@@ -6,4 +6,3 @@ export * from './elses_epci_read';
 export * from './all_collectivite_read';
 export * from './owned_collectivite_read';
 export * from './types';
-export * from './score_read';

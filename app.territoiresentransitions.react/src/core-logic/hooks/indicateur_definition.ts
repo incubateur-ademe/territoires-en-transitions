@@ -35,7 +35,7 @@ export const useAllIndicateurDefinitionsForGroup = (
           sortIndicateurDefinitionsByIdentifiant(definitions);
         return setIndicateurDefinitions(sortedDefinitions);
       });
-  }, []);
+  }, [group]);
 
   return indicateurDefinitions;
 };

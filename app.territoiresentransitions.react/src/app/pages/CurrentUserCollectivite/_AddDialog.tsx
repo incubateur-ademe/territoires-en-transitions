@@ -1,7 +1,7 @@
 import {allCollectiviteReadEndpoint} from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
 import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 import React, {useEffect, useState} from 'react';
-import {SelectInput, UiDialogButton} from 'ui';
+import {AutocompleteInput, UiDialogButton} from 'ui';
 import {
   OwnedCollectiviteBloc,
   ownedCollectiviteBloc,
@@ -13,17 +13,18 @@ import {
 import {Spacer} from 'ui/shared';
 import {Link} from 'react-router-dom';
 import {makeTableauBordUrl} from 'app/paths';
+import {currentCollectiviteBloc} from 'core-logic/observables';
 
 const _JoinCollectiviteDialogContent = ({
-  collectiviteId,
+  collectivite,
   referentContactResponse,
 }: {
-  collectiviteId: number;
+  collectivite: AllCollectiviteRead;
   referentContactResponse: ReferentContactResponse;
 }) => (
   <div>
     <div className="flex justify-center mt-8">
-      Pour rejoindre l'Collectivite {collectiviteId}, contacter le référent{' '}
+      Pour rejoindre "{collectivite.nom}", contactez le référent{' '}
       {referentContactResponse.prenom} {referentContactResponse.nom} par mail{' '}
       {referentContactResponse.email}
     </div>
@@ -31,16 +32,16 @@ const _JoinCollectiviteDialogContent = ({
 );
 
 const _ClaimCollectiviteDialogContent = ({
-  collectiviteId,
+  collectivite,
   bloc,
 }: {
-  collectiviteId: number;
+  collectivite: AllCollectiviteRead;
   bloc: OwnedCollectiviteBloc;
 }) => {
   const [success, setSuccess] = useState<boolean | null>(null);
 
   const onClick = async () => {
-    const claimSuccess = await bloc.claim(collectiviteId);
+    const claimSuccess = await bloc.claim(collectivite.collectivite_id);
     setSuccess(claimSuccess);
   };
 
@@ -48,7 +49,7 @@ const _ClaimCollectiviteDialogContent = ({
     return (
       <div className="items-center">
         <ul>
-          <li>Vous souhaitez rejoindre #{collectiviteId}</li>
+          <li>Vous souhaitez rejoindre {collectivite.nom}</li>
           <li>Cette collectivité n'est pas encore active.</li>
           <li className="font-bold">
             Souhaitez-vous activer cette collectivité et en être le référent ?
@@ -62,8 +63,13 @@ const _ClaimCollectiviteDialogContent = ({
   else if (success)
     return (
       <div>
-        <div>Vous avez activé la collectivité #{collectiviteId}</div>
-        <Link className="fr-btn" to={makeTableauBordUrl({collectiviteId})}>
+        <div>Vous avez activé la collectivité {collectivite.nom}</div>
+        <Link
+          className="fr-btn"
+          to={makeTableauBordUrl({
+            collectiviteId: collectivite.collectivite_id,
+          })}
+        >
           Tableau de bord
         </Link>
       </div>
@@ -76,59 +82,42 @@ const _ClaimCollectiviteDialogContent = ({
     );
 };
 
-const _ConditionalSelectDialog = ({
-  collectiviteId,
+const _ConditionalSelectDialogContent = ({
+  collectivite,
 }: {
-  collectiviteId?: number;
+  collectivite?: AllCollectiviteRead;
 }) => {
   const [referentContactResponse, setReferentContactResponse] =
     useState<ReferentContactResponse | null>(null);
 
   useEffect(() => {
-    if (collectiviteId) {
-      console.log(collectiviteId);
-      referentContact(collectiviteId).then(contact => {
+    if (collectivite) {
+      console.log(collectivite);
+      referentContact(collectivite.collectivite_id).then(contact => {
         setReferentContactResponse(contact);
       });
     }
-  }, [collectiviteId]);
+  }, [collectivite?.collectivite_id]);
 
-  if (!collectiviteId) return null;
+  if (!collectivite) return null;
 
   if (referentContactResponse)
     return (
       <_JoinCollectiviteDialogContent
         referentContactResponse={referentContactResponse}
-        collectiviteId={collectiviteId}
+        collectivite={collectivite}
       />
     );
   return (
     <_ClaimCollectiviteDialogContent
       bloc={ownedCollectiviteBloc}
-      collectiviteId={collectiviteId}
+      collectivite={collectivite}
     />
   );
 };
-export const JoinCurrentCollectiviteDialog = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) => {
+export const JoinCurrentCollectiviteDialog = () => {
+  const collectivite = currentCollectiviteBloc.currentCollectivite!;
   const [opened, setOpened] = React.useState<boolean>(false);
-  const [referentContactResponse, setReferentContactResponse] =
-    useState<ReferentContactResponse | null>(null);
-
-  useEffect(() => {
-    referentContact(collectiviteId).then(contact => {
-      setReferentContactResponse(contact);
-    });
-  }, [collectiviteId]);
-
-  console.log(
-    'JoinCurrentCollectiviteDialog : #',
-    collectiviteId,
-    referentContactResponse
-  );
 
   return (
     <UiDialogButton
@@ -137,12 +126,7 @@ export const JoinCurrentCollectiviteDialog = ({
       setOpened={setOpened}
       buttonClasses="fr-btn--secondary fr-btn--sm bg-white"
     >
-      {referentContactResponse && (
-        <_JoinCollectiviteDialogContent
-          collectiviteId={collectiviteId}
-          referentContactResponse={referentContactResponse}
-        />
-      )}
+      <_ConditionalSelectDialogContent collectivite={collectivite} />
     </UiDialogButton>
   );
 };
@@ -161,8 +145,8 @@ export const SelectCollectiviteDialog = () => {
       );
   }, []);
 
-  const [selectedCollectiviteId, setSelectedCollectiviteId] =
-    React.useState<number>();
+  const [selectedCollectivite, setSelectedCollectivite] =
+    React.useState<AllCollectiviteRead>();
 
   return (
     <UiDialogButton
@@ -172,7 +156,7 @@ export const SelectCollectiviteDialog = () => {
     >
       <div className="py-7">
         <div className="flex flex-row justify-center">
-          <SelectInput
+          <AutocompleteInput
             label="Sélectionner votre collectivité"
             options={allCollectiviteReads.map(
               (collectiviteRead: AllCollectiviteRead) => {
@@ -182,16 +166,27 @@ export const SelectCollectiviteDialog = () => {
                 };
               }
             )}
-            defaultValue=""
             onChange={collectiviteId => {
+              if (!collectiviteId) {
+                setSelectedCollectivite(undefined);
+                return;
+              }
+
               const parsedCollectiviteId = parseInt(collectiviteId);
-              if (parsedCollectiviteId !== selectedCollectiviteId)
-                setSelectedCollectiviteId(parsedCollectiviteId);
+              if (
+                parsedCollectiviteId !== selectedCollectivite?.collectivite_id
+              ) {
+                setSelectedCollectivite(
+                  allCollectiviteReads.find(
+                    c => c.collectivite_id === parsedCollectiviteId
+                  )
+                );
+              }
             }}
           />
         </div>
         <Spacer />
-        <_ConditionalSelectDialog collectiviteId={selectedCollectiviteId} />
+        <_ConditionalSelectDialogContent collectivite={selectedCollectivite} />
       </div>
     </UiDialogButton>
   );

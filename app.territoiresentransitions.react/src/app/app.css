@@ -12,7 +12,7 @@ details > .content p {
 }
 
 .htmlContent p {
-  margin: 0 0 1.5rem;
+  margin: 0 0 0.5rem;
 }
 
 .htmlContent a:link {
@@ -34,4 +34,31 @@ details > .content p {
 
 .ActionExpandPanelAdemeContent summary.title {
   font-size: 18px;
+}
+
+main a[href] {
+  box-shadow: none;
+}
+
+/* Checkbox styling */
+input {
+  appearance: none;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+input[type='checkbox'] {
+  border: 2px solid #555;
+  width: 20px;
+  height: 20px;
+  padding: 4px;
+}
+input[type='checkbox']:checked {
+  background: #555;
+  background-clip: content-box;
+}
+label {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 -2px 8px;
 }

@@ -14,7 +14,8 @@ def test_cannot_write_if_collectivite_or_action_does_not_exist(postgres_connecti
     repo = PostgresActionScoreRepository(postgres_connection)
     with pytest.raises(PostgresRepositoryError):
         repo.add_entities_for_collectivite(
-            collectivite_id=10000, entities=[make_action_score("cae", points=50)]
+            collectivite_id=10000,
+            entities=[make_action_score("cae", point_referentiel=50)],
         )
 
 
@@ -37,7 +38,7 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
 
     # add and retrieve a score for action "cae" on epci #1
     repo.add_entities_for_collectivite(
-        collectivite_id=1, entities=[make_action_score("cae", points=50)]
+        collectivite_id=1, entities=[make_action_score("cae", point_referentiel=50)]
     )
     test_cursor.execute("select action_id from score where collectivite_id=1;")
 
@@ -47,7 +48,7 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
 
     # add and retrieve a score for action "cae_1.1" on collectivite #2
     repo.add_entities_for_collectivite(
-        collectivite_id=2, entities=[make_action_score("cae_1.1", points=90)]
+        collectivite_id=2, entities=[make_action_score("cae_1.1", point_referentiel=90)]
     )
     test_cursor.execute("select action_id, points from score where collectivite_id=2;")
     collectivite_1_action_id_with_scores = test_cursor.fetchall()
@@ -58,7 +59,7 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
 
     # update score for cae_1.1
     repo.add_entities_for_collectivite(
-        collectivite_id=2, entities=[make_action_score("cae_1.1", points=95)]
+        collectivite_id=2, entities=[make_action_score("cae_1.1", point_referentiel=95)]
     )
     test_cursor.execute("select action_id, points from score where collectivite_id=2;")
     collectivite_1_action_id_with_scores = test_cursor.fetchall()

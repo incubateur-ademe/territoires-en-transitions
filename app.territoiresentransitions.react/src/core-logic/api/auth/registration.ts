@@ -13,7 +13,7 @@ export const politique_vie_privee =
 
 export const registerUser = async (inscription: InscriptionUtilisateur) => {
   if (!inscription.vie_privee_conditions)
-    throw 'cannot register user without vie_privee_conditions';
+    throw 'La politique de protection des données personnelles doit être acceptée. ';
 
   // todo test signup with existing user email.
 
@@ -22,7 +22,7 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
     password: inscription.password,
   });
 
-  if (!signedUp.user || signedUp.error) throw signedUp.error;
+  if (!signedUp.user || signedUp.error) throw signedUp.error?.message;
 
   // todo later save DCPs
   const dcp: DcpWrite = {

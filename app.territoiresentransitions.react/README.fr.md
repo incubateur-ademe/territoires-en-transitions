@@ -49,7 +49,7 @@ src
 
 - **app** : c'est là qu'est construite l'application react à proprement parlée. Elle va consommer ce qui est dans `core-logic` et dans `ui`.
 
-Dans chacun des dossiers, on utilise un fichier `index.ts` dont le role est de déterminer ce qui est exposé à l'utilisation externe. Et donc quand on créer un composant, il ne faut pas oublier de l'ajouter ici. Quand on travaille dans le dossier `app`, tout ce qui est importable de `ui` doit être importable avec la ligne suivante:
+Dans chacun des dossiers, on utilise un fichier `ClientScore.ts` dont le role est de déterminer ce qui est exposé à l'utilisation externe. Et donc quand on créer un composant, il ne faut pas oublier de l'ajouter ici. Quand on travaille dans le dossier `app`, tout ce qui est importable de `ui` doit être importable avec la ligne suivante:
 
 ##### `import {ComponentA, ComponentB} from "ui"`
 

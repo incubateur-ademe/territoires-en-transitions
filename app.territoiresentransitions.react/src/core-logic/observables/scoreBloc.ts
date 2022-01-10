@@ -1,10 +1,10 @@
 import {makeAutoObservable, reaction} from 'mobx';
-import {ScoreRead} from '../../generated/dataLayer/client_scores_read';
 import {ScoreController, ScoreSocket} from 'core-logic/api/sockets/ScoreSocket';
 import {SupabaseScoreController} from 'core-logic/api/sockets/SupabaseScoreController';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {clientScoresReadEndpoint} from 'core-logic/api/endpoints/ClientScoresReadEndpoint';
 import {currentCollectiviteBloc} from 'core-logic/observables';
+import {ActionScore} from 'types/ClientScore';
 
 export type CurrentCollectiviteObserved = {
   nom: string;
@@ -14,7 +14,10 @@ export type CurrentCollectiviteObserved = {
 // Should observe "CollectiviteId" of collectiviteBloc and ActionStatutWriteEndpoint
 // so that you start the connection on first status written
 export class ScoreBloc {
-  private _scores: ScoreRead[] = [];
+  private _scores: {eci: ActionScore[]; cae: ActionScore[]} = {
+    eci: [],
+    cae: [],
+  };
   private _scoreController: ScoreController | null = null;
 
   constructor() {
@@ -50,11 +53,28 @@ export class ScoreBloc {
         // referentiel,
       })
       .then(clientScoresRead => {
-        if (clientScoresRead[0]) {
-          this._scores = clientScoresRead[0].scores;
+        console.log('length of clientScoresRead : ', clientScoresRead.length);
+        if (clientScoresRead) {
+          this._scores.eci =
+            clientScoresRead.find(
+              scoresRead => scoresRead.referentiel === 'eci'
+            )?.scores ?? [];
+          this._scores.cae =
+            clientScoresRead.find(
+              scoresRead => scoresRead.referentiel === 'cae'
+            )?.scores ?? [];
         }
+        console.log(
+          'eci -> ',
+          this._scores.eci.length,
+          '\ncae -> ',
+          this._scores.cae.length
+        );
+        console.log(
+          'cae_1.1.1.1.1 -> ',
+          this._scores.cae.find(score => score.action_id === 'cae_1.1.1.1.1')
+        );
       });
-    console.log('fetchScoresForCollectivite ', this._scores);
   }
 
   openScoreSocketAndListenScoreController(collectiviteId: number) {
@@ -69,14 +89,23 @@ export class ScoreBloc {
     });
     this._scoreController.listen();
     socket.scoreObservable.subscribe(observedScores => {
-      console.log('observedScores: ', observedScores);
-      this._scores = observedScores;
+      const eciScores = observedScores.filter(
+        score => score.referentiel === 'eci'
+      );
+      if (eciScores.length) this._scores.eci = eciScores;
+
+      const caeScores = observedScores.filter(
+        score => score.referentiel === 'cae'
+      );
+      if (caeScores.length) {
+        this._scores.cae = caeScores;
+      }
     });
   }
 
-  getScore(action_id: string) {
-    const score = this._scores.find(() =>
-      this._scores.find(score => score.action_id === action_id)
+  getScore(action_id: string, referentiel: 'eci' | 'cae') {
+    const score = this._scores[referentiel].find(
+      score => score.action_id === action_id
     );
     return score ? {...score} : null;
   }

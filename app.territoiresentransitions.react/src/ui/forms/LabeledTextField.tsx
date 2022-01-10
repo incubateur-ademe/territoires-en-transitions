@@ -1,5 +1,5 @@
 import {v4 as uuid} from 'uuid';
-import {FC} from 'react';
+import React, {FC} from 'react';
 import {FieldProps} from 'formik';
 
 type LabeledTextInputProps = {
@@ -7,7 +7,16 @@ type LabeledTextInputProps = {
   id?: string;
   hint?: string;
   maxLength?: number;
-  type?: 'area' | 'text';
+  type?: 'area' | 'text' | 'password';
+};
+
+/**
+ * Prevents enter key submitting the form.
+ */
+const preventSubmit = (event: React.KeyboardEvent) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+  }
 };
 
 /**
@@ -24,14 +33,13 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
   const isTouched = touched[field.name];
-
+  const inputType = props.type ?? 'text';
   return (
     <div>
       <label className="fr-label" htmlFor={htmlId}>
         {props.label}
         <slot />
       </label>
-
       {!errorMessage && props.hint && (
         <div className="mt-2 text-sm opacity-80">{props.hint}</div>
       )}
@@ -40,17 +48,25 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
           {errorMessage}
         </div>
       )}
-
-      {props.type !== 'area' && (
+      {inputType === 'password' && (
         <input
+          type="password"
           id={htmlId}
-          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          className="fr-input mt-2 w-full bg-red p-3 border-b-2 border-red-500"
           maxLength={props.maxLength}
           {...field}
         />
       )}
-
-      {props.type === 'area' && (
+      {inputType === 'text' && (
+        <input
+          id={htmlId}
+          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          maxLength={props.maxLength}
+          onKeyDown={preventSubmit}
+          {...field}
+        />
+      )}
+      {inputType === 'area' && (
         <textarea
           id={htmlId}
           className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"

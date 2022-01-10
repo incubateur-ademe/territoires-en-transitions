@@ -89,7 +89,8 @@ def prepare_use_case(
         bus, events.ReferentielScoresForCollectiviteComputationFailed
     )
     trigger = trigger or events.ActionStatutUpdatedForCollectivite(
-        collectivite_id=1, referentiel=test_referentiel, created_at="2020-01-01T12"
+        collectivite_id=1,
+        referentiel=test_referentiel,
     )
     use_case.execute(trigger)
 
@@ -98,7 +99,7 @@ def prepare_use_case(
 
 def test_notation_fails_when_referentiel_is_empty():
     trigger = events.ActionStatutUpdatedForCollectivite(
-        collectivite_id=1, referentiel="cae", created_at="2020-01-01T12"
+        collectivite_id=1, referentiel="cae"
     )
     statuses = []
     converted_events, failure_events = prepare_use_case(statuses, trigger)
@@ -125,49 +126,61 @@ def test_notation_when_one_tache_is_fait():
 
     assert scores_by_id[ActionId("eci_1.1")] == ActionScore(
         action_id=ActionId("eci_1.1"),
-        points=10,
-        previsionnel=10,
-        potentiel=10,
-        referentiel_points=10,
+        point_fait=10,
+        point_programme=0,
+        point_pas_fait=0,
+        point_potentiel=10,
+        point_non_renseigne=0,
+        point_referentiel=10,
         completed_taches_count=1,
         total_taches_count=1,
         concerne=True,
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
-        points=10,
-        previsionnel=10,
-        potentiel=30,
-        referentiel_points=30,
+        point_fait=10,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=20,
+        point_potentiel=30,
+        point_referentiel=30,
         completed_taches_count=1,
         total_taches_count=2,
         concerne=True,
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
-        points=None,
-        previsionnel=None,
-        potentiel=70,
-        referentiel_points=70,
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=70,
+        point_potentiel=70,
+        point_referentiel=70,
         completed_taches_count=0,
         total_taches_count=3,
         concerne=True,
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
         action_id=ActionId("eci"),
-        points=10,
-        previsionnel=10,
-        potentiel=100,
-        referentiel_points=100,
+        point_fait=10,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=90,
+        point_potentiel=100,
+        point_referentiel=100,
         completed_taches_count=1,
         total_taches_count=5,
         concerne=True,
+        referentiel="eci",
     )
 
 
-def test_notation_when_one_tache_is_programmee():
+def test_notation_when_one_tache_is_programme():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
@@ -186,45 +199,43 @@ def test_notation_when_one_tache_is_programmee():
 
     assert scores_by_id[ActionId("eci_1.1")] == ActionScore(
         action_id=ActionId("eci_1.1"),
-        points=0,
-        previsionnel=10,
-        potentiel=10,
-        referentiel_points=10,
+        point_fait=0,
+        point_programme=10,
+        point_pas_fait=0,
+        point_potentiel=10,
+        point_non_renseigne=0,
+        point_referentiel=10,
         completed_taches_count=1,
         total_taches_count=1,
         concerne=True,
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
-        points=0,
-        previsionnel=10,
-        potentiel=30,
-        referentiel_points=30,
+        point_fait=0,
+        point_programme=10,
+        point_pas_fait=0,
+        point_non_renseigne=20,
+        point_potentiel=30,
+        point_referentiel=30,
         completed_taches_count=1,
         total_taches_count=2,
         concerne=True,
-    )
-
-    assert scores_by_id[ActionId("eci_2")] == ActionScore(
-        action_id=ActionId("eci_2"),
-        points=None,
-        previsionnel=None,
-        potentiel=70,
-        referentiel_points=70,
-        completed_taches_count=0,
-        total_taches_count=3,
-        concerne=True,
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
         action_id=ActionId("eci"),
-        points=0,
-        previsionnel=10,
-        potentiel=100,
-        referentiel_points=100,
+        point_fait=0,
+        point_programme=10,
+        point_pas_fait=0,
+        point_non_renseigne=90,
+        point_potentiel=100,
+        point_referentiel=100,
         completed_taches_count=1,
         total_taches_count=5,
         concerne=True,
+        referentiel="eci",
     )
 
 
@@ -247,45 +258,43 @@ def test_notation_when_one_tache_is_pas_fait():
 
     assert scores_by_id[ActionId("eci_1.1")] == ActionScore(
         action_id=ActionId("eci_1.1"),
-        points=0,
-        previsionnel=0,
-        potentiel=10,
-        referentiel_points=10,
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=10,
+        point_potentiel=10,
+        point_non_renseigne=0,
+        point_referentiel=10,
         completed_taches_count=1,
         total_taches_count=1,
         concerne=True,
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
-        points=0,
-        previsionnel=0,
-        potentiel=30,
-        referentiel_points=30,
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=10,
+        point_non_renseigne=20,
+        point_potentiel=30,
+        point_referentiel=30,
         completed_taches_count=1,
         total_taches_count=2,
         concerne=True,
-    )
-
-    assert scores_by_id[ActionId("eci_2")] == ActionScore(
-        action_id=ActionId("eci_2"),
-        points=None,
-        previsionnel=None,
-        potentiel=70,
-        referentiel_points=70,
-        completed_taches_count=0,
-        total_taches_count=3,
-        concerne=True,
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
         action_id=ActionId("eci"),
-        points=0,
-        previsionnel=0,
-        potentiel=100,
-        referentiel_points=100,
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=10,
+        point_non_renseigne=90,
+        point_potentiel=100,
+        point_referentiel=100,
         completed_taches_count=1,
         total_taches_count=5,
         concerne=True,
+        referentiel="eci",
     )
 
 
@@ -308,60 +317,61 @@ def test_notation_when_one_tache_is_non_concerne():
 
     assert scores_by_id[ActionId("eci_1.1")] == ActionScore(
         action_id=ActionId("eci_1.1"),
-        points=0,
-        previsionnel=0,
-        potentiel=0,
-        referentiel_points=10,
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_potentiel=0,
+        point_non_renseigne=0,
+        point_referentiel=10,
         completed_taches_count=1,
         total_taches_count=1,
         concerne=False,
+        referentiel="eci",
     )
-    # points of eci_1.1 is redistributed to its siblings (ie. to eci_1.2)
+
     assert scores_by_id[ActionId("eci_1.2")] == ActionScore(
         action_id=ActionId("eci_1.2"),
-        points=None,
-        previsionnel=None,
-        potentiel=30,
-        referentiel_points=20,
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_potentiel=30,
+        point_non_renseigne=30,
+        point_referentiel=20,
         completed_taches_count=0,
         total_taches_count=1,
         concerne=True,
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
-        points=0,
-        previsionnel=0,
-        potentiel=30,
-        referentiel_points=30,
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=30,
+        point_potentiel=30,
+        point_referentiel=30,
         completed_taches_count=1,
         total_taches_count=2,
         concerne=True,
-    )
-
-    assert scores_by_id[ActionId("eci_2")] == ActionScore(
-        action_id=ActionId("eci_2"),
-        points=None,
-        previsionnel=None,
-        potentiel=70,
-        referentiel_points=70,
-        completed_taches_count=0,
-        total_taches_count=3,
-        concerne=True,
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
         action_id=ActionId("eci"),
-        points=0,
-        previsionnel=0,
-        potentiel=100,
-        referentiel_points=100,
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=100,
+        point_potentiel=100,
+        point_referentiel=100,
         completed_taches_count=1,
         total_taches_count=5,
         concerne=True,
+        referentiel="eci",
     )
 
 
-def test_notation_when_an_action__of_action_level_becomes_non_concernee():
+def test_notation_when_an_action_of_action_level_becomes_non_concernee():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
@@ -385,56 +395,71 @@ def test_notation_when_an_action__of_action_level_becomes_non_concernee():
 
     assert scores_by_id[ActionId("eci_1.1")] == ActionScore(
         action_id=ActionId("eci_1.1"),
-        points=0,
-        previsionnel=0,
-        potentiel=0,
-        referentiel_points=10,
+        point_fait=0,
+        point_pas_fait=0,
+        point_programme=0,
+        point_non_renseigne=0,
+        point_potentiel=0,
+        point_referentiel=10,
         completed_taches_count=1,
         total_taches_count=1,
         concerne=False,
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_1.2")] == ActionScore(
         action_id=ActionId("eci_1.2"),
-        points=0,
-        previsionnel=0,
-        potentiel=0,
-        referentiel_points=20,
+        point_fait=0,
+        point_pas_fait=0,
+        point_programme=0,
+        point_non_renseigne=0,
+        point_potentiel=0,
+        point_referentiel=20,
         completed_taches_count=1,
         total_taches_count=1,
         concerne=False,
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
-        points=0,
-        previsionnel=0,
-        potentiel=0,
-        referentiel_points=30,
+        point_fait=0,
+        point_pas_fait=0,
+        point_programme=0,
+        point_non_renseigne=0,
+        point_potentiel=0,
+        point_referentiel=30,
         completed_taches_count=2,
         total_taches_count=2,
         concerne=False,
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
-        points=None,
-        previsionnel=None,
-        potentiel=70,
-        referentiel_points=70,
+        point_fait=0,
+        point_pas_fait=0,
+        point_programme=0,
+        point_non_renseigne=70,
+        point_potentiel=70,
+        point_referentiel=70,
         completed_taches_count=0,
         total_taches_count=3,
         concerne=True,
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
         action_id=ActionId("eci"),
-        points=0,
-        previsionnel=0,
-        potentiel=70,
-        referentiel_points=100,
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=70,
+        point_potentiel=70,
+        point_referentiel=100,
         completed_taches_count=2,
         total_taches_count=5,
         concerne=True,
+        referentiel="eci",
     )
 
 
@@ -462,67 +487,86 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires():
 
     assert scores_by_id[ActionId("eci_2.0")] == ActionScore(
         action_id=ActionId("eci_2.0"),
-        points=None,
-        previsionnel=None,
-        potentiel=0,
-        referentiel_points=0,
+        point_fait=0,
+        point_pas_fait=0,
+        point_programme=0,
+        point_non_renseigne=0,
+        point_potentiel=0,
+        point_referentiel=0,
         completed_taches_count=0,
         total_taches_count=1,
         concerne=True,
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_2.1")] == ActionScore(
         action_id=ActionId("eci_2.1"),
-        points=0,
-        previsionnel=0,
-        potentiel=0,
-        referentiel_points=65,
+        point_fait=0,
+        point_pas_fait=0,
+        point_programme=0,
+        point_non_renseigne=0,
+        point_potentiel=0,
+        point_referentiel=65,
         completed_taches_count=1,
         total_taches_count=1,
         concerne=False,
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci_2.2")] == ActionScore(
         action_id=ActionId("eci_2.2"),
-        points=70,
-        previsionnel=70,
-        potentiel=70,
-        referentiel_points=5,
+        point_fait=70,
+        point_pas_fait=0,
+        point_programme=0,
+        point_non_renseigne=0,
+        point_potentiel=70,
+        point_referentiel=5,
         completed_taches_count=1,
         total_taches_count=1,
         concerne=True,
+        referentiel="eci",
     )
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
-        points=70,
-        previsionnel=70,
-        potentiel=70,
-        referentiel_points=70,
+        point_fait=70,
+        point_pas_fait=0,
+        point_programme=0,
+        point_non_renseigne=0,
+        point_potentiel=70,
+        point_referentiel=70,
         completed_taches_count=2,
         total_taches_count=3,
         concerne=True,
+        referentiel="eci",
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
         action_id=ActionId("eci"),
-        points=70,
-        previsionnel=70,
-        potentiel=100,
-        referentiel_points=100,
+        point_fait=70,
+        point_pas_fait=0,
+        point_programme=0,
+        point_non_renseigne=30,
+        point_potentiel=100,
+        point_referentiel=100,
         completed_taches_count=2,
         total_taches_count=5,
         concerne=True,
+        referentiel="eci",
     )
 
 
 deeper_referentiel = copy.deepcopy(referentiel_repo)
 action_childrens = [
     make_action_children(f"eci_2.2", ["eci_2.2.1", "eci_2.2.2", "eci_2.2.3"]),
+    make_action_children(f"eci_2.1", ["eci_2.1.0", "eci_2.1.1", "eci_2.1.2"]),
 ]
 
 action_points = [
     make_action_points(action_id=f"eci_2.2.1", points=2),
     make_action_points(action_id=f"eci_2.2.2", points=1.5),
     make_action_points(action_id=f"eci_2.2.3", points=1.5),
+    make_action_points(action_id=f"eci_2.1.0", points=0),
+    make_action_points(action_id=f"eci_2.1.1", points=40),
+    make_action_points(action_id=f"eci_2.1.2", points=25),
 ]
 
 deeper_referentiel.add_referentiel_actions(
@@ -532,6 +576,9 @@ deeper_referentiel.add_referentiel_actions(
             "eci_2.2.1",
             "eci_2.2.2",
             "eci_2.2.3",
+            "eci_2.1.0",
+            "eci_2.1.1",
+            "eci_2.1.2",
         ]
     ],
     points=action_points,
@@ -570,56 +617,103 @@ def test_notation_should_redistribute_non_concernee_points_if_level_is_greater_t
     assert len(failure_events) == 0
 
     actual_scores = converted_events[0].scores
-    assert len(actual_scores) == 11
+    assert len(actual_scores) == 14
 
     scores_by_id = {score.action_id: score for score in actual_scores}
 
     assert scores_by_id[ActionId("eci_2.2")] == ActionScore(
         action_id=ActionId("eci_2.2"),
-        points=0,
-        previsionnel=0,
-        potentiel=0,
-        referentiel_points=5,
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=0,
+        point_potentiel=0,
+        point_referentiel=5,
         completed_taches_count=3,
         total_taches_count=3,
         concerne=False,
+        referentiel="eci",
     )
-    # points of 2.2 is redistributed on 2.1
-    assert scores_by_id[ActionId("eci_2.1")] == ActionScore(
-        action_id=ActionId("eci_2.1"),
-        points=None,
-        previsionnel=None,
-        potentiel=70,
-        referentiel_points=65,
+    # point_fait of 2.2 is redistributed on 2.1
+    # assert scores_by_id[ActionId("eci_2.1")] == ActionScore(
+    #     action_id=ActionId("eci_2.1"),
+    #     point_fait=0,
+    #     point_programme=0,
+    #     point_pas_fait=0,
+    #     point_non_renseigne=70,
+    #     point_potentiel=70,
+    #     point_referentiel=65,
+    #     completed_taches_count=0,
+    #     total_taches_count=3,
+    #     concerne=True,
+    #     referentiel="eci",
+    # )
+
+    assert scores_by_id[ActionId("eci_2.1.0")] == ActionScore(
+        action_id=ActionId("eci_2.1.0"),
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=0,
+        point_potentiel=0,
+        point_referentiel=0,
         completed_taches_count=0,
         total_taches_count=1,
         concerne=True,
+        referentiel="eci",
     )
-
-    # axe 2 points should remain unchanged
+    assert scores_by_id[ActionId("eci_2.1.1")] == ActionScore(
+        action_id=ActionId("eci_2.1.1"),
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=40 / 65 * 70,
+        point_potentiel=40 / 65 * 70,
+        point_referentiel=40,
+        completed_taches_count=0,
+        total_taches_count=1,
+        concerne=True,
+        referentiel="eci",
+    )
+    assert scores_by_id[ActionId("eci_2.1.2")] == ActionScore(
+        action_id=ActionId("eci_2.1.2"),
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=25 / 65 * 70,
+        point_potentiel=25 / 65 * 70,
+        point_referentiel=25,
+        completed_taches_count=0,
+        total_taches_count=1,
+        concerne=True,
+        referentiel="eci",
+    )
+    # axe 2 point_fait should remain unchanged
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
-        points=0,
-        previsionnel=0,
-        potentiel=70,
-        referentiel_points=70,
+        point_fait=0,
+        point_pas_fait=0,
+        point_programme=0,
+        point_non_renseigne=70,
+        point_potentiel=70,
+        point_referentiel=70,
         completed_taches_count=3,
-        total_taches_count=5,
-        concerne=True,
-    )
-
-    # root points should remain unchanged
-    assert scores_by_id[ActionId("eci")] == ActionScore(
-        action_id=ActionId("eci"),
-        points=0,
-        previsionnel=10,
-        potentiel=100,
-        referentiel_points=100,
-        completed_taches_count=4,
         total_taches_count=7,
         concerne=True,
+        referentiel="eci",
     )
 
-
-def test_notation_should_lower_root_potential_if_level_is_smaller_than_action_level():
-    referentiel_repo
+    # root point_fait should remain unchanged
+    assert scores_by_id[ActionId("eci")] == ActionScore(
+        action_id=ActionId("eci"),
+        point_fait=0,
+        point_programme=10,
+        point_pas_fait=0,
+        point_non_renseigne=90,
+        point_potentiel=100,
+        point_referentiel=100,
+        completed_taches_count=4,
+        total_taches_count=9,
+        concerne=True,
+        referentiel="eci",
+    )

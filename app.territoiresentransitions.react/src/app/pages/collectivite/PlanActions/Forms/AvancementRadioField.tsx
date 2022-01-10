@@ -4,10 +4,11 @@ import {v4 as uuid} from 'uuid';
 import {AvancementRadioButton} from 'ui/shared/AvancementRadioButton';
 
 import {Option, Options} from 'types';
-import {ficheActionAvancementLabels} from 'app/labels';
+import {
+  ficheActionAvancementLabels,
+  RadioButtonActionAvancement,
+} from 'app/labels';
 import * as R from 'ramda';
-import {Avancement} from 'generated/dataLayer/action_statut_read';
-import {FicheActionAvancement} from 'generated/dataLayer/fiche_action_write';
 
 type AvancementRadioFieldProps = {
   id?: string;
@@ -23,17 +24,28 @@ export const AvancementRadioField: FC<AvancementRadioFieldProps & FieldProps> =
   ({field, form: {setFieldValue}, ...props}) => {
     const htmlId = props.id ?? uuid();
 
-    const avancements: Options<FicheActionAvancement> = R.values(
+    const avancements: Options<RadioButtonActionAvancement> = R.values(
       R.mapObjIndexed(
         (label, value) => ({value, label}),
         ficheActionAvancementLabels
       )
     );
 
-    const optionIsChecked = ({option}: {option: Option<Avancement>}) =>
-      field.value === option.value;
-    const onClick = async ({option}: {option: Option<Avancement>}) => {
-      setFieldValue(field.name, option.value);
+    const optionIsChecked = ({
+      option,
+    }: {
+      option: Option<RadioButtonActionAvancement>;
+    }) => field.value === option.value;
+    const onClick = async ({
+      option,
+    }: {
+      option: Option<RadioButtonActionAvancement>;
+    }) => {
+      if (field.value === option.value)
+        setFieldValue(field.name, 'non_renseigne');
+      else {
+        setFieldValue(field.name, option.value);
+      }
     };
 
     return (

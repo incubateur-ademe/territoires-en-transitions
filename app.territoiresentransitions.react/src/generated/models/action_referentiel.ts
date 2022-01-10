@@ -1,3 +1,5 @@
+import {Referentiel} from 'types';
+
 export interface ActionReferentielInterface {
   id: string;
   id_nomenclature: string;
@@ -79,4 +81,61 @@ export class ActionReferentiel {
       other.actions === this.actions
     );
   }
+
+  get referentiel(): Referentiel {
+    return this.id.startsWith('cae') ? 'cae' : 'eci';
+  }
+
+  get referentielDisplayName(): string {
+    return this.referentiel === 'cae'
+      ? 'Climat Air Energie'
+      : 'Économie Circulaire';
+  }
+  get displayName(): string {
+    return `${this.identifiant} - ${this.nom}`;
+  }
+  /**
+   * Identifiant as in the markdown.
+   */
+  get identifiant(): string {
+    return this.id_nomenclature;
+  }
+
+  /**
+   * Identifiant number count.
+   */
+  get level(): number {
+    return this.identifiant.split('.').length;
+  }
+
+  /**
+   * The type of action.
+   */
+  get type(): ActionType {
+    return this.referentiel === 'cae'
+      ? caeHierarchy[this.level - 1]
+      : eciHierarchy[this.level - 1];
+  }
 }
+
+const caeHierarchy: ActionType[] = [
+  'domaine',
+  'sous-domaine',
+  'action',
+  'sous-action',
+  'tache',
+];
+
+const eciHierarchy: ActionType[] = [
+  'domaine',
+  'action',
+  'sous-action',
+  'tache',
+];
+
+export type ActionType =
+  | 'domaine'
+  | 'sous-domaine'
+  | 'action'
+  | 'sous-action'
+  | 'tache';

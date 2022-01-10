@@ -1,6 +1,7 @@
 import {FicheActionAvancement} from 'types';
 
 export const progressStateColors = {
+  non_renseigne: '#000',
   nc: '#444',
   alert: '#DA0505',
   warning: '#F59E0B',

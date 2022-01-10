@@ -1,6 +1,6 @@
 import {DataLayerReadEndpoint} from 'core-logic/api/dataLayerEndpoint';
-import {ClientScoresRead} from 'generated/dataLayer/client_scores_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
+import {ClientScores} from 'types/ClientScore';
 
 export interface ClientScoresGetParams {
   collectiviteId: number;
@@ -8,14 +8,14 @@ export interface ClientScoresGetParams {
 }
 
 class ClientScoresReadEndpoint extends DataLayerReadEndpoint<
-  ClientScoresRead,
+  ClientScores,
   ClientScoresGetParams
 > {
   readonly name = 'client_scores';
 
   async _read(
     getParams: ClientScoresGetParams
-  ): Promise<PostgrestResponse<ClientScoresRead>> {
+  ): Promise<PostgrestResponse<ClientScores>> {
     if (getParams.referentiel)
       return this._table
         .eq('collectivite_id', getParams.collectiviteId)

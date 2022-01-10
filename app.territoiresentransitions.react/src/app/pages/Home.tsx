@@ -1,5 +1,5 @@
-import {signUpPath, signInPath} from 'app/paths';
-import {Link} from 'react-router-dom';
+import {Spacer} from 'ui/shared';
+import {SignInLink, RegisterLink} from 'ui/shared/Links';
 
 const Home = () => {
   return (
@@ -13,14 +13,10 @@ const Home = () => {
         Rejoignez-nous dans sa co-construction en créant votre compte en moins
         d'une minute.
       </p>
-
+      <Spacer />
       <div className="flex flex-row-reverse gap-3">
-        <Link className="fr-btn" to={signInPath}>
-          Se connecter
-        </Link>
-        <Link className="fr-btn fr-btn--secondary" to={signUpPath}>
-          Créer un compte
-        </Link>
+        <SignInLink />
+        <RegisterLink />
       </div>
     </section>
   );

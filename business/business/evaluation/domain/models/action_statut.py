@@ -20,12 +20,13 @@ class ActionStatut:
         return self.avancement != ActionStatutAvancement.NON_RENSEIGNE
 
     @property
-    def is_done(self) -> bool:
+    def is_fait(self) -> bool:
         return self.avancement == ActionStatutAvancement.FAIT
 
     @property
-    def will_be_done(self) -> bool:
-        return self.avancement in [
-            ActionStatutAvancement.PROGRAMME,
-            ActionStatutAvancement.EN_COURS,
-        ]
+    def is_programme(self) -> bool:
+        return self.avancement == ActionStatutAvancement.PROGRAMME
+
+    @property
+    def is_pas_fait(self) -> bool:
+        return self.avancement == ActionStatutAvancement.PAS_FAIT

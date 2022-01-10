@@ -7,6 +7,5 @@ export {Footer} from 'ui/Footer';
 export {Header} from 'ui/Header';
 
 export {LabeledTextInput} from 'ui/forms/LabeledTextInput';
-export {SelectInput} from 'ui/forms/SelectInput';
-export * from 'ui/forms/SelectInput';
 export * from 'ui/UiDialogButton';
+export {AutocompleteInput} from 'ui/AutocompleteInput';

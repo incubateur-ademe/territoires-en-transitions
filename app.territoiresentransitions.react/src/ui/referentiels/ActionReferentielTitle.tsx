@@ -1,5 +1,8 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
 
+/**
+ * @deprecated since new UI, use ActionReferentielDisplayTitle
+ */
 export const ActionReferentielTitle = ({
   action,
   className,
@@ -8,6 +11,6 @@ export const ActionReferentielTitle = ({
   className?: string;
 }) => (
   <span className={className ? className : 'text-lg h-8'}>
-    {action.id_nomenclature} - {action.nom}
+    {action.identifiant} - {action.nom}
   </span>
 );

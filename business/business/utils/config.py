@@ -5,6 +5,10 @@ import os
 from dotenv import load_dotenv
 
 from realtime_py import Socket
+from business.evaluation.domain.ports.action_statut_update_event_repo import (
+    AbstractActionStatutUpdateEventRepository,
+    InMemoryActionStatutUpdateEventRepository,
+)
 
 
 from business.referentiel.adapters.json_referentiel_repo import (
@@ -31,6 +35,9 @@ from business.evaluation.domain.ports.action_score_repo import (
 )
 from business.evaluation.adapters.postgres_action_statut_repo import (
     PostgresActionStatutRepository,
+)
+from business.evaluation.adapters.postgres_action_statut_update_event_repo import (
+    PostgresActionStatutUpdateEventRepository,
 )
 from business.evaluation.domain.ports.action_status_repo import (
     AbstractActionStatutRepository,
@@ -114,6 +121,20 @@ class Config:
         else:
             raise NotImplementedError(
                 f"Statuts repo adapter {self.ENV.labelisation_repositories} not yet implemented."
+            )
+
+    def get_action_statut_update_event_repo(
+        self,
+    ) -> AbstractActionStatutUpdateEventRepository:
+        if self.ENV.labelisation_repositories == "IN_MEMORY":
+            return InMemoryActionStatutUpdateEventRepository()
+        elif self.ENV.labelisation_repositories == "POSTGRES":
+            return PostgresActionStatutUpdateEventRepository(
+                connection=self.get_postgres_connection()
+            )
+        else:
+            raise NotImplementedError(
+                f"Statuts repo adapter {self.ENV.labelisation_repositories} not implemented."
             )
 
     def get_realtime(self, socket: Optional[Socket]) -> AbstractRealtime:

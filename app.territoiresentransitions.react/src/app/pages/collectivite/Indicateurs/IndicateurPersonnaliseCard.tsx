@@ -1,7 +1,7 @@
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
+import {AnyIndicateurCommentaire} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCommentaire';
 import {AnyIndicateurLineChartExpandable} from 'app/pages/collectivite/Indicateurs/AnyIndicateurLineChartExpandable';
-import {AnyIndicateurEditableExpandPanel} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
-import {IndicateurDescriptionPanel} from 'app/pages/collectivite/Indicateurs/IndicateurDescriptionPanel';
+import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {IndicateurPersonnaliseEditionDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseEditionDialog';
 import {
   indicateurPersonnaliseObjectifRepository,
@@ -12,9 +12,9 @@ import {useCollectiviteId} from 'core-logic/hooks';
 import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
 import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
 import React from 'react';
-import {Editable, Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared';
 
-const IndicateurPersonnaliseCommentaire = (props: {
+const Commentaire = (props: {
   indicateur: IndicateurPersonnaliseDefinitionRead;
 }) => {
   const [value, setValue] = React.useState(props.indicateur.commentaire);
@@ -27,11 +27,6 @@ const IndicateurPersonnaliseCommentaire = (props: {
     setInitialValue(props.indicateur.commentaire);
   }
 
-  const handleChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
-    const inputValue = event.currentTarget.value;
-    setValue(inputValue);
-  };
-
   const handleSave = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const inputValue = event.currentTarget.value;
     const data = {
@@ -41,21 +36,7 @@ const IndicateurPersonnaliseCommentaire = (props: {
     indicateurPersonnaliseDefinitionRepository.save(data);
   };
 
-  return (
-    <div className="CrossExpandPanel">
-      <details>
-        <summary>
-          <Editable text="Commentaire" />
-        </summary>
-        <textarea
-          value={value}
-          onChange={handleChange}
-          onBlur={handleSave}
-          className="fr-input mt-2 w-4/5 bg-white p-3 border-b-2 border-gray-500 mr-5"
-        />
-      </details>
-    </div>
-  );
+  return <AnyIndicateurCommentaire handleSave={handleSave} value={value} />;
 };
 
 const IndicateurPersonnaliseCardContent = (props: {
@@ -63,15 +44,14 @@ const IndicateurPersonnaliseCardContent = (props: {
 }) => {
   return (
     <div>
-      <IndicateurDescriptionPanel description={props.indicateur.description} />
-      <IndicateurPersonnaliseCommentaire indicateur={props.indicateur} />
-      <AnyIndicateurEditableExpandPanel<number>
+      <AnyIndicateurValues
         repo={indicateurPersonnaliseObjectifRepository}
         indicateurId={props.indicateur.id}
-        title="Objectifs"
-        editable={true}
+        borderColor="blue"
       />
       <Spacer />
+      <Commentaire indicateur={props.indicateur} />
+
       <AnyIndicateurLineChartExpandable<number>
         title={props.indicateur.titre}
         unite={props.indicateur.unite}
@@ -122,6 +102,7 @@ export const IndicateurPersonnaliseCard = ({
       }
       indicateurId={indicateur.id}
       indicateurResultatRepo={indicateurPersonnaliseResultatRepository}
+      description={indicateur.description}
     >
       <IndicateurPersonnaliseCardContent indicateur={indicateur} />
     </AnyIndicateurCard>

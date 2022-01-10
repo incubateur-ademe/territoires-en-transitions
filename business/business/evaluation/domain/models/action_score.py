@@ -1,15 +1,19 @@
 from dataclasses import dataclass
-from typing import Optional
+
 from business.utils.action_id import ActionId
+from business.core.domain.models.referentiel import ActionReferentiel
 
 
-@dataclass
+@dataclass  # TODO : decide how to type this output for client !
 class ActionScore:
     action_id: ActionId  # eg.  "eci_1.0"
-    points: Optional[float]
-    previsionnel: Optional[float]
-    potentiel: float
-    referentiel_points: float
+    point_fait: float
+    point_programme: float
+    point_pas_fait: float
+    point_non_renseigne: float
+    point_potentiel: float
+    point_referentiel: float
     concerne: bool
     total_taches_count: int
     completed_taches_count: int
+    referentiel: ActionReferentiel

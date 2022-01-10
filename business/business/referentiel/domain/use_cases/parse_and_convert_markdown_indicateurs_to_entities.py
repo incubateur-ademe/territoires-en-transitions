@@ -56,11 +56,9 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         self,
         bus: AbstractDomainMessageBus,
         referentiel_repo: AbstractReferentielRepository,
-        # indicateur_repo: AbstractIndicateurRepository,
     ) -> None:
         self.bus = bus
         self.referentiel_repo = referentiel_repo
-        # self.indicateur_repo = indicateur_repo
         self._markdown_indicateur_schema = marshmallow_dataclass.class_schema(
             MarkdownIndicateur
         )()
@@ -181,8 +179,8 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         parser = build_markdown_parser(
             title_key="nom", children_key=None, description_key="description"
         )
-        actions_as_dict = parser(markdown)
-        return actions_as_dict
+        indicateurs_as_dict = parser(markdown)
+        return indicateurs_as_dict
 
     @staticmethod
     def _infer_action_ids(md_action_ids: List[str]) -> List[ActionId]:
@@ -198,15 +196,3 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
 
         number, literal = match.groups()
         return f"{number}.{literal}"
-
-    # @staticmethod
-    # def _infer_identifiant_from_id(indicateur_id: str, referentiel: Referentiel) -> str:
-    #     regex = referentiel + "-([0-9]{1,3})(.+)?"
-    #     match = re.match(regex, indicateur_id)
-
-    #     if not match:
-    #         raise MarkdownIndicateurInconsistent(
-    #             f"L'id de l'indicateur {indicateur_id} ne matche pas le pattern {regex}. "
-    #         )
-    #     number, literal = match.groups()
-    #     return f"{number}.{literal}"
