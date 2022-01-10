@@ -79,6 +79,26 @@ Content-Type: application/json
     });
 %}
 
+### Upsert a indicateur_resultat on a collectivité that is not ours
+POST {{api}}/rest/v1/indicateur_resultat
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+prefer: resolution=merge-duplicates
+Content-Type: application/json
+
+{
+  "valeur": 20,
+  "annee": 2020,
+  "collectivite_id": 10,
+  "indicateur_id": "cae_8"
+}
+
+> {%
+    client.test("Upsert was rejected as expected", function() {
+        client.assert(response.status === 403, "Response status is not 403");
+    });
+%}
+
 ### List all indicateur_objectif for collectivite 1
 GET {{api}}/rest/v1/indicateur_objectif?collectivite_id=eq.1&select=*
 apikey: {{anon}}
