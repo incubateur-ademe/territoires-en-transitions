@@ -11,7 +11,6 @@ import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import StatisticsPage from 'app/pages/statistics/StatisticsPage';
 import Home from 'app/pages/Home';
-import {useConnected} from 'core-logic/hooks';
 import {ConnectedRedirector} from 'app/Redirector';
 
 import 'app/app.css';
@@ -27,6 +26,7 @@ import {
   authBasePath,
   myCollectivitesPath,
 } from 'app/paths';
+import {authBloc} from 'core-logic/observables';
 
 const theme = createTheme({
   palette: {
@@ -51,17 +51,16 @@ export const App = () => {
               <Home />
             </HomeRoute>
 
-            <Route path={authBasePath}>
+            <HomeRoute path={authBasePath}>
               <Header />
               <AuthRoutes />
-            </Route>
+            </HomeRoute>
 
             <Route path={myCollectivitesPath}>
               <Header />
               <CurrentUserCollectivitesPage />
             </Route>
             <Route path={allCollectivitesPath}>
-              {/* <Lala /> */}
               <Header />
               <ElsesCollectivitesPage />
             </Route>
@@ -85,8 +84,7 @@ export const App = () => {
 };
 
 const HomeRoute = ({children, ...rest}: RouteProps) => {
-  const connected = useConnected();
-
+  const connected = authBloc.connected;
   return (
     <Route
       {...rest}
@@ -105,18 +103,3 @@ const HomeRoute = ({children, ...rest}: RouteProps) => {
     />
   );
 };
-
-// const Lala = () => (
-//   <SideMenu title="SideMenu Title" buttonLabel="SideMenu Button">
-//     <SideMenuItem title="SideMenu Item #1">
-//       <SideMenuLink href="/">SideMenu Link #1</SideMenuLink>
-//       <SideMenuLink onClick={() => {}}>SideMenu Link #2</SideMenuLink>
-//     </SideMenuItem>
-//     <SideMenuItem title="SideMenu Item #2">
-//       <SideMenuItem title="SideMenu Level 2 Item #1">
-//         <SideMenuLink href="/">SideMenu Level 2 Link #1</SideMenuLink>
-//         <SideMenuLink href="/">SideMenu Level 2 Link #2</SideMenuLink>
-//       </SideMenuItem>
-//     </SideMenuItem>
-//   </SideMenu>
-// );

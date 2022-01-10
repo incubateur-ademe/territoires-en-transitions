@@ -3,6 +3,7 @@ import * as Yup from 'yup';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Spacer, ValiderButton} from 'ui/shared';
 import {authBloc} from 'core-logic/observables/authBloc';
+import {RegisterLink} from 'ui/shared/Links';
 
 export interface SignInCredentials {
   email: string;
@@ -21,8 +22,9 @@ export const SignInPage = () => {
 
   return (
     <section className="max-w-2xl mx-auto p-5">
-      <h1 className="fr-h1">Se connecter</h1>
-      <div className=" pt-8 mx-auto">
+      <Spacer />
+      <h2 className="fr-h2 flex justify-center">Se connecter</h2>
+      <div className="mx-auto">
         <Formik<SignInCredentials>
           initialValues={{email: '', password: ''}}
           validationSchema={validation}
@@ -41,7 +43,10 @@ export const SignInPage = () => {
                 component={LabeledTextField}
               />
               <Spacer />
-              <ValiderButton />
+              <div className="flex flex-row-reverse gap-3">
+                <ValiderButton />
+                <RegisterLink />
+              </div>
             </Form>
           )}
         </Formik>

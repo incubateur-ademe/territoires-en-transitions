@@ -91,48 +91,59 @@ const RegistrationForm = () => {
           onSubmit={register}
         >
           {() => (
-            <Form>
-              <div className="max-w-2xl">
-                <h1 className="text-2xl">Créer un compte</h1>
-                <div className="pb-10" />
-                <Field
-                  name="email"
-                  label="Email"
-                  component={LabeledTextField}
-                />
-                <div className="p-5" />
-                <Field
-                  name="password"
-                  label="Mot de passe"
-                  component={LabeledTextField}
-                />
+            <>
+              <Spacer />
+              <h2 className="fr-h2 flex justify-center">Créer un compte</h2>
+              <Form>
+                <div className="max-w-2xl">
+                  <div className="pb-10" />
+                  <Field
+                    name="email"
+                    label="Email"
+                    component={LabeledTextField}
+                  />
+                  <div className="p-5" />
+                  <Field
+                    name="password"
+                    label="Mot de passe"
+                    component={LabeledTextField}
+                  />
 
+                  <div className="p-5" />
+                  <Field
+                    name="nom"
+                    label="Prénom"
+                    component={LabeledTextField}
+                  />
+                  <div className="p-5" />
+                  <Field
+                    name="prenom"
+                    label="Nom"
+                    component={LabeledTextField}
+                  />
+                </div>
                 <div className="p-5" />
-                <Field name="nom" label="Prénom" component={LabeledTextField} />
+                <label>
+                  <Field type="checkbox" name="vie_privee_conditions" />
+                  <span className="ml-2">
+                    J'accepte la{' '}
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className=" text-blue-600"
+                      href={politique_vie_privee}
+                    >
+                      politique de protection des données à caractère personnel
+                      de l'ADEME
+                    </a>
+                  </span>{' '}
+                </label>
                 <div className="p-5" />
-                <Field name="prenom" label="Nom" component={LabeledTextField} />
-              </div>
-              <div className="p-5" />
-              <label>
-                <Field type="checkbox" name="vie_privee_conditions" />
-                <span className="ml-2">
-                  J'accepte la{' '}
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className=" text-blue-600"
-                    href={politique_vie_privee}
-                  >
-                    politique de protection des données à caractère personnel de
-                    l'ADEME
-                  </a>
-                </span>{' '}
-              </label>
-              <div className="p-5" />
-              <div className="max-w-2xl flex flex-row-reverse">
-                <ValiderButton />
-              </div>
-            </Form>
+                <div className="max-w-2xl flex flex-row-reverse">
+                  <ValiderButton />
+                </div>
+              </Form>
+            </>
           )}
         </Formik>
       </div>
