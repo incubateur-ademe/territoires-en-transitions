@@ -12,7 +12,6 @@ export const IndicateurPersonnaliseEditionDialog = ({
 }) => {
   const [editing, setEditing] = React.useState<boolean>(false);
   const onSave = (indicateur: IndicateurPersonnaliseDefinitionWrite) => {
-    console.log('onSave : ', indicateur);
     indicateurPersonnaliseDefinitionRepository.save(indicateur);
     setEditing(false);
   };

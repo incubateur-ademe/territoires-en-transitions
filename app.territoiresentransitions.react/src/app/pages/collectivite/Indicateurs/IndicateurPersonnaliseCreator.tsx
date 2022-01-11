@@ -21,7 +21,6 @@ export const IndicateurPersonnaliseCreator = (props: {onClose: () => void}) => {
   );
 
   const onSave = (definition: IndicateurPersonnaliseDefinitionWrite) => {
-    console.log('Will call repo ....... ', definition);
     indicateurPersonnaliseDefinitionRepository.save(definition);
     setData(freshData());
     props.onClose();
