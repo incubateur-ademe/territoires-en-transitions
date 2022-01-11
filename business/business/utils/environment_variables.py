@@ -27,10 +27,10 @@ def get_env_variable(
     return variable
 
 
-ReferentielsRepository = Literal["JSON", "POSTGRES", "SQL"]
+ReferentielsRepository = Literal["JSON", "SUPABASE", "SQL"]
 referentiels_repository_options: List[ReferentielsRepository] = [
     "JSON",
-    "POSTGRES",
+    "SUPABASE",
     "SQL",
 ]
 

@@ -10,7 +10,6 @@ from business.evaluation.domain.ports.action_statut_update_event_repo import (
     InMemoryActionStatutUpdateEventRepository,
 )
 
-
 from business.referentiel.adapters.json_referentiel_repo import (
     JsonReferentielRepository,
 )
@@ -71,6 +70,17 @@ class Config:
     def prepare_use_cases(self) -> List[UseCase]:
         raise NotImplementedError
 
+    def get_supabase_client(self):
+        from supabase.client import create_client
+
+        url = os.getenv("SUPABASE_URL")
+        key = os.getenv("SUPABASE_KEY")
+        if url is None or key is None:
+            raise EnvironmentError(
+                "Missing SUPABASE_URL and/or SUPABASE_KEY env variables. "
+            )
+        return create_client(url, key)
+
     def get_postgres_connection(self):
         import psycopg
 
@@ -93,8 +103,14 @@ class Config:
                     "`REFERENTIEL_REPO_JSON` should de specified in mode JSON"
                 )
             return SqlReferentielRepository(Path(self.ENV.referentiels_repo_file))
+        elif self.ENV.referentiels_repository == "SUPABASE":
+            from business.referentiel.adapters.supabase_referentiel_repo import (
+                SupabaseReferentielRepository,
+            )
+
+            return SupabaseReferentielRepository(self.get_supabase_client())
+
         else:
-            # PostgresReferentielRepository()
             raise NotImplementedError(
                 f"Referentiels repo adapter {self.ENV.referentiels_repository} not yet implemented."
             )

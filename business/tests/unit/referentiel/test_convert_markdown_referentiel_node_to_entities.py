@@ -81,38 +81,28 @@ def test_import_referentiel_succeeds_when_all_is_good():
     assert node_converted_events[0].children == [
         ActionChildren(
             action_id=ActionId("eci"),
-            children_ids=[ActionId("eci_1"), ActionId("eci_2")],
+            children=[ActionId("eci_1"), ActionId("eci_2")],
             referentiel="eci",
         ),
         ActionChildren(
             action_id=ActionId("eci_1"),
-            children_ids=[
+            children=[
                 ActionId("eci_1.1"),
                 ActionId("eci_1.2"),
                 ActionId("eci_1.3"),
             ],
             referentiel="eci",
         ),
-        ActionChildren(
-            action_id=ActionId("eci_1.1"), children_ids=[], referentiel="eci"
-        ),
-        ActionChildren(
-            action_id=ActionId("eci_1.2"), children_ids=[], referentiel="eci"
-        ),
-        ActionChildren(
-            action_id=ActionId("eci_1.3"), children_ids=[], referentiel="eci"
-        ),
+        ActionChildren(action_id=ActionId("eci_1.1"), children=[], referentiel="eci"),
+        ActionChildren(action_id=ActionId("eci_1.2"), children=[], referentiel="eci"),
+        ActionChildren(action_id=ActionId("eci_1.3"), children=[], referentiel="eci"),
         ActionChildren(
             action_id=ActionId("eci_2"),
-            children_ids=[ActionId("eci_2.1"), ActionId("eci_2.2")],
+            children=[ActionId("eci_2.1"), ActionId("eci_2.2")],
             referentiel="eci",
         ),
-        ActionChildren(
-            action_id=ActionId("eci_2.1"), children_ids=[], referentiel="eci"
-        ),
-        ActionChildren(
-            action_id=ActionId("eci_2.2"), children_ids=[], referentiel="eci"
-        ),
+        ActionChildren(action_id=ActionId("eci_2.1"), children=[], referentiel="eci"),
+        ActionChildren(action_id=ActionId("eci_2.2"), children=[], referentiel="eci"),
     ]
     assert len(node_converted_events[0].definitions) == 8
 
