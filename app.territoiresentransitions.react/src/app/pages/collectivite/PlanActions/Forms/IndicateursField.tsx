@@ -39,7 +39,7 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
     const indicateur = allSortedIndicateurDefinitions.find(
       definition => definition.id === id
     )!;
-    return inferIndicateurReferentielAndTitle(indicateur);
+    return indicateur ? inferIndicateurReferentielAndTitle(indicateur) : '';
   };
 
   return (
