@@ -20,13 +20,15 @@ import {ScrollToTop} from 'app/ScrollToTop';
 import {createTheme, MuiThemeProvider} from '@material-ui/core';
 import {MatomoProvider} from '@datapunt/matomo-tracker-react';
 import {matomoInstance} from 'app/matomo_instance';
-import {ElsesCollectivitesPage, CurrentUserCollectivitesPage} from 'app/pages';
+
 import {
   allCollectivitesPath,
   authBasePath,
   myCollectivitesPath,
 } from 'app/paths';
 import {authBloc} from 'core-logic/observables';
+import {CurrentUserCollectivitesPage} from 'app/pages/CurrentUserCollectivite/CurrentUserCollectivitesPage';
+import {ElsesCollectivitesPage} from 'app/pages/ElsesCollectivites/ElsesCollectivitePage';
 
 const theme = createTheme({
   palette: {

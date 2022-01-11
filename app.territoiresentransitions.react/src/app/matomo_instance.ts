@@ -1,5 +1,5 @@
 import {createInstance} from '@datapunt/matomo-tracker-react';
-import {connected, currentUser} from 'core-logic/api/authentication';
+import {authBloc} from 'core-logic/observables';
 
 const url =
   process.env.REACT_APP_FLAVOR === 'prod'
@@ -9,7 +9,7 @@ const url =
 export const matomoInstance = createInstance({
   urlBase: url,
   siteId: 180,
-  userId: connected() ? currentUser()?.ademe_user_id : undefined,
+  userId: authBloc.userId ? authBloc.userId : undefined,
   trackerUrl: `${url}/piwik.php`,
   srcUrl: `${url}/piwik.js`,
 });
