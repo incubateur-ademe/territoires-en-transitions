@@ -7,7 +7,7 @@ import pytest
 from business.utils.get_postgres_connection_params import get_postgres_connection_params
 
 load_dotenv()
-test_postgres_url = os.getenv("POSTGRES_URL", "missing_postgres_url")
+test_postgres_url = os.getenv("POSTGRES_TEST_URL", "missing_postgres_url")
 
 
 @pytest.fixture()

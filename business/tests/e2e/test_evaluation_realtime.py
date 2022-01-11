@@ -29,7 +29,7 @@ referentiels_repo_json = "./data/referentiel_repository.json"
 @pytest.fixture
 def env_variables() -> EnvironmentVariables:
     return EnvironmentVariables(
-        referentiels_repository="JSON",
+        referentiels_repository="SUPABASE",
         labelisation_repositories="IN_MEMORY",
         realtime="REPLAY",
         referentiels_repo_file=referentiels_repo_json,  # This implies that CLI has already run and generated referentiels in this file
@@ -104,6 +104,7 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
                     "referentiel": "cae",
                     "collectivite_id": 1,
                     "created_at": "2020-01-01T12",
+                    "id": 42,
                 },
                 "table": "action_statut_update_event",
             }
