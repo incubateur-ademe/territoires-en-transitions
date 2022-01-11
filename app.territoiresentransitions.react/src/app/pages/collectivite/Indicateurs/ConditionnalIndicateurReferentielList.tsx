@@ -1,7 +1,7 @@
 import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
 import FuzzySearch from 'fuzzy-search';
 import {useEffect, useState} from 'react';
-import {ReferentielOfIndicateur} from 'types';
+import {ReferentielOfIndicateur} from 'types/litterals';
 import {UiSearchBar} from 'ui/UiSearchBar';
 import {IndicateurReferentielCard} from './IndicateurReferentielCard';
 

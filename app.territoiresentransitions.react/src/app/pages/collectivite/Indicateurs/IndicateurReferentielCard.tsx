@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
 import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 
-import {useCollectiviteId} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
-import {Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared/Spacer';
 import {
   indicateurObjectifRepository,
   indicateurResultatRepository,

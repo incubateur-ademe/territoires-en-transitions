@@ -1,5 +1,5 @@
 import {FicheActionAvancement} from 'generated/dataLayer/fiche_action_write';
-import type {ReferentielOfIndicateur} from 'types';
+import type {ReferentielOfIndicateur} from 'types/litterals';
 
 // Define all labels from app
 export const referentielToName: Record<ReferentielOfIndicateur, string> = {

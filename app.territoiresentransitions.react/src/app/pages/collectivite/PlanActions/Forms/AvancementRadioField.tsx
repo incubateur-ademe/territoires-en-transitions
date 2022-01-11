@@ -2,7 +2,7 @@ import {FC} from 'react';
 import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 
-import {Option, Options} from 'types';
+import {Option, Options} from 'types/componentSharedInterfaces';
 import {
   ficheActionAvancementLabels,
   FicheActionAvancementRenseigne,

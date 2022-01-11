@@ -10,7 +10,7 @@ import {
   ownedCollectiviteBloc,
   OwnedCollectiviteBloc,
 } from 'core-logic/observables/OwnedCollectiviteBloc';
-import {Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared/Spacer';
 
 const MyCollectiviteCards = observer(
   ({bloc}: {bloc: OwnedCollectiviteBloc}) => {

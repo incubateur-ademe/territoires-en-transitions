@@ -1,7 +1,6 @@
 import {allCollectiviteReadEndpoint} from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
 import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 import React, {useEffect, useState} from 'react';
-import {AutocompleteInput, UiDialogButton} from 'ui';
 import {
   OwnedCollectiviteBloc,
   ownedCollectiviteBloc,
@@ -10,10 +9,12 @@ import {
   ReferentContactResponse,
   referentContact,
 } from 'core-logic/api/procedures/collectiviteProcedures';
-import {Spacer} from 'ui/shared';
 import {Link} from 'react-router-dom';
 import {makeTableauBordUrl} from 'app/paths';
 import {currentCollectiviteBloc} from 'core-logic/observables';
+import {UiDialogButton} from 'ui/UiDialogButton';
+import {AutocompleteInput} from 'ui/AutocompleteInput';
+import {Spacer} from 'ui/shared/Spacer';
 
 const _JoinCollectiviteDialogContent = ({
   collectivite,

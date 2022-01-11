@@ -1,15 +1,13 @@
 import {Link} from 'react-router-dom';
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {
-  ActionProgressBar,
-  ActionReferentielDisplayTitle,
-} from 'ui/referentiels';
-import {referentielId} from 'utils/actions';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {makeCollectiviteActionUrl} from 'app/paths';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
 import {ArrowNarrowRightIcon} from '@heroicons/react/solid';
+import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
+import {referentielId} from 'utils/actions';
+import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 
 /**
  * Used on referentiels page, links to action page.

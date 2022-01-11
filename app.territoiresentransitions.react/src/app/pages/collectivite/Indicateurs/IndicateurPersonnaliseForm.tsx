@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import {Field, Form, Formik} from 'formik';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {IndicateurPersonnaliseDefinitionWrite} from 'generated/dataLayer/indicateur_personnalise_definition_write';
-import {ValiderButton} from 'ui/shared';
+import {ValiderButton} from 'ui/shared/ValiderButton';
 
 type FormState = 'ready' | 'saving';
 

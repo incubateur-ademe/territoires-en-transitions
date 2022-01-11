@@ -1,6 +1,6 @@
 import type {FicheAction} from 'generated/models/fiche_action';
 import type {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
-import {compareIndexes} from 'utils';
+import {compareIndexes} from 'utils/compareIndexes';
 import * as R from 'ramda';
 
 export const sortFiches = (fiches: FicheAction[]): FicheAction[] =>

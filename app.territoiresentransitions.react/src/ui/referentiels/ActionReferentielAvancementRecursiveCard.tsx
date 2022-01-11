@@ -1,10 +1,12 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {ActionCommentaire, ActionExemplesExpandPanel, Spacer} from 'ui/shared';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionStatusDropdown} from 'ui/shared/actions/ActionStatusDropdown';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
+import {Spacer} from 'ui/shared/Spacer';
+import {ActionExemplesExpandPanel} from 'ui/shared/actions/ActionExpandPanels';
+import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 
 /**
  * Displays an actions and it's children indented below.

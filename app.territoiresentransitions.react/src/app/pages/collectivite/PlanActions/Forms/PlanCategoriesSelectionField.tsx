@@ -17,7 +17,7 @@ import TextField from '@material-ui/core/TextField';
 import * as R from 'ramda';
 import {usePlanActionList} from 'core-logic/hooks/plan_action';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
-import {useCollectiviteId} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 type LinkedPlanCategoriesFieldProps = {
   ficheUid: string;

@@ -1,10 +1,9 @@
 import '@testing-library/jest-dom/extend-expect';
-import {Console} from 'console';
 import {FicheAction} from 'generated/models/fiche_action';
 import {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
-import {compareIndexes} from 'utils';
 
 import {categorizeAndSortFiches, sortFiches} from './sortFiches';
+import {compareIndexes} from 'utils/compareIndexes';
 
 const makeCategorie = (uid: string, fiche_actions_uids: string[] = []) =>
   new FicheActionCategorie({

@@ -1,9 +1,8 @@
-import {Redirect, Route, useRouteMatch} from 'react-router-dom';
+import {Route, useRouteMatch} from 'react-router-dom';
 
 import {PlanActionPage} from 'app/pages/collectivite/PlanActions/PlanActionsPage';
 import {FicheActionPage} from 'app/pages/collectivite/PlanActions/FicheActionPage';
 import {FicheActionCreationPage} from 'app/pages/collectivite/PlanActions/FicheActionCreationPage';
-import {useCollectiviteId} from 'core-logic/hooks';
 import {
   collectiviteActionPath,
   collectiviteIndicateurPath as collectiviteIndicateursPath,
@@ -22,7 +21,6 @@ import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPag
  */
 export const CollectiviteRoutes = () => {
   const {path} = useRouteMatch();
-  const collectiviteId = useCollectiviteId()!;
   return (
     <>
       <Route path={collectiviteReferentielPath}>

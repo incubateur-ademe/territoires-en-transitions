@@ -1,4 +1,4 @@
-import {useHistory, useParams} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {
   FicheActionForm,
   FicheActionFormData,
@@ -8,13 +8,13 @@ import {v4 as uuid} from 'uuid';
 import {searchActionById} from 'utils/actions';
 import {useQuery} from 'core-logic/hooks/query';
 import {actions} from 'generated/data/referentiels';
-import {RetourButton} from 'ui/shared';
+import {RetourButton} from 'ui/shared/RetourButton';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
-import {useCollectiviteId} from 'core-logic/hooks';
 import {makeCollectiviteDefaultPlanActionUrl} from 'app/paths';
 import {ficheActionRepository} from 'core-logic/api/repositories/FicheActionRepository';
 import {deleteObjectKey} from 'utils/deleteObjectKey';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /**
  * Used to create a fiche, shows FicheActionForm.

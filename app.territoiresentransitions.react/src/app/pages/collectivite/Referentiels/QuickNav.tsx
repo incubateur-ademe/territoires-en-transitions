@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useHistory} from 'react-router-dom';
-import {useCollectiviteId} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import {
   actionIdDepth,
   actionPath,

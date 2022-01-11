@@ -1,9 +1,9 @@
-import {useCollectiviteId} from 'core-logic/hooks';
 import {Link} from 'react-router-dom';
 
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 import {ficheActionAvancementLabels} from 'app/labels';
 import {FicheActionAvancement} from 'generated/dataLayer/fiche_action_write';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 const AvancementTag = ({avancement}: {avancement: FicheActionAvancement}) => {
   if (avancement === 'non_renseigne') return null;

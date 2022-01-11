@@ -1,6 +1,6 @@
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
-import {Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared/Spacer';
 
 const RegisterForm = lazy(() => import('./RegisterForm'));
 

@@ -1,4 +1,4 @@
-import {CrossExpandPanelWithHtmlContent} from 'ui/shared';
+import {CrossExpandPanelWithHtmlContent} from 'ui/shared/CrossExpandPanelWithHtmlContent';
 
 export const IndicateurDescriptionPanel = (props: {description: string}) => {
   if (props.description === '') return null;

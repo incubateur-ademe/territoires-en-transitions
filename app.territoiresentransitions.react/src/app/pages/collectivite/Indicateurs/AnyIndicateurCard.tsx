@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicateurValues';
 import {Chevron} from 'ui/shared/Chevron';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
-import {Spacer} from 'ui/shared';
 import {RenderMarkdownText} from 'ui/shared/RenderMarkdownText';
+import {Spacer} from 'ui/shared/Spacer';
 
 export function AnyIndicateurCard<T extends string | number>({
   children,

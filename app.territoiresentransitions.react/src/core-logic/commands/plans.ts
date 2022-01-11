@@ -3,7 +3,10 @@ import {FicheActionFormData} from 'app/pages/collectivite/PlanActions/Forms/Fich
 import {PlanActionStructure} from 'types/PlanActionTypedInterface';
 import {planActionRepository} from 'core-logic/api/repositories/PlanActionRepository';
 
-const createPlanAction = async (collectivite_id: number, nom: string) => {
+export const createPlanAction = async (
+  collectivite_id: number,
+  nom: string
+) => {
   await planActionRepository.save({
     collectivite_id,
     nom,
@@ -11,10 +14,6 @@ const createPlanAction = async (collectivite_id: number, nom: string) => {
     fiches_by_category: [],
     categories: [],
   });
-};
-
-export const plans = {
-  createPlanAction,
 };
 
 /**

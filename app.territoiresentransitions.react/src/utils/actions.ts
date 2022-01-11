@@ -1,5 +1,5 @@
 import {ActionReferentiel} from 'generated/models/action_referentiel';
-import {Referentiel} from 'types';
+import {Referentiel} from 'types/litterals';
 
 export const flattenActions = (
   actions: ActionReferentiel[],

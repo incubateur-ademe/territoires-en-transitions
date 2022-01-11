@@ -8,11 +8,11 @@ import {
   indicateurPersonnaliseResultatRepository,
 } from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {indicateurPersonnaliseDefinitionRepository} from 'core-logic/api/repositories/IndicateurPersonnaliseDefinitionRepository';
-import {useCollectiviteId} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
 import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
 import React from 'react';
-import {Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared/Spacer';
 
 const Commentaire = (props: {
   indicateur: IndicateurPersonnaliseDefinitionRead;

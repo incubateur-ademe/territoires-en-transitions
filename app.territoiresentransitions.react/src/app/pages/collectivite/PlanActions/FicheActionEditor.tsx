@@ -5,10 +5,10 @@ import {
   FicheActionFormData,
 } from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
-import {useCollectiviteId} from 'core-logic/hooks';
 import {makeCollectiviteDefaultPlanActionUrl} from 'app/paths';
 import {ficheActionRepository} from 'core-logic/api/repositories/FicheActionRepository';
 import {deleteObjectKey} from 'utils/deleteObjectKey';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /**
  * This is the main component of FicheActionPage, use to show a fiche.

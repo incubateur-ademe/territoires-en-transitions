@@ -5,8 +5,7 @@ import {
   RouteProps,
   Switch,
 } from 'react-router-dom';
-import {Footer, Header} from 'ui';
-import {FooterDescription, FooterNavigation} from 'ui/Footer';
+import {Footer, FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import StatisticsPage from 'app/pages/statistics/StatisticsPage';
@@ -29,6 +28,7 @@ import {
 import {authBloc} from 'core-logic/observables';
 import {CurrentUserCollectivitesPage} from 'app/pages/CurrentUserCollectivite/CurrentUserCollectivitesPage';
 import {ElsesCollectivitesPage} from 'app/pages/ElsesCollectivites/ElsesCollectivitePage';
+import {Header} from 'ui/Header';
 
 const theme = createTheme({
   palette: {

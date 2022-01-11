@@ -5,12 +5,12 @@ import {
 import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
 import {makeAutoObservable} from 'mobx';
 import {observer} from 'mobx-react-lite';
-import {useCollectiviteId} from 'core-logic/hooks';
 import {useEffect, useState} from 'react';
 import {MenuItem, Select} from '@material-ui/core';
 import {actionAvancementColors} from 'app/theme';
 import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
 import {currentCollectiviteBloc} from 'core-logic/observables';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
   const collectiviteId = useCollectiviteId()!;

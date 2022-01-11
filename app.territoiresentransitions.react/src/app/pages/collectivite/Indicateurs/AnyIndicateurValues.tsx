@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {useCollectiviteId} from 'core-logic/hooks';
-import {Editable} from 'ui/shared';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {currentCollectiviteBloc} from 'core-logic/observables';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {Editable} from 'ui/shared/Editable';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
