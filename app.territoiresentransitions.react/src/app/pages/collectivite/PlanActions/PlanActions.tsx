@@ -1,8 +1,8 @@
-import {useCollectiviteId, useFicheActionList} from 'core-logic/hooks';
+import {useFicheActionList} from 'core-logic/hooks/fiche_action';
 import {Link, useParams} from 'react-router-dom';
 import {Categorie} from 'types/PlanActionTypedInterface';
 import {FicheCard} from './FicheCard';
-import {Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared/Spacer';
 import {PlanNav} from './PlanNav';
 import {
   categorizeAndSortFiches,
@@ -10,7 +10,6 @@ import {
   nestCategorized,
 } from './sorting';
 import {useState} from 'react';
-import {UiDialogButton} from 'ui';
 import {PlanEditionForm} from './Forms/PlanEditionForm';
 import {PlanCreationForm} from './Forms/PlanCreationForm';
 import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaultDisplayCategorie';
@@ -18,6 +17,8 @@ import {LazyDetailsWithChevron} from 'ui/shared/LazyDetails';
 import {usePlanAction} from 'core-logic/hooks/plan_action';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
 import {makeCollectiviteNouvelleFicheUrl} from 'app/paths';
+import {UiDialogButton} from 'ui/UiDialogButton';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /**
  * The title of a category

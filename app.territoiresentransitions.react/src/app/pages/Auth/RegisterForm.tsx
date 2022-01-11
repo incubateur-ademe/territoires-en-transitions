@@ -8,8 +8,9 @@ import {
   politique_vie_privee,
   registerUser,
 } from 'core-logic/api/auth/registration';
-import {Spacer, ValiderButton} from 'ui/shared';
 import {signInPath} from 'app/paths';
+import {Spacer} from 'ui/shared/Spacer';
+import {ValiderButton} from 'ui/shared/ValiderButton';
 
 type FormState = 'ready' | 'success' | 'failure';
 

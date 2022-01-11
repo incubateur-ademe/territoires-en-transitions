@@ -1,5 +1,5 @@
 import './FicheAvancementRadioButton.css';
-import type {Option} from 'types';
+import type {Option} from 'types/componentSharedInterfaces';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {FicheActionAvancementRenseigne} from 'app/labels';
 

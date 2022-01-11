@@ -1,4 +1,3 @@
-import {defaultAuthorization} from 'core-logic/api/hybridStores';
 import {ENV} from 'environmentVariables';
 
 // Models
@@ -25,7 +24,7 @@ const makeGetStatistics = <T>(endpoint: string) => {
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: defaultAuthorization(),
+          Authorization: '',
         },
       }
     ).then(response => response.json());

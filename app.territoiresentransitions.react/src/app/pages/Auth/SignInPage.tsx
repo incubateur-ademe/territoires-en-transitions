@@ -1,9 +1,10 @@
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import LabeledTextField from 'ui/forms/LabeledTextField';
-import {Spacer, ValiderButton} from 'ui/shared';
 import {authBloc} from 'core-logic/observables/authBloc';
 import {RegisterLink} from 'ui/shared/Links';
+import {ValiderButton} from 'ui/shared/ValiderButton';
+import {Spacer} from 'ui/shared/Spacer';
 
 export interface SignInCredentials {
   email: string;

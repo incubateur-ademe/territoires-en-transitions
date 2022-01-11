@@ -1,8 +1,11 @@
 import {observer} from 'mobx-react-lite';
-import {ActionReferentiel, ActionType} from 'generated/models';
 import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {referentielId} from 'utils/actions';
 import {toFixed} from 'utils/toFixed';
+import {
+  ActionReferentiel,
+  ActionType,
+} from 'generated/models/action_referentiel';
 
 export interface PillParams {
   color: string;

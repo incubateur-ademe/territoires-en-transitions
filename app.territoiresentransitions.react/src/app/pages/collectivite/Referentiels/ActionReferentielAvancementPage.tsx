@@ -1,6 +1,6 @@
 import {lazy, Suspense} from 'react';
 import {useParams} from 'react-router-dom';
-import {renderLoader} from 'utils';
+import {renderLoader} from 'utils/renderLoader';
 
 const ActionReferentielAvancement = lazy(
   () =>

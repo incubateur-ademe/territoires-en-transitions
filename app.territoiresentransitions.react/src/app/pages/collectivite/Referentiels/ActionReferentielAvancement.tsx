@@ -1,12 +1,6 @@
 import {actions as referentielActions} from 'generated/data/referentiels';
 import {Link} from 'react-router-dom';
-import {
-  ActionProgressBar,
-  ActionReferentielAvancementRecursiveCard,
-  ActionReferentielDisplayTitle,
-} from 'ui/referentiels';
 import 'app/DesignSystem/buttons.css';
-import {ActionCommentaire, Spacer} from 'ui/shared';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 import {searchActionById} from 'utils/actions';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
@@ -18,6 +12,11 @@ import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definitio
 import {ActionFilAriane} from 'app/pages/collectivite/Referentiels/FilAriane';
 import {addTargetToContentAnchors} from 'utils/content';
 import {Tabs, Tab} from '@dataesr/react-dsfr';
+import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
+import {Spacer} from 'ui/shared/Spacer';
+import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
+import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
+import {ActionReferentielAvancementRecursiveCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =

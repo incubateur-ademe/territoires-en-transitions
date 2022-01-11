@@ -1,12 +1,10 @@
 import type {ChartData, ChartDataset} from 'chart.js';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
-import {useCollectiviteId} from 'core-logic/hooks';
 import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
 import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
 import {Line} from 'react-chartjs-2';
-import {Spacer} from 'ui/shared';
-import {IndicateurPersonnaliseStorable} from 'storables';
-import {IndicateurReferentiel} from 'generated/models';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {Spacer} from 'ui/shared/Spacer';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;

@@ -1,5 +1,5 @@
 import {BehaviorSubject, Observable} from 'rxjs';
-import {Referentiel} from 'types';
+import {Referentiel} from 'types/litterals';
 import {ActionScore} from 'types/ClientScore';
 
 export interface ClientScoreBatchRead {

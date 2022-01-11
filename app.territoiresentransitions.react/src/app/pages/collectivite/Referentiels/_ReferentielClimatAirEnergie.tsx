@@ -1,9 +1,9 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import * as R from 'ramda';
-import {ActionReferentielDisplayTitle} from 'ui/referentiels';
-import {compareIndexes} from 'utils';
 import 'app/pages/collectivite/Referentiels/ArrowExpandable.css';
 import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
+import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
+import {compareIndexes} from 'utils/compareIndexes';
 
 const AxisSectionClimatAirEnergie = ({axis}: {axis: ActionReferentiel}) => (
   <div className="flex flex-col justify-between  mb-8">

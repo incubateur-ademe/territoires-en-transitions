@@ -1,7 +1,7 @@
-import {LabeledTextInput} from 'ui';
 import {useState} from 'react';
-import {commands} from 'core-logic/commands';
-import {useCollectiviteId} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {LabeledTextInput} from 'ui/forms/LabeledTextInput';
+import {createPlanAction} from 'core-logic/commands/plans';
 
 export const PlanCreationForm = (props: {onSave: () => void}) => {
   const [nom, setNom] = useState<string>('');
@@ -9,7 +9,7 @@ export const PlanCreationForm = (props: {onSave: () => void}) => {
 
   const handleSave = async () => {
     if (!nom) return;
-    await commands.plansCommands.createPlanAction(collectiviteId, nom);
+    await createPlanAction(collectiviteId, nom);
     props.onSave();
   };
 

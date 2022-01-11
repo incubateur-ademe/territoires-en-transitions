@@ -3,7 +3,7 @@ import 'app/DesignSystem/core.css';
 import 'app/DesignSystem/variables.css';
 import {useEffect, useState} from 'react';
 
-import {Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared/Spacer';
 import {elsesCollectiviteReadEndpoint} from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
 import {ElsesCollectiviteRead} from 'generated/dataLayer';
 import {observer} from 'mobx-react-lite';

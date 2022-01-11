@@ -6,7 +6,7 @@ import {
 import {takeUntil} from 'rxjs/operators';
 import {timer} from 'rxjs';
 import {ActionScore} from 'types/ClientScore';
-import {Referentiel} from 'types';
+import {Referentiel} from 'types/litterals';
 
 const makeScoreRead = ({
   referentiel = 'cae',

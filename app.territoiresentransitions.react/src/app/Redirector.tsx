@@ -3,7 +3,7 @@ import {authBloc} from 'core-logic/observables/authBloc';
 import {reaction} from 'mobx';
 import {useHistory} from 'react-router-dom';
 import {currentCollectiviteBloc} from 'core-logic/observables';
-import {useCollectiviteId} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 export const CollectiviteRedirector = () => {
   const collectiviteId = useCollectiviteId();

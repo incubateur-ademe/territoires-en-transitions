@@ -1,6 +1,6 @@
 import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import {CrossExpandPanelWithHtmlContent} from 'ui/shared';
 import {addTargetToContentAnchors} from 'utils/content';
+import {CrossExpandPanelWithHtmlContent} from 'ui/shared/CrossExpandPanelWithHtmlContent';
 
 const ActionExpandPanelAdemeContent = (props: {
   content?: string;
@@ -18,17 +18,6 @@ const ActionExpandPanelAdemeContent = (props: {
     </div>
   );
 };
-
-export const ActionDescriptionExpandPanel = ({
-  action,
-}: {
-  action: ActionReferentiel;
-}) => (
-  <ActionExpandPanelAdemeContent
-    content={action.description}
-    title="Description"
-  />
-);
 
 export const ActionContexteExpandPanel = ({
   action,

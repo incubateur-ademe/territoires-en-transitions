@@ -2,12 +2,10 @@ import 'app/DesignSystem/core.css';
 import {ReferentielEconomieCirculaire} from 'app/pages/collectivite/Referentiels/_ReferentielEconomieCirculaire';
 import {ReferentielClimatAirEnergie} from 'app/pages/collectivite/Referentiels/_ReferentielClimatAirEnergie';
 import {useParams} from 'react-router-dom';
-import {Spacer} from 'ui/shared';
 import {actions} from 'generated/data/referentiels';
 import {ReferentielParamOption, referentielParam} from 'app/paths';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
-import {ActionProgressBar} from 'ui/referentiels';
-import {ReferentielFilAriane} from 'app/pages/collectivite/Referentiels/FilAriane';
+import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 
 const eciReferentiel = actions.find(action => action.id === 'eci')!;
 const caeReferentiel = actions.find(action => action.id === 'cae')!;

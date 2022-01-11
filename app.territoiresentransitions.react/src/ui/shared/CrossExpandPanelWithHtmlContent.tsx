@@ -1,5 +1,5 @@
-import {Editable} from 'ui/shared';
 import './CrossExpandPanel.css';
+import {Editable} from 'ui/shared/Editable';
 
 export const CrossExpandPanelWithHtmlContent = (props: {
   content: string;

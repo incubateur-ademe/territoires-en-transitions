@@ -1,5 +1,5 @@
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
-import {useCollectiviteId} from 'core-logic/hooks';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useIndicateurPersonnaliseDefinitionList} from 'core-logic/hooks/indicateur_personnalise_definition';
 import FuzzySearch from 'fuzzy-search';
 import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';

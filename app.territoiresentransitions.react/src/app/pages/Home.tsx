@@ -1,4 +1,4 @@
-import {Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared/Spacer';
 import {SignInLink, RegisterLink} from 'ui/shared/Links';
 
 const Home = () => {

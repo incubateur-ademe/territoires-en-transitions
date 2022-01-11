@@ -5,9 +5,9 @@ import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ActionsField} from 'app/pages/collectivite/PlanActions/Forms/ActionsField';
 import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursField';
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
-import {ActionReferentielAvancementCard} from 'ui/referentiels';
+import {ActionReferentielAvancementCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
 import {actions} from 'generated/data/referentiels';
-import {Spacer} from 'ui/shared';
+import {Spacer} from 'ui/shared/Spacer';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
 import {searchActionById} from 'utils/actions';
@@ -18,9 +18,9 @@ import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
 import {useIndicateurPersonnaliseDefinitionList} from 'core-logic/hooks/indicateur_personnalise_definition';
-import {useCollectiviteId} from 'core-logic/hooks';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /**
  * Stores both plan and category uid, represents the user's selection of a

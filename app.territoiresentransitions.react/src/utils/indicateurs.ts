@@ -1,6 +1,5 @@
-import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {refToEmoji} from 'utils/refToEmoji';
-import {ReferentielOfIndicateur} from 'types';
+import {ReferentielOfIndicateur} from 'types/litterals';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 
 export const indicateurIdRegexp =

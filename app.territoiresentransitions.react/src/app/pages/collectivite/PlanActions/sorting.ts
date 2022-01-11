@@ -1,5 +1,5 @@
 import {Categorie, PlanActionStructure} from 'types/PlanActionTypedInterface';
-import {compareIndexes} from 'utils';
+import {compareIndexes} from 'utils/compareIndexes';
 import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaultDisplayCategorie';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';

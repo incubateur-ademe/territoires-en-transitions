@@ -1,4 +1,4 @@
-import {Referentiel} from 'types';
+import {Referentiel} from 'types/litterals';
 
 export interface ActionReferentielInterface {
   id: string;
