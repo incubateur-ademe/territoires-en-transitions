@@ -40,7 +40,7 @@ class ActionPointTree:
             for action_point in actions_points
         }
         self._children_by_id = {
-            action_children.action_id: action_children.children_ids
+            action_children.action_id: action_children.children
             for action_children in actions_children
         }
         self._tache_ids = self.get_tache_ids()
@@ -48,7 +48,7 @@ class ActionPointTree:
     @staticmethod
     def _find_root_action_point_id(actions_children: List[ActionChildren]) -> ActionId:
         action_children_ids = flatten_list(
-            [action_children.children_ids for action_children in actions_children]
+            [action_children.children for action_children in actions_children]
         )
         for action_children in actions_children:
             if action_children.action_id not in action_children_ids:
@@ -83,7 +83,7 @@ class ActionPointTree:
             action_points.action_id: action_points for action_points in actions_points
         }
         action_children_ids_by_id: Dict[ActionId, List[ActionId]] = {
-            action_children.action_id: action_children.children_ids
+            action_children.action_id: action_children.children
             for action_children in actions_children
         }
         # Construct ActionPointsNode without children

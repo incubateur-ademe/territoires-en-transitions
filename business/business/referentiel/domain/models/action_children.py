@@ -10,4 +10,4 @@ from business.utils.action_id import ActionId
 class ActionChildren:
     referentiel: ActionReferentiel  # eg. "eci_2022"
     action_id: ActionId  # eg. "eci_1.1"
-    children_ids: List[ActionId]  # ["eci_1.1.1", "eci_1.1.2"]
+    children: List[ActionId]  # ["eci_1.1.1", "eci_1.1.2"]

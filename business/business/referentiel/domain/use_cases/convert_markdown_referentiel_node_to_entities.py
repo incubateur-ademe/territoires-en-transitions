@@ -121,7 +121,7 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
         children_entities: List[ActionChildren],
     ):
         for children_entity in children_entities:
-            children_ids = children_entity.children_ids
+            children_ids = children_entity.children
             if children_ids:
                 parent_point = points_by_action_id[children_entity.action_id]
                 children_point_sum = self._round(
@@ -220,7 +220,6 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
         for node in self.forward_nodes:
             action_definition_entity = ActionDefinition(
                 referentiel=self.referentiel,  # type: ignore
-                thematique_id=node.thematique_id,
                 action_id=build_action_id(self.referentiel, node.identifiant),
                 identifiant=node.identifiant,
                 nom=node.nom,
@@ -243,7 +242,7 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
             action_children_entity = ActionChildren(
                 referentiel=self.referentiel,
                 action_id=build_action_id(self.referentiel, node.identifiant),
-                children_ids=[
+                children=[
                     build_action_id(self.referentiel, child.identifiant)
                     for child in node.actions
                 ],

@@ -34,7 +34,6 @@ def make_action_definition(
         referentiel=referentiel or retrieve_referentiel(ActionId(action_id)),
         identifiant=identifiant,
         nom=nom,
-        thematique_id=thematique_id,
         description=description,
         contexte=contexte,
         exemples=exemples,
@@ -55,7 +54,7 @@ def make_action_points(action_id: str, points: float):
 def make_action_children(action_id: str, children_ids: List[str]):
     return ActionChildren(
         action_id=ActionId(action_id),
-        children_ids=[ActionId(child_id) for child_id in children_ids],
+        children=[ActionId(child_id) for child_id in children_ids],
         referentiel=retrieve_referentiel(ActionId(action_id)),
     )
 
