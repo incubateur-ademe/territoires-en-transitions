@@ -97,7 +97,6 @@ describe('Supabase Score Controller ', () => {
 //   });
 
 //   it.skip('Should ', async () => {
-//     // TODO : fix me !
 //     const topic = `realtime:${schema}:${readTableName}:collectivite_id=${collectiviteId}`;
 //     // const server = new WS('ws://localhost:1234/');
 //     const server = new WebSocketServer('ws://localhost:1234');
@@ -121,7 +120,6 @@ describe('Supabase Score Controller ', () => {
 
 //     const controller = new SupabaseScoreController({
 //       supabaseClient: supabase,
-//       // todo options: { realtime: {}}
 //     });
 //     const socket = new ScoreSocket({controller, collectiviteId});
 

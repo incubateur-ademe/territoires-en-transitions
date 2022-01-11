@@ -26,7 +26,6 @@ describe('Indicateur-commentaire write endpoint', () => {
     expect(updateResult).toEqual(expect.objectContaining(updatedCommentaire));
   });
 
-  // TODO : fixme (#RLS)
   it('Should fail if collectivite is readonly', async () => {
     const commentaire: IndicateurCommentaireWrite = {
       collectivite_id: 8, // Yili has no right on collectivite #8

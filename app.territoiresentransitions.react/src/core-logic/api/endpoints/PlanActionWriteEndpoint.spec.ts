@@ -39,7 +39,6 @@ describe('Plan action write endpoint', () => {
     expect(updateResult).toEqual(expect.objectContaining(updatedPlan));
   });
 
-  // TODO : fixme (#RLS)
   it('Should fail when collectivite is readonly', async () => {
     const endpoint = new PlanActionWriteEndpoint();
     const plan: PlanActionWrite = {

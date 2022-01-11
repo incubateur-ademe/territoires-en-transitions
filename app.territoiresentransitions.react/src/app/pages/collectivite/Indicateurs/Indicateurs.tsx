@@ -53,14 +53,15 @@ const Indicateurs = () => {
         <div className="mr-2 font-light">
           <div className="flex justify-end mt-24">
             <div className="flex">
-              {'Afficher uniquement les indicateurs renseignés'}
+              {'Afficher uniquement les indicateurs renseignés ' +
+                showOnlyIndicateurWithData}
               <Switch
                 color="primary"
-                value={showOnlyIndicateurWithData}
-                inputProps={{'aria-label': 'Switch A'}}
-                onClick={event =>
-                  setShowOnlyIndicateurWithData(!showOnlyIndicateurWithData)
-                }
+                checked={showOnlyIndicateurWithData}
+                inputProps={{'aria-label': 'controlled'}}
+                onChange={event => {
+                  setShowOnlyIndicateurWithData(!showOnlyIndicateurWithData);
+                }}
               />
             </div>
           </div>
