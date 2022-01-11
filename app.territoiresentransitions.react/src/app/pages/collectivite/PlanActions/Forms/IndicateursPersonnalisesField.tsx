@@ -3,11 +3,10 @@ import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import {useAllStorablesAsMap} from 'core-logic/hooks/storables';
-import {IndicateurPersonnaliseStorable} from 'storables/IndicateurPersonnaliseStorable';
-import {indicateurPersonnaliseStore} from 'core-logic/api/hybridStores';
 import {shortenLabel} from 'app/pages/collectivite/PlanActions/Forms/utils';
 import {compareIndexes} from 'utils';
+import {useIndicateurPersonnaliseDefinitionList} from 'core-logic/hooks/indicateur_personnalise_definition';
+import {useCollectiviteId} from 'core-logic/hooks';
 
 type IndicateursFieldProps = {
   label: string;
@@ -26,20 +25,19 @@ export const IndicateursPersonnalisesField: FC<
   form: {touched, errors, setFieldValue},
   ...props
 }) => {
-  const indicateurs = useAllStorablesAsMap<IndicateurPersonnaliseStorable>(
-    indicateurPersonnaliseStore
-  );
-  const allSortedIndicateurIds = [...indicateurs.entries()]
-    .sort((a, b) => compareIndexes(a[1].nom, b[1].nom))
+  const collectiviteId = useCollectiviteId()!;
+  const indicateursPersoDefs =
+    useIndicateurPersonnaliseDefinitionList(collectiviteId);
+
+  const allSortedIndicateurIds = [...indicateursPersoDefs.entries()]
+    .sort((a, b) => compareIndexes(a[1].titre, b[1].titre))
     .map(entry => entry[0]);
 
-  const renderIndicateurOption = (id: string) => {
-    const indicateur = indicateurs.get(id);
-    return indicateur
-      ? `${indicateur.custom_id ? '(' + indicateur.custom_id + ') ' : ''} ${
-          indicateur.nom
-        }`
-      : '...';
+  const renderIndicateurOption = (id: number) => {
+    const indicateur = indicateursPersoDefs.find(
+      indicateurPersoDef => indicateurPersoDef.id === id
+    );
+    return indicateur ? indicateur.titre : '...';
   };
   const htmlId = props.id ?? uuid();
   const errorMessage = errors[field.name];
@@ -57,7 +55,7 @@ export const IndicateursPersonnalisesField: FC<
         className="bg-beige"
         renderOption={id => renderIndicateurOption(id)}
         getOptionLabel={id => shortenLabel(renderIndicateurOption(id))}
-        value={field.value as string[]}
+        value={field.value as number[]}
         onChange={(e, value) => {
           setFieldValue(field.name, value);
         }}
