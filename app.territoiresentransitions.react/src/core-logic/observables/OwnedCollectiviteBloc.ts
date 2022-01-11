@@ -18,7 +18,6 @@ export class OwnedCollectiviteBloc {
     reaction(
       () => authBloc.userId,
       userId => {
-        console.log('bloc reaction userId , ', userId);
         this.updateOwnedCollectiviteReads(userId);
       }
     );

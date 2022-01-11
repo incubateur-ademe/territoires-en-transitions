@@ -17,6 +17,7 @@ export const isIndicateurRelatedToAction = (
 export const inferIndicateurReferentielAndTitle = (
   definition: IndicateurDefinitionRead
 ) => {
+  console.log('infer id from definition ', definition);
   const indicateurId = definition.id;
   const id_groups = indicateurId.match(indicateurIdRegexp)?.groups;
   if (!id_groups) return indicateurId;
@@ -39,7 +40,6 @@ export const sortIndicateurDefinitionsByIdentifiant = (
     const identifiant_b = def_b.identifiant;
     const a_groups = identifiant_a.match(indicateurIdentifiantRegexp)?.groups;
     const b_groups = identifiant_b.match(indicateurIdentifiantRegexp)?.groups;
-    console.log(a_groups, b_groups);
     if (!a_groups || !b_groups)
       return identifiant_a.localeCompare(identifiant_b);
     const a_number = Number(a_groups['number']);

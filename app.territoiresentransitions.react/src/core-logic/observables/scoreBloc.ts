@@ -33,7 +33,6 @@ export class ScoreBloc {
     reaction(
       () => currentCollectiviteBloc.collectiviteId,
       collectiviteId => {
-        console.log('bloc reaction collectiviteId , ', collectiviteId);
         if (collectiviteId !== null) {
           this.fetchScoresForCollectivite(collectiviteId);
           this.openScoreSocketAndListenScoreController(collectiviteId);
@@ -53,7 +52,6 @@ export class ScoreBloc {
         // referentiel,
       })
       .then(clientScoresRead => {
-        console.log('length of clientScoresRead : ', clientScoresRead.length);
         if (clientScoresRead) {
           this._scores.eci =
             clientScoresRead.find(
@@ -64,16 +62,6 @@ export class ScoreBloc {
               scoresRead => scoresRead.referentiel === 'cae'
             )?.scores ?? [];
         }
-        console.log(
-          'eci -> ',
-          this._scores.eci.length,
-          '\ncae -> ',
-          this._scores.cae.length
-        );
-        console.log(
-          'cae_1.1.1.1.1 -> ',
-          this._scores.cae.find(score => score.action_id === 'cae_1.1.1.1.1')
-        );
       });
   }
 

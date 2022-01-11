@@ -94,7 +94,6 @@ const _ConditionalSelectDialogContent = ({
 
   useEffect(() => {
     if (collectivite) {
-      console.log(collectivite);
       referentContact(collectivite.collectivite_id).then(contact => {
         setReferentContactResponse(contact);
       });
