@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import * as Yup from 'yup';
 import {Field, Form, Formik, useFormikContext} from 'formik';
 import LabeledTextField from 'ui/forms/LabeledTextField';
@@ -20,6 +20,7 @@ import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicate
 import {useIndicateurPersonnaliseDefinitionList} from 'core-logic/hooks/indicateur_personnalise_definition';
 import {useCollectiviteId} from 'core-logic/hooks';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
+import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
 
 /**
  * Stores both plan and category uid, represents the user's selection of a
@@ -81,10 +82,32 @@ const LinkedActionsReferentielCards = () => {
   );
 };
 
+const useFicheActionLinkedIndicateurDefinitions = (
+  linkedIndicateurIds: string[]
+) => {
+  const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
+    useState<IndicateurDefinitionRead[]>([]);
+  const allIndicateurDefinitions = useAllIndicateurDefinitions();
+
+  useEffect(() => {
+    const linkedIndicateurDefinitions = allIndicateurDefinitions.filter(
+      indicateurefinition =>
+        linkedIndicateurIds.includes(indicateurefinition.id)
+    );
+
+    setLinkedIndicateurDefinitions(
+      linkedIndicateurDefinitions.filter(
+        definition => !!definition
+      ) as IndicateurDefinitionRead[]
+    );
+  }, [allIndicateurDefinitions.length, linkedIndicateurIds.length]);
+  return linkedIndicateurDefinitions;
+};
+
 const LinkedIndicateurCards = () => {
   const {values} = useFormikContext<FicheActionRead>();
-  // todo use indicateur repo
-  const linkedIndicateurDefinitions: IndicateurDefinitionRead[] = [];
+  const linkedIndicateurDefinitions: IndicateurDefinitionRead[] =
+    useFicheActionLinkedIndicateurDefinitions(values.indicateur_ids);
   return (
     <div>
       {linkedIndicateurDefinitions.map(definition => {
