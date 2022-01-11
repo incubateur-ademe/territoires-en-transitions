@@ -1,5 +1,5 @@
-import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {addTargetToContentAnchors} from 'utils/content';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 export const ActionReferentielDescription = ({
   action,

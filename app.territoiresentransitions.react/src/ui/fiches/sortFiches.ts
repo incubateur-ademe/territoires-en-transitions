@@ -1,24 +1,24 @@
-import type {FicheAction} from 'generated/models/fiche_action';
-import type {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
+import type {FicheActionCategorie} from 'types/fiche_action_categorie';
 import {compareIndexes} from 'utils/compareIndexes';
 import * as R from 'ramda';
+import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 
-export const sortFiches = (fiches: FicheAction[]): FicheAction[] =>
+export const sortFiches = (fiches: FicheActionRead[]): FicheActionRead[] =>
   fiches
     .sort((ficheA, ficheB) => {
       return compareIndexes(ficheA.titre, ficheB.titre);
     })
     .sort((ficheA, ficheB) => {
-      return compareIndexes(ficheA.custom_id, ficheB.custom_id);
+      return compareIndexes(ficheA.numerotation, ficheB.numerotation);
     });
 
 export type CategorizedFiche = {
-  fiches: FicheAction[];
+  fiches: FicheActionRead[];
   categorie: FicheActionCategorie;
 };
 
 const findFicheCategorie = (
-  fiche: FicheAction,
+  fiche: FicheActionRead,
   categories: FicheActionCategorie[]
 ): FicheActionCategorie | undefined =>
   categories.find(categorie =>
@@ -26,16 +26,16 @@ const findFicheCategorie = (
   );
 
 export const categorizeAndSortFiches = (
-  fiches: FicheAction[],
+  fiches: FicheActionRead[],
   categories: FicheActionCategorie[],
   defaultCategorie: FicheActionCategorie
 ): CategorizedFiche[] => {
-  const byCategorieUid = R.groupBy((fiche: FicheAction) => {
+  const byCategorieUid = R.groupBy((fiche: FicheActionRead) => {
     const categorie = findFicheCategorie(fiche, categories) || defaultCategorie;
     return categorie.uid;
   });
   const asCategorizedFiche = R.mapObjIndexed(
-    (fiches: FicheAction[], categorieUid: string) => ({
+    (fiches: FicheActionRead[], categorieUid: string) => ({
       fiches: fiches,
       categorie: [...categories, defaultCategorie].find(
         categorie => categorie.uid === categorieUid
@@ -49,8 +49,8 @@ export const categorizeAndSortFiches = (
   }));
 
   const sortedCategorizedFiches = R.pipe<
-    FicheAction[],
-    Record<string, FicheAction[]>,
+    FicheActionRead[],
+    Record<string, FicheActionRead[]>,
     Record<string, CategorizedFiche>,
     CategorizedFiche[],
     CategorizedFiche[]

@@ -1,4 +1,4 @@
-import {IndicateurReferentiel} from '../models/indicateur_referentiel';
+import {IndicateurReferentiel} from 'types/indicateur_referentiel';
 
 export const indicateurs: IndicateurReferentiel[] = [
   new IndicateurReferentiel({

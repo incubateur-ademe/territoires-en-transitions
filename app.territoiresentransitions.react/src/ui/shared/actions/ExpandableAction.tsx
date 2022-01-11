@@ -1,10 +1,10 @@
-import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useState} from 'react';
 import {LazyDetails} from 'ui/shared/LazyDetails';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {Chevron} from 'ui/shared/Chevron';
 import {ScoreBloc, scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionReferentielLinkCard} from 'ui/referentiels/ActionReferentielLinkCard';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 function ActionProgressBar(props: {
   action: ActionReferentiel;

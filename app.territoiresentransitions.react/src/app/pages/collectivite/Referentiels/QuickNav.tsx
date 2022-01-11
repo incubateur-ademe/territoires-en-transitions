@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useHistory} from 'react-router-dom';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {
@@ -13,6 +12,7 @@ import {
 import {actions as referentielActions} from 'generated/data/referentiels';
 import {Menu, MenuItem} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 /**
  * Converts a list of actions to a list of menu items.

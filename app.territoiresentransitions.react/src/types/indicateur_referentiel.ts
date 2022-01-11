@@ -14,6 +14,7 @@ export class IndicateurReferentiel {
   get pathname(): string {
     return IndicateurReferentiel.pathname;
   }
+
   id: string;
   uid: string;
   valeur: string;
@@ -54,6 +55,7 @@ export class IndicateurReferentiel {
     this.thematique_id = thematique_id;
     this.unite = unite;
   }
+
   equals(other: IndicateurReferentielInterface | null): boolean {
     if (!other) return false;
     return (

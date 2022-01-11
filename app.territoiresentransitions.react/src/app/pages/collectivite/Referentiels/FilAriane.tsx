@@ -1,7 +1,7 @@
-import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {Link} from 'react-router-dom';
 import {makeCollectiviteReferentielUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 /**
  * The nav bar at the to of an orientation page, made of several

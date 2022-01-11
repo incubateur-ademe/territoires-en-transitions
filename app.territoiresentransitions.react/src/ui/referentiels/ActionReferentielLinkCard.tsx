@@ -1,5 +1,4 @@
 import {Link} from 'react-router-dom';
-import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {makeCollectiviteActionUrl} from 'app/paths';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
@@ -8,6 +7,7 @@ import {ArrowNarrowRightIcon} from '@heroicons/react/solid';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {referentielId} from 'utils/actions';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 /**
  * Used on referentiels page, links to action page.

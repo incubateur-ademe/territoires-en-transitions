@@ -5,7 +5,7 @@ import {observer} from 'mobx-react-lite';
 import {TextInput} from '@dataesr/react-dsfr';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ActionReferentiel} from 'generated/models/action_referentiel';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 export const ActionCommentaire = ({action}: {action: ActionReferentiel}) => {
   const collectiviteId = useCollectiviteId()!;

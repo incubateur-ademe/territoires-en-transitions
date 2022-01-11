@@ -18,6 +18,7 @@ export class ActionReferentiel {
   get pathname(): string {
     return ActionReferentiel.pathname;
   }
+
   id: string;
   id_nomenclature: string;
   nom: string;
@@ -66,6 +67,7 @@ export class ActionReferentiel {
     this.points = points;
     this.actions = actions;
   }
+
   equals(other: ActionReferentielInterface | null): boolean {
     if (!other) return false;
     return (
@@ -91,9 +93,11 @@ export class ActionReferentiel {
       ? 'Climat Air Energie'
       : 'Économie Circulaire';
   }
+
   get displayName(): string {
     return `${this.identifiant} - ${this.nom}`;
   }
+
   /**
    * Identifiant as in the markdown.
    */
@@ -125,14 +129,12 @@ const caeHierarchy: ActionType[] = [
   'sous-action',
   'tache',
 ];
-
 const eciHierarchy: ActionType[] = [
   'domaine',
   'action',
   'sous-action',
   'tache',
 ];
-
 export type ActionType =
   | 'domaine'
   | 'sous-domaine'

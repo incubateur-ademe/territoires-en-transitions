@@ -1,5 +1,5 @@
-import type {ActionReferentiel} from 'generated/models/action_referentiel';
 import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 export const ReferentielEconomieCirculaire = ({
   eciAxes,
