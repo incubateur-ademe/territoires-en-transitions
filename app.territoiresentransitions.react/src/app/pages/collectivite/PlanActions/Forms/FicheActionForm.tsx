@@ -197,8 +197,8 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
       'Ce champ doit faire au maximum 300 caractères'
     ),
     commentaire: Yup.string(),
-    // date_debut: Yup.date(),
-    // date_fin: Yup.date(),
+    date_debut: Yup.date(),
+    date_fin: Yup.date(),
     indicateur_personnalise_ids: Yup.array(),
     planCategories: Yup.array().min(
       1,
@@ -218,7 +218,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
         ...props.fiche,
         planCategories: props.planCategories,
       }}
-      // validationSchema={validation}
+      validationSchema={validation}
       onSubmit={save}
     >
       {() => (
