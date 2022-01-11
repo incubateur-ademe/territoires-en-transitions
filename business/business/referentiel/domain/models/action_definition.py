@@ -12,7 +12,6 @@ class ActionDefinition:
     referentiel: ActionReferentiel
     identifiant: str
     nom: str
-    thematique_id: str
     description: str
     contexte: str
     exemples: str

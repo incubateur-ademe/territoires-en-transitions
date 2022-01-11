@@ -73,7 +73,7 @@ class StoreReferentielActions(UseCase):
             if not all(
                 [
                     child_id in children_action_ids
-                    for child_id in children_entity.children_ids
+                    for child_id in children_entity.children
                 ]
             ):
                 return events.ReferentielStorageFailed(
