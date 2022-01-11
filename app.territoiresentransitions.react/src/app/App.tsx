@@ -11,9 +11,6 @@ import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import StatisticsPage from 'app/pages/statistics/StatisticsPage';
 import Home from 'app/pages/Home';
 import {ConnectedRedirector} from 'app/Redirector';
-
-import 'app/app.css';
-
 import {Toasters} from 'app/Toasters';
 import {ScrollToTop} from 'app/ScrollToTop';
 import {createTheme, MuiThemeProvider} from '@material-ui/core';
