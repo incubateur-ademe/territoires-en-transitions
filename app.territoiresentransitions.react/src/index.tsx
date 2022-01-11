@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {App} from 'app/App';
-import './index.css';
 import reportWebVitals from './reportWebVitals';
+
+import '@gouvfr/dsfr/dist/dsfr/dsfr.css';
+import 'css/tailwind.css';
+import 'css/app.css';
 
 ReactDOM.render(
   <React.StrictMode>

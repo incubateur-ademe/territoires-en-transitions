@@ -2,7 +2,6 @@
 
 # map
 /src/ui/map/cstc.json
-/src/css
 
 # dependencies
 /node_modules
