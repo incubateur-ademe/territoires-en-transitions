@@ -1,5 +1,5 @@
-import type {ActionReferentiel} from 'generated/models/action_referentiel';
-import type {IndicateurReferentiel} from 'generated/models/indicateur_referentiel';
+import {ActionReferentiel} from 'types/action_referentiel';
+import {IndicateurReferentiel} from 'types/indicateur_referentiel';
 
 const possiblyId = new RegExp('^\\d+');
 type voidCallback = () => void;

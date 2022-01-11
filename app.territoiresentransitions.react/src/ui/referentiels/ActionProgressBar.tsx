@@ -1,4 +1,3 @@
-import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {Tooltip} from '@material-ui/core';
 import {toFixed} from 'utils/toFixed';
 import {observer} from 'mobx-react-lite';
@@ -6,6 +5,7 @@ import {ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {referentielId} from 'utils/actions';
 import {ActionScore} from 'types/ClientScore';
 import {actionAvancementColors} from 'app/theme';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 export const ActionProgressBar = observer(
   ({action, scoreBloc}: {action: ActionReferentiel; scoreBloc: ScoreBloc}) => {

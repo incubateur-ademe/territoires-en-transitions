@@ -1,5 +1,4 @@
 import 'app/DesignSystem/buttons.css';
-import {ActionReferentiel} from 'generated/models/action_referentiel';
 import {useState} from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import {
@@ -7,6 +6,7 @@ import {
   ActionExemplesExpandPanel,
   ActionRessourcesExpandPanel,
 } from 'ui/shared/actions/ActionExpandPanels';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 const ContexteExemplesAndRessourcesDialogContent = ({
   action,

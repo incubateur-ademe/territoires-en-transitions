@@ -1,7 +1,7 @@
 import {indicateurs} from 'generated/data/indicateurs_referentiels';
 import {actions} from 'generated/data/referentiels';
-import {ActionReferentiel} from 'generated/models/action_referentiel';
 import * as R from 'ramda';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 const flattenActions = (actions: ActionReferentiel[]): ActionReferentiel[] =>
   R.reduce(

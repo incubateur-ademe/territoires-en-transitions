@@ -1,31 +1,40 @@
 import '@testing-library/jest-dom/extend-expect';
-import {FicheAction} from 'generated/models/fiche_action';
-import {FicheActionCategorie} from 'generated/models/fiche_action_categorie';
-
 import {categorizeAndSortFiches, sortFiches} from './sortFiches';
 import {compareIndexes} from 'utils/compareIndexes';
+import {FicheActionCategorie} from 'types/fiche_action_categorie';
+import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 
-const makeCategorie = (uid: string, fiche_actions_uids: string[] = []) =>
-  new FicheActionCategorie({
+const makeCategorie = (
+  uid: string,
+  fiche_actions_uids: string[] = []
+): FicheActionCategorie => {
+  return {
     epci_id: '',
     uid: uid,
     parent_uid: '',
     nom: '',
     fiche_actions_uids: fiche_actions_uids,
-  });
+  };
+};
 
-const makeFicheAction = (custom_id: string, uid: string, titre?: string) => {
-  return new FicheAction({
-    epci_id: '',
+const makeFicheAction = (
+  custom_id: string,
+  uid: string,
+  titre?: string
+): FicheActionRead => {
+  return {
+    id: 0,
+    modified_at: 'yoloBC',
+    collectivite_id: 0,
     uid: uid,
-    custom_id: custom_id,
-    avancement: '',
+    numerotation: custom_id,
+    avancement: 'pas_fait',
     en_retard: false,
-    referentiel_action_ids: [],
-    referentiel_indicateur_ids: [],
+    action_ids: [],
+    indicateur_ids: [],
     titre: titre ?? '',
     description: '',
-    budget: 1,
+    budget_global: 1,
     personne_referente: '',
     structure_pilote: '',
     partenaires: '',
@@ -34,7 +43,7 @@ const makeFicheAction = (custom_id: string, uid: string, titre?: string) => {
     date_debut: '',
     date_fin: '',
     indicateur_personnalise_ids: [],
-  });
+  };
 };
 
 const defaultcategorie = makeCategorie('default');

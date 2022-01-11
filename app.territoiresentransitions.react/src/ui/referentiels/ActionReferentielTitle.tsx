@@ -1,4 +1,4 @@
-import type {ActionReferentiel} from 'generated/models/action_referentiel';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 /**
  * @deprecated since new UI, use ActionReferentielDisplayTitle

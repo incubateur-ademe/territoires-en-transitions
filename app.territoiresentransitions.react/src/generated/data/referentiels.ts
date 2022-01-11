@@ -1,4 +1,4 @@
-import {ActionReferentiel} from '../models/action_referentiel';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 export const actions: ActionReferentiel[] = [
   new ActionReferentiel({
