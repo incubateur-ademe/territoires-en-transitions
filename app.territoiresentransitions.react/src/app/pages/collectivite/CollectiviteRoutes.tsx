@@ -1,14 +1,9 @@
 import {Redirect, Route, useRouteMatch} from 'react-router-dom';
-import {
-  ActionReferentielAvancementPage,
-  IndicateursPage,
-  ReferentielsPage,
-} from 'app/pages/index';
+
 import {PlanActionPage} from 'app/pages/collectivite/PlanActions/PlanActionsPage';
 import {FicheActionPage} from 'app/pages/collectivite/PlanActions/FicheActionPage';
 import {FicheActionCreationPage} from 'app/pages/collectivite/PlanActions/FicheActionCreationPage';
 import {useCollectiviteId} from 'core-logic/hooks';
-import {planActionDefault} from 'generated/models/plan_action_default';
 import {
   collectiviteActionPath,
   collectiviteIndicateurPath as collectiviteIndicateursPath,
@@ -16,6 +11,9 @@ import {
   collectivitePlanActionPath,
   collectiviteReferentielPath,
 } from 'app/paths';
+import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
+import {ActionReferentielAvancementPage} from 'app/pages/collectivite/Referentiels/ActionReferentielAvancementPage';
+import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -27,19 +25,6 @@ export const CollectiviteRoutes = () => {
   const collectiviteId = useCollectiviteId()!;
   return (
     <>
-      {/* <Route
-        path={`${makeCollectiviteTabUrl({
-          id: collectiviteId,
-          tab: 'referentiels',
-        })}`}
-      >
-        <Redirect
-          to={makeCollectiviteReferentielsUrl({
-            id: collectiviteId,
-            referentiel: 'eci',
-          })}
-        />
-      </Route> */}
       <Route path={collectiviteReferentielPath}>
         <ReferentielsPage />
       </Route>
@@ -49,25 +34,6 @@ export const CollectiviteRoutes = () => {
       <Route path={collectiviteIndicateursPath}>
         <IndicateursPage />
       </Route>
-      {/* <Route
-        path={`${makeCollectiviteTabUrl({
-          id: collectiviteId,
-          tab: 'indicateurs',
-        })}`}
-      >
-        <Redirect
-          to={makeCollectiviteIndicateursUrl({
-            collectiviteId,
-            indicateurGroup: 'eci',
-          })}
-        />
-      </Route> */}
-      {/* <Route path={collectivitePlanActionPath}>
-        {' '}
-        <Redirect
-          to={`/collectivite/${collectiviteId}/plan_action/${planActionDefault.uid}`}
-        />
-      </Route> */}
       <Route path={collectivitePlanActionPath}>
         <PlanActionPage />
       </Route>
