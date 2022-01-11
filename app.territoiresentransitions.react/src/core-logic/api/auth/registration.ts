@@ -15,7 +15,7 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
   if (!inscription.vie_privee_conditions)
     throw 'La politique de protection des données personnelles doit être acceptée. ';
 
-  // todo test signup with existing user email.
+  // todo fix signup with existing user email.
 
   const signedUp = await supabaseClient.auth.signUp({
     email: inscription.email,
@@ -24,7 +24,6 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
 
   if (!signedUp.user || signedUp.error) throw signedUp.error?.message;
 
-  // todo later save DCPs
   const dcp: DcpWrite = {
     email: inscription.email,
     prenom: inscription.prenom,

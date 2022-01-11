@@ -110,7 +110,7 @@ const RegistrationForm = () => {
               <Spacer size={2} />
               <Field name="nom" label="Nom" component={LabeledTextField} />
               <Spacer size={2} />
-              <label>
+              <label className="cgu">
                 <Field type="checkbox" name="vie_privee_conditions" />
                 <span className="ml-2">
                   J'accepte la{' '}

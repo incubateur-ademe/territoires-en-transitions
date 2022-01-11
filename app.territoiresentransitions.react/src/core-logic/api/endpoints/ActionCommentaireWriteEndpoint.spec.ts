@@ -29,7 +29,6 @@ describe('Action-commentaire write endpoint', () => {
     expect(updatedResult).toEqual(expect.objectContaining(updatedCommentaire));
   });
 
-  // TODO : fixme (#RLS)
   it('Should fail when saving a commentaire with readonly collectivite', async () => {
     const endpoint = new ActionCommentaireWriteEndpoint();
     const commentaire: ActionCommentaireWrite = {

@@ -46,7 +46,6 @@ describe('Fiche action write endpoint', () => {
       expect.objectContaining(updatedFiche)
     );
   });
-  // TODO : fixme (#RLS)
   it('Should fail when saving a fiche with readonly collectivite', async () => {
     const endpoint = new FicheActionWriteEndpoint();
     const fiche_with_collectivite_8 = {...fiche, collectivite_id: 8}; // Yili has no rights on collectivite 8

@@ -9,15 +9,9 @@ export const indicateurIdRegexp =
 export const indicateurIdentifiantRegexp =
   '(?<number>[0-9]{1,3})(?<literal>.+)?';
 
-export const isIndicateurRelatedToAction = (
-  definition: IndicateurDefinitionRead,
-  action: ActionReferentiel
-): boolean => true; // TODO ! //definition.action_ids.includes(action.id);
-
 export const inferIndicateurReferentielAndTitle = (
   definition: IndicateurDefinitionRead
 ) => {
-  console.log('infer id from definition ', definition);
   const indicateurId = definition.id;
   const id_groups = indicateurId.match(indicateurIdRegexp)?.groups;
   if (!id_groups) return indicateurId;
