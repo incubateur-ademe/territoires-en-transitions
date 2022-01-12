@@ -1,11 +1,9 @@
 import React, {useState} from 'react';
-import {useHistory} from 'react-router-dom';
+import {useHistory, Link} from 'react-router-dom';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {
-  actionIdDepth,
   actionPath,
   displayName,
-  referentielMesureDepth,
   searchActionSiblingsOfId,
   searchParents,
 } from 'utils/actions';
@@ -13,6 +11,7 @@ import {actions as referentielActions} from 'generated/data/referentiels';
 import {Menu, MenuItem} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
 import {ActionReferentiel} from 'types/action_referentiel';
+import {makeCollectiviteReferentielUrl} from 'app/paths';
 
 /**
  * Converts a list of actions to a list of menu items.
@@ -28,24 +27,7 @@ const actionsToMenuItems = (
   onSelect: (actionId: string) => void
 ): React.ReactNode[] => {
   return actions.map((action: ActionReferentiel): React.ReactNode => {
-    if (actionIdDepth(action.id) < referentielMesureDepth(action.id))
-      return (
-        <NestedMenuItem
-          key={action.id}
-          parentMenuOpen={true}
-          label={
-            <div
-              className="truncate max-w-sm"
-              onClick={() => onSelect(action.id)}
-            >
-              {displayName(action)}
-            </div>
-          }
-        >
-          {actionsToMenuItems(action.actions, onSelect)}
-        </NestedMenuItem>
-      );
-    else if (actionIdDepth(action.id) === referentielMesureDepth(action.id))
+    if (action.type === 'action') {
       return (
         <MenuItem key={action.id}>
           <div
@@ -56,26 +38,49 @@ const actionsToMenuItems = (
           </div>
         </MenuItem>
       );
-    throw `Error building quick nav item: "${action.id}" is below mesure depth`;
+    } else {
+      return (
+        <NestedMenuItem
+          key={action.id}
+          parentMenuOpen={true}
+          label={<div className="truncate max-w-sm">{displayName(action)}</div>}
+        >
+          {actionsToMenuItems(action.actions, onSelect)}
+        </NestedMenuItem>
+      );
+    }
   });
 };
 
 /**
- * The nav bar at the to of an orientation page, made of several
+ * The nav bar at the top of an orientation page, made of several
  * OrientationSwitcher
  */
 export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
   const parents = searchParents(props.action.id, referentielActions);
   const parent = parents[parents.length - 1];
-  const grandParents = parents.slice(0, parents.length - 1);
+  const grandParents = parents.slice(1, parents.length - 1);
+  const collectiviteId = useCollectiviteId()!;
   return (
-    <nav className="flex flex-row">
+    <nav className="flex flex-row text-sm">
+      <div className="flex flex-row flex-nowrap">
+        <Link
+          to={makeCollectiviteReferentielUrl({
+            collectiviteId: collectiviteId,
+            referentielId: props.action.referentiel,
+          })}
+        >
+          {props.action.referentielDisplayName}
+        </Link>
+
+        <span className="mx-2">&gt;</span>
+      </div>
       {grandParents.map(parent => {
         // we build a menu for every parent
         return (
           <div className="flex flex-row flex-nowrap" key={parent.id}>
             <OrientationSwitcher action={parent} />
-            <span className="mx-2">/</span>
+            <span className="mx-2">&gt;</span>
           </div>
         );
       })}
