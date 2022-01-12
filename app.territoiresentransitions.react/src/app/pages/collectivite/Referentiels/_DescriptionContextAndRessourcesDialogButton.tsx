@@ -1,4 +1,3 @@
-import 'app/DesignSystem/buttons.css';
 import {useState} from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import {

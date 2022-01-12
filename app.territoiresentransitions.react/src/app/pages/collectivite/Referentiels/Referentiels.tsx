@@ -1,4 +1,3 @@
-import 'app/DesignSystem/core.css';
 import {ReferentielEconomieCirculaire} from 'app/pages/collectivite/Referentiels/_ReferentielEconomieCirculaire';
 import {ReferentielClimatAirEnergie} from 'app/pages/collectivite/Referentiels/_ReferentielClimatAirEnergie';
 import {useParams} from 'react-router-dom';

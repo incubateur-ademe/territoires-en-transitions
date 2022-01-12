@@ -122,14 +122,16 @@ export const JoinCurrentCollectiviteDialog = () => {
   const [opened, setOpened] = React.useState<boolean>(false);
 
   return (
-    <UiDialogButton
-      title="Rejoindre cette collectivité"
-      opened={opened}
-      setOpened={setOpened}
-      buttonClasses="fr-btn--secondary fr-btn--sm bg-white"
-    >
-      <_ConditionalSelectDialogContent collectivite={collectivite} />
-    </UiDialogButton>
+    <div className="bg-white">
+      <UiDialogButton
+        title="Rejoindre cette collectivité"
+        opened={opened}
+        setOpened={setOpened}
+        buttonClasses="fr-btn--secondary fr-btn--sm"
+      >
+        <_ConditionalSelectDialogContent collectivite={collectivite} />
+      </UiDialogButton>
+    </div>
   );
 };
 
