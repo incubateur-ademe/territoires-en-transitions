@@ -8,7 +8,6 @@ import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurActionReadEndpoint';
 import {useEffect, useState} from 'react';
 import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
-import {ActionFilAriane} from 'app/pages/collectivite/Referentiels/FilAriane';
 import {addTargetToContentAnchors} from 'utils/content';
 import {Tabs, Tab} from '@dataesr/react-dsfr';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
@@ -16,6 +15,7 @@ import {Spacer} from 'ui/shared/Spacer';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielAvancementRecursiveCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
+import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -53,9 +53,9 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   return (
     <div className="fr-container">
       <div className="mt-8 mb-4">
-        <ActionFilAriane action={action} />
+        <OrientationQuickNav action={action} />
       </div>
-      <div className="sticky top-0 z-50 flex flex-row justify-between bg-white">
+      <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8">
         <div className="flex flex-col w-4/5">
           <ActionReferentielDisplayTitle action={action} />
         </div>

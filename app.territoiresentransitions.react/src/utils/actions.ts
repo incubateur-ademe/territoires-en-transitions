@@ -97,7 +97,7 @@ export const parentId = (actionId: string): string | null => {
 export const displayName = (action: ActionReferentiel) =>
   action.id_nomenclature
     ? `${action.id_nomenclature} - ${action.nom}`
-    : action.nom;
+    : action.referentielDisplayName;
 
 export const referentielId = (actionId: string): Referentiel =>
   actionId.startsWith('eci') ? 'eci' : 'cae';
@@ -112,7 +112,7 @@ export const actionPath = (
   const epciPath = `/collectivite/${collectiviteId}`;
 
   if (depth < mesureDepth) {
-    return `${epciPath}/referentiel/${referentielId(actionId)}/#${actionId}`;
+    return `${epciPath}/referentiels/${referentielId(actionId)}/#${actionId}`;
   }
   if (depth === mesureDepth) {
     return `${epciPath}/action/${referentielId(actionId)}/${actionId}`;
