@@ -36,14 +36,13 @@ const CurrentUserCollectivites = () => {
   return (
     <div className="app fr-container m-5">
       <section className="text-center">
-        {/* <h2 className="fr-h2 text-center mb-8">Sélectionner votre collectivité</h2> */}
+        <MyCollectiviteCards bloc={ownedCollectiviteBloc} />
+
+        <Spacer />
         <div className="my-4">
           Pourquoi pas un petit texte qui explique un peu.
         </div>
         <SelectCollectiviteDialog />
-        <Spacer />
-
-        <MyCollectiviteCards bloc={ownedCollectiviteBloc} />
       </section>
     </div>
   );
