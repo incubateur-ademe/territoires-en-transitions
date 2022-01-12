@@ -13,13 +13,14 @@ create table client_scores
 comment on table client_scores is 'Client score data is generated from score on trigger';
 comment on column client_scores.score_created_at is 'Equal score.created_at.';
 
-alter table client_scores
-    enable row level security;
-
-create policy allow_read
-    on client_scores
-    for select
-    using (is_any_role_on(collectivite_id));
+-- todo make RLS work with realtime
+-- alter table client_scores
+--     enable row level security;
+--
+-- create policy allow_read
+--     on client_scores
+--     for select
+--     using (is_authenticated());
 
 
 --------------------------------
