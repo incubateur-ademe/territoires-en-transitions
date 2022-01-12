@@ -52,24 +52,28 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
 
   return (
     <div className="fr-container">
-      <div className="mt-8 mb-16">
+      <div className="mt-8 mb-4">
         <ActionFilAriane action={action} />
-        <div className="pt-8 flex flex-row justify-between">
-          <div className="flex flex-col w-4/5">
-            <ActionReferentielDisplayTitle action={action} />
-            <div
-              className="htmlContent"
-              dangerouslySetInnerHTML={{
-                __html: addTargetToContentAnchors(action.description ?? ''),
-              }}
-            />
-            <DescriptionContextAndRessourcesDialogButton action={action} />
-            <Spacer size={1} />
-            <ActionCommentaire action={action} />
-          </div>
-          <div className="w-1/6">
-            <ActionProgressBar action={action} scoreBloc={scoreBloc} />
-          </div>
+      </div>
+      <div className="sticky top-0 z-50 flex flex-row justify-between bg-white">
+        <div className="flex flex-col w-4/5">
+          <ActionReferentielDisplayTitle action={action} />
+        </div>
+        <div className="w-1/6">
+          <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+        </div>
+      </div>
+      <div className="mb-16">
+        <div className="flex flex-col w-4/5">
+          <div
+            className="htmlContent"
+            dangerouslySetInnerHTML={{
+              __html: addTargetToContentAnchors(action.description ?? ''),
+            }}
+          />
+          <DescriptionContextAndRessourcesDialogButton action={action} />
+          <Spacer size={1} />
+          <ActionCommentaire action={action} />
         </div>
       </div>
 
