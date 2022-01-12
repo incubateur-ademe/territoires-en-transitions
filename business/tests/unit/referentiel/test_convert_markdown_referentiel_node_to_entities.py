@@ -145,7 +145,7 @@ def test_import_referentiel_fails_when_identifiants_are_not_unique():
     assert len(conversion_failed_events) == 1
     assert (
         conversion_failed_events[0].reason
-        == "Tous les identifiants devraient être uniques. Doublons: "
+        == "Tous les identifiants devraient être uniques. Doublons: 1"
     )
 
 
@@ -165,7 +165,7 @@ def test_check_referentiel_quotations_fails_when_percentage_level_isnt_100():
     assert len(conversion_failed_events) == 1
     assert (
         conversion_failed_events[0].reason
-        == "Les valeurs des actions 1, 2 sont renseignées en pourcentage, mais leur somme fait 90.0 au lieu de 100."
+        == "Les valeurs des actions eci_1, eci_2 sont renseignées en pourcentage, mais leur somme fait 90.0 au lieu de 100."
     )
 
 
