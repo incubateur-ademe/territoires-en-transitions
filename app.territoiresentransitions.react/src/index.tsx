@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import {App} from 'app/App';
 import reportWebVitals from './reportWebVitals';
 
-// import '@gouvfr/dsfr/dist/dsfr/dsfr.css';
 import 'css/tailwind.css';
 import 'css/app.css';
 
