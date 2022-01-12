@@ -70,7 +70,7 @@ export const ActionReferentielDisplayTitle = ({
           fontSize: pill.height + 'px',
         }}
       >
-        <div className="pb-1">{action.identifiant}</div>
+        <div className="py-1">{action.identifiant}</div>
       </div>
       <div className="py-2">
         <span className="fr-text--lg">{action.nom} </span>
