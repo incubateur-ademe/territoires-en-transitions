@@ -21,7 +21,7 @@ alter table action_statut
 create policy allow_read
     on action_statut
     for select
-    using (is_any_role_on(collectivite_id));
+    using (is_authenticated());
 
 create policy allow_insert
     on action_statut
