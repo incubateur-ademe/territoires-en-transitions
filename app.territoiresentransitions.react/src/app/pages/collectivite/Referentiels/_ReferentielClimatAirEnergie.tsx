@@ -27,7 +27,7 @@ export const ReferentielClimatAirEnergie = ({
   return (
     <section>
       {caeAxesSorted.map(axis => (
-        <AxisSectionClimatAirEnergie axis={axis} key={axis.id} />
+        <ExpandableAction action={axis} key={axis.id} />
       ))}
     </section>
   );
