@@ -186,17 +186,16 @@ export const Navigation = () => {
     <div className="fr-header__tools">
       <div className="fr-header__tools-links">
         <ul className="fr-links-group">
-          {authBloc.connected ? (
-            <Link className="fr-link" to={myCollectivitesPath}>
-              Mes collectivités
-            </Link>
-          ) : (
-            <></>
+          {authBloc.connected && (
+            <>
+              <Link className="fr-link" to={myCollectivitesPath}>
+                Mes collectivités
+              </Link>
+              <Link className="fr-link" to={allCollectivitesPath}>
+                Les autres collectivités
+              </Link>
+            </>
           )}
-          <Link className="fr-link" to={allCollectivitesPath}>
-            Les autres collectivités
-          </Link>
-
           <ConnexionSwitchLink bloc={authBloc} />
         </ul>
       </div>
