@@ -1,5 +1,3 @@
-import 'app/DesignSystem/footer.css';
-import 'app/DesignSystem/logo.css';
 import React from 'react';
 import {Link} from 'react-router-dom';
 

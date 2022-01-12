@@ -1,6 +1,5 @@
 import {actions as referentielActions} from 'generated/data/referentiels';
 import {Link} from 'react-router-dom';
-import 'app/DesignSystem/buttons.css';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 import {searchActionById} from 'utils/actions';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';

@@ -1,7 +1,3 @@
-import 'app/DesignSystem/buttons.css';
-import 'app/DesignSystem/core.css';
-import 'app/DesignSystem/variables.css';
-
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
 import {SimpleCollectiviteCard} from 'ui/collectivites/SimpleCollectiviteCard';
 import {SelectCollectiviteDialog} from './_AddDialog';

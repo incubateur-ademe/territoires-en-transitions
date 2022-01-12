@@ -3,7 +3,6 @@ import {
   allCollectivitesPath,
   makeCollectiviteDefaultPlanActionUrl,
   makeCollectiviteIndicateursUrl,
-  makeCollectivitePlanActionUrl,
   makeCollectiviteReferentielUrl,
   makeTableauBordUrl,
   myCollectivitesPath,
@@ -84,12 +83,12 @@ const CollectiviteNavigationDropdownTab = (props: {
           {props.listPathsAndLabels.map(labelAndPathSuffix => (
             <li className="fr-nav__item" key={labelAndPathSuffix.label}>
               <Link
-                className={`fr-nav__link whitespace-nowrap px-2 ${_activeTabStyle(
+                className={`fr-nav__link whitespace-nowrap ${_activeTabStyle(
                   labelAndPathSuffix.path === activePath
                 )}`}
                 to={labelAndPathSuffix.path}
               >
-                {labelAndPathSuffix.label}
+                <span className="px-3">{labelAndPathSuffix.label}</span>
               </Link>
             </li>
           ))}

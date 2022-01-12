@@ -1,8 +1,3 @@
-// import '@gouvfr/dsfr/dist/css/header.css';
-// import '@gouvfr/dsfr/dist/css/logo.css';
-// import '@gouvfr/dsfr/dist/css/links.css';
-// import '@gouvfr/dsfr/dist/css/navigation.css';
-
 import {CollectiviteNavigation, Navigation} from 'app/Navigation';
 import {
   authBloc,
@@ -25,11 +20,6 @@ const HeaderObserver = observer(
     <>
       <CollectiviteRedirector />
       <header role="banner" className="header fr-header ">
-        {/* {authBloc.userId}, {authBloc.connected ? 'connected' : 'not connected'},{' '}
-        with role{' '}
-        {currentCollectiviteBloc.readonly
-          ? 'readonly'
-          : currentCollectiviteBloc.currentCollectivite?.role_name} */}
         <div className="fr-header__body">
           <div className="fr-container">
             <div className="fr-header__body-row header__row">
@@ -81,7 +71,7 @@ const CollectiviteReadOnlyBanner = observer(
     if (bloc.readonly)
       return (
         <div className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70">
-          <div className="text-sm mr-4">lecture seule</div>
+          <div className="text-sm mr-4">Lecture seule</div>
           <JoinCurrentCollectiviteDialog />
         </div>
       );
