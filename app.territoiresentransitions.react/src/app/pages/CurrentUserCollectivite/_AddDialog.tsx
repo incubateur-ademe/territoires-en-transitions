@@ -161,7 +161,7 @@ export const SelectCollectiviteDialog = () => {
       <div className="py-7 min-h-[400px]">
         <div className="flex flex-row justify-center">
           <AutocompleteInput
-            label="Sélectionner votre collectivité"
+            label="Nom de la collectivité"
             options={allCollectiviteReads.map(
               (collectiviteRead: AllCollectiviteRead) => {
                 return {
@@ -191,6 +191,17 @@ export const SelectCollectiviteDialog = () => {
         </div>
         <Spacer />
         <_ConditionalSelectDialogContent collectivite={selectedCollectivite} />
+        {!selectedCollectivite && (
+          <p className="fr-text--sm">
+            Vous ne trouvez pas la collectivité que vous recherchez ? <br />
+            Merci d'envoyer un mail à{' '}
+            <a href="mailto:contact@territoiresentransitions">
+              contact@territoiresentransitions
+            </a>{' '}
+            avec le nom et numéro SIREN de cette collectivité pour que nous
+            puissions vous aider.
+          </p>
+        )}
       </div>
     </UiDialogButton>
   );
