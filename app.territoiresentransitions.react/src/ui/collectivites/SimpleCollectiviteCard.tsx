@@ -32,7 +32,7 @@ export const SimpleCollectiviteCard = ({
       <h3 className="fr-h3 p-2 text-center ">{collectivite.nom}</h3>
       <div>
         <SimpleCollectiviteCardLink
-          label="Plan d'actions"
+          label="Plan d'action"
           linkTo={makeCollectiviteDefaultPlanActionUrl({
             collectiviteId: collectivite.collectivite_id,
           })}

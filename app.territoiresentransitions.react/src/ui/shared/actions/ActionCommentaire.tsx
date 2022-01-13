@@ -19,7 +19,7 @@ export const ActionCommentaire = ({action}: {action: ActionReferentiel}) => {
         observable={observable}
         label={
           action.type === 'action'
-            ? "Description génerale de l'état d'avancement"
+            ? "Description générale de l'état d'avancement"
             : "Précisions sur l'état d'avancement"
         }
         hint={

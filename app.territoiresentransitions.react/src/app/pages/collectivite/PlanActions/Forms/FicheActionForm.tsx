@@ -242,7 +242,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
 
             <Field
               name="planCategories"
-              label="Plans d'actions"
+              label="plans d'action"
               ficheUid={props.fiche.uid}
               component={PlanCategoriesSelectionField}
             />

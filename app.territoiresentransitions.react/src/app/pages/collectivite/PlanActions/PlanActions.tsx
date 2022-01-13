@@ -165,7 +165,7 @@ const PlanActions = () => {
     <main className="fr-container mt-9 mb-16">
       <div className="flex flex-row items-center w-full">
         <div className="flex flex-row items-center">
-          <h1 className="fr-h1 mb-3 whitespace-nowrap mr-4">Plans d'actions</h1>
+          <h1 className="fr-h1 mb-3 whitespace-nowrap mr-4">Plans d'action</h1>
         </div>
         {plan && <PlanButtons plan={plan} />}
       </div>
