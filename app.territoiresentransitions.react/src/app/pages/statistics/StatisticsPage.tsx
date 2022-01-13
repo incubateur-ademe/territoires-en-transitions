@@ -84,7 +84,7 @@ const StatisticsPage = () => {
           </div>
         </div>
 
-        <h3 className="fr-h3">Plan d'actions</h3>
+        <h3 className="fr-h3">Plan d'action</h3>
         <div className="flex justify-start">
           <DailyCountLineChart
             unit="month"

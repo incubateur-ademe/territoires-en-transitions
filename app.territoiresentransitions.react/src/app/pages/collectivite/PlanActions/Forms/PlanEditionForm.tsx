@@ -129,7 +129,7 @@ function EditableCategoryTitle(props: {
               className="fr-btn fr-btn--secondary fr-btn--xs whitespace-nowrap"
               onClick={() => setAdding(true)}
             >
-              Ajouter un sous axe
+              Ajouter un sous-axe
             </button>
           </div>
         )}
@@ -147,7 +147,7 @@ function EditableCategoryTitle(props: {
               props.add!(category);
             }
           }}
-          text="sous axe"
+          text="Sous-axe"
           onStateChange={setEditing}
           initialEditingState={true}
           level={props.level}

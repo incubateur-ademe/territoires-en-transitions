@@ -170,7 +170,7 @@ export const CollectiviteNavigation = () => {
           ]}
         />
         <CollectiviteNavigationDirectTab
-          label="Plans d'actions"
+          label="Plans d'action"
           path={makeCollectiviteDefaultPlanActionUrl({
             collectiviteId:
               currentCollectiviteBloc.currentCollectivite.collectivite_id,
