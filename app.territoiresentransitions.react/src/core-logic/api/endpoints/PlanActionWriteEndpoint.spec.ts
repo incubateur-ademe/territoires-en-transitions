@@ -14,7 +14,7 @@ describe('Plan action write endpoint', () => {
     const plan: PlanActionWrite = {
       collectivite_id: 1,
       uid: 'f000cf22-e00f-4457-a312-d91a796df993',
-      nom: "Plan d'actions de la collectivité",
+      nom: "plan d'action de la collectivité",
       categories: [
         {
           nom: '1. Yolo',
@@ -44,7 +44,7 @@ describe('Plan action write endpoint', () => {
     const plan: PlanActionWrite = {
       collectivite_id: 8, // Yili has no right in collectivite #8
       uid: 'f111cf22-e00f-4457-a312-d91a796df993',
-      nom: "Plan d'actions de la collectivité",
+      nom: "plan d'action de la collectivité",
       categories: [],
       fiches_by_category: [],
     };

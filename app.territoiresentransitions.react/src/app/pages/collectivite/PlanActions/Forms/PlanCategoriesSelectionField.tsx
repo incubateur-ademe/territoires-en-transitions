@@ -236,7 +236,7 @@ export const PlanCategoriesSelectionField: FC<
               key={plan.uid}
             >
               <div className="border-gray-500 border-b-2 py-2 w-full">
-                {!categorie && <span>Selectionner un axe</span>}
+                {!categorie && <span>Sélectionner un axe</span>}
                 {categorie && <span>{categorie.nom}</span>}
               </div>
             </PlanDropdown>

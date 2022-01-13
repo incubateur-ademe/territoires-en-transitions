@@ -16,7 +16,7 @@ export const PlanCreationForm = (props: {onSave: () => void}) => {
   return (
     <div>
       <LabeledTextInput
-        label="Nom du plan d'actions"
+        label="Nom du plan d'action"
         maxLength={100}
         value={nom}
         onChange={event => {

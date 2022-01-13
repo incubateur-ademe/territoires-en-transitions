@@ -46,7 +46,9 @@ export const FooterDescription = () => (
     </p>
     <p className="fr-footer__content-desc">
       Vous rencontrez une difficulté ? Une suggestion pour nous aider à
-      améliorer l'outil ? Écrivez-nous à :
+      améliorer l'outil ?
+      <br />
+      Écrivez-nous à&#8201;:{' '}
       <a href="mailto:aide@territoiresentransitions.fr?subject=Aide sur app.territoiresentransitions.fr">
         aide@territoiresentransitions.fr
       </a>
