@@ -52,9 +52,8 @@ const Indicateurs = () => {
       <div className="flex justify-end">
         <div className="mr-2 font-light">
           <div className="flex justify-end mt-24">
-            <div className="flex">
-              {'Afficher uniquement les indicateurs renseignés ' +
-                showOnlyIndicateurWithData}
+            <div className="flex items-center">
+              Afficher uniquement les indicateurs renseignés
               <Switch
                 color="primary"
                 checked={showOnlyIndicateurWithData}
