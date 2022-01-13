@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import LabeledTextField from 'ui/forms/LabeledTextField';
@@ -92,7 +92,7 @@ const RegistrationForm = () => {
           validationSchema={validation}
           onSubmit={register}
         >
-          {() => (
+          {({errors, touched}) => (
             <Form>
               <Field name="email" label="Email" component={LabeledTextField} />
               <Spacer size={2} />
@@ -112,6 +112,13 @@ const RegistrationForm = () => {
               <Field name="nom" label="Nom" component={LabeledTextField} />
               <Spacer size={2} />
               <label className="cgu">
+                {errors.vie_privee_conditions &&
+                  touched.vie_privee_conditions && (
+                    <div className="mb-2 text-sm opacity-80 text-red-500">
+                      L'acceptation de la politique de protection des données à
+                      caractère personnel est nécessaire pour créer un compte.
+                    </div>
+                  )}
                 <Field type="checkbox" name="vie_privee_conditions" />
                 <span className="ml-2">
                   J'accepte la{' '}
