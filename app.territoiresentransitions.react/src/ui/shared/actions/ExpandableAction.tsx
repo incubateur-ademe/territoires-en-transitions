@@ -38,9 +38,12 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
         }
         onChange={setOpened}
       >
-        {action.actions.map(action => (
-          <ActionReferentielLinkCard key={action.id} action={action} />
-        ))}
+        {action.actions.map(action => {
+          if (action.type === 'domaine' || action.type === 'sous-domaine') {
+            return <ExpandableAction key={action.id} action={action} />;
+          }
+          return <ActionReferentielLinkCard key={action.id} action={action} />;
+        })}
       </LazyDetails>
     </div>
   );
