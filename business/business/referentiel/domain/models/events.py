@@ -4,7 +4,7 @@ from typing import List
 
 from .action_definition import ActionDefinition
 from .action_children import ActionChildren
-from .action_points import ActionPoints
+from .action_computed_point import ActionComputedPoint
 from business.core.domain.models.referentiel import ActionReferentiel
 from business.core.domain.models.event import DomainEvent, DomainFailureEvent
 from .markdown_action_node import MarkdownActionNode
@@ -29,7 +29,7 @@ class ParseMarkdownReferentielFolderFailed(DomainFailureEvent):  # FAILURE
 @dataclass
 class MarkdownReferentielNodeConvertedToEntities(DomainEvent):
     definitions: List[ActionDefinition]
-    points: List[ActionPoints]
+    points: List[ActionComputedPoint]
     children: List[ActionChildren]
     referentiel: ActionReferentiel
 

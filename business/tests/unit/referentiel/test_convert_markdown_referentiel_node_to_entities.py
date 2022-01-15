@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 from business.referentiel.domain.models import events
 from business.referentiel.domain.models.action_children import ActionChildren
-from business.referentiel.domain.models.action_points import ActionPoints
+from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.referentiel.domain.models.markdown_action_node import MarkdownActionNode
 from business.core.domain.ports.domain_message_bus import (
     InMemoryDomainMessageBus,
@@ -68,16 +68,35 @@ def test_import_referentiel_succeeds_when_all_is_good():
     assert len(node_converted_events) == 1
     assert len(conversion_failed_events) == 0
 
-    assert node_converted_events[0].points == [
-        ActionPoints(action_id=ActionId("eci"), value=100.0, referentiel="eci"),
-        ActionPoints(action_id=ActionId("eci_1"), value=30.0, referentiel="eci"),
-        ActionPoints(action_id=ActionId("eci_2"), value=70.0, referentiel="eci"),
-        ActionPoints(action_id=ActionId("eci_1.1"), value=10.0, referentiel="eci"),
-        ActionPoints(action_id=ActionId("eci_1.2"), value=10.0, referentiel="eci"),
-        ActionPoints(action_id=ActionId("eci_1.3"), value=10.0, referentiel="eci"),
-        ActionPoints(action_id=ActionId("eci_2.1"), value=35.0, referentiel="eci"),
-        ActionPoints(action_id=ActionId("eci_2.2"), value=35.0, referentiel="eci"),
-    ]
+    assert sorted(node_converted_events[0].points, key=lambda a: a.action_id) == sorted(
+        [
+            ActionComputedPoint(
+                action_id=ActionId("eci"), value=100.0, referentiel="eci"
+            ),
+            ActionComputedPoint(
+                action_id=ActionId("eci_1"), value=30.0, referentiel="eci"
+            ),
+            ActionComputedPoint(
+                action_id=ActionId("eci_2"), value=70.0, referentiel="eci"
+            ),
+            ActionComputedPoint(
+                action_id=ActionId("eci_1.1"), value=10.0, referentiel="eci"
+            ),
+            ActionComputedPoint(
+                action_id=ActionId("eci_1.2"), value=10.0, referentiel="eci"
+            ),
+            ActionComputedPoint(
+                action_id=ActionId("eci_1.3"), value=10.0, referentiel="eci"
+            ),
+            ActionComputedPoint(
+                action_id=ActionId("eci_2.1"), value=35.0, referentiel="eci"
+            ),
+            ActionComputedPoint(
+                action_id=ActionId("eci_2.2"), value=35.0, referentiel="eci"
+            ),
+        ],
+        key=lambda a: a.action_id,
+    )
     assert node_converted_events[0].children == [
         ActionChildren(
             action_id=ActionId("eci"),
@@ -123,9 +142,11 @@ def test_import_referentiel_succeeds_when_action_has_0_point():
     assert len(conversion_failed_events) == 0
 
     assert node_converted_events[0].points == [
-        ActionPoints(action_id=ActionId("eci"), value=100.0, referentiel="eci"),
-        ActionPoints(action_id=ActionId("eci_1"), value=100.0, referentiel="eci"),
-        ActionPoints(action_id=ActionId("eci_0"), value=0.0, referentiel="eci"),
+        ActionComputedPoint(action_id=ActionId("eci"), value=100.0, referentiel="eci"),
+        ActionComputedPoint(
+            action_id=ActionId("eci_1"), value=100.0, referentiel="eci"
+        ),
+        ActionComputedPoint(action_id=ActionId("eci_0"), value=0.0, referentiel="eci"),
     ]
 
 
@@ -160,7 +181,6 @@ def test_check_referentiel_quotations_fails_when_percentage_level_isnt_100():
     (node_converted_events, conversion_failed_events) = prepare_use_case(
         markdown_root_action_node
     )
-
     assert len(node_converted_events) == 0
     assert len(conversion_failed_events) == 1
     assert (

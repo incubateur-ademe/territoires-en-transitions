@@ -12,7 +12,7 @@ from business.referentiel.domain.ports.referentiel_repo import (
 from business.referentiel.domain.models.indicateur import Indicateur
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_definition import ActionDefinition
-from business.referentiel.domain.models.action_points import ActionPoints
+from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.utils.dataclass_from_dict import dataclass_from_dict
 
 
@@ -30,7 +30,7 @@ class JsonReferentielRepository(InMemoryReferentielRepository):
         self,
         definitions: List[ActionDefinition],
         children: List[ActionChildren],
-        points: List[ActionPoints],
+        points: List[ActionComputedPoint],
     ):
         super().add_referentiel_actions(definitions, children, points)
         self.to_json()
@@ -101,7 +101,7 @@ class JsonReferentielRepository(InMemoryReferentielRepository):
             ]
             points_entities = [
                 dataclass_from_dict(
-                    ActionPoints, serialized_points, use_marshmallow=True
+                    ActionComputedPoint, serialized_points, use_marshmallow=True
                 )
                 for serialized_points in action_entities["points"]
             ]

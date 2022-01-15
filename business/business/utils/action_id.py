@@ -2,7 +2,7 @@ from typing import NewType
 
 from business.core.domain.models.referentiel import ActionReferentiel
 
-# TODO : move this file to domain.
+# TODO : move this file to domain Referentiel
 
 ActionId = NewType("ActionId", str)
 

@@ -1,6 +1,4 @@
-from pathlib import Path
 from typing import Optional
-
 
 from business.referentiel.domain.models.indicateur import Indicateur, IndicateurId
 from business.core.domain.ports.domain_message_bus import (
@@ -30,7 +28,6 @@ def prepare_use_case(
     )
     bus = InMemoryDomainMessageBus()
     referentiel_repo = referentiel_repo or InMemoryReferentielRepository()
-    # indicateur_repo = InMemoryIndicateurRepository()
 
     use_case = ParseAndConvertMarkdownIndicateursToEntities(
         bus, referentiel_repo  # indicateur_repo
@@ -98,7 +95,7 @@ def test_fails_when_valeur_refers_to_unknown_indicateur_id():
         "./tests/data/md_indicateurs_wrong_valeur"
     )
 
-    # Referentiel repo is empty, hence, action1.1.1 and 1.1.3 refered
+    # Referentiel repo is empty, hence, action 1.1.1 and 1.1.3 refered
     # in indicateurs are unknwown
     assert len(failure_events) == 1
     assert len(parsed_events) == 0

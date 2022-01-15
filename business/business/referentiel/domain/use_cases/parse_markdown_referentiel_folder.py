@@ -2,25 +2,28 @@ import os
 from glob import glob
 from typing import Callable, List, Optional
 
+from pydantic import ValidationError
+from tqdm import tqdm
+
 from business.referentiel.domain.models import events
 from business.referentiel.domain.models.markdown_action_node import MarkdownActionNode
 from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
 from business.utils.markdown_import.markdown_parser import build_markdown_parser
 from business.utils.markdown_import.markdown_utils import load_md
 from business.utils.use_case import UseCase
-
-from pydantic import ValidationError
+from business.utils.timeit import timeit
 
 
 class ParseMarkdownReferentielFolder(UseCase):
     def __init__(self, bus: AbstractDomainMessageBus) -> None:
         self.bus = bus
 
+    @timeit("ParseMarkdownReferentielFolder.execute")
     def execute(self, trigger: events.MarkdownReferentielFolderUpdated):
         md_files = glob(os.path.join(trigger.folder_path, "*.md"))
         print(f"Parsing {len(md_files)} files to build referentiel node.")
         action_nodes = []
-        for md_file in md_files:
+        for md_file in tqdm(md_files):
             actions_as_dict = self._build_actions_as_dict_from_md(md_file)
 
             for action_as_dict in actions_as_dict:

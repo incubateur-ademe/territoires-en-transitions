@@ -8,7 +8,7 @@ from business.referentiel.domain.ports.referentiel_repo import (
 )
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_definition import ActionDefinition
-from business.referentiel.domain.models.action_points import ActionPoints
+from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.referentiel.domain.models.indicateur import Indicateur, IndicateurId
 from business.utils.action_id import ActionId
 
@@ -52,7 +52,7 @@ class SupabaseReferentielRepository(AbstractReferentielRepository):
 
     def get_all_points_from_referentiel(
         self, referentiel: ActionReferentiel
-    ) -> List[ActionPoints]:
+    ) -> List[ActionComputedPoint]:
         result = (
             self.supabase_client.table("action_computed_points")
             .select("*")  # type: ignore
@@ -66,7 +66,7 @@ class SupabaseReferentielRepository(AbstractReferentielRepository):
         rows = result["data"]
 
         return [
-            ActionPoints(
+            ActionComputedPoint(
                 referentiel=referentiel,
                 action_id=row["action_id"],
                 value=row["value"],
@@ -127,7 +127,7 @@ class SupabaseReferentielRepository(AbstractReferentielRepository):
         self,
         definitions: List[ActionDefinition],
         children: List[ActionChildren],
-        points: List[ActionPoints],
+        points: List[ActionComputedPoint],
     ):
         raise NotImplementedError
 

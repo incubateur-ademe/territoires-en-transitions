@@ -97,16 +97,6 @@ def prepare_use_case(
     return score_computed_events, failure_events
 
 
-def test_notation_fails_when_referentiel_is_empty():
-    trigger = events.ActionStatutUpdatedForCollectivite(
-        collectivite_id=1, referentiel="cae"
-    )
-    statuses = []
-    converted_events, failure_events = prepare_use_case(statuses, trigger)
-    assert len(converted_events) == 0
-    assert len(failure_events) == 1
-
-
 def test_notation_when_one_tache_is_fait():
     statuses: List[ActionStatut] = [
         ActionStatut(
@@ -586,7 +576,7 @@ deeper_referentiel.add_referentiel_actions(
 )
 
 
-def test_notation_should_redistribute_non_concernee_points_if_level_is_greater_than_action_level():
+def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_than_action_depth():
 
     statuses: List[ActionStatut] = [
         ActionStatut(
@@ -635,19 +625,19 @@ def test_notation_should_redistribute_non_concernee_points_if_level_is_greater_t
         referentiel="eci",
     )
     # point_fait of 2.2 is redistributed on 2.1
-    # assert scores_by_id[ActionId("eci_2.1")] == ActionScore(
-    #     action_id=ActionId("eci_2.1"),
-    #     point_fait=0,
-    #     point_programme=0,
-    #     point_pas_fait=0,
-    #     point_non_renseigne=70,
-    #     point_potentiel=70,
-    #     point_referentiel=65,
-    #     completed_taches_count=0,
-    #     total_taches_count=3,
-    #     concerne=True,
-    #     referentiel="eci",
-    # )
+    assert scores_by_id[ActionId("eci_2.1")] == ActionScore(
+        action_id=ActionId("eci_2.1"),
+        point_fait=0,
+        point_programme=0,
+        point_pas_fait=0,
+        point_non_renseigne=70,
+        point_potentiel=70,
+        point_referentiel=65,
+        completed_taches_count=0,
+        total_taches_count=3,
+        concerne=True,
+        referentiel="eci",
+    )
 
     assert scores_by_id[ActionId("eci_2.1.0")] == ActionScore(
         action_id=ActionId("eci_2.1.0"),

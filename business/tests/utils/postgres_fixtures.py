@@ -1,5 +1,5 @@
-import os
 from dotenv import load_dotenv
+import os
 import psycopg
 from psycopg.rows import dict_row
 import pytest

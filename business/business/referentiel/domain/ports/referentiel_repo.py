@@ -4,7 +4,7 @@ from typing import Dict, List
 
 from ..models.action_children import ActionChildren
 from ..models.action_definition import ActionDefinition
-from ..models.action_points import ActionPoints
+from ..models.action_computed_point import ActionComputedPoint
 from ..models.indicateur import Indicateur, IndicateurId
 from business.core.domain.models.referentiel import ActionReferentiel
 from business.utils.action_id import ActionId
@@ -19,7 +19,7 @@ class AbstractReferentielRepository(abc.ABC):
         self,
         definitions: List[ActionDefinition],
         children: List[ActionChildren],
-        points: List[ActionPoints],
+        points: List[ActionComputedPoint],
     ):
         raise NotImplementedError
 
@@ -32,7 +32,7 @@ class AbstractReferentielRepository(abc.ABC):
     @abc.abstractmethod
     def get_all_points_from_referentiel(
         self, referentiel: ActionReferentiel
-    ) -> List[ActionPoints]:
+    ) -> List[ActionComputedPoint]:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -65,7 +65,7 @@ class AbstractReferentielRepository(abc.ABC):
 class ReferentielEntities:
     definitions: List[ActionDefinition]
     children: List[ActionChildren]
-    points: List[ActionPoints]
+    points: List[ActionComputedPoint]
 
 
 class InMemoryReferentielRepository(AbstractReferentielRepository):
@@ -73,7 +73,7 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         self,
         children_entities: List[ActionChildren] = None,
         definition_entities: List[ActionDefinition] = None,
-        points_entities: List[ActionPoints] = None,
+        points_entities: List[ActionComputedPoint] = None,
     ) -> None:
         self._actions_by_ref: Dict[ActionReferentiel, ReferentielEntities] = {}
         self._indicateurs: List[Indicateur] = []
@@ -86,7 +86,7 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         self,
         definitions: List[ActionDefinition],
         children: List[ActionChildren],
-        points: List[ActionPoints],
+        points: List[ActionComputedPoint],
     ):
         if not definitions:  # No entity to add
             return
@@ -106,7 +106,7 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
 
     def get_all_points_from_referentiel(
         self, referentiel: ActionReferentiel
-    ) -> List[ActionPoints]:
+    ) -> List[ActionComputedPoint]:
         if referentiel not in self._actions_by_ref:
             return []
         return self._actions_by_ref[referentiel].points

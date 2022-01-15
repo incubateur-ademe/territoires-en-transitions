@@ -5,7 +5,7 @@ from business.core.domain.models.referentiel import ActionReferentiel
 
 
 @dataclass
-class ActionPoints:
+class ActionComputedPoint:
     referentiel: ActionReferentiel
     action_id: ActionId
     value: float
