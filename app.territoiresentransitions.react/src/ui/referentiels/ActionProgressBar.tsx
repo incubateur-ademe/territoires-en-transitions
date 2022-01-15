@@ -108,55 +108,61 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
 };
 const _formatAvancementScore = (
   avancementPoint: number,
-  potentielPoint: number,
-  preffixIfSome: string,
-  suffixIfSome: string
+  maxPoint: number
 ): string => {
-  const avancementPercentage = potentielPoint
-    ? toFixed((avancementPoint / potentielPoint) * 100)
-    : 0;
-  return avancementPercentage
-    ? `${preffixIfSome}${avancementPercentage}%${suffixIfSome}`
-    : '';
+  return `${maxPoint ? toFixed((avancementPoint / maxPoint) * 100) : 0}%`;
 };
 
+const _ProgressBarTooltipAvancementContent = ({
+  prefix,
+  avancementPoint,
+  maxPoint,
+}: {
+  prefix: string;
+  avancementPoint: number;
+  maxPoint: number;
+}) =>
+  avancementPoint ? (
+    <div>
+      {prefix} : {_formatAvancementScore(avancementPoint, maxPoint)}{' '}
+    </div>
+  ) : null;
+
 const _ProgressBarTooltipContent = ({score}: {score: ActionScore}) => {
+  const max_point = Math.max(score.point_referentiel, score.point_potentiel);
+
   const point_non_concerne = Math.max(
     score.point_referentiel - score.point_potentiel,
     0
   );
   return (
     <div className="text-base">
-      {_formatAvancementScore(
-        score.point_fait,
-        score.point_potentiel,
-        'fait: ',
-        ' / '
-      )}
-      {_formatAvancementScore(
-        score.point_programme,
-        score.point_potentiel,
-        'programmé: ',
-        ' / '
-      )}
-      {_formatAvancementScore(
-        score.point_pas_fait,
-        score.point_potentiel,
-        'pas-fait: ',
-        ' / '
-      )}
-      {_formatAvancementScore(
-        point_non_concerne,
-        score.point_potentiel,
-        'non concerné: ',
-        ' / '
-      )}
-      {_formatAvancementScore(
-        score.point_non_renseigne,
-        score.point_potentiel,
-        'non renseigné: ',
-        '.'
-      )}
+      <_ProgressBarTooltipAvancementContent
+        prefix={'Fait'}
+        avancementPoint={score.point_fait}
+        maxPoint={max_point}
+      />
+      <_ProgressBarTooltipAvancementContent
+        prefix={'Programmé'}
+        avancementPoint={score.point_programme}
+        maxPoint={max_point}
+      />
+      <_ProgressBarTooltipAvancementContent
+        prefix={'Pas fait'}
+        avancementPoint={score.point_pas_fait}
+        maxPoint={max_point}
+      />
+
+      <_ProgressBarTooltipAvancementContent
+        prefix={'Non concerné'}
+        avancementPoint={point_non_concerne}
+        maxPoint={max_point}
+      />
+      <_ProgressBarTooltipAvancementContent
+        prefix={'Non renseigné'}
+        avancementPoint={score.point_non_renseigne}
+        maxPoint={max_point}
+      />
     </div>
   );
 };
