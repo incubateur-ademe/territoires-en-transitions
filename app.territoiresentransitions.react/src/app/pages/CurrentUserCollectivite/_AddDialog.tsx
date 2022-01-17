@@ -10,7 +10,7 @@ import {
   referentContact,
 } from 'core-logic/api/procedures/collectiviteProcedures';
 import {Link} from 'react-router-dom';
-import {makeTableauBordUrl} from 'app/paths';
+import {makeCollectiviteTableauBordUrl} from 'app/paths';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {AutocompleteInput} from 'ui/AutocompleteInput';
@@ -69,7 +69,7 @@ const _ClaimCollectiviteDialogContent = ({
         <div>Vous avez activé la collectivité {collectivite.nom}</div>
         <Link
           className="fr-btn"
-          to={makeTableauBordUrl({
+          to={makeCollectiviteTableauBordUrl({
             collectiviteId: collectivite.collectivite_id,
           })}
         >

@@ -97,7 +97,7 @@ export const makeCollectiviteFicheUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${ficheParam}`, ficheUid);
 
-export const makeTableauBordUrl = ({
+export const makeCollectiviteTableauBordUrl = ({
   collectiviteId,
 }: {
   collectiviteId: number;
