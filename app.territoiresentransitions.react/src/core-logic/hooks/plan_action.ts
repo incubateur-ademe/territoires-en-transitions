@@ -23,7 +23,10 @@ export const usePlanActionList = (collectiviteId: number) => {
   return plans;
 };
 
-export const usePlanAction = (collectiviteId: number, uid: string) => {
+export const usePlanAction = (
+  collectiviteId: number,
+  uid: string | undefined
+) => {
   const [plan, setPlan] = useState<PlanActionRead | null>(null);
 
   useEffect(() => {
