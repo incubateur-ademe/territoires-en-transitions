@@ -10,8 +10,9 @@ const collectiviteParam = 'collectiviteId';
 export const indicateurViewParam = 'vue';
 export const referentielParam = 'referentielId';
 const actionParam = 'actionId';
-const planActionParam = 'planActionUid';
 const ficheParam = 'ficheUid';
+export const planActionParam = 'planActionUid';
+export const planActionDefaultId = 'plan_collectivite';
 
 export type ReferentielParamOption = 'cae' | 'eci';
 export type IndicateurViewParamOption = 'cae' | 'eci' | 'crte' | 'perso';
@@ -82,7 +83,7 @@ export const makeCollectiviteDefaultPlanActionUrl = ({
 }) =>
   makeCollectivitePlanActionUrl({
     collectiviteId,
-    planActionUid: 'plan_collectivite',
+    planActionUid: planActionDefaultId,
   });
 
 export const makeCollectiviteFicheUrl = ({

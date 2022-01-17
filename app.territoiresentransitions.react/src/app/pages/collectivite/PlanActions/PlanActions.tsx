@@ -16,7 +16,7 @@ import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaul
 import {LazyDetailsWithChevron} from 'ui/shared/LazyDetails';
 import {usePlanAction} from 'core-logic/hooks/plan_action';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
-import {makeCollectiviteNouvelleFicheUrl} from 'app/paths';
+import {makeCollectiviteNouvelleFicheUrl, planActionDefaultId} from 'app/paths';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 
@@ -94,9 +94,7 @@ const PlanButtons = (props: {plan: PlanActionRead}) => {
   return (
     <div className="flex flex-row items-center justify-end w-full gap-4">
       <CreatePlanActionDialogButton />
-      <Spacer size={1} />
       <ModifierArboDialogButton plan={props.plan} />
-      <Spacer size={1} />
       <AddFicheActionLink plan={props.plan} />
     </div>
   );
@@ -149,13 +147,17 @@ const AddFicheActionLink = (props: {plan: PlanActionRead}) => {
     </Link>
   );
 };
+
 /**
  * Plans d'action page contents
  */
 const PlanActions = () => {
-  const {planUid} = useParams<{planUid: string}>();
+  const {planActionUid} = useParams<{planActionUid: string}>();
   const collectiviteId = useCollectiviteId()!;
-  const plan = usePlanAction(collectiviteId, planUid);
+  const plan = usePlanAction(
+    collectiviteId,
+    planActionUid === planActionDefaultId ? undefined : planActionUid
+  );
 
   if (plan === null) {
     return null;
@@ -170,7 +172,7 @@ const PlanActions = () => {
         {plan && <PlanButtons plan={plan} />}
       </div>
 
-      <PlanNav />
+      <PlanNav planActionUid={plan.uid} />
       <Spacer />
       {plan && <Plan plan={plan} />}
     </main>
