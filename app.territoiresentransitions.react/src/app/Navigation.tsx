@@ -4,7 +4,7 @@ import {
   makeCollectiviteDefaultPlanActionUrl,
   makeCollectiviteIndicateursUrl,
   makeCollectiviteReferentielUrl,
-  makeTableauBordUrl,
+  makeCollectiviteTableauBordUrl,
   myCollectivitesPath,
   signInPath,
   signUpPath,
@@ -104,7 +104,7 @@ export const CollectiviteNavigation = () => {
       <nav className="flex flex-row gap-5" aria-label="Menu principal">
         <CollectiviteNavigationDirectTab
           label="Tableau de bord"
-          path={makeTableauBordUrl({
+          path={makeCollectiviteTableauBordUrl({
             collectiviteId:
               currentCollectiviteBloc.currentCollectivite.collectivite_id,
           })}

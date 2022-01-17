@@ -9,10 +9,12 @@ import {
   collectiviteNouvelleFichePath,
   collectivitePlanActionPath,
   collectiviteReferentielPath,
+  collectiviteTableauBordPath,
 } from 'app/paths';
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {ActionReferentielAvancementPage} from 'app/pages/collectivite/Referentiels/ActionReferentielAvancementPage';
 import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
+import {TableauBordPage} from 'app/pages/collectivite/TableauBord/TableauBordPage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -25,6 +27,9 @@ export const CollectiviteRoutes = () => {
     <>
       <Route path={collectiviteReferentielPath}>
         <ReferentielsPage />
+      </Route>
+      <Route path={collectiviteTableauBordPath}>
+        <TableauBordPage />
       </Route>
       <Route path={collectiviteActionPath}>
         <ActionReferentielAvancementPage />
