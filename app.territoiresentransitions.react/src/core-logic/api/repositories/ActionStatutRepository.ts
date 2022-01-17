@@ -18,6 +18,22 @@ class ActionStatutRepository {
 
     return results.find(statut => statut.action_id === args.actionId) || null;
   }
+
+  async fetchRenseigneChildren(args: {
+    collectiviteId: number;
+    actionId: string;
+  }): Promise<ActionStatutRead[]> {
+    const results = await actionStatutReadEndpoint.getBy({
+      collectivite_id: args.collectiviteId,
+    });
+
+    const childrenIdPrefix = args.actionId + '.';
+    return results.filter(
+      statut =>
+        statut.action_id.startsWith(childrenIdPrefix) &&
+        statut.avancement !== 'non_renseigne'
+    );
+  }
 }
 
 export const actionStatutRepository = new ActionStatutRepository();
