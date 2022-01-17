@@ -20,7 +20,7 @@ class IndicateurDefinitionReadEndpoint extends DataLayerReadCachedEndpoint<
       return this._table.eq('id', getParams.indicateur_id);
     else if (getParams.indicateur_group !== undefined)
       return this._table.eq('indicateur_group', getParams.indicateur_group);
-    return this._table;
+    return this._table.order('identifiant', {ascending: true});
   }
 }
 

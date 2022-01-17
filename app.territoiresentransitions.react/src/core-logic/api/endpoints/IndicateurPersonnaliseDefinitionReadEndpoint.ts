@@ -22,7 +22,9 @@ class IndicateurPersonnaliseDefinitionReadEndpoint extends DataLayerReadCachedEn
       return this._table
         .eq('collectivite_id', getParams.collectivite_id)
         .eq('id', getParams.indicateur_id);
-    return this._table.eq('collectivite_id', getParams.collectivite_id);
+    return this._table
+      .eq('collectivite_id', getParams.collectivite_id)
+      .order('titre', {ascending: true});
   }
 }
 
