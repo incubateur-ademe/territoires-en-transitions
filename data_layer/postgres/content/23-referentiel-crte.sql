@@ -38,7 +38,7 @@ Réduire la production de déchets</p>
 </ul>
 <p><strong>Données de référence:</strong>
 Au niveau national, la production de DMA est de 581kg/hab en 2017. Hors gravats, la production de DMA est de 526kg/hab. (Source : Ademe, janvier 2021 : La collecte des déchets par le service public en France - Résultats 2017)</p>
-', 'kg/hab', false ,   null);
+', 'kg/hab', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_10.2', 'crte', '10..2', null, 'Collecte annuelle de déchets ménagers et assimilés hors gravats (kg/hab)', '<p><strong>Définition:</strong>
 Tonnage total de déchets ménagers et assimilés (DMA), hors gravats, collectés annuellement sur le territoire, rapportée au nombre d’habitants.</p>
 <p><strong>Modalités de calcul:</strong>
@@ -78,7 +78,7 @@ Réduire la production de déchets</p>
 </ul>
 <p><strong>Données de référence:</strong>
 Au niveau national, la production de DMA est de 581kg/hab en 2017. Hors gravats, la production de DMA est de 526kg/hab. (Source : Ademe, janvier 2021 : La collecte des déchets par le service public en France - Résultats 2017)</p>
-', 'kg/hab', false ,   null);
+', 'kg/hab', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_4.1', 'crte', '4..1', null, 'Surface Agricole Utile totale du territoire (ha)', '<p><strong>Définition:</strong>
 Surface Agricole Utile (SAU) totale du territoire</p>
 <p><strong>Modalités de calcul:</strong>
@@ -101,7 +101,7 @@ Développement de l’agriculture biologique</p>
 <ul>
 <li>15% de SAU affectée à l’agriculture biologique au 31/12/2022 ; 30% en 2030</li>
 </ul>
-', 'ha', false ,   null);
+', 'ha', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_4.2', 'crte', '4..2', null, 'Part de la surface agricole utile en agriculture biologique (%)', '<p><strong>Définition:</strong>
 Part des surfaces d’exploitations agricoles certifiée agriculture biologique (AB) ou en conversion dans le total des SAU du territoire</p>
 <p><strong>Modalités de calcul:</strong>
@@ -124,7 +124,7 @@ Développement de l’agriculture biologique</p>
 <ul>
 <li>15% de SAU affectée à l’agriculture biologique au 31/12/2022 ; 30% en 2030</li>
 </ul>
-', '%', false ,   null);
+', '%', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_5.1', 'crte', '5..1', null, 'Part modale des modes actifs et transports en commun dans les déplacements domicile-travail', '<p><strong>Définition:</strong>
 Proportion des déplacements domicile-travail effectués selon un mode de déplacement actif, i.e faisant appel à l’énergie musculaire telle que la marche à pied et le vélo, mais aussi la trottinette, les rollers, etc ; ou en transport en commun.</p>
 <p><strong>Modalités de calcul:</strong>
@@ -146,7 +146,7 @@ Décarboner la mobilité</p>
 <ul>
 <li>Réduire de 37,5% les émissions de CO2 liées à la mobilité en 2030 - interdiction de la vente de voitures utilisant des énergies fossiles carbonées d''ici 2040 - Tripler la part modale du vélo d’ici 2024 (de 3% à 9% des déplacements quotidiens)</li>
 </ul>
-', '%', false ,   null);
+', '%', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_11.1-SO2', 'crte', '11..1-SO2', null, 'Emissions annuelles de SO2 du territoire (tonnes)', '<p><strong>Définition:</strong>
 Suivi annuel de la qualité de l’air au regard des émissions de polluants que sont les SO2, NOX, COVNM, PM2,5, et NH3.</p>
 <p><strong>Modalités de calcul:</strong>
@@ -180,7 +180,7 @@ Réduire les émissions de polluants atmosphériques</p>
 <p>NH3 (2020 = -4% /2025 = -8% / 2030 = -13%)</p>
 </li>
 </ul>
-', 'tonnes', false ,   null);
+', 'tonnes', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_11.1-NOx', 'crte', '11..1-NOx', null, 'Emissions annuelles de NOx du territoire (tonnes)', '<p><strong>Définition:</strong>
 Suivi annuel de la qualité de l’air au regard des émissions de polluants que sont les SO2, NOX, COVNM, PM2,5, et NH3.</p>
 <p><strong>Modalités de calcul:</strong>
@@ -214,7 +214,7 @@ Réduire les émissions de polluants atmosphériques</p>
 <p>NH3 (2020 = -4% /2025 = -8% / 2030 = -13%)</p>
 </li>
 </ul>
-', 'tonnes', false ,   null);
+', 'tonnes', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_11.1-COVNM', 'crte', '11..1-COVNM', null, 'Emissions annuelles de COVNM du territoire (tonnes)', '<p><strong>Définition:</strong>
 Suivi annuel de la qualité de l’air au regard des émissions de polluants que sont les SO2, NOX, COVNM, PM2,5, et NH3.</p>
 <p><strong>Modalités de calcul:</strong>
@@ -248,7 +248,7 @@ Réduire les émissions de polluants atmosphériques</p>
 <p>NH3 (2020 = -4% /2025 = -8% / 2030 = -13%)</p>
 </li>
 </ul>
-', 'tonnes', false ,   null);
+', 'tonnes', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_11.1-PM', 'crte', '11..1-PM', null, 'Emissions annuelles de PM2,5 du territoire (tonnes)', '<p><strong>Définition:</strong>
 Suivi annuel de la qualité de l’air au regard des émissions de polluants que sont les SO2, NOX, COVNM, PM2,5, et NH3.</p>
 <p><strong>Modalités de calcul:</strong>
@@ -282,7 +282,7 @@ Réduire les émissions de polluants atmosphériques</p>
 <p>NH3 (2020 = -4% /2025 = -8% / 2030 = -13%)</p>
 </li>
 </ul>
-', 'tonnes', false ,   null);
+', 'tonnes', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_11.1-NH3', 'crte', '11..1-NH3', null, 'Emissions annuelles de NH3 du territoire (tonnes)', '<p><strong>Définition:</strong>
 Suivi annuel de la qualité de l’air au regard des émissions de polluants que sont les SO2, NOX, COVNM, PM2,5, et NH3.</p>
 <p><strong>Modalités de calcul:</strong>
@@ -316,7 +316,7 @@ Réduire les émissions de polluants atmosphériques</p>
 <p>NH3 (2020 = -4% /2025 = -8% / 2030 = -13%)</p>
 </li>
 </ul>
-', 'tonnes', false ,   null);
+', 'tonnes', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_1.1', 'crte', '1..1', null, 'Emissions de GES annuelles du territoire (TeqCO2 / an)', '<p><strong>Définition:</strong>
 Émissions de gaz à effet de serre totales sur le territoire</p>
 <p><strong>Modalités de calcul:</strong>
@@ -362,7 +362,7 @@ Préciser si possible les moyennes nationale et/ou locale, le cas échéant cont
 <ul>
 <li>6,9 teqCO2/hab au niveau national</li>
 </ul>
-', 'teq CO2', false ,   null);
+', 'teq CO2', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_1.2', 'crte', '1..2', null, 'Emissions de GES annuelles par habitant (TeqCO2 / an / hab)', '<p><strong>Définition:</strong>
 Émissions de gaz à effet de serre totales sur le territoire rapportées au nombre d’habitant</p>
 <p><strong>Modalités de calcul:</strong>
@@ -408,7 +408,7 @@ Préciser si possible les moyennes nationale et/ou locale, le cas échéant cont
 <ul>
 <li>6,9 teqCO2/hab au niveau national</li>
 </ul>
-', 'teq CO2/hab', false ,   null);
+', 'teq CO2/hab', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_8.1', 'crte', '8..1', null, 'Taux de fuite des réseaux d’eau du territoire (%)', '<p><strong>Définition:</strong>
 Il s’agit du ratio entre, d’une part le volume consommé autorisé augmenté des volumes vendus en gros à d’autres services publics d’eau potable et, d’autre part le volume produit augmenté des volumes achetés en gros à d’autres services publics d’eau potable.</p>
 <p><strong>Modalités de calcul:</strong>
@@ -434,7 +434,7 @@ Réduire les consommations d’eau</p>
 Voir dernier rapport SISPEA
 </a>
 <p>Le volume de pertes en eau par fuite sur le réseau (qui inclut la partie des branchements avant compteur) est de l''ordre de 20% du volume introduit dans le réseau de distribution (c’est-à-dire la somme des volumes produits et volumes importés).</p>
-', '%', false ,   null);
+', '%', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_9.1', 'crte', '9..1', null, 'Part des cours d’eau en bon état écologique (%)', '<p><strong>Définition:</strong>
 Proportion des cours d’eau de surface dont l’état écologique est bon ou très bon</p>
 <p><strong>Modalités de calcul:</strong>
@@ -451,7 +451,7 @@ Eau</p>
 Restaurer les milieux aquatiques</p>
 <p><strong>Objectif opérationnel national fixé par les documents de référence</strong>
 : Directive-cadre sur l’eau</p>
-', '%', false ,   null);
+', '%', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_6.1', 'crte', '6..1', null, 'Linéaire d’aménagements cyclables sécurisés', '<p><strong>Définition:</strong>
 Longueur des voies de pistes cyclables en site propre ou voies vertes sur le territoire.</p>
 <p><strong>Modalités de calcul:</strong>
@@ -478,7 +478,7 @@ Décarboner la mobilité</p>
 <ul>
 <li>Tripler la part modale du vélo d’ici 2024 (de 3% à 9% des déplacements quotidiens)</li>
 </ul>
-', 'km', false ,   null);
+', 'km', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_12.1', 'crte', '12..1', null, 'Indicateur de fragmentation des milieux naturels (km²)', '<p><strong>Définition:</strong>
 L’indicateur de fragmentation des espaces naturels mobilise la méthode de la taille effective de maille (méthode CUT ou CBC).</p>
 <p>Cette méthode qualifie la fragmentation du paysage et se base sur la probabilité que deux points choisis au hasard sur un territoire ne soient pas séparés par une barrière (route ou zone urbanisée par exemple), ce qui peut être interprété comme la possibilité que deux animaux de la même espèce puissent se rencontrer sur le territoire sans avoir à franchir un obstacle. La valeur de l’indicateur diminue avec un nombre croissant de barrières sur le territoire.</p>
@@ -500,7 +500,7 @@ Préservation de la biodiversité, Trame verte et bleue</p>
 Restaurer et renforcer la biodiversité végétale et animale via les continuités écologiques</p>
 <p><strong>Objectif opérationnel national fixé par les documents de référence</strong>
 : Action 39 du Plan biodiversité de 2018 : Viser la résorption de 20 des principaux points noirs (obstacles aux continuités écologiques) identifiés dans les schémas régionaux de cohérence écologique (SRADDET maintenant)</p>
-', 'km²', false ,   null);
+', 'km²', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_2.1', 'crte', '2..1', null, 'Consommation énergétique finale annuelle (GWh)', '<p><strong>Définition:</strong>
 Consommation énergétique finale du territoire, tous types (électricité, gaz naturel, biogaz, pétrole, charbon-bois, charbon-combustion minérale fossile) et tous secteurs (industrie, agriculture, résidentiel-tertiaire, énergie, déchets, transport) confondus, totale</p>
 <p><strong>Modalités de calcul:</strong>
@@ -527,7 +527,7 @@ Réduire la consommation finale d’énergie</p>
 </ul>
 <p><strong>Données de référence:</strong>
 Préciser si possible les moyennes nationale et/ou locale, le cas échéant contextualisées (territoire urbain/rural/autre) pour permettre au territoire de mieux se situer.</p>
-', 'GWh', false ,   null);
+', 'GWh', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_2.1.hab', 'crte', '2..1.hab', null, 'Consommation énergétique finale annuelle (MWh/hab)', '<p><strong>Définition:</strong>
 Consommation énergétique finale du territoire, tous types (électricité, gaz naturel, biogaz, pétrole, charbon-bois, charbon-combustion minérale fossile) et tous secteurs (industrie, agriculture, résidentiel-tertiaire, énergie, déchets, transport) confondus, totale et par habitant</p>
 <p><strong>Modalités de calcul:</strong>
@@ -553,7 +553,7 @@ Réduire la consommation finale d’énergie</p>
 <p>Baisse de 20 % de la consommation primaire d’énergies fossiles en 2023 et de 35 % en 2028 par rapport à 2012</p>
 </li>
 </ul>
-', 'MWh/hab', false ,   null);
+', 'MWh/hab', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_13.1', 'crte', '13..1', null, 'Artificialisation des espaces naturels, agricoles, forestiers (ha)', '<p><strong>Définition:</strong>
 Consommation annuelle d’espaces naturels, agricoles ou forestiers par des opérations d’aménagement pouvant entraîner une imperméabilisation partielle ou totale, afin de les affecter notamment à des fonctions urbaines ou de transport (habitat, activités, commerces, infrastructures, équipements publics…)</p>
 <p><strong>Modalités de calcul:</strong>
@@ -573,7 +573,7 @@ Réduire le rythme d’artificialisation des sols</p>
 <p><strong>Objectif opérationnel national fixé par les documents de référence</strong>
 : Plan national biodiversité : zéro artificialisation nette</p>
 <p>Loi de finances pour 2021 : diviser par deux le rythme d’artificialisation des sols d’ici 2030</p>
-', 'ha', false ,   null);
+', 'ha', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_3.1', 'crte', '3..1', null, 'Production annuelle d’ENR du territoire hors hydroélectrique (MWh / an)', '<p><strong>Définition:</strong>
 Production annuelle d’énergie renouvelable sur le territoire toutes sources confondues et selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial), c''est à dire incluant les filières de production d’électricité (éolien terrestre, solaire photovoltaïque, solaire thermodynamique, biomasse solide, biogaz, géothermie), de chaleur (biomasse solide, pompes à chaleur, géothermie, solaire thermique, biogaz), de biométhane et de biocarburants.</p>
 <p>La production d’électricité d’origine hydraulique est suivie à part pour éviter l’effet statistique écrasant des grandes installations hydroélectriques par rapport aux autres ENR.</p>
@@ -620,7 +620,7 @@ Augmenter la production d’énergie renouvelable</p>
 <p>Capacités de production d’électricité renouvelables installées: 73,5 GW en 2023, soit + 50 % par rapport à 2017 ; 101 à 113 GW en 2028, soit x2 par rapport à 2017</p>
 </li>
 </ul>
-', 'MWh', false ,   null);
+', 'MWh', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_3.2', 'crte', '3..2', null, 'Production annuelle d’énergie hydroélectrique du territoire (MWh / an)', '<p><strong>Définition:</strong>
 Production annuelle d’énergie renouvelable sur le territoire toutes sources confondues et selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial), c''est à dire incluant les filières de production d’électricité (éolien terrestre, solaire photovoltaïque, solaire thermodynamique, biomasse solide, biogaz, géothermie), de chaleur (biomasse solide, pompes à chaleur, géothermie, solaire thermique, biogaz), de biométhane et de biocarburants.</p>
 <p>La production d’électricité d’origine hydraulique est suivie à part pour éviter l’effet statistique écrasant des grandes installations hydroélectriques par rapport aux autres ENR.</p>
@@ -667,7 +667,7 @@ Augmenter la production d’énergie renouvelable</p>
 <p>Capacités de production d’électricité renouvelables installées: 73,5 GW en 2023, soit + 50 % par rapport à 2017 ; 101 à 113 GW en 2028, soit x2 par rapport à 2017</p>
 </li>
 </ul>
-', 'MWh', false ,   null);
+', 'MWh', False ,  null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('crte_7.1', 'crte', '7..1', null, 'Population située dans une zone à risque naturel élevé', '<p><strong>Définition:</strong>
 Part de la population dans une zone à risque naturel fort ou très fort.</p>
 <p><strong>Modalités de calcul:</strong>
@@ -695,4 +695,4 @@ Réduire la vulnérabilité vis-à-vis de ces risques naturels ou a minima veill
 : Baisse de la vulnérabilité, ou a minima pas d’accroissement de la vulnérabilité du territoire</p>
 <p><strong>Objectif opérationnel local fixé par les documents de référence (SRADDET, PCAET, etc.):</strong>
 Voir les PGRI et SLGRI</p>
-', '%', false ,   null);
+', '%', False ,  null);
