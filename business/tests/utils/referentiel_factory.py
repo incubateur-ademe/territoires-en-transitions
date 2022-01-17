@@ -5,7 +5,7 @@ from business.referentiel.domain.models.action_definition import (
     ActionDefinition,
     ActionId,
 )
-from business.referentiel.domain.models.action_points import ActionPoints
+from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.referentiel.domain.models.indicateur import (
     Indicateur,
     IndicateurGroup,
@@ -44,7 +44,7 @@ def make_action_definition(
 
 
 def make_action_points(action_id: str, points: float):
-    return ActionPoints(
+    return ActionComputedPoint(
         action_id=ActionId(action_id),
         value=points,
         referentiel=retrieve_referentiel(ActionId(action_id)),
@@ -121,7 +121,7 @@ def set_markdown_action_node_children_with_points(
 
 def make_dummy_referentiel(
     action_ids: List[str], referentiel: ActionReferentiel = "eci"
-) -> Tuple[List[ActionChildren], List[ActionDefinition], List[ActionPoints]]:
+) -> Tuple[List[ActionChildren], List[ActionDefinition], List[ActionComputedPoint]]:
     definitions = [
         make_action_definition(
             action_id=action_id, identifiant=action_id.split(f"{referentiel}")[-1][1:]

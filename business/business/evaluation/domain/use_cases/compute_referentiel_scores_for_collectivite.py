@@ -15,18 +15,31 @@ from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
 from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
+from business.referentiel.domain.models.action_children import ActionChildren
+from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.utils.action_id import ActionId
+from business.utils.action_tree import ActionTree, ActionTreeError
 from business.utils.use_case import UseCase
-from business.utils.action_points_tree import (
-    ActionPointTree,
-    ActionsPointsTreeError,
-)
+from business.utils.points_almost_equal import points_almost_equal
 
 logger = logging.getLogger()
 
 
-class ComputeReferentielscoresError(Exception):
-    pass
+class ActionPointTree(ActionTree):
+    def __init__(
+        self,
+        actions_points: List[ActionComputedPoint],
+        actions_children: List[ActionChildren],
+    ) -> None:
+        super().__init__(actions_children)
+
+        self._points_by_id = {
+            action_point.action_id: action_point.value
+            for action_point in actions_points
+        }
+
+    def get_action_point(self, action_id: ActionId) -> float:
+        return self._points_by_id[action_id]
 
 
 class ComputeReferentielScoresForCollectivite(UseCase):
@@ -46,18 +59,18 @@ class ComputeReferentielScoresForCollectivite(UseCase):
     def execute(self, command: events.ActionStatutUpdatedForCollectivite):
         point_tree = self.points_trees.get(command.referentiel)
         action_level = self.referentiel_action_level[command.referentiel]
-
         if point_tree is None:
             try:
                 point_tree = self._build_points_tree(command.referentiel)
                 self.points_trees[command.referentiel] = point_tree
-            except ActionsPointsTreeError:
+            except ActionTreeError:
                 self.bus.publish_event(
                     events.ReferentielScoresForCollectiviteComputationFailed(
                         f"Referentiel tree could not be computed for referentiel {command.referentiel}"
                     )
                 )  # TODO
                 return
+
         statuses = self.statuses_repo.get_all_for_collectivite(
             command.collectivite_id, command.referentiel
         )
@@ -83,7 +96,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         # 2. Estimate tache points based on statuses
         point_tree.map_on_taches(
             lambda tache: self.update_scores_from_tache_given_statuses(
-                point_tree,
+                point_tree,  # type: ignore
                 scores,
                 potentiels,
                 tache,
@@ -95,7 +108,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         # 3. Infer all action points based on their children's
         point_tree.map_from_sous_actions_to_root(
             lambda action_id: self.update_scores_for_action_given_children_scores(
-                point_tree, scores, potentiels, action_id, command.referentiel
+                point_tree, scores, potentiels, action_id, command.referentiel  # type: ignore
             )
         )
         self.bus.publish_event(
@@ -191,7 +204,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         action_id: ActionId,
         referentiel: ActionReferentiel,
     ):
-        action_children = point_tree.get_action_children(action_id)
+        action_children = point_tree.get_children(action_id)
         action_point_referentiel = point_tree.get_action_point(action_id)
 
         action_children_with_scores = [
@@ -271,7 +284,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
     ):
         if action_id in actions_non_concernes_ids:
             return
-        children = point_tree.get_action_children(action_id)
+        children = point_tree.get_children(action_id)
         if children and all([child in actions_non_concernes_ids for child in children]):
             actions_non_concernes_ids.append(action_id)
 
@@ -283,7 +296,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         point_tree: ActionPointTree,
     ):
         # If some siblings are non concernes, redistribute their points
-        action_siblings = point_tree.get_action_siblings(action_id)
+        action_siblings = point_tree.get_siblings(action_id)
         action_sibling_is_non_concerne = [
             action_id in actions_non_concernes_ids for action_id in action_siblings
         ]
@@ -345,8 +358,8 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         def _add_action_potentiel_after_redistribution(
             action_id: ActionId,
         ):
-            this_level = point_tree.get_action_level(action_id)
-            children = point_tree.get_action_children(action_id)
+            this_level = point_tree.infer_depth(action_id)
+            children = point_tree.get_children(action_id)
 
             if not children:  # tache
                 original_action_potentiel = (
@@ -358,7 +371,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 original_action_potentiel = sum(
                     [
                         potentiels[child_id]
-                        for child_id in point_tree.get_action_children(action_id)
+                        for child_id in point_tree.get_children(action_id)
                     ]
                 )
 
@@ -383,36 +396,32 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             action_potentiel = potentiels[action_id]
             action_referentiel_points = point_tree.get_action_point(action_id)
             if action_potentiel != action_referentiel_points:
-                children = point_tree.get_action_children(action_id)
+                children = point_tree.get_children(action_id)
                 if not children:
                     return
                 children_potentiel_sum_before_resize = sum(
                     [potentiels[child_id] for child_id in children]
                 )
-                if not math.isclose(
-                    action_potentiel,
-                    children_potentiel_sum_before_resize,
-                    rel_tol=0.01,
-                ):
+                # if not math.isclose(
+                #     action_potentiel, children_potentiel_sum_before_resize, rel_tol=1e-5
+                # ):
 
-                    for child_id in children:
-                        new_child_potentiel = (
-                            potentiels[child_id]
-                            / action_referentiel_points
-                            * action_potentiel
-                        )
-                        potentiels[child_id] = new_child_potentiel
-                    children_potentiel_sum = sum(
-                        [potentiels[child_id] for child_id in children]
+                for child_id in children:
+                    new_child_potentiel = (
+                        potentiels[child_id]
+                        / action_referentiel_points
+                        * action_potentiel
                     )
-                    if not math.isclose(
-                        action_potentiel,
-                        children_potentiel_sum,
-                        rel_tol=0.01,  # TODO : should not happen. fix me.
-                    ):
-                        message = f"Children potentiels should sum up to parent potentiel, got action {action_id} with potentiel {action_potentiel} and its children's potentiels sum to {children_potentiel_sum}"
-                        logger.warn(message)
-                        raise Exception(message)
+                    potentiels[child_id] = new_child_potentiel
+                # children_potentiel_sum = sum(
+                #     [potentiels[child_id] for child_id in children]
+                # )
+                # if not points_almost_equal(
+                #     action_potentiel, children_potentiel_sum
+                # ):
+                #     message = f"Children potentiels should sum up to parent potentiel, got action {action_id} with potentiel {action_potentiel} and its children's potentiels sum to {children_potentiel_sum}"
+                #     logger.warn(message)
+                #     raise Exception(message)
 
         point_tree.map_from_action_to_taches(
             lambda action_id: _resize_children_potentiels(

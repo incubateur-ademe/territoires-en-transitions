@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from glob import glob
 import os
-import re
-from typing import Any, List, Optional, Tuple, Union
 from pathlib import Path
+import re
+from typing import Any, List, Optional, Tuple
+
 
 import marshmallow_dataclass
 from marshmallow import ValidationError
@@ -14,7 +15,6 @@ from business.referentiel.domain.models.indicateur import (
     IndicateurId,
 )
 from business.referentiel.domain.models import events
-from business.core.domain.models.referentiel import ActionReferentiel
 from business.core.domain.ports.domain_message_bus import (
     AbstractDomainMessageBus,
 )
@@ -119,7 +119,7 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         indicateur_group: IndicateurGroup,
     ) -> Tuple[List[Indicateur], List[str]]:
         repo_action_ids = self.referentiel_repo.get_all_action_ids_from_referentiel(
-            indicateur_group
+            indicateur_group  # type: ignore
         )
         repo_indicateur_ids = self.referentiel_repo.get_all_indicateur_ids()
         indicateurs: List[Indicateur] = []

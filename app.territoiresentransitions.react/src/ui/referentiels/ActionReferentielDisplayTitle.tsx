@@ -38,9 +38,10 @@ export const ActionPotentiel = observer(
     const score = scoreBloc.getScore(action.id, referentielId(action.id));
 
     if (score === null) return null;
+
     const potentiel = toFixed(
       score?.point_potentiel,
-      action.type === 'domaine' || action.type === 'sous-domaine' ? 0 : 1
+      action.type === 'domaine' || action.type === 'sous-domaine' ? 0 : 2
     );
     const text = score?.point_potentiel ? `${potentiel} points` : '0 point';
     return <span className="font-normal whitespace-nowrap">({text})</span>;

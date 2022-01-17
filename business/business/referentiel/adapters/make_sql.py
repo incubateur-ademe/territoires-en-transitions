@@ -1,5 +1,6 @@
-from typing import Dict
+from typing import Dict, List
 from business.core.domain.models.referentiel import ActionReferentiel
+from business.referentiel.domain.models.indicateur import Indicateur
 
 from business.referentiel.domain.ports.referentiel_repo import (
     ReferentielEntities,
@@ -10,13 +11,13 @@ def _format_text(text: str):
     return text.replace("'", "''")
 
 
-def make_sql_insert_indicateurs(self):
-    sql = (
-        self._make_sql_insert_action_relations()
-        + self._make_sql_insert_action_definition()
-        + self._make_sql_insert_action_computed_points()
-    )
-    return sql
+def make_sql_insert_indicateurs(indicateurs: List[Indicateur]):
+    sqls = []
+    for indicateur in indicateurs:
+        sql = f"insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('{indicateur.indicateur_id}', '{indicateur.indicateur_group}', '{indicateur.identifiant}', {indicateur.values_refers_to or 'null'}, '{_format_text(indicateur.nom)}', '{_format_text(indicateur.description)}', '{_format_text(indicateur.unite)}', {indicateur.obligation_eci} ,  null);"
+        sqls.append(sql)
+
+    return "\n".join(sqls)
 
 
 def _make_sql_insert_action_definition(

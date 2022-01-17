@@ -25,7 +25,6 @@ export const IndicateurPersonnaliseForm = (props: {
     });
 
     const save = (data: IndicateurPersonnaliseDefinitionWrite) => {
-      console.log('save : state => ', state);
       if (state !== 'ready') return;
       setState('saving');
       props.onSave(data);

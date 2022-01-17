@@ -7,7 +7,7 @@ from business.referentiel.domain.ports.referentiel_repo import (
 )
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_definition import ActionDefinition
-from business.referentiel.domain.models.action_points import ActionPoints
+from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.referentiel.domain.models.indicateur import Indicateur
 from business.referentiel.adapters.make_sql import (
     make_sql_insert_indicateurs,
@@ -29,7 +29,7 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
         self,
         definitions: List[ActionDefinition],
         children: List[ActionChildren],
-        points: List[ActionPoints],
+        points: List[ActionComputedPoint],
     ):
         super().add_referentiel_actions(definitions, children, points)
         self.actions_to_sql()
