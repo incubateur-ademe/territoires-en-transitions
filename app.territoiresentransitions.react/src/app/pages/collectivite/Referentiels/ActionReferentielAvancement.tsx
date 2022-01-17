@@ -16,6 +16,11 @@ import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielAvancementRecursiveCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
+import {Switch} from '@material-ui/core';
+import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
+import {ActionReferentiel} from 'types/action_referentiel';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -42,8 +47,32 @@ const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   }, [allIndicateurDefinitions]);
   return linkedIndicateurDefinitions;
 };
+
 const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   const action = searchActionById(actionId, referentielActions);
+  const collectiviteId = useCollectiviteId()!;
+  const [showOnlyActionWithData, setShowOnlyActionWithData] = useState(false);
+  const [renseigneStatuts, setRenseigneStatuts] = useState<ActionStatutRead[]>(
+    []
+  );
+
+  useEffect(() => {
+    if (!action) return;
+    actionStatutRepository
+      .fetchRenseigneChildren({
+        collectiviteId: collectiviteId,
+        actionId: action.id,
+      })
+      .then(statuts => setRenseigneStatuts(statuts));
+  }, [renseigneStatuts.length, showOnlyActionWithData, action]);
+
+  const isFullyRenseigne = (action: ActionReferentiel): boolean => {
+    const stat = renseigneStatuts.filter(statut =>
+      statut.action_id.startsWith(action.id)
+    );
+    return stat.length === action.actions.length;
+  };
+
   if (!action) {
     return <Link to="./referentiels" />;
   }
@@ -80,14 +109,30 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
       <Tabs>
         <Tab label="Actions">
           <section>
-            {action.actions.map(action => (
-              <ActionReferentielAvancementRecursiveCard
-                action={action}
-                key={action.id}
-                displayAddFicheActionButton={true}
-                displayProgressStat={true}
+            <div className="flex items-center fr-text--sm fr-m-0">
+              Afficher uniquement les actions non-renseignées
+              <Switch
+                color="primary"
+                checked={showOnlyActionWithData}
+                inputProps={{'aria-label': 'controlled'}}
+                onChange={() => {
+                  setShowOnlyActionWithData(!showOnlyActionWithData);
+                }}
               />
-            ))}
+            </div>
+            {action.actions.map(action => {
+              if (showOnlyActionWithData && isFullyRenseigne(action)) {
+                return null;
+              }
+              return (
+                <ActionReferentielAvancementRecursiveCard
+                  action={action}
+                  key={action.id}
+                  displayAddFicheActionButton={true}
+                  displayProgressStat={true}
+                />
+              );
+            })}
           </section>
         </Tab>
         <Tab label="Indicateurs">
