@@ -26,8 +26,7 @@ const PlanNavChip = (props: {
   );
 };
 
-export const PlanNav = () => {
-  const {planUid} = useParams<{planUid: string}>();
+export const PlanNav = (props: {planActionUid: string}) => {
   const collectiviteId = useCollectiviteId()!;
   const plans = usePlanActionList(collectiviteId);
   plans.sort((a, b) => a.nom.localeCompare(b.nom));
@@ -39,7 +38,7 @@ export const PlanNav = () => {
           collectiviteId={collectiviteId}
           planUid={plan.uid}
           planNom={plan.nom}
-          active={plan.uid === planUid}
+          active={plan.uid === props.planActionUid}
           key={plan.uid}
         />
       ))}
