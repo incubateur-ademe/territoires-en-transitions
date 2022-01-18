@@ -50,13 +50,23 @@ Puis :
 ```
 pytest tests 
 ```
+
 ### Lancer l'application
-TODO ! 
-<!-- ```
-python business/entrypoints/server.py
-``` -->
+On peut lancer l'application avec python
+```
+python business/evaluation/entrypoints/realtime.py
+```
+
+Ou bien en utilisant une des deux Dockerfiles
+- `dev.Dockerfile`: pour lancer le service
+- `debug.Dockerfile`: pour connecter un debugger, n'utilise pas pipenv et ressemble moins à la production.
+
+
 ### Déploiement 
-TODO ! 
+Le service est déployé sur [Scalingo](https://doc.scalingo.com/) dans un worker, le fichier de configuration `Procfile` permet de démarrer ce 
+worker.
+Attention, notre service n'expose pas de container `web`, 
+il faut donc scaler le nombre de containers `web` à 0 pour que les déploiments fonctionnent.
 
 ## Flux évenementiel 
 Une ébauche d'event stormming a été entrepris sur Miro, disponible [ici](https://miro.com/app/board/o9J_lnl6wNw=/). 
