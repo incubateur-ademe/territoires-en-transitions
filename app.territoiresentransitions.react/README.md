@@ -1,5 +1,4 @@
 # Installation
-
 Ce projet a été démarré avec [Create React App](https://github.com/facebook/create-react-app).
 
 Vous avez besoin de node installé, version >= 14.
@@ -7,13 +6,12 @@ Dans 'front', vous devez installer l'application avec la commande :
 
 #### `npm install`
 #### `cp .env.sample .env`
-Vous pouvez modifier les variable d'environnement dans ce nouveau fichier `.env`
+Vous pouvez modifier les variables d'environnement dans ce nouveau fichier `.env`
 On peut ensuite lancer le script qui nous intéresse dans la liste ci-dessous.
 
 
 ## Scripts disponibles
-
-**`npm run start`** : démarre l'appli en mode dev
+**`npm run dev`** : démarre l'appli en mode dev
 
 **`npm run test`** : lance les tests
 
@@ -21,15 +19,28 @@ On peut ensuite lancer le script qui nous intéresse dans la liste ci-dessous.
 
 
 ## Organisation du front
-L'arboresence du front est la suivante :
+L'arborescence du front est la suivante :
 
-> app\
-> core-logic\
-> ui\
-> utils\
-> interfaces
+> app/
+> core-logic/
+> css/
+> generated/data
+> generated/dataLayer
+> types/
+> ui/
+> utils/
 
-- **core-logic** : c'est là que se fait la gestion de l'état de l'application. Redux est utilisé, avec [redux-toolkit](https://redux-toolkit.js.org/). Il ne doit pas y avoir de `jsx`, `css` ou `html` ici. Cette partie concentre la logique métier pure, l'orchestration du state. Les requêtes et les souscriptions se passent ici également. C'est la partie du front qui est testé.
+- **core-logic** : c'est là que se fait la gestion de l'état de l'application. Il ne doit pas y avoir de `jsx`, 
+  `css` ou `html` ici. Cette partie concentre la logique métier pure, l'orchestration du state. Les requêtes et les souscriptions se passent ici également. C'est la partie du front qui est testée.
+ 
+- **css** : on trouve ici tailwindcss et des règles/petits overrides du dsfr propre à notre app.
+
+- **generated/data** : Les données générées par l'ancienne archi (codegen) et vouées à être remplacées par des 
+  appels à l'API.
+
+- **generated/dataLayer** : Les types exportés par le Data Layer `/data_layer`.
+
+- **types** : Les types et les interfaces partagées.
 
 - **ui** : la bibliothèque de composants. On cherche à faire des composants indépendants de l'application. Il ne 
   doivent pas connaitre, ni faire référence à redux. On utilise beaucoup [material-ui](https://material-ui.com/). Les imports à material-ui doivent se faire uniquement dans le dossier `ui`. Cela permet de changer facilement de design, sans avoir à toucher directement au code de l'application.
