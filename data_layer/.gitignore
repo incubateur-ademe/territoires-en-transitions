@@ -20,7 +20,8 @@ backend.egg-info/*
 tests/data/tmp
 
 # eeg-info
-business.eeg-info/
+data_layer.eeg-info/*
+data_layer.eeg-info
 
 # http client environment
 http-client.env.json
