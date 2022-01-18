@@ -1,6 +1,4 @@
-# This is a simple Dockerfile to use while developing
-# It's not suitable for production
-#
+# This is a simple Dockerfile to use while developing to run the service locally
 
 FROM python:3.9
 
@@ -10,8 +8,7 @@ WORKDIR /business
 COPY . .
 COPY .env.docker .env
 RUN pip install pipenv
-RUN pipenv install 
-# RUN pip install --upgrade pip
+RUN pipenv install
 RUN pipenv install -e .
 
 WORKDIR /business
