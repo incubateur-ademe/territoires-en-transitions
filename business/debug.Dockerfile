@@ -1,6 +1,4 @@
-# This is a simple Dockerfile to use while developing
-# It's not suitable for production
-#
+# This is a simple Dockerfile to use while debugging so we don't use pipenv
 
 FROM python:3.9
 
