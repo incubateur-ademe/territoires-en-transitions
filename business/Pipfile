@@ -19,6 +19,7 @@ pandas = "*"
 openpyxl = "*"
 tqdm = "*"
 realtime-py = "*"
+numpy = "*"
 
 [dev-packages]
 
