@@ -4,18 +4,22 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-supabase = "*"
+mistletoe = "*"
 pydantic = "*"
 pytest = "*"
-pytest-asyncio = "*"
+pyyaml = "*"
+supabase = "*"
 rx = "*"
+marshmallow-dataclass = "*"
+black = "==21.5b1"
 psycopg = "*"
-results = "*"
-jsonschema = "*"
-jtd = "*"
-typer = "*"
+business = {editable = true, path = "."}
 python-dotenv = "*"
-httpx = "*"
+pandas = "*"
+openpyxl = "*"
+tqdm = "*"
+realtime-py = "*"
+numpy = "*"
 
 [dev-packages]
 
