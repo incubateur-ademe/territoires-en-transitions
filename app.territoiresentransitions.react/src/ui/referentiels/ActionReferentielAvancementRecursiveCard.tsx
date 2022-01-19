@@ -62,7 +62,7 @@ export const ActionReferentielAvancementCard = ({
         <div className="w-full flex flex-col">
           {!isLeaf && (
             <div className="pt-4">
-              <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+              <ActionProgressBar actionId={action.id} scoreBloc={scoreBloc} />
             </div>
           )}
           {isLeaf && (

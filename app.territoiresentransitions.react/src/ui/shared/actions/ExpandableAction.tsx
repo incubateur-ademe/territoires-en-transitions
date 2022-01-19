@@ -2,16 +2,10 @@ import {useState} from 'react';
 import {LazyDetails} from 'ui/shared/LazyDetails';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {Chevron} from 'ui/shared/Chevron';
-import {ScoreBloc, scoreBloc} from 'core-logic/observables/scoreBloc';
+import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionReferentielLinkCard} from 'ui/referentiels/ActionReferentielLinkCard';
 import {ActionReferentiel} from 'types/action_referentiel';
-
-function ActionProgressBar(props: {
-  action: ActionReferentiel;
-  scoreBloc: ScoreBloc;
-}) {
-  return null;
-}
+import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 
 /**
  * An expandable action used for "axes" and "sous axes", shows Scores.
@@ -32,7 +26,7 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
               </div>
             </div>
             <div className="w-1/6">
-              <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+              <ActionProgressBar actionId={action.id} scoreBloc={scoreBloc} />
             </div>
           </div>
         }
