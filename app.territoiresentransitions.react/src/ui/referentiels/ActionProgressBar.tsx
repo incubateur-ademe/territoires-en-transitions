@@ -121,7 +121,7 @@ const _ProgressBarTooltipAvancementContent = ({
   avancementPoint: number;
   maxPoint: number;
 }) =>
-  avancementPoint < 1e-3 ? (
+  avancementPoint > 1e-3 ? (
     <div>
       {prefix} : {_formatAvancementScore(avancementPoint, maxPoint)}{' '}
     </div>
