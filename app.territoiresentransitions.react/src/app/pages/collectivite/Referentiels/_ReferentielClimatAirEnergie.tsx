@@ -5,15 +5,6 @@ import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDi
 import {compareIndexes} from 'utils/compareIndexes';
 import {ActionReferentiel} from 'types/action_referentiel';
 
-const AxisSectionClimatAirEnergie = ({axis}: {axis: ActionReferentiel}) => (
-  <div className="flex flex-col justify-between  mb-8">
-    <ActionReferentielDisplayTitle action={axis} />
-    {axis.actions.map(subAxis => (
-      <ExpandableAction action={subAxis} key={subAxis.id} />
-    ))}
-  </div>
-);
-
 export const ReferentielClimatAirEnergie = ({
   caeAxes,
 }: {
