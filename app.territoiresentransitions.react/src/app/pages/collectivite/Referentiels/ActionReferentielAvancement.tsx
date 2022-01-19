@@ -89,7 +89,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
           <ActionReferentielDisplayTitle action={action} />
         </div>
         <div className="w-1/6">
-          <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+          <ActionProgressBar actionId={action.id} scoreBloc={scoreBloc} />
         </div>
       </div>
       <div className="mb-16">

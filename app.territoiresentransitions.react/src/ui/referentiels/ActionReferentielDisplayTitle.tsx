@@ -47,31 +47,39 @@ export const ActionPotentiel = observer(
     return <span className="font-normal whitespace-nowrap">({text})</span>;
   }
 );
-export const ActionReferentielDisplayTitle = ({
+export const ActionReferentielTitlePill = ({
   action,
 }: {
   action: ActionReferentiel;
 }) => {
   const pill = pillParams[action.type];
-
+  return (
+    <div
+      className="content-center font-normal"
+      style={{
+        color: pill.textColor,
+        borderWidth: 2,
+        backgroundColor: pill.filled ? pill.color : 'white',
+        borderColor: pill.filled ? 'white' : pill.color,
+        borderRadius: pill.height,
+        minHeight: pill.height,
+        paddingLeft: pill.height * 0.5,
+        paddingRight: pill.height * 0.5,
+        fontSize: pill.height + 'px',
+      }}
+    >
+      <div className="pb-1">{action.identifiant}</div>
+    </div>
+  );
+};
+export const ActionReferentielDisplayTitle = ({
+  action,
+}: {
+  action: ActionReferentiel;
+}) => {
   return (
     <div className="flex flex-row align-middle items-center font-bold gap-2">
-      <div
-        className="content-center font-normal"
-        style={{
-          color: pill.textColor,
-          borderWidth: 2,
-          backgroundColor: pill.filled ? pill.color : 'white',
-          borderColor: pill.filled ? 'white' : pill.color,
-          borderRadius: pill.height,
-          minHeight: pill.height,
-          paddingLeft: pill.height * 0.5,
-          paddingRight: pill.height * 0.5,
-          fontSize: pill.height + 'px',
-        }}
-      >
-        <div className="py-1">{action.identifiant}</div>
-      </div>
+      <ActionReferentielTitlePill action={action} />
       <div className="py-2">
         <span className="fr-text--lg">{action.nom} </span>
         <ActionPotentiel action={action} scoreBloc={scoreBloc} />

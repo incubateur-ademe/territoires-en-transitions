@@ -29,7 +29,7 @@ const ReferentielHead = (props: {view: ReferentielParamOption}) => {
     <>
       <header className="flex flex-row mb-6 items-center justify-between">
         <h2 className="fr-h2">{referentiel.referentielDisplayName}</h2>
-        <ActionProgressBar action={referentiel} scoreBloc={scoreBloc} />
+        <ActionProgressBar actionId={referentiel.id} scoreBloc={scoreBloc} />
       </header>
     </>
   );
