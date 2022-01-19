@@ -78,6 +78,11 @@ const RegistrationForm = () => {
       })
       .catch(reason => {
         setState('failure');
+        reason =
+          reason ===
+          'Thanks for registering, now check your email to complete the process.'
+            ? 'Un compte existe peut-être avec la même adresse email.'
+            : reason;
         setErrorMessage(`${reason}`);
       });
   };
