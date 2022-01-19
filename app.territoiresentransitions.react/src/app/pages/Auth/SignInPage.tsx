@@ -1,11 +1,12 @@
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import LabeledTextField from 'ui/forms/LabeledTextField';
-import {authBloc} from 'core-logic/observables/authBloc';
+import {AuthBloc, authBloc} from 'core-logic/observables/authBloc';
 import {ValiderButton} from 'ui/shared/ValiderButton';
 import {Spacer} from 'ui/shared/Spacer';
 import {Link} from 'react-router-dom';
 import {signUpPath} from 'app/paths';
+import {observer} from 'mobx-react-lite';
 
 export interface SignInCredentials {
   email: string;
@@ -52,6 +53,7 @@ export const SignInPage = () => {
               />
 
               <Spacer size={4} />
+              <AuthError bloc={authBloc} />
               <div className="flex flex-row-reverse justify-between">
                 <ValiderButton />
                 <Link className="fr-link" to={signUpPath}>
@@ -65,3 +67,15 @@ export const SignInPage = () => {
     </section>
   );
 };
+
+const AuthError = observer(({bloc}: {bloc: AuthBloc}) => {
+  return (
+    <>
+      {bloc.authError !== null && (
+        <div className="p-2 text-sm opacity-80 text-red-500 text-right">
+          {bloc.authError}
+        </div>
+      )}
+    </>
+  );
+});
