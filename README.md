@@ -51,9 +51,8 @@ d'[évaluation](business/business/evaluation)
 
 ### Les données utilisateurs
 Les utilisateurs saisissent pour le compte de leur collectivité des données qui sont stockées dans le `data layer` 
-qui vérifie leurs droits en écriture grace aux [row security policies](https://www.postgresql.
-org/docs/current/ddl-rowsecurity.
-html)
+qui vérifie leurs droits en écriture grace aux 
+[row security policies](https://www.postgresql.˚org/docs/current/ddl-rowsecurity.html)
   
 ### Les données d'évaluation
 Les données utilisateurs rattachées aux référentiels sont évaluées par le service évaluation du `business` qui inscrit 
