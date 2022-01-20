@@ -4,8 +4,14 @@ import {
   indicateurPersonnaliseDefinitionReadEndpoint,
 } from 'core-logic/api/endpoints/IndicateurPersonnaliseDefinitionReadEndpoint';
 import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('Indicateur perso definition reading endpoint ', () => {
+  beforeEach(async () => {
+    await supabaseClient.auth.signIn(yiliCredentials);
+  });
+
   it('should retrieve data-layer default indicateur perso definition with id 0  for collectivite #1 ', async () => {
     const results = await indicateurPersonnaliseDefinitionReadEndpoint.getBy({
       collectivite_id: 1,
@@ -35,4 +41,3 @@ describe('Indicateur perso definition reading endpoint ', () => {
     expect(results.length).toEqual(0);
   });
 });
-2;
