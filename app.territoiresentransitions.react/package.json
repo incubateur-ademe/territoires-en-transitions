@@ -12,7 +12,9 @@
     "dev": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "dependencies": {
     "@craco/craco": "^6.0.0",
@@ -85,6 +87,14 @@
         "rules": {
           "react-hooks/exhaustive-deps": "off"
         }
+      },
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
       }
     ]
   },
@@ -101,6 +111,12 @@
     ]
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^6.4.13",
+    "@storybook/addon-essentials": "^6.4.13",
+    "@storybook/addon-links": "^6.4.13",
+    "@storybook/node-logger": "^6.4.13",
+    "@storybook/preset-create-react-app": "^3.2.0",
+    "@storybook/react": "^6.4.13",
     "@types/fuzzy-search": "^2.1.1",
     "@types/node": "^12.20.20",
     "@types/react-router-dom": "^5.1.8",
@@ -108,6 +124,8 @@
     "gts": "^3.1.0",
     "jest-websocket-mock": "^2.2.1",
     "mock-socket": "^9.0.8",
+    "storybook-preset-craco": "0.0.6",
+    "storybook-react-router": "^1.0.8",
     "typescript": "^4.0.3"
   }
 }
