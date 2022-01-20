@@ -4,14 +4,20 @@ import {
   indicateurPersonnaliseResultatReadEndpoint,
   indicateurResultatReadEndpoint,
 } from 'core-logic/api/endpoints/AnyIndicateurValueReadEndpoint';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('Indicateur-resultat reading endpoint should retrieve data-layer default resultat values', () => {
+  beforeEach(async () => {
+    await supabaseClient.auth.signIn(yiliCredentials);
+  });
+
   it('Retrieves at least one resutat when collectivite_id with resultat for collectivite #1', async () => {
     const results = await indicateurResultatReadEndpoint.getBy({
       collectiviteId: 1,
     });
     expect(indicateurResultatReadEndpoint.lastResponse?.status).toBe(200);
-    expect(results).toHaveLength(1);
+    expect(results).toHaveLength(2);
     expect(results[0]).toEqual(
       expect.objectContaining({
         indicateur_id: 'cae_8',
