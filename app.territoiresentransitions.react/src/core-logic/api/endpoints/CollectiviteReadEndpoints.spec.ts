@@ -5,7 +5,6 @@ import {
   ownedCollectiviteReadEndpoint,
 } from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {ElsesCollectiviteRead} from 'generated/dataLayer';
 import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read';
 
 import {
@@ -25,15 +24,6 @@ describe('All Collectivite reading endpoint should retrieve 1628 Collectivites',
 });
 
 describe('Elses Collectivite reading endpoint should retrieve only claimed Collectivite', () => {
-  it('should retrieve one active Collectivite if a given id is given', async () => {
-    const results = await elsesCollectiviteReadEndpoint.getBy({
-      collectivite_id: 1,
-    });
-
-    expect(results.length).toEqual(1);
-    const expected: ElsesCollectiviteRead[] = [collectivite1];
-    expect(results).toEqual(expected);
-  });
   it("should retrieve else's active Collectivite (2) if no id is given", async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
     const results = await elsesCollectiviteReadEndpoint.getBy({});
