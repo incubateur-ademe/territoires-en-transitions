@@ -20,6 +20,7 @@ describe('Indicateur perso definition write endpoint', () => {
     };
     // 1. create
     const createResult = await endpoint.save(def);
+    expect(endpoint.lastResponse?.status).toBe(201);
     expect(createResult).not.toBeNull();
     expect(createResult).toEqual(expect.objectContaining(def));
     // 2. update
