@@ -22,16 +22,22 @@ Le Data-Layer est responsable des lectures/écritures en base, c'est à dire de:
 
 ## Mode d'emploi
 
+### Pré-requis
+
+- psql (on peut l'installer sur Mac avec brew : `brew install postgresql`)
+- docker
+
 ### Dev / tests avec docker
 
 Aller dans le dossier `./test_only_docker` et exécuter :
 
-```
- docker-compose up --build 
+```bash
+ docker-compose up --build
 ```
 
 Ensuite utiliser `insert_all.sh` pour insérer les contenus de test.
 
+Redémarrer le container `postgrest` après les insertions pour que l'API soit regénérée.
 
 ## Générer les types pour le Business et le Client
 
@@ -40,7 +46,5 @@ pipenv install
 python typedef_cli.py --help
 ```
 
-Génére les modèles client ou business à partir de [json typedefs](https://jsontypedef.com/docs/jtd-in-5-minutes/) 
-pour être utilisés par
+Génére les modèles client ou business à partir de [json typedefs](https://jsontypedef.com/docs/jtd-in-5-minutes/) pour être utilisés par
 [json typedef codegen](https://jsontypedef.com/docs/jtd-codegen/)
-
