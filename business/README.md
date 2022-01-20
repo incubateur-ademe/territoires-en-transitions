@@ -57,10 +57,17 @@ On peut lancer l'application avec python
 python business/evaluation/entrypoints/realtime.py
 ```
 
-Ou bien en utilisant une des deux Dockerfiles
+Ou bien en utilisant un des deux Dockerfiles
+
 - `dev.Dockerfile`: pour lancer le service
 - `debug.Dockerfile`: pour connecter un debugger, n'utilise pas pipenv et ressemble moins à la production.
 
+```sh
+# build de l'image
+docker build -f dev.Dockerfile -t tet-business .
+# démarrer l'image
+docker run -d tet-business
+```
 
 ### Déploiement 
 Le service est déployé sur [Scalingo](https://doc.scalingo.com/) dans un worker, le fichier de configuration `Procfile` permet de démarrer ce 
