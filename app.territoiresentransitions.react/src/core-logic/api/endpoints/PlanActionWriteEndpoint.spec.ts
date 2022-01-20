@@ -1,5 +1,8 @@
 import '@testing-library/jest-dom/extend-expect';
-import {PlanActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteEndpoint';
+import {
+  planActionWriteEndpoint,
+  PlanActionWriteEndpoint,
+} from 'core-logic/api/endpoints/PlanActionWriteEndpoint';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {PlanActionWrite} from 'generated/dataLayer/plan_action_write';
 import {yiliCredentials} from 'test_utils/collectivites';
@@ -10,7 +13,6 @@ describe('Plan action write endpoint', () => {
   });
 
   it('Should be able to save and update a plan ', async () => {
-    const endpoint = new PlanActionWriteEndpoint();
     const plan: PlanActionWrite = {
       collectivite_id: 1,
       uid: 'f000cf22-e00f-4457-a312-d91a796df993',
@@ -29,12 +31,12 @@ describe('Plan action write endpoint', () => {
       ],
     };
     // 1. Create
-    const creationResult = await endpoint.save(plan);
+    const creationResult = await planActionWriteEndpoint.save(plan);
     expect(creationResult).not.toBeNull();
     expect(creationResult).toEqual(expect.objectContaining(plan));
     // 2. Update
-    const updatedPlan = {...plan, nom: 'Nouveau nom '};
-    const updateResult = await endpoint.save(plan);
+    const updatedPlan = {...plan, nom: 'Nouveau nom'};
+    const updateResult = await planActionWriteEndpoint.save(updatedPlan);
     expect(updateResult).not.toBeNull();
     expect(updateResult).toEqual(expect.objectContaining(updatedPlan));
   });
