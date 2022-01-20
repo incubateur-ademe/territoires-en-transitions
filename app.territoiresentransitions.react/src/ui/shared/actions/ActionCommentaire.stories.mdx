@@ -1,0 +1,33 @@
+import {Canvas, Meta, Story} from '@storybook/addon-docs';
+
+import {ActionCommentaire} from './ActionCommentaire';
+import {actions} from '../../../generated/data/referentiels';
+import {searchActionById} from '../../../utils/actions';
+
+export const Template = args => <ActionCommentaire {...args} />;
+
+<Meta title="shared/actions/ActionCommentaire" component={ActionCommentaire} />
+
+# Editer le commentaire associé à une référence action
+
+## Commentaire associé à une action
+
+<Canvas>
+  <Story
+    name="Exemple action"
+    args={{action: searchActionById('cae_1.1.1', actions)}}
+  >
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+## Commentaire associé à une tâche
+
+<Canvas>
+  <Story
+    name="Exemple de tâche"
+    args={{action: searchActionById('cae_1.1.1.1', actions)}}
+  >
+    {Template.bind({})}
+  </Story>
+</Canvas>
