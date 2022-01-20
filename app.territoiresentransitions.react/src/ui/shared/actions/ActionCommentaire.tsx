@@ -45,7 +45,7 @@ const ActionCommentaireField = observer(
     <TextInput
       textarea
       value={observable.fieldValue ?? ''}
-      onChange={(event: {currentTarget: any}) =>
+      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
         observable.setFieldValue(event.currentTarget.value)
       }
       onBlur={() => observable.saveFieldValue()}
