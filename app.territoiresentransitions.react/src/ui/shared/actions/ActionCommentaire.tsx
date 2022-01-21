@@ -2,10 +2,10 @@ import '../CrossExpandPanel.css';
 import {makeAutoObservable} from 'mobx';
 import {actionCommentaireRepository} from 'core-logic/api/repositories/ActionCommentaireRepository';
 import {observer} from 'mobx-react-lite';
-import {TextInput} from '@dataesr/react-dsfr';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {ActionReferentiel} from 'types/action_referentiel';
+import {AutoTextArea} from '../AutoTextArea';
 
 export const ActionCommentaire = ({action}: {action: ActionReferentiel}) => {
   const collectiviteId = useCollectiviteId()!;
@@ -15,43 +15,38 @@ export const ActionCommentaire = ({action}: {action: ActionReferentiel}) => {
   });
   return (
     <div className="border-gray-300 my-3">
-      <ActionCommentaireField
-        observable={observable}
-        label={
-          action.type === 'action'
-            ? "Description générale de l'état d'avancement"
-            : "Précisions sur l'état d'avancement"
-        }
-        hint={
-          action.type === 'action'
-            ? "Vous pouvez préciser ici l'avancement général de cette action"
-            : null
-        }
-      />
+      <ActionCommentaireField observable={observable} action={action} />
     </div>
   );
 };
 
-const ActionCommentaireField = observer(
+export const ActionCommentaireField = observer(
   ({
     observable,
-    label,
-    hint,
+    action,
+    ...otherProps
   }: {
     observable: ActionCommentaireFieldBloc;
-    label: string;
-    hint: string | null;
+    action: ActionReferentiel;
   }) => (
-    <TextInput
-      textarea
+    <AutoTextArea
       value={observable.fieldValue ?? ''}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
         observable.setFieldValue(event.currentTarget.value)
       }
       onBlur={() => observable.saveFieldValue()}
-      label={label}
-      hint={hint}
+      label={
+        action.type === 'action'
+          ? "Description générale de l'état d'avancement"
+          : "Précisions sur l'état d'avancement"
+      }
+      hint={
+        action.type === 'action'
+          ? "Description générale de l'état d'avancement"
+          : "Précisions sur l'état d'avancement"
+      }
       disabled={currentCollectiviteBloc.readonly}
+      {...otherProps}
     />
   )
 );
