@@ -13,8 +13,8 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@craco/craco": "^6.0.0",

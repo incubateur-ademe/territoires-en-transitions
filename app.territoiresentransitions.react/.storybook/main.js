@@ -22,4 +22,5 @@ module.exports = {
     },
   ],
   framework: '@storybook/react',
+  staticDirs: ['../public', '../src/app/static/_app/assets'],
 };
