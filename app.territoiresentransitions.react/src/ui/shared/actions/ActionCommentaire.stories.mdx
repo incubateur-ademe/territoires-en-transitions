@@ -1,21 +1,38 @@
 import {Canvas, Meta, Story} from '@storybook/addon-docs';
+import {action} from '@storybook/addon-actions';
+import {observable} from 'mobx';
 
-import {ActionCommentaire} from './ActionCommentaire';
+import {ActionCommentaireField} from './ActionCommentaire';
 import {actions} from '../../../generated/data/referentiels';
 import {searchActionById} from '../../../utils/actions';
 
-export const Template = args => <ActionCommentaire {...args} />;
+export const Template = args => <ActionCommentaireField {...args} />;
 
-<Meta title="shared/actions/ActionCommentaire" component={ActionCommentaire} />
+<Meta
+  title="shared/actions/ActionCommentaireField"
+  component={ActionCommentaireField}
+/>
 
 # Editer le commentaire associé à une référence action
+
+Ce composant permet de visualiser et éditer le commentaire associé à une référence action.
+
+Le libellé et le sous-libellé varie suivant le type de référence (action ou tâche).
 
 ## Commentaire associé à une action
 
 <Canvas>
   <Story
     name="Exemple action"
-    args={{action: searchActionById('cae_1.1.1', actions)}}
+    args={{
+      action: searchActionById('cae_1.1.1', actions),
+      observable: observable({
+        fieldValue: 'mon commentaire',
+        setFieldValue: action('setFieldValue'),
+        saveFieldValue: action('saveFieldValue'),
+        fetch: action('fetch'),
+      }),
+    }}
   >
     {Template.bind({})}
   </Story>
@@ -26,7 +43,38 @@ export const Template = args => <ActionCommentaire {...args} />;
 <Canvas>
   <Story
     name="Exemple de tâche"
-    args={{action: searchActionById('cae_1.1.1.1', actions)}}
+    args={{
+      action: searchActionById('cae_1.1.1.1', actions),
+      observable: observable({
+        fieldValue: 'mon commentaire',
+        setFieldValue: action('setFieldValue'),
+        saveFieldValue: action('saveFieldValue'),
+        fetch: action('fetch'),
+      }),
+    }}
+  >
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+## Le champ est redimensionné en fonction de la longueur du texte initial
+
+<Canvas>
+  <Story
+    name="Commentaire très long"
+    args={{
+      action: searchActionById('cae_1.1.1.1', actions),
+      observable: observable({
+        fieldValue: `mon commentaire vraiment très long ! 
+          
+          Lorem ipsum dolor sit amet. A quia animi aut aspernatur totam aut laboriosam enim qui velit repudiandae. Non ratione provident est mollitia voluptatibus ut quibusdam totam hic minima rerum et rerum reiciendis ab officia beatae et voluptate dolore. Eos labore exercitationem id dolorem dolorum eos itaque sapiente et sapiente ducimus aut pariatur autem. Ut pariatur aliquid non laborum facilis ab natus sint sit enim quia ut fuga earum nam debitis nihil est enim dolores. Sit fugiat molestiae est quia possimus nam magni quisquam hic voluptas sint. Ex illo quis ut illum quasi sit quia harum eum consequuntur veniam ut possimus harum.
+          
+          Et tempora minus vel deleniti inventore ea omnis enim. Et illo aspernatur qui ipsa quaerat ex magnam pariatur et maiores quis eos quia quia et rerum velit? Ab eius  hic nihil omnis est laudantium libero. Et corrupti labore ut necessitatibus omnis in accusamus aspernatur aut tempora accusantium et soluta provident qui distinctio explicabo`,
+        setFieldValue: action('setFieldValue'),
+        saveFieldValue: action('saveFieldValue'),
+        fetch: action('fetch'),
+      }),
+    }}
   >
     {Template.bind({})}
   </Story>
