@@ -21,4 +21,4 @@ class Indicateur:
     action_ids: List[ActionId]
     description: str
     values_refers_to: Optional[IndicateurId] = None
-    obligation_eci: Optional[bool] = False
+    obligation_eci: bool = False
