@@ -34,7 +34,7 @@ const MyCollectiviteCards = observer(
 
 const CurrentUserCollectivites = () => {
   return (
-    <div className="app fr-container m-5">
+    <div className="app fr-container mt-5 flex justify-center">
       <section className="text-center">
         <MyCollectiviteCards bloc={ownedCollectiviteBloc} />
 
