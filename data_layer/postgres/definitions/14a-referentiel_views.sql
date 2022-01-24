@@ -107,10 +107,7 @@ create or replace function action_down_to_tache(
 $$
 declare
     referentiel_action_depth integer;
-    id                       action_id;
 begin
-    -- action_id is ambiguous
-    select action_down_to_tache.action_id into id;
     if action_down_to_tache.referentiel = 'cae'
     then
         select 3 into referentiel_action_depth;
@@ -121,12 +118,8 @@ begin
         select *
         from action_definition_summary
         where action_definition_summary.referentiel = action_down_to_tache.referentiel
-          and action_definition_summary.id like action_down_to_tache.id || '%' -- could be better if we had parents
+          and action_definition_summary.identifiant like action_down_to_tache.action_id || '%'
           and action_definition_summary.depth >= referentiel_action_depth - 1;
 end
 $$ language plpgsql;
 comment on function action_down_to_tache is 'Returns referentiel action summary down to the tache level';
-
-
-select * from referentiel_down_to_action('cae');
-select * from action_down_to_tache('cae', '1.1.1');
