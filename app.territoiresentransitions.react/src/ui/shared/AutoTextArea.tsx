@@ -1,6 +1,15 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {TextInput} from '@dataesr/react-dsfr';
 
+// on va appliquer un offset négatif pour que la hauteur soit réduite quand le
+// champ est vide
+const OFFSET = -20;
+
+// on doit ausi surcharger la valeur par défaut du dsfr
+const TEXTAREA_OVERRIDES = {
+  minHeight: '2.75rem',
+};
+
 /**
  * Rend un champ de saisi qui se redimensionne en fonction de son contenu.
  * copié/adapté depuis: https://medium.com/@lucasalgus/creating-a-custom-auto-resize-textarea-component-for-your-react-web-application-6959c0ad68bc
@@ -13,11 +22,15 @@ export const AutoTextArea = (props: TextInput<HTMLInputElement>) => {
   const [textAreaHeight, setTextAreaHeight] = useState('auto');
   const [parentHeight, setParentHeight] = useState('auto');
 
+  // effet appliqué quand le texte change (chargement donnée ou édition par l'utilisateur)
   useEffect(() => {
+    // la hauteur doit être réduite quand le champ est vide
+    const offset = value === '' ? OFFSET : 0;
     setParentHeight(`${textAreaRef.current!.scrollHeight}px`);
-    setTextAreaHeight(`${textAreaRef.current!.scrollHeight}px`);
+    setTextAreaHeight(`${textAreaRef.current!.scrollHeight + offset}px`);
   }, [text, value]);
 
+  // appelé quand le champ est édité (va déclencher le recalcul de la hauteur)
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextAreaHeight('auto');
     setParentHeight(`${textAreaRef.current!.scrollHeight}px`);
@@ -38,7 +51,7 @@ export const AutoTextArea = (props: TextInput<HTMLInputElement>) => {
         textarea
         {...props}
         ref={textAreaRef}
-        style={{height: textAreaHeight}}
+        style={{...TEXTAREA_OVERRIDES, height: textAreaHeight}}
         onChange={onChangeHandler}
       />
     </div>
