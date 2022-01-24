@@ -45,8 +45,8 @@ def test_can_add_referentiel_actions(postgres_connection):
         + "insert into action_relation(id, referentiel, parent) values ('ref_1', 'eci', 'ref');\n"
         + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('ref', 'eci', '', '', 'l''ademe !', '', '', '', null, null);\n"
         + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('ref_1', 'eci', '', '', '', '', '', '', null, null);\n"
-        + "insert into action_computed_points(action_id, value) values ('ref', '500');\n"
-        + "insert into action_computed_points(action_id, value) values ('ref_1', '300');\n"
+        + "insert into action_computed_points(action_id, value) values ('ref', 500);\n"
+        + "insert into action_computed_points(action_id, value) values ('ref_1', 300);\n"
     )
 
     # check that sql can be executed and referntiel actions can be added
@@ -96,7 +96,7 @@ def test_can_add_referentiel_indicateurs(postgres_connection):
         file_content = file.read()
     assert (
         file_content
-        == "insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('indicateur_1', 'eci', '', null, '', 'l''ademe !', '', false ,   null);\ninsert into indicateur_action(indicateur_id, action_id) values ('indicateur_1', 'eci_1');\n"
+        == "insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('indicateur_1', 'eci', '', null, '', 'l''ademe !', '', false, null);insert into indicateur_action(indicateur_id, action_id) values ('indicateur_1', 'eci_1');\n"
     )
 
     # check that sql can be executed and referentiel indicateurs can be added
