@@ -24,7 +24,7 @@ const ElsesCollectivitesObserver = observer(
     }, []);
 
     return (
-      <div className="app fr-container m-5">
+      <div className="app fr-container mt-5 flex justify-center">
         <section>
           <h2 className="fr-h2 text-center">
             Consulter les autres collectivités
