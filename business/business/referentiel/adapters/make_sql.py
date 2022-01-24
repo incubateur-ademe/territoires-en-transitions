@@ -14,7 +14,9 @@ def _format_text(text: str):
 def make_sql_insert_indicateurs(indicateurs: List[Indicateur]):
     sqls = []
     for indicateur in indicateurs:
-        sql = f"insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('{indicateur.indicateur_id}', '{indicateur.indicateur_group}', '{indicateur.identifiant}', {indicateur.values_refers_to or 'null'}, '{_format_text(indicateur.nom)}', '{_format_text(indicateur.description)}', '{_format_text(indicateur.unite)}', {indicateur.obligation_eci} ,  null);"
+        sql = f"insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('{indicateur.indicateur_id}', '{indicateur.indicateur_group}', '{indicateur.identifiant}', {indicateur.values_refers_to or 'null'}, '{_format_text(indicateur.nom)}', '{_format_text(indicateur.description)}', '{_format_text(indicateur.unite)}', {str(indicateur.obligation_eci).lower()}, null);"
+        for action_id in indicateur.action_ids:
+            sql += f"insert into indicateur_action(indicateur_id, action_id) values ('{indicateur.indicateur_id}', '{action_id}');"
         sqls.append(sql)
 
     return "\n".join(sqls)
@@ -37,7 +39,7 @@ def _make_sql_insert_action_computed_points(
     sqls = []
     for referentiel, referentiel_entities in actions_by_ref.items():
         for points in referentiel_entities.points:
-            sql = f"insert into action_computed_points(action_id, value) values ('{points.action_id}', '{points.value}');"
+            sql = f"insert into action_computed_points(action_id, value) values ('{points.action_id}', {points.value});"
             sqls.append(sql)
     return "\n".join(sqls)
 
@@ -60,9 +62,12 @@ def _make_sql_insert_action_relations(
 def make_sql_insert_actions(
     actions_by_ref: Dict[ActionReferentiel, ReferentielEntities]
 ):
-    sql = (
-        _make_sql_insert_action_relations(actions_by_ref)
-        + _make_sql_insert_action_definition(actions_by_ref)
-        + _make_sql_insert_action_computed_points(actions_by_ref)
+    sql = "\n".join(
+        [
+            _make_sql_insert_action_relations(actions_by_ref),
+            _make_sql_insert_action_definition(actions_by_ref),
+            _make_sql_insert_action_computed_points(actions_by_ref),
+        ],
     )
+
     return sql
