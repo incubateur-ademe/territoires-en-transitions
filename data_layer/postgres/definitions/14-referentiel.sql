@@ -137,17 +137,8 @@ create policy allow_read
     for select
     using (true);
 
-create view action_definition_summary
-as
-select action_id,
-       referentiel,
-       identifiant,
-       nom,
-       description
-from action_definition
-order by action_id;
-comment on view action_definition_summary is
-    'The minimum information from definition';
+
+
 
 
 create table action_computed_points
@@ -166,59 +157,3 @@ create policy allow_read
     for select
     using (true);
 
-
-create or replace function referentiel_down_to_action(
-    referentiel referentiel
-)
-    returns setof action_definition_summary as
-$$
-declare
-    referentiel_action_depth integer;
-begin
-    if referentiel_down_to_action.referentiel = 'cae'
-    then
-        select 3 into referentiel_action_depth;
-    else
-        select 2 into referentiel_action_depth;
-    end if;
-    return query
-        select *
-        from action_definition_summary
-        where action_definition_summary.referentiel = referentiel_down_to_action.referentiel
-          and char_length(action_definition_summary.action_id) -
-              char_length(replace(action_definition_summary.action_id, '.', ''))
-            < referentiel_action_depth;
-end;
-$$ language plpgsql;
-comment on function referentiel_down_to_action is 'Returns referentiel action summary down to the action level';
-
-
-create or replace function action_down_to_tache(
-    referentiel referentiel,
-    action_id action_id
-)
-    returns setof action_definition_summary as
-$$
-declare
-    referentiel_action_depth integer;
-    id                       action_id;
-begin
-    -- action_id is ambiguous
-    select action_down_to_tache.action_id into id;
-    if action_down_to_tache.referentiel = 'cae'
-    then
-        select 3 into referentiel_action_depth;
-    else
-        select 2 into referentiel_action_depth;
-    end if;
-    return query
-        select *
-        from action_definition_summary
-        where action_definition_summary.referentiel = action_down_to_tache.referentiel
-          and action_definition_summary.action_id like id || '%'
-          and char_length(action_definition_summary.action_id) -
-              char_length(replace(action_definition_summary.action_id, '.', ''))
-            >= referentiel_action_depth - 1;
-end
-$$ language plpgsql;
-comment on function action_down_to_tache is 'Returns referentiel action summary down to the tache level';
