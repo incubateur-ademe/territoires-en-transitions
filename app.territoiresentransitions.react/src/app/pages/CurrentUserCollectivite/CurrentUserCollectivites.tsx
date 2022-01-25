@@ -15,8 +15,8 @@ const MyCollectiviteCards = observer(
     return (
       !!ownedCollectiviteReads[0] && (
         <>
-          <h2 className="fr-h2">Mes collectivités</h2>
-          <div className="grid grid-cols-3 gap-12">
+          <h2 className="fr-h2 py-5">Mes collectivités</h2>
+          <div className="flex flex-wrap justify-center gap-12">
             {ownedCollectiviteReads.map(
               (collectivite: OwnedCollectiviteRead) => (
                 <SimpleCollectiviteCard
