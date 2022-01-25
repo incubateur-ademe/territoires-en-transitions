@@ -39,7 +39,7 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
         onChange={setOpened}
       >
         {action.actions.map(action => {
-          if (action.type === 'domaine' || action.type === 'sous-domaine') {
+          if (action.type === 'axe' || action.type === 'sous-axe') {
             return <ExpandableAction key={action.id} action={action} />;
           }
           return <ActionReferentielLinkCard key={action.id} action={action} />;
