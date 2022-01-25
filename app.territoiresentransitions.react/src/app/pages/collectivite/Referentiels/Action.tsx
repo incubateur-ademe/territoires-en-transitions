@@ -1,7 +1,5 @@
-import {actions as referentielActions} from 'generated/data/referentiels';
 import {Link} from 'react-router-dom';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
-import {searchActionById} from 'utils/actions';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
@@ -15,12 +13,12 @@ import {Spacer} from 'ui/shared/Spacer';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielAvancementRecursiveCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
-import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 import {Switch} from '@material-ui/core';
 import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
-import {ActionReferentiel} from 'types/action_referentiel';
+import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -48,9 +46,10 @@ const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   return linkedIndicateurDefinitions;
 };
 
-const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
-  const action = searchActionById(actionId, referentielActions);
+const Action = ({action}: {action: ActionDefinitionSummary}) => {
+  const children = useActionSummaryChildren(action);
   const collectiviteId = useCollectiviteId()!;
+
   const [showOnlyActionWithData, setShowOnlyActionWithData] = useState(false);
   const [renseigneStatuts, setRenseigneStatuts] = useState<ActionStatutRead[]>(
     []
@@ -66,23 +65,23 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
       .then(statuts => setRenseigneStatuts(statuts));
   }, [renseigneStatuts.length, showOnlyActionWithData, action]);
 
-  const isFullyRenseigne = (action: ActionReferentiel): boolean => {
+  const isFullyRenseigne = (action: ActionDefinitionSummary): boolean => {
     const stat = renseigneStatuts.filter(statut =>
       statut.action_id.startsWith(action.id)
     );
-    return stat.length === action.actions.length;
+    return stat.length === action.children.length;
   };
 
   if (!action) {
     return <Link to="./referentiels" />;
   }
   const actionLinkedIndicateurDefinitions =
-    useActionLinkedIndicateurDefinitions(actionId);
+    useActionLinkedIndicateurDefinitions(action.id);
 
   return (
     <div className="fr-container">
       <div className="mt-8 mb-4">
-        <OrientationQuickNav action={action} />
+        {/*<OrientationQuickNav action={action} />*/}
       </div>
       <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8">
         <div className="flex flex-col w-4/5">
@@ -120,7 +119,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
                 }}
               />
             </div>
-            {action.actions.map(action => {
+            {children.map(action => {
               if (showOnlyActionWithData && isFullyRenseigne(action)) {
                 return null;
               }
@@ -154,4 +153,4 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   );
 };
 
-export default ActionReferentielAvancement;
+export default Action;
