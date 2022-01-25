@@ -7,7 +7,7 @@ comment on type referentiel is 'An enum representing a referentiel';
 create domain action_id as varchar(30);
 comment on type action_id is 'A unique action id. ex: eci_1.1.1.1';
 
-create type  action_type as enum ('axe', 'sous-axe', 'action', 'sous-action', 'tache');
+create type  action_type as enum ('referentiel','axe', 'sous-axe', 'action', 'sous-action', 'tache');
 comment on type action_type is 'An action type, or the name of it''s level';
 
 --------------------------------
