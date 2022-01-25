@@ -11,6 +11,7 @@ describe('Retrieve referentiel down to action', () => {
       referentiel: 'eci',
       children: ['eci_2', 'eci_3', 'eci_4', 'eci_1', 'eci_5'],
       depth: 0,
+      type: 'referentiel',
       identifiant: '',
       nom: 'Économie Circulaire',
       description: '',
@@ -20,6 +21,7 @@ describe('Retrieve referentiel down to action', () => {
       referentiel: 'eci',
       children: ['eci_1.1', 'eci_1.3', 'eci_1.2'],
       depth: 1,
+      type: 'axe',
       identifiant: '1',
     };
 
@@ -41,6 +43,7 @@ describe('Retrieve action down to tache', () => {
       referentiel: 'eci',
       children: ['eci_1.1.1.3', 'eci_1.1.1.4', 'eci_1.1.1.1', 'eci_1.1.1.2'],
       depth: 3,
+      type: 'sous-action',
       identifiant: '1.1.1',
     };
     const partialTache: Partial<ActionDefinitionSummary> = {
@@ -48,6 +51,7 @@ describe('Retrieve action down to tache', () => {
       referentiel: 'eci',
       children: [],
       depth: 4,
+      type: 'tache',
       identifiant: '1.1.1.1',
     };
 
