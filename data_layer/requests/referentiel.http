@@ -63,3 +63,20 @@ Content-Type: application/json
     });
 %}
 
+
+### Retrieve action ressources
+POST {{api}}/rest/v1/rpc/action_ressources
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id": "eci_2.2"
+}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
