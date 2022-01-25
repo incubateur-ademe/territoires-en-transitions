@@ -16,6 +16,20 @@ import {PasswordStrengthMeter} from 'ui/forms/PasswordStrengthMeter';
 
 type FormState = 'ready' | 'success' | 'failure';
 
+// certains mots spécifiques du site qui vont faire baisser le score du mdp
+const UNSAFE_WORDS = ['ademe', 'tet', 'territoire', 'transition'];
+
+// pour déterminer le score du mot de passe
+const getScore = (
+  value: string,
+  otherValues: InscriptionUtilisateur
+): number => {
+  // les autres valeurs du formulaire sont également prises en compte dans le score
+  const {email, nom, prenom} = otherValues || {};
+  const userInputs = [email, nom, prenom, ...UNSAFE_WORDS];
+  return zxcvbn(value, userInputs).score;
+};
+
 /**
  * The user registration form.
  */
@@ -72,7 +86,7 @@ const RegistrationForm = () => {
       .test(
         'is-robust',
         'Ce mot de passe est trop simple',
-        value => !value || zxcvbn(value).score > 3
+        (value, context) => !value || getScore(value, context.parent) > 3
       )
       .required('Champ requis'),
     vie_privee_conditions: Yup.boolean().isTrue('Champ requis'),
@@ -100,7 +114,7 @@ const RegistrationForm = () => {
           onSubmit={register}
         >
           {({errors, touched, values}) => {
-            const {score} = zxcvbn(values.password);
+            const score = getScore(values.password, values);
 
             return (
               <Form>
