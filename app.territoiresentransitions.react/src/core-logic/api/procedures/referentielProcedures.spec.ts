@@ -16,7 +16,6 @@ describe('Retrieve referentiel down to action', () => {
       type: 'referentiel',
       identifiant: '',
       nom: 'Économie Circulaire',
-      description: '',
     };
     const partialAxe: Partial<ActionDefinitionSummary> = {
       id: 'eci_1',
@@ -26,6 +25,20 @@ describe('Retrieve referentiel down to action', () => {
       type: 'axe',
       identifiant: '1',
     };
+    const partialAction: Partial<ActionDefinitionSummary> = {
+      id: 'eci_1.1',
+      referentiel: 'eci',
+      children: [
+        'eci_1.1.1',
+        'eci_1.1.5',
+        'eci_1.1.4',
+        'eci_1.1.3',
+        'eci_1.1.2',
+      ],
+      depth: 2,
+      type: 'action',
+      identifiant: '1.1',
+    };
 
     const procedureResponse = await referentielDownToAction('eci');
 
@@ -33,6 +46,7 @@ describe('Retrieve referentiel down to action', () => {
       expect.arrayContaining([
         expect.objectContaining(partialRoot),
         expect.objectContaining(partialAxe),
+        expect.objectContaining(partialAction),
       ])
     );
   });
