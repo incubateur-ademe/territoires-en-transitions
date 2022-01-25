@@ -145,3 +145,31 @@ from action_definition
 where action_definition.action_id = action_exemples.id
 $$ language sql stable;
 comment on function action_exemples is 'Returns action "exemples" text';
+
+create or replace function action_contexte(
+    id action_id,
+    out id action_id,
+    out contexte text
+)
+as
+$$
+select action_definition.action_id, action_definition.contexte
+from action_definition
+where action_definition.action_id = action_contexte.id
+$$ language sql stable;
+comment on function action_contexte is 'Returns action "contexte" text';
+
+
+create or replace function action_ressources(
+    id action_id,
+    out id action_id,
+    out ressources text
+)
+as
+$$
+select action_definition.action_id, action_definition.ressources
+from action_definition
+where action_definition.action_id = action_ressources.id
+$$ language sql stable;
+comment on function action_ressources is 'Returns action "ressources" text';
+
