@@ -1,35 +1,20 @@
-import {ReferentielEconomieCirculaire} from 'app/pages/collectivite/Referentiels/_ReferentielEconomieCirculaire';
-import {ReferentielClimatAirEnergie} from 'app/pages/collectivite/Referentiels/_ReferentielClimatAirEnergie';
 import {useParams} from 'react-router-dom';
-import {actions} from 'generated/data/referentiels';
 import {ReferentielParamOption, referentielParam} from 'app/paths';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
+import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
+import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
+import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
 
-const eciReferentiel = actions.find(action => action.id === 'eci')!;
-const caeReferentiel = actions.find(action => action.id === 'cae')!;
-
-const ConditionnalActionsReferentiels = ({
-  view,
-}: {
-  view: ReferentielParamOption;
-}) => {
-  if (view === 'cae') {
-    const caeAxes = caeReferentiel ? caeReferentiel.actions : [];
-    return <ReferentielClimatAirEnergie caeAxes={caeAxes} />;
-  } else {
-    const eciAxes = eciReferentiel ? eciReferentiel.actions : [];
-    return <ReferentielEconomieCirculaire eciAxes={eciAxes} />;
-  }
-};
-
-const ReferentielHead = (props: {view: ReferentielParamOption}) => {
-  const referentiel = props.view === 'eci' ? eciReferentiel : caeReferentiel;
+const ReferentielHead = (props: {referentiel: ActionDefinitionSummary}) => {
   return (
     <>
       <header className="flex flex-row mb-6 items-center justify-between">
-        <h2 className="fr-h2">{referentiel.referentielDisplayName}</h2>
-        <ActionProgressBar action={referentiel} scoreBloc={scoreBloc} />
+        <h2 className="fr-h2">{props.referentiel.nom}</h2>
+        <ActionProgressBar
+          actionId={props.referentiel.id}
+          scoreBloc={scoreBloc}
+        />
       </header>
     </>
   );
@@ -41,10 +26,20 @@ export const ActionsReferentiels = () => {
   }>();
   const current = referentielId ?? 'eci';
 
+  const actions = useReferentielDownToAction(current);
+  const axes = actions.filter(a => a.type === 'axe');
+  const referentiel = actions.find(a => a.type === 'referentiel')!;
+
+  if (!referentiel) return <></>;
+
   return (
     <main className="fr-container mt-9 mb-16">
-      <ReferentielHead view={current} />
-      <ConditionnalActionsReferentiels view={current} />
+      <ReferentielHead referentiel={referentiel} />
+      <section>
+        {axes.map(axe => (
+          <ExpandableAction action={axe} key={axe.id} />
+        ))}
+      </section>
     </main>
   );
 };
