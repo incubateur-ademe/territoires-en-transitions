@@ -222,7 +222,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
       onSubmit={save}
     >
       {() => (
-        <Form>
+        <Form className="fiche-action">
           <div className="max-w-2xl">
             <Field
               name="numerotation"

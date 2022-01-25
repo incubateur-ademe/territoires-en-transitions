@@ -42,19 +42,19 @@ main a[href] {
 
 /* Checkbox styling */
 
-.cgu input {
+.fiche-action input, .cgu input {
   appearance: none;
   display: inline-block;
   vertical-align: middle;
 }
 
-.cgu input[type='checkbox'] {
+.fiche-action input[type='checkbox'], .cgu input[type='checkbox'] {
   border: 2px solid #555;
   width: 20px;
   height: 20px;
   padding: 4px;
 }
-.cgu input[type='checkbox']:checked {
+.fiche-action input[type='checkbox']:checked, .cgu input[type='checkbox']:checked {
   background: #555;
   background-clip: content-box;
 }
