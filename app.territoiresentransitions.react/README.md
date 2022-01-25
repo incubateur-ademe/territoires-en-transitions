@@ -1,7 +1,7 @@
 # Installation
 Ce projet a été démarré avec [Create React App](https://github.com/facebook/create-react-app).
 
-Vous avez besoin de node installé, version >= 14.
+Vous avez besoin de node installé, version >= 16.
 Dans 'front', vous devez installer l'application avec la commande :
 
 #### `npm install`
