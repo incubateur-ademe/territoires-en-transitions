@@ -108,7 +108,7 @@ comment on function referentiel_down_to_action is 'Returns referentiel action su
 
 create or replace function action_down_to_tache(
     referentiel referentiel,
-    action_id action_id
+    identifiant text
 )
     returns setof action_definition_summary as
 $$
@@ -125,8 +125,23 @@ begin
         select *
         from action_definition_summary
         where action_definition_summary.referentiel = action_down_to_tache.referentiel
-          and action_definition_summary.identifiant like action_down_to_tache.action_id || '%'
+          and action_definition_summary.identifiant like action_down_to_tache.identifiant || '%'
           and action_definition_summary.depth >= referentiel_action_depth - 1;
 end
 $$ language plpgsql;
 comment on function action_down_to_tache is 'Returns referentiel action summary down to the tache level';
+
+
+
+create or replace function action_exemples(
+    id action_id,
+    out id action_id,
+    out exemples text
+)
+as
+$$
+select action_definition.action_id, action_definition.exemples
+from action_definition
+where action_definition.action_id = action_exemples.id
+$$ language sql stable;
+comment on function action_exemples is 'Returns action "exemples" text';
