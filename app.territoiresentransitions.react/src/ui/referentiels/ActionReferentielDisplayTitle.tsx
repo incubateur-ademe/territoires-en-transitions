@@ -3,6 +3,7 @@ import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {referentielId} from 'utils/actions';
 import {toFixed} from 'utils/toFixed';
 import {ActionReferentiel, ActionType} from 'types/action_referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
 
 export interface PillParams {
   color: string;
@@ -40,7 +41,13 @@ export const pillParams: Record<ActionType, PillParams> = {
   tache: {color: '#E8EBF3', textColor: 'black', filled: true, height: 20},
 };
 export const ActionPotentiel = observer(
-  ({action, scoreBloc}: {action: ActionReferentiel; scoreBloc: ScoreBloc}) => {
+  ({
+    action,
+    scoreBloc,
+  }: {
+    action: ActionReferentiel | ActionDefinitionSummary;
+    scoreBloc: ScoreBloc;
+  }) => {
     const score = scoreBloc.getScore(action.id, referentielId(action.id));
 
     if (score === null) return null;
@@ -53,31 +60,39 @@ export const ActionPotentiel = observer(
     return <span className="font-normal whitespace-nowrap">({text})</span>;
   }
 );
+export const ActionReferentielTitlePill = ({
+  action,
+}: {
+  action: ActionReferentiel | ActionDefinitionSummary;
+}) => {
+  const pill = pillParams[action.type];
+  return (
+    <div
+      className="content-center font-normal"
+      style={{
+        color: pill.textColor,
+        borderWidth: 2,
+        backgroundColor: pill.filled ? pill.color : 'white',
+        borderColor: pill.filled ? 'white' : pill.color,
+        borderRadius: pill.height,
+        minHeight: pill.height,
+        paddingLeft: pill.height * 0.5,
+        paddingRight: pill.height * 0.5,
+        fontSize: pill.height + 'px',
+      }}
+    >
+      <div className="pb-1">{action.identifiant}</div>
+    </div>
+  );
+};
 export const ActionReferentielDisplayTitle = ({
   action,
 }: {
-  action: ActionReferentiel;
+  action: ActionReferentiel | ActionDefinitionSummary;
 }) => {
-  const pill = pillParams[action.type];
-
   return (
     <div className="flex flex-row align-middle items-center font-bold gap-2">
-      <div
-        className="content-center font-normal"
-        style={{
-          color: pill.textColor,
-          borderWidth: 2,
-          backgroundColor: pill.filled ? pill.color : 'white',
-          borderColor: pill.filled ? 'white' : pill.color,
-          borderRadius: pill.height,
-          minHeight: pill.height,
-          paddingLeft: pill.height * 0.5,
-          paddingRight: pill.height * 0.5,
-          fontSize: pill.height + 'px',
-        }}
-      >
-        <div className="py-1">{action.identifiant}</div>
-      </div>
+      <ActionReferentielTitlePill action={action} />
       <div className="py-2">
         <span className="fr-text--lg">{action.nom} </span>
         <ActionPotentiel action={action} scoreBloc={scoreBloc} />
