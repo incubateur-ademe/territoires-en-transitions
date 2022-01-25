@@ -6,14 +6,22 @@ import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionReferentielLinkCard} from 'ui/referentiels/ActionReferentielLinkCard';
 import {ActionReferentiel} from 'types/action_referentiel';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
+import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
+import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 
 /**
  * An expandable action used for "axes" and "sous axes", shows Scores.
  *
  * Note: could be made recursive to simplify display on "axes" pages.
  */
-export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
+export const ExpandableAction = ({
+  action,
+}: {
+  action: ActionReferentiel | ActionDefinitionSummary;
+}) => {
   const [opened, setOpened] = useState(false);
+  const children = useActionSummaryChildren(action as ActionDefinitionSummary);
+
   return (
     <div className="mt-5">
       <LazyDetails
@@ -32,7 +40,7 @@ export const ExpandableAction = ({action}: {action: ActionReferentiel}) => {
         }
         onChange={setOpened}
       >
-        {action.actions.map(action => {
+        {children.map(action => {
           if (action.type === 'axe' || action.type === 'sous-axe') {
             return <ExpandableAction key={action.id} action={action} />;
           }
