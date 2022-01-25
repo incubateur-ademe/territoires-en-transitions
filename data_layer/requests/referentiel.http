@@ -80,3 +80,16 @@ Content-Type: application/json
     });
 %}
 
+
+### List action titles
+GET {{api}}/rest/v1/action_title?select=*
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+
