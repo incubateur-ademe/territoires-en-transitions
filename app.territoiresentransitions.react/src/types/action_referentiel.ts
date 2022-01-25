@@ -123,21 +123,16 @@ export class ActionReferentiel {
 }
 
 const caeHierarchy: ActionType[] = [
-  'domaine',
-  'sous-domaine',
+  'axe',
+  'sous-axe',
   'action',
   'sous-action',
   'tache',
 ];
-const eciHierarchy: ActionType[] = [
-  'domaine',
-  'action',
-  'sous-action',
-  'tache',
-];
+const eciHierarchy: ActionType[] = ['axe', 'action', 'sous-action', 'tache'];
 export type ActionType =
-  | 'domaine'
-  | 'sous-domaine'
+  | 'axe'
+  | 'sous-axe'
   | 'action'
   | 'sous-action'
   | 'tache';
