@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
+import zxcvbn from 'zxcvbn';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Link} from 'react-router-dom';
 import {
@@ -11,6 +12,7 @@ import {
 import {signInPath} from 'app/paths';
 import {Spacer} from 'ui/shared/Spacer';
 import {ValiderButton} from 'ui/shared/ValiderButton';
+import {PasswordStrengthMeter} from 'ui/forms/PasswordStrengthMeter';
 
 type FormState = 'ready' | 'success' | 'failure';
 
@@ -67,13 +69,18 @@ const RegistrationForm = () => {
     password: Yup.string()
       .min(8, 'Ce champ doit faire au minimum 8 caractères')
       .max(300, 'Ce champ doit faire au maximum 300 caractères')
+      .test(
+        'is-robust',
+        'Ce mot de passe est trop simple',
+        value => !value || zxcvbn(value).score > 3
+      )
       .required('Champ requis'),
     vie_privee_conditions: Yup.boolean().isTrue('Champ requis'),
   });
 
   const register = (data: InscriptionUtilisateur) => {
     registerUser(data)
-      .then(_ => {
+      .then(() => {
         setState('success');
       })
       .catch(reason => {
@@ -92,53 +99,65 @@ const RegistrationForm = () => {
           validationSchema={validation}
           onSubmit={register}
         >
-          {({errors, touched}) => (
-            <Form>
-              <Field name="email" label="Email" component={LabeledTextField} />
-              <Spacer size={2} />
-              <Field
-                name="password"
-                label="Mot de passe"
-                type="password"
-                component={LabeledTextField}
-              />
-              <Spacer size={2} />
-              <Field
-                name="prenom"
-                label="Prénom"
-                component={LabeledTextField}
-              />
-              <Spacer size={2} />
-              <Field name="nom" label="Nom" component={LabeledTextField} />
-              <Spacer size={2} />
-              <label className="cgu">
-                {errors.vie_privee_conditions &&
-                  touched.vie_privee_conditions && (
-                    <div className="mb-2 text-sm opacity-80 text-red-500">
-                      L'acceptation de la politique de protection des données à
-                      caractère personnel est nécessaire pour créer un compte.
-                    </div>
-                  )}
-                <Field type="checkbox" name="vie_privee_conditions" />
-                <span className="ml-2">
-                  J'accepte la{' '}
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className=" text-blue-600"
-                    href={politique_vie_privee}
-                  >
-                    politique de protection des données à caractère personnel de
-                    l'ADEME
-                  </a>
-                </span>{' '}
-              </label>
-              <Spacer size={2} />
-              <div className="max-w-2xl flex flex-row-reverse">
-                <ValiderButton />
-              </div>
-            </Form>
-          )}
+          {({errors, touched, values}) => {
+            const {score} = zxcvbn(values.password);
+
+            return (
+              <Form>
+                <Field
+                  name="email"
+                  label="Email"
+                  component={LabeledTextField}
+                />
+                <Spacer size={2} />
+                <Field
+                  name="password"
+                  label="Mot de passe"
+                  type="password"
+                  component={LabeledTextField}
+                />
+                {score > 0 && (
+                  <PasswordStrengthMeter score={score} className="pt-2" />
+                )}
+                <Spacer size={2} />
+                <Field
+                  name="prenom"
+                  label="Prénom"
+                  component={LabeledTextField}
+                />
+                <Spacer size={2} />
+                <Field name="nom" label="Nom" component={LabeledTextField} />
+                <Spacer size={2} />
+                <label className="cgu">
+                  {errors.vie_privee_conditions &&
+                    touched.vie_privee_conditions && (
+                      <div className="mb-2 text-sm opacity-80 text-red-500">
+                        L'acceptation de la politique de protection des données
+                        à caractère personnel est nécessaire pour créer un
+                        compte.
+                      </div>
+                    )}
+                  <Field type="checkbox" name="vie_privee_conditions" />
+                  <span className="ml-2">
+                    J'accepte la{' '}
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className=" text-blue-600"
+                      href={politique_vie_privee}
+                    >
+                      politique de protection des données à caractère personnel
+                      de l'ADEME
+                    </a>
+                  </span>{' '}
+                </label>
+                <Spacer size={2} />
+                <div className="max-w-2xl flex flex-row-reverse">
+                  <ValiderButton />
+                </div>
+              </Form>
+            );
+          }}
         </Formik>
       </div>
     </section>
