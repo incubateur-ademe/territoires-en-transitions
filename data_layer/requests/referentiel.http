@@ -38,7 +38,7 @@ Content-Type: application/json
 
 {
   "referentiel": "eci",
-  "action_id": "1.1.1"
+  "identifiant": "1.1.1"
 }
 
 > {%
@@ -46,3 +46,20 @@ Content-Type: application/json
         client.assert(response.status === 200, "Response status is not 200");
     });
 %}
+
+### Retrieve action exemple
+POST {{api}}/rest/v1/rpc/action_exemples
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id": "eci_1.1.1"
+}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+

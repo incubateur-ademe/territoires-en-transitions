@@ -2,6 +2,10 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {Referentiel} from 'types/litterals';
 import {ActionType} from 'types/action_referentiel';
 
+/**
+ * Action definition Summary
+ * Used to display an action using only displayed information
+ */
 export interface ActionDefinitionSummary {
   id: string;
   referentiel: Referentiel;
@@ -36,11 +40,11 @@ export const referentielDownToAction = async (
  */
 export const actionDownToTache = async (
   referentiel: Referentiel,
-  actionId: string
+  identifiant: string
 ): Promise<ActionDefinitionSummary[]> => {
   const {data, error} = await supabaseClient.rpc('action_down_to_tache', {
     referentiel: referentiel,
-    action_id: actionId,
+    identifiant: identifiant,
   });
 
   if (error) {
@@ -49,4 +53,29 @@ export const actionDownToTache = async (
   }
 
   return data as ActionDefinitionSummary[];
+};
+
+/**
+ * Action Exemples
+ * The exemples section contents
+ */
+export interface ActionExemples {
+  id: string;
+  exemples: string;
+}
+
+/**
+ * Returns action exemples text
+ */
+export const actionExemples = async (id: string): Promise<ActionExemples> => {
+  const {data, error} = await supabaseClient.rpc('action_exemples', {
+    id: id,
+  });
+
+  if (error) {
+    console.error(error);
+    return {id: id, exemples: ''};
+  }
+
+  return data as Object as ActionExemples;
 };
