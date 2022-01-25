@@ -30,8 +30,7 @@ export const FooterNavigation = () => (
       </li>
       <li className="fr-footer__bottom-item">
         <Link className="fr-footer__bottom-link" to="/statistics">
-          {' '}
-          Statistiques{' '}
+          Statistiques
         </Link>
       </li>
     </ul>
@@ -48,7 +47,7 @@ export const FooterDescription = () => (
       Vous rencontrez une difficulté ? Une suggestion pour nous aider à
       améliorer l'outil ?
       <br />
-      Écrivez-nous à&#8201;:{' '}
+      Écrivez-nous à&#8201;:
       <a href="mailto:aide@territoiresentransitions.fr?subject=Aide sur app.territoiresentransitions.fr">
         aide@territoiresentransitions.fr
       </a>
@@ -65,7 +64,7 @@ export const Footer = (props: FooterProps) => {
     >
       <div className="fr-container">
         <div className="fr-footer__body">
-          <div className="fr-footer__brand fr-enlarge-link">
+          <div className="fr-footer__brand">
             <p className="fr-logo" title="république française">
               république
               <br />
@@ -118,9 +117,9 @@ export const Footer = (props: FooterProps) => {
                 <li className="fr-footer__content-item">
                   <a
                     className="fr-footer__content-link"
-                    href="http://citergie.ademe.fr/"
+                    href="https://territoireengagetransitionecologique.ademe.fr"
                   >
-                    citergie.fr
+                    territoireengagetransitionecologique.ademe.fr
                   </a>
                 </li>
               </ul>
