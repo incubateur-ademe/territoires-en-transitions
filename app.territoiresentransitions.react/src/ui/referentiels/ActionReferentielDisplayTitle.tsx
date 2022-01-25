@@ -12,6 +12,12 @@ export interface PillParams {
 }
 
 export const pillParams: Record<ActionType, PillParams> = {
+  referentiel: {
+    color: '#000091',
+    textColor: '#000091',
+    filled: false,
+    height: 20,
+  },
   axe: {
     color: '#000091',
     textColor: '#000091',
