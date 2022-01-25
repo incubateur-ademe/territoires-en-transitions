@@ -1,8 +1,10 @@
 import {useEffect, useState} from 'react';
 import {
+  actionContexte,
   ActionDefinitionSummary,
   actionDownToTache,
   actionExemples,
+  actionRessources,
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
 import {Referentiel} from 'types/litterals';
@@ -43,6 +45,28 @@ export const useActionExemples = (actionId: string) => {
   }, [actionId]);
 
   return exemples;
+};
+
+export const useActionContexte = (actionId: string) => {
+  const [contexte, setContexte] = useState<string>('...');
+
+  useEffect(() => {
+    actionContexte(actionId).then(contexte => setContexte(contexte.contexte));
+  }, [actionId]);
+
+  return contexte;
+};
+
+export const useActionResources = (actionId: string) => {
+  const [ressources, setRessources] = useState<string>('...');
+
+  useEffect(() => {
+    actionRessources(actionId).then(ressources =>
+      setRessources(ressources.ressources)
+    );
+  }, [actionId]);
+
+  return ressources;
 };
 
 export const useActionSummaryChildren = (action: ActionDefinitionSummary) => {

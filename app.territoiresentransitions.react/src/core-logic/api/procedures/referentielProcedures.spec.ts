@@ -1,8 +1,12 @@
 import {
+  actionContexte,
+  ActionContexte,
   ActionDefinitionSummary,
   actionDownToTache,
   actionExemples,
   ActionExemples,
+  actionRessources,
+  ActionRessources,
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
 
@@ -90,5 +94,29 @@ describe('Retrieve exemples', () => {
     const procedureResponse = await actionExemples('eci_1.1.1');
 
     expect(procedureResponse).toEqual(expect.objectContaining(partialExemple));
+  });
+});
+
+describe('Retrieve contexte', () => {
+  it('should return the action contexte content', async () => {
+    const partialExemple: Partial<ActionContexte> = {
+      id: 'eci_2.2',
+    };
+    const procedureResponse = await actionContexte('eci_2.2');
+
+    expect(procedureResponse).toEqual(expect.objectContaining(partialExemple));
+    expect(procedureResponse.contexte.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Retrieve ressources', () => {
+  it('should return the action ressources content', async () => {
+    const partialExemple: Partial<ActionRessources> = {
+      id: 'eci_2.2',
+    };
+    const procedureResponse = await actionRessources('eci_2.2');
+
+    expect(procedureResponse).toEqual(expect.objectContaining(partialExemple));
+    expect(procedureResponse.ressources.length).toBeGreaterThan(0);
   });
 });
