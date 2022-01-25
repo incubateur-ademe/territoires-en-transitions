@@ -8,6 +8,7 @@ import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDi
 import {referentielId} from 'utils/actions';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentiel} from 'types/action_referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
 
 /**
  * Used on referentiels page, links to action page.
@@ -15,7 +16,7 @@ import {ActionReferentiel} from 'types/action_referentiel';
 export const ActionReferentielLinkCard = ({
   action,
 }: {
-  action: ActionReferentiel;
+  action: ActionReferentiel | ActionDefinitionSummary;
 }) => {
   const collectiviteId =
     currentCollectiviteBloc.currentCollectivite?.collectivite_id;
