@@ -100,7 +100,7 @@ begin
         select *
         from action_definition_summary
         where action_definition_summary.referentiel = referentiel_down_to_action.referentiel
-          and action_definition_summary.depth < referentiel_action_depth;
+          and action_definition_summary.depth <= referentiel_action_depth;
 end;
 $$ language plpgsql;
 comment on function referentiel_down_to_action is 'Returns referentiel action summary down to the action level';
