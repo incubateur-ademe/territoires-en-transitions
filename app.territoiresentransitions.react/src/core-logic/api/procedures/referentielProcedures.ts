@@ -1,5 +1,6 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {Referentiel} from 'types/litterals';
+import {ActionType} from 'types/action_referentiel';
 
 export interface ActionDefinitionSummary {
   id: string;
@@ -9,6 +10,7 @@ export interface ActionDefinitionSummary {
   children: string[];
   description: string;
   depth: number;
+  type: ActionType;
 }
 
 /**
