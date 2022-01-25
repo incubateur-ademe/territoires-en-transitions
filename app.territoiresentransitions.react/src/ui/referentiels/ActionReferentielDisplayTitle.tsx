@@ -12,13 +12,13 @@ export interface PillParams {
 }
 
 export const pillParams: Record<ActionType, PillParams> = {
-  domaine: {
+  axe: {
     color: '#000091',
     textColor: '#000091',
     filled: false,
     height: 20,
   },
-  'sous-domaine': {
+  'sous-axe': {
     color: '#000091',
     textColor: '#000091',
     filled: false,
@@ -41,7 +41,7 @@ export const ActionPotentiel = observer(
 
     const potentiel = toFixed(
       score?.point_potentiel,
-      action.type === 'domaine' || action.type === 'sous-domaine' ? 0 : 2
+      action.type === 'axe' || action.type === 'sous-axe' ? 0 : 2
     );
     const text = score?.point_potentiel ? `${potentiel} points` : '0 point';
     return <span className="font-normal whitespace-nowrap">({text})</span>;

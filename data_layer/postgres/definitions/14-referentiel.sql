@@ -7,6 +7,8 @@ comment on type referentiel is 'An enum representing a referentiel';
 create domain action_id as varchar(30);
 comment on type action_id is 'A unique action id. ex: eci_1.1.1.1';
 
+create type  action_type as enum ('axe', 'sous-axe', 'action', 'sous-action', 'tache');
+comment on type action_type is 'An action type, or the name of it''s level';
 
 --------------------------------
 ------ ACTION RELATION ---------
@@ -136,10 +138,6 @@ create policy allow_read
     on action_definition
     for select
     using (true);
-
-
-
-
 
 create table action_computed_points
 (
