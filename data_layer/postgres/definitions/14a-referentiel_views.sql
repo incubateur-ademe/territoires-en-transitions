@@ -51,9 +51,9 @@ with recursive
 -- +---+-------------------------------------+-----+
 -- |cae|{cae_4,cae_5,cae_2,cae_6,cae_1,cae_3}|0    |
 -- |eci|{eci_2,eci_3,eci_4,eci_1,eci_5}      |0    |
-select actions_from_parents.id as id,
+select actions_from_parents.id                               as id,
        coalesce(parent_children.children, '{}'::action_id[]) as children,
-       actions_from_parents.depth as depth
+       actions_from_parents.depth                            as depth
 from actions_from_parents
          left join parent_children on actions_from_parents.id = parent_children.id
 order by depth;
@@ -65,11 +65,18 @@ select id,
        action_definition.referentiel,
        action_children.children,
        action_children.depth,
+       coalesce(
+               case
+                   when referentiel = 'cae'
+                       then ('{"axe", "sous-axe", "action", "sous-action", "tache"}'::action_type[])[action_children.depth]
+                   else ('{"axe", "action", "sous-action", "tache"}'::action_type[])[action_children.depth]
+                   end
+           , 'referentiel') as type,
        identifiant,
        nom,
        description
 from action_definition
-join action_children on action_id = action_children.id
+         join action_children on action_id = action_children.id
 order by action_id;
 comment on view action_definition_summary is
     'The minimum information from definition';
