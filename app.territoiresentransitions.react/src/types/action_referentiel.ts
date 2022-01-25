@@ -1,5 +1,8 @@
 import {Referentiel} from 'types/litterals';
 
+/**
+ * @deprecated use actions types from referentiels procedures
+ */
 export interface ActionReferentielInterface {
   id: string;
   id_nomenclature: string;
@@ -13,6 +16,9 @@ export interface ActionReferentielInterface {
   actions: ActionReferentiel[];
 }
 
+/**
+ * @deprecated use actions types from referentiels procedures
+ */
 export class ActionReferentiel {
   public static pathname = 'action_referentiel';
   get pathname(): string {
