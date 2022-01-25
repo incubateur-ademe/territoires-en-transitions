@@ -5,7 +5,7 @@ export const RetourButton = () => {
   return (
     <button
       className="fr-link fr-fi-arrow-left-line fr-link--icon-left"
-      onClick={history.goBack}
+      onClick={history.back}
     >
       Retour
     </button>
