@@ -10,6 +10,8 @@ import {
 } from 'ui/shared/actions/ActionExpandPanels';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ActionReferentiel} from 'types/action_referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
+import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 
 /**
  * Displays an actions and it's children indented below.
@@ -25,23 +27,24 @@ const ActionReferentielRecursiveCard = ({
   action,
   card,
 }: {
-  action: ActionReferentiel;
-  card: ({action}: {action: ActionReferentiel}) => JSX.Element;
+  action: ActionDefinitionSummary;
+  card: ({action}: {action: ActionDefinitionSummary}) => JSX.Element;
 }) => {
-  if (action.actions.length === 0) return <div> {card({action})}</div>;
-  else
-    return (
-      <div id={action.id}>
-        <div> {card({action})}</div>{' '}
-        {action.actions.map(action => (
-          <ActionReferentielRecursiveCard
-            key={action.id}
-            action={action}
-            card={card}
-          />
-        ))}
-      </div>
-    );
+  if (action.children.length === 0) return <div> {card({action})}</div>;
+
+  const children = useActionSummaryChildren(action);
+  return (
+    <div id={action.id}>
+      <div> {card({action})}</div>{' '}
+      {children.map(action => (
+        <ActionReferentielRecursiveCard
+          key={action.id}
+          action={action}
+          card={card}
+        />
+      ))}
+    </div>
+  );
 };
 
 export const ActionReferentielAvancementCard = ({
@@ -49,9 +52,9 @@ export const ActionReferentielAvancementCard = ({
 }: {
   displayProgressStat: boolean;
   displayAddFicheActionButton: boolean;
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
 }) => {
-  const isLeaf = action.actions.length === 0;
+  const isLeaf = action.children.length === 0;
   return (
     <div className="pt-8 flex flex-row justify-between">
       <div className="flex flex-col w-4/5">
@@ -85,7 +88,7 @@ export const ActionReferentielAvancementRecursiveCard = ({
   displayProgressStat,
   displayAddFicheActionButton,
 }: {
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
   displayProgressStat: boolean;
   displayAddFicheActionButton: boolean;
 }) =>

@@ -5,12 +5,12 @@ import {
   ActionExemplesExpandPanel,
   ActionRessourcesExpandPanel,
 } from 'ui/shared/actions/ActionExpandPanels';
-import {ActionReferentiel} from 'types/action_referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
 
 const ContexteExemplesAndRessourcesDialogContent = ({
   action,
 }: {
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
 }) => (
   <div className="p-7 flex flex-col">
     <h4 className="pb-4"> {action.nom} </h4>
@@ -23,7 +23,7 @@ const ContexteExemplesAndRessourcesDialogContent = ({
 export const DescriptionContextAndRessourcesDialogButton = ({
   action,
 }: {
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
 }) => {
   const [opened, setOpened] = useState(false);
 
