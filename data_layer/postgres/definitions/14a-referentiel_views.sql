@@ -79,7 +79,20 @@ from action_definition
          join action_children on action_id = action_children.id
 order by action_id;
 comment on view action_definition_summary is
-    'The minimum information from definition';
+    'The minimum information to display an action';
+
+
+create or replace view action_title
+as
+select id,
+       referentiel,
+       children,
+       type,
+       identifiant,
+       nom
+from action_definition_summary;
+comment on view action_title is
+    'Titles only';
 
 
 create or replace function referentiel_down_to_action(
