@@ -2,7 +2,7 @@ import {observer} from 'mobx-react-lite';
 import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {referentielId} from 'utils/actions';
 import {toFixed} from 'utils/toFixed';
-import {ActionReferentiel, ActionType} from 'types/action_referentiel';
+import {ActionType} from 'types/action_referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 export interface PillParams {
@@ -45,7 +45,7 @@ export const ActionPotentiel = observer(
     action,
     scoreBloc,
   }: {
-    action: ActionReferentiel | ActionDefinitionSummary;
+    action: ActionDefinitionSummary;
     scoreBloc: ScoreBloc;
   }) => {
     const score = scoreBloc.getScore(action.id, referentielId(action.id));
@@ -63,7 +63,7 @@ export const ActionPotentiel = observer(
 export const ActionReferentielTitlePill = ({
   action,
 }: {
-  action: ActionReferentiel | ActionDefinitionSummary;
+  action: ActionDefinitionSummary;
 }) => {
   const pill = pillParams[action.type];
   return (
@@ -88,7 +88,7 @@ export const ActionReferentielTitlePill = ({
 export const ActionReferentielDisplayTitle = ({
   action,
 }: {
-  action: ActionReferentiel | ActionDefinitionSummary;
+  action: ActionDefinitionSummary;
 }) => {
   return (
     <div className="flex flex-row align-middle items-center font-bold gap-2">

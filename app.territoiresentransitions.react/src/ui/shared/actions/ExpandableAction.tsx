@@ -4,7 +4,6 @@ import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDi
 import {Chevron} from 'ui/shared/Chevron';
 import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionReferentielLinkCard} from 'ui/referentiels/ActionReferentielLinkCard';
-import {ActionReferentiel} from 'types/action_referentiel';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -17,7 +16,7 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 export const ExpandableAction = ({
   action,
 }: {
-  action: ActionReferentiel | ActionDefinitionSummary;
+  action: ActionDefinitionSummary;
 }) => {
   const [opened, setOpened] = useState(false);
   const children = useActionSummaryChildren(action as ActionDefinitionSummary);
