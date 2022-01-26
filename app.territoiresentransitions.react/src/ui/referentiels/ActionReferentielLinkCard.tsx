@@ -16,7 +16,7 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 export const ActionReferentielLinkCard = ({
   action,
 }: {
-  action: ActionReferentiel | ActionDefinitionSummary;
+  action: ActionDefinitionSummary;
 }) => {
   const collectiviteId =
     currentCollectiviteBloc.currentCollectivite?.collectivite_id;
