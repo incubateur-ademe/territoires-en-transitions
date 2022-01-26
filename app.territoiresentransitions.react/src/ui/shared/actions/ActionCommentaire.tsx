@@ -5,7 +5,7 @@ import {observer} from 'mobx-react-lite';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {AutoTextArea} from '../AutoTextArea';
-import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 export const ActionCommentaire = ({
   action,

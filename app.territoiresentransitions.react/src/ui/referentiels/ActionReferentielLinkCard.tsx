@@ -8,7 +8,7 @@ import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDi
 import {referentielId} from 'utils/actions';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentiel} from 'types/action_referentiel';
-import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 /**
  * Used on referentiels page, links to action page.
