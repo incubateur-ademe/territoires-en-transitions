@@ -515,9 +515,9 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 </li>
 </ul>
 ', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.2.1.1', 'eci', '2.2.1.1', 'Disposer d''une analyse actualisée par rapport à l''état du système de collecte sur le taux d''utilisation du service', '', '', '', '', null, 33.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.2.1.2', 'eci', '2.2.1.2', 'Disposer d''une analyse actualisée par rapport à l''état du système de collecte sur l''évaluation du parc de déchèteries', '', '', '', '', null, 33.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.2.1.3', 'eci', '2.2.1.3', 'Disposer d''une étude préalable à la mise en place de solutions alternatives pour diminuer les flux traités', '', '', '', '', null, 34.0);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.2.1.1', 'eci', '2.2.1.1', 'Disposer d''une analyse actualisée par rapport à l''état du système de collecte sur le taux d''utilisation du service', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.2.1.2', 'eci', '2.2.1.2', 'Disposer d''une analyse actualisée par rapport à l''état du système de collecte sur l''évaluation du parc de déchèteries', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.2.1.3', 'eci', '2.2.1.3', 'Disposer d''une étude préalable à la mise en place de solutions alternatives pour diminuer les flux traités', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.2.2', 'eci', '2.2.2', 'Définir un plan d''action', '<p>Sur la base des données du suivi ou des résultats des études, la collectivité défini un plan d''actions d''optimisation de la collecte, en cohérence avec les objectifs de la loi relative à la lutte contre le gaspillage et pour l''économie circulaire (loi AGEC).</p>
 ', '', '<p>Fixer des priorités d''optimisation du système de collecte sur une période donnée afin de ne pas mener tous les chantiers d''optimisation de front.</p>
 <p>En fonction de la stratégie et des moyens de la  collectivité,  les actions peuvent porter sur les objectifs extraits de la loi relative à la lutte contre le gaspillage et pour l''économie circulaire qui concernent la collecte :</p>
@@ -738,14 +738,14 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Une étude peut être basée sur les travaux internes déjà disponibles ou réalisée sur mesure en interne ou par un sous-traitant.</p>
 <p>L''étude d''optimisation peut faire état du taux d''utilisation des installations actuelles et des pistes pour l''optimiser.</p>
 <p>L''étude peut mener vers la mise en place de nouvelle(s) filière(s).</p>
-', '', null, 33.0);
+', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.3.1.1', 'eci', '2.3.1.1', 'Connaitre les flux de déchets', '', '', '', '', null, 40.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.3.1.2', 'eci', '2.3.1.2', 'Disposer d''un état des lieux de l''utilisation des filières existantes', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.3.1.3', 'eci', '2.3.1.3', 'Etudier l''optimisation des filières envisageables', '', '', '', '', null, 40.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.3.2', 'eci', '2.3.2', 'Concrétiser les solutions issues des études d''optimisation', '<p>La collectivité concrétise les solutions issues des études d''optimisation. Elle met en place les conditions (financières et organisationnelles) pour favoriser l’émergence de ces solutions.</p>
 <p>Elle mène et accompagne l''évolution des moyens de traitement.</p>
 ', '', '<p>Au-delà des obligations du guide de collecte des déchets (Article R2224-27 du Code Général des Collectivités Territoriales), la collectivité informe les professionnels sur leurs obligations, notamment : tri 5 flux (décret n° 2016-288 du 10 mars 2016)</p>
-', '', null, 33.0);
+', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.3.2.1', 'eci', '2.3.2.1', 'Concrétiser au moins une solution et avoir concrétisé moins d''un tiers des solutions retenues dans l’étude', '', '', '', '', null, 25.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.3.2.2', 'eci', '2.3.2.2', 'Concrétiser entre un tiers et deux tiers des solutions', '', '', '', '', null, 25.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.3.2.3', 'eci', '2.3.2.3', 'Concrétiser plus de deux tiers des solutions', '', '', '', '', null, 25.0);
@@ -785,7 +785,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>en tenant compte des études de prospection (évolution future des flux)</p>
 </li>
 </ul>
-', '', null, 34.0);
+', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.3.3.1', 'eci', '2.3.3.1', 'Mesurer l''effet de l''accompagnement', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.3.3.2', 'eci', '2.3.3.2', 'Valoriser au moins 50% des déchets', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.3.3.3', 'eci', '2.3.3.3', 'Valoriser au moins 60% des déchets', '', '', '', '', null, 10.0);
@@ -1150,9 +1150,9 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>NOTA : La collectivité qui souhaite, indépendamment de ses missions de service public, prendre en charge une activité économique, ne peut le faire légalement que dans le respect tant de la liberté du commerce et de l’industrie que du droit de la concurrence.</p>
 <p>(Voir décision du Conseil d''Etat du 31 mai 2006)</p>
 ', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.5.3.1', 'eci', '2.5.3.1', 'Mettre en place des moyens pour identifier ou fédérer des réseaux d''acteurs sur le territoire', '', '', '', '', null, 33.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.5.3.2', 'eci', '2.5.3.2', 'Mettre en place des moyens pour accompagner les projets dans leur définition', '', '', '', '', null, 33.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.5.3.3', 'eci', '2.5.3.3', 'Mettre en place des moyens pour soutenir le déploiement des projets', '', '', '', '', null, 34.0);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.5.3.1', 'eci', '2.5.3.1', 'Mettre en place des moyens pour identifier ou fédérer des réseaux d''acteurs sur le territoire', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.5.3.2', 'eci', '2.5.3.2', 'Mettre en place des moyens pour accompagner les projets dans leur définition', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.5.3.3', 'eci', '2.5.3.3', 'Mettre en place des moyens pour soutenir le déploiement des projets', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1', 'eci', '2.1', 'Disposer d''un programme de prévention des déchets', '<p>Le Programme Local de Prévention des Déchets Ménagers et Assimilés (PLPDMA) d''un territoire vise à réduire la quantité et la nocivité des déchets (via l''atteinte d''un objectif partagé). Ce programme s''inscrit dans la durée au travers de la coordination, de la mise en place et du suivi d''actions concertées avec les acteurs locaux.</p>
 ', '<p><strong>Contexte</strong></p>
 <p><a href="https://www.optigede.ademe.fr/plan-programme-prevention">Plans et programmes de prévention</a></p>
@@ -1240,13 +1240,13 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 </li>
 </ul>
 ', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.1', 'eci', '2.1.1.1', 'Déployer 3 à 9 actions sur l''année', '', '', '', '', null, 17.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.2', 'eci', '2.1.1.2', 'Déployer 10 à 14 actions sur l''année', '', '', '', '', null, 16.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.3', 'eci', '2.1.1.3', 'Déployer 15 actions ou plus', '', '', '', '', null, 17.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.4', 'eci', '2.1.1.4', 'Exploiter 1 ou 2 axes du guide PLPDMA de l''ADEME', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.5', 'eci', '2.1.1.5', 'Exploiter 3 ou 4 axes du guide PLPDMA de l''ADEME', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.6', 'eci', '2.1.1.6', 'Exploiter 5 ou 6 axes du guide PLPDMA de l''ADEME', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.7', 'eci', '2.1.1.7', 'Exploiter les 7 axes du guide PLPDMA de l''ADEME', '', '', '', '', null, 10.0);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.1', 'eci', '2.1.1.1', 'Déployer 3 à 9 actions sur l''année', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.2', 'eci', '2.1.1.2', 'Déployer 10 à 14 actions sur l''année', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.3', 'eci', '2.1.1.3', 'Déployer 15 actions ou plus', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.4', 'eci', '2.1.1.4', 'Exploiter 1 ou 2 axes du guide PLPDMA de l''ADEME', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.5', 'eci', '2.1.1.5', 'Exploiter 3 ou 4 axes du guide PLPDMA de l''ADEME', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.6', 'eci', '2.1.1.6', 'Exploiter 5 ou 6 axes du guide PLPDMA de l''ADEME', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.1.7', 'eci', '2.1.1.7', 'Exploiter les 7 axes du guide PLPDMA de l''ADEME', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_2.1.2', 'eci', '2.1.2', 'Disposer d''une commission consultative d''élaboration et de suivi (CCES) élargie', '<p>La collectivité fait vivre une gouvernance participative élargie avec la commission consultative d''élaboration et de suivi (CCES).</p>
 ', '', '<p>Une composition élargie de la CCES incluant l''ensemble des parties prenantes au-delà des élus (partenaires publics, ONG, associations, habitants, acteurs économiques, …)</p>
 ', '', null, 20.0);
@@ -1975,7 +1975,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Année 1: Filière 1 est diagnostiquée.</p>
 <p>Année 2: Filière 1 fait objet du plan d''action; Filière 2 est diagnostiquée.</p>
 <p>Année 3: Filière 1 a son plan d''action piloté; Filière 2 fait objet du plan d''action; Filière 3 est diagnostiquée.</p>
-', '', null, 33.0);
+', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.1.1', 'eci', '3.1.1.1', 'Prioriser la filière (les filières) à diagnostiquer', '', '', '', '', null, 40.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.1.2', 'eci', '3.1.1.2', 'Disposer d''un diagnostic de filière(s) à enjeux d''économie circulaire en cours de réalisation', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.1.3', 'eci', '3.1.1.3', 'Disposer d''un diagnostic de filière(s) à enjeux d''économie circulaire finalisé', '', '', '', '', null, 20.0);
@@ -2004,7 +2004,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Définir un coordinateur de la mise en œuvre du plan d''actions (une personne ou une équipe).</p>
 </li>
 </ul>
-', '', null, 33.0);
+', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.2.1', 'eci', '3.1.2.1', 'Construire le plan d''actions', '', '', '', '', null, 30.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.2.2', 'eci', '3.1.2.2', 'Co-construire le plan d''action avec les acteurs clés des filières', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.2.3', 'eci', '3.1.2.3', 'Valider le plan d''actions', '', '', '', '', null, 20.0);
@@ -2034,10 +2034,10 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Communiquer et valoriser les résultats et l''impact d''actions réalisées. Valoriser les partenariats.</p>
 </li>
 </ul>
-', '', null, 34.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.3.1', 'eci', '3.1.3.1', 'Définir un protocole de suivi', '', '', '', '', null, 33.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.3.2', 'eci', '3.1.3.2', 'Recueillir les données', '', '', '', '', null, 33.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.3.3', 'eci', '3.1.3.3', 'Analyser l''évolution des indicateurs et ajuster le plan d''actions', '', '', '', '', null, 34.0);
+', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.3.1', 'eci', '3.1.3.1', 'Définir un protocole de suivi', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.3.2', 'eci', '3.1.3.2', 'Recueillir les données', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.1.3.3', 'eci', '3.1.3.3', 'Analyser l''évolution des indicateurs et ajuster le plan d''actions', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_3.5', 'eci', '3.5', 'Soutenir et accompagner les projets d''Ecologie Industrielle et Territoriale (EIT)', '<p>L''EIT s''appuie sur l''étude des flux  pour identifier et développer des synergies entre acteurs économiques d’un territoire :  substituer des flux de matières, d''énergies et d''eau, initier la mutualisation de moyens et de services, le partage d''infrastructures.</p>
 <p>L’EIT, par ses démarches collectives et volontaires menées sur un territoire en vue d’en optimiser les ressources, réconcilie ainsi développement économique et meilleur usage des ressources, en privilégiant l’ancrage des activités et de l’emploi dans les territoires.</p>
 <p>Une collectivité qui soutient et accompagne ce type de projet intervient à différents stades :</p>
@@ -2469,9 +2469,9 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.2.1.2', 'eci', '4.2.1.2', 'Couvrir toutes les communes du territoire avec la redevance spéciale', '', '', '', '', null, 50.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.2.2', 'eci', '4.2.2', 'Etudier le potentiel de mise en place de la Tarification incitative (Ti)', '<p>La collectivité étudie la mise en place d''un système de Ti (y compris redevance spéciale en cas de Taxe d’Enlèvement des Ordures Ménagères (TEOM) incitative) sur l''ensemble du territoire.</p>
 ', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.2.2.1', 'eci', '4.2.2.1', 'Engager l''étude de la mise en place de la tarification incitative (phase de lancement)', '', '', '', '', null, 33.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.2.2.2', 'eci', '4.2.2.2', 'Disposer d''une étude de mise en place de la tarification incitative en cours de réalisation (phase de réalisation)', '', '', '', '', null, 33.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.2.2.3', 'eci', '4.2.2.3', 'Disposer d''une étude de mise en place de la tarification incitative réalisée (étude terminée)', '', '', '', '', null, 34.0);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.2.2.1', 'eci', '4.2.2.1', 'Engager l''étude de la mise en place de la tarification incitative (phase de lancement)', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.2.2.2', 'eci', '4.2.2.2', 'Disposer d''une étude de mise en place de la tarification incitative en cours de réalisation (phase de réalisation)', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.2.2.3', 'eci', '4.2.2.3', 'Disposer d''une étude de mise en place de la tarification incitative réalisée (étude terminée)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.2.3', 'eci', '4.2.3', 'Mettre en œuvre la Redevance Spéciale incitative pour les usagers non ménagers', '<p>La collectivité, si elle n''est pas en REOM, facture la Redevance Spéciale avec une part variable en fonction des levées et/ou pesées effectuées.</p>
 <p>La facturation est différentiée par flux et donc pour le service mobilisé.</p>
 ', '', '', '', null, 40.0);
@@ -2550,9 +2550,9 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.3.3', 'eci', '4.3.3', 'Accompagner les acteurs du territoire', '<p>La collectivité accompagne les acteurs de son territoire dans leur recherche de financements en faveur de l''économie circulaire en fonction de leurs besoins. Elle identifie, valorise et communique autour des démarches exemplaires du territoire.</p>
 ', '', '<p>Actions spécifiques du service développement économique sur l''économie circulaire.</p>
 ', '', null, 35.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.3.3.1', 'eci', '4.3.3.1', 'Mettre en place des moyens pour identifier les acteurs en recherche de financements', '', '', '', '', null, 33.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.3.3.2', 'eci', '4.3.3.2', 'Mettre en place des moyens pour accompagner les acteurs sur la recherche de financements', '', '', '', '', null, 33.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.3.3.3', 'eci', '4.3.3.3', 'Accompagner des projets', '', '', '', '', null, 34.0);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.3.3.1', 'eci', '4.3.3.1', 'Mettre en place des moyens pour identifier les acteurs en recherche de financements', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.3.3.2', 'eci', '4.3.3.2', 'Mettre en place des moyens pour accompagner les acteurs sur la recherche de financements', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.3.3.3', 'eci', '4.3.3.3', 'Accompagner des projets', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_4.3.4', 'eci', '4.3.4', 'Financer des projets sur le sujet de l''économie circulaire', '<p>La collectivité réserve une part de son budget au financement de projets sur le sujet de l''économie circulaire. Elle met en cohérence les subventions des acteurs du territoire au regard de la sobriété.</p>
 ', '', '<p>Financement d''associations impliquées dans la réparation, les jardins partagés, le compostage, le &quot;zéro déchet&quot;.</p>
 <p>Appels à projets de la collectivité.</p>
@@ -3253,19 +3253,19 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Organiser des réunions d''information à destination des entreprises (y compris en partenariat avec les représentants locaux).</p>
 ', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.1.1', 'eci', '5.3.1.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.1.2', 'eci', '5.3.1.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.1.3', 'eci', '5.3.1.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.1.4', 'eci', '5.3.1.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.1.5', 'eci', '5.3.1.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.1.6', 'eci', '5.3.1.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.1.7', 'eci', '5.3.1.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.2', 'eci', '5.3.2', 'Aider à l''action à destination des acteurs économiques', '<p>La collectivité met en place des actions concrètes avec les acteurs économiques de son territoire sur les 7 piliers de l''économie circulaire.</p>
 <p>Ces actions peuvent être déjà mentionnées dans les axes précédents.</p>
 ', '', '<p>Lancer ou participer à des initiatives en matière d''économie circulaire  réalisées par les représentants locaux et/ou les acteurs économiques :</p>
@@ -3276,19 +3276,19 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Organisation de concours autour de l''éco-conception, etc.</p>
 ', '', null, 50.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.2.1', 'eci', '5.3.2.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.2.2', 'eci', '5.3.2.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.2.3', 'eci', '5.3.2.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.2.4', 'eci', '5.3.2.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.2.5', 'eci', '5.3.2.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.2.6', 'eci', '5.3.2.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.2.7', 'eci', '5.3.2.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.3.3', 'eci', '5.3.3', 'Fédérer les acteurs du territoire', '<p>La collectivité déploie des partenariats ayant aboutis à des actions avec les acteurs économiques de son territoire sur les 7 piliers de l''économie circulaire.</p>
 <p>(Un partenariat peut couvrir plusieurs piliers)</p>
 ', '', '<p>Conclure des accords avec un ou plusieurs représentants locaux et/ou acteurs économiques du territoire permettant de progresser sur une thématique particulière de l''économie circulaire.</p>
@@ -3384,19 +3384,19 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 </ul>
 ', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.1.1', 'eci', '5.2.1.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.1.2', 'eci', '5.2.1.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.1.3', 'eci', '5.2.1.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.1.4', 'eci', '5.2.1.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.1.5', 'eci', '5.2.1.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.1.6', 'eci', '5.2.1.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.1.7', 'eci', '5.2.1.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.2', 'eci', '5.2.2', 'Aider à l''action des autres collectivités de son territoire', '<p>La collectivité soutient des actions concrètes réalisées en direction des collectivités infra et supra sur les 7 piliers de l''économie circulaire.</p>
 <p>Les actions peuvent être réalisées par la collectivité elle-même ou avec d''autres collectivités.</p>
 ', '', '<p>Lancer ou participer à des initiatives en matière d''économie circulaire entre les collectivités du territoire, par exemple : mutualisation de moyens ou de formations.</p>
@@ -3406,19 +3406,19 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Mise en place d''un club Economie circulaire des collectivités sur le territoire pour l''échange de bonnes pratiques, émergence de projets, etc.</p>
 ', '', null, 40.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.2.1', 'eci', '5.2.2.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.2.2', 'eci', '5.2.2.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.2.3', 'eci', '5.2.2.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.2.4', 'eci', '5.2.2.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.2.5', 'eci', '5.2.2.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.2.6', 'eci', '5.2.2.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.2.7', 'eci', '5.2.2.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.2.3', 'eci', '5.2.3', 'Structurer des partenariats', '<p>La collectivité structure des partenariats avec les collectivités infra et supra pour généraliser et amplifier la démarche sur l''ensemble du territoire.</p>
 <p>Elle mesure la réussite des partenariats mis en place et valorise les résultats.</p>
 <p>Un partenariat peut couvrir plusieurs piliers de l''économie circualire.</p>
@@ -3510,19 +3510,19 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 </ul>
 ', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.1.1', 'eci', '5.1.1.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.1.2', 'eci', '5.1.1.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.1.3', 'eci', '5.1.1.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.1.4', 'eci', '5.1.1.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.1.5', 'eci', '5.1.1.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.1.6', 'eci', '5.1.1.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.1.7', 'eci', '5.1.1.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.2', 'eci', '5.1.2', 'Aider à l''action en direction du grand public', '<p>La collectivité soutient des actions concrètes réalisées en direction du grand public sur les 7 piliers de l''économie circulaire en s''appuyant sur les initiatives du territoire.</p>
 <p>Ces actions peuvent être déjà mentionnées dans les axes précédents.</p>
 ', '', '<p>Mettre en place une ressourcerie ou un Repair Café</p>
@@ -3534,19 +3534,19 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>etc.</p>
 ', '', null, 40.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.2.1', 'eci', '5.1.2.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.2.2', 'eci', '5.1.2.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.2.3', 'eci', '5.1.2.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.2.4', 'eci', '5.1.2.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.2.5', 'eci', '5.1.2.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 14.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.2.6', 'eci', '5.1.2.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.2.7', 'eci', '5.1.2.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', null, 15.0);
+', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('eci_5.1.3', 'eci', '5.1.3', 'Fédérer les acteurs du territoire', '<p>La collectivité crée des espaces communs de dialogue afin d''encourager et amplifier les actions sur le territoire. Elle structure des partenariats avec les associations (et autres acteurs) sur les 7 piliers de l''économie circulaire. Elle mesure la réussite des partenariats mis en place et valorise les résultats.</p>
 <p>Un partenariat peut couvrir plusieurs piliers.</p>
 ', '', '<p>Enquêter sur les besoins des acteurs associatifs grand public du territoire.</p>
@@ -3588,73 +3588,24 @@ insert into action_computed_points(action_id, value) values ('eci_5', 90.0);
 insert into action_computed_points(action_id, value) values ('eci_5.3', 30.0);
 insert into action_computed_points(action_id, value) values ('eci_5.2', 30.0);
 insert into action_computed_points(action_id, value) values ('eci_5.1', 30.0);
-insert into action_computed_points(action_id, value) values ('eci_4.3.1', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_4.3.2', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_4.3.3', 7.0);
-insert into action_computed_points(action_id, value) values ('eci_4.3.4', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2', 15.0);
-insert into action_computed_points(action_id, value) values ('eci_5.3.3', 9.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.2', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.3', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.4', 12.0);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2', 12.0);
+insert into action_computed_points(action_id, value) values ('eci_5.1.3', 12.0);
+insert into action_computed_points(action_id, value) values ('eci_3.7.1', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_3.7.2', 15.0);
 insert into action_computed_points(action_id, value) values ('eci_4.2.1', 5.0);
 insert into action_computed_points(action_id, value) values ('eci_4.2.2', 4.0);
 insert into action_computed_points(action_id, value) values ('eci_4.2.3', 8.0);
 insert into action_computed_points(action_id, value) values ('eci_4.2.4', 3.0);
 insert into action_computed_points(action_id, value) values ('eci_4.2.5', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_3.5.1', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_3.5.2', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_3.5.3', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_3.5.4', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_1.1.1', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.1.2', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.1.3', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.1.4', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.1.5', 6.0);
 insert into action_computed_points(action_id, value) values ('eci_3.6.1', 3.75);
 insert into action_computed_points(action_id, value) values ('eci_3.6.2', 8.75);
 insert into action_computed_points(action_id, value) values ('eci_3.6.3', 7.5);
 insert into action_computed_points(action_id, value) values ('eci_3.6.4', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_3.2.0', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_3.2.1', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.2.2', 12.5);
-insert into action_computed_points(action_id, value) values ('eci_3.2.3', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_4.1.0', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_4.1.1', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_4.1.2', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_4.1.3', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_4.1.4', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_3.7.1', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_3.7.2', 15.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.0', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.1', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.2', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.3', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.4', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.5', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.2', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.3', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.4', 12.0);
-insert into action_computed_points(action_id, value) values ('eci_2.3.0', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_2.3.1', 6.6000000000000005);
-insert into action_computed_points(action_id, value) values ('eci_2.3.2', 6.6000000000000005);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3', 6.800000000000001);
-insert into action_computed_points(action_id, value) values ('eci_2.2.0', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.1', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.2', 4.5);
-insert into action_computed_points(action_id, value) values ('eci_2.2.3', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_2.5.1', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_2.5.2', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_2.5.3', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_2.1.0', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_2.1.1', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_2.1.2', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_2.1.3', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_1.3.1', 15.0);
-insert into action_computed_points(action_id, value) values ('eci_1.3.2', 15.0);
-insert into action_computed_points(action_id, value) values ('eci_3.3.1', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.2', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.3', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.4', 6.25);
 insert into action_computed_points(action_id, value) values ('eci_5.2.1', 6.0);
 insert into action_computed_points(action_id, value) values ('eci_5.2.2', 12.0);
 insert into action_computed_points(action_id, value) values ('eci_5.2.3', 12.0);
@@ -3662,141 +3613,194 @@ insert into action_computed_points(action_id, value) values ('eci_3.4.1', 7.5);
 insert into action_computed_points(action_id, value) values ('eci_3.4.2', 6.25);
 insert into action_computed_points(action_id, value) values ('eci_3.4.3', 7.5);
 insert into action_computed_points(action_id, value) values ('eci_3.4.4', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2', 12.0);
-insert into action_computed_points(action_id, value) values ('eci_5.1.3', 12.0);
-insert into action_computed_points(action_id, value) values ('eci_3.1.1', 11.55);
-insert into action_computed_points(action_id, value) values ('eci_3.1.2', 11.55);
-insert into action_computed_points(action_id, value) values ('eci_3.1.3', 11.9);
-insert into action_computed_points(action_id, value) values ('eci_3.2.2.1', 3.125);
-insert into action_computed_points(action_id, value) values ('eci_3.2.2.2', 3.125);
-insert into action_computed_points(action_id, value) values ('eci_3.2.2.3', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.6.1.1', 0.9375);
-insert into action_computed_points(action_id, value) values ('eci_3.6.1.2', 0.9375);
-insert into action_computed_points(action_id, value) values ('eci_3.6.1.3', 0.9375);
-insert into action_computed_points(action_id, value) values ('eci_3.6.1.4', 0.9375);
-insert into action_computed_points(action_id, value) values ('eci_3.7.2.1', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_3.7.2.2', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.1', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.2', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.3', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.4', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.5', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.6', 0.8999999999999999);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.7', 0.8999999999999999);
-insert into action_computed_points(action_id, value) values ('eci_3.4.3.1', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_3.4.3.2', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_4.1.1.1', 2.4);
-insert into action_computed_points(action_id, value) values ('eci_4.1.1.2', 1.6);
+insert into action_computed_points(action_id, value) values ('eci_2.4.0', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_2.4.1', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_2.4.2', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_2.4.3', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_2.4.4', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_2.4.5', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.1', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.2', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.3', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_3.5.4', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_2.2.0', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.1', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.2', 4.5);
+insert into action_computed_points(action_id, value) values ('eci_2.2.3', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_2.5.1', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_2.5.2', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_2.5.3', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.2.0', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_3.2.1', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.2.2', 12.5);
+insert into action_computed_points(action_id, value) values ('eci_3.2.3', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2', 15.0);
+insert into action_computed_points(action_id, value) values ('eci_5.3.3', 9.0);
+insert into action_computed_points(action_id, value) values ('eci_3.1.1', 11.666666666666666);
+insert into action_computed_points(action_id, value) values ('eci_3.1.2', 11.666666666666666);
+insert into action_computed_points(action_id, value) values ('eci_3.1.3', 11.666666666666666);
+insert into action_computed_points(action_id, value) values ('eci_1.3.1', 15.0);
+insert into action_computed_points(action_id, value) values ('eci_1.3.2', 15.0);
+insert into action_computed_points(action_id, value) values ('eci_3.3.1', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.2', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.3', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.4', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_4.3.1', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_4.3.2', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_4.3.3', 7.0);
+insert into action_computed_points(action_id, value) values ('eci_4.3.4', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.1.2', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.1.3', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.1.4', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.1.5', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_2.3.0', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_2.3.1', 6.666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.2', 6.666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3', 6.666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_4.1.0', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.1', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.2', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.3', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.4', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_2.1.0', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_2.1.1', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_2.1.2', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_2.1.3', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_1.3.1.1', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_1.3.1.2', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_1.3.1.3', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.3.3.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.3.2', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.3.3', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.3.3.4', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.1.3.1', 3.888888888888889);
+insert into action_computed_points(action_id, value) values ('eci_3.1.3.2', 3.888888888888889);
+insert into action_computed_points(action_id, value) values ('eci_3.1.3.3', 3.888888888888889);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.1', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.2', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.3', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.4', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.5', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.6', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.7', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_2.4.2.1', 0.6);
+insert into action_computed_points(action_id, value) values ('eci_2.4.2.2', 0.6);
+insert into action_computed_points(action_id, value) values ('eci_2.4.2.3', 1.6);
+insert into action_computed_points(action_id, value) values ('eci_2.4.2.4', 1.2);
+insert into action_computed_points(action_id, value) values ('eci_2.5.3.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_2.5.3.2', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_2.5.3.3', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_2.1.2.1', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.1.2.2', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_3.7.1.1', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_3.7.1.2', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_3.7.1.3', 2.0);
 insert into action_computed_points(action_id, value) values ('eci_3.6.4.1', 1.25);
 insert into action_computed_points(action_id, value) values ('eci_3.6.4.2', 1.25);
 insert into action_computed_points(action_id, value) values ('eci_3.6.4.3', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_4.1.3.1', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_4.1.3.2', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_4.1.3.3', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_2.1.2.1', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_2.1.2.2', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.1.1', 0.99);
-insert into action_computed_points(action_id, value) values ('eci_2.2.1.2', 0.99);
-insert into action_computed_points(action_id, value) values ('eci_2.2.1.3', 1.02);
-insert into action_computed_points(action_id, value) values ('eci_1.3.2.1', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.3.2.2', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_1.3.2.3', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_1.3.2.4', 4.5);
-insert into action_computed_points(action_id, value) values ('eci_3.1.3.1', 3.9270000000000005);
-insert into action_computed_points(action_id, value) values ('eci_3.1.3.2', 3.9270000000000005);
-insert into action_computed_points(action_id, value) values ('eci_3.1.3.3', 4.046);
-insert into action_computed_points(action_id, value) values ('eci_3.3.2.1', 1.5625);
-insert into action_computed_points(action_id, value) values ('eci_3.3.2.2', 1.5625);
-insert into action_computed_points(action_id, value) values ('eci_3.3.2.3', 1.5625);
-insert into action_computed_points(action_id, value) values ('eci_3.3.2.4', 1.5625);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.1', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.2', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.3', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.4', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.5', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.6', 0.8999999999999999);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.7', 0.8999999999999999);
-insert into action_computed_points(action_id, value) values ('eci_2.4.4.1', 0.8999999999999999);
-insert into action_computed_points(action_id, value) values ('eci_2.4.4.2', 0.8999999999999999);
-insert into action_computed_points(action_id, value) values ('eci_2.4.4.3', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_2.4.4.4', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_3.1.2.1', 3.4650000000000003);
-insert into action_computed_points(action_id, value) values ('eci_3.1.2.2', 2.31);
-insert into action_computed_points(action_id, value) values ('eci_3.1.2.3', 2.31);
-insert into action_computed_points(action_id, value) values ('eci_3.1.2.4', 3.4650000000000003);
-insert into action_computed_points(action_id, value) values ('eci_4.1.4.1', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_4.1.4.2', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.5.1', 0.8);
-insert into action_computed_points(action_id, value) values ('eci_2.4.5.2', 0.8);
-insert into action_computed_points(action_id, value) values ('eci_2.4.5.3', 0.8);
-insert into action_computed_points(action_id, value) values ('eci_2.4.5.4', 0.8);
-insert into action_computed_points(action_id, value) values ('eci_2.4.5.5', 0.8);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1.2', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1.3', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1.4', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1.2', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1.5', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_5.1.3.1', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('eci_5.1.3.2', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('eci_5.1.3.3', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('eci_5.1.3.4', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('eci_5.1.3.5', 2.4000000000000004);
 insert into action_computed_points(action_id, value) values ('eci_1.1.2.1', 1.2000000000000002);
 insert into action_computed_points(action_id, value) values ('eci_1.1.2.2', 1.2000000000000002);
 insert into action_computed_points(action_id, value) values ('eci_1.1.2.3', 1.2000000000000002);
 insert into action_computed_points(action_id, value) values ('eci_1.1.2.4', 1.2000000000000002);
 insert into action_computed_points(action_id, value) values ('eci_1.1.2.5', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_4.1.0.1', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_4.1.0.2', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_2.4.5.1', 0.8);
+insert into action_computed_points(action_id, value) values ('eci_2.4.5.2', 0.8);
+insert into action_computed_points(action_id, value) values ('eci_2.4.5.3', 0.8);
+insert into action_computed_points(action_id, value) values ('eci_2.4.5.4', 0.8);
+insert into action_computed_points(action_id, value) values ('eci_2.4.5.5', 0.8);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.1', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.2', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.3', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.4', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.5', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.6', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.7', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_1.1.3.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.3.2', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('eci_1.1.3.3', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_3.2.3.1', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_3.2.3.2', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.2.3.3', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_1.2.4.1', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.4.2', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.4.3', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.4.4', 3.0);
 insert into action_computed_points(action_id, value) values ('eci_3.6.2.1', 1.75);
 insert into action_computed_points(action_id, value) values ('eci_3.6.2.2', 0.875);
 insert into action_computed_points(action_id, value) values ('eci_3.6.2.3', 1.75);
 insert into action_computed_points(action_id, value) values ('eci_3.6.2.4', 4.375);
-insert into action_computed_points(action_id, value) values ('eci_5.2.3.1', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_5.2.3.2', 3.5999999999999996);
-insert into action_computed_points(action_id, value) values ('eci_5.2.3.3', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_3.4.4.1', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.4.4.2', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_2.1.1.1', 0.68);
-insert into action_computed_points(action_id, value) values ('eci_2.1.1.2', 0.64);
-insert into action_computed_points(action_id, value) values ('eci_2.1.1.3', 0.68);
-insert into action_computed_points(action_id, value) values ('eci_2.1.1.4', 0.4);
-insert into action_computed_points(action_id, value) values ('eci_2.1.1.5', 0.6);
-insert into action_computed_points(action_id, value) values ('eci_2.1.1.6', 0.6);
-insert into action_computed_points(action_id, value) values ('eci_2.1.1.7', 0.4);
+insert into action_computed_points(action_id, value) values ('eci_4.2.2.1', 1.3333333333333333);
+insert into action_computed_points(action_id, value) values ('eci_4.2.2.2', 1.3333333333333333);
+insert into action_computed_points(action_id, value) values ('eci_4.2.2.3', 1.3333333333333333);
 insert into action_computed_points(action_id, value) values ('eci_3.5.2.1', 1.25);
 insert into action_computed_points(action_id, value) values ('eci_3.5.2.2', 1.25);
 insert into action_computed_points(action_id, value) values ('eci_3.5.2.3', 1.25);
 insert into action_computed_points(action_id, value) values ('eci_3.5.2.4', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_1.1.5.1', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.5.2', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.5.3', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.5.4', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.1', 2.1);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.2', 2.1);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.3', 2.1);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.4', 2.1);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.5', 2.1);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.6', 2.25);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.7', 2.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.3.1', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.3.2', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.3.3', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.3.3.4', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.3.1.1', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.1.2', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.3.1.3', 3.125);
-insert into action_computed_points(action_id, value) values ('eci_5.2.2.1', 1.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.2.2.2', 1.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.2.2.3', 1.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.2.2.4', 1.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.2.2.5', 1.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.2.2.6', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_5.2.2.7', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_3.2.3.1', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_3.2.3.2', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.2.3.3', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.1.1.1', 4.62);
-insert into action_computed_points(action_id, value) values ('eci_3.1.1.2', 2.31);
-insert into action_computed_points(action_id, value) values ('eci_3.1.1.3', 2.31);
-insert into action_computed_points(action_id, value) values ('eci_3.1.1.4', 2.31);
-insert into action_computed_points(action_id, value) values ('eci_2.5.3.1', 1.2375);
-insert into action_computed_points(action_id, value) values ('eci_2.5.3.2', 1.2375);
-insert into action_computed_points(action_id, value) values ('eci_2.5.3.3', 1.2750000000000001);
-insert into action_computed_points(action_id, value) values ('eci_2.4.1.1', 0.8);
-insert into action_computed_points(action_id, value) values ('eci_2.4.1.2', 1.2);
-insert into action_computed_points(action_id, value) values ('eci_2.4.1.3', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_2.3.1.1', 2.666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.1.2', 1.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_2.3.1.3', 2.666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_4.2.5.1', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_4.2.5.2', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.4.1', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.4.2', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.4.3', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_3.1.1.1', 4.666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_3.1.1.2', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.1.1.3', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.1.1.4', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.6.1.1', 0.9375);
+insert into action_computed_points(action_id, value) values ('eci_3.6.1.2', 0.9375);
+insert into action_computed_points(action_id, value) values ('eci_3.6.1.3', 0.9375);
+insert into action_computed_points(action_id, value) values ('eci_3.6.1.4', 0.9375);
+insert into action_computed_points(action_id, value) values ('eci_3.4.4.1', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.4.4.2', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_4.1.4.1', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.4.2', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.3.1', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_2.2.3.2', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_2.2.3.3', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_2.2.3.4', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_2.2.3.5', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_2.1.1.1', 0.5714285714285714);
+insert into action_computed_points(action_id, value) values ('eci_2.1.1.2', 0.5714285714285714);
+insert into action_computed_points(action_id, value) values ('eci_2.1.1.3', 0.5714285714285714);
+insert into action_computed_points(action_id, value) values ('eci_2.1.1.4', 0.5714285714285714);
+insert into action_computed_points(action_id, value) values ('eci_2.1.1.5', 0.5714285714285714);
+insert into action_computed_points(action_id, value) values ('eci_2.1.1.6', 0.5714285714285714);
+insert into action_computed_points(action_id, value) values ('eci_2.1.1.7', 0.5714285714285714);
+insert into action_computed_points(action_id, value) values ('eci_4.2.1.1', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_4.2.1.2', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_2.4.4.1', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('eci_2.4.4.2', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('eci_2.4.4.3', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('eci_2.4.4.4', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('eci_3.3.2.1', 1.5625);
+insert into action_computed_points(action_id, value) values ('eci_3.3.2.2', 1.5625);
+insert into action_computed_points(action_id, value) values ('eci_3.3.2.3', 1.5625);
+insert into action_computed_points(action_id, value) values ('eci_3.3.2.4', 1.5625);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.1', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.2', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.3', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.4', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.5', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.6', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.7', 0.8571428571428571);
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.1', 0.75);
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.2', 1.5);
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.3', 0.75);
@@ -3804,46 +3808,78 @@ insert into action_computed_points(action_id, value) values ('eci_3.5.3.4', 1.5)
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.5', 1.5);
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.6', 0.75);
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.7', 0.75);
-insert into action_computed_points(action_id, value) values ('eci_1.2.4.1', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.4.2', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.4.3', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.4.4', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_3.7.1.1', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_3.7.1.2', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_3.7.1.3', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.2.1', 4.800000000000001);
+insert into action_computed_points(action_id, value) values ('eci_4.1.2.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_4.3.4.1', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_4.3.4.2', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_4.3.4.3', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.1', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.2', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.3', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.4', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.5', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.6', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.7', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_2.4.1.1', 0.8);
+insert into action_computed_points(action_id, value) values ('eci_2.4.1.2', 1.2);
+insert into action_computed_points(action_id, value) values ('eci_2.4.1.3', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.2.1', 2.25);
+insert into action_computed_points(action_id, value) values ('eci_2.2.2.2', 2.25);
+insert into action_computed_points(action_id, value) values ('eci_2.3.2.1', 1.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.2.2', 1.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.2.3', 1.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.2.4', 1.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_3.7.2.1', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_3.7.2.2', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_3.4.1.1', 0.375);
+insert into action_computed_points(action_id, value) values ('eci_3.4.1.2', 1.125);
+insert into action_computed_points(action_id, value) values ('eci_3.4.1.3', 2.25);
+insert into action_computed_points(action_id, value) values ('eci_3.4.1.4', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.2.1.1', 0.625);
+insert into action_computed_points(action_id, value) values ('eci_3.2.1.2', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.2.1.3', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.2.1.4', 3.125);
+insert into action_computed_points(action_id, value) values ('eci_4.1.0.1', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.0.2', 0.0);
 insert into action_computed_points(action_id, value) values ('eci_5.3.3.1', 0.9);
 insert into action_computed_points(action_id, value) values ('eci_5.3.3.2', 1.3499999999999999);
 insert into action_computed_points(action_id, value) values ('eci_5.3.3.3', 1.3499999999999999);
 insert into action_computed_points(action_id, value) values ('eci_5.3.3.4', 1.8);
 insert into action_computed_points(action_id, value) values ('eci_5.3.3.5', 2.6999999999999997);
 insert into action_computed_points(action_id, value) values ('eci_5.3.3.6', 0.9);
+insert into action_computed_points(action_id, value) values ('eci_4.2.3.1', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_4.2.3.2', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_5.2.2.1', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.2.2.2', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.2.2.3', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.2.2.4', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.2.2.5', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.2.2.6', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.2.2.7', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_3.6.3.1', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.6.3.2', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_1.1.5.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.5.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.5.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.5.4', 2.4000000000000004);
 insert into action_computed_points(action_id, value) values ('eci_3.3.4.1', 1.25);
 insert into action_computed_points(action_id, value) values ('eci_3.3.4.2', 2.5);
 insert into action_computed_points(action_id, value) values ('eci_3.3.4.3', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_2.3.1.1', 2.6400000000000006);
-insert into action_computed_points(action_id, value) values ('eci_2.3.1.2', 1.3200000000000003);
-insert into action_computed_points(action_id, value) values ('eci_2.3.1.3', 2.6400000000000006);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.1', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.2', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.3', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.4', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.5', 0.8400000000000001);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.6', 0.8999999999999999);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.7', 0.8999999999999999);
-insert into action_computed_points(action_id, value) values ('eci_4.2.5.1', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_4.2.5.2', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.2.1', 2.25);
-insert into action_computed_points(action_id, value) values ('eci_2.2.2.2', 2.25);
-insert into action_computed_points(action_id, value) values ('eci_1.3.1.1', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_1.3.1.2', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_1.3.1.3', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_3.5.4.1', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_3.5.4.2', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_3.5.4.3', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_3.4.1.1', 0.375);
-insert into action_computed_points(action_id, value) values ('eci_3.4.1.2', 1.125);
-insert into action_computed_points(action_id, value) values ('eci_3.4.1.3', 2.25);
-insert into action_computed_points(action_id, value) values ('eci_3.4.1.4', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_4.1.3.1', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_4.1.3.2', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.3.3', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_3.4.3.1', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.4.3.2', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.2.2.1', 3.125);
+insert into action_computed_points(action_id, value) values ('eci_3.2.2.2', 3.125);
+insert into action_computed_points(action_id, value) values ('eci_3.2.2.3', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_1.3.2.1', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.3.2.2', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_1.3.2.3', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_1.3.2.4', 4.5);
+insert into action_computed_points(action_id, value) values ('eci_4.3.3.1', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_4.3.3.2', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_4.3.3.3', 2.3333333333333335);
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.1', 0.8999999999999999);
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.2', 0.8999999999999999);
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.3', 0.8999999999999999);
@@ -3858,77 +3894,41 @@ insert into action_computed_points(action_id, value) values ('eci_1.1.4.11', 0.2
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.12', 0.24);
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.13', 0.24);
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.14', 0.24);
-insert into action_computed_points(action_id, value) values ('eci_4.2.2.1', 1.32);
-insert into action_computed_points(action_id, value) values ('eci_4.2.2.2', 1.32);
-insert into action_computed_points(action_id, value) values ('eci_4.2.2.3', 1.36);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.1', 1.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.2', 1.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.3', 1.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.4', 1.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.5', 1.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.6', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.7', 1.7999999999999998);
 insert into action_computed_points(action_id, value) values ('eci_4.2.4.1', 0.8999999999999999);
 insert into action_computed_points(action_id, value) values ('eci_4.2.4.2', 2.0999999999999996);
+insert into action_computed_points(action_id, value) values ('eci_3.3.1.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.1.2', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.3.1.3', 3.125);
+insert into action_computed_points(action_id, value) values ('eci_5.2.3.1', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('eci_5.2.3.2', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('eci_5.2.3.3', 6.0);
 insert into action_computed_points(action_id, value) values ('eci_3.4.2.1', 1.25);
 insert into action_computed_points(action_id, value) values ('eci_3.4.2.2', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.3.1', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_2.2.3.2', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_2.2.3.3', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_2.2.3.4', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_2.2.3.5', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_4.2.1.1', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_4.2.1.2', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.1', 1.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.2', 1.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.3', 0.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.4', 1.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.5', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.6', 0.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_4.1.1.1', 2.4);
+insert into action_computed_points(action_id, value) values ('eci_4.1.1.2', 1.6);
+insert into action_computed_points(action_id, value) values ('eci_3.1.2.1', 3.4999999999999996);
+insert into action_computed_points(action_id, value) values ('eci_3.1.2.2', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.1.2.3', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.1.2.4', 3.4999999999999996);
 insert into action_computed_points(action_id, value) values ('eci_2.5.2.1', 1.875);
 insert into action_computed_points(action_id, value) values ('eci_2.5.2.2', 3.75);
 insert into action_computed_points(action_id, value) values ('eci_2.5.2.3', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_1.1.3.1', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.3.2', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_1.1.3.3', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_3.6.3.1', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_3.6.3.2', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_4.3.4.1', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_4.3.4.2', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_4.3.4.3', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_4.2.3.1', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_4.2.3.2', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_4.1.2.1', 4.800000000000001);
-insert into action_computed_points(action_id, value) values ('eci_4.1.2.2', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_3.2.1.1', 0.625);
-insert into action_computed_points(action_id, value) values ('eci_3.2.1.2', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.2.1.3', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.2.1.4', 3.125);
-insert into action_computed_points(action_id, value) values ('eci_4.3.3.1', 2.31);
-insert into action_computed_points(action_id, value) values ('eci_4.3.3.2', 2.31);
-insert into action_computed_points(action_id, value) values ('eci_4.3.3.3', 2.3800000000000003);
-insert into action_computed_points(action_id, value) values ('eci_5.1.3.1', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_5.1.3.2', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_5.1.3.3', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_5.1.3.4', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_5.1.3.5', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_2.3.2.1', 1.6500000000000001);
-insert into action_computed_points(action_id, value) values ('eci_2.3.2.2', 1.6500000000000001);
-insert into action_computed_points(action_id, value) values ('eci_2.3.2.3', 1.6500000000000001);
-insert into action_computed_points(action_id, value) values ('eci_2.3.2.4', 1.6500000000000001);
-insert into action_computed_points(action_id, value) values ('eci_2.4.2.1', 0.6);
-insert into action_computed_points(action_id, value) values ('eci_2.4.2.2', 0.6);
-insert into action_computed_points(action_id, value) values ('eci_2.4.2.3', 1.6);
-insert into action_computed_points(action_id, value) values ('eci_2.4.2.4', 1.2);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1.1', 0.6000000000000001);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1.2', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1.3', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1.4', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1.5', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.1.1', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.1.2', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_1.1.1.3', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_1.1.1.4', 0.6000000000000001);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.1', 1.3600000000000003);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.2', 1.3600000000000003);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.3', 0.6800000000000002);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.4', 1.7000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.5', 1.02);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.6', 0.6800000000000002);
+insert into action_computed_points(action_id, value) values ('eci_2.2.1.1', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.1.2', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.1.3', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.1', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.2', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.3', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.4', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.5', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.6', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.7', 2.142857142857143);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_28', 'eci', '28.None', null, 'Proportion de l''activité de réemploi et/ou de réutilisation dans l''activité économique (%)', '<p>Nombre d''entreprises de réemploi et/ou de réutilisation (ex. SINOE Structures du réemploi et/ou de réutilisation) / nombre total d''entreprises sur le territoire</p>
 ', '%', false, null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_8', 'eci', '8.None', null, 'Taux de mise en décharge de DMA (%)', '<p>Poids de déchets envoyés en décharge / Poids de déchets produits sur le territoire</p>
