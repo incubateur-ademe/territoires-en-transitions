@@ -171,9 +171,7 @@ def test_import_referentiel_fails_when_identifiants_are_not_unique():
 
 
 def test_check_referentiel_quotations_fails_when_percentage_level_isnt_100():
-    markdown_root_action_node = make_markdown_action_node(
-        identifiant="root", points=500
-    )
+    markdown_root_action_node = make_markdown_action_node(identifiant="", points=500)
     markdown_root_action_node.actions = [
         make_markdown_action_node(identifiant="1", pourcentage=10),
         make_markdown_action_node(identifiant="2", pourcentage=80),
@@ -187,6 +185,27 @@ def test_check_referentiel_quotations_fails_when_percentage_level_isnt_100():
         conversion_failed_events[0].reason
         == "Les valeurs des actions eci_1, eci_2 sont renseignées en pourcentage, mais leur somme fait 90.0 au lieu de 100."
     )
+
+
+def test_points_are_equi_redistributed_amongst_siblings_when_one_action_worth_0_percent():
+    markdown_root_action_node = make_markdown_action_node(identifiant="", points=100)
+    markdown_root_action_node.actions = [
+        make_markdown_action_node(identifiant="1", pourcentage=0),
+        make_markdown_action_node(identifiant="2"),
+        make_markdown_action_node(identifiant="3"),
+    ]
+    (node_converted_events, conversion_failed_events) = prepare_use_case(
+        markdown_root_action_node
+    )
+    assert len(node_converted_events) == 1
+    assert len(conversion_failed_events) == 0
+
+    assert node_converted_events[0].points == [
+        ActionComputedPoint(action_id=ActionId("eci"), value=100.0, referentiel="eci"),
+        ActionComputedPoint(action_id=ActionId("eci_1"), value=0.0, referentiel="eci"),
+        ActionComputedPoint(action_id=ActionId("eci_2"), value=50.0, referentiel="eci"),
+        ActionComputedPoint(action_id=ActionId("eci_3"), value=50.0, referentiel="eci"),
+    ]
 
 
 def test_check_referentiel_quotations_fails_when_children_points_doesnt_sum_to_parent_point():
