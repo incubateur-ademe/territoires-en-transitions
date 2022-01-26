@@ -3,7 +3,7 @@ import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {referentielId} from 'utils/actions';
 import {toFixed} from 'utils/toFixed';
 import {ActionReferentiel, ActionType} from 'types/action_referentiel';
-import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 export interface PillParams {
   color: string;

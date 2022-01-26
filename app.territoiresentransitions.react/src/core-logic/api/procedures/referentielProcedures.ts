@@ -1,9 +1,9 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {Referentiel} from 'types/litterals';
-import {ActionType} from 'types/action_referentiel';
 // eslint-disable-next-line node/no-extraneous-import
 import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
 import {PostgrestResponse} from '@supabase/supabase-js';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 class RpcCache {
   cache: Record<string, PostgrestResponse<any>> = {};
@@ -33,21 +33,6 @@ class RpcCache {
   }
 }
 const rpcCache = new RpcCache();
-
-/**
- * Action definition Summary
- * Used to display an action using only displayed information
- */
-export interface ActionDefinitionSummary {
-  id: string;
-  referentiel: Referentiel;
-  nom: string;
-  identifiant: string;
-  children: string[];
-  description: string;
-  depth: number;
-  type: ActionType;
-}
 
 /**
  * Returns a view of a réferentiel down to the action level

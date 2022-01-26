@@ -5,7 +5,7 @@ import {
   ActionExemplesExpandPanel,
   ActionRessourcesExpandPanel,
 } from 'ui/shared/actions/ActionExpandPanels';
-import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 const ContexteExemplesAndRessourcesDialogContent = ({
   action,

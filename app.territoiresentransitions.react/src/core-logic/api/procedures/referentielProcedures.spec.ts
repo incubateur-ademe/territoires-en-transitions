@@ -1,7 +1,6 @@
 import {
   actionContexte,
   ActionContexte,
-  ActionDefinitionSummary,
   actionDownToTache,
   actionExemples,
   ActionExemples,
@@ -9,6 +8,7 @@ import {
   ActionRessources,
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 describe('Retrieve referentiel down to action', () => {
   it('should return the referentiel content', async () => {

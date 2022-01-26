@@ -18,7 +18,7 @@ import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRe
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
-import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =

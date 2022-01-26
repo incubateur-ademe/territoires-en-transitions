@@ -1,7 +1,7 @@
 import {refToEmoji} from 'utils/refToEmoji';
 import {ActionReferentiel} from 'types/action_referentiel';
 import {IndicateurReferentiel} from 'types/indicateur_referentiel';
-import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 export const actionToEmoji = (
   action: ActionReferentiel | ActionDefinitionSummary
