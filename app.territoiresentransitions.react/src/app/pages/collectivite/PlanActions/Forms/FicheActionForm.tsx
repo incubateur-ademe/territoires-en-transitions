@@ -5,12 +5,9 @@ import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ActionsField} from 'app/pages/collectivite/PlanActions/Forms/ActionsField';
 import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursField';
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
-import {ActionReferentielAvancementCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
-import {actions} from 'generated/data/referentiels';
 import {Spacer} from 'ui/shared/Spacer';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
 import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
-import {searchActionById} from 'utils/actions';
 import {PlanCategoriesSelectionField} from 'app/pages/collectivite/PlanActions/Forms/PlanCategoriesSelectionField';
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
@@ -21,6 +18,8 @@ import {useIndicateurPersonnaliseDefinitionList} from 'core-logic/hooks/indicate
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useActionTitleList} from 'core-logic/hooks/referentiel';
+import {ExpensiveActionReferentielAvancementCard} from 'ui/referentiels/ExpensiveActionReferentielAvancementCard';
 
 /**
  * Stores both plan and category uid, represents the user's selection of a
@@ -53,29 +52,20 @@ type FicheActionFormProps = {
 
 type FormState = 'ready' | 'saving';
 
-/**
- * Prevents enter key submitting the form.
- */
-function preventSubmit(event: React.KeyboardEvent) {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-  }
-}
-
 const LinkedActionsReferentielCards = () => {
   const {values} = useFormikContext<FicheActionRead>();
-  const linkedActions = values.action_ids.map(
-    actionId => searchActionById(actionId, actions)!
+  const titles = useActionTitleList('all');
+
+  const linkedTitles = titles.filter(title =>
+    values.action_ids.includes(title.id)
   );
 
   return (
     <div>
-      {linkedActions.map(action => (
-        <ActionReferentielAvancementCard
-          key={action.id}
-          action={action}
-          displayProgressStat={false}
-          displayAddFicheActionButton={false}
+      {linkedTitles.map(title => (
+        <ExpensiveActionReferentielAvancementCard
+          key={title.id}
+          title={title}
         />
       ))}
     </div>
