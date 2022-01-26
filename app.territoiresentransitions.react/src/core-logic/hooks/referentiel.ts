@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 import {
   actionContexte,
-  ActionDefinitionSummary,
   actionDownToTache,
   actionExemples,
   actionRessources,
@@ -9,6 +8,14 @@ import {
 } from 'core-logic/api/procedures/referentielProcedures';
 import {Referentiel} from 'types/litterals';
 import {parentId} from 'utils/actions';
+import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
+import {planActionReadEndpoint} from 'core-logic/api/endpoints/PlanActionReadEndpoint';
+import {planActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteEndpoint';
+import {
+  ActionTitleRead,
+  actionTitleReadEndpoint,
+} from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 export const useActionDownToTache = (
   referentiel: Referentiel,
@@ -102,4 +109,17 @@ export const useActionSummaryChildren = (action: ActionDefinitionSummary) => {
   }, [action.id]);
 
   return children;
+};
+
+export const useActionTitleList = (scope: 'all' | 'cae' | 'eci') => {
+  const [actionTitles, setActionTitles] = useState<ActionTitleRead[]>([]);
+
+  useEffect(() => {
+    if (scope === 'all')
+      actionTitleReadEndpoint.getBy({}).then(setActionTitles);
+    else
+      actionTitleReadEndpoint.getBy({referentiel: scope}).then(setActionTitles);
+  }, [scope]);
+
+  return actionTitles;
 };
