@@ -8,15 +8,18 @@ import {
 } from 'core-logic/api/procedures/referentielProcedures';
 import {Referentiel} from 'types/litterals';
 import {parentId} from 'utils/actions';
-import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
-import {planActionReadEndpoint} from 'core-logic/api/endpoints/PlanActionReadEndpoint';
-import {planActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteEndpoint';
 import {
   ActionTitleRead,
   actionTitleReadEndpoint,
 } from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {
+  ActionDefinitionSummary,
+  actionDefinitionSummaryReadEndpoint,
+} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
+/**
+ * Returns a list of actions from the "action" level down to the "tache" level.
+ */
 export const useActionDownToTache = (
   referentiel: Referentiel,
   identifiant: string
@@ -32,6 +35,10 @@ export const useActionDownToTache = (
   return summaries;
 };
 
+/**
+ * Returns a list of actions from the root "referentiel" down to the "action"
+ * level.
+ */
 export const useReferentielDownToAction = (referentiel: Referentiel) => {
   const [summaries, setSummaries] = useState<ActionDefinitionSummary[]>([]);
 
@@ -44,6 +51,9 @@ export const useReferentielDownToAction = (referentiel: Referentiel) => {
   return summaries;
 };
 
+/**
+ * Returns action exemples html contents
+ */
 export const useActionExemples = (actionId: string) => {
   const [exemples, setExemples] = useState<string>('...');
 
@@ -54,6 +64,9 @@ export const useActionExemples = (actionId: string) => {
   return exemples;
 };
 
+/**
+ * Returns action context html contents
+ */
 export const useActionContexte = (actionId: string) => {
   const [contexte, setContexte] = useState<string>('...');
 
@@ -64,6 +77,9 @@ export const useActionContexte = (actionId: string) => {
   return contexte;
 };
 
+/**
+ * Returns action ressources html contents
+ */
 export const useActionResources = (actionId: string) => {
   const [ressources, setRessources] = useState<string>('...');
 
@@ -76,6 +92,11 @@ export const useActionResources = (actionId: string) => {
   return ressources;
 };
 
+/**
+ * Returns the action summaries of the action children.
+ *
+ * This is how we recurse through the referentiel.
+ */
 export const useActionSummaryChildren = (action: ActionDefinitionSummary) => {
   const [children, setChildren] = useState<ActionDefinitionSummary[]>([]);
 
@@ -111,6 +132,9 @@ export const useActionSummaryChildren = (action: ActionDefinitionSummary) => {
   return children;
 };
 
+/**
+ * Returns action titles relative to the scope
+ */
 export const useActionTitleList = (scope: 'all' | 'cae' | 'eci') => {
   const [actionTitles, setActionTitles] = useState<ActionTitleRead[]>([]);
 
@@ -122,4 +146,23 @@ export const useActionTitleList = (scope: 'all' | 'cae' | 'eci') => {
   }, [scope]);
 
   return actionTitles;
+};
+
+/**
+ * Returns an action summary.
+ */
+export const useActionSummary = (
+  referentiel: Referentiel,
+  identifiant: string
+) => {
+  const [actionSummary, setActionSummary] =
+    useState<ActionDefinitionSummary | null>();
+
+  useEffect(() => {
+    actionDefinitionSummaryReadEndpoint
+      .getBy({referentiel, identifiant})
+      .then(list => setActionSummary(list.length === 0 ? null : list[0]));
+  }, [referentiel, identifiant]);
+
+  return actionSummary;
 };
