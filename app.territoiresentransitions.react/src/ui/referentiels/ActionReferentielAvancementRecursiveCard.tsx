@@ -10,8 +10,8 @@ import {
 } from 'ui/shared/actions/ActionExpandPanels';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ActionReferentiel} from 'types/action_referentiel';
-import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 /**
  * Displays an actions and it's children indented below.

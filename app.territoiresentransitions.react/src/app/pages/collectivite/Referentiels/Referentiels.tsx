@@ -4,7 +4,7 @@ import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
 import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
-import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 const ReferentielHead = (props: {referentiel: ActionDefinitionSummary}) => {
   return (

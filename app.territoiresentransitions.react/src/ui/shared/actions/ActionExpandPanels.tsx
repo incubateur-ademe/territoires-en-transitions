@@ -1,11 +1,11 @@
 import {addTargetToContentAnchors} from 'utils/content';
 import {CrossExpandPanelWithHtmlContent} from 'ui/shared/CrossExpandPanelWithHtmlContent';
-import {ActionDefinitionSummary} from 'core-logic/api/procedures/referentielProcedures';
 import {
   useActionContexte,
   useActionExemples,
   useActionResources,
 } from 'core-logic/hooks/referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 const ActionExpandPanelAdemeContent = (props: {
   content?: string;
