@@ -46,6 +46,7 @@ export const IndicateurPersonnaliseForm = (props: {
             type="area"
             component={LabeledTextField}
           />
+          <div className="p-5" />
 
           <Field name="unite" label="Unité" component={LabeledTextField} />
           <div className="p-5" />

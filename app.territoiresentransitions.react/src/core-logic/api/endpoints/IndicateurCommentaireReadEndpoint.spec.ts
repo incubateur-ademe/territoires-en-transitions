@@ -1,7 +1,13 @@
 import '@testing-library/jest-dom/extend-expect';
 import {indicateurCommentaireReadEndpoint} from 'core-logic/api/endpoints/IndicateurCommentaireReadEndpoint';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('Indicateur-commentaire reading endpoint ', () => {
+  beforeEach(async () => {
+    await supabaseClient.auth.signIn(yiliCredentials);
+  });
+
   it('should retrieve data-layer default commentaire for collectivite #1 ', async () => {
     const results = await indicateurCommentaireReadEndpoint.getBy({
       collectivite_id: 1,

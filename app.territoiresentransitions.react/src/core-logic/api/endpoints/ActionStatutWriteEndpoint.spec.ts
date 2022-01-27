@@ -6,6 +6,10 @@ import {yiliCredentials} from 'test_utils/collectivites';
 import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
 
 describe('Action-statut write endpoint', () => {
+  beforeEach(async () => {
+    await supabaseClient.auth.signIn(yiliCredentials);
+  });
+
   beforeAll(async () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });

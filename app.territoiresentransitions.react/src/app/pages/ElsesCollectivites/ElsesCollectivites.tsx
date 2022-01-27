@@ -24,13 +24,10 @@ const ElsesCollectivitesObserver = observer(
     }, []);
 
     return (
-      <div className="app fr-container m-5">
-        <section>
-          <h2 className="fr-h2 text-center">
-            Consulter les autres collectivités
-          </h2>
-          <Spacer size={3} />
-          <div className="grid grid-cols-3 gap-12">
+      <div className="app fr-container mt-5 flex justify-center">
+        <section className="text-center">
+          <h2 className="fr-h2 py-5">Consulter les autres collectivités</h2>
+          <div className="flex flex-wrap justify-center gap-12">
             {elseCollectiviteReads.map(collectivite => {
               if (
                 bloc.ownedCollectiviteIds.includes(collectivite.collectivite_id)

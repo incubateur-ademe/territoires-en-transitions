@@ -1,44 +1,46 @@
 # Installation
-
 Ce projet a été démarré avec [Create React App](https://github.com/facebook/create-react-app).
 
-Vous avez besoin de node installé, version >= 14.
+Vous avez besoin de node installé, version >= 16.
 Dans 'front', vous devez installer l'application avec la commande :
 
 #### `npm install`
 #### `cp .env.sample .env`
-Vous pouvez modifier les variable d'environnement dans ce nouveau fichier `.env`
+Vous pouvez modifier les variables d'environnement dans ce nouveau fichier `.env`
 On peut ensuite lancer le script qui nous intéresse dans la liste ci-dessous.
 
 
 ## Scripts disponibles
+``npm run dev`` : démarre l'appli en mode dev
 
-**`npm run start`** : démarre l'appli en mode dev
+``npm run test`` : lance les tests
 
-**`npm run test`** : lance les tests
-
-**`npm run build`** : construit les bundles de production
+``npm run build`` : construit les bundles de production
 
 
 ## Organisation du front
-L'arboresence du front est la suivante :
+L'arborescence du front est la suivante :
 
-> app\
-> core-logic\
-> ui\
-> utils\
-> interfaces
+- `core-logic` : c'est là que se fait la gestion de l'état de l'application. Il ne doit pas y avoir de `jsx`, 
+  `css` ou `html` ici. Cette partie concentre la logique métier pure, l'orchestration du state. Les requêtes et les souscriptions se passent ici également. C'est la partie du front qui est testée.
+ 
+- `css` : on trouve ici tailwindcss et des règles/petits overrides du dsfr propre à notre app.
 
-- **core-logic** : c'est là que se fait la gestion de l'état de l'application. Redux est utilisé, avec [redux-toolkit](https://redux-toolkit.js.org/). Il ne doit pas y avoir de `jsx`, `css` ou `html` ici. Cette partie concentre la logique métier pure, l'orchestration du state. Les requêtes et les souscriptions se passent ici également. C'est la partie du front qui est testé.
+- `generated/data` : Les données générées par l'ancienne archi (codegen) et vouées à être remplacées par des 
+  appels à l'API.
 
-- **ui** : la bibliothèque de composants. On cherche à faire des composants indépendants de l'application. Il ne 
+- `generated/dataLayer` : Les types exportés par le Data Layer `/data_layer`.
+
+- `types` : Les types et les interfaces partagées.
+
+- `ui` : la bibliothèque de composants. On cherche à faire des composants indépendants de l'application. Il ne 
   doivent pas connaitre, ni faire référence à redux. On utilise beaucoup [material-ui](https://material-ui.com/). Les imports à material-ui doivent se faire uniquement dans le dossier `ui`. Cela permet de changer facilement de design, sans avoir à toucher directement au code de l'application.
 
-- **utils** : on regroupe là les petites fonctions utilitaires qui peuvent servir un peu partout.
+- `utils` : on regroupe là les petites fonctions utilitaires qui peuvent servir un peu partout.
 
-- **interface** : les interfaces typescript qui sont ici sont générées par le backend. C'est sur elle que l'on s'appuie pour garantir le contrat d'interface avec le backend.
+- `interface` : les interfaces typescript qui sont ici sont générées par le backend. C'est sur elle que l'on s'appuie pour garantir le contrat d'interface avec le backend.
 
-- **app** : c'est là qu'est construite l'application react à proprement parlée. Elle va consommer ce qui est dans `core-logic` et dans `ui`.
+- `app` : c'est là qu'est construite l'application react à proprement parlée. Elle va consommer ce qui est dans `core-logic` et dans `ui`.
 
 
 ### CSS

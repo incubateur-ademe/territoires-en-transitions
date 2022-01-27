@@ -5,11 +5,10 @@ import {ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {referentielId} from 'utils/actions';
 import {ActionScore} from 'types/ClientScore';
 import {actionAvancementColors} from 'app/theme';
-import {ActionReferentiel} from 'types/action_referentiel';
 
 export const ActionProgressBar = observer(
-  ({action, scoreBloc}: {action: ActionReferentiel; scoreBloc: ScoreBloc}) => {
-    const score = scoreBloc.getScore(action.id, referentielId(action.id));
+  ({actionId, scoreBloc}: {actionId: string; scoreBloc: ScoreBloc}) => {
+    const score = scoreBloc.getScore(actionId, referentielId(actionId));
 
     if (score === null) return null;
 
@@ -122,7 +121,7 @@ const _ProgressBarTooltipAvancementContent = ({
   avancementPoint: number;
   maxPoint: number;
 }) =>
-  avancementPoint ? (
+  avancementPoint > 1e-3 ? (
     <div>
       {prefix} : {_formatAvancementScore(avancementPoint, maxPoint)}{' '}
     </div>
