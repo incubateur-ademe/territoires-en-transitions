@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
-import zxcvbn from 'zxcvbn';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Link} from 'react-router-dom';
 import {
@@ -9,6 +8,7 @@ import {
   politique_vie_privee,
   registerUser,
 } from 'core-logic/api/auth/registration';
+import {getPasswordStrength} from 'core-logic/api/auth/getPasswordStrength';
 import {signInPath} from 'app/paths';
 import {Spacer} from 'ui/shared/Spacer';
 import {ValiderButton} from 'ui/shared/ValiderButton';
@@ -16,19 +16,37 @@ import {PasswordStrengthMeter} from 'ui/forms/PasswordStrengthMeter';
 
 type FormState = 'ready' | 'success' | 'failure';
 
-// certains mots spécifiques du site qui vont faire baisser le score du mdp
-const UNSAFE_WORDS = ['ademe', 'tet', 'territoire', 'transition'];
-
-// pour déterminer le score du mot de passe
+// le score du mdp dépend aussi des autres champs du formulaire
 const getScore = (
-  value: string,
-  otherValues: InscriptionUtilisateur
-): number => {
-  // les autres valeurs du formulaire sont également prises en compte dans le score
-  const {email, nom, prenom} = otherValues || {};
-  const userInputs = [email, nom, prenom, ...UNSAFE_WORDS];
-  return zxcvbn(value, userInputs).score;
-};
+  password: string,
+  {email, nom, prenom}: InscriptionUtilisateur
+) => getPasswordStrength(password, [email, nom, prenom]);
+
+export const passwordValidator = Yup.string()
+  .min(8, 'Ce champ doit faire au minimum 8 caractères')
+  .max(300, 'Ce champ doit faire au maximum 300 caractères')
+  .test(
+    'is-robust',
+    'Ce mot de passe est trop simple',
+    (value, context) => !value || getScore(value, context.parent) > 3
+  )
+  .required('Champ requis');
+
+export const emailValidator = Yup.string()
+  .email("Cette adresse email n'est pas valide")
+  .required('Champ requis');
+
+const validation = Yup.object({
+  email: emailValidator,
+  nom: Yup.string()
+    .max(300, 'Ce champ doit faire au maximum 300 caractères')
+    .required('Champ requis'),
+  prenom: Yup.string()
+    .max(300, 'Ce champ doit faire au maximum 300 caractères')
+    .required('Champ requis'),
+  password: passwordValidator,
+  vie_privee_conditions: Yup.boolean().isTrue('Champ requis'),
+});
 
 /**
  * The user registration form.
@@ -69,28 +87,6 @@ const RegistrationForm = () => {
     password: '',
     vie_privee_conditions: false,
   };
-
-  const validation = Yup.object({
-    email: Yup.string()
-      .email("Cette adresse email n'est pas valide")
-      .required('Champ requis'),
-    nom: Yup.string()
-      .max(300, 'Ce champ doit faire au maximum 300 caractères')
-      .required('Champ requis'),
-    prenom: Yup.string()
-      .max(300, 'Ce champ doit faire au maximum 300 caractères')
-      .required('Champ requis'),
-    password: Yup.string()
-      .min(8, 'Ce champ doit faire au minimum 8 caractères')
-      .max(300, 'Ce champ doit faire au maximum 300 caractères')
-      .test(
-        'is-robust',
-        'Ce mot de passe est trop simple',
-        (value, context) => !value || getScore(value, context.parent) > 3
-      )
-      .required('Champ requis'),
-    vie_privee_conditions: Yup.boolean().isTrue('Champ requis'),
-  });
 
   const register = (data: InscriptionUtilisateur) => {
     registerUser(data)
