@@ -10,14 +10,7 @@ import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 /**
- * Displays an actions and it's children indented below.
- *
- * @param action
- * @param card
- * @param marginLeft the accumulated margin passed down to children for
- * indentation, beware the resulting tailwind classes have to be excluded
- * from purge in `tailwind.config.js`.
- * @constructor
+ * Displays an actions and it's children below.
  */
 const ActionReferentielRecursiveCard = ({
   action,
@@ -57,7 +50,7 @@ export const ActionReferentielAvancementCard = ({
         <ActionReferentielDisplayTitle action={action} />
         <Spacer size={1} />
         <ActionReferentielDescription action={action} />
-        <ActionExemplesExpandPanel action={action} />
+        {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
         <ActionCommentaire action={action} />
       </div>
       <div className="w-1/6 pl-4">
