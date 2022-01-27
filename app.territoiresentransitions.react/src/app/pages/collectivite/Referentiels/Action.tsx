@@ -19,6 +19,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -81,7 +82,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   return (
     <div className="fr-container">
       <div className="mt-8 mb-4">
-        {/*<OrientationQuickNav action={action} />*/}
+        <OrientationQuickNav action={action} />
       </div>
       <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8">
         <div className="flex flex-col w-4/5">

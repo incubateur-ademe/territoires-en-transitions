@@ -1,91 +1,71 @@
 import {Referentiel} from 'types/litterals';
-import {ActionReferentiel} from 'types/action_referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {ActionTitleRead} from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
 
-export const flattenActions = (
-  actions: ActionReferentiel[],
-  recursive: boolean
-): ActionReferentiel[] => {
-  const flattened: ActionReferentiel[] = [];
-  for (const action of actions) {
-    flattened.push(...action.actions);
-    if (recursive) flattened.push(...flattenActions(action.actions, true));
+/**
+ * Search for the siblings of an action in the action list.
+ * The returned list of siblings *includes* the action.
+ *
+ * @param action one of the siblings
+ * @param actions list containing the siblings
+ */
+export function findActionSiblingsOfId<
+  T extends ActionDefinitionSummary | ActionTitleRead
+>(action: T, actions: T[]): T[] {
+  if (action.type === 'referentiel') {
+    return actions.filter(a => a.type === 'referentiel');
   }
 
-  return flattened;
-};
+  const parent = findParent(action, actions)!;
+  return findChildren<T>(parent, actions) ?? [];
+}
 
-export const actionsById = (
-  actions: ActionReferentiel[]
-): Map<string, ActionReferentiel> => {
-  const results = new Map<string, ActionReferentiel>();
-  const append = (actions: ActionReferentiel[]) => {
-    for (const action of actions) {
-      results.set(action.id, action);
-      append(action.actions);
-    }
-  };
-  append(actions);
+/**
+ * Search for the children of action in the action list.
+ *
+ * @param action parent action
+ * @param actions list containing children
+ */
+export function findChildren<
+  T extends ActionDefinitionSummary | ActionTitleRead
+>(action: T, actions: T[]): T[] {
+  return actions.filter(a => action.children.includes(a.id));
+}
 
-  return results;
-};
-
-export const searchActionById = (
-  actionId: string,
-  actions: ActionReferentiel[]
-): ActionReferentiel | null => {
-  for (const action of actions) {
-    if (actionId === action.id) return action;
-    if (actionId.startsWith(action.id))
-      return searchActionById(actionId, action.actions);
-  }
-  return null;
-};
-
-export const searchActionSiblingsOfId = (
-  actionId: string,
-  actions: ActionReferentiel[]
-): ActionReferentiel[] | null => {
-  for (const action of actions) {
-    if (actionId === action.id) return actions;
-    if (actionId.startsWith(action.id))
-      return searchActionSiblingsOfId(actionId, action.actions);
-  }
-  return null;
-};
+/**
+ * Search for the parent of a given action amongst actions.
+ * @param action
+ * @param actions
+ */
+export function findParent<T extends ActionDefinitionSummary | ActionTitleRead>(
+  action: T,
+  actions: T[]
+): T | null {
+  return actions.find(a => a.children.includes(action.id)) ?? null;
+}
 
 /**
  * Returns a list of parents ordered from top (root) to bottom.
  *
- * @param actionId id we search for
- * @param actions actions tree to search in
+ * @param action the action we are searching the parent of.
+ * @param actions list containing the action ancestor.
  */
-export const searchParents = (
-  actionId: string,
-  actions: ActionReferentiel[]
-): ActionReferentiel[] => {
-  const parents: ActionReferentiel[] = [];
+export function searchAncestors<
+  T extends ActionDefinitionSummary | ActionTitleRead
+>(action: T, actions: T[]): T[] {
+  const parents: T[] = [];
+  let parent = findParent(action, actions);
 
-  const search = (actions: ActionReferentiel[]): void => {
-    for (const action of actions) {
-      if (actionId === action.id) return;
-      if (actionId.startsWith(action.id)) {
-        parents.push(action);
-        return search(action.actions);
-      }
-    }
-  };
-  search(actions);
+  while (parent !== null) {
+    parents.unshift(parent);
+    parent = findParent(parent, actions);
+  }
+
   return parents;
-};
+}
 
 export const referentielMesureDepth = (actionId: string): number =>
   actionId.startsWith('eci') ? 2 : 3;
-
-export const actionIdDepth = (actionId: string) => {
-  const [, action] = actionId.split('__');
-  if (action) return action.split('.').length;
-  return 0;
-};
 
 export const parentId = (actionId: string): string | null => {
   const elements = actionId.split('.');
@@ -94,10 +74,12 @@ export const parentId = (actionId: string): string | null => {
   return elements.join('.');
 };
 
-export const displayName = (action: ActionReferentiel) =>
-  action.id_nomenclature
-    ? `${action.id_nomenclature} - ${action.nom}`
-    : action.referentielDisplayName;
+export const displayName = (
+  action: ActionDefinitionSummary | ActionTitleRead
+) =>
+  action.type === 'referentiel'
+    ? referentielDisplayName(action)
+    : `${action.identifiant} - ${action.nom}`;
 
 export const referentielId = (actionId: string): Referentiel =>
   actionId.startsWith('eci') ? 'eci' : 'cae';
@@ -121,3 +103,8 @@ export const actionPath = (
   const mesureId = elements.join('.');
   return `${epciPath}/action/${referentielId(actionId)}/${mesureId}`;
 };
+
+export const referentielDisplayName = (
+  action: ActionDefinitionSummary | ActionTitleRead
+): string =>
+  action.referentiel === 'cae' ? 'Climat Air Energie' : 'Économie Circulaire';
