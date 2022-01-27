@@ -9,7 +9,7 @@ export class AuthBloc {
     makeAutoObservable(this);
     const connectedUser = supabaseClient.auth.user();
     if (connectedUser) {
-      this._userId = connectedUser.id;
+      this.setUserId(connectedUser.id);
     }
   }
 
@@ -18,13 +18,13 @@ export class AuthBloc {
       .signIn({email, password})
       .then(session => {
         if (session.user) {
-          this._userId = session.user.id;
-          this._authError = null;
+          this.setUserId(session.user.id);
+          this.setAuthError(null);
           console.log('user connected ', this.userId);
         } else {
           console.log(session.error?.message);
-          this._authError = "L'email et le mot de passe ne correspondent pas.";
-          this._userId = null;
+          this.setAuthError("L'email et le mot de passe ne correspondent pas.");
+          this.setUserId(null);
         }
       })
       .catch(error => {
@@ -35,9 +35,23 @@ export class AuthBloc {
   disconnect() {
     supabaseClient.auth.signOut().then(response => {
       if (response.error === null) {
-        this._userId = null;
-      } else this._authError = response.error.message;
+        this.setUserId(null);
+      } else this.setAuthError(response.error.message);
     });
+  }
+
+  resetPasswordForEmail({email}: {email: string}) {
+    supabaseClient.auth.api
+      .resetPasswordForEmail(email)
+      .then(response => {
+        if (response.error) {
+          console.log(response.error?.message);
+          this.setAuthError('Email non valide');
+        }
+      })
+      .catch(error => {
+        console.log('resetPasswordForEmail error: ', error);
+      });
   }
 
   get connected() {
@@ -48,6 +62,13 @@ export class AuthBloc {
   }
   get userId() {
     return this._userId;
+  }
+
+  private setUserId(userId: string | null) {
+    this._userId = userId;
+  }
+  private setAuthError(authError: string | null) {
+    this._authError = authError;
   }
 }
 
