@@ -5,9 +5,7 @@ import {
   PlanCategorieSelection,
 } from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {v4 as uuid} from 'uuid';
-import {searchActionById} from 'utils/actions';
 import {useQuery} from 'core-logic/hooks/query';
-import {actions} from 'generated/data/referentiels';
 import {RetourButton} from 'ui/shared/RetourButton';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
@@ -24,18 +22,6 @@ const FicheActionCreator = () => {
   const query = useQuery();
   const history = useHistory();
 
-  // handle action_id query parameter, used when the fiche is created from
-  // an action.
-  let titre = '';
-  let referentiel_action_ids: string[] = [];
-  if (query.get('action_id')) {
-    const action = searchActionById(query.get('action_id')!, actions);
-    if (action) {
-      titre = action.nom;
-      referentiel_action_ids = [action.id];
-    }
-  }
-
   // handle plan_id query parameter, used when the fiche is created from
   // a plan.
   const planCategories: PlanCategorieSelection[] = [];
@@ -48,7 +34,7 @@ const FicheActionCreator = () => {
   const fiche: FicheActionWrite = {
     uid: uuid(),
     collectivite_id: collectiviteId,
-    titre: titre,
+    titre: '',
     avancement: 'non_renseigne',
     numerotation: '',
     description: '',
@@ -63,7 +49,7 @@ const FicheActionCreator = () => {
     commentaire: '',
     date_debut: '',
     date_fin: '',
-    action_ids: referentiel_action_ids,
+    action_ids: [],
     indicateur_ids: [],
     indicateur_personnalise_ids: [],
   };
