@@ -4,29 +4,30 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {
   actionPath,
   displayName,
-  searchActionSiblingsOfId,
-  searchParents,
+  findActionSiblingsOfId,
+  findChildren,
+  searchAncestors,
 } from 'utils/actions';
-import {actions as referentielActions} from 'generated/data/referentiels';
 import {Menu, MenuItem} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
-import {ActionReferentiel} from 'types/action_referentiel';
 import {makeCollectiviteReferentielUrl} from 'app/paths';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {useActionTitleList} from 'core-logic/hooks/referentiel';
+import {ActionTitleRead} from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
 
 /**
- * Converts a list of actions to a list of menu items.
+ * Returns a list of menu items
  *
- * When actions are above mesure level we show nested items until we are at
- * the mesure level where we show a clickable item that calls onSelect.
- *
- * @param actions Actions must be less or equal to mesure depth
- * @param onSelect A callback that takes a mesure id.
+ * @param siblings The actions to display as siblings
+ * @param actions The action list to search the children in.
+ * @param onSelect The on click callback.
  */
 const actionsToMenuItems = (
-  actions: ActionReferentiel[],
+  siblings: ActionTitleRead[],
+  actions: ActionTitleRead[],
   onSelect: (actionId: string) => void
 ): React.ReactNode[] => {
-  return actions.map((action: ActionReferentiel): React.ReactNode => {
+  return siblings.map((action: ActionTitleRead): React.ReactNode => {
     if (action.type === 'action') {
       return (
         <MenuItem key={action.id}>
@@ -45,7 +46,7 @@ const actionsToMenuItems = (
           parentMenuOpen={true}
           label={<div className="truncate max-w-sm">{displayName(action)}</div>}
         >
-          {actionsToMenuItems(action.actions, onSelect)}
+          {actionsToMenuItems(findChildren(action, actions), actions, onSelect)}
         </NestedMenuItem>
       );
     }
@@ -56,11 +57,17 @@ const actionsToMenuItems = (
  * The nav bar at the top of an orientation page, made of several
  * OrientationSwitcher
  */
-export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
-  const parents = searchParents(props.action.id, referentielActions);
+export const OrientationQuickNav = (props: {
+  action: ActionDefinitionSummary;
+}) => {
+  const collectiviteId = useCollectiviteId()!;
+  const titles = useActionTitleList('all');
+
+  if (titles.length === 0) return <></>;
+
+  const parents = searchAncestors(props.action, titles);
   const parent = parents[parents.length - 1];
   const grandParents = parents.slice(1, parents.length - 1);
-  const collectiviteId = useCollectiviteId()!;
   return (
     <nav className="flex flex-row text-sm">
       <div className="flex flex-row flex-nowrap">
@@ -70,7 +77,7 @@ export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
             referentielId: props.action.referentiel,
           })}
         >
-          {props.action.referentielDisplayName}
+          {displayName(parents[0])}
         </Link>
 
         <span className="mx-2">&gt;</span>
@@ -79,12 +86,12 @@ export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
         // we build a menu for every parent
         return (
           <div className="flex flex-row flex-nowrap" key={parent.id}>
-            <OrientationSwitcher action={parent} />
+            <OrientationSwitcher action={parent} titles={titles} />
             <span className="mx-2">&gt;</span>
           </div>
         );
       })}
-      <OrientationSwitcher action={parent} />
+      <OrientationSwitcher action={parent} titles={titles} />
     </nav>
   );
 };
@@ -92,14 +99,14 @@ export const OrientationQuickNav = (props: {action: ActionReferentiel}) => {
 /**
  * Builds a link that opens a menu showing the action siblings as items.
  */
-export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
+const OrientationSwitcher = (props: {
+  action: ActionTitleRead;
+  titles: ActionTitleRead[];
+}) => {
   const [opened, setOpened] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const menuId = `${props.action.id}-menu`;
-  const siblings = searchActionSiblingsOfId(
-    props.action.id,
-    referentielActions
-  );
+  const siblings = findActionSiblingsOfId(props.action, props.titles);
   const history = useHistory();
   const collectiviteId = useCollectiviteId()!;
 
@@ -134,7 +141,7 @@ export const OrientationSwitcher = (props: {action: ActionReferentiel}) => {
         anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
         transformOrigin={{vertical: 'top', horizontal: 'left'}}
       >
-        {actionsToMenuItems(siblings!, onSelect)}
+        {actionsToMenuItems(siblings!, props.titles, onSelect)}
       </Menu>
     </>
   );
