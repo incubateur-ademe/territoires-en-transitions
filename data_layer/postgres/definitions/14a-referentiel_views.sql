@@ -74,7 +74,10 @@ select id,
            , 'referentiel') as type,
        identifiant,
        nom,
-       description
+       description,
+       exemples != '' as have_exemples,
+       ressources != '' as have_ressources,
+       contexte != '' as have_contexte
 from action_definition
          join action_children on action_id = action_children.id
 order by action_id;

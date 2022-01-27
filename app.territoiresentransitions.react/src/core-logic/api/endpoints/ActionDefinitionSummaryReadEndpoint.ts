@@ -20,6 +20,9 @@ export interface ActionDefinitionSummary {
   description: string;
   depth: number;
   type: ActionType;
+  have_exemples: boolean;
+  have_ressources: boolean;
+  have_contexte: boolean;
 }
 
 class ActionDefinitionSummaryReadEndpoint extends DataLayerReadCachedEndpoint<
