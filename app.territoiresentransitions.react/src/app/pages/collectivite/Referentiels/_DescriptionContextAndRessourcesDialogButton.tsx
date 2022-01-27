@@ -14,9 +14,10 @@ const ContexteExemplesAndRessourcesDialogContent = ({
 }) => (
   <div className="p-7 flex flex-col">
     <h4 className="pb-4"> {action.nom} </h4>
-    <ActionContexteExpandPanel action={action} />
-    <ActionExemplesExpandPanel action={action} />
-    <ActionRessourcesExpandPanel action={action} />
+
+    {action.have_contexte && <ActionContexteExpandPanel action={action} />}
+    {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
+    {action.have_ressources && <ActionRessourcesExpandPanel action={action} />}
   </div>
 );
 
