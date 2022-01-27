@@ -32,21 +32,6 @@ create policy allow_read
     using (true);
 
 
-create or replace view action_children
-as
-select referentiel, id, parent, children.ids as children
-from action_relation as ar
-         left join lateral (
-    select array_agg(action_relation.id) as ids
-    from action_relation
-    where action_relation.parent = ar.id
-
-    )
-    as children on true;
-comment on view action_children is
-    'Action and its children, computed from action relation';
-
-
 --------------------------------
 --------- INDICATEUR -----------
 --------------------------------
