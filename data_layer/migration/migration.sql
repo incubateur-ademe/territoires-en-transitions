@@ -1,13 +1,13 @@
 begin;
 
 -- 1. Import missing epcis
-insert into epci (nom, siren, nature)
-select oe.nom, oe.siren, 'PETR'
-from old.epci oe
-         left join epci e on oe.siren = e.siren
-where latest
-  and e.siren is null
-  and oe.siren != '';
+-- insert into epci (nom, siren, nature)
+-- select oe.nom, oe.siren, 'PETR'
+-- from old.epci oe
+--          left join epci e on oe.siren = e.siren
+-- where latest
+--   and e.siren is null
+--   and oe.siren != '';
 
 -- 2. Import users
 create function create_user(
@@ -120,4 +120,6 @@ from old_statuts os
     select * from private_utilisateur_droit ) ud on ne.new_id = ud.collectivite_id
 where collectivite_id = 1 and action_id = 'eci_4.3.3.1'
 on conflict do nothing ;
+
+
 rollback;
