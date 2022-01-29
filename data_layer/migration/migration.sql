@@ -48,8 +48,9 @@ with unique_dcp as (
     from old.ademeutilisateur
              join auth.users u on ademe_user_id::uuid = u.id
 )
-insert into dcp (user_id, nom, prenom, email, created_at, modified_at)
-select ademe_user_id::uuid,  nom, prenom, email, created_at, modified_at
+insert
+into dcp (user_id, nom, prenom, email, created_at, modified_at)
+select ademe_user_id::uuid, nom, prenom, email, created_at, modified_at
 from unique_dcp;
 
 -- 4 droits
@@ -59,14 +60,17 @@ with unique_droits as (
            od.created_at
     from old.utilisateurdroits od
              join auth.users u on od.ademe_user_id::uuid = u.id
-    where latest and ecriture
-), new_epcis as (
-    select oe.uid as old_epci_id, e.id as new_id
-    from epci e
-             join old.epci oe on e.siren = oe.siren
     where latest
-)
-insert into private_utilisateur_droit (user_id, collectivite_id, role_name, active, created_at)
+      and ecriture
+),
+     new_epcis as (
+         select oe.uid as old_epci_id, e.id as new_id
+         from epci e
+                  join old.epci oe on e.siren = oe.siren
+         where latest
+     )
+insert
+into private_utilisateur_droit (user_id, collectivite_id, role_name, active, created_at)
 select d.ademe_user_id::uuid, e.new_id, 'referent', true, d.created_at
 from unique_droits d
          join new_epcis e on e.old_epci_id = d.old_epci_id;
@@ -79,7 +83,9 @@ with partitioned_old_statuts as (
     where (action_id like 'citergie__%' or action_id like 'economie_circulaire__%')
 ),
      old_statuts as (
-         select * from partitioned_old_statuts where row_number = 1
+         select *
+         from partitioned_old_statuts
+         where row_number = 1
      ),
 
      converted_action_id as (
@@ -89,17 +95,16 @@ with partitioned_old_statuts as (
      ),
 
      converted_statut as (
-         select
-             id,
-             case
-                 when avancement like 'non_concerne%' then 'non_renseigne'
-                 when avancement = 'en_cours' then 'programme'
-                 when avancement = 'programmee' then 'programme'
-                 when avancement = 'faite' then 'fait'
-                 when avancement = 'pas_faite' then 'pas_fait'
-                 else 'non_renseigne'
-                 end as avancement,
-             avancement like 'non_concerne%' as concerne
+         select id,
+                case
+                    when avancement like 'non_concerne%' then 'non_renseigne'
+                    when avancement = 'en_cours' then 'programme'
+                    when avancement = 'programmee' then 'programme'
+                    when avancement = 'faite' then 'fait'
+                    when avancement = 'pas_faite' then 'pas_fait'
+                    else 'non_renseigne'
+                    end                         as avancement,
+                avancement like 'non_concerne%' as concerne
          from old_statuts
      ),
      new_epcis as (
@@ -108,9 +113,15 @@ with partitioned_old_statuts as (
                   join old.epci oe on e.siren = oe.siren
          where latest
      )
-insert into action_statut (collectivite_id, action_id, avancement, concerne, modified_by,  modified_at)
-select ne.new_id as collectivite_id, ca.converted as action_id, cs.avancement::avancement, cs.concerne, ud
-    .user_id, os
+insert
+into action_statut (collectivite_id, action_id, avancement, concerne, modified_by, modified_at)
+select ne.new_id    as collectivite_id,
+       ca.converted as action_id,
+       cs.avancement::avancement,
+       cs.concerne,
+       ud
+           .user_id,
+       os
            .modified_at
 from old_statuts os
          join new_epcis ne on os.epci_id = ne.old_epci_id
@@ -118,8 +129,45 @@ from old_statuts os
          join converted_action_id ca on os.id = ca.id
          join lateral (
     select * from private_utilisateur_droit ) ud on ne.new_id = ud.collectivite_id
-where collectivite_id = 1 and action_id = 'eci_4.3.3.1'
-on conflict do nothing ;
+where collectivite_id = 1
+  and action_id = 'eci_4.3.3.1'
+on conflict do nothing;
+
+
+-- xx view utils
+create view old.new_epci
+as
+select oe.uid as old_epci_id, e.id as new_id
+from epci e
+         join old.epci oe on e.siren = oe.siren
+where latest;
+
+create view old.new_indicateur_id
+as
+with all_ids as (
+    select indicateur_id
+    from old.indicateurresultat
+    union
+    select indicateur_id
+    from old.indicateurobjectif
+)
+select distinct regexp_replace(
+                        regexp_replace(
+                                regexp_replace(
+                                        indicateur_id,
+                                    -- third crte
+                                        'crte-(\d+).(\d+)', 'crte_\1.\2'
+                                    ),
+                            -- second eci
+                                'eci-(0+)(\d+)', 'eci_\2'
+                            ),
+                    -- first cae
+                    -- todo   'cae-(\d+)([a-z]+)?', 'cae_\1.\2'
+                        'cae-(\d+)([a-z]+)?', 'cae_\1\2'
+                    )         as new_id,
+                indicateur_id as old_id
+from all_ids;
+
 
 
 rollback;
