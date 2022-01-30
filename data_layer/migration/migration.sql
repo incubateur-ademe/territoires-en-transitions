@@ -217,6 +217,80 @@ select count(*) from indicateur_objectif;
 
 -- 8 - définitions, résultats et objectifs des indicateurs personnalisés
 
+-- a. mapping from old indicateur perso uid to new integer id 
+create or replace view old.indicateur_perso_uid_mapping as 
+    select distinct on (uid)
+    uid old_uid,
+       row_number() OVER (ORDER BY uid) new_uid,
+       epci_id
+  from old.indicateurpersonnalise; 
+
+
+-- b. Définitions des indicateurs personnalisés
+with partitioned_old_indicateur_personnalise_definition as (
+    select *, row_number() over (partition by (uid, epci_id) order by modified_at desc) as row_number
+    from old.indicateurpersonnalise
+),
+old_indicateur_personnalise_definition as (
+    select * from partitioned_old_indicateur_personnalise_definition where row_number = 1
+)
+    insert into indicateur_personnalise_definition(id, collectivite_id, titre, description, unite, commentaire, modified_by, modified_at)
+     select 
+        new_uid id,
+        ne.new_id  collectivite_id,
+        nom titre, 
+        description, 
+        unite, 
+        meta -> 'commentaire' commentaire,
+      ud.user_id modified_by,        
+      defs.modified_at modified_at
+     from old_indicateur_personnalise_definition oipd 
+     join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipd.uid
+     join old.new_epci ne on oipd.epci_id = ne.old_epci_id
+     join lateral (
+    select * from private_utilisateur_droit ) ud on ne.new_id = ud.collectivite_id;
+
+-- c. Résultats des indicateurs personnalisés
+with partitioned_old_indicateur_personnalise_resultat as (
+    select *, row_number() over (partition by (indicateur_id, year, epci_id) order by modified_at desc) as row_number
+    from old.indicateurpersonnaliseresultat
+),
+old_indicateur_personnalise_resultat as (
+    select * from partitioned_old_indicateur_personnalise_resultat where row_number = 1
+)
+    insert into indicateur_personnalise_resultat(indicateur_id, collectivite_id, annee, valeur, modified_at)
+     select 
+        new_uid indicateur_id,
+        ne.new_id  collectivite_id,
+        oipr.year annee,
+        oipr.value valeur,
+        -- ud.user_id modified_by,        
+        oipr.modified_at modified_at
+     from old_indicateur_personnalise_resultat oipr 
+     join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipr.indicateur_id
+     join old.new_epci ne on oipr.epci_id = ne.old_epci_id;
+
+
+-- d. Objectifs des indicateurs personnalisés
+with partitioned_old_indicateur_personnalise_objectif as (
+    select *, row_number() over (partition by (indicateur_id, year, epci_id) order by modified_at desc) as row_number
+    from old.indicateurpersonnaliseobjectif
+),
+old_indicateur_personnalise_objectif as (
+    select * from partitioned_old_indicateur_personnalise_objectif where row_number = 1
+)
+    insert into indicateur_personnalise_objectif(indicateur_id, collectivite_id, annee, valeur, modified_at)
+     select 
+        new_uid indicateur_id,
+        ne.new_id  collectivite_id,
+        oipr.year annee,
+        oipr.value valeur,
+        -- ud.user_id modified_by,        
+        oipr.modified_at modified_at
+     from old_indicateur_personnalise_objectif oipr 
+     join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipr.indicateur_id
+     join old.new_epci ne on oipr.epci_id = ne.old_epci_id;
+
 
 -- Diagnostics
 select distinct indicateur_id from old.indicateurobjectif
