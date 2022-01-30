@@ -169,5 +169,62 @@ select distinct regexp_replace(
 from all_ids;
 
 
+-- 6 - résultats des indicateurs référentiels
+with partitioned_old_indicateur_resultats as (
+    select *, row_number() over (partition by (indicateur_id, epci_id, year) order by modified_at desc) as row_number
+    from old.indicateurresultat
+),
+     old_indicateur_resultats as (
+         select *
+         from partitioned_old_indicateur_resultats
+         where row_number = 1
+     )
+insert
+into indicateur_resultat (collectivite_id, indicateur_id, valeur, annee, modified_at)
+select ne.new_id  as collectivite_id,
+       nii.new_id as indicateur_id,
+       oir.value  as valeur,
+       oir.year   as annee,
+       modified_at
+
+from old_indicateur_resultats oir
+         join old.new_indicateur_id nii on oir.indicateur_id = nii.old_id
+         join old.new_epci ne on oir.epci_id = ne.old_epci_id;
+
+-- 7 - objectifs des indicateurs référentiels
+with partitioned_old_indicateur_objectifs as (
+    select *, row_number() over (partition by (indicateur_id, epci_id, year) order by modified_at desc) as row_number
+    from old.indicateurobjectif
+),
+     old_indicateur_objectifs as (
+         select *
+         from partitioned_old_indicateur_objectifs
+         where row_number = 1
+     )
+insert
+into indicateur_objectif (collectivite_id, indicateur_id, valeur, annee, modified_at)
+select ne.new_id  as collectivite_id,
+       nii.new_id as indicateur_id,
+       oir.value  as valeur,
+       oir.year   as annee,
+       modified_at
+
+from old_indicateur_objectifs oir
+         join old.new_indicateur_id nii on oir.indicateur_id = nii.old_id
+         join old.new_epci ne on oir.epci_id = ne.old_epci_id;
+
+select count(*) from indicateur_objectif;
+
+-- 8 - définitions, résultats et objectifs des indicateurs personnalisés
+
+
+-- Diagnostics
+select distinct indicateur_id from old.indicateurobjectif
+except
+select distinct old_id from indicateur_resultat ir join old.new_indicateur_id oni on ir.indicateur_id = oni.new_id;
+
+select distinct indicateur_id from old.indicateurresultat
+except
+select distinct old_id from indicateur_resultat ir join old.new_indicateur_id oni on ir.indicateur_id = oni.new_id;
 
 rollback;
