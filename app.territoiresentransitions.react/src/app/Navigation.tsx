@@ -5,6 +5,7 @@ import {
   makeCollectiviteIndicateursUrl,
   makeCollectiviteReferentielUrl,
   makeCollectiviteTableauBordUrl,
+  makeCollectiviteUsersUrl,
   myCollectivitesPath,
   signInPath,
   signUpPath,
@@ -172,6 +173,13 @@ export const CollectiviteNavigation = () => {
         <CollectiviteNavigationDirectTab
           label="Plans d'action"
           path={makeCollectiviteDefaultPlanActionUrl({
+            collectiviteId:
+              currentCollectiviteBloc.currentCollectivite.collectivite_id,
+          })}
+        />
+        <CollectiviteNavigationDirectTab
+          label="Gestion des accès"
+          path={makeCollectiviteUsersUrl({
             collectiviteId:
               currentCollectiviteBloc.currentCollectivite.collectivite_id,
           })}
