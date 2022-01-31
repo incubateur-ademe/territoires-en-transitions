@@ -154,6 +154,7 @@ export const SelectCollectiviteDialog = () => {
 
   return (
     <UiDialogButton
+      className="overflow-hidden"
       title="Sélectionner votre collectivité"
       opened={opened}
       setOpened={setOpened}
