@@ -299,7 +299,7 @@ with partitioned_old_indicateur_personnalise_objectif as (
 
 insert
 into indicateur_personnalise_objectif(indicateur_id, collectivite_id, annee, valeur, modified_at)
-select new_id           indicateur_id,
+select mapping.new_id           indicateur_id,
        ne.new_id        collectivite_id,
        oipr.year        annee,
        oipr.value       valeur,
