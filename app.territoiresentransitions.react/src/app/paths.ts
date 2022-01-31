@@ -25,6 +25,7 @@ export const collectiviteActionPath = `${collectivitePath}/action/:${referentiel
 export const collectivitePlanActionPath = `${collectivitePath}/plan_action/:${planActionParam}`;
 export const collectiviteNouvelleFichePath = `${collectivitePath}/nouvelle_fiche`;
 export const collectiviteFichePath = `${collectivitePath}/fiche/:${ficheParam}`;
+export const collectiviteUsersPath = `${collectivitePath}/users`;
 
 export const makeCollectiviteIndicateursUrl = ({
   collectiviteId,
@@ -115,3 +116,13 @@ export const makeCollectiviteNouvelleFicheUrl = (props: {
     `:${collectiviteParam}`,
     props.collectiviteId.toString()
   )}?plan_uid=${props.planActionUid}`;
+
+export const makeCollectiviteUsersUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteUsersPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
