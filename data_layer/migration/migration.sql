@@ -465,6 +465,18 @@ from old_fiche
          join old.new_epci ne on old_fiche.epci_id = ne.old_epci_id
 ;
 
---- Plan action
+--- 9.b Plan action
+insert into plan_action (uid, collectivite_id, nom, categories, fiches_by_category, created_at, modified_at)
+select gen_random_uuid() as uuid,
+       ne.new_id as collectivite_id,
+       nom,
+       categories,
+       fiches_by_category,
+       created_at,
+       modified_at
+from old.planaction pa
+    join old.new_epci ne on pa.epci_id = ne.old_epci_id
+where latest and not deleted
+;
 
 rollback;
