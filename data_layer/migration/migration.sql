@@ -1,14 +1,5 @@
 begin;
 
--- 1. Import missing epcis
--- insert into epci (nom, siren, nature)
--- select oe.nom, oe.siren, 'PETR'
--- from old.epci oe
---          left join epci e on oe.siren = e.siren
--- where latest
---   and e.siren is null
---   and oe.siren != '';
-
 -- 2. Import users
 create function create_user(
     id uuid,
@@ -134,15 +125,16 @@ where collectivite_id = 1
 on conflict do nothing;
 
 
--- xx view utils
+-- view utils
 create view old.new_epci
 as
 select oe.uid as old_epci_id, e.id as new_id
 from epci e
          join old.epci oe on e.siren = oe.siren
-where latest;
+where oe.latest;
 
-create view old.new_indicateur_id
+
+create or replace view old.new_indicateur_id
 as
 with all_ids as (
     select indicateur_id
@@ -150,6 +142,9 @@ with all_ids as (
     union
     select indicateur_id
     from old.indicateurobjectif
+    union
+    select replace(jsonb_array_elements(referentiel_indicateur_ids) :: text, '"', '')::varchar(36) as indicateur_id
+    from old.ficheaction
 )
 select distinct regexp_replace(
                         regexp_replace(
@@ -166,7 +161,10 @@ select distinct regexp_replace(
                         'cae-(\d+)([a-z]+)?', 'cae_\1\2'
                     )         as new_id,
                 indicateur_id as old_id
-from all_ids;
+from all_ids
+where indicateur_id like 'eci%'
+   or indicateur_id like 'cae%'
+;
 
 
 -- 6 - résultats des indicateurs référentiels
@@ -189,7 +187,9 @@ select ne.new_id  as collectivite_id,
 
 from old_indicateur_resultats oir
          join old.new_indicateur_id nii on oir.indicateur_id = nii.old_id
-         join old.new_epci ne on oir.epci_id = ne.old_epci_id;
+         join old.new_epci ne on oir.epci_id = ne.old_epci_id
+on conflict do nothing
+;
 
 -- 7 - objectifs des indicateurs référentiels
 with partitioned_old_indicateur_objectifs as (
@@ -211,64 +211,81 @@ select ne.new_id  as collectivite_id,
 
 from old_indicateur_objectifs oir
          join old.new_indicateur_id nii on oir.indicateur_id = nii.old_id
-         join old.new_epci ne on oir.epci_id = ne.old_epci_id;
-
-select count(*) from indicateur_objectif;
+         join old.new_epci ne on oir.epci_id = ne.old_epci_id
+on conflict do nothing
+;
 
 -- 8 - définitions, résultats et objectifs des indicateurs personnalisés
-
--- a. mapping from old indicateur perso uid to new integer id 
-create or replace view old.indicateur_perso_uid_mapping as 
-    select distinct on (uid)
-    uid old_uid,
-       row_number() OVER (ORDER BY uid) new_uid,
-       epci_id
-  from old.indicateurpersonnalise; 
-
+-- a. mapping from old indicateur perso uid to new integer id
+create materialized view old.indicateur_perso_uid_mapping as
+with seq as (
+    select max(id) as last_id
+    from indicateur_personnalise_definition
+)
+select distinct on (uid) uid                                           old_uid,
+                         row_number() OVER (ORDER BY uid) + last_id as new_id,
+                         epci_id
+from old.indicateurpersonnalise
+         join seq on true;
 
 -- b. Définitions des indicateurs personnalisés
-with partitioned_old_indicateur_personnalise_definition as (
+with partitioned as (
     select *, row_number() over (partition by (uid, epci_id) order by modified_at desc) as row_number
     from old.indicateurpersonnalise
 ),
-old_indicateur_personnalise_definition as (
-    select * from partitioned_old_indicateur_personnalise_definition where row_number = 1
-)
-    insert into indicateur_personnalise_definition(id, collectivite_id, titre, description, unite, commentaire, modified_by, modified_at)
-     select 
-        new_uid id,
-        ne.new_id  collectivite_id,
-        nom titre, 
-        description, 
-        unite, 
-        meta -> 'commentaire' commentaire,
-      ud.user_id modified_by,        
-      defs.modified_at modified_at
-     from old_indicateur_personnalise_definition oipd 
-     join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipd.uid
-     join old.new_epci ne on oipd.epci_id = ne.old_epci_id
-     join lateral (
-    select * from private_utilisateur_droit ) ud on ne.new_id = ud.collectivite_id;
+     old_indicateur_personnalise_definition as (
+         select *
+         from partitioned
+         where row_number = 1
+     ),
+     data as (
+         select mapping.new_id              id,
+                ne.new_id                   collectivite_id,
+                nom                         titre,
+                description,
+                unite,
+                meta -> 'commentaire'::text commentaire,
+                ud.user_id                  modified_by,
+                oipd.modified_at            modified_at
+         from old_indicateur_personnalise_definition oipd
+                  join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipd.uid
+                  join old.new_epci ne on oipd.epci_id = ne.old_epci_id
+                  join lateral (select * from private_utilisateur_droit where collectivite_id = ne.new_id limit 1) ud
+                       on true
+     )
+insert
+into indicateur_personnalise_definition(id, collectivite_id, titre, description, unite, commentaire,
+                                        modified_by, modified_at)
+select id,
+       collectivite_id,
+       titre,
+       description,
+       unite,
+       replace(coalesce(commentaire::text, ''), '"', '') as commentaire,
+       modified_by,
+       modified_at
+from data
+;
 
 -- c. Résultats des indicateurs personnalisés
 with partitioned_old_indicateur_personnalise_resultat as (
     select *, row_number() over (partition by (indicateur_id, year, epci_id) order by modified_at desc) as row_number
     from old.indicateurpersonnaliseresultat
 ),
-old_indicateur_personnalise_resultat as (
-    select * from partitioned_old_indicateur_personnalise_resultat where row_number = 1
-)
-    insert into indicateur_personnalise_resultat(indicateur_id, collectivite_id, annee, valeur, modified_at)
-     select 
-        new_uid indicateur_id,
-        ne.new_id  collectivite_id,
-        oipr.year annee,
-        oipr.value valeur,
-        -- ud.user_id modified_by,        
-        oipr.modified_at modified_at
-     from old_indicateur_personnalise_resultat oipr 
-     join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipr.indicateur_id
-     join old.new_epci ne on oipr.epci_id = ne.old_epci_id;
+     old_indicateur_personnalise_resultat as (
+         select * from partitioned_old_indicateur_personnalise_resultat where row_number = 1
+     )
+insert
+into indicateur_personnalise_resultat(indicateur_id, collectivite_id, annee, valeur, modified_at)
+select mapping.new_id   indicateur_id,
+       ne.new_id        collectivite_id,
+       oipr.year        annee,
+       oipr.value       valeur,
+       -- ud.user_id modified_by,
+       oipr.modified_at modified_at
+from old_indicateur_personnalise_resultat oipr
+         join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipr.indicateur_id
+         join old.new_epci ne on oipr.epci_id = ne.old_epci_id;
 
 
 -- d. Objectifs des indicateurs personnalisés
@@ -276,29 +293,178 @@ with partitioned_old_indicateur_personnalise_objectif as (
     select *, row_number() over (partition by (indicateur_id, year, epci_id) order by modified_at desc) as row_number
     from old.indicateurpersonnaliseobjectif
 ),
-old_indicateur_personnalise_objectif as (
-    select * from partitioned_old_indicateur_personnalise_objectif where row_number = 1
-)
-    insert into indicateur_personnalise_objectif(indicateur_id, collectivite_id, annee, valeur, modified_at)
-     select 
-        new_uid indicateur_id,
-        ne.new_id  collectivite_id,
-        oipr.year annee,
-        oipr.value valeur,
-        -- ud.user_id modified_by,        
-        oipr.modified_at modified_at
-     from old_indicateur_personnalise_objectif oipr 
-     join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipr.indicateur_id
-     join old.new_epci ne on oipr.epci_id = ne.old_epci_id;
+     old_indicateur_personnalise_objectif as (
+         select * from partitioned_old_indicateur_personnalise_objectif where row_number = 1
+     )
+
+insert
+into indicateur_personnalise_objectif(indicateur_id, collectivite_id, annee, valeur, modified_at)
+select new_id           indicateur_id,
+       ne.new_id        collectivite_id,
+       oipr.year        annee,
+       oipr.value       valeur,
+       -- ud.user_id modified_by,
+       oipr.modified_at modified_at
+from old_indicateur_personnalise_objectif oipr
+         join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipr.indicateur_id
+         join old.new_epci ne on oipr.epci_id = ne.old_epci_id;
 
 
 -- Diagnostics
-select distinct indicateur_id from old.indicateurobjectif
-except
-select distinct old_id from indicateur_resultat ir join old.new_indicateur_id oni on ir.indicateur_id = oni.new_id;
+---- EPCI perdues
+select oe.nom, oe.siren, '' as nature
+from old.epci oe
+         left join epci e on oe.siren = e.siren
+where latest
+  and e.siren is null
+  and oe.siren != '' -- only old epci with a siren
+;
 
-select distinct indicateur_id from old.indicateurresultat
+---- Missing indicateurs objectifs from real epcis
+select distinct indicateur_id
+from old.indicateurobjectif oio
+         join old.epci oe on oio.epci_id = oe.uid
+where oe.siren != ''
 except
-select distinct old_id from indicateur_resultat ir join old.new_indicateur_id oni on ir.indicateur_id = oni.new_id;
+select distinct old_id
+from indicateur_resultat ir
+         join old.new_indicateur_id oni on ir.indicateur_id = oni.new_id;
+
+---- Missing indicateurs objectifs from real epcis
+select distinct indicateur_id
+from old.indicateurresultat oi
+         join old.epci oe on oi.epci_id = oe.uid
+where oe.siren != ''
+except
+select distinct old_id
+from indicateur_resultat ir
+         join old.new_indicateur_id oni on ir.indicateur_id = oni.new_id;
+
+---- Missing indicateurs personnalise definitions from real epcis
+select count(*)
+from old.indicateurpersonnalise oip
+         join old.epci oe on oip.epci_id = oe.uid
+where oip.latest
+  and oe.siren != '';
+
+select count(*)
+from indicateur_personnalise_definition ipd
+
+         join old.indicateur_perso_uid_mapping m
+              on m.new_id = ipd.id
+;
+
+
+-- 9 Plan action
+
+
+-- 9.a Fiche action
+with old_fiche as (
+    select *
+    from old.ficheaction
+    where latest
+      and not deleted
+),
+     new_ai as (
+         select id,
+                replace(
+                        replace(
+                                replace(
+                                        jsonb_array_elements(referentiel_action_ids) :: text,
+                                        '"', ''),
+                                'citergie__', 'cae_'
+                            ),
+                        'economie_circulaire__', 'eci_'
+                    ) as converted
+         from old_fiche
+     ),
+     valid_ai as (
+       select new_ai.id,
+              new_ai.converted
+         from new_ai
+            join action_relation on action_relation.id = new_ai.converted
+     ),
+     old_ir as (
+         select id,
+                replace(jsonb_array_elements(referentiel_indicateur_ids) :: text, '"',
+                        '')::varchar(36) as old_indicateur_id
+         from old_fiche
+     ),
+     new_ir as (
+         select id,
+                new_id
+         from old_ir
+                  join old.new_indicateur_id
+                       on old_id = old_ir.old_indicateur_id
+     ),
+     old_ip as (
+         select id,
+                split_part(
+                        replace(jsonb_array_elements(indicateur_personnalise_ids) :: text, '"', ''),
+                        '/',
+                        2
+                    )::varchar(36)
+                    as old_indicateur_perso_id
+         from old_fiche
+     ),
+     new_ip as (
+         select id,
+                m.new_id
+         from old_ip
+                  join old.indicateur_perso_uid_mapping m on m.old_uid = old_ip.old_indicateur_perso_id
+     )
+insert
+into fiche_action (modified_at,
+                   uid,
+                   collectivite_id,
+                   avancement,
+                   numerotation,
+                   titre,
+                   description,
+                   structure_pilote,
+                   personne_referente,
+                   elu_referent,
+                   partenaires,
+                   budget_global,
+                   commentaire,
+                   date_fin,
+                   date_debut,
+                   en_retard,
+                   action_ids,
+                   indicateur_ids,
+                   indicateur_personnalise_ids)
+select modified_at,
+       uid::uuid,
+       ne.new_id                           collectivite_id,
+       case
+           when avancement like 'fait%' then 'fait'
+           when avancement = 'en_cours' then 'en_cours'
+           else 'pas_fait'
+           end::fiche_action_avancement as avancement,
+       custom_id                        as numerotation,
+       titre,
+       description,
+       structure_pilote,
+       personne_referente,
+       elu_referent,
+       partenaires,
+       budget                           as budget_global,
+       commentaire,
+       date_fin,
+       date_debut,
+       en_retard,
+       coalesce(a.id, '{}')             as action_ids,
+       coalesce(ir.id, '{}')            as indicateur_ids,
+       '{}'                             as indicateur_personnalise_ids
+       -- coalesce(ip.id, '{}')            as indicateur_personnalise_ids
+
+from old_fiche
+         join lateral (select array_agg(converted) as id from valid_ai where old_fiche.id = valid_ai.id) a on true
+         -- join lateral (select array_agg(new_id) as id from new_ip where old_fiche.id = new_ip.id) ip on true
+         join lateral (select array_agg(new_id) as id from new_ir where old_fiche.id = new_ir.id) ir on true
+         join old.new_epci ne on old_fiche.epci_id = ne.old_epci_id
+;
+
+--- Plan action
 
 rollback;
