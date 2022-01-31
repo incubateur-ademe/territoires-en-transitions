@@ -4,6 +4,7 @@ import Dialog from '@material-ui/core/Dialog';
 interface UiDialogButtonProps {
   useFrBtn: boolean;
   buttonClasses?: string;
+  className?: string;
   title: string;
   children: React.ReactNode;
   opened: boolean;
@@ -33,7 +34,7 @@ export const UiDialogButton = (props: UiDialogButtonProps) => (
       maxWidth="md"
       fullWidth={true}
     >
-      <div className="p-7 flex flex-col items-center">
+      <div className={`p-7 flex flex-col items-center ${props.className}`}>
         <h3 className="text-center pb-4"> {props.title} </h3>
         <div className="w-3/4">{props.children}</div>
       </div>
