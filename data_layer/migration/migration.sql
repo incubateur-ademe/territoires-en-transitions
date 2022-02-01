@@ -443,10 +443,11 @@ with old_fiche as (
          from old_fiche
      ),
      new_ip as (
-         select id,
+         select old_ip.id,
                 m.new_id
          from old_ip
                   join old.indicateur_perso_uid_mapping m on m.old_uid = old_ip.old_indicateur_perso_id
+                  join indicateur_personnalise_definition i on m.new_id = i.id
      )
 insert
 into fiche_action (modified_at,
@@ -490,12 +491,11 @@ select modified_at,
        en_retard,
        coalesce(a.id, '{}')             as action_ids,
        coalesce(ir.id, '{}')            as indicateur_ids,
-       '{}'                             as indicateur_personnalise_ids
-       -- coalesce(ip.id, '{}')            as indicateur_personnalise_ids
+       coalesce(ip.id, '{}')            as indicateur_personnalise_ids
 
 from old_fiche
          join lateral (select array_agg(converted) as id from valid_ai where old_fiche.id = valid_ai.id) a on true
-    -- join lateral (select array_agg(new_id) as id from new_ip where old_fiche.id = new_ip.id) ip on true
+         join lateral (select array_agg(distinct new_id) as id from new_ip where old_fiche.id = new_ip.id) ip on true
          join lateral (select array_agg(new_id) as id from new_ir where old_fiche.id = new_ir.id) ir on true
          join old.new_epci ne on old_fiche.epci_id = ne.old_epci_id
 ;
