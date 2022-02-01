@@ -15,14 +15,7 @@ export const inferIndicateurReferentielAndTitle = (
   const id_groups = indicateurId.match(indicateurIdRegexp)?.groups;
   if (!id_groups) return indicateurId;
   const ref = id_groups['ref'] as ReferentielOfIndicateur;
-  const nomenclature =
-    ref === 'crte'
-      ? id_groups['number'] + id_groups['literal']
-      : `${Number(id_groups['number'])}${
-          id_groups['literal'] ? '.' + id_groups['literal'] : ''
-        }`;
-
-  return `${refToEmoji[ref]} ${nomenclature} - ${definition.nom}`;
+  return `${refToEmoji[ref]} ${definition.identifiant} - ${definition.nom}`;
 };
 
 export const sortIndicateurDefinitionsByIdentifiant = (
