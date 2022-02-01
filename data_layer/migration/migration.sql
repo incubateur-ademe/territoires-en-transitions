@@ -31,8 +31,7 @@ select distinct regexp_replace(
                                 'eci-(0+)(\d+)', 'eci_\2'
                             ),
                     -- first cae
-                    -- todo   'cae-(\d+)([a-z]+)?', 'cae_\1.\2'
-                        'cae-(\d+)([a-z]+)?', 'cae_\1\2'
+                    'cae-(\d+)([a-z]+)?', 'cae_\1.\2'
                     )         as new_id,
                 indicateur_id as old_id
 from all_ids
