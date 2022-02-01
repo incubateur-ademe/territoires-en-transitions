@@ -78,12 +78,14 @@ export const ActionReferentielDisplayTitle = ({
   action: ActionReferentiel;
 }) => {
   return (
-    <div className="flex flex-row align-middle items-center font-bold gap-2">
-      <ActionReferentielTitlePill action={action} />
-      <div className="py-2">
-        <span className="fr-text--lg">{action.nom} </span>
-        <ActionPotentiel action={action} scoreBloc={scoreBloc} />
+    <div className="flex justify-between my-6 items-center">
+      <div className="flex flex-row align-middle items-center font-bold gap-2">
+        <ActionReferentielTitlePill action={action} />
+        <div>
+          <span className="fr-text--lg">{action.nom} </span>
+        </div>
       </div>
+      <ActionPotentiel action={action} scoreBloc={scoreBloc} />
     </div>
   );
 };
