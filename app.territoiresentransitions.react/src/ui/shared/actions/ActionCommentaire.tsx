@@ -35,11 +35,6 @@ export const ActionCommentaireField = observer(
         observable.setFieldValue(event.currentTarget.value)
       }
       onBlur={() => observable.saveFieldValue()}
-      label={
-        action.type === 'action'
-          ? "Description générale de l'état d'avancement"
-          : "Précisions sur l'état d'avancement"
-      }
       hint={
         action.type === 'action'
           ? "Description générale de l'état d'avancement"
