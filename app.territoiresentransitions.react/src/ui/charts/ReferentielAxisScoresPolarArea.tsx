@@ -69,7 +69,7 @@ export const ReferentielAxisScoresPolarArea = ({
                 display: true,
                 // centerPointLabels: true,
                 font: {
-                  size: 8,
+                  size: 10,
                 },
               },
               min: 0,
