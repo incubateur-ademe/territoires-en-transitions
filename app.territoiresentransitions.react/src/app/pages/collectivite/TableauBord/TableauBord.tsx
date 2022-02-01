@@ -80,7 +80,7 @@ const ChiffreCles = ({
   const widthPx = 120;
   // Action key numbers
   const realisePoints = toFixed(rootScore.point_fait, 1);
-  const realisePercentage = realisePoints * 100;
+  const realisePercentage = (realisePoints / rootScore.point_potentiel) * 100;
 
   const previsionnelPoints = toFixed(
     rootScore.point_fait + rootScore.point_programme,
@@ -142,7 +142,10 @@ const ChiffreCles = ({
               bigFontSizePx={bigFontSizePx}
               smallFontSizePx={smallFontSizePx}
               bigText={`${toFixed(realisePercentage, 1).toString()}%`}
-              tooltipText={`${realisePoints} points réalisés sur ${rootScore.point_potentiel} potentiels.`}
+              tooltipText={`${realisePoints} points réalisés sur ${toFixed(
+                rootScore.point_potentiel,
+                0
+              )} potentiels.`}
               smallText="réalisé"
               hexColor={actionAvancementColors.fait}
               doughnutFillPercentage={realisePercentage}
@@ -152,7 +155,10 @@ const ChiffreCles = ({
               bigFontSizePx={bigFontSizePx}
               smallFontSizePx={smallFontSizePx}
               bigText={`${toFixed(previsionnelPercentage, 1).toString()}%`}
-              tooltipText={`${previsionnelPoints} points programmés sur ${rootScore.point_potentiel} potentiels.`}
+              tooltipText={`${previsionnelPoints} points programmés sur ${toFixed(
+                rootScore.point_potentiel,
+                0
+              )} potentiels.`}
               smallText="programmé"
               hexColor={actionAvancementColors.programme}
               doughnutFillPercentage={previsionnelPercentage}
@@ -233,7 +239,7 @@ const ReferentielSection = observer(
         if (!axisScore) return null;
         const sample: AxisAvancementSample = {
           label: axisLabels[axe.id],
-          potentielPoints: axisScore?.point_potentiel,
+          potentielPoints: toFixed(axisScore?.point_potentiel, 0),
           percentages: {
             fait: (axisScore.point_fait / axisScore.point_potentiel) * 100,
             programme:
