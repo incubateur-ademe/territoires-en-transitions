@@ -154,8 +154,9 @@ export const SelectCollectiviteDialog = () => {
 
   return (
     <UiDialogButton
-      className="overflow-hidden"
-      title="Sélectionner votre collectivité"
+      title="Associer une collectivité à mon compte"
+      buttonClasses="fr-btn--secondary"
+      dialogClasses="overflow-hidden"
       opened={opened}
       setOpened={setOpened}
     >
