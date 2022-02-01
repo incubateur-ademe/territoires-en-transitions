@@ -32,8 +32,8 @@ as
 $$
 select count(*) > 0
 from private_utilisateur_droit
-where private_utilisateur_droit.collectivite_id = is_any_role_on.id and
-    private_utilisateur_droit.user_id = auth.uid()
+where private_utilisateur_droit.collectivite_id = is_any_role_on.id
+  and private_utilisateur_droit.user_id = auth.uid()
   and active
 $$ language sql;
 comment on function is_any_role_on is
@@ -80,6 +80,16 @@ select is_role_on('referent', is_referent_of.id)
 $$ language sql;
 comment on function is_referent_of is
     'Returns true if current user is a referent of collectivite id';
+
+create or replace function
+    is_agent_of(id integer)
+    returns boolean
+as
+$$
+select is_role_on('agent', is_agent_of.id)
+$$ language sql;
+comment on function is_agent_of is
+    'Returns true if current user is a agent of collectivite id';
 
 create or replace function
     is_authenticated()
@@ -232,7 +242,9 @@ begin
     -- select referent user id
     select user_id
     from private_utilisateur_droit
-    where active and collectivite_id = requested_collectivite_id and role_name = 'referent'
+    where active
+      and collectivite_id = requested_collectivite_id
+      and role_name = 'referent'
     into referent_id;
 
     if referent_id is null
@@ -259,14 +271,97 @@ comment on function referent_contact is
 --------------------------------
 ------- INVITATION FLOW --------
 --------------------------------
--- todo create function accept_invitation(invitation_id uuid);
--- todo create function create_invitation();
--- todo
--- create table private_epci_invitation
--- (
---     id              serial primary key,
---     role_name       role_name                                          not null,
---     collectivite_id integer references collectivite                    not null,
---     created_by      uuid references auth.users,
---     created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
--- );
+create table private_collectivite_invitation
+(
+    id              uuid primary key         default gen_random_uuid(),
+    role_name       role_name                                          not null,
+    collectivite_id integer references collectivite                    not null,
+    created_by      uuid references auth.users                         not null,
+    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
+);
+alter table private_collectivite_invitation
+    enable row level security;
+
+create function create_agent_invitation(collectivite_id integer)
+    returns json
+as
+$$
+declare
+    inivitation_id uuid;
+begin
+    if is_referent_of(create_agent_invitation.collectivite_id)
+    then
+        select gen_random_uuid() into inivitation_id;
+        insert into private_collectivite_invitation
+        values (inivitation_id, 'agent', create_agent_invitation.collectivite_id, auth.uid());
+        return json_build_object('message', 'L''invitation a été crée.', 'id', inivitation_id);
+    else
+        perform set_config('response.status', '401', true);
+        return json_build_object('message', 'Vous n''êtes par le référent de cette collectivité.');
+    end if;
+end
+$$ language plpgsql;
+
+create function latest_invitation(in collectivite_id integer, out invitation_id uuid)
+as
+$$
+declare
+    param_collectivite_id integer;
+begin
+    select collectivite_id into param_collectivite_id;
+    if is_any_role_on(collectivite_id)
+    then
+        return query
+            select id as invitation_id
+            from private_collectivite_invitation
+            where private_collectivite_invitation.collectivite_id = param_collectivite_id;
+    else
+        perform set_config('response.status', '401', true);
+        return json_build_object('message', 'Vous n''êtes n''avez pas rejoint cette collectivité.');
+    end if;
+end;
+$$ language plpgsql;
+
+create function accept_invitation(invitation_id uuid)
+as
+$$
+insert into private_utilisateur_droit(user_id, collectivite_id, role_name, active)
+select auth.uid(), collectivite_id, role_name, true
+from private_collectivite_invitation
+where id = invitation_id
+order by created_at
+limit 1
+$$ language sql security definer;
+
+
+create function remove_from_collectivite(user_id uuid, collectivite_id integer)
+    returns json
+as
+$$
+declare
+    param_user_id         uuid;
+    param_collectivite_id integer;
+begin
+    -- parameters are ambiguous
+    select user_id into param_user_id;
+    select collectivite_id into param_collectivite_id;
+
+    -- only referents can remove other users.
+    if is_referent_of(remove_from_collectivite.collectivite_id)
+    then
+        -- deactivate the droits
+        update private_utilisateur_droit
+        set active      = false,
+            modified_at = now()
+        where collectivite_id = param_collectivite_id
+          and user_id = param_user_id;
+
+        -- return success with a message
+        perform set_config('response.status', '200', true);
+        return json_build_object('message', 'Vous avez retiré les droits à l''utilisateur.');
+    else
+        perform set_config('response.status', '401', true);
+        return json_build_object('message', 'Vous n''êtes par le référent de cette collectivité.');
+    end if;
+end;
+$$ language plpgsql security definer;
