@@ -1,5 +1,3 @@
-begin;
-
 -- view utils
 create or replace view old.new_epci
 as
@@ -266,7 +264,7 @@ on conflict do nothing
 -- a. mapping from old indicateur perso uid to new integer id
 create materialized view old.indicateur_perso_uid_mapping as
 with seq as (
-    select max(id) as last_id
+    select coalesce( max(id), 0) as last_id
     from indicateur_personnalise_definition
 )
 select distinct on (uid) uid                                           old_uid,
@@ -526,5 +524,3 @@ from old.planaction pa
 where latest
   and not deleted
 ;
-
-rollback;
