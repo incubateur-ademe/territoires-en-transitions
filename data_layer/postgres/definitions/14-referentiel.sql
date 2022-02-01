@@ -110,6 +110,7 @@ create table action_definition
     contexte    text        not null,
     exemples    text        not null,
     ressources  text        not null,
+    preuve      text        not null,
     points      float,
     pourcentage float
 ) inherits (absract_modified_at);
