@@ -1,4 +1,3 @@
-// import {action} from '@storybook/addon-actions';
 import {PasswordRecovery, TPasswordRecoveryOpts} from './PasswordRecovery';
 // eslint-disable-next-line node/no-unpublished-import
 import {action} from '@storybook/addon-actions';
