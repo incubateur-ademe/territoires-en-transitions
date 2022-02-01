@@ -1,4 +1,5 @@
 begin;
+
 -- view utils
 create or replace view old.new_epci
 as
@@ -23,16 +24,22 @@ with all_ids as (
 select distinct regexp_replace(
                         regexp_replace(
                                 regexp_replace(
-                                        indicateur_id,
-                                    -- third crte
-                                        'crte-(\d+).(\d+)', 'crte_\1.\2'
+                                        regexp_replace(
+                                                indicateur_id,
+                                            -- first crte
+                                                'crte-(\d+).(\d+)', 'crte_\1.\2'
+                                            ),
+                                    -- second eci
+                                        'eci-(0+)(\d+)', 'eci_\2'
                                     ),
-                            -- second eci
-                                'eci-(0+)(\d+)', 'eci_\2'
+
+                            -- third cae
+                                'cae-(\d+)([a-z]+)', 'cae_\1.\2'
                             ),
-                    -- first cae
-                    'cae-(\d+)([a-z]+)?', 'cae_\1.\2'
-                    )         as new_id,
+                    -- cae again
+                        'cae-(\d+)', 'cae_\1'
+                    )
+                              as new_id,
                 indicateur_id as old_id
 from all_ids
 where indicateur_id like 'eci%'
@@ -42,7 +49,7 @@ where indicateur_id like 'eci%'
 
 
 -- 2. Import users
-create function create_user(
+create function old.migrate_user(
     id uuid,
     email text
 ) returns void
@@ -54,25 +61,26 @@ INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, e
                         raw_app_meta_data, raw_user_meta_data, is_super_admin, created_at, updated_at, phone,
                         phone_confirmed_at, phone_change, phone_change_token, phone_change_sent_at,
                         email_change_token_current, email_change_confirm_status)
-VALUES ('00000000-0000-0000-0000-000000000000', create_user.id, '', 'authenticated',
-        create_user.email, '$2a$10$vBZp2SU5Rxedb1DLsaBtP.9bu3PeNDhy9dQ7ye9ikIuw66gM4gedi',
+VALUES ('00000000-0000-0000-0000-000000000000', migrate_user.id, '', 'authenticated',
+        migrate_user.email, '$2a$10$vBZp2SU5Rxedb1DLsaBtP.9bu3PeNDhy9dQ7ye9ikIuw66gM4gedi',
         '2021-12-03 10:17:09.205161 +00:00', null, '', null, '', null, '', '', null,
         '2021-12-03 10:17:09.209968 +00:00', '{
     "provider": "email"
   }', 'null', false, '2021-12-03 10:17:09.201674 +00:00', '2021-12-03 10:17:09.201674 +00:00', null, null, '', '', null,
         '', 0);
-
 $$ language sql volatile;
 
 
 with unique_users as (
-    select email, ademe_user_id
+    select au.email, ademe_user_id
     from old.ademeutilisateur au
-    group by ademe_user_id, email
+        left join auth.users u on u.email = au.email
+    where u.email is null
+    group by ademe_user_id, au.email
 )
 select *
 from unique_users,
-    lateral create_user(ademe_user_id::uuid, email);
+    lateral old.migrate_user(ademe_user_id::uuid, email);
 
 -- 3 dcp
 with unique_dcp as (
@@ -162,7 +170,11 @@ from old_statuts os
          join converted_action_id ca on os.id = ca.id
          join action_relation r on ca.converted = r.id
          join lateral (
-    select * from private_utilisateur_droit ) ud on ne.new_id = ud.collectivite_id
+    select *
+    from private_utilisateur_droit d
+    where ne.new_id = d.collectivite_id
+    limit 1
+    ) ud on true
 on conflict do nothing
 ;
 
@@ -182,10 +194,11 @@ with partitioned_old_commentaire as (
                 replace(replace(action_id, 'citergie__', 'cae_'), 'economie_circulaire__', 'eci_') as converted
          from old_commentaire
      )
-insert into action_commentaire (collectivite_id, action_id, commentaire, modified_by, modified_at)
+insert
+into action_commentaire (collectivite_id, action_id, commentaire, modified_by, modified_at)
 select ne.new_id,
        a.converted,
-       replace( (oc.meta -> 'commentaire')::text , '"', ''),
+       replace((oc.meta -> 'commentaire')::text, '"', ''),
        u.user_id,
        oc.modified_at
 
