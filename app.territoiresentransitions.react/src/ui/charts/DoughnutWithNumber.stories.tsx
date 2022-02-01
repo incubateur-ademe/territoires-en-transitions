@@ -16,6 +16,7 @@ const props: DoughnutWithNumberProps = {
   bigFontSizePx: 45,
   bigText: '15%',
   smallText: 'réalisé',
+  tooltipText: '15 actions sur 100 réalisées',
 };
 
 DoughnutWithNumberStory.args = props;

@@ -72,7 +72,7 @@ export const ReferentielAxisAvancementStackedBar = ({
               max: 100,
               stacked: true,
               ticks: {
-                font: {size: 8},
+                font: {size: 10},
                 stepSize: 25,
                 backdropPadding: 0,
                 callback: function () {
@@ -84,14 +84,14 @@ export const ReferentielAxisAvancementStackedBar = ({
             y: {
               position: 'left',
               stacked: true,
-              ticks: {padding: 0, font: {size: 8}},
+              ticks: {padding: 0, font: {size: 10}},
               afterFit: function (scaleInstance) {
                 scaleInstance.width = 100; // sets the width to 100px
               },
             },
             z: {
               ticks: {
-                font: {size: 10},
+                font: {size: 8},
               },
               position: 'right',
               labels: data.map(

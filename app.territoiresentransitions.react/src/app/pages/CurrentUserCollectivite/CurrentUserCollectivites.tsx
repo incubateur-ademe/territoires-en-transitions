@@ -39,9 +39,6 @@ const CurrentUserCollectivites = ({bloc}: {bloc?: OwnedCollectiviteBloc}) => {
         <MyCollectiviteCards bloc={bloc || ownedCollectiviteBloc} />
 
         <Spacer />
-        <div className="my-4">
-          Pourquoi pas un petit texte qui explique un peu.
-        </div>
         <SelectCollectiviteDialog />
       </section>
     </div>

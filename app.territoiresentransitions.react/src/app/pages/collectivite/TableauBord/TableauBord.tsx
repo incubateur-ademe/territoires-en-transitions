@@ -1,3 +1,4 @@
+import {makeCollectiviteReferentielUrl} from 'app/paths';
 import {actionAvancementColors} from 'app/theme';
 import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
@@ -6,6 +7,7 @@ import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {actions} from 'generated/data/referentiels';
 import {observer} from 'mobx-react-lite';
 import {useEffect, useState} from 'react';
+import {Link} from 'react-router-dom';
 import {ActionScore} from 'types/ClientScore';
 import {AxisAvancementSample} from 'ui/charts/chartTypes';
 import {DoughnutWithNumber} from 'ui/charts/DoughnutWithNumber';
@@ -15,7 +17,7 @@ import {Spacer} from 'ui/shared/Spacer';
 import {refToEmoji} from 'utils/refToEmoji';
 import {toFixed} from 'utils/toFixed';
 
-const remplissageColor = '#000091';
+const remplissageColor = '#2F4077';
 
 const axisLabels: Record<string, string[][]> = {
   eci_1: [['1. Stratégie globale']],
@@ -77,13 +79,15 @@ const ChiffreCles = ({
   const smallFontSizePx = 10;
   const widthPx = 120;
   // Action key numbers
-  const realisePercentage =
-    (rootScore.point_fait / rootScore.point_potentiel) * 100;
+  const realisePoints = toFixed(rootScore.point_fait, 1);
+  const realisePercentage = realisePoints * 100;
 
+  const previsionnelPoints = toFixed(
+    rootScore.point_fait + rootScore.point_programme,
+    1
+  );
   const previsionnelPercentage =
-    ((rootScore.point_fait + rootScore.point_programme) /
-      rootScore.point_potentiel) *
-    100;
+    (previsionnelPoints / rootScore.point_potentiel) * 100;
 
   // Indicateurs key numbers
   const collectiviteId = useCollectiviteId()!;
@@ -106,9 +110,12 @@ const ChiffreCles = ({
               smallFontSizePx={smallFontSizePx}
               bigText={rootScore.completed_taches_count.toString()}
               smallText="actions renseignées"
+              tooltipText={`${rootScore.completed_taches_count} actions renseignées sur ${rootScore.total_taches_count}.`}
               hexColor={remplissageColor}
               doughnutFillPercentage={
-                rootScore.completed_taches_count / rootScore.total_taches_count
+                (rootScore.completed_taches_count /
+                  rootScore.total_taches_count) *
+                100
               }
               widthPx={widthPx}
             />
@@ -117,6 +124,7 @@ const ChiffreCles = ({
               smallFontSizePx={smallFontSizePx}
               bigText={nbOfIndicateurswithValue.toString()}
               smallText="indicateurs renseignés"
+              tooltipText={`${nbOfIndicateurswithValue} indicateurs renseignés sur ${nbOfIndicateurs}.`}
               hexColor={remplissageColor}
               doughnutFillPercentage={
                 (nbOfIndicateurswithValue / nbOfIndicateurs) * 100
@@ -134,6 +142,7 @@ const ChiffreCles = ({
               bigFontSizePx={bigFontSizePx}
               smallFontSizePx={smallFontSizePx}
               bigText={`${toFixed(realisePercentage, 1).toString()}%`}
+              tooltipText={`${realisePoints} points réalisés sur ${rootScore.point_potentiel} potentiels.`}
               smallText="réalisé"
               hexColor={actionAvancementColors.fait}
               doughnutFillPercentage={realisePercentage}
@@ -143,6 +152,7 @@ const ChiffreCles = ({
               bigFontSizePx={bigFontSizePx}
               smallFontSizePx={smallFontSizePx}
               bigText={`${toFixed(previsionnelPercentage, 1).toString()}%`}
+              tooltipText={`${previsionnelPoints} points programmés sur ${rootScore.point_potentiel} potentiels.`}
               smallText="programmé"
               hexColor={actionAvancementColors.programme}
               doughnutFillPercentage={previsionnelPercentage}
@@ -175,24 +185,42 @@ const ChiffreCles = ({
 
 const ReferentielSection = observer(
   ({
-    referentiel,
+    referentiel: referentielId,
     scoreBloc,
   }: {
     referentiel: 'cae' | 'eci';
     scoreBloc: ScoreBloc;
   }) => {
-    const referentielRoot = actions.find(action => action.id === referentiel)!;
+    const collectiviteId = useCollectiviteId()!;
+    const referentielRoot = actions.find(
+      action => action.id === referentielId
+    )!;
     const rootScore = scoreBloc.getScore(
       referentielRoot.id,
       referentielRoot.referentiel
     );
     if (!rootScore) {
       return (
-        <div
-          style={{padding: '10px', height: '150px'}}
-          className="flex items-center justify-center font-light"
-        >
-          Aucune donnée disponible... 🙄
+        <div>
+          <div
+            style={{padding: '10px', height: '150px'}}
+            className="flex items-center justify-center font-light"
+          >
+            Ce référentiel n’est pas encore renseigné pour votre collectivité.
+            Pour commencer à visualiser votre progression, mettez à jour les
+            statuts des actions.
+          </div>
+          <div className="flex justify-center">
+            <Link
+              className="fr-btn fr-btn--secondary "
+              to={makeCollectiviteReferentielUrl({
+                collectiviteId,
+                referentielId,
+              })}
+            >
+              Mettre à jour le référentiel
+            </Link>
+          </div>
         </div>
       );
     }
@@ -223,7 +251,7 @@ const ReferentielSection = observer(
       <div className="p-4">
         {/* <ObjectifLabelisation /> */}
         {rootScore && (
-          <ChiffreCles rootScore={rootScore} referentiel={referentiel} />
+          <ChiffreCles rootScore={rootScore} referentiel={referentielId} />
         )}
         <Spacer />
         <div className="flex justify-center">
@@ -244,7 +272,7 @@ const TableauBord = () => (
     <section style={{width: '600px'}} className="bg-beige p-4">
       <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
         <div>{refToEmoji.cae}</div>
-        <div>Climat Air Énergie</div>
+        <div>Référentiel Climat Air Énergie</div>
       </div>
       <ReferentielSection scoreBloc={scoreBloc} referentiel="cae" />
     </section>
@@ -252,7 +280,7 @@ const TableauBord = () => (
     <section style={{width: '600px'}} className="bg-beige p-4">
       <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
         <div>{refToEmoji.eci}</div>
-        <div>Économie Circulaire</div>
+        <div>Référentiel Économie Circulaire</div>
       </div>
       <ReferentielSection scoreBloc={scoreBloc} referentiel="eci" />
     </section>
