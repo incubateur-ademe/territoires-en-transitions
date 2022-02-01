@@ -1,4 +1,46 @@
 begin;
+-- view utils
+create or replace view old.new_epci
+as
+select oe.uid as old_epci_id, e.id as new_id
+from epci e
+         join old.epci oe on e.siren = oe.siren
+where oe.latest;
+
+
+create or replace view old.new_indicateur_id
+as
+with all_ids as (
+    select indicateur_id
+    from old.indicateurresultat
+    union
+    select indicateur_id
+    from old.indicateurobjectif
+    union
+    select replace(jsonb_array_elements(referentiel_indicateur_ids) :: text, '"', '')::varchar(36) as indicateur_id
+    from old.ficheaction
+)
+select distinct regexp_replace(
+                        regexp_replace(
+                                regexp_replace(
+                                        indicateur_id,
+                                    -- third crte
+                                        'crte-(\d+).(\d+)', 'crte_\1.\2'
+                                    ),
+                            -- second eci
+                                'eci-(0+)(\d+)', 'eci_\2'
+                            ),
+                    -- first cae
+                    -- todo   'cae-(\d+)([a-z]+)?', 'cae_\1.\2'
+                        'cae-(\d+)([a-z]+)?', 'cae_\1\2'
+                    )         as new_id,
+                indicateur_id as old_id
+from all_ids
+where indicateur_id like 'eci%'
+   or indicateur_id like 'cae%'
+;
+
+
 
 -- 2. Import users
 create function create_user(
@@ -67,7 +109,8 @@ from unique_droits d
          join new_epcis e on e.old_epci_id = d.old_epci_id;
 
 
--- 5 statuts
+-- 5 Actions
+-- 5.a Action statuts
 with partitioned_old_statuts as (
     select *, row_number() over (partition by (action_id, epci_id) order by modified_at desc) as row_number
     from old.actionstatus
@@ -118,52 +161,44 @@ from old_statuts os
          join new_epcis ne on os.epci_id = ne.old_epci_id
          join converted_statut cs on cs.id = os.id
          join converted_action_id ca on os.id = ca.id
+         join action_relation r on ca.converted = r.id
          join lateral (
     select * from private_utilisateur_droit ) ud on ne.new_id = ud.collectivite_id
-where collectivite_id = 1
-  and action_id = 'eci_4.3.3.1'
-on conflict do nothing;
+on conflict do nothing
+;
 
+-- 5.b Action commentaire
+with partitioned_old_commentaire as (
+    select *, row_number() over (partition by (action_id, epci_id) order by modified_at desc) as row_number
+    from old.actionmeta
+    where (action_id like 'citergie__%' or action_id like 'economie_circulaire__%')
+),
+     old_commentaire as (
+         select *
+         from partitioned_old_commentaire
+         where row_number = 1
+     ),
+     converted_action_id as (
+         select id,
+                replace(replace(action_id, 'citergie__', 'cae_'), 'economie_circulaire__', 'eci_') as converted
+         from old_commentaire
+     )
+insert into action_commentaire (collectivite_id, action_id, commentaire, modified_by, modified_at)
+select ne.new_id,
+       a.converted,
+       replace( (oc.meta -> 'commentaire')::text , '"', ''),
+       u.user_id,
+       oc.modified_at
 
--- view utils
-create view old.new_epci
-as
-select oe.uid as old_epci_id, e.id as new_id
-from epci e
-         join old.epci oe on e.siren = oe.siren
-where oe.latest;
-
-
-create or replace view old.new_indicateur_id
-as
-with all_ids as (
-    select indicateur_id
-    from old.indicateurresultat
-    union
-    select indicateur_id
-    from old.indicateurobjectif
-    union
-    select replace(jsonb_array_elements(referentiel_indicateur_ids) :: text, '"', '')::varchar(36) as indicateur_id
-    from old.ficheaction
-)
-select distinct regexp_replace(
-                        regexp_replace(
-                                regexp_replace(
-                                        indicateur_id,
-                                    -- third crte
-                                        'crte-(\d+).(\d+)', 'crte_\1.\2'
-                                    ),
-                            -- second eci
-                                'eci-(0+)(\d+)', 'eci_\2'
-                            ),
-                    -- first cae
-                    -- todo   'cae-(\d+)([a-z]+)?', 'cae_\1.\2'
-                        'cae-(\d+)([a-z]+)?', 'cae_\1\2'
-                    )         as new_id,
-                indicateur_id as old_id
-from all_ids
-where indicateur_id like 'eci%'
-   or indicateur_id like 'cae%'
+from old_commentaire oc
+         join converted_action_id a on oc.id = a.id
+         join old.new_epci ne on oc.epci_id = ne.old_epci_id
+         join action_relation r on a.converted = r.id
+         join lateral (select user_id
+                       from private_utilisateur_droit d
+                       where d.collectivite_id = ne.new_id
+                       limit 1) u on true
+on conflict do nothing
 ;
 
 
@@ -299,7 +334,7 @@ with partitioned_old_indicateur_personnalise_objectif as (
 
 insert
 into indicateur_personnalise_objectif(indicateur_id, collectivite_id, annee, valeur, modified_at)
-select mapping.new_id           indicateur_id,
+select mapping.new_id   indicateur_id,
        ne.new_id        collectivite_id,
        oipr.year        annee,
        oipr.value       valeur,
@@ -379,10 +414,10 @@ with old_fiche as (
          from old_fiche
      ),
      valid_ai as (
-       select new_ai.id,
-              new_ai.converted
+         select new_ai.id,
+                new_ai.converted
          from new_ai
-            join action_relation on action_relation.id = new_ai.converted
+                  join action_relation on action_relation.id = new_ai.converted
      ),
      old_ir as (
          select id,
@@ -460,7 +495,7 @@ select modified_at,
 
 from old_fiche
          join lateral (select array_agg(converted) as id from valid_ai where old_fiche.id = valid_ai.id) a on true
-         -- join lateral (select array_agg(new_id) as id from new_ip where old_fiche.id = new_ip.id) ip on true
+    -- join lateral (select array_agg(new_id) as id from new_ip where old_fiche.id = new_ip.id) ip on true
          join lateral (select array_agg(new_id) as id from new_ir where old_fiche.id = new_ir.id) ir on true
          join old.new_epci ne on old_fiche.epci_id = ne.old_epci_id
 ;
@@ -468,15 +503,16 @@ from old_fiche
 --- 9.b Plan action
 insert into plan_action (uid, collectivite_id, nom, categories, fiches_by_category, created_at, modified_at)
 select gen_random_uuid() as uuid,
-       ne.new_id as collectivite_id,
+       ne.new_id         as collectivite_id,
        nom,
        categories,
        fiches_by_category,
        created_at,
        modified_at
 from old.planaction pa
-    join old.new_epci ne on pa.epci_id = ne.old_epci_id
-where latest and not deleted
+         join old.new_epci ne on pa.epci_id = ne.old_epci_id
+where latest
+  and not deleted
 ;
 
 rollback;
