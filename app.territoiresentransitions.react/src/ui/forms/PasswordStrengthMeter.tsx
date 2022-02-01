@@ -1,4 +1,4 @@
-import React from 'react';
+import {ZxcvbnResult} from '@zxcvbn-ts/core';
 
 // libellés et couleurs en fonction du niveau de robustesse du mdp
 const DEFAULT_LABEL = 'Faible';
@@ -32,14 +32,16 @@ const textColorsByScore = [
  * Affiche un indicateur de robustesse du mot de passe
  */
 export const PasswordStrengthMeter = ({
-  score,
+  strength,
   className,
 }: {
-  /** Score tel que fourni par zxcvbn */
-  score: number;
+  /** Résultat du contrôle de robustesse tel que fourni par zxcvbn */
+  strength: ZxcvbnResult;
   /** Styles appliqués au container */
   className?: string;
 }) => {
+  const {score, feedback} = strength;
+  const {warning, suggestions} = feedback || {};
   const label = labelsByScore[score] || DEFAULT_LABEL;
   const bgColor = bgColorsByScore[score] || DEFAULT_BG_COLOR;
   const textColor = textColorsByScore[score] || DEFAULT_TEXT_COLOR;
@@ -55,6 +57,14 @@ export const PasswordStrengthMeter = ({
       <label className={`${textColor} block text-sm`}>
         {score ? label : ''}
       </label>
+      {warning ? <label>{warning}</label> : null}
+      {suggestions?.length ? (
+        <ul className="mt-2 ml-4 text-sm list-disc">
+          {suggestions.map(s => (
+            <li key={s}>{s}</li>
+          ))}
+        </ul>
+      ) : null}
     </section>
   );
 };

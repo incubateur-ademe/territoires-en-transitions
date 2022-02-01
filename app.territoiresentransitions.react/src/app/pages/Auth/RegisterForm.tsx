@@ -28,7 +28,7 @@ export const passwordValidator = Yup.string()
   .test(
     'is-robust',
     'Ce mot de passe est trop simple',
-    (value, context) => !value || getScore(value, context.parent) > 3
+    (value, context) => !value || getScore(value, context.parent).score > 3
   )
   .required('Champ requis');
 
@@ -115,7 +115,7 @@ const RegistrationForm = () => {
           onSubmit={register}
         >
           {({errors, touched, values}) => {
-            const score = getScore(values.password, values);
+            const result = getScore(values.password, values);
 
             return (
               <Form>
@@ -131,8 +131,8 @@ const RegistrationForm = () => {
                   type="password"
                   component={LabeledTextField}
                 />
-                {score > 0 && (
-                  <PasswordStrengthMeter score={score} className="pt-2" />
+                {result.score > 0 && (
+                  <PasswordStrengthMeter strength={result} className="pt-2" />
                 )}
                 <Spacer size={2} />
                 <Field
