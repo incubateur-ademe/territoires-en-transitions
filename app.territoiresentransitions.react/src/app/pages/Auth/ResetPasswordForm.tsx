@@ -100,7 +100,7 @@ const ResetPasswordForm = ({
           onSubmit={register}
         >
           {({values}) => {
-            const score = getPasswordStrength(values.password, []);
+            const result = getPasswordStrength(values.password, []);
 
             return (
               <Form>
@@ -110,8 +110,8 @@ const ResetPasswordForm = ({
                   type="password"
                   component={LabeledTextField}
                 />
-                {score > 0 && (
-                  <PasswordStrengthMeter score={score} className="pt-2" />
+                {result.score > 0 && (
+                  <PasswordStrengthMeter strength={result} className="pt-2" />
                 )}
                 <Spacer size={2} />
                 <div className="max-w-2xl flex flex-row-reverse">
