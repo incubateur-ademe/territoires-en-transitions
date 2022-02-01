@@ -1,19 +1,20 @@
 INSERT INTO epci(nom, siren, nature) VALUES ('SYVEDAC', '251402681', 'SIVOM');
-INSERT INTO epci(nom, siren, nature) VALUES ('SIEEEN', '255801185', 'SIVU');
+INSERT INTO epci(nom, siren, nature) VALUES ('SIEEEN', '255801185', 'SMO');
 INSERT INTO epci(nom, siren, nature) VALUES ('SIVOM de Mortain - Le Neufbourg', '245000195', 'SIVOM');
 INSERT INTO epci(nom, siren, nature) VALUES ('Métropole européenne de Lille', '245900410', 'METRO');
 INSERT INTO epci(nom, siren, nature) VALUES ('Collectivité Territoriale de Martinique', '200055507', 'CC');
-INSERT INTO epci(nom, siren, nature) VALUES ('Syndicat des déchets du centre Yonne', '258902311', 'SIVU');
+INSERT INTO epci(nom, siren, nature) VALUES ('Syndicat des déchets du centre Yonne', '258902311', 'SMF');
 INSERT INTO epci(nom, siren, nature) VALUES ('PETR du Pays Lédonien', '200051225', 'PETR');
 INSERT INTO epci(nom, siren, nature) VALUES ('RIVED', '200062479', 'SIVOM');
 INSERT INTO epci(nom, siren, nature) VALUES ('PETR du Pays de Bray', '200049591', 'PETR');
-INSERT INTO epci(nom, siren, nature) VALUES ('Syndicat Mixte du Pays du Mans', '200078426', 'SIVOM');
+INSERT INTO epci(nom, siren, nature) VALUES ('Syndicat Mixte du Pays du Mans', '200078426', 'SMO');
 INSERT INTO epci(nom, siren, nature) VALUES ('PETR Ariège', '200051076', 'PETR');
 INSERT INTO epci(nom, siren, nature) VALUES ('PETR Pays Portes de Gascogne', '200048593', 'PETR');
 INSERT INTO epci(nom, siren, nature) VALUES ('PETR Pays Midi Quercy', '200049690', 'PETR');
 INSERT INTO epci(nom, siren, nature) VALUES ('PETR Coeur des Hauts-de-France', '200078244', 'PETR');
-INSERT INTO epci(nom, siren, nature) VALUES ('Syndicat énergie du Morbihan', '255601106', 'SIVU');
-INSERT INTO epci(nom, siren, nature) VALUES ('Trifyl Syndicat départemental de traitement et de valorisation des déchets', '258102169', 'SIVOM');
-INSERT INTO epci(nom, siren, nature) VALUES ('PNR GRANDS CAUSSES', '251201349', 'PETR');
+INSERT INTO epci(nom, siren, nature) VALUES ('Syndicat énergie du Morbihan', '255601106', 'SMF');
+INSERT INTO epci(nom, siren, nature) VALUES ('Trifyl Syndicat départemental de traitement et de valorisation des ' ||
+                                             'déchets', '258102169', 'SMO');
+INSERT INTO epci(nom, siren, nature) VALUES ('PNR GRANDS CAUSSES', '251201349', 'SMO');
 INSERT INTO epci(nom, siren, nature) VALUES ('Pôle métropolitain du Genevois français', '200075372', 'PETR');
 INSERT INTO epci(nom, siren, nature) VALUES ('PETR du Pays de Balagne', '200066611', 'PETR' );
