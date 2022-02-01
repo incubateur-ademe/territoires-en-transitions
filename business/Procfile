@@ -1,1 +1,1 @@
-worker: python business/evaluation/entrypoints/realtime.py
+worker: python business/evaluation/entrypoints/start_realtime.py
