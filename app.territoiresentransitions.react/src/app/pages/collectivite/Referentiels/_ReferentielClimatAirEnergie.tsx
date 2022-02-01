@@ -1,7 +1,6 @@
 import * as R from 'ramda';
 import 'app/pages/collectivite/Referentiels/ArrowExpandable.css';
 import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
-import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {compareIndexes} from 'utils/compareIndexes';
 import {ActionReferentiel} from 'types/action_referentiel';
 

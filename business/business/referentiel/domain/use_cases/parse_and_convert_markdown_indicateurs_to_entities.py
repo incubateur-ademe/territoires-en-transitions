@@ -164,7 +164,7 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         return Indicateur(
             indicateur_id=IndicateurId(md_indicateur.id),
             indicateur_group=indicateur_group,
-            identifiant=self._format_identifiant(str(md_indicateur.identifiant)),
+            identifiant=md_indicateur.identifiant,
             nom=md_indicateur.nom,
             description=md_indicateur.description,
             unite=md_indicateur.unite,
@@ -186,13 +186,3 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
     def _infer_action_ids(md_action_ids: List[str]) -> List[ActionId]:
         return [ActionId(md_action_id) for md_action_id in md_action_ids]
 
-    @staticmethod
-    def _format_identifiant(identifiant: str):
-        regex = "([0-9]{1,3})(.+)?"
-        match = re.match(regex, identifiant)
-
-        if not match:
-            return identifiant
-
-        number, literal = match.groups()
-        return f"{number}.{literal}"
