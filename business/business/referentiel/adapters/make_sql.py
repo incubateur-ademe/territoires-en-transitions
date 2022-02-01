@@ -7,14 +7,14 @@ from business.referentiel.domain.ports.referentiel_repo import (
 )
 
 
-def _format_text(text: str):
+def format_sql_text(text: str):
     return text.replace("'", "''")
 
 
 def make_sql_insert_indicateurs(indicateurs: List[Indicateur]):
     sqls = []
     for indicateur in indicateurs:
-        sql = f"insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('{indicateur.indicateur_id}', '{indicateur.indicateur_group}', '{indicateur.identifiant}', {indicateur.values_refers_to or 'null'}, '{_format_text(indicateur.nom)}', '{_format_text(indicateur.description)}', '{_format_text(indicateur.unite)}', {str(indicateur.obligation_eci).lower()}, null);"
+        sql = f"insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('{indicateur.indicateur_id}', '{indicateur.indicateur_group}', '{indicateur.identifiant}', {indicateur.values_refers_to or 'null'}, '{format_sql_text(indicateur.nom)}', '{format_sql_text(indicateur.description)}', '{format_sql_text(indicateur.unite)}', {str(indicateur.obligation_eci).lower()}, null);"
         for action_id in indicateur.action_ids:
             sql += f"insert into indicateur_action(indicateur_id, action_id) values ('{indicateur.indicateur_id}', '{action_id}');"
         sqls.append(sql)
@@ -28,7 +28,7 @@ def _make_sql_insert_action_definition(
     sqls = []
     for referentiel, referentiel_entities in actions_by_ref.items():
         for definition in referentiel_entities.definitions:
-            sql = f"insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('{definition.action_id}', '{definition.referentiel}', '{definition.identifiant}', '{_format_text(definition.nom)}', '{_format_text(definition.description)}', '{_format_text(definition.contexte)}', '{_format_text(definition.exemples)}', '{_format_text(definition.ressources)}', {definition.points or 'null'}, {definition.pourcentage or 'null'});"
+            sql = f"insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('{definition.action_id}', '{definition.referentiel}', '{definition.identifiant}', '{format_sql_text(definition.nom)}', '{format_sql_text(definition.description)}', '{format_sql_text(definition.contexte)}', '{format_sql_text(definition.exemples)}', '{format_sql_text(definition.ressources)}', {definition.points or 'null'}, {definition.pourcentage or 'null'});"
             sqls.append(sql)
     return "\n".join(sqls)
 

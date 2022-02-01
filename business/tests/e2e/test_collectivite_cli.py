@@ -1,17 +1,18 @@
-from business.epci.cli_import_epci import cli_import_epci
+from business.collectivite.cli_import_collectivite import cli_import_collectivite
 
-expected_nb_of_epcis = 12
 
 # Should work if DB is already initialized.
 # TODO : decide what to do with test docker-compose !
 def skip_test_update_referentiels():
     try:
-        cli_import_epci(
+        cli_import_collectivite(
             [
                 "--repo-option",
                 "POSTGRES",
-                "--output-path",
+                "--output-epci-path",
                 "./tests/data/tmp/epcis.sql",
+                "--output-commune-path",
+                "./tests/data/tmp/communes.sql",
             ]
         )
     except SystemExit:

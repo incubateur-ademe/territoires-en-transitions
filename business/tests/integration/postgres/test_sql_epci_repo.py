@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from tests.utils.postgres_fixtures import *
-from business.epci.adaters.sql_epci_repo import SqlEpciRepository
+from business.epci.adaters.sql_collectivite_repo import SqlCollectiviteRepository
 from business.epci.domain.epci import Epci
 from tests.utils.files import remove_file, mkdir
 
@@ -12,7 +12,7 @@ def test_can_add_epcis(postgres_connection):
     mkdir(sql_path.parent)
     remove_file(sql_path)
 
-    repo = SqlEpciRepository(sql_path)
+    repo = SqlCollectiviteRepository(sql_path)
 
     epci1 = Epci("Pénélopie sur l'apostrophe", "000000000", "CC")
     epci2 = Epci("Florianus - Raphaëlle", "111111111", "CC")
