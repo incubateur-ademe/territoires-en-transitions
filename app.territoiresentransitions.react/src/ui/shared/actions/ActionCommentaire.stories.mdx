@@ -3,8 +3,6 @@ import {action} from '@storybook/addon-actions';
 import {observable} from 'mobx';
 
 import {ActionCommentaireField} from './ActionCommentaire';
-import {actions} from '../../../generated/data/referentiels';
-import {searchActionById} from '../../../utils/actions';
 
 export const Template = args => <ActionCommentaireField {...args} />;
 
@@ -25,7 +23,7 @@ Le libellé et le sous-libellé varie suivant le type de référence (action ou 
   <Story
     name="Exemple action"
     args={{
-      action: searchActionById('cae_1.1.1', actions),
+      action: {}, 
       observable: observable({
         fieldValue: 'mon commentaire',
         setFieldValue: action('setFieldValue'),
@@ -40,11 +38,12 @@ Le libellé et le sous-libellé varie suivant le type de référence (action ou 
 
 ## Commentaire associé à une tâche
 
+
 <Canvas>
   <Story
     name="Exemple de tâche"
     args={{
-      action: searchActionById('cae_1.1.1.1', actions),
+      action: {},
       observable: observable({
         fieldValue: 'mon commentaire',
         setFieldValue: action('setFieldValue'),
@@ -63,7 +62,7 @@ Le libellé et le sous-libellé varie suivant le type de référence (action ou 
   <Story
     name="Commentaire très long"
     args={{
-      action: searchActionById('cae_1.1.1.1', actions),
+      action: {},
       observable: observable({
         fieldValue: `mon commentaire vraiment très long ! 
           
