@@ -43,6 +43,7 @@ class SupabaseReferentielRepository(AbstractReferentielRepository):
                 description=row["description"],
                 contexte=row["contexte"],
                 exemples=row["exemples"],
+                preuve=row["preuve"],
                 ressources=row["ressources"],
                 points=row["points"],
                 pourcentage=row["pourcentage"],

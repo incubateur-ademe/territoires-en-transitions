@@ -28,7 +28,7 @@ def _make_sql_insert_action_definition(
     sqls = []
     for referentiel, referentiel_entities in actions_by_ref.items():
         for definition in referentiel_entities.definitions:
-            sql = f"insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('{definition.action_id}', '{definition.referentiel}', '{definition.identifiant}', '{_format_text(definition.nom)}', '{_format_text(definition.description)}', '{_format_text(definition.contexte)}', '{_format_text(definition.exemples)}', '{_format_text(definition.ressources)}', {definition.points or 'null'}, {definition.pourcentage or 'null'});"
+            sql = f"insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, points, pourcentage) values ('{definition.action_id}', '{definition.referentiel}', '{definition.identifiant}', '{_format_text(definition.nom)}', '{_format_text(definition.description)}', '{_format_text(definition.contexte)}', '{_format_text(definition.exemples)}', '{_format_text(definition.preuve)}', '{_format_text(definition.ressources)}', {definition.points or 'null'}, {definition.pourcentage or 'null'});"
             sqls.append(sql)
     return "\n".join(sqls)
 

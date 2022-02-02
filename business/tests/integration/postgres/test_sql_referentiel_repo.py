@@ -43,8 +43,8 @@ def test_can_add_referentiel_actions(postgres_connection):
         file_content
         == "insert into action_relation(id, referentiel, parent) values ('ref', 'eci', null);\n"
         + "insert into action_relation(id, referentiel, parent) values ('ref_1', 'eci', 'ref');\n"
-        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('ref', 'eci', '', '', 'l''ademe !', '', '', '', null, null);\n"
-        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('ref_1', 'eci', '', '', '', '', '', '', null, null);\n"
+        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, points, pourcentage) values ('ref', 'eci', '', '', 'l''ademe !', '', '', '', '', null, null);\n"
+        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, points, pourcentage) values ('ref_1', 'eci', '', '', '', '', '', '', '', null, null);\n"
         + "insert into action_computed_points(action_id, value) values ('ref', 500);\n"
         + "insert into action_computed_points(action_id, value) values ('ref_1', 300);\n"
     )
