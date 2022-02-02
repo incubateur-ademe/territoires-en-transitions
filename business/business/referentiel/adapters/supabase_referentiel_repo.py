@@ -78,7 +78,7 @@ class SupabaseReferentielRepository(AbstractReferentielRepository):
         self, referentiel: ActionReferentiel
     ) -> List[ActionChildren]:
         result = (
-            self.supabase_client.table("action_children")
+            self.supabase_client.table("business_action_children")
             .select("*")  # type: ignore
             .eq("referentiel", referentiel)
             .execute()
