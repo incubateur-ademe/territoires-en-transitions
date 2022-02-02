@@ -79,7 +79,7 @@ export const ActionReferentielDisplayTitle = ({
 }) => {
   return (
     <div className="flex justify-between my-6 items-center">
-      <div className="flex flex-row align-middle items-center font-bold gap-2">
+      <div className="flex flex-row align-middle items-center font-bold gap-2 mr-2">
         <ActionReferentielTitlePill action={action} />
         <div>
           <span className="fr-text--lg">{action.nom} </span>
