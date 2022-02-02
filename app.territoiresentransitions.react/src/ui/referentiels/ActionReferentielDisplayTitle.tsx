@@ -2,7 +2,8 @@ import {observer} from 'mobx-react-lite';
 import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {referentielId} from 'utils/actions';
 import {toFixed} from 'utils/toFixed';
-import {ActionReferentiel, ActionType} from 'types/action_referentiel';
+import {ActionType} from 'types/action_referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 export interface PillParams {
   color: string;
@@ -12,13 +13,19 @@ export interface PillParams {
 }
 
 export const pillParams: Record<ActionType, PillParams> = {
-  domaine: {
+  referentiel: {
     color: '#000091',
     textColor: '#000091',
     filled: false,
     height: 20,
   },
-  'sous-domaine': {
+  axe: {
+    color: '#000091',
+    textColor: '#000091',
+    filled: false,
+    height: 20,
+  },
+  'sous-axe': {
     color: '#000091',
     textColor: '#000091',
     filled: false,
@@ -34,14 +41,20 @@ export const pillParams: Record<ActionType, PillParams> = {
   tache: {color: '#E8EBF3', textColor: 'black', filled: true, height: 20},
 };
 export const ActionPotentiel = observer(
-  ({action, scoreBloc}: {action: ActionReferentiel; scoreBloc: ScoreBloc}) => {
+  ({
+    action,
+    scoreBloc,
+  }: {
+    action: ActionDefinitionSummary;
+    scoreBloc: ScoreBloc;
+  }) => {
     const score = scoreBloc.getScore(action.id, referentielId(action.id));
 
     if (score === null) return null;
 
     const potentiel = toFixed(
       score?.point_potentiel,
-      action.type === 'domaine' || action.type === 'sous-domaine' ? 0 : 2
+      action.type === 'axe' || action.type === 'sous-axe' ? 0 : 2
     );
     const text = score?.point_potentiel ? `${potentiel} points` : '0 point';
     return <span className="font-normal whitespace-nowrap">({text})</span>;
@@ -50,7 +63,7 @@ export const ActionPotentiel = observer(
 export const ActionReferentielTitlePill = ({
   action,
 }: {
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
 }) => {
   const pill = pillParams[action.type];
   return (
@@ -75,11 +88,11 @@ export const ActionReferentielTitlePill = ({
 export const ActionReferentielDisplayTitle = ({
   action,
 }: {
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
 }) => {
   return (
     <div className="flex justify-between my-6 items-center">
-      <div className="flex flex-row align-middle items-center font-bold gap-2">
+      <div className="flex flex-row align-middle items-center font-bold gap-2 mr-2">
         <ActionReferentielTitlePill action={action} />
         <div>
           <span className="fr-text--lg">{action.nom} </span>

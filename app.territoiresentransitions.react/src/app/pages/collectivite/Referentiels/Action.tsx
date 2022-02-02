@@ -1,30 +1,29 @@
-import {Tab, Tabs} from '@dataesr/react-dsfr';
-import {Switch} from '@material-ui/core';
-import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
-import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
-import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurActionReadEndpoint';
-import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
-import {scoreBloc} from 'core-logic/observables/scoreBloc';
-import {actions as referentielActions} from 'generated/data/referentiels';
-import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
-import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {ActionReferentiel} from 'types/action_referentiel';
+import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
+import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
+import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
+import {scoreBloc} from 'core-logic/observables/scoreBloc';
+import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurActionReadEndpoint';
+import {useEffect, useState} from 'react';
+import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
+import {addTargetToContentAnchors} from 'utils/content';
+import {Tabs, Tab} from '@dataesr/react-dsfr';
+import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
+import {Spacer} from 'ui/shared/Spacer';
+import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielAvancementRecursiveCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
-import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
-import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
-import {Spacer} from 'ui/shared/Spacer';
-import {searchActionById} from 'utils/actions';
-import {addTargetToContentAnchors} from 'utils/content';
-import {sortIndicateurDefinitionsByIdentifiant} from 'utils/indicateurs';
-import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
+import {Switch} from '@material-ui/core';
+import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
     useState<IndicateurDefinitionRead[]>([]);
 
   const allIndicateurDefinitions = useAllIndicateurDefinitions();
+
   useEffect(() => {
     indicateurActionReadEndpoint.getBy({}).then(allIndicateurActions => {
       const linkedIndicateurDefinitions = allIndicateurActions
@@ -43,14 +42,14 @@ const useActionLinkedIndicateurDefinitions = (actionId: string) => {
       );
     });
   }, [allIndicateurDefinitions]);
-  return sortIndicateurDefinitionsByIdentifiant(linkedIndicateurDefinitions);
+  return linkedIndicateurDefinitions;
 };
 
-const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
-  const action = searchActionById(actionId, referentielActions);
+const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const [showOnlyActionWithData, setShowOnlyActionWithData] = useState(false);
+  const children = useActionSummaryChildren(action);
 
-  const isFullyRenseigne = (action: ActionReferentiel): boolean => {
+  const isFullyRenseigne = (action: ActionDefinitionSummary): boolean => {
     const actionScore = scoreBloc.getScore(action.id, action.referentiel);
     return !!actionScore && actionScore.point_non_renseigne === 0;
   };
@@ -59,14 +58,14 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
     return <Link to="./referentiels" />;
   }
   const actionLinkedIndicateurDefinitions =
-    useActionLinkedIndicateurDefinitions(actionId);
+    useActionLinkedIndicateurDefinitions(action.id);
 
   return (
     <div className="fr-container">
       <div className="mt-8 mb-4">
         <OrientationQuickNav action={action} />
       </div>
-      <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8 items-center">
+      <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8">
         <div className="flex flex-col w-4/5">
           <ActionReferentielDisplayTitle action={action} />
         </div>
@@ -102,7 +101,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
                 }}
               />
             </div>
-            {action.actions.map(action => {
+            {children.map(action => {
               if (showOnlyActionWithData && isFullyRenseigne(action)) {
                 return null;
               }
@@ -120,7 +119,7 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
         <Tab label="Indicateurs">
           <section>
             {actionLinkedIndicateurDefinitions.length === 0 && (
-              <p>Cette action ne comporte pas d'indicateur.</p>
+              <p>Cette action ne comporte pas d'indicateur</p>
             )}
 
             {actionLinkedIndicateurDefinitions.map(definition => (
@@ -136,4 +135,4 @@ const ActionReferentielAvancement = ({actionId}: {actionId: string}) => {
   );
 };
 
-export default ActionReferentielAvancement;
+export default Action;

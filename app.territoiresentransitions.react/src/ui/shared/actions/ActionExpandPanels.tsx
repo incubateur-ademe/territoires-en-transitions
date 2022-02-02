@@ -1,6 +1,11 @@
 import {addTargetToContentAnchors} from 'utils/content';
 import {CrossExpandPanelWithHtmlContent} from 'ui/shared/CrossExpandPanelWithHtmlContent';
-import {ActionReferentiel} from 'types/action_referentiel';
+import {
+  useActionContexte,
+  useActionExemples,
+  useActionResources,
+} from 'core-logic/hooks/referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 const ActionExpandPanelAdemeContent = (props: {
   content?: string;
@@ -22,40 +27,44 @@ const ActionExpandPanelAdemeContent = (props: {
 export const ActionContexteExpandPanel = ({
   action,
 }: {
-  action: ActionReferentiel;
-}) => (
-  <ActionExpandPanelAdemeContent
-    content={action.contexte}
-    title="Contexte et réglementation"
-  />
-);
+  action: ActionDefinitionSummary;
+}) => {
+  const contexte = useActionContexte(action.id);
+
+  return (
+    <ActionExpandPanelAdemeContent
+      content={contexte}
+      title="Contexte et réglementation"
+    />
+  );
+};
 
 export const ActionExemplesExpandPanel = ({
   action,
 }: {
-  action: ActionReferentiel;
-}) => (
-  <ActionExpandPanelAdemeContent content={action.exemples} title="Exemples" />
-);
+  action: ActionDefinitionSummary;
+}) => {
+  const exemples = useActionExemples(action.id);
+  return <ActionExpandPanelAdemeContent content={exemples} title="Exemples" />;
+};
 
 export const ActionPreuvesExpandPanel = ({
   action,
 }: {
-  action: ActionReferentiel;
-}) => (
-  <ActionExpandPanelAdemeContent
-    content={'TODO !! Import preuves 🙊'}
-    title="Preuves"
-  />
-);
+  action: ActionDefinitionSummary;
+}) => {
+  const preuve = useActionExemples(action.id);
+  return <ActionExpandPanelAdemeContent content={preuve} title="Preuves" />;
+};
 
 export const ActionRessourcesExpandPanel = ({
   action,
 }: {
-  action: ActionReferentiel;
-}) => (
-  <ActionExpandPanelAdemeContent
-    content={action.ressources}
-    title="Ressources"
-  />
-);
+  action: ActionDefinitionSummary;
+}) => {
+  const ressources = useActionResources(action.id);
+
+  return (
+    <ActionExpandPanelAdemeContent content={ressources} title="Ressources" />
+  );
+};

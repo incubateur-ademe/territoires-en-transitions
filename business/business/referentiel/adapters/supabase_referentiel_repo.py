@@ -43,6 +43,7 @@ class SupabaseReferentielRepository(AbstractReferentielRepository):
                 description=row["description"],
                 contexte=row["contexte"],
                 exemples=row["exemples"],
+                preuve=row["preuve"],
                 ressources=row["ressources"],
                 points=row["points"],
                 pourcentage=row["pourcentage"],
@@ -57,7 +58,7 @@ class SupabaseReferentielRepository(AbstractReferentielRepository):
             self.supabase_client.table("action_computed_points")
             .select("*")  # type: ignore
             .like(
-                "action_id", f"{referentiel}*"
+                "action_id", f"{referentiel}%"
             )  # TODO : find a better way to infer the referentiel (make a view ? )
             .execute()
         )
@@ -78,7 +79,7 @@ class SupabaseReferentielRepository(AbstractReferentielRepository):
         self, referentiel: ActionReferentiel
     ) -> List[ActionChildren]:
         result = (
-            self.supabase_client.table("action_children")
+            self.supabase_client.table("business_action_children")
             .select("*")  # type: ignore
             .eq("referentiel", referentiel)
             .execute()

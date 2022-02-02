@@ -7,6 +7,8 @@ comment on type referentiel is 'An enum representing a referentiel';
 create domain action_id as varchar(30);
 comment on type action_id is 'A unique action id. ex: eci_1.1.1.1';
 
+create type  action_type as enum ('referentiel','axe', 'sous-axe', 'action', 'sous-action', 'tache');
+comment on type action_type is 'An action type, or the name of it''s level';
 
 --------------------------------
 ------ ACTION RELATION ---------
@@ -28,21 +30,6 @@ create policy allow_read
     on action_relation
     for select
     using (true);
-
-
-create or replace view action_children
-as
-select referentiel, id, parent, children.ids as children
-from action_relation as ar
-         left join lateral (
-    select array_agg(action_relation.id) as ids
-    from action_relation
-    where action_relation.parent = ar.id
-
-    )
-    as children on true;
-comment on view action_children is
-    'Action and its children, computed from action relation';
 
 
 --------------------------------
@@ -123,6 +110,7 @@ create table action_definition
     contexte    text        not null,
     exemples    text        not null,
     ressources  text        not null,
+    preuve      text        not null,
     points      float,
     pourcentage float
 ) inherits (absract_modified_at);
@@ -136,19 +124,6 @@ create policy allow_read
     on action_definition
     for select
     using (true);
-
-create view action_definition_summary
-as
-select action_id,
-       referentiel,
-       identifiant,
-       nom,
-       description
-from action_definition
-order by action_id;
-comment on view action_definition_summary is
-    'The minimum information from definition';
-
 
 create table action_computed_points
 (
@@ -166,59 +141,3 @@ create policy allow_read
     for select
     using (true);
 
-
-create or replace function referentiel_down_to_action(
-    referentiel referentiel
-)
-    returns setof action_definition_summary as
-$$
-declare
-    referentiel_action_depth integer;
-begin
-    if referentiel_down_to_action.referentiel = 'cae'
-    then
-        select 3 into referentiel_action_depth;
-    else
-        select 2 into referentiel_action_depth;
-    end if;
-    return query
-        select *
-        from action_definition_summary
-        where action_definition_summary.referentiel = referentiel_down_to_action.referentiel
-          and char_length(action_definition_summary.action_id) -
-              char_length(replace(action_definition_summary.action_id, '.', ''))
-            < referentiel_action_depth;
-end;
-$$ language plpgsql;
-comment on function referentiel_down_to_action is 'Returns referentiel action summary down to the action level';
-
-
-create or replace function action_down_to_tache(
-    referentiel referentiel,
-    action_id action_id
-)
-    returns setof action_definition_summary as
-$$
-declare
-    referentiel_action_depth integer;
-    id                       action_id;
-begin
-    -- action_id is ambiguous
-    select action_down_to_tache.action_id into id;
-    if action_down_to_tache.referentiel = 'cae'
-    then
-        select 3 into referentiel_action_depth;
-    else
-        select 2 into referentiel_action_depth;
-    end if;
-    return query
-        select *
-        from action_definition_summary
-        where action_definition_summary.referentiel = action_down_to_tache.referentiel
-          and action_definition_summary.action_id like id || '%'
-          and char_length(action_definition_summary.action_id) -
-              char_length(replace(action_definition_summary.action_id, '.', ''))
-            >= referentiel_action_depth - 1;
-end
-$$ language plpgsql;
-comment on function action_down_to_tache is 'Returns referentiel action summary down to the tache level';

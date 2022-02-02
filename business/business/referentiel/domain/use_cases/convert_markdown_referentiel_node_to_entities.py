@@ -153,9 +153,6 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
             action_definition = definition_entities[action_id]
 
             if action_id not in points_by_id and action_definition.pourcentage is None:
-                children_definitions = [
-                    definition_entities[child_id] for child_id in children_ids
-                ]
                 if children_ids and children_ids[0] in points_by_id:
                     points_by_id[action_id] = sum(
                         [points_by_id[child_id] for child_id in children_ids]
@@ -225,6 +222,7 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
                 contexte=node.contexte,
                 description=node.description,
                 exemples=node.exemples,
+                preuve=node.preuve,
                 ressources=node.ressources,
                 points=node.points,
                 pourcentage=node.pourcentage,

@@ -4,10 +4,14 @@ import {actionCommentaireRepository} from 'core-logic/api/repositories/ActionCom
 import {observer} from 'mobx-react-lite';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ActionReferentiel} from 'types/action_referentiel';
 import {AutoTextArea} from '../AutoTextArea';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
-export const ActionCommentaire = ({action}: {action: ActionReferentiel}) => {
+export const ActionCommentaire = ({
+  action,
+}: {
+  action: ActionDefinitionSummary;
+}) => {
   const collectiviteId = useCollectiviteId()!;
   const observable = new ActionCommentaireFieldBloc({
     actionId: action.id,
@@ -27,7 +31,7 @@ export const ActionCommentaireField = observer(
     ...otherProps
   }: {
     observable: ActionCommentaireFieldBloc;
-    action: ActionReferentiel;
+    action: ActionDefinitionSummary;
   }) => (
     <AutoTextArea
       value={observable.fieldValue ?? ''}

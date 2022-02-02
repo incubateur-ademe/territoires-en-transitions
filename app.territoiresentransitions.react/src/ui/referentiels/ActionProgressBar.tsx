@@ -29,6 +29,7 @@ export const ActionProgressBar = observer(
 );
 
 const _ColoredBar = ({score}: {score: ActionScore}) => {
+  if (score.point_potentiel < 1e-3) return null;
   const percentageAgainstPotentiel = (x: number): number =>
     (100 * x) / score.point_potentiel;
   const fait_width = percentageAgainstPotentiel(score.point_fait);

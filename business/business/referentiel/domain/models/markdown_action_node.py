@@ -12,6 +12,7 @@ class MarkdownActionNode(BaseModel):
     description: str = ""
     contexte: str = ""
     exemples: str = ""
+    preuve: str = ""
     ressources: str = ""
     referentiel: Optional[ActionReferentiel] = None
     points: Optional[float] = None

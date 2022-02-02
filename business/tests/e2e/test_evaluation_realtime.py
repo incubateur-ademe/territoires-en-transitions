@@ -12,7 +12,7 @@ from business.evaluation.adapters.replay_realtime import ReplayRealtime
 from business.evaluation.domain.models import events
 from business.utils.environment_variables import EnvironmentVariables
 from business.utils.prepare_bus import prepare_bus
-from business.evaluation.entrypoints.realtime import (
+from business.evaluation.entrypoints.start_realtime import (
     EvaluationConfig,
     EVENT_HANDLERS,
 )

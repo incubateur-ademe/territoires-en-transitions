@@ -1,11 +1,12 @@
 import {addTargetToContentAnchors} from 'utils/content';
 import {ActionReferentiel} from 'types/action_referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 export const ActionReferentielDescription = ({
   action,
   className,
 }: {
-  action: ActionReferentiel;
+  action: ActionReferentiel | ActionDefinitionSummary;
   className?: string;
 }) => (
   <div

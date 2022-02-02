@@ -1,10 +1,11 @@
 import {makeCollectiviteReferentielUrl} from 'app/paths';
 import {actionAvancementColors} from 'app/theme';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
 import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
-import {actions} from 'generated/data/referentiels';
 import {observer} from 'mobx-react-lite';
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
@@ -191,16 +192,18 @@ const ChiffreCles = ({
 
 const ReferentielSection = observer(
   ({
-    referentiel: referentielId,
+    referentielId,
     scoreBloc,
   }: {
-    referentiel: 'cae' | 'eci';
+    referentielId: 'cae' | 'eci';
     scoreBloc: ScoreBloc;
   }) => {
     const collectiviteId = useCollectiviteId()!;
-    const referentielRoot = actions.find(
-      action => action.id === referentielId
-    )!;
+    const actions = useReferentielDownToAction(referentielId);
+    const referentielRoot = actions.find(a => a.type === 'referentiel');
+
+    if (!referentielRoot) return null;
+
     const rootScore = scoreBloc.getScore(
       referentielRoot.id,
       referentielRoot.referentiel
@@ -231,7 +234,9 @@ const ReferentielSection = observer(
       );
     }
 
-    const referentielAxes = referentielRoot ? referentielRoot.actions : [];
+    const referentielAxes: ActionDefinitionSummary[] = actions.filter(
+      a => a.type === 'axe'
+    );
 
     const axisAvancementSamples: AxisAvancementSample[] = referentielAxes
       .map(axe => {
@@ -280,7 +285,7 @@ const TableauBord = () => (
         <div>{refToEmoji.cae}</div>
         <div>Référentiel Climat Air Énergie</div>
       </div>
-      <ReferentielSection scoreBloc={scoreBloc} referentiel="cae" />
+      <ReferentielSection scoreBloc={scoreBloc} referentielId="cae" />
     </section>
 
     <section style={{width: '600px'}} className="bg-beige p-4">
@@ -288,7 +293,7 @@ const TableauBord = () => (
         <div>{refToEmoji.eci}</div>
         <div>Référentiel Économie Circulaire</div>
       </div>
-      <ReferentielSection scoreBloc={scoreBloc} referentiel="eci" />
+      <ReferentielSection scoreBloc={scoreBloc} referentielId="eci" />
     </section>
   </main>
 );

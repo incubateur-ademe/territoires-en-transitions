@@ -5,25 +5,26 @@ import {
   ActionExemplesExpandPanel,
   ActionRessourcesExpandPanel,
 } from 'ui/shared/actions/ActionExpandPanels';
-import {ActionReferentiel} from 'types/action_referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 const ContexteExemplesAndRessourcesDialogContent = ({
   action,
 }: {
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
 }) => (
   <div className="p-7 flex flex-col">
     <h4 className="pb-4"> {action.nom} </h4>
-    <ActionContexteExpandPanel action={action} />
-    <ActionExemplesExpandPanel action={action} />
-    <ActionRessourcesExpandPanel action={action} />
+
+    {action.have_contexte && <ActionContexteExpandPanel action={action} />}
+    {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
+    {action.have_ressources && <ActionRessourcesExpandPanel action={action} />}
   </div>
 );
 
 export const DescriptionContextAndRessourcesDialogButton = ({
   action,
 }: {
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
 }) => {
   const [opened, setOpened] = useState(false);
 

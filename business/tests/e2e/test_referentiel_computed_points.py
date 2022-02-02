@@ -11,7 +11,10 @@ from tests.utils.assert_children_points_sum_to_parent_point import (
 # )
 # repo = JsonReferentielRepository(Path("./data/referentiel_repository.json"))
 
-from business.evaluation.entrypoints.realtime import get_config, get_connected_socket
+from business.evaluation.entrypoints.start_realtime import (
+    get_config,
+    get_connected_socket,
+)
 
 socket = get_connected_socket()
 config = get_config(socket)

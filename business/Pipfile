@@ -8,7 +8,6 @@ mistletoe = "*"
 pydantic = "*"
 pytest = "*"
 pyyaml = "*"
-supabase = "*"
 rx = "*"
 marshmallow-dataclass = "*"
 black = "==21.5b1"
@@ -18,8 +17,9 @@ python-dotenv = "*"
 pandas = "*"
 openpyxl = "*"
 tqdm = "*"
-realtime-py = "*"
+realtime-py = "0.1.3"
 numpy = "*"
+supabase = "==0.0.3"
 
 [dev-packages]
 

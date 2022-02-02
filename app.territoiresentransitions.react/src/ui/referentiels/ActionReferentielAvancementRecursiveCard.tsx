@@ -9,39 +9,34 @@ import {
   ActionPreuvesExpandPanel,
 } from 'ui/shared/actions/ActionExpandPanels';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
-import {ActionReferentiel} from 'types/action_referentiel';
+import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 /**
- * Displays an actions and it's children indented below.
- *
- * @param action
- * @param card
- * @param marginLeft the accumulated margin passed down to children for
- * indentation, beware the resulting tailwind classes have to be excluded
- * from purge in `tailwind.config.js`.
- * @constructor
+ * Displays an actions and it's children below.
  */
 const ActionReferentielRecursiveCard = ({
   action,
   card,
 }: {
-  action: ActionReferentiel;
-  card: ({action}: {action: ActionReferentiel}) => JSX.Element;
+  action: ActionDefinitionSummary;
+  card: ({action}: {action: ActionDefinitionSummary}) => JSX.Element;
 }) => {
-  if (action.actions.length === 0) return <div> {card({action})}</div>;
-  else
-    return (
-      <div id={action.id}>
-        <div> {card({action})}</div>{' '}
-        {action.actions.map(action => (
-          <ActionReferentielRecursiveCard
-            key={action.id}
-            action={action}
-            card={card}
-          />
-        ))}
-      </div>
-    );
+  if (action.children.length === 0) return <div> {card({action})}</div>;
+
+  const children = useActionSummaryChildren(action);
+  return (
+    <div id={action.id}>
+      <div> {card({action})}</div>{' '}
+      {children.map(action => (
+        <ActionReferentielRecursiveCard
+          key={action.id}
+          action={action}
+          card={card}
+        />
+      ))}
+    </div>
+  );
 };
 
 export const ActionReferentielAvancementCard = ({
@@ -49,17 +44,17 @@ export const ActionReferentielAvancementCard = ({
 }: {
   displayProgressStat: boolean;
   displayAddFicheActionButton: boolean;
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
 }) => {
-  const isLeaf = action.actions.length === 0;
+  const isLeaf = action.children.length === 0;
   return (
     <div className="pt-8 flex flex-row justify-between">
       <div className="flex flex-col w-4/5">
         <ActionReferentielDisplayTitle action={action} />
         <Spacer size={1} />
         <ActionReferentielDescription action={action} />
-        <ActionExemplesExpandPanel action={action} />
-        <ActionPreuvesExpandPanel action={action} />
+        {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
+        {action.have_preuve && <ActionPreuvesExpandPanel action={action} />}
         <ActionCommentaire action={action} />
       </div>
       <div className="w-1/6 pl-4">
@@ -85,7 +80,7 @@ export const ActionReferentielAvancementRecursiveCard = ({
   displayProgressStat,
   displayAddFicheActionButton,
 }: {
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
   displayProgressStat: boolean;
   displayAddFicheActionButton: boolean;
 }) =>
