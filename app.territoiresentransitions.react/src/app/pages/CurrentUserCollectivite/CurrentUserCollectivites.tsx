@@ -34,7 +34,10 @@ const MyCollectiviteCards = observer(
 
 const CurrentUserCollectivites = ({bloc}: {bloc?: OwnedCollectiviteBloc}) => {
   return (
-    <div className="app fr-container mt-5 flex justify-center">
+    <div
+      data-test="CurrentUserCollectivites"
+      className="app fr-container mt-5 flex justify-center"
+    >
       <section className="text-center">
         <MyCollectiviteCards bloc={bloc || ownedCollectiviteBloc} />
 

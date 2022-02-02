@@ -26,7 +26,7 @@ export const SignInPage = () => {
   });
 
   return (
-    <section className="max-w-xl mx-auto p-5">
+    <section data-test="SignInPage" className="max-w-xl mx-auto p-5">
       <Spacer />
       <h2 className="fr-h2 flex justify-center">Se connecter</h2>
       <div className="mx-auto">
