@@ -14,9 +14,6 @@ import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielAvancementRecursiveCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
 import {Switch} from '@material-ui/core';
-import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
@@ -26,6 +23,7 @@ const useActionLinkedIndicateurDefinitions = (actionId: string) => {
     useState<IndicateurDefinitionRead[]>([]);
 
   const allIndicateurDefinitions = useAllIndicateurDefinitions();
+
   useEffect(() => {
     indicateurActionReadEndpoint.getBy({}).then(allIndicateurActions => {
       const linkedIndicateurDefinitions = allIndicateurActions
@@ -48,29 +46,12 @@ const useActionLinkedIndicateurDefinitions = (actionId: string) => {
 };
 
 const Action = ({action}: {action: ActionDefinitionSummary}) => {
-  const children = useActionSummaryChildren(action);
-  const collectiviteId = useCollectiviteId()!;
-
   const [showOnlyActionWithData, setShowOnlyActionWithData] = useState(false);
-  const [renseigneStatuts, setRenseigneStatuts] = useState<ActionStatutRead[]>(
-    []
-  );
-
-  useEffect(() => {
-    if (!action) return;
-    actionStatutRepository
-      .fetchRenseigneChildren({
-        collectiviteId: collectiviteId,
-        actionId: action.id,
-      })
-      .then(statuts => setRenseigneStatuts(statuts));
-  }, [renseigneStatuts.length, showOnlyActionWithData, action]);
+  const children = useActionSummaryChildren(action);
 
   const isFullyRenseigne = (action: ActionDefinitionSummary): boolean => {
-    const stat = renseigneStatuts.filter(statut =>
-      statut.action_id.startsWith(action.id)
-    );
-    return stat.length === action.children.length;
+    const actionScore = scoreBloc.getScore(action.id, action.referentiel);
+    return !!actionScore && actionScore.point_non_renseigne === 0;
   };
 
   if (!action) {
@@ -89,7 +70,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           <ActionReferentielDisplayTitle action={action} />
         </div>
         <div className="w-1/6">
-          <ActionProgressBar action={action} scoreBloc={scoreBloc} />
+          <ActionProgressBar actionId={action.id} scoreBloc={scoreBloc} />
         </div>
       </div>
       <div className="mb-16">

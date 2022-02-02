@@ -51,7 +51,7 @@ export const ActionExemplesExpandPanel = ({
 export const ActionPreuvesExpandPanel = ({
   action,
 }: {
-  action: ActionReferentiel;
+  action: ActionDefinitionSummary;
 }) => (
   <ActionExpandPanelAdemeContent
     content={'TODO !! Import preuves 🙊'}
