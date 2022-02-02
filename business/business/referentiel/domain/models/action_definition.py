@@ -15,6 +15,7 @@ class ActionDefinition:
     description: str
     contexte: str
     exemples: str
+    preuve: str
     ressources: str
     points: Optional[float]
     pourcentage: Optional[float]
