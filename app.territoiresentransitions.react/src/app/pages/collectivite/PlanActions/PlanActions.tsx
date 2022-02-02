@@ -10,7 +10,6 @@ import {
   nestCategorized,
 } from './sorting';
 import {useState} from 'react';
-import {PlanEditionForm} from './Forms/PlanEditionForm';
 import {PlanCreationForm} from './Forms/PlanCreationForm';
 import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaultDisplayCategorie';
 import {LazyDetailsWithChevron} from 'ui/shared/LazyDetails';
@@ -19,6 +18,7 @@ import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
 import {makeCollectiviteNouvelleFicheUrl, planActionDefaultId} from 'app/paths';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {ModifierArboDialogButton} from './ModifierArboDialogButton';
 
 /**
  * The title of a category
@@ -97,22 +97,6 @@ const PlanButtons = (props: {plan: PlanActionRead}) => {
       <ModifierArboDialogButton plan={props.plan} />
       <AddFicheActionLink plan={props.plan} />
     </div>
-  );
-};
-
-const ModifierArboDialogButton = (props: {plan: PlanActionRead}) => {
-  const [editing, setEditing] = useState<boolean>(false);
-
-  return (
-    <UiDialogButton
-      title="Modifier l'arborescence"
-      opened={editing}
-      setOpened={setEditing}
-      buttonClasses="fr-btn--secondary"
-    >
-      <Spacer />
-      <PlanEditionForm plan={props.plan} />
-    </UiDialogButton>
   );
 };
 
