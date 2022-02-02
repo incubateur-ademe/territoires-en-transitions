@@ -65,7 +65,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
       <div className="mt-8 mb-4">
         <OrientationQuickNav action={action} />
       </div>
-      <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8">
+      <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8 py-4">
         <div className="flex flex-col w-4/5">
           <ActionReferentielDisplayTitle action={action} />
         </div>
