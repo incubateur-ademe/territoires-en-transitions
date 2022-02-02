@@ -51,7 +51,10 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
 
   const isFullyRenseigne = (action: ActionDefinitionSummary): boolean => {
     const actionScore = scoreBloc.getScore(action.id, action.referentiel);
-    return !!actionScore && actionScore.point_non_renseigne === 0;
+    return (
+      !!actionScore &&
+      actionScore.completed_taches_count === actionScore.total_taches_count
+    );
   };
 
   if (!action) {
