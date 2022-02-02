@@ -12,7 +12,7 @@ const Home = () => {
   }
 
   return (
-    <section className="max-w-2xl mx-auto p-5">
+    <section data-test="home" className="max-w-2xl mx-auto p-5">
       <h1 className="fr-h1">À vous de jouer !</h1>
 
       <p>

@@ -33,7 +33,7 @@ const ConnexionSwitchLink = observer(({bloc}: {bloc: AuthBloc}) => {
       </Link>
     );
   return (
-    <Link className="fr-link" to={signInPath}>
+    <Link data-test="signin" className="fr-link" to={signInPath}>
       <div className="fr-fi-account-line m-1"></div>
       Se connecter
     </Link>
