@@ -1,0 +1,11 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "viewportWidth": 1280,
+  "viewportHeight": 1024,
+  "testFiles": "**/*.feature",
+  "video": false,
+  "retries": {
+    "runMode": 2,
+    "openMode": 0
+  }
+}
