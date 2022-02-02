@@ -148,3 +148,28 @@ export const actionContexte = async (id: string): Promise<ActionContexte> => {
 
   return data as Object as ActionContexte;
 };
+
+/**
+ * Action Preuve
+ * The preuve section contents
+ */
+export interface ActionPreuve {
+  id: string;
+  preuve: string;
+}
+
+/**
+ * Returns action preuve text
+ */
+export const actionPreuve = async (id: string): Promise<ActionPreuve> => {
+  const {data, error} = await rpcCache.rpc('action_preuve', {
+    id: id,
+  });
+
+  if (error) {
+    console.error('actionPreuve rpc error ', error);
+    return {id: id, preuve: ''};
+  }
+  console.log('actionPreuve data ', data);
+  return data as Object as ActionPreuve;
+};
