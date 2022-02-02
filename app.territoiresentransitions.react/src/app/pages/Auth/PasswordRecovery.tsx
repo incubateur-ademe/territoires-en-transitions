@@ -51,7 +51,7 @@ export const PasswordRecovery = ({
         onSubmit={formValues => authBloc.resetPasswordForEmail(formValues)}
       >
         {() => (
-          <Form>
+          <Form data-test="PasswordRecovery">
             <Field
               name="email"
               label="Un lien de réinitialisation de votre mot de passe va être envoyé à l'adresse ci-dessous"
@@ -78,6 +78,7 @@ export const PasswordRecovery = ({
     </UiDialogButton>
   ) : (
     <a
+      data-test="forgotten-pwd"
       className="fr-link text-sm"
       href="#"
       onClick={e => {
