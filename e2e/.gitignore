@@ -1,0 +1,8 @@
+node_modules
+
+cypress/videos
+cypress/screenshots
+cypress/cucumber-json
+cypress/logs
+report*
+coverage*

@@ -1,0 +1,29 @@
+{
+  "name": "e2e",
+  "version": "1.0.0",
+  "engines": {
+    "node": "16"
+  },
+  "private": true,
+  "scripts": {
+    "start": "cross-env TZ=Europe/Paris cypress open --env coverage=false",
+    "pretest": "rimraf cypress/cucumber-json && rimraf .nyc_output && rimraf report",
+    "test": "cross-env TZ=Europe/Paris cypress run --env coverage=false",
+    "test:coverage": "cross-env TZ=Europe/Paris cypress run"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true,
+    "cucumberJson": {
+      "generate": true,
+      "outputFolder": "cypress/cucumber-json",
+      "filePrefix": "",
+      "fileSuffix": ".cucumber"
+    }
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "cypress": "^9.4.1",
+    "cypress-cucumber-preprocessor": "^4.3.1",
+    "rimraf": "^3.0.2"
+  }
+}
