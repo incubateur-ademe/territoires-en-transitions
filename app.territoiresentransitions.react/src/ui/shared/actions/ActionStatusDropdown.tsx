@@ -102,7 +102,7 @@ const _ActionStatusAvancementRadioButton = observer(
 
     return (
       <Select
-        value={value}
+        value={value ?? -1}
         onChange={handleChange}
         displayEmpty
         inputProps={{'aria-label': 'Without label'}}

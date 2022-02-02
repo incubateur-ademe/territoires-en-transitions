@@ -52,12 +52,10 @@ export const ActionPreuvesExpandPanel = ({
   action,
 }: {
   action: ActionDefinitionSummary;
-}) => (
-  <ActionExpandPanelAdemeContent
-    content={'TODO !! Import preuves 🙊'}
-    title="Preuves"
-  />
-);
+}) => {
+  const preuve = useActionExemples(action.id);
+  return <ActionExpandPanelAdemeContent content={preuve} title="Preuves" />;
+};
 
 export const ActionRessourcesExpandPanel = ({
   action,

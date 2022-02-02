@@ -4,7 +4,10 @@ import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
 import {Spacer} from 'ui/shared/Spacer';
-import {ActionExemplesExpandPanel} from 'ui/shared/actions/ActionExpandPanels';
+import {
+  ActionExemplesExpandPanel,
+  ActionPreuvesExpandPanel,
+} from 'ui/shared/actions/ActionExpandPanels';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -51,6 +54,7 @@ export const ActionReferentielAvancementCard = ({
         <Spacer size={1} />
         <ActionReferentielDescription action={action} />
         {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
+        {action.have_preuve && <ActionPreuvesExpandPanel action={action} />}
         <ActionCommentaire action={action} />
       </div>
       <div className="w-1/6 pl-4">

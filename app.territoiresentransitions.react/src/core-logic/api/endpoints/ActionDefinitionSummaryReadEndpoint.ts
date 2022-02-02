@@ -20,6 +20,7 @@ export interface ActionDefinitionSummary {
   description: string;
   depth: number;
   type: ActionType;
+  have_preuve: boolean;
   have_exemples: boolean;
   have_ressources: boolean;
   have_contexte: boolean;

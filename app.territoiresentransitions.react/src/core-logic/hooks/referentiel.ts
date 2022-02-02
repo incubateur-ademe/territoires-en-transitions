@@ -3,6 +3,7 @@ import {
   actionContexte,
   actionDownToTache,
   actionExemples,
+  actionPreuve,
   actionRessources,
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
@@ -89,6 +90,19 @@ export const useActionResources = (actionId: string) => {
   }, [actionId]);
 
   return ressources;
+};
+
+/**
+ * Returns action ressources html contents
+ */
+export const useActionPreuve = (actionId: string) => {
+  const [preuve, setPreuve] = useState<string>('...');
+
+  useEffect(() => {
+    actionPreuve(actionId).then(preuve => setPreuve(preuve.preuve));
+  }, [actionId]);
+
+  return preuve;
 };
 
 /**
