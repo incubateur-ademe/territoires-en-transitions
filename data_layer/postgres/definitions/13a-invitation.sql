@@ -27,7 +27,7 @@ begin
         return json_build_object('message', 'L''invitation a été crée.', 'id', invitation_id);
     else
         perform set_config('response.status', '401', true);
-        return json_build_object('message', 'Vous n''êtes pas le référent de cette collectivité.');
+        return json_build_object('error', 'Vous n''êtes pas le référent de cette collectivité.');
     end if;
 end
 $$ language plpgsql;
@@ -49,7 +49,7 @@ begin
         return json_build_object('id', invitation_id);
     else
         perform set_config('response.status', '401', true);
-        return json_build_object('message', 'Vous n''êtes n''avez pas rejoint cette collectivité.');
+        return json_build_object('error', 'Vous n''avez pas rejoint cette collectivité.');
     end if;
 end;
 $$ language plpgsql;
@@ -94,7 +94,7 @@ begin
         return json_build_object('message', 'Vous avez retiré les droits à l''utilisateur.');
     else
         perform set_config('response.status', '401', true);
-        return json_build_object('message', 'Vous n''êtes par le référent de cette collectivité.');
+        return json_build_object('error', 'Vous n''êtes pas le référent de cette collectivité.');
     end if;
 end;
 $$ language plpgsql security definer;
