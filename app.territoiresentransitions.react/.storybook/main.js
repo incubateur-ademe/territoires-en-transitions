@@ -23,4 +23,13 @@ module.exports = {
   ],
   framework: '@storybook/react',
   staticDirs: ['../public', '../src/app/static/_app/assets'],
+  typescript: {
+    reactDocgen: 'react-docgen-typescript',
+    reactDocgenTypescriptOptions: {
+      compilerOptions: {
+        allowSyntheticDefaultImports: false,
+        esModuleInterop: false,
+      },
+    }
+  }
 };

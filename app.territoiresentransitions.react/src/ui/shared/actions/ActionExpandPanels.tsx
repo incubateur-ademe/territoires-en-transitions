@@ -48,6 +48,17 @@ export const ActionExemplesExpandPanel = ({
   return <ActionExpandPanelAdemeContent content={exemples} title="Exemples" />;
 };
 
+export const ActionPreuvesExpandPanel = ({
+  action,
+}: {
+  action: ActionReferentiel;
+}) => (
+  <ActionExpandPanelAdemeContent
+    content={'TODO !! Import preuves 🙊'}
+    title="Preuves"
+  />
+);
+
 export const ActionRessourcesExpandPanel = ({
   action,
 }: {

@@ -44,7 +44,7 @@ const useActionLinkedIndicateurDefinitions = (actionId: string) => {
       );
     });
   }, [allIndicateurDefinitions]);
-  return linkedIndicateurDefinitions;
+  return sortIndicateurDefinitionsByIdentifiant(linkedIndicateurDefinitions);
 };
 
 const Action = ({action}: {action: ActionDefinitionSummary}) => {
@@ -84,7 +84,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
       <div className="mt-8 mb-4">
         <OrientationQuickNav action={action} />
       </div>
-      <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8">
+      <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8 items-center">
         <div className="flex flex-col w-4/5">
           <ActionReferentielDisplayTitle action={action} />
         </div>
@@ -138,7 +138,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         <Tab label="Indicateurs">
           <section>
             {actionLinkedIndicateurDefinitions.length === 0 && (
-              <p>Cette action ne comporte pas d'indicateur</p>
+              <p>Cette action ne comporte pas d'indicateur.</p>
             )}
 
             {actionLinkedIndicateurDefinitions.map(definition => (

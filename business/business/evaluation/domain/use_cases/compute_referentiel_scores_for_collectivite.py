@@ -61,6 +61,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         action_level = self.referentiel_action_level[command.referentiel]
         if point_tree is None:
             try:
+                print("Building point tree for referentiel ", command.referentiel)
                 point_tree = self._build_points_tree(command.referentiel)
                 self.points_trees[command.referentiel] = point_tree
             except ActionTreeError:
@@ -273,6 +274,9 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         )
         ref_children = self.referentiel_repo.get_all_children_from_referentiel(
             referentiel=referentiel
+        )
+        print(
+            f"Got {len(ref_points)} points and {len(ref_children)} children for referentiel {referentiel}."
         )
         return ActionPointTree(ref_points, ref_children)
 

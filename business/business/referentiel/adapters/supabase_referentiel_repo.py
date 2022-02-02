@@ -57,7 +57,7 @@ class SupabaseReferentielRepository(AbstractReferentielRepository):
             self.supabase_client.table("action_computed_points")
             .select("*")  # type: ignore
             .like(
-                "action_id", f"{referentiel}*"
+                "action_id", f"{referentiel}%"
             )  # TODO : find a better way to infer the referentiel (make a view ? )
             .execute()
         )

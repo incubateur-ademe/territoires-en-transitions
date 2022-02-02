@@ -1475,7 +1475,8 @@ insert into action_relation(id, referentiel, parent) values ('cae_5.2.2.6.6', 'c
 insert into action_relation(id, referentiel, parent) values ('cae_5.2.2.6.7', 'cae', 'cae_5.2.2.6');
 insert into action_relation(id, referentiel, parent) values ('cae_5.2.2.7.1', 'cae', 'cae_5.2.2.7');
 insert into action_relation(id, referentiel, parent) values ('cae_5.2.2.8.1', 'cae', 'cae_5.2.2.8');
-insert into action_relation(id, referentiel, parent) values ('cae_5.2.2.8.2', 'cae', 'cae_5.2.2.8');insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae', 'cae', '', 'Économie Circulaire', '', '', '', '', null, null);
+insert into action_relation(id, referentiel, parent) values ('cae_5.2.2.8.2', 'cae', 'cae_5.2.2.8');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae', 'cae', '', 'Économie Circulaire', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2', 'cae', '2', 'Patrimoine de la collectivité', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.1', 'cae', '2.1', 'Suivi et stratégie patrimoniale', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.1.1', 'cae', '2.1.1', 'Mettre en place une comptabilité énergétique et des émissions de GES des bâtiments publics', '<p>La collectivité dispose d’un bilan énergétique et technique de tous les bâtiments et équipements publics significatifs. Ce bilan inclut des éléments sur les consommations d’énergie, les gaz à effet de serre, les énergies renouvelables, la qualité de l’air intérieur.</p>
@@ -2065,7 +2066,8 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.2.5.2', 'cae', '2.3.2.5.2', 'Pour les piscines, attester de leur performance par un suivi précis mensuel avec un indicateur adapté', '<p>Exemple : indicateur de taux de renouvellement, litres par baigneur...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.3', 'cae', '2.3.3', 'Gérer sa voirie durablement', '<p>La collectivité gère sa voirie durablement : elle est attentive à limiter l''impact énergétique et les émissions de gaz à effet de serre de sa politique de création et d''entretien de voirie, de l''amont à l''aval (choix des matériaux, technique de mise en oeuvre, action préventive, priorisation des voiries à rénover...). Elle anticipe les risques liés au changement climatique et contribue à l''adaptation du territoire.</p>
-', '', '', '', 2.0, null);
+', '', '', '<p>« Guide de recommandations pour l’évaluation des émissions de GES des projets routiers », du CEREMA</p>
+', 2.0, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.3.1', 'cae', '2.3.3.1', 'Connaître son patrimoine (voirie)', '', '', '', '', null, 15.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.3.1.1', 'cae', '2.3.3.1.1', 'Mettre en place et tenir à jour un SIG répertoriant les voiries', '<p>Il identifie les délaissés et parties de voirie non utilisées pouvant être déclassées pour être désartificialisées, recevoir un revêtement limitant le stockage du rayonnement solaire (choix de l’albédo de la surface), le ruissellement, favorisant la biodiversité et la perméabilité des sols.</p>
 ', '', '', '', null, null);
@@ -2165,7 +2167,10 @@ https://sev84.fr/wp-content/uploads/2017/08/11-17-15-3-50-Eclairage_collectivite
 <a href="https://www.ecologie.gouv.fr/arrete-du-27-decembre-2018-relatif-prevention-reduction-et-limitation-des-nuisances-lumineuses">
 https://www.ecologie.gouv.fr/arrete-du-27-decembre-2018-relatif-prevention-reduction-et-limitation-des-nuisances-lumineuses
 </a>
-<p>Outil de pré-diagnostic de l’éclairage public, OPEPA : http://opepa.ademe.fr/</p>
+<p>Outil de pré-diagnostic de l’éclairage public, OPEPA :
+<a href="http://opepa.ademe.fr/">
+http://opepa.ademe.fr/
+</a></p>
 ', 6.0, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.1', 'cae', '2.3.1.1', 'Réaliser un diagnostic de l’éclairage public', '<p>La collectivité désigne 2 référents énergie (1 élu et 1 technicien) qui aident le prestataire/ou le service (si réalisé en interne) à récolter les données nécessaires à l’étude.</p>
 <p>Le diagnostic porte sur les points suivants :</p>
@@ -2195,7 +2200,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 ', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.2', 'cae', '2.3.1.2', 'Mettre en place des actions de sobriété sur l’éclairage public en priorité', '<p>La collectivité met en place des actions de sobriété, attestées par la progression d''un indicateur : diminution du nb de point lumineux/hab ou /km, baisse du nombre d''heures d''éclairement, % de communes pratiquant l''extinction (pour les EPCI compétents), pas seulement lampadaires mais aussi mobilier urbain, enseignes.</p>
 ', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.3', 'cae', '2.3.1.3', 'Délibérer et mettre en œuvre un plan d’optimisation de l’éclairage public', '', '', '', '', null, 35.0);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.3', 'cae', '2.3.1.3', 'Délibérer et mettre en œuvre un plan d’optimisation de l’éclairage public', '', '', '', '', null, 40.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.3.1', 'cae', '2.3.1.3.1', 'Mettre en œuvre de mesures d''amélioration des performances issues du diagnostic', '<p>Exemples de mesures: Optimisation tarifaire, maintenance préventive, modernisation des équipements, modification/optimisation du service rendu – extinction ou variateur de tension la nuit, choix judicieux des points lumineux, généralisation de l’éclairage à détection de présence ou encore la modération de l’éclairage des bâtiments, statues et façades...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.3.2', 'cae', '2.3.1.3.2', 'Formaliser des exigences/objectifs en matière d''entretien/maintenance dans un document dédié (contrat de maintenance, régie...)', '', '', '', '', null, null);
@@ -2207,7 +2212,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.3.7', 'cae', '2.3.1.3.7', 'Porter une attention au dimensionnement et à la performance des décorations de Noël', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.3.8', 'cae', '2.3.1.3.8', 'Respecter les prescriptions techniques de l’arrêté du 27 décembre 2018 relatif à la prévention, à la réduction et à la limitation des nuisances lumineuses', '<p>Prescriptions techniques: températures de couleur strictement inférieures à 3000K (idéal = 2700K) ; ratio ULR=0 (rapport du flux sortant des luminaires qui est émis dans l’hémisphère supérieur au flux total sortant des luminaires) ; densité surfacique de flux lumineux installé (lumen/m²) limitée à 35 lm/m2 en agglomération et 25lm/m2 hors agglomération.</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.4', 'cae', '2.3.1.4', 'Suivre et atteindre les objectifs fixés en matière d’éclairage public', '', '', '', '', null, 30.0);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.4', 'cae', '2.3.1.4', 'Suivre et atteindre les objectifs fixés en matière d’éclairage public', '', '', '', '', null, 25.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_2.3.1.4.1', 'cae', '2.3.1.4.1', 'Comparer l’indicateur de consommation/habitant avec les valeurs de références (10% des points):', '<p>*Valeur limite : 90 kWh/hab (énergie finale)</p>
 <p>*Valeur cible : 60 kWh/hab</p>
 ', '', '', '', null, null);
@@ -2361,7 +2366,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.1.4.1', 'cae', '6.1.1.4.1', 'Interpeller les acteurs sur les blocages législatifs et réglementaires rencontrés', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.1.4.2', 'cae', '6.1.1.4.2', 'Interpeller officiellement le niveau national voire européen sur les blocages rencontrés (députés, sénateurs, commission européenne)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.1.4.3', 'cae', '6.1.1.4.3', 'Proposer les évolutions législatives, réglementaires et autres initiatives', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.1.4.4', 'cae', '6.1.1.4.4', 'Prendre position et/ou mener des actions lors de procédures de consultation ordinaires (lois, ordonnances, planifications, infrastructures de transport, etc.) attestées par des documents écrits', '<p>Par exemple: courriers au députés-sénateurs, questions au gouvernement, communication à la presse, lettres des lecteurs, récoltes de signatures, etc...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.1.4.4', 'cae', '6.1.1.4.4', 'Prendre position et/ou mener des actions lors de procédures de consultation ordinaires (lois, ordonnances, planifications, infrastructures de transport, etc.) attestées par des documents écrits', '<p>par exemple : courriers au députés-sénateurs, questions au gouvernement, communication à la presse, lettres des lecteurs, récoltes de signatures, etc...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.1.5', 'cae', '6.1.1.5', 'Mettre en place des actions au niveau international', '', '', '', '', null, 25.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.1.5.1', 'cae', '6.1.1.5.1', 'S’engager dans des projets européens (LIFE, Interreg…)', '', '', '', '', null, null);
@@ -2444,10 +2449,10 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.3.2.4', 'cae', '6.1.3.2.4', 'Exploiter les moyens de communication existants (journal de la collectivité, réunions publiques, médias locaux, affichage, etc) pour diffuser les informations', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.3.2.5', 'cae', '6.1.3.2.5', 'Mettre en avant des installations et projets exemplaires dans le secteur des énergies renouvelables et de la lutte contre le changement climatique (par exemple, chaudière bois collective, maisons passives...)', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.3.2.6', 'cae', '6.1.3.2.6', 'Etre cohérent dans le travail quotidien et les décisions prises', '<p>Par exemple: pas de salon de l''automobile, pas de vaisselle à usage unique lors des manifestations de la collectivité, etc...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.3.2.6', 'cae', '6.1.3.2.6', 'Etre cohérent dans le travail quotidien et les décisions prises', '<p>par exemple : pas de salon de l''automobile, pas de vaisselle à usage unique lors des manifestations de la collectivité, etc...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.3.3', 'cae', '6.1.3.3', 'Donner du poids et crédibiliser les actions de la collectivité dans sa communication', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.3.3.1', 'cae', '6.1.3.3.1', 'Inscrire ses démarches et actions climat-air-énergie dans des démarches de reconnaissance locales, nationales ou européennes pour crédibiliser et renforcer sa communication', '<p>Par exemple: ligue EnR, Cit’ergie, Rubans du développement durable, etc...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.3.3.1', 'cae', '6.1.3.3.1', 'Inscrire ses démarches et actions climat-air-énergie dans des démarches de reconnaissance locales, nationales ou européennes pour crédibiliser et renforcer sa communication', '<p>par exemple : ligue EnR, Cit’ergie, Rubans du développement durable, etc...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.3.4', 'cae', '6.1.3.4', 'Décliner le plan de communication pour chaque cible du territoire', '', '', '', '', null, 30.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.3.4.1', 'cae', '6.1.3.4.1', 'Mettre en place des supports de communication différenciés selon les cibles (contenu, médias et lieux de diffusion...)', '', '', '', '', null, null);
@@ -2509,7 +2514,7 @@ Convention territoriale d''exercice concerté d''une compétence
 ', 4.0, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.1', 'cae', '6.1.2.1', 'Partager une stratégie climat-air-énergie commune', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.1.1', 'cae', '6.1.2.1.1', 'Echanger/relayer/diffuser des données, des documents et des bonnes pratiques entre EPCI et communes membres, concernant leur politique climat air énergie', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.1.2', 'cae', '6.1.2.1.2', 'Etre à l’initiative ou participer à des rencontres ponctuelles bilatérales commune/intercommunalité en lien avec le climat, l’air et l’énergie', '<p>Par exemple: conférences, groupes de travail thématique, rencontres à l’occasion de l’élaboration des documents de planification et d’urbanisme. Pour les EPCI : les rencontres sont fréquemment délocalisées sur le territoire pour les territoires étendus pour faciliter la participation d’un maximum de communes membres.</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.1.2', 'cae', '6.1.2.1.2', 'Etre à l’initiative ou participer à des rencontres ponctuelles bilatérales commune/intercommunalité en lien avec le climat, l’air et l’énergie', '<p>par exemple : conférences, groupes de travail thématique, rencontres à l’occasion de l’élaboration des documents de planification et d’urbanisme. Pour les EPCI : les rencontres sont fréquemment délocalisées sur le territoire pour les territoires étendus pour faciliter la participation d’un maximum de communes membres.</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.2', 'cae', '6.1.2.2', 'Connaître les rôles de chacun en matière de climat, d’air et d’énergie', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.2.1', 'cae', '6.1.2.2.1', 'Sur les thématiques en lien avec le climat, l’air et l’énergie, les rôles et compétences de chacun (intercommunalité/commune) sont clairs', '<p>Le cas échéant des précisions sont apportées et formalisées (délibération précisant les compétences, convention EPCI-commune membre)</p>
@@ -2531,9 +2536,9 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.3.2', 'cae', '6.1.2.3.2', 'Commune : la collectivité est force de proposition auprès de l’intercommunalité pour la mise en place d’actions mutualisées et participe régulièrement aux actions collectives proposées par son EPCI.', '<p>En cas de faiblesse de l’EPCI sur le sujet, elle initie des actions collectives entre communes-membres.</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.4', 'cae', '6.1.2.4', 'Systématiser la coopération intercommunale et donner l’exemple sur le territoire', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.4.1', 'cae', '6.1.2.4.1', 'EPCI: Mettre en place un outil global pour accompagner les communes membres sur les thématique climat-air-énergie', '<p>Par exemple: kit pédagogique, plateforme internet, cellule d’appui technique…</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.4.1', 'cae', '6.1.2.4.1', 'EPCI: Mettre en place un outil global pour accompagner les communes membres sur les thématique climat-air-énergie', '<p>par exemple : kit pédagogique, plateforme internet, cellule d’appui technique…</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.4.2', 'cae', '6.1.2.4.2', 'EPCI: Réflechir sur de nouveaux outils juridico-financiers pour faciliter le passage à l’acte des communes', '<p>Par exemple: faisabilité d’un fonds local issu des ressources générées par le développement des énergies renouvelables à l’échelle de l’EPCI, faisabilité d’une société publique locale dédiée à la rénovation pour accompagner les communes dans leurs projets…</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.4.2', 'cae', '6.1.2.4.2', 'EPCI: Réflechir sur de nouveaux outils juridico-financiers pour faciliter le passage à l’acte des communes', '<p>par exemple : faisabilité d’un fonds local issu des ressources générées par le développement des énergies renouvelables à l’échelle de l’EPCI, faisabilité d’une société publique locale dédiée à la rénovation pour accompagner les communes dans leurs projets…</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.1.2.4.3', 'cae', '6.1.2.4.3', 'EPCI: Institutionnaliser les réunions thématiques avec les communes membres', '<p>Composition et fréquence de réunions déterminées à l’avance, notion de « Club climat-air-énergie » ou équivalent réunissant régulièrement les collectivités volontaires sur le territoire...</p>
 ', '', '', '', null, null);
@@ -2632,9 +2637,9 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Exemple de solutions: éco-conditionnement des garanties d''emprunts accordés aux bailleurs sociaux, soutien financier ou technique pour des travaux de performance énergétique…</p>
 <p>Veiller à prendre en compte en amont des travaux la qualité de l’air intérieur.</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.2.4.4', 'cae', '6.2.2.4.4', 'Utiliser les outils existants et en créer des nouveaux', '<p>Par exemple: PDALPD, baux à réhabilitation, outil préventif pour l''amélioration thermique des logements, outil curatif d''aide au paiement des dettes d''énergie, Fonds de Solidarité pour le logement, Fonds Sociaux d''Aide aux Travaux de Maîtrise de l''Energie (FSATME), opération de distribution de &quot;kits eau/énergie&quot;...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.2.4.4', 'cae', '6.2.2.4.4', 'Utiliser les outils existants et en créer des nouveaux', '<p>par exemple : PDALPD, baux à réhabilitation, outil préventif pour l''amélioration thermique des logements, outil curatif d''aide au paiement des dettes d''énergie, Fonds de Solidarité pour le logement, Fonds Sociaux d''Aide aux Travaux de Maîtrise de l''Energie (FSATME), opération de distribution de &quot;kits eau/énergie&quot;...</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.2.4.5', 'cae', '6.2.2.4.5', 'Monter des partenariats pour proposer/élaborer une offre de solutions alternatives afin d''éviter les déplacements contraints en véhicule individuel pour les publics précaires', '<p>Par exemple: gratuité/tarif réduit des transports en commun, transports à la demande ou locations de vélo pour les demandeurs d’emplois ou seniors, desserte TC ou transport à la demande des agences Pôle emploi…</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.2.4.5', 'cae', '6.2.2.4.5', 'Monter des partenariats pour proposer/élaborer une offre de solutions alternatives afin d''éviter les déplacements contraints en véhicule individuel pour les publics précaires', '<p>par exemple : gratuité/tarif réduit des transports en commun, transports à la demande ou locations de vélo pour les demandeurs d’emplois ou seniors, desserte TC ou transport à la demande des agences Pôle emploi…</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.3', 'cae', '6.2.3', 'Accompagner les particuliers pour la rénovation et la construction durable de leur logement (habitat individuel et collectif)', '<p>La collectivité gère ou soutient un ou des centre(s) de conseil (local ou régional) sur le climat, l''air et l''énergie à l''intention des particuliers. Elle soutient également financièrement les travaux de rénovation du secteur résidentiel. Ces missions sont assurées dans l''idéal par un guichet unique type espace conseil FAIRE .</p>
 ', '<p><strong>Contexte et enjeux</strong></p>
@@ -2757,7 +2762,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.4.6', 'cae', '6.2.4.6', 'Mesurer les résultats de l’activité d''accompagnement', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.4.6.1', 'cae', '6.2.4.6.1', 'Le nombre de consultations émanant des acteurs tertiaires privés est en augmentation', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.4.6.2', 'cae', '6.2.4.6.2', 'Des locaux tertiaires rénovés (BBC rénovation) ou neufs exemplaires (E+C-, certification HQE…), ayant fait l''objet du soutien de la collectivité, sont présents sur le territoire', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.4.6.3', 'cae', '6.2.4.6.3', 'Suivre le respect des obligations de performance du décret tertiaire sur son territoire', '<p>Par exemple: mise en place de partenariats pour obtenir les données au niveau local, baisse constatée des consommations moyennes par type de bâtiment etc...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.4.6.3', 'cae', '6.2.4.6.3', 'Suivre le respect des obligations de performance du décret tertiaire sur son territoire', '<p>par exemple : mise en place de partenariats pour obtenir les données au niveau local, baisse constatée des consommations moyennes par type de bâtiment etc...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.1', 'cae', '6.2.1', 'Coopérer avec les acteurs professionnels du bâtiment et de l''immobilier', '<p>La collectivité informe et incite les acteurs professionnels du bâtiment (bailleurs sociaux, promoteurs, investisseurs, artisans, bureau d''études, administrateurs de biens, notaires, agents immobiliers...) à intégrer les enjeux climat-air-énergie à leurs activités. Ces actions sont réalisées via  des espaces conseils FAIRE ou des conventions volontaires, contenant des standards de construction et de rénovation élevés, des objectifs d''efficacité énergétique, la sensibilisation des occupants.</p>
 ', '<p><strong>Contexte et enjeux</strong></p>
@@ -2820,7 +2825,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.1.1.3', 'cae', '6.2.1.1.3', 'Informer les acteurs du bâtiment et de l’immobilier sur la vulnérabilité du territoire au changement climatique', '<p>Vigilance quant au choix des implantations de bâtiments et d''équipements.</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.1.1.4', 'cae', '6.2.1.1.4', 'Informer les acteurs du bâtiment et de l’immobilier des dispositifs mis en place au niveau régional et local ainsi que des formations disponibles, en s’appuyant sur les acteurs de la formation professionnelle de son territoire', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.1.1.5', 'cae', '6.2.1.1.5', 'Informer les aménageurs sur les dispositifs permettant de développer les usages cyclables', '<p>Par exemple: niveau de qualité des aménagements, du stationnement, systématisation d’une réflexion intégrant le vélo dans un projet…</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.1.1.5', 'cae', '6.2.1.1.5', 'Informer les aménageurs sur les dispositifs permettant de développer les usages cyclables', '<p>par exemple : niveau de qualité des aménagements, du stationnement, systématisation d’une réflexion intégrant le vélo dans un projet…</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.1.2', 'cae', '6.2.1.2', 'Animer et inciter les acteurs à qualifier leurs pratiques', '', '', '', '', null, 30.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.2.1.2.1', 'cae', '6.2.1.2.1', 'Favoriser l’animation des acteurs avec mise en place de dispositifs variés (ateliers, visites, rencontres, formation) afin de créer une culture commune sur le territoire', '', '', '', '', null, null);
@@ -2853,7 +2858,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.3.1', 'cae', '6.3.3.1', 'Mener une veille pro-active sur les acteurs et projets phares', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.3.1.1', 'cae', '6.3.3.1.1', 'Recenser les acteurs privés et ceux de la recherche, de l''enseignement supérieur, de la formation professionnelle (GRETA, lycée agricole, CFA, MFR…), qui sont susceptibles de mener des projets sur les thématiques climat-air-énergie (situés sur le territoire ou à proximité de celui-ci pour le milieu rural)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.3.1.2', 'cae', '6.3.3.1.2', 'Rencontrer des acteurs pour étudier des partenariats sur des projets concrets et/ou des axes de recherches et de formations', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.3.1.3', 'cae', '6.3.3.1.3', 'Recenser les principaux appels à projets, notamment européens, et informer les acteurs du territoire susceptibles d’y répondre ont été informés', '<p>Par exemple: lettre d’information, journée de rencontres, etc...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.3.1.3', 'cae', '6.3.3.1.3', 'Recenser les principaux appels à projets, notamment européens, et informer les acteurs du territoire susceptibles d’y répondre ont été informés', '<p>par exemple : lettre d’information, journée de rencontres, etc...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.3.2', 'cae', '6.3.3.2', 'Formaliser l’engagement de la collectivité dans le soutien des projets des acteurs privés', '', '', '', '', null, 10.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.3.2.1', 'cae', '6.3.3.2.1', 'Le partenariat ou l''implication de la collectivité avec les acteurs décrits précédemment a fait l''objet d''une discussion', '<p>Discussion inscrite dans un compte-rendu, voire d’une délibération si nécessaire au niveau de l''organe délibérant</p>
@@ -3003,7 +3008,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.2', 'cae', '6.3.2.2', 'Mobiliser les acteurs du tourisme', '', '', '', '', null, 15.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.2.1', 'cae', '6.3.2.2.1', 'Engager l’Office de Tourisme dans une démarche éco-responsable', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.2.2', 'cae', '6.3.2.2.2', 'Valoriser par l’office de tourisme des acteurs du tourisme engagés dans une démarche de tourisme durable', '<p>Par exemple: mise en exergue sur le site web, mise en exergue par un macaron sur la vitrine...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.2.2', 'cae', '6.3.2.2.2', 'Valoriser par l’office de tourisme des acteurs du tourisme engagés dans une démarche de tourisme durable', '<p>par exemple : mise en exergue sur le site web, mise en exergue par un macaron sur la vitrine...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.2.3', 'cae', '6.3.2.2.3', 'Sensibiliser aux enjeux climat-air-énergie, l’ensemble des acteurs professionnels et associatifs', '<p>Les prestataires, les professionnels de l''hôtellerie et de la restauration, les élus et les agents des collectivités…</p>
 ', '', '', '', null, null);
@@ -3016,19 +3021,19 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.3.3', 'cae', '6.3.2.3.3', 'Augmenter le nombre de structures touristiques labellisées (Ecolabel européen notamment), par exemple en soutenant une opération collective d''éco labellisation de professionnels de la restauration et de l''hébergement', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.3.4', 'cae', '6.3.2.3.4', 'Soutenir la création d''entreprises œuvrant pour le tourisme durable par le biais d''appels à projets, de valorisation médiatique, de soutiens financiers', '<p>Par exemple appel à projets Ecolabel européen...</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.3.5', 'cae', '6.3.2.3.5', 'Créer des événements touristiques sur le territoire éco-responsables au travers un engagement via une charte et visant la certification ISO 20121:2012 (évènements intégrant le développement durable)', '<p>Par exemple: festival, manifestation culturelle, manifestation sportive, congrès, etc...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.3.5', 'cae', '6.3.2.3.5', 'Créer des événements touristiques sur le territoire éco-responsables au travers un engagement via une charte et visant la certification ISO 20121:2012 (évènements intégrant le développement durable)', '<p>par exemple : festival, manifestation culturelle, manifestation sportive, congrès, etc...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.4', 'cae', '6.3.2.4', 'Mettre en place une offre globale de mobilité durable en lien avec le tourisme', '', '', '', '', null, 25.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.4.1', 'cae', '6.3.2.4.1', 'Faciliter l’accès pour se rendre sur le territoire par les transports en commun. Promouvoir l’usage des transports en commun sur tous les supports de communication', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.4.2', 'cae', '6.3.2.4.2', 'Faciliter l’accès à l’intérieur du territoire aux activités/hébergements par les transports en commun. Promouvoir l’usage des transports en commun sur tous les supports de communication', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.4.3', 'cae', '6.3.2.4.3', 'Identifier et remettre en état / développer les circuits de randonnée pédestres et cyclables touristiques sur le territoire', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.4.4', 'cae', '6.3.2.4.4', 'Interdire/contraindre fortement l''accès aux véhicules motorisés sur une ou des parties particulièrement sensibles et fréquentées du territoire', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.4.5', 'cae', '6.3.2.4.5', 'Création de circuits touristiques sans voiture, de services de mobilité en particulier pour le “dernier kilomètre” en lien avec les hébergements', '<p>Par exemple: navettes, partenariats hébergeur/services de location de vélo…</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.4.5', 'cae', '6.3.2.4.5', 'Création de circuits touristiques sans voiture, de services de mobilité en particulier pour le “dernier kilomètre” en lien avec les hébergements', '<p>par exemple : navettes, partenariats hébergeur/services de location de vélo…</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.4.6', 'cae', '6.3.2.4.6', 'Prendre en compte le déplacement des saisonniers dans l’offre de transports et de logements', '<p>Exemple: navette, co-voiturage, subventionner des logements au coeur des stations pour rendre les loyers accessibles</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.5', 'cae', '6.3.2.5', 'Intégrer et formaliser de manière ambitieuse l’enjeu du tourisme durable dans la vision climat air énergie du territoire', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.5.1', 'cae', '6.3.2.5.1', 'Porter une offre touristique durable et adaptée au changement climatique dans le discours politique et les documents de planification', '<p>Par exemple: diversification des activités, tourisme 4 saisons, suppression progressive des activités constituant une mal-adaptation, c’est-à-dire un changement opéré dans les systèmes naturels ou humains et qui conduit de manière non intentionnelle à augmenter la vulnérabilité au lieu de la réduire…</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.5.1', 'cae', '6.3.2.5.1', 'Porter une offre touristique durable et adaptée au changement climatique dans le discours politique et les documents de planification', '<p>par exemple : diversification des activités, tourisme 4 saisons, suppression progressive des activités constituant une mal-adaptation, c’est-à-dire un changement opéré dans les systèmes naturels ou humains et qui conduit de manière non intentionnelle à augmenter la vulnérabilité au lieu de la réduire…</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.3.2.5.2', 'cae', '6.3.2.5.2', 'Adhérer collectivement à des chartes à l’échelle du territoire', '<p>Exemples: Charte de l’Organisation Mondiale du Tourisme, Charte européenne du tourisme durable, charte des professionnels…</p>
 ', '', '', '', null, null);
@@ -3261,7 +3266,7 @@ et ses possibilités de développement, identifiant au moins les sols agricoles 
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.1', 'cae', '6.4.2.1', 'Sensibiliser élus, services et acteurs du territoire aux enjeux liés à la forêt et aux espaces boisés', '', '', '', '', null, 10.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.1.1', 'cae', '6.4.2.1.1', 'Sensibiliser les élus et services de la collectivité et les particuliers à la gestion durable de la forêt (sensibilisation notamment aux leviers forestiers d’atténuation du changement climatique : séquestration carbone en forêt et production durable de bois pour les usages bois matériau et bois énergie) et à l’utilisation du bois énergie sur le territoire, de façon complémentaire aux usages matériaux', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.1.2', 'cae', '6.4.2.1.2', 'Sensibiliser les élus à l’utilisation du bois matériau, notamment à l’utilisation du bois dans la construction', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.1.3', 'cae', '6.4.2.1.3', 'Sensibilises élus à l’utilisation optimale du bois', '<p>Par exemple: complémentarité des filières, principe d’utilisation de bois en cascade, utilisation du bois local filières courtes (ex : marques type bois des Alpes, bois des Territoires du Massif Central, ...)</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.1.3', 'cae', '6.4.2.1.3', 'Sensibilises élus à l’utilisation optimale du bois', '<p>par exemple : complémentarité des filières, principe d’utilisation de bois en cascade, utilisation du bois local filières courtes (ex : marques type bois des Alpes, bois des Territoires du Massif Central, ...)</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.1.4', 'cae', '6.4.2.1.4', 'Sensibiliser les élus à la lutte contre la déforestation importée', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.2', 'cae', '6.4.2.2', 'Lutter contre la déforestation importée', '', '', '', '', null, 10.0);
@@ -3295,7 +3300,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.5.4', 'cae', '6.4.2.5.4', 'Mettre en place des mesures pour favoriser la séquestration de carbone dans les forêts et les espaces boisés (ex : îlots de sénescence, arbres morts...).', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.5.5', 'cae', '6.4.2.5.5', 'Mettre en place des actions favorisant l’utilisation optimale du bois (tri du bois, chantiers groupés).', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.6', 'cae', '6.4.2.6', 'Prendre en charge, promouvoir et soutenir le développement d’une filière bois-construction locale et à haute performance environnementale', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.6.1', 'cae', '6.4.2.6.1', 'Soutenir la structuration et l’optimisation de la filière bois', '<p>Par exemple: création de plateforme de séchage et de stockage destinées en priorité à un usage local, espaces/groupes de discussion entre acteurs, création d''association, de SEM ou de SCIC, label pour le bois local...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.6.1', 'cae', '6.4.2.6.1', 'Soutenir la structuration et l’optimisation de la filière bois', '<p>par exemple : création de plateforme de séchage et de stockage destinées en priorité à un usage local, espaces/groupes de discussion entre acteurs, création d''association, de SEM ou de SCIC, label pour le bois local...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.6.2', 'cae', '6.4.2.6.2', 'Engager une opération de construction / rénovation bois en adaptant les spécifications techniques aux caractéristiques du bois local', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.2.6.3', 'cae', '6.4.2.6.3', 'Accompagner les acteurs de la filière bois du territoire pour pénétrer le marché de la construction bois sur le territoire et au-delà', '', '', '', '', null, null);
@@ -3481,7 +3486,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 ', '', '', '', null, 10.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.1.2.1', 'cae', '6.4.1.2.1', 'Initier une concertation entre les acteurs (réunions professionnelles, réunions publiques…)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.1.2.2', 'cae', '6.4.1.2.2', 'Mener des actions de sensibilisation (réunions publiques, films, intervenants extérieurs, théâtre, expos, défis Famille à alimentation positive…)', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.1.2.3', 'cae', '6.4.1.2.3', 'Mettre en relation les acteurs', '<p>Par exemple: producteurs-consommateurs-restaurateurs, commissions locales à l’installation – café installation-, limitation du gaspillage alimentaire, facilitation et accompagnement d’associations d’aide alimentaire, don, acteurs de l’alimentation, de la santé et du social autour des questions d’accès de tous à une alimentation saine et durable …</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.1.2.3', 'cae', '6.4.1.2.3', 'Mettre en relation les acteurs', '<p>par exemple : producteurs-consommateurs-restaurateurs, commissions locales à l’installation – café installation-, limitation du gaspillage alimentaire, facilitation et accompagnement d’associations d’aide alimentaire, don, acteurs de l’alimentation, de la santé et du social autour des questions d’accès de tous à une alimentation saine et durable …</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.4.1.3', 'cae', '6.4.1.3', 'Améliorer la performance environnementale de la production agricole', '<p>Les améliorations visent les champs suivants :</p>
 <ul>
@@ -3726,11 +3731,11 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>D’autres actions de sensibilisation/animation sur le sujet des déchets ou de l’alimentation sont traitées plus en détail dans les mesures dédiées 1.2.3 et 6.4.1.</p>
 ', '', '', '', null, 30.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.2.4', 'cae', '6.5.2.4', 'Montrer l’exemple lors des évènements', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.2.4.1', 'cae', '6.5.2.4.1', 'A l''occasion de manifestations ou à l''occasion de récompenses à des jeux ou objets "promotionnels", des objets incitant aux comportements éco-responsables sont privilégiés', '<p>Par exemple: réducteurs de pression, lampes basses consommations, gilet fluo pour faire du vélo, produits (biens ou services) porteurs de l''Ecolabel Européen...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.2.4.1', 'cae', '6.5.2.4.1', 'A l''occasion de manifestations ou à l''occasion de récompenses à des jeux ou objets "promotionnels", des objets incitant aux comportements éco-responsables sont privilégiés', '<p>par exemple : réducteurs de pression, lampes basses consommations, gilet fluo pour faire du vélo, produits (biens ou services) porteurs de l''Ecolabel Européen...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.2.4.2', 'cae', '6.5.2.4.2', 'Mettre en place des “ponts” entre les différents postes de consommation', '<p>Lors des manifestations pour une alimentation biologique et locale la collectivité promeut (ou invite les organisateurs à promouvoir) aussi les initiatives sur les économies d’énergie, etc. afin de favoriser une approche globale de la consommation responsable.</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.2.4.3', 'cae', '6.5.2.4.3', 'Réaliser de manière éco-responsable la tenue des évènements des relais d''opinions', '<p>Par exemple: élaboration d''un guide par la collectivité, autorisation ou caution liées aux éco-gestes, relevé des consommations d''énergie et d''eau avant et après l''utilisation des locaux par les associations...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.2.4.3', 'cae', '6.5.2.4.3', 'Réaliser de manière éco-responsable la tenue des évènements des relais d''opinions', '<p>par exemple : élaboration d''un guide par la collectivité, autorisation ou caution liées aux éco-gestes, relevé des consommations d''énergie et d''eau avant et après l''utilisation des locaux par les associations...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.2.5', 'cae', '6.5.2.5', 'Limiter l’emprise de la publicité', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.2.5.1', 'cae', '6.5.2.5.1', 'Sensibiliser les habitants à travers des actions rapides et efficaces (par exemple distribution généralisée d’autocollants « Stop Pub » avec le bulletin municipal)', '', '', '', '', null, null);
@@ -3820,7 +3825,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.1.1.5', 'cae', '6.5.1.1.5', 'Institutionnaliser la collaboration entre les habitants et la collectivité sur les thèmes relevant de l''énergie et du climat en définissant un organe participatif et/de concertation ou en se basant sur les groupes de travail déjà existants (qualifier les Conseils de quartier, Conseils de développement, …)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.1.2', 'cae', '6.5.1.2', 'Conduire une concertation régulière et pérenne', '', '', '', '', null, 45.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.1.2.1', 'cae', '6.5.1.2.1', 'Animer et mobiliser régulièrement (au moins trois fois par an) les habitants lors d’ateliers thématiques ou autour de projets particuliers (plan vélo, rénovation d’une école, etc.).', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.1.2.2', 'cae', '6.5.1.2.2', 'S''organiser pour faire participer des publics variés en mobilisant des canaux de communication et des formats de concertation variés et adaptés au différents publics', '<p>Par exemple: ateliers avec les centres sociaux, avec les Maisons des Jeunes et de la Culture (MJC), mise en place de garderies pour favoriser la participation des jeunes actifs, ...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.1.2.2', 'cae', '6.5.1.2.2', 'S''organiser pour faire participer des publics variés en mobilisant des canaux de communication et des formats de concertation variés et adaptés au différents publics', '<p>par exemple : ateliers avec les centres sociaux, avec les Maisons des Jeunes et de la Culture (MJC), mise en place de garderies pour favoriser la participation des jeunes actifs, ...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_6.5.1.2.3', 'cae', '6.5.1.2.3', 'Adapter les processus de concertation des habitants au travail collaboratif et à l’expression de la parole de chacun.', '<p>Un travail est conduit pour favoriser l’appropriation des problématiques air-énergie-climat afin que chacun se sente en capacité de s’exprimer (pédagogie des intervenants, production de documents synthétiques et pédagogiques...). Les modes d’animation mises en place favorisent l’écoute des participants.</p>
 ', '', '', '', null, null);
@@ -4395,9 +4400,9 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.2', 'cae', '3.3.4.2', 'Sensibiliser à l’importance et à la fragilité de la biodiversité et aux enjeux liés aux espaces verts', '', '', '', '', null, 10.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.2.1', 'cae', '3.3.4.2.1', 'Mettre en place des actions de sensibilisation aux différents publics à la biodiversité', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.2.2', 'cae', '3.3.4.2.2', 'Mettre en valeur les informations et actions locales relatives à la biodiversité dans ses supports de communication', '<p>Par exemple: journal communal ou intercommunal, site web...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.2.2', 'cae', '3.3.4.2.2', 'Mettre en valeur les informations et actions locales relatives à la biodiversité dans ses supports de communication', '<p>par exemple : journal communal ou intercommunal, site web...</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.2.3', 'cae', '3.3.4.2.3', 'Participer à la réalisation des pratiques de gestion des espaces verts.', '<p>Par exemple: initiative, financement, soutien, participation à des réunions, avis...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.2.3', 'cae', '3.3.4.2.3', 'Participer à la réalisation des pratiques de gestion des espaces verts.', '<p>par exemple : initiative, financement, soutien, participation à des réunions, avis...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.2.4', 'cae', '3.3.4.2.4', 'Organiser de sessions de sensibilisation / formation en interne sur la gestion différenciée des espaces verts et les pratiques alternatives aux produits phytosanitaires', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.3', 'cae', '3.3.4.3', 'Réduire les impacts de l’éclairage sur la biodiversité nocturne', '<p>Les travaux sur l’éclairage public sont évalués dans la mesure 2.3.1.</p>
@@ -4417,11 +4422,11 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.5', 'cae', '3.3.4.5', 'Prendre en compte la biodiversité dans une approche transversale', '', '', '', '', null, 10.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.5.1', 'cae', '3.3.4.5.1', 'Travailler ensemble pour mener la politique de préservation de la biodiversité (réunion commune, relecture itérative des documents…)', '<p>Les services et les élus en lien avec l’urbanisme, la voirie, les milieux naturels et la transition énergétique doivent être impliqués.</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.5.2', 'cae', '3.3.4.5.2', 'Intègrer les enjeux et les objectifs de la démarche climat-air-énergie dans l’élaboration de la trame verte et bleue (et vice-versa)', '<p>Par exemple: travaux de restauration et entretien des haies bocagères augmentant la ressource bois, croisement des potentiels énergétiques et des cartes d’enjeux environnementaux, séquestration carbone…</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.5.2', 'cae', '3.3.4.5.2', 'Intègrer les enjeux et les objectifs de la démarche climat-air-énergie dans l’élaboration de la trame verte et bleue (et vice-versa)', '<p>par exemple : travaux de restauration et entretien des haies bocagères augmentant la ressource bois, croisement des potentiels énergétiques et des cartes d’enjeux environnementaux, séquestration carbone…</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.5.3', 'cae', '3.3.4.5.3', 'Définir des critères environnementaux pour orienter les porteurs de projet', '<p>Cela permet de limiter l’impact sur la biodiversité des constructions et des ENR (fiche d’application de la trame verte bleue, zoom par secteur, etc.)</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.5.4', 'cae', '3.3.4.5.4', 'Concilier trame verte et bleue avec densification des espaces urbains', '<p>Par exemple: trame verte et bleue urbaine multifonctionnelle, en créant, préservant et/ou restaurant des milieux naturels - notamment berges et cours d''eau- et des corridors écologiques entre ces milieux.</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.5.4', 'cae', '3.3.4.5.4', 'Concilier trame verte et bleue avec densification des espaces urbains', '<p>par exemple : trame verte et bleue urbaine multifonctionnelle, en créant, préservant et/ou restaurant des milieux naturels - notamment berges et cours d''eau- et des corridors écologiques entre ces milieux.</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.5.5', 'cae', '3.3.4.5.5', 'Décider d’un seuil maximal d’imperméabilisation des sols pour tout projet d’aménagement de construction, de rénovation ou d’agrandissement sur le territoire', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.5.6', 'cae', '3.3.4.5.6', 'Utiliser le coefficient de biotope par surface dans le PLU', '', '', '', '', null, null);
@@ -4431,11 +4436,11 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.6.1', 'cae', '3.3.4.6.1', 'Restaurer des zones humides', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.6.2', 'cae', '3.3.4.6.2', 'Végétaliser des bâtiments (toitures, façades…) en prenant en compte la biodiversité', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.6.3', 'cae', '3.3.4.6.3', 'Déminéraliser des espaces urbains non bâtis (cours d’école, d’immeubles, voiries)', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.6.4', 'cae', '3.3.4.6.4', 'Mettre en place des actions de valorisation écologique des espaces publics', '<p>Par exemple: parcs, dents creuses, friches industrielles, coulées vertes, rives des plans et cours d’eau…</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.6.4', 'cae', '3.3.4.6.4', 'Mettre en place des actions de valorisation écologique des espaces publics', '<p>par exemple : parcs, dents creuses, friches industrielles, coulées vertes, rives des plans et cours d’eau…</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.7', 'cae', '3.3.4.7', 'Utiliser des outils de contractualisation opérationnels pour la mise en œuvre de la trame verte et bleue', '<p>La collectivité met en place/promeut des outils de contractualisation et de maîtrise foncière transversaux dans lesquels la &quot;préservation de la biodiversité, la protection des milieux et des ressources&quot; constitue un pilier majeur.</p>
 ', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.7.1', 'cae', '3.3.4.7.1', 'Mettre en place un outil de contractualisation à l’échelle parcellaire', '<p>Par exemple: Bail rural à clauses environnementales, contrat Natura 2000, convention de gestion, cahier des charges de lotissement, mesure agro environnementale territorialisée, …</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.7.1', 'cae', '3.3.4.7.1', 'Mettre en place un outil de contractualisation à l’échelle parcellaire', '<p>par exemple : Bail rural à clauses environnementales, contrat Natura 2000, convention de gestion, cahier des charges de lotissement, mesure agro environnementale territorialisée, …</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.7.2', 'cae', '3.3.4.7.2', 'Mettre en place un outil à une échelle plus large', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.4.8', 'cae', '3.3.4.8', 'Suivre l’évolution de la biodiversité et la gestion des espaces verts', '', '', '', '', null, 15.0);
@@ -4512,7 +4517,7 @@ https://www.astee.org/publications/guide-methodologique-des-emissions-de-gaz-a-e
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.1.1', 'cae', '3.3.1.1', 'Définir la recherche de l''efficacité énergétique comme un objectif dans les contrats de DSP ou l''inscrire dans la stratégie de la régie', '', '', '', '', null, 15.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.1.1.1', 'cae', '3.3.1.1.1', 'Demander la recherche de l’efficacité énergétique dans les contrats de DSP ou l''inscrite dans la stratégie de la régie', '<p>Une certification ISO 9001 et/ou 50001,  etc. du service ou des installations est un plus.</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.1.1.2', 'cae', '3.3.1.1.2', 'Determiner les indices les plus importants dans le cadre d''une analyse et proposer des mesures d''amélioration de l''efficacité énergétique', '<p>Par exemple: consommation d''énergie, rendements, indices linéaires de pertes, …</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.1.1.2', 'cae', '3.3.1.1.2', 'Determiner les indices les plus importants dans le cadre d''une analyse et proposer des mesures d''amélioration de l''efficacité énergétique', '<p>par exemple : consommation d''énergie, rendements, indices linéaires de pertes, …</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.1.2', 'cae', '3.3.1.2', 'Conseiller et former, de façon fréquente, les acteurs du secteur', '', '', '', '', null, 10.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.1.2.1', 'cae', '3.3.1.2.1', 'Dispenser des formations à destination des acteurs du secteur', '<p>Par exemple séminaires de formation pour les installateurs sanitaires...</p>
@@ -4694,7 +4699,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.2.1', 'cae', '3.3.5.2.1', 'Valoriser la chaleur de l''UIOM (utilisation complète, en interne et/ou vente à l''extérieur)et suivre le % réel de valorisation énergétique/déchets entrants.', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.2.2', 'cae', '3.3.5.2.2', 'Valoriser la chaleur résiduelle (cogénération) si l''UIOM produit de l''électricité', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.2.3', 'cae', '3.3.5.2.3', 'Valoriser la chaleur ou l''électricité dans l''unité de combustion de CSR (pour les DOM)', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.2.4', 'cae', '3.3.5.2.4', 'Optimiser le captage du biogaz issu des centres d’enfouissement', '<p>Par exemple: diminution des émissions en phase d’exploitation avant mise en œuvre des dispositifs définitifs de captage (captage précoce, optimisation de la durée d’exploitation des alvéoles ou casiers) et limitation des fuites aux parois du réseau, notamment par l’optimisation des dimensionnements des réseaux</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.2.4', 'cae', '3.3.5.2.4', 'Optimiser le captage du biogaz issu des centres d’enfouissement', '<p>par exemple : diminution des émissions en phase d’exploitation avant mise en œuvre des dispositifs définitifs de captage (captage précoce, optimisation de la durée d’exploitation des alvéoles ou casiers) et limitation des fuites aux parois du réseau, notamment par l’optimisation des dimensionnements des réseaux</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.2.5', 'cae', '3.3.5.2.5', 'Valoriser le biogaz issu du centre d’enfouissement', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.2.6', 'cae', '3.3.5.2.6', 'Mettre en place une gestion intégrée des différents biodéchets du territoire, avec une part de valorisation énergétique (méthanisation, combustion ou agro-carburants)', '', '', '', '', null, null);
@@ -4702,12 +4707,12 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.2.8', 'cae', '3.3.5.2.8', 'Contrôler l''interdiction du brûlage à l''air libre des déchets verts est contrôlée et faire l''objet de nombreuses actions de sensibilisation', '<p>Des solutions alternatives sont proposées aux particuliers (amélioration de la collecte des déchets verts, travail sur le compostage dans la restauration collective, filière courte de valorisation pour alimenter les chaufferies bois...)</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.2.9', 'cae', '3.3.5.2.9', 'Trouver des débouchés pour l''ensemble de l''énergie produite et pour le compost (lien avec le monde agricole)', '<p>Par exemple: vente à un fournisseur de gaz, raccordement à un réseau de chaleur, favoriser l’installation d’utilisateurs d’énergie à proximité des sites de traitements des déchets producteurs d’énergie, etc...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.2.9', 'cae', '3.3.5.2.9', 'Trouver des débouchés pour l''ensemble de l''énergie produite et pour le compost (lien avec le monde agricole)', '<p>par exemple : vente à un fournisseur de gaz, raccordement à un réseau de chaleur, favoriser l’installation d’utilisateurs d’énergie à proximité des sites de traitements des déchets producteurs d’énergie, etc...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.3', 'cae', '3.3.5.3', 'Suivre les objectifs et atteindre un haut niveau de valorisation des déchets', '', '', '', '', null, 40.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.3.1', 'cae', '3.3.5.3.1', 'Avoir un rendement de l''UIOM élevé', '<p>Le rendement doit être supérieur ou égal au seuil de performance énergétique permettant la modulation de la TGAP selon la règlementation.</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.3.2', 'cae', '3.3.5.3.2', 'Les centres de stockage des déchets ménagers et assimilés font l''objet d''une valorisation énergétique du biogaz >75%', '<p>Par exemple: production de chaleur, cogénération ou injection dans le réseau gaz. La valorisation est proportionnelle selon le pourcentage de biogaz valorisé, à partir de 75% et avec le maximum des points à 100%.</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.3.2', 'cae', '3.3.5.3.2', 'Les centres de stockage des déchets ménagers et assimilés font l''objet d''une valorisation énergétique du biogaz >75%', '<p>par exemple : production de chaleur, cogénération ou injection dans le réseau gaz. La valorisation est proportionnelle selon le pourcentage de biogaz valorisé, à partir de 75% et avec le maximum des points à 100%.</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.3.3', 'cae', '3.3.5.3.3', 'Augmenter la production d’électricité et de chaleur en kWh produit à partir de biodéchets pour l''ensemble du territoire (ménages et activités économiques, agricoles...) ou à défaut la quantité en kg/hab.an de biodéchets ménagers et assimilés issus de collecte sélective valorisés', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.5.3.4', 'cae', '3.3.5.3.4', 'Témoigner des performances par des indicateurs de suivi de la politique de compostage', '<p>Par exemple : nombre de composteurs individuels distribués, nb de sites collectifs en pied d''immeuble, etc...</p>
@@ -4964,7 +4969,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Services espaces verts et transport: baisse des pollutions.</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.3.4', 'cae', '3.3.3.4', 'Utiliser le règlement d’assainissement pour gérer les eaux pluviales au plus près de leur point de chute', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.3.4.1', 'cae', '3.3.3.4.1', 'Intégrer au règlement d''assainissement des normes permettant de limiter le ruissellement des eaux pluviales et la surcharge des collecteurs d’assainissement', '<p>Par exemple: rétention à la parcelle, débit de fuite limité, conformité des branchements aux réseaux séparatifs...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.3.4.1', 'cae', '3.3.3.4.1', 'Intégrer au règlement d''assainissement des normes permettant de limiter le ruissellement des eaux pluviales et la surcharge des collecteurs d’assainissement', '<p>par exemple : rétention à la parcelle, débit de fuite limité, conformité des branchements aux réseaux séparatifs...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.3.4.2', 'cae', '3.3.3.4.2', 'Appliquer systématiquement les mesures du règlement d''assainissement', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_3.3.3.4.3', 'cae', '3.3.3.4.3', 'Mettre en place des mesures particulières sur certaines zones pour limiter les risques d''inondation par ruissellement qui peuvent être amplifiés par le changement climatique', '', '', '', '', null, null);
@@ -5115,7 +5120,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.1.1.5.1', 'cae', '4.1.1.5.1', 'Créer/participer à un réseau local dédié à la mobilité durable', '<p>Ce réseau est élargi et regroupe les différents acteurs locaux concernés par la mobilité durable (collectivités, services de l''État, AOT-AOM, entreprises de transport, entreprises, organismes consulaires, associations d''usagers ou de salariés, etc.). Le réseau est destiné à capitaliser et mutualiser les bonnes pratiques ainsi que les moyens (plans de mobilité , plateforme de covoiturage, formations à l''éco-conduite, etc.). Il contribue également à la finalisation et l''adaptation de la stratégie en matière de transport et de mobilité, notamment pour l''élaboration d''un plan de mobilité ou d’un plan de mobilité simplifié  (cf. action 1.2.2).</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.1.1.6', 'cae', '4.1.1.6', 'Vérifier la progression des parts modales des modes de transports alternatifs à la voiture, atteindre des valeurs exemplaires et les communiquer', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.1.1.6.1', 'cae', '4.1.1.6.1', 'Analyser la progression des parts modales dans le temps et les comparer avec les parts modales moyennes à l''échelle nationale (ou régionale pour les DOM) ou encore de collectivités exemplaires', '<p>Par exemple: part modale des piétons, des cyclistes, des TC, du co-voiturage ou autre système alternatif à la voiture individuelle, adapté au milieu rural notamment (cf. indicateurs). Pour les collectivités rurales ou de petite taille, ce suivi peut-être mutualisé avec d’autres collectivités, et effectué à une échelle supérieure (avec appropriation et déclinaison par la collectivité infra).</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.1.1.6.1', 'cae', '4.1.1.6.1', 'Analyser la progression des parts modales dans le temps et les comparer avec les parts modales moyennes à l''échelle nationale (ou régionale pour les DOM) ou encore de collectivités exemplaires', '<p>par exemple : part modale des piétons, des cyclistes, des TC, du co-voiturage ou autre système alternatif à la voiture individuelle, adapté au milieu rural notamment (cf. indicateurs). Pour les collectivités rurales ou de petite taille, ce suivi peut-être mutualisé avec d’autres collectivités, et effectué à une échelle supérieure (avec appropriation et déclinaison par la collectivité infra).</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.1.1.6.2', 'cae', '4.1.1.6.2', 'Avoir de bonnes performances', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.1.1.6.3', 'cae', '4.1.1.6.3', 'Communiquer et valoriser l''exemplarité de la politique de mobilité durable menée (via une campagne d''affichage des chiffres clés, dans les journaux locaux, …)', '', '', '', '', null, null);
@@ -5351,14 +5356,14 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.3', 'cae', '4.2.3.3', 'Se doter de la compétence "gestion des marchandises"', '', '', '', '', null, 5.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.4', 'cae', '4.2.3.4', 'Réglementer, encadrer, soutenir et faire appliquer l''optimisation de la gestion des flux de marchandises sur le territoire', '', '', '', '', null, 30.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.4.1', 'cae', '4.2.3.4.1', 'Réglementer afin d''organiser l''accès au centre-ville (plage horaire, différenciation selon les performances environnementales des véhicules, etc), voire mise en place d''une zone à circulation restreinte en zone PPA', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.4.2', 'cae', '4.2.3.4.2', 'Proposer des solutions alternatives de transport de marchandises', '<p>Par exemple: création d''un port fluvial dédié au transport de marchandises, création de centres de distribution ou de plateformes urbaines pour centraliser les apports et réacheminer les marchandises sur les derniers kilomètres, promotion des modes actifs de livraison (vélo, triporteur...)</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.4.2', 'cae', '4.2.3.4.2', 'Proposer des solutions alternatives de transport de marchandises', '<p>par exemple : création d''un port fluvial dédié au transport de marchandises, création de centres de distribution ou de plateformes urbaines pour centraliser les apports et réacheminer les marchandises sur les derniers kilomètres, promotion des modes actifs de livraison (vélo, triporteur...)</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.4.3', 'cae', '4.2.3.4.3', 'Mettre en place des centres de distribution urbaine (pour les collectivités > 50 000 habitants) et des points relais (dans des commerces, des entreprises ou des équipements spécialisés)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.4.4', 'cae', '4.2.3.4.4', 'Mettre en place des services mutualisés de livraison (acteurs économiques, établissements publics et des particuliers)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.4.5', 'cae', '4.2.3.4.5', 'Encourager la mutualisation des services', '<p>Par exemple mutualiser les activités de commerces/services ambulants en milieu rural (épicerie, postes, etc) lorsque la pertinence climat-air-énergie est avérée (bon fonctionnement du service, circuit étudié, réponse à un besoin réel...)</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.4.6', 'cae', '4.2.3.4.6', 'En milieu rural, cibler les acteurs clés par exemple les agriculteurs pour réaliser des actions pour optimiser le transport de marchandises', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.4.7', 'cae', '4.2.3.4.7', 'En présence d’un port, Réaliser des actions spécifiques', '<p>Par exemple: formation des grutiers, optimisation des véhicules de transport d''un point de vue énergétique, …</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.4.7', 'cae', '4.2.3.4.7', 'En présence d’un port, Réaliser des actions spécifiques', '<p>par exemple : formation des grutiers, optimisation des véhicules de transport d''un point de vue énergétique, …</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.5', 'cae', '4.2.3.5', 'Repenser la stratégie de stationnement des véhicules de marchandises', '', '', '', '', null, 15.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.3.5.1', 'cae', '4.2.3.5.1', 'Proposer un réseau cohérent et suffisant d''aires de livraison', '', '', '', '', null, null);
@@ -5441,7 +5446,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 </li>
 </ul>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.2.3.2', 'cae', '4.2.2.3.2', 'Installer une signalisation favorisant la réduction des vitesses et la valorisation des commerces de proximité', '<p>Par exemple: radars pédagogiques, silhouettes d’enfants, traitement au sol différencié des linéaires commerciaux, …</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.2.3.2', 'cae', '4.2.2.3.2', 'Installer une signalisation favorisant la réduction des vitesses et la valorisation des commerces de proximité', '<p>par exemple : radars pédagogiques, silhouettes d’enfants, traitement au sol différencié des linéaires commerciaux, …</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.2.3.3', 'cae', '4.2.2.3.3', 'Mettre en place une signalisation aux entrées de ville pour signaler la politique générale de la ville', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.2.3.4', 'cae', '4.2.2.3.4', 'Collaborer avec les acteurs du territoire et des citoyens pour la mise en place des actions', '', '', '', '', null, null);
@@ -5517,7 +5522,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.1.3.3', 'cae', '4.2.1.3.3', 'Mettre en place un système de guidage pour limiter la recherche de place (si nécessaire)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.1.3.4', 'cae', '4.2.1.3.4', 'Ombrager les espaces de stationnement pour limiter le recours à la climatisation, tout en limitant l’imperméabilisation des sols', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.1.4', 'cae', '4.2.1.4', 'Repenser la stratégie de stationnement afin de favoriser l''intermodalité et le recours aux modes actifs de déplacement', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.1.4.1', 'cae', '4.2.1.4.1', 'Inscrire des objectifs maximaux de stationnement privé dans les documents d''urbanisme', '<p>Par exemple: normes minimales de stationnement privé sur parcelle.</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.1.4.1', 'cae', '4.2.1.4.1', 'Inscrire des objectifs maximaux de stationnement privé dans les documents d''urbanisme', '<p>par exemple : normes minimales de stationnement privé sur parcelle.</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.2.1.4.2', 'cae', '4.2.1.4.2', 'Ne pas favoriser la voiture à tout prix en centre-ville ou dans les situations complexes en terme de stationnement', '<p>Au cas par cas : privilégier les parkings relais en périphérie ou à proximité des gares (cf. mesure 4.3.4), parking déporté de plusieurs centaines de mètres bien reliés aux Pôles Générateurs de Trafic par des itinéraires piétons ou cycles, aux abords des écoles par exemple.</p>
 ', '', '', '', null, null);
@@ -5580,7 +5585,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.1.2', 'cae', '4.3.2.1.2', 'Mener des enquêtes périodiques sur la part modale des cyclistes et utiliser les études réalisées par d’autres organismes', '<p>Exemple INSEE pour les motifs travail et études ; baromètre des villes cyclables de la FUB tous les 2 ans.</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.2', 'cae', '4.3.2.2', 'Consulter et informer les habitants', '', '', '', '', null, 5.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.2.1', 'cae', '4.3.2.2.1', 'Évaluer le ressenti des habitants au regard du mode de déplacement cycliste', '<p>Par exemple: sondage de popularité, sentiment de sécurité, stationnement, etc...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.2.1', 'cae', '4.3.2.2.1', 'Évaluer le ressenti des habitants au regard du mode de déplacement cycliste', '<p>par exemple : sondage de popularité, sentiment de sécurité, stationnement, etc...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.2.2', 'cae', '4.3.2.2.2', 'Evaluer les besoins des cyclistes (notamment enquêtes spécifiques pour les déplacements de loisirs et de tourisme)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.2.3', 'cae', '4.3.2.2.3', 'Informer les cyclistes sur le réseau existant (notamment informations spécifiques à destination des touristes)', '', '', '', '', null, null);
@@ -5595,9 +5600,9 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.4.2', 'cae', '4.3.2.4.2', 'Anticiper et/ou réduire les conflits d’usage, notamment en traitant les points noirs du réseau pouvant freiner le développement de la mobilité cyclable', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.4.3', 'cae', '4.3.2.4.3', 'Traiter les discontinuités cyclables (plus important que l’augmentation du linéaire d’aménagements)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.4.4', 'cae', '4.3.2.4.4', 'Densifier le réseau cyclable en veillant à garantir un maillage desservant efficacement l''ensemble des lieux à forte fréquentation (notamment touristique)', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.4.5', 'cae', '4.3.2.4.5', 'Limiter les détours et les obstacles pour les cyclistes en retravaillant le plan de circulation des voiries', '<p>Par exemple: autorisation du contre-sens sur les rues à sens unique, cédez le passage cycliste au feu,  goulottes dans les escaliers, barrière pivotante…</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.4.5', 'cae', '4.3.2.4.5', 'Limiter les détours et les obstacles pour les cyclistes en retravaillant le plan de circulation des voiries', '<p>par exemple : autorisation du contre-sens sur les rues à sens unique, cédez le passage cycliste au feu,  goulottes dans les escaliers, barrière pivotante…</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.4.6', 'cae', '4.3.2.4.6', 'Eliminer les endroits dangereux à la circulation cycliste (autour des écoles, traversée des routes principales, etc.), sécuriser et différencier les réseaux', '<p>Par exemple: pistes cyclables séparées de la voirie et larges lorsque les vitesses sont élevées, ouvrir les couloirs de bus et de tramway aux cyclistes, etc...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.4.6', 'cae', '4.3.2.4.6', 'Eliminer les endroits dangereux à la circulation cycliste (autour des écoles, traversée des routes principales, etc.), sécuriser et différencier les réseaux', '<p>par exemple : pistes cyclables séparées de la voirie et larges lorsque les vitesses sont élevées, ouvrir les couloirs de bus et de tramway aux cyclistes, etc...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.2.4.7', 'cae', '4.3.2.4.7', 'S''appuyer sur la signalisation des itinéraires afin d''accompagner et guider les cyclistes et penser le réseau cyclable conjointement aux autres réseaux de modes actifs de déplacements afin de favoriser l''intermodalité', '<p>Par exemple en s’appuyant sur les schémas directeurs touristiques</p>
 ', '', '', '', null, null);
@@ -5701,9 +5706,9 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.4', 'cae', '4.3.3.4', 'Améliorer l''efficacité du réseau de transports collectifs en collaboration avec les AOM et les principaux générateurs de déplacements', '', '', '', '', null, 30.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.4.1', 'cae', '4.3.3.4.1', 'Optimiser l''offre existante', '<p>Amélioration de la qualité de service – amplitude et couverture du territoire, cadencement et augmentation des fréquences, du maillage, ajustement de la localisation des arrêts, adaptation de la desserte, confort des véhicules, en associant les AOM (des indicateurs chiffrés attestent de la qualité de l’offre).</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.4.2', 'cae', '4.3.3.4.2', 'Donner la priorité aux transports publics dans le trafic, en lien avec les collectivités compétentes en matière de voirie', '<p>Par exemple: voies en site propre, commande de la signalisation, priorité aux feux, lors d''événements climatiques extrêmes… (l''évolution des vitesses commerciales peut en attester)</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.4.2', 'cae', '4.3.3.4.2', 'Donner la priorité aux transports publics dans le trafic, en lien avec les collectivités compétentes en matière de voirie', '<p>par exemple : voies en site propre, commande de la signalisation, priorité aux feux, lors d''événements climatiques extrêmes… (l''évolution des vitesses commerciales peut en attester)</p>
 ', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.4.3', 'cae', '4.3.3.4.3', 'Développer des systèmes d''information réactifs pour informer en temps réel ou quasiment les usagers de l''état du trafic sur le réseau de TC', '<p>Par exemple: affichage dans les arrêts, réseaux sociaux, site internet...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.4.3', 'cae', '4.3.3.4.3', 'Développer des systèmes d''information réactifs pour informer en temps réel ou quasiment les usagers de l''état du trafic sur le réseau de TC', '<p>par exemple : affichage dans les arrêts, réseaux sociaux, site internet...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.4.4', 'cae', '4.3.3.4.4', 'Prendre des mesures pour assurer la fiabilité lors d''événements climatiques extrêmes, et la qualité des transports', '<p>En particulier le confort thermique et olfactif dans les transports en commun, en hiver et en été (ex : ombrage des stations de remisage).</p>
 ', '', '', '', null, null);
@@ -5713,10 +5718,10 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.4.7', 'cae', '4.3.3.4.7', 'S’engager dans une opération type « Objectif CO2 les transporteurs s’engagent »', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.5', 'cae', '4.3.3.5', 'Diversifier l’offre de transport collectif, pour plus de souplesse', '<p>Les actions concernant l’utilisation de voitures partagées (co-voiturage, auto-partage) sont évaluées dans la mesure 4.3.4.</p>
 ', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.5.1', 'cae', '4.3.3.5.1', 'Mettre en place des offres propres à la collectivité ou soutenir les offres/dessertes existantes (utilisation des transports scolaires…)', '<p>Par exemple: bus local, navettes y compris fluviales ou maritimes, TAD...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.5.1', 'cae', '4.3.3.5.1', 'Mettre en place des offres propres à la collectivité ou soutenir les offres/dessertes existantes (utilisation des transports scolaires…)', '<p>par exemple : bus local, navettes y compris fluviales ou maritimes, TAD...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.6', 'cae', '4.3.3.6', 'Mettre en place une tarification adaptée', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.6.1', 'cae', '4.3.3.6.1', 'Créer une billettique unique', '<p>Par exemple: système de « pass » unique pour tous les transports en commun du territoire, voire pour plusieurs modes de transport.</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.6.1', 'cae', '4.3.3.6.1', 'Créer une billettique unique', '<p>par exemple : système de « pass » unique pour tous les transports en commun du territoire, voire pour plusieurs modes de transport.</p>
 <p>Cf. mesure 4.3.4. sur l’intermodalité.</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.3.6.2', 'cae', '4.3.3.6.2', 'Mettre en place une offre de cartes journalières pour les transports publics et gratuité des transports en commun en cas d''épisodes de pollution', '', '', '', '', null, null);
@@ -5772,14 +5777,14 @@ https://www.gart.org/wp-content/uploads/2016/06/Etude-GART_Pratiques-intermodali
 </a>
 ', 8.0, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.1', 'cae', '4.3.4.1', 'Analyser les besoins et l’offre multimodale existante', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.1.1', 'cae', '4.3.4.1.1', 'Analyser la situation en matière de co-voiturage, d’auto-partage, de location de vélos et services associés', '<p>Par exemple: offre existante sur place, comparaison avec d''autres collectivités...</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.1.1', 'cae', '4.3.4.1.1', 'Analyser la situation en matière de co-voiturage, d’auto-partage, de location de vélos et services associés', '<p>par exemple : offre existante sur place, comparaison avec d''autres collectivités...</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.1.2', 'cae', '4.3.4.1.2', 'Connaître les enjeux de l’intermodalité et formaliser la volonté de faciliter l’intermodalité dans un document (ou est démontrée par des premières réalisations)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.1.3', 'cae', '4.3.4.1.3', 'Mettre à disposition des moyens pour la mise en œuvre d’actions en faveur de la multi-modalité et de l’intermodalité (budget alloué, personnel identifié)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.2', 'cae', '4.3.4.2', 'Faciliter le changement de mode de transport', '<p>(En l’absence de transport en commun – contexte non adapté à son développement, les points sont reportés en totalité ou partiellement sur la voiture partagée)</p>
 ', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.2.1', 'cae', '4.3.4.2.1', 'Développer des parkings relais (P+R)', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.2.2', 'cae', '4.3.4.2.2', 'Autoriser et faciliter l’embarquement des vélos dans les transports en commun lorsque les conditions d’exploitation le permettent', '<p>Par exemple: modulation éventuellement selon les heures, les lignes, les places disponibles, les types de véhicules…</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.2.2', 'cae', '4.3.4.2.2', 'Autoriser et faciliter l’embarquement des vélos dans les transports en commun lorsque les conditions d’exploitation le permettent', '<p>par exemple : modulation éventuellement selon les heures, les lignes, les places disponibles, les types de véhicules…</p>
 ', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.2.3', 'cae', '4.3.4.2.3', 'Mettre en place une tarification et une billettique unique/coordonnée entre les différentes offres de transport (TC, location de vélo, auto-partage…)', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_4.3.4.2.4', 'cae', '4.3.4.2.4', 'Installer un pôle d’échanges multimodal, combinant en même lieu plusieurs modes de transport alternatifs différents', '', '', '', '', null, null);
@@ -6661,7 +6666,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>une modulation de la TGAP est possible lorsque le transfert des déchets entre le site de regroupement et le site de traitement final est effectué par voie ferroviaire ou fluviale, sous réserve que la desserte routière terminale, lorsqu''elle est nécessaire, n''excède pas 20 % du kilométrage de l''itinéraire global (l’article 266 nonies Code des douanes)</p>
 </li>
 </ul>
-', '', '<p>Publications :</p>
+', '', '<p><strong>Publications :</strong></p>
 <ul>
 <li>
 <a href="http://www.plpdma-guide-ademe.fr/portail.html">
@@ -6684,12 +6689,14 @@ Rapport, Etude de cas et monographies des plans et programmes de prévention des
 </a>
 </li>
 <li>
-<p>a href=&quot;http://www.ademe.fr/sites/default/files/assets/documents/prevention_gestion_des_dechets_rapportannueldumaire_010037.pdf&quot;&gt;Rapport du service public de prévention et de gestion des déchets ménagers et assimilés
-</a></p>
+<a href="http://www.ademe.fr/sites/default/files/assets/documents/prevention_gestion_des_dechets_rapportannueldumaire_010037.pdf">
+Rapport du service public de prévention et de gestion des déchets ménagers et assimilés
+</a>
 </li>
 <li>
-<p>a href=&quot;http://www.ademe.fr/referentiel-national-couts-service-public-prevention-gestion-dechets&quot;&gt;Référentiel national des coûts du service public de prévention et de gestion de déchets, édition 2017, ADEME, mars 2018
-</a></p>
+<a href="http://www.ademe.fr/referentiel-national-couts-service-public-prevention-gestion-dechets">
+Référentiel national des coûts du service public de prévention et de gestion de déchets, édition 2017, ADEME, mars 2018
+</a>
 </li>
 <li>
 <a href="https://www.ademe.fr/sites/default/files/assets/documents/adm00005918_s1.pdf">
@@ -6702,7 +6709,7 @@ Evaluation des bénéfices environnementaux, économiques et sociaux de différe
 </a>
 </li>
 </ul>
-<p>Sites internet</p>
+<p><strong>Sites internet :</strong></p>
 <ul>
 <li>
 <a href="http://optigede.ademe.fr">
@@ -6728,7 +6735,7 @@ Semaine européenne de la réduction des déchets
 </a>
 </li>
 </ul>
-<p>Tri à la source des biodéchets :</p>
+<p><strong>Tri à la source des biodéchets :</strong></p>
 <ul>
 <li>
 <a href="http://www.ademe.fr/comment-reussir-mise-oeuvre-tri-a-source-biodechets">
@@ -6751,7 +6758,7 @@ Fiche EAS SMICTOM Pays de Vilaine
 </a>
 </li>
 </ul>
-<p>Tarification incitative :</p>
+<p><strong>Tarification incitative :</strong></p>
 <ul>
 <li>
 <a href="http://www.ademe.fr/tarification-incitative-service-public-prevention-gestion-dechets">
@@ -6759,19 +6766,18 @@ Avis de l’ADEME sur la tarification incitative
 </a>
 </li>
 <li>
-<p>a href=&quot;http://www.ademe.fr/teom-incitative-premiers-resultats&quot;&gt;TEOM incitative les premiers résultats
-</a></p>
+<a href="http://www.ademe.fr/teom-incitative-premiers-resultats">
+TEOM incitative les premiers résultats
+</a>
 </li>
 <li>
 <a href="http://www.ademe.fr/communiquer-tarification-incitative">
 Outils de communication
 </a>
 </li>
-<li>
-<p>Synthèse thématique (voir médiathèque ADEME, parution à l’été 2018)</p>
-</li>
+<li>Synthèse thématique (voir médiathèque ADEME, parution à l’été 2018)</li>
 </ul>
-<p>Formations</p>
+<p><strong>Formations :</strong></p>
 <ul>
 <li>
 <p>Formation &quot;animer et coordonner un PLPDMA&quot; : Dans le cadre des formations que l’ADEME développe, elle propose aux porteurs de projets territoriaux une formation pour animer et coordonner un Programme local de prévention des déchets ménagers et assimilés (PLPDMA).
@@ -6781,7 +6787,7 @@ Retrouvez la formation en ligne
 </li>
 <li>
 <a href="http://www.optigede.ademe.fr/prevention-formations">
-Pour se former consulter aussi
+Pour se former consulter aussi la rubrique prévention-formations sur Optigede
 </a>
 </li>
 </ul>
@@ -7542,1485 +7548,1486 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_5.2.2.7.1', 'cae', '5.2.2.7.1', 'Informer les fournisseurs et producteurs de la politique d’achats responsables par une communication ciblée auprès des entreprises concernées, voire via la plateforme d’achat de la collectivité', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_5.2.2.8', 'cae', '5.2.2.8', 'Passer au crible l''ensemble des achats publics', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_5.2.2.8.1', 'cae', '5.2.2.8.1', '% des marchés (en nombre) intégrant des clauses environnementales (et sociales) dans les spécifications techniques ou les critères d’attribution en augmentation', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_5.2.2.8.2', 'cae', '5.2.2.8.2', '% des marchés (en €) intégrant des clauses environnementales (et sociales) dans les spécifications techniques ou les critères d’attribution en augmentation', '', '', '', '', null, null);insert into action_computed_points(action_id, value) values ('cae_2.1.1', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2', '8.0');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_2.2.2', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3', '4.0');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2', '4.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4', '8.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2', '4.0');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1', '8.0');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3', '4.0');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_3.2.3', '8.0');
-insert into action_computed_points(action_id, value) values ('cae_3.2.2', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2', '16.0');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1', '8.0');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2', '16.0');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3', '14.0');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4', '8.0');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3', '8.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3', '4.0');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4', '8.0');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1', '12.0');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2', '8.0');
-insert into action_computed_points(action_id, value) values ('cae_3.2', '32.0');
-insert into action_computed_points(action_id, value) values ('cae_4.2', '30.0');
-insert into action_computed_points(action_id, value) values ('cae_6.3', '18.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1', '20.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2', '44.0');
-insert into action_computed_points(action_id, value) values ('cae_3.3', '42.0');
-insert into action_computed_points(action_id, value) values ('cae_4.3', '50.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1', '30.0');
-insert into action_computed_points(action_id, value) values ('cae_4.1', '16.0');
-insert into action_computed_points(action_id, value) values ('cae_2.3', '10.0');
-insert into action_computed_points(action_id, value) values ('cae_6.5', '16.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2', '34.0');
-insert into action_computed_points(action_id, value) values ('cae_5.1', '26.0');
-insert into action_computed_points(action_id, value) values ('cae_2.1', '24.0');
-insert into action_computed_points(action_id, value) values ('cae_6.4', '18.0');
-insert into action_computed_points(action_id, value) values ('cae_5.2', '20.0');
-insert into action_computed_points(action_id, value) values ('cae_1.3', '26.0');
-insert into action_computed_points(action_id, value) values ('cae_6.1', '14.0');
-insert into action_computed_points(action_id, value) values ('cae_2.2', '30.0');
-insert into action_computed_points(action_id, value) values ('cae_4', '96.0');
-insert into action_computed_points(action_id, value) values ('cae_6', '100.0');
-insert into action_computed_points(action_id, value) values ('cae_5', '46.0');
-insert into action_computed_points(action_id, value) values ('cae_1', '100.0');
-insert into action_computed_points(action_id, value) values ('cae_2', '64.0');
-insert into action_computed_points(action_id, value) values ('cae_3', '94.0');
-insert into action_computed_points(action_id, value) values ('cae', '500.0');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.1', '2.0999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.2', '2.0999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.3', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.3', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.4', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.5', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.6', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.1', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.2', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.3', '3.5999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.4', '3.5999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.2', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.3', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.4', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.5', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.6', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.1', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.3', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.4', '4.5');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.3', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.4', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.5', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.6', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.3', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.4', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.5', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.2', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.3', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.4', '2.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.5', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.6', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.3', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.4', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.5', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.6', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.1', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.3', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.4', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.5', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.6', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.1', '2.0999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.2', '2.7');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.3', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.2', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.3', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.4', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.3', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.4', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.5', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.6', '4.0');
-insert into action_computed_points(action_id, value) values ('cae_2.2.2.1', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.2.2.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.2.2.3', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.2.2.4', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.2.2.5', '3.0');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4.3', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4.4', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.1', '3.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.2', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.3', '3.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.4', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.2', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.3', '2.0999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.4', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.2', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.3', '3.5999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.4', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.5', '3.5999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.2.3.1', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_3.2.3.2', '2.4');
-insert into action_computed_points(action_id, value) values ('cae_3.2.3.3', '4.0');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.3', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.4', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.5', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.6', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.3', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.4', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.5', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.6', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.7', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.8', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.1', '3.5999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.2', '3.5999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.3', '4.800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.1', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.3', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.4', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.1', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.3', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.4', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.5', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.3', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.4', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.5', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.1', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.2', '4.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.3', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.4', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.5', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.1', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.3', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.4', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.5', '3.0');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.3', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.4', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.5', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.6', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.1', '3.2');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.2', '4.0');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.3', '5.6');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.4', '3.2');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.2', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.3', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.4', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.5', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.3', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.4', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.2', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.3', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.4', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.5', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.1', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2', '5.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.3', '3.0');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.3', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.4', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.5', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.6', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.7', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.2', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.3', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.4', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.5', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.6', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.7', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.8', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.1', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.3', '3.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.4', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.5', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.6', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.2', '2.4');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.3', '2.4');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.4', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.5', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.6', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.3', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.4', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.5', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.6', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.7', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.8', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.3', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.4', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.5', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.6', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.7', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.8', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.4', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.5', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.6', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.3', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.4', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.5', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.6', '3.5999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.1', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.2', '2.4');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.3', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.4', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.5', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.6', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.1', '3.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.2', '3.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.3', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.4', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.2', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.3', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.4', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.5', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.1', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.2', '3.0');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.3', '1.7999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.4', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.5', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.6', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.7', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.1', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.2', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.3', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.4', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.5', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.6', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.7', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.1', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.2', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.3', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.4', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.5', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.6', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.3', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.4', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.5', '3.5999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.6', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.7', '4.199999999999999');
-insert into action_computed_points(action_id, value) values ('cae_3.2.2.1', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_3.2.2.2', '6.0');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.1', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.2', '3.2');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.3', '2.4');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.4', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.3', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.4', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.1', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.2', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.3', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.4', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.5', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.6', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.7', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.8', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.3', '3.2');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.4', '3.2');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.2', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.3', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.4', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.5', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.1', '1.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.2', '1.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.3', '1.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.4', '4.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.5', '2.8000000000000003');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.6', '1.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.7', '1.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.1', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.3', '3.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.4', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.5', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.3', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.4', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.5', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.6', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.7', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.8', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.1', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.2', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.3', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.4', '2.0');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.5', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.1', '3.5999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.2', '3.5999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.3', '4.800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.1', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.3', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.4', '4.0');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.5', '2.4');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.6', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.7', '4.8');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.1', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.2', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.3', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.4', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.5', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.6', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.3.1', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.3.2', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.3.3', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.3.4', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.3.5', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.3.1', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.3.2', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.3.3', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.3.4', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.3.5', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.7.1', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.7.2', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.7.3', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.7.4', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.4.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.4.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.7.1', '1.5999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.7.2', '1.5999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.7.3', '1.5999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.1', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.2', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.3', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.4', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.5', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.6', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.7', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.8', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.9', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.6.1', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.6.2', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.6.3', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.6.4', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.8.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.8.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.1', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.2', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.3', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.4', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.5', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.6', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.7', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.8', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.1.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.1.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.1', '0.08571428571428573');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.2', '0.08571428571428573');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.3', '0.08571428571428573');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.4', '0.08571428571428573');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.5', '0.08571428571428573');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.6', '0.08571428571428573');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.7', '0.08571428571428573');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.2.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.2.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.1.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.1.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.1.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.5.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.5.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.3.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.3.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.3.3', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.3.4', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.1.1', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.1.2', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.1.3', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.3.1', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.3.2', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.3.3', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.2.2.4.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.2.2.4.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.1', '0.2571428571428571');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.2', '0.2571428571428571');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.3', '0.2571428571428571');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.4', '0.2571428571428571');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.5', '0.2571428571428571');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.6', '0.2571428571428571');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.7', '0.2571428571428571');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.4.1', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.4.2', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.4.3', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.4.4', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.5.1', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.5.2', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.5.3', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.5.4', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.5.5', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.4.1', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.4.2', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.1.1', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.1.2', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.1.3', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.1.4', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.1.5', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.6.1', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.6.2', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.6.3', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.6.4', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.4.1', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.4.2', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.4.3', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.8.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.8.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.8.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.4.1', '0.6666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.4.2', '0.6666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.4.3', '0.6666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.1.1', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.1.2', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.1.3', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.1', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.2', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.3', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.4', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.5', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.6', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.7', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.8', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.9', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.4.1', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.4.2', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.4.3', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.6.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.6.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.6.3', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.6.4', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.5.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.3.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.3.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.3.3', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.3.4', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.1', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.2', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.3', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.4', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.5', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.6', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.7', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.8', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.9', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.2.1', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.2.2', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.2.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.2.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.2.3', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.3.1', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.3.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.3.3', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.2.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.2.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.2.1', '0.28');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.2.2', '0.28');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.2.3', '0.28');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.2.4', '0.28');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.2.5', '0.28');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.2.1', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.2.2', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.4.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.4.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.1.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.1.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.1.3', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.1.4', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.6.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.6.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.6.1', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.6.2', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.6.3', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.2.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.2.1', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.2.2', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.2.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.2.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.2.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.4.1', '0.16');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.4.2', '0.16');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.4.3', '0.16');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.4.4', '0.16');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.4.5', '0.16');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.4.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.4.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.1.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.1.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.1.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.5.1', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.5.2', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.5.3', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.5.4', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.5.5', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.3.1', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.3.2', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.3.3', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.6.1', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.6.2', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.6.3', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.6.4', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.7.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.7.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.7.3', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.7.4', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.3.1', '0.16');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.3.2', '0.16');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.3.3', '0.16');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.3.4', '0.16');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.3.5', '0.16');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.1', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.2', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.3', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.4', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.5', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.6', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.7', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.8', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.9', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.10', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.11', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.12', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.13', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.14', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.15', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.16', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.17', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.18', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.19', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.20', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.21', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.22', '0.22727272727272727');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.2.1', '0.05');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.2.2', '0.05');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.7.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.7.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.7.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.3.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.3.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.7.1', '0.46666666666666673');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.7.2', '0.46666666666666673');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.7.3', '0.46666666666666673');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.1', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.2', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.3', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.4', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.5', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.6', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.2.3.2.1', '0.7999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_3.2.3.2.2', '0.7999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_3.2.3.2.3', '0.7999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.1', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.2', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.3', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.4', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.5', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.6', '0.19999999999999998');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.3.1', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.2.3.3.2', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.2.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.2.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.2.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.2.4', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.2.5', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_2.2.2.5.1', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_2.2.2.5.2', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.3.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.3.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.2.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.2.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.2.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.7.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.1', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.2', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.3', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.4', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.5', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.6', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.4.1', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.3.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.3.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.3.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.3.4', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.3.5', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.6.1', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.6.2', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.6.3', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.1', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.2', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.3', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.4', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.5', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.6', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.2.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.2.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.4.1', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.4.2', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.4.3', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.4.4', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.4.5', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.6.1', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.6.2', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.6.3', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.6.4', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.2.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.2.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.5.1', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.5.2', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.5.3', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.1.1', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.1.2', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.1.3', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.6.1', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.6.2', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.6.3', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.6.4', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.7.1', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.7.2', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.4', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.5', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.6', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.1.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.1.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.2.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.2.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.2.3', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.2.4', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.5.1', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.5.2', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.5.3', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.5.4', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.5.5', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.4.1', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.4.2', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.4.3', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.4.4', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.2.2.4.5', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.1.1', '1.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.5.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.5.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.1', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.2', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.3', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.4', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.5', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.6', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.7', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.8', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.1', '0.3375');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.2', '0.3375');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.3', '0.3375');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.4', '0.3375');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.5', '0.3375');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.6', '0.3375');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.7', '0.3375');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.8', '0.3375');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.6.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.6.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.6.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.3.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.3.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.2.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.2.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.2.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.5.1', '0.24');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.5.2', '0.24');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.5.3', '0.24');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.5.4', '0.24');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.5.5', '0.24');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.4.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.4.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.4.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.6.1', '1.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.6.2', '1.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.6.3', '1.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.1.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.1.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.1.3', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.1.4', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.1', '0.26666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.2', '0.26666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.3', '0.26666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.4', '0.26666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.5', '0.26666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.6', '0.26666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.4.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.4.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.4.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.1.1', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.1.2', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.1.3', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.1.4', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.1.1', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.1.2', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.1.3', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.1.4', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.1.5', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.5.1', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.5.2', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.5.3', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.3.1', '1.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.3.2', '1.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.3.3', '1.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.3.4', '1.4');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.3.1', '1.0666666666666667');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.3.2', '1.0666666666666667');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.3.3', '1.0666666666666667');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.2.1', '0.18');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.2.2', '0.18');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.2.3', '0.18');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.2.4', '0.18');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.2.5', '0.18');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.1.1', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.1.2', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.1', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.2', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.3', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.4', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.5', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.6', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.1.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.1.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.1.3', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.1.4', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.2.1', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.2.2', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.2.3', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.2.4', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.2.5', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.1.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.1.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.1.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.1.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.1', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.2', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.3', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.4', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.5', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.6', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.5.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.5.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.5.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.5.1', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.5.2', '1.5');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.1.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.2.5.1.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.3.1', '0.75');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.3.2', '0.75');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.3.3', '0.75');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.3.4', '0.75');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4.1.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4.1.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.2.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.2.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.8.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.8.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.1.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.1.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.1.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.1.4', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.3.1', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.3.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.3.3', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.3.4', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.3.5', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.2.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.2.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.1.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.1.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.1.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.1.1', '0.24');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.1.2', '0.24');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.1.3', '0.24');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.1.4', '0.24');
-insert into action_computed_points(action_id, value) values ('cae_1.3.3.1.5', '0.24');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.1', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.2', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.3', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.4', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.5', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.6', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.7', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.8', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.2.1', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.2.2', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.2.3', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.3.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.3.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.3.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.3.4', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.3.5', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.6.1', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.6.2', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.2.4.6.3', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.4.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.4.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.6.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.6.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.6.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.4.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.4.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.4.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.1', '0.4444444444444444');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.2', '0.4444444444444444');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.3', '0.4444444444444444');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.4', '0.4444444444444444');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.5', '0.4444444444444444');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.6', '0.4444444444444444');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.7', '0.4444444444444444');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.8', '0.4444444444444444');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.9', '0.4444444444444444');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.1.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.1.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.3.1', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.3.2', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.3.3', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.1.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.1.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.1.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.1.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.1.3', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.1.4', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.1.5', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.2.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.2.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.2.3', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.1', '0.17142857142857146');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.2', '0.17142857142857146');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.3', '0.17142857142857146');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.4', '0.17142857142857146');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.5', '0.17142857142857146');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.6', '0.17142857142857146');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.7', '0.17142857142857146');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.5.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.5.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.3.1', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.3.2', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.3.3', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.3.4', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.1.1', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.1.2', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.1.3', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.1.4', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.6.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.2.1.6.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.6.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.6.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.6.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.2.1', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.2.2', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.2.3', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.2.4', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.2.5', '0.4800000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.1', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.2', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.3', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.4', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.5', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.6', '0.13333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.3.1', '0.46666666666666673');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.3.2', '0.46666666666666673');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.3.3', '0.46666666666666673');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.3.1', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.3.2', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.3.3', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.1', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.3', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.4', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.5', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.6', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.4.1', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.4.2', '1.6');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.2.1', '0.125');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.2.2', '0.125');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.2.3', '0.125');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.2.4', '0.125');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.5.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.5.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.5.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.5.1', '0.7999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.5.2', '0.7999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.5.3', '0.7999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.4', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.5', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.6', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.2.1', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.2.2', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.2.3', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.2.4', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_5.1.2.2.5', '0.41999999999999993');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.4.1', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.4.2', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.4.3', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.4.4', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.1.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.1.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.1.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.4.1', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.4.2', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.4.3', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.4.1', '0.75');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.4.2', '0.75');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.3', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.4', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.1.1', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.1.2', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.1.3', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.1.4', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.1.5', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.1.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.1.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.1.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.2.1', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.2.2', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.2.3', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.2.4', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.6.1', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.6.2', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.6.3', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.6.4', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.6.5', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.1', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.2', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.3', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.4', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.5', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.6', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.7', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.8', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.9', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.10', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.11', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.12', '0.15');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.1', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.3', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.4', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.5', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.6', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.7', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.2.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.2.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.2.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.2.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.5.1', '2.8000000000000003');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.7.1', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.7.2', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.2.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.2.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.4', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.5', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.6', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.3.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.3.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.1.1', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.1.2', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.1.3', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.1.4', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.1', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.2', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.3', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.4', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.5', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.6', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.7', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.8', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.3.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.2.1.3.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.5.1', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.5.2', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.1.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.5.1', '2.4000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.1', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.2', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.3', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.4', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.5', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.6', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.7', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.8', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.4.1', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.4.2', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.4.3', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.4.4', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.4.5', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.1.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.1.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.5.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.5.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.5.3', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.5.4', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.5.1', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.5.2', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.5.3', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.5.4', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.5.5', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.5.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.5.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.5.3', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.5.4', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.5.5', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.1', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.2', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.3', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.4', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.5', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.6', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.7', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.5.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.5.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.5.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.5.4', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.5.5', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.3.1', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.3.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.3.3', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.3.4', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.2.1', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.2.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_5.1.1.2.3', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.4.1', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.4.2', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.4.3', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.4.4', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.3.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.1.2.3.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.3.1', '0.1');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.3.1', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.3.2', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.3.3', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.3.4', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_1.2.2.3.5', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.1.1', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.1.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.1.3', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.1.4', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_6.2.1.1.5', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.1', '0.2285714285714286');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.2', '0.2285714285714286');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.3', '0.2285714285714286');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.4', '0.2285714285714286');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.5', '0.2285714285714286');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.6', '0.2285714285714286');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.7', '0.2285714285714286');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.4', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.5', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.6', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.1.3.3.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.2.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.2.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.2.3', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.2.4', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.3.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.3.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.3.3', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.1.3.4', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.4.1', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.4.2', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.4.3', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.5.1', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.5.2', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.5.3', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.5.4', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.5.5', '0.12000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.4.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.4.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.1.1', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.1.2', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.1.3', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.5.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_2.3.2.5.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.4.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.4.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.6.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.6.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.6.3', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.6.4', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.5.1', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.5.2', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.5.3', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.5.4', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.1.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.1.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.1.3', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.1.4', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.2.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.2.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.7.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.7.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.7.3', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.7.4', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.7.5', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.2.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.2.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.2.3.2.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.2.1', '1.0666666666666667');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.2.2', '1.0666666666666667');
-insert into action_computed_points(action_id, value) values ('cae_5.1.4.2.3', '1.0666666666666667');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.5.1', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.5.2', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.5.3', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.2.1', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.2.2', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.2.3', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.1.1', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.1.2', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.1.3', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.1.4', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.5.1', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.5.2', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.5.3', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.5.4', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_5.1.3.5.5', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4.2.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4.2.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4.2.3', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.2.4.2.4', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.1.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.1.1', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.1.2', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.1.3', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.1', '0.26249999999999996');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.2', '0.26249999999999996');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.3', '0.26249999999999996');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.4', '0.26249999999999996');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.5', '0.26249999999999996');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.6', '0.26249999999999996');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.7', '0.26249999999999996');
-insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.8', '0.26249999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.4', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.5', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.6', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.1', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.2', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.3', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.4', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.5', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.6', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.7', '0.21428571428571427');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.3.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.1.2.3.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.1.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.1.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.4.1', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.4.2', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.4.3', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.4.4', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.3.1', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.3.2', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.3.2.3.3', '0.5333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.6.1', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.6.2', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.6.3', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.3.1.6.4', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.5.1', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.5.2', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.2.3.5.3', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.5.1', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.5.2', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.5.3', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.5.4', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.1.1', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.1.2', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.1.3', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.5.1', '0.6666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.5.2', '0.6666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.5.3', '0.6666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.5.1', '0.18');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.5.2', '0.18');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.5.3', '0.18');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.5.4', '0.18');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.5.5', '0.18');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.3.1', '0.375');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.3.2', '0.375');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.3.3', '0.375');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.3.4', '0.375');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.3.1', '0.26666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.3.2', '0.26666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.3.3', '0.26666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.2.1', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.2.2', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.1.1.2.3', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.1.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.1.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.1.3', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.4.1', '0.6666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.4.2', '0.6666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_3.1.2.4.3', '0.6666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.2.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.2.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.4.1', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.4.2', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.4.3', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.4.4', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.4.5', '0.72');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.1.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.1.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.1.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.2.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.2.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.2.3', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.2.4', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.2.5', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.3.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.3.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.3.1', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.3.2', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.3.3', '1.0');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.4.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.4.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.4.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.6.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.6.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.6.3', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.6.4', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.2.1', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.2.2', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.3.2.3', '0.20000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.3.1', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.3.2', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_4.3.1.3.3', '1.2');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.1.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.1.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.4.1', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.4.2', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.4.3', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.1.1.4.4', '0.22499999999999998');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.6.1', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.6.2', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.6.3', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.6.4', '0.44999999999999996');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.3.1', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.3.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.3.3', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.3.4', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.2.4.3.5', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.4.1', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.4.2', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.4.3', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.4.4', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_3.3.1.4.5', '0.24000000000000005');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.3.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.3.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.3.3', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.3.4', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.3.5', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.3.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.3.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.6.1', '0.46666666666666673');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.6.2', '0.46666666666666673');
-insert into action_computed_points(action_id, value) values ('cae_4.3.3.6.3', '0.46666666666666673');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.1', '0.2857142857142857');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.2', '0.2857142857142857');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.3', '0.2857142857142857');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.4', '0.2857142857142857');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.5', '0.2857142857142857');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.6', '0.2857142857142857');
-insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.7', '0.2857142857142857');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.3.1', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.3.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.3.3', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.3.4', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.4.1', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.4.2', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.4.3', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.4.4', '0.8');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.1.1', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_3.3.4.1.2', '0.30000000000000004');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.4.1', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.4.2', '0.8999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.4.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_5.2.2.4.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.3.1', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.3.2', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.3.3', '0.3');
-insert into action_computed_points(action_id, value) values ('cae_2.1.1.5.1', '0.5');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.1.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.1.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.1.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.4.1', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.4.2', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.4.3', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.4.2.4.4', '0.15000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.3.1', '0.75');
-insert into action_computed_points(action_id, value) values ('cae_6.3.3.3.2', '0.75');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.1.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_1.1.3.1.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.1', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.2', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.3', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.4', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.5', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.6', '0.16666666666666666');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.8.1', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.8.2', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.8.3', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.8.4', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_6.4.1.8.5', '0.36');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.2.1', '1.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.2.2', '1.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_4.2.2.2.3', '1.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.2.1', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.2.2', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.3.3.2.3', '0.09999999999999999');
-insert into action_computed_points(action_id, value) values ('cae_2.1.3.2.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.1.1', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.1.2', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_6.3.1.1.3', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.2.1', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.2.2', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.2.3', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_2.1.2.2.4', '0.6');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.7.1', '1.3999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.7.2', '1.3999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_1.1.1.7.3', '1.3999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.2.1', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.2.2', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.2.3', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_4.3.4.2.4', '0.4');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.1', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.2', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.3', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.4', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.5', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.6', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.7', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.8', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.9', '0.39999999999999997');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.2.1', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.2.2', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_3.1.1.2.3', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.4.1', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.4.2', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_6.5.2.4.3', '0.4000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.1', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.2', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.3', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.4', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.5', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.6', '0.3333333333333333');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.6.1', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_1.3.2.6.2', '0.25');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.3.1', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.3.2', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.3.3', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.2.1.3.4', '1.2000000000000002');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.1.1', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_3.3.2.1.2', '0.6000000000000001');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.7.1', '0.125');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.7.2', '0.125');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.7.3', '0.125');
-insert into action_computed_points(action_id, value) values ('cae_1.2.1.7.4', '0.125');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.5.1', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.5.2', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.5.3', '0.2');
-insert into action_computed_points(action_id, value) values ('cae_6.5.3.5.4', '0.2');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_38', 'cae', '38.None', null, 'Indicateur alternatif à la part modale TC (à définir par la collectivité et son conseiller le cas échéant)', '<p>En remplacement de l''indicateur sur les parts modales des transports en commun, la collectivité peut mesurer par un autre indicateur la progression d''un moyen de transport alternatif à la voiture individuelle, mieux adapté à sa situation (milieu rural notamment) : co-voiturage, transport à la demande... Il peut également s’agir de la part de déplacements intermodaux réalisés par les habitants du territoire, c’est-à-dire la part de déplacements mécanisés (tout mode hors marche-a-pied)  composés d''au moins deux trajets effectués à l’aide de plusieurs modes mécanisés. Pour obtenir la totalité des points, la valeur collectée doit témoigner d''une bonne performance de la collectivité par rapport à des valeurs de références nationales ou locales. A préciser en commentaires.</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, points, pourcentage) values ('cae_5.2.2.8.2', 'cae', '5.2.2.8.2', '% des marchés (en €) intégrant des clauses environnementales (et sociales) dans les spécifications techniques ou les critères d’attribution en augmentation', '', '', '', '', null, null);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2', 8.0);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_2.2.2', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3', 4.0);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2', 4.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4', 8.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2', 4.0);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1', 8.0);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3', 4.0);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_3.2.3', 8.0);
+insert into action_computed_points(action_id, value) values ('cae_3.2.2', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2', 16.0);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1', 8.0);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2', 16.0);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3', 14.0);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4', 8.0);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3', 8.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3', 4.0);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4', 8.0);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1', 12.0);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2', 8.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1', 20.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2', 44.0);
+insert into action_computed_points(action_id, value) values ('cae_2.3', 10.0);
+insert into action_computed_points(action_id, value) values ('cae_1.3', 26.0);
+insert into action_computed_points(action_id, value) values ('cae_6.3', 18.0);
+insert into action_computed_points(action_id, value) values ('cae_5.2', 20.0);
+insert into action_computed_points(action_id, value) values ('cae_6.4', 18.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2', 34.0);
+insert into action_computed_points(action_id, value) values ('cae_6.1', 14.0);
+insert into action_computed_points(action_id, value) values ('cae_3.2', 32.0);
+insert into action_computed_points(action_id, value) values ('cae_3.3', 42.0);
+insert into action_computed_points(action_id, value) values ('cae_4.2', 30.0);
+insert into action_computed_points(action_id, value) values ('cae_6.5', 16.0);
+insert into action_computed_points(action_id, value) values ('cae_5.1', 26.0);
+insert into action_computed_points(action_id, value) values ('cae_4.1', 16.0);
+insert into action_computed_points(action_id, value) values ('cae_2.1', 24.0);
+insert into action_computed_points(action_id, value) values ('cae_2.2', 30.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1', 30.0);
+insert into action_computed_points(action_id, value) values ('cae_4.3', 50.0);
+insert into action_computed_points(action_id, value) values ('cae_6', 100.0);
+insert into action_computed_points(action_id, value) values ('cae_4', 96.0);
+insert into action_computed_points(action_id, value) values ('cae_3', 94.0);
+insert into action_computed_points(action_id, value) values ('cae_2', 64.0);
+insert into action_computed_points(action_id, value) values ('cae_5', 46.0);
+insert into action_computed_points(action_id, value) values ('cae_1', 100.0);
+insert into action_computed_points(action_id, value) values ('cae', 500.0);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.3', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.4', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.5', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.1', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.3', 3.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.4', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.5', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.6', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.3', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.4', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.5', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.6', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.7', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.8', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.2', 2.4);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.3', 2.4);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.4', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.5', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.6', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.3', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.4', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.5', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.6', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_2.2.2.1', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.2.2.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.2.3', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.2.2.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.2.2.5', 3.0);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.3', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.4', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.5', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.6', 4.0);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.1', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.2', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.3', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.4', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.5', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.3', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.4', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.5', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.6', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.2', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.3', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.4', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.5', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.1', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.3', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.4', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.1', 3.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.2', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.3', 3.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.4', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.1', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.3', 3.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.4', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.5', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.1', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.2', 3.2);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.3', 2.4);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.4', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.1', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2', 5.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.3', 3.0);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.1', 3.2);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.2', 4.0);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.3', 5.6);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.4', 3.2);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.2', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.3', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.5', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.4', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.5', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.6', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.1', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.2', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.3', 4.800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.2', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.3', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.4', 2.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.5', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.6', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.4', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.1', 2.0999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.2', 2.7);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.2', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.3', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.4', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.5', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.1', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.2', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.3', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.4', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.1', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.2', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.3', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.4', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.5', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.6', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.1', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.2', 4.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.3', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.4', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.5', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.1', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.2', 3.0);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.3', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.5', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.6', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.7', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.2.2.1', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_3.2.2.2', 6.0);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.3', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.4', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.5', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.6', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.7', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.8', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.1', 3.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.2', 3.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.3', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.4', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.1', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.3', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.5', 3.0);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.1', 1.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.2', 1.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.3', 1.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.4', 4.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.5', 2.8000000000000003);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.6', 1.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.7', 1.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.3', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.4', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.5', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.6', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.7', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.8', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.1', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.3', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.5', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.6', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.1', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.2', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.3', 4.800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4.3', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.1', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.3', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.4', 4.0);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.5', 2.4);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.6', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.7', 4.8);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.2', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.4', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.2', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.3', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.4', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.2', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.3', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.4', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.5', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.6', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.2', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.3', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.4', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.5', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.1', 2.0999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.2', 2.0999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.3', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.3', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.4', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.5', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.1', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.2', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.3', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.4', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.5', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.6', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.3', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.5', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.6', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.2', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.3', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.4', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.5', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.6', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.7', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.8', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.1', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.3', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.4', 4.5);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.5', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.6', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.1', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.2', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.3', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.4', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.5', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.6', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.7', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.8', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.3', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.4', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.5', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.6', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.3', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.4', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.5', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.6', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.7', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_3.2.3.1', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_3.2.3.2', 2.4);
+insert into action_computed_points(action_id, value) values ('cae_3.2.3.3', 4.0);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.3', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.4', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.1', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.2', 2.4);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.3', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.4', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.5', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.6', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.2', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.3', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.4', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.5', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.4', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.5', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.6', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.7', 4.199999999999999);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.3', 3.2);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.4', 3.2);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.4', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.5', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.6', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.3', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.4', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.5', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.6', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.7', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.8', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.1', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.3', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.4', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.5', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.1', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.2', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.3', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.4', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.5', 2.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.6', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.7', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.1', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.2', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.3', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.4', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.5', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.6', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.7', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.8', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.2.9', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.5.1', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.5.2', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.5.3', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.3.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.3.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.3.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.1.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.1.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.1.3', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.1.4', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.1.5', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.6.1', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.6.2', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.6.3', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.6.4', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.6.5', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.1.1', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.1.2', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.1.3', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.1.1', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.1.2', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.1.3', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.1.4', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.1', 0.3375);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.2', 0.3375);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.3', 0.3375);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.4', 0.3375);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.5', 0.3375);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.6', 0.3375);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.7', 0.3375);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.2.8', 0.3375);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.4', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.5', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.4.6', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.3.1', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.3.2', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.3.3', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.2.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.2.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.1.1', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.1.2', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.1.3', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.1.4', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.3.1', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.3.2', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.3.3', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.3.4', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.3.5', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4.2.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4.2.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4.2.3', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4.2.4', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.5.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.5.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.3.1', 0.26666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.3.2', 0.26666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.3.3', 0.26666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.2.1', 0.28);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.2.2', 0.28);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.2.3', 0.28);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.2.4', 0.28);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.2.5', 0.28);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.4.1', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.4.2', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.4.3', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.5.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.5.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.5.3', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.5.4', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.4.1', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.4.2', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.4.3', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.4.4', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.1', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.2', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.3', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.4', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.5', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.6', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.7', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.2.8', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_3.2.3.2.1', 0.7999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_3.2.3.2.2', 0.7999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_3.2.3.2.3', 0.7999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.1.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.1.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.5.1', 0.18);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.5.2', 0.18);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.5.3', 0.18);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.5.4', 0.18);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.5.5', 0.18);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.5.1', 0.7999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.5.2', 0.7999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.5.3', 0.7999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.4.1', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.4.2', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.4.3', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.1', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.2', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.3', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.4', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.5', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.6', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.7', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.4.8', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.4.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.4.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.1.1', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.1.2', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.2.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.4.1', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.4.2', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.4.3', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.4.4', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.6.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.6.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.6.3', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.6.4', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.1.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.6.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.6.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.6.3', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.6.4', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.2.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.2.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.5.1', 2.8000000000000003);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.5.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.5.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.5.3', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.5.4', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.5.5', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.4.1', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.4.2', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.4.3', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.4', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.5', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.3.6', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.3.1', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.3.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.3.3', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.3.4', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.3.5', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.3.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.3.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.3.3', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.3.4', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.6.1', 0.46666666666666673);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.6.2', 0.46666666666666673);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.6.3', 0.46666666666666673);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.1.1', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.1.2', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.1.3', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.1.4', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.6.1', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.6.2', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.6.3', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.6.4', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.1', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.2', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.3', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.4', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.5', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.1.6', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.4.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.4.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.1.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.1.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.6.1', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.6.2', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.6.3', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.6.4', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.1.1', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.1.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.1.3', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.1.4', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.1.5', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.8.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.8.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.2.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.2.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.2.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.2.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.2.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.6.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.6.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.6.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.5.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.5.1', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.5.2', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.5.3', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.5.4', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.5.5', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.2.1', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.2.2', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.2.3', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.2.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.4.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.4.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.4.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.1', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.2', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.3', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.4', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.5', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.4.6', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.2.1', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.2.2', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.2.3', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.2.4', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.2.5', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.1.1', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.1.2', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.1.3', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.1.4', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.1.5', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.3.1', 0.75);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.3.2', 0.75);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.6.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.6.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.6.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.2.1', 0.05);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.2.2', 0.05);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.4.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.4.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.5.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.5.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.5.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.5.4', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.5.5', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.1.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.1.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.4.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.4.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.4.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.3.1', 0.16);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.3.2', 0.16);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.3.3', 0.16);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.3.4', 0.16);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.3.5', 0.16);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.1', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.2', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.3', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.4', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.5', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.6', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.7', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.3.8', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.2.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.2.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.2.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.2.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.1.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.1.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.1.3', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.1.4', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.3.1', 0.46666666666666673);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.3.2', 0.46666666666666673);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.3.3', 0.46666666666666673);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.2.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.2.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.2.3', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.2.4', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.2.1', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.2.2', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.2.3', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.4', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.5', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.3.6', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.3.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.3.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.1', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.2', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.3', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.4', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.5', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.6', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.1.7', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.5.1', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.3.1', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.3.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.3.3', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.4.1', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.4.2', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.4.3', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.4.4', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.2.1', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.2.2', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.2.3', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.1.1', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.1.2', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.1.3', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.1.4', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.2.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.2.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.2.3', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.2.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.2.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.2.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.1.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.1.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.4.1', 0.75);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.4.2', 0.75);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.3.1', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.3.2', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.3.3', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.5.1', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.5.2', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.5.3', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.5.4', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.3.1', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.3.2', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.3.3', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.2.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.2.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.2.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.5.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.5.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.5.3', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.5.4', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.3.1', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.3.2', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.3.3', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.3.4', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.3.5', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.4.1', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.4.2', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.4.3', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.4.4', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.4.5', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.2.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.2.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.2.3', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.2.4', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.5.1', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.5.2', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.5.3', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.3.1', 0.75);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.3.2', 0.75);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.3.3', 0.75);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.3.4', 0.75);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.5.1', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.5.2', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.5.3', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.5.4', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.5.5', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.1', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.2', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.3', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.4', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.5', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.4.6', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.3.1', 0.375);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.3.2', 0.375);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.3.3', 0.375);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.3.4', 0.375);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.1', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.2', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.3', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.4', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.5', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.6', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.7', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.8', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.2.9', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.1.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.1.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.1.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.5.3.1.4', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.1.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.1.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.3.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.3.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.7.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.7.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.7.3', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.7.4', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.7.5', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.3.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.3.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.3.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.3.4', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.3.5', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.3.1', 1.0666666666666667);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.3.2', 1.0666666666666667);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.3.3', 1.0666666666666667);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.4.1', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.4.2', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.4.3', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.4.4', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.4.5', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.6.1', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.6.2', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.6.3', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.6.4', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.6.1', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.6.2', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.5.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.5.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.5.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.2.1', 1.0666666666666667);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.2.2', 1.0666666666666667);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.2.3', 1.0666666666666667);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.2.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.2.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.2.3', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.2.4', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.2.5', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.1.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.1.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.1.1', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.1.2', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.1.3', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.4.1', 0.16);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.4.2', 0.16);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.4.3', 0.16);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.4.4', 0.16);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.4.5', 0.16);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.2.1', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.2.2', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.2.3', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.2.4', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.2.5', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.1', 0.2285714285714286);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.2', 0.2285714285714286);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.3', 0.2285714285714286);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.4', 0.2285714285714286);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.5', 0.2285714285714286);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.6', 0.2285714285714286);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.6.7', 0.2285714285714286);
+insert into action_computed_points(action_id, value) values ('cae_2.2.2.4.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.2.2.4.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.1.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.1.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.1.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.3.1', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.3.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.3.3', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.3.4', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.5.1', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.5.2', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.5.3', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.4.1', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.4.2', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.4.3', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.4.4', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.4.5', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.2.1', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.2.2', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.5.1', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.5.2', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.5.3', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.5.4', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.2.1', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.2.2', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.2.3', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.3.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.3.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.3.3', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.3.4', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.2.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.2.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.1.2.3', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.3.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.3.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.5.1', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.5.2', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.5.3', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.5.4', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.5.5', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.1.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.1.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.7.1', 1.3999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.7.2', 1.3999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.7.3', 1.3999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.1.1', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.1.2', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.1.3', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.5.1', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.5.2', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.5.3', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.5.4', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.5.5', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.4.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.4.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.6.1', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.6.2', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.6.3', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.4.1', 0.75);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.4.2', 0.75);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.2.1', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.2.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.2.3', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.2.4', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.1', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.2', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.3', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.4', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.5', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.2.6', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.5.1', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.5.2', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.4.1', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.4.2', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.4.3', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.4.4', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.4.5', 0.72);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.3.1', 0.1);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.2.1', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.2.2', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.3.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_6.2.3.3.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.3.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.3.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.3.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.3.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.2.1', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.2.5.2.2', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.3.1', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.3.2', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.3.3', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.2.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.2.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.2.1', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.2.2', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.2.3', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.2.4', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.1.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.1.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.1.3', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.1.4', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.6.1', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.6.2', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.6.3', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.6.4', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.4.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.4.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.4.3', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.4.4', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.4.1', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.4.2', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.4.3', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.7.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.1.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.1.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.1.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.1.1', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.1.2', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.1.3', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.1.4', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.1.5', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.7.1', 0.125);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.7.2', 0.125);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.7.3', 0.125);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.7.4', 0.125);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.1.1', 0.24);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.1.2', 0.24);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.1.3', 0.24);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.1.4', 0.24);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.1.5', 0.24);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.1', 0.2571428571428571);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.2', 0.2571428571428571);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.3', 0.2571428571428571);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.4', 0.2571428571428571);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.5', 0.2571428571428571);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.6', 0.2571428571428571);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.4.7', 0.2571428571428571);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.2.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.2.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.2.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.2.4', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.2.5', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.4', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.5', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.3.6', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.3.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.3.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.3.3', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.3.4', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.1.1', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.1.2', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.1.3', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.3.1', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.3.2', 0.15000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.3.1', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.3.2', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.3.3', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.1.2.3.4', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.6.1', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.6.2', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.6.3', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.1.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.1.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.2.1', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.2.2', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.2.3', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.2.4', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.2.5', 0.4800000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.3.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.3.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.5.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.5.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.7.1', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.7.2', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.7.3', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.7.4', 0.25);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.1.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.1.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.1.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.1.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.1.1', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.1.2', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.1.3', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.1.1', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.1.2', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.1.3', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.2.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.2.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.5.1', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.5.2', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.5.3', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.3.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.3.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.3.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.3.4', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.1.1.3.5', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.6.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.6.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.6.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.1', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.2', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.3', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.4', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.5', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.1.6', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.5.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.5.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.2.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.2.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.2.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.3.1', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.3.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.3.3', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.3.4', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.8.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.8.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.8.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.1', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.2', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.3', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.4', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.5', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.6', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.7', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.1.8', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.3.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.3.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.3.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.2.1.3.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.5.1', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_2.2.1.5.2', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.6.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.6.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.2.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.2.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.3.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.3.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.2.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.2.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.5.1', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.5.2', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.5.3', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.5.1', 0.24);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.5.2', 0.24);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.5.3', 0.24);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.5.4', 0.24);
+insert into action_computed_points(action_id, value) values ('cae_4.3.4.5.5', 0.24);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.4.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.4.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.4.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.1', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.3', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.4', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.5', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.6', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.4.7', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.6.1', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.6.2', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.6.3', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.6.4', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.1', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.2', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.3', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.4', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.5', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.6', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.7', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.5.8', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.2.1', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.2.2', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.2.3', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.4.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.4.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.4.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.7.1', 1.5999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.7.2', 1.5999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.7.3', 1.5999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.1.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_5.2.2.1.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.6.1', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.6.2', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.6.3', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.6.4', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.2.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.2.2.2.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.4.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.3.2.4.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.3.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.4.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.4.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_3.3.3.4.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.3', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.4', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.5', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.6', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.7', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_2.3.1.3.8', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.3.1', 1.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.3.2', 1.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.3.3', 1.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.3.4', 1.4);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.1.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.1.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.1.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.2.1', 1.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.2.2', 1.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.2.2.3', 1.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.2.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.2.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.2.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.1', 0.17142857142857146);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.2', 0.17142857142857146);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.3', 0.17142857142857146);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.4', 0.17142857142857146);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.5', 0.17142857142857146);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.6', 0.17142857142857146);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.1.7', 0.17142857142857146);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.1.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.1.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_2.2.3.1.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.1', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.2', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.3', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.4', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.5', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.2.6', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.6.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.6.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.6.3', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_2.1.2.6.4', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.3.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.3.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.3.3', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.3.4', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.3.5', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.1', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.3', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.4', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.5', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_3.3.5.1.6', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.1.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.1.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.2.1.3', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.4.1', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_1.1.3.4.2', 1.6);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.1', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.2', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.3', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.4', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.5', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.2.6', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.1.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.1.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.8.1', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.8.2', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.8.3', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.8.4', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_6.4.1.8.5', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.4.1', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.4.2', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.4.3', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.4.4', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.2.1', 0.125);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.2.2', 0.125);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.2.3', 0.125);
+insert into action_computed_points(action_id, value) values ('cae_2.1.1.2.4', 0.125);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.3.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.3.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.3.3', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.7.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.7.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.7.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.6.1', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.6.2', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.2.4.6.3', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.4.1', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.4.2', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.4.3', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.4.4', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.4.5', 0.36);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.1', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.2', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.3', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.4', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.5', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.6', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.7', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.8', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.8.9', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.1', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.2', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.3', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.4', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.5', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.6', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_6.3.3.4.7', 0.21428571428571427);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.1', 0.2857142857142857);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.2', 0.2857142857142857);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.3', 0.2857142857142857);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.4', 0.2857142857142857);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.5', 0.2857142857142857);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.6', 0.2857142857142857);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.5.7', 0.2857142857142857);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.7.1', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.7.2', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.4.1', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.1', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.2', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.3', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.4', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.5', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_6.3.2.4.6', 0.16666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.1', 0.08571428571428573);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.2', 0.08571428571428573);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.3', 0.08571428571428573);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.4', 0.08571428571428573);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.5', 0.08571428571428573);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.6', 0.08571428571428573);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.5.7', 0.08571428571428573);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.4.1', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_1.2.1.4.2', 1.0);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.5.1', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.5.2', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.5.3', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.5.4', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.5.5', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4.1.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.2.4.1.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.1.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.1.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.3.1', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.3.2', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.3.3', 1.2);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.2.1', 0.18);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.2.2', 0.18);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.2.3', 0.18);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.2.4', 0.18);
+insert into action_computed_points(action_id, value) values ('cae_4.1.2.2.5', 0.18);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.4.1', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.4.2', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.4.3', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_3.1.1.4.4', 0.5);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.1', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.2', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.3', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.4', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.5', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.6', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.7', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.8', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.9', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.10', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.11', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.12', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.13', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.14', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.15', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.16', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.17', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.18', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.19', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.20', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.21', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_1.2.3.2.22', 0.22727272727272727);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.1', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.2', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.3', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.4', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.5', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.6.6', 0.13333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.3.1', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_6.1.2.3.2', 0.8);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.1.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.1.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.1.3', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_4.3.1.1.4', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.7.1', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.7.2', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.4.1', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.4.2', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.4.3', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.1.3.4.4', 0.44999999999999996);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.7.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.7.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.7.3', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.7.4', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.1.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.1.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.1.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.1', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.2', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.3', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.4', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.5', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.6', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.7', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.8', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.4.9', 0.19999999999999998);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.1', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.2', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.3', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.4', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.5', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.6', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.7', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.8', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.9', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.10', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.11', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.3.12', 0.15);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.1.1', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.1.2', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.1.3', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.1.4', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_6.5.1.1.5', 0.41999999999999993);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.3.1', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.3.2', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.3.1.3.3', 0.5333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.8.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_6.4.2.8.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.1.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.1.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.1.3', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.1.4', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.4.1', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.4.2', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.4.3', 0.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.5.1', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.5.2', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_4.2.3.5.3', 0.3);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.1.1', 1.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.1.1', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.1.2', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_1.2.2.1.3', 0.4000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.1.1', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.1.2', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.3.3.1.3', 0.09999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.3.1', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.3.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.3.3', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.3.4', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.3.5', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.2.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_3.3.1.2.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.1', 0.26666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.2', 0.26666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.3', 0.26666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.4', 0.26666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.5', 0.26666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_1.3.3.3.6', 0.26666666666666666);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.4.1', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_2.1.3.4.2', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.6.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_5.2.1.6.2', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.1.1', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_2.3.2.1.2', 0.2);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.4.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_5.1.4.4.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.5.1', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.5.2', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.5.3', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.5.4', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_6.5.2.5.5', 0.24000000000000005);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.4.1', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.4.2', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_6.1.3.4.3', 0.39999999999999997);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.5.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.2.5.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_2.2.2.5.1', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_2.2.2.5.2', 1.5);
+insert into action_computed_points(action_id, value) values ('cae_1.2.4.5.1', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.1.1', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.1.1.1.2', 0.30000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.1', 0.4444444444444444);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.2', 0.4444444444444444);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.3', 0.4444444444444444);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.4', 0.4444444444444444);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.5', 0.4444444444444444);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.6', 0.4444444444444444);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.7', 0.4444444444444444);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.8', 0.4444444444444444);
+insert into action_computed_points(action_id, value) values ('cae_4.3.2.4.9', 0.4444444444444444);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.6.1', 1.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.6.2', 1.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_4.1.1.6.3', 1.3333333333333333);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.6.1', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.6.2', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.6.3', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.6.4', 0.22499999999999998);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.7.1', 0.46666666666666673);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.7.2', 0.46666666666666673);
+insert into action_computed_points(action_id, value) values ('cae_4.3.3.7.3', 0.46666666666666673);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.2.1', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.2.2', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.2.3', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_4.2.1.2.4', 0.4);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.3.1', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.3.2', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.3.3', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.3.4', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_3.3.4.3.5', 0.12000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.2.1', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.2.2', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_5.1.1.2.3', 0.6);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.1', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.2', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.3', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.4', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.5', 0.20000000000000004);
+insert into action_computed_points(action_id, value) values ('cae_1.3.1.1.6', 0.20000000000000004);
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_38', 'cae', '38', null, 'Indicateur alternatif à la part modale TC (à définir par la collectivité et son conseiller le cas échéant)', '<p>En remplacement de l''indicateur sur les parts modales des transports en commun, la collectivité peut mesurer par un autre indicateur la progression d''un moyen de transport alternatif à la voiture individuelle, mieux adapté à sa situation (milieu rural notamment) : co-voiturage, transport à la demande... Il peut également s’agir de la part de déplacements intermodaux réalisés par les habitants du territoire, c’est-à-dire la part de déplacements mécanisés (tout mode hors marche-a-pied)  composés d''au moins deux trajets effectués à l’aide de plusieurs modes mécanisés. Pour obtenir la totalité des points, la valeur collectée doit témoigner d''une bonne performance de la collectivité par rapport à des valeurs de références nationales ou locales. A préciser en commentaires.</p>
 <p>A titre indicatif,  [valeur limite ; valeur cible] pour la part de déplacements intermodaux:</p>
 <ul>
 <li>
@@ -9037,16 +9044,16 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 </li>
 </ul>
 <p>(source : analyse de rapport d’études et de recherches sur l’intermodalité, CEREMA – IFSTTAR, 2015 et 2016, tendances observées depuis 1985 dans le cadre des EMD)</p>
-', 'à définir par la collectivité et son conseiller le cas échéant', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_28a', 'cae', '28.a', null, 'Consommation énergétique du système d''alimentation en eau potable (captage/traitement/distribution) en kWh/hab', '<p>Le système d''alimentation en eau potable est très dépendant de l''état de la ressource en eau sur le territoire. L''évaluation des effets se fait donc de manière relative, sur plusieurs années, en étant vigilant sur les conditions climatiques de l''année étudiée. L''indicateur peut être en kWh/hab.</p>
-', 'captage/traitement/distribution', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_28b', 'cae', '28.b', null, 'Rendement du système d''alimentation en eau potable (captage/traitement/distribution) en m3 brut/m3 vendu', '<p>Le système d''alimentation en eau potable est très dépendant de l''état de la ressource en eau sur le territoire. L''évaluation des effets se fait donc de manière relative, sur plusieurs années, en étant vigilant sur les conditions climatiques de l''année étudiée. L''indicateur est en m3 brut/m3 vendu pour mesurer les pertes (la cible étant dans ce cas de se rapprocher de 1).</p>
-', 'captage/traitement/distribution', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_8', 'cae', '8.None', null, 'Nombre de logements rénovés énergétiquement (nb logements rénovés/100 logements existants)', '<p>L''indicateur mesure le nombre annuel de logements rénovés via les dispositifs de subventionnement et d’accompagnement dont la collectivité est partenaire, ramené au nombre de logements du territoire (pour 100 logements). Pour rappel l’objectif national du plan de rénovation énergétique de l’habitat est de 500 000 logements rénovés par an en 2017, soit 1,4 logements rénovés pour 100 logements existants (35,425 millions de logements en 2016 selon l’INSEE).</p>
-', 'nb logements rénovés/100 logements existants', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_59', 'cae', '59.None', null, 'Part de surface agricole certifiée agriculture biologique ou en conversion et haute valeur environnementale (%)', '<p>L''indicateur mesure le pourcentage % de SAU impliquée dans une démarche de certification environnementale (par rapport à la SAU totale) : agriculture biologique (certifiée et en conversion) et haute valeur environnementale (HVE). L''agriculture raisonnée (ou niveau 2 de certification environnementale selon les décrets et arrêtés du 20 et 21 juin 2011) n''est pas prise en compte. Pour la France métropole, la valeur limite est basée sur la valeur moyenne française des surfaces labellisées AB en 2016 (5,7% - Agence bio) et la valeur cible est basée sur l’objectif 2020 fixé dans la loi Grenelle I (20%).</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49a', 'cae', '49.a', null, 'Budget associé à la politique climat-air-énergie (euros/hab.an)', '<p>L''indicateur suit et totalise les budgets annuels associés aux actions les plus clairement identifiables de la politique climat-air-énergie de la collectivité, en fonctionnement et en investissement. L''indicateur doit exister et être suivi annuellement pour être valorisé (pas de valeur limite ou cible). Pour faciliter la comparaison au fil du temps et entre collectivités, le budget est rapporté au nombre d''habitant et la décomposition suivante peut être utilisée :</p>
+', 'à définir par la collectivité et son conseiller le cas échéant', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_38', 'cae_4.1.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_38', 'cae_4.3.3');insert into indicateur_action(indicateur_id, action_id) values ('cae_38', 'cae_4.3.4');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_28.a', 'cae', '28.a', null, 'Consommation énergétique du système d''alimentation en eau potable (captage/traitement/distribution) en kWh/hab', '<p>Le système d''alimentation en eau potable est très dépendant de l''état de la ressource en eau sur le territoire. L''évaluation des effets se fait donc de manière relative, sur plusieurs années, en étant vigilant sur les conditions climatiques de l''année étudiée. L''indicateur peut être en kWh/hab.</p>
+', 'captage/traitement/distribution', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_28.a', 'cae_3.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_28.b', 'cae', '28.b', null, 'Rendement du système d''alimentation en eau potable (captage/traitement/distribution) en m3 brut/m3 vendu', '<p>Le système d''alimentation en eau potable est très dépendant de l''état de la ressource en eau sur le territoire. L''évaluation des effets se fait donc de manière relative, sur plusieurs années, en étant vigilant sur les conditions climatiques de l''année étudiée. L''indicateur est en m3 brut/m3 vendu pour mesurer les pertes (la cible étant dans ce cas de se rapprocher de 1).</p>
+', 'captage/traitement/distribution', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_28.b', 'cae_3.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_8', 'cae', '8', null, 'Nombre de logements rénovés énergétiquement (nb logements rénovés/100 logements existants)', '<p>L''indicateur mesure le nombre annuel de logements rénovés via les dispositifs de subventionnement et d’accompagnement dont la collectivité est partenaire, ramené au nombre de logements du territoire (pour 100 logements). Pour rappel l’objectif national du plan de rénovation énergétique de l’habitat est de 500 000 logements rénovés par an en 2017, soit 1,4 logements rénovés pour 100 logements existants (35,425 millions de logements en 2016 selon l’INSEE).</p>
+', 'nb logements rénovés/100 logements existants', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_8', 'cae_1.2.4');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_59', 'cae', '59', null, 'Part de surface agricole certifiée agriculture biologique ou en conversion et haute valeur environnementale (%)', '<p>L''indicateur mesure le pourcentage % de SAU impliquée dans une démarche de certification environnementale (par rapport à la SAU totale) : agriculture biologique (certifiée et en conversion) et haute valeur environnementale (HVE). L''agriculture raisonnée (ou niveau 2 de certification environnementale selon les décrets et arrêtés du 20 et 21 juin 2011) n''est pas prise en compte. Pour la France métropole, la valeur limite est basée sur la valeur moyenne française des surfaces labellisées AB en 2016 (5,7% - Agence bio) et la valeur cible est basée sur l’objectif 2020 fixé dans la loi Grenelle I (20%).</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_59', 'cae_6.4.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49.a', 'cae', '49.a', null, 'Budget associé à la politique climat-air-énergie (euros/hab.an)', '<p>L''indicateur suit et totalise les budgets annuels associés aux actions les plus clairement identifiables de la politique climat-air-énergie de la collectivité, en fonctionnement et en investissement. L''indicateur doit exister et être suivi annuellement pour être valorisé (pas de valeur limite ou cible). Pour faciliter la comparaison au fil du temps et entre collectivités, le budget est rapporté au nombre d''habitant et la décomposition suivante peut être utilisée :</p>
 <ul>
 <li>
 <p>études/expertises concernant la maîtrise de l’énergie et la baisse des émissions de GES dans les différents secteurs consommateurs et émetteurs, les énergies renouvelables, l''adaptation au changement climatique, la qualité de l''air</p>
@@ -9071,43 +9078,39 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 </li>
 </ul>
 <p>A noter : Dans une approche véritablement transversale et intégrée, l''ensemble des budgets des différents services contribuent à la politique climat-air-énergie, mais dans une proportion difficilement quantifiable.  Les budgets associés aux services déchets/eau/assainissement/transports publics/voirie, sont notamment associés à cette politique, mais répondent à des objectifs plus larges.</p>
-', 'euros/hab.an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49b', 'cae', '49.b', null, 'Budget études/expertises MDE/ENR/qualité de l''air/adaptation au changement climatique (euros)', '<p>Composante de l''indicateur 49a:</p>
+', 'euros/hab.an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_49.a', 'cae_5.2.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49.b', 'cae', '49.b', null, 'Budget études/expertises MDE/ENR/qualité de l''air/adaptation au changement climatique (euros)', '<p>Composante de l''indicateur 49a:</p>
 <p>Budget associé à la politique climat-air-énergie (euros/hab.an)</p>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49c', 'cae', '49.c', null, 'Budget actions communication/sensibilisation climat-air-énergie  (euros)', '<p>Composante de l''indicateur 49a:</p>
+', 'euros', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_49.b', 'cae_5.2.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49.c', 'cae', '49.c', null, 'Budget actions communication/sensibilisation climat-air-énergie  (euros)', '<p>Composante de l''indicateur 49a:</p>
 <p>Budget associé à la politique climat-air-énergie (euros/hab.an)</p>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49d', 'cae', '49.d', null, 'Montant des aides financières accordées aux particuliers et acteurs privés (euros)', '<p>Composante de l''indicateur 49a:</p>
+', 'euros', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_49.c', 'cae_5.2.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49.d', 'cae', '49.d', null, 'Montant des aides financières accordées aux particuliers et acteurs privés (euros)', '<p>Composante de l''indicateur 49a:</p>
 <p>Budget associé à la politique climat-air-énergie (euros/hab.an)</p>
 <ul>
 <li>Il s''agit du montant des subventions octroyées par la collectivité aux particuliers et autres acteurs privés dans le domaine énergétique et climatique. La part financée par la collectivité dans des subventions partenariales est prise en compte.</li>
 </ul>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49d.hab', 'cae', '49.d.hab', null, 'Montant des aides financières accordées aux particuliers et acteurs privés (euros/hab.an)', '<p>Déclinaison par habitant.</p>
-', 'euros/hab.an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49e', 'cae', '49.e', null, 'Budget projets de coopération  (euros)', '<p>Composante de l''indicateur 49a:</p>
+', 'euros', false, null);
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49.d.hab', 'cae', '49.d-hab', null, 'Montant des aides financières accordées aux particuliers et acteurs privés (euros/hab.an)', '<p>Déclinaison par habitant.</p>
+', 'euros/hab.an', false, null);
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49.e', 'cae', '49.e', null, 'Budget projets de coopération  (euros)', '<p>Composante de l''indicateur 49a:</p>
 <p>Budget associé à la politique climat-air-énergie (euros/hab.an)</p>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49f', 'cae', '49.f', null, 'Budget politique cyclable  (euros)', '<p>Composante de l''indicateur 49a:</p>
+', 'euros', false, null);
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49.f', 'cae', '49.f', null, 'Budget politique cyclable  (euros)', '<p>Composante de l''indicateur 49a:</p>
+<p>Budget associé à la politique climat-air-énergie (euros/hab.an).</p>
+<p>L’indicateur mesure le budget global dédié par la collectivité au développement de la pratique cyclable sur son territoire : études, infrastructures et services.</p>
+', 'euros', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_49.f', 'cae_4.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49.f', 'cae', '49.f-hab', null, 'Budget politique cyclable  (euros/hab.an)', '<p>Déclinaison par habitant.  Pour les collectivités compétentes en la matière, des valeurs de références ramenées au nombre d''habitants sont données à titre indicatif : valeur limite 5 euros/hab.an, valeur cible 10 euros/hab.an (source observatoire des mobilités actives, ADEME 2016)</p>
+', 'euros/hab.an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_49.f', 'cae_4.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49.g', 'cae', '49.g', null, 'Budget travaux rénovation énergétique patrimoine public  (euros)', '<p>Composante de l''indicateur 49a:</p>
 <p>Budget associé à la politique climat-air-énergie (euros/hab.an)</p>
-<ul>
-<li>L’indicateur mesure le budget global dédié par la collectivité au développement de la pratique cyclable sur son territoire : études, infrastructures et services.</li>
-</ul>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite,
-                                  obligation_eci, parent) values ('cae_49f-hab', 'cae', '49.f', null, 'Budget ' ||
-                                                                                                     'politique cyclable  (euros/hab.an)', '<p>Déclinaison par habitant.  Pour les collectivités compétentes en la matière, des valeurs de références ramenées au nombre d''habitants sont données à titre indicatif : valeur limite 5 euros/hab.an, valeur cible 10 euros/hab.an (source observatoire des mobilités actives, ADEME 2016)</p>
-', 'euros/hab.an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49g', 'cae', '49.g', null, 'Budget travaux rénovation énergétique patrimoine public  (euros)', '<p>Composante de l''indicateur 49a:</p>
+', 'euros', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_49.g', 'cae_4.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49.h', 'cae', '49.h', null, 'Budget installations ENR publiques  (euros)', '<p>Composante de l''indicateur 49a:</p>
 <p>Budget associé à la politique climat-air-énergie (euros/hab.an)</p>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_49h', 'cae', '49.h', null, 'Budget installations ENR publiques  (euros)', '<p>Composante de l''indicateur 49a:</p>
-<p>Budget associé à la politique climat-air-énergie (euros/hab.an)</p>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_18', 'cae', '18.None', null, 'Part des achats d’électricité renouvelable de la collectivité (%)', '<p>L''indicateur mesure le rapport entre les achats d''électricité renouvelable et le montant total des achats d''électricité de la collectivité pour les bâtiments et équipements de la collectivité (y compris services publics eaux, assainissement, déchets et éclairage public s’ils sont de la compétence de la collectivité) (en kWh ou MWh). La cible est de 100%</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_9', 'cae', '9.None', null, 'Compacité des formes urbaines', '<p>Trois indicateurs au choix :</p>
+', 'euros', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_49.h', 'cae_4.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_18', 'cae', '18', null, 'Part des achats d’électricité renouvelable de la collectivité (%)', '<p>L''indicateur mesure le rapport entre les achats d''électricité renouvelable et le montant total des achats d''électricité de la collectivité pour les bâtiments et équipements de la collectivité (y compris services publics eaux, assainissement, déchets et éclairage public s’ils sont de la compétence de la collectivité) (en kWh ou MWh). La cible est de 100%</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_18', 'cae_2.2.4');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_9', 'cae', '9', null, 'Compacité des formes urbaines', '<p>Trois indicateurs au choix :</p>
 <ul>
 <li>
 <p>Rapport annuel entre nouvelle surface construite ou réhabilitée sur des sites en reconversion (sites déjà urbanisés : friches industrielles, dents creuses, habitat insalubre...) / nouvelle surface construite en extension (en limite d''urbanisation ou sur des espaces naturels ou agricoles). La comptabilisation se fait sur la base des permis de construire. Pour une agglomération, le ratio de 2 (soit 1/3 en extension et 2/3 en renouvellement) est une bonne performance ; pour une ville-centre les objectifs visés pourront être plus élevés.</p>
@@ -9119,18 +9122,18 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Part du foncier en friche : L’indicateur permet d’identifier et caractériser les gisements fonciers locaux qualifiés comme étant « en friche ». Les enjeux sont d’effectuer une veille foncière, d’anticiper la formation de friches et d’étudier la mutabilité des espaces en friche. Compacité des formes urbaines</p>
 </li>
 </ul>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_58', 'cae', '58.None', null, 'Emissions directes de polluants atmosphériques du secteur agriculture par ha (tonne/ha)', '<p>Indicateur exigé dans la règlementation PCAET (diagnostic). Arrêté du 4 août 2016 relatif au plan climat-air-énergie territorial. Ramené à l’hectare pour comparaison.</p>
-', 'tonne/ha', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_48', 'cae', '48.None', null, 'Part d''ETP de la collectivité  dédié à la mise en œuvre de la politique climat air énergie ( %)', '<p>L’indicateur mesure le nombre de personnes en équivalent temps plein dédiées à la mise en œuvre de la politique climat-air-énergie. Pour être comptabilisé à 100%, l’intitulé du poste doit clairement se référer à cette politique (e : chargé de mission énergie, plan climat, mobilité douce…) ; pour des postes mixtes (ex : chargé de mission bâtiments), le poste ne doit pas être compté entièrement dans l’indicateur, mais uniquement l’estimation du % des tâches en lien avec la politique climat-air-énergie. Le personnel externe (prestataires) ne doit pas être pris en compte. Pour faciliter la comparaison, le nombre d’ETP est ramené au nombre total d''ETP de la collectivité.</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_19a_hors_dom', 'cae', '19.a_hors_dom', null, 'Part de bâtiments de classe F ou G selon le DPE pour les GES (ou équivalent) (hors DOM)', '<p>En France métropolitaine, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE,  dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes F et G selon le DPE pour les GES. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. L''indicateur permet de mesurer l''effort de la collectivité pour la rénovation de ces bâtiments les plus émetteurs. L''objectif est de ne plus avoir de patrimoine dans ces classes (valeur limite : 10%).</p>
-', 'ou équivalent', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_19b_hors_dom', 'cae', '19.b_hors_dom', null, 'Part de bâtiments de classe A ou B selon le DPE pour les GES (ou équivalent)  (hors DOM)', '<p>En France métropolitaine, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE, dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes A et B selon le DPE pour les GES. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. La cible est d''atteindre 30% du parc dans les classes A et B (mais valorisation progressive à partir de 0%).</p>
-', 'ou équivalent', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_39', 'cae', '39.None', null, 'Part de la population active couverte par un PDE/PDA (%)', '<p>L''indicateur comptabilise le nombre d''employés couverts par un Plan de Déplacements Entreprise (PDE) et Administration (PDA) sur le territoire et le rapporte à la population active du territoire. Ce chiffre doit être en augmentation chaque année. Des valeurs indicatives limites et cibles sont données, basées sur des données ADEME (enquête nationale 2009 et Poitou-Charentes 2012) et les meilleurs scores des collectivités Cit''ergie.</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_29', 'cae', '29.None', null, 'Consommation énergétique des STEP kWh/kgDBO5 éliminé', '<p>L''indicateur de consommation énergétique des STEP (station d''épuration) s''exprime en kWh/kg de DBO5 (demande biologique en oxygène mesuré à 5 jours) éliminés, plus fiables que les indicateurs en kWh/m3 d''eau traité. La composition des eaux entrantes influe en effet sur les consommations énergétiques de la station sans pour autant refléter ses performances. Le privilège est donc donné à cet indicateur, qui se situe habituellement se situe, selon la filière, autour des valeurs suivantes : BA (boues activées) entre 2 et 4, SBR (réacteur biologique séquencé) autour de 4 et BRM (bioréacteur à membranes) autour de 5 (dires d''experts). L''énergie est mesurée en énergie finale. Dans le cas d''une moyenne entre plusieurs STEP, pondérer selon les équivalents habitants.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_9', 'cae_1.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_58', 'cae', '58', null, 'Emissions directes de polluants atmosphériques du secteur agriculture par ha (tonne/ha)', '<p>Indicateur exigé dans la règlementation PCAET (diagnostic). Arrêté du 4 août 2016 relatif au plan climat-air-énergie territorial. Ramené à l’hectare pour comparaison.</p>
+', 'tonne/ha', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_58', 'cae_6.4.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_48', 'cae', '48', null, 'Part d''ETP de la collectivité  dédié à la mise en œuvre de la politique climat air énergie ( %)', '<p>L’indicateur mesure le nombre de personnes en équivalent temps plein dédiées à la mise en œuvre de la politique climat-air-énergie. Pour être comptabilisé à 100%, l’intitulé du poste doit clairement se référer à cette politique (e : chargé de mission énergie, plan climat, mobilité douce…) ; pour des postes mixtes (ex : chargé de mission bâtiments), le poste ne doit pas être compté entièrement dans l’indicateur, mais uniquement l’estimation du % des tâches en lien avec la politique climat-air-énergie. Le personnel externe (prestataires) ne doit pas être pris en compte. Pour faciliter la comparaison, le nombre d’ETP est ramené au nombre total d''ETP de la collectivité.</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_48', 'cae_5.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_19.a_hors_dom', 'cae', '19.a-hors-dom', null, 'Part de bâtiments de classe F ou G selon le DPE pour les GES (ou équivalent) (hors DOM)', '<p>En France métropolitaine, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE,  dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes F et G selon le DPE pour les GES. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. L''indicateur permet de mesurer l''effort de la collectivité pour la rénovation de ces bâtiments les plus émetteurs. L''objectif est de ne plus avoir de patrimoine dans ces classes (valeur limite : 10%).</p>
+', 'ou équivalent', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_19.a_hors_dom', 'cae_2.2.5');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_19.b_hors_dom', 'cae', '19.b-hors-dom', null, 'Part de bâtiments de classe A ou B selon le DPE pour les GES (ou équivalent)  (hors DOM)', '<p>En France métropolitaine, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE, dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes A et B selon le DPE pour les GES. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. La cible est d''atteindre 30% du parc dans les classes A et B (mais valorisation progressive à partir de 0%).</p>
+', 'ou équivalent', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_19.b_hors_dom', 'cae_2.2.5');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_39', 'cae', '39', null, 'Part de la population active couverte par un PDE/PDA (%)', '<p>L''indicateur comptabilise le nombre d''employés couverts par un Plan de Déplacements Entreprise (PDE) et Administration (PDA) sur le territoire et le rapporte à la population active du territoire. Ce chiffre doit être en augmentation chaque année. Des valeurs indicatives limites et cibles sont données, basées sur des données ADEME (enquête nationale 2009 et Poitou-Charentes 2012) et les meilleurs scores des collectivités Cit''ergie.</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_39', 'cae_4.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_29', 'cae', '29', null, 'Consommation énergétique des STEP kWh/kgDBO5 éliminé', '<p>L''indicateur de consommation énergétique des STEP (station d''épuration) s''exprime en kWh/kg de DBO5 (demande biologique en oxygène mesuré à 5 jours) éliminés, plus fiables que les indicateurs en kWh/m3 d''eau traité. La composition des eaux entrantes influe en effet sur les consommations énergétiques de la station sans pour autant refléter ses performances. Le privilège est donc donné à cet indicateur, qui se situe habituellement se situe, selon la filière, autour des valeurs suivantes : BA (boues activées) entre 2 et 4, SBR (réacteur biologique séquencé) autour de 4 et BRM (bioréacteur à membranes) autour de 5 (dires d''experts). L''énergie est mesurée en énergie finale. Dans le cas d''une moyenne entre plusieurs STEP, pondérer selon les équivalents habitants.</p>
 <ul>
 <li>
 <p>Valeur limite : BA 4, SBR 5, BRM 7</p>
@@ -9139,27 +9142,27 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Valeur cible : BA 2, SBR 3, BRM 4</p>
 </li>
 </ul>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_32', 'cae', '32.None', null, 'Rendement énergétique UIOM en % (valorisation énergétique électricité et chaleur)', '<p>Le rendement de l''UIOM (unité d''incinération des ordures ménagères) est calculé selon la formule permettant la modulation du taux de la TGAP (arrêté du 7 décembre 2016 modifiant l''arrêté du 20 septembre 2002 relatif aux installations d''incinération et de coïncinération de déchets non dangereux et aux installations incinérant des déchets d''activités de soins à risques infectieux). Le niveau de performance énergétique choisi comme valeur cible est celui utilisé à l''article 266 nonies du code des douanes pour bénéficier d’une TGAP réduite.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_29', 'cae_3.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_32', 'cae', '32', null, 'Rendement énergétique UIOM en % (valorisation énergétique électricité et chaleur)', '<p>Le rendement de l''UIOM (unité d''incinération des ordures ménagères) est calculé selon la formule permettant la modulation du taux de la TGAP (arrêté du 7 décembre 2016 modifiant l''arrêté du 20 septembre 2002 relatif aux installations d''incinération et de coïncinération de déchets non dangereux et aux installations incinérant des déchets d''activités de soins à risques infectieux). Le niveau de performance énergétique choisi comme valeur cible est celui utilisé à l''article 266 nonies du code des douanes pour bénéficier d’une TGAP réduite.</p>
 <ul>
 <li>Valeur limite et cible : 65%</li>
 </ul>
-', 'valorisation énergétique électricité et chaleur', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63a', 'cae', '63.a', null, 'Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)', '<p>L''indicateur suit une estimation de la séquestration nette de dioxyde de carbone, identifiant au moins les sols agricoles et la forêt, en tenant compte des changements d’affectation des terres (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial).</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63b', 'cae', '63.b', null, 'Séquestration de la forêt  (teq CO2)', '<p>Composante de l''indicateur 63a:</p>
+', 'valorisation énergétique électricité et chaleur', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_32', 'cae_3.3.5');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63.a', 'cae', '63.a', null, 'Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)', '<p>L''indicateur suit une estimation de la séquestration nette de dioxyde de carbone, identifiant au moins les sols agricoles et la forêt, en tenant compte des changements d’affectation des terres (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial).</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_63.a', 'cae_6.4.2');insert into indicateur_action(indicateur_id, action_id) values ('cae_63.a', 'cae_6.4.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63.b', 'cae', '63.b', null, 'Séquestration de la forêt  (teq CO2)', '<p>Composante de l''indicateur 63a:</p>
 <p>Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63c', 'cae', '63.c', null, 'Séquestration dans les terres agricoles et les prairies (teq CO2)', '<p>Composante de l''indicateur 63a:</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_63.b', 'cae_6.4.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63.c', 'cae', '63.c', null, 'Séquestration dans les terres agricoles et les prairies (teq CO2)', '<p>Composante de l''indicateur 63a:</p>
 <p>Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63d', 'cae', '63.d', null, 'Séquestration dans les autres sols (teq CO2)', '<p>Composante de l''indicateur 63a:</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_63.c', 'cae_6.4.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_63.d', 'cae', '63.d', null, 'Séquestration dans les autres sols (teq CO2)', '<p>Composante de l''indicateur 63a:</p>
 <p>Séquestration nette de dioxyde de carbone des sols et de la forêt (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_57', 'cae', '57.None', null, 'Taux d’hébergements labellisés Ecolabel européen (ou équivalent)', '<p>Nombre d''hébergements labellisés Ecolabel Européen / Total d''hébergements touristiques sur le territoire</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_63.d', 'cae_6.4.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_57', 'cae', '57', null, 'Taux d’hébergements labellisés Ecolabel européen (ou équivalent)', '<p>Nombre d''hébergements labellisés Ecolabel Européen / Total d''hébergements touristiques sur le territoire</p>
 <p>(Indicateur complémentaire : Nombre d’hébergements labellisés Ecolabel Européen)</p>
-', 'ou équivalent', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6a', 'cae', '6.a', null, 'Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)', '<p>Les déchets ménagers et assimilés comprennent les ordures ménagères résiduelles, les collectes sélectives et les déchets collectés en déchèteries (y compris déchets et gravats), soit la totalité des déchets des ménages et des non ménages pris en charge par le service public. Les déchets produits par les services municipaux (déchets de l’assainissement collectif, déchets de nettoyage des rues, de marché, …) ne relèvent pas de ce périmètre.  Le calcul ne considère que les services de collecte opérationnels, c''est-à-dire ceux qui ont fonctionné au moins une journée au cours de l''année de référence du calcul et les déchèteries opérationnelles, c''est-à-dire des déchèteries qui ont été ouvertes au moins une journée au cours de l''année de référence du calcul.</p>
+', 'ou équivalent', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_57', 'cae_6.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6.a', 'cae', '6.a', null, 'Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)', '<p>Les déchets ménagers et assimilés comprennent les ordures ménagères résiduelles, les collectes sélectives et les déchets collectés en déchèteries (y compris déchets et gravats), soit la totalité des déchets des ménages et des non ménages pris en charge par le service public. Les déchets produits par les services municipaux (déchets de l’assainissement collectif, déchets de nettoyage des rues, de marché, …) ne relèvent pas de ce périmètre.  Le calcul ne considère que les services de collecte opérationnels, c''est-à-dire ceux qui ont fonctionné au moins une journée au cours de l''année de référence du calcul et les déchèteries opérationnelles, c''est-à-dire des déchèteries qui ont été ouvertes au moins une journée au cours de l''année de référence du calcul.</p>
 <p>La valeur limite est issue des chiffres-clés déchets de l’ADEME, édition 2016, basé sur l’enquête Collecte 2013 et la valeur cible des 47 territoires pionniers en France.</p>
 <ul>
 <li>
@@ -9169,8 +9172,8 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Valeur cible : 480 kg/hab.an</p>
 </li>
 </ul>
-', 'avec déblais et gravats', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6b', 'cae', '6.b', null, 'Production Ordures ménagères résiduelles (kg/hab)', '<p>Composante de l''indicateur 6a:</p>
+', 'avec déblais et gravats', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_6.a', 'cae_1.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6.b', 'cae', '6.b', null, 'Production Ordures ménagères résiduelles (kg/hab)', '<p>Composante de l''indicateur 6a:</p>
 <p>Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)</p>
 <ul>
 <li>L''indicateur concerne uniquement les ordures ménagères résiduelles, c’est-à-dire les déchets collectés en mélange (poubelles ordinaires). La valeur limite est issue des chiffres-clés déchets de l’ADEME, édition 2016, basé sur l’enquête Collecte 2013 et la valeur cible des 47 territoires pionniers en France.</li>
@@ -9183,74 +9186,74 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Valeur cible : 120 kg/hab.an</p>
 </li>
 </ul>
-', 'kg/hab', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6c', 'cae', '6.c', null, 'Production de déchets collectés sélectivement, soit en porte-à-porte, soit en apport volontaire (kg/hab)', '<p>Composante de l''indicateur 6a:</p>
+', 'kg/hab', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_6.b', 'cae_1.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6.c', 'cae', '6.c', null, 'Production de déchets collectés sélectivement, soit en porte-à-porte, soit en apport volontaire (kg/hab)', '<p>Composante de l''indicateur 6a:</p>
 <p>Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)</p>
 <p>: emballages, déchets fermentescibles, verre…</p>
-', 'kg/hab', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6d', 'cae', '6.d', null, 'Production de déchets occasionnels (kg/hab)', '<p>Composante de l''indicateur 6a:</p>
+', 'kg/hab', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_6.c', 'cae_1.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_6.d', 'cae', '6.d', null, 'Production de déchets occasionnels (kg/hab)', '<p>Composante de l''indicateur 6a:</p>
 <p>Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)</p>
 <p>: encombrants, déchets verts, déblais et gravats…</p>
-', 'kg/hab', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_16a', 'cae', '16.a', null, 'Consommation de chaleur/rafraichissement renouvelable et de récupération - patrimoine collectivité   (MWh)', '<p>Pour les bâtiments et équipements publics, l''indicateur mesure  la consommation de chaleur/rafraichissement issue d’energie renouvelable et de récupération. Le patrimoine en DSP est inclus si possible ainsi que les services publics eau/assainissement/déchets lorsqu''ils sont de la compétence de la collectivité.</p>
+', 'kg/hab', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_6.d', 'cae_1.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_16.a', 'cae', '16.a', null, 'Consommation de chaleur/rafraichissement renouvelable et de récupération - patrimoine collectivité   (MWh)', '<p>Pour les bâtiments et équipements publics, l''indicateur mesure  la consommation de chaleur/rafraichissement issue d’energie renouvelable et de récupération. Le patrimoine en DSP est inclus si possible ainsi que les services publics eau/assainissement/déchets lorsqu''ils sont de la compétence de la collectivité.</p>
 <p>Pour les collectivités compétentes, la récupération de chaleur des UIOM ainsi que sur les eaux usées/épurées peut ainsi être prise en compte pour la part autoconsommée sur place (bâtiments de la collectivité et process). Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/eau, sol/sol avec une efficacité énergétique ≥ 126 % (PAC basse température) et une efficacité énergétique ≥ 111 % (PAC moyenne ou haute température).</p>
 <p>Pour les bâtiments publics desservis par des réseaux de chaleur, le taux d’EnR&amp;R du réseau est défini réglementairement et s’apprécie au regard du bulletin officiel des impôts vis-a-vis de la TVA réduite (BOI-TVA-LIQ-30 chapitre 2.140). La co-génération fossile n’est pas prise en compte.</p>
-', 'MWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_16b', 'cae', '16.b', null, 'Taux de couverture par les énergies renouvelables et de récupération des besoins en chaleur et rafraichissement - patrimoine collectivité (%)', '<p>Déclinaison de l''indicateur 16a:</p>
+', 'MWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_16.a', 'cae_2.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_16.b', 'cae', '16.b', null, 'Taux de couverture par les énergies renouvelables et de récupération des besoins en chaleur et rafraichissement - patrimoine collectivité (%)', '<p>Déclinaison de l''indicateur 16a:</p>
 <p>Consommation de chaleur/rafraichissement renouvelable et de récupération - patrimoine collectivité   (MWh)</p>
 <ul>
 <li>Pour les bâtiments et équipements publics, l''indicateur mesure le rapport de la consommation de chaleur/rafraichissement issue d’energie renouvelable et de récupération sur la consommation totale d''énergie pour les usages thermiques (chauffage, eau chaude sanitaire, climatisation-rafraichissement) en énergie finale. Le patrimoine en DSP est inclus si possible. Les consommations thermiques des services publics eau/assainissement/déchets sont prises en compte lorsqu''ils sont de la compétence de la collectivité. Pour les collectivités compétentes, la récupération de chaleur des UIOM ainsi que sur les eaux usées/épurées peut ainsi être prise en compte pour la part autoconsommée sur place (bâtiments de la collectivité et process).</li>
 </ul>
 <p>Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/eau, sol/sol  avec une efficacité énergétique ≥ 126 % (PAC basse température) et une efficacité énergétique ≥ 111 % (PAC moyenne ou haute température).</p>
 <p>Pour les bâtiments publics desservis par des réseaux de chaleur, le taux d’EnR&amp;R du réseau est défini réglementairement et s’apprécie au regard du bulletin officiel des impôts vis-a-vis de la TVA réduite (BOI-TVA-LIQ-30 chapitre 2.140). La co-génération fossile n’est pas prise en compte.</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_47', 'cae', '47.None', null, 'Maillage du territoire par le réseau TC', '<p>L''indicateur a pour objectif de mesurer le maillage du territoire par les TC : nombre moyen d''arrêts par km du réseau de transport en commun, nb arrêts/hab, km de réseau/hab ou par ha de territoire, % de population desservie dans un rayon de 300-500 mètres... L''indicateur est basé sur une moyenne tous modes de TC confondus.</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_22', 'cae', '22.None', null, 'Taux d''énergie renouvelable et de récupération (ENR&R) des réseaux de chaleur sur le territoire (en %)', '<p>Il s''agit de mesurer la part d''énergie renouvelable et de récupération (ENR&amp;R) du réseau de chaleur de la collectivité. La méthodologie de calcul doit être conforme à celle élaborée par le SNCU, reprise réglementairement dans le cadre de l''instruction fiscale ou le classement du réseau de chaleur. En présence de plusieurs réseaux de chaleur, une moyenne doit être réalisée. La valeur cible est fixée à 75%.</p>
-', 'ENR&R', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2a', 'cae', '2.a', null, 'Consommation énergétique globale annuelle du territoire (GWh)', '<p>Cet indicateur estime la consommation énergétique finale annuelle du territoire, selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial).</p>
-', 'GWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2b', 'cae', '2.b', null, 'Consommation énergétique annuelle du territoire par habitant (MWh/hab.an)', '<p>Pour faciliter les comparaisons, l’indicateur est ramené au nombre d’habitants (population municipale selon l’INSEE). Préciser l''année de référence en commentaire. L''évaluation est basée sur l''évolution de l''indicateur.</p>
-', 'MWh/hab.an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2c', 'cae', '2.c', null, 'Consommation énergétique annuelle du territoire pour la chaleur et le rafraîchissement (GWh)', '<p>Décomposition par usage de l''indicateur 2a:</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_16.b', 'cae_2.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_47', 'cae', '47', null, 'Maillage du territoire par le réseau TC', '<p>L''indicateur a pour objectif de mesurer le maillage du territoire par les TC : nombre moyen d''arrêts par km du réseau de transport en commun, nb arrêts/hab, km de réseau/hab ou par ha de territoire, % de population desservie dans un rayon de 300-500 mètres... L''indicateur est basé sur une moyenne tous modes de TC confondus.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_47', 'cae_4.3.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_22', 'cae', '22', null, 'Taux d''énergie renouvelable et de récupération (ENR&R) des réseaux de chaleur sur le territoire (en %)', '<p>Il s''agit de mesurer la part d''énergie renouvelable et de récupération (ENR&amp;R) du réseau de chaleur de la collectivité. La méthodologie de calcul doit être conforme à celle élaborée par le SNCU, reprise réglementairement dans le cadre de l''instruction fiscale ou le classement du réseau de chaleur. En présence de plusieurs réseaux de chaleur, une moyenne doit être réalisée. La valeur cible est fixée à 75%.</p>
+', 'ENR&R', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_22', 'cae_3.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.a', 'cae', '2.a', null, 'Consommation énergétique globale annuelle du territoire (GWh)', '<p>Cet indicateur estime la consommation énergétique finale annuelle du territoire, selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial).</p>
+', 'GWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.a', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.b', 'cae', '2.b', null, 'Consommation énergétique annuelle du territoire par habitant (MWh/hab.an)', '<p>Pour faciliter les comparaisons, l’indicateur est ramené au nombre d’habitants (population municipale selon l’INSEE). Préciser l''année de référence en commentaire. L''évaluation est basée sur l''évolution de l''indicateur.</p>
+', 'MWh/hab.an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.b', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.c', 'cae', '2.c', null, 'Consommation énergétique annuelle du territoire pour la chaleur et le rafraîchissement (GWh)', '<p>Décomposition par usage de l''indicateur 2a:</p>
 <p>Consommation énergétique globale annuelle du territoire (GWh)</p>
 <ul>
 <li>utile aux calculs des taux de production ENR (dénominateur).</li>
 </ul>
-', 'GWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2d', 'cae', '2.d', null, 'Consommation énergétique annuelle du territoire pour l''électricité (GWh)', '<p>Décomposition par usage de l''indicateur 2a:</p>
+', 'GWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.c', 'cae_3.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.d', 'cae', '2.d', null, 'Consommation énergétique annuelle du territoire pour l''électricité (GWh)', '<p>Décomposition par usage de l''indicateur 2a:</p>
 <p>Consommation énergétique globale annuelle du territoire (GWh)</p>
 <ul>
 <li>utile aux calculs des taux de production ENR (dénominateur).</li>
 </ul>
-', 'GWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2e', 'cae', '2.e', null, 'Consommation énergétique du résidentiel  (GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
+', 'GWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.d', 'cae_3.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.e', 'cae', '2.e', null, 'Consommation énergétique du résidentiel  (GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
 <p>Consommation énergétique globale annuelle du territoire (GWh).</p>
-', 'GWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2f', 'cae', '2.f', null, 'Consommation énergétique du tertiaire (GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
+', 'GWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.e', 'cae_1.2.4');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.f', 'cae', '2.f', null, 'Consommation énergétique du tertiaire (GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
 <p>Consommation énergétique globale annuelle du territoire (GWh).</p>
-', 'GWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2g', 'cae', '2.g', null, 'Consommation énergétique  du transport routier(GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
+', 'GWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.f', 'cae_6.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.g', 'cae', '2.g', null, 'Consommation énergétique  du transport routier(GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
 <p>Consommation énergétique globale annuelle du territoire (GWh).</p>
-', 'GWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2h', 'cae', '2.h', null, 'Consommation énergétique du secteur "autres transports" (teq CO2)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
+', 'GWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.g', 'cae_1.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.h', 'cae', '2.h', null, 'Consommation énergétique du secteur "autres transports" (teq CO2)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
 <p>Consommation énergétique globale annuelle du territoire (GWh).</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2i', 'cae', '2.i', null, 'Consommation énergétique de l''agriculture (GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.h', 'cae_1.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.i', 'cae', '2.i', null, 'Consommation énergétique de l''agriculture (GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
 <p>Consommation énergétique globale annuelle du territoire (GWh).</p>
-', 'GWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2j', 'cae', '2.j', null, 'Consommation énergétique des déchets (GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
+', 'GWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.i', 'cae_6.4.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.j', 'cae', '2.j', null, 'Consommation énergétique des déchets (GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
 <p>Consommation énergétique globale annuelle du territoire (GWh).</p>
-', 'GWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2k', 'cae', '2.k', null, 'Consommation énergétique de l''industrie hors branche énergie (GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
+', 'GWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.j', 'cae_1.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_2.k', 'cae', '2.k', null, 'Consommation énergétique de l''industrie hors branche énergie (GWh)', '<p>Décomposition par secteur réglementaire de l''indicateur global 2a:</p>
 <p>Consommation énergétique globale annuelle du territoire (GWh).</p>
-', 'GWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_53', 'cae', '53.None', null, 'Part du budget consacré aux projets de coopération significatifs et multi-acteurs par an sur le climat, l’air et l’énergie (%)', '<p>L''indicateur mesure le montant des dépenses engagées pour les projets de coopération significatifs et multi-acteurs par an sur le climat, l’air et l’énergie (hors coopération décentralisée), rapporté au budget total (investissement et fonctionnement) de la collectivité.</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_36', 'cae', '36.None', null, 'Part modale vélo', '<p>La part modale est une part modale en nombre de déplacements.</p>
+', 'GWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_2.k', 'cae_6.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_53', 'cae', '53', null, 'Part du budget consacré aux projets de coopération significatifs et multi-acteurs par an sur le climat, l’air et l’énergie (%)', '<p>L''indicateur mesure le montant des dépenses engagées pour les projets de coopération significatifs et multi-acteurs par an sur le climat, l’air et l’énergie (hors coopération décentralisée), rapporté au budget total (investissement et fonctionnement) de la collectivité.</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_53', 'cae_6.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_36', 'cae', '36', null, 'Part modale vélo', '<p>La part modale est une part modale en nombre de déplacements.</p>
 <p>Les valeurs limites et cibles sont données à titre indicatif pour le conseiller, qui doit également juger de l''évolution de la part modale au fil du temps et selon le territoire. En France, la moyenne est de 3%, les meilleures collectivités françaises atteignent 10% des déplacements. En Allemagne les parts modales atteignent 25% dans plusieurs villes. A défaut de posséder les parts modales issues d''une enquête ménages, les collectivités peuvent utiliser les données INSEE donnant les parts modales des déplacements domicile-travail pour la population active (tableau NAV2A ou NAV2B).</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_26', 'cae', '26.None', null, 'Puissance photovoltaïque installée sur le territoire (Wc/hab)', '<p>L''installation de panneaux solaires photovoltaïques est possible dans toutes les collectivités. Un indicateur en puissance installée plutôt qu''en production permet de ne pas prendre en compte les différences d''ensoleillement des territoires. Les valeurs cibles sont établies à partir des données collectées dans le cadre des démarches Cit''ergie.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_36', 'cae_4.1.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_36', 'cae_4.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_26', 'cae', '26', null, 'Puissance photovoltaïque installée sur le territoire (Wc/hab)', '<p>L''installation de panneaux solaires photovoltaïques est possible dans toutes les collectivités. Un indicateur en puissance installée plutôt qu''en production permet de ne pas prendre en compte les différences d''ensoleillement des territoires. Les valeurs cibles sont établies à partir des données collectées dans le cadre des démarches Cit''ergie.</p>
 <p>Les valeurs cibles sont les suivantes :</p>
 <ul>
 <li>
@@ -9263,12 +9266,12 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>pour les collectivités &lt; 50 000 habitants : 60 Wc/hab (Métropole) - 180 Wc/hab (DOM-ROM)</p>
 </li>
 </ul>
-', 'Wc/hab', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_43', 'cae', '43.None', null, 'Part de voiries « apaisées » (%)', '<p>L’indicateur mesure la part des voiries où un dispositif règlementaire permet l’apaisement de la circulation (réduction des vitesses en dessous de 50 km/heures ou limitation de la circulation) par rapport au linéaire total de voirie de la collectivité. Les dispositifs pris en compte sont les zones de rencontre, les zones 30, les aires piétonnes, les zones de circulation restreinte.</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_12', 'cae', '12.None', null, 'Part de bâtiments publics ayant fait l''objet d''un diagnostic énergétique', '<p>L''indicateur mesure la part de bâtiments publics (de préférence en surface, et par défaut en nombre) ayant fait l''objet d''un diagnostic énergétique (à minima de type DPE, et de préférence un audit énergétique plus poussé). Le périmètre des bâtiments pris en compte est le plus large possible : celui dont elle est propriétaire ou celui dont elle est locataire ; les diagnostics pouvant être portés et financés par le propriétaire ou l''utilisateur. Si le suivi est effectué conjointement au niveau communal et intercommunal, l''indicateur peut-être décomposé en deux volets : part de bâtiments communaux ayant fait l''objet d''un diagnostic énergétique et part de bâtiments intercommunaux ayant fait l''objet d''un diagnostic énergétique.</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_3a', 'cae', '3.a', null, 'Production d’énergie renouvelable globale du territoire (MWh)', '<p>Cet indicateur mesure la production d’énergie renouvelable totale sur le territoire, selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial), c''est à dire incluant les filières de production:</p>
+', 'Wc/hab', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_26', 'cae_3.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_43', 'cae', '43', null, 'Part de voiries « apaisées » (%)', '<p>L’indicateur mesure la part des voiries où un dispositif règlementaire permet l’apaisement de la circulation (réduction des vitesses en dessous de 50 km/heures ou limitation de la circulation) par rapport au linéaire total de voirie de la collectivité. Les dispositifs pris en compte sont les zones de rencontre, les zones 30, les aires piétonnes, les zones de circulation restreinte.</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_43', 'cae_4.3.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_43', 'cae_4.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_12', 'cae', '12', null, 'Part de bâtiments publics ayant fait l''objet d''un diagnostic énergétique', '<p>L''indicateur mesure la part de bâtiments publics (de préférence en surface, et par défaut en nombre) ayant fait l''objet d''un diagnostic énergétique (à minima de type DPE, et de préférence un audit énergétique plus poussé). Le périmètre des bâtiments pris en compte est le plus large possible : celui dont elle est propriétaire ou celui dont elle est locataire ; les diagnostics pouvant être portés et financés par le propriétaire ou l''utilisateur. Si le suivi est effectué conjointement au niveau communal et intercommunal, l''indicateur peut-être décomposé en deux volets : part de bâtiments communaux ayant fait l''objet d''un diagnostic énergétique et part de bâtiments intercommunaux ayant fait l''objet d''un diagnostic énergétique.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_12', 'cae_2.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_3.a', 'cae', '3.a', null, 'Production d’énergie renouvelable globale du territoire (MWh)', '<p>Cet indicateur mesure la production d’énergie renouvelable totale sur le territoire, selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial), c''est à dire incluant les filières de production:</p>
 <ul>
 <li>
 <p>d’électricité: éolien  terrestre, solaire  photovoltaïque, solaire  thermodynamique,  hydraulique,  biomasse  solide, biogaz, géothermie</p>
@@ -9281,16 +9284,16 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 </li>
 </ul>
 <p>Préciser l''année de référence en commentaire.</p>
-', 'MWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_3b', 'cae', '3.b', null, 'Production d’énergie renouvelable globale du territoire (% de la consommation)', '<p>Déclinaison en % de la consommation énergétique du territoire de l''indicateur 3a:</p>
+', 'MWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_3.a', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_3.b', 'cae', '3.b', null, 'Production d’énergie renouvelable globale du territoire (% de la consommation)', '<p>Déclinaison en % de la consommation énergétique du territoire de l''indicateur 3a:</p>
 <p>Production d’énergie renouvelable globale du territoire (MWh).</p>
-', '% de la consommation', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_52', 'cae', '52.None', null, 'Part du budget consacré à des projets de coopération décentralisée en lien avec le climat, l’air ou l’énergie (%)', '<p>L''indicateur mesure le montant des subventions ou investissements consentis pour les projets de coopération décentralisée, en lien avec le climat, l’air et l’énergie, rapporté au budget total (investissement et fonctionnement) de la collectivité. Pour information, l''aide publique au développement en France est estimée à 0,38% du RNB en 2017, toutes thématiques confondues (santé, éducation, alimentaire, eau, climat...). Lors du sommet du millénaire de 2000, l''objectif fixé par la commission européenne était d''atteindre 0,7 % du RNB en 2015.</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_37', 'cae', '37.None', null, 'Part modale TC', '<p>La part modale est une part modale en nombre de déplacements.</p>
+', '% de la consommation', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_3.b', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_52', 'cae', '52', null, 'Part du budget consacré à des projets de coopération décentralisée en lien avec le climat, l’air ou l’énergie (%)', '<p>L''indicateur mesure le montant des subventions ou investissements consentis pour les projets de coopération décentralisée, en lien avec le climat, l’air et l’énergie, rapporté au budget total (investissement et fonctionnement) de la collectivité. Pour information, l''aide publique au développement en France est estimée à 0,38% du RNB en 2017, toutes thématiques confondues (santé, éducation, alimentaire, eau, climat...). Lors du sommet du millénaire de 2000, l''objectif fixé par la commission européenne était d''atteindre 0,7 % du RNB en 2015.</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_52', 'cae_6.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_37', 'cae', '37', null, 'Part modale TC', '<p>La part modale est une part modale en nombre de déplacements.</p>
 <p>Il s’agit (si possible) des transports en commun en général : bus urbain, car interurbain, tram, métro, train..., pas uniquement les TCU (transport collectif urbain). La rentabilité économique du système est prise en compte dans la réduction de potentiel. Les valeurs limites et cibles (début de valorisation entre 5 et 10% selon les infrastructures en place, cible &gt;20% -région parisienne) sont données à titre indicatif pour le conseiller, qui doit également juger de l''évolution de la part modale au fil du temps et de l''offre TC sur le territoire. A défaut de posséder les parts modales issues d''une enquête ménages, les collectivités peuvent utiliser les données INSEE donnant les parts modales des déplacements domicile-travail  pour la population active (tableau NAV2A ou NAV2B).</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_27', 'cae', '27.None', null, 'Mix énergétique proposé par les régies et SEM fournisseur d''électricité (%)', '<p>Les SEM et régies peuvent, en plus de leur propre production d’énergies renouvelables, acheter de l''électricité renouvelable ou verte (labellisée) pour compléter leur offre. Les objectifs fixés (production et achat) sont basés sur les objectifs 2030 de la loi de transition énergétique.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_37', 'cae_4.1.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_37', 'cae_4.3.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_27', 'cae', '27', null, 'Mix énergétique proposé par les régies et SEM fournisseur d''électricité (%)', '<p>Les SEM et régies peuvent, en plus de leur propre production d’énergies renouvelables, acheter de l''électricité renouvelable ou verte (labellisée) pour compléter leur offre. Les objectifs fixés (production et achat) sont basés sur les objectifs 2030 de la loi de transition énergétique.</p>
 <p>Valeur cible :</p>
 <ul>
 <li>
@@ -9300,23 +9303,23 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>100% (DOM)</p>
 </li>
 </ul>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_42', 'cae', '42.None', null, 'Nombre de places de stationnement public pour les voitures par habitant (nb/hab)', '<p>L''indicateur mesure le nombre de places de stationnement public pour les voitures par habitant (stationnements publics gratuit ou payant, sur voirie ou dans des ouvrages, exploité en régie par la collectivité –commune ou EPCI- ou délégué). Si le périmètre suivi est partiel, l’indiquer en commentaire.</p>
-', 'nb/hab', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13a', 'cae', '13.a', null, 'Dépenses énergétiques de la collectivité (euros)', '<p>L''indicateur mesure les dépenses d’énergie payées directement par la collectivité, c’est-à-dire celles payées par la collectivité aux fournisseurs et aux exploitants (uniquement le poste combustibles P1 dans ce dernier cas) pour le patrimoine bâti, l’éclairage public et les carburants des véhicules.</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_27', 'cae_3.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_42', 'cae', '42', null, 'Nombre de places de stationnement public pour les voitures par habitant (nb/hab)', '<p>L''indicateur mesure le nombre de places de stationnement public pour les voitures par habitant (stationnements publics gratuit ou payant, sur voirie ou dans des ouvrages, exploité en régie par la collectivité –commune ou EPCI- ou délégué). Si le périmètre suivi est partiel, l’indiquer en commentaire.</p>
+', 'nb/hab', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_42', 'cae_4.2.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13.a', 'cae', '13.a', null, 'Dépenses énergétiques de la collectivité (euros)', '<p>L''indicateur mesure les dépenses d’énergie payées directement par la collectivité, c’est-à-dire celles payées par la collectivité aux fournisseurs et aux exploitants (uniquement le poste combustibles P1 dans ce dernier cas) pour le patrimoine bâti, l’éclairage public et les carburants des véhicules.</p>
 <p>Les trois postes de dépenses sont également suivis indépendamment.</p>
 <p>Rapportées au nombre d''habitants, pour les communes, les valeurs peuvent-être comparées avec des valeurs de références  tirées de l''enquête ADEME-AITF-EDF-GDF &quot;Energie et patrimoine communal 2012&quot;.</p>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13b', 'cae', '13.b', null, 'Dépenses  énergétiques - bâtiments (euros)', '<p>Composante de l''indicateur de dépenses énergétiques de la collectivités pour les bâtiments</p>
+', 'euros', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_13.a', 'cae_2.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13.b', 'cae', '13.b', null, 'Dépenses  énergétiques - bâtiments (euros)', '<p>Composante de l''indicateur de dépenses énergétiques de la collectivités pour les bâtiments</p>
 <p>L''indicateur mesure les dépenses d’énergie payées directement par la collectivité, c’est-à-dire celles payées par la collectivité aux fournisseurs et aux exploitants (uniquement le poste combustibles P1 dans ce dernier cas) pour les bâtiments (patrimoine bâti)</p>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13c', 'cae', '13.c', null, 'Dépenses énergétiques - véhicules (euros)', '<p>Composante de l''indicateur de dépenses énergétiques de la collectivité pour les carburants des véhicules</p>
+', 'euros', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_13.b', 'cae_2.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13.c', 'cae', '13.c', null, 'Dépenses énergétiques - véhicules (euros)', '<p>Composante de l''indicateur de dépenses énergétiques de la collectivité pour les carburants des véhicules</p>
 <p>L''indicateur mesure les dépenses d’énergie payées directement par la collectivité, c’est-à-dire celles payées par la collectivité aux fournisseurs et aux exploitants (uniquement le poste combustibles P1 dans ce dernier cas) pour les carburants des véhicules</p>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13d', 'cae', '13.d', null, 'Dépenses énergétiques - éclairage public  (euros)', '<p>Composante de l''indicateur de dépenses énergétiques de la collectivité pour l''éclairage public</p>
+', 'euros', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_13.c', 'cae_4.1.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_13.d', 'cae', '13.d', null, 'Dépenses énergétiques - éclairage public  (euros)', '<p>Composante de l''indicateur de dépenses énergétiques de la collectivité pour l''éclairage public</p>
 <p>L''indicateur mesure les dépenses d’énergie payées directement par la collectivité, c’est-à-dire celles payées par la collectivité aux fournisseurs et aux exploitants (uniquement le poste combustibles P1 dans ce dernier cas)  pour l''éclairage public</p>
-', 'euros', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_33', 'cae', '33.None', null, 'Energie produite par la valorisation des biodéchets en kWh/an (à défaut kg/hab.an de biodéchets collectés de manière séparative -méthanisation et/ou compostage)', '<p>L''indicateur mesure l''électricité et la chaleur (en kWh) produite à partir de biodéchets pour l''ensemble du territoire (ménages et activités économiques, agricoles...). A défaut, l''indicateur indique le tonnage des biodéchets collectés de manière séparative. Pour information, le ratio moyen de déchets alimentaires collectés par l’ensemble des collectivités en France en 2015 est de 63 kg/habitant desservi (étude suivi technico-économique biodéchets, Ademe, 2017) :</p>
+', 'euros', false, null);
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_33', 'cae', '33', null, 'Energie produite par la valorisation des biodéchets en kWh/an (à défaut kg/hab.an de biodéchets collectés de manière séparative -méthanisation et/ou compostage)', '<p>L''indicateur mesure l''électricité et la chaleur (en kWh) produite à partir de biodéchets pour l''ensemble du territoire (ménages et activités économiques, agricoles...). A défaut, l''indicateur indique le tonnage des biodéchets collectés de manière séparative. Pour information, le ratio moyen de déchets alimentaires collectés par l’ensemble des collectivités en France en 2015 est de 63 kg/habitant desservi (étude suivi technico-économique biodéchets, Ademe, 2017) :</p>
 <ul>
 <li>
 <p>46 kg/habitant desservi pour la collecte de déchets alimentaires seuls;</p>
@@ -9325,23 +9328,23 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>99 kg/habitant desservi pour la collecte de déchets alimentaires et déchets verts.</p>
 </li>
 </ul>
-', 'à défaut kg/hab.an de biodéchets collectés de manière séparative -méthanisation et/ou compostage-', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_62', 'cae', '62.None', null, 'Part de surface forestière certifiée (%)', '<p>L''indicateur mesure le % de surfaces forestières certifiées FSC ou PEFC (par rapport à la surface forestière totale). Les objectifs sont basés sur les valeurs moyennes françaises et des dires d''experts  ADEME.</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_56', 'cae', '56.None', null, 'Nombre de dossiers « Habiter mieux » déposés à l’Anah sur le territoire', '<p>L’indicateur mesure le nombre de dossier déposés chaque année auprès de l’ANAH dans le cadre du programme Habiter mieux. Ce programme vise les propriétaires occupants (sous conditions de ressources) et les propriétaires bailleurs.</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_7', 'cae', '7.None', null, 'Recyclage matière et organique des déchets ménagers et assimilés (%)', '<p>Il s’agit de la part (en poids) des déchets ménagers et assimilés (DMA, cf. définition ci-dessus) orientés vers le recyclage matière et organique. Le recyclage consiste en toute opération de valorisation par laquelle les déchets, y compris organiques, sont retraités en substances, matières ou produits pour resservir à leur fonction initiale ou à d’autres fins (définition du code de l’environnement). La valorisation énergétique n''est pas prise en compte ici.</p>
+', 'à défaut kg/hab.an de biodéchets collectés de manière séparative -méthanisation et/ou compostage-', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_33', 'cae_3.3.5');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_62', 'cae', '62', null, 'Part de surface forestière certifiée (%)', '<p>L''indicateur mesure le % de surfaces forestières certifiées FSC ou PEFC (par rapport à la surface forestière totale). Les objectifs sont basés sur les valeurs moyennes françaises et des dires d''experts  ADEME.</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_62', 'cae_6.4.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_56', 'cae', '56', null, 'Nombre de dossiers « Habiter mieux » déposés à l’Anah sur le territoire', '<p>L’indicateur mesure le nombre de dossier déposés chaque année auprès de l’ANAH dans le cadre du programme Habiter mieux. Ce programme vise les propriétaires occupants (sous conditions de ressources) et les propriétaires bailleurs.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_56', 'cae_6.2.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_7', 'cae', '7', null, 'Recyclage matière et organique des déchets ménagers et assimilés (%)', '<p>Il s’agit de la part (en poids) des déchets ménagers et assimilés (DMA, cf. définition ci-dessus) orientés vers le recyclage matière et organique. Le recyclage consiste en toute opération de valorisation par laquelle les déchets, y compris organiques, sont retraités en substances, matières ou produits pour resservir à leur fonction initiale ou à d’autres fins (définition du code de l’environnement). La valorisation énergétique n''est pas prise en compte ici.</p>
 <p>NB : On mesure les déchets « orientés vers le recyclage », les refus de tri ne sont donc pas déduits. Ne sont pas considérés ici comme « orientés vers le recyclage » les déchets entrant dans des installations de tri mécanobiologique. Pour ces derniers, seuls les flux sortant orientés vers la valorisation organique (compostage ou méthanisation) ou vers le recyclage matière (métaux récupérés) sont à intégrer dans les flux « orientés vers le recyclage ». Les mâchefers valorisés ainsi que les métaux récupérés sur mâchefers ne sont pas intégrés.</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_17a', 'cae', '17.a', null, 'Production d''électricité renouvelable - patrimoine collectivité (MWh)', '<p>L''indicateur mesure la production d''électricité d''origine renouvelable (installations financées en totalité ou en majorité par la collectivité et de sa compétence : éolien, photovoltaïque, hydraulique, marémotrice, géothermie haute température, électricité issue de l''incinération des déchets à hauteur de 50%, cogénération biomasse/biogaz...).</p>
-', 'MWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_17b', 'cae', '17.b', null, 'Taux de production d''électricité renouvelable  - patrimoine collectivité (%)', '<p>Déclinaison de l''indicateur 17a:</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_7', 'cae_1.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_17.a', 'cae', '17.a', null, 'Production d''électricité renouvelable - patrimoine collectivité (MWh)', '<p>L''indicateur mesure la production d''électricité d''origine renouvelable (installations financées en totalité ou en majorité par la collectivité et de sa compétence : éolien, photovoltaïque, hydraulique, marémotrice, géothermie haute température, électricité issue de l''incinération des déchets à hauteur de 50%, cogénération biomasse/biogaz...).</p>
+', 'MWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_17.a', 'cae_2.2.4');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_17.b', 'cae', '17.b', null, 'Taux de production d''électricité renouvelable  - patrimoine collectivité (%)', '<p>Déclinaison de l''indicateur 17a:</p>
 <p>Production d''électricité renouvelable - patrimoine collectivité (MWh)</p>
 <ul>
 <li>L''indicateur mesure le rapport de la production d''électricité d''origine renouvelable (installations financées en totalité ou en majorité par la collectivité et de sa compétence : éolien, photovoltaïque, hydraulique, marémotrice, géothermie haute température, électricité issue de l''incinération des déchets à hauteur de 50%, cogénération biomasse/biogaz...) sur la consommation totale d''électricité des bâtiments et équipements communaux (y compris l''éclairage public et les services industriels de la compétence de la collectivité) en énergie finale. Le patrimoine en DSP est inclus si possible.</li>
 </ul>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_46', 'cae', '46.None', null, 'Fréquentation des TC (voyages/hab)', '<p>Il s''agit du nombre moyen de voyages en transport en commun effectué chaque année par un habitant. Source de l''indicateur : L''année 2007 des transports urbains, GART – Enquête annuelle sur les transports urbains (CERTU-DGITMGART-UTP) sur 192 réseaux.</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_17.b', 'cae_2.2.4');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_46', 'cae', '46', null, 'Fréquentation des TC (voyages/hab)', '<p>Il s''agit du nombre moyen de voyages en transport en commun effectué chaque année par un habitant. Source de l''indicateur : L''année 2007 des transports urbains, GART – Enquête annuelle sur les transports urbains (CERTU-DGITMGART-UTP) sur 192 réseaux.</p>
 <ul>
 <li>
 <p>Valeur limite : 32 (&lt;100 000 hab) et 64 (&gt;100 000 hab)</p>
@@ -9350,16 +9353,16 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Valeur cible : 114 (&lt;100 000 hab) et 140 (&gt;100 000 hab)</p>
 </li>
 </ul>
-', 'voyages/hab', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_23', 'cae', '23.None', null, 'Taux de couverture des besoins de chaleur du territoire (résidentiel et tertiaire) par les réseaux de chaleur ENR&R (en %)', '<p>Cet indicateur est le ratio entre la consommation d''énergie pour le chauffage assurée par le(s) réseau(x) de chaleur ENR&amp;R et la consommation totale d''énergie pour le chauffage du territoire (pour le résidentiel et le tertiaire, donc hors industrie).</p>
+', 'voyages/hab', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_46', 'cae_4.3.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_23', 'cae', '23', null, 'Taux de couverture des besoins de chaleur du territoire (résidentiel et tertiaire) par les réseaux de chaleur ENR&R (en %)', '<p>Cet indicateur est le ratio entre la consommation d''énergie pour le chauffage assurée par le(s) réseau(x) de chaleur ENR&amp;R et la consommation totale d''énergie pour le chauffage du territoire (pour le résidentiel et le tertiaire, donc hors industrie).</p>
 <p>La valeur limite (10%) est basée sur le taux moyen de couverture des besoins de chaleur par les réseaux de chaleur en Europe (source : AMORCE).</p>
 <ul>
 <li>ATTENTION: Les réseaux de chaleur 100% fossiles ne sont pas pris en compte ici.</li>
 </ul>
-', 'résidentiel et tertiaire', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_51', 'cae', '51.None', null, 'Part des marchés intégrant des clauses environnementales (%)', '<p>Part des marchés (en nombre) intégrant des clauses environnementales dans les spécifications techniques ou les critères d’attribution en augmentation</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_34', 'cae', '34.None', null, 'Taux de valorisation énergétique du biogaz des centres de stockage des déchets (en %)', '<p>L''indicateur mesure la part de biogaz valorisé par le centre de stockage des déchets.</p>
+', 'résidentiel et tertiaire', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_23', 'cae_3.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_51', 'cae', '51', null, 'Part des marchés intégrant des clauses environnementales (%)', '<p>Part des marchés (en nombre) intégrant des clauses environnementales dans les spécifications techniques ou les critères d’attribution en augmentation</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_51', 'cae_5.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_34', 'cae', '34', null, 'Taux de valorisation énergétique du biogaz des centres de stockage des déchets (en %)', '<p>L''indicateur mesure la part de biogaz valorisé par le centre de stockage des déchets.</p>
 <ul>
 <li>
 <p>Valeur limite: 75% (fixée par le seuil de valorisation permettant la modulation de la TGAP)</p>
@@ -9368,8 +9371,8 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Valeur cible : 100%</p>
 </li>
 </ul>
-', 'en %', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_65', 'cae', '65.None', null, 'Nombre d''heures de consultations et de conseils sur la thématique climat air énergie pour 100 hab / an', '<p>Nombre d''heures de consultations et de conseil sur l''énergie et la construction pour 100 hab / an</p>
+', 'en %', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_34', 'cae_3.3.5');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_65', 'cae', '65', null, 'Nombre d''heures de consultations et de conseils sur la thématique climat air énergie pour 100 hab / an', '<p>Nombre d''heures de consultations et de conseil sur l''énergie et la construction pour 100 hab / an</p>
 <ul>
 <li>
 <p>Valeur limite = 10 min /100 hab</p>
@@ -9378,14 +9381,14 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Valeur cible = 60 min / 100 hab</p>
 </li>
 </ul>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_24a', 'cae', '24.a', null, 'Production de chaleur/froid renouvelable  (MWh)', '<p>Cet indicateur mesure la production de chaleur et de rafraichissement  renouvelable sur le territoire (initiative publique et privée). Les énergies renouvelables prise en compte sont celles citées selon les filières citées dans le Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial :  biomasse  solide,  pompes  à  chaleur,  géothermie,  solaire  thermique,  biogaz.</p>
+', 'Non trouvé', false, null);
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_24.a', 'cae', '24.a', null, 'Production de chaleur/froid renouvelable  (MWh)', '<p>Cet indicateur mesure la production de chaleur et de rafraichissement  renouvelable sur le territoire (initiative publique et privée). Les énergies renouvelables prise en compte sont celles citées selon les filières citées dans le Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial :  biomasse  solide,  pompes  à  chaleur,  géothermie,  solaire  thermique,  biogaz.</p>
 <p>Par convention, 50% de la chaleur produite par l’incinération des déchets est considérée issue de déchets urbains renouvelables (source DGEC, dans ses bilans). Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/eau, sol/sol  avec une efficacité énergétique ≥ 126 % (PAC basse température) et une efficacité énergétique ≥ 111 % (PAC moyenne ou haute température) (exigences du crédit d’impôt pour la transition énergétique 2018).</p>
 <ul>
 <li>ATTENTION: La cogénération à partir d''énergie fossile n''est pas prise en compte.</li>
 </ul>
-', 'MWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_24b', 'cae', '24.b', null, 'Taux de production d''énergie renouvelable pour la chaleur et le rafraîchissement sur le territoire (en %)', '<p>Cet indicateur mesure la production de chaleur et de rafraichissement  renouvelable sur le territoire (initiative publique et privée), divisée par les consommations totales de chaleur et de froid du territoire (en énergie finale). Les énergies renouvelables prise en compte sont celles citées selon les filières citées dans le Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial :  biomasse  solide,  pompes  à  chaleur,  géothermie,  solaire  thermique,  biogaz. Par convention, 50% de la chaleur produite par l’incinération des déchets est considérée issue de déchets urbains renouvelables (source DGEC, dans ses bilans). Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/eau, sol/sol  avec une efficacité énergétique ≥ 126 % (PAC basse température) et une efficacité énergétique ≥ 111 % (PAC moyenne ou haute température) (exigences du crédit d’impôt pour la transition énergétique 2018). La cogénération à partir d''énergie fossile n''est pas prise en compte.</p>
+', 'MWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_24.a', 'cae_3.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_24.b', 'cae', '24.b', null, 'Taux de production d''énergie renouvelable pour la chaleur et le rafraîchissement sur le territoire (en %)', '<p>Cet indicateur mesure la production de chaleur et de rafraichissement  renouvelable sur le territoire (initiative publique et privée), divisée par les consommations totales de chaleur et de froid du territoire (en énergie finale). Les énergies renouvelables prise en compte sont celles citées selon les filières citées dans le Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial :  biomasse  solide,  pompes  à  chaleur,  géothermie,  solaire  thermique,  biogaz. Par convention, 50% de la chaleur produite par l’incinération des déchets est considérée issue de déchets urbains renouvelables (source DGEC, dans ses bilans). Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/eau, sol/sol  avec une efficacité énergétique ≥ 126 % (PAC basse température) et une efficacité énergétique ≥ 111 % (PAC moyenne ou haute température) (exigences du crédit d’impôt pour la transition énergétique 2018). La cogénération à partir d''énergie fossile n''est pas prise en compte.</p>
 <p>Pour connaître cet indicateur, la collectivité doit avoir effectué un bilan de ses consommations et production d''ENR tel que décrit à l''action 1.1.2:</p>
 <p>Réaliser le diagnostic Climat-Air-Energie du territoire</p>
 <ul>
@@ -9394,30 +9397,30 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <ul>
 <li>Valeur cible : 38% en Métropole, 75% dans les DOM</li>
 </ul>
-', 'en %', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_10', 'cae', '10.None', null, 'Part des surfaces agricoles et naturelles (%)', '<p>Il s''agit de la mesure de la consommation ou de la réintroduction d''espaces naturels et agricoles au fil des ans grâce au suivi des surfaces réservées à ces usages dans les PLU, mesuré en pourcentage de la surface totale de la collectivité (ha cumulé des zones N et A/ha total). Ces surfaces sont non imperméabilisées, capteuses de CO2, productrices de ressources alimentaires, énergétiques, et de biodiversité. La valeur obtenue doit être comparée avec l''indicateur issu de la précédente version du document d''urbanisme de la collectivité.</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_41', 'cae', '41.None', null, 'Part modale des déplacements alternatifs à la voiture individuelle pour les déplacements  domicile-travail des agents de la collectivité (%)', '<p>Via une enquête réalisée auprès des agents, l’indicateur mesure la part modale (en nombre de déplacements) cumulée des déplacements alternatifs à la voiture individuelle (somme des parts modales marche, vélo, transport en commun, co-voiturage) dans les déplacements domicile-travail des agents. L’indicateur est décliné si possible également en kilomètres parcourus.</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_61', 'cae', '61.None', null, 'Quantité moyenne de viande par repas dans la restauration collective publique (g/repas)', '<p>L’indicateur mesure le ratio moyen de viande par repas : la quantité totale annuelle de viande achetée dans la restauration collectivité publique (maîtrisée par la collectivité) est divisée par le nombre de repas servi sur l’année.</p>
-', 'g/repas', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_30', 'cae', '30.None', null, 'Quantité annuelle d''engrais/m2 d''espaces verts', '<p>L''objectif est de mesurer les efforts de la collectivité en matière de limitation des engrais sur ses espaces verts. La quantité annuelle d''engrais apportée est divisée par la surface d''espaces verts gérés par la collectivité. L''unité de l''indicateur est fixé selon les possibilités de la collectivité et les produits employés : unité d''azote/m2, kg/m2, litre/m2, euros/m2...</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4a', 'cae', '4.a', null, 'Emissions annuelles de Nox (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
-', 'tonnes', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4b', 'cae', '4.b', null, 'Emissions annuelles de PM10 (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
-', 'tonnes', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4c', 'cae', '4.c', null, 'Emissions annuelles de PM2,5 (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
-', 'tonnes', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4d', 'cae', '4.d', null, 'Emissions annuelles de COV (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
-', 'tonnes', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4e', 'cae', '4.e', null, 'Emissions annuelles de SO2  (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
-', 'tonnes', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4f', 'cae', '4.f', null, 'Emissions annuelles de NH3 (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
-', 'tonnes', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_55', 'cae', '55.None', null, 'Nombre de ménages demandeurs et bénéficiaires du FSL pour l’aide au paiement des factures d’énergie sur le territoire', '<p>L’indicateur mesure annuellement le nombre de ménages demandeurs et bénéficiaires du fond de solidarité logement (FSL) pour l’aide au paiement des factures d’énergie sur le territoire. Il peut être obtenu auprès des Conseils Départementaux qui gèrent ce fond (indicateur suivi au niveau national par l’office national de la précarité énergétique).</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_45', 'cae', '45.None', null, 'Nombre de places de stationnement vélo, hors pince-roues (nb / 100 habitants)', '<p>L''indicateur mesure le nombre de places de stationnement vélo pour 100 habitants : arceaux sur l’espace public, consignes ou boxes à vélos, stationnements vélos en gare, en parking automobiles... Attention, les stationnements de type râtelier vélo ou « pince-roues » sur l’espace public, qui ne permettent pas une accroche sécuritaire, ne sont pas pris en compte.</p>
+', 'en %', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_24.b', 'cae_3.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_10', 'cae', '10', null, 'Part des surfaces agricoles et naturelles (%)', '<p>Il s''agit de la mesure de la consommation ou de la réintroduction d''espaces naturels et agricoles au fil des ans grâce au suivi des surfaces réservées à ces usages dans les PLU, mesuré en pourcentage de la surface totale de la collectivité (ha cumulé des zones N et A/ha total). Ces surfaces sont non imperméabilisées, capteuses de CO2, productrices de ressources alimentaires, énergétiques, et de biodiversité. La valeur obtenue doit être comparée avec l''indicateur issu de la précédente version du document d''urbanisme de la collectivité.</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_10', 'cae_1.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_41', 'cae', '41', null, 'Part modale des déplacements alternatifs à la voiture individuelle pour les déplacements  domicile-travail des agents de la collectivité (%)', '<p>Via une enquête réalisée auprès des agents, l’indicateur mesure la part modale (en nombre de déplacements) cumulée des déplacements alternatifs à la voiture individuelle (somme des parts modales marche, vélo, transport en commun, co-voiturage) dans les déplacements domicile-travail des agents. L’indicateur est décliné si possible également en kilomètres parcourus.</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_41', 'cae_4.1.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_61', 'cae', '61', null, 'Quantité moyenne de viande par repas dans la restauration collective publique (g/repas)', '<p>L’indicateur mesure le ratio moyen de viande par repas : la quantité totale annuelle de viande achetée dans la restauration collectivité publique (maîtrisée par la collectivité) est divisée par le nombre de repas servi sur l’année.</p>
+', 'g/repas', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_61', 'cae_6.4.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_30', 'cae', '30', null, 'Quantité annuelle d''engrais/m2 d''espaces verts', '<p>L''objectif est de mesurer les efforts de la collectivité en matière de limitation des engrais sur ses espaces verts. La quantité annuelle d''engrais apportée est divisée par la surface d''espaces verts gérés par la collectivité. L''unité de l''indicateur est fixé selon les possibilités de la collectivité et les produits employés : unité d''azote/m2, kg/m2, litre/m2, euros/m2...</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_30', 'cae_3.3.4');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4.a', 'cae', '4.a', null, 'Emissions annuelles de Nox (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
+', 'tonnes', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_4.a', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4.b', 'cae', '4.b', null, 'Emissions annuelles de PM10 (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
+', 'tonnes', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_4.b', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4.c', 'cae', '4.c', null, 'Emissions annuelles de PM2,5 (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
+', 'tonnes', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_4.c', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4.d', 'cae', '4.d', null, 'Emissions annuelles de COV (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
+', 'tonnes', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_4.d', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4.e', 'cae', '4.e', null, 'Emissions annuelles de SO2  (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
+', 'tonnes', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_4.e', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_4.f', 'cae', '4.f', null, 'Emissions annuelles de NH3 (tonnes)', '<p>Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3). Préciser l''année de référence en commentaire. Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l''air (AASQA). L''évaluation est basée sur l''évolution de l''indicateur.</p>
+', 'tonnes', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_4.f', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_55', 'cae', '55', null, 'Nombre de ménages demandeurs et bénéficiaires du FSL pour l’aide au paiement des factures d’énergie sur le territoire', '<p>L’indicateur mesure annuellement le nombre de ménages demandeurs et bénéficiaires du fond de solidarité logement (FSL) pour l’aide au paiement des factures d’énergie sur le territoire. Il peut être obtenu auprès des Conseils Départementaux qui gèrent ce fond (indicateur suivi au niveau national par l’office national de la précarité énergétique).</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_55', 'cae_6.2.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_45', 'cae', '45', null, 'Nombre de places de stationnement vélo, hors pince-roues (nb / 100 habitants)', '<p>L''indicateur mesure le nombre de places de stationnement vélo pour 100 habitants : arceaux sur l’espace public, consignes ou boxes à vélos, stationnements vélos en gare, en parking automobiles... Attention, les stationnements de type râtelier vélo ou « pince-roues » sur l’espace public, qui ne permettent pas une accroche sécuritaire, ne sont pas pris en compte.</p>
 <ul>
 <li>
 <p>Valeurs limites : 2 (commune) et 1 (EPCI)</p>
@@ -9429,14 +9432,14 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>ATTENTION: pour les collectivités rurales, se focaliser sur la présence d’abris et de stationnements proposés aux endroits clés (centres bourgs, autour des écoles et pôles d’activités, lieux publics de rencontre, commerces, etc).</p>
 </li>
 </ul>
-', 'nb / 100 habitants', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_14a', 'cae', '14.a', null, 'Consommation d''énergie finale des bâtiments publics (MWh)', '<p>L''indicateur mesure la consommation énergétique totale (toute énergie, tout usage) du patrimoine bâti à la charge directe de la commune, en énergie finale. Les piscines et patinoires, si elles sont à la charge de la collectivité sont prises en compte, mais pas les services publics eau, assainissement, déchets, ni l''éclairage public.</p>
-', 'MWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_14b', 'cae', '14.b', null, 'Consommation d''énergie finale des bâtiments publics (rapporté au nb d''habitant, en kWh/hab)', '<p>L''indicateur mesure la consommation énergétique totale (toute énergie, tout usage) du patrimoine bâti à la charge directe de la commune, en énergie finale, rapportée par habitant et comparée à la valeur moyenne française (tirée de l''enquête ADEME-AITF-EDF-GDF &quot;Energie et patrimoine communal 2012&quot;) selon la taille de la collectivité. Les piscines et patinoires, si elles sont à la charge de la collectivité sont prises en compte, mais pas les services publics eau, assainissement, déchets, ni l''éclairage public. Pour les EPCI, l''indicateur en kWh/m².an est plus pertinent.</p>
-', 'rapporté au nb d''habitant, en kWh/hab', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_14c', 'cae', '14.c', null, 'Consommation d''énergie finale des bâtiments publics (rapporté à la surface du patrimoine, en kWh/m²)', '<p>L''indicateur mesure la consommation énergétique totale (toute énergie, tout usage) du patrimoine bâti à la charge directe de la commune, en énergie finale, rapportée par rapport à la surface. Les piscines et patinoires, si elles sont à la charge de la collectivité sont prises en compte, mais pas les services publics eau, assainissement, déchets, ni l''éclairage public.</p>
-', 'rapporté à la surface du patrimoine, en kWh/m²', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_20', 'cae', '20.None', null, 'Consommation de l’éclairage public  (kWh/hab.an)', '<p>L’indicateur est en énergie finale et inclut les consommations pour la signalisation et l’éclairage du mobilier urbain (ex : abri-bus). La valeur limite est inspirée (valeur moyenne arrondie) de l’enquête ADEME-AITF-EDF-GDF « Energie et patrimoine communal 2012 », en énergie finale. La valeur cible correspond aux meilleures scores obtenues par des collectivités Cit’ergie.</p>
+', 'nb / 100 habitants', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_45', 'cae_4.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_14.a', 'cae', '14.a', null, 'Consommation d''énergie finale des bâtiments publics (MWh)', '<p>L''indicateur mesure la consommation énergétique totale (toute énergie, tout usage) du patrimoine bâti à la charge directe de la commune, en énergie finale. Les piscines et patinoires, si elles sont à la charge de la collectivité sont prises en compte, mais pas les services publics eau, assainissement, déchets, ni l''éclairage public.</p>
+', 'MWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_14.a', 'cae_2.2.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_14.a', 'cae_2.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_14.b', 'cae', '14.b', null, 'Consommation d''énergie finale des bâtiments publics (rapporté au nb d''habitant, en kWh/hab)', '<p>L''indicateur mesure la consommation énergétique totale (toute énergie, tout usage) du patrimoine bâti à la charge directe de la commune, en énergie finale, rapportée par habitant et comparée à la valeur moyenne française (tirée de l''enquête ADEME-AITF-EDF-GDF &quot;Energie et patrimoine communal 2012&quot;) selon la taille de la collectivité. Les piscines et patinoires, si elles sont à la charge de la collectivité sont prises en compte, mais pas les services publics eau, assainissement, déchets, ni l''éclairage public. Pour les EPCI, l''indicateur en kWh/m².an est plus pertinent.</p>
+', 'rapporté au nb d''habitant, en kWh/hab', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_14.b', 'cae_2.2.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_14.b', 'cae_2.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_14.c', 'cae', '14.c', null, 'Consommation d''énergie finale des bâtiments publics (rapporté à la surface du patrimoine, en kWh/m²)', '<p>L''indicateur mesure la consommation énergétique totale (toute énergie, tout usage) du patrimoine bâti à la charge directe de la commune, en énergie finale, rapportée par rapport à la surface. Les piscines et patinoires, si elles sont à la charge de la collectivité sont prises en compte, mais pas les services publics eau, assainissement, déchets, ni l''éclairage public.</p>
+', 'rapporté à la surface du patrimoine, en kWh/m²', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_14.c', 'cae_2.2.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_14.c', 'cae_2.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_20', 'cae', '20', null, 'Consommation de l’éclairage public  (kWh/hab.an)', '<p>L’indicateur est en énergie finale et inclut les consommations pour la signalisation et l’éclairage du mobilier urbain (ex : abri-bus). La valeur limite est inspirée (valeur moyenne arrondie) de l’enquête ADEME-AITF-EDF-GDF « Energie et patrimoine communal 2012 », en énergie finale. La valeur cible correspond aux meilleures scores obtenues par des collectivités Cit’ergie.</p>
 <p>Pour les EPCI, l’indicateur n’est renseigné que si la compétence a été transférée totalement (pas uniquement sur les zones communautaires).</p>
 <ul>
 <li>
@@ -9446,12 +9449,12 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Valeur cible : 60 kWh/hab</p>
 </li>
 </ul>
-', 'kWh/hab.an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_60', 'cae', '60.None', null, 'Part de produits biologiques dans la restauration collective publique (%)', '<p>L’indicateur mesure la part des achats (en euros) labellisés « agriculture biologique » dans les achats totaux d’alimentation de la restauration collective publique (maîtrisée par la collectivité).  Pour la France métropole, la valeur limite est basée sur la part nationale des achats biologiques dans la restauration collective à caractère social en 2015 (3,2% - Agence Bio) et la valeur cible sur l’objectif 2022 du projet de loi pour l’équilibre des relations commerciales dans le secteur agricole et alimentaire et une alimentation saine et durable (20%).</p>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_31', 'cae', '31.None', null, 'Quantité annuelle d''eau/m2 d''espaces verts', '<p>L''objectif est de mesurer les efforts de la collectivité en matière de limitation des consommations d''eau pour l''arrosage de ses espaces verts. Le volume annuel d''eau est divisé par la surface d''espaces verts gérés par la collectivité. L''unité de l''indicateur est en m3/m2. Les espaces verts sont entendus au sens large, à savoir : parcs et jardins, espaces sportifs végétalisés, ronds-points ou accotement enherbées de la compétence de la collectivité.</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_5', 'cae', '5.None', null, 'Part modale de la voiture (en nombre de déplacements)', '<p>L''objectif de cet indicateur est de juger de l''impact des mesures de planification des déplacements sur l''utilisation de la voiture sur le territoire, via le suivi de la part modale de la voiture (nombre de déplacements en voiture/nombre de déplacements). Pour information, des valeurs limites et cibles indicatives de parts modales sont données, basées sur les moyennes nationales et les meilleurs scores atteints par des collectivités Cit''ergie. Mais le conseiller doit apprécier les efforts de la collectivité, en fonction du contexte territorial, et les progrès réalisés sur l''indicateur.</p>
+', 'kWh/hab.an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_20', 'cae_2.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_60', 'cae', '60', null, 'Part de produits biologiques dans la restauration collective publique (%)', '<p>L’indicateur mesure la part des achats (en euros) labellisés « agriculture biologique » dans les achats totaux d’alimentation de la restauration collective publique (maîtrisée par la collectivité).  Pour la France métropole, la valeur limite est basée sur la part nationale des achats biologiques dans la restauration collective à caractère social en 2015 (3,2% - Agence Bio) et la valeur cible sur l’objectif 2022 du projet de loi pour l’équilibre des relations commerciales dans le secteur agricole et alimentaire et une alimentation saine et durable (20%).</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_60', 'cae_6.4.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_31', 'cae', '31', null, 'Quantité annuelle d''eau/m2 d''espaces verts', '<p>L''objectif est de mesurer les efforts de la collectivité en matière de limitation des consommations d''eau pour l''arrosage de ses espaces verts. Le volume annuel d''eau est divisé par la surface d''espaces verts gérés par la collectivité. L''unité de l''indicateur est en m3/m2. Les espaces verts sont entendus au sens large, à savoir : parcs et jardins, espaces sportifs végétalisés, ronds-points ou accotement enherbées de la compétence de la collectivité.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_31', 'cae_3.3.4');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_5', 'cae', '5', null, 'Part modale de la voiture (en nombre de déplacements)', '<p>L''objectif de cet indicateur est de juger de l''impact des mesures de planification des déplacements sur l''utilisation de la voiture sur le territoire, via le suivi de la part modale de la voiture (nombre de déplacements en voiture/nombre de déplacements). Pour information, des valeurs limites et cibles indicatives de parts modales sont données, basées sur les moyennes nationales et les meilleurs scores atteints par des collectivités Cit''ergie. Mais le conseiller doit apprécier les efforts de la collectivité, en fonction du contexte territorial, et les progrès réalisés sur l''indicateur.</p>
 <ul>
 <li>
 <p>Valeur limite : 65 % (ville dans une aire urbaine) / 75% (EPCI ou ville hors aire urbaine)</p>
@@ -9460,12 +9463,12 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Valeur cible : 40 % (ville dans une aire urbaine) / 50 % (EPCI ou ville hors aire urbaine)</p>
 </li>
 </ul>
-', 'en nombre de déplacements', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_54', 'cae', '54.None', null, 'Nombre de manifestations/actions par an sur le climat l''air et l''énergie', '<p>Il s''agit du nombre de manifestions/actions de communication menées sur le thème de l''énergie et du climat. L''évaluation est différenciée selon la taille de la collectivité. Cet indicateur fait partie d''un ensemble (indicateurs qualitatifs et quantitatifs).</p>
+', 'en nombre de déplacements', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_5', 'cae_1.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_54', 'cae', '54', null, 'Nombre de manifestations/actions par an sur le climat l''air et l''énergie', '<p>Il s''agit du nombre de manifestions/actions de communication menées sur le thème de l''énergie et du climat. L''évaluation est différenciée selon la taille de la collectivité. Cet indicateur fait partie d''un ensemble (indicateurs qualitatifs et quantitatifs).</p>
 <p>Valeur limite : 2 (&lt; 3 000 hab) ; 5 (&gt; 3 000 hab) ; 10 (&gt; 50 000 hab)</p>
 <p>Les actions importantes peuvent être comptées comme équivalentes à deux actions.</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_44', 'cae', '44.None', null, 'Part de voiries aménagées pour les cycles (%  Ou à défaut km/1000hab)', '<p>L''indicateur mesure le kilométrage de voiries aménagées (pistes le long de la voirie, bandes cyclables et couloirs bus autorisés aux vélos, les zones 30, les aires piétonnes…) sur le kilométrage total de voirie. Les aménagements à double-sens compte pour 1, les sens unique pour 0,5 ; les aménagements hors voirie ne sont pas pris en compte (voies vertes, pistes ne suivant pas le tracé de la voirie, allées de parcs, ...). A défaut, un indicateur en km/1000 habitants pourra être utilisé. Les valeurs de références sont basées sur un traitement des données du Club des villes et territoires cyclables, dans le cadre de l’Observatoire des mobilités actives, enquête 2015-2016.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_54', 'cae_6.1.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_44', 'cae', '44', null, 'Part de voiries aménagées pour les cycles (%  Ou à défaut km/1000hab)', '<p>L''indicateur mesure le kilométrage de voiries aménagées (pistes le long de la voirie, bandes cyclables et couloirs bus autorisés aux vélos, les zones 30, les aires piétonnes…) sur le kilométrage total de voirie. Les aménagements à double-sens compte pour 1, les sens unique pour 0,5 ; les aménagements hors voirie ne sont pas pris en compte (voies vertes, pistes ne suivant pas le tracé de la voirie, allées de parcs, ...). A défaut, un indicateur en km/1000 habitants pourra être utilisé. Les valeurs de références sont basées sur un traitement des données du Club des villes et territoires cyclables, dans le cadre de l’Observatoire des mobilités actives, enquête 2015-2016.</p>
 <ul>
 <li>
 <p>Valeurs limites :  25% ou 1 km/1000 hab (ville) et 20% ou 0,8 km/1000 hab(EPCI)</p>
@@ -9474,79 +9477,79 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Valeurs cibles (objectifs) :  50% ou 2 km/1000 hab  (ville) et 40% ou 1,5 km/1000 hab (EPCI)</p>
 </li>
 </ul>
-', '%  Ou à défaut km/1000hab', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15a', 'cae', '15.a', null, 'Part de bâtiments publics de classe F ou G selon le DPE pour l''énergie (ou équivalent)', '<p>En France métropolitaine, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE,  dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes F et G selon le DPE pour l''énergie. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. L''indicateur permet de mesurer l''effort de la collectivité pour la rénovation de ces bâtiments les plus émetteurs. L''objectif est de ne plus avoir de patrimoine dans ces classes (valeur limite : 10%).</p>
-', 'ou équivalent', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15a_dom', 'cae', '15.a_dom', null, 'Part de bâtiments >=701 kWhep/m².an (calcul DPE ou équivalent) (DOM)', '<p>Dans les DOM, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments dont la collectivité est propriétaire  (ou mis à disposition avec transfert des droits patrimoniaux) dont la consommation d''énergie primaire est supérieure ou égale à 701 kWhep/m². Les modalités de calcul sont celles du Diagnostic de Performance Energétique s''il existe dans le DOM concerné ou toute démarche équivalente. Les piscines/patinoires sont exclues.</p>
-', 'calcul DPE ou équivalent', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15b', 'cae', '15.b', null, 'Part de bâtiments publics de classe A ou B selon le DPE pour l''énergie (ou équivalent)', '<p>En France métropolitaire, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE,  dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes A et B selon le DPE pour l''énergie. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. La cible est d''atteindre 30% du parc dans les classes A et B (mais valorisation progressive à partir de 0%).</p>
-', 'ou équivalent', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15b_dom', 'cae', '15.b_dom', null, 'Part de bâtiments =<100 kWhep/m².an (calcul DPE ou équivalent) (DOM)', '<p>Dans les DOM, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments dont la collectivité est propriétaire  (ou mis à disposition avec transfert des droits patrimoniaux) dont la consommation d''énergie primaire est inférieure ou égale à 100 kWhep/m². Les modalités de calcul sont celles du Diagnostic de Performance Energétique s''il existe dans le DOM concerné ou toute démarche équivalente. Les piscines/patinoires sont exclues.</p>
-', 'calcul DPE ou équivalent', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21a', 'cae', '21.a', null, 'Consommation moyenne d''eau dans les bâtiments de la collectivité (l/m².an)', '<p>L''objectif est de mesurer l''impact des mesures de limitation des consommations d''eau au fil des ans dans les bâtiments de la collectivités (hors piscine).</p>
+', '%  Ou à défaut km/1000hab', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_44', 'cae_4.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15.a', 'cae', '15.a', null, 'Part de bâtiments publics de classe F ou G selon le DPE pour l''énergie (ou équivalent)', '<p>En France métropolitaine, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE,  dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes F et G selon le DPE pour l''énergie. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. L''indicateur permet de mesurer l''effort de la collectivité pour la rénovation de ces bâtiments les plus émetteurs. L''objectif est de ne plus avoir de patrimoine dans ces classes (valeur limite : 10%).</p>
+', 'ou équivalent', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_15.a', 'cae_2.2.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_15.a', 'cae_2.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15.a_dom', 'cae', '15.a-dom', null, 'Part de bâtiments >=701 kWhep/m².an (calcul DPE ou équivalent) (DOM)', '<p>Dans les DOM, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments dont la collectivité est propriétaire  (ou mis à disposition avec transfert des droits patrimoniaux) dont la consommation d''énergie primaire est supérieure ou égale à 701 kWhep/m². Les modalités de calcul sont celles du Diagnostic de Performance Energétique s''il existe dans le DOM concerné ou toute démarche équivalente. Les piscines/patinoires sont exclues.</p>
+', 'calcul DPE ou équivalent', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_15.a_dom', 'cae_2.2.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_15.a_dom', 'cae_2.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15.b', 'cae', '15.b', null, 'Part de bâtiments publics de classe A ou B selon le DPE pour l''énergie (ou équivalent)', '<p>En France métropolitaire, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l''obligation de réalisation du DPE,  dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes A et B selon le DPE pour l''énergie. Le patrimoine en DSP est inclus si possible.  Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d''hygrométrie ou de qualité de l''air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l''extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu''elles sont définies dans l''arrêté du 7 décembre 2007 relatif à l''affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. La cible est d''atteindre 30% du parc dans les classes A et B (mais valorisation progressive à partir de 0%).</p>
+', 'ou équivalent', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_15.b', 'cae_2.2.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_15.b', 'cae_2.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_15.b_dom', 'cae', '15.b-dom', null, 'Part de bâtiments =<100 kWhep/m².an (calcul DPE ou équivalent) (DOM)', '<p>Dans les DOM, l''indicateur mesure la part (en surface -à défaut en nombre) de bâtiments dont la collectivité est propriétaire  (ou mis à disposition avec transfert des droits patrimoniaux) dont la consommation d''énergie primaire est inférieure ou égale à 100 kWhep/m². Les modalités de calcul sont celles du Diagnostic de Performance Energétique s''il existe dans le DOM concerné ou toute démarche équivalente. Les piscines/patinoires sont exclues.</p>
+', 'calcul DPE ou équivalent', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_15.b_dom', 'cae_2.2.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_15.b_dom', 'cae_2.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21.a', 'cae', '21.a', null, 'Consommation moyenne d''eau dans les bâtiments de la collectivité (l/m².an)', '<p>L''objectif est de mesurer l''impact des mesures de limitation des consommations d''eau au fil des ans dans les bâtiments de la collectivités (hors piscine).</p>
 <p>Des valeurs moyennes comparatives pour 3 catégories de bâtiments (dans la catégorie &quot;culture/sport&quot;, les piscines ne sont pas comptées) sont proposées pour aider le conseiller à situer la collectivité (regroupement effectué à partir de valeurs recueillies via Display, 2012).</p>
-', 'l/m².an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21b', 'cae', '21.b', null, 'Consommation moyenne d''eau dans les bâtiments "enseignement/crèche" (l/m².an)', '<p>Composante de l''indicateur 21a:</p>
+', 'l/m².an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_21.a', 'cae_2.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21.b', 'cae', '21.b', null, 'Consommation moyenne d''eau dans les bâtiments "enseignement/crèche" (l/m².an)', '<p>Composante de l''indicateur 21a:</p>
 <p>Consommation moyenne d''eau dans les bâtiments de la collectivité (l/m².an).</p>
-', 'l/m².an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21c', 'cae', '21.c', null, 'Consommation moyenne d''eau dans les bâtiments "administration" (l/m².an)', '<p>Composante de l''indicateur 21a:</p>
+', 'l/m².an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_21.b', 'cae_2.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21.c', 'cae', '21.c', null, 'Consommation moyenne d''eau dans les bâtiments "administration" (l/m².an)', '<p>Composante de l''indicateur 21a:</p>
 <p>Consommation moyenne d''eau dans les bâtiments de la collectivité (l/m².an).</p>
-', 'l/m².an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21d', 'cae', '21.d', null, 'Consommation moyenne d''eau dans les bâtiments"culture/sport" (l/m².an)', '<p>Composante de l''indicateur 21a:</p>
+', 'l/m².an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_21.c', 'cae_2.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_21.d', 'cae', '21.d', null, 'Consommation moyenne d''eau dans les bâtiments"culture/sport" (l/m².an)', '<p>Composante de l''indicateur 21a:</p>
 <p>Consommation moyenne d''eau dans les bâtiments de la collectivité (l/m².an).</p>
-', 'l/m².an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_50', 'cae', '50.None', null, 'Valorisation des CEE (kWhcumac  valorisé/an)', '<p>Les kWhcumac valorisés chaque année par la collectivité sont calculés selon les modalités règlementaires du dispositif des certificats d''économie d''énergie. Il s''agit de ceux dont la rente revient à la collectivité.</p>
-', 'kWhcumac  valorisé/an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1a', 'cae', '1.a', null, 'Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2.</p>
+', 'l/m².an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_21.d', 'cae_2.3.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_50', 'cae', '50', null, 'Valorisation des CEE (kWhcumac  valorisé/an)', '<p>Les kWhcumac valorisés chaque année par la collectivité sont calculés selon les modalités règlementaires du dispositif des certificats d''économie d''énergie. Il s''agit de ceux dont la rente revient à la collectivité.</p>
+', 'kWhcumac  valorisé/an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_50', 'cae_5.2.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1.a', 'cae', '1.a', null, 'Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2.</p>
 <p>L''indicateur, issu d''un diagnostic d''émissions de gaz à effet de serre mesure la quantité totale d''émissions annuelle des différents secteurs d''activités et des habitants du territoire, selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial).</p>
 <p>A savoir : les  émissions  directes  produites par l''ensemble des secteurs résidentiel, tertiaire, transport routier, autres transports, agriculture, déchets, industrie hors branche énergie, branche énergie (hors production d''électricité, de chaleur et de froid pour les émissions de gaz à effet de serre, dont les émissions correspondantes sont comptabilisées au stade de la consommation).</p>
 <p>Il ne s''agit pas du bilan GES &quot;Patrimoine et compétences&quot;.</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1b', 'cae', '1.b', null, 'Emissions de gaz à effet de serre annuelles du territoire par habitant (teq CO2/hab)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 par habitant.</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_1.a', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1.b', 'cae', '1.b', null, 'Emissions de gaz à effet de serre annuelles du territoire par habitant (teq CO2/hab)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 par habitant.</p>
 <p>Pour faciliter les comparaisons, l’indicateur est ramené au nombre d’habitants (population municipale selon l’INSEE).</p>
 <p>Pour rappel, objectifs nationaux : division par 4 (-75 %) des émissions de gaz à effet de serre d’ici 2050 par rapport à 1990 (loi POPE) et étape intermédiaire de -40% entre 1990 et 2030 (loi de transition énergétique).</p>
 <p>L''évaluation est basée sur l''évolution de l''indicateur.</p>
-', 'teq CO2/hab', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1c', 'cae', '1.c', null, 'Emissions de gaz à effet de serre du résidentiel (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur résidentiel.</p>
+', 'teq CO2/hab', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_1.b', 'cae_1.1.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1.c', 'cae', '1.c', null, 'Emissions de gaz à effet de serre du résidentiel (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur résidentiel.</p>
 <p>Décomposition par secteur réglementaire de l''indicateur global</p>
 <p>Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1d', 'cae', '1.d', null, 'Emissions de gaz à effet de serre du tertiaire (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur tertiaire.</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_1.c', 'cae_1.2.4');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1.d', 'cae', '1.d', null, 'Emissions de gaz à effet de serre du tertiaire (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur tertiaire.</p>
 <p>Décomposition par secteur réglementaire de l''indicateur global</p>
 <p>Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1e', 'cae', '1.e', null, 'Emissions de gaz à effet de serre du transport routier (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur du transport routier.</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_1.d', 'cae_6.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1.e', 'cae', '1.e', null, 'Emissions de gaz à effet de serre du transport routier (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur du transport routier.</p>
 <p>Décomposition par secteur réglementaire de l''indicateur global</p>
 <p>Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1f', 'cae', '1.f', null, 'Emissions de gaz à effet de serre de secteurs "autres transports" (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur des autres transport (hors routier).</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_1.e', 'cae_1.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1.f', 'cae', '1.f', null, 'Emissions de gaz à effet de serre de secteurs "autres transports" (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur des autres transport (hors routier).</p>
 <p>Décomposition par secteur réglementaire de l''indicateur global</p>
 <p>Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1g', 'cae', '1.g', null, 'Emissions de gaz à effet de serre de l''agriculture (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur de l''agriculture.</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_1.f', 'cae_1.2.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1.g', 'cae', '1.g', null, 'Emissions de gaz à effet de serre de l''agriculture (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur de l''agriculture.</p>
 <p>Décomposition par secteur réglementaire de l''indicateur global</p>
 <p>Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1h', 'cae', '1.h', null, 'Emissions de gaz à effet de serre des déchets (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur des déchets.</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_1.g', 'cae_6.4.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1.h', 'cae', '1.h', null, 'Emissions de gaz à effet de serre des déchets (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur des déchets.</p>
 <p>Décomposition par secteur réglementaire de l''indicateur global</p>
 <p>Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1i', 'cae', '1.i', null, 'Emissions de gaz à effet de serre de l''industrie hors branche énergie (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur de l''industrie hors branche énergie.</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_1.h', 'cae_1.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1.i', 'cae', '1.i', null, 'Emissions de gaz à effet de serre de l''industrie hors branche énergie (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur de l''industrie hors branche énergie.</p>
 <p>Décomposition par secteur réglementaire de l''indicateur global</p>
 <p>Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1j', 'cae', '1.j', null, 'Emissions de gaz à effet de serre de l''industrie branche énergie (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur de l''industrie branche énergie (hors production d''électricité, de chaleur et de froid pour les émissions de gaz à effet de serre, dont les émissions correspondantes sont comptabilisées au stade de la consommation).</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_1.i', 'cae_6.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_1.j', 'cae', '1.j', null, 'Emissions de gaz à effet de serre de l''industrie branche énergie (teq CO2)', '<p>Émissions de gaz à effet de serre globales annuelles du territoire exprimées en tonnes équivalent CO2 pour le secteur de l''industrie branche énergie (hors production d''électricité, de chaleur et de froid pour les émissions de gaz à effet de serre, dont les émissions correspondantes sont comptabilisées au stade de la consommation).</p>
 <p>Décomposition par secteur réglementaire de l''indicateur global</p>
 <p>Émissions de gaz à effet de serre globales annuelles du territoire (teq CO2)</p>
-', 'teq CO2', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_35', 'cae', '35.None', null, 'Part modale piéton', '<p>La part modale est une part modale en nombre de déplacements.</p>
+', 'teq CO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_1.j', 'cae_6.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_35', 'cae', '35', null, 'Part modale piéton', '<p>La part modale est une part modale en nombre de déplacements.</p>
 <p>Les valeurs limites et cibles (selon le nombre d''habitants, limite de 15-25%, cible de 25-35%) sont données à titre indicatif pour le conseiller, qui doit également juger de l''évolution de la part modale au fil du temps et des caractéristiques du territoire (ville centre dense favorisant la marche ou territoire étendu d''une agglomération...). A défaut de posséder les parts modales issues d''une enquête ménages, les collectivités peuvent utiliser les données INSEE donnant les parts modales des déplacements domicile-travail pour la population active (tableau NAV2A ou NAV2B).</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_64', 'cae', '64.None', null, 'Part d''établissements scolaires couverts par un PDES ou un pédibus/vélobus', '<p>L''indicateur comptabilise le nombre d''établissement scolaires (écoles primaires, collèges, lycées) couverts par un Plan de Déplacements Etablissements Scolaires ou un pédibus/vélobus (pour les écoles primaires principalement) sur le territoire et le rapporte au nombre total d''établissements scolaires. Ce chiffre doit être en augmentation chaque année. Des valeurs indicatives limites (10%) et cibles (30%) sont données, basées sur des données ADEME et les meilleurs scores des collectivités Cit''ergie.</p>
-', 'Non trouvé', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_25a', 'cae', '25.a', null, 'Production d''électricité renouvelable  (MWh)', '<p>Cet indicateur mesure la production d''électricité renouvelable sur le territoire (initiative publique et privée). Les énergies renouvelables prise en compte sont celles citées selon les filières citées dans le Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial :  éolien terrestre, solaire PV, solaire thermodynamique, hydraulique, biomasse solide, biogaz, géothermie.</p>
-', 'MWh', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_25b', 'cae', '25.b', null, 'Taux de production d''électricité renouvelable sur le territoire (%)', '<p>Cet indicateur mesure la production d''électricité renouvelable sur le territoire, par la collectivité, ses partenaires et les particuliers, rapporté à la consommation totale d''électricité du territoire (énergie finale). Les énergies renouvelables considérées sont celles citées dans le décret Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial  (éolien  terrestre,  solaire  photovoltaïque,  solaire  thermodynamique,  hydraulique,  biomasse  solide, biogaz,  géothermie). L''électricité produite par cogénération via incinération des déchets en mélange compte pour 50% comme une énergie renouvelable (biomasse solide). La cogénération à partir d''énergie fossile n''est pas prise en compte.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_35', 'cae_4.1.1');insert into indicateur_action(indicateur_id, action_id) values ('cae_35', 'cae_4.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_64', 'cae', '64', null, 'Part d''établissements scolaires couverts par un PDES ou un pédibus/vélobus', '<p>L''indicateur comptabilise le nombre d''établissement scolaires (écoles primaires, collèges, lycées) couverts par un Plan de Déplacements Etablissements Scolaires ou un pédibus/vélobus (pour les écoles primaires principalement) sur le territoire et le rapporte au nombre total d''établissements scolaires. Ce chiffre doit être en augmentation chaque année. Des valeurs indicatives limites (10%) et cibles (30%) sont données, basées sur des données ADEME et les meilleurs scores des collectivités Cit''ergie.</p>
+', 'Non trouvé', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_64', 'cae_6.5.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_25.a', 'cae', '25.a', null, 'Production d''électricité renouvelable  (MWh)', '<p>Cet indicateur mesure la production d''électricité renouvelable sur le territoire (initiative publique et privée). Les énergies renouvelables prise en compte sont celles citées selon les filières citées dans le Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial :  éolien terrestre, solaire PV, solaire thermodynamique, hydraulique, biomasse solide, biogaz, géothermie.</p>
+', 'MWh', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_25.a', 'cae_3.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_25.b', 'cae', '25.b', null, 'Taux de production d''électricité renouvelable sur le territoire (%)', '<p>Cet indicateur mesure la production d''électricité renouvelable sur le territoire, par la collectivité, ses partenaires et les particuliers, rapporté à la consommation totale d''électricité du territoire (énergie finale). Les énergies renouvelables considérées sont celles citées dans le décret Décret n° 2016-849 du 28 juin 2016  relatif au plan climat-air-énergie territorial  (éolien  terrestre,  solaire  photovoltaïque,  solaire  thermodynamique,  hydraulique,  biomasse  solide, biogaz,  géothermie). L''électricité produite par cogénération via incinération des déchets en mélange compte pour 50% comme une énergie renouvelable (biomasse solide). La cogénération à partir d''énergie fossile n''est pas prise en compte.</p>
 <p>La collectivité doit avoir effectué un bilan de ses consommations et productions d''ENR tel que décrit à l''action 1.1.2:</p>
 <p>Réaliser le diagnostic Climat-Air-Energie du territoire</p>
 <ul>
@@ -9563,11 +9566,11 @@ insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indi
 <p>Valeur cible pour les DOM : 75%</p>
 </li>
 </ul>
-', '%', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_11', 'cae', '11.None', null, 'Surface annuelle artificialisée (ha/an)', '<p>L’indicateur mesure les surfaces artificialisées chaque année a minima par l’habitat et les activités, et dans la mesure du possible également pour les autres motifs (infrastructures routières, etc.). Si l’indicateur n’est pas disponible annuellement, il s’agit de la moyenne annuelle sur une période plus large, établi à l’occasion de l’élaboration ou de la révision du PLU ou du SCOT (évaluation règlementaire de la consommation d''espaces naturels, agricoles et forestiers).</p>
-', 'ha/an', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_40a', 'cae', '40.a', null, 'Consommation annuelle d''énergie des véhicules (VP) de la collectivité (kWh/an.employé)', '<p>L''indicateur mesure la consommation d''énergie en kWh (gazole, essence, GPL, GNV, électricité, biogaz, agro-carburants...) des véhicules de type &quot;véhicule particulier&quot; pour le fonctionnement de la collectivité, divisé par le nombre d''agents et/ou par kilomètre effectué. Facteurs de conversion simplifiés : gazole et essence 10 kWh/L, GPL 7 kWh/L, GNV 11 kWh/m3.</p>
-', 'VP', False ,  null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_40b', 'cae', '40.b', null, 'Consommation annuelle d''énergie des véhicules (VP) de la collectivité (kWh/an.km)', '<p>déclinaison par kilomètre de l''indicateur 40a:</p>
+', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_25.b', 'cae_3.2.3');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_11', 'cae', '11', null, 'Surface annuelle artificialisée (ha/an)', '<p>L’indicateur mesure les surfaces artificialisées chaque année a minima par l’habitat et les activités, et dans la mesure du possible également pour les autres motifs (infrastructures routières, etc.). Si l’indicateur n’est pas disponible annuellement, il s’agit de la moyenne annuelle sur une période plus large, établi à l’occasion de l’élaboration ou de la révision du PLU ou du SCOT (évaluation règlementaire de la consommation d''espaces naturels, agricoles et forestiers).</p>
+', 'ha/an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_11', 'cae_1.3.1');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_40.a', 'cae', '40.a', null, 'Consommation annuelle d''énergie des véhicules (VP) de la collectivité (kWh/an.employé)', '<p>L''indicateur mesure la consommation d''énergie en kWh (gazole, essence, GPL, GNV, électricité, biogaz, agro-carburants...) des véhicules de type &quot;véhicule particulier&quot; pour le fonctionnement de la collectivité, divisé par le nombre d''agents et/ou par kilomètre effectué. Facteurs de conversion simplifiés : gazole et essence 10 kWh/L, GPL 7 kWh/L, GNV 11 kWh/m3.</p>
+', 'VP', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_40.a', 'cae_4.1.2');
+insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_40.b', 'cae', '40.b', null, 'Consommation annuelle d''énergie des véhicules (VP) de la collectivité (kWh/an.km)', '<p>déclinaison par kilomètre de l''indicateur 40a:</p>
 <p>Consommation annuelle d''énergie des véhicules (VP) de la collectivité (kWh/an.employé)</p>
-', 'VP', False ,  null);
+', 'VP', false, null);insert into indicateur_action(indicateur_id, action_id) values ('cae_40.b', 'cae_4.1.2');

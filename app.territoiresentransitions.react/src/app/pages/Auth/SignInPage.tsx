@@ -7,6 +7,8 @@ import {Spacer} from 'ui/shared/Spacer';
 import {Link} from 'react-router-dom';
 import {signUpPath} from 'app/paths';
 import {observer} from 'mobx-react-lite';
+import {ErrorMessage} from 'ui/forms/ErrorMessage';
+import {PasswordRecovery} from './PasswordRecovery';
 
 export interface SignInCredentials {
   email: string;
@@ -36,7 +38,7 @@ export const SignInPage = () => {
             console.log(authBloc.connected);
           }}
         >
-          {() => (
+          {({values}) => (
             <Form>
               <Field
                 name="email"
@@ -51,7 +53,8 @@ export const SignInPage = () => {
                 type="password"
                 component={LabeledTextField}
               />
-
+              <Spacer size={2} />
+              <PasswordRecovery email={values.email} bloc={authBloc} />
               <Spacer size={4} />
               <AuthError bloc={authBloc} />
               <div className="flex flex-row-reverse justify-between">
@@ -68,14 +71,6 @@ export const SignInPage = () => {
   );
 };
 
-const AuthError = observer(({bloc}: {bloc: AuthBloc}) => {
-  return (
-    <>
-      {bloc.authError !== null && (
-        <div className="p-2 text-sm opacity-80 text-red-500 text-right">
-          {bloc.authError}
-        </div>
-      )}
-    </>
-  );
-});
+const AuthError = observer(({bloc}: {bloc: AuthBloc}) =>
+  bloc.authError !== null ? <ErrorMessage message={bloc.authError} /> : null
+);

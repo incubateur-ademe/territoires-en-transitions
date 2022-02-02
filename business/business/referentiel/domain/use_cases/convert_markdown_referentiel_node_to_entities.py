@@ -167,7 +167,7 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
             if children_ids and children_ids[0] not in points_by_id:
                 percentage_equidistributed = all(
                     [
-                        definition_entities[child_id].pourcentage is None
+                        definition_entities[child_id].pourcentage in [None, 0.0]
                         for child_id in children_ids
                     ]
                 )  # if pourcentage is not specified, then points are equi-distributed within siblings
@@ -183,10 +183,19 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
                         raise MarkdownReferentielNodeInconsistent(
                             f"Les valeurs des actions {', '.join(children_ids)} sont renseignées en pourcentage, mais leur somme fait {sum_children_percentages} au lieu de 100."
                         )
-
+                child_ids_with_percentage_0 = [
+                    child_id
+                    for child_id in children_ids
+                    if definition_entities[child_id].pourcentage == 0
+                ]
                 for child_id in children_ids:
                     if percentage_equidistributed:
-                        child_points = action_points / len(children_ids)
+                        if child_id in child_ids_with_percentage_0:
+                            child_points = 0.0
+                        else:
+                            child_points = action_points / (
+                                len(children_ids) - len(child_ids_with_percentage_0)
+                            )
                     else:
                         child_points = (
                             (definition_entities[child_id].pourcentage or 0.0) / 100
