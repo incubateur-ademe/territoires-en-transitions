@@ -120,10 +120,11 @@ const LinkedIndicateurPersonnaliseCards = () => {
     useIndicateurPersonnaliseDefinitionList(collectivieId);
 
   const {values} = useFormikContext<FicheActionRead>();
-  const linkedIndicateursPersonnalises = values.indicateur_personnalise_ids.map(
-    indicateurId =>
+  const linkedIndicateursPersonnalises = values.indicateur_personnalise_ids
+    .map(indicateurId =>
       indicateurPersonnalises.find(indicateur => indicateur.id === indicateurId)
-  );
+    )
+    .filter(Boolean); // filtre les entrées vides
 
   return (
     <div className="flex flex-col justify-between mt-6">
