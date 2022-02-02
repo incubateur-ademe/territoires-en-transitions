@@ -20,12 +20,22 @@ export class CurrentCollectiviteBloc {
     makeAutoObservable(this);
   }
 
+  private setCollectiviteId = (id: number | null) => {
+    this._collectiviteId = id;
+  };
+  private setNom = (nom: string | null) => {
+    this._nom = nom;
+  };
+  private setRoleName = (roleName: RoleName | null) => {
+    this._roleName = roleName;
+  };
+
   update({collectiviteId}: {collectiviteId: number | null}) {
     console.log('CollectiviteBloc update ', collectiviteId);
     if (collectiviteId === null) {
-      this._collectiviteId = null;
-      this._nom = null;
-      this._roleName = null;
+      this.setCollectiviteId(null);
+      this.setNom(null);
+      this.setRoleName(null);
     } else if (collectiviteId !== this._collectiviteId) {
       this._fetchCollectivite({collectiviteId});
     }
@@ -38,9 +48,9 @@ export class CurrentCollectiviteBloc {
       })
     )[0];
     if (ownedFetched) {
-      this._nom = ownedFetched.nom;
-      this._collectiviteId = ownedFetched.collectivite_id;
-      this._roleName = ownedFetched.role_name as RoleName;
+      this.setNom(ownedFetched.nom);
+      this.setCollectiviteId(ownedFetched.collectivite_id);
+      this.setRoleName(ownedFetched.role_name as RoleName);
     } else {
       const elsesFetched = (
         await elsesCollectiviteReadEndpoint.getBy({
@@ -48,9 +58,9 @@ export class CurrentCollectiviteBloc {
         })
       )[0];
       if (elsesFetched) {
-        this._nom = elsesFetched.nom;
-        this._collectiviteId = elsesFetched.collectivite_id;
-        this._roleName = null;
+        this.setNom(elsesFetched.nom);
+        this.setCollectiviteId(elsesFetched.collectivite_id);
+        this.setRoleName(null);
       } else {
         console.log('Collectivite is not active, should throw !');
       }

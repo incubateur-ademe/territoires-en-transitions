@@ -139,12 +139,16 @@ class ActionStatusAvancementRadioButtonBloc {
     this.fetch();
   }
 
+  private setStatut = (s: SelectableStatut) => (this._statut = s);
+  private setAvancement = (a: ActionAvancement) => (this.avancement = a);
+  private setConcerne = (c: boolean) => (this.concerne = c);
+
   public async pickStatutValue(value: number) {
     const statut = ActionStatusAvancementRadioButtonBloc.statutByValue(value);
-    this._statut = statut;
-    this.avancement = statut.avancement;
-    this.concerne = statut.concerne;
-    await this.saveStatut();
+    this.setStatut(statut);
+    this.setAvancement(statut.avancement);
+    this.setConcerne(statut.concerne);
+    this.saveStatut();
   }
 
   get statut(): SelectableStatut {
@@ -161,8 +165,9 @@ class ActionStatusAvancementRadioButtonBloc {
       })
       .then(saved => {
         if (saved) {
-          this._statut =
-            ActionStatusAvancementRadioButtonBloc.statutByEntity(saved);
+          this.setStatut(
+            ActionStatusAvancementRadioButtonBloc.statutByEntity(saved)
+          );
         }
       });
   }
@@ -175,8 +180,9 @@ class ActionStatusAvancementRadioButtonBloc {
       })
       .then(fetched => {
         if (fetched) {
-          this._statut =
-            ActionStatusAvancementRadioButtonBloc.statutByEntity(fetched);
+          this.setStatut(
+            ActionStatusAvancementRadioButtonBloc.statutByEntity(fetched)
+          );
         }
       });
   }
