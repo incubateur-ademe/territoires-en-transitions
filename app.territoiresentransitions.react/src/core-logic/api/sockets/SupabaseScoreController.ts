@@ -33,13 +33,12 @@ export class SupabaseScoreController extends ScoreController {
   private subscribe() {
     if (!this._scoreSocket) throw 'Score socket is null; cannot subscribe !';
     if (this.subscription) throw 'Already subscribed, cannot listen twice.';
+    const subscribeTo = `client_scores:collectivite_id=eq.${this._scoreSocket?.collectiviteId}`;
     this.subscription = this.supabaseClient
-      .from<ClientScoreBatchRead>(
-        // todo filter by collectivite col :collectivite_id=${this._scoreSocket?.collectiviteId}
-        'client_scores'
-      )
+      .from<ClientScoreBatchRead>(subscribeTo)
       .on('INSERT', payload => this.handlePayload(payload))
       .on('UPDATE', payload => this.handlePayload(payload))
       .subscribe();
+    console.log('Successfully subscribed to ', subscribeTo);
   }
 }
