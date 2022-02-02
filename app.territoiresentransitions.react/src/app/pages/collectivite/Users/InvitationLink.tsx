@@ -1,5 +1,6 @@
 import {useEffect} from 'react';
 import useCopyToClipboard from 'ui/shared/useCopyToClipboard';
+import {InvitationGenerateButton} from 'app/pages/collectivite/Users/InvitationGenerateButton';
 
 // durée (en ms) pendant laquelle le message "copié !" est affiché sur la page
 // après un clic sur le bouton "Copier"
@@ -60,12 +61,7 @@ const InvitationLink = (props: TInvitationLinkProps) => {
             .
           </b>
         </span>
-        <button
-          className="fr-btn fr-btn--secondary h-6 ml-4"
-          onClick={() => onGenerateLink()}
-        >
-          Générer un nouveau lien
-        </button>
+        <InvitationGenerateButton onClick={() => onGenerateLink()} />
       </div>
     </div>
   );
