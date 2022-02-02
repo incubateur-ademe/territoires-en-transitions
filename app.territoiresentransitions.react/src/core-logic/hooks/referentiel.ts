@@ -47,7 +47,6 @@ export const useReferentielDownToAction = (referentiel: Referentiel) => {
       setSummaries(definitions)
     );
   }, [referentiel]);
-
   return summaries;
 };
 
