@@ -25,6 +25,11 @@ export const ActionsField: FC<ActionsFieldProps & FieldProps> = ({
   const isTouched = touched[field.name];
   const titles = useActionTitleList('all');
 
+  // don't display anything if data are not available...
+  if (!titles?.length) {
+    return null;
+  }
+
   const allActionIds = titles
     .filter(title => title.type !== 'referentiel')
     .map(title => title.id);

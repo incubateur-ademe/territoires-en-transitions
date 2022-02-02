@@ -31,7 +31,7 @@ export const IndicateursPersonnalisesField: FC<
 
   const allSortedIndicateurIds = [...indicateursPersoDefs.entries()]
     .sort((a, b) => compareIndexes(a[1].titre, b[1].titre))
-    .map(entry => entry[0]);
+    .map(entry => entry[1].id);
 
   const renderIndicateurOption = (id: number) => {
     const indicateur = indicateursPersoDefs.find(
