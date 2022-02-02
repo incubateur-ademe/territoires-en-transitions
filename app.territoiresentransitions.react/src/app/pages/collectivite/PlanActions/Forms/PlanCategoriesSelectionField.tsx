@@ -18,6 +18,7 @@ import * as R from 'ramda';
 import {usePlanActionList} from 'core-logic/hooks/plan_action';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {ModifierArboDialogButton} from '../ModifierArboDialogButton';
 
 type LinkedPlanCategoriesFieldProps = {
   ficheUid: string;
@@ -96,9 +97,15 @@ const PlanDropdown = (props: {
         anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
         transformOrigin={{vertical: 'top', horizontal: 'left'}}
       >
-        {categoriesToItems(categories, categorieUid => {
-          props.onSelect(categorieUid, plan.uid);
-        })}
+        {categories?.length ? (
+          categoriesToItems(categories, categorieUid => {
+            props.onSelect(categorieUid, plan.uid);
+          })
+        ) : (
+          <MenuItem>
+            <ModifierArboDialogButton plan={plan} />
+          </MenuItem>
+        )}
       </Menu>
     </>
   );
@@ -222,6 +229,8 @@ export const PlanCategoriesSelectionField: FC<
         const categorie = R.find(categorie => {
           return categorie.uid === selected?.categorieUid;
         }, plan.categories);
+        const categories = nestPlanCategories(plan.categories);
+
         return (
           <div
             className="flex flex-row items-center gap-2 ml-4 my-4 w-full"
@@ -240,6 +249,9 @@ export const PlanCategoriesSelectionField: FC<
                 {categorie && <span>{categorie.nom}</span>}
               </div>
             </PlanDropdown>
+            {categories?.length ? (
+              <ModifierArboDialogButton plan={plan} />
+            ) : null}
           </div>
         );
       })}
