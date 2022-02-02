@@ -76,6 +76,7 @@ select id,
        nom,
        description,
        exemples != '' as have_exemples,
+       preuve != '' as have_preuve,
        ressources != '' as have_ressources,
        contexte != '' as have_contexte
 from action_definition
@@ -174,6 +175,19 @@ from action_definition
 where action_definition.action_id = action_contexte.id
 $$ language sql stable;
 comment on function action_contexte is 'Returns action "contexte" text';
+
+create or replace function action_preuve(
+    id action_id,
+    out id action_id,
+    out preuve text
+)
+as
+$$
+select action_definition.action_id, action_definition.preuve
+from action_definition
+where action_definition.action_id = action_preuve.id
+$$ language sql stable;
+comment on function action_preuve is 'Returns action "preuve" text';
 
 
 create or replace function action_ressources(
