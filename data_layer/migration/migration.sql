@@ -143,7 +143,7 @@ with partitioned_old_statuts as (
                     when avancement = 'pas_faite' then 'pas_fait'
                     else 'non_renseigne'
                     end                         as avancement,
-                avancement like 'non_concerne%' as concerne
+                avancement not like 'non_concerne%' as concerne
          from old_statuts
      ),
      new_epcis as (
