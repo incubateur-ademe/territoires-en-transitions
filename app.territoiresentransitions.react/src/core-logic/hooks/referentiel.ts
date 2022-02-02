@@ -24,7 +24,7 @@ import {
 export const useActionDownToTache = (
   referentiel: Referentiel,
   identifiant: string
-) => {
+): ActionDefinitionSummary[] => {
   const [summaries, setSummaries] = useState<ActionDefinitionSummary[]>([]);
 
   useEffect(() => {
@@ -40,7 +40,9 @@ export const useActionDownToTache = (
  * Returns a list of actions from the root "referentiel" down to the "action"
  * level.
  */
-export const useReferentielDownToAction = (referentiel: Referentiel) => {
+export const useReferentielDownToAction = (
+  referentiel: Referentiel
+): ActionDefinitionSummary[] => {
   const [summaries, setSummaries] = useState<ActionDefinitionSummary[]>([]);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export const useReferentielDownToAction = (referentiel: Referentiel) => {
 /**
  * Returns action exemples html contents
  */
-export const useActionExemples = (actionId: string) => {
+export const useActionExemples = (actionId: string): string => {
   const [exemples, setExemples] = useState<string>('...');
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export const useActionExemples = (actionId: string) => {
 /**
  * Returns action context html contents
  */
-export const useActionContexte = (actionId: string) => {
+export const useActionContexte = (actionId: string): string => {
   const [contexte, setContexte] = useState<string>('...');
 
   useEffect(() => {
@@ -80,7 +82,7 @@ export const useActionContexte = (actionId: string) => {
 /**
  * Returns action ressources html contents
  */
-export const useActionResources = (actionId: string) => {
+export const useActionResources = (actionId: string): string => {
   const [ressources, setRessources] = useState<string>('...');
 
   useEffect(() => {
@@ -110,7 +112,9 @@ export const useActionPreuve = (actionId: string) => {
  *
  * This is how we recurse through the referentiel.
  */
-export const useActionSummaryChildren = (action: ActionDefinitionSummary) => {
+export const useActionSummaryChildren = (
+  action: ActionDefinitionSummary
+): ActionDefinitionSummary[] => {
   const [children, setChildren] = useState<ActionDefinitionSummary[]>([]);
 
   const isChild = (a: ActionDefinitionSummary) =>
@@ -148,7 +152,9 @@ export const useActionSummaryChildren = (action: ActionDefinitionSummary) => {
 /**
  * Returns action titles relative to the scope
  */
-export const useActionTitleList = (scope: 'all' | 'cae' | 'eci') => {
+export const useActionTitleList = (
+  scope: 'all' | 'cae' | 'eci'
+): ActionTitleRead[] => {
   const [actionTitles, setActionTitles] = useState<ActionTitleRead[]>([]);
 
   useEffect(() => {
@@ -167,7 +173,7 @@ export const useActionTitleList = (scope: 'all' | 'cae' | 'eci') => {
 export const useActionSummary = (
   referentiel: Referentiel,
   identifiant: string
-) => {
+): ActionDefinitionSummary | null => {
   const [actionSummary, setActionSummary] =
     useState<ActionDefinitionSummary | null>();
 
@@ -177,5 +183,5 @@ export const useActionSummary = (
       .then(list => setActionSummary(list.length === 0 ? null : list[0]));
   }, [referentiel, identifiant]);
 
-  return actionSummary;
+  return actionSummary ?? null;
 };
