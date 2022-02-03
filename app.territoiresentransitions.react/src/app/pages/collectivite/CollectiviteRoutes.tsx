@@ -49,11 +49,10 @@ export const CollectiviteRoutes = () => {
       <Route path={collectiviteNouvelleFichePath}>
         <FicheActionCreationPage />
       </Route>
-      {currentCollectiviteBloc.isReferent && (
-        <Route path={collectiviteUsersPath}>
-          <UsersPage />
-        </Route>
-      )}
+      <Route path={collectiviteUsersPath}>
+        <UsersPage />
+      </Route>
+      )
     </>
   );
 };

@@ -4,6 +4,7 @@ import {
   fetchAgentInvitation,
 } from 'core-logic/api/procedures/invitationProcedures';
 import {currentCollectiviteBloc} from 'core-logic/observables';
+import {makeInvitationLandingPath} from 'app/paths';
 
 export class InvitationBloc {
   private _agentInvitationId: string | null = null;
@@ -15,13 +16,23 @@ export class InvitationBloc {
     reaction(
       () => currentCollectiviteBloc.collectiviteId,
       collectiviteId => {
-        fetchAgentInvitation(collectiviteId!).then(latestInvitationResponse => {
-          console.log(
-            'change collectivite : reset link to ',
-            latestInvitationResponse.id
-          );
-          this.setAgentInvitationId(latestInvitationResponse.id ?? null);
-        });
+        this.setAgentInvitationId(null);
+        fetchAgentInvitation(collectiviteId!)
+          .then(latestInvitationResponse => {
+            console.log(
+              'change collectivite : reset link to ',
+              latestInvitationResponse.id
+            );
+            this.setAgentInvitationId(latestInvitationResponse.id ?? null);
+          })
+          .catch(error => {
+            console.log(
+              'Error while fetching latest invitation from ',
+              collectiviteId,
+              error
+            );
+            this.setInvitationError(JSON.stringify(error));
+          });
       }
     );
   }
@@ -40,8 +51,11 @@ export class InvitationBloc {
       });
   }
 
-  get agentInvitationId() {
-    return this._agentInvitationId;
+  get agentInvitationUrl(): string | null {
+    return (
+      this._agentInvitationId &&
+      makeInvitationLandingPath(this._agentInvitationId)
+    );
   }
   get invitationError() {
     return this._invitationError;
