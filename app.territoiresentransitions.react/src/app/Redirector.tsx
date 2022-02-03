@@ -20,9 +20,24 @@ export const ConnectedRedirector = () => {
     () => authBloc.connected,
     connected => {
       console.log('authBloc connected changed', connected);
-      if (connected) history.push(myCollectivitesPath);
-      else history.push(signInPath);
+      if (
+        connected &&
+        authBloc.invitationState !== 'waitingForLogin' &&
+        authBloc.invitationState !== 'waitingForAcceptation'
+      ) {
+        history.push(myCollectivitesPath);
+      } else history.push(signInPath);
     }
   );
+
+  reaction(
+    () => authBloc.invitationState,
+    state => {
+      console.log('authBloc invitation state changed', state);
+      if (state === 'accepted') history.push(myCollectivitesPath);
+      if (state === 'waitingForLogin') history.push(signInPath);
+    }
+  );
+
   return null;
 };

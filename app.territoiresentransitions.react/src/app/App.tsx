@@ -20,12 +20,14 @@ import {matomoInstance} from 'app/matomo_instance';
 import {
   allCollectivitesPath,
   authBasePath,
+  invitationLandingPath,
   myCollectivitesPath,
 } from 'app/paths';
 import {authBloc} from 'core-logic/observables';
 import {CurrentUserCollectivitesPage} from 'app/pages/CurrentUserCollectivite/CurrentUserCollectivitesPage';
 import {ElsesCollectivitesPage} from 'app/pages/ElsesCollectivites/ElsesCollectivitePage';
 import {Header} from 'ui/Header';
+import {InvitationLanding} from 'app/pages/invitation/InvitationLanding';
 
 const theme = createTheme({
   palette: {
@@ -70,6 +72,10 @@ export const App = () => {
             <Route path={'/statistics'}>
               <Header />
               <StatisticsPage />
+            </Route>
+            <Route path={invitationLandingPath}>
+              <Header />
+              <InvitationLanding />
             </Route>
           </Switch>
           <Footer
