@@ -129,7 +129,6 @@ with current_droits as (
 select named_collectivite.collectivite_id as collectivite_id, named_collectivite.nom, role_name
 from current_droits
          join named_collectivite on named_collectivite.collectivite_id = current_droits.collectivite_id
-         join epci on named_collectivite.collectivite_id = epci.collectivite_id
 order by nom;
 
 
