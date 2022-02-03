@@ -39,7 +39,7 @@ begin
         return json_build_object('error', 'Vous n''êtes pas le référent de cette collectivité.');
     end if;
 end
-$$ language plpgsql security definer ;
+$$ language plpgsql security definer;
 
 create function latest_invitation(collectivite_id integer)
     returns json
@@ -47,7 +47,7 @@ as
 $$
 declare
     param_collectivite_id integer;
-    invitation_id uuid;
+    invitation_id         uuid;
 begin
     select collectivite_id into param_collectivite_id;
     if is_any_role_on(collectivite_id)
@@ -63,17 +63,31 @@ begin
 end;
 $$ language plpgsql;
 
-create function accept_invitation(invitation_id uuid)
-    returns void
+create or replace function accept_invitation(invitation_id uuid)
+    returns json
 as
 $$
-insert into private_utilisateur_droit(user_id, collectivite_id, role_name, active)
-select auth.uid(), collectivite_id, role_name, true
-from private_collectivite_invitation
-where id = invitation_id
-order by created_at
-limit 1
-$$ language sql security definer;
+declare
+    invitation_collectivite_id integer;
+begin
+    select into invitation_collectivite_id collectivite_id
+    from private_collectivite_invitation
+    where id = invitation_id;
+    if (is_any_role_on(invitation_collectivite_id))
+    then
+        perform set_config('response.status', '401', true);
+        return json_build_object('error', 'Vous avez déjà rejoint cette collectivité.');
+    else
+        insert into private_utilisateur_droit(user_id, collectivite_id, role_name, active)
+        select auth.uid(), collectivite_id, role_name, true
+        from private_collectivite_invitation
+        where id = invitation_id
+        order by created_at
+        limit 1;
+        return json_build_object('message', 'Vous avez rejoint cette collectivité.');
+    end if;
+end
+$$ language plpgsql security definer;
 
 
 create or replace function remove_from_collectivite(user_id uuid, collectivite_id integer)
