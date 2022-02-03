@@ -12,7 +12,7 @@ from commune c
 where oe.latest)
 SELECT * FROM new_epcis
 UNION ALL
-SELECT * FROM new_communes
+SELECT * FROM new_communes; 
 
 
 
@@ -53,6 +53,7 @@ select distinct regexp_replace(
 from all_ids
 where indicateur_id like 'eci%'
    or indicateur_id like 'cae%'
+   or indicateur_id like 'crte%',
 ;
 
 
