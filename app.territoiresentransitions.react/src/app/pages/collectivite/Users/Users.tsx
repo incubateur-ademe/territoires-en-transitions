@@ -71,33 +71,33 @@ const Users = () => {
         />
       )}
 
-      <h2 className="fr-h2 mt-4">Contact principal</h2>
-      <p className="pb-4">
-        Ces informations sont affichées à toute personne qui demande accès à
-        votre collectivité.
-      </p>
-      <MainContactForm {...TMP_contactProps} />
+      {/*<h2 className="fr-h2 mt-4">Contact principal</h2>*/}
+      {/*<p className="pb-4">*/}
+      {/*  Ces informations sont affichées à toute personne qui demande accès à*/}
+      {/*  votre collectivité.*/}
+      {/*</p>*/}
+      {/*<MainContactForm {...TMP_contactProps} />*/}
 
-      <h2 className="fr-h2 mt-4">Liste des utilisateurs</h2>
-      <p className="pb-4">
-        Lorsque vous retirez un utilisateur, il ne pourra plus modifier les
-        informations d’une collectivité.
-      </p>
-      {TMP_usersListProps.users.map(user => (
-        <UserCard
-          key={user.id}
-          user={user}
-          onRemove={TMP_usersListProps.onRemove}
-        />
-      ))}
+      {/*<h2 className="fr-h2 mt-4">Liste des utilisateurs</h2>*/}
+      {/*<p className="pb-4">*/}
+      {/*  Lorsque vous retirez un utilisateur, il ne pourra plus modifier les*/}
+      {/*  informations d’une collectivité.*/}
+      {/*</p>*/}
+      {/*{TMP_usersListProps.users.map(user => (*/}
+      {/*  <UserCard*/}
+      {/*    key={user.id}*/}
+      {/*    user={user}*/}
+      {/*    onRemove={TMP_usersListProps.onRemove}*/}
+      {/*  />*/}
+      {/*))}*/}
 
-      <h2 className="fr-h2 mt-4 pt-4">Liste des conseillers</h2>
-      {TMP_usersListProps.conseillers.map(user => (
-        <UserCard key={user.id} user={user} />
-      ))}
+      {/*<h2 className="fr-h2 mt-4 pt-4">Liste des conseillers</h2>*/}
+      {/*{TMP_usersListProps.conseillers.map(user => (*/}
+      {/*  <UserCard key={user.id} user={user} />*/}
+      {/*))}*/}
 
-      <h2 className="fr-h2 mt-4 pt-4">Auditeur</h2>
-      <UserCard user={TMP_usersListProps.auditeur} />
+      {/*<h2 className="fr-h2 mt-4 pt-4">Auditeur</h2>*/}
+      {/*<UserCard user={TMP_usersListProps.auditeur} />*/}
     </main>
   );
 };
