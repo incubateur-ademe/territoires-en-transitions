@@ -1,12 +1,12 @@
 from typing import List
 import pandas as pd
-from .epci_repo import AbstractEpciRepository
+from .collectivite_repo import AbstractCollectiviteRepository
 from .epci import Epci
 
 
-def import_banatic_xlsx_to_epci_repo(
-    epci_repo: AbstractEpciRepository,
-    input_xlsx="business/epci/data/banatic_2021.xlsx",
+def import_banatic_xlsx_to_collectivite_repo(
+    epci_repo: AbstractCollectiviteRepository,
+    input_xlsx="business/collectivite/data/banatic_2021.xlsx",
 ):
     df = pd.read_excel(input_xlsx, dtype=str)
     competences_to_filter = ["C1510", "C1555"]
