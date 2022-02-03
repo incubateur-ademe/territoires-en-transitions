@@ -2,6 +2,7 @@ import {makeAutoObservable} from 'mobx';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {acceptAgentInvitation} from 'core-logic/api/procedures/invitationProcedures';
 
+// TODO : this should be in an other bloc : AcceptInvitationBloc
 type invitationState =
   | 'empty'
   | 'waitingForLogin'

@@ -1,7 +1,6 @@
 import InvitationLink from './InvitationLink';
 import MainContactForm from './MainContactForm';
 import UserCard from './UserCard';
-import {useAgentInvitationId} from 'core-logic/hooks/invitation';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {InvitationGenerateButton} from 'app/pages/collectivite/Users/InvitationGenerateButton';
 import {createAgentInvitation} from 'core-logic/api/procedures/invitationProcedures';
@@ -56,7 +55,7 @@ const Users = observer(({invitationBloc}: {invitationBloc: InvitationBloc}) => {
       </p>
 
       <InvitationLink
-        link={invitationBloc.agentInvitationId}
+        link={invitationBloc.agentInvitationUrl}
         linkExpiredAt={'2022-01-31T10:50:43.180Z'}
         onGenerateLink={() => invitationBloc.generateInvitationId()}
       />

@@ -129,3 +129,7 @@ export const makeCollectiviteUsersUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
+
+export const makeInvitationLandingPath = (invitationId: string) =>
+  window.location.hostname +
+  invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);
