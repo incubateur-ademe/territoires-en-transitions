@@ -3,6 +3,9 @@ export const signInPath = `${authBasePath}/signin`;
 export const signUpPath = `${authBasePath}/signup`;
 export const identityPath = `${authBasePath}/identity`;
 
+export const invitationIdParam = 'invitationId';
+export const invitationLandingPath = `/invitation/:${invitationIdParam}`;
+
 export const allCollectivitesPath = '/toutes_collectivites';
 export const myCollectivitesPath = '/mes_collectivites';
 
