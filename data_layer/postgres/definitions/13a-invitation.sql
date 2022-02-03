@@ -11,8 +11,17 @@ create table private_collectivite_invitation
 );
 alter table private_collectivite_invitation
     enable row level security;
+create policy allow_read
+    on private_collectivite_invitation
+    for select
+    using (is_any_role_on(collectivite_id));
+create policy allow_insert
+    on private_collectivite_invitation
+    for insert
+    with check (is_referent_of(collectivite_id));
 
-create function create_agent_invitation(collectivite_id integer)
+
+create or replace function create_agent_invitation(collectivite_id integer)
     returns json
 as
 $$
@@ -30,7 +39,7 @@ begin
         return json_build_object('error', 'Vous n''êtes pas le référent de cette collectivité.');
     end if;
 end
-$$ language plpgsql;
+$$ language plpgsql security definer ;
 
 create function latest_invitation(collectivite_id integer)
     returns json
