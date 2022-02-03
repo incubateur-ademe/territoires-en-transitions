@@ -76,6 +76,10 @@ export class CurrentCollectiviteBloc {
     };
   }
 
+  get isReferent(): boolean {
+    return this._roleName === 'referent';
+  }
+
   get readonly(): boolean {
     return this.currentCollectivite !== null && this._roleName === null;
   }

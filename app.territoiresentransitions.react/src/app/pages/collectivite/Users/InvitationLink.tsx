@@ -8,7 +8,7 @@ const COPIED_HINT_DURATION = 3000;
 
 type TInvitationLinkProps = {
   /** Lien d'invitation */
-  link: string;
+  link: string | null;
   /** Date d'expiration du lien d'invitation */
   linkExpiredAt: string;
   /** Appelée pour demander la généraiton d'un nouveau lien d'invitation */
@@ -21,6 +21,7 @@ type TInvitationLinkProps = {
  */
 const InvitationLink = (props: TInvitationLinkProps) => {
   const {link, linkExpiredAt, onGenerateLink} = props;
+  const displayedLink = link ?? '';
   const [copiedText, copy, reset] = useCopyToClipboard();
 
   useEffect(() => {
@@ -37,10 +38,10 @@ const InvitationLink = (props: TInvitationLinkProps) => {
   return (
     <div className="flex flex-col max-w-2xl py-4">
       <div className="flex py-4">
-        <input className="fr-input mr-4" readOnly value={link} />
+        <input className="fr-input mr-4" readOnly value={displayedLink} />
         <button
           className="fr-btn fr-btn--secondary h-6"
-          onClick={() => copy(link)}
+          onClick={() => copy(displayedLink)}
         >
           Copier
         </button>
@@ -50,17 +51,19 @@ const InvitationLink = (props: TInvitationLinkProps) => {
           </span>
         ) : null}
       </div>
-      <div className="flex max-w-2xl items-center justify-between">
-        <span>
-          Ce lien est valable jusqu'au
-          <b>
-            &nbsp;
-            {new Date(linkExpiredAt).toLocaleDateString(undefined, {
-              dateStyle: 'long',
-            })}
-            .
-          </b>
-        </span>
+      <div className="flex max-w-2xl items-center justify-end">
+        {link && (
+          <span>
+            Ce lien est valable jusqu'au
+            <b>
+              &nbsp;
+              {new Date(linkExpiredAt).toLocaleDateString(undefined, {
+                dateStyle: 'long',
+              })}
+              .
+            </b>
+          </span>
+        )}
         <InvitationGenerateButton onClick={() => onGenerateLink()} />
       </div>
     </div>

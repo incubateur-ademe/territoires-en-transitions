@@ -5,50 +5,46 @@ import {useAgentInvitationId} from 'core-logic/hooks/invitation';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {InvitationGenerateButton} from 'app/pages/collectivite/Users/InvitationGenerateButton';
 import {createAgentInvitation} from 'core-logic/api/procedures/invitationProcedures';
+import {useState} from 'react';
+import {
+  InvitationBloc,
+  invitationBloc,
+} from 'core-logic/observables/invitationBloc';
+import {observer} from 'mobx-react-lite';
 
 // TODO: à connecter à l'API
-const TMP_linkProps = {
-  link: 'exemple de lien...',
-  linkExpiredAt: '2022-01-31T10:50:43.180Z',
-  onGenerateLink: () => {
-    console.log('TODO!');
-  },
-};
-const TMP_contactProps = {
-  name: 'Bureau d’appui Cit’ergie',
-  email: 'bureauappui@ademe.fr',
-  onUpdateContact: () => {
-    console.log('TODO!');
-  },
-};
-const TMP_usersListProps = {
-  onRemove: (id: string) => {
-    console.log('TODO: remove id=', id);
-  },
-  users: [
-    {
-      id: '1',
-      name: 'Bécassine Dupont',
-      email: 'becassine.dupont@collectivitedefrance.fr',
-    },
-    {
-      id: '2',
-      name: 'Solène Demonmoulin',
-      email: 'solene.demonmoulin@collectivitedefrance.fr',
-    },
-  ],
-  conseillers: [{id: '3', name: 'nom', email: 'email@domaine.fr'}],
-  auditeur: {id: '3', name: 'nom', email: 'email@domaine.fr'},
-};
+// const TMP_contactProps = {
+//   name: 'Bureau d’appui Cit’ergie',
+//   email: 'bureauappui@ademe.fr',
+//   onUpdateContact: () => {
+//     console.log('TODO!');
+//   },
+// };
+// const TMP_usersListProps = {
+//   onRemove: (id: string) => {
+//     console.log('TODO: remove id=', id);
+//   },
+//   users: [
+//     {
+//       id: '1',
+//       name: 'Bécassine Dupont',
+//       email: 'becassine.dupont@collectivitedefrance.fr',
+//     },
+//     {
+//       id: '2',
+//       name: 'Solène Demonmoulin',
+//       email: 'solene.demonmoulin@collectivitedefrance.fr',
+//     },
+//   ],
+//   conseillers: [{id: '3', name: 'nom', email: 'email@domaine.fr'}],
+//   auditeur: {id: '3', name: 'nom', email: 'email@domaine.fr'},
+// };
 
 /**
  * Affiche la page listant les utilisateurs attachés à une collectivité
  * et le formulaire permettant d'envoyer des liens d'invitation
  */
-const Users = () => {
-  const collectiviteId = useCollectiviteId()!;
-  const invitationId = useAgentInvitationId(collectiviteId);
-
+const Users = observer(({invitationBloc}: {invitationBloc: InvitationBloc}) => {
   return (
     <main className="fr-container mt-9 mb-16">
       <h1 className="fr-h1 mb-3 whitespace-nowrap mr-4">Collaboration</h1>
@@ -59,17 +55,11 @@ const Users = () => {
         données de votre collectivité.
       </p>
 
-      {invitationId ? (
-        <InvitationLink
-          link={invitationId}
-          linkExpiredAt={'2022-01-31T10:50:43.180Z'}
-          onGenerateLink={() => createAgentInvitation(collectiviteId)}
-        />
-      ) : (
-        <InvitationGenerateButton
-          onClick={() => createAgentInvitation(collectiviteId)}
-        />
-      )}
+      <InvitationLink
+        link={invitationBloc.agentInvitationId}
+        linkExpiredAt={'2022-01-31T10:50:43.180Z'}
+        onGenerateLink={() => invitationBloc.generateInvitationId()}
+      />
 
       {/*<h2 className="fr-h2 mt-4">Contact principal</h2>*/}
       {/*<p className="pb-4">*/}
@@ -100,6 +90,6 @@ const Users = () => {
       {/*<UserCard user={TMP_usersListProps.auditeur} />*/}
     </main>
   );
-};
+});
 
 export default Users;

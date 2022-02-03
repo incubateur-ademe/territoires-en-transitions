@@ -3,7 +3,9 @@ import {
   makeCollectiviteIndicateursUrl,
   makeCollectiviteReferentielUrl,
   makeCollectiviteTableauBordUrl,
+  makeCollectiviteUsersUrl,
 } from 'app/paths';
+import {ownedCollectiviteBloc} from 'core-logic/observables/OwnedCollectiviteBloc';
 import {
   ElsesCollectiviteRead,
   OwnedCollectiviteRead,
@@ -75,6 +77,23 @@ export const SimpleCollectiviteCard = ({
           })}
           id={collectivite.collectivite_id}
         />
+        <div
+          className={
+            ownedCollectiviteBloc.ownedAsAgentCollectiviteIds.includes(
+              collectivite.collectivite_id
+            )
+              ? ''
+              : 'invisible'
+          }
+        >
+          <SimpleCollectiviteCardSecondaryLink
+            label="Gestion des accès"
+            linkTo={makeCollectiviteUsersUrl({
+              collectiviteId: collectivite.collectivite_id,
+            })}
+            id={collectivite.collectivite_id}
+          />
+        </div>
       </div>
     </div>
   );

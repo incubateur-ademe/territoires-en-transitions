@@ -177,13 +177,15 @@ export const CollectiviteNavigation = () => {
               currentCollectiviteBloc.currentCollectivite.collectivite_id,
           })}
         />
-        <CollectiviteNavigationDirectTab
-          label="Gestion des accès"
-          path={makeCollectiviteUsersUrl({
-            collectiviteId:
-              currentCollectiviteBloc.currentCollectivite.collectivite_id,
-          })}
-        />
+        {currentCollectiviteBloc.isReferent && (
+          <CollectiviteNavigationDirectTab
+            label="Gestion des accès"
+            path={makeCollectiviteUsersUrl({
+              collectiviteId:
+                currentCollectiviteBloc.currentCollectivite.collectivite_id,
+            })}
+          />
+        )}
       </nav>
     )
   );

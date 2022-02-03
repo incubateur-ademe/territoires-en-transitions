@@ -46,6 +46,11 @@ export class OwnedCollectiviteBloc {
       ownedCollectivite => ownedCollectivite.collectivite_id
     );
   }
+  get ownedAsAgentCollectiviteIds() {
+    return this.ownedCollectiviteReads
+      .filter(ownedCollectivite => ownedCollectivite.role_name === 'referent')
+      .map(ownedCollectivite => ownedCollectivite.collectivite_id);
+  }
 }
 
 export const ownedCollectiviteBloc = new OwnedCollectiviteBloc();
