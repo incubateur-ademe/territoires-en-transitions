@@ -28,6 +28,7 @@ jobs:
           SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
         run: |
           cp .env.ci  .env
+          envsubst '${ANON_KEY}, ${SERVICE_ROLE_KEY}' < kong.sample.yml > volumes/kong.yml 
           docker-compose up --build -d
         working-directory: ${{env.datalayer-docker-directory}}
 
