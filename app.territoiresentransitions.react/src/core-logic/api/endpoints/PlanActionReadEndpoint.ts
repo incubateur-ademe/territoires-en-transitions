@@ -8,7 +8,7 @@ export interface PlanGetParams {
   plan_action_uid?: string;
 }
 
-class PlanActionReadEndpoint extends DataLayerReadCachedEndpoint<
+export class PlanActionReadEndpoint extends DataLayerReadCachedEndpoint<
   PlanActionRead,
   PlanGetParams
 > {

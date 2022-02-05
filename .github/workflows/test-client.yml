@@ -24,19 +24,6 @@ jobs:
       # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2
 
-      # Download JavaScript models and data generated previously by codegen.
-      # - name: Download generated files
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: generated-client-files
-      #     path: app.territoiresentransitions.react/src/generated
-
-      # Install dependencies
-      - name: Install app dependencies
-        run: |
-          npm install
-        working-directory: ${{env.app-directory}}
-
       # Launch docker
       - name: Launch docker 
         run: |
@@ -53,6 +40,12 @@ jobs:
       - name: Restart postgres service
         run: docker-compose -f ./test_only_docker/docker-compose.yml  up -d --no-deps --build  rest 
         working-directory: ${{env.datalayer-directory}}
+
+      # Install app dependencies
+      - name: Install client dependencies
+        run: |
+          npm install
+        working-directory: ${{env.app-directory}}
 
       # Use Jest to run unit tests
       - name: Jest run

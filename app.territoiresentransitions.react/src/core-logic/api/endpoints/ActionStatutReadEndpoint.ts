@@ -11,7 +11,7 @@ export interface StatutGetParams {
   action_id?: string;
 }
 
-class ActionStatutReadEndpoint extends DataLayerReadCachedEndpoint<
+export class ActionStatutReadEndpoint extends DataLayerReadCachedEndpoint<
   ActionStatutRead,
   StatutGetParams
 > {

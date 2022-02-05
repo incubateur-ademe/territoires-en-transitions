@@ -11,7 +11,7 @@ describe('Indicateur-commentaire write endpoint', () => {
   const endpoint = new IndicateurCommentaireWriteEndpoint();
   it('Should be able to create and update a commentaire ', async () => {
     const commentaire: IndicateurCommentaireWrite = {
-      collectivite_id: 1,
+      collectivite_id: 2,
       indicateur_id: 'cae_10',
       commentaire: 'yolo',
     };
