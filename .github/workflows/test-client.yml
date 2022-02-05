@@ -1,4 +1,4 @@
-name: Test Client 
+name: Test Client
 
 on:
   pull_request:
@@ -8,13 +8,13 @@ on:
   push:
 jobs:
   client-test:
-    name: Client unit tests 
+    name: Client unit tests
     runs-on: ubuntu-latest
     env:
       app-directory:  ./app.territoiresentransitions.react
       datalayer-directory: ./data_layer
       datalayer-docker-directory: ./data_layer/test_only_docker
-      SUPABASE_KEY: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwfQ.zcaQfHd3VA7XgJmdGfmV86OLVJT9s2MTmSy-e69BpUY
+      SUPABASE_KEY:  ${{secrets.TEST_ANON_SUPABASE_KEY}}
       SUPABASE_URL: http://localhost:8000
 
     steps:
@@ -22,23 +22,26 @@ jobs:
       - uses: actions/checkout@v2
 
       # Launch docker
-      - name: Launch docker 
+      - name: Launch docker
+        env:
+          ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
+          SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
         run: |
           cp .env.sample  .env
           docker-compose up --build -d
         working-directory: ${{env.datalayer-docker-directory}}
 
-      # Prepare DB 
-      - name: Insert definitions, content and fake data in database 
+      # Prepare DB
+      - name: Insert definitions, content and fake data in database
         run: sh insert_all.sh
         working-directory: ${{env.datalayer-directory}}
-        env: 
-          ANON_KEY: ${{env.SUPABASE_KEY}} 
-          SERVICE_ROLE_KEY: ${{env.SUPABASE_KEY}} 
+        env:
+          ANON_KEY: ${{env.SUPABASE_KEY}}
+          SERVICE_ROLE_KEY: ${{env.SUPABASE_KEY}}
 
-      # Restart postgres service  
+      # Restart postgres service
       - name: Restart postgres service
-        run: docker-compose -f ./docker-compose.yml  up -d --no-deps --build  rest 
+        run: docker-compose -f ./docker-compose.yml  up -d --no-deps --build  rest
         working-directory: ${{env.datalayer-docker-directory}}
 
       # Install app dependencies
@@ -51,7 +54,7 @@ jobs:
       - name: Jest run
         run: npm run test
         working-directory: ${{env.app-directory}}
-        env: 
-          REACT_APP_SUPABASE_KEY: ${{env.SUPABASE_KEY}} 
-          REACT_APP_SUPABASE_URL: ${{env.SUPABASE_URL}} 
-      
+        env:
+          REACT_APP_SUPABASE_KEY: ${{env.SUPABASE_KEY}}
+          REACT_APP_SUPABASE_URL: ${{env.SUPABASE_URL}}
+
