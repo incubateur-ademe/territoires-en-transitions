@@ -12,7 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     # needs: codegen-test-and-generate
     env:
-      working-directory:  ./app.territoiresentransitions.react
+      app-directory:  ./app.territoiresentransitions.react
+      datalayer-directory: ./data_layer
+      REACT_APP_SUPABASE_KEY: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwfQ.zcaQfHd3VA7XgJmdGfmV86OLVJT9s2MTmSy-e69BpUY
+      REACT_APP_SUPABASE_URL: http://localhost:8000
 
     steps:
       # Note : This *should* download the artifact generated interfaces, but since it is *for now*
@@ -29,14 +32,31 @@ jobs:
       #     path: app.territoiresentransitions.react/src/generated
 
       # Install dependencies
-      - name: Install dependencies
+      - name: Install app dependencies
         run: |
           npm install
-        working-directory: ${{env.working-directory}}
+        working-directory: ${{env.app-directory}}
+
+      # Launch docker
+      - name: Launch docker 
+        run: |
+          cp ./test_only_docker/.env.sample  ./test_only_docker/.env
+          docker-compose -f ./test_only_docker/docker-compose.yml up --build -d
+        working-directory: ${{env.datalayer-directory}}
+
+      # Prepare DB 
+      - name: Insert definitions, content and fake data in database 
+        run: sh insert_all.sh
+        working-directory: ${{env.datalayer-directory}}
+
+      # Restart postgres service  
+      - name: Restart postgres service
+        run: docker-compose -f ./test_only_docker/docker-compose.yml  up -d --no-deps --build  rest 
+        working-directory: ${{env.datalayer-directory}}
 
       # Use Jest to run unit tests
       - name: Jest run
         run: |
           npm run test
-        working-directory: ${{env.working-directory}}
+        working-directory: ${{env.app-directory}}
       
