@@ -27,7 +27,7 @@ jobs:
           ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
           SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
         run: |
-          cp .env.sample  .env
+          cp .env.ci  .env
           docker-compose up --build -d
         working-directory: ${{env.datalayer-docker-directory}}
 
