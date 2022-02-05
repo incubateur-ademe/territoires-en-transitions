@@ -8,6 +8,7 @@ export interface IndicateurCommentaireGetParams {
 }
 
 class IndicateurCommentaireReadEndpoint extends DataLayerReadEndpoint<
+  // /!\ No caching here  /!\
   IndicateurCommentaireRead,
   IndicateurCommentaireGetParams
 > {

@@ -15,11 +15,13 @@ import {
 } from 'test_utils/collectivites';
 
 describe('All Collectivite reading endpoint should retrieve 1628 Collectivites', () => {
-  it('should retrieve all Collectivites sorted by nom if no arguments are given', async () => {
+  it('should retrieve all Collectivites sorted by nom if no arguments are given (for any connected user) ', async () => {
+    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+
     const results = await allCollectiviteReadEndpoint.getBy({}); // all
 
-    expect(results.length).toEqual(1628);
-    expect(results[0].nom).toEqual('Ardenne Métropole');
+    expect(results.length).toBeGreaterThan(5000);
+    expect(results[0].nom).toEqual('Abbeville');
   });
 });
 
@@ -37,12 +39,12 @@ describe('Owned Collectivite reading endpoint ', () => {
     const results = await ownedCollectiviteReadEndpoint.getBy({});
     const expectedResults: OwnedCollectiviteRead[] = [
       {
-        ...collectivite2,
-        role_name: 'agent',
-      },
-      {
         ...collectivite1,
         role_name: 'referent',
+      },
+      {
+        ...collectivite2,
+        role_name: 'agent',
       },
     ];
     expect(results.length).toEqual(2);

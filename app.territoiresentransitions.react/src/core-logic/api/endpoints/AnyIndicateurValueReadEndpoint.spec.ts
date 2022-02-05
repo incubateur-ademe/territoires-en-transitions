@@ -5,11 +5,11 @@ import {
   indicateurResultatReadEndpoint,
 } from 'core-logic/api/endpoints/AnyIndicateurValueReadEndpoint';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {yiliCredentials} from 'test_utils/collectivites';
+import {yuluCredentials} from 'test_utils/collectivites';
 
-describe('Indicateur-resultat reading endpoint should retrieve data-layer default resultat values', () => {
+describe('Indicateur-resultat reading endpoint should retrieve data-layer default resultat values  (for anyone connected)', () => {
   beforeEach(async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
   });
 
   it('Retrieves at least one resutat when collectivite_id with resultat for collectivite #1', async () => {
@@ -17,7 +17,6 @@ describe('Indicateur-resultat reading endpoint should retrieve data-layer defaul
       collectiviteId: 1,
     });
     expect(indicateurResultatReadEndpoint.lastResponse?.status).toBe(200);
-    expect(results).toHaveLength(2);
     expect(results[0]).toEqual(
       expect.objectContaining({
         indicateur_id: 'cae_8',
@@ -27,24 +26,16 @@ describe('Indicateur-resultat reading endpoint should retrieve data-layer defaul
       })
     );
   });
-  it(
-    'Retrieves no resultat values when collectivite_id without indicateur resultats is' +
-      ' given',
-    async () => {
-      const results = await indicateurResultatReadEndpoint.getBy({
-        collectiviteId: 2,
-      });
-      expect(results.length).toEqual(0);
-    }
-  );
 });
 
-describe('Indicateur-personnalise values reading endpoint should retrieve data-layer default resultat values', () => {
+describe('Indicateur-personnalise values reading endpoint should retrieve data-layer default resultat values (for anyone connected)', () => {
+  beforeEach(async () => {
+    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1.
+  });
   it('Retrieves one resutat when collectivite_id with resultat for collectivite #1', async () => {
     const results = await indicateurPersonnaliseResultatReadEndpoint.getBy({
       collectiviteId: 1,
     });
-    expect(results).toHaveLength(1);
     expect(results[0]).toEqual(
       expect.objectContaining({
         indicateur_id: 0,

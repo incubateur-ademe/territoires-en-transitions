@@ -8,7 +8,7 @@ export interface FicheGetParams {
   fiche_action_uid?: string;
 }
 
-class FicheActionReadEndpoint extends DataLayerReadCachedEndpoint<
+export class FicheActionReadEndpoint extends DataLayerReadCachedEndpoint<
   FicheActionRead,
   FicheGetParams
 > {

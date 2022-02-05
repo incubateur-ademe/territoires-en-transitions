@@ -6,9 +6,9 @@ import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('Fiche action write endpoint', () => {
   const fiche: FicheActionWrite = {
-    collectivite_id: 1,
+    collectivite_id: 2,
     avancement: 'pas_fait',
-    uid: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    uid: '37440546-f389-4d4f-bfdb-b0c94a1bd0f9',
     numerotation: 'A1',
     titre: 'titre http',
     description: 'description',

@@ -18,7 +18,7 @@ alter table action_commentaire
 create policy allow_read
     on action_commentaire
     for select
-    using (is_any_role_on(collectivite_id));
+    using (is_authenticated());
 
 create policy allow_insert
     on action_commentaire
@@ -57,7 +57,7 @@ alter table indicateur_resultat
 create policy allow_read
     on indicateur_resultat
     for select
-    using (is_any_role_on(collectivite_id));
+    using (is_authenticated());
 
 create policy allow_insert
     on indicateur_resultat
@@ -85,7 +85,7 @@ alter table indicateur_objectif
 create policy allow_read
     on indicateur_objectif
     for select
-    using (is_any_role_on(collectivite_id));
+    using (is_authenticated());
 
 create policy allow_insert
     on indicateur_objectif
@@ -114,7 +114,7 @@ alter table indicateur_commentaire
 create policy allow_read
     on indicateur_commentaire
     for select
-    using (is_any_role_on(collectivite_id));
+    using (is_authenticated());
 
 create policy allow_insert
     on indicateur_commentaire
@@ -148,7 +148,7 @@ alter table indicateur_personnalise_definition
 create policy allow_read
     on indicateur_personnalise_definition
     for select
-    using (is_any_role_on(collectivite_id));
+    using (is_authenticated());
 
 create policy allow_insert
     on indicateur_personnalise_definition
@@ -176,7 +176,7 @@ alter table indicateur_personnalise_resultat
 create policy allow_read
     on indicateur_personnalise_resultat
     for select
-    using (is_any_role_on(collectivite_id));
+    using (is_authenticated());
 
 create policy allow_insert
     on indicateur_personnalise_resultat
@@ -204,7 +204,7 @@ alter table indicateur_personnalise_objectif
 create policy allow_read
     on indicateur_personnalise_objectif
     for select
-    using (is_any_role_on(collectivite_id));
+    using (is_authenticated());
 
 create policy allow_insert
     on indicateur_personnalise_objectif

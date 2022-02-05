@@ -18,7 +18,7 @@ describe('Indicateur-resultat write endpoint', () => {
       annee: 2020,
       valeur: 20.4,
       indicateur_id: 'cae_10',
-      collectivite_id: 1,
+      collectivite_id: 2,
     };
     const insertResult = await endpoint.save(indicateurValue);
 
@@ -28,7 +28,7 @@ describe('Indicateur-resultat write endpoint', () => {
         annee: 2020,
         valeur: 20.4,
         indicateur_id: 'cae_10',
-        collectivite_id: 1,
+        collectivite_id: 2,
       })
     );
 
@@ -37,7 +37,7 @@ describe('Indicateur-resultat write endpoint', () => {
       annee: 2020,
       valeur: 18,
       indicateur_id: 'cae_10',
-      collectivite_id: 1,
+      collectivite_id: 2,
     });
     expect(updateResult).not.toBeNull();
     expect(updateResult).toEqual(
@@ -71,7 +71,7 @@ describe('Indicateur personnalise resultat write endpoint', () => {
       annee: 2020,
       valeur: 20.2,
       indicateur_id: 0,
-      collectivite_id: 1,
+      collectivite_id: 2,
     };
     const insertResult = await endpoint.save(indicateurValue);
 
@@ -86,7 +86,7 @@ describe('Indicateur personnalise resultat write endpoint', () => {
       annee: 2020,
       valeur: 12.4,
       indicateur_id: 0,
-      collectivite_id: 1, // Yulu has no right on collectivite #1
+      collectivite_id: 2, // Yulu has no right on collectivite #2
     };
     const insertResult = await endpoint.save(indicateurValue);
     expect(endpoint.lastResponse?.status).toBe(403);

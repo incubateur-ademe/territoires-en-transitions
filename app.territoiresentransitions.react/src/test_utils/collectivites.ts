@@ -1,17 +1,17 @@
 import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 
 export const collectivite1: AllCollectiviteRead = {
-  nom: 'Haut - Bugey Agglomération',
+  nom: 'Ambérieu-en-Bugey',
   collectivite_id: 1,
 };
 
 export const collectivite2: AllCollectiviteRead = {
-  nom: 'CA du Bassin de Bourg-en-Bresse',
+  nom: 'Arbent',
   collectivite_id: 2,
 };
 
 export const epci40: AllCollectiviteRead = {
-  nom: 'PETR du Soissonnais et du Valois',
+  nom: 'Saint-Genis-Pouilly',
   collectivite_id: 40,
 };
 

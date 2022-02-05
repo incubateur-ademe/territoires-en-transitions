@@ -1,18 +1,20 @@
 import '@testing-library/jest-dom/extend-expect';
-import {
-  IndicateurPersonnaliseDefinitionGetParams,
-  indicateurPersonnaliseDefinitionReadEndpoint,
-} from 'core-logic/api/endpoints/IndicateurPersonnaliseDefinitionReadEndpoint';
+import {indicateurPersonnaliseDefinitionReadEndpoint} from 'core-logic/api/endpoints/IndicateurPersonnaliseDefinitionReadEndpoint';
 import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {yiliCredentials} from 'test_utils/collectivites';
+import {yuluCredentials} from 'test_utils/collectivites';
 
 describe('Indicateur perso definition reading endpoint ', () => {
-  beforeEach(async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
-  });
+  it('should not be able to read if not connected', async () => {
+    const results = await indicateurPersonnaliseDefinitionReadEndpoint.getBy({
+      collectivite_id: 1,
+    });
 
-  it('should retrieve data-layer default indicateur perso definition with id 0  for collectivite #1 ', async () => {
+    expect(results).toHaveLength(0);
+  });
+  it('should retrieve data-layer default indicateur perso definition with id 0 for collectivite #1 (for anyone connected) ', async () => {
+    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+
     const results = await indicateurPersonnaliseDefinitionReadEndpoint.getBy({
       collectivite_id: 1,
       indicateur_id: 0,
@@ -33,11 +35,5 @@ describe('Indicateur perso definition reading endpoint ', () => {
         partialExpectedReadIndicateurPersonnaliseDefinition
       )
     );
-  });
-  it('should retrieve 0 indicateur perso for collectivite #2 ', async () => {
-    const results = await indicateurPersonnaliseDefinitionReadEndpoint.getBy({
-      collectivite_id: 2,
-    });
-    expect(results.length).toEqual(0);
   });
 });

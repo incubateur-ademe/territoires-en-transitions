@@ -30,14 +30,14 @@ export class CurrentCollectiviteBloc {
     this._roleName = roleName;
   };
 
-  update({collectiviteId}: {collectiviteId: number | null}) {
+  async update({collectiviteId}: {collectiviteId: number | null}) {
     console.log('CollectiviteBloc update ', collectiviteId);
     if (collectiviteId === null) {
       this.setCollectiviteId(null);
       this.setNom(null);
       this.setRoleName(null);
     } else if (collectiviteId !== this._collectiviteId) {
-      this._fetchCollectivite({collectiviteId});
+      await this._fetchCollectivite({collectiviteId});
     }
   }
 

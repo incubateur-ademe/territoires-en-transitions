@@ -8,8 +8,9 @@ import {
 } from '@supabase/supabase-js';
 
 describe('Supabase diag', () => {
+  // This test needs the business to run !
   jest.setTimeout(100000);
-  it('[Should observe some new scores when saving an action statut (requires that business is running !) ', async () => {
+  it.skip('[Should observe some new scores when saving an action statut (requires that business is running !) ', async () => {
     const controller = new SupabaseController({
       supabaseClient: supabaseClient,
     });
