@@ -1187,7 +1187,7 @@ insert into epci(nom, siren, nature) values ('CC des Vallons du Lyonnais (CCVL)'
 insert into epci(nom, siren, nature) values ('CC du Pays Mornantais (COPAMO)', '246900740', 'CC');
 insert into epci(nom, siren, nature) values ('CC de la Vallée du Garon (CCVG)', '246900757', 'CC');
 insert into epci(nom, siren, nature) values ('CC du Pays de l''Ozon', '246900765', 'CC');
-insert into epci(nom, siren, nature) values ('Métropole de Lyon', '200046977', 'MET69');
+insert into epci(nom, siren, nature) values ('Métropole de Lyon', '200046977', 'METRO');
 insert into epci(nom, siren, nature) values ('SM de l''Ouest Lyonnais', '200035046', 'SMF');
 insert into epci(nom, siren, nature) values ('SM d''élimination, de traitement et de valorisation des déchets Beaujolais Dombes (SYTRAIVAL)', '256900705', 'SMF');
 insert into epci(nom, siren, nature) values ('SI de collecte et de traitement des ordures ménagères (SITOM Sud Rhône)', '256901133', 'SMF');
