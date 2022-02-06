@@ -10,7 +10,7 @@ describe('Fiche action write endpoint', () => {
     avancement: 'pas_fait',
     uid: '37440546-f389-4d4f-bfdb-b0c94a1bd0f9',
     numerotation: 'A1',
-    titre: 'titre http',
+    titre: 'titre',
     description: 'description',
     structure_pilote: 'pilote',
     personne_referente: 'référente',
