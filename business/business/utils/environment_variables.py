@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 import os
 from typing import List, Literal, Optional, TypeVar
+import logging
 
 from dotenv import load_dotenv
 
 load_dotenv()
+logger = logging.getLogger()
 
 
 class UnexpectedEnvironmentVariableException(Exception):
@@ -21,7 +23,7 @@ def get_env_variable(
 ) -> GenericVariable:
     variable: Optional[GenericVariable] = os.environ.get(variable_name) or default
     if not variable in variable_options:
-        raise UnexpectedEnvironmentVariableException(
+        logger.warning(
             f"\n \n Got {variable} for {variable_name}, expected one of {variable_options}"
         )
     return variable
