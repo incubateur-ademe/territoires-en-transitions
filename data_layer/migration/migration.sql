@@ -4,7 +4,7 @@ as
 with new_epcis as (select oe.uid as old_epci_id, e.id as new_collectivite_id
 from epci e
          join old.epci oe on e.siren = oe.siren
-where oe.latest), 
+where oe.latest),
 
 new_communes as (select oe.uid as old_epci_id, c.id as new_collectivite_id
 from commune c
@@ -12,11 +12,7 @@ from commune c
 where oe.latest)
 SELECT * FROM new_epcis
 UNION ALL
-SELECT * FROM new_communes; 
-
-
-
-
+SELECT * FROM new_communes;
 
 create or replace view old.new_indicateur_id
 as
@@ -53,7 +49,7 @@ select distinct regexp_replace(
 from all_ids
 where indicateur_id like 'eci%'
    or indicateur_id like 'cae%'
-   or indicateur_id like 'crte%',
+   or indicateur_id like 'crte%'
 ;
 
 
@@ -91,6 +87,7 @@ with unique_users as (
 select *
 from unique_users,
     lateral old.migrate_user(ademe_user_id::uuid, email);
+select count(*) from auth.users; -- 501, 611 after second run ?
 
 -- 3 dcp
 with unique_dcp as (
@@ -102,8 +99,17 @@ insert
 into dcp (user_id, nom, prenom, email, created_at, modified_at)
 select ademe_user_id::uuid, nom, prenom, email, created_at, modified_at
 from unique_dcp;
+select count(*) from dcp; --621
 
--- 4 droits 
+select distinct user_id  from dcp
+except
+select id from auth.users; -- should be 0
+
+select count(*) from dcp
+    left join auth.users on dcp.user_id = users.id
+; -- 621
+
+-- 4 droits
 ---- 4.a EPCIs
 with unique_droits as (
     select od.ademe_user_id,
@@ -125,6 +131,10 @@ into private_utilisateur_droit (user_id, collectivite_id, role_name, active, cre
 select d.ademe_user_id::uuid, e.new_id, 'referent', true, d.created_at
 from unique_droits d
          join new_epci_droits e on e.old_epci_id = d.old_epci_id;
+
+select count(*) from private_utilisateur_droit; -- 419 then 456
+select count(*) from old.utilisateurdroits; -- 634
+
 
 ----- 4.b Communes
 -- 4 droits
@@ -212,6 +222,12 @@ from old_statuts os
 on conflict do nothing
 ;
 
+select count(*) from old.actionstatus oa
+join old.new_collectivites nc on nc.old_epci_id = oa.epci_id
+where latest -- 23645
+;
+select count(*) from action_statut; -- 20215
+
 -- 5.b Action commentaire
 with partitioned_old_commentaire as (
     select *, row_number() over (partition by (action_id, epci_id) order by modified_at desc) as row_number
@@ -247,6 +263,12 @@ from old_commentaire oc
 on conflict do nothing
 ;
 
+select count(*) from old.actionmeta am
+                         join old.new_collectivites nc on nc.old_epci_id = am.epci_id
+where latest -- 6899
+;
+select count(*) from action_commentaire; -- 6168
+
 
 -- 6 - résultats des indicateurs référentiels
 with partitioned_old_indicateur_resultats as (
@@ -272,6 +294,16 @@ from old_indicateur_resultats oir
 on conflict do nothing
 ;
 
+---- Missing indicateurs resultats from real epcis
+select distinct indicateur_id
+from old.indicateurresultat oi
+         join old.new_collectivites nc on nc.old_epci_id = oi.epci_id
+except
+select distinct old_id
+from indicateur_resultat ir
+         join old.new_indicateur_id oni on ir.indicateur_id = oni.new_id;
+
+
 -- 7 - objectifs des indicateurs référentiels
 with partitioned_old_indicateur_objectifs as (
     select *, row_number() over (partition by (indicateur_id, epci_id, year) order by modified_at desc) as row_number
@@ -295,6 +327,16 @@ from old_indicateur_objectifs oir
          join old.new_collectivites nc on oir.epci_id = nc.old_epci_id
 on conflict do nothing
 ;
+
+---- Missing indicateurs objectifs from real epcis
+select distinct indicateur_id
+from old.indicateurobjectif oio
+         join old.new_collectivites nc on nc.old_epci_id = oio.epci_id
+except
+select distinct old_id
+from indicateur_resultat ir
+         join old.new_indicateur_id oni on ir.indicateur_id = oni.new_id;
+
 
 -- 8 - définitions, résultats et objectifs des indicateurs personnalisés
 -- a. mapping from old indicateur perso uid to new integer id
@@ -348,6 +390,19 @@ select id,
 from data
 ;
 
+---- Missing indicateurs personnalise definitions from real epcis
+select count(*)
+from old.indicateurpersonnalise oip
+         join old.new_collectivites nc on nc.old_epci_id = oip.epci_id
+where oip.latest; -- 125
+
+select count(*)
+from indicateur_personnalise_definition ipd
+
+         join old.indicateur_perso_uid_mapping m
+              on m.new_id = ipd.id -- 124
+;
+
 -- c. Résultats des indicateurs personnalisés
 with partitioned_old_indicateur_personnalise_resultat as (
     select *, row_number() over (partition by (indicateur_id, year, epci_id) order by modified_at desc) as row_number
@@ -368,6 +423,17 @@ from old_indicateur_personnalise_resultat oipr
          join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipr.indicateur_id
          join old.new_collectivites nc on oipr.epci_id = nc.old_epci_id;
 
+select count(*)
+from old.indicateurpersonnaliseresultat ipr
+         join old.new_collectivites nc on nc.old_epci_id = ipr.epci_id
+where ipr.latest; -- 34
+
+select count(*)
+from indicateur_personnalise_resultat ipr
+
+         join old.indicateur_perso_uid_mapping m
+              on m.new_id = ipr.indicateur_id -- 34
+;
 
 -- d. Objectifs des indicateurs personnalisés
 with partitioned_old_indicateur_personnalise_objectif as (
@@ -390,6 +456,17 @@ from old_indicateur_personnalise_objectif oipr
          join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipr.indicateur_id
          join old.new_collectivites nc on oipr.epci_id = nc.old_epci_id;
 
+select count(*)
+from old.indicateurpersonnaliseobjectif ipr
+         join old.new_collectivites nc on nc.old_epci_id = ipr.epci_id
+where ipr.latest; -- 6
+
+select count(*)
+from indicateur_personnalise_objectif ipr
+
+         join old.indicateur_perso_uid_mapping m
+              on m.new_id = ipr.indicateur_id -- 6
+;
 
 -- Diagnostics
 ---- EPCI perdues
@@ -401,39 +478,9 @@ where latest
   and oe.siren != '' -- only old epci with a siren
 ;
 
----- Missing indicateurs objectifs from real epcis
-select distinct indicateur_id
-from old.indicateurobjectif oio
-         join old.epci oe on oio.epci_id = oe.uid
-where oe.siren != ''
-except
-select distinct old_id
-from indicateur_resultat ir
-         join old.new_indicateur_id oni on ir.indicateur_id = oni.new_id;
 
----- Missing indicateurs objectifs from real epcis
-select distinct indicateur_id
-from old.indicateurresultat oi
-         join old.epci oe on oi.epci_id = oe.uid
-where oe.siren != ''
-except
-select distinct old_id
-from indicateur_resultat ir
-         join old.new_indicateur_id oni on ir.indicateur_id = oni.new_id;
 
----- Missing indicateurs personnalise definitions from real epcis
-select count(*)
-from old.indicateurpersonnalise oip
-         join old.epci oe on oip.epci_id = oe.uid
-where oip.latest
-  and oe.siren != '';
 
-select count(*)
-from indicateur_personnalise_definition ipd
-
-         join old.indicateur_perso_uid_mapping m
-              on m.new_id = ipd.id
-;
 
 
 -- 9 Plan action
@@ -546,7 +593,18 @@ from old_fiche
          join old.new_collectivites nc on old_fiche.epci_id = nc.old_epci_id
 ;
 
+select count(*)
+from old.ficheaction fa
+         join old.new_collectivites nc on nc.old_epci_id = fa.epci_id
+where fa.latest; -- 656
+
+select count(*)
+from fiche_action fa -- 655
+;
+
 --- 9.b Plan action
+truncate plan_action;
+
 insert into plan_action (uid, collectivite_id, nom, categories, fiches_by_category, created_at, modified_at)
 select gen_random_uuid() as uuid,
        nc.new_collectivite_id         as collectivite_id,
@@ -560,3 +618,14 @@ from old.planaction pa
 where latest
   and not deleted
 ;
+
+select count(*)
+from old.planaction pa
+         join old.new_collectivites nc on nc.old_epci_id = pa.epci_id
+where pa.latest; -- 317
+
+select count(*)
+from plan_action  -- 655
+;
+
+select count(*) from collectivite;
