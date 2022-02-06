@@ -27,16 +27,6 @@ jobs:
           cp .env.sample  .env
           docker-compose up --build -d
         working-directory: ${{env.datalayer-docker-directory}}
-
-      # [Prepare DB] Insert definitions
-      - name: Insert definitions in database 
-        run: sh insert_definitions.sh
-        working-directory: ${{env.datalayer-directory}}
-
-      # [Prepare DB] Insert content
-      - name: Insert content in database 
-        run: sh insert_content.sh
-        working-directory: ${{env.datalayer-directory}}
       
       # [Prepare DB] Insert fakes
       - name: Insert fake data in database 

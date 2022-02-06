@@ -28,7 +28,7 @@ class SupabaseActionScoreRepository(
             return
 
         referentiel = entities[0].referentiel
-        client_scores_json = json.dumps([asdict(score) for score in entities])
+        client_scores_json = [asdict(score) for score in entities]
 
         insert_result = self.table.insert(  # type: ignore
             {
@@ -40,7 +40,6 @@ class SupabaseActionScoreRepository(
             upsert=True,
         ).execute()
         if insert_result["status_code"] not in [200, 201]:
-            breakpoint()
             raise SupabaseError(
                 f"Error with status code {insert_result.get('status_code')}.\n Data: "
                 + json.dumps(insert_result.get("data"))
