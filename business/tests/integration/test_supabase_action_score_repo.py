@@ -52,7 +52,21 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
         {
             "collectivite_id": collectivite_id,
             "referentiel": "cae",
-            "scores": '[{"action_id": "cae_1.1", "point_fait": 80, "point_programme": 30, "point_pas_fait": 60, "point_non_renseigne": 30, "point_potentiel": 100, "point_referentiel": 100, "concerne": true, "total_taches_count": 100, "completed_taches_count": 1, "referentiel": "cae"}]',
+            "scores": [
+                {
+                    "action_id": "cae_1.1",
+                    "point_fait": 80,
+                    "point_programme": 30,
+                    "point_pas_fait": 60,
+                    "point_non_renseigne": 30,
+                    "point_potentiel": 100,
+                    "point_referentiel": 100,
+                    "concerne": True,
+                    "total_taches_count": 100,
+                    "completed_taches_count": 1,
+                    "referentiel": "cae",
+                }
+            ],
             "score_created_at": insert_date,
         }
     ]

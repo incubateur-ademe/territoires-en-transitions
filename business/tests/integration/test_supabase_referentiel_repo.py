@@ -8,7 +8,7 @@ from tests.utils.supabase_fixtures import *
 # Note : those should not change very often.
 expected_nb_of_eci_actions = 368
 expected_nb_of_cae_actions = 1478
-expected_nb_of_indicateurs = 181
+expected_nb_of_indicateurs = 180
 
 
 @pytest.fixture()
@@ -36,7 +36,7 @@ def test_get_all_action_ids_from_referentiel(supabase_repo):
 
 def test_get_all_indicateur_ids(supabase_repo):
     all_indicateur_ids = supabase_repo.get_all_indicateur_ids()
-    assert len(all_indicateur_ids) == expected_nb_of_indicateurs
+    assert len(all_indicateur_ids) >= expected_nb_of_indicateurs
 
 
 def test_get_all_children_from_referentiel(supabase_repo):

@@ -43,24 +43,18 @@ jobs:
           docker-compose up --build -d
         working-directory: ${{env.datalayer-docker-directory}}
 
-      # [Prepare DB] Insert definitions
-      - name: Insert definitions in database 
-        run: sh insert_definitions.sh
-        working-directory: ${{env.datalayer-directory}}
-
-      # [Prepare DB] Insert content
-      - name: Insert content in database 
-        run: sh insert_content.sh
-        working-directory: ${{env.datalayer-directory}}
-      
       # [Prepare DB] Insert fakes
       - name: Insert fake data in database 
         run: sh insert_fakes.sh
         working-directory: ${{env.datalayer-directory}}
-
+        
       # Use Pytest to run tests
-      - name: Pytest run
-        run:  pipenv run pytest tests 
+      - name: Unit tests
+        run:  pipenv run pytest tests/unit
+        working-directory: ${{env.business-directory}}
+
+      - name: All tests (unit + integration + e2e)
+        run:  pipenv run pytest tests
         working-directory: ${{env.business-directory}}
         env: 
           SUPABASE_TEST_URL: ${{env.SUPABASE_URL}} 
@@ -70,4 +64,4 @@ jobs:
           STATUTS_REPO: SUPABASE 
           LABELISATION_REPOSITORIES: SUPABASE 
           REALTIME: REPLAY
-
+    
