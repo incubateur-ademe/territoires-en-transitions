@@ -28,17 +28,24 @@ jobs:
           docker-compose up --build -d
         working-directory: ${{env.datalayer-docker-directory}}
 
-      # Prepare DB 
-      - name: Insert definitions, content and fake data in database 
-        run: sh insert_all.sh
+      # [Prepare DB] Insert definitions
+      - name: Insert definitions in database 
+        run: sh insert_definitions.sh
         working-directory: ${{env.datalayer-directory}}
-        env: 
-          ANON_KEY: ${{env.SUPABASE_KEY}} 
-          SERVICE_ROLE_KEY: ${{env.SUPABASE_KEY}} 
+
+      # [Prepare DB] Insert content
+      - name: Insert content in database 
+        run: sh insert_content.sh
+        working-directory: ${{env.datalayer-directory}}
+      
+      # [Prepare DB] Insert fakes
+      - name: Insert fake data in database 
+        run: sh insert_fakes.sh
+        working-directory: ${{env.datalayer-directory}}
 
       # Restart postgres service  
       - name: Restart postgres service
-        run: docker-compose -f ./docker-compose.yml  up -d --no-deps --build  rest 
+        run: docker-compose restart rest    
         working-directory: ${{env.datalayer-docker-directory}}
 
       # Install app dependencies

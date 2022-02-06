@@ -10,6 +10,7 @@ import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read
 import {
   collectivite1,
   collectivite2,
+  yiliCredentials,
   yoloCredentials,
   yuluCredentials,
 } from 'test_utils/collectivites';
@@ -26,8 +27,8 @@ describe('All Collectivite reading endpoint should retrieve 1628 Collectivites',
 });
 
 describe('Elses Collectivite reading endpoint should retrieve only claimed Collectivite', () => {
-  it("should retrieve else's active Collectivite (2) if no id is given", async () => {
-    await supabaseClient.auth.signIn(yoloCredentials);
+  it("should retrieve else's active Collectivite (3) if no id is given", async () => {
+    await supabaseClient.auth.signIn(yiliCredentials);
     const results = await elsesCollectiviteReadEndpoint.getBy({});
     expect(results).toHaveLength(3);
   });
