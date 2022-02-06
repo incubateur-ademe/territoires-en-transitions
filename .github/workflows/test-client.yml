@@ -54,11 +54,24 @@ jobs:
           npm install
         working-directory: ${{env.app-directory}}
 
-      # Use Jest to run unit tests
-      - name: Jest run
-        run: npm run test
+      # Run client unit tests
+      - name: Test procedures
+        run: npm run test -t proc
         working-directory: ${{env.app-directory}}
         env: 
           REACT_APP_SUPABASE_KEY: ${{env.SUPABASE_KEY}} 
           REACT_APP_SUPABASE_URL: ${{env.SUPABASE_URL}} 
-      
+
+      - name: Test write endpoints
+        run: npm run test -t writeendpoint
+        working-directory: ${{env.app-directory}}
+        env: 
+          REACT_APP_SUPABASE_KEY: ${{env.SUPABASE_KEY}} 
+          REACT_APP_SUPABASE_URL: ${{env.SUPABASE_URL}} 
+
+      - name: Test read endpoints
+        run: npm run test -t readendpoint
+        working-directory: ${{env.app-directory}}
+        env: 
+          REACT_APP_SUPABASE_KEY: ${{env.SUPABASE_KEY}} 
+          REACT_APP_SUPABASE_URL: ${{env.SUPABASE_URL}}   
