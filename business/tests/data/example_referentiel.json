@@ -9,7 +9,7 @@
       "action_ids": [],
       "description": "",
       "values_refers_to": null,
-      "obligation_eci": null
+      "obligation_eci": false
     }
   ],
   "actions": {
@@ -20,7 +20,7 @@
           "referentiel": "eci",
           "identifiant": "",
           "nom": "",
-          "thematique_id": "",
+          "preuve": "",
           "description": "",
           "contexte": "",
           "exemples": "",
@@ -33,7 +33,7 @@
           "referentiel": "eci",
           "identifiant": "",
           "nom": "",
-          "thematique_id": "",
+          "preuve": "",
           "description": "",
           "contexte": "",
           "exemples": "",
@@ -50,9 +50,9 @@
         {
           "referentiel": "eci",
           "action_id": "eci",
-          "children_ids": ["eci_1"]
+          "children": ["eci_1"]
         },
-        { "referentiel": "eci", "action_id": "eci_1", "children_ids": [] }
+        { "referentiel": "eci", "action_id": "eci_1", "children": [] }
       ]
     }
   }

@@ -403,12 +403,6 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 children = point_tree.get_children(action_id)
                 if not children:
                     return
-                children_potentiel_sum_before_resize = sum(
-                    [potentiels[child_id] for child_id in children]
-                )
-                # if not math.isclose(
-                #     action_potentiel, children_potentiel_sum_before_resize, rel_tol=1e-5
-                # ):
 
                 for child_id in children:
                     new_child_potentiel = (
@@ -417,15 +411,6 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                         * action_potentiel
                     )
                     potentiels[child_id] = new_child_potentiel
-                # children_potentiel_sum = sum(
-                #     [potentiels[child_id] for child_id in children]
-                # )
-                # if not points_almost_equal(
-                #     action_potentiel, children_potentiel_sum
-                # ):
-                #     message = f"Children potentiels should sum up to parent potentiel, got action {action_id} with potentiel {action_potentiel} and its children's potentiels sum to {children_potentiel_sum}"
-                #     logger.warn(message)
-                #     raise Exception(message)
 
         point_tree.map_from_action_to_taches(
             lambda action_id: _resize_children_potentiels(

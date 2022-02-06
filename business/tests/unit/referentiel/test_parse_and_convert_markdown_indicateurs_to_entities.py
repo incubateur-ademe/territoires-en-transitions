@@ -51,7 +51,7 @@ def test_fails_when_markdown_indicateurs_refers_to_unknown_action_ids():
     assert len(parsed_events) == 0
     assert (
         failure_events[0].reason
-        == "Incohérences dans la conversion de 2 indicateurs: \nL'indicateur cae_1a référence des actions qui n'existent pas dans la base de donnée: cae_1.1.1.\nL'indicateur cae_1b référence des actions qui n'existent pas dans la base de donnée: cae_1.1.3."
+        == "Incohérences dans la conversion de 2 indicateurs: \nL'indicateur cae_1.a référence des actions qui n'existent pas dans la base de donnée: cae_1.1.1.\nL'indicateur cae_1.b référence des actions qui n'existent pas dans la base de donnée: cae_1.1.3."
     )
 
 
@@ -65,20 +65,20 @@ def test_parse_and_convert_markdown_indicateurs_to_entities_from_ok_folder():
     )
     assert len(failure_events) == 0
     assert len(parsed_events) == 1
-
     assert parsed_events[0].indicateurs == [
         Indicateur(
-            indicateur_id=IndicateurId("cae_1a"),
-            indicateur_group="cae",
+            indicateur_id=IndicateurId("cae_1.a"),
             identifiant="1.a",
+            indicateur_group="cae",
             nom="Nom de l'indicateur 1.a",
             unite="CO2",
             action_ids=[ActionId("cae_1.1.1")],
             description="<p>Description de l'indicateur 1.a</p>\n",
             values_refers_to=None,
+            obligation_eci=False,
         ),
         Indicateur(
-            indicateur_id=IndicateurId("cae_1b"),
+            indicateur_id=IndicateurId("cae_1.b"),
             indicateur_group="cae",
             identifiant="1.b",
             nom="Nom de l'indicateur 1.b",
@@ -86,6 +86,7 @@ def test_parse_and_convert_markdown_indicateurs_to_entities_from_ok_folder():
             action_ids=[ActionId("cae_1.1.3")],
             description="<p>Description de l'indicateur 1.b</p>\n",
             values_refers_to=None,
+            obligation_eci=False,
         ),
     ]
 

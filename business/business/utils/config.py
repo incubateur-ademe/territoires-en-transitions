@@ -5,6 +5,15 @@ import os
 from dotenv import load_dotenv
 
 from realtime_py import Socket
+from business.evaluation.adapters.supabase_action_score_repo import (
+    SupabaseActionScoreRepository,
+)
+from business.evaluation.adapters.supabase_action_statut_repo import (
+    SupabaseActionStatutRepository,
+)
+from business.evaluation.adapters.supabase_action_statut_update_event_repo import (
+    SupabaseActionStatutUpdateEventRepository,
+)
 from business.evaluation.domain.ports.action_statut_update_event_repo import (
     AbstractActionStatutUpdateEventRepository,
     InMemoryActionStatutUpdateEventRepository,
@@ -19,9 +28,7 @@ from business.core.domain.ports.domain_message_bus import AbstractDomainMessageB
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
-from business.evaluation.adapters.postgres_action_score_repo import (
-    PostgresActionScoreRepository,
-)
+
 from business.referentiel.adapters.sql_referentiel_repo import SqlReferentielRepository
 from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
@@ -32,18 +39,12 @@ from business.evaluation.domain.ports.action_score_repo import (
     AbstractActionScoreRepository,
     InMemoryActionScoreRepository,
 )
-from business.evaluation.adapters.postgres_action_statut_repo import (
-    PostgresActionStatutRepository,
-)
-from business.evaluation.adapters.postgres_action_statut_update_event_repo import (
-    PostgresActionStatutUpdateEventRepository,
-)
+
 from business.evaluation.domain.ports.action_status_repo import (
     AbstractActionStatutRepository,
     InMemoryActionStatutRepository,
 )
 from business.evaluation.domain.use_cases import *
-from business.utils.get_postgres_connection_params import get_postgres_connection_params
 from business.utils.use_case import UseCase
 from .environment_variables import (
     EnvironmentVariables,
@@ -81,15 +82,6 @@ class Config:
             )
         return create_client(url, key)
 
-    def get_postgres_connection(self):
-        import psycopg
-
-        postgres_url = os.getenv("POSTGRES_URL")
-        if postgres_url is None:
-            raise EnvironmentError("Missing POSTGRES_URL env variable. ")
-        connection = psycopg.connect(**get_postgres_connection_params(postgres_url))
-        return connection
-
     def get_referentiel_repo(self) -> AbstractReferentielRepository:
         if self.ENV.referentiels_repository == "JSON":
             if self.ENV.referentiels_repo_file is None:
@@ -118,9 +110,9 @@ class Config:
     def get_scores_repo(self) -> AbstractActionScoreRepository:
         if self.ENV.labelisation_repositories == "IN_MEMORY":
             return InMemoryActionScoreRepository()
-        elif self.ENV.labelisation_repositories == "POSTGRES":
-            return PostgresActionScoreRepository(
-                connection=self.get_postgres_connection()
+        elif self.ENV.labelisation_repositories == "SUPABASE":
+            return SupabaseActionScoreRepository(
+                supabase_client=self.get_supabase_client()
             )
         else:
             raise NotImplementedError(
@@ -130,9 +122,9 @@ class Config:
     def get_statuts_repo(self) -> AbstractActionStatutRepository:
         if self.ENV.labelisation_repositories == "IN_MEMORY":
             return InMemoryActionStatutRepository()
-        elif self.ENV.labelisation_repositories == "POSTGRES":
-            return PostgresActionStatutRepository(
-                connection=self.get_postgres_connection()
+        elif self.ENV.labelisation_repositories == "SUPABASE":
+            return SupabaseActionStatutRepository(
+                supabase_client=self.get_supabase_client()
             )
         else:
             raise NotImplementedError(
@@ -144,9 +136,9 @@ class Config:
     ) -> AbstractActionStatutUpdateEventRepository:
         if self.ENV.labelisation_repositories == "IN_MEMORY":
             return InMemoryActionStatutUpdateEventRepository()
-        elif self.ENV.labelisation_repositories == "POSTGRES":
-            return PostgresActionStatutUpdateEventRepository(
-                connection=self.get_postgres_connection()
+        elif self.ENV.labelisation_repositories == "SUPABASE":
+            return SupabaseActionStatutUpdateEventRepository(
+                supabase_client=self.get_supabase_client()
             )
         else:
             raise NotImplementedError(
