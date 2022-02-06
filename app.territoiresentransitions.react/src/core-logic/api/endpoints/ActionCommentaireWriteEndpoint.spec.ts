@@ -12,7 +12,7 @@ describe('Action-commentaire write endpoint', () => {
   it('Should be able to save and update a commentaire ', async () => {
     const endpoint = new ActionCommentaireWriteEndpoint();
     const commentaire: ActionCommentaireWrite = {
-      collectivite_id: 1,
+      collectivite_id: 2,
       action_id: 'cae_1.1.1.1.2',
       commentaire: 'yolo',
     };

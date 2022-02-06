@@ -31,7 +31,7 @@ alter table fiche_action
 create policy allow_read
     on fiche_action
     for select
-    using (is_any_role_on(collectivite_id));
+    using (is_authenticated());
 
 create policy allow_insert
     on fiche_action
@@ -54,10 +54,12 @@ comment on table fiche_action is
     'Many-to-many relationship between fiche action and referentiel action';
 alter table fiche_action_action
     enable row level security;
+
 create policy allow_read
     on fiche_action_action
     for select
-    using (true);
+   using (is_authenticated());
+
 
 create table fiche_action_indicateur
 (
@@ -72,7 +74,7 @@ alter table fiche_action_indicateur
 create policy allow_read
     on fiche_action_indicateur
     for select
-    using (true);
+    using (is_authenticated());
 
 create table fiche_action_indicateur_personnalise
 (
@@ -87,7 +89,7 @@ alter table fiche_action_indicateur_personnalise
 create policy allow_read
     on fiche_action_indicateur_personnalise
     for select
-    using (true);
+    using (is_authenticated());
 
 
 create or replace function update_fiche_relationships(
@@ -177,7 +179,7 @@ alter table plan_action
 create policy allow_read
     on plan_action
     for select
-    using (is_any_role_on(collectivite_id));
+    using (is_authenticated());
 
 create policy allow_insert
     on plan_action

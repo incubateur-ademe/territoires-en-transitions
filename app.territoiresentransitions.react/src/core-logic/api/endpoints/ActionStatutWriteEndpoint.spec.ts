@@ -19,7 +19,7 @@ describe('Action-statut write endpoint', () => {
       concerne: true,
       avancement: 'programme',
       action_id: 'cae_1.1.1.1.1',
-      collectivite_id: 1,
+      collectivite_id: 2,
     };
     // 1. Create
     const result = await endpoint.save(statut);

@@ -10,22 +10,25 @@ import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read
 import {
   collectivite1,
   collectivite2,
+  yiliCredentials,
   yoloCredentials,
   yuluCredentials,
 } from 'test_utils/collectivites';
 
 describe('All Collectivite reading endpoint should retrieve 1628 Collectivites', () => {
-  it('should retrieve all Collectivites sorted by nom if no arguments are given', async () => {
+  it('should retrieve all Collectivites sorted by nom if no arguments are given (for any connected user) ', async () => {
+    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+
     const results = await allCollectiviteReadEndpoint.getBy({}); // all
 
-    expect(results.length).toEqual(1628);
-    expect(results[0].nom).toEqual('Ardenne Métropole');
+    expect(results.length).toBeGreaterThan(5000);
+    expect(results[0].nom).toEqual('Abbeville');
   });
 });
 
 describe('Elses Collectivite reading endpoint should retrieve only claimed Collectivite', () => {
-  it("should retrieve else's active Collectivite (2) if no id is given", async () => {
-    await supabaseClient.auth.signIn(yoloCredentials);
+  it("should retrieve else's active Collectivite (3) if no id is given", async () => {
+    await supabaseClient.auth.signIn(yiliCredentials);
     const results = await elsesCollectiviteReadEndpoint.getBy({});
     expect(results).toHaveLength(3);
   });
@@ -37,12 +40,12 @@ describe('Owned Collectivite reading endpoint ', () => {
     const results = await ownedCollectiviteReadEndpoint.getBy({});
     const expectedResults: OwnedCollectiviteRead[] = [
       {
-        ...collectivite2,
-        role_name: 'agent',
-      },
-      {
         ...collectivite1,
         role_name: 'referent',
+      },
+      {
+        ...collectivite2,
+        role_name: 'agent',
       },
     ];
     expect(results.length).toEqual(2);

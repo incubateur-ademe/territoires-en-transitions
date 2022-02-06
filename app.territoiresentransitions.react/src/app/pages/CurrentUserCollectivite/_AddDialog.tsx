@@ -197,8 +197,8 @@ export const SelectCollectiviteDialog = () => {
           <p className="fr-text--sm">
             Vous ne trouvez pas la collectivité que vous recherchez ? <br />
             Merci d'envoyer un mail à{' '}
-            <a href="mailto:contact@territoiresentransitions">
-              contact@territoiresentransitions
+            <a href="mailto:contact@territoiresentransitions.fr">
+              contact@territoiresentransitions.fr
             </a>{' '}
             avec le nom et numéro SIREN de cette collectivité pour que nous
             puissions vous aider.

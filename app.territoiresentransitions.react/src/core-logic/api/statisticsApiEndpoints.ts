@@ -17,17 +17,14 @@ export type FunctionnalitiesUsageProportion = {
 
 const makeGetStatistics = <T>(endpoint: string) => {
   const getStatistics = async () => {
-    const response_json = await fetch(
-      `${ENV.backendHost}/v2/statistics/${endpoint}`,
-      {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: '',
-        },
-      }
-    ).then(response => response.json());
+    const response_json = await fetch(`TODO`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: '',
+      },
+    }).then(response => response.json());
 
     console.log(response_json);
     return response_json as T;

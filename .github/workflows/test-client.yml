@@ -1,0 +1,64 @@
+name: Test Client 
+
+on:
+  pull_request:
+    branches-ignore:
+      - production
+      - production-static
+  push:
+jobs:
+  client-test:
+    name: Client unit tests 
+    runs-on: ubuntu-latest
+    env:
+      app-directory:  ./app.territoiresentransitions.react
+      datalayer-directory: ./data_layer
+      datalayer-docker-directory: ./data_layer/test_only_docker
+      SUPABASE_KEY: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwfQ.zcaQfHd3VA7XgJmdGfmV86OLVJT9s2MTmSy-e69BpUY
+      SUPABASE_URL: http://localhost:8000
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # Launch docker
+      - name: Launch docker 
+        run: |
+          cp .env.sample  .env
+          docker-compose up --build -d
+        working-directory: ${{env.datalayer-docker-directory}}
+
+      # [Prepare DB] Insert definitions
+      - name: Insert definitions in database 
+        run: sh insert_definitions.sh
+        working-directory: ${{env.datalayer-directory}}
+
+      # [Prepare DB] Insert content
+      - name: Insert content in database 
+        run: sh insert_content.sh
+        working-directory: ${{env.datalayer-directory}}
+      
+      # [Prepare DB] Insert fakes
+      - name: Insert fake data in database 
+        run: sh insert_fakes.sh
+        working-directory: ${{env.datalayer-directory}}
+
+      # Restart postgres service  
+      - name: Restart postgres service
+        run: docker-compose restart rest    
+        working-directory: ${{env.datalayer-docker-directory}}
+
+      # Install app dependencies
+      - name: Install client dependencies
+        run: |
+          npm install
+        working-directory: ${{env.app-directory}}
+
+      # Use Jest to run unit tests
+      - name: Jest run
+        run: npm run test
+        working-directory: ${{env.app-directory}}
+        env: 
+          REACT_APP_SUPABASE_KEY: ${{env.SUPABASE_KEY}} 
+          REACT_APP_SUPABASE_URL: ${{env.SUPABASE_URL}} 
+      
