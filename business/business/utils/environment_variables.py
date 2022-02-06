@@ -34,10 +34,10 @@ referentiels_repository_options: List[ReferentielsRepository] = [
     "SQL",
 ]
 
-LabelisationRepositories = Literal["IN_MEMORY", "POSTGRES"]
+LabelisationRepositories = Literal["IN_MEMORY", "SUPABASE"]
 labelisation_repositories_options: List[LabelisationRepositories] = [
     "IN_MEMORY",
-    "POSTGRES",
+    "SUPABASE",
 ]
 
 Realtime = Literal["REPLAY", "SUPABASE"]

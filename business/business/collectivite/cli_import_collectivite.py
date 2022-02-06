@@ -1,7 +1,4 @@
-import click
-import os
 from pathlib import Path
-import psycopg
 from typing import Literal, Optional
 
 from business.collectivite.domain.import_banatic_xlsx_to_collectivite_repo import (
@@ -16,6 +13,9 @@ from business.collectivite.adapters.csv_collectivite_repo import (
 from business.collectivite.adapters.sql_collectivite_repo import (
     SqlCollectiviteRepository,
 )
+
+import click
+
 
 # 3. Prepare domain event bus (dependencies infection)
 @click.command()
