@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from tests.utils.postgres_fixtures import *
 from business.referentiel.adapters.sql_referentiel_repo import SqlReferentielRepository
 from tests.utils.files import remove_file, mkdir
 from tests.utils.referentiel_factory import (
@@ -11,7 +10,7 @@ from tests.utils.referentiel_factory import (
 )
 
 
-def test_can_add_referentiel_actions(postgres_connection):
+def test_can_add_referentiel_actions():
 
     sql_path = Path("./tests/data/tmp/referentiel_actions.sql")
     mkdir(sql_path.parent)
@@ -49,33 +48,33 @@ def test_can_add_referentiel_actions(postgres_connection):
         + "insert into action_computed_points(action_id, value) values ('ref_1', 300);\n"
     )
 
-    # check that sql can be executed and referntiel actions can be added
-    test_cursor = postgres_connection.cursor(row_factory=dict_row)
-    test_cursor.execute(file_content)
+    # # check that sql can be executed and referntiel actions can be added
+    # test_cursor = postgres_connection.cursor(row_factory=dict_row)
+    # test_cursor.execute(file_content)
 
-    # check referentiel action have correctly been inserted
-    test_cursor.execute("select * from action_relation where id in ('ref', 'ref_1');")
-    inserted_relations = test_cursor.fetchall()
-    assert len(inserted_relations) == 2
-    assert inserted_relations == [
-        {"id": "ref", "referentiel": "eci", "parent": None},
-        {"id": "ref_1", "referentiel": "eci", "parent": "ref"},
-    ]
+    # # check referentiel action have correctly been inserted
+    # test_cursor.execute("select * from action_relation where id in ('ref', 'ref_1');")
+    # inserted_relations = test_cursor.fetchall()
+    # assert len(inserted_relations) == 2
+    # assert inserted_relations == [
+    #     {"id": "ref", "referentiel": "eci", "parent": None},
+    #     {"id": "ref_1", "referentiel": "eci", "parent": "ref"},
+    # ]
 
-    test_cursor.execute(
-        "select * from action_computed_points where action_id in ('ref', 'ref_1');"
-    )
-    inserted_points = test_cursor.fetchall()
-    assert len(inserted_points) == 2
+    # test_cursor.execute(
+    #     "select * from action_computed_points where action_id in ('ref', 'ref_1');"
+    # )
+    # inserted_points = test_cursor.fetchall()
+    # assert len(inserted_points) == 2
 
-    test_cursor.execute(
-        "select * from action_definition where action_id in ('ref', 'ref_1');"
-    )
-    inserted_definitions = test_cursor.fetchall()
-    assert len(inserted_definitions) == 2
+    # test_cursor.execute(
+    #     "select * from action_definition where action_id in ('ref', 'ref_1');"
+    # )
+    # inserted_definitions = test_cursor.fetchall()
+    # assert len(inserted_definitions) == 2
 
 
-def test_can_add_referentiel_indicateurs(postgres_connection):
+def test_can_add_referentiel_indicateurs():
 
     sql_path = Path("./tests/data/tmp/referentiel_indicateurs.sql")
     mkdir(sql_path.parent)
@@ -98,12 +97,3 @@ def test_can_add_referentiel_indicateurs(postgres_connection):
         file_content
         == "insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('indicateur_1', 'eci', '', null, '', 'l''ademe !', '', false, null);insert into indicateur_action(indicateur_id, action_id) values ('indicateur_1', 'eci_1');\n"
     )
-
-    # check that sql can be executed and referentiel indicateurs can be added
-    test_cursor = postgres_connection.cursor(row_factory=dict_row)
-    # first, insert an action_relation
-    test_cursor.execute(
-        "insert into action_relation(id, referentiel, parent) values ('eci_1', 'eci', null);"
-    )
-    # then execute
-    test_cursor.execute(file_content)

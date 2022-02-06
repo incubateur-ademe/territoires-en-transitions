@@ -11,16 +11,10 @@ from business.referentiel.domain.models.action_definition import ActionDefinitio
 from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.referentiel.domain.models.indicateur import Indicateur, IndicateurId
 from business.utils.action_id import ActionId
+from business.utils.supabase_repo import SupabaseError, SupabaseRepository
 
 
-class SupabaseError(Exception):
-    pass
-
-
-class SupabaseReferentielRepository(AbstractReferentielRepository):
-    def __init__(self, supabase_client: Client) -> None:
-        self.supabase_client = supabase_client
-
+class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepository):
     def get_all_definitions_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionDefinition]:

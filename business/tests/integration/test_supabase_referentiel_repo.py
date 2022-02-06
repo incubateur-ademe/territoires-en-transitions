@@ -1,9 +1,19 @@
+import pytest
+
+from business.referentiel.adapters.supabase_referentiel_repo import (
+    SupabaseReferentielRepository,
+)
 from tests.utils.supabase_fixtures import *
 
 # Note : those should not change very often.
 expected_nb_of_eci_actions = 368
 expected_nb_of_cae_actions = 1478
-expected_nb_of_indicateurs = 122
+expected_nb_of_indicateurs = 181
+
+
+@pytest.fixture()
+def supabase_repo(supabase_client) -> SupabaseReferentielRepository:
+    return SupabaseReferentielRepository(supabase_client)
 
 
 def test_get_all_definitions_from_referentiel(supabase_repo):
