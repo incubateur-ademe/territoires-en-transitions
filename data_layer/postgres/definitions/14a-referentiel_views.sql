@@ -1,3 +1,18 @@
+create or replace view business_action_children
+as
+select referentiel, id, parent, children.ids as children
+from action_relation as ar
+         left join lateral (
+    select array_agg(action_relation.id) as ids
+    from action_relation
+    where action_relation.parent = ar.id
+
+    )
+    as children on true;
+comment on view business_action_children is
+    'Action and its children, computed from action relation';
+
+
 create view action_children
 as
 with recursive
