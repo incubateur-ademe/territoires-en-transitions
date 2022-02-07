@@ -36,7 +36,7 @@ jobs:
 
       # [Prepare DB] Insert fakes
       - name: Insert fake data in database
-        run: sh insert_fakes.sh
+        run: sh insert_all.sh
         working-directory: ${{env.datalayer-directory}}
 
       # Restart postgres service
