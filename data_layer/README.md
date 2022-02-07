@@ -7,7 +7,7 @@ Le Data-Layer est responsable des lectures/écritures en base, c'est à dire de:
 - notifier d'un changement en base
     - au business (ex : nouveau statut d'une action, qui déclenchera le moteur de notation pour mettre à jour les
       scores)
-    - au client (ex : un nouveau score a été calculé, donc les jauges doivent être mises à jour dynaamiquement)
+    - au client (ex : un nouveau score a été calculé, donc les jauges doivent être mises à jour dynamiquement)
 - fournir au client des vues prêtes à consommer
 
 ## Organisation du dossier
@@ -17,13 +17,11 @@ Le Data-Layer est responsable des lectures/écritures en base, c'est à dire de:
 - `postgres/fakes` : des fausses données utilisées pour développer/tester [readme](data_layer/postgres/fakes/README.md)
 - `postgres/tests` : début de tests en sql, on utilisera [pgtap](https://pgtap.org/) par la suite 
 - `requests` : des requêtes http pour tester l'API [readme](data_layer/requests/README.md)
-- `test_only_docker` : une appli docker compose utilisée pour développer/tester 
-- `tests` : tests en python
+- `test_only_docker` : une appli docker compose utilisée pour développer/tester
 
 ## Mode d'emploi
 
 ### Pré-requis
-
 - psql (on peut l'installer sur Mac avec brew : `brew install postgresql`)
 - docker
 
@@ -34,10 +32,9 @@ Aller dans le dossier `./test_only_docker` et exécuter :
 ```bash
  docker-compose up --build
 ```
-
-Ensuite utiliser `insert_all.sh` pour insérer les contenus de test.
-
-Redémarrer le container `postgrest` après les insertions pour que l'API soit regénérée.
+Ensuite 
+- utiliser `insert_all.sh` pour insérer les contenus de test.
+- redémarrer le container `postgrest` après les insertions pour que l'API soit régénérée avec `docker-compose restart rest  `.
 
 ## Générer les types pour le Business et le Client
 
@@ -45,6 +42,25 @@ Redémarrer le container `postgrest` après les insertions pour que l'API soit r
 pipenv install
 python typedef_cli.py --help
 ```
+Cette partie encore expérimentale génère les modèles client ou business à partir de 
+[json typedefs](https://jsontypedef.com/docs/jtd-in-5-minutes/) pour être utilisés par
+[json typedef codegen](https://jsontypedef.com/docs/jtd-codegen/).
+Il nous manque la génération des litérals pour l'utiliser pleinement.
 
-Génére les modèles client ou business à partir de [json typedefs](https://jsontypedef.com/docs/jtd-in-5-minutes/) pour être utilisés par
-[json typedef codegen](https://jsontypedef.com/docs/jtd-codegen/)
+## Créer un projet sur Supabase
+Après la création du projet
+- Mettre à jour les mails `authentication` avec les traductions depuis `auth/templates`.
+- Désactiver la confirmation des mails `Enable email confirmations` depuis `auth/settings`.
+- Augmenter le nombre `Max rows` à `1500` depuis `settings/api`, le business ayant besoin de récupérer toutes les 
+  actions en une seule requête.
+
+Pour utiliser ce nouveau projet avec les autres services
+il faut mettre à jour les variables d'environnement :
+- du client avec
+  - l'url du projet `https://{ID}.supabase.co`
+  - la clé d'API publique **anon**
+- du business avec
+  - l'url http du projet `https://{ID}.supabase.co`
+  - le websocket `wss://{ID}.supabase.co`
+  - la clé privée **service_role**
+  - l'url postgres `postgresql://postgres:{PASSWORD}@db.{ID}.supabase.co:5432/postgres`
