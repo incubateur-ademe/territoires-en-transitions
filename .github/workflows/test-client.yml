@@ -25,6 +25,7 @@ jobs:
       # Launch docker
       - name: Launch docker
         run: |
+          cp .env.sample .env
           docker-compose up --build -d
         working-directory: ${{env.datalayer-docker-directory}}
 
