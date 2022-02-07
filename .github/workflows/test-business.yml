@@ -1,4 +1,4 @@
-name: Test Business 
+name: Test Business
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
   push:
 jobs:
   business-test:
-    name: Business tests 
+    name: Business tests
     runs-on: ubuntu-latest
     env:
       business-directory:  ./business
@@ -36,32 +36,8 @@ jobs:
             pipenv install --dev
         working-directory: ${{env.business-directory}}
 
-      # # Launch docker
-      # - name: Launch docker 
-      #   run: |
-      #     cp .env.sample  .env
-      #     docker-compose up --build -d
-      #   working-directory: ${{env.datalayer-docker-directory}}
-
-      # # [Prepare DB] Insert fakes
-      # - name: Insert fake data in database 
-      #   run: sh insert_fakes.sh
-      #   working-directory: ${{env.datalayer-directory}}
 
       # Use Pytest to run tests
       - name: Unit tests
         run:  pipenv run pytest tests/unit
         working-directory: ${{env.business-directory}}
-
-      # - name: All tests (unit + integration + e2e)
-      #   run:  pipenv run pytest tests
-      #   working-directory: ${{env.business-directory}}
-      #   env: 
-      #     SUPABASE_TEST_URL: ${{env.SUPABASE_URL}} 
-      #     SUPABASE_TEST_WS: ${{env.SUPABASE_WS}} 
-      #     SUPABASE_TEST_KEY: ${{env.SUPABASE_KEY}} 
-      #     REFERENTIELS_REPOSITORY: SUPABASE 
-      #     STATUTS_REPO: SUPABASE 
-      #     LABELISATION_REPOSITORIES: SUPABASE 
-      #     REALTIME: REPLAY
-    
