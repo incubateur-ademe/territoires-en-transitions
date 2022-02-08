@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Charts/ReferentielAxisScoresPolarArea CAE Example 1`] = `
+<div
+  style={
+    Object {
+      "width": "500px",
+    }
+  }
+>
+  <div
+    className="font-semibold text-center text-xl"
+    style={
+      Object {
+        "marginBottom": "-32px",
+        "paddingTop": "32px",
+      }
+    }
+  >
+    Scores par axe
+  </div>
+  <canvas
+    data-testid="canvas"
+    height={150}
+    onClick={[Function]}
+    role="img"
+    width={300}
+  />
+</div>
+`;

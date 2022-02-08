@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Charts/ReferentielAxisAvancementStackedBar CAE Example 1`] = `
+<div
+  style={
+    Object {
+      "marginLeft": "0px",
+      "width": "500px",
+    }
+  }
+>
+  <div
+    className="font-semibold text-center text-xl"
+  >
+    État d'avancement par axes
+  </div>
+  <div
+    className="p-2"
+  />
+  <canvas
+    data-testid="canvas"
+    height={250}
+    onClick={[Function]}
+    role="img"
+    width={400}
+  />
+</div>
+`;
