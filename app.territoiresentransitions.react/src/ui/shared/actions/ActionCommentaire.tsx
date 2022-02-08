@@ -24,15 +24,13 @@ export const ActionCommentaire = ({
   );
 };
 
+export type ActionCommentaireFieldProps = {
+  observable: ActionCommentaireFieldBloc;
+  action: ActionDefinitionSummary;
+};
+
 export const ActionCommentaireField = observer(
-  ({
-    observable,
-    action,
-    ...otherProps
-  }: {
-    observable: ActionCommentaireFieldBloc;
-    action: ActionDefinitionSummary;
-  }) => (
+  ({observable, action, ...otherProps}: ActionCommentaireFieldProps) => (
     <AutoTextArea
       value={observable.fieldValue ?? ''}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
