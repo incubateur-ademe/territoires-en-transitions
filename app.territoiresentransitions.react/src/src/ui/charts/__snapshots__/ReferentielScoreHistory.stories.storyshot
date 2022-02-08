@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Charts/ReferentielScoreHistory Referentiel Score History Story 1`] = `
+<div
+  style={
+    Object {
+      "width": "500px",
+    }
+  }
+>
+  <div
+    className="font-semibold text-center text-xl"
+  >
+    Évolution du score du référentiel (sur 
+    500
+     points)
+     
+  </div>
+  <canvas
+    data-testid="canvas"
+    height={150}
+    onClick={[Function]}
+    role="img"
+    width={300}
+  />
+</div>
+`;
