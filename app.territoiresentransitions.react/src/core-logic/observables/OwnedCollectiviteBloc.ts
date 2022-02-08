@@ -22,6 +22,14 @@ export class OwnedCollectiviteBloc {
       }
     );
 
+    // listen to invitation state
+    reaction(
+      () => authBloc.invitationState,
+      userId => {
+        this.updateOwnedCollectiviteReads(userId);
+      }
+    );
+
     // listen to
     allCollectiviteReadEndpoint.addListener(() => {});
   }
