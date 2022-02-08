@@ -5,3 +5,4 @@ export default {
 };
 
 export const Exemple = () => <RegistrationForm />;
+Exemple.parameters = {storyshots: false};

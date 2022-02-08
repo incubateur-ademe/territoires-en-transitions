@@ -19,10 +19,12 @@ export const Default = (args: TPasswordRecoveryOpts) => (
 export const Opened = (args: TPasswordRecoveryOpts) => (
   <PasswordRecovery {...args} opened />
 );
+Opened.parameters = {storyshots: false};
 
 export const Prefilled = (args: TPasswordRecoveryOpts) => (
   <PasswordRecovery {...args} opened email="someone@example.com" />
 );
+Prefilled.parameters = {storyshots: false};
 
 export const Error = (args: TPasswordRecoveryOpts) => (
   <PasswordRecovery
@@ -35,3 +37,4 @@ export const Error = (args: TPasswordRecoveryOpts) => (
     })}
   />
 );
+Error.parameters = {storyshots: false};
