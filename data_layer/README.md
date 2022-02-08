@@ -52,8 +52,9 @@ Après la création du projet
 - Mettre à jour `Site URL` dans `auth/settings` avec l'url du front.
 - Mettre à jour les mails `authentication` avec les traductions depuis `auth/templates`.
 - Désactiver la confirmation des mails `Enable email confirmations` depuis `auth/settings`.
-- Augmenter le nombre `Max rows` à `1500` depuis `settings/api`, 
-le business ayant besoin de récupérer toutes les actions en une seule requête.
+- Augmenter le nombre `Max rows` à `6000` depuis `settings/api`, 
+le business ayant besoin de récupérer toutes les actions en une seule requête
+et le client de récupérer tous les noms des collectivités.
 
 Pour utiliser ce nouveau projet avec les autres services
 il faut mettre à jour les variables d'environnement :
