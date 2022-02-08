@@ -24,6 +24,7 @@ const handlers = {
 
 // Commentaire associé à une action
 export const ExempleAction = Template.bind({});
+ExempleAction.parameters = {storyshots: false};
 ExempleAction.args = {
   action: {
     type: 'action',
@@ -36,6 +37,7 @@ ExempleAction.args = {
 
 // Commentaire associé à une tâche
 export const ExempleTache = Template.bind({});
+ExempleTache.parameters = {storyshots: false};
 ExempleTache.args = {
   action: {
     type: 'tache',
@@ -48,6 +50,7 @@ ExempleTache.args = {
 
 // Le champ est redimensionné en fonction de la longueur du texte initial
 export const CommentaireLong = Template.bind({});
+CommentaireLong.parameters = {storyshots: false};
 CommentaireLong.args = {
   action: {
     type: 'tache',
