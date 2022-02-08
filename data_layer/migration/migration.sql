@@ -1,3 +1,33 @@
+TRUNCATE
+    action_commentaire ,
+--     action_computed_points ,
+--     action_definition ,
+--     action_relation ,
+    action_statut ,
+    action_statut_update_event ,
+    client_scores ,
+--     collectivite ,
+--     commune ,
+    dcp ,
+--     epci ,
+    fiche_action ,
+    fiche_action_action ,
+    fiche_action_indicateur ,
+    fiche_action_indicateur_personnalise ,
+--     indicateur_action ,
+    indicateur_commentaire ,
+--     indicateur_definition ,
+    indicateur_objectif ,
+--     indicateur_parent ,
+    indicateur_personnalise_definition ,
+    indicateur_personnalise_objectif ,
+    indicateur_personnalise_resultat ,
+    indicateur_resultat ,
+    plan_action ,
+    private_utilisateur_droit
+    RESTART IDENTITY CASCADE;
+
+
 -- view utils
 --- new collectivite / old epci
 create or replace view old.new_collectivites
