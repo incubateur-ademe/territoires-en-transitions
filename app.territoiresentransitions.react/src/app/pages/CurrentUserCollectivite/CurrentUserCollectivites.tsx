@@ -32,6 +32,7 @@ const MyCollectiviteCards = observer(
   }
 );
 
+<<<<<<< HEAD
 const CurrentUserCollectivites = ({bloc}: {bloc?: OwnedCollectiviteBloc}) => {
   return (
     <div className="app fr-container mt-5 flex justify-center">
@@ -43,6 +44,23 @@ const CurrentUserCollectivites = ({bloc}: {bloc?: OwnedCollectiviteBloc}) => {
       </section>
     </div>
   );
+=======
+export type CurrentUserCollectivitesProps = {
+  bloc?: OwnedCollectiviteBloc;
+>>>>>>> fa592636 (transforme les stories mdx en tsx)
 };
+
+const CurrentUserCollectivites = ({bloc}: CurrentUserCollectivitesProps) => (
+  <div
+    data-test="CurrentUserCollectivites"
+    className="app fr-container mt-5 flex justify-center"
+  >
+    <section className="text-center">
+      <MyCollectiviteCards bloc={bloc || ownedCollectiviteBloc} />
+      <Spacer />
+      <SelectCollectiviteDialog />
+    </section>
+  </div>
+);
 
 export default CurrentUserCollectivites;
