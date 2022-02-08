@@ -5,6 +5,7 @@ export default {
 };
 
 export const Default = () => <ResetPasswordForm token="fake" />;
+Default.parameters = {storyshots: false};
 
 export const Failure = () => (
   <ResetPasswordForm
