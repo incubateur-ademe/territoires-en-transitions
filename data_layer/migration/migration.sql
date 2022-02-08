@@ -1,19 +1,31 @@
 -- view utils
+--- new collectivite / old epci
 create or replace view old.new_collectivites
 as
-with new_epcis as (select oe.uid as old_epci_id, e.id as new_collectivite_id
-from epci e
-         join old.epci oe on e.siren = oe.siren
-where oe.latest),
+with new_epcis as (select oe.uid            as old_epci_id,
+                          e.collectivite_id as new_collectivite_id
+                   from epci e
+                            join old.epci oe on e.siren = oe.siren
+                   where oe.latest),
 
-new_communes as (select oe.uid as old_epci_id, c.id as new_collectivite_id
-from commune c
-         join old.epci oe on c.code = oe.insee
-where oe.latest)
-SELECT * FROM new_epcis
-UNION ALL
-SELECT * FROM new_communes;
+     new_communes as (select oe.uid            as old_epci_id,
+                             c.collectivite_id as new_collectivite_id
+                      from commune c
+                               join old.epci oe on c.code = oe.insee
+                      where oe.latest)
+select *
+from new_epcis
+union all
+select *
+from new_communes;
 
+select n.nom, old.epci.nom
+from old.new_collectivites
+         join named_collectivite n on collectivite_id = new_collectivite_id
+         left join old.epci on uid = old_epci_id
+; -- 315
+
+--- old indicateur id / new indicateur id
 create or replace view old.new_indicateur_id
 as
 with all_ids as (
@@ -80,14 +92,16 @@ $$ language sql volatile;
 with unique_users as (
     select au.email, ademe_user_id
     from old.ademeutilisateur au
-        left join auth.users u on u.email = au.email
+             left join auth.users u on u.email = au.email
     where u.email is null
     group by ademe_user_id, au.email
 )
 select *
 from unique_users,
     lateral old.migrate_user(ademe_user_id::uuid, email);
-select count(*) from auth.users; -- 501, 611 after second run ?
+select count(*)
+from auth.users;
+-- 501, 611 after second run ?
 
 -- 3 dcp
 with unique_dcp as (
@@ -99,65 +113,50 @@ insert
 into dcp (user_id, nom, prenom, email, created_at, modified_at)
 select ademe_user_id::uuid, nom, prenom, email, created_at, modified_at
 from unique_dcp;
-select count(*) from dcp; --621
+select count(*)
+from dcp; --621
 
-select distinct user_id  from dcp
+select distinct user_id
+from dcp
 except
-select id from auth.users; -- should be 0
+select id
+from auth.users; -- should be 0
 
-select count(*) from dcp
-    left join auth.users on dcp.user_id = users.id
-; -- 621
+select count(*)
+from dcp
+         left join auth.users on dcp.user_id = users.id
+;
+-- 621
 
 -- 4 droits
 ---- 4.a EPCIs
 with unique_droits as (
     select od.ademe_user_id,
+           new_collectivite_id,
            od.epci_id as old_epci_id,
            od.created_at
     from old.utilisateurdroits od
              join auth.users u on od.ademe_user_id::uuid = u.id
+             join old.new_collectivites on old_epci_id = od.epci_id
     where latest
       and ecriture
-),
-     new_epci_droits as (
-         select oe.uid as old_epci_id, e.id as new_id
-         from epci e
-                  join old.epci oe on e.siren = oe.siren
-         where latest
-     )
+)
 insert
 into private_utilisateur_droit (user_id, collectivite_id, role_name, active, created_at)
-select d.ademe_user_id::uuid, e.new_id, 'referent', true, d.created_at
-from unique_droits d
-         join new_epci_droits e on e.old_epci_id = d.old_epci_id;
+select d.ademe_user_id::uuid, new_collectivite_id, 'referent', true, d.created_at
+from unique_droits d;
 
-select count(*) from private_utilisateur_droit; -- 419 then 456
-select count(*) from old.utilisateurdroits; -- 634
+select count(*)
+from private_utilisateur_droit; -- 456
+select count(*)
+from old.utilisateurdroits; -- 634
 
-
------ 4.b Communes
--- 4 droits
-with unique_droits as (
-    select od.ademe_user_id,
-           od.epci_id as old_epci_id,
-           od.created_at
-    from old.utilisateurdroits od
-             join auth.users u on od.ademe_user_id::uuid = u.id
-    where latest
-      and ecriture
-),
-      new_communes_droits as (
-         select oe.uid as old_epci_id, c.id as new_commune_id
-         from commune c
-                  join old.epci oe on c.code = oe.insee
-         where latest
-     )
-insert
-into private_utilisateur_droit (user_id, collectivite_id, role_name, active, created_at)
-select d.ademe_user_id::uuid, c.new_commune_id, 'referent', true, d.created_at
-from unique_droits d
-         join new_communes_droits c on c.old_epci_id = d.old_epci_id;
+select nom, email, nc.collectivite_id
+from private_utilisateur_droit
+         join named_collectivite nc on private_utilisateur_droit.collectivite_id = nc.collectivite_id
+         join auth.users on private_utilisateur_droit.user_id = users.id
+;
+-- 456
 
 
 -- 5 Actions
@@ -172,13 +171,11 @@ with partitioned_old_statuts as (
          from partitioned_old_statuts
          where row_number = 1
      ),
-
      converted_action_id as (
          select id,
                 replace(replace(action_id, 'citergie__', 'cae_'), 'economie_circulaire__', 'eci_') as converted
          from old_statuts
      ),
-
      converted_statut as (
          select id,
                 case
@@ -188,26 +185,18 @@ with partitioned_old_statuts as (
                     when avancement = 'faite' then 'fait'
                     when avancement = 'pas_faite' then 'pas_fait'
                     else 'non_renseigne'
-                    end                         as avancement,
+                    end                             as avancement,
                 avancement not like 'non_concerne%' as concerne
          from old_statuts
      )
-    --  new_epcis as (
-    --      select oe.uid as old_epci_id, e.id as new_id
-    --      from epci e
-    --               join old.epci oe on e.siren = oe.siren
-    --      where latest
-    --  )
 insert
 into action_statut (collectivite_id, action_id, avancement, concerne, modified_by, modified_at)
-select nc.new_collectivite_id    as collectivite_id,
-       ca.converted as action_id,
+select nc.new_collectivite_id as collectivite_id,
+       ca.converted           as action_id,
        cs.avancement::avancement,
        cs.concerne,
-       ud
-           .user_id,
-       os
-           .modified_at
+       ud.user_id,
+       os.modified_at
 from old_statuts os
          join old.new_collectivites nc on os.epci_id = nc.old_epci_id
          join converted_statut cs on cs.id = os.id
@@ -222,11 +211,14 @@ from old_statuts os
 on conflict do nothing
 ;
 
-select count(*) from old.actionstatus oa
-join old.new_collectivites nc on nc.old_epci_id = oa.epci_id
+select count(*)
+from old.actionstatus oa
+         join old.new_collectivites nc on nc.old_epci_id = oa.epci_id
 where latest -- 23645
 ;
-select count(*) from action_statut; -- 20215
+select count(*)
+from action_statut;
+-- 20215
 
 -- 5.b Action commentaire
 with partitioned_old_commentaire as (
@@ -263,11 +255,14 @@ from old_commentaire oc
 on conflict do nothing
 ;
 
-select count(*) from old.actionmeta am
-                         join old.new_collectivites nc on nc.old_epci_id = am.epci_id
+select count(*)
+from old.actionmeta am
+         join old.new_collectivites nc on nc.old_epci_id = am.epci_id
 where latest -- 6899
 ;
-select count(*) from action_commentaire; -- 6168
+select count(*)
+from action_commentaire;
+-- 6168
 
 
 -- 6 - résultats des indicateurs référentiels
@@ -282,10 +277,10 @@ with partitioned_old_indicateur_resultats as (
      )
 insert
 into indicateur_resultat (collectivite_id, indicateur_id, valeur, annee, modified_at)
-select nc.new_collectivite_id  as collectivite_id,
-       nii.new_id as indicateur_id,
-       oir.value  as valeur,
-       oir.year   as annee,
+select nc.new_collectivite_id as collectivite_id,
+       nii.new_id             as indicateur_id,
+       oir.value              as valeur,
+       oir.year               as annee,
        modified_at
 
 from old_indicateur_resultats oir
@@ -316,10 +311,10 @@ with partitioned_old_indicateur_objectifs as (
      )
 insert
 into indicateur_objectif (collectivite_id, indicateur_id, valeur, annee, modified_at)
-select nc.new_collectivite_id  as collectivite_id,
-       nii.new_id as indicateur_id,
-       oir.value  as valeur,
-       oir.year   as annee,
+select nc.new_collectivite_id as collectivite_id,
+       nii.new_id             as indicateur_id,
+       oir.value              as valeur,
+       oir.year               as annee,
        modified_at
 
 from old_indicateur_objectifs oir
@@ -342,7 +337,7 @@ from indicateur_resultat ir
 -- a. mapping from old indicateur perso uid to new integer id
 create materialized view old.indicateur_perso_uid_mapping as
 with seq as (
-    select coalesce( max(id), 0) as last_id
+    select coalesce(max(id), 0) as last_id
     from indicateur_personnalise_definition
 )
 select distinct on (uid) uid                                           old_uid,
@@ -363,7 +358,7 @@ with partitioned as (
      ),
      data as (
          select mapping.new_id              id,
-                nc.new_collectivite_id                   collectivite_id,
+                nc.new_collectivite_id      collectivite_id,
                 nom                         titre,
                 description,
                 unite,
@@ -373,7 +368,10 @@ with partitioned as (
          from old_indicateur_personnalise_definition oipd
                   join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipd.uid
                   join old.new_collectivites nc on oipd.epci_id = nc.old_epci_id
-                  join lateral (select * from private_utilisateur_droit where collectivite_id = nc.new_collectivite_id limit 1) ud
+                  join lateral (select *
+                                from private_utilisateur_droit
+                                where collectivite_id = nc.new_collectivite_id
+                                limit 1) ud
                        on true
      )
 insert
@@ -413,12 +411,12 @@ with partitioned_old_indicateur_personnalise_resultat as (
      )
 insert
 into indicateur_personnalise_resultat(indicateur_id, collectivite_id, annee, valeur, modified_at)
-select mapping.new_id   indicateur_id,
-       nc.new_collectivite_id        collectivite_id,
-       oipr.year        annee,
-       oipr.value       valeur,
+select mapping.new_id         indicateur_id,
+       nc.new_collectivite_id collectivite_id,
+       oipr.year              annee,
+       oipr.value             valeur,
        -- ud.user_id modified_by,
-       oipr.modified_at modified_at
+       oipr.modified_at       modified_at
 from old_indicateur_personnalise_resultat oipr
          join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipr.indicateur_id
          join old.new_collectivites nc on oipr.epci_id = nc.old_epci_id;
@@ -446,12 +444,12 @@ with partitioned_old_indicateur_personnalise_objectif as (
 
 insert
 into indicateur_personnalise_objectif(indicateur_id, collectivite_id, annee, valeur, modified_at)
-select mapping.new_id   indicateur_id,
-       nc.new_collectivite_id        collectivite_id,
-       oipr.year        annee,
-       oipr.value       valeur,
+select mapping.new_id         indicateur_id,
+       nc.new_collectivite_id collectivite_id,
+       oipr.year              annee,
+       oipr.value             valeur,
        -- ud.user_id modified_by,
-       oipr.modified_at modified_at
+       oipr.modified_at       modified_at
 from old_indicateur_personnalise_objectif oipr
          join old.indicateur_perso_uid_mapping mapping on mapping.old_uid = oipr.indicateur_id
          join old.new_collectivites nc on oipr.epci_id = nc.old_epci_id;
@@ -477,9 +475,6 @@ where latest
   and e.siren is null
   and oe.siren != '' -- only old epci with a siren
 ;
-
-
-
 
 
 
@@ -564,7 +559,7 @@ into fiche_action (modified_at,
                    indicateur_personnalise_ids)
 select modified_at,
        uid::uuid,
-       nc.new_collectivite_id                           collectivite_id,
+       nc.new_collectivite_id              collectivite_id,
        case
            when avancement like 'fait%' then 'fait'
            when avancement = 'en_cours' then 'en_cours'
@@ -606,8 +601,8 @@ from fiche_action fa -- 655
 truncate plan_action;
 
 insert into plan_action (uid, collectivite_id, nom, categories, fiches_by_category, created_at, modified_at)
-select gen_random_uuid() as uuid,
-       nc.new_collectivite_id         as collectivite_id,
+select gen_random_uuid()      as uuid,
+       nc.new_collectivite_id as collectivite_id,
        nom,
        categories,
        fiches_by_category,
@@ -624,8 +619,33 @@ from old.planaction pa
          join old.new_collectivites nc on nc.old_epci_id = pa.epci_id
 where pa.latest; -- 317
 
-select count(*)
-from plan_action  -- 655
-;
 
-select count(*) from collectivite;
+select count(*)
+from collectivite c
+where id not in (
+    select distinct collectivite_id
+    from plan_action
+); -- 5159
+
+-- Create default plans
+with without_plan as (
+    select *
+    from collectivite c
+    where id not in (
+        select distinct collectivite_id
+        from plan_action
+    )
+)
+insert
+into plan_action
+(collectivite_id,
+ uid,
+ nom,
+ categories,
+ fiches_by_category)
+select id,
+       gen_random_uuid(),
+       'Plan d''action de la collectivité',
+       '[]',
+       '[]'
+from without_plan;
