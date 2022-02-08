@@ -21,6 +21,11 @@ jobs:
     steps:
       # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: ${{env.app-directory}}/package-lock.json
 
       # Launch docker
       - name: Launch docker
