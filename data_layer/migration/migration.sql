@@ -335,6 +335,7 @@ from indicateur_resultat ir
 
 -- 8 - définitions, résultats et objectifs des indicateurs personnalisés
 -- a. mapping from old indicateur perso uid to new integer id
+drop materialized view if exists old.indicateur_perso_uid_mapping;
 create materialized view old.indicateur_perso_uid_mapping as
 with seq as (
     select coalesce(max(id), 0) as last_id
