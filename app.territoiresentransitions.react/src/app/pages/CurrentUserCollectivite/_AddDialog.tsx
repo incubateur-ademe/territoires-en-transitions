@@ -142,11 +142,9 @@ export const SelectCollectiviteDialog = () => {
   >([]);
 
   useEffect(() => {
-    if (opened) {
-      allCollectiviteReadEndpoint
-        .getBy({})
-        .then(data => setAllCollectiviteReads(data));
-    }
+    allCollectiviteReadEndpoint
+      .getBy({})
+      .then(data => setAllCollectiviteReads(data));
   }, []);
 
   const [selectedCollectivite, setSelectedCollectivite] =
