@@ -1,7 +1,12 @@
-import {myCollectivitesPath, signInPath} from 'app/paths';
+import {
+  myCollectivitesPath,
+  signInPath,
+  resetPwdPath,
+  resetPwdToken,
+} from 'app/paths';
 import {authBloc} from 'core-logic/observables/authBloc';
 import {reaction} from 'mobx';
-import {useHistory} from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 import {currentCollectiviteBloc} from 'core-logic/observables';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 
@@ -15,18 +20,29 @@ export const CollectiviteRedirector = () => {
 
 export const ConnectedRedirector = () => {
   const history = useHistory();
+  const {hash} = useLocation();
+
+  const {type: _type, access_token} = parseHash(hash);
+  if (access_token && _type === 'recovery') {
+    // on est en mode récupération de mdp
+    history.push(resetPwdPath.replace(`:${resetPwdToken}`, access_token));
+    return null;
+  }
 
   reaction(
     () => authBloc.connected,
     connected => {
       console.log('authBloc connected changed', connected);
+
       if (
         connected &&
         authBloc.invitationState !== 'waitingForLogin' &&
         authBloc.invitationState !== 'waitingForAcceptation'
       ) {
         history.push(myCollectivitesPath);
-      } else history.push(signInPath);
+      } else {
+        history.push(signInPath);
+      }
     }
   );
 
@@ -41,3 +57,19 @@ export const ConnectedRedirector = () => {
 
   return null;
 };
+
+// génère un dictionnaire de clé/valeur à partir d'une chaîne de la forme
+// #cle=valeur&cle2=val2
+type TKeyValues = {[k: string]: string};
+const parseHash = (hash: string): TKeyValues =>
+  hash
+    .substring(1) // saute le # en début de chaîne
+    .split('&') // sépare les groupes de clé/valeur
+    .reduce((dict, kv) => {
+      // ajoute la clé/valeur au dictionnaire
+      const [k, v] = kv.split('=');
+      return {
+        ...dict,
+        [k]: v,
+      };
+    }, {});
