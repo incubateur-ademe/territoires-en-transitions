@@ -33,11 +33,4 @@ describe('authBloc', () => {
     );
     expect(authBloc.userId).toBeNull();
   });
-  it('should catch error when resetPasswordForEmail failed', async () => {
-    const authBloc = new AuthBloc();
-    authBloc.resetPasswordForEmail({email: 'unkownuser@gmail.com'});
-    await when(() => !!authBloc.authError);
-    expect(authBloc.authError).toBe('Email non valide');
-    expect(authBloc.connected).toBe(false);
-  });
 });

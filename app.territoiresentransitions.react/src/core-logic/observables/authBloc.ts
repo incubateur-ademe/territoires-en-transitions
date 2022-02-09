@@ -72,20 +72,6 @@ export class AuthBloc {
     });
   }
 
-  resetPasswordForEmail({email}: {email: string}) {
-    supabaseClient.auth.api
-      .resetPasswordForEmail(email)
-      .then(response => {
-        if (response.error) {
-          console.log(response.error?.message);
-          this.setAuthError('Email non valide');
-        }
-      })
-      .catch(error => {
-        console.log('resetPasswordForEmail error: ', error);
-      });
-  }
-
   get connected() {
     return this.userId !== null;
   }
