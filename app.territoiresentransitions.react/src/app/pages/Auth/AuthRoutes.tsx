@@ -2,7 +2,8 @@ import {Route} from 'react-router-dom';
 import {IdentityPage} from 'app/pages/Auth/IdentityPage';
 import {RegisterPage} from 'app/pages/Auth/RegisterPage';
 import {SignInPage} from 'app/pages/Auth/SignInPage';
-import {identityPath, signUpPath, signInPath} from 'app/paths';
+import {identityPath, signUpPath, signInPath, resetPwdPath} from 'app/paths';
+import {ResetPasswordPage} from './ResetPasswordPage';
 
 export const AuthRoutes = () => {
   return (
@@ -15,6 +16,9 @@ export const AuthRoutes = () => {
       </Route>
       <Route path={signInPath}>
         <SignInPage />
+      </Route>
+      <Route path={resetPwdPath}>
+        <ResetPasswordPage />
       </Route>
     </>
   );
