@@ -54,7 +54,7 @@ export const SignInPage = () => {
                 component={LabeledTextField}
               />
               <Spacer size={2} />
-              <PasswordRecovery email={values.email} bloc={authBloc} />
+              <PasswordRecovery email={values.email} />
               <Spacer size={4} />
               <AuthError bloc={authBloc} />
               <div className="flex flex-row-reverse justify-between">
