@@ -24,12 +24,31 @@ export const Selectors = {
       'Mot de passe oublié': '[data-test=forgotten-pwd]',
     },
   },
-  'formulaire de réinitialisation du mdp': {
+  'demande de lien de réinitialisation du mdp': {
     selector: '[data-test=PasswordRecovery]',
     children: {
       email: 'input[name=email]',
       Valider: 'button[type=submit]',
     },
+  },
+  'message lien envoyé': {
+    selector: '[data-test=PasswordRecoverySucceed]',
+    children: {
+      'Retour à la connexion': 'button',
+    },
+  },
+  'formulaire de réinitialisation du mdp': {
+    selector: '[data-test=ResetPassword]',
+    children: {
+      mdp: 'input[name=password]',
+      Valider: 'button[type=submit]',
+    },
+  },
+  'réinitialisation du mot de passe réussie': {
+    selector: '[data-test=ResetPasswordSucceed]',
+  },
+  'réinitialisation du mot de passe en erreur': {
+    selector: '[data-test=ResetPasswordFailed]',
   },
   'mes collectivités': {
     selector: '[data-test=CurrentUserCollectivites]',

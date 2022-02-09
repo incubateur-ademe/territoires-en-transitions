@@ -3,6 +3,15 @@ import { Selectors } from './selectors';
 
 defineStep("j'ouvre le site", () => cy.visit('/'));
 
+const fakeToken = 'header.payload.sign';
+defineStep(
+  "j'ouvre le site depuis un lien de réinitialisation du mot de passe",
+  () =>
+    cy.visit(
+      `/#access_token=${fakeToken}&refresh_token=y&expires_in=z&token_type=bearer&type=recovery`
+    )
+);
+
 // Met en pause le déroulement d'un scénario.
 // Associé avec la directive @focus cela permet de debugger facilement
 // les tests.
@@ -24,7 +33,13 @@ const Expectations = {
 export const checkExpectation = (selector, expectation, value) => {
   const c = Expectations[expectation];
   if (!c) return;
-  cy.get(selector).should(c, value);
+  if (typeof c === 'object' && c.cond) {
+    cy.get(selector).should(c.cond, value || c.value);
+  } else if (typeof c === 'function') {
+    c(selector, value);
+  } else {
+    cy.get(selector).should(c, value);
+  }
 };
 
 defineStep(/la page vérifie les conditions suivantes/, (dataTable) => {
@@ -58,6 +73,17 @@ defineStep(
 const Requests = {
   'auth.resetPasswordForEmail': {
     ok: ['/auth/v*/recover', { statusCode: 200, body: {} }],
+    error: ['/auth/v*/recover', { statusCode: 400, body: {} }],
+  },
+  'auth.updateUserPassword': {
+    ok: ['PUT', '/auth/v*/user', { statusCode: 200, body: {} }],
+    error: [
+      '/auth/v*/user',
+      {
+        statusCode: 400,
+        body: { error: 'some API error here' },
+      },
+    ],
   },
 };
 
