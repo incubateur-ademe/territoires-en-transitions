@@ -3,6 +3,7 @@ import {CrossExpandPanelWithHtmlContent} from 'ui/shared/CrossExpandPanelWithHtm
 import {
   useActionContexte,
   useActionExemples,
+  useActionPreuve,
   useActionResources,
 } from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -53,7 +54,7 @@ export const ActionPreuvesExpandPanel = ({
 }: {
   action: ActionDefinitionSummary;
 }) => {
-  const preuve = useActionExemples(action.id);
+  const preuve = useActionPreuve(action.id);
   return <ActionExpandPanelAdemeContent content={preuve} title="Preuves" />;
 };
 
