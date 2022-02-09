@@ -2,6 +2,8 @@ export const authBasePath = '/auth';
 export const signInPath = `${authBasePath}/signin`;
 export const signUpPath = `${authBasePath}/signup`;
 export const identityPath = `${authBasePath}/identity`;
+export const resetPwdToken = 'token';
+export const resetPwdPath = `${authBasePath}/recover/:${resetPwdToken}`;
 
 export const invitationIdParam = 'invitationId';
 export const invitationLandingPath = `/invitation/:${invitationIdParam}`;
