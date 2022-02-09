@@ -44,17 +44,22 @@ const ResetPasswordForm = ({
 
   if (state === 'failure') {
     return (
-      <section className="max-w-2xl mx-auto p-5 text-center">
+      <section
+        data-test="ResetPasswordFailed"
+        className="max-w-2xl mx-auto p-5 text-center"
+      >
         <Spacer />
         <p>Le mot de passe n'a pas pu être réinitialisé... </p>
-        {errorMessage && <p>{errorMessage}</p>}
-        {!errorMessage && <p>Erreur indéterminée</p>}
+        <p>{errorMessage || 'Erreur indéterminée'}</p>
         <Spacer />
       </section>
     );
   } else if (state === 'success') {
     return (
-      <section className="max-w-2xl mx-auto p-5 text-center">
+      <section
+        data-test="ResetPasswordSucceed"
+        className="max-w-2xl mx-auto p-5 text-center"
+      >
         <Spacer />
         <p>Votre mot de passe a bien été réinitialisé !</p>
         <Spacer />
@@ -88,11 +93,15 @@ const ResetPasswordForm = ({
   };
 
   return (
-    <section className="max-w-2xl mx-auto p-5">
+    <section data-test="ResetPassword" className="max-w-2xl mx-auto p-5">
       <Spacer />
       <h2 className="fr-h2 flex justify-center">
-        Réinitialiser votre mot de passe
+        Créer un nouveau mot de passe
       </h2>
+      <p className="mb-4">
+        C’est presque terminé ! Choisissez votre nouveau mot de passe et vous
+        pourrez vous connecter.
+      </p>
       <div className="mx-auto">
         <Formik<UpdatePasswordParams>
           initialValues={initialData}
