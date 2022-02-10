@@ -1,8 +1,8 @@
 /**
- * Intercepte les requêtes et fourni une réponse prédéfinie
+ * Réponses prédéfinies pour l'interception de requêtes à l'API
  */
 
-const LocalMocks = {
+export const LocalMocks = {
   'auth.resetPasswordForEmail': {
     ok: ['/auth/v*/recover', { statusCode: 200, body: {} }],
     error: ['/auth/v*/recover', { statusCode: 400, body: {} }],
@@ -18,7 +18,3 @@ const LocalMocks = {
     ],
   },
 };
-
-beforeEach(() => {
-  cy.wrap(LocalMocks).as('LocalMocks');
-});
