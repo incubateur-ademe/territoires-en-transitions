@@ -50,7 +50,7 @@ const _ClaimCollectiviteDialogContent = ({
 
   if (success === null)
     return (
-      <div className="items-center">
+      <div className="items-center" data-test="confirm-selection-msg">
         <ul>
           <li>Vous souhaitez rejoindre {collectivite.nom}</li>
           <li>Cette collectivité n'est pas encore active.</li>
@@ -152,13 +152,14 @@ export const SelectCollectiviteDialog = () => {
 
   return (
     <UiDialogButton
+      data-test="btn-select-collectivite"
       title="Associer une collectivité à mon compte"
       buttonClasses="fr-btn--secondary"
       dialogClasses="overflow-hidden"
       opened={opened}
       setOpened={setOpened}
     >
-      <div className="py-7 min-h-[400px]">
+      <div data-test="collectivite-picker" className="py-7 min-h-[400px]">
         <div className="flex flex-row justify-center">
           <AutocompleteInput
             label="Nom de la collectivité"
@@ -192,7 +193,7 @@ export const SelectCollectiviteDialog = () => {
         <Spacer />
         <_ConditionalSelectDialogContent collectivite={selectedCollectivite} />
         {!selectedCollectivite && (
-          <p className="fr-text--sm">
+          <p className="fr-text--sm" data-test="no-selection-msg">
             Vous ne trouvez pas la collectivité que vous recherchez ? <br />
             Merci d'envoyer un mail à{' '}
             <a href="mailto:contact@territoiresentransitions.fr">
