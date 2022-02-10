@@ -28,7 +28,7 @@ comment on function is_authenticated is
 
 create or replace function
     is_service_role()
-    returns text
+    returns boolean
 as
 $$
 begin
