@@ -35,4 +35,31 @@ Content-Type: application/json
 %}
 
 
+### Is service role with anon key
+POST {{api}}/rest/v1/rpc/is_service_role
+apikey: {{anon}}
+Authorization: Bearer {{anon}}
+Content-Type: application/json
 
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 204");
+        client.assert(response.body === "false", "Response body is not false");
+    });
+%}
+
+
+### Is service role with service key
+POST {{api}}/rest/v1/rpc/is_service_role
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 204");
+        client.assert(response.body === "true", "Response body is not true");
+    });
+%}
