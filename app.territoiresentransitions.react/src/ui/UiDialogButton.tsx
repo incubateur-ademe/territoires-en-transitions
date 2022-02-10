@@ -9,6 +9,7 @@ interface UiDialogButtonProps {
   children: React.ReactNode;
   opened: boolean;
   setOpened: React.Dispatch<React.SetStateAction<boolean>>;
+  'data-test'?: string;
 }
 
 const defaultProps = {
@@ -18,6 +19,7 @@ const defaultProps = {
 export const UiDialogButton = (props: UiDialogButtonProps) => (
   <div onClick={event => event.stopPropagation()}>
     <button
+      data-test={props['data-test']}
       className={
         `${props.useFrBtn ? 'fr-btn ' : ''}` + `${props.buttonClasses ?? ''}`
       }
