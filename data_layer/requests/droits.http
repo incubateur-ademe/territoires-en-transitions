@@ -85,13 +85,3 @@ POST {{api}}/rest/v1/rpc/is_authenticated
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
-### Update droits as service
-PATCH {{api}}/rest/v1/private_utilisateur_droit?id=eq.5
-apikey: {{service}}
-Authorization: Bearer {{service}}
-Prefer: return=representation
-Content-Type: application/json
-
-{ "active": false }
-
-
