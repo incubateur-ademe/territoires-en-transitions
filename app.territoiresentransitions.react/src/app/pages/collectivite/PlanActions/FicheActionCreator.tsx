@@ -6,7 +6,6 @@ import {
 } from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
 import {v4 as uuid} from 'uuid';
 import {useQuery} from 'core-logic/hooks/query';
-import {RetourButton} from 'ui/shared/RetourButton';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';
 import {makeCollectiviteDefaultPlanActionUrl} from 'app/paths';
@@ -62,7 +61,6 @@ const FicheActionCreator = () => {
 
   return (
     <main className="fr-container pt-8">
-      <RetourButton />
       <h1 className="fr-h1 pt-5">Ajouter une fiche action</h1>
       <FicheActionForm
         fiche={fiche}
