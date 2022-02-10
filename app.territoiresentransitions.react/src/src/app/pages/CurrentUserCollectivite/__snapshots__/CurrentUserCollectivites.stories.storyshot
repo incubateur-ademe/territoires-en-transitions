@@ -77,6 +77,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
     >
       <button
         className="fr-btn fr-btn--secondary"
+        data-test="btn-select-collectivite"
         onClick={[Function]}
       >
         Associer une collectivité à mon compte
@@ -215,6 +216,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
     >
       <button
         className="fr-btn fr-btn--secondary"
+        data-test="btn-select-collectivite"
         onClick={[Function]}
       >
         Associer une collectivité à mon compte
@@ -405,6 +407,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
     >
       <button
         className="fr-btn fr-btn--secondary"
+        data-test="btn-select-collectivite"
         onClick={[Function]}
       >
         Associer une collectivité à mon compte
@@ -647,6 +650,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
     >
       <button
         className="fr-btn fr-btn--secondary"
+        data-test="btn-select-collectivite"
         onClick={[Function]}
       >
         Associer une collectivité à mon compte
