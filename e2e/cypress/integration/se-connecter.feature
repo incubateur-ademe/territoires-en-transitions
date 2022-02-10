@@ -64,7 +64,6 @@ Fonctionnalité: Accéder au site et se connecter
       | mes collectivités       | absent    |                                                 |
       | footer                  | visible   |                                                 |
 
-
   Scénario: Demander un lien de réinitialisation du mot de passe
     Etant donné que j'ouvre le site
     Et que je clique sur le bouton "Se connecter" du "header"
