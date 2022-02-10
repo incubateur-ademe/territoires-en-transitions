@@ -22,6 +22,11 @@ create policy allow_read
     for select
     using (true);
 
+create policy allow_update
+    on private_utilisateur_droit
+    for update
+    using (is_service_role());
+
 --------------------------------
 -------- RLS HELPERS -----------
 --------------------------------
