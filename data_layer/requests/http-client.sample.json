@@ -2,6 +2,7 @@
   "local_test": {
     "api": "http://localhost:8000",
     "anon": "xx",
+    "service": "yy",
     "yolo_mail": "yolo@dodo.com",
     "yolo_pass": "yolododo"
   }
