@@ -34,7 +34,16 @@ Content-Type: application/json
     });
 %}
 
+### Create a new user
+POST {{api}}/auth/v1/signup
+apikey: {{anon}}
+Authorization: Bearer {{anon}}
+Content-Type: application/json
 
+{
+  "email": "yele@dede.com",
+  "password": "yeledede"
+}
 ### Is service role with anon key
 POST {{api}}/rest/v1/rpc/is_service_role
 apikey: {{anon}}
