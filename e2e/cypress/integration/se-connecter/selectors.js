@@ -2,7 +2,7 @@
  * Sélecteurs d'éléments pour les fonctionnalités d'auth.
  */
 
-const LocalSelectors = {
+export const LocalSelectors = {
   'formulaire de connexion': {
     selector: '[data-test=SignInPage]',
     children: {
@@ -39,7 +39,3 @@ const LocalSelectors = {
     selector: '[data-test=ResetPasswordFailed]',
   },
 };
-
-beforeEach(() => {
-  cy.wrap(LocalSelectors).as('LocalSelectors');
-});

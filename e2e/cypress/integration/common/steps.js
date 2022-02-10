@@ -6,8 +6,27 @@
 
 import { Selectors } from './selectors';
 import { Expectations } from './expectations';
+import { LocalSelectors as AuthSelectors } from '../se-connecter/selectors';
 
 defineStep("j'ouvre le site", () => cy.visit('/'));
+
+const Users = {
+  yolo: {
+    email: 'yolo@dodo.com',
+    password: 'yolododo',
+  },
+};
+const SignInPage = AuthSelectors['formulaire de connexion'];
+defineStep(/je suis connecté en tant que "([^"]*)"/, function (userName) {
+  const u = Users[userName];
+  assert(u, 'utilisateur non trouvé');
+  cy.visit('/auth/signin');
+  cy.get(SignInPage.selector).within(() => {
+    cy.get(SignInPage.children.email).clear().type(u.email);
+    cy.get(SignInPage.children.mdp).clear().type(u.password);
+    cy.get(SignInPage.children.Valider).click();
+  });
+});
 
 // Met en pause le déroulement d'un scénario.
 // Associé avec le tag @focus cela permet de debugger facilement les tests.
@@ -43,26 +62,48 @@ defineStep(/la page vérifie les conditions suivantes/, function (dataTable) {
     checkExpectation(resolveSelector(this, elem).selector, expectation, value);
   });
 });
-
 defineStep(
-  /je clique sur le bouton "([^"]*)" du "([^"]*)"/,
-  function (subElement, elem) {
-    const parent = resolveSelector(this, elem);
-    cy.get(parent.selector).find(parent.children[subElement]).click();
+  /le "([^"]*)" vérifie les conditions suivantes/,
+  function (parentName, dataTable) {
+    const parent = resolveSelector(this, parentName);
+    const rows = dataTable.rows();
+    cy.wrap(rows).each(([elem, expectation, value]) => {
+      checkExpectation(parent.children[elem], expectation, value);
+    });
+  }
+);
+defineStep(
+  /le "([^"]*)" vérifie la condition "([^"]*)"/,
+  function (elem, expectation) {
+    checkExpectation(resolveSelector(this, elem).selector, expectation);
   }
 );
 
+function handleClickOnElement(subElement, elem) {
+  const parent = resolveSelector(this, elem);
+  cy.get(parent.selector).find(parent.children[subElement]).click();
+}
+defineStep(
+  /je clique sur le bouton "([^"]*)" du "([^"]*)"/,
+  handleClickOnElement
+);
+defineStep(
+  /je clique sur le bouton "([^"]*)" de la page "([^"]*)"/,
+  handleClickOnElement
+);
+
+function fillFormWithValues(elem, dataTable) {
+  const parent = resolveSelector(this, elem);
+  cy.get(parent.selector).within(() => {
+    const rows = dataTable.rows();
+    cy.wrap(rows).each(([field, value]) => {
+      cy.get(parent.children[field]).clear().type(value);
+    });
+  });
+}
 defineStep(
   /je remplis le "([^"]*)" avec les valeurs suivantes/,
-  function (elem, dataTable) {
-    const parent = resolveSelector(this, elem);
-    cy.get(parent.selector).within(() => {
-      const rows = dataTable.rows();
-      cy.wrap(rows).each(([field, value]) => {
-        cy.get(parent.children[field]).clear().type(value);
-      });
-    });
-  }
+  fillFormWithValues
 );
 
 defineStep(/l'appel à "([^"]*)" va répondre "([^"]*)"/, function (name, reply) {
@@ -70,3 +111,7 @@ defineStep(/l'appel à "([^"]*)" va répondre "([^"]*)"/, function (name, reply)
   assert(r, 'mock non trouvé');
   cy.intercept(...r).as(name);
 });
+
+defineStep('je clique en dehors de la boîte de dialogue', () =>
+  cy.get('body').click(10, 10)
+);
