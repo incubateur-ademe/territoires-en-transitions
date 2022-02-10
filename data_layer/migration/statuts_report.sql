@@ -18,7 +18,7 @@ select array_to_string(contacts, ', '),
        else 'climat air énergie'
        end as referentiel,
        split_part(action_id, '__', 2) as tache,
-       'https://upcoming-client.osc-fr1.scalingo.io/collectivite/' || collectivite_id || '/tableau_bord' as lien
+       'https://app.territoiresentransitions.fr/collectivite/' || collectivite_id || '/tableau_bord' as lien
 from nc
     join named_collectivite c on c.collectivite_id = new_collectivite_id
     left join lateral (
