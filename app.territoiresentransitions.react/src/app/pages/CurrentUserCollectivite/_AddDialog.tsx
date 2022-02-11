@@ -150,6 +150,13 @@ export const SelectCollectiviteDialog = () => {
   const [selectedCollectivite, setSelectedCollectivite] =
     React.useState<AllCollectiviteRead>();
 
+  useEffect(() => {
+    // uniquement à l'ouverture du dialogue
+    if (opened) {
+      setSelectedCollectivite(undefined);
+    }
+  }, [opened]);
+
   return (
     <UiDialogButton
       data-test="btn-select-collectivite"
