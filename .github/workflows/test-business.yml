@@ -22,6 +22,13 @@ jobs:
       # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2
 
+      # Launch docker
+      - name: Launch docker
+        run: |
+          cp .env.sample .env
+          docker-compose up --build -d
+        working-directory: ${{env.datalayer-docker-directory}}
+
       # Set up Python
       - name: Set up Python 3.x
         uses: actions/setup-python@v2
@@ -31,13 +38,24 @@ jobs:
       # Install the dependencies manager.
       - name: Install pipenv
         run: |
+          cp .env.sample .env
           python -m pip install --upgrade pipenv wheel
             pipenv install
             pipenv install --dev
         working-directory: ${{env.business-directory}}
 
 
+      # [Prepare DB] Insert fakes
+      - name: Insert fake data in database
+        run: sh insert_all.sh
+        working-directory: ${{env.datalayer-directory}}
+
+      # Restart postgres service
+      - name: Restart postgres service
+        run: docker-compose restart rest
+        working-directory: ${{env.datalayer-docker-directory}}
+
       # Use Pytest to run tests
-      - name: Unit tests
-        run:  pipenv run pytest tests/unit
+      - name: Tests
+        run:  pipenv run pytest tests
         working-directory: ${{env.business-directory}}
