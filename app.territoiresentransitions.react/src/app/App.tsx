@@ -5,6 +5,7 @@ import {
   RouteProps,
   Switch,
 } from 'react-router-dom';
+import {E2E} from './E2E';
 import {Footer, FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
@@ -42,6 +43,7 @@ export const App = () => {
     <MatomoProvider value={matomoInstance}>
       <MuiThemeProvider theme={theme}>
         <Router>
+          <E2E />
           <ScrollToTop />
           <Toasters />
           <ConnectedRedirector />
