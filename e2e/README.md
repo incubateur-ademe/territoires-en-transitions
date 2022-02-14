@@ -79,7 +79,7 @@ Fonctionnalité: Nom de la fonctionnalité à tester
 
 La [définition d'une étape de scénario](https://cucumber.io/docs/cucumber/step-definitions/), permet d'associer une phrase en langage naturel et une ou plusieurs opérations (attentes, actions).
 
-La fonction globale `defineStep` permet de réaliser cette implémentation.
+La fonction globale `Given` permet de réaliser cette implémentation.
 
 Les définitions du sous-dossier `cypress/integration/common` sont communes à toutes les fonctionnalités.
 
