@@ -44,7 +44,10 @@ export const SimpleCollectiviteCard = ({
   collectivite: ElsesCollectiviteRead | OwnedCollectiviteRead;
 }) => {
   return (
-    <div className="w-80 flex flex-col items-center justify-between p-8 bg-beige border-t-4">
+    <div
+      data-test="SimpleCollectiviteCard"
+      className="w-80 flex flex-col items-center justify-between p-8 bg-beige border-t-4"
+    >
       <h3 className="fr-h3 p-2 text-center ">{collectivite.nom}</h3>
       <div className="flex flex-col gap-2">
         <SimpleCollectiviteCardPrimaryLink
