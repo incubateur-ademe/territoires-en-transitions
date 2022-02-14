@@ -1,5 +1,7 @@
 import abc
-from supabase.client import Client
+
+# from supabase.client import Client
+from supabase_client import Client
 
 
 class SupabaseError(Exception):

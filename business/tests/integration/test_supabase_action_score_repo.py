@@ -13,7 +13,8 @@ def supabase_repo(supabase_client) -> SupabaseActionScoreRepository:
     return SupabaseActionScoreRepository(supabase_client)
 
 
-def test_adding_and_updating_entities_for_different_collectivites_to_repo_should_write_in_postgres(
+@pytest.mark.asyncio
+async def test_adding_and_updating_entities_for_different_collectivites_to_repo_should_write_in_postgres(
     supabase_repo,
 ):
     collectivite_id = 23
@@ -23,7 +24,7 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
     supabase_repo.get_now = lambda: insert_date
 
     # create score for action "cae_1.1" on this collectivite
-    supabase_repo.add_entities_for_collectivite(
+    await supabase_repo.add_entities_for_collectivite(
         collectivite_id=collectivite_id,
         entities=[
             ActionScore(
@@ -42,10 +43,10 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
         ],
     )
     # check score has been inserted
-    stored_scores = (
+    stored_scores = await (
         supabase_repo.table.select("*")
         .eq("collectivite_id", str(collectivite_id))
-        .execute()
+        .query()
     )
 
     assert stored_scores["data"] == [

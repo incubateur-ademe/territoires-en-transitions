@@ -1,8 +1,11 @@
 from typing import List
 
-from supabase.client import Client
+# from supabase.client import Client
+from supabase_client import Client
+from supabase_client.supabase_client import TableClient
 
 from business.core.domain.models.referentiel import ActionReferentiel
+from business.evaluation.adapters import supabase_table_names
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
@@ -15,18 +18,20 @@ from business.utils.supabase_repo import SupabaseError, SupabaseRepository
 
 
 class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepository):
-    def get_all_definitions_from_referentiel(
+    async def get_all_definitions_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionDefinition]:
-        result = (
+        result = await (
             self.supabase_client.table("action_definition")
-            .select("*")  # type: ignore
+            .select("*")
             .eq("referentiel", referentiel)
-            .execute()
+            .query()
         )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
+        if not result:
+            raise SupabaseError()
+        error, rows = result
+        if error or not rows:
+            raise SupabaseError(error)
 
         return [
             ActionDefinition(
@@ -45,20 +50,22 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
             for row in rows
         ]
 
-    def get_all_points_from_referentiel(
+    async def get_all_points_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionComputedPoint]:
-        result = (
+        result = await (
             self.supabase_client.table("action_computed_points")
-            .select("*")  # type: ignore
+            .select("*")
             .like(
                 "action_id", f"{referentiel}%"
             )  # TODO : find a better way to infer the referentiel (make a view ? )
-            .execute()
+            .query()
         )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
+        if not result:
+            raise SupabaseError()
+        error, rows = result
+        if error or not rows:
+            raise SupabaseError(error)
 
         return [
             ActionComputedPoint(
@@ -69,18 +76,20 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
             for row in rows
         ]
 
-    def get_all_children_from_referentiel(
+    async def get_all_children_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionChildren]:
-        result = (
+        result = await (
             self.supabase_client.table("business_action_children")
-            .select("*")  # type: ignore
+            .select("*")
             .eq("referentiel", referentiel)
-            .execute()
+            .query()
         )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
+        if not result:
+            raise SupabaseError()
+        error, rows = result
+        if error or not rows:
+            raise SupabaseError(error)
 
         return [
             ActionChildren(
@@ -91,30 +100,32 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
             for row in rows
         ]
 
-    def get_all_action_ids_from_referentiel(
+    async def get_all_action_ids_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionId]:
-        result = (
+        result = await (
             self.supabase_client.table("action_relation")
-            .select("id")  # type: ignore
+            .select("id")
             .eq("referentiel", referentiel)
-            .execute()
+            .query()
         )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
+        if not result:
+            raise SupabaseError()
+        error, rows = result
+        if error or not rows:
+            raise SupabaseError(error)
 
         return [row["id"] for row in rows]
 
-    def get_all_indicateur_ids(
+    async def get_all_indicateur_ids(
         self,
     ) -> List[IndicateurId]:
-        result = (
-            self.supabase_client.table("indicateur_definition").select("id").execute()  # type: ignore
-        )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
+        result = await self.indicateur_definition_table.select("id").query()
+        if not result:
+            raise SupabaseError()
+        error, rows = result
+        if error or not rows:
+            raise SupabaseError(error)
 
         return [row["id"] for row in rows]
 
@@ -126,8 +137,31 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     ):
         raise NotImplementedError
 
-    def add_indicateurs(
+    async def add_indicateurs(
         self,
         indicateurs: List[Indicateur],
     ):
-        raise NotImplementedError
+        result = await self.indicateur_definition_table.insert(
+            [
+                {
+                    "id": indicateur.indicateur_id,
+                    "identifiant": indicateur.identifiant,
+                    "indicateur_group": indicateur.indicateur_group,
+                    "nom": indicateur.nom,
+                    "unite": indicateur.unite,
+                    "description": indicateur.description,
+                    "valeur_indicateur": indicateur.valeur_indicateur,
+                    "obligation_eci": indicateur.obligation_eci,
+                }
+                for indicateur in indicateurs
+            ]
+        )
+        if not result:
+            raise SupabaseError()
+        error, rows = result
+        if error or not rows:
+            raise SupabaseError(error)
+
+    @property
+    def indicateur_definition_table(self) -> TableClient:
+        return self.supabase_client.table(supabase_table_names.indicateur_definition)
