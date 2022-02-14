@@ -18,7 +18,7 @@ const SimpleCollectiviteCardPrimaryLink = (props: {
   id: number;
 }) => (
   <Link
-    className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+    className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
     to={props.linkTo}
   >
     {props.label}
@@ -31,7 +31,7 @@ const SimpleCollectiviteCardSecondaryLink = (props: {
   id: number;
 }) => (
   <Link
-    className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+    className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
     to={props.linkTo}
   >
     {props.label}
