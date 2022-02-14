@@ -26,6 +26,7 @@ Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {
     cy.get(SignInPage.children.mdp).clear().type(u.password);
     cy.get(SignInPage.children.Valider).click();
   });
+  cy.get(SignInPage.selector).should('not.exist');
 });
 
 // Met en pause le déroulement d'un scénario.
