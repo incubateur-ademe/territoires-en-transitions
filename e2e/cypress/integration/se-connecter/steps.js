@@ -8,7 +8,7 @@ beforeEach(() => {
 });
 
 const fakeToken = 'header.payload.sign';
-defineStep(
+Given(
   "j'ouvre le site depuis un lien de réinitialisation du mot de passe",
   () =>
     cy.visit(
