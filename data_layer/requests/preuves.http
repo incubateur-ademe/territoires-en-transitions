@@ -19,12 +19,48 @@ Content-Type: application/json
 
 ### Create a bucket
 POST {{api}}/storage/v1/bucket
-apikey: {{anon}}
-Authorization: Bearer {{auth_token}}
+apikey: {{service}}
+Authorization: Bearer {{service}}
 Content-Type: application/json
 
 {
-  "id": "yo",
-  "name": "yo",
-  "public": false
+  "id": "preuves",
+  "name": "preuves",
+  "public": true
+}
+
+
+### Upload a file
+POST {{api}}/storage/v1/object/preuves/preuve_input.txt
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+x-upsert: true
+cacheControl: 3600
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="preuve_input.txt"; filename="preuve_input.txt"
+
+< ./preuve_input.txt
+--boundary--
+
+### Retrieve a file
+GET {{api}}/storage/v1/object/preuves/preuve_input.txt
+apikey: {{service}}
+Authorization: Bearer {{service}}
+
+### List files
+POST {{api}}/storage/v1/object/list/preuves
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+{
+  "prefix": "",
+  "limit": 100,
+  "offset": 0,
+  "sortBy": {
+    "column": "name",
+    "order": "asc"
+  }
 }
