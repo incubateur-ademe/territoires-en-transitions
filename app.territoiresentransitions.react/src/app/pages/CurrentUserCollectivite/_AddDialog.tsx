@@ -26,7 +26,7 @@ const _JoinCollectiviteDialogContent = ({
   return (
     <div>
       <div className="flex justify-center mt-8">
-        Pour rejoindre "{collectivite.nom}", contactez le référent{' '}
+        Pour rejoindre "{collectivite.nom}", contactez la personne référente{' '}
         {referentContactResponse.prenom} {referentContactResponse.nom} par mail{' '}
         {referentContactResponse.email}
       </div>
@@ -55,7 +55,8 @@ const _ClaimCollectiviteDialogContent = ({
           <li>Vous souhaitez rejoindre {collectivite.nom}</li>
           <li>Cette collectivité n'est pas encore active.</li>
           <li className="font-bold">
-            Souhaitez-vous activer cette collectivité et en être le référent ?
+            Souhaitez-vous activer cette collectivité et en être la personne
+            référente ?
           </li>
         </ul>
         <button className="fr-btn fr-btn--sm" onClick={onClick}>
