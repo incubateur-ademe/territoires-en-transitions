@@ -29,28 +29,28 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           className="flex flex-col gap-2"
         >
           <a
-            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/tableau_bord"
             onClick={[Function]}
           >
             Tableau de bord
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/plan_action/plan_collectivite"
             onClick={[Function]}
           >
             Plan d'action
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/referentiels/eci"
             onClick={[Function]}
           >
             Référentiels
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/indicateurs/eci"
             onClick={[Function]}
           >
@@ -60,7 +60,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
             className="invisible"
           >
             <a
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
               href="/collectivite/104/users"
               onClick={[Function]}
             >
@@ -117,28 +117,28 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           className="flex flex-col gap-2"
         >
           <a
-            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/tableau_bord"
             onClick={[Function]}
           >
             Tableau de bord
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/plan_action/plan_collectivite"
             onClick={[Function]}
           >
             Plan d'action
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/referentiels/eci"
             onClick={[Function]}
           >
             Référentiels
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/indicateurs/eci"
             onClick={[Function]}
           >
@@ -148,7 +148,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
             className="invisible"
           >
             <a
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
               href="/collectivite/104/users"
               onClick={[Function]}
             >
@@ -170,28 +170,28 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           className="flex flex-col gap-2"
         >
           <a
-            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/tableau_bord"
             onClick={[Function]}
           >
             Tableau de bord
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/plan_action/plan_collectivite"
             onClick={[Function]}
           >
             Plan d'action
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/referentiels/eci"
             onClick={[Function]}
           >
             Référentiels
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/indicateurs/eci"
             onClick={[Function]}
           >
@@ -201,7 +201,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
             className="invisible"
           >
             <a
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
               href="/collectivite/513/users"
               onClick={[Function]}
             >
@@ -258,28 +258,28 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           className="flex flex-col gap-2"
         >
           <a
-            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/tableau_bord"
             onClick={[Function]}
           >
             Tableau de bord
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/plan_action/plan_collectivite"
             onClick={[Function]}
           >
             Plan d'action
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/referentiels/eci"
             onClick={[Function]}
           >
             Référentiels
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/indicateurs/eci"
             onClick={[Function]}
           >
@@ -289,7 +289,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
             className="invisible"
           >
             <a
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
               href="/collectivite/104/users"
               onClick={[Function]}
             >
@@ -311,28 +311,28 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           className="flex flex-col gap-2"
         >
           <a
-            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/tableau_bord"
             onClick={[Function]}
           >
             Tableau de bord
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/plan_action/plan_collectivite"
             onClick={[Function]}
           >
             Plan d'action
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/referentiels/eci"
             onClick={[Function]}
           >
             Référentiels
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/indicateurs/eci"
             onClick={[Function]}
           >
@@ -342,7 +342,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
             className="invisible"
           >
             <a
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
               href="/collectivite/513/users"
               onClick={[Function]}
             >
@@ -364,28 +364,28 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           className="flex flex-col gap-2"
         >
           <a
-            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/1575/tableau_bord"
             onClick={[Function]}
           >
             Tableau de bord
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/1575/plan_action/plan_collectivite"
             onClick={[Function]}
           >
             Plan d'action
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/1575/referentiels/eci"
             onClick={[Function]}
           >
             Référentiels
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/1575/indicateurs/eci"
             onClick={[Function]}
           >
@@ -395,7 +395,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
             className="invisible"
           >
             <a
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
               href="/collectivite/1575/users"
               onClick={[Function]}
             >
@@ -452,28 +452,28 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           className="flex flex-col gap-2"
         >
           <a
-            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/tableau_bord"
             onClick={[Function]}
           >
             Tableau de bord
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/plan_action/plan_collectivite"
             onClick={[Function]}
           >
             Plan d'action
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/referentiels/eci"
             onClick={[Function]}
           >
             Référentiels
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/104/indicateurs/eci"
             onClick={[Function]}
           >
@@ -483,7 +483,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
             className="invisible"
           >
             <a
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
               href="/collectivite/104/users"
               onClick={[Function]}
             >
@@ -505,28 +505,28 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           className="flex flex-col gap-2"
         >
           <a
-            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/tableau_bord"
             onClick={[Function]}
           >
             Tableau de bord
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/plan_action/plan_collectivite"
             onClick={[Function]}
           >
             Plan d'action
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/referentiels/eci"
             onClick={[Function]}
           >
             Référentiels
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/513/indicateurs/eci"
             onClick={[Function]}
           >
@@ -536,7 +536,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
             className="invisible"
           >
             <a
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
               href="/collectivite/513/users"
               onClick={[Function]}
             >
@@ -558,28 +558,28 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           className="flex flex-col gap-2"
         >
           <a
-            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/1575/tableau_bord"
             onClick={[Function]}
           >
             Tableau de bord
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/1575/plan_action/plan_collectivite"
             onClick={[Function]}
           >
             Plan d'action
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/1575/referentiels/eci"
             onClick={[Function]}
           >
             Référentiels
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/1575/indicateurs/eci"
             onClick={[Function]}
           >
@@ -589,7 +589,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
             className="invisible"
           >
             <a
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
               href="/collectivite/1575/users"
               onClick={[Function]}
             >
@@ -611,28 +611,28 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           className="flex flex-col gap-2"
         >
           <a
-            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--primary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/400/tableau_bord"
             onClick={[Function]}
           >
             Tableau de bord
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/400/plan_action/plan_collectivite"
             onClick={[Function]}
           >
             Plan d'action
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/400/referentiels/eci"
             onClick={[Function]}
           >
             Référentiels
           </a>
           <a
-            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
             href="/collectivite/400/indicateurs/eci"
             onClick={[Function]}
           >
@@ -642,7 +642,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
             className="invisible"
           >
             <a
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full"
+              className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
               href="/collectivite/400/users"
               onClick={[Function]}
             >
