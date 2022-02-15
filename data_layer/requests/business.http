@@ -1,11 +1,10 @@
-### upsert_indicateur_definitions
-POST {{api}}/rest/v1/rpc/upsert_indicateurs
+### Upsert indicateurs and update indicateur action relationships.
+POST {{api}}/rest/v1/rpc/business_upsert_indicateurs
 apikey: {{service}}
 Authorization: Bearer {{service}}
 Content-Type: application/json
 
 {
-
   "indicateur_definitions": [
     {
       "id": "t_1",
@@ -48,9 +47,52 @@ apikey: {{service}}
 Authorization: Bearer {{service}}
 Content-Type: application/json
 
-### Get indicateur definition
+### Get indicateur action relashionship
 GET {{api}}/rest/v1/indicateur_action?indicateur_id=eq.t_1
 apikey: {{service}}
 Authorization: Bearer {{service}}
 Content-Type: application/json
 
+### Update existing action definitions
+POST {{api}}/rest/v1/rpc/business_update_action_definitions
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+{
+  "definitions": [
+    {
+      "action_id": "cae",
+      "referentiel": "cae",
+      "identifiant": "",
+      "nom": "Le référentiel répondant au doux nom de CLIMAT AIR ÉNERGIE",
+      "description": "",
+      "contexte": "",
+      "exemples": "",
+      "ressources": "",
+      "preuve": "",
+      "points": null,
+      "pourcentage": null
+    },
+    {
+      "action_id": "cae_2",
+      "referentiel": "cae",
+      "identifiant": "2",
+      "nom": "Le patrimoine de toute ta collectivité",
+      "description": "",
+      "contexte": "",
+      "exemples": "",
+      "ressources": "",
+      "preuve": "",
+      "points": null,
+      "pourcentage": null
+    }
+  ]
+}
+
+
+### Get action definition
+GET {{api}}/rest/v1/action_definition?action_id=eq.cae
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
