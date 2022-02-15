@@ -1,6 +1,7 @@
 import {actionAvancementColors} from 'app/theme';
 import {TooltipItem} from 'chart.js';
 import {PolarArea} from 'react-chartjs-2';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {AxisAvancementSample} from 'ui/charts/chartTypes';
 import {addOpacityToHex} from 'utils/addOpacityToHex';
 import {toFixed} from 'utils/toFixed';
@@ -34,6 +35,7 @@ export const ReferentielAxisScoresPolarArea = ({
       },
     ],
   };
+
   return (
     <div style={{width: `${widthPx}px`}}>
       <div
@@ -44,46 +46,53 @@ export const ReferentielAxisScoresPolarArea = ({
       </div>
       <PolarArea
         data={formatedData}
-        options={{
-          layout: {padding: {left: 50}},
-          plugins: {
-            legend: {display: false},
-            tooltip: {
-              callbacks: {
-                title: (tooltipItems: TooltipItem<'polarArea'>[]) => {
-                  return data[tooltipItems[0].datasetIndex].label;
+        plugins={[ChartDataLabels] as any}
+        options={
+          {
+            layout: {padding: 110},
+            plugins: {
+              legend: {display: false},
+              tooltip: {
+                callbacks: {
+                  title: (tooltipItems: TooltipItem<'polarArea'>[]) => {
+                    return data[tooltipItems[0].datasetIndex].label;
+                  },
+                  label: (tooltipItem: TooltipItem<'polarArea'>) => {
+                    return `${tooltipItem.dataset.label} : ${toFixed(
+                      tooltipItem.raw as number,
+                      1
+                    )} %`;
+                  },
                 },
-                label: (tooltipItem: TooltipItem<'polarArea'>) => {
-                  return `${tooltipItem.dataset.label} : ${toFixed(
-                    tooltipItem.raw as number,
-                    1
-                  )} %`;
+              } as any,
+              datalabels: {
+                formatter: (value: any, context: any) => {
+                  return context.chart.data.labels[context.dataIndex];
                 },
+                anchor: 'start',
+                align: 'end',
+                offset: 150,
               },
-            } as any,
-          },
-          responsive: true,
-          scales: {
-            r: {
-              pointLabels: {
-                display: true,
-                // centerPointLabels: true,
-                font: {
-                  size: 10,
+            },
+            responsive: true,
+            scales: {
+              r: {
+                pointLabels: {
+                  display: false,
                 },
-              },
-              min: 0,
-              max: 100,
-              ticks: {
-                font: {size: 7},
-                stepSize: 25,
-                callback: function (tick) {
-                  return tick + '%';
+                min: 0,
+                max: 100,
+                ticks: {
+                  font: {size: 7},
+                  stepSize: 25,
+                  callback: function (tick: number) {
+                    return tick + '%';
+                  },
                 },
               },
             },
-          },
-        }}
+          } as any
+        }
       />
     </div>
   );

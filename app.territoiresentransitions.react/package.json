@@ -52,6 +52,7 @@
     "chart.js": "^3.5.1",
     "chartjs": "^0.3.24",
     "chartjs-adapter-moment": "^1.0.0",
+    "chartjs-plugin-datalabels": "^2.0.0",
     "date-fns": "^2.16.1",
     "express": "^4.17.1",
     "formik": "^2.2.9",
