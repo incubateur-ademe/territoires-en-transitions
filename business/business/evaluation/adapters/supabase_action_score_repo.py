@@ -39,7 +39,6 @@ class SupabaseActionScoreRepository(
                 }
             ],
         )
-        breakpoint()
         # if insert_result["status_code"] not in [200, 201]:
         #     raise SupabaseError(
         #         f"Error with status code {insert_result.get('status_code')}.\n Data: "

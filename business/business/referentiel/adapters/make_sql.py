@@ -14,7 +14,7 @@ def format_sql_text(text: str):
 def make_sql_insert_indicateurs(indicateurs: List[Indicateur]):
     sqls = []
     for indicateur in indicateurs:
-        sql = f"insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('{indicateur.indicateur_id}', '{indicateur.indicateur_group}', '{indicateur.identifiant}', {indicateur.values_refers_to or 'null'}, '{format_sql_text(indicateur.nom)}', '{format_sql_text(indicateur.description)}', '{format_sql_text(indicateur.unite)}', {str(indicateur.obligation_eci).lower()}, null);"
+        sql = f"insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('{indicateur.indicateur_id}', '{indicateur.indicateur_group}', '{indicateur.identifiant}', {indicateur.valeur_indicateur or 'null'}, '{format_sql_text(indicateur.nom)}', '{format_sql_text(indicateur.description)}', '{format_sql_text(indicateur.unite)}', {str(indicateur.obligation_eci).lower()}, null);"
         for action_id in indicateur.action_ids:
             sql += f"insert into indicateur_action(indicateur_id, action_id) values ('{indicateur.indicateur_id}', '{action_id}');"
         sqls.append(sql)
