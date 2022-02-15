@@ -72,7 +72,6 @@ def store_referentiels(
         - f"{markdown_foder}/indicateurs/{referentiel}/*md"
     """
 
-    print("json_path ", to_json)
     domain_message_bus = InMemoryDomainMessageBus()
     config = ReferentielConfig(
         domain_message_bus,

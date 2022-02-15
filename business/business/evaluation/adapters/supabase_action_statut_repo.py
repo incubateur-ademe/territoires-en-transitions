@@ -10,8 +10,7 @@ from business.evaluation.domain.models.action_statut import (
     ActionId,
     ActionStatutAvancement,
 )
-from business.utils.supabase_repo import SupabaseError, SupabaseRepository
-from business.utils.timeit import timeit
+from business.utils.supabase_repo import SupabaseRepository
 
 
 class SupabaseActionStatutRepository(
@@ -22,7 +21,7 @@ class SupabaseActionStatutRepository(
         self, collectivite_id: int, referentiel: ActionReferentiel
     ) -> List[ActionStatut]:
         rows = self.client.db.get_by(
-            supabase_names.tables.business_action_statut,
+            supabase_names.views.action_statut,
             filters={
                 "collectivite_id": f"eq.{collectivite_id}",
                 "referentiel": f"eq.{referentiel}",

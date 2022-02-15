@@ -54,7 +54,7 @@ Authorization: Bearer {{service}}
 Content-Type: application/json
 
 ### Update existing action definitions
-POST {{api}}/rest/v1/rpc/business_update_action_definitions
+POST {{api}}/rest/v1/rpc/business_update_actions
 apikey: {{service}}
 Authorization: Bearer {{service}}
 Content-Type: application/json

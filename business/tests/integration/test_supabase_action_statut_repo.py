@@ -11,7 +11,9 @@ from tests.utils.supabase_fixtures import *
 
 
 @pytest.fixture()
-def supabase_repo(supabase_client: SupabaseClient) -> SupabaseActionStatutRepository:
+def supabase_repo(
+    supabase_client: SupabaseClient,
+) -> SupabaseActionStatutRepository:
     return SupabaseActionStatutRepository(supabase_client)
 
 

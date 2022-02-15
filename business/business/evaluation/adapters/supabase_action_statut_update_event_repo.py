@@ -7,7 +7,7 @@ from business.evaluation.domain.ports.action_statut_update_event_repo import (
 from business.core.domain.models.generated.unprocessed_action_statut_update_event_read import (
     UnprocessedActionStatutUpdateEventRead,
 )
-from business.utils.supabase_repo import SupabaseError, SupabaseRepository
+from business.utils.supabase_repo import SupabaseRepository
 from business.evaluation.adapters import supabase_names
 
 
@@ -16,7 +16,7 @@ class SupabaseActionStatutUpdateEventRepository(
 ):
     def get_unprocessed_events(self) -> List[UnprocessedActionStatutUpdateEventRead]:
         rows = self.client.db.get_all(
-            supabase_names.tables.unprocessed_action_statut_event
+            supabase_names.views.unprocessed_action_statut_event
         )
         return [
             UnprocessedActionStatutUpdateEventRead(

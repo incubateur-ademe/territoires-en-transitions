@@ -10,10 +10,8 @@ from business.evaluation.domain.ports.action_score_repo import (
     AbstractActionScoreRepository,
 )
 
-from business.utils.supabase_repo import SupabaseError, SupabaseRepository
+from business.utils.supabase_repo import SupabaseRepository
 from business.evaluation.adapters import supabase_names
-
-from supabase_client.supabase_client import TableClient
 
 
 class SupabaseActionScoreRepository(
@@ -39,15 +37,6 @@ class SupabaseActionScoreRepository(
             },
             merge_duplicates=True,
         )
-        # if insert_result["status_code"] not in [200, 201]:
-        #     raise SupabaseError(
-        #         f"Error with status code {insert_result.get('status_code')}.\n Data: "
-        #         + json.dumps(insert_result.get("data"))
-        # )
-
-    # @property
-    # def table(self) -> TableClient:
-    #     return self.client.table(supabase_names.client_scores)
 
     def get_now(self) -> str:
         return datetime.now().strftime("%m/%d/%Y %H:%M:%S")

@@ -11,7 +11,7 @@ from business.referentiel.domain.models.action_definition import ActionDefinitio
 from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.referentiel.domain.models.indicateur import Indicateur, IndicateurId
 from business.utils.action_id import ActionId
-from business.utils.supabase_repo import SupabaseError, SupabaseRepository
+from business.utils.supabase_repo import SupabaseRepository
 
 
 class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepository):
@@ -64,7 +64,7 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
         self, referentiel: ActionReferentiel
     ) -> List[ActionChildren]:
         rows = self.client.db.get_by(
-            supabase_names.tables.business_action_children,
+            supabase_names.views.action_children,
             filters={"referentiel": f"eq.{referentiel}"},
         )
 
@@ -133,6 +133,38 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
                     for indicateur in indicateurs
                 ]
             ),
+        )
+
+    def update_referentiel_actions(
+        self,
+        definitions: List[ActionDefinition],
+        points: List[ActionComputedPoint],
+    ):
+        self.client.rpc.call(
+            supabase_names.rpc.update_actions,
+            definitions=[
+                {
+                    "action_id": definition.action_id,
+                    "referentiel": definition.referentiel,
+                    "identifiant": definition.identifiant,
+                    "nom": definition.nom,
+                    "description": definition.description,
+                    "contexte": definition.contexte,
+                    "exemples": definition.exemples,
+                    "preuve": definition.preuve,
+                    "ressources": definition.ressources,
+                    "points": definition.points,
+                    "pourcentage": definition.pourcentage,
+                }
+                for definition in definitions
+            ],
+            computed_points=[
+                {
+                    "action_id": point.action_id,
+                    "value": point.value,
+                }
+                for point in points
+            ],
         )
 
     @staticmethod

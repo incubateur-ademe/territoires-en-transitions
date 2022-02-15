@@ -1,8 +1,6 @@
 import abc
 import json
-import os
 from typing import Any, List, Optional
-
 import requests
 from requests import Response
 import urllib.parse
@@ -104,7 +102,6 @@ class SupabaseRpc:
         self.client = client
 
     def call(self, name: str, **kwargs) -> None:
-
         r = self.client._post(
             f"/rpc/{name}",
             data=kwargs or None,

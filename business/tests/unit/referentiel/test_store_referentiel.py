@@ -91,3 +91,49 @@ def test_wont_store_if_incoherent_children():
     )
     assert len(entity_stored_events) == 0
     assert "eci" not in referentiel_repo._actions_by_ref
+
+
+def test_can_update_referentiel():
+    # Prepare
+    bus = InMemoryDomainMessageBus()
+    referentiel_repo = InMemoryReferentielRepository()
+    # Add action in repo
+    existing_children = make_action_children(action_id="eci_1.2", children_ids=[])
+    existing_definition = make_action_definition(
+        action_id=existing_children.action_id, description="Old def", referentiel="eci"
+    )
+    existing_points = make_action_points(
+        action_id=existing_definition.action_id, points=20
+    )
+
+    referentiel_repo.add_referentiel_actions(
+        definitions=[existing_definition],
+        points=[existing_points],
+        children=[existing_children],
+    )
+    use_case = StoreReferentielActions(bus, referentiel_repo)
+
+    # Spy on events
+    entity_stored_events = spy_on_event(bus, events.ReferentielActionsStored)
+    failure_events = spy_on_event(bus, events.ReferentielStorageFailed)
+
+    # Act : trigger use-case execution to update the existing action
+    updated_definition = make_action_definition(
+        action_id=existing_children.action_id, description="New def"
+    )
+    updated_points = make_action_points(
+        action_id=existing_definition.action_id, points=32
+    )
+    trigger = events.MarkdownReferentielNodeConvertedToEntities(
+        [updated_definition], [updated_points], [existing_children], referentiel="eci"
+    )
+
+    use_case.execute(trigger)
+
+    # Assert : points and definition have been updated
+    assert len(entity_stored_events) == 1
+    assert len(failure_events) == 0
+    assert (
+        referentiel_repo._actions_by_ref["eci"].definitions[0].description == "New def"
+    )
+    assert referentiel_repo._actions_by_ref["eci"].points[0].value == 32
