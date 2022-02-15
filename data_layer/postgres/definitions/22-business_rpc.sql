@@ -1,15 +1,15 @@
-drop function upsert_indicateur_definitions;
-
-create or replace function upsert_indicateur_definitions(
-    definitions indicateur_definition[]
+create or replace function upsert_indicateurs(
+    indicateur_definitions indicateur_definition[],
+    indicateur_actions indicateur_action[]
 ) returns void as
 $$
 declare
     def indicateur_definition;
+    i_a indicateur_action;
 begin
     if is_service_role()
     then
-        foreach def in array definitions
+        foreach def in array indicateur_definitions
             loop
                 insert into indicateur_definition
                 values (default,
@@ -22,6 +22,12 @@ begin
                         def.unite,
                         def.obligation_eci,
                         def.parent);
+            end loop;
+        foreach i_a in array indicateur_actions
+            loop
+                insert into indicateur_action
+                values (i_a.indicateur_id,
+                        i_a.action_id);
             end loop;
     else
         perform set_config('response.status', '401', true);
