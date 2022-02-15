@@ -2,7 +2,7 @@ from business.evaluation.adapters.supabase_action_statut_update_event_repo impor
     SupabaseActionStatutUpdateEventRepository,
 )
 from tests.utils.supabase_fixtures import *
-from business.evaluation.adapters import supabase_table_names
+from business.evaluation.adapters import supabase_names
 
 
 @pytest.fixture()
@@ -10,7 +10,9 @@ def supabase_repo(supabase_client) -> SupabaseActionStatutUpdateEventRepository:
     return SupabaseActionStatutUpdateEventRepository(supabase_client)
 
 
-def skip_test_can_get_unprocessed_events(supabase_repo):
+def test_can_get_unprocessed_events(
+    supabase_repo: SupabaseActionStatutUpdateEventRepository,
+):
     # TODO : insert an action_statut row ==> unfortunately, violates row level security ... :(
     # supabase_client.table("action_statut").insert(
     #     {

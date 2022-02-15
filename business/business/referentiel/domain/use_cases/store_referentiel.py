@@ -91,5 +91,5 @@ class StoreReferentielIndicateurs(UseCase):
         self.referentiel_repo = referentiel_repo
 
     def execute(self, trigger: events.IndicateurMarkdownConvertedToEntities):
-        self.referentiel_repo.add_indicateurs(trigger.indicateurs)
+        self.referentiel_repo.upsert_indicateurs(trigger.indicateurs)
         self.bus.publish_event(events.ReferentielIndicateursStored(trigger.referentiel))

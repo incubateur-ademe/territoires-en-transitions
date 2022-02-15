@@ -1,3 +1,4 @@
+from business.evaluation.adapters import supabase_names
 from business.evaluation.adapters.supabase_action_statut_repo import (
     SupabaseActionStatutRepository,
 )
@@ -10,7 +11,7 @@ from tests.utils.supabase_fixtures import *
 
 
 @pytest.fixture()
-def supabase_repo(supabase_client) -> SupabaseActionStatutRepository:
+def supabase_repo(supabase_client: SupabaseClient) -> SupabaseActionStatutRepository:
     return SupabaseActionStatutRepository(supabase_client)
 
 
