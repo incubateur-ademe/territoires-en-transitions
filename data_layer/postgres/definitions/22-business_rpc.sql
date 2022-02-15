@@ -54,14 +54,17 @@ comment on function business_upsert_indicateurs is
 
 
 create or replace function business_update_action_definitions(
-    definitions action_definition[]
+    definitions action_definition[],
+    computed_points action_computed_points[]
 ) returns void as
 $$
 declare
     def action_definition;
+    pts action_computed_points;
 begin
     if is_service_role()
     then
+        -- update definitions
         foreach def in array business_update_action_definitions.definitions
             loop
                 update action_definition
@@ -77,11 +80,19 @@ begin
                     pourcentage = def.pourcentage
                 where action_id = def.action_id;
             end loop;
+        -- update computed points
+        foreach pts in array business_update_action_definitions.computed_points
+            loop
+                update action_computed_points
+                set value = pts.value
+                where action_id = pts.action_id;
+            end loop;
     else
         perform set_config('response.status', '401', true);
     end if;
-
 end;
 $$ language plpgsql;
 comment on function business_update_action_definitions is
-    'Update existing action definitions.';
+    'Update existing action definitions and computed points';
+
+
