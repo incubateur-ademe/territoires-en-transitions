@@ -9,6 +9,7 @@ declare
 begin
     if is_service_role()
     then
+        -- upsert definition
         foreach def in array indicateur_definitions
             loop
                 insert into indicateur_definition
@@ -21,12 +22,26 @@ begin
                         def.description,
                         def.unite,
                         def.obligation_eci,
-                        def.parent);
+                        def.parent)
+                on conflict (id)
+                    do update set indicateur_group  = def.indicateur_group,
+                                          identifiant       = def.identifiant,
+                                          valeur_indicateur = def.valeur_indicateur,
+                                          nom               = def.nom,
+                                          description       = def.description,
+                                          unite             = def.unite,
+                                          obligation_eci    = def.obligation_eci,
+                                          parent            = def.parent;
+                -- delete indicateur actions
+                delete
+                from indicateur_action
+                where indicateur_id = def.id;
             end loop;
         foreach i_a in array indicateur_actions
             loop
                 insert into indicateur_action
-                values (i_a.indicateur_id,
+                values (default,
+                        i_a.indicateur_id,
                         i_a.action_id);
             end loop;
     else
