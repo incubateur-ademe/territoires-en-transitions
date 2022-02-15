@@ -1,6 +1,10 @@
 import os
 from dotenv import load_dotenv
 import pytest
+from business.evaluation.adapters import supabase_names
+from business.referentiel.adapters.supabase_referentiel_repo import (
+    SupabaseReferentielRepository,
+)
 
 from business.utils.supabase_repo import SupabaseClient
 
@@ -16,3 +20,20 @@ def supabase_client() -> SupabaseClient:
         url=url,
         key=key,
     )
+
+
+@pytest.fixture()
+def supabase_referentiel_repo(supabase_client) -> SupabaseReferentielRepository:
+    supabase_client.db.delete_by(
+        supabase_names.tables.indicateur_definition, {"id": "like.test%"}
+    )
+    supabase_client.db.delete_by(
+        supabase_names.tables.action_computed_points, {"action_id": "like.test%"}
+    )
+    supabase_client.db.delete_by(
+        supabase_names.tables.action_definition, {"action_id": "like.test%"}
+    )
+    supabase_client.db.delete_by(
+        supabase_names.tables.action_relation, {"id": "like.test%"}
+    )
+    return SupabaseReferentielRepository(supabase_client)

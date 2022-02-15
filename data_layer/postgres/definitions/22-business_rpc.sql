@@ -53,7 +53,7 @@ comment on function business_upsert_indicateurs is
     'Upsert indicateurs and update indicateur action relationships.';
 
 
-create or replace function business_update_action_definitions(
+create or replace function business_update_actions(
     definitions action_definition[],
     computed_points action_computed_points[]
 ) returns void as
@@ -65,7 +65,7 @@ begin
     if is_service_role()
     then
         -- update definitions
-        foreach def in array business_update_action_definitions.definitions
+        foreach def in array business_update_actions.definitions
             loop
                 update action_definition
                 set referentiel = def.referentiel,
@@ -81,7 +81,7 @@ begin
                 where action_id = def.action_id;
             end loop;
         -- update computed points
-        foreach pts in array business_update_action_definitions.computed_points
+        foreach pts in array business_update_actions.computed_points
             loop
                 update action_computed_points
                 set value = pts.value
@@ -92,7 +92,7 @@ begin
     end if;
 end;
 $$ language plpgsql;
-comment on function business_update_action_definitions is
+comment on function business_update_actions is
     'Update existing action definitions and computed points';
 
 

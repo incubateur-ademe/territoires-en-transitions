@@ -32,13 +32,55 @@ class StoreReferentielActions(UseCase):
             self.bus.publish_event(failure_event)
             return
 
+        existing_action_ids = [
+            children.action_id
+            for children in self.referentiel_repo.get_all_children_from_referentiel(
+                trigger.referentiel
+            )
+        ]
+
         # TODO : this should be transactionnal !
         # Question : Should it be only one port AbstractReferentielRepo, with a method that takes those three arguments ?
         try:
-            self.referentiel_repo.add_referentiel_actions(
-                self.definition_entities, self.children_entities, self.points_entities
-            )
+            # Add new actions
+            ids_of_new_actions = [
+                children.action_id
+                for children in trigger.children
+                if children.action_id not in existing_action_ids
+            ]
 
+            if ids_of_new_actions:
+                self.referentiel_repo.add_referentiel_actions(
+                    [
+                        definition
+                        for definition in trigger.definitions
+                        if definition.action_id in ids_of_new_actions
+                    ],
+                    [
+                        children
+                        for children in trigger.children
+                        if children.action_id in ids_of_new_actions
+                    ],
+                    [
+                        point
+                        for point in trigger.points
+                        if point.action_id in ids_of_new_actions
+                    ],
+                )
+
+            # Update existing actions
+            self.referentiel_repo.update_referentiel_actions(
+                [
+                    definition
+                    for definition in trigger.definitions
+                    if definition.action_id in existing_action_ids
+                ],
+                [
+                    point
+                    for point in trigger.points
+                    if point.action_id in existing_action_ids
+                ],
+            )
             self.bus.publish_event(
                 events.ReferentielActionsStored(referentiel=trigger.referentiel)
             )
