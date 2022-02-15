@@ -1,0 +1,39 @@
+### upsert_indicateur_definitions
+POST {{api}}/rest/v1/rpc/upsert_indicateur_definitions
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+{
+  "definitions": [
+    {
+      "id": "t_1",
+      "indicateur_group": "eci",
+      "identifiant": "a",
+      "valeur_indicateur": null,
+      "nom": "Yo",
+      "description": "yo !",
+      "unite": "t",
+      "obligation_eci": false,
+      "parent": null
+    },
+    {
+      "id": "t_2",
+      "indicateur_group": "eci",
+      "identifiant": "b",
+      "valeur_indicateur": null,
+      "nom": "Lo",
+      "description": "lo !",
+      "unite": "kg",
+      "obligation_eci": false,
+      "parent": null
+    }
+  ]
+}
+
+### Get indicateur definition
+GET {{api}}/rest/v1/indicateur_definition?id=eq.t_1
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
