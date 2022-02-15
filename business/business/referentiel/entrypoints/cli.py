@@ -108,12 +108,12 @@ def store_referentiels(
 @click.command()
 @click.option(
     "--repo-option",
-    prompt="Referentiel repository option",
+    prompt="Referentiel repository option (JSON | SQL | SUPABASE ) ",
 )
 @click.option(
     "--to-file",
-    prompt="Repo Output path (required if repo-option==JSON | SQL) ",
     default="./data/referentiel_repository.json",
+    required=False,
 )
 @click.option("--actions/--no-actions", is_flag=True, default=True)
 @click.option("--indicateurs/--no-indicateurs", is_flag=True, default=True)

@@ -8,6 +8,7 @@ from typing import Any, List, Optional, Tuple
 
 import marshmallow_dataclass
 from marshmallow import ValidationError
+from business.core.domain.models.referentiel import action_referentiel_options
 
 from business.referentiel.domain.models.indicateur import (
     Indicateur,
@@ -118,9 +119,12 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         md_indicateurs: List[MarkdownIndicateur],
         indicateur_group: IndicateurGroup,
     ) -> Tuple[List[Indicateur], List[str]]:
-        repo_action_ids = self.referentiel_repo.get_all_action_ids_from_referentiel(
-            indicateur_group  # type: ignore
+        repo_action_ids = (
+            self.referentiel_repo.get_all_action_ids_from_referentiel(indicateur_group)
+            if indicateur_group in action_referentiel_options
+            else []
         )
+
         repo_indicateur_ids = self.referentiel_repo.get_all_indicateur_ids()
         indicateurs: List[Indicateur] = []
         errors: List[str] = []
@@ -185,4 +189,3 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
     @staticmethod
     def _infer_action_ids(md_action_ids: List[str]) -> List[ActionId]:
         return [ActionId(md_action_id) for md_action_id in md_action_ids]
-

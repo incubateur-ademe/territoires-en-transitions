@@ -33487,7 +33487,7 @@
       "obligation_eci": false
     },
     {
-      "indicateur_id": "cae_6a",
+      "indicateur_id": "cae_6.a",
       "identifiant": "6.a",
       "indicateur_group": "cae",
       "nom": "Production de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats) par habitant (kg/hab.an)",
@@ -33498,7 +33498,7 @@
       "obligation_eci": false
     },
     {
-      "indicateur_id": "cae_6b",
+      "indicateur_id": "cae_6.b",
       "identifiant": "6.b",
       "indicateur_group": "cae",
       "nom": "Production Ordures m\u00e9nag\u00e8res r\u00e9siduelles (kg/hab)",
@@ -34048,7 +34048,7 @@
       "obligation_eci": false
     },
     {
-      "indicateur_id": "cae_4a",
+      "indicateur_id": "cae_4.a",
       "identifiant": "4.a",
       "indicateur_group": "cae",
       "nom": "Emissions annuelles de Nox (tonnes)",
@@ -34070,7 +34070,7 @@
       "obligation_eci": false
     },
     {
-      "indicateur_id": "cae_4c",
+      "indicateur_id": "cae_4.c",
       "identifiant": "4.c",
       "indicateur_group": "cae",
       "nom": "Emissions annuelles de PM2,5 (tonnes)",
@@ -34081,7 +34081,7 @@
       "obligation_eci": false
     },
     {
-      "indicateur_id": "cae_4d",
+      "indicateur_id": "cae_4.d",
       "identifiant": "4.d",
       "indicateur_group": "cae",
       "nom": "Emissions annuelles de COV (tonnes)",
@@ -34092,7 +34092,7 @@
       "obligation_eci": false
     },
     {
-      "indicateur_id": "cae_4e",
+      "indicateur_id": "cae_4.e",
       "identifiant": "4.e",
       "indicateur_group": "cae",
       "nom": "Emissions annuelles de SO2  (tonnes)",
@@ -34103,7 +34103,7 @@
       "obligation_eci": false
     },
     {
-      "indicateur_id": "cae_4f",
+      "indicateur_id": "cae_4.f",
       "identifiant": "4.f",
       "indicateur_group": "cae",
       "nom": "Emissions annuelles de NH3 (tonnes)",
