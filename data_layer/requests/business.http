@@ -1,11 +1,12 @@
 ### upsert_indicateur_definitions
-POST {{api}}/rest/v1/rpc/upsert_indicateur_definitions
+POST {{api}}/rest/v1/rpc/upsert_indicateurs
 apikey: {{service}}
 Authorization: Bearer {{service}}
 Content-Type: application/json
 
 {
-  "definitions": [
+
+  "indicateur_definitions": [
     {
       "id": "t_1",
       "indicateur_group": "eci",
@@ -28,11 +29,27 @@ Content-Type: application/json
       "obligation_eci": false,
       "parent": null
     }
+  ],
+  "indicateur_actions": [
+    {
+      "indicateur_id": "t_1",
+      "action_id": "cae_4.1.2"
+    },
+    {
+      "indicateur_id": "t_2",
+      "action_id": "cae_4.1.2"
+    }
   ]
 }
 
 ### Get indicateur definition
 GET {{api}}/rest/v1/indicateur_definition?id=eq.t_1
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+### Get indicateur definition
+GET {{api}}/rest/v1/indicateur_action?indicateur_id=eq.t_1
 apikey: {{service}}
 Authorization: Bearer {{service}}
 Content-Type: application/json
