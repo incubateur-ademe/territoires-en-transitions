@@ -22,7 +22,9 @@ def supabase_repo(supabase_client) -> SupabaseReferentielRepository:
     return SupabaseReferentielRepository(supabase_client)
 
 
-def test_get_all_definitions_from_referentiel(supabase_repo):
+def test_get_all_definitions_from_referentiel(
+    supabase_repo: SupabaseReferentielRepository,
+):
     all_eci_definitions = supabase_repo.get_all_definitions_from_referentiel("eci")
     assert len(all_eci_definitions) == expected_nb_of_eci_actions
 
@@ -30,7 +32,9 @@ def test_get_all_definitions_from_referentiel(supabase_repo):
     assert len(all_cae_definitions) == expected_nb_of_cae_actions
 
 
-def test_get_all_action_ids_from_referentiel(supabase_repo):
+def test_get_all_action_ids_from_referentiel(
+    supabase_repo: SupabaseReferentielRepository,
+):
     all_eci_action_ids = supabase_repo.get_all_action_ids_from_referentiel("eci")
     assert len(all_eci_action_ids) == expected_nb_of_eci_actions
     assert "eci" in all_eci_action_ids
@@ -40,7 +44,7 @@ def test_get_all_action_ids_from_referentiel(supabase_repo):
     assert "cae" in all_cae_action_ids
 
 
-def test_get_all_indicateur_ids(supabase_repo):
+def test_get_all_indicateur_ids(supabase_repo: SupabaseReferentielRepository):
     all_indicateur_ids = supabase_repo.get_all_indicateur_ids()
     assert len(all_indicateur_ids) >= expected_nb_of_indicateurs
 

@@ -45,6 +45,7 @@ from business.evaluation.domain.ports.action_status_repo import (
     InMemoryActionStatutRepository,
 )
 from business.evaluation.domain.use_cases import *
+from business.utils.supabase_repo import SupabaseClient
 from business.utils.use_case import UseCase
 from .environment_variables import (
     EnvironmentVariables,
@@ -71,8 +72,7 @@ class Config:
     def prepare_use_cases(self) -> List[UseCase]:
         raise NotImplementedError
 
-    def get_supabase_client(self):
-        from supabase.client import create_client
+    def get_supabase_client(self) -> SupabaseClient:
 
         url = os.getenv("SUPABASE_URL")
         key = os.getenv("SUPABASE_KEY")
@@ -80,7 +80,7 @@ class Config:
             raise EnvironmentError(
                 "Missing SUPABASE_URL and/or SUPABASE_KEY env variables. "
             )
-        return create_client(url, key)
+        return SupabaseClient(url=url, key=key)
 
     def get_referentiel_repo(self) -> AbstractReferentielRepository:
         if self.ENV.referentiels_repository == "JSON":

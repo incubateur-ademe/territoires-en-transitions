@@ -1,5 +1,6 @@
-from typing import Literal
+from typing import List, Literal
 
 
 ActionReferentiel = Literal["eci", "cae"]
-IndicateurGroups= Literal["eci", "cae", "crte"]
+action_referentiel_options: List[ActionReferentiel] = ["eci", "cae"]
+IndicateurGroups = Literal["eci", "cae", "crte"]

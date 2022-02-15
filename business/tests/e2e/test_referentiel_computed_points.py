@@ -5,11 +5,6 @@ from tests.utils.assert_children_points_sum_to_parent_point import (
     assert_children_points_sum_to_parent_point,
 )
 
-# from pathlib import Path
-# from business.referentiel.adapters.json_referentiel_repo import (
-#     JsonReferentielRepository,
-# )
-# repo = JsonReferentielRepository(Path("./data/referentiel_repository.json"))
 
 from business.evaluation.entrypoints.start_realtime import (
     get_config,
