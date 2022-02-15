@@ -11,7 +11,7 @@ from business.evaluation.domain.ports.action_score_repo import (
 )
 
 from business.utils.supabase_repo import SupabaseError, SupabaseRepository
-from business.evaluation.adapters import supabase_table_names
+from business.evaluation.adapters import supabase_names
 
 from supabase_client.supabase_client import TableClient
 
@@ -20,7 +20,7 @@ class SupabaseActionScoreRepository(
     SupabaseRepository,
     AbstractActionScoreRepository,
 ):
-    async def add_entities_for_collectivite(
+    def add_entities_for_collectivite(
         self, collectivite_id: int, entities: List[ActionScore]
     ):
         if not entities:
@@ -29,15 +29,15 @@ class SupabaseActionScoreRepository(
         referentiel = entities[0].referentiel
         client_scores_json = [asdict(score) for score in entities]
 
-        result = await self.table.insert(
-            [
-                {
-                    "collectivite_id": collectivite_id,
-                    "referentiel": referentiel,
-                    "scores": client_scores_json,
-                    "score_created_at": self.get_now(),
-                }
-            ],
+        self.client.db.insert(
+            supabase_names.tables.client_scores,
+            {
+                "collectivite_id": collectivite_id,
+                "referentiel": referentiel,
+                "scores": client_scores_json,
+                "score_created_at": self.get_now(),
+            },
+            merge_duplicates=True,
         )
         # if insert_result["status_code"] not in [200, 201]:
         #     raise SupabaseError(
@@ -45,9 +45,9 @@ class SupabaseActionScoreRepository(
         #         + json.dumps(insert_result.get("data"))
         # )
 
-    @property
-    def table(self) -> TableClient:
-        return self.supabase_client.table(supabase_table_names.client_scores)
+    # @property
+    # def table(self) -> TableClient:
+    #     return self.client.table(supabase_names.client_scores)
 
     def get_now(self) -> str:
         return datetime.now().strftime("%m/%d/%Y %H:%M:%S")

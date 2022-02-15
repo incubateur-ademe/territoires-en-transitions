@@ -2,7 +2,7 @@ from typing import List
 
 
 from business.core.domain.models.referentiel import ActionReferentiel
-from business.evaluation.adapters import supabase_table_names
+from business.evaluation.adapters import supabase_names
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
@@ -18,8 +18,8 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     def get_all_definitions_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionDefinition]:
-        rows = self.supabase_client.db.get_by(
-            supabase_table_names.action_definition,
+        rows = self.client.db.get_by(
+            supabase_names.tables.action_definition,
             filters={
                 "referentiel": f"eq.{referentiel}",
             },
@@ -44,8 +44,8 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     def get_all_points_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionComputedPoint]:
-        rows = self.supabase_client.db.get_by(
-            supabase_table_names.action_computed_points,
+        rows = self.client.db.get_by(
+            supabase_names.tables.action_computed_points,
             filters={
                 "action_id": f"like.{referentiel}%",  # TODO : find a better way to infer the referentiel (make a view ? )
             },
@@ -63,8 +63,8 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     def get_all_children_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionChildren]:
-        rows = self.supabase_client.db.get_by(
-            supabase_table_names.business_action_children,
+        rows = self.client.db.get_by(
+            supabase_names.tables.business_action_children,
             filters={"referentiel": f"eq.{referentiel}"},
         )
 
@@ -80,8 +80,8 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     def get_all_action_ids_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionId]:
-        rows = self.supabase_client.db.get_by(
-            supabase_table_names.action_relation,
+        rows = self.client.db.get_by(
+            supabase_names.tables.action_relation,
             filters={"referentiel": f"eq.{referentiel}"},
         )
         return [row["id"] for row in rows]
@@ -89,9 +89,7 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     def get_all_indicateur_ids(
         self,
     ) -> List[IndicateurId]:
-        rows = self.supabase_client.db.get_all(
-            supabase_table_names.indicateur_definition
-        )
+        rows = self.client.db.get_all(supabase_names.tables.indicateur_definition)
 
         return [row["id"] for row in rows]
 
@@ -103,13 +101,13 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     ):
         raise NotImplementedError
 
-    def add_indicateurs(
+    def upsert_indicateurs(
         self,
         indicateurs: List[Indicateur],
     ):
-        self.supabase_client.db.insert_many(
-            supabase_table_names.indicateur_definition,
-            [
+        self.client.rpc.call(
+            supabase_names.rpc.upsert_indicateurs,
+            indicateur_definitions=[
                 {
                     "id": indicateur.indicateur_id,
                     "identifiant": indicateur.identifiant,
@@ -119,7 +117,24 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
                     "description": indicateur.description,
                     "valeur_indicateur": indicateur.valeur_indicateur,
                     "obligation_eci": indicateur.obligation_eci,
+                    "parent": None,
                 }
                 for indicateur in indicateurs
             ],
+            indicateur_actions=self.flatten_list(
+                [
+                    [
+                        {
+                            "indicateur_id": indicateur.indicateur_id,
+                            "action_id": action_id,
+                        }
+                        for action_id in indicateur.action_ids
+                    ]
+                    for indicateur in indicateurs
+                ]
+            ),
         )
+
+    @staticmethod
+    def flatten_list(l: List) -> List:
+        return [item for sublist in l for item in sublist]

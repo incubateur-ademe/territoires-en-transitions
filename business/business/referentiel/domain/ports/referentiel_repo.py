@@ -48,7 +48,7 @@ class AbstractReferentielRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add_indicateurs(
+    def upsert_indicateurs(
         self,
         indicateurs: List[Indicateur],
     ):
@@ -126,7 +126,7 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
             return []
         return [definition.action_id for definition in referentiel_entities.definitions]
 
-    def add_indicateurs(
+    def upsert_indicateurs(
         self,
         indicateurs: List[Indicateur],
     ):

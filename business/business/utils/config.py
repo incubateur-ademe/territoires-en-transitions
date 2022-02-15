@@ -111,9 +111,7 @@ class Config:
         if self.ENV.labelisation_repositories == "IN_MEMORY":
             return InMemoryActionScoreRepository()
         elif self.ENV.labelisation_repositories == "SUPABASE":
-            return SupabaseActionScoreRepository(
-                supabase_client=self.get_supabase_client()
-            )
+            return SupabaseActionScoreRepository(client=self.get_supabase_client())
         else:
             raise NotImplementedError(
                 f"Scores repo adapter {self.ENV.labelisation_repositories} not yet implemented."
@@ -123,9 +121,7 @@ class Config:
         if self.ENV.labelisation_repositories == "IN_MEMORY":
             return InMemoryActionStatutRepository()
         elif self.ENV.labelisation_repositories == "SUPABASE":
-            return SupabaseActionStatutRepository(
-                supabase_client=self.get_supabase_client()
-            )
+            return SupabaseActionStatutRepository(client=self.get_supabase_client())
         else:
             raise NotImplementedError(
                 f"Statuts repo adapter {self.ENV.labelisation_repositories} not yet implemented."
@@ -138,7 +134,7 @@ class Config:
             return InMemoryActionStatutUpdateEventRepository()
         elif self.ENV.labelisation_repositories == "SUPABASE":
             return SupabaseActionStatutUpdateEventRepository(
-                supabase_client=self.get_supabase_client()
+                client=self.get_supabase_client()
             )
         else:
             raise NotImplementedError(

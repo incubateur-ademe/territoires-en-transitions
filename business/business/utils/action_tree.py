@@ -14,10 +14,6 @@ class ActionTreeError(Exception):
     pass
 
 
-def flatten_list(l: List) -> List:
-    return [item for sublist in l for item in sublist]
-
-
 class ActionTree:
     def __init__(self, actions_children: List[ActionChildren]) -> None:
 

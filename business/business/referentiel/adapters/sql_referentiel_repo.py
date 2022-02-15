@@ -38,7 +38,7 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
         self,
         indicateurs: List[Indicateur],
     ):
-        super().add_indicateurs(indicateurs)
+        super().upsert_indicateurs(indicateurs)
         self.indicateurs_to_sql()
 
     def indicateurs_to_sql(self):
