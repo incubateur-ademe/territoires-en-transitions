@@ -3,7 +3,7 @@
 id: crte_10.1
 identifiant: 10.1
 unite: kg/hab
-valeur: cae_6a 
+valeur: cae_6.a 
 ```
 ## Description
 
@@ -30,7 +30,7 @@ Pour la production par habitant, la production totale du territoire est rapport√
 id: crte_10.2
 identifiant: 10.2
 unite: kg/hab
-valeur: cae_6a 
+valeur: cae_6.a 
 ```
 ## Description
 

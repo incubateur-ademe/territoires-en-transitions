@@ -3,7 +3,7 @@
 id: crte_11.1-SO2
 identifiant: 11.1-SO2
 unite: tonnes
-valeur: cae_4e
+valeur: cae_4.e
 ```
 ## Description
 
@@ -26,7 +26,7 @@ valeur: cae_4e
 id: crte_11.1-NOx
 identifiant: 11.1-NOx
 unite: tonnes
-valeur: cae_4a
+valeur: cae_4.a
 ```
 ## Description
 
@@ -49,7 +49,7 @@ valeur: cae_4a
 id: crte_11.1-COVNM
 identifiant: 11.1-COVNM
 unite: tonnes
-valeur: cae_4d
+valeur: cae_4.d
 ```
 ## Description
 
@@ -72,7 +72,7 @@ valeur: cae_4d
 id: crte_11.1-PM
 identifiant: 11.1-PM
 unite: tonnes
-valeur: cae_4c
+valeur: cae_4.c
 ```
 ## Description
 
@@ -95,7 +95,7 @@ valeur: cae_4c
 id: crte_11.1-NH3
 identifiant: 11.1-NH3
 unite: tonnes
-valeur: cae_4f
+valeur: cae_4.f
 ```
 ## Description
 

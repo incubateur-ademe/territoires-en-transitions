@@ -3,7 +3,7 @@
 id: crte_1.1
 identifiant: 1.1
 unite: teq CO2
-valeur: cae_1a
+valeur: cae_1.a
 ```
 ## Description
 
@@ -30,7 +30,7 @@ valeur: cae_1a
 id: crte_1.2
 identifiant: 1.2
 unite: teq CO2/hab
-valeur: cae_1b
+valeur: cae_1.b
 ```
 ## Description
 
