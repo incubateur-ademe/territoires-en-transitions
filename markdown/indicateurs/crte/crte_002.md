@@ -3,7 +3,7 @@
 id: crte_2.1
 identifiant: 2.1
 unite: GWh
-valeur: cae_2a
+valeur: cae_2.a
 ```
 ## Description
 
@@ -25,7 +25,7 @@ valeur: cae_2a
 id: crte_2.1.hab
 identifiant: 2.1.hab
 unite: MWh/hab
-valeur: cae_2b
+valeur: cae_2.b
 ```
 ## Description
 
