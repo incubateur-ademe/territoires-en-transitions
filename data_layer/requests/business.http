@@ -75,24 +75,43 @@ Content-Type: application/json
       "pourcentage": null
     },
     {
-      "action_id": "cae_2",
-      "referentiel": "cae",
-      "identifiant": "2",
-      "nom": "Le patrimoine de toute ta collectivité",
+      "action_id": "eci",
+      "referentiel": "eci",
+      "identifiant": "",
+      "nom": "Le référentiel Économie Circulaire qui repose sur 7 piliers. Un par nain, en fait.",
       "description": "",
       "contexte": "",
       "exemples": "",
       "ressources": "",
-      "preuve": "",
+      "preuve": "des photos",
       "points": null,
       "pourcentage": null
+    }
+  ],
+
+  "computed_points" : [
+    {
+    "action_id": "cae",
+    "value": 50
+    },
+    {
+      "action_id": "eci",
+      "value": 5000
     }
   ]
 }
 
 
 ### Get action definition
-GET {{api}}/rest/v1/action_definition?action_id=eq.cae
+GET {{api}}/rest/v1/action_definition?action_id=eq.eci
 apikey: {{service}}
 Authorization: Bearer {{service}}
 Content-Type: application/json
+
+
+### Get action computed points
+GET {{api}}/rest/v1/action_computed_points?action_id=eq.cae
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
