@@ -9,9 +9,7 @@ const COPIED_HINT_DURATION = 3000;
 type TInvitationLinkProps = {
   /** Lien d'invitation */
   link: string | null;
-  /** Date d'expiration du lien d'invitation */
-  linkExpiredAt: string;
-  /** Appelée pour demander la généraiton d'un nouveau lien d'invitation */
+  /** Appelée pour demander la génération d'un nouveau lien d'invitation */
   onGenerateLink: () => void;
 };
 
@@ -20,7 +18,7 @@ type TInvitationLinkProps = {
  * et un bouton pour générer un nouveau lien
  */
 const InvitationLink = (props: TInvitationLinkProps) => {
-  const {link, linkExpiredAt, onGenerateLink} = props;
+  const {link, onGenerateLink} = props;
   const displayedLink = link ?? '';
   const [copiedText, copy, reset] = useCopyToClipboard();
 
@@ -52,18 +50,6 @@ const InvitationLink = (props: TInvitationLinkProps) => {
         ) : null}
       </div>
       <div className="flex max-w-2xl items-center justify-end">
-        {link && (
-          <span>
-            Ce lien est valable jusqu'au
-            <b>
-              &nbsp;
-              {new Date(linkExpiredAt).toLocaleDateString(undefined, {
-                dateStyle: 'long',
-              })}
-              .
-            </b>
-          </span>
-        )}
         <InvitationGenerateButton onClick={() => onGenerateLink()} />
       </div>
     </div>

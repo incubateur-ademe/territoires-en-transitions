@@ -85,4 +85,3 @@ POST {{api}}/rest/v1/rpc/is_authenticated
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
-

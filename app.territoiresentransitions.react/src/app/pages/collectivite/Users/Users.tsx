@@ -56,7 +56,6 @@ const Users = observer(({invitationBloc}: {invitationBloc: InvitationBloc}) => {
 
       <InvitationLink
         link={invitationBloc.agentInvitationUrl}
-        linkExpiredAt={'2022-01-31T10:50:43.180Z'}
         onGenerateLink={() => invitationBloc.generateInvitationId()}
       />
 

@@ -22,6 +22,11 @@ create policy allow_read
     for select
     using (true);
 
+create policy allow_update
+    on private_utilisateur_droit
+    for update
+    using (is_service_role());
+
 --------------------------------
 -------- RLS HELPERS -----------
 --------------------------------
@@ -91,17 +96,6 @@ $$ language sql;
 comment on function is_agent_of is
     'Returns true if current user is a agent of collectivite id';
 
-create or replace function
-    is_authenticated()
-    returns boolean
-as
-$$
-begin
-    return auth.role() = 'authenticated';
-end;
-$$ language plpgsql;
-comment on function is_authenticated is
-    'Returns true if current user is authenticated.';
 
 
 --------------------------------

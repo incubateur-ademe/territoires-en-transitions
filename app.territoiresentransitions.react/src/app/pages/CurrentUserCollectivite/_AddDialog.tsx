@@ -26,7 +26,7 @@ const _JoinCollectiviteDialogContent = ({
   return (
     <div>
       <div className="flex justify-center mt-8">
-        Pour rejoindre "{collectivite.nom}", contactez le référent{' '}
+        Pour rejoindre "{collectivite.nom}", contactez la personne référente{' '}
         {referentContactResponse.prenom} {referentContactResponse.nom} par mail{' '}
         {referentContactResponse.email}
       </div>
@@ -50,12 +50,13 @@ const _ClaimCollectiviteDialogContent = ({
 
   if (success === null)
     return (
-      <div className="items-center">
+      <div className="items-center" data-test="confirm-selection-msg">
         <ul>
           <li>Vous souhaitez rejoindre {collectivite.nom}</li>
           <li>Cette collectivité n'est pas encore active.</li>
           <li className="font-bold">
-            Souhaitez-vous activer cette collectivité et en être le référent ?
+            Souhaitez-vous activer cette collectivité et en être la personne
+            référente ?
           </li>
         </ul>
         <button className="fr-btn fr-btn--sm" onClick={onClick}>
@@ -150,15 +151,23 @@ export const SelectCollectiviteDialog = () => {
   const [selectedCollectivite, setSelectedCollectivite] =
     React.useState<AllCollectiviteRead>();
 
+  useEffect(() => {
+    // uniquement à l'ouverture du dialogue
+    if (opened) {
+      setSelectedCollectivite(undefined);
+    }
+  }, [opened]);
+
   return (
     <UiDialogButton
+      data-test="btn-select-collectivite"
       title="Associer une collectivité à mon compte"
       buttonClasses="fr-btn--secondary"
       dialogClasses="overflow-hidden"
       opened={opened}
       setOpened={setOpened}
     >
-      <div className="py-7 min-h-[400px]">
+      <div data-test="collectivite-picker" className="py-7 min-h-[400px]">
         <div className="flex flex-row justify-center">
           <AutocompleteInput
             label="Nom de la collectivité"
@@ -192,7 +201,7 @@ export const SelectCollectiviteDialog = () => {
         <Spacer />
         <_ConditionalSelectDialogContent collectivite={selectedCollectivite} />
         {!selectedCollectivite && (
-          <p className="fr-text--sm">
+          <p className="fr-text--sm" data-test="no-selection-msg">
             Vous ne trouvez pas la collectivité que vous recherchez ? <br />
             Merci d'envoyer un mail à{' '}
             <a href="mailto:contact@territoiresentransitions.fr">

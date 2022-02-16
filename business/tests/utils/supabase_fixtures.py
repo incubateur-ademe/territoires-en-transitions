@@ -11,6 +11,6 @@ test_postgres_url = os.getenv("POSTGRES_URL", "missing_postgres_url")
 
 @pytest.fixture()
 def supabase_client() -> Client:
-    url: str = os.getenv("SUPABASE_TEST_URL", "missing_supabase_test_url")
-    key: str = os.getenv("SUPABASE_TEST_KEY", "missing_supabase_test_key")
+    url: str = os.getenv("SUPABASE_URL", "missing_supabase_url")
+    key: str = os.getenv("SUPABASE_KEY", "missing_supabase_key")
     return create_client(url, key)

@@ -24,7 +24,10 @@ const ElsesCollectivitesObserver = observer(
     }, []);
 
     return (
-      <div className="app fr-container mt-5 flex justify-center">
+      <div
+        data-test="ElsesCollectivites"
+        className="app fr-container mt-5 flex justify-center"
+      >
         <section className="text-center">
           <h2 className="fr-h2 py-5">Consulter les autres collectivités</h2>
           <div className="flex flex-wrap justify-center gap-12">
