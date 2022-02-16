@@ -24,14 +24,14 @@ Authorization: Bearer {{service}}
 Content-Type: application/json
 
 {
-  "id": "preuves",
-  "name": "preuves",
+  "id": "1",
+  "name": "preuves de la collectivité x",
   "public": true
 }
 
 
 ### Upload a file
-POST {{api}}/storage/v1/object/preuves/preuve_input.txt
+POST {{api}}/storage/v1/object/1f6a5e37-26a4-4f9f-bea8-65ca460113c1/eci_1.1.2/preuve_input.txt
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 x-upsert: true
@@ -39,20 +39,20 @@ cacheControl: 3600
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary
-Content-Disposition: form-data; name="preuve_input.txt"; filename="preuve_input.txt"
+Content-Disposition: form-data; name="eci_1.1.2/preuve_input.txt"; filename="eci_1.1.2/preuve_input.txt"
 
 < ./preuve_input.txt
 --boundary--
 
-### Retrieve a file
-GET {{api}}/storage/v1/object/preuves/preuve_input.txt
+### Download a file
+GET {{api}}/storage/v1/object/1f6a5e37-26a4-4f9f-bea8-65ca460113c1/eci_1.1.1/preuve_input.txt
 apikey: {{service}}
 Authorization: Bearer {{service}}
 
-### List files
-POST {{api}}/storage/v1/object/list/preuves
-apikey: {{service}}
-Authorization: Bearer {{service}}
+### List files (does not work with files with slashes)
+POST {{api}}/storage/v1/object/list/1f6a5e37-26a4-4f9f-bea8-65ca460113c1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
