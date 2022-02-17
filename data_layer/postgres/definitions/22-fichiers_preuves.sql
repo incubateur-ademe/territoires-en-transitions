@@ -10,6 +10,7 @@ comment on table collectivite_bucket
 
 alter table collectivite_bucket
     enable row level security;
+
 create policy allow_read
     on collectivite_bucket
     using (true);
@@ -24,6 +25,7 @@ $$
 select count(*) > 0
 from collectivite_bucket cb
 where is_any_role_on(cb.collectivite_id)
+  and cb.bucket_id = is_bucket_writer.id
 $$ language sql;
 comment on function is_bucket_writer is
     'Returns true if current user can write on a bucket id';
@@ -36,11 +38,11 @@ create policy allow_read
 
 create policy allow_insert
     on storage.objects for insert
-    with check (is_bucket_writer(id));
+    with check (is_bucket_writer(bucket_id));
 
 create policy au
     on storage.objects for update
-    with check (is_bucket_writer(id));
+    with check (is_bucket_writer(bucket_id));
 
 
 -- Create bucket for collectivités
@@ -106,8 +108,7 @@ from collectivite c
 create table if not exists fichier_preuve_commentaire
 (
     file_id     uuid references storage.objects primary key,
-    bucket_id   text references storage.buckets not null,
-    commentaire text                            not null default ''
+    commentaire text not null default ''
 );
 alter table fichier_preuve_commentaire
     enable row level security;
@@ -118,32 +119,56 @@ create policy allow_read
 
 create policy allow_insert
     on fichier_preuve_commentaire for insert
-    with check (is_bucket_writer(bucket_id)
-    -- sanity check
-    and exists(select *
-               from storage.objects o
-               where o.bucket_id = bucket_id
-                 and o.id = fichier_preuve_commentaire.file_id));
+    with check (is_bucket_writer(
+        (select o.bucket_id
+         from storage.objects o
+         where o.id = fichier_preuve_commentaire.file_id
+        )));
 
 create policy allow_update
     on fichier_preuve_commentaire for update
-    -- sanity check
-    with check (is_bucket_writer(bucket_id)
-    and exists(select *
-               from storage.objects o
-               where o.bucket_id = bucket_id
-                 and o.id = fichier_preuve_commentaire.file_id));
+    using (is_bucket_writer(
+        (select o.bucket_id
+         from storage.objects o
+         where o.id = fichier_preuve_commentaire.file_id
+        )));
+
+
+-- Convenience upsert function so the client does not have to know about object ids
+create or replace function upsert_fichier_preuve_commentaire(
+    collectivite_id integer,
+    action_id action_id,
+    filename text,
+    commentaire text
+)
+returns void
+as
+$$
+with file as (
+    select obj.id
+    from storage.objects obj
+             join collectivite_bucket cb on obj.bucket_id = cb.bucket_id
+    where cb.collectivite_id = upsert_fichier_preuve_commentaire.collectivite_id
+      and obj.path_tokens[1] = action_id::text
+      and obj.path_tokens[2] = filename
+)
+insert into fichier_preuve_commentaire
+select file.id, upsert_fichier_preuve_commentaire.commentaire
+    from file
+    on conflict (file_id) do update set commentaire = upsert_fichier_preuve_commentaire.commentaire;
+$$ language sql;
+comment on function upsert_fichier_preuve_commentaire is 'Upsert a commentaire on a preuve file';
 
 
 -- Client view
 create view fichier_preuve
 as
-select c.id                         as collectivite_id,
-       cb.bucket_id                 as bucket_id,
-       obj.name                     as file,
-       obj.id                       as file_id,
-       a.id                         as action_id,
-       coalesce(fc.commentaire, '') as commentaire
+select c.id                                           as collectivite_id,
+       cb.bucket_id                                   as bucket_id,
+       a.id                                           as action_id,
+       obj.name                                       as filename,
+       cb.bucket_id || '/' || obj.name as path,
+       coalesce(fc.commentaire, '')                   as commentaire
 from collectivite c
          join collectivite_bucket cb on c.id = cb.collectivite_id
          join lateral (select id, name, path_tokens
@@ -151,3 +176,6 @@ from collectivite c
                        where o.bucket_id = cb.bucket_id) as obj on true
          join action_relation a on a.id = obj.path_tokens[1]
          left join fichier_preuve_commentaire fc on fc.file_id = obj.id;
+
+
+

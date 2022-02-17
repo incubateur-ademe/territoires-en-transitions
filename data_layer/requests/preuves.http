@@ -17,7 +17,8 @@ Content-Type: application/json
     client.global.set("auth_token", response.body['access_token']);
 %}
 
-### Create a bucket
+### # Supabase API
+### Create a bucket as service user.
 POST {{api}}/storage/v1/bucket
 apikey: {{service}}
 Authorization: Bearer {{service}}
@@ -29,28 +30,8 @@ Content-Type: application/json
   "public": true
 }
 
-
-### Upload a file
-POST {{api}}/storage/v1/object/1f6a5e37-26a4-4f9f-bea8-65ca460113c1/eci_1.1.2/preuve_input.txt
-apikey: {{anon}}
-Authorization: Bearer {{auth_token}}
-x-upsert: true
-cacheControl: 3600
-Content-Type: multipart/form-data; boundary=boundary
-
---boundary
-Content-Disposition: form-data; name="eci_1.1.2/preuve_input.txt"; filename="eci_1.1.2/preuve_input.txt"
-
-< ./preuve_input.txt
---boundary--
-
-### Download a file
-GET {{api}}/storage/v1/object/1f6a5e37-26a4-4f9f-bea8-65ca460113c1/eci_1.1.1/preuve_input.txt
-apikey: {{service}}
-Authorization: Bearer {{service}}
-
-### List files (does not work with files with slashes)
-POST {{api}}/storage/v1/object/list/1f6a5e37-26a4-4f9f-bea8-65ca460113c1
+### List files using supabase API (does not work well with files with slashes)
+POST {{api}}/storage/v1/object/list/{{bucket_id}}
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
@@ -64,3 +45,91 @@ Content-Type: application/json
     "order": "asc"
   }
 }
+
+### # A. Upload scenario
+### A. Retrieve bucket id for collectivite 1
+GET {{api}}/rest/v1/collectivite_bucket?collectivite_id=eq.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    // Save bucket id to use it later.
+    client.global.set("bucket_id", response.body[0]['bucket_id']);
+%}
+
+### A. Can I write on a bucket ?
+POST {{api}}/rest/v1/rpc/is_bucket_writer
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{ "id": "{{bucket_id}}" }
+
+> {%
+    client.test("Read executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body === true, "Response body is not true");
+    });
+%}
+
+### A. Upload a file
+POST {{api}}/storage/v1/object/{{bucket_id}}/eci_1.1.2/preuve_input.txt
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+x-upsert: true
+cacheControl: 3600
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="eci_1.1.2/preuve_input.txt"; filename="eci_1.1.2/preuve_input.txt"
+
+< ./preuve_input.txt
+--boundary--
+
+> {%
+    client.test("Upload executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### A. Download a file
+GET {{api}}/storage/v1/object/{{bucket_id}}/eci_1.1.2/preuve_input.txt
+apikey: {{service}}
+Authorization: Bearer {{service}}
+
+
+
+### A. Upsert a commentaire
+POST {{api}}/rest/v1/rpc/upsert_fichier_preuve_commentaire
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "action_id": "eci_1.1.2",
+  "filename": "preuve_input.txt",
+  "commentaire": "très inspiré !"
+}
+
+> {%
+    client.test("Upsert executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+
+
+### A. List all fichier_preuve for collectivite 1 and action id eci_1.1.2
+GET {{api}}/rest/v1/fichier_preuve?collectivite_id=eq.1&action_id=eq.eci_1.1.2
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
