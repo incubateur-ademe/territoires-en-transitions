@@ -130,8 +130,10 @@ services:
       # TODO: https://github.com/supabase/storage-api/issues/55
       REGION: stub
       GLOBAL_S3_BUCKET: stub
-    volumes:
-      - ./volumes/storage:/var/lib/storage
+      # We don't persist storage for development since we use macOS.
+      # https://github.com/supabase/supabase/issues/3902
+      #    volumes:
+      #      - ./volumes/storage:/var/lib/storage
 
   meta:
     container_name: supabase-meta
