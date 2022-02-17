@@ -13,6 +13,7 @@ module.exports = {
         beige: '#f9f8f6',
         // Design system
         bf500: '#000091',
+        bf975: '#f5f5fe',
       },
     },
   },
