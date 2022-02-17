@@ -2,7 +2,7 @@ create extension if not exists pgtap with schema extensions;
 
 begin;
 
-select plan(2);
+select plan(4);
 
 -- make uid work as if yolododo user was connected.
 create or replace function auth.uid() returns uuid as
@@ -32,4 +32,25 @@ select ok(not is_bucket_writer((
 )), 'yulu should be not be a writer of yolo''s bucket');
 
 
+-- insert yet another commune
+insert into commune(nom, code)
+values ('Triffouilly-les-Alouettes', '66666');
+
+select ok(exists(
+                  select *
+                  from storage.buckets b
+                           join collectivite_bucket cb on cb.bucket_id = b.id
+                           join commune c on c.collectivite_id = cb.collectivite_id
+                  where c.code = '66666'
+              ), 'Triffouilly-les-Alouettes should have a bucket');
+
+
+select results_eq(
+               'select b.id from storage.buckets b',
+               'select b.id from storage.buckets b join collectivite_bucket cb on b.id = cb.bucket_id',
+               'every collectivité should have a bucket'
+           );
+
 rollback;
+
+
