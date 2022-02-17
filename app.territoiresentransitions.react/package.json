@@ -9,11 +9,11 @@
     "format": "prettier src --check",
     "format-write": "prettier src --write",
     "start": "node server.js",
-    "dev": "craco start",
+    "dev": "TAILWIND_MODE=watch craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "TAILWIND_MODE=watch start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
   "dependencies": {
