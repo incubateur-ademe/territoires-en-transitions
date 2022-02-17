@@ -46,11 +46,9 @@ select ok(exists(
 
 
 select results_eq(
-               'select b.id from storage.buckets b',
-               'select b.id from storage.buckets b join collectivite_bucket cb on b.id = cb.bucket_id',
-               'every collectivité should have a bucket'
+               'select count(*) from storage.buckets b',
+               'select count(*) from storage.buckets b join collectivite_bucket cb on b.id = cb.bucket_id',
+               'bucket and collectivité count should be the same'
            );
 
 rollback;
-
-
