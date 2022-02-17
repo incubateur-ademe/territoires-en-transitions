@@ -76,7 +76,7 @@ Content-Type: application/json
 %}
 
 ### A. Upload a file
-POST {{api}}/storage/v1/object/{{bucket_id}}/eci_1.1.2/preuve_input.txt
+POST {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 x-upsert: true
@@ -84,7 +84,7 @@ cacheControl: 3600
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary
-Content-Disposition: form-data; name="eci_1.1.2/preuve_input.txt"; filename="eci_1.1.2/preuve_input.txt"
+Content-Disposition: form-data; name="preuve_input.txt"; filename="preuve_input.txt"
 
 < ./preuve_input.txt
 --boundary--
@@ -96,14 +96,14 @@ Content-Disposition: form-data; name="eci_1.1.2/preuve_input.txt"; filename="eci
 %}
 
 ### A. Download a file
-GET {{api}}/storage/v1/object/{{bucket_id}}/eci_1.1.2/preuve_input.txt
+GET {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
 apikey: {{service}}
 Authorization: Bearer {{service}}
 
 
 
-### A. Upsert a commentaire
-POST {{api}}/rest/v1/rpc/upsert_fichier_preuve_commentaire
+### A. Upsert a preuve
+POST {{api}}/rest/v1/rpc/upsert_preuve
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
@@ -112,12 +112,12 @@ Content-Type: application/json
   "collectivite_id": 1,
   "action_id": "eci_1.1.2",
   "filename": "preuve_input.txt",
-  "commentaire": "très inspiré !"
+  "commentaire": "très inspiré"
 }
 
 > {%
     client.test("Upsert executed successfully", function() {
-        client.assert(response.status === 201, "Response status is not 201");
+        client.assert(response.status === 200, "Response status is not 200");
     });
 %}
 
@@ -132,4 +132,9 @@ Authorization: Bearer {{auth_token}}
         client.assert(response.status === 200, "Response status is not 200");
     });
 %}
+
+### A. Delete file
+DELETE {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
+apikey: {{service}}
+Authorization: Bearer {{service}}
 

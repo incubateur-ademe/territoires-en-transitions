@@ -1,4 +1,4 @@
--- Create relation table.
+-- Create collectivité bucket  relation table.
 create table if not exists collectivite_bucket
 (
     collectivite_id integer references collectivite,
@@ -15,7 +15,6 @@ create policy allow_read
     on collectivite_bucket
     using (true);
 
-
 -- Can the user write in the bucket ?
 create or replace function
     is_bucket_writer(id text)
@@ -29,6 +28,36 @@ where is_any_role_on(cb.collectivite_id)
 $$ language sql;
 comment on function is_bucket_writer is
     'Returns true if current user can write on a bucket id';
+
+
+-- Create file action relation table.
+create table if not exists preuve
+(
+    collectivite_id integer references collectivite      not null,
+    action_id       action_id references action_relation not null,
+    file_id         uuid references storage.objects      not null,
+    commentaire     text                                 not null default '',
+    primary key (collectivite_id, action_id, file_id)
+);
+alter table preuve
+    enable row level security;
+create policy allow_read
+    on preuve for select
+    using (is_authenticated());
+create policy allow_insert
+    on preuve for insert
+    with check (is_bucket_writer(
+        (select o.bucket_id
+         from storage.objects o
+         where o.id = preuve.file_id
+        )));
+create policy allow_update
+    on preuve for update
+    using (is_bucket_writer(
+        (select o.bucket_id
+         from storage.objects o
+         where o.id = preuve.file_id
+        )));
 
 
 -- Set policies on buckets
@@ -104,78 +133,69 @@ from collectivite c
          join lateral ( select private.create_bucket(c) ) cb on true;
 
 
--- File comments
-create table if not exists fichier_preuve_commentaire
-(
-    file_id     uuid references storage.objects primary key,
-    commentaire text not null default ''
-);
-alter table fichier_preuve_commentaire
-    enable row level security;
-
-create policy allow_read
-    on fichier_preuve_commentaire for select
-    using (is_authenticated());
-
-create policy allow_insert
-    on fichier_preuve_commentaire for insert
-    with check (is_bucket_writer(
-        (select o.bucket_id
-         from storage.objects o
-         where o.id = fichier_preuve_commentaire.file_id
-        )));
-
-create policy allow_update
-    on fichier_preuve_commentaire for update
-    using (is_bucket_writer(
-        (select o.bucket_id
-         from storage.objects o
-         where o.id = fichier_preuve_commentaire.file_id
-        )));
-
 
 -- Convenience upsert function so the client does not have to know about object ids
-create or replace function upsert_fichier_preuve_commentaire(
+create or replace function upsert_preuve(
     collectivite_id integer,
     action_id action_id,
     filename text,
     commentaire text
 )
-returns void
+    returns void
 as
 $$
 with file as (
     select obj.id
     from storage.objects obj
              join collectivite_bucket cb on obj.bucket_id = cb.bucket_id
-    where cb.collectivite_id = upsert_fichier_preuve_commentaire.collectivite_id
-      and obj.path_tokens[1] = action_id::text
-      and obj.path_tokens[2] = filename
+    where cb.collectivite_id = upsert_preuve.collectivite_id
+      and obj.name = filename
 )
-insert into fichier_preuve_commentaire
-select file.id, upsert_fichier_preuve_commentaire.commentaire
-    from file
-    on conflict (file_id) do update set commentaire = upsert_fichier_preuve_commentaire.commentaire;
+insert
+into preuve(collectivite_id, action_id, file_id, commentaire)
+select collectivite_id, action_id, file.id, upsert_preuve.commentaire
+from file
+on conflict (collectivite_id, action_id, file_id) do update set commentaire = upsert_preuve.commentaire;
 $$ language sql;
-comment on function upsert_fichier_preuve_commentaire is 'Upsert a commentaire on a preuve file';
+comment on function upsert_preuve is 'Upsert a commentaire on a preuve file';
 
 
 -- Client view
 create view fichier_preuve
 as
-select c.id                                           as collectivite_id,
-       cb.bucket_id                                   as bucket_id,
-       a.id                                           as action_id,
-       obj.name                                       as filename,
+select c.id                            as collectivite_id,
+       cb.bucket_id                    as bucket_id,
+       p.action_id                     as action_id,
+       obj.name                        as filename,
        cb.bucket_id || '/' || obj.name as path,
-       coalesce(fc.commentaire, '')                   as commentaire
+       coalesce(p.commentaire, '')     as commentaire
 from collectivite c
          join collectivite_bucket cb on c.id = cb.collectivite_id
          join lateral (select id, name, path_tokens
                        from storage.objects o
                        where o.bucket_id = cb.bucket_id) as obj on true
-         join action_relation a on a.id = obj.path_tokens[1]
-         left join fichier_preuve_commentaire fc on fc.file_id = obj.id;
+         left join preuve p on p.file_id = obj.id;
+
+
+-- Handle file deletion.
+create or replace function remove_preuve()
+    returns trigger
+as
+$$
+begin
+    delete
+    from preuve
+    where file_id = old.id;
+    return old;
+end
+$$ language plpgsql security definer;
+
+create trigger remove_preuve_before_file_delete
+    before delete
+    on storage.objects
+    for each row
+execute procedure remove_preuve();
+
 
 
 
