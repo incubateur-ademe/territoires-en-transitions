@@ -23,10 +23,7 @@ as
 $$
 select count(*) > 0
 from collectivite_bucket cb
-         join private_utilisateur_droit d on d.collectivite_id = cb.collectivite_id
-where cb.bucket_id = is_bucket_writer.id
-  and d.user_id = auth.uid()
-  and d.active
+where is_any_role_on(cb.collectivite_id)
 $$ language sql;
 comment on function is_bucket_writer is
     'Returns true if current user can write on a bucket id';
