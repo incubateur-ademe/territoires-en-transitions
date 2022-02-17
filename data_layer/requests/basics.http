@@ -44,3 +44,18 @@ Content-Type: application/json
   "email": "yele@dede.com",
   "password": "yeledede"
 }
+
+
+### Is service role with anon key
+POST {{api}}/rest/v1/rpc/is_service_role
+apikey: {{anon}}
+Authorization: Bearer {{anon}}
+Content-Type: application/json
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 204");
+        client.assert(response.body === "false", "Response body is not false");
+    });
+%}
