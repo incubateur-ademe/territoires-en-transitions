@@ -1,0 +1,1 @@
+export {ActionPreuvePanel} from './ActionPreuvePanel';
