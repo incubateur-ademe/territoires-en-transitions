@@ -14,9 +14,10 @@ create policy allow_read
     on collectivite_bucket
     using (true);
 
+
 -- Can the user write in the bucket ?
 create or replace function
-    is_bucket_writer(id integer)
+    is_bucket_writer(id text)
     returns boolean
 as
 $$
