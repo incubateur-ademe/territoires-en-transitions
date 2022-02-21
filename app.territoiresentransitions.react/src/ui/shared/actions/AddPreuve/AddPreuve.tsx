@@ -7,14 +7,10 @@ import {AddPreuveFichier} from './AddPreuveFichier';
 export type TAddPreuveProps = {
   /** Index de l'onglet actif */
   defaultActiveTab?: number;
-  /** Fonction appelée pour téléverser les fichiers sélectionnés */
-  uploadFiles: (
-    files: Array<File>
-  ) => Promise<{data: {Key: string} | null; error: Error | null}>;
 };
 
 export const AddPreuve = (props: TAddPreuveProps) => {
-  const {defaultActiveTab, uploadFiles} = props;
+  const {defaultActiveTab} = props;
 
   return (
     <Tabs defaultActiveTab={defaultActiveTab}>
@@ -22,7 +18,7 @@ export const AddPreuve = (props: TAddPreuveProps) => {
         <p>Lien</p>
       </Tab>
       <Tab label="&nbsp;Fichier" icon="fr-fi-upload-2-fill">
-        <AddPreuveFichier uploadFiles={uploadFiles} />
+        <AddPreuveFichier />
       </Tab>
       <Tab label="&nbsp;Bibliothèque" icon="fr-fi-archive-line">
         <p>Bibliothèque</p>

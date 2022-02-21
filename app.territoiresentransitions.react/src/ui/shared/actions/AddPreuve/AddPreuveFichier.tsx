@@ -1,94 +1,92 @@
 /**
  * Affiche le sélecteur de fichiers preuves
  */
-import {File} from '@dataesr/react-dsfr';
-import {LinearProgress} from '@material-ui/core';
+import {File as InputFile} from '@dataesr/react-dsfr';
 import {ChangeEvent, FormEvent, useState} from 'react';
 import {
   MAX_FILE_SIZE_MB,
   EXPECTED_FORMATS,
   EXPECTED_FORMATS_LIST,
-  filesToArray,
-  getInvalidFiles,
-  TFilesArrayOrNull,
-  getValidFiles,
+  filesToSelection,
 } from './constants';
+import {TFileItem} from './FileItem';
+import {FileItemsList} from './FileItemsList';
+import {UploadStatus, UploadStatusCode} from './Uploader.d';
 
 export type TAddPreuveFichierProps = {
-  /** Fonction appelée pour téléverser les fichiers sélectionnés */
-  uploadFiles: (
-    files: Array<File>
-  ) => Promise<{data: {Key: string} | null; error: Error | null}>;
+  /** Fichiers initialement sélectionnés (pour les tests) */
+  initialSelection?: Array<TFileItem>;
 };
 
-const HINT = (
-  <>
-    Taille maximale par fichier : {MAX_FILE_SIZE_MB} Mo.
-    <br />
-    Formats supportés : {EXPECTED_FORMATS.join(', ')}.
-  </>
-);
+const HINT = `Taille maximale par fichier : ${MAX_FILE_SIZE_MB} Mo.\
+  Formats supportés : ${EXPECTED_FORMATS.join(', ')}.`;
+
+const getFileByName = (fileName: string, selection: Array<TFileItem>): number =>
+  selection.findIndex(({file}) => file.name === fileName);
 
 export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
-  const {uploadFiles} = props;
-  const [currentSelection, setCurrentSelection] =
-    useState<TFilesArrayOrNull>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const validFiles = getValidFiles(currentSelection);
-  const invalidFiles = getInvalidFiles(currentSelection);
-  const errorMessage = invalidFiles?.length ? (
-    <div>
-      Les fichiers suivants ne sont pas compatibles et ne seront pas transférés
-      :<br />
-      <ul>
-        {invalidFiles.map(f => (
-          <li key={f.name}>{f.name}</li>
-        ))}
-      </ul>
-    </div>
-  ) : null;
+  const {initialSelection} = props;
+  const [currentSelection, setCurrentSelection] = useState<Array<TFileItem>>(
+    initialSelection || []
+  );
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const {files} = e.target;
-    setCurrentSelection(filesToArray(files));
-  };
-
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (validFiles?.length) {
-      setIsLoading(true);
-      uploadFiles(validFiles).then(() => {
-        setIsLoading(false);
-      });
+    if (files) {
+      setCurrentSelection(filesToSelection(files));
     }
   };
 
-  const isDisabled = !validFiles?.length || isLoading;
+  // appelée quand un item sort de l'état "running" */
+  const onRunningStopped = (fileName: string, status: UploadStatus) => {
+    const index = getFileByName(fileName, currentSelection);
+    if (index !== -1) {
+      // met à jour la sélection courante
+      const updatedSelection = [...currentSelection];
+      updatedSelection[index] = {...currentSelection[index], status};
+      setCurrentSelection(updatedSelection);
+    }
+  };
+
+  // appelée pour supprimer un item terminé en erreur
+  const onRemoveFailed = (fileName: string) => {
+    const index = getFileByName(fileName, currentSelection);
+    if (index !== -1) {
+      setCurrentSelection([
+        ...currentSelection.slice(0, index),
+        ...currentSelection.slice(index + 1),
+      ]);
+    }
+  };
+
+  const validFiles = currentSelection.filter(
+    ({status}) => status.code === UploadStatusCode.completed
+  );
+  const isDisabled = !validFiles?.length;
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    console.log('add preuve:', validFiles);
+  };
 
   return (
     <form onSubmit={onSubmit}>
-      <File
+      <InputFile
         label="Ajouter un ou plusieurs fichier(s)"
         hint={HINT}
         accept={EXPECTED_FORMATS_LIST}
         multiple
         onChange={onChange}
-        errorMessage={errorMessage}
-        disabled={isLoading}
+        //disabled={isLoading}
       />
-      <br />
-
-      {isLoading ? (
-        <label>
-          Transfert en cours...
-          <LinearProgress />
-        </label>
-      ) : (
-        <button className="fr-btn" disabled={isDisabled} type="submit">
-          Ajouter
-        </button>
-      )}
+      <FileItemsList
+        items={currentSelection}
+        onRunningStopped={onRunningStopped}
+        onRemoveFailed={onRemoveFailed}
+      />
+      <button className="fr-btn mt-2" disabled={isDisabled} type="submit">
+        Ajouter
+      </button>
     </form>
   );
 };

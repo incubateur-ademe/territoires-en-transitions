@@ -12,7 +12,7 @@ export const AddPreuveButton = (props: TAddPreuveProps) => {
     <UiDialogButton
       buttonLabel="+ Ajouter"
       title="Ajouter une preuve"
-      buttonClasses="fr-btn--secondary fr-btn--sm"
+      buttonClasses="fr-btn fr-btn--sm"
       opened={opened}
       setOpened={setOpened}
     >
