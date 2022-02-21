@@ -23,8 +23,6 @@ export type TActionPreuvePanelProps = {
   preuve: TActionPreuve;
 };
 
-const TMP_UPLOAD = () => Promise.resolve({error: null, data: null});
-
 /**
  * Affiche le panneau "preuves" d'une action
  */
@@ -32,11 +30,13 @@ export const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
   const {preuve} = props;
 
   return (
-    <Highlight color="#FCD270">
-      <ActionPreuveTitle preuve={preuve} />
-      <ActionPreuveFiles preuve={preuve} />
-      <AddPreuveButton uploadFiles={TMP_UPLOAD} />
-    </Highlight>
+    <>
+      <p className="text-sm text-grey425">
+        Toutes les preuves ajoutées seront visibles par les membres de la
+        communauté Territoires en Transitions.
+      </p>
+      <AddPreuveButton />
+    </>
   );
 };
 

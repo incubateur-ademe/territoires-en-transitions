@@ -72,10 +72,6 @@ export const ActionPreuvesExpandPanel = ({
     <div className="ActionExpandPanelAdemeContent">
       <div className="border-gray-300">
         <CrossExpandPanelWithNode title="Preuves">
-          <p className="text-sm">
-            Toutes les preuves ajoutées seront visibles par les membres de la
-            communauté Territoires en Transitions.
-          </p>
           <ActionPreuvePanel preuve={PREUVE_TMP} />
         </CrossExpandPanelWithNode>
       </div>
