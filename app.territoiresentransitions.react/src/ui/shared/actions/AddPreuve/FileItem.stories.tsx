@@ -30,19 +30,19 @@ export const fileItemMocks = {
       'Rapport d’activités 2019-2020 et rapport DD 2020 nom vraiment trop long.doc',
       60 * 1024 * 1024
     ),
-    status: {code: 'failed', error: 'max_size'},
+    status: {code: 'failed', error: 'sizeError'},
   },
   unknownFormat: {
     file: createMockFile('Logo-comcom.SVG', 15 * 1024 * 1024),
-    status: {code: 'failed', error: 'unknown_format'},
+    status: {code: 'failed', error: 'formatError'},
   },
   formatAndSize: {
     file: createMockFile('mauvais format et taille.exe', 80 * 1024 * 1024),
-    status: {code: 'failed', error: 'format_and_size'},
+    status: {code: 'failed', error: 'formatAndSizeError'},
   },
   uploadError: {
     file: createMockFile('fichier.doc', 15 * 1024 * 1024),
-    status: {code: 'failed', error: 'upload_error'},
+    status: {code: 'failed', error: 'uploadError'},
   },
 };
 

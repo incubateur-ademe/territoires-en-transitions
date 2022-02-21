@@ -1,16 +1,22 @@
-import React from 'react';
+import {useEffect} from 'react';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import {
   UploadStatus,
   UploadStatusCode,
   UploadStatusRunning,
   UploadStatusFailed,
 } from './Uploader.d';
+import {useUploader} from './useUploader';
 
 export type TFileItem = {
   /** Fichier concerné */
   file: File;
   /** Etat */
   status: UploadStatus;
+  /** Pour notifier de la sortie de l'état "running" */
+  onRunningStopped?: (fileName: string, status: UploadStatus) => void;
+  /** Pour supprimer un item de la liste "failed" */
+  onRemoveFailed?: (fileName: string) => void;
 };
 
 export type TFileItemProps = TFileItem; //& {};
@@ -20,13 +26,24 @@ export type TFileItemProps = TFileItem; //& {};
  */
 export const FileItem = (props: TFileItemProps) => {
   const {status} = props;
-  const Renderer = statusToRenderer[status?.code];
+  const code: UploadStatusCode = status?.code || '';
+  const Renderer = statusToRenderer[code];
   return Renderer ? <Renderer {...props} /> : null;
 };
 
 const FileItemRunning = (props: TFileItemProps) => {
-  const {file, status} = props;
-  const {progress} = status as UploadStatusRunning;
+  const {file, onRunningStopped} = props;
+  const collectiviteId = useCollectiviteId()!;
+  const {status} = useUploader('' + collectiviteId, 'action_id', file);
+  const {progress, abort} = status as UploadStatusRunning;
+
+  // répercute le changement d'état de running à completed | failed
+  useEffect(() => {
+    if (status.code !== UploadStatusCode.running) {
+      onRunningStopped?.(file.name, status);
+    }
+  }, [status]);
+
   return (
     <div className="pl-2 pr-4 py-1 flex justify-between">
       <div className="w-8/12 flex justify-between">
@@ -39,7 +56,7 @@ const FileItemRunning = (props: TFileItemProps) => {
       </div>
       <div className="w-3/12 flex items-center">
         <ProgressBar className="w-80 h-3.5 inline-block" value={progress} />
-        <ButtonClose />
+        <ButtonClose onClick={abort} />
       </div>
     </div>
   );
@@ -55,17 +72,17 @@ const FileItemCompleted = (props: TFileItemProps) => {
 };
 
 const errorToLabel = {
-  max_size:
+  sizeError:
     'Ce fichier ne peut pas être téléversé car il dépasse la taille maximale autorisée',
-  unknown_format:
+  formatError:
     'Ce fichier ne peut pas être téléversé car son format n’est pas supporté',
-  format_and_size:
+  formatAndSizeError:
     'Ce fichier ne peut pas être téléversé car son format n’est pas supporté et il dépasse la taille maximale autorisée',
-  upload_error: 'Ce fichier n’a pas pu être téléversé',
+  uploadError: 'Ce fichier n’a pas pu être téléversé',
 };
 
 const FileItemFailed = (props: TFileItemProps) => {
-  const {file, status} = props;
+  const {file, status, onRemoveFailed} = props;
   const {error} = status as UploadStatusFailed;
   const label = errorToLabel[error];
   return (
@@ -79,7 +96,10 @@ const FileItemFailed = (props: TFileItemProps) => {
             ({formatFileSize(file.size)})
           </div>
         </div>
-        <ButtonClose className="invisible group-hover:visible" />
+        <ButtonClose
+          className="invisible group-hover:visible"
+          onClick={() => onRemoveFailed?.(file.name)}
+        />
       </div>
       <div className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs">
         &nbsp;{label}
@@ -92,6 +112,7 @@ const statusToRenderer = {
   running: FileItemRunning,
   completed: FileItemCompleted,
   failed: FileItemFailed,
+  aborted: () => null,
 };
 
 const formatFileSize = (size: number) => {
@@ -120,13 +141,19 @@ const ProgressBar = ({
   </div>
 );
 
-const SmallIconButton = ({className, ...props}: {className?: string}) => (
+const SmallIconButton = ({
+  className,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
   <button
     className={`ml-1 px-1 w-7 text-sm inline-block text-center ${className}`}
     {...props}
   />
 );
 
-const ButtonClose = ({className, ...props}: {className?: string}) => (
+const ButtonClose = ({
+  className,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
   <SmallIconButton className={`fr-fi-close-line ${className}`} {...props} />
 );

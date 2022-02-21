@@ -1,9 +1,44 @@
-import {FileItem, TFileItem, UploadStatusCode} from './FileItem';
+import {FileItem, TFileItem} from './FileItem';
+import {UploadStatus, UploadStatusCode} from './Uploader.d';
 
 export type TFileItemsListProps = {
   items: Array<TFileItem>;
+  /** Pour notifier de la sortie de l'état "running" */
+  onRunningStopped: (fileName: string, status: UploadStatus) => void;
+  /** Pour supprimer un item de la liste "failed" */
+  onRemoveFailed?: (fileName: string) => void;
 };
 
+/**
+ * Affiche la liste des fichiers uploadés/en cours d'upload/en erreur
+ */
+export const FileItemsList = (props: TFileItemsListProps) => {
+  const {items, onRunningStopped, onRemoveFailed} = props;
+
+  // groupe les items terminés/en cours/en erreur
+  const {completed, running, failed} = items.reduce(groupByStatus, emptyGroups);
+
+  // et rend chaque groupe d'items
+  return (
+    <div>
+      {renderItems(completed)}
+      {renderItems(running, {onRunningStopped})}
+      {renderItems(failed, {onRemoveFailed})}
+    </div>
+  );
+};
+
+// rendu des items
+const renderItems = (items: Array<TFileItem>, props?: {}) =>
+  items.length ? (
+    <div className="pb-4">
+      {items.map(item => (
+        <FileItem key={item.file.name} {...item} {...props} />
+      ))}
+    </div>
+  ) : null;
+
+// pour grouper les items terminés/en cours/en erreur
 type TGroupedItems = {
   completed: Array<TFileItem>;
   running: Array<TFileItem>;
@@ -22,40 +57,10 @@ const groupByStatus = (
   const {status} = item;
   switch (status.code) {
     case UploadStatusCode.completed:
-      return {...result, completed: [...result.completed, item]};
     case UploadStatusCode.running:
-      return {...result, running: [...result.running, item]};
     case UploadStatusCode.failed:
-      return {...result, failed: [...result.failed, item]};
+      return {...result, [status.code]: [...result[status.code], item]};
     default:
       return result;
   }
-};
-
-/**
- * Affiche la liste des fichiers uploadés/en cours d'upload/en erreur
- */
-export const FileItemsList = (props: TFileItemsListProps) => {
-  const {items} = props;
-  const {completed, running, failed} = items.reduce(groupByStatus, emptyGroups);
-  console.log({items, completed, running, failed});
-  return (
-    <div>
-      <div className="pb-4">
-        {completed.map(item => (
-          <FileItem key={item.file.name} {...item} />
-        ))}
-      </div>
-      <div className="pb-4">
-        {running.map(item => (
-          <FileItem key={item.file.name} {...item} />
-        ))}
-      </div>
-      <div className="pt-1">
-        {failed.map(item => (
-          <FileItem key={item.file.name} {...item} />
-        ))}
-      </div>
-    </div>
-  );
 };
