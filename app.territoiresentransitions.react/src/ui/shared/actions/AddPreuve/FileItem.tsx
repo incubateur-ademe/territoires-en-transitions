@@ -1,4 +1,10 @@
 import React from 'react';
+import {
+  UploadStatus,
+  UploadStatusCode,
+  UploadStatusRunning,
+  UploadStatusFailed,
+} from './Uploader.d';
 
 export type TFileItem = {
   /** Fichier concerné */
@@ -7,37 +13,7 @@ export type TFileItem = {
   status: UploadStatus;
 };
 
-export type TFileItemProps = TFileItem & {
-  onAbort: () => void;
-};
-
-export enum UploadStatusCode {
-  running = 'running',
-  completed = 'completed',
-  failed = 'failed',
-  aborted = 'aborted',
-}
-
-enum UploadErrorCode {
-  max_size,
-  unkown_format,
-  format_and_size,
-  upload_error,
-}
-
-type UploadStatusRunning = {code: UploadStatusCode.running; progress: number};
-type UploadStatusFailed = {
-  code: UploadStatusCode.failed;
-  error: UploadErrorCode;
-};
-type UploadStatusCompleted = {code: UploadStatusCode.completed};
-type UploadStatusAborted = {code: UploadStatusCode.aborted};
-
-type UploadStatus =
-  | UploadStatusRunning
-  | UploadStatusCompleted
-  | UploadStatusFailed
-  | UploadStatusAborted;
+export type TFileItemProps = TFileItem; //& {};
 
 /**
  * Affiche un item représentant un fichier
