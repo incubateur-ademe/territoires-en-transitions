@@ -1,36 +1,28 @@
-// import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
-import {supabaseClient} from 'core-logic/api/supabase';
 // eslint-disable-next-line node/no-extraneous-import
 import {FileObject} from '@supabase/storage-js';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {collectiviteBucketReadEndpoint} from './CollectiviteBucketReadEndpoint';
 
 export interface CollectiviteBucketFilesParams {
-  bucket_id: string;
+  collectivite_id: number;
 }
 
-/*
-class CollectiviteBucketFilesReadEndpoint extends DataLayerReadCachedEndpoint<
-  Array<FileObject> | null,
-  CollectiviteBucketFilesParams
-> {
-  readonly name = 'storage.objects'; // ???
+// liste tous les fichiers de la bibliothèque d'une collectivité
+class CollectiviteBucketFilesReadEndpoint {
+  async getBy(getParams: CollectiviteBucketFilesParams): Promise<FileObject[]> {
+    const buckets = await collectiviteBucketReadEndpoint.getBy({
+      collectivite_id: getParams.collectivite_id,
+    });
 
-  async _read(
-    getParams: CollectiviteBucketFilesParams
-  ): Promise<Array<FileObject> | null> {
-    const {data, error} = await supabaseClient.storage
-      .from(getParams.bucket_id)
-      .list();
+    const bucket_id = buckets[0]?.bucket_id;
+
+    if (!bucket_id) return [];
+
+    const {data, error} = await supabaseClient.storage.from(bucket_id).list();
     if (error) throw error?.message;
-    return data;
+    return data || [];
   }
 }
-*/
 
-// TODO: utiliser le cache ?
-export const collectiviteBucketFilesReadEndpoint = async ({
-  bucket_id,
-}: CollectiviteBucketFilesParams): Promise<Array<FileObject> | null> => {
-  const {data, error} = await supabaseClient.storage.from(bucket_id).list();
-  if (error) throw error?.message;
-  return data;
-};
+export const collectiviteBucketFilesReadEndpoint =
+  new CollectiviteBucketFilesReadEndpoint();

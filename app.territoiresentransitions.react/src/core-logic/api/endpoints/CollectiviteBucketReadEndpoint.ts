@@ -10,6 +10,7 @@ export interface CollectiviteBucket {
   bucket_id: string;
 }
 
+// retrouve le bucket associé à une collectivité
 class CollectiviteBucketReadEndpoint extends DataLayerReadCachedEndpoint<
   CollectiviteBucket,
   CollectiviteBucketParams
