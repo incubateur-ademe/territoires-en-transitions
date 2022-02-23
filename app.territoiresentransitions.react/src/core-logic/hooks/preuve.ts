@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {preuveReadEndpoint} from 'core-logic/api/endpoints/PreuveReadEndpoint';
-import {FichierPreuve} from 'generated/dataLayer/preuve_read';
+import {Preuve} from 'generated/dataLayer/preuve_read';
 import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
@@ -10,11 +10,11 @@ import {preuveUploader} from 'ui/shared/actions/AddPreuve/useUploader';
 import {FileObject} from '@supabase/storage-js';
 
 export type TPreuveFichiersHook = {
-  fichiers: FichierPreuve[];
+  fichiers: Preuve[];
 };
 
 export const usePreuveFichiers = (action_id: string): TPreuveFichiersHook => {
-  const [fichiers, setFichiers] = useState<FichierPreuve[]>([]);
+  const [fichiers, setFichiers] = useState<Preuve[]>([]);
   const collectivite_id = useCollectiviteId();
   const fetch = () => {
     if (collectivite_id) {
@@ -57,12 +57,10 @@ export const useCollectiviteBucketFiles = (): TCollectiviteFichiersHook => {
   const [bucketFiles, setBucketFiles] = useState<FileObject[]>([]);
   const collectivite_id = useCollectiviteId()!;
   const fetch = () => {
-    console.log('=> => collectiviteBucketFilesReadEndpoint should fetch !! ');
     if (collectivite_id) {
       collectiviteBucketFilesReadEndpoint
         .getBy({collectivite_id})
         .then(bucketFiles => setBucketFiles(bucketFiles));
-      console.log('bucketFiles ', bucketFiles);
     }
   };
 
