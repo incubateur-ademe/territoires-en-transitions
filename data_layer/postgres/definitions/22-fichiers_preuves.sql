@@ -39,11 +39,15 @@ create table if not exists preuve
     commentaire     text                                 not null default '',
     primary key (collectivite_id, action_id, file_id)
 );
+comment on table preuve is
+    'A preuve links a file from storage to an action for a collectivité.';
 alter table preuve
     enable row level security;
+
 create policy allow_read
     on preuve for select
     using (is_authenticated());
+
 create policy allow_insert
     on preuve for insert
     with check (is_bucket_writer(
@@ -51,8 +55,17 @@ create policy allow_insert
          from storage.objects o
          where o.id = preuve.file_id
         )));
+
 create policy allow_update
     on preuve for update
+    using (is_bucket_writer(
+        (select o.bucket_id
+         from storage.objects o
+         where o.id = preuve.file_id
+        )));
+
+create policy allow_delete
+    on preuve for delete
     using (is_bucket_writer(
         (select o.bucket_id
          from storage.objects o
@@ -69,7 +82,7 @@ create policy allow_insert
     on storage.objects for insert
     with check (is_bucket_writer(bucket_id));
 
-create policy au
+create policy allow_update
     on storage.objects for update
     with check (is_bucket_writer(bucket_id));
 
@@ -134,7 +147,7 @@ from collectivite c
 
 
 
--- Convenience upsert function so the client does not have to know about object ids
+-- Convenience upsert functions so the client does not have to know about object ids
 create or replace function upsert_preuve(
     collectivite_id integer,
     action_id action_id,
@@ -157,7 +170,30 @@ select collectivite_id, action_id, file.id, upsert_preuve.commentaire
 from file
 on conflict (collectivite_id, action_id, file_id) do update set commentaire = upsert_preuve.commentaire;
 $$ language sql;
-comment on function upsert_preuve is 'Upsert a commentaire on a preuve file';
+comment on function upsert_preuve is 'Upsert a preuve';
+
+create or replace function delete_preuve(
+    collectivite_id integer,
+    action_id action_id,
+    filename text
+)
+    returns void
+as
+$$
+with file as (
+    select obj.id
+    from storage.objects obj
+             join collectivite_bucket cb on obj.bucket_id = cb.bucket_id
+    where cb.collectivite_id = delete_preuve.collectivite_id
+      and obj.name = filename
+)
+delete
+from preuve
+where preuve.collectivite_id = delete_preuve.collectivite_id
+  and preuve.action_id = delete_preuve.action_id
+  and preuve.file_id in (select id from file);
+$$ language sql;
+comment on function delete_preuve is 'Delete a preuve';
 
 
 -- Client view

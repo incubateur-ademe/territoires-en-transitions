@@ -133,8 +133,26 @@ Authorization: Bearer {{auth_token}}
     });
 %}
 
-### A. Delete file
+### A. Delete file and related preuves
 DELETE {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
 apikey: {{service}}
 Authorization: Bearer {{service}}
+
+### A. removes a preuve
+POST {{api}}/rest/v1/rpc/delete_preuve
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "action_id": "eci_1.1.2",
+  "filename": "preuve_input.txt"
+}
+
+> {%
+    client.test("Delete executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
 
