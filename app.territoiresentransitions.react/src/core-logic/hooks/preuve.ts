@@ -1,8 +1,6 @@
 import {useEffect, useState} from 'react';
-import {
-  FichierPreuve,
-  fichierPreuveReadEndpoint,
-} from 'core-logic/api/endpoints/FichierPreuveReadEndpoint';
+import {fichierPreuveReadEndpoint} from 'core-logic/api/endpoints/FichierPreuveReadEndpoint';
+import {FichierPreuve} from 'generated/dataLayer/fichier_preuve_read';
 import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {

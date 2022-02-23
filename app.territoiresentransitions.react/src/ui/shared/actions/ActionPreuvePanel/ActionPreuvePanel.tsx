@@ -1,6 +1,6 @@
 import {ChangeEvent, MouseEvent, useState} from 'react';
 import {TextInput} from '@dataesr/react-dsfr';
-import {FichierPreuve} from 'core-logic/api/endpoints/FichierPreuveReadEndpoint';
+import {FichierPreuve} from 'generated/dataLayer/fichier_preuve_read';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {AddPreuveButton} from 'ui/shared/actions/AddPreuve';
 import {ButtonComment, ButtonRemove} from 'ui/shared/SmallIconButton';
