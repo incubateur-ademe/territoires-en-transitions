@@ -9,10 +9,11 @@ import {
   upsertFichierPreuve,
   FichierPreuveWrite,
 } from 'core-logic/api/procedures/preuveProcedures';
+import {fichierPreuveWriteEndpoint} from 'core-logic/api/endpoints/FichierPreuveWriteEndpoint';
 
 export type TPreuveFichiersHook = {
   fichiers: FichierPreuve[];
-  upsertPreuve: (fichierPreuve: FichierPreuveWrite) => Promise<boolean>;
+  // upsertPreuve: (fichierPreuve: FichierPreuveWrite) => Promise<boolean>;
 };
 
 export const usePreuveFichiers = (action_id: string): TPreuveFichiersHook => {
@@ -44,21 +45,16 @@ export const usePreuveFichiers = (action_id: string): TPreuveFichiersHook => {
   const fetch = () => {
     console.log('refetch');
     if (collectivite_id) {
-      fichierPreuveReadEndpoint({collectivite_id, action_id})
-        //.getBy({collectivite_id, action_id})
+      fichierPreuveReadEndpoint
+        .getBy({collectivite_id, action_id})
         .then(setFichiers);
     }
   };
 
-  const upsertPreuve = (fichierPreuve: FichierPreuveWrite): Promise<boolean> =>
-    upsertFichierPreuve(fichierPreuve).then(ret => {
-      if (ret) {
-        fetch();
-      }
-      return ret;
-    });
+  fichierPreuveWriteEndpoint.addListener(fetch);
+  fetch();
 
-  return {fichiers, upsertPreuve};
+  return {fichiers};
 };
 
 export const useCollectiviteBucketId = () => {

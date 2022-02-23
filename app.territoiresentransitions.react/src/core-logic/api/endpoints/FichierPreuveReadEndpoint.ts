@@ -1,6 +1,6 @@
-// import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
-// import {PostgrestResponse} from '@supabase/supabase-js';
-import {supabaseClient} from '../supabase';
+import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
+import {PostgrestResponse} from '@supabase/supabase-js';
+import {fichierPreuveWriteEndpoint} from 'core-logic/api/endpoints/FichierPreuveWriteEndpoint';
 
 export interface FichierPreuveParams {
   collectivite_id: number;
@@ -16,7 +16,6 @@ export interface FichierPreuve {
   commentaire: string;
 }
 
-/*
 class FichierPreuveReadEndpoint extends DataLayerReadCachedEndpoint<
   FichierPreuve,
   FichierPreuveParams
@@ -32,21 +31,22 @@ class FichierPreuveReadEndpoint extends DataLayerReadCachedEndpoint<
   }
 }
 
-export const fichierPreuveReadEndpoint = new FichierPreuveReadEndpoint([]);
-*/
+export const fichierPreuveReadEndpoint = new FichierPreuveReadEndpoint([
+  fichierPreuveWriteEndpoint,
+]);
 
-export const fichierPreuveReadEndpoint = async ({
-  collectivite_id,
-  action_id,
-}: FichierPreuveParams): Promise<FichierPreuve[]> => {
-  const {data, error} = await supabaseClient
-    .from('fichier_preuve')
-    .select()
-    .eq('collectivite_id', collectivite_id)
-    .eq('action_id', action_id);
+// export const fichierPreuveReadEndpoint = async ({
+//   collectivite_id,
+//   action_id,
+// }: FichierPreuveParams): Promise<FichierPreuve[]> => {
+//   const {data, error} = await supabaseClient
+//     .from('fichier_preuve')
+//     .select()
+//     .eq('collectivite_id', collectivite_id)
+//     .eq('action_id', action_id);
 
-  if (error) {
-    throw error.message;
-  }
-  return data as FichierPreuve[];
-};
+//   if (error) {
+//     throw error.message;
+//   }
+//   return data as FichierPreuve[];
+// };

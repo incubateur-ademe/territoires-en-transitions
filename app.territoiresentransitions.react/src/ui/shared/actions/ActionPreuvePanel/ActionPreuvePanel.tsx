@@ -7,6 +7,7 @@ import {ButtonComment, ButtonRemove} from 'ui/shared/SmallIconButton';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useActionPreuve} from 'core-logic/hooks/referentiel';
 import {TPreuveFichiersHook, usePreuveFichiers} from 'core-logic/hooks/preuve';
+import {fichierPreuveWriteEndpoint} from 'core-logic/api/endpoints/FichierPreuveWriteEndpoint';
 
 export type TActionPreuvePanelProps = {
   action: ActionDefinitionSummary;
@@ -175,10 +176,14 @@ const PreuveFile = ({
           }
           onBlur={() => {
             setEditingComment(false);
-            preuveFichiers.upsertPreuve({
+            fichierPreuveWriteEndpoint.save({
               ...file,
               commentaire: updatedComment,
             });
+            // preuveFichiers.upsertPreuve({
+            //   ...file,
+            //   commentaire: updatedComment,
+            // });
           }}
         />
       ) : null}
