@@ -6,3 +6,9 @@ export type PreuveWrite = {
   filename: string;
   commentaire: string;
 };
+
+export type PreuveDelete = {
+  collectivite_id: number;
+  action_id: string;
+  filename: string;
+};

@@ -63,13 +63,13 @@ const ActionPreuveFiles = (props: TActionPreuveFilesProps) => {
 /**
  * Affiche le détail d'un fichier
  */
-const PreuveFile = ({file}: {file: FichierPreuve}) => {
-  const {filename, bucket_id, commentaire} = file;
+const PreuveFile = ({file}: {file: Preuve}) => {
+  const {action_id, collectivite_id, filename, bucket_id, commentaire} = file;
   const [isEditingComment, setEditingComment] = useState(false);
   const [updatedComment, setUpdatedComment] = useState(commentaire);
 
   const removePreuve = () => {
-    console.log('TODO');
+    preuveWriteEndpoint.delete({action_id, collectivite_id, filename});
   };
 
   // télécharge le fichier avant de l'afficher dans un nouvel onglet
