@@ -6,7 +6,6 @@ import {
 import {
   useActionContexte,
   useActionExemples,
-  useActionPreuve,
   useActionResources,
 } from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';

@@ -1,19 +1,5 @@
 import {Story, Meta} from '@storybook/react';
-// eslint-disable-next-line node/no-unpublished-import
-import {action} from '@storybook/addon-actions';
 import {AddPreuve, TAddPreuveProps} from './AddPreuve';
-
-// Après un délai, applique une action et renvoi une promesse résolue avec la
-// réponse donnée.
-const delayedAction =
-  (act, reply, delay = 500) =>
-  (...args) =>
-    new Promise(resolve =>
-      setTimeout(() => {
-        act(...args);
-        resolve(reply);
-      }, delay)
-    );
 
 const DEFAULT_ARGS = {
   action: {id: '"eci_1.1.2'},
