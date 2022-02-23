@@ -42,43 +42,6 @@ export const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
 };
 
 /**
- * Affiche le titre d'une preuve et le bouton (i) / dialogue "info" si nécessaire
-const ActionPreuveTitle = ({preuve}: {preuve: TActionPreuve}) => {
-  const [opened, setOpened] = useState(false);
-  const {title, info} = preuve;
-
-  return (
-    <>
-      <p className="pb-4">
-        {title}
-        {info ? (
-          <i
-            className="fr-fi-information-fill text-bf500"
-            onClick={() => {
-              if (info) {
-                setOpened(true);
-              }
-            }}
-          />
-        ) : null}
-      </p>
-      <Dialog
-        open={opened}
-        onClose={() => setOpened(false)}
-        maxWidth="md"
-        fullWidth={true}
-      >
-        <div className="p-7 flex flex-col">
-          <h4 className="pb-4">Pièces complémentaires</h4>
-          <p>{info} </p>
-        </div>
-      </Dialog>
-    </>
-  );
-};
- */
-
-/**
  * Affiche les fichiers attachés à l'action
  */
 const ActionPreuveFiles = (props: TActionPreuveFilesProps) => {
@@ -91,11 +54,7 @@ const ActionPreuveFiles = (props: TActionPreuveFilesProps) => {
   return (
     <div className="mt-2">
       {fichiers.map(file => (
-        <PreuveFile
-          key={file.filename}
-          file={file}
-          preuveFichiers={preuveFichiers}
-        />
+        <PreuveFile key={file.filename} file={file} />
       ))}
     </div>
   );
@@ -104,13 +63,7 @@ const ActionPreuveFiles = (props: TActionPreuveFilesProps) => {
 /**
  * Affiche le détail d'un fichier
  */
-const PreuveFile = ({
-  file,
-  preuveFichiers,
-}: {
-  file: FichierPreuve;
-  preuveFichiers: TPreuveFichiersHook;
-}) => {
+const PreuveFile = ({file}: {file: FichierPreuve}) => {
   const {filename, bucket_id, commentaire} = file;
   const [isEditingComment, setEditingComment] = useState(false);
   const [updatedComment, setUpdatedComment] = useState(commentaire);
@@ -119,6 +72,8 @@ const PreuveFile = ({
     console.log('TODO');
   };
 
+  // télécharge le fichier avant de l'afficher dans un nouvel onglet
+  // l'ouverture directe de l'URL ne fonctionne pas car les headers d'auth. sont absents
   const openFileInNewTab = async () => {
     const {data, error} = await supabaseClient.storage
       .from(bucket_id)
@@ -180,13 +135,48 @@ const PreuveFile = ({
               ...file,
               commentaire: updatedComment,
             });
-            // preuveFichiers.upsertPreuve({
-            //   ...file,
-            //   commentaire: updatedComment,
-            // });
           }}
         />
       ) : null}
     </div>
   );
 };
+
+/**
+ * COMMENTER EN ATTENDANT DE POUVOIR LISTER LES LIBELLES DES PREUVES INDIVIDUELLEMENT
+ *
+ * Affiche le titre d'une preuve et le bouton (i) / dialogue "info" si nécessaire
+const ActionPreuveTitle = ({preuve}: {preuve: TActionPreuve}) => {
+  const [opened, setOpened] = useState(false);
+  const {title, info} = preuve;
+
+  return (
+    <>
+      <p className="pb-4">
+        {title}
+        {info ? (
+          <i
+            className="fr-fi-information-fill text-bf500"
+            onClick={() => {
+              if (info) {
+                setOpened(true);
+              }
+            }}
+          />
+        ) : null}
+      </p>
+      <Dialog
+        open={opened}
+        onClose={() => setOpened(false)}
+        maxWidth="md"
+        fullWidth={true}
+      >
+        <div className="p-7 flex flex-col">
+          <h4 className="pb-4">Pièces complémentaires</h4>
+          <p>{info} </p>
+        </div>
+      </Dialog>
+    </>
+  );
+};
+ */
