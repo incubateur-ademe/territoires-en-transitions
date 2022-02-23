@@ -3,54 +3,30 @@ import {fichierPreuveReadEndpoint} from 'core-logic/api/endpoints/FichierPreuveR
 import {FichierPreuve} from 'generated/dataLayer/fichier_preuve_read';
 import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {
-  upsertFichierPreuve,
-  FichierPreuveWrite,
-} from 'core-logic/api/procedures/preuveProcedures';
 import {fichierPreuveWriteEndpoint} from 'core-logic/api/endpoints/FichierPreuveWriteEndpoint';
 
 export type TPreuveFichiersHook = {
   fichiers: FichierPreuve[];
-  // upsertPreuve: (fichierPreuve: FichierPreuveWrite) => Promise<boolean>;
 };
 
 export const usePreuveFichiers = (action_id: string): TPreuveFichiersHook => {
   const [fichiers, setFichiers] = useState<FichierPreuve[]>([]);
   const collectivite_id = useCollectiviteId();
 
-  /*
-  const [subscription, setSubscription] = useState<RealtimeSubscription>();
   useEffect(() => {
-    if (!subscription) {
-      const sub = supabaseClient
-        .from(`preuve:collectivite_id=eq.${collectivite_id}`)
-        .on('INSERT', fetch)
-        .on('UPDATE', fetch)
-        .subscribe();
-      setSubscription(sub);
-      return () => {
-        supabaseClient.removeSubscription(sub);
-      };
-    }
-    return () => {};
-  }, [subscription, collectivite_id, action_id]);
-  */
-
-  useEffect(() => {
+    const fetch = () => {
+      if (collectivite_id) {
+        fichierPreuveReadEndpoint
+          .getBy({collectivite_id, action_id})
+          .then(setFichiers);
+      }
+    };
+    fichierPreuveWriteEndpoint.addListener(fetch);
     fetch();
+    return () => {
+      fichierPreuveWriteEndpoint.removeListener(fetch);
+    };
   }, [collectivite_id, action_id]);
-
-  const fetch = () => {
-    console.log('refetch');
-    if (collectivite_id) {
-      fichierPreuveReadEndpoint
-        .getBy({collectivite_id, action_id})
-        .then(setFichiers);
-    }
-  };
-
-  fichierPreuveWriteEndpoint.addListener(fetch);
-  fetch();
 
   return {fichiers};
 };
