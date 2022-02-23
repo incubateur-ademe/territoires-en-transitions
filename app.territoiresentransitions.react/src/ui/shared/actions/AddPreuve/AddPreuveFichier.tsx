@@ -2,7 +2,7 @@
  * Affiche le sélecteur de fichiers preuves
  */
 import {File as InputFile} from '@dataesr/react-dsfr';
-import {fichierPreuveWriteEndpoint} from 'core-logic/api/endpoints/FichierPreuveWriteEndpoint';
+import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {ChangeEvent, FormEvent, useState} from 'react';
 import {TActionPreuvePanelProps} from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
@@ -74,7 +74,7 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
     if (collectivite_id) {
       Promise.all(
         validFiles.map(({actionId, file}) =>
-          fichierPreuveWriteEndpoint.save(
+          preuveWriteEndpoint.save(
             // upsertFichierPreuve(
             {
               action_id: actionId,

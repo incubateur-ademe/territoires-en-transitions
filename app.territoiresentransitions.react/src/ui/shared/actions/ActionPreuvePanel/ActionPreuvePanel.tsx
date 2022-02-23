@@ -1,13 +1,13 @@
 import {ChangeEvent, MouseEvent, useState} from 'react';
 import {TextInput} from '@dataesr/react-dsfr';
-import {FichierPreuve} from 'generated/dataLayer/fichier_preuve_read';
+import {FichierPreuve} from 'generated/dataLayer/preuve_read';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {AddPreuveButton} from 'ui/shared/actions/AddPreuve';
 import {ButtonComment, ButtonRemove} from 'ui/shared/SmallIconButton';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useActionPreuve} from 'core-logic/hooks/referentiel';
 import {TPreuveFichiersHook, usePreuveFichiers} from 'core-logic/hooks/preuve';
-import {fichierPreuveWriteEndpoint} from 'core-logic/api/endpoints/FichierPreuveWriteEndpoint';
+import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
 
 export type TActionPreuvePanelProps = {
   action: ActionDefinitionSummary;
@@ -131,7 +131,7 @@ const PreuveFile = ({file}: {file: FichierPreuve}) => {
           }
           onBlur={() => {
             setEditingComment(false);
-            fichierPreuveWriteEndpoint.save({
+            preuveWriteEndpoint.save({
               ...file,
               commentaire: updatedComment,
             });

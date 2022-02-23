@@ -1,12 +1,12 @@
 import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {PostgrestResponse} from '@supabase/supabase-js';
-import {fichierPreuveWriteEndpoint} from 'core-logic/api/endpoints/FichierPreuveWriteEndpoint';
+import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
 import {
   FichierPreuve,
   FichierPreuveParams,
-} from 'generated/dataLayer/fichier_preuve_read';
+} from 'generated/dataLayer/preuve_read';
 
-class FichierPreuveReadEndpoint extends DataLayerReadCachedEndpoint<
+class PreuveReadEndpoint extends DataLayerReadCachedEndpoint<
   FichierPreuve,
   FichierPreuveParams
 > {
@@ -21,6 +21,4 @@ class FichierPreuveReadEndpoint extends DataLayerReadCachedEndpoint<
   }
 }
 
-export const fichierPreuveReadEndpoint = new FichierPreuveReadEndpoint([
-  fichierPreuveWriteEndpoint,
-]);
+export const preuveReadEndpoint = new PreuveReadEndpoint([preuveWriteEndpoint]);

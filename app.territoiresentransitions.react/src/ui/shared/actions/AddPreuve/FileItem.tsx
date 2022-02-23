@@ -8,7 +8,6 @@ import {
 import {useUploader} from './useUploader';
 import {ButtonClose} from '../../SmallIconButton';
 import {ProgressBar} from '../../ProgressBar';
-import {useCollectiviteBucketId} from 'core-logic/hooks/preuve';
 
 export type TFileItem = {
   actionId: string;
@@ -35,9 +34,8 @@ export const FileItem = (props: TFileItemProps) => {
 };
 
 const FileItemRunning = (props: TFileItemProps) => {
-  const {actionId, file, onRunningStopped} = props;
-  const bucketId = useCollectiviteBucketId();
-  const {status} = useUploader(bucketId, actionId, file);
+  const {file, onRunningStopped} = props;
+  const {status} = useUploader(file);
   const {progress, abort} = status as UploadStatusRunning;
 
   // répercute le changement d'état de running à completed | failed

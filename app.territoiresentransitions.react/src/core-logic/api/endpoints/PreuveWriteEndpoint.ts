@@ -1,10 +1,10 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {ChangeNotifier} from 'core-logic/api/reactivity';
-import type {FichierPreuveWrite} from 'generated/dataLayer/fichier_preuve_write';
+import type {PreuveWrite} from 'generated/dataLayer/preuve_write';
 
-export class FichierPreuveWriteEndpoint extends ChangeNotifier {
-  async save(fichierPreuve: FichierPreuveWrite): Promise<boolean> {
-    const {collectivite_id, action_id, filename, commentaire} = fichierPreuve;
+export class PreuveWriteEndpoint extends ChangeNotifier {
+  async save(preuve: PreuveWrite): Promise<boolean> {
+    const {collectivite_id, action_id, filename, commentaire} = preuve;
     const {error} = await supabaseClient.rpc('upsert_preuve', {
       collectivite_id,
       action_id,
@@ -20,4 +20,4 @@ export class FichierPreuveWriteEndpoint extends ChangeNotifier {
   }
 }
 
-export const fichierPreuveWriteEndpoint = new FichierPreuveWriteEndpoint();
+export const preuveWriteEndpoint = new PreuveWriteEndpoint();

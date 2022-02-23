@@ -1,9 +1,13 @@
 import {useEffect, useState} from 'react';
-import {fichierPreuveReadEndpoint} from 'core-logic/api/endpoints/FichierPreuveReadEndpoint';
-import {FichierPreuve} from 'generated/dataLayer/fichier_preuve_read';
+import {preuveReadEndpoint} from 'core-logic/api/endpoints/PreuveReadEndpoint';
+import {FichierPreuve} from 'generated/dataLayer/preuve_read';
 import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {fichierPreuveWriteEndpoint} from 'core-logic/api/endpoints/FichierPreuveWriteEndpoint';
+import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
+import {collectiviteBucketFilesReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketFilesReadEndpoint';
+import {preuveUploader} from 'ui/shared/actions/AddPreuve/useUploader';
+// eslint-disable-next-line node/no-extraneous-import
+import {FileObject} from '@supabase/storage-js';
 
 export type TPreuveFichiersHook = {
   fichiers: FichierPreuve[];
@@ -12,19 +16,17 @@ export type TPreuveFichiersHook = {
 export const usePreuveFichiers = (action_id: string): TPreuveFichiersHook => {
   const [fichiers, setFichiers] = useState<FichierPreuve[]>([]);
   const collectivite_id = useCollectiviteId();
+  const fetch = () => {
+    if (collectivite_id) {
+      preuveReadEndpoint.getBy({collectivite_id, action_id}).then(setFichiers);
+    }
+  };
 
   useEffect(() => {
-    const fetch = () => {
-      if (collectivite_id) {
-        fichierPreuveReadEndpoint
-          .getBy({collectivite_id, action_id})
-          .then(setFichiers);
-      }
-    };
-    fichierPreuveWriteEndpoint.addListener(fetch);
+    preuveWriteEndpoint.addListener(fetch);
     fetch();
     return () => {
-      fichierPreuveWriteEndpoint.removeListener(fetch);
+      preuveWriteEndpoint.removeListener(fetch);
     };
   }, [collectivite_id, action_id]);
 
@@ -45,4 +47,32 @@ export const useCollectiviteBucketId = () => {
   });
 
   return bucketId;
+};
+
+export type TCollectiviteFichiersHook = {
+  bucketFiles: FileObject[];
+};
+
+export const useCollectiviteBucketFiles = (): TCollectiviteFichiersHook => {
+  const [bucketFiles, setBucketFiles] = useState<FileObject[]>([]);
+  const collectivite_id = useCollectiviteId()!;
+  const fetch = () => {
+    console.log('=> => collectiviteBucketFilesReadEndpoint should fetch !! ');
+    if (collectivite_id) {
+      collectiviteBucketFilesReadEndpoint
+        .getBy({collectivite_id})
+        .then(bucketFiles => setBucketFiles(bucketFiles));
+      console.log('bucketFiles ', bucketFiles);
+    }
+  };
+
+  useEffect(() => {
+    preuveUploader.addListener(fetch);
+    fetch();
+    return () => {
+      preuveUploader.removeListener(fetch);
+    };
+  }, [collectivite_id]);
+
+  return {bucketFiles};
 };

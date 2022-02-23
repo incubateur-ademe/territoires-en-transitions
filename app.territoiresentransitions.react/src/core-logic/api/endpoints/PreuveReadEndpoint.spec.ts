@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/extend-expect';
-import {fichierPreuveReadEndpoint} from './FichierPreuveReadEndpoint';
+import {preuveReadEndpoint} from './PreuveReadEndpoint';
 import {supabaseClient} from 'core-logic/api/supabase';
 
 import {collectivite1, yoloCredentials} from 'test_utils/collectivites';
@@ -8,7 +8,7 @@ describe('fichier_preuve for a collectivite and an action', () => {
   it('should retrieve fichier_preuve', async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
 
-    const results = await fichierPreuveReadEndpoint.getBy({
+    const results = await preuveReadEndpoint.getBy({
       collectivite_id: collectivite1.collectivite_id,
       action_id: 'eci_1.3.2',
     });
