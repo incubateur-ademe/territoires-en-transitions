@@ -58,21 +58,11 @@ export const ActionPreuvesExpandPanel = ({
 }: {
   action: ActionDefinitionSummary;
 }) => {
-  const preuve = useActionPreuve(action.id);
-  // console.log({preuve});
-  const PREUVE_TMP = {
-    title: 'Fiches de poste des membres de l’équipe mises à jour ',
-    info: 'Si l’élaboration d’une politique Économie circulaire a fait l’objet d’un travail spécifique, fournir le document le plus récent démontrant l’existence de celle-ci : Plan/Programme/Convention issue d’un Contrat de transition écologique, d’un CODEC, etc.',
-    files: [
-      {pathName: 'un-fichier.pdf'},
-      {pathName: 'un-autre.doc', comment: 'mon commentaire'},
-    ],
-  };
   return (
     <div className="ActionExpandPanelAdemeContent">
       <div className="border-gray-300">
         <CrossExpandPanelWithNode title="Preuves">
-          <ActionPreuvePanel preuve={PREUVE_TMP} />
+          <ActionPreuvePanel action={action} />
         </CrossExpandPanelWithNode>
       </div>
     </div>

@@ -1,105 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Storyshots Ui/Shared/Actions/Action Preuve Panel/Action Preuve Panel Default 1`] = `
-<div
-  className="fr-highlight"
->
+Array [
   <p
-    className="fr-text--md"
+    className="text-sm text-grey425"
   >
-    <p
-      className="pb-4"
-    >
-      Délibération indiquant l’engagement à développer un programme d’actions Économie circulaire
-    </p>
-    <div
+    Toutes les preuves ajoutées seront visibles par les membres de la communauté Territoires en Transitions.
+  </p>,
+  <div
+    onClick={[Function]}
+  >
+    <button
+      className="fr-btn fr-btn--sm"
+      data-test="AddPreuveButton"
       onClick={[Function]}
     >
-      <button
-        className="fr-btn fr-btn--secondary fr-btn--sm"
-        onClick={[Function]}
-      >
-        + Ajouter
-      </button>
-    </div>
-  </p>
-</div>
-`;
-
-exports[`Storyshots Ui/Shared/Actions/Action Preuve Panel/Action Preuve Panel With Files 1`] = `
-<div
-  className="fr-highlight"
->
-  <p
-    className="fr-text--md"
-  >
-    <p
-      className="pb-4"
-    >
-      Délibération qui donne délégation et/ou qui cite l’élu.e.s en charge de l’Économie Circulaire 
-    </p>
-    <div>
-      <p
-        className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl"
-      >
-        Délibération-Engagement-PCAET.pdf
-        <div
-          className="invisible group-hover:visible"
-        >
-          <i
-            className="fr-fi-chat-quote-line hover:fr-fi-chat-quote-fill mr-2"
-          />
-          <i
-            className="fr-fi-delete-line hover:fr-fi-delete-line"
-          />
-        </div>
-      </p>
-      <p
-        className="text-sm text-gray-500 pl-2 pb-4"
-      >
-        Cf pp 34-35 - Document provisoire, en attente d’approbation
-      </p>
-    </div>
-    <div
-      onClick={[Function]}
-    >
-      <button
-        className="fr-btn fr-btn--secondary fr-btn--sm"
-        onClick={[Function]}
-      >
-        + Ajouter
-      </button>
-    </div>
-  </p>
-</div>
-`;
-
-exports[`Storyshots Ui/Shared/Actions/Action Preuve Panel/Action Preuve Panel With Optional Info 1`] = `
-<div
-  className="fr-highlight"
->
-  <p
-    className="fr-text--md"
-  >
-    <p
-      className="pb-4"
-    >
-      Fiches de poste des membres de l’équipe mises à jour 
-      <i
-        className="fr-fi-information-fill text-bf500"
-        onClick={[Function]}
-      />
-    </p>
-    <div
-      onClick={[Function]}
-    >
-      <button
-        className="fr-btn fr-btn--secondary fr-btn--sm"
-        onClick={[Function]}
-      >
-        + Ajouter
-      </button>
-    </div>
-  </p>
-</div>
+      + Ajouter
+    </button>
+  </div>,
+  <hr
+    className="mt-4"
+  />,
+  <h6>
+    Liste des preuves requises pour cette action
+  </h6>,
+  <div
+    className="content"
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "...",
+      }
+    }
+  />,
+]
 `;

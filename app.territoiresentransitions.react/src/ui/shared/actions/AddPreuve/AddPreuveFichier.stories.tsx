@@ -15,6 +15,7 @@ const Template: Story<TAddPreuveFichierProps> = args => (
 
 export const Exemple1 = Template.bind({});
 Exemple1.args = {
+  action: {id: 'eci_1.1.1'},
   initialSelection: [
     fileItemMocks.toobig,
     fileItemMocks.unknownFormat,

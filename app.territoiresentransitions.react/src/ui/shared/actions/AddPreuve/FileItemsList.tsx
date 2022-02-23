@@ -2,6 +2,7 @@ import {FileItem, TFileItem} from './FileItem';
 import {UploadStatus, UploadStatusCode} from './Uploader.d';
 
 export type TFileItemsListProps = {
+  actionId: string;
   items: Array<TFileItem>;
   /** Pour notifier de la sortie de l'état "running" */
   onRunningStopped: (fileName: string, status: UploadStatus) => void;
@@ -13,7 +14,7 @@ export type TFileItemsListProps = {
  * Affiche la liste des fichiers uploadés/en cours d'upload/en erreur
  */
 export const FileItemsList = (props: TFileItemsListProps) => {
-  const {items, onRunningStopped, onRemoveFailed} = props;
+  const {actionId, items, onRunningStopped, onRemoveFailed} = props;
 
   // groupe les items terminés/en cours/en erreur
   const {completed, running, failed} = items.reduce(groupByStatus, emptyGroups);
@@ -21,9 +22,16 @@ export const FileItemsList = (props: TFileItemsListProps) => {
   // et rend chaque groupe d'items
   return (
     <div>
-      {renderItems(completed)}
-      {renderItems(running, {onRunningStopped})}
-      {renderItems(failed, {onRemoveFailed})}
+      {renderItems(completed, {actionId})}
+      {renderItems(running, {actionId, onRunningStopped})}
+      <div
+        style={{
+          maxHeight: '33vh',
+          overflow: 'auto',
+        }}
+      >
+        {renderItems(failed, {actionId, onRemoveFailed})}
+      </div>
     </div>
   );
 };

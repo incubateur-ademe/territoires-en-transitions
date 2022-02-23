@@ -27,7 +27,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Format And Siz
   }
 >
   <div
-    className="py-1 group flex flex-col hover:bg-grey925"
+    className="py-1 mr-4 group flex flex-col hover:bg-grey925"
   >
     <div
       className="px-2 pt-1 flex justify-between"
@@ -73,7 +73,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed To Upload 1`] 
   }
 >
   <div
-    className="py-1 group flex flex-col hover:bg-grey925"
+    className="py-1 mr-4 group flex flex-col hover:bg-grey925"
   >
     <div
       className="px-2 pt-1 flex justify-between"
@@ -119,7 +119,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Too Big 1`] = 
   }
 >
   <div
-    className="py-1 group flex flex-col hover:bg-grey925"
+    className="py-1 mr-4 group flex flex-col hover:bg-grey925"
   >
     <div
       className="px-2 pt-1 flex justify-between"
@@ -165,7 +165,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Unknown Format
   }
 >
   <div
-    className="py-1 group flex flex-col hover:bg-grey925"
+    className="py-1 mr-4 group flex flex-col hover:bg-grey925"
   >
     <div
       className="px-2 pt-1 flex justify-between"
@@ -250,6 +250,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Running 1`] = `
       </div>
       <button
         className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-close-line undefined"
+        onClick={[Function]}
       />
     </div>
   </div>
@@ -305,6 +306,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Running 2 1`] = `
       </div>
       <button
         className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-close-line undefined"
+        onClick={[Function]}
       />
     </div>
   </div>

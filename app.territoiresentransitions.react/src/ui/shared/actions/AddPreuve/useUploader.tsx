@@ -30,12 +30,15 @@ export const useUploader = (
     progress: 0,
   });
 
-  // url de destination
-  const url = `${ENV.supabase_url!}/storage/v1/object/${bucket}/${path}`;
   let xhr: XMLHttpRequest;
 
   useEffect(() => {
-    if (!xhr) {
+    if (!xhr && bucket) {
+      // url de destination
+      const url = `${ENV.supabase_url!}/storage/v1/object/${bucket}/${
+        file.name
+      }`;
+
       // crée la requête
       xhr = new XMLHttpRequest();
       const abort = () => xhr.abort();
@@ -63,6 +66,7 @@ export const useUploader = (
 
       // appelé quand le transfert est interrompu
       xhr.upload.onabort = () => {
+        console.log('aborted');
         setStatus({code: UploadStatusCode.aborted});
       };
 
@@ -86,7 +90,7 @@ export const useUploader = (
       }
       xhr.send(file);
     }
-  }, [url]);
+  }, [bucket]);
 
   return {status};
 };

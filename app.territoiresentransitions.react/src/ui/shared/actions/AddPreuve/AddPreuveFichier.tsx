@@ -2,7 +2,10 @@
  * Affiche le sélecteur de fichiers preuves
  */
 import {File as InputFile} from '@dataesr/react-dsfr';
+import {upsertFichierPreuve} from 'core-logic/api/procedures/preuveProcedures';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import {ChangeEvent, FormEvent, useState} from 'react';
+import {TActionPreuvePanelProps} from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import {
   MAX_FILE_SIZE_MB,
   EXPECTED_FORMATS,
@@ -13,9 +16,10 @@ import {TFileItem} from './FileItem';
 import {FileItemsList} from './FileItemsList';
 import {UploadStatus, UploadStatusCode} from './Uploader.d';
 
-export type TAddPreuveFichierProps = {
+export type TAddPreuveFichierProps = TActionPreuvePanelProps & {
   /** Fichiers initialement sélectionnés (pour les tests) */
   initialSelection?: Array<TFileItem>;
+  onClose: () => void;
 };
 
 const HINT = `Taille maximale par fichier : ${MAX_FILE_SIZE_MB} Mo.\
@@ -25,15 +29,16 @@ const getFileByName = (fileName: string, selection: Array<TFileItem>): number =>
   selection.findIndex(({file}) => file.name === fileName);
 
 export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
-  const {initialSelection} = props;
+  const {initialSelection, onClose, action} = props;
   const [currentSelection, setCurrentSelection] = useState<Array<TFileItem>>(
     initialSelection || []
   );
+  const collectivite_id = useCollectiviteId();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const {files} = e.target;
     if (files) {
-      setCurrentSelection(filesToSelection(files));
+      setCurrentSelection(filesToSelection(action, files));
     }
   };
 
@@ -66,7 +71,20 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log('add preuve:', validFiles);
+    if (collectivite_id) {
+      Promise.all(
+        validFiles.map(({actionId, file}) =>
+          upsertFichierPreuve({
+            action_id: actionId,
+            collectivite_id,
+            commentaire: '',
+            filename: file.name,
+          })
+        )
+      ).then(() => {
+        onClose();
+      });
+    }
   };
 
   return (
@@ -80,6 +98,7 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
         //disabled={isLoading}
       />
       <FileItemsList
+        actionId={action.id}
         items={currentSelection}
         onRunningStopped={onRunningStopped}
         onRemoveFailed={onRemoveFailed}

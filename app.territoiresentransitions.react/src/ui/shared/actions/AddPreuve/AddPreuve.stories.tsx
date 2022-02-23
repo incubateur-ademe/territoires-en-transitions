@@ -16,7 +16,7 @@ const delayedAction =
     );
 
 const DEFAULT_ARGS = {
-  uploadFiles: delayedAction(action('uploadFiles'), {error: null}),
+  action: {id: '"eci_1.1.2'},
 };
 export default {
   component: AddPreuve,
@@ -25,19 +25,18 @@ export default {
 
 const Template: Story<TAddPreuveProps> = args => <AddPreuve {...args} />;
 
-export const Lien = Template.bind({});
-Lien.parameters = {storyshots: false}; // désactive le storyshot à cause d'un pb dans react-dsfr <File> (?)
+//export const Lien = Template.bind({});
+// Lien.parameters = {storyshots: false}; // désactive le storyshot à cause d'un pb dans react-dsfr <File> (?)
 
 export const Fichier = Template.bind({});
 Fichier.args = {
   ...DEFAULT_ARGS,
-  defaultActiveTab: 1,
 };
 Fichier.parameters = {storyshots: false}; // désactive le storyshot à cause d'un pb dans react-dsfr <File> (?)
 
 export const Bibliotheque = Template.bind({});
 Bibliotheque.args = {
   ...DEFAULT_ARGS,
-  defaultActiveTab: 2,
+  defaultActiveTab: 1,
 };
 Bibliotheque.parameters = {storyshots: false}; // désactive le storyshot à cause d'un pb dans react-dsfr <File> (?)

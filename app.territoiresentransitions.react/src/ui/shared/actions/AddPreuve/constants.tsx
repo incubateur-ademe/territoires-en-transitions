@@ -1,3 +1,4 @@
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {TFileItem} from './FileItem';
 import {UploadStatusCode, UploadErrorCode} from './Uploader.d';
 
@@ -35,7 +36,12 @@ const filesToArray = (files: FileList): Array<File> => {
   return arr;
 };
 
-const createItemFailed = (file: File, error: UploadErrorCode): TFileItem => ({
+const createItemFailed = (
+  action: ActionDefinitionSummary,
+  file: File,
+  error: UploadErrorCode
+): TFileItem => ({
+  actionId: action.id,
   file,
   status: {
     code: UploadStatusCode.failed,
@@ -43,7 +49,11 @@ const createItemFailed = (file: File, error: UploadErrorCode): TFileItem => ({
   },
 });
 
-const createItemRunning = (file: File): TFileItem => ({
+const createItemRunning = (
+  action: ActionDefinitionSummary,
+  file: File
+): TFileItem => ({
+  actionId: action.id,
   file,
   status: {
     code: UploadStatusCode.running,
@@ -51,7 +61,10 @@ const createItemRunning = (file: File): TFileItem => ({
   },
 });
 
-export const filesToSelection = (files: FileList | null): Array<TFileItem> => {
+export const filesToSelection = (
+  action: ActionDefinitionSummary,
+  files: FileList | null
+): Array<TFileItem> => {
   if (!files) {
     return [];
   }
@@ -60,15 +73,15 @@ export const filesToSelection = (files: FileList | null): Array<TFileItem> => {
     const sizeErr = !isValidFileSize(file);
     const formatErr = !isValidFileFormat(file);
     if (formatErr && sizeErr) {
-      return createItemFailed(file, UploadErrorCode.formatAndSizeError);
+      return createItemFailed(action, file, UploadErrorCode.formatAndSizeError);
     }
     if (formatErr) {
-      return createItemFailed(file, UploadErrorCode.formatError);
+      return createItemFailed(action, file, UploadErrorCode.formatError);
     }
     if (sizeErr) {
-      return createItemFailed(file, UploadErrorCode.sizeError);
+      return createItemFailed(action, file, UploadErrorCode.sizeError);
     }
-    return createItemRunning(file);
+    return createItemRunning(action, file);
   });
 };
 
