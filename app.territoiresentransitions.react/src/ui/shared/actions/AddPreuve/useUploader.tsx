@@ -7,57 +7,56 @@ import {
   UploadStatus,
   UploadStatusCode,
 } from './Uploader.d';
+import {ChangeNotifier} from 'core-logic/api/reactivity';
+import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /**
- * Démarre l'upload d'un fichier et fourni un état de la progression
- * et une fonction permettant d'interrompre le transfert.
- *
- * On utilise une requête XHR plutôt que le client Supabase car celui-ci
- * ne permet pas d'avoir la progression et l'interruption.
- * Ref: https://github.com/supabase/storage-api/issues/23#issuecomment-973277262
+ * Gère l'upload et envoi une notification après un transfert réussi
+ * afin de déclencher un refetch aux endroits où c'est nécessaire
  */
-export const useUploader = (
-  /** identifiant du stockage */
-  bucket: string,
-  /** chemin/nom de fichier dans lequel stocker */
-  path: string,
-  /** contenu à stocker */
-  file: File
-): TUploader => {
-  // état de la progression
-  const [status, setStatus] = useState<UploadStatus>({
-    code: UploadStatusCode.running,
-    progress: 0,
-  });
+class PreuveUploader extends ChangeNotifier {
+  async upload(
+    collectiviteId: number,
+    file: File,
+    callback: (status: UploadStatus) => void
+  ) {
+    /**
+     * On utilise une requête XHR plutôt que le client Supabase car celui-ci
+     * ne permet pas d'avoir la progression et l'interruption.
+     * Ref: https://github.com/supabase/storage-api/issues/23#issuecomment-973277262
+     */
+    const xhr = new XMLHttpRequest();
+    const buckets = await collectiviteBucketReadEndpoint.getBy({
+      collectivite_id: collectiviteId,
+    });
+    const bucket_id = buckets[0]?.bucket_id;
 
-  let xhr: XMLHttpRequest;
+    const abort = () => xhr.abort();
 
-  useEffect(() => {
-    if (!xhr && bucket) {
+    if (bucket_id) {
       // url de destination
-      const url = `${ENV.supabase_url!}/storage/v1/object/${bucket}/${
+      const url = `${ENV.supabase_url!}/storage/v1/object/${bucket_id}/${
         file.name
       }`;
-
-      // crée la requête
-      xhr = new XMLHttpRequest();
-      const abort = () => xhr.abort();
 
       // attache les écouteurs d'événements
       xhr.upload.onprogress = (e: ProgressEvent<EventTarget>) => {
         const progress = (e.loaded / e.total) * 100;
-        setStatus({
+        callback({
           code: UploadStatusCode.running,
           progress,
           abort,
         });
       };
 
+      const notifyListeners = () => this.notifyListeners();
       // appelé quand le transfert est terminé
       xhr.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE) {
           if (this.status === 200) {
-            setStatus({code: UploadStatusCode.completed});
+            callback({code: UploadStatusCode.completed});
+            notifyListeners();
           } else {
             setError();
           }
@@ -67,12 +66,12 @@ export const useUploader = (
       // appelé quand le transfert est interrompu
       xhr.upload.onabort = () => {
         console.log('aborted');
-        setStatus({code: UploadStatusCode.aborted});
+        callback({code: UploadStatusCode.aborted});
       };
 
       // appelé quand le transfert est terminé en erreur
       const setError = () => {
-        setStatus({
+        callback({
           code: UploadStatusCode.failed,
           error: UploadErrorCode.uploadError,
         });
@@ -90,7 +89,30 @@ export const useUploader = (
       }
       xhr.send(file);
     }
-  }, [bucket]);
+  }
+}
+
+export const preuveUploader = new PreuveUploader();
+
+/**
+ * Démarre l'upload d'un fichier et fourni un état de la progression
+ * et une fonction permettant d'interrompre le transfert.
+ */
+export const useUploader = (
+  /** contenu à stocker */
+  file: File
+): TUploader => {
+  // état de la progression
+  const [status, setStatus] = useState<UploadStatus>({
+    code: UploadStatusCode.running,
+    progress: 0,
+  });
+
+  const collectiviteId = useCollectiviteId()!;
+
+  useEffect(() => {
+    preuveUploader.upload(collectiviteId, file, setStatus);
+  }, [collectiviteId]);
 
   return {status};
 };
