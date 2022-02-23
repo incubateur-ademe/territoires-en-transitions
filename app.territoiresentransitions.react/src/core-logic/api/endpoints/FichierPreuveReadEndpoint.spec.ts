@@ -8,7 +8,7 @@ describe('fichier_preuve for a collectivite and an action', () => {
   it('should retrieve fichier_preuve', async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
 
-    const results = await fichierPreuveReadEndpoint({
+    const results = await fichierPreuveReadEndpoint.getBy({
       collectivite_id: collectivite1.collectivite_id,
       action_id: 'eci_1.3.2',
     });
