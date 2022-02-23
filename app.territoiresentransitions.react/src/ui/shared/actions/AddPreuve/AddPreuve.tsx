@@ -4,6 +4,7 @@
 import {Tabs, Tab} from '@dataesr/react-dsfr';
 import {TActionPreuvePanelProps} from '../ActionPreuvePanel/ActionPreuvePanel';
 import {AddPreuveFichier} from './AddPreuveFichier';
+import {AddPreuveFromLib} from './AddPreuveFromLib';
 
 export type TAddPreuveProps = TActionPreuvePanelProps & {
   /** Index de l'onglet actif */
@@ -25,7 +26,7 @@ export const AddPreuve = (props: TAddPreuveProps) => {
         <AddPreuveFichier {...props} />
       </Tab>
       <Tab label="&nbsp;Bibliothèque" icon="fr-fi-archive-line">
-        <p>Bibliothèque</p>
+        <AddPreuveFromLib {...props} />
       </Tab>
     </Tabs>
   );
