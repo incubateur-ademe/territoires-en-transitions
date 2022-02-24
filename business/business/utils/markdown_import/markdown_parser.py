@@ -1,6 +1,8 @@
 from __future__ import annotations
+from re import sub
 
 from typing import Callable, List, Optional
+import unicodedata
 
 import yaml
 from mistletoe import Document
@@ -8,6 +10,7 @@ from mistletoe.block_token import BlockToken, Heading, CodeFence
 
 from .markdown_utils import (
     is_keyword,
+    to_snake_case,
     token_to_string,
     is_heading,
     is_yaml,
@@ -46,10 +49,11 @@ def render_text_to_html(
 def make_section_writer(title: str) -> NodeWriter:
     def section_writer(token: BlockToken, node: dict) -> None:
         """Save leaf description as an HTML string"""
-        if is_keyword(token, title):
-            node[title.lower()] = ""
-        elif title.lower() in node.keys():
-            node[title.lower()] += render_text_to_html(token_to_string(token))
+        snake_title = to_snake_case(title)
+        if is_keyword(token, snake_title):
+            node[snake_title] = ""
+        elif snake_title in node.keys():
+            node[snake_title] += render_text_to_html(token_to_string(token))
 
     return section_writer
 

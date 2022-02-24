@@ -4,6 +4,8 @@ import {
   actionDownToTache,
   actionExemples,
   ActionExemples,
+  actionPerimetreEvaluation,
+  actionReductionPotentiel,
   actionRessources,
   ActionRessources,
   referentielDownToAction,
@@ -45,7 +47,6 @@ describe('Retrieve referentiel down to action', () => {
     };
 
     const procedureResponse = await referentielDownToAction('eci');
-
     expect(procedureResponse).toEqual(
       expect.arrayContaining([
         expect.objectContaining(partialRoot),
@@ -77,6 +78,7 @@ describe('Retrieve action down to tache', () => {
 
     const procedureResponse = await actionDownToTache('eci', '1.1.1');
 
+    expect(procedureResponse).toHaveLength(5);
     expect(procedureResponse).toEqual(
       expect.arrayContaining([
         expect.objectContaining(partialAction),
@@ -99,24 +101,40 @@ describe('Retrieve exemples', () => {
 
 describe('Retrieve contexte', () => {
   it('should return the action contexte content', async () => {
-    const partialExemple: Partial<ActionContexte> = {
+    const partialContext: Partial<ActionContexte> = {
       id: 'eci_2.2',
     };
     const procedureResponse = await actionContexte('eci_2.2');
 
-    expect(procedureResponse).toEqual(expect.objectContaining(partialExemple));
+    expect(procedureResponse).toEqual(expect.objectContaining(partialContext));
     expect(procedureResponse.contexte.length).toBeGreaterThan(0);
   });
 });
 
 describe('Retrieve ressources', () => {
   it('should return the action ressources content', async () => {
-    const partialExemple: Partial<ActionRessources> = {
+    const partialRessources: Partial<ActionRessources> = {
       id: 'eci_2.2',
     };
     const procedureResponse = await actionRessources('eci_2.2');
 
-    expect(procedureResponse).toEqual(expect.objectContaining(partialExemple));
+    expect(procedureResponse).toEqual(
+      expect.objectContaining(partialRessources)
+    );
     expect(procedureResponse.ressources.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Retrieve perimetre evaluation', () => {
+  it('should return some content for action cae_1.1.1', async () => {
+    const procedureResponse = await actionPerimetreEvaluation('cae_1.1.1');
+    expect(procedureResponse.perimetre_evaluation.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Retrieve reduction potentiel', () => {
+  it('should return some content for action cae_1.1.1', async () => {
+    const procedureResponse = await actionReductionPotentiel('cae_1.1.1');
+    expect(procedureResponse.reduction_potentiel.length).toBeGreaterThan(0);
   });
 });

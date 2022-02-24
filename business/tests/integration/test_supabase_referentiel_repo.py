@@ -153,6 +153,8 @@ def test_can_update_actions(
             "contexte": "old stuff",
             "exemples": "old stuff",
             "ressources": "old stuff",
+            "perimetre_evaluation": "old stuff",
+            "reduction_potentiel": "old stuff",
             "preuve": "old stuff",
             "points": 42,
             "pourcentage": 42,
@@ -166,7 +168,13 @@ def test_can_update_actions(
         },
     )
     # Act : Update this action giving it a def and point
-    updated_def = make_action_definition(action_id=action_id, referentiel=referentiel)
+    updated_def = make_action_definition(
+        action_id=action_id,
+        referentiel=referentiel,
+        description="new stuff",
+        reduction_potentiel="new stuff",
+        perimetre_evaluation="new stuff",
+    )
     updated_point = make_action_points(action_id=action_id, points=42)
 
     supabase_referentiel_repo.update_referentiel_actions([updated_def], [updated_point])
@@ -179,6 +187,9 @@ def test_can_update_actions(
     )
     assert len(defs) == 1
     assert defs[0]["description"] == updated_def.description
+    assert defs[0]["reduction_potentiel"] == updated_def.reduction_potentiel
+    assert defs[0]["perimetre_evaluation"] == updated_def.perimetre_evaluation
+
     # 2. check that the point exist in DB
     points = supabase_client.db.get_by(
         supabase_names.tables.action_computed_points,

@@ -41,6 +41,13 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
         super().upsert_indicateurs(indicateurs)
         self.indicateurs_to_sql()
 
+    def upsert_indicateurs(
+        self,
+        indicateurs: List[Indicateur],
+    ):
+        super().upsert_indicateurs(indicateurs)
+        self.indicateurs_to_sql()
+        
     def indicateurs_to_sql(self):
         sql = make_sql_insert_indicateurs(self._indicateurs)
         with open(self.path, "a") as f:

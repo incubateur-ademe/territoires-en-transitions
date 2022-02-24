@@ -35,6 +35,8 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
                 exemples=row["exemples"],
                 preuve=row["preuve"],
                 ressources=row["ressources"],
+                reduction_potentiel=row["reduction_potentiel"],
+                perimetre_evaluation=row["perimetre_evaluation"],
                 points=row["points"],
                 pourcentage=row["pourcentage"],
             )
@@ -153,6 +155,8 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
                     "exemples": definition.exemples,
                     "preuve": definition.preuve,
                     "ressources": definition.ressources,
+                    "perimetre_evaluation": definition.perimetre_evaluation,
+                    "reduction_potentiel": definition.reduction_potentiel,
                     "points": definition.points,
                     "pourcentage": definition.pourcentage,
                 }

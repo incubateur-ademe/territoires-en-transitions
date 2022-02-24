@@ -17,6 +17,12 @@ Exemples de l'action 1.1
 ## Ressources
 Ressources de l'action 1.1 
 
+## Réduction de potentiel
+Réduction de potentiel de l'action 1.1
+
+## Périmètre de l'évaluation
+Périmètre de l'évaluation de l'action 1.1
+
 ## Actions
 ### Titre de l'action 1.1.1
 ```yaml
