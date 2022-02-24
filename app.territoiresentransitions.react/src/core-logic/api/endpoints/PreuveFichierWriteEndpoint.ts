@@ -1,13 +1,16 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {ChangeNotifier} from 'core-logic/api/reactivity';
-import type {PreuveDelete, PreuveWrite} from 'generated/dataLayer/preuve_write';
+import type {
+  PreuveFichierDelete,
+  PreuveFichierWrite,
+} from 'generated/dataLayer/preuve_fichier_write';
 
 // permet d'ajouter ou supprimer un lien entre une action d'une collectivité et
 // un fichier de la bibliothèque de celle-ci
-export class PreuveWriteEndpoint extends ChangeNotifier {
-  async save(preuve: PreuveWrite): Promise<boolean> {
+export class PreuveFichierWriteEndpoint extends ChangeNotifier {
+  async save(preuve: PreuveFichierWrite): Promise<boolean> {
     const {collectivite_id, action_id, filename, commentaire} = preuve;
-    const {error} = await supabaseClient.rpc('upsert_preuve', {
+    const {error} = await supabaseClient.rpc('upsert_preuve_fichier', {
       collectivite_id,
       action_id,
       filename,
@@ -21,9 +24,9 @@ export class PreuveWriteEndpoint extends ChangeNotifier {
     return true;
   }
 
-  async delete(preuve: PreuveDelete): Promise<boolean> {
+  async delete(preuve: PreuveFichierDelete): Promise<boolean> {
     const {collectivite_id, action_id, filename} = preuve;
-    const {error} = await supabaseClient.rpc('delete_preuve', {
+    const {error} = await supabaseClient.rpc('delete_preuve_fichier', {
       collectivite_id,
       action_id,
       filename,
@@ -37,4 +40,4 @@ export class PreuveWriteEndpoint extends ChangeNotifier {
   }
 }
 
-export const preuveWriteEndpoint = new PreuveWriteEndpoint();
+export const preuveFichierWriteEndpoint = new PreuveFichierWriteEndpoint();

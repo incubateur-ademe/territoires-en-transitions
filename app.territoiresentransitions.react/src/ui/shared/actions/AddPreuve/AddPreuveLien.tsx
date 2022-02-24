@@ -5,7 +5,7 @@
 import {ChangeEvent, FormEvent, useState} from 'react';
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
-import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
+import {preuveLienWriteEndpoint} from 'core-logic/api/endpoints/PreuveLienWriteEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Spacer} from 'ui/shared/Spacer';
@@ -38,6 +38,7 @@ export const AddPreuveLien = (props: TAddPreuveLienProps) => {
   const collectivite_id = useCollectiviteId();
 
   const onSubmit = ({titre, url}: TPreuveLienParams) => {
+    //TODO: insérer l'appel à preuveLienWrite ici
     console.log({
       action_id: action.id,
       collectivite_id,
