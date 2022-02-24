@@ -1,6 +1,5 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {Referentiel} from 'types/litterals';
-// eslint-disable-next-line node/no-extraneous-import
 import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
 import {PostgrestResponse} from '@supabase/supabase-js';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';

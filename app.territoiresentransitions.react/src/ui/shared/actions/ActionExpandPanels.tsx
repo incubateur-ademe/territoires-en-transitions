@@ -1,12 +1,15 @@
 import {addTargetToContentAnchors} from 'utils/content';
-import {CrossExpandPanelWithHtmlContent} from 'ui/shared/CrossExpandPanelWithHtmlContent';
+import {
+  CrossExpandPanelWithHtmlContent,
+  CrossExpandPanelWithNode,
+} from 'ui/shared/CrossExpandPanelWithHtmlContent';
 import {
   useActionContexte,
   useActionExemples,
-  useActionPreuve,
   useActionResources,
 } from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {ActionPreuvePanel} from './ActionPreuvePanel';
 
 const ActionExpandPanelAdemeContent = (props: {
   content?: string;
@@ -54,8 +57,15 @@ export const ActionPreuvesExpandPanel = ({
 }: {
   action: ActionDefinitionSummary;
 }) => {
-  const preuve = useActionPreuve(action.id);
-  return <ActionExpandPanelAdemeContent content={preuve} title="Preuves" />;
+  return (
+    <div className="ActionExpandPanelAdemeContent">
+      <div className="border-gray-300">
+        <CrossExpandPanelWithNode title="Preuves">
+          <ActionPreuvePanel action={action} />
+        </CrossExpandPanelWithNode>
+      </div>
+    </div>
+  );
 };
 
 export const ActionRessourcesExpandPanel = ({

@@ -146,9 +146,9 @@ export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
     return supabaseClient.from(this.name);
   }
 
-  get _select() {
-    return this._table.select();
-  }
+  // get _select() {
+  //   return this._table.select();
+  // }
 
   /**
    * Get a list of T using getParams.

@@ -13,6 +13,12 @@ module.exports = {
         beige: '#f9f8f6',
         // Design system
         bf500: '#000091',
+        bf525: '#6A6AF4',
+        bf975: '#f5f5fe',
+        grey425: '#666',
+        grey625: '#929292',
+        grey925: '#E5E5E5',
+        error425: '#CE0500',
       },
     },
   },
