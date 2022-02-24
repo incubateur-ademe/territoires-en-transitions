@@ -5,8 +5,6 @@ import { Views } from './views';
 
 export const navigateTo = (view) => {
   const { route, selector } = Views[view];
-  // on attends que l'appli expose un objet `e2e` permettant de la contrôler
-  cy.window({ log: false }).its('e2e.history').as('history');
   cy.get('@history').then((history) => history.replace(route));
   cy.get(selector).should('be.visible');
 };
