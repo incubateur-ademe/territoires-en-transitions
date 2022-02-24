@@ -3,6 +3,7 @@
  */
 import {Tabs, Tab} from '@dataesr/react-dsfr';
 import {TActionPreuvePanelProps} from '../ActionPreuvePanel/ActionPreuvePanel';
+import {AddPreuveLien} from './AddPreuveLien';
 import {AddPreuveFichier} from './AddPreuveFichier';
 import {AddPreuveFromLib} from './AddPreuveFromLib';
 
@@ -17,11 +18,9 @@ export const AddPreuve = (props: TAddPreuveProps) => {
 
   return (
     <Tabs defaultActiveTab={defaultActiveTab}>
-      {/*
-        <Tab label="&nbsp;Lien" icon="fr-fi-links-fill">
-        <p>Lien</p>
+      <Tab label="&nbsp;Lien" icon="fr-fi-links-fill">
+        <AddPreuveLien {...props} />
       </Tab>
-      */}
       <Tab label="&nbsp;Fichier" icon="fr-fi-upload-2-fill">
         <AddPreuveFichier {...props} />
       </Tab>
