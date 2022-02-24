@@ -6,9 +6,18 @@
 
 import { Selectors } from './selectors';
 import { Expectations } from './expectations';
-import { LocalSelectors as AuthSelectors } from '../se-connecter/selectors';
+import { LocalSelectors as AuthSelectors } from '../01-se-connecter/selectors';
 
-Given("j'ouvre le site", () => cy.visit('/'));
+beforeEach(() => {
+  cy.visit('/');
+  // on attends que l'appli expose un objet `e2e` permettant de la contrôler
+  cy.window({ log: false }).its('e2e.history').as('history');
+  cy.window({ log: false }).its('e2e.authBloc').as('authBloc');
+});
+
+Given("j'ouvre le site", () => {
+  cy.get(SignInPage.selector).should('be.visible');
+});
 
 const Users = {
   yolo: {
@@ -20,12 +29,7 @@ const SignInPage = AuthSelectors['formulaire de connexion'];
 Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {
   const u = Users[userName];
   assert(u, 'utilisateur non trouvé');
-  cy.visit('/auth/signin');
-  cy.get(SignInPage.selector).within(() => {
-    cy.get(SignInPage.children.email).clear().type(u.email);
-    cy.get(SignInPage.children.mdp).clear().type(u.password);
-    cy.get(SignInPage.children.Valider).click();
-  });
+  cy.get('@authBloc').then((authBloc) => authBloc.connect(u));
   cy.get(SignInPage.selector).should('not.exist');
 });
 
