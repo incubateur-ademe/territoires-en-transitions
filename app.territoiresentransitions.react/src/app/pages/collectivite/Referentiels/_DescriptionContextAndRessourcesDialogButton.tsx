@@ -3,6 +3,8 @@ import Dialog from '@material-ui/core/Dialog';
 import {
   ActionContexteExpandPanel,
   ActionExemplesExpandPanel,
+  ActionPerimetreEvaluationExpandPanel,
+  ActionReductionPotentielExpandPanel,
   ActionRessourcesExpandPanel,
 } from 'ui/shared/actions/ActionExpandPanels';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -18,6 +20,12 @@ const ContexteExemplesAndRessourcesDialogContent = ({
     {action.have_contexte && <ActionContexteExpandPanel action={action} />}
     {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
     {action.have_ressources && <ActionRessourcesExpandPanel action={action} />}
+    {action.have_reduction_potentiel && (
+      <ActionReductionPotentielExpandPanel action={action} />
+    )}
+    {action.have_perimetre_evaluation && (
+      <ActionPerimetreEvaluationExpandPanel action={action} />
+    )}
   </div>
 );
 

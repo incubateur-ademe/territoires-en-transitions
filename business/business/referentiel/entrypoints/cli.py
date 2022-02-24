@@ -145,6 +145,6 @@ if __name__ == "__main__":
 
 # Command lines
 # --------------
-# python business/referentiel/entrypoints/cli.py --repo-option JSON --referentiel "cae"
+# python business/referentiel/entrypoints/cli.py --repo-option SQL --referentiel "cae"
 # python business/referentiel/entrypoints/cli.py --repo-option JSON --referentiel "eci"
 # python business/referentiel/entrypoints/cli.py --repo-option JSON --referentiel "crte" --no-actions

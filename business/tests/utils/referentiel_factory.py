@@ -25,6 +25,8 @@ def make_action_definition(
     contexte: str = "",
     exemples: str = "",
     ressources: str = "",
+    perimetre_evaluation="",
+    reduction_potentiel="",
     preuve: str = "",
     points: Optional[float] = None,
     pourcentage: Optional[float] = None,
@@ -39,6 +41,8 @@ def make_action_definition(
         exemples=exemples,
         preuve=preuve,
         ressources=ressources,
+        perimetre_evaluation=perimetre_evaluation,
+        reduction_potentiel=reduction_potentiel,
         points=points,
         pourcentage=pourcentage,
     )

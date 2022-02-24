@@ -110,6 +110,8 @@ create table action_definition
     contexte    text        not null,
     exemples    text        not null,
     ressources  text        not null,
+    reduction_potentiel text not null, 
+    perimetre_evaluation text not null, 
     preuve      text        not null,
     points      float,
     pourcentage float

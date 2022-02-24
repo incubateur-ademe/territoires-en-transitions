@@ -14,6 +14,8 @@ class MarkdownActionNode(BaseModel):
     exemples: str = ""
     preuve: str = ""
     ressources: str = ""
+    reduction_de_potentiel: str = ""
+    perimetre_de_levaluation: str = ""
     referentiel: Optional[ActionReferentiel] = None
     points: Optional[float] = None
     pourcentage: Optional[float] = None

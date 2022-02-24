@@ -17,6 +17,8 @@ class ActionDefinition:
     exemples: str
     preuve: str
     ressources: str
+    perimetre_evaluation: str
+    reduction_potentiel: str
     points: Optional[float]
     pourcentage: Optional[float]
 
