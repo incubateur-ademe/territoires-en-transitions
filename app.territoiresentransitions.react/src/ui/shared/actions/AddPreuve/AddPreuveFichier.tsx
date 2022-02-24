@@ -4,14 +4,11 @@
 import {File as InputFile} from '@dataesr/react-dsfr';
 import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useCollectiviteBucketFiles} from 'core-logic/hooks/preuve';
 import {ChangeEvent, FormEvent, useState} from 'react';
 import {TActionPreuvePanelProps} from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
-import {
-  MAX_FILE_SIZE_MB,
-  EXPECTED_FORMATS,
-  EXPECTED_FORMATS_LIST,
-  filesToSelection,
-} from './constants';
+import {HINT, EXPECTED_FORMATS_LIST} from './constants';
+import {filesToUploadList} from './filesToUploadList';
 import {TFileItem} from './FileItem';
 import {FileItemsList} from './FileItemsList';
 import {UploadStatus, UploadStatusCode} from './Uploader.d';
@@ -22,9 +19,6 @@ export type TAddPreuveFichierProps = TActionPreuvePanelProps & {
   onClose: () => void;
 };
 
-const HINT = `Taille maximale par fichier : ${MAX_FILE_SIZE_MB} Mo.\
-  Formats supportés : ${EXPECTED_FORMATS.join(', ')}.`;
-
 const getFileByName = (fileName: string, selection: Array<TFileItem>): number =>
   selection.findIndex(({file}) => file.name === fileName);
 
@@ -34,15 +28,16 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
     initialSelection || []
   );
   const collectivite_id = useCollectiviteId();
+  const {bucketFiles} = useCollectiviteBucketFiles();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const {files} = e.target;
     if (files) {
-      setCurrentSelection(filesToSelection(action, files));
+      setCurrentSelection(filesToUploadList(action, files, bucketFiles));
     }
   };
 
-  // appelée quand un item sort de l'état "running" */
+  // appelée quand un item sort de l'état "running"
   const onRunningStopped = (fileName: string, status: UploadStatus) => {
     const index = getFileByName(fileName, currentSelection);
     if (index !== -1) {
@@ -74,15 +69,12 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
     if (collectivite_id) {
       Promise.all(
         validFiles.map(({actionId, file}) =>
-          preuveWriteEndpoint.save(
-            // upsertFichierPreuve(
-            {
-              action_id: actionId,
-              collectivite_id,
-              commentaire: '',
-              filename: file.name,
-            }
-          )
+          preuveWriteEndpoint.save({
+            action_id: actionId,
+            collectivite_id,
+            commentaire: '',
+            filename: file.name,
+          })
         )
       ).then(() => {
         onClose();
