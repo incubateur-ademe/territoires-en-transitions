@@ -35,7 +35,9 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
       />
       
     </div>
-    <div>
+    <div
+      className="pt-2"
+    >
       <div
         style={
           Object {

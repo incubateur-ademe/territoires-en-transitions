@@ -13,6 +13,7 @@ export enum UploadErrorCode {
   sizeError = 'sizeError',
   formatError = 'formatError',
   formatAndSizeError = 'formatAndSizeError',
+  duplicateError = 'duplicateError',
   uploadError = 'uploadError',
 }
 
