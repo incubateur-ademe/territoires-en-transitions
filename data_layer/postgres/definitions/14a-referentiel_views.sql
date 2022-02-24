@@ -13,7 +13,7 @@ comment on view business_action_children is
     'Action and its children, computed from action relation';
 
 
-create view action_children
+create or replace view action_children
 as
 with recursive
     actions_from_parents as
@@ -93,6 +93,8 @@ select id,
        exemples != '' as have_exemples,
        preuve != '' as have_preuve,
        ressources != '' as have_ressources,
+       reduction_potentiel != '' as have_reduction_potentiel,
+       perimetre_evaluation != '' as have_perimetre_evaluation,
        contexte != '' as have_contexte
 from action_definition
          join action_children on action_id = action_children.id
@@ -217,6 +219,34 @@ from action_definition
 where action_definition.action_id = action_ressources.id
 $$ language sql stable;
 comment on function action_ressources is 'Returns action "ressources" text';
+
+
+create or replace function action_reduction_potentiel(
+    id action_id,
+    out id action_id,
+    out reduction_potentiel text
+)
+as
+$$
+select action_definition.action_id, action_definition.reduction_potentiel
+from action_definition
+where action_definition.action_id = action_reduction_potentiel.id
+$$ language sql stable;
+comment on function action_reduction_potentiel is 'Returns action "reduction_potentiel" text';
+
+
+create or replace function action_perimetre_evaluation(
+    id action_id,
+    out id action_id,
+    out perimetre_evaluation text
+)
+as
+$$
+select action_definition.action_id, action_definition.perimetre_evaluation
+from action_definition
+where action_definition.action_id = action_perimetre_evaluation.id
+$$ language sql stable;
+comment on function action_perimetre_evaluation is 'Returns action "perimetre_evaluation" text';
 
 
 create or replace view business_action_children

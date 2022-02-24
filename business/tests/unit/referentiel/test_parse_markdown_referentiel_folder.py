@@ -60,6 +60,8 @@ def test_build_markdown_action_node_from_ok_folder():
                             exemples="<p>Exemples de l'action 1.1</p>\n",
                             preuve="",
                             ressources="<p>Ressources de l'action 1.1</p>\n",
+                            reduction_de_potentiel="<p>Réduction de potentiel de l'action 1.1</p>\n",
+                            perimetre_de_levaluation="<p>Périmètre de l'évaluation de l'action 1.1</p>\n",
                             points=30.0,
                             pourcentage=None,
                             actions=[

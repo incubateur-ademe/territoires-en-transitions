@@ -224,6 +224,8 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
                 exemples=node.exemples,
                 preuve=node.preuve,
                 ressources=node.ressources,
+                perimetre_evaluation=node.perimetre_de_levaluation,
+                reduction_potentiel=node.reduction_de_potentiel,
                 points=node.points,
                 pourcentage=node.pourcentage,
             )

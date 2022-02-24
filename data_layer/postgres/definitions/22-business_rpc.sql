@@ -75,6 +75,8 @@ begin
                     contexte    = def.contexte,
                     exemples    = def.exemples,
                     ressources  = def.ressources,
+                    perimetre_evaluation = def.perimetre_evaluation,
+                    reduction_potentiel = def.reduction_potentiel, 
                     preuve      = def.preuve,
                     points      = def.points,
                     pourcentage = def.pourcentage

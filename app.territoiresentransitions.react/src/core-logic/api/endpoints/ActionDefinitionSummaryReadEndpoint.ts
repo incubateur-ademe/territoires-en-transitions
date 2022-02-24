@@ -24,6 +24,8 @@ export interface ActionDefinitionSummary {
   have_exemples: boolean;
   have_ressources: boolean;
   have_contexte: boolean;
+  have_reduction_potentiel: boolean;
+  have_perimetre_evaluation: boolean;
 }
 
 class ActionDefinitionSummaryReadEndpoint extends DataLayerReadCachedEndpoint<
