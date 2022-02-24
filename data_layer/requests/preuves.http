@@ -172,9 +172,10 @@ Content-Type: application/json
 
 {
   "collectivite_id": 1,
-  "action_id": "eci_1.1.2",
+  "action_id": "eci_1.1.3",
   "url": "bad url",
-  "commentaire": "hello"
+  "titre": "hello",
+  "commentaire": "dodo"
 }
 
 ### List preuves of all types
@@ -182,4 +183,13 @@ GET {{api}}/rest/v1/preuve?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
+### List preuves of all types
+DELETE {{api}}/rest/v1/preuve_lien?id=eq.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
 
+> {%
+    client.test("Delete executed successfully", function() {
+        client.assert(response.status === 204, "Response status is not 204");
+    });
+%}
