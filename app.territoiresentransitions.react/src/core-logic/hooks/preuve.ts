@@ -1,31 +1,33 @@
 import {useEffect, useState} from 'react';
 import {FileObject} from '@supabase/storage-js';
-import {preuveReadEndpoint} from 'core-logic/api/endpoints/PreuveReadEndpoint';
-import {Preuve} from 'generated/dataLayer/preuve_read';
+import {preuveFichierReadEndpoint} from 'core-logic/api/endpoints/PreuveFichierReadEndpoint';
+import {PreuveFichierRead} from 'generated/dataLayer/preuve_fichier_read';
 import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
+import {preuveFichierWriteEndpoint} from 'core-logic/api/endpoints/PreuveFichierWriteEndpoint';
 import {collectiviteBucketFilesReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketFilesReadEndpoint';
 import {preuveUploader} from 'ui/shared/actions/AddPreuve/useUploader';
 
 export type TPreuveFichiersHook = {
-  fichiers: Preuve[];
+  fichiers: PreuveFichierRead[];
 };
 
 export const usePreuveFichiers = (action_id: string): TPreuveFichiersHook => {
-  const [fichiers, setFichiers] = useState<Preuve[]>([]);
+  const [fichiers, setFichiers] = useState<PreuveFichierRead[]>([]);
   const collectivite_id = useCollectiviteId();
   const fetch = () => {
     if (collectivite_id) {
-      preuveReadEndpoint.getBy({collectivite_id, action_id}).then(setFichiers);
+      preuveFichierReadEndpoint
+        .getBy({collectivite_id, action_id})
+        .then(setFichiers);
     }
   };
 
   useEffect(() => {
-    preuveWriteEndpoint.addListener(fetch);
+    preuveFichierWriteEndpoint.addListener(fetch);
     fetch();
     return () => {
-      preuveWriteEndpoint.removeListener(fetch);
+      preuveFichierWriteEndpoint.removeListener(fetch);
     };
   }, [collectivite_id, action_id]);
 

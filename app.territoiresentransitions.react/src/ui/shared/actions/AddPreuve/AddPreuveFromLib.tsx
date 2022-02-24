@@ -4,7 +4,7 @@
  */
 
 import {ChangeEvent, FormEvent, useState} from 'react';
-import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
+import {preuveFichierWriteEndpoint} from 'core-logic/api/endpoints/PreuveFichierWriteEndpoint';
 import {useCollectiviteBucketFiles} from 'core-logic/hooks/preuve';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TActionPreuvePanelProps} from '../ActionPreuvePanel/ActionPreuvePanel';
@@ -38,7 +38,7 @@ export const AddPreuveFromLib = (props: TAddPreuveFromLibProps) => {
         Object.entries(currentSelection)
           .filter(([, checked]) => checked)
           .map(([name]) =>
-            preuveWriteEndpoint.save({
+            preuveFichierWriteEndpoint.save({
               action_id: action.id,
               collectivite_id,
               commentaire: '',

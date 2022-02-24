@@ -1,19 +1,28 @@
 import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
+import {
+  PreuveLienParams,
+  PreuveLienRead,
+} from 'generated/dataLayer/preuve_lien_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
-import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
-import {Preuve, PreuveParams} from 'generated/dataLayer/preuve_read';
+import {preuveFichierWriteEndpoint} from 'core-logic/api/endpoints/PreuveFichierWriteEndpoint';
+import {preuveLienWriteEndpoint} from 'core-logic/api/endpoints/PreuveLienWriteEndpoint';
 
-class PreuveReadEndpoint extends DataLayerReadCachedEndpoint<
-  Preuve,
-  PreuveParams
+export class PreuveReadEndpoint extends DataLayerReadCachedEndpoint<
+  PreuveLienRead,
+  PreuveLienParams
 > {
-  readonly name = 'fichier_preuve';
+  readonly name = 'preuve';
 
-  async _read(getParams: PreuveParams): Promise<PostgrestResponse<Preuve>> {
+  async _read(
+    getParams: PreuveLienParams
+  ): Promise<PostgrestResponse<PreuveLienRead>> {
     return this._table
       .eq('collectivite_id', getParams.collectivite_id)
       .eq('action_id', getParams.action_id);
   }
 }
 
-export const preuveReadEndpoint = new PreuveReadEndpoint([preuveWriteEndpoint]);
+export const preuveReadEndpoint = new PreuveReadEndpoint([
+  preuveFichierWriteEndpoint,
+  preuveLienWriteEndpoint,
+]);

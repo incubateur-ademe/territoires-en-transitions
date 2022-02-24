@@ -1,13 +1,13 @@
 import {ChangeEvent, MouseEvent, useState} from 'react';
 import {TextInput} from '@dataesr/react-dsfr';
-import {Preuve} from 'generated/dataLayer/preuve_read';
+import {PreuveFichierRead} from 'generated/dataLayer/preuve_fichier_read';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {AddPreuveButton} from 'ui/shared/actions/AddPreuve';
 import {ButtonComment, ButtonRemove} from 'ui/shared/SmallIconButton';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useActionPreuve} from 'core-logic/hooks/referentiel';
 import {TPreuveFichiersHook, usePreuveFichiers} from 'core-logic/hooks/preuve';
-import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
+import {preuveFichierWriteEndpoint} from 'core-logic/api/endpoints/PreuveFichierWriteEndpoint';
 
 export type TActionPreuvePanelProps = {
   action: ActionDefinitionSummary;
@@ -54,7 +54,7 @@ const ActionPreuveFiles = (props: TActionPreuveFilesProps) => {
   return (
     <div className="mt-2">
       {fichiers.map(file => (
-        <PreuveFile key={file.filename} file={file} />
+        <PreuveFichierDetail key={file.filename} file={file} />
       ))}
     </div>
   );
@@ -63,13 +63,13 @@ const ActionPreuveFiles = (props: TActionPreuveFilesProps) => {
 /**
  * Affiche le détail d'un fichier
  */
-const PreuveFile = ({file}: {file: Preuve}) => {
+const PreuveFichierDetail = ({file}: {file: PreuveFichierRead}) => {
   const {action_id, collectivite_id, filename, bucket_id, commentaire} = file;
   const [isEditingComment, setEditingComment] = useState(false);
   const [updatedComment, setUpdatedComment] = useState(commentaire);
 
   const removePreuve = () => {
-    preuveWriteEndpoint.delete({action_id, collectivite_id, filename});
+    preuveFichierWriteEndpoint.delete({action_id, collectivite_id, filename});
   };
 
   // télécharge le fichier avant de l'afficher dans un nouvel onglet
@@ -131,7 +131,7 @@ const PreuveFile = ({file}: {file: Preuve}) => {
           }
           onBlur={() => {
             setEditingComment(false);
-            preuveWriteEndpoint.save({
+            preuveFichierWriteEndpoint.save({
               ...file,
               commentaire: updatedComment,
             });
