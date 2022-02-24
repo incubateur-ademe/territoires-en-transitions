@@ -13,6 +13,7 @@ describe('fichier_preuve for a collectivite and an action', () => {
       action_id: 'eci_1.3.2',
     });
 
+    expect(preuveReadEndpoint.lastResponse?.status).toBe(200);
     expect(results.length).toBe(0);
     /* TODO: ajouter une entrée dans la base pour tester le retour
     expect(results[0]).toMatchObject({
