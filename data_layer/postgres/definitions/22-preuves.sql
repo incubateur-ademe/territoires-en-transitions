@@ -234,6 +234,7 @@ execute procedure remove_preuve_fichier();
 
 create table preuve_lien
 (
+    id              serial primary key,
     collectivite_id integer references collectivite,
     action_id       action_id references action_relation,
     url             text            not null,
@@ -262,6 +263,7 @@ create policy allow_delete
 create or replace view preuve
 as
 select 'fichier' as type,
+       null      as id,
        f.action_id,
        f.collectivite_id,
        f.commentaire,
@@ -273,6 +275,7 @@ select 'fichier' as type,
 from action_preuve_fichier f
 union
 select 'lien' as type,
+       l.id,
        l.action_id,
        l.collectivite_id,
        l.commentaire,
