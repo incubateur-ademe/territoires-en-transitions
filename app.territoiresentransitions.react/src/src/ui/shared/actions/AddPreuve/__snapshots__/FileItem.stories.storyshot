@@ -17,6 +17,52 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Completed 1`] = `
 </div>
 `;
 
+exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Duplicate 1`] = `
+<div
+  style={
+    Object {
+      "border": "1px dashed",
+      "maxWidth": 548,
+    }
+  }
+>
+  <div
+    className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+  >
+    <div
+      className="px-2 pt-1 flex justify-between"
+    >
+      <div
+        className="flex w-11/12"
+      >
+        <div
+          className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+        >
+          fichier.doc
+        </div>
+        <div
+          className="text-sm min-w-max text-grey625 pl-2"
+        >
+          (
+          15 Mo
+          )
+        </div>
+      </div>
+      <button
+        className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-close-line invisible group-hover:visible"
+        onClick={[Function]}
+      />
+    </div>
+    <div
+      className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+    >
+       
+      Ce fichier a déjà été téléversé. Il peut être ajouté depuis la bibliothèque.
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Format And Size 1`] = `
 <div
   style={

@@ -44,6 +44,10 @@ export const fileItemMocks = {
     file: createMockFile('fichier.doc', 15 * 1024 * 1024),
     status: {code: 'failed', error: 'uploadError'},
   },
+  duplicateError: {
+    file: createMockFile('fichier.doc', 15 * 1024 * 1024),
+    status: {code: 'failed', error: 'duplicateError'},
+  },
 };
 
 export default {
@@ -77,3 +81,6 @@ FailedFormatAndSize.args = {...fileItemMocks.formatAndSize};
 
 export const FailedToUpload = Template.bind({});
 FailedToUpload.args = {...fileItemMocks.uploadError};
+
+export const FailedDuplicate = Template.bind({});
+FailedDuplicate.args = {...fileItemMocks.duplicateError};

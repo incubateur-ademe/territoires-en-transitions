@@ -85,7 +85,7 @@ const errorToLabel = {
   formatAndSizeError:
     'Ce fichier ne peut pas être téléversé car son format n’est pas supporté et il dépasse la taille maximale autorisée',
   duplicateError:
-    'Ce fichier a déjà été téléversé. Il est peut être ajouté depuis la bibliothèque.',
+    'Ce fichier a déjà été téléversé. Il peut être ajouté depuis la bibliothèque.',
   uploadError: 'Ce fichier n’a pas pu être téléversé',
 };
 
