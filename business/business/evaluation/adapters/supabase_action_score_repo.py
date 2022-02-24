@@ -9,12 +9,9 @@ from business.evaluation.domain.models.action_score import ActionScore
 from business.evaluation.domain.ports.action_score_repo import (
     AbstractActionScoreRepository,
 )
-from business.utils.timeit import timeit
 
-from business.utils.supabase_repo import SupabaseError, SupabaseRepository
-from business.evaluation.adapters import supabase_table_names
-
-from supabase.client import SupabaseQueryBuilder
+from business.utils.supabase_repo import SupabaseRepository
+from business.evaluation.adapters import supabase_names
 
 
 class SupabaseActionScoreRepository(
@@ -30,24 +27,16 @@ class SupabaseActionScoreRepository(
         referentiel = entities[0].referentiel
         client_scores_json = [asdict(score) for score in entities]
 
-        insert_result = self.table.insert(  # type: ignore
+        self.client.db.insert(
+            supabase_names.tables.client_scores,
             {
                 "collectivite_id": collectivite_id,
                 "referentiel": referentiel,
                 "scores": client_scores_json,
                 "score_created_at": self.get_now(),
             },
-            upsert=True,
-        ).execute()
-        if insert_result["status_code"] not in [200, 201]:
-            raise SupabaseError(
-                f"Error with status code {insert_result.get('status_code')}.\n Data: "
-                + json.dumps(insert_result.get("data"))
-            )
-
-    @property
-    def table(self) -> SupabaseQueryBuilder:
-        return self.supabase_client.table(supabase_table_names.client_scores)
+            merge_duplicates=True,
+        )
 
     def get_now(self) -> str:
         return datetime.now().strftime("%m/%d/%Y %H:%M:%S")

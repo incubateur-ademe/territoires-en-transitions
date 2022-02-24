@@ -1,0 +1,158 @@
+### Authenticate as a user
+POST {{api}}/auth/v1/token?grant_type=password
+apikey: {{anon}}
+Content-Type: application/json
+
+{
+  "email": "{{yolo_mail}}",
+  "password": "{{yolo_pass}}"
+}
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.log('token is ' + response.body['access_token']);
+    client.global.set("auth_token", response.body['access_token']);
+%}
+
+### # Supabase API
+### Create a bucket as service user.
+POST {{api}}/storage/v1/bucket
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+{
+  "id": "1",
+  "name": "preuves de la collectivité x",
+  "public": true
+}
+
+### List files using supabase API (does not work well with files with slashes)
+POST {{api}}/storage/v1/object/list/{{bucket_id}}
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "prefix": "",
+  "limit": 100,
+  "offset": 0,
+  "sortBy": {
+    "column": "name",
+    "order": "asc"
+  }
+}
+
+### # A. Upload scenario
+### A. Retrieve bucket id for collectivite 1
+GET {{api}}/rest/v1/collectivite_bucket?collectivite_id=eq.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    // Save bucket id to use it later.
+    client.global.set("bucket_id", response.body[0]['bucket_id']);
+%}
+
+### A. Can I write on a bucket ?
+POST {{api}}/rest/v1/rpc/is_bucket_writer
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{ "id": "{{bucket_id}}" }
+
+> {%
+    client.test("Read executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body === true, "Response body is not true");
+    });
+%}
+
+### A. Upload a file
+POST {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+x-upsert: true
+cacheControl: 3600
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="preuve_input.txt"; filename="preuve_input.txt"
+
+< ./preuve_input.txt
+--boundary--
+
+> {%
+    client.test("Upload executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### A. Download a file
+GET {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
+apikey: {{service}}
+Authorization: Bearer {{service}}
+
+
+
+### A. Upsert a preuve
+POST {{api}}/rest/v1/rpc/upsert_preuve
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "action_id": "eci_1.1.2",
+  "filename": "preuve_input.txt",
+  "commentaire": "très inspiré"
+}
+
+> {%
+    client.test("Upsert executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+
+### A. List all fichier_preuve for collectivite 1 and action id eci_1.1.2
+GET {{api}}/rest/v1/fichier_preuve?collectivite_id=eq.1&action_id=eq.eci_1.1.2
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### A. Delete file and related preuves
+DELETE {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
+apikey: {{service}}
+Authorization: Bearer {{service}}
+
+### A. removes a preuve
+POST {{api}}/rest/v1/rpc/delete_preuve
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "action_id": "eci_1.1.2",
+  "filename": "preuve_input.txt"
+}
+
+> {%
+    client.test("Delete executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+

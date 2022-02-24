@@ -4,14 +4,13 @@ from business.core.domain.models.referentiel import ActionReferentiel
 from business.evaluation.domain.ports.action_status_repo import (
     AbstractActionStatutRepository,
 )
-from business.evaluation.adapters import supabase_table_names
+from business.evaluation.adapters import supabase_names
 from business.evaluation.domain.models.action_statut import (
     ActionStatut,
     ActionId,
     ActionStatutAvancement,
 )
-from business.utils.supabase_repo import SupabaseError, SupabaseRepository
-from business.utils.timeit import timeit
+from business.utils.supabase_repo import SupabaseRepository
 
 
 class SupabaseActionStatutRepository(
@@ -21,16 +20,13 @@ class SupabaseActionStatutRepository(
     def get_all_for_collectivite(
         self, collectivite_id: int, referentiel: ActionReferentiel
     ) -> List[ActionStatut]:
-        result = (
-            self.supabase_client.table(supabase_table_names.business_action_statut)
-            .select("*")  # type: ignore
-            .eq("collectivite_id", str(collectivite_id))
-            .eq("referentiel", referentiel)
-            .execute()
+        rows = self.client.db.get_by(
+            supabase_names.views.action_statut,
+            filters={
+                "collectivite_id": f"eq.{collectivite_id}",
+                "referentiel": f"eq.{referentiel}",
+            },
         )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
         return [
             ActionStatut(
                 action_id=ActionId(row["action_id"]),

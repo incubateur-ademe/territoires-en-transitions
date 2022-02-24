@@ -88,7 +88,7 @@ def make_indicateur(
     description: Optional[str] = None,
     indicateur_group: Optional[IndicateurGroup] = None,
     action_ids: Optional[List[str]] = None,
-    values_refers_to: Optional[str] = None,
+    valeur_indicateur: Optional[str] = None,
 ) -> Indicateur:
     return Indicateur(
         indicateur_id=IndicateurId(indicateur_id),
@@ -100,10 +100,10 @@ def make_indicateur(
         if action_ids
         else [],
         description=description or "",
-        values_refers_to=IndicateurId(values_refers_to)
-        if values_refers_to
+        valeur_indicateur=IndicateurId(valeur_indicateur)
+        if valeur_indicateur
         else None
-        if values_refers_to
+        if valeur_indicateur
         else None,
         obligation_eci=False,
     )

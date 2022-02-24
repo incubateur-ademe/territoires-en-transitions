@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Ui/Shared/Actions/Action Preuve Panel/Action Preuve Panel Default 1`] = `
+Array [
+  <p
+    className="text-sm text-grey425"
+  >
+    Toutes les preuves ajoutées seront visibles par les membres de la communauté Territoires en Transitions.
+  </p>,
+  <div
+    onClick={[Function]}
+  >
+    <button
+      className="fr-btn fr-btn--sm"
+      data-test="AddPreuveButton"
+      onClick={[Function]}
+    >
+      + Ajouter
+    </button>
+  </div>,
+  <hr
+    className="mt-4"
+  />,
+  <h6>
+    Liste des preuves requises pour cette action
+  </h6>,
+  <div
+    className="content"
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "...",
+      }
+    }
+  />,
+]
+`;

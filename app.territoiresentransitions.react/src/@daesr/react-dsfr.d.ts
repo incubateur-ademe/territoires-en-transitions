@@ -4,4 +4,6 @@
 declare module '@dataesr/react-dsfr' {
   export {Tab, Tabs} from './Tabs';
   export {TextInput} from './TextInput';
+  export {File} from './File';
+  export {Highlight} from './Highlight';
 }

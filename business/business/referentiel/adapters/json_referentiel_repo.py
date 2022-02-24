@@ -35,11 +35,11 @@ class JsonReferentielRepository(InMemoryReferentielRepository):
         super().add_referentiel_actions(definitions, children, points)
         self.to_json()
 
-    def add_indicateurs(
+    def upsert_indicateurs(
         self,
         indicateurs: List[Indicateur],
     ):
-        super().add_indicateurs(indicateurs)
+        super().upsert_indicateurs(indicateurs)
         self.to_json()
 
     def to_json(self):

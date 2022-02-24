@@ -1,8 +1,8 @@
 from typing import List
 
-from supabase.client import Client
 
 from business.core.domain.models.referentiel import ActionReferentiel
+from business.evaluation.adapters import supabase_names
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
@@ -11,23 +11,19 @@ from business.referentiel.domain.models.action_definition import ActionDefinitio
 from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.referentiel.domain.models.indicateur import Indicateur, IndicateurId
 from business.utils.action_id import ActionId
-from business.utils.supabase_repo import SupabaseError, SupabaseRepository
+from business.utils.supabase_repo import SupabaseRepository
 
 
 class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepository):
     def get_all_definitions_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionDefinition]:
-        result = (
-            self.supabase_client.table("action_definition")
-            .select("*")  # type: ignore
-            .eq("referentiel", referentiel)
-            .execute()
+        rows = self.client.db.get_by(
+            supabase_names.tables.action_definition,
+            filters={
+                "referentiel": f"eq.{referentiel}",
+            },
         )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
-
         return [
             ActionDefinition(
                 action_id=row["action_id"],
@@ -48,17 +44,12 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     def get_all_points_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionComputedPoint]:
-        result = (
-            self.supabase_client.table("action_computed_points")
-            .select("*")  # type: ignore
-            .like(
-                "action_id", f"{referentiel}%"
-            )  # TODO : find a better way to infer the referentiel (make a view ? )
-            .execute()
+        rows = self.client.db.get_by(
+            supabase_names.tables.action_computed_points,
+            filters={
+                "action_id": f"like.{referentiel}%",  # TODO : find a better way to infer the referentiel (make a view ? )
+            },
         )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
 
         return [
             ActionComputedPoint(
@@ -72,15 +63,10 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     def get_all_children_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionChildren]:
-        result = (
-            self.supabase_client.table("business_action_children")
-            .select("*")  # type: ignore
-            .eq("referentiel", referentiel)
-            .execute()
+        rows = self.client.db.get_by(
+            supabase_names.views.action_children,
+            filters={"referentiel": f"eq.{referentiel}"},
         )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
 
         return [
             ActionChildren(
@@ -94,27 +80,16 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     def get_all_action_ids_from_referentiel(
         self, referentiel: ActionReferentiel
     ) -> List[ActionId]:
-        result = (
-            self.supabase_client.table("action_relation")
-            .select("id")  # type: ignore
-            .eq("referentiel", referentiel)
-            .execute()
+        rows = self.client.db.get_by(
+            supabase_names.tables.action_relation,
+            filters={"referentiel": f"eq.{referentiel}"},
         )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
-
         return [row["id"] for row in rows]
 
     def get_all_indicateur_ids(
         self,
     ) -> List[IndicateurId]:
-        result = (
-            self.supabase_client.table("indicateur_definition").select("id").execute()  # type: ignore
-        )
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
+        rows = self.client.db.get_all(supabase_names.tables.indicateur_definition)
 
         return [row["id"] for row in rows]
 
@@ -126,8 +101,72 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     ):
         raise NotImplementedError
 
-    def add_indicateurs(
+    def upsert_indicateurs(
         self,
         indicateurs: List[Indicateur],
     ):
-        raise NotImplementedError
+        self.client.rpc.call(
+            supabase_names.rpc.upsert_indicateurs,
+            indicateur_definitions=[
+                {
+                    "id": indicateur.indicateur_id,
+                    "identifiant": indicateur.identifiant,
+                    "indicateur_group": indicateur.indicateur_group,
+                    "nom": indicateur.nom,
+                    "unite": indicateur.unite,
+                    "description": indicateur.description,
+                    "valeur_indicateur": indicateur.valeur_indicateur,
+                    "obligation_eci": indicateur.obligation_eci,
+                    "parent": None,
+                }
+                for indicateur in indicateurs
+            ],
+            indicateur_actions=self.flatten_list(
+                [
+                    [
+                        {
+                            "indicateur_id": indicateur.indicateur_id,
+                            "action_id": action_id,
+                        }
+                        for action_id in indicateur.action_ids
+                    ]
+                    for indicateur in indicateurs
+                ]
+            ),
+        )
+
+    def update_referentiel_actions(
+        self,
+        definitions: List[ActionDefinition],
+        points: List[ActionComputedPoint],
+    ):
+        self.client.rpc.call(
+            supabase_names.rpc.update_actions,
+            definitions=[
+                {
+                    "action_id": definition.action_id,
+                    "referentiel": definition.referentiel,
+                    "identifiant": definition.identifiant,
+                    "nom": definition.nom,
+                    "description": definition.description,
+                    "contexte": definition.contexte,
+                    "exemples": definition.exemples,
+                    "preuve": definition.preuve,
+                    "ressources": definition.ressources,
+                    "points": definition.points,
+                    "pourcentage": definition.pourcentage,
+                }
+                for definition in definitions
+            ],
+            computed_points=[
+                {
+                    "action_id": point.action_id,
+                    "value": point.value,
+                }
+                for point in points
+            ],
+        )
+
+    @staticmethod
+    def flatten_list(l: List) -> List:
+        return [item for sublist in l for item in sublist]

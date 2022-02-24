@@ -7,18 +7,17 @@ from business.evaluation.domain.ports.action_statut_update_event_repo import (
 from business.core.domain.models.generated.unprocessed_action_statut_update_event_read import (
     UnprocessedActionStatutUpdateEventRead,
 )
-from business.utils.supabase_repo import SupabaseError, SupabaseRepository
-from business.evaluation.adapters import supabase_table_names
+from business.utils.supabase_repo import SupabaseRepository
+from business.evaluation.adapters import supabase_names
 
 
 class SupabaseActionStatutUpdateEventRepository(
     SupabaseRepository, AbstractActionStatutUpdateEventRepository
 ):
     def get_unprocessed_events(self) -> List[UnprocessedActionStatutUpdateEventRead]:
-        result = self.table.select("*").execute()  # type: ignore
-        if not result["status_code"] == 200:
-            raise SupabaseError(str(result["data"]))
-        rows = result["data"]
+        rows = self.client.db.get_all(
+            supabase_names.views.unprocessed_action_statut_event
+        )
         return [
             UnprocessedActionStatutUpdateEventRead(
                 collectivite_id=row["collectivite_id"],
@@ -27,9 +26,3 @@ class SupabaseActionStatutUpdateEventRepository(
             )
             for row in rows
         ]
-
-    @property
-    def table(self):
-        return self.supabase_client.table(
-            supabase_table_names.unprocessed_action_statut_event
-        )

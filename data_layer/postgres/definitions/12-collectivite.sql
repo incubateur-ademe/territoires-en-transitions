@@ -1,3 +1,4 @@
+create extension if not exists unaccent;
 create type nature as enum ('SMF', 'CU', 'CC', 'SIVOM', 'POLEM', 'METRO', 'SMO', 'CA', 'EPT', 'SIVU', 'PETR');
 create domain siren as varchar(9)
     check (
@@ -51,6 +52,7 @@ create table commune
     code            codegeo unique not null
 );
 
+
 -- A collectivité with a name from it's underlying type
 create or replace view named_collectivite
 as
@@ -59,7 +61,7 @@ select collectivite.id as collectivite_id,
 from collectivite
          left join epci on epci.collectivite_id = collectivite.id
          left join commune on commune.collectivite_id = collectivite.id
-order by nom;
+order by unaccent(coalesce(epci.nom, commune.nom));
 comment on view named_collectivite is 'Collectivité with the necessary information to display in the client.';
 
 

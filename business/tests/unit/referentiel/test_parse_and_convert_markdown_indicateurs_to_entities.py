@@ -74,7 +74,7 @@ def test_parse_and_convert_markdown_indicateurs_to_entities_from_ok_folder():
             unite="CO2",
             action_ids=[ActionId("cae_1.1.1")],
             description="<p>Description de l'indicateur 1.a</p>\n",
-            values_refers_to=None,
+            valeur_indicateur=None,
             obligation_eci=False,
         ),
         Indicateur(
@@ -85,7 +85,7 @@ def test_parse_and_convert_markdown_indicateurs_to_entities_from_ok_folder():
             unite="CO2/hab",
             action_ids=[ActionId("cae_1.1.3")],
             description="<p>Description de l'indicateur 1.b</p>\n",
-            values_refers_to=None,
+            valeur_indicateur=None,
             obligation_eci=False,
         ),
     ]

@@ -48,7 +48,7 @@ class AbstractReferentielRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add_indicateurs(
+    def upsert_indicateurs(
         self,
         indicateurs: List[Indicateur],
     ):
@@ -58,6 +58,14 @@ class AbstractReferentielRepository(abc.ABC):
     def get_all_indicateur_ids(
         self,
     ) -> List[IndicateurId]:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def update_referentiel_actions(
+        self,
+        definitions: List[ActionDefinition],
+        points: List[ActionComputedPoint],
+    ):
         raise NotImplementedError
 
 
@@ -126,11 +134,40 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
             return []
         return [definition.action_id for definition in referentiel_entities.definitions]
 
-    def add_indicateurs(
+    def upsert_indicateurs(
         self,
         indicateurs: List[Indicateur],
     ):
         self._indicateurs += indicateurs
+
+    def update_referentiel_actions(
+        self,
+        definitions: List[ActionDefinition],
+        points: List[ActionComputedPoint],
+    ):
+        if not definitions:  # No entity to update
+            return
+        new_definitions_by_id = {
+            definition.action_id: definition for definition in definitions
+        }
+        new_points_by_id = {point.action_id: point for point in points}
+
+        referentiel = definitions[0].referentiel
+        if referentiel not in self._actions_by_ref:
+            return
+
+        self._actions_by_ref[referentiel].definitions = [
+            old_def
+            if old_def.action_id not in new_definitions_by_id
+            else new_definitions_by_id[old_def.action_id]
+            for old_def in self._actions_by_ref[referentiel].definitions
+        ]
+        self._actions_by_ref[referentiel].points = [
+            old_point
+            if old_point.action_id not in new_points_by_id
+            else new_points_by_id[old_point.action_id]
+            for old_point in self._actions_by_ref[referentiel].points
+        ]
 
     def get_all_indicateur_ids(
         self,

@@ -58,7 +58,7 @@ def test_can_add_indicateurs_to_repo():
         make_indicateur(indicateur_id="eci-12"),
     ]
 
-    repo.add_indicateurs(indicateur_entities)
+    repo.upsert_indicateurs(indicateur_entities)
 
     with open(path, "r") as f:
         serialized_repo = json.load(f)

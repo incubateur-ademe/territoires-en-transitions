@@ -6,6 +6,7 @@ interface UiDialogButtonProps {
   buttonClasses?: string;
   dialogClasses?: string;
   title: string;
+  buttonLabel?: string;
   children: React.ReactNode;
   opened: boolean;
   setOpened: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,7 +29,7 @@ export const UiDialogButton = (props: UiDialogButtonProps) => (
         props.setOpened(true);
       }}
     >
-      {props.title}
+      {props.buttonLabel || props.title}
     </button>
     <Dialog
       open={props.opened}

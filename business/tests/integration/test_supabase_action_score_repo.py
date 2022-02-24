@@ -1,4 +1,5 @@
 import pytest
+from business.evaluation.adapters import supabase_names
 
 from business.evaluation.adapters.supabase_action_score_repo import (
     SupabaseActionScoreRepository,
@@ -14,7 +15,7 @@ def supabase_repo(supabase_client) -> SupabaseActionScoreRepository:
 
 
 def test_adding_and_updating_entities_for_different_collectivites_to_repo_should_write_in_postgres(
-    supabase_repo,
+    supabase_repo: SupabaseActionScoreRepository, supabase_client: SupabaseClient
 ):
     collectivite_id = 23
 
@@ -22,7 +23,7 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
     insert_date = "2022-02-02T16:00:00+00:00"
     supabase_repo.get_now = lambda: insert_date
 
-    # create score for action "cae_1.1" on this collectivite
+    # 1. Create score for action "cae_1.1" on this collectivite
     supabase_repo.add_entities_for_collectivite(
         collectivite_id=collectivite_id,
         entities=[
@@ -41,14 +42,14 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
             )
         ],
     )
-    # check score has been inserted
-    stored_scores = (
-        supabase_repo.table.select("*")
-        .eq("collectivite_id", str(collectivite_id))
-        .execute()
+
+    # Assert : check score has been inserted
+    stored_scores = supabase_client.db.get_by(
+        supabase_names.tables.client_scores,
+        filters={"collectivite_id": f"eq.{collectivite_id}"},
     )
 
-    assert stored_scores["data"] == [
+    assert stored_scores == [
         {
             "collectivite_id": collectivite_id,
             "referentiel": "cae",
@@ -71,7 +72,7 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
         }
     ]
 
-    # update the score for same collectivite, same referentiel
+    # 2. Update the score for same collectivite, same referentiel
     # Mock get_now method
     update_date = "2022-02-02T18:00:00+00:00"
     supabase_repo.get_now = lambda: update_date
@@ -95,10 +96,9 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
         ],
     )
 
-    # check score has been updated
-    stored_scores = (
-        supabase_repo.table.select("*")
-        .eq("collectivite_id", str(collectivite_id))
-        .execute()
+    # Assert : check score has been updated
+    stored_scores = supabase_client.db.get_by(
+        supabase_names.tables.client_scores,
+        filters={"collectivite_id": f"eq.{collectivite_id}"},
     )
-    assert stored_scores["data"][0]["score_created_at"] == update_date
+    assert stored_scores[0]["score_created_at"] == update_date
