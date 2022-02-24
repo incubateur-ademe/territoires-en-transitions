@@ -3,7 +3,9 @@ import {
   actionContexte,
   actionDownToTache,
   actionExemples,
+  actionPerimetreEvaluation,
   actionPreuve,
+  actionReductionPotentiel,
   actionRessources,
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
@@ -105,6 +107,36 @@ export const useActionPreuve = (actionId: string) => {
   }, [actionId]);
 
   return preuve;
+};
+
+/**
+ * Returns action preuve html contents
+ */
+export const useActionReductionPotentiel = (actionId: string) => {
+  const [reductionPotentiel, setReductionPotentiel] = useState<string>('...');
+
+  useEffect(() => {
+    actionReductionPotentiel(actionId).then(reductionPotentiel =>
+      setReductionPotentiel(reductionPotentiel.reduction_potentiel)
+    );
+  }, [actionId]);
+
+  return reductionPotentiel;
+};
+
+/**
+ * Returns perimetre evaluation html contents
+ */
+export const useActionPerimetreEvaluation = (actionId: string) => {
+  const [perimetreEvaluation, setPerimetreEvaluation] = useState<string>('...');
+
+  useEffect(() => {
+    actionPerimetreEvaluation(actionId).then(perimetreEvaluation =>
+      setPerimetreEvaluation(perimetreEvaluation.perimetre_evaluation)
+    );
+  }, [actionId]);
+
+  return perimetreEvaluation;
 };
 
 /**

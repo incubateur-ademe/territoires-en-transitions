@@ -6,6 +6,8 @@ import {
 import {
   useActionContexte,
   useActionExemples,
+  useActionPerimetreEvaluation,
+  useActionReductionPotentiel,
   useActionResources,
 } from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -77,5 +79,35 @@ export const ActionRessourcesExpandPanel = ({
 
   return (
     <ActionExpandPanelAdemeContent content={ressources} title="Ressources" />
+  );
+};
+
+export const ActionReductionPotentielExpandPanel = ({
+  action,
+}: {
+  action: ActionDefinitionSummary;
+}) => {
+  const reductionPotentiel = useActionReductionPotentiel(action.id);
+
+  return (
+    <ActionExpandPanelAdemeContent
+      content={reductionPotentiel}
+      title="Réduction de potentiel"
+    />
+  );
+};
+
+export const ActionPerimetreEvaluationExpandPanel = ({
+  action,
+}: {
+  action: ActionDefinitionSummary;
+}) => {
+  const perimetreEvaluation = useActionPerimetreEvaluation(action.id);
+
+  return (
+    <ActionExpandPanelAdemeContent
+      content={perimetreEvaluation}
+      title="Renvois-limite"
+    />
   );
 };

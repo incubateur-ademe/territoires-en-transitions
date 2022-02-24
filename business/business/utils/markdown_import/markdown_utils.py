@@ -28,12 +28,22 @@ def token_to_string(token: BlockToken, level=0) -> str:
     return rendered
 
 
-def is_keyword(token: BlockToken, keyword: str) -> bool:
+def to_snake_case(text: str):
+    return (
+        text.title()
+        .lower()
+        .translate(str.maketrans("áéèúíó", "aeeuio"))
+        .replace(" ", "_")
+        .replace("'", "")
+    )
+
+
+def is_keyword(token: BlockToken, snake_title: str) -> bool:
     """Returns True if token is a reserved keyword."""
     return (
         isinstance(token, Heading)
         and token.children
-        and str(token.children[0].content).lower().strip() == keyword.lower()
+        and to_snake_case(str(token.children[0].content)) == snake_title
     )
 
 
