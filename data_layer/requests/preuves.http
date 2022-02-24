@@ -103,7 +103,7 @@ Authorization: Bearer {{service}}
 
 
 ### A. Upsert a preuve
-POST {{api}}/rest/v1/rpc/upsert_preuve
+POST {{api}}/rest/v1/rpc/upsert_preuve_fichier
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
@@ -123,7 +123,7 @@ Content-Type: application/json
 
 
 ### A. List all fichier_preuve for collectivite 1 and action id eci_1.1.2
-GET {{api}}/rest/v1/fichier_preuve?collectivite_id=eq.1&action_id=eq.eci_1.1.2
+GET {{api}}/rest/v1/action_preuve_fichier?collectivite_id=eq.1&action_id=eq.eci_1.1.2
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
@@ -139,7 +139,7 @@ apikey: {{service}}
 Authorization: Bearer {{service}}
 
 ### A. removes a preuve
-POST {{api}}/rest/v1/rpc/delete_preuve
+POST {{api}}/rest/v1/rpc/delete_preuve_fichier
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
@@ -155,4 +155,31 @@ Content-Type: application/json
         client.assert(response.status === 200, "Response status is not 200");
     });
 %}
+
+### # B. Add a lien scenario
+### List liens
+GET {{api}}/rest/v1/preuve_lien?collectivite_id=eq.1&action_id=eq.eci_1.1.2
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+
+### Insert a lien
+POST {{api}}/rest/v1/preuve_lien
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Prefer: return=representation
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "action_id": "eci_1.1.2",
+  "url": "bad url",
+  "commentaire": "hello"
+}
+
+### List preuves of all types
+GET {{api}}/rest/v1/preuve?collectivite_id=eq.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
 
