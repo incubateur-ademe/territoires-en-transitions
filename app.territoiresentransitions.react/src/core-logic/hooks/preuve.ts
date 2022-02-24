@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {FileObject} from '@supabase/storage-js';
 import {preuveReadEndpoint} from 'core-logic/api/endpoints/PreuveReadEndpoint';
 import {Preuve} from 'generated/dataLayer/preuve_read';
 import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
@@ -6,8 +7,6 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {preuveWriteEndpoint} from 'core-logic/api/endpoints/PreuveWriteEndpoint';
 import {collectiviteBucketFilesReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketFilesReadEndpoint';
 import {preuveUploader} from 'ui/shared/actions/AddPreuve/useUploader';
-// eslint-disable-next-line node/no-extraneous-import
-import {FileObject} from '@supabase/storage-js';
 
 export type TPreuveFichiersHook = {
   fichiers: Preuve[];

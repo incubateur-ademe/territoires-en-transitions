@@ -1,4 +1,3 @@
-// eslint-disable-next-line node/no-extraneous-import
 import {FileObject} from '@supabase/storage-js';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {collectiviteBucketReadEndpoint} from './CollectiviteBucketReadEndpoint';
