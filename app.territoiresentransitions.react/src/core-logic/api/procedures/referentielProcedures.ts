@@ -169,6 +169,57 @@ export const actionPreuve = async (id: string): Promise<ActionPreuve> => {
     console.error('actionPreuve rpc error ', error);
     return {id: id, preuve: ''};
   }
-  console.log('actionPreuve data ', data);
   return data as Object as ActionPreuve;
+};
+
+/**
+ * Reduction Potentiel
+ * The reduction potentiel section contents
+ */
+export interface ActionReductionPotentiel {
+  id: string;
+  reduction_potentiel: string;
+}
+
+/**
+ * Returns action reduction potentiel text
+ */
+export const actionReductionPotentiel = async (
+  id: string
+): Promise<ActionReductionPotentiel> => {
+  const {data, error} = await rpcCache.rpc('action_reduction_potentiel', {
+    id: id,
+  });
+
+  if (error) {
+    console.error('reduction_potentiel rpc error ', error);
+    return {id: id, reduction_potentiel: ''};
+  }
+  return data as Object as ActionReductionPotentiel;
+};
+
+/**
+ * Perimetre Evaluation
+ * The perimetre evaluation section contents
+ */
+export interface ActionPerimetreEvaluation {
+  id: string;
+  perimetre_evaluation: string;
+}
+
+/**
+ * Returns action reduction potentiel text
+ */
+export const actionPerimetreEvaluation = async (
+  id: string
+): Promise<ActionPerimetreEvaluation> => {
+  const {data, error} = await rpcCache.rpc('action_perimetre_evaluation', {
+    id: id,
+  });
+
+  if (error) {
+    console.error('action_perimetre_evaluation rpc error ', error);
+    return {id: id, perimetre_evaluation: ''};
+  }
+  return data as Object as ActionPerimetreEvaluation;
 };
