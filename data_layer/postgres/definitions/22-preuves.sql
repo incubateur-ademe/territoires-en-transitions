@@ -31,7 +31,7 @@ comment on function is_bucket_writer is
 
 
 -- Create file action relation table.
-create table if not exists preuve
+create table if not exists preuve_fichier
 (
     collectivite_id integer references collectivite      not null,
     action_id       action_id references action_relation not null,
@@ -39,37 +39,37 @@ create table if not exists preuve
     commentaire     text                                 not null default '',
     primary key (collectivite_id, action_id, file_id)
 );
-comment on table preuve is
-    'A preuve links a file from storage to an action for a collectivité.';
-alter table preuve
+comment on table preuve_fichier is
+    'A preuve fichier links a file from storage to an action for a collectivité.';
+alter table preuve_fichier
     enable row level security;
 
 create policy allow_read
-    on preuve for select
+    on preuve_fichier for select
     using (is_authenticated());
 
 create policy allow_insert
-    on preuve for insert
+    on preuve_fichier for insert
     with check (is_bucket_writer(
         (select o.bucket_id
          from storage.objects o
-         where o.id = preuve.file_id
+         where o.id = preuve_fichier.file_id
         )));
 
 create policy allow_update
-    on preuve for update
+    on preuve_fichier for update
     using (is_bucket_writer(
         (select o.bucket_id
          from storage.objects o
-         where o.id = preuve.file_id
+         where o.id = preuve_fichier.file_id
         )));
 
 create policy allow_delete
-    on preuve for delete
+    on preuve_fichier for delete
     using (is_bucket_writer(
         (select o.bucket_id
          from storage.objects o
-         where o.id = preuve.file_id
+         where o.id = preuve_fichier.file_id
         )));
 
 
@@ -148,7 +148,7 @@ from collectivite c
 
 
 -- Convenience upsert functions so the client does not have to know about object ids
-create or replace function upsert_preuve(
+create or replace function upsert_preuve_fichier(
     collectivite_id integer,
     action_id action_id,
     filename text,
@@ -161,18 +161,18 @@ with file as (
     select obj.id
     from storage.objects obj
              join collectivite_bucket cb on obj.bucket_id = cb.bucket_id
-    where cb.collectivite_id = upsert_preuve.collectivite_id
+    where cb.collectivite_id = upsert_preuve_fichier.collectivite_id
       and obj.name = filename
 )
 insert
-into preuve(collectivite_id, action_id, file_id, commentaire)
-select collectivite_id, action_id, file.id, upsert_preuve.commentaire
+into preuve_fichier(collectivite_id, action_id, file_id, commentaire)
+select collectivite_id, action_id, file.id, upsert_preuve_fichier.commentaire
 from file
-on conflict (collectivite_id, action_id, file_id) do update set commentaire = upsert_preuve.commentaire;
+on conflict (collectivite_id, action_id, file_id) do update set commentaire = upsert_preuve_fichier.commentaire;
 $$ language sql;
-comment on function upsert_preuve is 'Upsert a preuve';
+comment on function upsert_preuve_fichier is 'Upsert a preuve';
 
-create or replace function delete_preuve(
+create or replace function delete_preuve_fichier(
     collectivite_id integer,
     action_id action_id,
     filename text
@@ -184,20 +184,20 @@ with file as (
     select obj.id
     from storage.objects obj
              join collectivite_bucket cb on obj.bucket_id = cb.bucket_id
-    where cb.collectivite_id = delete_preuve.collectivite_id
+    where cb.collectivite_id = delete_preuve_fichier.collectivite_id
       and obj.name = filename
 )
 delete
-from preuve
-where preuve.collectivite_id = delete_preuve.collectivite_id
-  and preuve.action_id = delete_preuve.action_id
-  and preuve.file_id in (select id from file);
+from preuve_fichier
+where preuve_fichier.collectivite_id = delete_preuve_fichier.collectivite_id
+  and preuve_fichier.action_id = delete_preuve_fichier.action_id
+  and preuve_fichier.file_id in (select id from file);
 $$ language sql;
-comment on function delete_preuve is 'Delete a preuve';
+comment on function delete_preuve_fichier is 'Delete a preuve';
 
 
 -- Client view
-create view fichier_preuve
+create view action_preuve_fichier
 as
 select c.id                            as collectivite_id,
        cb.bucket_id                    as bucket_id,
@@ -210,28 +210,77 @@ from collectivite c
          join lateral (select id, name, path_tokens
                        from storage.objects o
                        where o.bucket_id = cb.bucket_id) as obj on true
-         left join preuve p on p.file_id = obj.id;
+         left join preuve_fichier p on p.file_id = obj.id;
 
 
 -- Handle file deletion.
-create or replace function remove_preuve()
+create or replace function remove_preuve_fichier()
     returns trigger
 as
 $$
 begin
     delete
-    from preuve
+    from preuve_fichier
     where file_id = old.id;
     return old;
 end
 $$ language plpgsql security definer;
 
-create trigger remove_preuve_before_file_delete
+create trigger remove_preuve_fichier_before_file_delete
     before delete
     on storage.objects
     for each row
-execute procedure remove_preuve();
+execute procedure remove_preuve_fichier();
+
+create table preuve_lien
+(
+    collectivite_id integer references collectivite,
+    action_id       action_id references action_relation,
+    url             text            not null,
+    titre           text            not null,
+    commentaire     text default '' not null
+);
+comment on table preuve_lien is 'A preuve lien links an url to an action of a collectivité.';
+
+create policy allow_read
+    on preuve_lien for select
+    using (is_authenticated());
+
+create policy allow_insert
+    on preuve_lien for insert
+    with check (is_any_role_on(collectivite_id));
+
+create policy allow_update
+    on preuve_lien for update
+    using (is_any_role_on(collectivite_id));
+
+create policy allow_delete
+    on preuve_lien for delete
+    using (is_any_role_on(collectivite_id));
 
 
-
-
+create or replace view preuve
+as
+select 'fichier' as type,
+       f.action_id,
+       f.collectivite_id,
+       f.commentaire,
+       f.filename,
+       f.bucket_id,
+       f.path,
+       null      as url,
+       null      as titre
+from action_preuve_fichier f
+union
+select 'lien' as type,
+       l.action_id,
+       l.collectivite_id,
+       l.commentaire,
+       null   as filename,
+       null   as bucket_id,
+       null   as path,
+       l.url,
+       l.titre
+from preuve_lien l;
+comment on view preuve is
+    'List both preuve fichier and preuve lien';
