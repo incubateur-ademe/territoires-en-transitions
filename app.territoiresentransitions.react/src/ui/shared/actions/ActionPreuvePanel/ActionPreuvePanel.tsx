@@ -1,21 +1,24 @@
-import {ChangeEvent, MouseEvent, useState} from 'react';
+import {ChangeEvent, KeyboardEvent, MouseEvent, useState} from 'react';
 import {TextInput} from '@dataesr/react-dsfr';
-import {PreuveFichierRead} from 'generated/dataLayer/preuve_fichier_read';
+import {PreuveRead} from 'generated/dataLayer/preuve_read';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {AddPreuveButton} from 'ui/shared/actions/AddPreuve';
 import {ButtonComment, ButtonRemove} from 'ui/shared/SmallIconButton';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useActionPreuve} from 'core-logic/hooks/referentiel';
-import {TPreuveFichiersHook, usePreuveFichiers} from 'core-logic/hooks/preuve';
+import {usePreuves} from 'core-logic/hooks/preuve';
 import {preuveFichierWriteEndpoint} from 'core-logic/api/endpoints/PreuveFichierWriteEndpoint';
+import {PreuveFichierRead} from 'generated/dataLayer/preuve_fichier_read';
+import {preuveLienWriteEndpoint} from 'core-logic/api/endpoints/PreuveLienWriteEndpoint';
+import {PreuveLienRead} from 'generated/dataLayer/preuve_lien_read';
 
 export type TActionPreuvePanelProps = {
   action: ActionDefinitionSummary;
 };
 
-export type TActionPreuveFilesProps = {
+export type TActionPreuvesProps = {
   action: ActionDefinitionSummary;
-  preuveFichiers: TPreuveFichiersHook;
+  preuves: PreuveRead[];
 };
 
 /**
@@ -23,8 +26,8 @@ export type TActionPreuveFilesProps = {
  */
 export const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
   const {action} = props;
-  const preuve = useActionPreuve(action.id);
-  const preuveFichiers = usePreuveFichiers(action.id);
+  const preuveContent = useActionPreuve(action.id);
+  const preuves = usePreuves(action.id);
 
   return (
     <>
@@ -33,10 +36,13 @@ export const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
         communauté Territoires en Transitions.
       </p>
       <AddPreuveButton {...props} />
-      <ActionPreuveFiles {...props} preuveFichiers={preuveFichiers} />
+      <ActionPreuves {...props} preuves={preuves} />
       <hr className="mt-4" />
       <h6>Liste des preuves requises pour cette action</h6>
-      <div className="content" dangerouslySetInnerHTML={{__html: preuve}} />
+      <div
+        className="content"
+        dangerouslySetInnerHTML={{__html: preuveContent}}
+      />
     </>
   );
 };
@@ -44,17 +50,18 @@ export const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
 /**
  * Affiche les fichiers attachés à l'action
  */
-const ActionPreuveFiles = (props: TActionPreuveFilesProps) => {
-  const {preuveFichiers} = props;
-  const {fichiers} = preuveFichiers;
-  if (!fichiers?.length) {
+const ActionPreuves = ({preuves}: {preuves: PreuveRead[]}) => {
+  if (!preuves.length) {
     return null;
   }
 
   return (
     <div className="mt-2">
-      {fichiers.map(file => (
-        <PreuveFichierDetail key={file.filename} file={file} />
+      {preuves.map(preuve => (
+        <PreuveFichierDetail
+          key={preuve.id || preuve.filename}
+          preuve={preuve}
+        />
       ))}
     </div>
   );
@@ -63,34 +70,65 @@ const ActionPreuveFiles = (props: TActionPreuveFilesProps) => {
 /**
  * Affiche le détail d'un fichier
  */
-const PreuveFichierDetail = ({file}: {file: PreuveFichierRead}) => {
-  const {action_id, collectivite_id, filename, bucket_id, commentaire} = file;
+const PreuveFichierDetail = ({preuve}: {preuve: PreuveRead}) => {
+  const {type: _type, action_id, collectivite_id, commentaire} = preuve;
+  const {bucket_id, filename} = preuve as PreuveFichierRead;
+  const {id: preuveId, url, titre} = preuve as PreuveLienRead;
+
   const [isEditingComment, setEditingComment] = useState(false);
   const [updatedComment, setUpdatedComment] = useState(commentaire);
 
   const removePreuve = () => {
-    preuveFichierWriteEndpoint.delete({action_id, collectivite_id, filename});
+    if (_type === 'fichier') {
+      preuveFichierWriteEndpoint.delete({action_id, collectivite_id, filename});
+    } else {
+      preuveLienWriteEndpoint.delete(preuveId);
+    }
   };
 
-  // télécharge le fichier avant de l'afficher dans un nouvel onglet
-  // l'ouverture directe de l'URL ne fonctionne pas car les headers d'auth. sont absents
-  const openFileInNewTab = async () => {
-    const {data, error} = await supabaseClient.storage
-      .from(bucket_id)
-      .download(filename);
-    if (error) {
-      console.log(error.message);
+  const updatePreuve = () => {
+    setEditingComment(false);
+    if (_type === 'fichier') {
+      preuveFichierWriteEndpoint.save({
+        collectivite_id,
+        action_id,
+        filename,
+        commentaire: updatedComment,
+      });
+    } else {
+      preuveLienWriteEndpoint.save({
+        collectivite_id,
+        action_id,
+        titre,
+        url,
+        commentaire: updatedComment,
+      });
     }
-    if (data) {
-      const fileURL = URL.createObjectURL(data);
-      window.open(fileURL);
+  };
+
+  const openInNewTab = async () => {
+    if (_type === 'fichier') {
+      // télécharge le fichier avant de l'afficher dans un nouvel onglet
+      // l'ouverture directe de l'URL ne fonctionne pas car les headers d'auth. sont absents
+      const {data, error} = await supabaseClient.storage
+        .from(bucket_id)
+        .download(filename);
+      if (error) {
+        console.log(error.message);
+      }
+      if (data) {
+        const fileURL = URL.createObjectURL(data);
+        window.open(fileURL);
+      }
+    } else {
+      window.open(url);
     }
   };
 
   return (
     <div>
       <p className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0">
-        <div onClick={openFileInNewTab}>{filename}</div>
+        <div onClick={openInNewTab}>{filename || titre}</div>
         <div className="invisible group-hover:visible">
           <ButtonComment
             title="Commentaire"
@@ -129,12 +167,11 @@ const PreuveFichierDetail = ({file}: {file: PreuveFichierRead}) => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setUpdatedComment(e.target.value)
           }
-          onBlur={() => {
-            setEditingComment(false);
-            preuveFichierWriteEndpoint.save({
-              ...file,
-              commentaire: updatedComment,
-            });
+          onBlur={updatePreuve}
+          onKeyUp={(e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+              updatePreuve();
+            }
           }}
         />
       ) : null}

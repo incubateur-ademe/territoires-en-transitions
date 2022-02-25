@@ -2,7 +2,6 @@
  * Pertmet d'ajouter un lien comme preuve
  */
 
-import {ChangeEvent, FormEvent, useState} from 'react';
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {preuveLienWriteEndpoint} from 'core-logic/api/endpoints/PreuveLienWriteEndpoint';
@@ -38,15 +37,17 @@ export const AddPreuveLien = (props: TAddPreuveLienProps) => {
   const collectivite_id = useCollectiviteId();
 
   const onSubmit = ({titre, url}: TPreuveLienParams) => {
-    //TODO: insérer l'appel à preuveLienWrite ici
-    console.log({
-      action_id: action.id,
-      collectivite_id,
-      titre,
-      url,
-      commentaire: '',
-    });
-    //.then(onClose)
+    if (collectivite_id) {
+      preuveLienWriteEndpoint
+        .save({
+          action_id: action.id,
+          collectivite_id,
+          titre,
+          url,
+          commentaire: '',
+        })
+        .then(onClose);
+    }
   };
 
   return (
