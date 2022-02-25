@@ -56,7 +56,7 @@ export const AddPreuveLien = (props: TAddPreuveLienProps) => {
       validationSchema={validation}
       onSubmit={onSubmit}
     >
-      {({isValid}) => {
+      {({values, isValid}) => {
         return (
           <Form>
             <div className="fr-form-group">
@@ -75,7 +75,11 @@ export const AddPreuveLien = (props: TAddPreuveLienProps) => {
                 />
               </fieldset>
             </div>
-            <button className="fr-btn mt-2" disabled={!isValid} type="submit">
+            <button
+              className="fr-btn mt-2"
+              disabled={!values.titre || !values.url || !isValid}
+              type="submit"
+            >
               Ajouter
             </button>
           </Form>
