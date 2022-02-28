@@ -155,26 +155,26 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             )
             return
 
-        if tache_status and tache_status.is_renseigne:
+        if tache_status and tache_status.detailed_avancement:
             point_fait = (
-                tache_point_potentiel
-                if tache_concerne and tache_status.is_fait
+                tache_point_potentiel * tache_status.detailed_avancement.fait
+                if tache_concerne
                 else 0.0
             )
             point_programme = (
-                tache_point_potentiel
-                if tache_concerne and tache_status.is_programme
+                tache_point_potentiel * tache_status.detailed_avancement.programme
+                if tache_concerne
                 else 0.0
             )
             point_pas_fait = (
-                tache_point_potentiel
-                if tache_concerne and tache_status.is_pas_fait
+                tache_point_potentiel * tache_status.detailed_avancement.pas_fait
+                if tache_concerne
                 else 0.0
             )
             point_non_renseigne = 0.0
 
             print(
-                f"\n For tache {tache_id}, point_fait is {point_fait}, point_fait is {point_programme}, point_pas_fait is {point_pas_fait}, avancement is {tache_status.avancement}, concerne is {tache_concerne}."
+                f"\n For tache {tache_id}, point_fait is {point_fait}, point_fait is {point_programme}, point_pas_fait is {point_pas_fait}, avancement is {tache_status.detailed_avancement}, concerne is {tache_concerne}."
             )
             completed_taches_count = 1
         else:
