@@ -8,9 +8,7 @@ export class PreuveLienWriteEndpoint extends DataLayerWriteEndpoint<PreuveLienWr
   async _write(
     preuveLien: PreuveLienWrite
   ): Promise<PostgrestResponse<PreuveLienWrite>> {
-    return this._table.upsert([preuveLien], {
-      //      onConflict: 'collectivite_id,action_id',
-    });
+    return this._table.upsert(preuveLien);
   }
 
   async delete(preuveId: number): Promise<boolean> {
