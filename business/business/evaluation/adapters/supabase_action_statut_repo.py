@@ -8,7 +8,7 @@ from business.evaluation.adapters import supabase_names
 from business.evaluation.domain.models.action_statut import (
     ActionStatut,
     ActionId,
-    ActionStatutAvancement,
+    DetailedAvancement,
 )
 from business.utils.supabase_repo import SupabaseRepository
 
@@ -27,11 +27,23 @@ class SupabaseActionStatutRepository(
                 "referentiel": f"eq.{referentiel}",
             },
         )
-        return [
-            ActionStatut(
-                action_id=ActionId(row["action_id"]),
-                avancement=ActionStatutAvancement.from_json_data(row["avancement"]),
-                concerne=row["concerne"],
-            )
-            for row in rows
-        ]
+        return [self.action_statut_from_row(row) for row in rows]
+
+    @staticmethod
+    def action_statut_from_row(row: dict) -> ActionStatut:
+        if row["avancement"] == "fait":
+            detailed_avancement = DetailedAvancement(1, 0, 0)
+        elif row["avancement"] == "programme":
+            detailed_avancement = DetailedAvancement(0, 1, 0)
+        elif row["avancement"] == "pas_fait":
+            detailed_avancement = DetailedAvancement(0, 0, 1)
+        elif row["avancement"] == "non_renseigne":
+            detailed_avancement = None
+        else:
+            detailed_avancement = DetailedAvancement(*row["avancement_detaille"])
+
+        return ActionStatut(
+            action_id=ActionId(row["action_id"]),
+            detailed_avancement=detailed_avancement,
+            concerne=row["concerne"],
+        )

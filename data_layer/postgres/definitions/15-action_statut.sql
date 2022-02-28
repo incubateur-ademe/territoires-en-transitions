@@ -1,19 +1,23 @@
 --------------------------------
 ---------- STATUT --------------
 --------------------------------
-create type avancement as enum ('fait', 'pas_fait', 'programme', 'non_renseigne');
+create type avancement as enum ('fait', 'pas_fait', 'programme', 'non_renseigne', 'detaille');
 
 create table action_statut
 (
     collectivite_id integer references collectivite                      not null,
     action_id       action_id references action_relation                 not null,
     avancement      avancement                                           not null,
+    avancement_detaille float[],                     -- [fait, programme, pas_fait]
     concerne        boolean                                              not null,
     modified_by     uuid references auth.users default auth.uid()        not null,
     modified_at     timestamp with time zone   default CURRENT_TIMESTAMP not null,
 
     primary key (collectivite_id, action_id)
 );
+
+alter table action_statut add constraint avancement_detaille_length CHECK (array_length(avancement_detaille, 1) = 3);
+-- alter table action_statut add constraint avancement_detaille_sum_to_1 CHECK (avancement_detaille[0] + avancement_detaille[1] + avancement_detaille[2] = 1); --does not seem to work :( 
 
 alter table action_statut
     enable row level security;
@@ -51,6 +55,7 @@ select collectivite_id,
        referentiel,
        action_id,
        avancement,
+       avancement_detaille, 
        concerne
 from action_statut
          join action_relation on action_id = action_relation.id;

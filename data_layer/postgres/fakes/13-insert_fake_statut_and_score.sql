@@ -5,3 +5,7 @@
 insert into
     action_statut(collectivite_id, action_id, avancement, concerne, modified_by)
     values (1, 'cae_1.1.1.1.1', 'fait', true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
+
+insert into
+    action_statut(collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by)
+    values (1, 'cae_1.1.1.1.2', 'detaille', ARRAY[.2, .7, .1], true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
