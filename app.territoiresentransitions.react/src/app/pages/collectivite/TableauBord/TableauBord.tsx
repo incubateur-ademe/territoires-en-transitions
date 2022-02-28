@@ -266,10 +266,7 @@ const ReferentielSection = observer(
         )}
         <Spacer />
         <div className="flex justify-center">
-          <ReferentielAxisScoresPolarArea
-            data={axisAvancementSamples}
-            widthPx={550}
-          />
+          <ReferentielAxisScoresPolarArea data={axisAvancementSamples} />
         </div>
         <Spacer />
         <ReferentielAxisAvancementStackedBar data={axisAvancementSamples} />
