@@ -24,7 +24,7 @@ from business.referentiel.adapters.json_referentiel_repo import (
 )
 from business.evaluation.adapters.replay_realtime import ReplayRealtime
 from business.evaluation.adapters.supabase_realtime import SupabaseRealtime
-from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
+from business.utils.domain_message_bus import AbstractDomainMessageBus
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from business.referentiel.domain.models.indicateur import Indicateur, IndicateurId
-from business.core.domain.ports.domain_message_bus import (
+from business.utils.domain_message_bus import (
     InMemoryDomainMessageBus,
 )
 from business.referentiel.domain.ports.referentiel_repo import (

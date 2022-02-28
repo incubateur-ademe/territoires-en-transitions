@@ -4,7 +4,7 @@ from business.evaluation.domain.ports.action_statut_update_event_repo import (
     AbstractActionStatutUpdateEventRepository,
 )
 
-from business.core.domain.models.generated.unprocessed_action_statut_update_event_read import (
+from business.evaluation.domain.models.unprocessed_action_statut_update_event_read import (
     UnprocessedActionStatutUpdateEventRead,
 )
 from business.utils.supabase_repo import SupabaseRepository

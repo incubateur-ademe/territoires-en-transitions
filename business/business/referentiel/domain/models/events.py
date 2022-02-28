@@ -5,8 +5,8 @@ from typing import List
 from .action_definition import ActionDefinition
 from .action_children import ActionChildren
 from .action_computed_point import ActionComputedPoint
-from business.core.domain.models.referentiel import ActionReferentiel
-from business.core.domain.models.event import DomainEvent, DomainFailureEvent
+from business.referentiel.domain.models.referentiel import ActionReferentiel
+from business.utils.domain_message_bus import DomainEvent, DomainFailureEvent
 from .markdown_action_node import MarkdownActionNode
 from .indicateur import Indicateur
 

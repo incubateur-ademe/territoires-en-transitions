@@ -4,7 +4,7 @@ from typing import List, Optional
 from realtime_py import Socket
 
 from business.evaluation.domain.models import events
-from business.core.domain.ports.domain_message_bus import (
+from business.utils.domain_message_bus import (
     AbstractDomainMessageBus,
     InMemoryDomainMessageBus,
 )

@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import List, Optional
 
 from pydantic.main import BaseModel
-from business.core.domain.models.referentiel import ActionReferentiel
+from business.referentiel.domain.models.referentiel import ActionReferentiel
 
 
 class MarkdownActionNode(BaseModel):

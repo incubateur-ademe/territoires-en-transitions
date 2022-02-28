@@ -3,10 +3,7 @@ from business.evaluation.domain.ports.action_statut_update_event_repo import (
     AbstractActionStatutUpdateEventRepository,
 )
 from business.utils.use_case import UseCase
-from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
-from business.evaluation.domain.ports.action_status_repo import (
-    AbstractActionStatutRepository,
-)
+from business.utils.domain_message_bus import AbstractDomainMessageBus
 
 
 class CatchUpUnprocessedActionStatusUpdateEvents(UseCase):

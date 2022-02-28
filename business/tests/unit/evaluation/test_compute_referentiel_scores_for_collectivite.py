@@ -14,7 +14,7 @@ from business.referentiel.domain.ports.referentiel_repo import (
 from business.evaluation.domain.ports.action_status_repo import (
     InMemoryActionStatutRepository,
 )
-from business.core.domain.ports.domain_message_bus import InMemoryDomainMessageBus
+from business.utils.domain_message_bus import InMemoryDomainMessageBus
 from business.evaluation.domain.use_cases.compute_referentiel_scores_for_collectivite import (
     ComputeReferentielScoresForCollectivite,
 )

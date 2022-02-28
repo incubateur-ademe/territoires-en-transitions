@@ -8,7 +8,7 @@ from typing import Any, List, Optional, Tuple
 
 import marshmallow_dataclass
 from marshmallow import ValidationError
-from business.core.domain.models.referentiel import action_referentiel_options
+from business.referentiel.domain.models.referentiel import action_referentiel_options
 
 from business.referentiel.domain.models.indicateur import (
     Indicateur,
@@ -16,7 +16,7 @@ from business.referentiel.domain.models.indicateur import (
     IndicateurId,
 )
 from business.referentiel.domain.models import events
-from business.core.domain.ports.domain_message_bus import (
+from business.utils.domain_message_bus import (
     AbstractDomainMessageBus,
 )
 from business.referentiel.domain.ports.referentiel_repo import (
