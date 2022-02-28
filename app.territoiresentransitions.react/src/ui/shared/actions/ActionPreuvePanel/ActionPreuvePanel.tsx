@@ -79,10 +79,16 @@ const PreuveFichierDetail = ({preuve}: {preuve: PreuveRead}) => {
   const [updatedComment, setUpdatedComment] = useState(commentaire);
 
   const removePreuve = () => {
-    if (_type === 'fichier') {
-      preuveFichierWriteEndpoint.delete({action_id, collectivite_id, filename});
-    } else {
-      preuveLienWriteEndpoint.delete(preuveId);
+    if (confirm('Voulez-vous vraiment supprimer cette preuve ?')) {
+      if (_type === 'fichier') {
+        preuveFichierWriteEndpoint.delete({
+          action_id,
+          collectivite_id,
+          filename,
+        });
+      } else {
+        preuveLienWriteEndpoint.delete(preuveId);
+      }
     }
   };
 
