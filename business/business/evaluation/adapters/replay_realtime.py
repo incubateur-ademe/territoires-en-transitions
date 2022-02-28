@@ -8,7 +8,7 @@ from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
     AbstractRealtime,
 )
-from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
+from business.utils.domain_message_bus import AbstractDomainMessageBus
 
 
 class ReplayRealtime(AbstractRealtime):

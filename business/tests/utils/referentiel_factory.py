@@ -11,7 +11,7 @@ from business.referentiel.domain.models.indicateur import (
     IndicateurGroup,
     IndicateurId,
 )
-from business.core.domain.models.referentiel import ActionReferentiel
+from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.referentiel.domain.models.markdown_action_node import MarkdownActionNode
 from business.utils.action_id import retrieve_referentiel
 

@@ -1,12 +1,21 @@
 from dataclasses import dataclass
+from enum import Enum
 
-from business.core.domain.models.generated.business_action_statut_read import (
-    ActionStatutAvancement as GeneratedActionStatutAvancement,
-)
+from typing import Any
+
 from business.utils.action_id import ActionId
 
 
-ActionStatutAvancement = GeneratedActionStatutAvancement
+class ActionStatutAvancement(Enum):
+    EN_COURS = "en_cours"
+    FAIT = "fait"
+    NON_RENSEIGNE = "non_renseigne"
+    PAS_FAIT = "pas_fait"
+    PROGRAMME = "programme"
+
+    @classmethod
+    def from_json_data(cls, data: Any) -> "ActionStatutAvancement":
+        return cls(data)
 
 
 @dataclass

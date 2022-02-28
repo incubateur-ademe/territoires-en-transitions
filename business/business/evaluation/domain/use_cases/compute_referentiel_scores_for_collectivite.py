@@ -7,20 +7,19 @@ from business.evaluation.domain.models.action_statut import (
     ActionStatut,
 )
 from business.evaluation.domain.models.action_score import ActionScore
-from business.core.domain.models.referentiel import ActionReferentiel
+from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.evaluation.domain.ports.action_status_repo import (
     AbstractActionStatutRepository,
 )
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
-from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
+from business.utils.domain_message_bus import AbstractDomainMessageBus
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.utils.action_id import ActionId
 from business.utils.action_tree import ActionTree, ActionTreeError
 from business.utils.use_case import UseCase
-from business.utils.points_almost_equal import points_almost_equal
 
 logger = logging.getLogger()
 

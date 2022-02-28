@@ -1,5 +1,5 @@
 from typing import Dict, List
-from business.core.domain.models.referentiel import ActionReferentiel
+from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.referentiel.domain.models.indicateur import Indicateur
 
 from business.referentiel.domain.ports.referentiel_repo import (

@@ -10,10 +10,10 @@ from ..models.action_children import ActionChildren
 from ..models.action_definition import ActionDefinition
 
 from ..models.action_computed_point import ActionComputedPoint
-from business.core.domain.models.referentiel import ActionReferentiel
+from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.utils.action_id import ActionId
 
-from business.core.domain.ports.domain_message_bus import (
+from business.utils.domain_message_bus import (
     AbstractDomainMessageBus,
 )
 from business.utils.action_id import build_action_id

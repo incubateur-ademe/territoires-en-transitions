@@ -4,7 +4,7 @@ from business.referentiel.domain.models import events
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.referentiel.domain.models.markdown_action_node import MarkdownActionNode
-from business.core.domain.ports.domain_message_bus import (
+from business.utils.domain_message_bus import (
     InMemoryDomainMessageBus,
 )
 from business.referentiel.domain.use_cases.convert_markdown_referentiel_node_to_entities import (
