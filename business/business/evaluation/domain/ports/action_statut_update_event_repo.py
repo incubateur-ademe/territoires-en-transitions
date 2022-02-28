@@ -1,7 +1,7 @@
 import abc
 from typing import List
 
-from business.core.domain.models.generated.unprocessed_action_statut_update_event_read import (
+from business.evaluation.domain.models.unprocessed_action_statut_update_event_read import (
     UnprocessedActionStatutUpdateEventRead,
 )
 

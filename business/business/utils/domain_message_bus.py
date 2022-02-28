@@ -1,8 +1,18 @@
 import abc
+from dataclasses import dataclass
 from collections import defaultdict
 from typing import Any, Callable, Dict, List, Optional, Type
 
-from business.core.domain.models.event import DomainEvent, DomainFailureEvent
+
+@dataclass
+class DomainEvent:
+    pass
+
+
+@dataclass
+class DomainFailureEvent(DomainEvent):
+    reason: str
+
 
 EventCallback = Callable[[DomainEvent], Any]
 

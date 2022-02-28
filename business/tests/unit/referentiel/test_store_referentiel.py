@@ -1,5 +1,5 @@
 from business.referentiel.domain.models import events
-from business.core.domain.ports.domain_message_bus import (
+from business.utils.domain_message_bus import (
     InMemoryDomainMessageBus,
 )
 from business.referentiel.domain.ports.referentiel_repo import (

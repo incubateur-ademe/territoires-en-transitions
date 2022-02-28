@@ -1,7 +1,7 @@
-from business.core.domain.models.generated.unprocessed_action_statut_update_event_read import (
+from business.evaluation.domain.models.unprocessed_action_statut_update_event_read import (
     UnprocessedActionStatutUpdateEventRead,
 )
-from business.core.domain.ports.domain_message_bus import InMemoryDomainMessageBus
+from business.utils.domain_message_bus import InMemoryDomainMessageBus
 from business.evaluation.domain.ports.action_statut_update_event_repo import (
     InMemoryActionStatutUpdateEventRepository,
 )

@@ -2,7 +2,7 @@ from typing import List
 
 from dataclasses import dataclass
 
-from business.core.domain.models.referentiel import ActionReferentiel
+from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.utils.action_id import ActionId
 
 

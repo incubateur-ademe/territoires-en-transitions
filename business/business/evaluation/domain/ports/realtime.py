@@ -6,11 +6,11 @@ from marshmallow import ValidationError
 import rx.operators as op
 from rx.subject.subject import Subject
 
-from business.core.domain.models.event import DomainEvent
-from business.core.domain.models.generated.action_statut_update_event import (
+from business.utils.domain_message_bus import DomainEvent
+from business.evaluation.domain.models.action_statut_update_event import (
     ActionStatutUpdateEvent,
 )
-from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
+from business.utils.domain_message_bus import AbstractDomainMessageBus
 from business.evaluation.domain.models import events
 
 RealtimeTopic = Literal["collectivite_action_statut_update"]
