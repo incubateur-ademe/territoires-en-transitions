@@ -5,6 +5,7 @@ import {PreuveRead} from 'generated/dataLayer/preuve_read';
 import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {preuveFichierWriteEndpoint} from 'core-logic/api/endpoints/PreuveFichierWriteEndpoint';
+import {preuveLienWriteEndpoint} from 'core-logic/api/endpoints/PreuveLienWriteEndpoint';
 import {collectiviteBucketFilesReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketFilesReadEndpoint';
 import {preuveUploader} from 'ui/shared/actions/AddPreuve/useUploader';
 
@@ -19,9 +20,11 @@ export const usePreuves = (action_id: string): PreuveRead[] => {
 
   useEffect(() => {
     preuveFichierWriteEndpoint.addListener(fetch);
+    preuveLienWriteEndpoint.addListener(fetch);
     fetch();
     return () => {
       preuveFichierWriteEndpoint.removeListener(fetch);
+      preuveLienWriteEndpoint.removeListener(fetch);
     };
   }, [collectivite_id, action_id]);
 
