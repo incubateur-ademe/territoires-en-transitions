@@ -53,16 +53,18 @@ const validation = Yup.object({
  */
 const RegistrationForm = () => {
   const [state, setState] = useState<FormState>('ready');
-  const [errorMessage, setErrorMessage] = useState<string>('');
 
   if (state === 'failure') {
     return (
       <section className="max-w-2xl mx-auto p-5 text-center">
         <Spacer />
-        <p>Le compte n'a pas pu être créé... </p>
-        {errorMessage && <p>{errorMessage}</p>}
-        {!errorMessage && <p>Erreur indéterminée</p>}
-        <Spacer />
+        Le compte n'a pas pu être créé. Un compte existe peut-être déjà avec la
+        même adresse email, essayez de vous connecter et/ou de renouveler votre
+        mot de passe. Si le problème persiste,&nbsp;
+        <a href="mailto:contact@territoiresentransitions.fr" target="_blank">
+          contactez-nous
+        </a>
+        .
       </section>
     );
   } else if (state === 'success') {
@@ -93,13 +95,8 @@ const RegistrationForm = () => {
       .then(() => {
         setState('success');
       })
-      .catch(reason => {
+      .catch(() => {
         setState('failure');
-        reason =
-          reason === 'User already registered'
-            ? 'Un compte existe peut-être avec la même adresse email.'
-            : reason;
-        setErrorMessage(`${reason}`);
       });
   };
 
