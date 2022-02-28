@@ -13,7 +13,7 @@ describe('Action-statut write endpoint', () => {
   beforeAll(async () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
-  it('Should be able to save and update a statut', async () => {
+  it('Should be able to save and update a statut with basic avancement', async () => {
     const endpoint = new ActionStatutWriteEndpoint();
     const statut: ActionStatutWrite = {
       concerne: true,
@@ -24,7 +24,7 @@ describe('Action-statut write endpoint', () => {
     // 1. Create
     const result = await endpoint.save(statut);
     expect(result).not.toBeNull();
-    expect(result).toEqual(expect.objectContaining(statut));
+    expect(result).toMatchObject(statut);
 
     // 2. Update
     const updatedStatut = {
@@ -33,7 +33,34 @@ describe('Action-statut write endpoint', () => {
     };
     const updateResult = await endpoint.save(updatedStatut);
     expect(updateResult).not.toBeNull();
-    expect(updateResult).toEqual(expect.objectContaining(updatedStatut));
+    expect(updateResult).toMatchObject(updatedStatut);
+  });
+
+  it('Should be able to save and update a statut with detailed avancement', async () => {
+    const endpoint = new ActionStatutWriteEndpoint();
+    const statut: ActionStatutWrite = {
+      concerne: true,
+      avancement: 'detaille',
+      avancement_detaille: [0.1, 0.8, 0.2],
+      action_id: 'cae_1.1.1.1.2',
+      collectivite_id: 2,
+    };
+    const result = await endpoint.save(statut);
+    expect(result).not.toBeNull();
+    expect(result).toMatchObject(statut);
+  });
+
+  it('Should not be able to save a statut with a wrong detailed avancement', async () => {
+    const endpoint = new ActionStatutWriteEndpoint();
+    const statut: ActionStatutWrite = {
+      concerne: true,
+      avancement: 'detaille',
+      avancement_detaille: [0.1, 0.1], // Not correct length !
+      action_id: 'cae_1.1.1.1.2',
+      collectivite_id: 2,
+    };
+    const result = await endpoint.save(statut);
+    expect(result).toBeNull();
   });
 
   it('Saving a statut with readonly collectivite should fail', async () => {

@@ -1,10 +1,9 @@
-from business.evaluation.adapters import supabase_names
 from business.evaluation.adapters.supabase_action_statut_repo import (
     SupabaseActionStatutRepository,
 )
 from business.evaluation.domain.models.action_statut import (
     ActionStatut,
-    ActionStatutAvancement,
+    DetailedAvancement,
 )
 from business.utils.action_id import ActionId
 from tests.utils.supabase_fixtures import *
@@ -26,9 +25,14 @@ def test_can_get_all_actions_of_a_referentiel_for_epci(supabase_repo):
     assert all_statuts_cae_of_epci_1 == [
         ActionStatut(
             action_id=ActionId("cae_1.1.1.1.1"),
-            avancement=ActionStatutAvancement.FAIT,
+            detailed_avancement=DetailedAvancement(1, 0, 0),
             concerne=True,
-        )
+        ),
+        ActionStatut(
+            action_id=ActionId("cae_1.1.1.1.2"),
+            detailed_avancement=DetailedAvancement(0.2, 0.7, 0.1),
+            concerne=True,
+        ),
     ]
     # No statut for referentiel ECI for EPCI #1
     all_statuts_cae_of_epci_1 = supabase_repo.get_all_for_collectivite(

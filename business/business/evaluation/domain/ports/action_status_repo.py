@@ -1,5 +1,5 @@
 import abc
-from typing import List
+from typing import List, Optional
 
 from business.evaluation.domain.models.action_statut import ActionStatut
 from business.referentiel.domain.models.referentiel import ActionReferentiel
@@ -17,7 +17,7 @@ class AbstractActionStatutRepository(abc.ABC):
 
 
 class InMemoryActionStatutRepository(AbstractActionStatutRepository):
-    def __init__(self, entities: List[ActionStatut] = None) -> None:
+    def __init__(self, entities: Optional[List[ActionStatut]] = None) -> None:
         self._entities = entities or []
 
     def get_all_for_collectivite(
@@ -27,7 +27,7 @@ class InMemoryActionStatutRepository(AbstractActionStatutRepository):
 
     # For test purposes only
 
-    def add_entities(self, entities=List[ActionStatut]):
+    def add_entities(self, entities: List[ActionStatut]):
         self._entities += entities
 
     @property

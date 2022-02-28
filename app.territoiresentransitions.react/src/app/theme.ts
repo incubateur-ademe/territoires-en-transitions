@@ -9,4 +9,5 @@ export const actionAvancementColors: Record<
   pas_fait: '#FF6384',
   non_renseigne: '#565656',
   non_concerne: '#D3D3D3',
+  detaille: '#ff7f00',
 };
