@@ -1,7 +1,4 @@
-import {
-  DataLayerReadCachedEndpoint,
-  DataLayerReadEndpoint,
-} from 'core-logic/api/dataLayerEndpoint';
+import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
 import {actionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';

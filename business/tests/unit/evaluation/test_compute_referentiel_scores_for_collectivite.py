@@ -6,7 +6,7 @@ from business.evaluation.domain.models import events
 from business.evaluation.domain.models.action_score import ActionScore
 from business.evaluation.domain.models.action_statut import (
     ActionStatut,
-    ActionStatutAvancement,
+    DetailedAvancement,
 )
 from business.referentiel.domain.ports.referentiel_repo import (
     InMemoryReferentielRepository,
@@ -101,7 +101,7 @@ def test_notation_when_one_tache_is_fait():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.FAIT,
+            detailed_avancement=DetailedAvancement(1, 0, 0),
             concerne=True,
         )
     ]
@@ -174,7 +174,7 @@ def test_notation_when_one_tache_is_programme():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.PROGRAMME,
+            detailed_avancement=DetailedAvancement(0, 1, 0),
             concerne=True,
         )
     ]
@@ -233,7 +233,7 @@ def test_notation_when_one_tache_is_pas_fait():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.PAS_FAIT,
+            detailed_avancement=DetailedAvancement(0, 0, 1),
             concerne=True,
         )
     ]
@@ -288,11 +288,70 @@ def test_notation_when_one_tache_is_pas_fait():
     )
 
 
+def test_notation_when_one_tache_has_detailed_avancement():
+    statuses: List[ActionStatut] = [
+        ActionStatut(
+            action_id=ActionId("eci_1.1"),
+            detailed_avancement=DetailedAvancement(0.2, 0.7, 0.1),
+            concerne=True,
+        )
+    ]
+    converted_events, failure_events = prepare_use_case(statuses)
+    assert len(converted_events) == 1
+    assert len(failure_events) == 0
+
+    actual_scores = converted_events[0].scores
+    assert len(actual_scores) == 8
+
+    scores_by_id = {score.action_id: score for score in actual_scores}
+
+    assert scores_by_id[ActionId("eci_1.1")] == ActionScore(
+        action_id=ActionId("eci_1.1"),
+        point_fait=2,
+        point_programme=7,
+        point_pas_fait=1,
+        point_potentiel=10,
+        point_non_renseigne=0,
+        point_referentiel=10,
+        completed_taches_count=1,
+        total_taches_count=1,
+        concerne=True,
+        referentiel="eci",
+    )
+    assert scores_by_id[ActionId("eci_1")] == ActionScore(
+        action_id=ActionId("eci_1"),
+        point_fait=2,
+        point_programme=7,
+        point_pas_fait=1,
+        point_non_renseigne=20,
+        point_potentiel=30,
+        point_referentiel=30,
+        completed_taches_count=1,
+        total_taches_count=2,
+        concerne=True,
+        referentiel="eci",
+    )
+
+    assert scores_by_id[ActionId("eci")] == ActionScore(
+        action_id=ActionId("eci"),
+        point_fait=2,
+        point_programme=7,
+        point_pas_fait=1,
+        point_non_renseigne=90,
+        point_potentiel=100,
+        point_referentiel=100,
+        completed_taches_count=1,
+        total_taches_count=5,
+        concerne=True,
+        referentiel="eci",
+    )
+
+
 def test_notation_when_one_tache_is_non_concerne():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            detailed_avancement=None,
             concerne=False,
         )
     ]
@@ -365,12 +424,12 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            detailed_avancement=None,
             concerne=False,
         ),
         ActionStatut(
             action_id=ActionId("eci_1.2"),
-            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            detailed_avancement=None,
             concerne=False,
         ),
     ]
@@ -457,12 +516,12 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires():
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_2.1"),
-            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            detailed_avancement=None,
             concerne=False,
         ),
         ActionStatut(
             action_id=ActionId("eci_2.2"),
-            avancement=ActionStatutAvancement.FAIT,
+            detailed_avancement=DetailedAvancement(1, 0, 0),
             concerne=True,
         ),
     ]
@@ -581,22 +640,22 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
     statuses: List[ActionStatut] = [
         ActionStatut(
             action_id=ActionId("eci_2.2.1"),
-            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            detailed_avancement=None,
             concerne=False,
         ),
         ActionStatut(
             action_id=ActionId("eci_2.2.2"),
-            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            detailed_avancement=None,
             concerne=False,
         ),
         ActionStatut(
             action_id=ActionId("eci_2.2.3"),
-            avancement=ActionStatutAvancement.NON_RENSEIGNE,
+            detailed_avancement=None,
             concerne=False,
         ),
         ActionStatut(
             action_id=ActionId("eci_1.1"),
-            avancement=ActionStatutAvancement.PROGRAMME,
+            detailed_avancement=DetailedAvancement(0, 1, 0),
             concerne=True,
         ),
     ]

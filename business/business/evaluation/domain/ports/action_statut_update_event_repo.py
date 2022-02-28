@@ -1,5 +1,5 @@
 import abc
-from typing import List
+from typing import List, Optional
 
 from business.evaluation.domain.models.unprocessed_action_statut_update_event_read import (
     UnprocessedActionStatutUpdateEventRead,
@@ -19,7 +19,10 @@ class InMemoryActionStatutUpdateEventRepository(
     AbstractActionStatutUpdateEventRepository
 ):
     def __init__(
-        self, unprocessed_events: List[UnprocessedActionStatutUpdateEventRead] = None
+        self,
+        unprocessed_events: Optional[
+            List[UnprocessedActionStatutUpdateEventRead]
+        ] = None,
     ) -> None:
         self._unprocessed_events = unprocessed_events or []
 
