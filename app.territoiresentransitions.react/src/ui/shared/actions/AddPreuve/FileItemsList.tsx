@@ -24,14 +24,7 @@ export const FileItemsList = (props: TFileItemsListProps) => {
     <div className="pt-2">
       {renderItems(completed, {actionId})}
       {renderItems(running, {actionId, onRunningStopped})}
-      <div
-        style={{
-          maxHeight: '33vh',
-          overflow: 'auto',
-        }}
-      >
-        {renderItems(failed, {actionId, onRemoveFailed})}
-      </div>
+      {renderItems(failed, {actionId, onRemoveFailed})}
     </div>
   );
 };
