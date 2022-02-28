@@ -33,7 +33,10 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const {files} = e.target;
     if (files) {
-      setCurrentSelection(filesToUploadList(action, files, bucketFiles));
+      setCurrentSelection([
+        ...currentSelection,
+        ...filesToUploadList(action, files, bucketFiles),
+      ]);
     }
   };
 
