@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from business.referentiel.domain.models import events
 from business.referentiel.domain.models.markdown_action_node import MarkdownActionNode
-from business.core.domain.ports.domain_message_bus import AbstractDomainMessageBus
+from business.utils.domain_message_bus import AbstractDomainMessageBus
 from business.utils.markdown_import.markdown_parser import build_markdown_parser
 from business.utils.markdown_import.markdown_utils import load_md
 from business.utils.use_case import UseCase
