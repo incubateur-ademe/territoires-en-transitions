@@ -1,7 +1,7 @@
 import abc
-from typing import Type, Any
+from typing import Any
 
-from business.core.domain.models.event import DomainEvent
+from business.utils.domain_message_bus import DomainEvent
 
 
 class UseCase(abc.ABC):

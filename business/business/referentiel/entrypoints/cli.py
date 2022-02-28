@@ -4,7 +4,7 @@ from typing import Dict, List, Type, Optional
 import click
 
 from business.referentiel.domain.models import events
-from business.core.domain.ports.domain_message_bus import (
+from business.utils.domain_message_bus import (
     InMemoryDomainMessageBus,
 )
 from business.utils.use_case import UseCase

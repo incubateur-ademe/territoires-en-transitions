@@ -1,7 +1,7 @@
 from typing import List
 
 
-from business.core.domain.models.referentiel import ActionReferentiel
+from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.evaluation.adapters import supabase_names
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,

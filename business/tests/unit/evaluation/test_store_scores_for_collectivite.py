@@ -1,5 +1,5 @@
 from business.evaluation.domain.models import events
-from business.core.domain.ports.domain_message_bus import InMemoryDomainMessageBus
+from business.utils.domain_message_bus import InMemoryDomainMessageBus
 from business.evaluation.domain.ports.action_score_repo import (
     InMemoryActionScoreRepository,
 )

@@ -1,6 +1,6 @@
 from typing import List
 
-from business.core.domain.ports.domain_message_bus import (
+from business.utils.domain_message_bus import (
     InMemoryDomainMessageBus,
 )
 

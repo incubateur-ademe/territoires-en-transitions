@@ -1,5 +1,5 @@
 from business.referentiel.domain.models.markdown_action_node import MarkdownActionNode
-from business.core.domain.ports.domain_message_bus import (
+from business.utils.domain_message_bus import (
     InMemoryDomainMessageBus,
 )
 from business.referentiel.domain.use_cases.parse_markdown_referentiel_folder import (
