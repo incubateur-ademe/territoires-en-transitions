@@ -60,7 +60,7 @@ export const AddPreuveFromLib = (props: TAddPreuveFromLibProps) => {
               style={{maxHeight: '36vh'}}
             >
               {bucketFiles.map(({id, name}) => (
-                <div className="fr-checkbox-group">
+                <div key={id} className="fr-checkbox-group">
                   <input type="checkbox" name={name} id={id} className="py-0" />
                   <label className="fr-label" htmlFor={id}>
                     {name}
