@@ -69,6 +69,7 @@ export const ReferentielAxisScoresPolarArea = ({
                 formatter: (value: any, context: any) => {
                   return context.chart.data.labels[context.dataIndex];
                 },
+                font: {size: 10},
                 anchor: 'start',
                 align: 'end',
                 offset: 150,
