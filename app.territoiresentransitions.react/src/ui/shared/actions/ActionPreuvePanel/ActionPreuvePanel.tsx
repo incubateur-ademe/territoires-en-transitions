@@ -97,6 +97,7 @@ const PreuveFichierDetail = ({preuve}: {preuve: PreuveRead}) => {
       });
     } else {
       preuveLienWriteEndpoint.save({
+        id: preuveId,
         collectivite_id,
         action_id,
         titre,
