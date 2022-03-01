@@ -1,0 +1,1 @@
+create view retool_labellisation as (select l.*, nom as collectivite_nom from labellisation l join named_collectivite nc on l.collectivite_id = nc.collectivite_id); 
