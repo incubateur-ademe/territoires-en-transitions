@@ -47,8 +47,8 @@ export const ReferentielAxisAvancementStackedBar = ({
       <Spacer size={2} />
       <Bar
         data={formatedData}
-        height={250}
-        width={400}
+        height={58 * data.length}
+        width={widthPx}
         options={{
           indexAxis: 'y',
           plugins: {
@@ -86,7 +86,7 @@ export const ReferentielAxisAvancementStackedBar = ({
               stacked: true,
               ticks: {padding: 0, font: {size: 10}},
               afterFit: function (scaleInstance) {
-                scaleInstance.width = 100; // sets the width to 100px
+                scaleInstance.width = 120; // largeur libellés à gauche
               },
             },
             z: {
