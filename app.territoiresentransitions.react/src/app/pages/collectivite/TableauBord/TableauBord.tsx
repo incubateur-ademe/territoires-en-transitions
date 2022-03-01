@@ -32,7 +32,7 @@ const axisLabels: Record<string, string[][]> = {
   eci_5: [['5. Coopération'], ['et engagement']],
   cae_1: [['1. Plannification'], ['territoriale']],
   cae_2: [['2. Patrimoine de la'], ['collectivité']],
-  cae_3: [['3. Approvisionnement, '], ['énergie, eau, '], ['assainissement']],
+  cae_3: [['3. Approvisionnement,'], ['énergie, eau,'], ['assainissement']],
   cae_4: [['4. Mobilité']],
   cae_5: [['5. Organisation'], ['interne']],
   cae_6: [['6. Coopération, '], ['communication']],

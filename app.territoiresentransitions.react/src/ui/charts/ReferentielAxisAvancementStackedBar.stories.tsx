@@ -32,7 +32,7 @@ const props: ReferentielAxisAvancementStackedBarProps = {
       potentielPoints: 64,
     },
     {
-      label: [['3. Approvisionnement énergie'], ['eau, assainissement']],
+      label: [['3. Approvisionnement'], ['énergie, eau,'], ['assainissement']],
       percentages: {
         fait: 10,
         programme: 20,
