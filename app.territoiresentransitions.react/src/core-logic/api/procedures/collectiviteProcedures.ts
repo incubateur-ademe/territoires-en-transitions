@@ -32,3 +32,21 @@ export const referentContact = async (
   }
   return data as any as ReferentContactResponse;
 };
+
+export type PersonneList = {
+  role_name: RoleName;
+  personnes: DcpRead[];
+};
+
+export const userList = async (
+  collectivite_id: number
+): Promise<PersonneList[] | null> => {
+  const {data, error} = await supabaseClient.rpc('collectivite_user_list', {
+    id: collectivite_id,
+  });
+
+  if (error || !data) {
+    return null;
+  }
+  return data as PersonneList[];
+};
