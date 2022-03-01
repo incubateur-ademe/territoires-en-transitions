@@ -1,5 +1,4 @@
 import {Story, Meta} from '@storybook/react';
-// import { action } from '@storybook/addon-actions';
 import {FileItem, TFileItemProps} from './FileItem';
 
 // utilitaire pour générer un objet File
