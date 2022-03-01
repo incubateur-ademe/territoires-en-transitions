@@ -24,6 +24,12 @@
     "jsx": "react-jsx",
     "baseUrl": "src"
   },
-  "include": ["src", "postcss.config.js"],
-  "exclude": ["**/*.stories.tsx"]
+  "include": [
+    "src",
+    "postcss.config.js"
+  ],
+  "exclude": [
+    "**/*.stories.tsx",
+    "**/Storyshots.test.tsx"
+  ]
 }
