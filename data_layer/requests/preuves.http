@@ -97,9 +97,8 @@ Content-Disposition: form-data; name="preuve_input.txt"; filename="preuve_input.
 
 ### A. Download a file
 GET {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
-apikey: {{service}}
-Authorization: Bearer {{service}}
-
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
 
 
 ### A. Upsert a preuve
