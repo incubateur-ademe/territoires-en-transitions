@@ -1,5 +1,4 @@
 import {Story, Meta} from '@storybook/react';
-// eslint-disable-next-line node/no-unpublished-import
 import {action} from '@storybook/addon-actions';
 import {observable} from 'mobx';
 

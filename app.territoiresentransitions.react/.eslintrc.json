@@ -6,6 +6,12 @@
       {
         "allowModules": ["@supabase/storage-js", "@supabase/postgrest-js"]
       }
+    ],
+    "node/no-unpublished-import": [
+      "error",
+      {
+        "allowModules": ["@storybook/addon-actions"]
+      }
     ]
   }
 }
