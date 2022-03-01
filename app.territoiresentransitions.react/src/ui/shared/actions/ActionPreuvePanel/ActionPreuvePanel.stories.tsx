@@ -1,6 +1,4 @@
 import {Story, Meta} from '@storybook/react';
-// eslint-disable-next-line node/no-unpublished-import
-// import {action} from '@storybook/addon-actions';
 import {ActionPreuvePanel, TActionPreuvePanelProps} from './ActionPreuvePanel';
 
 const DEFAULT_ARGS = {
