@@ -40,6 +40,12 @@ const Slider = withStyles({
     opacity: 1,
     height: TRACK_HEIGHT,
   },
+  mark: {
+    backgroundColor: '#bfbfbf',
+    height: TRACK_HEIGHT,
+    width: 1,
+    marginTop: -3,
+  },
 })(SliderBase);
 
 // converti les valeurs du slider en un tableau de pourcentage
@@ -115,7 +121,7 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
           backgroundColor: actionAvancementColors.pas_fait,
         }}
       />
-      <Slider value={currentValue} onChange={handleChange} />
+      <Slider marks step={10} value={currentValue} onChange={handleChange} />
     </div>
   );
 };
