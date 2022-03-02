@@ -57,7 +57,7 @@ export const ActionReferentielAvancementCard = ({
         {action.have_preuve && <ActionPreuvesExpandPanel action={action} />}
         <ActionCommentaire action={action} />
       </div>
-      <div className="w-1/6 pl-4">
+      <div className="w-2/8 pl-4">
         <div className="w-full flex flex-col">
           {!isLeaf && (
             <div className="pt-4">
