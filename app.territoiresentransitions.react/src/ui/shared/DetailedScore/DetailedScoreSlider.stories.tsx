@@ -17,3 +17,4 @@ Exemple1.args = {
   value: [0.3, 0.4, 0.3],
   onChange: action('onChange'),
 };
+Exemple1.parameters = {storyshots: false}; // storyshot désactivé (pb avec mui Slider ?)
