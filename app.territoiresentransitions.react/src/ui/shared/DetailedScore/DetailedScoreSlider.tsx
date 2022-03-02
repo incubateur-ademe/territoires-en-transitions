@@ -45,6 +45,10 @@ const Slider = withStyles({
     height: TRACK_HEIGHT,
     width: 1,
     marginTop: -3,
+    // pour masquer la 1ère et la dernière graduation
+    '&[data-index="0"], &[data-index="10"]': {
+      visibility: 'hidden',
+    },
   },
 })(SliderBase);
 
