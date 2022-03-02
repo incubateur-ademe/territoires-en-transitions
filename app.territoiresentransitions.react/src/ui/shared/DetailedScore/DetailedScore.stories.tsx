@@ -15,3 +15,4 @@ Exemple1.args = {
   avancement: [0.3, 0.5, 0.2],
   onSave: action('onSave'),
 };
+Exemple1.parameters = {storyshots: false}; // storyshot désactivé (pb avec mui Slider ?)
