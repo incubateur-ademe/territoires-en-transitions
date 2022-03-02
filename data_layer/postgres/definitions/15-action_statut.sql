@@ -1,23 +1,63 @@
 --------------------------------
 ---------- STATUT --------------
 --------------------------------
+create schema if not exists private;
 create type avancement as enum ('fait', 'pas_fait', 'programme', 'non_renseigne', 'detaille');
 
 create table action_statut
 (
-    collectivite_id integer references collectivite                      not null,
-    action_id       action_id references action_relation                 not null,
-    avancement      avancement                                           not null,
-    avancement_detaille float[],                     -- [fait, programme, pas_fait]
-    concerne        boolean                                              not null,
-    modified_by     uuid references auth.users default auth.uid()        not null,
-    modified_at     timestamp with time zone   default CURRENT_TIMESTAMP not null,
+    collectivite_id     integer references collectivite                      not null,
+    action_id           action_id references action_relation                 not null,
+    avancement          avancement                                           not null,
+    avancement_detaille float[],
+    concerne            boolean                                              not null,
+    modified_by         uuid references auth.users default auth.uid()        not null,
+    modified_at         timestamp with time zone   default CURRENT_TIMESTAMP not null,
 
     primary key (collectivite_id, action_id)
 );
+comment on table action_statut is 'Action statut set by the user.';
+comment on column action_statut.avancement_detaille is 'An array of 3 floats: fait, programme, pas_fait';
 
-alter table action_statut add constraint avancement_detaille_length CHECK (array_length(avancement_detaille, 1) = 3);
--- alter table action_statut add constraint avancement_detaille_sum_to_1 CHECK (avancement_detaille[0] + avancement_detaille[1] + avancement_detaille[2] = 1); --does not seem to work :( 
+alter table action_statut
+    add constraint avancement_detaille_length check (cardinality(avancement_detaille) = 3);
+
+create or replace function private.check_avancement_detaille_sum()
+    returns trigger as
+$$
+declare
+    total float;
+begin
+    if new.avancement != 'detaille'
+    then
+        return new;
+    end if;
+
+    select sum(t) from unnest(new.avancement_detaille) t into total;
+    if total = 1
+    then
+        return new;
+    else
+        raise 'avancement_detaille does not sum to 1';
+    end if;
+end
+$$ language plpgsql;
+
+select sum(t) from unnest(array [1,2,3]) t;
+
+create trigger action_statut_check_insert
+    before insert
+    on action_statut
+    for each row
+execute procedure private.check_avancement_detaille_sum();
+
+create trigger action_statut_check_update
+    before update
+    on action_statut
+    for each row
+execute procedure private.check_avancement_detaille_sum();
+
+
 
 alter table action_statut
     enable row level security;
@@ -37,7 +77,7 @@ create policy allow_update
     on action_statut
     for update
     using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                                   collectivite_id));
+                              collectivite_id));
 
 
 create view client_action_statut
@@ -55,7 +95,7 @@ select collectivite_id,
        referentiel,
        action_id,
        avancement,
-       avancement_detaille, 
+       avancement_detaille,
        concerne
 from action_statut
          join action_relation on action_id = action_relation.id;
