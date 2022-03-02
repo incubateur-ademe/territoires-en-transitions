@@ -38,8 +38,9 @@ Content-Type: application/json
 
 {
   "collectivite_id": 1,
-  "action_id": "eci_1.1.1.1",
-  "avancement": "fait",
+  "action_id": "eci_1.1.2.1",
+  "avancement": "detaille",
+  "avancement_detaille": [0.2, 0.5, 0.3],
   "concerne": true
 }
 
