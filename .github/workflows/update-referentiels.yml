@@ -1,0 +1,136 @@
+name: Update referentiels
+
+on:
+  push:
+    branches: 
+      - upcoming_production
+      - upcoming_sandbox
+      - upcoming_develop
+  pull_request:
+    branches: 
+      - upcoming_develop 
+  
+jobs:
+  check:
+    name: Check files
+    outputs:
+      run_job: ${{ steps.check_files.outputs.run_job }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: check modified markdown referentiel definition files
+        id: check_files
+        run: |
+          echo "=============== list modified files ==============="
+          git diff --name-only HEAD^ HEAD
+          echo "========== check paths of modified files =========="
+          git diff --name-only HEAD^ HEAD > files.txt
+          while IFS= read -r file
+          do
+            echo $file
+            if [[ $file != markdown/* ]]; then
+              echo "This modified file is not under the 'markdown' folder."     
+            else
+              echo "This modified file is under the 'markdown' folder. Returns true !"     
+              echo "::set-output name=run_job::true"
+              break
+            fi
+            echo "None of modified files is under the 'markdown' folder. Returns false !"   
+            echo "::set-output name=run_job::false"
+          done < files.txt
+
+  update-referentiels:
+    name: Business updates referentiel from markdowns
+    needs: check
+    if: needs.check.outputs.run_job == 'true'
+    runs-on: ubuntu-latest
+    env:
+      business-directory:  ./business
+      datalayer-directory: ./data_layer
+      datalayer-docker-directory: ./data_layer/test_only_docker
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # Launch docker
+      - name: Launch docker
+        if: github.ref == 'upcoming_sandbox' && github.ref == 'upcoming_production' 
+        run: |
+          cp .env.sample .env
+          docker-compose up --build -d
+        working-directory: ${{env.datalayer-docker-directory}}
+
+      # Set up Python
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.1'
+
+      # Install the dependencies manager.
+      - name: Install pipenv
+        run: |
+          cp .env.sample .env
+          python -m pip install --upgrade pipenv wheel
+          pipenv install
+          pipenv install --dev
+        working-directory: ${{env.business-directory}}
+
+
+      # [Prepare DB] Insert fakes
+      - name: Insert fake data in database
+        if: github.ref == 'upcoming_sandbox' && github.ref == 'upcoming_production' 
+        run: sh insert_all.sh
+        working-directory: ${{env.datalayer-directory}}
+
+      # Restart postgres service
+      - name: Restart postgres service
+        if: github.ref == 'upcoming_sandbox' && github.ref == 'upcoming_production' 
+        run: docker-compose restart rest
+        working-directory: ${{env.datalayer-docker-directory}}
+
+      # Execute CLI on local datalayer if branch not in [upcoming-sandbox, upcoming-production]
+      - name: Execute parsing scripts to update DataLayer
+        if: github.ref == 'upcoming_sandbox' && github.ref == 'upcoming_production' 
+        run: |
+          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "eci"
+          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "cae"
+          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "crte" --no-actions
+
+        working-directory: ${{env.business-directory}}
+        env: 
+          SUPABASE_KEY: ${{secrets.DOCKER_SUPABASE_KEY}}
+          SUPABASE_URL: http://localhost:8000
+          SUPABASE_WS: ws://localhost:8000
+      
+      # Execute CLI locally on sandbox datalayer
+      - name: Execute parsing scripts to update DataLayer
+        if: github.ref == 'upcoming_sandbox'
+        run: |
+          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "eci"
+          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "cae"
+          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "crte" --no-actions
+
+        working-directory: ${{env.business-directory}}
+        env: 
+          SUPABASE_KEY: ${{secrets.SANDBOX_SUPABASE_KEY}}
+          SUPABASE_URL: https://xbrefnclajfcjlpnwyow.supabase.co	
+          SUPABASE_WS: ws://xbrefnclajfcjlpnwyow.supabase.co	
+
+      # Execute CLI locally on production datalayer
+      - name: Execute parsing scripts to update DataLayer
+        if: github.ref == 'upcoming_production'
+        run: |
+          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "eci"
+          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "cae"
+          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "crte" --no-actions
+
+        working-directory: ${{env.business-directory}}
+        env: 
+          SUPABASE_KEY: ${{secrets.PRODUCTION_SUPABASE_KEY}}
+          SUPABASE_URL: https://rlarzronkgoyvtdkltqy.supabase.co	
+          SUPABASE_WS: ws://rlarzronkgoyvtdkltqy.supabase.co	

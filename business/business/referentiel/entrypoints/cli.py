@@ -1,10 +1,12 @@
 import os
+import sys
 from typing import Dict, List, Type, Optional
 
 import click
 
 from business.referentiel.domain.models import events
 from business.utils.domain_message_bus import (
+    DomainFailureEvent,
     InMemoryDomainMessageBus,
 )
 from business.utils.use_case import UseCase
@@ -17,6 +19,12 @@ from business.utils.environment_variables import (
     ReferentielsRepository,
 )
 
+
+class SystemExit(UseCase):
+    def execute(self, failure: DomainFailureEvent):
+        sys.exit(f"Erreur dans le traitement des fichiers markdowns : {failure.reason}")
+
+
 # 1. Define message handlers (orchestration)
 
 EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
@@ -28,6 +36,11 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
     ],
     events.IndicateurMarkdownConvertedToEntities: [StoreReferentielIndicateurs],
     events.ExtractReferentielActionsToCsvTriggered: [ExtractReferentielActionsToCsv],
+    # Exit on DomainFailureEvent
+    events.ParseMarkdownReferentielFolderFailed: [SystemExit],
+    events.ReferentielStorageFailed: [SystemExit],
+    events.IndicateurMarkdownParsingOrConvertionFailed: [SystemExit],
+    events.MarkdownReferentielNodeInconsistencyFound: [SystemExit],
 }
 
 
@@ -52,6 +65,7 @@ class ReferentielConfig(Config):
             ),
             StoreReferentielIndicateurs(self.domain_message_bus, self.referentiel_repo),
             ExtractReferentielActionsToCsv(referentiel_repo=self.referentiel_repo),
+            SystemExit(),
         ]
 
 
