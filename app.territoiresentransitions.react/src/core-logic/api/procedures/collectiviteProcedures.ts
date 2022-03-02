@@ -50,3 +50,24 @@ export const userList = async (
   }
   return data as PersonneList[];
 };
+
+export interface RemoveUserResponse {
+  message?: string;
+}
+export const removeUser = async (
+  collectiviteId: number,
+  userId: string
+): Promise<RemoveUserResponse | null> => {
+  const {data, error} = await supabaseClient.rpc(
+    'remove_user_from_collectivite',
+    {
+      id: collectiviteId,
+      user_id: userId,
+    }
+  );
+
+  if (error || !data) {
+    return null;
+  }
+  return data as any as RemoveUserResponse;
+};
