@@ -7,6 +7,7 @@ import {makeAutoObservable} from 'mobx';
 import {observer} from 'mobx-react-lite';
 import {useEffect, useState} from 'react';
 import {MenuItem, Select} from '@material-ui/core';
+import {SelectInputProps} from '@material-ui/core/Select/SelectInput';
 import {actionAvancementColors} from 'app/theme';
 import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
 import {currentCollectiviteBloc} from 'core-logic/observables';
@@ -73,12 +74,21 @@ const nonConcerneStatut: SelectableStatut = {
   label: 'Non concerné',
 };
 
+const detailleStatut: SelectableStatut = {
+  value: 6,
+  color: actionAvancementColors.detaille,
+  concerne: true,
+  avancement: 'detaille',
+  label: 'Détaillé',
+};
+
 const selectables = [
   nonRenseigneStatut,
   faitStatut,
   programmeStatut,
   pasFaitStatut,
   nonConcerneStatut,
+  detailleStatut,
 ];
 
 const _ActionStatusAvancementRadioButton = observer(
@@ -92,9 +102,9 @@ const _ActionStatusAvancementRadioButton = observer(
       () => setValue(actionStatusAvancementBloc.statut.value),
       [actionStatusAvancementBloc.statut.value]
     );
-    const handleChange = (event: {target: any}) => {
+    const handleChange: SelectInputProps['onChange'] = event => {
       actionStatusAvancementBloc
-        .pickStatutValue(event.target.value)
+        .pickStatutValue(event.target.value as number)
         .then(() => {
           return setValue(actionStatusAvancementBloc.statut.value);
         });
