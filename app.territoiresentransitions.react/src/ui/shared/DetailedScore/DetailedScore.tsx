@@ -5,13 +5,12 @@
 import {useState} from 'react';
 import {DetailedScoreSlider, AvancementValues} from './DetailedScoreSlider';
 import {actionAvancementColors} from 'app/theme';
+import {toPercentString} from 'utils/score';
 
 export type TDetailedScoreProps = {
   avancement: AvancementValues;
   onSave: (values: AvancementValues) => void;
 };
-
-const toPercentString = (value: number) => `${Math.round(value * 100)}%`;
 
 export const DetailedScore = (props: TDetailedScoreProps) => {
   const {avancement, onSave} = props;
