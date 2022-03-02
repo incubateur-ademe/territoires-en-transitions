@@ -93,7 +93,8 @@ def _raise_if_unexpected_status(expected_status_code: int, r: Response):
     actual_status_code = r.status_code
     if actual_status_code != expected_status_code:
         raise SupabaseError(
-            f"Error with status code {actual_status_code}, while we expected {expected_status_code}.\nReason is : {r.reason}"
+            f"Error with status code {actual_status_code}, while we expected {expected_status_code}.\nReason is : {r.reason}",
+            r,
         )
 
 

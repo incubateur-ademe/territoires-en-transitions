@@ -19,6 +19,7 @@ tqdm = "*"
 realtime-py = "0.1.3"
 numpy = "*"
 supabase = "==0.0.3"
+click = "*"
 
 [dev-packages]
 
