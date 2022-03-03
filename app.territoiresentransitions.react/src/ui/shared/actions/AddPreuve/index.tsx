@@ -1,6 +1,7 @@
 import {Dialog} from '@material-ui/core';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useState} from 'react';
+import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
 import {AddPreuve} from './AddPreuve';
 
 export type TAddPreuveButtonProps = {
@@ -32,17 +33,8 @@ export const AddPreuveButton = (props: TAddPreuveButtonProps) => {
         fullWidth={true}
       >
         <div className="p-7 flex flex-col items-center">
-          <a
-            className="fr-link fr-fi-close-line fr-link--icon-right self-end"
-            href="#"
-            onClick={e => {
-              e.preventDefault();
-              setOpened(false);
-            }}
-          >
-            Fermer
-          </a>
-          <h3 className="text-center pb-4">Ajouter une preuve</h3>
+          <CloseDialogButton setOpened={setOpened} />
+          <h3 className="pb-4">Ajouter une preuve</h3>
           <div className="w-full">
             <AddPreuve {...props} onClose={() => setOpened(false)} />
           </div>
