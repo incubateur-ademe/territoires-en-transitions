@@ -41,7 +41,7 @@ describe('Action-statut write endpoint', () => {
     const statut: ActionStatutWrite = {
       concerne: true,
       avancement: 'detaille',
-      avancement_detaille: [0.1, 0.8, 0.2],
+      avancement_detaille: [0.1, 0.8, 0.1],
       action_id: 'cae_1.1.1.1.2',
       collectivite_id: 2,
     };
