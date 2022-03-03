@@ -20,6 +20,7 @@ export type ReferentContactResponse = {
   prenom: string;
 };
 
+// renvoi le contact principal (fonctionne même si on est pas membre de la coll.)
 export const referentContact = async (
   collectivite_id: number
 ): Promise<ReferentContactResponse | null> => {
@@ -30,7 +31,7 @@ export const referentContact = async (
   if (error || !data) {
     return null;
   }
-  return data as any as ReferentContactResponse;
+  return data as unknown as ReferentContactResponse;
 };
 
 export type PersonneList = {
@@ -69,5 +70,5 @@ export const removeUser = async (
   if (error || !data) {
     return null;
   }
-  return data as any as RemoveUserResponse;
+  return data as unknown as RemoveUserResponse;
 };
