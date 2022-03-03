@@ -35,16 +35,18 @@ interface SelectableStatut {
   color: string;
   concerne: boolean;
   avancement: ActionAvancement;
-  avancement_detaille: number[];
+  avancement_detaille?: number[];
   label: string;
 }
+
+const DEFAULT_DETAIL_VALUES = [0.3, 0.4, 0.3];
 
 const faitStatut: SelectableStatut = {
   value: 1,
   color: actionAvancementColors.fait,
   concerne: true,
   avancement: 'fait',
-  avancement_detaille: [],
+  avancement_detaille: [1, 0, 0],
   label: 'Fait',
 };
 
@@ -53,7 +55,7 @@ const programmeStatut: SelectableStatut = {
   color: actionAvancementColors.programme,
   concerne: true,
   avancement: 'programme',
-  avancement_detaille: [],
+  avancement_detaille: [0, 1, 0],
   label: 'Programmé',
 };
 
@@ -62,7 +64,7 @@ const pasFaitStatut: SelectableStatut = {
   color: actionAvancementColors.pas_fait,
   concerne: true,
   avancement: 'pas_fait',
-  avancement_detaille: [],
+  avancement_detaille: [0, 0, 1],
   label: 'Pas fait',
 };
 
@@ -71,7 +73,6 @@ const nonRenseigneStatut: SelectableStatut = {
   color: actionAvancementColors.non_renseigne,
   concerne: true,
   avancement: 'non_renseigne',
-  avancement_detaille: [],
   label: 'Non renseigné',
 };
 
@@ -80,7 +81,7 @@ const detailleStatut: SelectableStatut = {
   color: actionAvancementColors.detaille,
   concerne: true,
   avancement: 'detaille',
-  avancement_detaille: [],
+  avancement_detaille: DEFAULT_DETAIL_VALUES,
   label: 'Détaillé',
 };
 
@@ -89,11 +90,8 @@ const nonConcerneStatut: SelectableStatut = {
   color: actionAvancementColors.non_concerne,
   concerne: false,
   avancement: 'non_renseigne',
-  avancement_detaille: [],
   label: 'Non concerné',
 };
-
-const DEFAULT_DETAIL_VALUES = [0.1, 0.1, 0.8];
 
 const selectables = [
   nonRenseigneStatut,
@@ -149,7 +147,7 @@ const _ActionStatusAvancementRadioButton = observer(
         </Select>
         {avancement === 'detaille' ? (
           <>
-            {avancement_detaille.length === 3 ? (
+            {avancement_detaille?.length === 3 ? (
               <ul className="mt-6 text-sm">
                 <li>
                   Fait :&nbsp;
@@ -183,7 +181,7 @@ const _ActionStatusAvancementRadioButton = observer(
                 <div className="w-full">
                   <DetailedScore
                     avancement={
-                      (avancement_detaille.length === 3
+                      (avancement_detaille?.length === 3
                         ? avancement_detaille
                         : DEFAULT_DETAIL_VALUES) as AvancementValues
                     }
@@ -203,7 +201,7 @@ class ActionStatusAvancementRadioButtonBloc {
   private actionId: string;
   private collectiviteId: number;
   private avancement: ActionAvancement = 'non_renseigne';
-  public avancement_detaille: number[] = [];
+  public avancement_detaille?: number[] | undefined;
   private concerne = true;
   private _statut: SelectableStatut = nonRenseigneStatut;
 
@@ -222,7 +220,7 @@ class ActionStatusAvancementRadioButtonBloc {
 
   private setStatut = (s: SelectableStatut) => (this._statut = s);
   private setAvancement = (a: ActionAvancement) => (this.avancement = a);
-  public setAvancementDetaille = (a: number[]) =>
+  public setAvancementDetaille = (a: number[] | undefined) =>
     (this.avancement_detaille = a);
   private setConcerne = (c: boolean) => (this.concerne = c);
 
