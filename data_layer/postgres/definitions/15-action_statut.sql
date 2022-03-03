@@ -9,7 +9,7 @@ create table action_statut
     collectivite_id     integer references collectivite                      not null,
     action_id           action_id references action_relation                 not null,
     avancement          avancement                                           not null,
-    avancement_detaille float[],
+    avancement_detaille numeric[],
     concerne            boolean                                              not null,
     modified_by         uuid references auth.users default auth.uid()        not null,
     modified_at         timestamp with time zone   default CURRENT_TIMESTAMP not null,
