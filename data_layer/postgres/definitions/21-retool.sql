@@ -45,42 +45,92 @@ where is_service_role()
 
 create or replace view retool_completude as
 with active as (
-    select n.nom, n.collectivite_id from named_collectivite n
+    select n.nom, n.collectivite_id
+    from named_collectivite n
     where collectivite_id in (select collectivite_id from private_utilisateur_droit where active)
-), completed_eci as (
-    select c.collectivite_id, count(*) as count
-    from active c
-        join action_statut s on s.collectivite_id = c.collectivite_id
-        join action_relation r on r.id = s.action_id
-    where r.referentiel = 'eci'
-    group by c.collectivite_id
-), eci_count as (
-    select count(*)
-    from action_relation r
-        join action_children c on r.id = c.id
-    where r.referentiel = 'eci' and array_length(c.children, 1) is null
-), completed_cae as (
-    select c.collectivite_id, count(*) as count
-    from active c
-        join action_statut s on s.collectivite_id = c.collectivite_id
-        join action_relation r on r.id = s.action_id
-    where r.referentiel = 'cae'
-    group by c.collectivite_id
-), cae_count as (
-    select count(*)
-    from action_relation r
-        join action_children c on r.id = c.id
-    where r.referentiel = 'cae' and array_length(c.children, 1) is null
-)
+),
+     completed_eci as (
+         select c.collectivite_id, count(*) as count
+         from active c
+                  join action_statut s on s.collectivite_id = c.collectivite_id
+                  join action_relation r on r.id = s.action_id
+         where r.referentiel = 'eci'
+         group by c.collectivite_id
+     ),
+     eci_count as (
+         select count(*)
+         from action_relation r
+                  join action_children c on r.id = c.id
+         where r.referentiel = 'eci'
+           and array_length(c.children, 1) is null
+     ),
+     completed_cae as (
+         select c.collectivite_id, count(*) as count
+         from active c
+                  join action_statut s on s.collectivite_id = c.collectivite_id
+                  join action_relation r on r.id = s.action_id
+         where r.referentiel = 'cae'
+         group by c.collectivite_id
+     ),
+     cae_count as (
+         select count(*)
+         from action_relation r
+                  join action_children c on r.id = c.id
+         where r.referentiel = 'cae'
+           and array_length(c.children, 1) is null
+     )
 select c.collectivite_id,
        c.nom,
-       round( (compl_eci.count::decimal / c_eci.count::decimal) * 100, 2 ) as completude_eci,
-       round( (compl_cae.count::decimal / c_cae.count::decimal) * 100, 2 ) as completude_cae
+       round((compl_eci.count::decimal / c_eci.count::decimal) * 100, 2) as completude_eci,
+       round((compl_cae.count::decimal / c_cae.count::decimal) * 100, 2) as completude_cae
 from active c
-    left join completed_eci compl_eci on compl_eci.collectivite_id = c.collectivite_id
-    left join completed_cae compl_cae on compl_cae.collectivite_id = c.collectivite_id
-    join eci_count c_eci on true
-    join cae_count c_cae on true
+         left join completed_eci compl_eci on compl_eci.collectivite_id = c.collectivite_id
+         left join completed_cae compl_cae on compl_cae.collectivite_id = c.collectivite_id
+         join eci_count c_eci on true
+         join cae_count c_cae on true
 where is_service_role()
 ;
 
+drop view retool_score;
+create or replace view retool_score as
+with relation as (
+    select *
+    from action_relation
+),
+     statut as (
+         select *
+         from action_statut a
+                  join relation on relation.id = a.action_id
+     ),
+     score as (
+         select json_array_elements(scores) ->> 'action_id'       as action_id,
+                json_array_elements(scores) ->> 'point_fait'      as points,
+                json_array_elements(scores) ->> 'point_potentiel' as points_pot,
+                s.collectivite_id
+         from client_scores s
+     ),
+     commentaires as (
+         select *
+         from action_commentaire c
+                  join relation on relation.id = c.action_id
+     )
+select n.collectivite_id,
+       n.nom                            as collectivité,
+       a.referentiel,
+       a.id                             as action,
+       coalesce(s.avancement::text, '') as avancement,
+       score.points                     as points,
+       score.points_pot                 as points_potentiels,
+       coalesce(
+                       score.points::numeric / nullif(score.points_pot::numeric, 0)::float * 100.0,
+                       0.0)             as pourcentage,
+       coalesce(c.commentaire, '')      as commentaire
+
+from named_collectivite n
+         full join relation a on true
+         left join statut s on s.action_id = a.id and s.collectivite_id = n.collectivite_id
+         left join score on score.action_id = a.id and score.collectivite_id = n.collectivite_id
+         left join commentaires c on c.action_id = a.id and c.collectivite_id = n.collectivite_id
+where is_service_role()
+order by n.collectivite_id, a.id
+;
