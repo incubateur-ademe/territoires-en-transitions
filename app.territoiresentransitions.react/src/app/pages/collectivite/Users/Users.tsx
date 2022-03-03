@@ -37,6 +37,7 @@ const useUserList = () => {
   const agents = activeUsersByRole(users, 'agent');
   const conseillers = activeUsersByRole(users, 'conseiller');
   const auditeurs = activeUsersByRole(users, 'auditeur');
+  const referents = activeUsersByRole(users, 'referent');
 
   const removeFromCollectivite = (user_id: string) => {
     if (collectivite_id) {
@@ -48,6 +49,7 @@ const useUserList = () => {
     agents,
     conseillers,
     auditeurs,
+    referents,
     removeFromCollectivite,
   };
 };
@@ -56,7 +58,7 @@ const useUserList = () => {
  * et le formulaire permettant d'envoyer des liens d'invitation
  */
 const Users = observer(({invitationBloc}: {invitationBloc: InvitationBloc}) => {
-  const {agents, conseillers, auditeurs, removeFromCollectivite} =
+  const {agents, conseillers, auditeurs, referents, removeFromCollectivite} =
     useUserList();
 
   const onRemove = (user_id: string) => {
@@ -91,24 +93,41 @@ const Users = observer(({invitationBloc}: {invitationBloc: InvitationBloc}) => {
       {/* </p>*/}
       {/* <MainContactForm {...TMP_contactProps} />*/}
 
-      <h2 className="fr-h2 mt-4">Liste des utilisateurs</h2>
-      <p className="pb-4">
-        Lorsque vous retirez un utilisateur, il ne pourra plus modifier les
-        informations d’une collectivité.
-      </p>
-      {agents?.map(user => (
+      <h2 className="fr-h2 mt-4">Liste des personnes référentes</h2>
+      {referents?.map(user => (
         <UserCard key={user.user_id} user={user} onRemove={onRemove} />
       ))}
 
-      <h2 className="fr-h2 mt-4 pt-4">Liste des conseillers</h2>
-      {conseillers?.map(user => (
-        <UserCard key={user.user_id} user={user} />
-      ))}
+      {agents ? (
+        <>
+          <h2 className="fr-h2 mt-4">Liste des utilisateurs</h2>
+          <p className="pb-4">
+            Lorsque vous retirez un utilisateur, il ne pourra plus modifier les
+            informations d’une collectivité.
+          </p>
+          {agents?.map(user => (
+            <UserCard key={user.user_id} user={user} onRemove={onRemove} />
+          ))}
+        </>
+      ) : null}
 
-      <h2 className="fr-h2 mt-4 pt-4">Auditeur</h2>
-      {auditeurs?.map(user => (
-        <UserCard key={user.user_id} user={user} />
-      ))}
+      {conseillers ? (
+        <>
+          <h2 className="fr-h2 mt-4 pt-4">Liste des conseillers</h2>
+          {conseillers?.map(user => (
+            <UserCard key={user.user_id} user={user} />
+          ))}
+        </>
+      ) : null}
+
+      {auditeurs ? (
+        <>
+          <h2 className="fr-h2 mt-4 pt-4">Auditeur</h2>
+          {auditeurs?.map(user => (
+            <UserCard key={user.user_id} user={user} />
+          ))}
+        </>
+      ) : null}
     </main>
   );
 });
