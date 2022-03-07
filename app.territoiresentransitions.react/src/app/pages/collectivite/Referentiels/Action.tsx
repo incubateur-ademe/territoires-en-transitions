@@ -64,7 +64,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
     useActionLinkedIndicateurDefinitions(action.id);
 
   return (
-    <div className="fr-container">
+    <div className="fr-container" data-test={`Action-${action.identifiant}`}>
       <div className="mt-8 mb-4">
         <OrientationQuickNav action={action} />
       </div>

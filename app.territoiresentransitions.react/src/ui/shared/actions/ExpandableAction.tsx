@@ -22,7 +22,7 @@ export const ExpandableAction = ({
   const children = useActionSummaryChildren(action as ActionDefinitionSummary);
 
   return (
-    <div className="mt-5">
+    <div className="mt-5" data-test={`ExpandableAction-${action.identifiant}`}>
       <LazyDetails
         summary={
           <div className="flex flex-row items-center justify-between mt-3">

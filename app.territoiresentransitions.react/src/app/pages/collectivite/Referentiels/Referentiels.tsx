@@ -33,7 +33,7 @@ export const ActionsReferentiels = () => {
   if (!referentiel) return <></>;
 
   return (
-    <main className="fr-container mt-9 mb-16">
+    <main data-test="ActionsReferentiels" className="fr-container mt-9 mb-16">
       <ReferentielHead referentiel={referentiel} />
       <section>
         {axes.map(axe => (
