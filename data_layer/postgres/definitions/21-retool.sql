@@ -17,7 +17,19 @@ from private_utilisateur_droit d
 where is_service_role()
 $$ language sql;
 comment on function retool_user_list is
-    'Returns the user list for service role.';
+    'Returns the user list for service role as an rpc for legacy reasons.';
+
+
+create or replace view retool_user_list
+as
+select d.id, p.nom, p.prenom, p.email, nc.nom
+from private_utilisateur_droit d
+         join dcp p on p.user_id = d.user_id
+         join named_collectivite nc on d.collectivite_id = nc.collectivite_id
+where is_service_role() -- Protect the DCPs.
+;
+comment on function retool_user_list is
+    'Returns user list for retool.';
 
 
 create or replace view retool_user_collectivites_list as
@@ -39,8 +51,10 @@ from dcp p
     select coalesce(array_agg(droit.nom), '{}') as noms
     from droit
     where droit.user_id = p.user_id) d on true
-where is_service_role()
+where is_service_role() -- Protect the DCPs.
 ;
+comment on view retool_user_collectivites_list is
+    'Users droit by collectivite to activate/deactivate accesses.';
 
 
 create or replace view retool_completude_compute as
@@ -88,7 +102,6 @@ from active c
          left join completed_cae compl_cae on compl_cae.collectivite_id = c.collectivite_id
          join eci_count c_eci on true
          join cae_count c_cae on true
-where is_service_role()
 ;
 comment on view retool_completude_compute is
     'Completude computed using statut over definition count.';
@@ -133,21 +146,28 @@ from named_collectivite n
          left join statut s on s.action_id = a.id and s.collectivite_id = n.collectivite_id
          left join score on score.action_id = a.id and score.collectivite_id = n.collectivite_id
          left join commentaires c on c.action_id = a.id and c.collectivite_id = n.collectivite_id
-where is_service_role()
+where is_service_role() -- Protect DCPs that could be in commentaires.
 order by n.collectivite_id, a.id
 ;
 comment on view retool_score is
     'Scores and commentaires for audit.';
 
 
+create view retool_active_collectivite
+as
+select c.collectivite_id,
+       nom
+from named_collectivite c
+         join private_utilisateur_droit d on d.collectivite_id = c.collectivite_id
+where d.active;
+comment on view retool_active_collectivite is
+    'Active collectivités as defined by métier.';
+
 create view retool_completude
 as
 with active as (
-    select c.collectivite_id,
-           nom
-    from named_collectivite c
-             join private_utilisateur_droit d on d.collectivite_id = c.collectivite_id
-    where d.active
+    select *
+    from retool_active_collectivite
 ),
      score as (
          select collectivite_id, jsonb_array_elements(scores) as o from client_scores
@@ -182,5 +202,39 @@ order by c.collectivite_id
 ;
 comment on view retool_completude
     is 'Completude computed from client scores';
+
+
+create view retool_last_activity
+as
+select c.collectivite_id,
+       c.nom,
+       max("as".modified_at) as statut,
+       max(ac.modified_at)   as commentaire,
+       max(pa.modified_at)   as plan_action,
+       max(fa.modified_at)   as fiche_action,
+       max(ir.modified_at)   as indicateur,
+       max(ic.modified_at)   as indicateur_commentaire,
+       max(ipd.modified_at)  as indicateur_perso,
+       max(ipr.modified_at)  as indicateur_perso_resultat
+from retool_active_collectivite c
+         -- referentiel
+         left join action_statut "as" on c.collectivite_id = "as".collectivite_id
+         left join action_commentaire ac on c.collectivite_id = ac.collectivite_id
+    -- plan action
+         left join plan_action pa on c.collectivite_id = pa.collectivite_id
+         left join fiche_action fa on c.collectivite_id = fa.collectivite_id
+    -- indicateurs
+         left join indicateur_resultat ir on c.collectivite_id = ir.collectivite_id
+         left join indicateur_commentaire ic on c.collectivite_id = ic.collectivite_id
+    -- indicateurs perso
+         left join indicateur_personnalise_definition ipd on c.collectivite_id = ipd.collectivite_id
+         left join indicateur_personnalise_resultat ipr on c.collectivite_id = ipr.collectivite_id
+group by c.collectivite_id, c.nom
+;
+comment on view retool_last_activity
+    is 'Last activity by collectivité';
+
+
+
 
 
