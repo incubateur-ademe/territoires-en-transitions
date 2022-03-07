@@ -6,7 +6,7 @@ create table client_scores
     -- id               serial primary key,
     collectivite_id  integer references collectivite not null,
     referentiel      referentiel                     not null,
-    scores           json                            not null,
+    scores           jsonb                            not null,
     score_created_at timestamp with time zone        not null,
     primary key (collectivite_id, referentiel)
 );

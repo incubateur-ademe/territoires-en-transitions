@@ -43,7 +43,7 @@ where is_service_role()
 ;
 
 
-create or replace view retool_completude as
+create or replace view retool_completude_compute as
 with active as (
     select n.nom, n.collectivite_id
     from named_collectivite n
@@ -91,7 +91,7 @@ from active c
 where is_service_role()
 ;
 
-drop view retool_score;
+
 create or replace view retool_score as
 with relation as (
     select *
@@ -134,3 +134,49 @@ from named_collectivite n
 where is_service_role()
 order by n.collectivite_id, a.id
 ;
+
+
+
+
+create view retool_completude
+as
+with active as (
+    select c.collectivite_id,
+           nom
+    from named_collectivite c
+             join private_utilisateur_droit d on d.collectivite_id = c.collectivite_id
+    where d.active
+),
+     score as (
+         select collectivite_id, jsonb_array_elements(scores) as o from client_scores
+     ),
+     eci as (
+         select collectivite_id,
+                (o ->> 'completed_taches_count')::integer as completed_taches_count,
+                (o ->> 'total_taches_count')::integer     as total_taches_count,
+                (o ->> 'point_fait')::float               as point_fait,
+                (o ->> 'point_programme')::float          as point_programme
+         from score
+         where o @> '{"action_id": "eci"}'
+     ),
+     cae as (
+         select collectivite_id,
+                (o ->> 'completed_taches_count')::integer as completed_taches_count,
+                (o ->> 'total_taches_count')::integer     as total_taches_count,
+                (o ->> 'point_fait')::float               as point_fait,
+                (o ->> 'point_programme')::float          as point_programme
+         from score
+         where o @> '{"action_id": "cae"}'
+     )
+
+select c.collectivite_id,
+       c.nom,
+       eci.completed_taches_count / eci.total_taches_count as completude_eci,
+       cae.completed_taches_count / cae.total_taches_count as completude_cae
+from active c
+         left join eci on eci.collectivite_id = c.collectivite_id
+         left join cae on cae.collectivite_id = c.collectivite_id
+order by c.collectivite_id
+;
+
+
