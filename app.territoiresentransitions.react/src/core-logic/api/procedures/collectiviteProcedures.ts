@@ -59,13 +59,10 @@ export const removeUser = async (
   collectiviteId: number,
   userId: string
 ): Promise<RemoveUserResponse | null> => {
-  const {data, error} = await supabaseClient.rpc(
-    'remove_user_from_collectivite',
-    {
-      id: collectiviteId,
-      user_id: userId,
-    }
-  );
+  const {data, error} = await supabaseClient.rpc('remove_from_collectivite', {
+    collectivite_id: collectiviteId,
+    user_id: userId,
+  });
 
   if (error || !data) {
     return null;
