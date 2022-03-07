@@ -1,5 +1,5 @@
+import {ChangeEvent, ReactNode, useState} from 'react';
 import './CrossExpandPanel.css';
-import {ReactNode} from 'react';
 import {Editable} from 'ui/shared/Editable';
 
 export const CrossExpandPanelWithHtmlContent = (props: {
@@ -22,14 +22,20 @@ export const CrossExpandPanelWithNode = (props: {
   editable?: boolean;
 }) => {
   const {children, title, editable} = props;
+  const [opened, setOpened] = useState(false);
+
+  const onToggle = (event: ChangeEvent<HTMLDetailsElement>) => {
+    event.preventDefault();
+    setOpened(!opened);
+  };
 
   return (
     <div className="CrossExpandPanel">
-      <details className="htmlContent">
+      <details className="htmlContent" open={opened} onToggle={onToggle}>
         <summary className="title">
           {editable ? <Editable text={title} /> : <div>{title}</div>}
         </summary>
-        {children}
+        {opened ? children : null}
       </details>
     </div>
   );
