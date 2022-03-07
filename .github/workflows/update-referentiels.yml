@@ -59,7 +59,7 @@ jobs:
 
       # Launch docker
       - name: Launch docker
-        if: github.ref == 'upcoming_sandbox' && github.ref == 'upcoming_production' 
+        if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
         run: |
           cp .env.sample .env
           docker-compose up --build -d
@@ -83,20 +83,21 @@ jobs:
 
       # [Prepare DB] Insert fakes
       - name: Insert fake data in database
-        if: github.ref == 'upcoming_sandbox' && github.ref == 'upcoming_production' 
+        if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
         run: sh insert_all.sh
         working-directory: ${{env.datalayer-directory}}
 
       # Restart postgres service
       - name: Restart postgres service
-        if: github.ref == 'upcoming_sandbox' && github.ref == 'upcoming_production' 
+        if: github.ref != 'upcoming_sandbox' && github.ref != 'upcoming_production' 
         run: docker-compose restart rest
         working-directory: ${{env.datalayer-docker-directory}}
 
       # Execute CLI on local datalayer if branch not in [upcoming-sandbox, upcoming-production]
       - name: Execute parsing scripts to update DataLayer
-        if: github.ref == 'upcoming_sandbox' && github.ref == 'upcoming_production' 
+        if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
         run: |
+          echo "Parsing markdown folder on branch $GITHUB_REF"
           pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "eci"
           pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "cae"
           pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "crte" --no-actions
@@ -109,8 +110,9 @@ jobs:
       
       # Execute CLI locally on sandbox datalayer
       - name: Execute parsing scripts to update DataLayer
-        if: github.ref == 'upcoming_sandbox'
+        if: ${{ github.ref == 'refs/heads/upcoming_sandbox'}}
         run: |
+          echo "Parsing markdown folder on branch $GITHUB_REF"
           pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "eci"
           pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "cae"
           pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "crte" --no-actions
@@ -123,8 +125,9 @@ jobs:
 
       # Execute CLI locally on production datalayer
       - name: Execute parsing scripts to update DataLayer
-        if: github.ref == 'upcoming_production'
+        if: ${{ github.ref == 'refs/heads/upcoming_production'}}
         run: |
+          echo "Parsing markdown folder on branch $GITHUB_REF"
           pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "eci"
           pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "cae"
           pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "crte" --no-actions
