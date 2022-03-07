@@ -13,6 +13,13 @@ beforeEach(() => {
   // on attends que l'appli expose un objet `e2e` permettant de la contrôler
   cy.window({ log: false }).its('e2e.history').as('history');
   cy.window({ log: false }).its('e2e.authBloc').as('authBloc');
+  cy.window({ log: false }).its('e2e.supabaseClient').as('supabaseClient');
+
+  // bouchon pour la fonction window.open
+  const stub = cy.stub().as('open');
+  cy.on('window:before:load', (win) => {
+    cy.stub(win, 'open').callsFake(stub);
+  });
 });
 
 Given("j'ouvre le site", () => {
@@ -31,6 +38,7 @@ Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {
   assert(u, 'utilisateur non trouvé');
   cy.get('@authBloc').then((authBloc) => authBloc.connect(u));
   cy.get(SignInPage.selector).should('not.exist');
+  cy.get('[data-test=logoutBtn]').should('be.visible');
 });
 
 // Met en pause le déroulement d'un scénario.
@@ -77,12 +85,11 @@ Given(
     });
   }
 );
-Given(
-  /le "([^"]*)" vérifie la condition "([^"]*)"/,
-  function (elem, expectation) {
-    checkExpectation(resolveSelector(this, elem).selector, expectation);
-  }
-);
+Given(/le "([^"]*)" vérifie la condition "([^"]*)"/, verifyExpectation);
+Given(/^le "([^"]*)" est ([^"]*)$/, verifyExpectation);
+function verifyExpectation(elem, expectation) {
+  checkExpectation(resolveSelector(this, elem).selector, expectation);
+}
 
 function handleClickOnElement(subElement, elem) {
   const parent = resolveSelector(this, elem);
