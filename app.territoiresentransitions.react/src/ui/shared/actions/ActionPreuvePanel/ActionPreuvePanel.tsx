@@ -24,7 +24,7 @@ export type TActionPreuvesProps = {
 /**
  * Affiche le panneau "preuves" d'une action
  */
-export const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
+export default (props: TActionPreuvePanelProps) => {
   const {action} = props;
   const preuveContent = useActionPreuve(action.id);
   const preuves = usePreuves(action.id);
@@ -134,7 +134,7 @@ const PreuveFichierDetail = ({preuve}: {preuve: PreuveRead}) => {
 
   return (
     <div>
-      <p className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0">
+      <div className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0">
         <div onClick={openInNewTab}>{filename || titre}</div>
         <div className="invisible group-hover:visible">
           <ButtonComment
@@ -153,7 +153,7 @@ const PreuveFichierDetail = ({preuve}: {preuve: PreuveRead}) => {
             }}
           />
         </div>
-      </p>
+      </div>
       {!isEditingComment && commentaire ? (
         <p
           className="text-sm text-gray-500 pl-2 pb-4"
