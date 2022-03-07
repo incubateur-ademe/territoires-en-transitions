@@ -27,3 +27,14 @@ Content-Type: application/json
   "id": 1
 }
 
+
+### Remove a collectivite
+POST {{api}}/rest/v1/rpc/remove_user_from_collectivite
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "user_id": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9"
+}

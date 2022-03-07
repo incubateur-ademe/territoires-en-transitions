@@ -88,36 +88,3 @@ begin
     end if;
 end
 $$ language plpgsql security definer;
-
-
-create or replace function remove_from_collectivite(user_id uuid, collectivite_id integer)
-    returns json
-as
-$$
-declare
-    param_user_id         uuid;
-    param_collectivite_id integer;
-begin
-    -- parameters are ambiguous
-    select user_id into param_user_id;
-    select remove_from_collectivite.collectivite_id into param_collectivite_id;
-
-    -- only referents can remove other users.
-    if is_referent_of(param_collectivite_id)
-    then
-        -- deactivate the droits
-        update private_utilisateur_droit
-        set active      = false,
-            modified_at = now()
-        where private_utilisateur_droit.collectivite_id = param_collectivite_id
-          and user_id = param_user_id;
-
-        -- return success with a message
-        perform set_config('response.status', '200', true);
-        return json_build_object('message', 'Vous avez retiré les droits à l''utilisateur.');
-    else
-        perform set_config('response.status', '401', true);
-        return json_build_object('error', 'Vous n''êtes pas le référent de cette collectivité.');
-    end if;
-end;
-$$ language plpgsql security definer;

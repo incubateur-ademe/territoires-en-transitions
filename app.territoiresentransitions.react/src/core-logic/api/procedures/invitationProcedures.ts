@@ -67,20 +67,3 @@ export interface AgentRemovalResponse {
   message?: string;
   error?: string;
 }
-
-/**
- * Removes an agent from a collectivité as the authenticated user.
- * The user have to be a referent of the collectivité to perform the procedure.
- * Returns true if successful.
- */
-export const removeAgentFromCollectivite = async (
-  agentUserId: string,
-  collectiviteId: number
-): Promise<boolean> => {
-  const {data, error} = await supabaseClient.rpc('remove_from_collectivite', {
-    user_id: agentUserId,
-    collectivite_id: collectiviteId,
-  });
-
-  return error === null || !!(data as any as AgentRemovalResponse).error;
-};
