@@ -90,6 +90,8 @@ from active c
          join cae_count c_cae on true
 where is_service_role()
 ;
+comment on view retool_completude_compute is
+    'Completude computed using statut over definition count.';
 
 
 create or replace view retool_score as
@@ -134,8 +136,8 @@ from named_collectivite n
 where is_service_role()
 order by n.collectivite_id, a.id
 ;
-
-
+comment on view retool_score is
+    'Scores and commentaires for audit.';
 
 
 create view retool_completude
@@ -178,5 +180,7 @@ from active c
          left join cae on cae.collectivite_id = c.collectivite_id
 order by c.collectivite_id
 ;
+comment on view retool_completude
+    is 'Completude computed from client scores';
 
 
