@@ -27,6 +27,7 @@ export const AddPreuveButton = (props: TAddPreuveButtonProps) => {
         +&nbsp;Ajouter
       </button>
       <Dialog
+        data-test="AddPreuveDlg"
         open={opened}
         onClose={() => setOpened(false)}
         maxWidth="md"

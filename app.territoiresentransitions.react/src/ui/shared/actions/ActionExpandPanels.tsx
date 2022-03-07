@@ -60,7 +60,10 @@ export const ActionPreuvesExpandPanel = ({
   action: ActionDefinitionSummary;
 }) => {
   return (
-    <div className="ActionExpandPanelAdemeContent">
+    <div
+      className="ActionExpandPanelAdemeContent"
+      data-test={`PreuvesPanel-${action.identifiant}`}
+    >
       <div className="border-gray-300">
         <CrossExpandPanelWithNode title="Preuves">
           <ActionPreuvePanel action={action} />

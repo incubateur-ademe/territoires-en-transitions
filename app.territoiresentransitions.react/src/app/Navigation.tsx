@@ -23,6 +23,7 @@ const ConnexionSwitchLink = observer(({bloc}: {bloc: AuthBloc}) => {
     return (
       <Link
         className="fr-link"
+        data-test="logoutBtn"
         to={signUpPath}
         onClick={() => {
           bloc.disconnect();

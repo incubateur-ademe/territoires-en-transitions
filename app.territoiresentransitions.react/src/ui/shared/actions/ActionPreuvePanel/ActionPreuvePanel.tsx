@@ -56,7 +56,7 @@ const ActionPreuves = ({preuves}: {preuves: PreuveRead[]}) => {
   }
 
   return (
-    <div className="mt-2">
+    <div className="mt-2" data-test="ActionPreuves">
       {preuves.map(preuve => (
         <PreuveFichierDetail
           key={preuve.id || preuve.filename}
