@@ -22,7 +22,11 @@ comment on function retool_user_list is
 
 create or replace view retool_user_list
 as
-select d.id, p.nom, p.prenom, p.email, nc.nom
+select d.id     as droit_id,
+       nc.nom   as collectivite_id,
+       p.nom    as nom,
+       p.prenom as prenom,
+       p.email  as email
 from private_utilisateur_droit d
          join dcp p on p.user_id = d.user_id
          join named_collectivite nc on d.collectivite_id = nc.collectivite_id
@@ -118,9 +122,9 @@ with relation as (
                   join relation on relation.id = a.action_id
      ),
      score as (
-         select json_array_elements(scores) ->> 'action_id'       as action_id,
-                json_array_elements(scores) ->> 'point_fait'      as points,
-                json_array_elements(scores) ->> 'point_potentiel' as points_pot,
+         select jsonb_array_elements(scores) ->> 'action_id'       as action_id,
+                jsonb_array_elements(scores) ->> 'point_fait'      as points,
+                jsonb_array_elements(scores) ->> 'point_potentiel' as points_pot,
                 s.collectivite_id
          from client_scores s
      ),
@@ -153,7 +157,7 @@ comment on view retool_score is
     'Scores and commentaires for audit.';
 
 
-create view retool_active_collectivite
+create or replace view retool_active_collectivite
 as
 select c.collectivite_id,
        nom
@@ -163,7 +167,7 @@ where d.active;
 comment on view retool_active_collectivite is
     'Active collectivités as defined by métier.';
 
-create view retool_completude
+create or replace view retool_completude
 as
 with active as (
     select *
