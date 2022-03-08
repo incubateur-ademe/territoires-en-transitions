@@ -58,12 +58,17 @@ export const useReferentielDownToAction = (
 /**
  * Returns action exemples html contents
  */
-export const useActionExemples = (actionId: string): string => {
+export const useActionExemples = (
+  actionId: string,
+  opened: boolean
+): string => {
   const [exemples, setExemples] = useState<string>('...');
 
   useEffect(() => {
-    actionExemples(actionId).then(exemples => setExemples(exemples.exemples));
-  }, [actionId]);
+    if (opened) {
+      actionExemples(actionId).then(exemples => setExemples(exemples.exemples));
+    }
+  }, [actionId, opened]);
 
   return exemples;
 };
@@ -71,12 +76,17 @@ export const useActionExemples = (actionId: string): string => {
 /**
  * Returns action context html contents
  */
-export const useActionContexte = (actionId: string): string => {
+export const useActionContexte = (
+  actionId: string,
+  opened: boolean
+): string => {
   const [contexte, setContexte] = useState<string>('...');
 
   useEffect(() => {
-    actionContexte(actionId).then(contexte => setContexte(contexte.contexte));
-  }, [actionId]);
+    if (opened) {
+      actionContexte(actionId).then(contexte => setContexte(contexte.contexte));
+    }
+  }, [actionId, opened]);
 
   return contexte;
 };
@@ -84,14 +94,19 @@ export const useActionContexte = (actionId: string): string => {
 /**
  * Returns action ressources html contents
  */
-export const useActionResources = (actionId: string): string => {
+export const useActionResources = (
+  actionId: string,
+  opened: boolean
+): string => {
   const [ressources, setRessources] = useState<string>('...');
 
   useEffect(() => {
-    actionRessources(actionId).then(ressources =>
-      setRessources(ressources.ressources)
-    );
-  }, [actionId]);
+    if (opened) {
+      actionRessources(actionId).then(ressources =>
+        setRessources(ressources.ressources)
+      );
+    }
+  }, [actionId, opened]);
 
   return ressources;
 };
@@ -112,14 +127,19 @@ export const useActionPreuve = (actionId: string) => {
 /**
  * Returns action preuve html contents
  */
-export const useActionReductionPotentiel = (actionId: string) => {
+export const useActionReductionPotentiel = (
+  actionId: string,
+  opened: boolean
+) => {
   const [reductionPotentiel, setReductionPotentiel] = useState<string>('...');
 
   useEffect(() => {
-    actionReductionPotentiel(actionId).then(reductionPotentiel =>
-      setReductionPotentiel(reductionPotentiel.reduction_potentiel)
-    );
-  }, [actionId]);
+    if (opened) {
+      actionReductionPotentiel(actionId).then(reductionPotentiel =>
+        setReductionPotentiel(reductionPotentiel.reduction_potentiel)
+      );
+    }
+  }, [actionId, opened]);
 
   return reductionPotentiel;
 };
@@ -127,14 +147,19 @@ export const useActionReductionPotentiel = (actionId: string) => {
 /**
  * Returns perimetre evaluation html contents
  */
-export const useActionPerimetreEvaluation = (actionId: string) => {
+export const useActionPerimetreEvaluation = (
+  actionId: string,
+  opened: boolean
+) => {
   const [perimetreEvaluation, setPerimetreEvaluation] = useState<string>('...');
 
   useEffect(() => {
-    actionPerimetreEvaluation(actionId).then(perimetreEvaluation =>
-      setPerimetreEvaluation(perimetreEvaluation.perimetre_evaluation)
-    );
-  }, [actionId]);
+    if (opened) {
+      actionPerimetreEvaluation(actionId).then(perimetreEvaluation =>
+        setPerimetreEvaluation(perimetreEvaluation.perimetre_evaluation)
+      );
+    }
+  }, [actionId, opened]);
 
   return perimetreEvaluation;
 };
