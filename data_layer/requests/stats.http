@@ -1,0 +1,5 @@
+### Read user list as service
+GET {{api}}/rest/v1/stats_rattachements
+apikey: {{service}}
+Authorization: Bearer {{service}}
+
