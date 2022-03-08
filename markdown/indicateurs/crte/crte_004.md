@@ -14,7 +14,7 @@ unite: ha
 **Politique publique:** Agriculture et alimentation durable
 **Objectif stratégique:** Développement de l’agriculture biologique
 **Objectif opérationnel national fixé par les documents de référence**: Stratégie “De la Ferme à la Fourchette” (F2F) UE ; Plan ambition bio - Loi Egalim :
-- 15% de SAU affectée à l’agriculture biologique au 31/12/2022 ; 30% en 2030
+- 15 % de SAU affectée à l’agriculture biologique au 31/12/2022 ; 30 % en 2030
 
 # Part de la surface agricole utile en agriculture biologique (%)
 ```yaml
@@ -33,4 +33,4 @@ valeur: cae_59
 **Politique publique:** Agriculture et alimentation durable
 **Objectif stratégique:** Développement de l’agriculture biologique
 **Objectif opérationnel national fixé par les documents de référence**: Stratégie “De la Ferme à la Fourchette” (F2F) UE ; Plan ambition bio - Loi Egalim :
-- 15% de SAU affectée à l’agriculture biologique au 31/12/2022 ; 30% en 2030
+- 15 % de SAU affectée à l’agriculture biologique au 31/12/2022 ; 30 % en 2030

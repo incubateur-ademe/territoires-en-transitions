@@ -89,12 +89,12 @@ jobs:
 
       # Restart postgres service
       - name: Restart postgres service
-        if: github.ref != 'upcoming_sandbox' && github.ref != 'upcoming_production' 
+        if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
         run: docker-compose restart rest
         working-directory: ${{env.datalayer-docker-directory}}
 
       # Execute CLI on local datalayer if branch not in [upcoming-sandbox, upcoming-production]
-      - name: Execute parsing scripts to update DataLayer
+      - name: Execute parsing scripts to update DataLayer on local datalayer (docker)
         if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
         run: |
           echo "Parsing markdown folder on branch $GITHUB_REF"
@@ -109,7 +109,7 @@ jobs:
           SUPABASE_WS: ws://localhost:8000
       
       # Execute CLI locally on sandbox datalayer
-      - name: Execute parsing scripts to update DataLayer
+      - name: Execute parsing scripts to update DataLayer on Supabase Sandbox
         if: ${{ github.ref == 'refs/heads/upcoming_sandbox'}}
         run: |
           echo "Parsing markdown folder on branch $GITHUB_REF"
@@ -124,7 +124,7 @@ jobs:
           SUPABASE_WS: ws://xbrefnclajfcjlpnwyow.supabase.co	
 
       # Execute CLI locally on production datalayer
-      - name: Execute parsing scripts to update DataLayer
+      - name: Execute parsing scripts to update DataLayer on Supabase Production
         if: ${{ github.ref == 'refs/heads/upcoming_production'}}
         run: |
           echo "Parsing markdown folder on branch $GITHUB_REF"

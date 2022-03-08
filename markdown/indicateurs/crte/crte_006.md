@@ -16,4 +16,4 @@ Les voies cyclables qui existent de chaque côté de la même route doivent êtr
 **Politique publique:** Mobilité
 **Objectif stratégique:** Décarboner la mobilité
 **Objectif opérationnel national fixé par les documents de référence**: LOM:
-- Tripler la part modale du vélo d’ici 2024 (de 3% à 9% des déplacements quotidiens)
+- Tripler la part modale du vélo d’ici 2024 (de 3 % à 9 % des déplacements quotidiens)

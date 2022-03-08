@@ -1,6 +1,6 @@
 import abc
 import json
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 import requests
 from requests import Response
 import urllib.parse
@@ -89,11 +89,18 @@ class SupabaseDb:
         return r_json
 
 
-def _raise_if_unexpected_status(expected_status_code: int, r: Response):
+def _raise_if_unexpected_status(
+    expected_status_code: Union[int, list[int]], r: Response
+):
+    list_expected_status_code = (
+        expected_status_code
+        if isinstance(expected_status_code, list)
+        else [expected_status_code]
+    )
     actual_status_code = r.status_code
-    if actual_status_code != expected_status_code:
+    if actual_status_code not in list_expected_status_code:
         raise SupabaseError(
-            f"Error with status code {actual_status_code}, while we expected {expected_status_code}.\nReason is : {r.reason}",
+            f"Error with status code {actual_status_code}, while we expected one of {list_expected_status_code}.\nReason is : {r.reason}",
             r,
         )
 
@@ -108,7 +115,7 @@ class SupabaseRpc:
             data=kwargs or None,
             additional_header={"Content-Type": "application/json"},
         )
-        _raise_if_unexpected_status(200, r)
+        _raise_if_unexpected_status([200, 204], r)
 
 
 class SupabaseError(Exception):
