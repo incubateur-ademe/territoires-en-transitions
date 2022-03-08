@@ -22,11 +22,14 @@ comment on function retool_user_list is
 
 create or replace view retool_user_list
 as
-select d.id     as droit_id,
-       nc.nom   as collectivite_id,
-       p.nom    as nom,
-       p.prenom as prenom,
-       p.email  as email
+select d.id               as droit_id,
+       nc.collectivite_id as collectivite_id,
+       d.user_id          as user_id,
+       nc.nom             as collectivite,
+       d.role_name        as role,
+       p.nom              as nom,
+       p.prenom           as prenom,
+       p.email            as email
 from private_utilisateur_droit d
          join dcp p on p.user_id = d.user_id
          join named_collectivite nc on d.collectivite_id = nc.collectivite_id
@@ -61,11 +64,19 @@ comment on view retool_user_collectivites_list is
     'Users droit by collectivite to activate/deactivate accesses.';
 
 
+create or replace view retool_active_collectivite
+as
+select c.collectivite_id,
+       nom
+from named_collectivite c
+where collectivite_id in (select collectivite_id from private_utilisateur_droit where active);
+comment on view retool_active_collectivite is
+    'Active collectivités as defined by métier.';
+
+
 create or replace view retool_completude_compute as
 with active as (
-    select n.nom, n.collectivite_id
-    from named_collectivite n
-    where collectivite_id in (select collectivite_id from private_utilisateur_droit where active)
+    select * from retool_active_collectivite
 ),
      completed_eci as (
          select c.collectivite_id, count(*) as count
@@ -157,16 +168,6 @@ comment on view retool_score is
     'Scores and commentaires for audit.';
 
 
-create or replace view retool_active_collectivite
-as
-select c.collectivite_id,
-       nom
-from named_collectivite c
-         join private_utilisateur_droit d on d.collectivite_id = c.collectivite_id
-where d.active;
-comment on view retool_active_collectivite is
-    'Active collectivités as defined by métier.';
-
 create or replace view retool_completude
 as
 with active as (
@@ -197,8 +198,8 @@ with active as (
 
 select c.collectivite_id,
        c.nom,
-       eci.completed_taches_count / eci.total_taches_count as completude_eci,
-       cae.completed_taches_count / cae.total_taches_count as completude_cae
+       (eci.completed_taches_count::float / eci.total_taches_count::float) * 100 as completude_eci,
+       (cae.completed_taches_count::float / cae.total_taches_count::float) * 100 as completude_cae
 from active c
          left join eci on eci.collectivite_id = c.collectivite_id
          left join cae on cae.collectivite_id = c.collectivite_id
@@ -208,7 +209,7 @@ comment on view retool_completude
     is 'Completude computed from client scores';
 
 
-create view retool_last_activity
+create or replace view retool_last_activity
 as
 select c.collectivite_id,
        c.nom,
