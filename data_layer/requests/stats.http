@@ -1,5 +1,9 @@
-### Read user list as service
+### Read rattachement daily progression
 GET {{api}}/rest/v1/stats_rattachements
 apikey: {{service}}
 Authorization: Bearer {{service}}
 
+### Read completude tranche
+GET {{api}}/rest/v1/stats_tranche_completude
+apikey: {{service}}
+Authorization: Bearer {{service}}

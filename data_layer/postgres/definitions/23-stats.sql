@@ -15,7 +15,7 @@ from daily;
 create view stats_functionnalities_usage_proportion as (
     with active_collectivite as (
     select distinct collectivite_id
-    from private_utilisateur_droit 
+    from private_utilisateur_droit
     where active
 ),  fiches as (
     select collectivite_id,
@@ -26,7 +26,7 @@ create view stats_functionnalities_usage_proportion as (
      eci_statuses as (
          select collectivite_id,
                 count(collectivite_id) as count
-         from action_statut a_s 
+         from action_statut a_s
          join action_relation a_r on a_r.id = a_s.action_id
          where a_r.referentiel = 'eci'
          group by collectivite_id
@@ -35,7 +35,7 @@ create view stats_functionnalities_usage_proportion as (
      cae_statuses as (
          select collectivite_id,
                 count(collectivite_id) as count
-         from action_statut a_s 
+         from action_statut a_s
          join action_relation a_r on a_r.id = a_s.action_id
          where a_r.referentiel = 'cae'
          group by collectivite_id
@@ -79,4 +79,35 @@ from (
                   full join utilisateurs on utilisateurs.collectivite_id = a_c.collectivite_id
          where utilisateurs.collectivite_id is not null
      ) as per_collectivite
-)
+);
+
+create or replace view stats_tranche_completude
+as
+with completude as (
+    select coalesce(completude_eci, .0) as completude_eci,
+           coalesce(completude_cae, .0) as completude_cae
+    from retool_completude
+),
+     range as (
+         select unnest('{0, 20, 40, 60, 80}'::int[]) as start,
+                unnest('{20, 40, 60, 80, 101}'::int[]) as "end"
+     ),
+     eci as (
+         select r.start, count(eci.*) as count
+         from range r
+                  left join completude eci on eci.completude_eci >= start and eci.completude_eci < "end"
+         group by r.start
+     ),
+     cae as (
+         select r.start, count(cae.*) as count
+         from range r
+                  left join completude cae on cae.completude_cae >= start and cae.completude_cae < "end"
+         group by r.start
+     )
+select range.start || ':' || range."end" as bucket, eci.count as eci, cae.count as cae
+from range
+         left join eci on eci.start = range.start
+         left join cae on cae.start = range.start
+order by range.start
+;
+
