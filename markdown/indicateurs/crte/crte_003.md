@@ -23,7 +23,7 @@ CHALEUR
 • solaire thermique
 • biogaz
 BIOMETHANE / BIOCARBURANTS
-Par convention, 50% de la chaleur produite par l’incinération des déchets est considérée issue de déchets urbains renouvelables (source DGEC, dans ses bilans).
+Par convention, 50 % de la chaleur produite par l’incinération des déchets est considérée issue de déchets urbains renouvelables (source DGEC, dans ses bilans).
 L'électricité produite par cogénération via incinération des déchets en mélange compte pour 50% comme une énergie renouvelable (biomasse solide).
 Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/eau, sol/sol avec une efficacité énergétique ≥ 126 % (PAC basse température) et une efficacité énergétique ≥ 111 % (PAC moyenne ou haute température) (exigences du crédit d’impôt pour la transition énergétique 2018). La cogénération à partir d'énergie fossile n'est pas prise en compte.
 La production annuelle d’énergie hydroélectrique sur le territoire est comptabilisée à part.
@@ -62,8 +62,8 @@ CHALEUR
 • solaire thermique
 • biogaz
 BIOMETHANE / BIOCARBURANTS
-Par convention, 50% de la chaleur produite par l’incinération des déchets est considérée issue de déchets urbains renouvelables (source DGEC, dans ses bilans).
-L'électricité produite par cogénération via incinération des déchets en mélange compte pour 50% comme une énergie renouvelable (biomasse solide).
+Par convention, 50 % de la chaleur produite par l’incinération des déchets est considérée issue de déchets urbains renouvelables (source DGEC, dans ses bilans).
+L'électricité produite par cogénération via incinération des déchets en mélange compte pour 50 % comme une énergie renouvelable (biomasse solide).
 Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/eau, sol/sol avec une efficacité énergétique ≥ 126 % (PAC basse température) et une efficacité énergétique ≥ 111 % (PAC moyenne ou haute température) (exigences du crédit d’impôt pour la transition énergétique 2018). La cogénération à partir d'énergie fossile n'est pas prise en compte.
 La production annuelle d’énergie hydroélectrique sur le territoire est comptabilisée à part.
 **Sources:** Observatoires régionaux de l’énergie, du climat et de l’air

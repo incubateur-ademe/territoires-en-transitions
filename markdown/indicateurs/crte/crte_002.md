@@ -15,7 +15,7 @@ valeur: cae_2.a
 **Politique publique:** Transition énergétique
 **Objectif stratégique:** Réduire la consommation finale d’énergie
 **Objectif opérationnel national fixé par les documents de référence**: Programmation pluriannuelle de l’énergie (PPE)
-- Baisse de la consommation finale d’énergie de 16,5% en 2028 par rapport à 2012 (soit 15,4% par rapport à 2018)
+- Baisse de la consommation finale d’énergie de 16,5 % en 2028 par rapport à 2012 (soit 15,4 % par rapport à 2018)
 - Baisse de 20 % de la consommation primaire d’énergies fossiles en 2023 et de 35 % en 2028 par rapport à 2012
 
 **Données de référence:** Préciser si possible les moyennes nationale et/ou locale, le cas échéant contextualisées (territoire urbain/rural/autre) pour permettre au territoire de mieux se situer. 
@@ -38,5 +38,5 @@ Pour la consommation par habitant, rapporter la consommation d’énergie totale
 **Politique publique:** Transition énergétique
 **Objectif stratégique:** Réduire la consommation finale d’énergie
 **Objectif opérationnel national fixé par les documents de référence**: Programmation pluriannuelle de l’énergie (PPE)
-- Baisse de la consommation finale d’énergie de 16,5% en 2028 par rapport à 2012 (soit 15,4% par rapport à 2018)
+- Baisse de la consommation finale d’énergie de 16,5 % en 2028 par rapport à 2012 (soit 15,4 % par rapport à 2018)
 - Baisse de 20 % de la consommation primaire d’énergies fossiles en 2023 et de 35 % en 2028 par rapport à 2012

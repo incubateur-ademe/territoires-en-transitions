@@ -89,7 +89,7 @@ jobs:
 
       # Restart postgres service
       - name: Restart postgres service
-        if: github.ref != 'upcoming_sandbox' && github.ref != 'upcoming_production' 
+        if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
         run: docker-compose restart rest
         working-directory: ${{env.datalayer-docker-directory}}
 

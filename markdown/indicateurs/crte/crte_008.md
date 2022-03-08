@@ -17,4 +17,4 @@ Voir en lien avec les agences de l’eau.
 **Objectif stratégique:** Réduire les consommations d’eau
 **Objectif opérationnel national fixé par les documents de référence**: Le décret 2012-97 du 27 janvier 2012 issu de l’engagement 111 du Grenelle de l’Environnement définit un rendement seuil dont le calcul est adapté à chaque situation.
 **Données de référence:** <a href="https://www.services.eaufrance.fr/docs/synthese/rapports/Rapport_Sispea_2017_VF.pdf">Voir dernier rapport SISPEA</a>
-Le volume de pertes en eau par fuite sur le réseau (qui inclut la partie des branchements avant compteur) est de l'ordre de 20% du volume introduit dans le réseau de distribution (c’est-à-dire la somme des volumes produits et volumes importés).
+Le volume de pertes en eau par fuite sur le réseau (qui inclut la partie des branchements avant compteur) est de l'ordre de 20 % du volume introduit dans le réseau de distribution (c’est-à-dire la somme des volumes produits et volumes importés).
