@@ -1,5 +1,35 @@
-### Read user as service
-GET {{api}}/rest/v1/rpc/retool_user_list
+### Read user list as service
+GET {{api}}/rest/v1/retool_user_list
+apikey: {{service}}
+Authorization: Bearer {{service}}
+
+
+### Read user collectivite list as service
+GET {{api}}/rest/v1/retool_user_collectivites_list
+apikey: {{service}}
+Authorization: Bearer {{service}}
+
+
+### Read collectivite completude from list as service
+GET {{api}}/rest/v1/retool_completude?collectivite_id=eq.5453
+apikey: {{service}}
+Authorization: Bearer {{service}}
+
+
+### Read user collectivite computed completude from list as service
+GET {{api}}/rest/v1/retool_completude_compute?collectivite_id=eq.5453
+apikey: {{service}}
+Authorization: Bearer {{service}}
+
+
+### Read user collectivite computed completude from list as service
+GET {{api}}/rest/v1/retool_last_activity?collectivite_id=eq.5453
+apikey: {{service}}
+Authorization: Bearer {{service}}
+
+
+### Read user collectivite list as service
+GET {{api}}/rest/v1/retool_user_collectivites_list
 apikey: {{service}}
 Authorization: Bearer {{service}}
 
