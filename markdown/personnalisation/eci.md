@@ -23,3 +23,22 @@ action_id: eci_2.2
 reponse(dechets_1, NON) 
 ```
 
+# Désactivation eci_3.4 liee competence dev eco
+```yaml
+action_id: eci_3.4
+```
+
+## Desactivation
+```yaml
+reponse(dev_eco_1, NON) 
+```
+
+# Désactivation eci_4.3 liee competence dev eco
+```yaml
+action_id: eci_4.3
+```
+
+## Desactivation
+```yaml
+reponse(dev_eco_1, NON) 
+```
