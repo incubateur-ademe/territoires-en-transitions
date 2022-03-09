@@ -61,20 +61,45 @@ create policy commune_read_for_all
     using (true);
 
 
+-- Test collectivité
+create table collectivite_test
+(
+    id              serial primary key,
+    collectivite_id integer references collectivite,
+    nom             varchar(300) not null
+);
+
+alter table collectivite_test
+    enable row level security;
+
+create policy collectivite_test_read_for_all
+    on collectivite_test
+    for select
+    using (true);
+
+
 -- A collectivité with a name from it's underlying type
 create or replace view named_collectivite
 as
-select collectivite.id as collectivite_id,
-       coalesce(epci.nom, commune.nom) as nom
+select collectivite.id                                        as collectivite_id,
+       coalesce(epci.nom, commune.nom, collectivite_test.nom) as nom
 from collectivite
          left join epci on epci.collectivite_id = collectivite.id
          left join commune on commune.collectivite_id = collectivite.id
-order by unaccent(coalesce(epci.nom, commune.nom));
+         left join collectivite_test on collectivite_test.collectivite_id = collectivite.id
+order by case
+             when collectivite_test.nom is not null
+                 -- display test collectivités before regular collectivités
+                 then '0' || unaccent(collectivite_test.nom)
+             else
+                 unaccent(coalesce(epci.nom, commune.nom))
+             end
+;
 comment on view named_collectivite is 'Collectivité with the necessary information to display in the client.';
 
 
 -- Triggers, create collectivité when a related type is inserted.
-create or replace function before_epci_write_create_collectivite() returns trigger as
+create or replace function before_write_create_collectivite() returns trigger as
 $$
 declare
     created_collectivite_id integer;
@@ -91,26 +116,18 @@ create trigger before_epci_write
     before insert
     on epci
     for each row
-execute procedure before_epci_write_create_collectivite();
+execute procedure before_write_create_collectivite();
 
-
-create or replace function before_commune_write_create_collectivite() returns trigger as
-$$
-declare
-    created_collectivite_id integer;
-begin
-    insert into collectivite default values;
-    select currval(pg_get_serial_sequence('collectivite', 'id')) into created_collectivite_id;
-    new.collectivite_id = created_collectivite_id;
-    -- The new is what will be inserted
-    return new;
-end;
-$$ language plpgsql;
 
 create trigger before_commune_write
     before insert
     on commune
     for each row
-execute procedure before_commune_write_create_collectivite();
+execute procedure before_write_create_collectivite();
 
 
+create trigger before_collectivite_test_write
+    before insert
+    on collectivite_test
+    for each row
+execute procedure before_write_create_collectivite();
