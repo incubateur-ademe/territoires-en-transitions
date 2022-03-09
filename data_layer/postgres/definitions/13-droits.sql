@@ -108,6 +108,7 @@ from named_collectivite
               on named_collectivite.collectivite_id = private_utilisateur_droit.collectivite_id
 where private_utilisateur_droit.id is not null
   and private_utilisateur_droit.active
+  and named_collectivite.collectivite_id not in (select collectivite_id from collectivite_test)
   and is_authenticated()
 group by named_collectivite.collectivite_id, nom
 order by nom;
