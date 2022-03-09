@@ -20,7 +20,7 @@ export const ActionProgressBar = observer(
           </div>
         }
       >
-        <div>
+        <div data-test={`score-${actionId}`}>
           <_ColoredBar score={score} />
         </div>
       </Tooltip>
