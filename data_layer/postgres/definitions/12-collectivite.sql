@@ -52,6 +52,14 @@ create table commune
     code            codegeo unique not null
 );
 
+alter table commune
+    enable row level security;
+
+create policy commune_read_for_all
+    on commune
+    for select
+    using (true);
+
 
 -- A collectivité with a name from it's underlying type
 create or replace view named_collectivite
