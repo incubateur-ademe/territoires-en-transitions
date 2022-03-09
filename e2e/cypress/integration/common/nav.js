@@ -15,6 +15,17 @@ When(/visite la vue(?:.*)? "(.*)"/, (view) => navigateTo(view));
 // navigue sur une sous-route associée à un item de menu
 When(/j'ouvre le dialogue "(.*)"/, (menuItem) => navigateToSubRoute(menuItem));
 
+// navigue sur un référentiel
+When(
+  /visite le sous-axe "([^"]*)" du référentiel "([^"]*)" de la collectivité "(\d+)"/,
+  (action, referentiel, collectiviteId) => {
+    cy.visit(
+      `/collectivite/${collectiviteId}/action/${referentiel}/${referentiel}_${action}`
+    );
+    cy.get(`[data-test="Action-${action}"]`).should('be.visible');
+  }
+);
+
 // vérifie qu'on est sur une route/vue
 When(/voi[rs] la vue(?: des)? "(.*)"/, (view) => {
   const { selector } = Views[view];
