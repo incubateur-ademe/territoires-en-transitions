@@ -1,97 +1,120 @@
 import {Line} from 'react-chartjs-2';
-import type {ChartData, ChartDataset} from 'chart.js';
+import type {ChartData, TooltipItem} from 'chart.js';
+import 'chartjs-adapter-date-fns';
+import {fr} from 'date-fns/locale';
 import {DailyCount} from 'core-logic/api/statisticsApiEndpoints';
-import {useEffect, useState} from 'react';
-import * as R from 'ramda';
-import 'chartjs-adapter-moment';
-import moment from 'moment';
-import 'moment/locale/fr';
+import {useMemo} from 'react';
 
-moment.locale('fr');
-
-const getDataset = (dates: Date[], dailyCount: DailyCount[]): ChartDataset => {
-  const color = '#000091';
-  const data = R.map(date => {
-    const userCountForDay = R.find(
-      dailyUserCount =>
-        new Date(dailyUserCount.date).getTime() === date.getTime(),
-      dailyCount
-    );
-    return userCountForDay ? userCountForDay.cumulated_count : NaN;
-  }, dates);
-
-  const datastet = {
-    data,
-    fill: false,
-    backgroundColor: color,
-    borderColor: color,
-    strokeColor: color,
-    borderWidth: 2,
-    pointRadius: 2,
-    pointHoverRadius: 3,
-    tension: 0.2,
-    spanGaps: true,
-  };
-
-  return datastet;
+// sépare les données par type de compteur (quotidien ou cumulés)
+const byCountType = (
+  res: {labels: Date[]; daily: number[]; cumul: number[]},
+  {date, count, cumulated_count}: DailyCount
+) => {
+  const {labels, daily, cumul} = res;
+  labels.push(new Date(date));
+  daily.push(count);
+  cumul.push(cumulated_count);
+  return res;
 };
 
-export const DailyCountLineChart = (props: {
-  chartTitle: string;
-  unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
-  getDailyCount: () => Promise<DailyCount[]>;
-  yAxisTitle: string;
-  yMin: number;
-}) => {
-  const [chartData, setChartData] = useState({} as ChartData);
+const commonLineProps = {
+  fill: false,
+  borderWidth: 1,
+  pointRadius: 2,
+  pointHoverRadius: 3,
+  tension: 0.2,
+  spanGaps: true,
+};
 
-  useEffect(() => {
-    props.getDailyCount().then(dailyCounts => {
-      const dates = dailyCounts.map(
-        dailyUserCount => new Date(dailyUserCount.date)
-      );
-      const dataset = getDataset(dates, dailyCounts);
-      const data: ChartData = {
-        labels: dates,
-        datasets: [dataset],
-      };
-      setChartData(data);
-    });
-  }, []);
+const getChartData = (dailyCounts: DailyCount[]): ChartData => {
+  const color2 = '#247BC7';
+  const color1 = '#033663';
+  const {labels, daily, cumul} = dailyCounts.reduce(byCountType, {
+    labels: [],
+    daily: [],
+    cumul: [],
+  });
+
+  return {
+    labels,
+    datasets: [
+      {
+        ...commonLineProps,
+        label: 'Rattachements',
+        data: daily,
+        backgroundColor: color1,
+        borderColor: color1,
+      },
+      {
+        ...commonLineProps,
+        label: 'Rattachements cumulés',
+        data: cumul,
+        backgroundColor: color2,
+        borderColor: color2,
+      },
+    ],
+  };
+};
+
+export type TDailyCountLineChartProps = {
+  widthPx: number;
+  dailyCounts: DailyCount[];
+};
+
+export const DailyCountLineChart = (props: TDailyCountLineChartProps) => {
+  const {widthPx, dailyCounts} = props;
+
+  const data = useMemo(() => getChartData(dailyCounts), [dailyCounts]);
+  const labels = data.labels as Date[];
 
   return (
-    <div>
-      <div className="h-64 w-96 my-6">
-        <div className="xs text-left font-bold text-bf500">
-          {props.chartTitle}
-        </div>
-        <Line
-          className="py-5"
-          data={chartData}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                display: false,
-              },
-            },
-            scales: {
-              y: {
-                title: {display: true, text: props.yAxisTitle},
-                min: props.yMin,
-              },
-
-              x: {
-                type: 'time',
-                time: {
-                  unit: props.unit,
+    <div style={{width: widthPx, marginLeft: 0}}>
+      <div className="font-semibold text-center text-xl">
+        Rattachements utilisateur/collectivité
+      </div>
+      <Line
+        className="py-5"
+        data={data}
+        options={{
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {display: true, position: 'bottom'},
+            tooltip: {
+              callbacks: {
+                label: ({raw, dataset}: TooltipItem<'line'>) => {
+                  return `${dataset.label} : ${raw}`;
+                },
+                title: tooltipItems => {
+                  const [item] = tooltipItems;
+                  return labels[item.dataIndex].toLocaleDateString();
                 },
               },
             },
-          }}
-        />
-      </div>
+          },
+          scales: {
+            y: {
+              title: {
+                display: true,
+                text: "Nombre d'utilisateurs rattachés à une collectivité",
+              },
+              min: 0,
+            },
+
+            x: {
+              type: 'time',
+              adapters: {
+                date: {
+                  locale: fr,
+                },
+              },
+              time: {
+                unit: 'month',
+              },
+            },
+          },
+        }}
+      />
     </div>
   );
 };
