@@ -25,5 +25,9 @@
     "cypress": "^9.4.1",
     "cypress-cucumber-preprocessor": "^4.3.1",
     "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "pg": "^8.7.3"
   }
 }
