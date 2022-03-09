@@ -65,7 +65,10 @@ export const ActionReferentielAvancementCard = ({
             </div>
           )}
           {isLeaf && (
-            <div className="pt-2 flex justify-end">
+            <div
+              className="pt-2 flex justify-end"
+              data-test={`task-${action.id}`}
+            >
               <ActionStatusDropdown actionId={action.id} />
             </div>
           )}
