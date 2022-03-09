@@ -7,17 +7,6 @@ beforeEach(() => {
   cy.wrap(LocalSelectors).as('LocalSelectors');
 });
 
-// navigue sur un référentiel
-When(
-  /visite le sous-axe "([^"]*)" du référentiel "([^"]*)" de la collectivité "(\d+)"/,
-  (action, referentiel, collectiviteId) => {
-    cy.visit(
-      `/collectivite/${collectiviteId}/action/${referentiel}/${referentiel}_${action}`
-    );
-    cy.get(`[data-test="Action-${action}"]`).should('be.visible');
-  }
-);
-
 When(/je déplie le panneau Preuves de l'action "([^"]+)"/, (action) =>
   getPreuvePanel(action).within(() => {
     // la liste des preuves attendues n'existe pas
