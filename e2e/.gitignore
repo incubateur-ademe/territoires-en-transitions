@@ -6,3 +6,4 @@ cypress/cucumber-json
 cypress/logs
 report*
 coverage*
+.env
