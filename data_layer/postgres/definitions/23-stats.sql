@@ -25,12 +25,13 @@ with unique_collectivite_droit as (
     from private_utilisateur_droit d
              join stats_real_collectivites c on d.collectivite_id = c.collectivite_id
     group by d.collectivite_id
-), daily as (
-    select created_at::date as day, count(created_at) as count
-    from unique_collectivite_droit d
-             join stats_real_collectivites c on d.collectivite_id = c.collectivite_id
-    group by day
-)
+),
+     daily as (
+         select created_at::date as day, count(created_at) as count
+         from unique_collectivite_droit d
+                  join stats_real_collectivites c on d.collectivite_id = c.collectivite_id
+         group by day
+     )
 select day                                                                                      as date,
        count,
        sum(count) over (order by day rows between unbounded preceding and current row)::integer as cumulated_count
@@ -133,8 +134,8 @@ with completude as (
     from retool_completude
 ),
      range as (
-         select unnest('{0, 0.00001, 50, 80,  100}'::float[]) as start,
-                unnest('{0, 50,      80, 100, 100.1}'::float[]) as "end"
+         select unnest('{0,       0.00001, 50, 80,  100}'::float[])         as start,
+                unnest('{0.00001, 50,      80, 100, 100.1}'::float[]) as "end"
      ),
      eci as (
          select r.start, count(eci.*) as count
