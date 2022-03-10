@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Statistics Page/Completeness Slices Chart CAE 1`] = `
+<div
+  style={
+    Object {
+      "marginLeft": 0,
+      "width": 350,
+    }
+  }
+>
+  <div
+    className="font-semibold text-center text-md pb-4"
+  >
+    Climat Air Énergie
+  </div>
+  <canvas
+    data-testid="canvas"
+    height={150}
+    onClick={[Function]}
+    role="img"
+    width={300}
+  />
+</div>
+`;
+
+exports[`Storyshots App/Pages/Statistics Page/Completeness Slices Chart ECI 1`] = `
+<div
+  style={
+    Object {
+      "marginLeft": 0,
+      "width": 350,
+    }
+  }
+>
+  <div
+    className="font-semibold text-center text-md pb-4"
+  >
+    Économie Circulaire
+  </div>
+  <canvas
+    data-testid="canvas"
+    height={150}
+    onClick={[Function]}
+    role="img"
+    width={300}
+  />
+</div>
+`;

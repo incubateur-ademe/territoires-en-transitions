@@ -4,6 +4,7 @@ import {
   FeaturesUseBarChart,
   TFeaturesUseBarChartProps,
 } from './FeaturesUseBarChart';
+import {proportions} from './fixture.json';
 
 export default {
   component: FeaturesUseBarChart,
@@ -16,11 +17,5 @@ const Template: Story<TFeaturesUseBarChartProps> = args => (
 export const Exemple1 = Template.bind({});
 Exemple1.args = {
   widthPx: 500,
-  proportions: {
-    fiche_action_avg: 0.06319702602230483,
-    cae_statuses_avg: 0.04460966542750929,
-    eci_statuses_avg: 0.4944237918215613,
-    indicateur_referentiel_avg: 0.13382899628252787,
-    indicateur_personnalise_avg: 0.0037174721189591076,
-  },
+  proportions,
 };

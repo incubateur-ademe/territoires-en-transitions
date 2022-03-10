@@ -9,7 +9,7 @@ import {E2E} from './E2E';
 import {Footer, FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
-import StatisticsPage from 'app/pages/statistics/StatisticsPage';
+import StatisticsPage from 'app/pages/StatisticsPage';
 import Home from 'app/pages/Home';
 import {ConnectedRedirector} from 'app/Redirector';
 import {Toasters} from 'app/Toasters';
