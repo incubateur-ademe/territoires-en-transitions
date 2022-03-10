@@ -1,4 +1,5 @@
-import {ENV} from 'environmentVariables';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {useEffect, useState} from 'react';
 
 // Models
 export type DailyCount = {
@@ -8,62 +9,72 @@ export type DailyCount = {
 };
 
 export type FunctionnalitiesUsageProportion = {
-  fiche_action: number;
-  eci_referentiel: number;
-  cae_referentiel: number;
-  indicateur_personnalise: number;
-  inficateur_referentiel: number;
+  [key: string]: number;
+  fiche_action_avg: number;
+  eci_referentiel_avg: number;
+  cae_referentiel_avg: number;
+  indicateur_personnalise_avg: number;
+  inficateur_referentiel_avg: number;
 };
 
-const makeGetStatistics = <T>(endpoint: string) => {
-  const getStatistics = async () => {
-    const response_json = await fetch(`TODO`, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: '',
-      },
-    }).then(response => response.json());
-
-    console.log(response_json);
-    return response_json as T;
-  };
-  return getStatistics;
+export type CompletenessSlice = {
+  bucket: string;
+  eci: number;
+  cae: number;
 };
 
-export const getDailyUserCounts =
-  makeGetStatistics<DailyCount[]>('daily_user_count');
+const useDailyCounts = (view: string) => {
+  const [data, setData] = useState<DailyCount[] | null>(null);
 
-export const getDailyCollectiviteCounts = makeGetStatistics<DailyCount[]>(
-  'daily_collectivite_count'
-);
+  useEffect(() => {
+    if (!data) {
+      supabaseClient
+        .from(view)
+        .select()
+        .then(result => setData(result.data));
+    }
+  });
 
-export const getFunctionnalitiesUsageProportion =
-  makeGetStatistics<FunctionnalitiesUsageProportion>(
-    'functionnalities_usage_proportion'
+  return data;
+};
+
+export const useRattachements = () => useDailyCounts('stats_rattachements');
+export const useActiveCollectivites = () =>
+  useDailyCounts('stats_unique_active_collectivite');
+export const useActiveUsers = () => useDailyCounts('stats_unique_active_users');
+
+export const useFunctionnalitiesUsageProportion = () => {
+  const [data, setData] = useState<FunctionnalitiesUsageProportion | null>(
+    null
   );
 
-export const getDailyCAEIndicateurReferentielValueCount = makeGetStatistics<
-  DailyCount[]
->('daily_indicateur_referentiel_count/cae');
+  useEffect(() => {
+    if (!data) {
+      supabaseClient
+        .from('stats_functionnalities_usage_proportion')
+        .select()
+        .then(result => {
+          if (result.data?.length === 1) {
+            setData(result.data[0]);
+          }
+        });
+    }
+  });
 
-export const getDailyECIIndicateurReferentielValueCount = makeGetStatistics<
-  DailyCount[]
->('daily_indicateur_referentiel_count/eci');
+  return data;
+};
 
-export const getDailyIndicateurPersonnaliseValueCount = makeGetStatistics<
-  DailyCount[]
->('daily_indicateur_personnalise_count');
+export const useCompletenessSlices = () => {
+  const [data, setData] = useState<CompletenessSlice[] | null>(null);
 
-export const getDailyFicheActionCreatedCount = makeGetStatistics<DailyCount[]>(
-  'daily_fiche_action_created_count'
-);
+  useEffect(() => {
+    if (!data) {
+      supabaseClient
+        .from('stats_tranche_completude')
+        .select()
+        .then(result => setData(result.data));
+    }
+  });
 
-export const getDailyCAEActionStatusCreatedCount = makeGetStatistics<
-  DailyCount[]
->('daily_action_referentiel_status_count/cae');
-
-export const getDailyECIActionStatusCreatedCount = makeGetStatistics<
-  DailyCount[]
->('daily_action_referentiel_status_count/eci');
+  return data;
+};

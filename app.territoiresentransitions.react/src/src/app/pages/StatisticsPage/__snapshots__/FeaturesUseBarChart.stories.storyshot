@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Statistics Page/Features Use Bar Chart Exemple 1 1`] = `
+<div
+  style={
+    Object {
+      "marginLeft": 0,
+      "width": 500,
+    }
+  }
+>
+  <canvas
+    data-testid="canvas"
+    height={150}
+    onClick={[Function]}
+    role="img"
+    width={300}
+  />
+</div>
+`;

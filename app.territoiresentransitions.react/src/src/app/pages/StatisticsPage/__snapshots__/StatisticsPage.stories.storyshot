@@ -1,0 +1,158 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Statistics Page/Statistics Page Exemple 1 1`] = `
+<div
+  className="app fr-container m-5"
+>
+  <section>
+    <h1
+      className="fr-h1"
+    >
+      Statistiques de Territoires en Transitions
+    </h1>
+    <p>
+      Découvrez ici les statistiques de déploiement et d'utilisation de la plateforme Territoires en Transitions
+    </p>
+    <h3
+      className="fr-h3 py-2"
+    >
+      Utilisateurs actifs
+    </h3>
+    <div
+      style={
+        Object {
+          "marginLeft": 0,
+          "width": 650,
+        }
+      }
+    >
+      <canvas
+        data-testid="canvas"
+        height={150}
+        onClick={[Function]}
+        role="img"
+        width={300}
+      />
+    </div>
+    <h3
+      className="fr-h3 py-2"
+    >
+      Collectivités actives
+    </h3>
+    <div
+      style={
+        Object {
+          "marginLeft": 0,
+          "width": 650,
+        }
+      }
+    >
+      <canvas
+        data-testid="canvas"
+        height={150}
+        onClick={[Function]}
+        role="img"
+        width={300}
+      />
+    </div>
+    <h3
+      className="fr-h3 py-2"
+    >
+      Rattachements utilisateur/collectivité
+    </h3>
+    <div
+      style={
+        Object {
+          "marginLeft": 0,
+          "width": 650,
+        }
+      }
+    >
+      <canvas
+        data-testid="canvas"
+        height={150}
+        onClick={[Function]}
+        role="img"
+        width={300}
+      />
+    </div>
+    <h3
+      className="fr-h3 pt-8 pb-2"
+    >
+      Pourcentage des collectivités actives qui utilisent les fonctionnalités
+    </h3>
+    <div
+      style={
+        Object {
+          "marginLeft": 0,
+          "width": 650,
+        }
+      }
+    >
+      <canvas
+        data-testid="canvas"
+        height={150}
+        onClick={[Function]}
+        role="img"
+        width={300}
+      />
+    </div>
+    <h3
+      className="fr-h3 pt-8"
+    >
+      Référentiels
+    </h3>
+    <h4
+      className="fr-h4"
+    >
+      Part des collectivités par tranche de complétude pour chaque référentiel
+    </h4>
+    <div
+      className="flex justify-start gap-12"
+    >
+      <div
+        style={
+          Object {
+            "marginLeft": 0,
+            "width": 350,
+          }
+        }
+      >
+        <div
+          className="font-semibold text-center text-md pb-4"
+        >
+          Économie Circulaire
+        </div>
+        <canvas
+          data-testid="canvas"
+          height={150}
+          onClick={[Function]}
+          role="img"
+          width={300}
+        />
+      </div>
+      <div
+        style={
+          Object {
+            "marginLeft": 0,
+            "width": 350,
+          }
+        }
+      >
+        <div
+          className="font-semibold text-center text-md pb-4"
+        >
+          Climat Air Énergie
+        </div>
+        <canvas
+          data-testid="canvas"
+          height={150}
+          onClick={[Function]}
+          role="img"
+          width={300}
+        />
+      </div>
+    </div>
+  </section>
+</div>
+`;
