@@ -22,7 +22,7 @@ describe('All Collectivite reading endpoint should retrieve 1628 Collectivites',
     const results = await allCollectiviteReadEndpoint.getBy({}); // all
 
     expect(results.length).toBeGreaterThan(5000);
-    expect(results[0].nom).toEqual('Abbeville');
+    expect(results[0].nom).toEqual('#Collectivité Test');
   });
 });
 
