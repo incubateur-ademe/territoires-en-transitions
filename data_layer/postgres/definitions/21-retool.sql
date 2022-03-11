@@ -19,7 +19,6 @@ $$ language sql;
 comment on function retool_user_list is
     'Returns the user list for service role as an rpc for legacy reasons.';
 
-
 create or replace view retool_user_list
 as
 select d.id               as droit_id,
@@ -27,6 +26,7 @@ select d.id               as droit_id,
        d.user_id          as user_id,
        nc.nom             as collectivite,
        d.role_name        as role,
+       d.active           as active,
        p.nom              as nom,
        p.prenom           as prenom,
        p.email            as email
