@@ -1,0 +1,5 @@
+%syntax-version=1.0.0
+%project=tet
+%uri=https://github.com/betagouv/territoires-en-transitions/
+
+base 2022-03-11T16:56:57Z Florian <florian@derfurth.com> # Our base functions
