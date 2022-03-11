@@ -9,5 +9,6 @@
 drop view retool_user_list;
 -- from 21-retool.sql
 --- l 22:37 create or replace view retool_user_list
+--- l 42:65 create or replace view retool_user_collectivites_list
 
 
