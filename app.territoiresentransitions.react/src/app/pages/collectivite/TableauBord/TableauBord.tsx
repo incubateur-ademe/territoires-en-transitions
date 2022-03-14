@@ -281,8 +281,8 @@ const TableauBord = () => {
   const labellisation = useLabellisation();
 
   return (
-    <div className="bg-beige">
-      <div className="fr-container mt-9 mb-16">
+    <div className="bg-grey975">
+      <div className="fr-container pt-9 pb-16">
         {labellisation ? (
           <NiveauLabellisation labellisation={labellisation} />
         ) : null}

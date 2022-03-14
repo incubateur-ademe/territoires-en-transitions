@@ -18,6 +18,7 @@ module.exports = {
         grey425: '#666',
         grey625: '#929292',
         grey925: '#E5E5E5',
+        grey975: '#F6F6F6',
         error425: '#CE0500',
       },
     },
