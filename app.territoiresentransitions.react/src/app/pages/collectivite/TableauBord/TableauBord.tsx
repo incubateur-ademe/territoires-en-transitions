@@ -202,6 +202,7 @@ const ReferentielSection = observer(
   }) => {
     const collectiviteId = useCollectiviteId()!;
     const actions = useReferentielDownToAction(referentielId);
+    const labellisation = useLabellisation(referentielId);
     const referentielRoot = actions.find(a => a.type === 'referentiel');
 
     if (!referentielRoot) return null;
@@ -262,7 +263,9 @@ const ReferentielSection = observer(
       .filter((sample): sample is AxisAvancementSample => sample !== null);
     return (
       <div className="p-4">
-        {/* <ObjectifLabelisation /> */}
+        {labellisation ? (
+          <NiveauLabellisation labellisation={labellisation} />
+        ) : null}
         {rootScore && (
           <ChiffreCles rootScore={rootScore} referentiel={referentielId} />
         )}
@@ -278,15 +281,9 @@ const ReferentielSection = observer(
 );
 
 const TableauBord = () => {
-  const labellisation = useLabellisation();
-
   return (
     <div className="bg-grey975">
       <div className="fr-container pt-9 pb-16">
-        {labellisation ? (
-          <NiveauLabellisation labellisation={labellisation} />
-        ) : null}
-
         <main className="flex flex-row gap-4">
           <section style={{width: '600px'}} className="bg-white p-4">
             <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
