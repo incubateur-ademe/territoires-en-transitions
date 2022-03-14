@@ -1,6 +1,6 @@
 import abc
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from ..models.action_children import ActionChildren
 from ..models.action_definition import ActionDefinition
@@ -42,8 +42,8 @@ class AbstractReferentielRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_all_action_ids_from_referentiel(
-        self, referentiel: ActionReferentiel
+    def get_all_action_ids(
+        self, referentiel: Optional[ActionReferentiel] = None
     ) -> List[ActionId]:
         raise NotImplementedError
 
@@ -125,6 +125,16 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         if referentiel not in self._actions_by_ref:
             return []
         return self._actions_by_ref[referentiel].children
+
+    def get_all_action_ids(
+        self, referentiel: Optional[ActionReferentiel] = None
+    ) -> List[ActionId]:
+        if referentiel:
+            return self.get_all_action_ids_from_referentiel(referentiel)
+        all_action_ids = []
+        for referentiel in self._actions_by_ref:
+            all_action_ids += self.get_all_action_ids_from_referentiel(referentiel)
+        return all_action_ids
 
     def get_all_action_ids_from_referentiel(
         self, referentiel: ActionReferentiel

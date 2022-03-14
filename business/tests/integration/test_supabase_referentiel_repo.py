@@ -34,15 +34,11 @@ def test_get_all_definitions_from_referentiel(
 def test_get_all_action_ids_from_referentiel(
     supabase_referentiel_repo: SupabaseReferentielRepository,
 ):
-    all_eci_action_ids = supabase_referentiel_repo.get_all_action_ids_from_referentiel(
-        "eci"
-    )
+    all_eci_action_ids = supabase_referentiel_repo.get_all_action_ids("eci")
     assert len(all_eci_action_ids) == expected_nb_of_eci_actions
     assert "eci" in all_eci_action_ids
 
-    all_cae_action_ids = supabase_referentiel_repo.get_all_action_ids_from_referentiel(
-        "cae"
-    )
+    all_cae_action_ids = supabase_referentiel_repo.get_all_action_ids("cae")
     assert len(all_cae_action_ids) == expected_nb_of_cae_actions
     assert "cae" in all_cae_action_ids
 

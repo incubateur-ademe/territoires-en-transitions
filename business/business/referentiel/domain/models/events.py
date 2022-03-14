@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
+from business.referentiel.domain.models.question import Question
+
 from .action_definition import ActionDefinition
 from .action_children import ActionChildren
 from .action_computed_point import ActionComputedPoint
@@ -85,3 +87,18 @@ class ExtractReferentielActionsToCsvTriggered(DomainEvent):
 class ParseAndConvertMarkdownIndicateursToEntitiesTriggered(DomainEvent):
     folder_path: str
     referentiel: ActionReferentiel
+
+
+@dataclass
+class ParseAndConvertMarkdownReferentielQuestionsTriggered:
+    folder_path: str
+
+
+@dataclass
+class QuestionMarkdownParsingOrConvertionFailed(DomainFailureEvent):
+    pass
+
+
+@dataclass
+class QuestionMarkdownConvertedToEntities(DomainEvent):
+    questions: List[Question]

@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from glob import glob
 import os
 from pathlib import Path
-import re
 from typing import Any, List, Optional, Tuple
 
 
@@ -120,7 +119,7 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         indicateur_group: IndicateurGroup,
     ) -> Tuple[List[Indicateur], List[str]]:
         repo_action_ids = (
-            self.referentiel_repo.get_all_action_ids_from_referentiel(indicateur_group)
+            self.referentiel_repo.get_all_action_ids(indicateur_group)
             if indicateur_group in action_referentiel_options
             else []
         )
@@ -177,11 +176,14 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
 
     @staticmethod
     def _build_md_indicateur_as_dict_from_md(path: str) -> List[dict]:
-        """Extract an action from a markdown document"""
+        """Extract an indicateur from a markdown document"""
 
         markdown = load_md(path)
         parser = build_markdown_parser(
-            title_key="nom", children_key=None, description_key="description"
+            title_key="nom",
+            description_key="description",
+            initial_keyword="indicateurs",
+            keyword_node_builders={"indicateurs": lambda: {"nom": ""}},
         )
         indicateurs_as_dict = parser(markdown)
         return indicateurs_as_dict
