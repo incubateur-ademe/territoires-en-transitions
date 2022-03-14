@@ -17,6 +17,8 @@ import {ReferentielAxisScoresPolarArea} from 'ui/charts/ReferentielAxisScoresPol
 import {Spacer} from 'ui/shared/Spacer';
 import {refToEmoji} from 'utils/refToEmoji';
 import {toFixed} from 'utils/toFixed';
+import {NiveauLabellisation} from './NiveauLabellisation';
+import {useLabellisation} from './useLabellisation';
 
 const remplissageColor = '#2F4077';
 
@@ -275,24 +277,36 @@ const ReferentielSection = observer(
   }
 );
 
-const TableauBord = () => (
-  <main className="fr-container mt-9 mb-16 flex flex-row gap-4">
-    <section style={{width: '600px'}} className="bg-beige p-4">
-      <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
-        <div>{refToEmoji.cae}</div>
-        <div>Référentiel Climat Air Énergie</div>
-      </div>
-      <ReferentielSection scoreBloc={scoreBloc} referentielId="cae" />
-    </section>
+const TableauBord = () => {
+  const labellisation = useLabellisation();
 
-    <section style={{width: '600px'}} className="bg-beige p-4">
-      <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
-        <div>{refToEmoji.eci}</div>
-        <div>Référentiel Économie Circulaire</div>
+  return (
+    <div className="bg-beige">
+      <div className="fr-container mt-9 mb-16">
+        {labellisation ? (
+          <NiveauLabellisation labellisation={labellisation} />
+        ) : null}
+
+        <main className="flex flex-row gap-4">
+          <section style={{width: '600px'}} className="bg-white p-4">
+            <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
+              <div>{refToEmoji.cae}</div>
+              <div>Référentiel Climat Air Énergie</div>
+            </div>
+            <ReferentielSection scoreBloc={scoreBloc} referentielId="cae" />
+          </section>
+
+          <section style={{width: '600px'}} className="bg-white p-4">
+            <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
+              <div>{refToEmoji.eci}</div>
+              <div>Référentiel Économie Circulaire</div>
+            </div>
+            <ReferentielSection scoreBloc={scoreBloc} referentielId="eci" />
+          </section>
+        </main>
       </div>
-      <ReferentielSection scoreBloc={scoreBloc} referentielId="eci" />
-    </section>
-  </main>
-);
+    </div>
+  );
+};
 
 export default TableauBord;
