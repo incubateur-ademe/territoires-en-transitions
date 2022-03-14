@@ -56,6 +56,17 @@ DeuxEtoiles.args = {
   },
 };
 
+export const DeuxEtoilesScoreNul = Template.bind({});
+DeuxEtoilesScoreNul.args = {
+  labellisation: {
+    collectivite_id: 1,
+    etoiles: 2,
+    obtenue_le: new Date('2022-03-14T09:43:00.251Z'),
+    score_realise: null,
+    score_programme: null,
+  },
+};
+
 export const TroisEtoiles = Template.bind({});
 TroisEtoiles.args = {
   labellisation: {
