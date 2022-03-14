@@ -3,7 +3,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {LabellisationRead} from 'generated/dataLayer/labellisation_read';
 import {useEffect, useState} from 'react';
 
-export const useLabellisation = () => {
+export const useLabellisation = (referentiel: string) => {
   const [labellisation, setLabellisation] = useState<LabellisationRead | null>(
     null
   );
@@ -12,7 +12,7 @@ export const useLabellisation = () => {
   useEffect(() => {
     if (!labellisation) {
       labellisationReadEndpoint
-        .getBy({collectivite_id})
+        .getBy({collectivite_id, referentiel})
         .then(res => setLabellisation(res[0]));
     }
   }, [labellisation]);
