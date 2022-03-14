@@ -42,8 +42,8 @@ class ParseMarkdownReferentielFolder(UseCase):
         self.bus.publish_event(result)
 
     def _referentiel_from_actions(
-        self,
-        actions: List[MarkdownActionNode],
+            self,
+            actions: List[MarkdownActionNode],
     ) -> events.DomainEvent:
         """
         Nest actions into a root referentiel action.
@@ -102,26 +102,27 @@ class ParseMarkdownReferentielFolder(UseCase):
 
         markdown = load_md(path)
         parser = build_markdown_parser(
-            title_key="nom", children_key="actions", description_key="description"
+            title_key="nom", description_key="description", initial_keyword="actions", keyword_node_builders={
+                "actions": lambda: {"nom": "", "actions": []}}
         )
         actions_as_dict = parser(markdown)
         return actions_as_dict
 
     @staticmethod
     def is_ancestor_of(
-        child: MarkdownActionNode,
+            child: MarkdownActionNode,
     ) -> Callable[[MarkdownActionNode], bool]:
         return (
             lambda action: child.identifiant.startswith(action.identifiant)
-            and action.identifiant != child.identifiant
+                           and action.identifiant != child.identifiant
         )
 
     def is_parent_of(
-        self, child: MarkdownActionNode
+            self, child: MarkdownActionNode
     ) -> Callable[[MarkdownActionNode], bool]:
         return (
             lambda action: self.is_ancestor_of(child)(action)
-            and self.level(child) == self.level(action) + 1
+                           and self.level(child) == self.level(action) + 1
         )
 
     @staticmethod
@@ -146,7 +147,7 @@ class ParseMarkdownReferentielFolder(UseCase):
         return len(node.identifiant.split("."))
 
     def find_parent_within_tree(
-        self, child: MarkdownActionNode, tree: MarkdownActionNode
+            self, child: MarkdownActionNode, tree: MarkdownActionNode
     ) -> Optional[MarkdownActionNode]:
         if not self.is_ancestor_of(child)(tree):
             return

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 
 from business.referentiel.domain.models.referentiel import ActionReferentiel
@@ -79,12 +79,12 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
             for row in rows
         ]
 
-    def get_all_action_ids_from_referentiel(
-        self, referentiel: ActionReferentiel
+    def get_all_action_ids(
+        self, referentiel: Optional[ActionReferentiel] = None
     ) -> List[ActionId]:
         rows = self.client.db.get_by(
             supabase_names.tables.action_relation,
-            filters={"referentiel": f"eq.{referentiel}"},
+            filters={"referentiel": f"eq.{referentiel}"} if referentiel else {},
         )
         return [row["id"] for row in rows]
 
