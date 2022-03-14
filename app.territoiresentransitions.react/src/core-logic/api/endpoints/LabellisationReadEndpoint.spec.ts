@@ -9,6 +9,7 @@ describe('Labellisation reading endpoint ', () => {
     const labellisationReadEndpoint = new LabellisationReadEndpoint([]);
     const results = await labellisationReadEndpoint.getBy({
       collectivite_id: 1,
+      referentiel: 'cae',
     });
 
     expect(results).toHaveLength(0);
@@ -18,6 +19,7 @@ describe('Labellisation reading endpoint ', () => {
     await supabaseClient.auth.signIn(yuluCredentials); // Yulu has not rights on collectivite #1
     const results = await labellisationReadEndpoint.getBy({
       collectivite_id: 1,
+      referentiel: 'cae',
     });
 
     expect(results).toHaveLength(1);

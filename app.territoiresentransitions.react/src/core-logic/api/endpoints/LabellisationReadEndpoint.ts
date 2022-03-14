@@ -4,6 +4,7 @@ import {PostgrestResponse} from '@supabase/supabase-js';
 
 export interface LabellisationGetParams {
   collectivite_id: number;
+  referentiel: string;
 }
 
 export class LabellisationReadEndpoint extends DataLayerReadCachedEndpoint<
@@ -17,6 +18,7 @@ export class LabellisationReadEndpoint extends DataLayerReadCachedEndpoint<
   ): Promise<PostgrestResponse<LabellisationRead>> {
     return this._table
       .eq('collectivite_id', getParams.collectivite_id)
+      .eq('referentiel', getParams.referentiel)
       .order('obtenue_le', {ascending: false})
       .limit(1);
   }
