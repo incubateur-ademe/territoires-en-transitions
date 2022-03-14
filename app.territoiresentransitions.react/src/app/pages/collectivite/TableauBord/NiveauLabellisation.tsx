@@ -78,7 +78,9 @@ const NiveauActuel = (props: TNiveauLabellisationProps) => {
               return (
                 <BlueStar
                   key={`s${i}`}
-                  title={`Score labellisé en ${obtenue_le?.getFullYear()} : ${toPercentString(
+                  title={`Score labellisé en ${new Date(
+                    obtenue_le
+                  ).getFullYear()} : ${toPercentString(
                     score_realise
                   )}\nAmbition à quatre ans : ${toPercentString(
                     score_programme
