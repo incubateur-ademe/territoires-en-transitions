@@ -51,7 +51,6 @@ export const CollectiviteRoutes = () => {
       <Route path={collectiviteUsersPath}>
         <UsersPage />
       </Route>
-      )
     </>
   );
 };
