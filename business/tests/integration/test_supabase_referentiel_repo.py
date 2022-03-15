@@ -4,6 +4,7 @@ from business.evaluation.adapters import supabase_names
 from business.referentiel.adapters.supabase_referentiel_repo import (
     SupabaseReferentielRepository,
 )
+from business.referentiel.domain.models.personnalisation import Personnalisation, Regle
 from business.referentiel.domain.models.question import Choix, Question
 from business.utils.action_id import ActionId
 from tests.utils.referentiel_factory import (
@@ -197,11 +198,19 @@ def test_can_update_actions(
     assert points[0]["value"] == updated_point.value
 
 
-def test_can_add_referentiel_questions(
+def test_can_upsert_and_retrieve_referentiel_questions(
     supabase_referentiel_repo: SupabaseReferentielRepository,
     supabase_client: SupabaseClient,
 ):
+    # Prepare : add an action_children (to then be able to link a question to it)
+    action_id = "eci_1"
+    referentiel = "eci"
+    supabase_client.db.insert(
+        supabase_names.tables.action_relation,
+        {"referentiel": referentiel, "id": action_id, "parent": None},
+    )
 
+    # Act : upsert a question
     question = Question(
         id="question_1",
         formulation="Est-ce que la collectivité est compétente en voirie ?",
@@ -222,6 +231,43 @@ def test_can_add_referentiel_questions(
 
     supabase_referentiel_repo.upsert_questions([question])
 
-    # Assert : # TODO !
-    # 1. check that the questions exist in DB
-    # 2. check that the choix exist in DB
+    # Assert : Check that we retrieve the question back
+    stored_questions = supabase_referentiel_repo.get_questions()
+    assert stored_questions == [question]
+
+
+def test_can_upsert_and_retrieve_referentiel_personnalisations(
+    supabase_referentiel_repo: SupabaseReferentielRepository,
+    supabase_client: SupabaseClient,
+):
+    # Prepare : add an action_children (to then be able to link a question to it)
+    action_id = "eci_1"
+    referentiel = "eci"
+    supabase_client.db.insert(
+        supabase_names.tables.action_relation,
+        {"referentiel": referentiel, "id": action_id, "parent": None},
+    )
+
+    # Act : upsert a personnalisation to this action
+    personnalisation = Personnalisation(
+        action_id=ActionId("eci_1"),
+        description="",
+        titre="la personnalisation",
+        regles=[
+            Regle(
+                description="une description de la regle de désactivation",
+                formule="reponse(dechets_1, NON)",
+                type="desactivation",
+            ),
+            Regle(
+                description="une description de la regle de réduction",
+                formule="si reponse(dechets_1, OUI) alors reponse(dechets_2)",
+                type="reduction",
+            ),
+        ],
+    )
+    supabase_referentiel_repo.upsert_personnalisations([personnalisation])
+
+    # Assert : Check that we retrieve the personnalisation back
+    stored_personnalisations = supabase_referentiel_repo.get_personnalisations()
+    assert stored_personnalisations == [personnalisation]

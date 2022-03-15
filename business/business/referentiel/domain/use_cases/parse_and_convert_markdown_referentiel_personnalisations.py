@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from glob import glob
 import os
 from pathlib import Path
-from typing import Dict, List, Literal, Tuple, Type
+from typing import Dict, List, Literal, Tuple
 
 from marshmallow import ValidationError
 import marshmallow_dataclass
@@ -13,6 +13,7 @@ from business.referentiel.domain.models.personnalisation import (
     Regle,
     RegleType,
 )
+from business.utils.action_id import ActionId
 from business.utils.domain_message_bus import (
     AbstractDomainMessageBus,
 )
@@ -55,7 +56,7 @@ regle_titre_to_type: Dict[MarkdownPersonnalisationRegleTitre, RegleType] = {
 }
 
 
-class ParseAndConvertMarkdownReferentielPersonnalisation(UseCase):
+class ParseAndConvertMarkdownReferentielPersonnalisations(UseCase):
     def __init__(
         self,
         bus: AbstractDomainMessageBus,
@@ -69,7 +70,7 @@ class ParseAndConvertMarkdownReferentielPersonnalisation(UseCase):
 
     def execute(
         self,
-        trigger: events.ParseAndConvertMarkdownReferentielPersonnalisationTriggered,
+        trigger: events.ParseAndConvertMarkdownReferentielPersonnalisationsTriggered,
     ):
         md_files = glob(os.path.join(trigger.folder_path, "*.md"))
         print(f"Parsing {len(md_files)} files with personnalisation")
@@ -164,7 +165,7 @@ class ParseAndConvertMarkdownReferentielPersonnalisation(UseCase):
         # 2. todo : check that formule is correct (??)
         personnalisation = [
             Personnalisation(
-                id=md_personnalisation.action_id,
+                action_id=ActionId(md_personnalisation.action_id),
                 titre=md_personnalisation.titre,
                 regles=[
                     Regle(

@@ -1,10 +1,11 @@
 import abc
 from dataclasses import dataclass
 from typing import Dict, List, Optional
+
+import marshmallow_dataclass
+
 from business.referentiel.domain.models.personnalisation import Personnalisation
-
 from business.referentiel.domain.models.question import Question
-
 from ..models.action_children import ActionChildren
 from ..models.action_definition import ActionDefinition
 from ..models.action_computed_point import ActionComputedPoint
@@ -68,21 +69,33 @@ class AbstractReferentielRepository(abc.ABC):
         self,
         definitions: List[ActionDefinition],
         points: List[ActionComputedPoint],
-    ):
+    ) -> None:
         raise NotImplementedError
 
     @abc.abstractmethod
     def upsert_questions(
         self,
         questions: List[Question],
-    ):
+    ) -> None:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_questions(
+        self,
+    ) -> List[Question]:
         raise NotImplementedError
 
     @abc.abstractmethod
     def upsert_personnalisations(
         self,
         personnalisations: List[Personnalisation],
-    ):
+    ) -> None:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_personnalisations(
+        self,
+    ) -> List[Personnalisation]:
         raise NotImplementedError
 
 
@@ -214,3 +227,13 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         personnalisations: List[Personnalisation],
     ):
         self._personnalisations += personnalisations
+
+    def get_questions(
+        self,
+    ) -> List[Question]:
+        return self._questions
+
+    def get_personnalisations(
+        self,
+    ) -> List[Personnalisation]:
+        return self._personnalisations
