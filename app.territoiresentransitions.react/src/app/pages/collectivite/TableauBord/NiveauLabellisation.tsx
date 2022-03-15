@@ -1,8 +1,11 @@
 /**
  * Affiche le niveau de labellisation d'une collectivité
+ *
+ * Spec: https://github.com/betagouv/territoires-en-transitions/issues/453#issuecomment-1035227214
+ * https://mattermost.incubateur.net/betagouv/pl/hcajyhsqfing3b5cuf854ue4dc
  */
 
-import {LabellisationRead} from 'generated/dataLayer/labellisation_read';
+import {LabellisationReadByEtoiles} from './useLabellisation';
 import {toPercentString} from 'utils/score';
 import {BlueStar, GreyStar} from './Star';
 
@@ -10,21 +13,24 @@ const MAX_STARS = 5;
 const STEPS = [0.35, 0.5, 0.65, 0.75];
 
 export type TNiveauLabellisationProps = {
-  labellisation: LabellisationRead;
+  labellisation: LabellisationReadByEtoiles;
 };
 
 export const NiveauLabellisation = (props: TNiveauLabellisationProps) => {
   const {labellisation} = props;
-  const {etoiles} = labellisation;
+  const hasEtoiles =
+    Object.values(labellisation).length - (labellisation[0] ? 1 : 0) > 0;
 
-  if (!etoiles) {
-    return <NonLabellise {...props} />;
+  if (!hasEtoiles) {
+    // Cas particulier aucune étoile bleue : pas de comportement au survol de la souris, sur aucune étoile
+    return <NonLabellise />;
+    //return <NonLabellise {...props} />;
   }
 
   return <NiveauActuel {...props} />;
 };
 
-const NonLabellise = (props: TNiveauLabellisationProps) => {
+const NonLabellise = (/* props: TNiveauLabellisationProps */) => {
   //const {labellisation} = props;
   // const {score_realise} = labellisation;
 
@@ -64,7 +70,6 @@ const NonLabellise = (props: TNiveauLabellisationProps) => {
 
 const NiveauActuel = (props: TNiveauLabellisationProps) => {
   const {labellisation} = props;
-  const {etoiles, obtenue_le, score_realise, score_programme} = labellisation;
 
   return (
     <div className="flex flex-col items-center">
@@ -73,41 +78,67 @@ const NiveauActuel = (props: TNiveauLabellisationProps) => {
         {Array(MAX_STARS)
           .fill(0)
           .map((v, i) => {
-            // étoile déjà obtenue
-            if (i < etoiles) {
-              return (
-                <BlueStar
-                  key={`s${i}`}
-                  title={`Score labellisé en ${new Date(
-                    obtenue_le
-                  ).getFullYear()} : ${toPercentString(
-                    score_realise
-                  )}\nAmbition à quatre ans : ${toPercentString(
-                    score_programme
-                  )}`}
-                />
-              );
-            }
-            // étoile suivante
-            if (i === etoiles) {
-              // Cas particulier deuxième étoile si le score courant est supérieur à 35%
-              if (i === 1 && score_realise > STEPS[0]) {
+            const current = labellisation[i + 1];
+            // les données pour cette étoile existent
+            if (current) {
+              const {obtenue_le, score_realise, score_programme} = current;
+              const year = new Date(obtenue_le).getFullYear();
+
+              // pas de score affiché dans le tooltip de la 1ère étoile (ou si il n'y a pas de score)
+              if (i === 0 || !score_realise) {
                 return (
-                  <GreyStar
+                  <BlueStar
                     key={`s${i}`}
-                    title="Vous atteignez le score requis, félicitations ! Candidatez dès à présent ou continuez à progresser jusqu’à la fin de votre cycle de labellisation."
+                    title={`Reconnaissance obtenue en ${year}`}
                   />
                 );
               }
+
+              // étoile 2+ obtenue
+              const tooltip = `Score labellisé en ${year} : ${toPercentString(
+                score_realise
+              )}\nAmbition à quatre ans : ${toPercentString(score_programme)}`;
+              return <BlueStar key={`s${i}`} title={tooltip} />;
+            }
+
+            // bien que la spec dise "Cas particulier deuxième étoile...", la règle doit
+            // s'appliquer aux autres étoiles quand le score requis est dépassé (sinon le
+            // tooltip "Plus que ...% à réaliser..." va afficher une valeur négative !)
+            if (labellisation[i]?.score_realise > STEPS[i - 1]) {
               return (
                 <GreyStar
                   key={`s${i}`}
-                  title={`Plus que ${toPercentString(
-                    STEPS[i - 1] - score_realise
-                  )} à réaliser pour candidater, d'après votre score actuel !`}
+                  title={
+                    'Vous atteignez le score requis, félicitations ! Candidatez dès à présent ou continuez à progresser jusqu’à la fin de votre cycle de labellisation.'
+                  }
                 />
               );
             }
+
+            if (i > 0) {
+              // Étoile grisée suivante une étoile bleue : "Plus que [score requis- score courant actuel]% à réaliser pour candidater, d'après votre score actuel !"
+              if (labellisation[i]) {
+                const restant = STEPS[i - 1] - labellisation[i].score_realise;
+                const tooltip = `Plus que ${toPercentString(
+                  restant
+                )} à réaliser pour candidater, d'après votre score actuel !`;
+                return <GreyStar key={`s${i}`} title={tooltip} />;
+              }
+
+              // Étoiles grisées qui ne sont pas directement à la suite d'une étoile bleue : "Score requis : [score requis]%"
+              return (
+                <GreyStar
+                  key={`s${i}`}
+                  title={`Score requis : ${toPercentString(STEPS[i - 1])}`}
+                />
+              );
+            }
+
+            // pas de données pour cette étoile mais pour les étoiles suivantes oui
+            if (Object.keys(labellisation).find(v => parseInt(v) > i + 1)) {
+              return <BlueStar key={`s${i}`} title="Reconnaissance obtenue" />;
+            }
+
             // prochaine étoile
             return (
               <GreyStar
