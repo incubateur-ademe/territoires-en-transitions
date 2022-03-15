@@ -1,4 +1,3 @@
-import pytest
 from business.evaluation.adapters import supabase_names
 
 from business.referentiel.adapters.supabase_referentiel_repo import (
@@ -202,8 +201,10 @@ def test_can_upsert_and_retrieve_referentiel_questions(
     supabase_referentiel_repo: SupabaseReferentielRepository,
     supabase_client: SupabaseClient,
 ):
-    # Prepare : add an action_children (to then be able to link a question to it)
-    action_id = "eci_1"
+    question_id = "test_question"
+
+    # Prepare : Add an action_children (to then be able to link a question to it)
+    action_id = ActionId("test_1")
     referentiel = "eci"
     supabase_client.db.insert(
         supabase_names.tables.action_relation,
@@ -212,10 +213,11 @@ def test_can_upsert_and_retrieve_referentiel_questions(
 
     # Act : upsert a question
     question = Question(
-        id="question_1",
+        id=question_id,
         formulation="Est-ce que la collectivité est compétente en voirie ?",
         description="Une petite description",
-        action_ids=[ActionId("eci_1")],
+        thematique_id="dechets",
+        action_ids=[action_id],
         type="choix",
         choix=[
             Choix(
@@ -231,9 +233,27 @@ def test_can_upsert_and_retrieve_referentiel_questions(
 
     supabase_referentiel_repo.upsert_questions([question])
 
-    # Assert : Check that we retrieve the question back
-    stored_questions = supabase_referentiel_repo.get_questions()
-    assert stored_questions == [question]
+    # Assert :
+    # 1. Check that the question is there
+    questions = supabase_client.db.get_by(
+        "question",
+        {"id": f"eq.{question_id}"},
+    )
+    assert len(questions) == 1
+
+    # 2. Check that the choix is there
+    choix = supabase_client.db.get_by(
+        supabase_names.tables.question_choix,
+        {"question_id": f"eq.{question_id}"},
+    )
+    assert len(choix) == 2
+
+    # 3. Check that the link to action is there
+    question_action = supabase_client.db.get_by(
+        supabase_names.tables.question_action,
+        {"question_id": f"eq.{question_id}"},
+    )
+    assert len(question_action) == 1
 
 
 def test_can_upsert_and_retrieve_referentiel_personnalisations(
@@ -241,7 +261,7 @@ def test_can_upsert_and_retrieve_referentiel_personnalisations(
     supabase_client: SupabaseClient,
 ):
     # Prepare : add an action_children (to then be able to link a question to it)
-    action_id = "eci_1"
+    action_id = ActionId("test_1")
     referentiel = "eci"
     supabase_client.db.insert(
         supabase_names.tables.action_relation,
@@ -250,8 +270,8 @@ def test_can_upsert_and_retrieve_referentiel_personnalisations(
 
     # Act : upsert a personnalisation to this action
     personnalisation = Personnalisation(
-        action_id=ActionId("eci_1"),
-        description="",
+        action_id=action_id,
+        description="une description",
         titre="la personnalisation",
         regles=[
             Regle(
@@ -268,6 +288,17 @@ def test_can_upsert_and_retrieve_referentiel_personnalisations(
     )
     supabase_referentiel_repo.upsert_personnalisations([personnalisation])
 
-    # Assert : Check that we retrieve the personnalisation back
-    stored_personnalisations = supabase_referentiel_repo.get_personnalisations()
-    assert stored_personnalisations == [personnalisation]
+    # Assert
+    # 1. Check that the personnalisation is there
+    personnalisation = supabase_client.db.get_by(
+        supabase_names.tables.personnalisation,
+        {"action_id": f"eq.{action_id}"},
+    )
+    assert len(personnalisation) == 1
+
+    # 2. Check that the 2 regles are there
+    regles = supabase_client.db.get_by(
+        supabase_names.tables.personnalisation_regle,
+        {"action_id": f"eq.{action_id}"},
+    )
+    assert len(regles) == 2

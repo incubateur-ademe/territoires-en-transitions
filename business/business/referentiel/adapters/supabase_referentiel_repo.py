@@ -1,10 +1,10 @@
 from typing import List, Optional
+from dataclasses import asdict
 
 import marshmallow_dataclass
-from business.referentiel.domain.models.personnalisation import Personnalisation, Regle
+
+from business.referentiel.domain.models.personnalisation import Personnalisation
 from business.referentiel.domain.models.question import Question
-
-
 from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.evaluation.adapters import supabase_names
 from business.referentiel.domain.ports.referentiel_repo import (
@@ -183,7 +183,10 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
         self,
         questions: List[Question],
     ):
-        self.client.rpc.call(supabase_names.rpc.upsert_questions, questions=questions)
+        self.client.rpc.call(
+            supabase_names.rpc.upsert_questions,
+            questions=[asdict(question) for question in questions],
+        )
 
     def upsert_personnalisations(
         self,
@@ -191,7 +194,9 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     ):
         self.client.rpc.call(
             supabase_names.rpc.upsert_personnalisations,
-            personnalisations=personnalisations,
+            personnalisations=[
+                asdict(personnalisation) for personnalisation in personnalisations
+            ],
         )
 
     def get_questions(

@@ -24,6 +24,8 @@ def supabase_client() -> SupabaseClient:
 
 @pytest.fixture()
 def supabase_referentiel_repo(supabase_client) -> SupabaseReferentielRepository:
+    # Remove all test entities from database
+    # Note that the order matters here /!\
     supabase_client.db.delete_by(
         supabase_names.tables.indicateur_definition, {"id": "like.test%"}
     )
@@ -33,6 +35,23 @@ def supabase_referentiel_repo(supabase_client) -> SupabaseReferentielRepository:
     supabase_client.db.delete_by(
         supabase_names.tables.action_definition, {"action_id": "like.test%"}
     )
+
+    supabase_client.db.delete_by(supabase_names.tables.question, {"id": "like.test%"})
+    supabase_client.db.delete_by(
+        supabase_names.tables.question_choix, {"question_id": "like.test%"}
+    )
+    supabase_client.db.delete_by(
+        supabase_names.tables.question_action, {"question_id": "like.test%"}
+    )
+
+    supabase_client.db.delete_by(
+        supabase_names.tables.personnalisation_regle, {"action_id": "like.test%"}
+    )
+
+    supabase_client.db.delete_by(
+        supabase_names.tables.personnalisation, {"action_id": "like.test%"}
+    )
+
     supabase_client.db.delete_by(
         supabase_names.tables.action_relation, {"id": "like.test%"}
     )
