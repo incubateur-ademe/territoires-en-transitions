@@ -2,8 +2,10 @@
 ```yaml
 action_id: cae_4.1.1
 ```
-## Réduction de potentiel 
-```
+
+## Regles
+### Réduction de potentiel 
+```formule
 si reponse(mobilite_1, OUI) alors max(reponse(mobilite_2), 0.5) 
 ```
 Pour une collectivité AOM, la réduction est proportionnelle 
@@ -14,8 +16,10 @@ Pour une collectivité AOM, la réduction est proportionnelle
 ```yaml
 action_id: cae_3.3.5
 ```
-## Score 
-```
+
+## Regles
+### Score
+```formule
 min(score(cae_1.2.3), score(cae_3.3.5 )) 
 ```
 Score de la 3.3.5 ne peut pas dépasser le score de la 1.2.3
