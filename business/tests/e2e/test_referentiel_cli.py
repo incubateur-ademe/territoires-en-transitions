@@ -7,7 +7,7 @@ from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_computed_point import (
     ActionComputedPoint,
 )
-from business.referentiel.entrypoints.cli import store_referentiels_command
+from business.referentiel.entrypoints.cli import store_referentiels
 from tests.utils.files import remove_file, mkdir
 from tests.utils.assert_children_points_sum_to_parent_point import (
     assert_children_points_sum_to_parent_point,
@@ -40,7 +40,7 @@ def skip_test_update_referentiels(referentiel: str):
     remove_file(json_path)
 
     try:
-        store_referentiels_command(
+        store_referentiels(
             [
                 "--repo-option",
                 "JSON",

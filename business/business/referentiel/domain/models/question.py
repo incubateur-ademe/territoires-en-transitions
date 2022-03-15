@@ -16,6 +16,19 @@ class Question:
     id: str
     formulation: str
     description: str
+    thematique_id: str
     action_ids: List[ActionId]
     type: Literal["choix", "binaire", "proportion"]
     choix: Optional[List[Choix]] = None
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Question":
+        return Question(
+            id=d["id"],
+            formulation=d["formulation"],
+            type=d["type"],
+            description=d["description"],
+            thematique_id=d["thematique_id"],
+            action_ids=[ActionId(action_id) for action_id in d["action_ids"]],
+            choix=[Choix(**choix) for choix in d["choix"]],
+        )

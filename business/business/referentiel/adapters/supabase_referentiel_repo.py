@@ -1,5 +1,7 @@
 from typing import List, Optional
-from business.referentiel.domain.models.personnalisation import Personnalisation
+
+import marshmallow_dataclass
+from business.referentiel.domain.models.personnalisation import Personnalisation, Regle
 from business.referentiel.domain.models.question import Question
 
 
@@ -14,6 +16,10 @@ from business.referentiel.domain.models.action_computed_point import ActionCompu
 from business.referentiel.domain.models.indicateur import Indicateur, IndicateurId
 from business.utils.action_id import ActionId
 from business.utils.supabase_repo import SupabaseRepository
+
+
+question_schema = marshmallow_dataclass.class_schema(Question)()
+personnalisation_schema = marshmallow_dataclass.class_schema(Personnalisation)()
 
 
 class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepository):
@@ -177,13 +183,28 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
         self,
         questions: List[Question],
     ):
-        raise NotImplementedError
+        self.client.rpc.call(supabase_names.rpc.upsert_questions, questions=questions)
 
     def upsert_personnalisations(
         self,
         personnalisations: List[Personnalisation],
     ):
-        raise NotImplementedError
+        self.client.rpc.call(
+            supabase_names.rpc.upsert_personnalisations,
+            personnalisations=personnalisations,
+        )
+
+    def get_questions(
+        self,
+    ) -> List[Question]:
+        rows = self.client.db.get_all(supabase_names.views.questions)
+        return [Question.from_dict(row) for row in rows]
+
+    def get_personnalisations(
+        self,
+    ) -> List[Personnalisation]:
+        rows = self.client.db.get_all(supabase_names.views.personnalisations)
+        return [Personnalisation.from_dict(row) for row in rows]
 
     @staticmethod
     def flatten_list(l: List) -> List:

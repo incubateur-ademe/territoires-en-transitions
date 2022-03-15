@@ -91,7 +91,7 @@ class ParseAndConvertMarkdownIndicateursToEntitiesTriggered(DomainEvent):
 
 
 @dataclass
-class ParseAndConvertMarkdownReferentielQuestionsTriggered:
+class ParseAndConvertMarkdownReferentielQuestionsTriggered(DomainEvent):
     folder_path: str
 
 
@@ -111,7 +111,7 @@ class ReferentielQuestionsStored(DomainEvent):
 
 
 @dataclass
-class ParseAndConvertMarkdownReferentielPersonnalisationTriggered:
+class ParseAndConvertMarkdownReferentielPersonnalisationsTriggered(DomainEvent):
     folder_path: str
 
 

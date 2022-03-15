@@ -155,6 +155,7 @@ class ParseAndConvertMarkdownReferentielQuestions(UseCase):
                 id=md_question.id,
                 formulation=md_question.titre,
                 description=md_question.description,
+                thematique_id=md_question.thematique_id,
                 type=md_question.type,
                 action_ids=[ActionId(action) for action in md_question.actions]
                 if md_question.actions

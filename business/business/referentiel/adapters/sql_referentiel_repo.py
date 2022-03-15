@@ -62,6 +62,16 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
     ):
         raise NotImplementedError
 
+    def get_questions(
+        self,
+    ) -> List[Question]:
+        raise NotImplementedError
+
+    def get_personnalisations(
+        self,
+    ) -> List[Personnalisation]:
+        raise NotImplementedError
+
     def indicateurs_to_sql(self):
         sql = make_sql_insert_indicateurs(self._indicateurs)
         with open(self.path, "a") as f:
