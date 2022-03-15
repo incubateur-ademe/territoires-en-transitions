@@ -9,6 +9,11 @@ class tables:
     action_relation = "action_relation"
     action_definition = "action_definition"
     action_computed_points = "action_computed_points"
+    question = "question"
+    question_choix = "question_choix"
+    question_action = "question_action"
+    personnalisation = "personnalisation"
+    personnalisation_regle = "personnalisation_regle"
 
 
 @dataclass
