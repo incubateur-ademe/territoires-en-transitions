@@ -3,8 +3,9 @@
 action_id: eci_2.1
 ```
 
-## Desactivation
-```yaml
+## Regles
+### Désactivation
+```formule
 reponse(dechets_1, NON) ou reponse(dechets_3, NON) 
 ```
 
@@ -18,8 +19,9 @@ d'un programme PLPDMA
 action_id: eci_2.2
 ```
 
-## Desactivation
-```yaml
+## Regles
+### Désactivation
+```formule
 reponse(dechets_1, NON) 
 ```
 
