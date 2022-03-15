@@ -26,7 +26,9 @@ export const CustomPointsDoc = (props: TCustomPointsDocProps) => {
         <tbody>
           <tr>
             <td>Commune sans compétence voirie</td>
-            <td style={{whiteSpace: 'nowrap'}}>Réduction à 0 sur 2 points</td>
+            <td className="whitespace-nowrap fr-pr-8v">
+              Réduction à 0 sur 2 points
+            </td>
           </tr>
           <tr>
             <td>Intercommunalité sans aucune compétence voirie</td>
