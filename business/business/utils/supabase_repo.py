@@ -51,7 +51,7 @@ class SupabaseDb:
 
     def delete_by(self, table: str, filters: dict) -> None:
         r = self.client._delete(f"/{table}?{ urllib.parse.urlencode(filters)}")
-        _raise_if_unexpected_status(204, r)
+        _raise_if_unexpected_status([204], r)
 
     def insert_many(self, table: str, rows: List[dict], merge_duplicates=False) -> None:
         r = self.client._post(

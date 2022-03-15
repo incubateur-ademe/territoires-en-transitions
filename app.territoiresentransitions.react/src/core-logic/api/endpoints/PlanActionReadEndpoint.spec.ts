@@ -24,7 +24,7 @@ describe('Plan action reading endpoint ', () => {
     expect(results.length).toBeGreaterThanOrEqual(1);
     const partialExpectedReadPlanAction = {
       collectivite_id: 1,
-      nom: "Plan d'action de test",
+      nom: "Plan d'action de la collectivité",
     };
     expect(results[0]).toMatchObject(partialExpectedReadPlanAction);
   });

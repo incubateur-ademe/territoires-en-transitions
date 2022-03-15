@@ -176,11 +176,18 @@ def subscribe_bus_to_update_actions_and_indicateurs_of_referentiel(
     indicateurs_trigger = events.ParseAndConvertMarkdownIndicateursToEntitiesTriggered(
         os.path.join(markdown_folder, "indicateurs", referentiel), referentiel
     )
+
+    def publish_trigger_once_this_referentiel_actions_are_stored(
+        event: events.ReferentielActionsStored,
+    ):
+        if event.referentiel == referentiel:
+            domain_message_bus.publish_event(indicateurs_trigger)
+
     if update_actions:
         if update_indicateurs:
             domain_message_bus.subscribe_to_event(
                 events.ReferentielActionsStored,
-                lambda _: domain_message_bus.publish_event(indicateurs_trigger),
+                publish_trigger_once_this_referentiel_actions_are_stored,
             )
         domain_message_bus.publish_event(actions_trigger)
     elif update_indicateurs:
@@ -198,7 +205,7 @@ def subscribe_bus_to_update_actions_and_indicateurs_of_referentiel(
 @click.option("--indicateurs/--no-indicateurs", is_flag=True, default=True)
 @click.option("--markdown-folder", default="../markdown")
 @click.option("--referentiel", default=None)
-def store_referentiels(
+def update_referentiels(
     repo_option: ReferentielsRepository,
     to_file: Optional[str],
     markdown_folder: str,
@@ -255,7 +262,7 @@ def prepare_bus_to_update_questions_and_personnalisations(
         )
     )
     domain_message_bus.subscribe_to_event(
-        events.ReferentielActionsStored,
+        events.ReferentielQuestionsStored,
         lambda _: domain_message_bus.publish_event(personnalisations_trigger),
     )
     domain_message_bus.publish_event(questions_trigger)
@@ -290,6 +297,5 @@ if __name__ == "__main__":
 
 # Command lines
 # --------------
-# python business/referentiel/entrypoints/cli.py --repo-option SQL --referentiel "cae"
-# python business/referentiel/entrypoints/cli.py --repo-option JSON --referentiel "eci"
-# python business/referentiel/entrypoints/cli.py --repo-option JSON --referentiel "crte" --no-actions
+#  python business/referentiel/entrypoints/cli.py update-referentiels
+#  python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations
