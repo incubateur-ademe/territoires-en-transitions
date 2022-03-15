@@ -1,0 +1,559 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Custom Points/Custom Points Tabs Documentation 1`] = `
+<div
+  className="fr-tabs"
+>
+  <ul
+    className="fr-tabs__list"
+    role="tablist"
+  >
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-0"
+        aria-selected="false"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-0"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+        type="button"
+      >
+        <i
+          className="fr-fi-settings-line"
+        />
+         Personnalisation du potentiel
+      </button>
+    </li>
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-1"
+        aria-selected="true"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-1"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={0}
+        type="button"
+      >
+        <i
+          className="fr-fi-information-line"
+        />
+         Documentation
+      </button>
+    </li>
+  </ul>
+  <div
+    aria-labelledby="fr-tab-0"
+    className="fr-tabs__panel "
+    id="fr-tabpanel-0"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="CustomPointsSettings"
+    >
+      <div
+        className="fr-alert fr-alert--info fr-alert--sm"
+      >
+        <p>
+          Potentiel pour cette sous-action : 6,7 points
+        </p>
+      </div>
+      <h6
+        className="mt-4"
+      >
+        Caractéristique liée
+      </h6>
+      <div
+        className="fr-form-group"
+      >
+        <fieldset
+          className="fr-fieldset"
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular"
+            id="radio-legend"
+          >
+            La collectivité a-t-elle la compétence voirie ?
+          </legend>
+          <div
+            className="fr-fieldset__content"
+          >
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                id="radio-1"
+                name="radio"
+                type="radio"
+              />
+              <label
+                className="fr-label"
+                htmlFor="radio-1"
+              >
+                Oui, pour l’ensemble de la collectivité
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                id="radio-2"
+                name="radio"
+                type="radio"
+              />
+              <label
+                className="fr-label"
+                htmlFor="radio-2"
+              >
+                Oui, uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                id="radio-3"
+                name="radio"
+                type="radio"
+              />
+              <label
+                className="fr-label"
+                htmlFor="radio-3"
+              >
+                Non
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div
+    aria-labelledby="fr-tab-1"
+    className="fr-tabs__panel fr-tabs__panel--selected"
+    id="fr-tabpanel-1"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="CustomPointsDoc"
+    >
+      <span
+        className="font-bold"
+      >
+        Nombre de points pour cette sous-action
+      </span>
+      <ul>
+        <li>
+          Minimum : 0
+        </li>
+        <li>
+          Maximum : 6,67
+        </li>
+      </ul>
+      <table
+        className="fr-table fr-table--blue-ecume mt-8"
+        style={
+          Object {
+            "marginBottom": 0,
+          }
+        }
+      >
+        <thead>
+          <tr>
+            <th
+              scope="col"
+            >
+              Condition
+            </th>
+            <th
+              scope="col"
+            >
+              Pondération
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Commune sans compétence voirie
+            </td>
+            <td
+              style={
+                Object {
+                  "whiteSpace": "nowrap",
+                }
+              }
+            >
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Intercommunalité sans aucune compétence voirie
+            </td>
+            <td>
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
+            </td>
+            <td>
+              Réduction à 1 sur 2 points
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Custom Points/Custom Points Tabs Exemple 1 1`] = `
+<div
+  className="fr-tabs"
+>
+  <ul
+    className="fr-tabs__list"
+    role="tablist"
+  >
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-0"
+        aria-selected="true"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-0"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={0}
+        type="button"
+      >
+        <i
+          className="fr-fi-settings-line"
+        />
+         Personnalisation du potentiel
+      </button>
+    </li>
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-1"
+        aria-selected="false"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-1"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+        type="button"
+      >
+        <i
+          className="fr-fi-information-line"
+        />
+         Documentation
+      </button>
+    </li>
+  </ul>
+  <div
+    aria-labelledby="fr-tab-0"
+    className="fr-tabs__panel fr-tabs__panel--selected"
+    id="fr-tabpanel-0"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="CustomPointsSettings"
+    >
+      <div
+        className="fr-alert fr-alert--info fr-alert--sm"
+      >
+        <p>
+          Potentiel réduit pour cette sous-action : 3,3 points
+        </p>
+      </div>
+      <h6
+        className="mt-4"
+      >
+        Caractéristique liée
+      </h6>
+      <legend
+        className="fr-fieldset__legend fr-text--regular"
+      >
+        La collectivité n'a pas la compétence voirie
+      </legend>
+      <a
+        className="fr-link fr-link--icon-left fr-fi-edit-line mb-4"
+        href="#"
+        onClick={[Function]}
+      >
+        Gérer les caractéristiques de ma collectivité
+      </a>
+      <hr />
+      <h6>
+        Historique
+      </h6>
+      <div>
+        <div
+          className="mb-2"
+        >
+          <span
+            className="font-bold pr-2"
+          >
+            Richard Stallman
+          </span>
+          <span
+            className="text-grey425 fr-text--sm"
+          >
+            23 janvier 2022
+          </span>
+        </div>
+        <span>
+          Personnalisation du potentiel via la gestion des caractéristiques : 6,67 à 3,3 points
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    aria-labelledby="fr-tab-1"
+    className="fr-tabs__panel "
+    id="fr-tabpanel-1"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    documentation
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Custom Points/Custom Points Tabs Personnalisation Du Potentiel 1`] = `
+<div
+  className="fr-tabs"
+>
+  <ul
+    className="fr-tabs__list"
+    role="tablist"
+  >
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-0"
+        aria-selected="true"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-0"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={0}
+        type="button"
+      >
+        <i
+          className="fr-fi-settings-line"
+        />
+         Personnalisation du potentiel
+      </button>
+    </li>
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-1"
+        aria-selected="false"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-1"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+        type="button"
+      >
+        <i
+          className="fr-fi-information-line"
+        />
+         Documentation
+      </button>
+    </li>
+  </ul>
+  <div
+    aria-labelledby="fr-tab-0"
+    className="fr-tabs__panel fr-tabs__panel--selected"
+    id="fr-tabpanel-0"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="CustomPointsSettings"
+    >
+      <div
+        className="fr-alert fr-alert--info fr-alert--sm"
+      >
+        <p>
+          Potentiel pour cette sous-action : 6,7 points
+        </p>
+      </div>
+      <h6
+        className="mt-4"
+      >
+        Caractéristique liée
+      </h6>
+      <div
+        className="fr-form-group"
+      >
+        <fieldset
+          className="fr-fieldset"
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular"
+            id="radio-legend"
+          >
+            La collectivité a-t-elle la compétence voirie ?
+          </legend>
+          <div
+            className="fr-fieldset__content"
+          >
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                id="radio-1"
+                name="radio"
+                type="radio"
+              />
+              <label
+                className="fr-label"
+                htmlFor="radio-1"
+              >
+                Oui, pour l’ensemble de la collectivité
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                id="radio-2"
+                name="radio"
+                type="radio"
+              />
+              <label
+                className="fr-label"
+                htmlFor="radio-2"
+              >
+                Oui, uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                id="radio-3"
+                name="radio"
+                type="radio"
+              />
+              <label
+                className="fr-label"
+                htmlFor="radio-3"
+              >
+                Non
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div
+    aria-labelledby="fr-tab-1"
+    className="fr-tabs__panel "
+    id="fr-tabpanel-1"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="CustomPointsDoc"
+    >
+      <span
+        className="font-bold"
+      >
+        Nombre de points pour cette sous-action
+      </span>
+      <ul>
+        <li>
+          Minimum : 0
+        </li>
+        <li>
+          Maximum : 6,67
+        </li>
+      </ul>
+      <table
+        className="fr-table fr-table--blue-ecume mt-8"
+        style={
+          Object {
+            "marginBottom": 0,
+          }
+        }
+      >
+        <thead>
+          <tr>
+            <th
+              scope="col"
+            >
+              Condition
+            </th>
+            <th
+              scope="col"
+            >
+              Pondération
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Commune sans compétence voirie
+            </td>
+            <td
+              style={
+                Object {
+                  "whiteSpace": "nowrap",
+                }
+              }
+            >
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Intercommunalité sans aucune compétence voirie
+            </td>
+            <td>
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
+            </td>
+            <td>
+              Réduction à 1 sur 2 points
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;
