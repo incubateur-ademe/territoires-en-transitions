@@ -1,6 +1,8 @@
 from pathlib import Path
 
 from business.referentiel.adapters.sql_referentiel_repo import SqlReferentielRepository
+from business.referentiel.domain.models.question import Choix, Question
+from business.utils.action_id import ActionId
 from tests.utils.files import remove_file, mkdir
 from tests.utils.referentiel_factory import (
     make_action_children,
@@ -97,3 +99,36 @@ def test_can_add_referentiel_indicateurs():
         file_content
         == "insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('indicateur_1', 'eci', '', null, '', 'l''ademe !', '', false, null);insert into indicateur_action(indicateur_id, action_id) values ('indicateur_1', 'eci_1');\n"
     )
+
+
+def test_can_add_referentiel_questions():
+
+    sql_path = Path("./tests/data/tmp/referentiel_questions.sql")
+    mkdir(sql_path.parent)
+    remove_file(sql_path)
+
+    repo = SqlReferentielRepository(sql_path)
+
+    question = Question(
+        id="question_1",
+        formulation="Est-ce que la collectivité est compétente en voirie ?",
+        description="Une petite description",
+        action_ids=[ActionId("eci_1")],
+        type="choix",
+        choix=[
+            Choix(
+                id="question_a",
+                formulation="Oui",
+            ),
+            Choix(
+                id="question_b",
+                formulation="Non",
+            ),
+        ],
+    )
+
+    repo.upsert_questions([question])
+
+    with open(sql_path) as file:
+        file_content = file.read()
+    assert file_content == "TODO"

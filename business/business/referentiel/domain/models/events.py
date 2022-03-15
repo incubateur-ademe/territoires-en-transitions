@@ -11,6 +11,7 @@ from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.utils.domain_message_bus import DomainEvent, DomainFailureEvent
 from .markdown_action_node import MarkdownActionNode
 from .indicateur import Indicateur
+from .personnalisation import Personnalisation
 
 
 @dataclass
@@ -102,3 +103,28 @@ class QuestionMarkdownParsingOrConvertionFailed(DomainFailureEvent):
 @dataclass
 class QuestionMarkdownConvertedToEntities(DomainEvent):
     questions: List[Question]
+
+
+@dataclass
+class ReferentielQuestionsStored(DomainEvent):
+    pass
+
+
+@dataclass
+class ParseAndConvertMarkdownReferentielPersonnalisationTriggered:
+    folder_path: str
+
+
+@dataclass
+class PersonnalisationMarkdownConvertedToEntities(DomainEvent):
+    personnalisations: List[Personnalisation]
+
+
+@dataclass
+class PersonnalisationMarkdownParsingOrConvertionFailed(DomainFailureEvent):
+    pass
+
+
+@dataclass
+class ReferentielPersonnalisationStored(DomainEvent):
+    pass

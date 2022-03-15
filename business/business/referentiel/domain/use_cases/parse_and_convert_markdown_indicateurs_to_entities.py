@@ -108,7 +108,7 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
                     md_indicateur = self._markdown_indicateur_schema.load(
                         md_indicateur_as_dict
                     )
-                    md_indicateurs.append(md_indicateur)
+                    md_indicateurs.append(md_indicateur)  # type: ignore
                 except ValidationError as error:
                     parsing_errors.append(f"In file {Path(md_file).name} {str(error)}")
         return md_indicateurs, parsing_errors

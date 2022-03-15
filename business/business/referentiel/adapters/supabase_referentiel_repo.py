@@ -1,4 +1,6 @@
 from typing import List, Optional
+from business.referentiel.domain.models.personnalisation import Personnalisation
+from business.referentiel.domain.models.question import Question
 
 
 from business.referentiel.domain.models.referentiel import ActionReferentiel
@@ -170,6 +172,18 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
                 for point in points
             ],
         )
+
+    def upsert_questions(
+        self,
+        questions: List[Question],
+    ):
+        raise NotImplementedError
+
+    def upsert_personnalisations(
+        self,
+        personnalisations: List[Personnalisation],
+    ):
+        raise NotImplementedError
 
     @staticmethod
     def flatten_list(l: List) -> List:

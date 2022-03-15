@@ -1,6 +1,9 @@
 import abc
 from dataclasses import dataclass
 from typing import Dict, List, Optional
+from business.referentiel.domain.models.personnalisation import Personnalisation
+
+from business.referentiel.domain.models.question import Question
 
 from ..models.action_children import ActionChildren
 from ..models.action_definition import ActionDefinition
@@ -68,6 +71,20 @@ class AbstractReferentielRepository(abc.ABC):
     ):
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def upsert_questions(
+        self,
+        questions: List[Question],
+    ):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def upsert_personnalisations(
+        self,
+        personnalisations: List[Personnalisation],
+    ):
+        raise NotImplementedError
+
 
 @dataclass
 class ReferentielEntities:
@@ -85,6 +102,8 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
     ) -> None:
         self._actions_by_ref: Dict[ActionReferentiel, ReferentielEntities] = {}
         self._indicateurs: List[Indicateur] = []
+        self._questions: List[Question] = []
+        self._personnalisations: List[Personnalisation] = []
         if children_entities and definition_entities and points_entities:
             self.add_referentiel_actions(
                 definition_entities, children_entities, points_entities
@@ -183,3 +202,15 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         self,
     ) -> List[IndicateurId]:
         return [indicateur.indicateur_id for indicateur in self._indicateurs]
+
+    def upsert_questions(
+        self,
+        questions: List[Question],
+    ):
+        self._questions += questions
+
+    def upsert_personnalisations(
+        self,
+        personnalisations: List[Personnalisation],
+    ):
+        self._personnalisations += personnalisations
