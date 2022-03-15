@@ -11,4 +11,9 @@ drop view retool_user_list;
 --- l 22:37 create or replace view retool_user_list
 --- l 42:65 create or replace view retool_user_collectivites_list
 
+drop trigger after_epci_write on epci;
+drop function after_epci_write_insert_default_plan;
+-- from 18-plan_action.sql
+--- l 197:219
+
 
