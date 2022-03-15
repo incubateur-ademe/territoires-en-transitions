@@ -56,6 +56,7 @@ def test_parse_and_convert_markdown_referentiel_questions_from_ok_folder():
     assert actual_questions == [
         Question(
             id="question_1",
+            thematique_id="dechets",
             formulation="Question 1 binaire",
             description="",
             action_ids=[],
@@ -64,6 +65,7 @@ def test_parse_and_convert_markdown_referentiel_questions_from_ok_folder():
         ),
         Question(
             id="question_2",
+            thematique_id="dechets",
             formulation="Question 2 proportion",
             description="",
             action_ids=[],
@@ -72,6 +74,7 @@ def test_parse_and_convert_markdown_referentiel_questions_from_ok_folder():
         ),
         Question(
             id="question_3",
+            thematique_id="dechets",
             formulation="Question 3 avec actions liées",
             description="",
             action_ids=[ActionId("eci_1"), ActionId("eci_2")],
@@ -80,6 +83,7 @@ def test_parse_and_convert_markdown_referentiel_questions_from_ok_folder():
         ),
         Question(
             id="question_4",
+            thematique_id="dechets",
             formulation="Question 4 choix",
             description="",
             action_ids=[],
@@ -91,6 +95,7 @@ def test_parse_and_convert_markdown_referentiel_questions_from_ok_folder():
         ),
         Question(
             id="question_5",
+            thematique_id="dechets",
             formulation="Question 5 binaire",
             description="",
             action_ids=[],

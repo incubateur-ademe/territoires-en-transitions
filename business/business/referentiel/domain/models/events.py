@@ -25,7 +25,12 @@ class MarkdownReferentielFolderParsed(DomainEvent):
 
 
 @dataclass
-class ParseMarkdownReferentielFolderFailed(DomainFailureEvent):  # FAILURE
+class ParseMarkdownReferentielFolderFailed(DomainFailureEvent):
+    pass
+
+
+@dataclass
+class ParseMarkdownReferentielFolderEmpty(DomainEvent):
     pass
 
 
