@@ -98,9 +98,10 @@ jobs:
         if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
         run: |
           echo "Parsing markdown folder on branch $GITHUB_REF"
-          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "eci"
-          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "cae"
-          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "crte" --no-actions
+          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel eci
+          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel cae
+          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel crte
+          pipenv run python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations
 
         working-directory: ${{env.business-directory}}
         env: 
@@ -113,9 +114,10 @@ jobs:
         if: ${{ github.ref == 'refs/heads/upcoming_sandbox'}}
         run: |
           echo "Parsing markdown folder on branch $GITHUB_REF"
-          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "eci"
-          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "cae"
-          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "crte" --no-actions
+          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel eci
+          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel cae
+          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel crte
+          pipenv run python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations
 
         working-directory: ${{env.business-directory}}
         env: 
@@ -128,9 +130,11 @@ jobs:
         if: ${{ github.ref == 'refs/heads/upcoming_production'}}
         run: |
           echo "Parsing markdown folder on branch $GITHUB_REF"
-          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "eci"
-          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "cae"
-          pipenv run python business/referentiel/entrypoints/cli.py --repo-option SUPABASE --referentiel "crte" --no-actions
+          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel eci
+          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel cae
+          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel crte
+          pipenv run python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations
+
 
         working-directory: ${{env.business-directory}}
         env: 

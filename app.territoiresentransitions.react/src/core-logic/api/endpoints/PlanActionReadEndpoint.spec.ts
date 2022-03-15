@@ -24,7 +24,7 @@ describe('Plan action reading endpoint ', () => {
     expect(results.length).toBeGreaterThanOrEqual(1);
     const partialExpectedFakePlanAction = {
       collectivite_id: 1,
-      nom: "Plan d'action de test",
+      nom: "Plan d'action de la collectivité",
     };
 
     const partialExpectedDefaultPlanAction = {
