@@ -88,11 +88,10 @@ Content-Type: application/json
       "pourcentage": null
     }
   ],
-
-  "computed_points" : [
+  "computed_points": [
     {
-    "action_id": "cae",
-    "value": 50
+      "action_id": "cae",
+      "value": 50
     },
     {
       "action_id": "eci",
@@ -115,3 +114,65 @@ apikey: {{service}}
 Authorization: Bearer {{service}}
 Content-Type: application/json
 
+
+
+### Upsert personnalisation data
+POST {{api}}/rest/v1/rpc/business_upsert_personnalisations
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+{
+  "personnalisations": [
+    {
+      "action_id": "eci_1.1.1",
+      "titre": "Yolo !",
+      "description": "....",
+      "regles": [
+        {
+          "formule": "yo(lo)",
+          "type": "reduction",
+          "description": "yolo"
+        },
+        {
+          "formule": "yo(no)",
+          "type": "desactivation",
+          "description": "yono"
+        }
+      ]
+    }
+  ]
+}
+
+
+### Upsert personnalisation data
+POST {{api}}/rest/v1/rpc/business_upsert_questions
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+
+{
+  "questions": [
+    {
+      "id": "question_1",
+      "formulation": "Est-ce que la collectivité est compétente en voirie ?",
+      "description": "Une petite description",
+      "thematique_id": "mobilites",
+      "action_ids": [
+        "eci_1"
+      ],
+      "type": "choix",
+      "choix": [
+        {
+          "id": "question_a",
+          "formulation": "Oui"
+        },
+        {
+          "id": "question_b",
+          "formulation": "Non"
+        }
+      ]
+    }
+  ]
+}
