@@ -149,7 +149,7 @@ def test_build_markdown_action_node_when_referentiel_is_unknown():
 
     assert (
         failure_events[0].reason
-        == "1 validation error for MarkdownActionNode\nreferentiel\n  unexpected value; permitted: 'eci', 'cae' (type=value_error.const; given=some_new_fancy_referentiel; permitted=('eci', 'cae'))"
+        == "1 validation error for MarkdownActionNode\nreferentiel\n  unexpected value; permitted: 'eci', 'cae', 'crte' (type=value_error.const; given=some_new_fancy_referentiel; permitted=('eci', 'cae', 'crte'))"
     )
 
 
@@ -160,18 +160,13 @@ def test_build_markdown_action_node_when_no_action_root():
     bus = InMemoryDomainMessageBus()
     use_case = ParseMarkdownReferentielFolder(bus=bus)
 
-    failure_events = spy_on_event(bus, events.ParseMarkdownReferentielFolderFailed)
+    empty_folder_events = spy_on_event(bus, events.ParseMarkdownReferentielFolderEmpty)
     success_events = spy_on_event(bus, events.MarkdownReferentielFolderParsed)
 
     use_case.execute(test_trigger)
 
-    assert len(failure_events) == 1
+    assert len(empty_folder_events) == 1
     assert len(success_events) == 0
-
-    assert (
-        failure_events[0].reason
-        == "Le dossier de markdowns doit contenir une unique action racine (dont l'identifiant est ''). 0 trouvé(s)."
-    )
 
 
 def test_build_markdown_action_node_when_orphan_nodes():

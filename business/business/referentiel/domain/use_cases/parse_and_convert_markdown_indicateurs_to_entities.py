@@ -67,7 +67,9 @@ class ParseAndConvertMarkdownIndicateursToEntities(UseCase):
         self, trigger: events.ParseAndConvertMarkdownIndicateursToEntitiesTriggered
     ):
         md_files = glob(os.path.join(trigger.folder_path, "*.md"))
-        print(f"Parsing {len(md_files)} files to build referentiel node.")
+        print(
+            f"Parsing {len(md_files)} files to build referentiel node from {trigger.folder_path}."
+        )
         # parse
         md_indicateurs, parsing_errors = self.parse(md_files)
 
