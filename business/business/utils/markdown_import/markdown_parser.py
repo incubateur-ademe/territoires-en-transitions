@@ -7,6 +7,7 @@ from mistletoe import Document
 from mistletoe.block_token import BlockToken, Heading, CodeFence
 
 from .markdown_utils import (
+    is_formule,
     is_keyword,
     to_snake_case,
     token_to_string,
@@ -18,11 +19,22 @@ from mistletoe import HTMLRenderer
 NodeWriter = Callable[[BlockToken, dict], None]
 
 
+def code_writer(token: BlockToken, node: dict) -> None:
+    yaml_writer(token, node)
+    formule_writer(token, node)
+
+
 def yaml_writer(token: BlockToken, node: dict) -> None:
     """Update a node with the content of a parsed yaml"""
     if is_yaml(token):
         parsed = yaml.safe_load(token.children[0].content)
         node.update(parsed)
+
+
+def formule_writer(token: BlockToken, node: dict) -> None:
+    """Update a node with the content of a formule block"""
+    if is_formule(token):
+        node["formule"] = token.children[0].content
 
 
 def make_head_writer(title_key: str, name_level: int) -> NodeWriter:
@@ -37,7 +49,7 @@ def make_head_writer(title_key: str, name_level: int) -> NodeWriter:
 
 
 def render_text_to_html(
-        text: str,
+    text: str,
 ):
     """Renders text markdown to html."""
     renderer = HTMLRenderer()
@@ -57,10 +69,10 @@ def make_section_writer(title: str) -> NodeWriter:
 
 
 def build_markdown_parser(
-        title_key: str,
-        description_key: str,
-        initial_keyword: Optional[str],
-        keyword_node_builders: Dict[str, Callable[[], dict]]
+    title_key: str,
+    description_key: str,
+    initial_keyword: Optional[str],
+    keyword_node_builders: Dict[str, Callable[[], dict]],
 ) -> Callable[[Document], List[dict]]:
     """
     Build a Markdown parser used to convert a Document into a list of nodes.
@@ -82,7 +94,7 @@ def build_markdown_parser(
         return keyword_node_builders[current_keyword]()
 
     def node_writer_builder(
-            name_level: int,
+        name_level: int,
     ) -> Callable:
         """Returns a closure to keep track of current writer function. Also scope actions related functions."""
         head_writer = make_head_writer(title_key, name_level)
@@ -93,7 +105,7 @@ def build_markdown_parser(
         def node_writer(token: BlockToken, node: dict) -> None:
             """Save actions"""
             if current_keyword and is_keyword(
-                    token, current_keyword
+                token, current_keyword
             ):  # children_key keyword is handled in the top parser
                 return
 
@@ -116,13 +128,12 @@ def build_markdown_parser(
                     parent[current_keyword].append(leaf)
                 current_writer = head_writer
             elif isinstance(token, CodeFence):
-                current_writer = yaml_writer
-            elif current_writer == yaml_writer:
+                current_writer = code_writer
+            elif current_writer == code_writer:
                 current_writer = make_section_writer(description_key)
             elif is_heading(token, name_level + 1):
                 title = token.children[0].content.strip()
                 current_writer = make_section_writer(title)
-
             current_writer(token, leaf)
 
         return node_writer
@@ -136,7 +147,9 @@ def build_markdown_parser(
         keyword_per_level[name_level] = current_keyword
 
         for token in doc.children:
-            kw_match = [kw for kw in keyword_node_builders.keys() if is_keyword(token, kw)]
+            kw_match = [
+                kw for kw in keyword_node_builders.keys() if is_keyword(token, kw)
+            ]
             if kw_match:
                 # the heading is a keyword
                 name_level = token.level + 1
@@ -149,9 +162,9 @@ def build_markdown_parser(
             elif is_heading(token, level=1):
                 # The heading is level one
                 name_level = 1
+                current_keyword = keyword_per_level[name_level]
                 if nodes[-1][title_key]:
                     nodes.append(build_current_node())
-                current_keyword = keyword_per_level[name_level]
                 current_writer = node_writer_builder(
                     name_level=name_level,
                 )

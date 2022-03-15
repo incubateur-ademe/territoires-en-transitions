@@ -135,3 +135,31 @@ class StoreReferentielIndicateurs(UseCase):
     def execute(self, trigger: events.IndicateurMarkdownConvertedToEntities):
         self.referentiel_repo.upsert_indicateurs(trigger.indicateurs)
         self.bus.publish_event(events.ReferentielIndicateursStored(trigger.referentiel))
+
+
+class StoreReferentielQuestions(UseCase):
+    def __init__(
+        self,
+        bus: AbstractDomainMessageBus,
+        referentiel_repo: AbstractReferentielRepository,
+    ) -> None:
+        self.bus = bus
+        self.referentiel_repo = referentiel_repo
+
+    def execute(self, trigger: events.QuestionMarkdownConvertedToEntities):
+        self.referentiel_repo.upsert_questions(trigger.questions)
+        self.bus.publish_event(events.ReferentielQuestionsStored())
+
+
+class StoreReferentielPersonnalisations(UseCase):
+    def __init__(
+        self,
+        bus: AbstractDomainMessageBus,
+        referentiel_repo: AbstractReferentielRepository,
+    ) -> None:
+        self.bus = bus
+        self.referentiel_repo = referentiel_repo
+
+    def execute(self, trigger: events.PersonnalisationMarkdownConvertedToEntities):
+        self.referentiel_repo.upsert_personnalisations(trigger.personnalisations)
+        self.bus.publish_event(events.ReferentielPersonnalisationStored())

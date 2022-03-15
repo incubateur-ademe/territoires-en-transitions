@@ -94,7 +94,7 @@ class ParseAndConvertMarkdownReferentielQuestions(UseCase):
                     md_question = self._markdown_question_schema.load(
                         md_question_as_dict
                     )
-                    md_questions.append(md_question)
+                    md_questions.append(md_question)  # type: ignore
                 except ValidationError as error:
                     parsing_errors.append(f"In file {Path(md_file).name} {str(error)}")
         return md_questions, parsing_errors

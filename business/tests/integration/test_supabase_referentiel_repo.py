@@ -4,6 +4,8 @@ from business.evaluation.adapters import supabase_names
 from business.referentiel.adapters.supabase_referentiel_repo import (
     SupabaseReferentielRepository,
 )
+from business.referentiel.domain.models.question import Choix, Question
+from business.utils.action_id import ActionId
 from tests.utils.referentiel_factory import (
     make_action_definition,
     make_action_points,
@@ -193,3 +195,33 @@ def test_can_update_actions(
     )
     assert len(points) == 1
     assert points[0]["value"] == updated_point.value
+
+
+def test_can_add_referentiel_questions(
+    supabase_referentiel_repo: SupabaseReferentielRepository,
+    supabase_client: SupabaseClient,
+):
+
+    question = Question(
+        id="question_1",
+        formulation="Est-ce que la collectivité est compétente en voirie ?",
+        description="Une petite description",
+        action_ids=[ActionId("eci_1")],
+        type="choix",
+        choix=[
+            Choix(
+                id="question_a",
+                formulation="Oui",
+            ),
+            Choix(
+                id="question_b",
+                formulation="Non",
+            ),
+        ],
+    )
+
+    supabase_referentiel_repo.upsert_questions([question])
+
+    # Assert : # TODO !
+    # 1. check that the questions exist in DB
+    # 2. check that the choix exist in DB

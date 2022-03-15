@@ -52,6 +52,11 @@ def is_yaml(token: BlockToken) -> bool:
     return isinstance(token, CodeFence) and token.language == "yaml"
 
 
+def is_formule(token: BlockToken) -> bool:
+    """Returns True if token is a formule blockquote"""
+    return isinstance(token, CodeFence) and token.language == "formule"
+
+
 def is_heading(token: BlockToken, level: int) -> bool:
     """Returns True if token is a reserved keyword."""
     return isinstance(token, Heading) and token.level == level

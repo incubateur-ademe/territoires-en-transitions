@@ -1,6 +1,8 @@
 import os
 from typing import List
 from pathlib import Path
+from business.referentiel.domain.models.personnalisation import Personnalisation
+from business.referentiel.domain.models.question import Question
 
 from business.referentiel.domain.ports.referentiel_repo import (
     InMemoryReferentielRepository,
@@ -47,7 +49,19 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
     ):
         super().upsert_indicateurs(indicateurs)
         self.indicateurs_to_sql()
-        
+
+    def upsert_questions(
+        self,
+        questions: List[Question],
+    ):
+        raise NotImplementedError
+
+    def upsert_personnalisations(
+        self,
+        personnalisations: List[Personnalisation],
+    ):
+        raise NotImplementedError
+
     def indicateurs_to_sql(self):
         sql = make_sql_insert_indicateurs(self._indicateurs)
         with open(self.path, "a") as f:
