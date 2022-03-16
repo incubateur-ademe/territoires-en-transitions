@@ -194,7 +194,7 @@ create policy allow_update
 
 
 -- plan d'action par défaut
-create or replace function after_epci_write_insert_default_plan() returns trigger as
+create or replace function after_collectivite_insert_default_plan() returns trigger as
 $$
     begin
 insert into plan_action
@@ -203,7 +203,7 @@ insert into plan_action
  nom,
  categories,
  fiches_by_category)
-values (new.collectivite_id,
+values (new.id,
         gen_random_uuid(),
         'Plan d''action de la collectivité',
         '[]',
@@ -212,8 +212,8 @@ return new;
 end;
 $$ language plpgsql;
 
-create trigger after_epci_write
+create trigger after_collectivite_insert
     after insert
-    on epci
+    on collectivite
     for each row
-execute procedure after_epci_write_insert_default_plan();
+execute procedure after_collectivite_insert_default_plan();

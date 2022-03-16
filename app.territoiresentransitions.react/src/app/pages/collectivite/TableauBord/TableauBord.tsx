@@ -18,7 +18,7 @@ import {Spacer} from 'ui/shared/Spacer';
 import {refToEmoji} from 'utils/refToEmoji';
 import {toFixed} from 'utils/toFixed';
 import {NiveauLabellisation} from './NiveauLabellisation';
-import {useLabellisation} from './useLabellisation';
+import {useLabellisationParNiveau} from './useLabellisationParNiveau';
 
 const remplissageColor = '#2F4077';
 
@@ -71,6 +71,12 @@ const useIndicateurCounts = (
   };
 };
 
+const scoreRealise = (rootScore: ActionScore) => {
+  const realisePoints = toFixed(rootScore.point_fait, 1);
+  const realisePercentage = (realisePoints / rootScore.point_potentiel) * 100;
+  return {realisePoints, realisePercentage};
+};
+
 const ChiffreCles = ({
   rootScore,
   referentiel,
@@ -82,8 +88,7 @@ const ChiffreCles = ({
   const smallFontSizePx = 10;
   const widthPx = 120;
   // Action key numbers
-  const realisePoints = toFixed(rootScore.point_fait, 1);
-  const realisePercentage = (realisePoints / rootScore.point_potentiel) * 100;
+  const {realisePoints, realisePercentage} = scoreRealise(rootScore);
 
   const previsionnelPoints = toFixed(
     rootScore.point_fait + rootScore.point_programme,
@@ -202,7 +207,7 @@ const ReferentielSection = observer(
   }) => {
     const collectiviteId = useCollectiviteId()!;
     const actions = useReferentielDownToAction(referentielId);
-    const labellisation = useLabellisation(referentielId);
+    const labellisationParNiveau = useLabellisationParNiveau(referentielId);
     const referentielRoot = actions.find(a => a.type === 'referentiel');
 
     if (!referentielRoot) return null;
@@ -211,6 +216,7 @@ const ReferentielSection = observer(
       referentielRoot.id,
       referentielRoot.referentiel
     );
+
     if (!rootScore) {
       return (
         <div>
@@ -261,10 +267,14 @@ const ReferentielSection = observer(
         return sample;
       })
       .filter((sample): sample is AxisAvancementSample => sample !== null);
+    const {realisePercentage} = scoreRealise(rootScore);
     return (
       <div className="p-4">
-        {labellisation ? (
-          <NiveauLabellisation labellisation={labellisation} />
+        {labellisationParNiveau ? (
+          <NiveauLabellisation
+            labellisationParNiveau={labellisationParNiveau}
+            realisePercentage={realisePercentage}
+          />
         ) : null}
         {rootScore && (
           <ChiffreCles rootScore={rootScore} referentiel={referentielId} />

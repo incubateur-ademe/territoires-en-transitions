@@ -1,3 +1,15 @@
+-- natural sort from http://www.rhodiumtoad.org.uk/junk/naturalsort.sql
+create or replace function naturalsort(text)
+    returns bytea
+    language sql
+    immutable strict
+as $f$
+select string_agg(convert_to(coalesce(r[2],
+                                      length(length(r[1])::text) || length(r[1])::text || r[1]),
+                             'SQL_ASCII'),'\x00')
+from regexp_matches($1, '0*([0-9]+)|([^0-9]+)', 'g') r;
+$f$;
+
 create or replace view business_action_children
 as
 select referentiel, id, parent, children.ids as children
@@ -98,7 +110,7 @@ select id,
        contexte != '' as have_contexte
 from action_definition
          join action_children on action_id = action_children.id
-order by action_id;
+order by naturalsort(action_id);
 comment on view action_definition_summary is
     'The minimum information to display an action';
 

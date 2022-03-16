@@ -43,8 +43,6 @@ begin
 end
 $$ language plpgsql;
 
-select sum(t) from unnest(array [1,2,3]) t;
-
 create trigger action_statut_check_insert
     before insert
     on action_statut
