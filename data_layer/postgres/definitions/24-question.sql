@@ -10,6 +10,9 @@ create table question_thematique
 );
 comment on table question_thematique is
     'Question thematique';
+alter table question_thematique
+    enable row level security;
+create policy allow_read_for_all on question_thematique for select using (true);
 
 
 create table question
@@ -23,6 +26,9 @@ create table question
 comment on table question is
     'Question asked to the user about a collectivité';
 
+alter table question
+    enable row level security;
+create policy allow_read_for_all on question for select using (true);
 
 create table question_choix
 (
@@ -32,6 +38,10 @@ create table question_choix
 );
 comment on table question_choix is
     'Question choix';
+
+alter table question_choix
+    enable row level security;
+create policy allow_read_for_all on question_choix for select using (true);
 
 
 create table question_action
@@ -43,6 +53,10 @@ create table question_action
 comment on table question_action is
     'Question <-> Action many-to-many relationship';
 
+alter table question_action
+    enable row level security;
+create policy allow_read_for_all on question_action for select using (true);
+
 
 create or replace function business_upsert_questions(
     questions json[]
@@ -52,7 +66,7 @@ declare
     obj  json;
     type question_type;
 begin
-    if true -- is_service_role()
+    if is_service_role() -- only service role can upsert questions
     then
         -- loop over questions
         foreach obj in array questions
