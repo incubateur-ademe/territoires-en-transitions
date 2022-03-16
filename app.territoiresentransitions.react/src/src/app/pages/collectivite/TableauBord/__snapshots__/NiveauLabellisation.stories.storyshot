@@ -2,11 +2,13 @@
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Cinq Etoiles 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Niveau de labellisation actuel
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
@@ -95,11 +97,13 @@ Ambition à quatre ans : 80%
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deux Etoiles 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Niveau de labellisation actuel
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
@@ -185,11 +189,13 @@ Ambition à quatre ans : 62%
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deux Etoiles Directement 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Niveau de labellisation actuel
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
@@ -274,11 +280,13 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deu
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deux Etoiles Possibles 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Niveau de labellisation actuel
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
@@ -363,11 +371,13 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deu
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deux Etoiles Score Nul 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Niveau de labellisation actuel
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
@@ -452,11 +462,13 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deu
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Non Labellise 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Non labellisé
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
@@ -526,11 +538,13 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Non
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Non Labellise Pas De Donnees 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Non labellisé
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
@@ -600,11 +614,13 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Non
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Quatre Etoiles 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Niveau de labellisation actuel
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
@@ -692,11 +708,13 @@ Ambition à quatre ans : 80%
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Trois Etoiles 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Niveau de labellisation actuel
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
@@ -783,11 +801,13 @@ Ambition à quatre ans : 62%
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Trois Etoiles Possibles 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Niveau de labellisation actuel
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
@@ -873,11 +893,13 @@ Ambition à quatre ans : 75%
 
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Une Etoile 1`] = `
 <div
-  className="flex flex-col items-center"
+  className="flex flex-col items-center mt-4"
 >
-  <h2>
+  <div
+    className="font-semibold text-center mb-4 text-xl"
+  >
     Niveau de labellisation actuel
-  </h2>
+  </div>
   <div
     className="flex space-x-4 pb-12"
   >
