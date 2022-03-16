@@ -15,12 +15,13 @@ const Template: Story<TNiveauLabellisationProps> = args => (
 
 export const NonLabellisePasDeDonnees = Template.bind({});
 NonLabellisePasDeDonnees.args = {
-  labellisation: {},
+  labellisationParNiveau: {},
 };
 
 export const NonLabellise = Template.bind({});
 NonLabellise.args = {
-  labellisation: {
+  realisePercentage: 0.1,
+  labellisationParNiveau: {
     0: {
       collectivite_id: 1,
       etoiles: 0,
@@ -32,7 +33,8 @@ NonLabellise.args = {
 
 export const UneEtoile = Template.bind({});
 UneEtoile.args = {
-  labellisation: {
+  realisePercentage: 0.25,
+  labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 1,
@@ -45,7 +47,8 @@ UneEtoile.args = {
 
 export const DeuxEtoilesPossibles = Template.bind({});
 DeuxEtoilesPossibles.args = {
-  labellisation: {
+  realisePercentage: 0.45,
+  labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 1,
@@ -58,7 +61,8 @@ DeuxEtoilesPossibles.args = {
 
 export const DeuxEtoiles = Template.bind({});
 DeuxEtoiles.args = {
-  labellisation: {
+  realisePercentage: 0.45,
+  labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 1,
@@ -78,7 +82,7 @@ DeuxEtoiles.args = {
 
 export const DeuxEtoilesScoreNul = Template.bind({});
 DeuxEtoilesScoreNul.args = {
-  labellisation: {
+  labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 2,
@@ -100,7 +104,8 @@ DeuxEtoilesScoreNul.args = {
 // afficher uniquement "Reconnaissance obtenue"
 export const DeuxEtoilesDirectement = Template.bind({});
 DeuxEtoilesDirectement.args = {
-  labellisation: {
+  realisePercentage: 0.42,
+  labellisationParNiveau: {
     2: {
       collectivite_id: 1,
       etoiles: 2,
@@ -116,7 +121,8 @@ DeuxEtoilesDirectement.args = {
 // tooltip "Plus que ...% à réaliser..." va afficher une valeur négative !)
 export const TroisEtoilesPossibles = Template.bind({});
 TroisEtoilesPossibles.args = {
-  labellisation: {
+  realisePercentage: 0.51,
+  labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 1,
@@ -128,7 +134,7 @@ TroisEtoilesPossibles.args = {
       collectivite_id: 1,
       etoiles: 2,
       obtenue_le: new Date('2022-03-14T09:43:00.251Z'),
-      score_realise: 0.7,
+      score_realise: 0.35,
       score_programme: 0.75,
     },
   },
@@ -136,7 +142,8 @@ TroisEtoilesPossibles.args = {
 
 export const TroisEtoiles = Template.bind({});
 TroisEtoiles.args = {
-  labellisation: {
+  realisePercentage: 0.51,
+  labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 1,
@@ -163,8 +170,9 @@ TroisEtoiles.args = {
 
 export const QuatreEtoiles = Template.bind({});
 QuatreEtoiles.args = {
-  labellisation: {
-    ...TroisEtoiles.args.labellisation,
+  realisePercentage: 0.69,
+  labellisationParNiveau: {
+    ...TroisEtoiles.args.labellisationParNiveau,
     4: {
       collectivite_id: 1,
       etoiles: 4,
@@ -177,8 +185,9 @@ QuatreEtoiles.args = {
 
 export const CinqEtoiles = Template.bind({});
 CinqEtoiles.args = {
-  labellisation: {
-    ...QuatreEtoiles.args.labellisation,
+  realisePercentage: 0.79,
+  labellisationParNiveau: {
+    ...QuatreEtoiles.args.labellisationParNiveau,
     5: {
       collectivite_id: 1,
       etoiles: 5,

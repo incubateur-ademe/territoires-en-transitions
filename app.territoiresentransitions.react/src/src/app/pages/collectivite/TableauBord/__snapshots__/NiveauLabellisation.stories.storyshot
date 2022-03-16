@@ -142,7 +142,7 @@ Ambition à quatre ans : 62%
       xmlns="http://www.w3.org/2000/svg"
     >
       <title>
-        Plus que 13% à réaliser pour candidater, d'après votre score actuel !
+        Plus que 5% à réaliser pour candidater, d'après votre score actuel !
       </title>
       <path
         d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
@@ -231,7 +231,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deu
       xmlns="http://www.w3.org/2000/svg"
     >
       <title>
-        Plus que 50% à réaliser pour candidater, d'après votre score actuel !
+        Plus que 8% à réaliser pour candidater, d'après votre score actuel !
       </title>
       <path
         d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
@@ -361,96 +361,6 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deu
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deux Etoiles Score Atteint 1`] = `
-<div
-  className="flex flex-col items-center"
->
-  <h2>
-    Niveau de labellisation actuel
-  </h2>
-  <div
-    className="flex space-x-4 pb-12"
-  >
-    <svg
-      fill="none"
-      height="38"
-      viewBox="0 0 39 38"
-      width="39"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <title>
-        Reconnaissance obtenue en 2020
-      </title>
-      <path
-        d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
-        fill="#0063CB"
-      />
-    </svg>
-    <svg
-      fill="none"
-      height="38"
-      viewBox="0 0 39 38"
-      width="39"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <title>
-        Score labellisé en 2022 : 70%
-Ambition à quatre ans : 75%
-      </title>
-      <path
-        d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
-        fill="#0063CB"
-      />
-    </svg>
-    <svg
-      fill="none"
-      height="38"
-      viewBox="0 0 39 38"
-      width="39"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <title>
-        Vous atteignez le score requis, félicitations ! Candidatez dès à présent ou continuez à progresser jusqu’à la fin de votre cycle de labellisation.
-      </title>
-      <path
-        d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
-        fill="#e5e5e5"
-      />
-    </svg>
-    <svg
-      fill="none"
-      height="38"
-      viewBox="0 0 39 38"
-      width="39"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <title>
-        Score requis : 65%
-      </title>
-      <path
-        d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
-        fill="#e5e5e5"
-      />
-    </svg>
-    <svg
-      fill="none"
-      height="38"
-      viewBox="0 0 39 38"
-      width="39"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <title>
-        Score requis : 75%
-      </title>
-      <path
-        d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
-        fill="#e5e5e5"
-      />
-    </svg>
-  </div>
-</div>
-`;
-
 exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deux Etoiles Score Nul 1`] = `
 <div
   className="flex flex-col items-center"
@@ -499,7 +409,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deu
       xmlns="http://www.w3.org/2000/svg"
     >
       <title>
-        Plus que 50% à réaliser pour candidater, d'après votre score actuel !
+        Score requis : 50%
       </title>
       <path
         d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
@@ -769,7 +679,7 @@ Ambition à quatre ans : 80%
       xmlns="http://www.w3.org/2000/svg"
     >
       <title>
-        Plus que 10% à réaliser pour candidater, d'après votre score actuel !
+        Plus que 6% à réaliser pour candidater, d'après votre score actuel !
       </title>
       <path
         d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
@@ -904,7 +814,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Tro
       xmlns="http://www.w3.org/2000/svg"
     >
       <title>
-        Score labellisé en 2022 : 70%
+        Score labellisé en 2022 : 35%
 Ambition à quatre ans : 75%
       </title>
       <path
@@ -994,7 +904,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Une
       xmlns="http://www.w3.org/2000/svg"
     >
       <title>
-        Plus que 15% à réaliser pour candidater, d'après votre score actuel !
+        Plus que 10% à réaliser pour candidater, d'après votre score actuel !
       </title>
       <path
         d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
