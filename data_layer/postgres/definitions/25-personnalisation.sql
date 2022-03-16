@@ -9,6 +9,10 @@ create table personnalisation
 comment on table personnalisation is
     'How an action is personalized.';
 
+alter table personnalisation
+    enable row level security;
+create policy allow_read_for_all on personnalisation for select using (true);
+
 create table personnalisation_regle
 (
     action_id   action_id  not null references personnalisation,
@@ -20,6 +24,10 @@ create table personnalisation_regle
 comment on table personnalisation_regle is
     'A règle to be used for score computation, relate to a personnalisation and an action.';
 
+alter table personnalisation_regle
+    enable row level security;
+create policy allow_read_for_all on personnalisation_regle for select using (true);
+
 
 create or replace function business_upsert_personnalisations(
     personnalisations json[]
@@ -28,7 +36,7 @@ $$
 declare
     obj json;
 begin
-    if true -- is_service_role()
+    if is_service_role()
     then
         -- loop over personnalisations
         foreach obj in array personnalisations
@@ -61,4 +69,4 @@ begin
         perform set_config('response.status', '401', true);
     end if;
 end
-$$ language plpgsql;
+$$ language plpgsql security definer;
