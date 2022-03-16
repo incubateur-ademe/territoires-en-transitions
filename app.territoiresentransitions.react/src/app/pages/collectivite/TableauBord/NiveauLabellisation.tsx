@@ -33,8 +33,10 @@ export const NiveauLabellisation = (props: TNiveauLabellisationProps) => {
 
 const NonLabellise = () => {
   return (
-    <div className="flex flex-col items-center">
-      <h2>Non labellisé</h2>
+    <div className="flex flex-col items-center mt-4">
+      <div className="font-semibold text-center mb-4 text-xl">
+        Non labellisé
+      </div>
       <div className="flex space-x-4 pb-12">
         {NIVEAUX.map(niveau => (
           <GreyStar key={`n${niveau}`} />
@@ -48,8 +50,10 @@ const NiveauActuel = (props: TNiveauLabellisationProps) => {
   const {realisePercentage, labellisationParNiveau} = props;
 
   return (
-    <div className="flex flex-col items-center">
-      <h2>Niveau de labellisation actuel</h2>
+    <div className="flex flex-col items-center mt-4">
+      <div className="font-semibold text-center mb-4 text-xl">
+        Niveau de labellisation actuel
+      </div>
       <div className="flex space-x-4 pb-12">
         {NIVEAUX.map(niveau => {
           const {obtenu, message} = getNiveauInfo(
