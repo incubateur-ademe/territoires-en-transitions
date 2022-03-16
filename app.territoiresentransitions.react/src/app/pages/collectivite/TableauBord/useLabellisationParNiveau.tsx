@@ -3,28 +3,28 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {LabellisationRead} from 'generated/dataLayer/labellisation_read';
 import {useEffect, useState} from 'react';
 
-export const useLabellisation = (referentiel: string) => {
+export const useLabellisationParNiveau = (referentiel: string) => {
   const [labellisation, setLabellisation] =
-    useState<LabellisationReadByEtoiles | null>(null);
+    useState<LabellisationParNiveauRead | null>(null);
 
   const collectivite_id = useCollectiviteId()!;
   useEffect(() => {
     if (!labellisation) {
       labellisationReadEndpoint
         .getBy({collectivite_id, referentiel})
-        .then(res => setLabellisation(res.reduce(byEtoiles, {})));
+        .then(res => setLabellisation(res.reduce(parNiveau, {})));
     }
   }, [labellisation]);
 
   return labellisation;
 };
 
-export type LabellisationReadByEtoiles = {
+export type LabellisationParNiveauRead = {
   [key: number]: LabellisationRead;
 };
 
-const byEtoiles = (
-  dict: LabellisationReadByEtoiles,
+const parNiveau = (
+  dict: LabellisationParNiveauRead,
   item: LabellisationRead
 ) => {
   const {etoiles} = item;
