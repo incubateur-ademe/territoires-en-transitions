@@ -20,62 +20,62 @@ NonLabellisePasDeDonnees.args = {
 
 export const NonLabellise = Template.bind({});
 NonLabellise.args = {
-  realisePercentage: 0.1,
+  realisePercentage: 10,
   labellisationParNiveau: {
     0: {
       collectivite_id: 1,
       etoiles: 0,
-      score_realise: 0.1,
-      score_programme: 0.62,
+      score_realise: 10,
+      score_programme: 62,
     },
   },
 };
 
 export const UneEtoile = Template.bind({});
 UneEtoile.args = {
-  realisePercentage: 0.25,
+  realisePercentage: 25,
   labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 1,
       obtenue_le: new Date('2022-03-14T09:43:00.251Z'),
-      score_realise: 0.2,
-      score_programme: 0.62,
+      score_realise: 20,
+      score_programme: 62,
     },
   },
 };
 
 export const DeuxEtoilesPossibles = Template.bind({});
 DeuxEtoilesPossibles.args = {
-  realisePercentage: 0.45,
+  realisePercentage: 45,
   labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 1,
       obtenue_le: new Date('2022-03-14T09:43:00.251Z'),
-      score_realise: 0.36,
-      score_programme: 0.62,
+      score_realise: 36,
+      score_programme: 62,
     },
   },
 };
 
 export const DeuxEtoiles = Template.bind({});
 DeuxEtoiles.args = {
-  realisePercentage: 0.45,
+  realisePercentage: 45,
   labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 1,
       obtenue_le: new Date('2020-03-14T09:43:00.251Z'),
-      score_realise: 0.2,
-      score_programme: 0.45,
+      score_realise: 20,
+      score_programme: 45,
     },
     2: {
       collectivite_id: 1,
       etoiles: 2,
       obtenue_le: new Date('2022-03-14T09:43:00.251Z'),
-      score_realise: 0.37,
-      score_programme: 0.62,
+      score_realise: 37,
+      score_programme: 62,
     },
   },
 };
@@ -104,7 +104,7 @@ DeuxEtoilesScoreNul.args = {
 // afficher uniquement "Reconnaissance obtenue"
 export const DeuxEtoilesDirectement = Template.bind({});
 DeuxEtoilesDirectement.args = {
-  realisePercentage: 0.42,
+  realisePercentage: 42,
   labellisationParNiveau: {
     2: {
       collectivite_id: 1,
@@ -121,79 +121,79 @@ DeuxEtoilesDirectement.args = {
 // tooltip "Plus que ...% à réaliser..." va afficher une valeur négative !)
 export const TroisEtoilesPossibles = Template.bind({});
 TroisEtoilesPossibles.args = {
-  realisePercentage: 0.51,
+  realisePercentage: 51,
   labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 1,
       obtenue_le: new Date('2020-03-14T09:43:00.251Z'),
-      score_realise: 0.2,
-      score_programme: 0.45,
+      score_realise: 20,
+      score_programme: 45,
     },
     2: {
       collectivite_id: 1,
       etoiles: 2,
       obtenue_le: new Date('2022-03-14T09:43:00.251Z'),
-      score_realise: 0.35,
-      score_programme: 0.75,
+      score_realise: 35,
+      score_programme: 75,
     },
   },
 };
 
 export const TroisEtoiles = Template.bind({});
 TroisEtoiles.args = {
-  realisePercentage: 0.51,
+  realisePercentage: 51,
   labellisationParNiveau: {
     1: {
       collectivite_id: 1,
       etoiles: 1,
       obtenue_le: new Date('2018-03-14T09:43:00.251Z'),
-      score_realise: 0.2,
-      score_programme: 0.45,
+      score_realise: 20,
+      score_programme: 45,
     },
     2: {
       collectivite_id: 1,
       etoiles: 2,
       obtenue_le: new Date('2020-03-14T09:43:00.251Z'),
-      score_realise: 0.37,
-      score_programme: 0.62,
+      score_realise: 37,
+      score_programme: 62,
     },
     3: {
       collectivite_id: 1,
       etoiles: 3,
       obtenue_le: new Date('2022-03-14T09:43:00.251Z'),
-      score_realise: 0.51,
-      score_programme: 0.62,
+      score_realise: 51,
+      score_programme: 62,
     },
   },
 };
 
 export const QuatreEtoiles = Template.bind({});
 QuatreEtoiles.args = {
-  realisePercentage: 0.69,
+  realisePercentage: 69,
   labellisationParNiveau: {
     ...TroisEtoiles.args.labellisationParNiveau,
     4: {
       collectivite_id: 1,
       etoiles: 4,
       obtenue_le: new Date('2023-03-14T09:43:00.251Z'),
-      score_realise: 0.65,
-      score_programme: 0.8,
+      score_realise: 65,
+      score_programme: 80,
     },
   },
 };
 
 export const CinqEtoiles = Template.bind({});
 CinqEtoiles.args = {
-  realisePercentage: 0.79,
+  realisePercentage: 79,
   labellisationParNiveau: {
     ...QuatreEtoiles.args.labellisationParNiveau,
     5: {
       collectivite_id: 1,
       etoiles: 5,
       obtenue_le: new Date('2024-03-14T09:43:00.251Z'),
-      score_realise: 0.75,
-      score_programme: 0.8,
+      score_realise: 75,
+      score_programme: 80,
     },
   },
 };

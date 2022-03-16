@@ -1,15 +1,17 @@
-import {toPercentString} from 'utils/score';
 import {LabellisationParNiveauRead} from 'app/pages/collectivite/TableauBord/useLabellisationParNiveau';
+import {toFixed} from 'utils/toFixed';
 
 export const NIVEAUX = [1, 2, 3, 4, 5];
 
 const scoreRequisParNiveau: {[key: number]: number} = {
   1: 0,
-  2: 0.35,
-  3: 0.5,
-  4: 0.65,
-  5: 0.75,
+  2: 35,
+  3: 50,
+  4: 65,
+  5: 75,
 };
+
+const toPercentString = (n: number) => toFixed(n, 1).toString() + '%';
 
 /**
  * Indique si un niveau a été obtenu ou non, et fourni un message
