@@ -1,0 +1,1321 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Binaire 1`] = `
+<div
+  className="fr-tabs"
+>
+  <ul
+    className="fr-tabs__list"
+    role="tablist"
+  >
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-0"
+        aria-selected="true"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-0"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={0}
+        type="button"
+      >
+        <i
+          className="fr-fi-settings-line"
+        />
+         Personnalisation du potentiel
+      </button>
+    </li>
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-1"
+        aria-selected="false"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-1"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+        type="button"
+      >
+        <i
+          className="fr-fi-information-line"
+        />
+         Documentation
+      </button>
+    </li>
+  </ul>
+  <div
+    aria-labelledby="fr-tab-0"
+    className="fr-tabs__panel fr-tabs__panel--selected"
+    id="fr-tabpanel-0"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielQR"
+    >
+      <div
+        className="fr-highlight"
+        style={
+          Object {
+            "border": "1px solid var(--yellow-moutarde-850)",
+            "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+            "marginLeft": 0,
+            "paddingBottom": "1rem",
+            "paddingTop": "1rem",
+          }
+        }
+      >
+        <div
+          className="flex items-center"
+        >
+          Potentiel pour cette sous-action : 6,7 points
+        </div>
+      </div>
+      <h6
+        className="mt-8"
+      >
+        Caractéristique liée
+      </h6>
+      <div
+        className="fr-form-group"
+      >
+        <fieldset
+          className="fr-fieldset"
+          name="binaire"
+          onChange={[Function]}
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
+              }
+            }
+          />
+          <div
+            className="fr-fieldset__content fr-fieldset--inline"
+          >
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={false}
+                id="q2-y"
+                name="binaire"
+                type="radio"
+                value="true"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q2-y"
+              >
+                Oui
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={false}
+                id="q2-n"
+                name="binaire"
+                type="radio"
+                value="false"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q2-n"
+              >
+                Non
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div
+    aria-labelledby="fr-tab-1"
+    className="fr-tabs__panel "
+    id="fr-tabpanel-1"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielDoc"
+    >
+      <span
+        className="font-bold"
+      >
+        Nombre de points pour cette sous-action
+      </span>
+      <ul>
+        <li>
+          Minimum : 0
+        </li>
+        <li>
+          Maximum : 6,67
+        </li>
+      </ul>
+      <table
+        className="fr-table fr-table--blue-ecume mt-8"
+        style={
+          Object {
+            "marginBottom": 0,
+          }
+        }
+      >
+        <thead>
+          <tr>
+            <th
+              scope="col"
+            >
+              Condition
+            </th>
+            <th
+              scope="col"
+            >
+              Pondération
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Commune sans compétence voirie
+            </td>
+            <td
+              className="whitespace-nowrap fr-pr-8v"
+            >
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Intercommunalité sans aucune compétence voirie
+            </td>
+            <td>
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
+            </td>
+            <td>
+              Réduction à 1 sur 2 points
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Binaire Modifiee 1`] = `
+<div
+  className="fr-tabs"
+>
+  <ul
+    className="fr-tabs__list"
+    role="tablist"
+  >
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-0"
+        aria-selected="true"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-0"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={0}
+        type="button"
+      >
+        <i
+          className="fr-fi-settings-line"
+        />
+         Personnalisation du potentiel
+      </button>
+    </li>
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-1"
+        aria-selected="false"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-1"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+        type="button"
+      >
+        <i
+          className="fr-fi-information-line"
+        />
+         Documentation
+      </button>
+    </li>
+  </ul>
+  <div
+    aria-labelledby="fr-tab-0"
+    className="fr-tabs__panel fr-tabs__panel--selected"
+    id="fr-tabpanel-0"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielQR"
+    >
+      <div
+        className="fr-highlight"
+        style={
+          Object {
+            "border": "1px solid var(--yellow-moutarde-850)",
+            "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+            "marginLeft": 0,
+            "paddingBottom": "1rem",
+            "paddingTop": "1rem",
+          }
+        }
+      >
+        <div
+          className="flex items-center"
+        >
+          Potentiel réduit pour cette sous-action : 3,3 points
+        </div>
+      </div>
+      <h6
+        className="mt-8"
+      >
+        Caractéristique liée
+      </h6>
+      <div
+        className="fr-form-group"
+      >
+        <fieldset
+          className="fr-fieldset"
+          name="binaire"
+          onChange={[Function]}
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
+              }
+            }
+          />
+          <div
+            className="fr-fieldset__content fr-fieldset--inline"
+          >
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={false}
+                id="q2-y"
+                name="binaire"
+                type="radio"
+                value="true"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q2-y"
+              >
+                Oui
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={true}
+                id="q2-n"
+                name="binaire"
+                type="radio"
+                value="false"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q2-n"
+              >
+                Non
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div
+    aria-labelledby="fr-tab-1"
+    className="fr-tabs__panel "
+    id="fr-tabpanel-1"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielDoc"
+    >
+      <span
+        className="font-bold"
+      >
+        Nombre de points pour cette sous-action
+      </span>
+      <ul>
+        <li>
+          Minimum : 0
+        </li>
+        <li>
+          Maximum : 6,67
+        </li>
+      </ul>
+      <table
+        className="fr-table fr-table--blue-ecume mt-8"
+        style={
+          Object {
+            "marginBottom": 0,
+          }
+        }
+      >
+        <thead>
+          <tr>
+            <th
+              scope="col"
+            >
+              Condition
+            </th>
+            <th
+              scope="col"
+            >
+              Pondération
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Commune sans compétence voirie
+            </td>
+            <td
+              className="whitespace-nowrap fr-pr-8v"
+            >
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Intercommunalité sans aucune compétence voirie
+            </td>
+            <td>
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
+            </td>
+            <td>
+              Réduction à 1 sur 2 points
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Choix 1`] = `
+<div
+  className="fr-tabs"
+>
+  <ul
+    className="fr-tabs__list"
+    role="tablist"
+  >
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-0"
+        aria-selected="true"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-0"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={0}
+        type="button"
+      >
+        <i
+          className="fr-fi-settings-line"
+        />
+         Personnalisation du potentiel
+      </button>
+    </li>
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-1"
+        aria-selected="false"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-1"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+        type="button"
+      >
+        <i
+          className="fr-fi-information-line"
+        />
+         Documentation
+      </button>
+    </li>
+  </ul>
+  <div
+    aria-labelledby="fr-tab-0"
+    className="fr-tabs__panel fr-tabs__panel--selected"
+    id="fr-tabpanel-0"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielQR"
+    >
+      <div
+        className="fr-highlight"
+        style={
+          Object {
+            "border": "1px solid var(--yellow-moutarde-850)",
+            "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+            "marginLeft": 0,
+            "paddingBottom": "1rem",
+            "paddingTop": "1rem",
+          }
+        }
+      >
+        <div
+          className="flex items-center"
+        >
+          Potentiel pour cette sous-action : 6,7 points
+        </div>
+      </div>
+      <h6
+        className="mt-8"
+      >
+        Caractéristique liée
+      </h6>
+      <div
+        className="fr-form-group"
+      >
+        <fieldset
+          className="fr-fieldset"
+          name="choix"
+          onChange={[Function]}
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
+              }
+            }
+          />
+          <div
+            className="fr-fieldset__content"
+          >
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={false}
+                id="q1-c1"
+                name="choix"
+                type="radio"
+                value="c1"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q1-c1"
+              >
+                Oui, pour l’ensemble de la collectivité
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={false}
+                id="q1-c2"
+                name="choix"
+                type="radio"
+                value="c2"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q1-c2"
+              >
+                Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={false}
+                id="q1-c3"
+                name="choix"
+                type="radio"
+                value="c3"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q1-c3"
+              >
+                Non
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div
+    aria-labelledby="fr-tab-1"
+    className="fr-tabs__panel "
+    id="fr-tabpanel-1"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielDoc"
+    >
+      <span
+        className="font-bold"
+      >
+        Nombre de points pour cette sous-action
+      </span>
+      <ul>
+        <li>
+          Minimum : 0
+        </li>
+        <li>
+          Maximum : 6,67
+        </li>
+      </ul>
+      <table
+        className="fr-table fr-table--blue-ecume mt-8"
+        style={
+          Object {
+            "marginBottom": 0,
+          }
+        }
+      >
+        <thead>
+          <tr>
+            <th
+              scope="col"
+            >
+              Condition
+            </th>
+            <th
+              scope="col"
+            >
+              Pondération
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Commune sans compétence voirie
+            </td>
+            <td
+              className="whitespace-nowrap fr-pr-8v"
+            >
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Intercommunalité sans aucune compétence voirie
+            </td>
+            <td>
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
+            </td>
+            <td>
+              Réduction à 1 sur 2 points
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Choix Modifiee 1`] = `
+<div
+  className="fr-tabs"
+>
+  <ul
+    className="fr-tabs__list"
+    role="tablist"
+  >
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-0"
+        aria-selected="true"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-0"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={0}
+        type="button"
+      >
+        <i
+          className="fr-fi-settings-line"
+        />
+         Personnalisation du potentiel
+      </button>
+    </li>
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-1"
+        aria-selected="false"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-1"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+        type="button"
+      >
+        <i
+          className="fr-fi-information-line"
+        />
+         Documentation
+      </button>
+    </li>
+  </ul>
+  <div
+    aria-labelledby="fr-tab-0"
+    className="fr-tabs__panel fr-tabs__panel--selected"
+    id="fr-tabpanel-0"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielQR"
+    >
+      <div
+        className="fr-highlight"
+        style={
+          Object {
+            "border": "1px solid var(--yellow-moutarde-850)",
+            "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+            "marginLeft": 0,
+            "paddingBottom": "1rem",
+            "paddingTop": "1rem",
+          }
+        }
+      >
+        <div
+          className="flex items-center"
+        >
+          Potentiel réduit pour cette sous-action : 3,3 points
+        </div>
+      </div>
+      <h6
+        className="mt-8"
+      >
+        Caractéristique liée
+      </h6>
+      <div
+        className="fr-form-group"
+      >
+        <fieldset
+          className="fr-fieldset"
+          name="choix"
+          onChange={[Function]}
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
+              }
+            }
+          />
+          <div
+            className="fr-fieldset__content"
+          >
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={false}
+                id="q1-c1"
+                name="choix"
+                type="radio"
+                value="c1"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q1-c1"
+              >
+                Oui, pour l’ensemble de la collectivité
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={false}
+                id="q1-c2"
+                name="choix"
+                type="radio"
+                value="c2"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q1-c2"
+              >
+                Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={true}
+                id="q1-c3"
+                name="choix"
+                type="radio"
+                value="c3"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q1-c3"
+              >
+                Non
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div
+    aria-labelledby="fr-tab-1"
+    className="fr-tabs__panel "
+    id="fr-tabpanel-1"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielDoc"
+    >
+      <span
+        className="font-bold"
+      >
+        Nombre de points pour cette sous-action
+      </span>
+      <ul>
+        <li>
+          Minimum : 0
+        </li>
+        <li>
+          Maximum : 6,67
+        </li>
+      </ul>
+      <table
+        className="fr-table fr-table--blue-ecume mt-8"
+        style={
+          Object {
+            "marginBottom": 0,
+          }
+        }
+      >
+        <thead>
+          <tr>
+            <th
+              scope="col"
+            >
+              Condition
+            </th>
+            <th
+              scope="col"
+            >
+              Pondération
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Commune sans compétence voirie
+            </td>
+            <td
+              className="whitespace-nowrap fr-pr-8v"
+            >
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Intercommunalité sans aucune compétence voirie
+            </td>
+            <td>
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
+            </td>
+            <td>
+              Réduction à 1 sur 2 points
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Proportion 1`] = `
+<div
+  className="fr-tabs"
+>
+  <ul
+    className="fr-tabs__list"
+    role="tablist"
+  >
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-0"
+        aria-selected="true"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-0"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={0}
+        type="button"
+      >
+        <i
+          className="fr-fi-settings-line"
+        />
+         Personnalisation du potentiel
+      </button>
+    </li>
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-1"
+        aria-selected="false"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-1"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+        type="button"
+      >
+        <i
+          className="fr-fi-information-line"
+        />
+         Documentation
+      </button>
+    </li>
+  </ul>
+  <div
+    aria-labelledby="fr-tab-0"
+    className="fr-tabs__panel fr-tabs__panel--selected"
+    id="fr-tabpanel-0"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielQR"
+    >
+      <div
+        className="fr-highlight"
+        style={
+          Object {
+            "border": "1px solid var(--yellow-moutarde-850)",
+            "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+            "marginLeft": 0,
+            "paddingBottom": "1rem",
+            "paddingTop": "1rem",
+          }
+        }
+      >
+        <div
+          className="flex items-center"
+        >
+          Potentiel pour cette sous-action : 6,7 points
+        </div>
+      </div>
+      <h6
+        className="mt-8"
+      >
+        Caractéristique liée
+      </h6>
+      <div
+        className="fr-form-group"
+      >
+        <fieldset
+          className="fr-fieldset"
+          name="proportion"
+          onChange={[Function]}
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
+              }
+            }
+          />
+          <div
+            className="fr-fieldset__content fr-fieldset--inline"
+          >
+            <label
+              className="fr-label"
+              htmlFor="q3"
+            >
+              Part en pourcentage
+            </label>
+            <input
+              className="fr-input"
+              id="q3"
+              max={100}
+              min={0}
+              name="proportion"
+              style={
+                Object {
+                  "width": 224,
+                }
+              }
+              type="number"
+              value="undefined"
+            />
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div
+    aria-labelledby="fr-tab-1"
+    className="fr-tabs__panel "
+    id="fr-tabpanel-1"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielDoc"
+    >
+      <span
+        className="font-bold"
+      >
+        Nombre de points pour cette sous-action
+      </span>
+      <ul>
+        <li>
+          Minimum : 0
+        </li>
+        <li>
+          Maximum : 6,67
+        </li>
+      </ul>
+      <table
+        className="fr-table fr-table--blue-ecume mt-8"
+        style={
+          Object {
+            "marginBottom": 0,
+          }
+        }
+      >
+        <thead>
+          <tr>
+            <th
+              scope="col"
+            >
+              Condition
+            </th>
+            <th
+              scope="col"
+            >
+              Pondération
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Commune sans compétence voirie
+            </td>
+            <td
+              className="whitespace-nowrap fr-pr-8v"
+            >
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Intercommunalité sans aucune compétence voirie
+            </td>
+            <td>
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
+            </td>
+            <td>
+              Réduction à 1 sur 2 points
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Proportion Modifiee 1`] = `
+<div
+  className="fr-tabs"
+>
+  <ul
+    className="fr-tabs__list"
+    role="tablist"
+  >
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-0"
+        aria-selected="true"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-0"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={0}
+        type="button"
+      >
+        <i
+          className="fr-fi-settings-line"
+        />
+         Personnalisation du potentiel
+      </button>
+    </li>
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-1"
+        aria-selected="false"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-1"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+        type="button"
+      >
+        <i
+          className="fr-fi-information-line"
+        />
+         Documentation
+      </button>
+    </li>
+  </ul>
+  <div
+    aria-labelledby="fr-tab-0"
+    className="fr-tabs__panel fr-tabs__panel--selected"
+    id="fr-tabpanel-0"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielQR"
+    >
+      <div
+        className="fr-highlight"
+        style={
+          Object {
+            "border": "1px solid var(--yellow-moutarde-850)",
+            "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+            "marginLeft": 0,
+            "paddingBottom": "1rem",
+            "paddingTop": "1rem",
+          }
+        }
+      >
+        <div
+          className="flex items-center"
+        >
+          Potentiel réduit pour cette sous-action : 3,3 points
+        </div>
+      </div>
+      <h6
+        className="mt-8"
+      >
+        Caractéristique liée
+      </h6>
+      <div
+        className="fr-form-group"
+      >
+        <fieldset
+          className="fr-fieldset"
+          name="proportion"
+          onChange={[Function]}
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
+              }
+            }
+          />
+          <div
+            className="fr-fieldset__content fr-fieldset--inline"
+          >
+            <label
+              className="fr-label"
+              htmlFor="q3"
+            >
+              Part en pourcentage
+            </label>
+            <input
+              className="fr-input"
+              id="q3"
+              max={100}
+              min={0}
+              name="proportion"
+              style={
+                Object {
+                  "width": 224,
+                }
+              }
+              type="number"
+              value="60"
+            />
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div
+    aria-labelledby="fr-tab-1"
+    className="fr-tabs__panel "
+    id="fr-tabpanel-1"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielDoc"
+    >
+      <span
+        className="font-bold"
+      >
+        Nombre de points pour cette sous-action
+      </span>
+      <ul>
+        <li>
+          Minimum : 0
+        </li>
+        <li>
+          Maximum : 6,67
+        </li>
+      </ul>
+      <table
+        className="fr-table fr-table--blue-ecume mt-8"
+        style={
+          Object {
+            "marginBottom": 0,
+          }
+        }
+      >
+        <thead>
+          <tr>
+            <th
+              scope="col"
+            >
+              Condition
+            </th>
+            <th
+              scope="col"
+            >
+              Pondération
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Commune sans compétence voirie
+            </td>
+            <td
+              className="whitespace-nowrap fr-pr-8v"
+            >
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Intercommunalité sans aucune compétence voirie
+            </td>
+            <td>
+              Réduction à 0 sur 2 points
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
+            </td>
+            <td>
+              Réduction à 1 sur 2 points
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;

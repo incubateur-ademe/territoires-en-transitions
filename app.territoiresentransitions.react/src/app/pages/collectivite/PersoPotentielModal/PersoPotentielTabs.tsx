@@ -3,27 +3,26 @@
  */
 
 import {Tabs, Tab} from '@dataesr/react-dsfr';
-import {CustomPointsSettings} from './CustomPointsSettings';
-import {CustomPointsDoc} from './CustomPointsDoc';
+import {PersoPotentielQR, TPersoPotentielQRProps} from './PersoPotentielQR';
+import {PersoPotentielDoc} from './PersoPotentielDoc';
 
-export type TCustomPointsTabsProps = {
+export type TPersoPotentielTabsProps = TPersoPotentielQRProps & {
   /** Index de l'onglet actif */
   defaultActiveTab?: number;
-  // action: ActionDefinitionSummary
 };
 
-export const CustomPointsTabs = (props: TCustomPointsTabsProps) => {
-  const {defaultActiveTab} = props;
+export const PersoPotentielTabs = (props: TPersoPotentielTabsProps) => {
+  const {defaultActiveTab, ...other} = props;
   return (
     <Tabs defaultActiveTab={defaultActiveTab}>
       <Tab
         label="&nbsp;Personnalisation du potentiel"
         icon="fr-fi-settings-line"
       >
-        <CustomPointsSettings />
+        <PersoPotentielQR {...other} />
       </Tab>
       <Tab label="&nbsp;Documentation" icon="fr-fi-information-line">
-        <CustomPointsDoc />
+        <PersoPotentielDoc />
       </Tab>
     </Tabs>
   );
