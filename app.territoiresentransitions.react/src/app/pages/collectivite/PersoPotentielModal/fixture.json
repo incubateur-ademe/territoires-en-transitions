@@ -1,0 +1,37 @@
+{
+  "ACTION_DEF": {
+    "type": "sous-action"
+  },
+  "Q1": {
+    "id": "q1",
+    "type": "choix",
+    "description": "Contenu (html) pour l‘onglet Documentation.",
+    "formulation": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
+    "choix": [
+      {"id": "c1", "label": "Oui, pour l’ensemble de la collectivité"},
+      {
+        "id": "c2",
+        "label": "Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles"
+      },
+      {"id": "c3", "label": "Non"}
+    ]
+  },
+  "Q2": {
+    "id": "q2",
+    "type": "binaire",
+    "formulation": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?"
+  },
+  "Q3": {
+    "id": "q3",
+    "type": "proportion",
+    "formulation": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>"
+  },
+  "SCORE": {
+    "point_referentiel": 6.7,
+    "point_potentiel_perso": 6.7
+  },
+  "SCORE_MODIFIE": {
+    "point_referentiel": 6.7,
+    "point_potentiel_perso": 3.3
+  }
+}

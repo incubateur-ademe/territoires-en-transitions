@@ -2,12 +2,12 @@
  * Affiche l'onglet "Documentation"
  */
 
-export type TCustomPointsDocProps = {};
+export type TPersoPotentielDocProps = {};
 
-export const CustomPointsDoc = (props: TCustomPointsDocProps) => {
+export const PersoPotentielDoc = (props: TPersoPotentielDocProps) => {
   //const {} = props;
   return (
-    <div data-test="CustomPointsDoc">
+    <div data-test="PersoPotentielDoc">
       <span className="font-bold">Nombre de points pour cette sous-action</span>
       <ul>
         <li>Minimum : 0</li>
