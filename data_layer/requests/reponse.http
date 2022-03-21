@@ -59,3 +59,9 @@ Content-Type: application/json
   "collectivite_id": 1,
   "reponse": "mobilite_1_b"
 }
+
+
+### Get reponse
+GET {{api}}/rest/v1/reponse_display?collectivite_id=eq.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}

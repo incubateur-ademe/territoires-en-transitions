@@ -30,6 +30,35 @@ comment on table reponse_choix is
     'Réponses saisies par la collectivité aux questions de type proportion';
 
 
+create or replace view reponse_display
+as
+select q.id                                                                 as question_id,
+       coalesce(rb.collectivite_id, rp.collectivite_id, rc.collectivite_id) as collectivite_id,
+       case
+           when q.type = 'binaire'
+               then json_build_object('question_id', q.id,
+                                      'collectivite_id', rb.collectivite_id,
+                                      'type', q.type,
+                                      'reponse', rb.reponse)
+           when q.type = 'proportion'
+               then json_build_object('question_id', q.id,
+                                      'collectivite_id', rp.collectivite_id,
+                                      'type', q.type,
+                                      'reponse', rp.reponse)
+           when q.type = 'choix'
+               then json_build_object('question_id', q.id,
+                                      'collectivite_id', rc.collectivite_id,
+                                      'type', q.type,
+                                      'reponse', rc.reponse)
+           end
+                                                                            as reponse
+from question q
+         left join reponse_binaire rb on rb.question_id = q.id
+         left join reponse_proportion rp on rp.question_id = q.id
+         left join reponse_choix rc on rc.question_id = q.id
+where is_any_role_on(coalesce(rb.collectivite_id, rp.collectivite_id, rc.collectivite_id));
+
+
 create or replace function save_reponse(json)
     returns void
 as
@@ -84,6 +113,11 @@ create policy allow_insert
     on reponse_choix
     for insert
     with check (is_any_role_on(collectivite_id));
+
+create policy allow_update
+    on reponse_choix
+    for update
+    using (is_any_role_on(collectivite_id));
 --
 alter table reponse_binaire
     enable row level security;
@@ -98,6 +132,11 @@ create policy allow_insert
     for insert
     with check (is_any_role_on(collectivite_id));
 
+create policy allow_update
+    on reponse_binaire
+    for update
+    using (is_any_role_on(collectivite_id));
+
 --
 alter table reponse_proportion
     enable row level security;
@@ -111,3 +150,8 @@ create policy allow_insert
     on reponse_proportion
     for insert
     with check (is_any_role_on(collectivite_id));
+
+create policy allow_update
+    on reponse_proportion
+    for update
+    using (is_any_role_on(collectivite_id));
