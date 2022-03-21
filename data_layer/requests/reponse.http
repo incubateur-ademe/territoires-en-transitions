@@ -1,0 +1,61 @@
+### Authenticate as a user
+POST {{api}}/auth/v1/token?grant_type=password
+apikey: {{anon}}
+Content-Type: application/json
+
+{
+  "email": "{{yolo_mail}}",
+  "password": "{{yolo_pass}}"
+}
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.log('token is ' + response.body['access_token']);
+    client.global.set("auth_token", response.body['access_token']);
+%}
+
+
+### Upsert proportion reponse
+POST {{api}}/rest/v1/rpc/save_reponse
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+
+{
+  "question_id": "energie_1",
+  "collectivite_id": 1,
+  "reponse": 0.5
+}
+
+
+### Upsert oui/non reponse
+POST {{api}}/rest/v1/rpc/save_reponse
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+
+{
+  "question_id": "dechets_1",
+  "collectivite_id": 1,
+  "reponse": false
+}
+
+
+
+### Post reponse
+POST {{api}}/rest/v1/rpc/save_reponse
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+
+{
+  "question_id": "mobilite_1",
+  "collectivite_id": 1,
+  "reponse": "mobilite_1_b"
+}
