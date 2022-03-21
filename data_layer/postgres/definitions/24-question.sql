@@ -105,10 +105,15 @@ begin
 end
 $$ language plpgsql;
 
-
 create view question_display
 as
+with actions as (
+    select question_id, array_agg(action_id) action_ids
+    from question_action
+    group by question_id
+)
 select q.id    as id,
+       a.action_ids,
        thematique_id,
        type,
        t.nom   as thematique_nom,
@@ -117,6 +122,7 @@ select q.id    as id,
        cx.json as choix
 from question q
          join question_thematique t on t.id = q.thematique_id
+         join actions a on q.id = a.question_id
          left join lateral (
     select json_build_array(
                    json_build_object('id', c.id,
