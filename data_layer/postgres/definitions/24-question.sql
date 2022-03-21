@@ -1,4 +1,6 @@
 create type question_type as enum ('choix', 'binaire', 'proportion');
+create domain question_id as varchar(30);
+create domain choix_id as varchar(30);
 
 
 create table question_thematique
@@ -12,7 +14,7 @@ comment on table question_thematique is
 
 create table question
 (
-    id            varchar(30) primary key,
+    id            question_id primary key,
     thematique_id varchar references question_thematique,
     type          question_type not null,
     description   text          not null,
@@ -24,8 +26,8 @@ comment on table question is
 
 create table question_choix
 (
-    question_id varchar references question on delete cascade,
-    id          varchar(30) primary key,
+    question_id question_id references question on delete cascade,
+    id          choix_id primary key,
     formulation text
 );
 comment on table question_choix is
@@ -34,7 +36,7 @@ comment on table question_choix is
 
 create table question_action
 (
-    question_id varchar references question on delete cascade,
+    question_id question_id references question on delete cascade,
     action_id   action_id references action_relation,
     primary key (question_id, action_id)
 );
