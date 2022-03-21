@@ -66,8 +66,8 @@ begin
                 on conflict (id) do update
                     -- we update the request fields, except for type.
                     set thematique_id = excluded.thematique_id,
-                        description = excluded.description,
-                        formulation = excluded.formulation;
+                        description   = excluded.description,
+                        formulation   = excluded.formulation;
 
                 with action_id as (
                     select a
@@ -78,7 +78,7 @@ begin
                 select obj ->> 'id',
                        a::action_id
                 from action_id r
-                on conflict do nothing ;
+                on conflict do nothing;
 
                 if type = 'choix'
                 then
@@ -102,3 +102,24 @@ begin
     end if;
 end
 $$ language plpgsql;
+
+
+create view question_display
+as
+select q.id    as id,
+       thematique_id,
+       type,
+       t.nom   as thematique_nom,
+       description,
+       formulation,
+       cx.json as choix
+from question q
+         join question_thematique t on t.id = q.thematique_id
+         left join lateral (
+    select json_build_array(
+                   json_build_object('id', c.id,
+                                     'label', c.formulation)
+               ) as json
+    from question_choix c
+    where c.question_id = q.id) cx on true
+;
