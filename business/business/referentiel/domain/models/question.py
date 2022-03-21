@@ -11,6 +11,9 @@ class Choix:
     formulation: str
 
 
+QuestionType = Literal["choix", "binaire", "proportion"]
+
+
 @dataclass
 class Question:
     id: str
@@ -18,7 +21,7 @@ class Question:
     description: str
     thematique_id: str
     action_ids: List[ActionId]
-    type: Literal["choix", "binaire", "proportion"]
+    type: QuestionType
     choix: Optional[List[Choix]] = None
 
     @classmethod
