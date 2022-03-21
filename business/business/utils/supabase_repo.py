@@ -90,7 +90,7 @@ class SupabaseDb:
 
 
 def _raise_if_unexpected_status(
-    expected_status_code: Union[int, list[int]], r: Response
+    expected_status_code: Union[int, List[int]], r: Response
 ):
     list_expected_status_code = (
         expected_status_code
