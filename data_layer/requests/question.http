@@ -19,6 +19,12 @@ Content-Type: application/json
 
 
 ### List question display
-GET {{api}}/rest/v1/question_display?select=*
+GET {{api}}/rest/v1/question_display
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+
+### List question display
+GET {{api}}/rest/v1/question_display?action_ids=cs.{eci_4}
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
