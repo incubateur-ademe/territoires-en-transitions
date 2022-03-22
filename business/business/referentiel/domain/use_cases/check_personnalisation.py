@@ -1,4 +1,4 @@
-from business.personnalisation.check_regles import (
+from business.personnalisation.find_regles_errors import (
     find_regles_errors,
     Question as EngineQuestion,
 )
@@ -32,15 +32,17 @@ class CheckPersonnalisation(UseCase):
             for question in trigger.questions
         ]
         regles = sum(
-            [personnalisation.regles for personnalisation in trigger.personnalisations],
+            [personnalisation.regles for personnalisation in trigger.regles],
             [],
         )
         regles_errors = find_regles_errors(regles=regles, questions=engine_questions)
         if regles_errors:
             self.bus.publish_event(
-                events.ReglesCheckingFailed(
+                events.QuestionAndReglesCheckingFailed(
                     f"Incompatiblité dans les formulations des questions et des régles : {', '.join(regles_errors)}"
                 )
             )
         else:
-            self.bus.publish_event(events.ReglesChecked(trigger.personnalisations))
+            self.bus.publish_event(
+                events.QuestionAndReglesChecked(trigger.questions, trigger.regles)
+            )

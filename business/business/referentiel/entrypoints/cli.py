@@ -47,7 +47,7 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
     events.QuestionAndPersonnalisationMarkdownConvertedToEntities: [
         CheckPersonnalisation
     ],
-    events.ReglesChecked: [StoreReferentielPersonnalisations],
+    events.QuestionAndReglesChecked: [StoreReferentielPersonnalisations],
     # Csv extraction
     events.ExtractReferentielActionsToCsvTriggered: [ExtractReferentielActionsToCsv],
     # Exit on DomainFailureEvent
@@ -55,7 +55,7 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
     events.ReferentielStorageFailed: [SystemExit],
     events.IndicateurMarkdownParsingOrConvertionFailed: [SystemExit],
     events.MarkdownReferentielNodeInconsistencyFound: [SystemExit],
-    events.ReglesCheckingFailed: [SystemExit],
+    events.QuestionAndReglesCheckingFailed: [SystemExit],
 }
 
 
