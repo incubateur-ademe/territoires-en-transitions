@@ -1,11 +1,11 @@
 import os
 import sys
 from typing import Dict, List, Type, Optional
-from xml import dom
 
 import click
 
 from business.referentiel.domain.models import events
+from business.referentiel.domain.use_cases import check_personnalisation
 from business.utils.domain_message_bus import (
     DomainFailureEvent,
     InMemoryDomainMessageBus,
@@ -46,9 +46,8 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
     events.ParseAndConvertMarkdownReferentielPersonnalisationsTriggered: [
         ParseAndConvertMarkdownReferentielPersonnalisations
     ],
-    events.PersonnalisationMarkdownConvertedToEntities: [
-        StoreReferentielPersonnalisations
-    ],
+    events.PersonnalisationMarkdownConvertedToEntities: [CheckPersonnalisation],
+    events.PersonnalisationReglesChecked: [StoreReferentielPersonnalisations],
     # Csv extraction
     events.ExtractReferentielActionsToCsvTriggered: [ExtractReferentielActionsToCsv],
     # Exit on DomainFailureEvent
@@ -56,6 +55,7 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
     events.ReferentielStorageFailed: [SystemExit],
     events.IndicateurMarkdownParsingOrConvertionFailed: [SystemExit],
     events.MarkdownReferentielNodeInconsistencyFound: [SystemExit],
+    events.PersonnalisationReglesCheckingFailed: [SystemExit],
 }
 
 
@@ -94,6 +94,7 @@ class ReferentielConfig(Config):
             StoreReferentielPersonnalisations(
                 self.domain_message_bus, self.referentiel_repo
             ),
+            CheckPersonnalisation(self.domain_message_bus, self.referentiel_repo),
             # Exit
             SystemExit(),
         ]

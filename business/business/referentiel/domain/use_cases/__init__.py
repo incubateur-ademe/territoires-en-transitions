@@ -5,3 +5,4 @@ from .parse_markdown_referentiel_folder import *
 from .store_referentiel import *
 from .parse_and_convert_markdown_referentiel_questions import *
 from .parse_and_convert_markdown_referentiel_personnalisations import *
+from .check_personnalisation import *

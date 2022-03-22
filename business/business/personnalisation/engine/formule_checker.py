@@ -2,14 +2,15 @@ from typing import List, Tuple, Any, Type
 
 from lark import Transformer
 
-from business.personnalisation.engine.formule import FormuleABC, Question, FormuleError
+from business.personnalisation.engine.formule import FormuleABC, FormuleError
+from business.personnalisation.engine.models import Question
 
 
 class FormuleChecker(FormuleABC, Transformer):
     """In charge of checking formules are correct"""
 
     def __init__(self, questions: List[Question], visit_tokens: bool = True) -> None:
-        super(Transformer, self).__init__(visit_tokens)
+        Transformer.__init__(self, visit_tokens)
         self.questions = {question.question_id: question for question in questions}
 
     def reponse_comparison(self, node: Tuple[Any, Any]):
