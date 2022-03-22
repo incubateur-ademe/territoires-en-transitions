@@ -152,12 +152,13 @@ class FormuleInterpreter(Interpreter):
             raise ReponseMissing(f"No reponse for question {question_id}")
         return self.reponses[question_id]
 
-    def if_statement(self, node: Tuple[Any, Any, Any]):
-        if_statement, if_return, else_return = node
-        if if_statement:
-            return if_return
-        else:
-            return else_return
+
+    def if_then(self, tree: Tree):
+        test = self.visit(tree.children[0])
+        if test:
+            return self.visit(tree.children[1])
+        return None
+
 
     @staticmethod
     def identifier(tree):
@@ -176,3 +177,7 @@ class FormuleInterpreter(Interpreter):
     @staticmethod
     def false(_):
         return False
+
+    @staticmethod
+    def number(tree):
+        return float(tree.children[0].value)
