@@ -142,12 +142,12 @@ class FormuleInterpreter(Interpreter):
         reponse_choix_id = self.reponses[question_id]
         return reponse_choix_id == compared_choix_id
 
-    def reponse_value(self, node: Tuple[Any]):
+    def reponse_value(self, tree: Tree):
         """Compute reponse to questions of type proportion or binaire
         Returns the value responses at given key
         Returns None if reponse can't be found
         """
-        question_id = node[0]
+        question_id = self.visit_children(tree)[0]
         if question_id not in self.reponses:
             raise ReponseMissing(f"No reponse for question {question_id}")
         return self.reponses[question_id]

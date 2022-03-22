@@ -3,7 +3,7 @@ import pytest
 
 from business.personnalisation.engine.formule import (
     FormuleInterpreter,
-    Reponse,
+    Reponse, ReponseMissing,
 )
 from business.personnalisation.engine.parser import parser
 
@@ -27,11 +27,11 @@ def test_function_reponse_on_question_type_choix():
 def test_function_reponse_on_question_typebinaire():
     tree = parser.parse("reponse(question_binaire_1, OUI)")
     assert (
-        FormuleInterpreter([Reponse("question_binaire_1", "OUI")]).transform(tree)
+        FormuleInterpreter([Reponse("question_binaire_1", "OUI")]).visit(tree)
         is True
     )
     assert (
-        FormuleInterpreter([Reponse("question_binaire_1", "NON")]).transform(tree)
+        FormuleInterpreter([Reponse("question_binaire_1", "NON")]).visit(tree)
         is False
     )
 
@@ -39,7 +39,7 @@ def test_function_reponse_on_question_typebinaire():
 def test_function_reponse_on_question_type_proportion():
     tree = parser.parse("reponse(question_proportion)")
     assert (
-        FormuleInterpreter(reponses=[Reponse("question_proportion", 0.7)]).transform(
+        FormuleInterpreter(reponses=[Reponse("question_proportion", 0.7)]).visit(
             tree
         )
         is 0.7
@@ -48,14 +48,14 @@ def test_function_reponse_on_question_type_proportion():
 
 def test_function_reponse_value_raises_if_no_reponse():
     tree = parser.parse("reponse(question_X)")
-    with pytest.raises(lark.exceptions.VisitError):
-        FormuleInterpreter([]).transform(tree)
+    with pytest.raises(ReponseMissing):
+        FormuleInterpreter([]).visit(tree)
 
 
 def test_function_reponse_comparison_raises_if_no_reponse():
     tree = parser.parse("reponse(question_X, choix_A)")
-    with pytest.raises(lark.exceptions.VisitError):
-        FormuleInterpreter([]).transform(tree)
+    with pytest.raises(ReponseMissing):
+        FormuleInterpreter([]).visit(tree)
 
 
 # def test_function_simple_if_statement():
