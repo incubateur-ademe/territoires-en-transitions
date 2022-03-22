@@ -24,9 +24,9 @@ IdentiteLocalisationOption = Literal["DOM"]
 
 @dataclass
 class IdentiteOptions:
-    type: List[IdentiteTypeOption] = ["syndicat", "commune"]
-    population: List[IdentitePopulationOption] = ["moins_de_100000"]
-    localisation: List[IdentiteLocalisationOption] = ["DOM"]
+    type: List[IdentiteTypeOption]  # = ["syndicat", "commune"]
+    population: List[IdentitePopulationOption]  # = ["moins_de_100000"]
+    localisation: List[IdentiteLocalisationOption]  # = ["DOM"]
 
 
 @dataclass
