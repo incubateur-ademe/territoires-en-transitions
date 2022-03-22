@@ -1,4 +1,3 @@
-import lark
 import pytest
 
 from business.personnalisation.engine.formule import (
@@ -11,38 +10,38 @@ from business.personnalisation.engine.parser import parser
 def test_function_reponse_on_question_type_choix():
     tree = parser.parse("reponse(question_choix_1, question_choix_1a)")
     assert (
-        FormuleInterpreter(
-            [Reponse("question_choix_1", "question_choix_1a")]
-        ).visit(tree)
-        is True
+            FormuleInterpreter(
+                [Reponse("question_choix_1", "question_choix_1a")]
+            ).visit(tree)
+            is True
     )
     assert (
-        FormuleInterpreter(
-            [Reponse("question_choix_1", "question_choix_1b")]
-        ).visit(tree)
-        is False
+            FormuleInterpreter(
+                [Reponse("question_choix_1", "question_choix_1b")]
+            ).visit(tree)
+            is False
     )
 
 
 def test_function_reponse_on_question_typebinaire():
     tree = parser.parse("reponse(question_binaire_1, OUI)")
     assert (
-        FormuleInterpreter([Reponse("question_binaire_1", "OUI")]).visit(tree)
-        is True
+            FormuleInterpreter([Reponse("question_binaire_1", "OUI")]).visit(tree)
+            is True
     )
     assert (
-        FormuleInterpreter([Reponse("question_binaire_1", "NON")]).visit(tree)
-        is False
+            FormuleInterpreter([Reponse("question_binaire_1", "NON")]).visit(tree)
+            is False
     )
 
 
 def test_function_reponse_on_question_type_proportion():
     tree = parser.parse("reponse(question_proportion)")
     assert (
-        FormuleInterpreter(reponses=[Reponse("question_proportion", 0.7)]).visit(
-            tree
-        )
-        is 0.7
+            FormuleInterpreter(reponses=[Reponse("question_proportion", 0.7)]).visit(
+                tree
+            )
+            is 0.7
     )
 
 
@@ -58,14 +57,12 @@ def test_function_reponse_comparison_raises_if_no_reponse():
         FormuleInterpreter([]).visit(tree)
 
 
-# def test_function_simple_if_statement():
-#     context = Context(
-#         reponses=[],
-#     )
-#     tree = parser.parse("si true alors 0.8 sinon 0.1")
-#     result = FormuleTransformer(context).transform(tree)
-#     assert result == 0.8
+def test_function_simple_if_statement():
+    tree = parser.parse("si VRAI alors 2")
+    assert (FormuleInterpreter([]).visit(tree) == 2.0)
 
+    tree = parser.parse("si FAUX alors 2")
+    assert (FormuleInterpreter([]).visit(tree) is None)
 
 # def test_function_multiple_if_statement():
 #     context = Context(

@@ -4,7 +4,8 @@
 ?statement: if_statement
      | expression
 
-?if_statement: "si" expression "alors" statement ["sinon" statement]
+?if_statement: "si" expression "alors" statement -> if_then
+      | "si" expression "alors" statement "sinon" statement -> if_then_else
 
 // expressions produce values
 ?expression: literal
@@ -12,10 +13,10 @@
       | binary
       | call
 
-?literal: 
-      | CNAME              -> string
+?literal:
       | "VRAI"             -> true
       | "FAUX"             -> false
+      | CNAME              -> string
 
 // embed functions in the langage
 ?call: "identite" "(" identifier "," literal ")" -> identite
@@ -24,7 +25,7 @@
       | "min" "(" number "," number ")" -> min
       | "max" "(" number "," number ")" -> max
 
-?unary:  ( "-" | "!" ) expression 
+?unary:  ( "-" | "!" ) expression
 
 ?binary: sum
 
@@ -32,7 +33,7 @@
     | sum "+" product   -> add
     | sum "-" product   -> sub
 
-?product: number 
+?product: number
     | product "*" number  -> mul
     | product "/" number  -> div
     | "(" [expression] ")"
