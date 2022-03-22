@@ -1,3 +1,4 @@
+import operator
 from typing import List
 
 from lark import Tree
@@ -57,6 +58,18 @@ class FormuleInterpreter(FormuleABC, Interpreter):
 
     def max(self, tree: Tree):
         return max(self.visit(tree.children[0]), self.visit(tree.children[1]))
+
+    def mul(self, tree: Tree):
+        return operator.mul(self.visit(tree.children[0]), self.visit(tree.children[1]))
+
+    def div(self, tree: Tree):
+        return operator.truediv(self.visit(tree.children[0]), self.visit(tree.children[1]))
+
+    def add(self, tree: Tree):
+        return operator.add(self.visit(tree.children[0]), self.visit(tree.children[1]))
+
+    def sub(self, tree: Tree):
+        return operator.sub(self.visit(tree.children[0]), self.visit(tree.children[1]))
 
     @staticmethod
     def identifier(tree):

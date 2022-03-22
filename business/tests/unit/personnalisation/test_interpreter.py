@@ -57,7 +57,7 @@ def test_function_reponse_comparison_raises_if_no_reponse():
         FormuleInterpreter([]).visit(tree)
 
 
-def test_function_if_then_statement():
+def test_statement_if_then():
     interpreter = FormuleInterpreter([])
 
     tree = parser.parse("si VRAI alors 2")
@@ -67,7 +67,7 @@ def test_function_if_then_statement():
     assert (interpreter.visit(tree) is None)
 
 
-def test_function_if_then_else_statement():
+def test_statement_if_then_else():
     interpreter = FormuleInterpreter([])
 
     tree = parser.parse("si vrai alors 2 sinon si faux alors 4 sinon 8")
@@ -80,7 +80,7 @@ def test_function_if_then_else_statement():
     assert (interpreter.visit(tree) == 8)
 
 
-def test_function_or():
+def test_logical_or():
     interpreter = FormuleInterpreter([])
 
     assert interpreter.visit(parser.parse("vrai ou faux")) == (True or False)
@@ -89,7 +89,7 @@ def test_function_or():
     assert interpreter.visit(parser.parse("faux ou faux")) == (False or False)
 
 
-def test_function_and():
+def test_logical_and():
     interpreter = FormuleInterpreter([])
 
     assert interpreter.visit(parser.parse("vrai et faux")) == (True and False)
@@ -101,12 +101,46 @@ def test_function_and():
 def test_function_max():
     interpreter = FormuleInterpreter([])
 
-    assert interpreter.visit(parser.parse("max(2, 3)")) == max(2.0, 3.0)
-    assert interpreter.visit(parser.parse("max(3, 2)")) == max(3.0, 2.0)
+    assert interpreter.visit(parser.parse("max(2, 3)")) == max(2, 3)
+    assert interpreter.visit(parser.parse("max(3, 2)")) == max(3, 2)
 
 
 def test_function_min():
     interpreter = FormuleInterpreter([])
 
-    assert interpreter.visit(parser.parse("min(2, 3)")) == min(2.0, 3.0)
-    assert interpreter.visit(parser.parse("min(3, 2)")) == min(3.0, 2.0)
+    assert interpreter.visit(parser.parse("min(2, 3)")) == min(2, 3)
+    assert interpreter.visit(parser.parse("min(3, 2)")) == min(3, 2)
+
+
+def test_operator_add():
+    interpreter = FormuleInterpreter([])
+
+    assert interpreter.visit(parser.parse("2 + 3")) == 2 + 3
+    assert interpreter.visit(parser.parse("3 + 2")) == 3 + 2
+
+
+def test_operator_sub():
+    interpreter = FormuleInterpreter([])
+
+    assert interpreter.visit(parser.parse("2 - 3")) == 2 - 3
+    assert interpreter.visit(parser.parse("3 - 2")) == 3 - 2
+
+
+def test_operator_mul():
+    interpreter = FormuleInterpreter([])
+
+    assert interpreter.visit(parser.parse("2 * 3")) == 2 * 3
+    assert interpreter.visit(parser.parse("3 * 2")) == 3 * 2
+
+
+def test_operator_div():
+    interpreter = FormuleInterpreter([])
+
+    assert interpreter.visit(parser.parse("2 / 3")) == 2 / 3
+    assert interpreter.visit(parser.parse("3 / 2")) == 3 / 2
+
+
+def test_operator_precedence():
+    interpreter = FormuleInterpreter([])
+
+    assert interpreter.visit(parser.parse("1 + 2 * 3 - 4")) == 1 + 2 * 3 - 4
