@@ -137,11 +137,25 @@ select q.id    as id,
 from question q
          join question_thematique t on t.id = q.thematique_id
          join actions a on q.id = a.question_id
-         left join lateral (
-    select json_build_array(
-                   json_build_object('id', c.id,
-                                     'label', c.formulation)
-               ) as json
-    from question_choix c
-    where c.question_id = q.id) cx on true
-;
+         left join lateral (select array_agg(
+                                           json_build_object(
+                                                   'id', c.id,
+                                                   'label', c.formulation
+                                               )) as json
+                            from question_choix c
+                            where c.question_id = q.id) cx on true;
+comment on view question_display is
+    'Questions avec leurs choix pour l''affichage dans le client' ;
+
+
+create view question_engine
+as
+select q.id   as id,
+       type,
+       cx.ids as choix_ids
+from question q
+         left join lateral (select array_agg(c.id) as ids
+                            from question_choix c
+                            where c.question_id = q.id) cx on true;
+comment on view question_display is
+    'Questions avec leurs choix pour le moteur de formule';
