@@ -40,6 +40,24 @@ class FormuleInterpreter(FormuleABC, Interpreter):
             return self.visit(tree.children[1])
         return None
 
+    def if_then_else(self, tree: Tree):
+        test = self.visit(tree.children[0])
+        if test:
+            return self.visit(tree.children[1])
+        return self.visit(tree.children[2])
+
+    def logic_or(self, tree: Tree):
+        return self.visit(tree.children[0]) or self.visit(tree.children[1])
+
+    def logic_and(self, tree: Tree):
+        return self.visit(tree.children[0]) and self.visit(tree.children[1])
+
+    def min(self, tree: Tree):
+        return min(self.visit(tree.children[0]), self.visit(tree.children[1]))
+
+    def max(self, tree: Tree):
+        return max(self.visit(tree.children[0]), self.visit(tree.children[1]))
+
     @staticmethod
     def identifier(tree):
         """returns token content as the identifier is a dict key"""

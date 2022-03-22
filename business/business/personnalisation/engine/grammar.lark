@@ -8,35 +8,40 @@
       | "si" expression "alors" statement "sinon" statement -> if_then_else
 
 // expressions produce values
-?expression: literal
-      | unary
-      | binary
-      | call
+?expression: logic_or
 
-?literal:
-      | "VRAI"             -> true
-      | "FAUX"             -> false
-      | CNAME              -> string
+?logic_or: logic_and
+    | logic_and "ou" logic_and -> logic_or
+
+?logic_and: term
+     | term "et" term -> logic_and
+
+?term: factor
+    | factor "+" factor   -> add
+    | factor "-" factor   -> sub
+
+?factor: unary
+    | unary "*" unary  -> mul
+    | unary "/" unary  -> div
+
+?unary: call
 
 // embed functions in the langage
-?call: "identite" "(" identifier "," literal ")" -> identite
-      | "reponse" "(" identifier "," literal ")" -> reponse_comparison
+?call: primary
+      | "identite" "(" identifier "," primary ")" -> identite
+      | "reponse" "(" identifier "," primary ")" -> reponse_comparison
       | "reponse" "(" identifier ")" -> reponse_value
-      | "min" "(" number "," number ")" -> min
-      | "max" "(" number "," number ")" -> max
+      | "min" "(" term "," term ")" -> min
+      | "max" "(" term "," term ")" -> max
 
-?unary:  ( "-" | "!" ) expression
 
-?binary: sum
-
-?sum: product
-    | sum "+" product   -> add
-    | sum "-" product   -> sub
-
-?product: number
-    | product "*" number  -> mul
-    | product "/" number  -> div
-    | "(" [expression] ")"
+?primary:
+      | "VRAI"             -> true
+      | "FAUX"             -> false
+      | "vrai"             -> true
+      | "faux"             -> false
+      | CNAME              -> string
+      | number
 
 arguments: expression [ "," expression]
 identifier: CNAME -> identifier
