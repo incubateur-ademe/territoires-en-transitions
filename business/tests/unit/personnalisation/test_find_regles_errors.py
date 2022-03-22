@@ -1,11 +1,5 @@
-import lark
-import pytest
 from business.personnalisation.check_regles import find_regles_errors
 from business.personnalisation.engine.models import Question
-
-from business.personnalisation.engine.parser import parser
-
-from business.personnalisation.engine.formule_checker import FormuleChecker
 from business.referentiel.domain.models.personnalisation import Regle
 
 

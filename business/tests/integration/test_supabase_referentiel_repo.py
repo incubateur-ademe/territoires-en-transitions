@@ -3,7 +3,10 @@ from business.evaluation.adapters import supabase_names
 from business.referentiel.adapters.supabase_referentiel_repo import (
     SupabaseReferentielRepository,
 )
-from business.referentiel.domain.models.personnalisation import Personnalisation, Regle
+from business.referentiel.domain.models.personnalisation import (
+    ActionPersonnalisation,
+    Regle,
+)
 from business.referentiel.domain.models.question import Choix, Question
 from business.utils.action_id import ActionId
 from tests.utils.referentiel_factory import (
@@ -11,6 +14,7 @@ from tests.utils.referentiel_factory import (
     make_action_points,
     make_indicateur,
 )
+from business.personnalisation.engine.models import Question as QuestionEngine
 from tests.utils.supabase_fixtures import *
 
 # Note : those should not change very often.
@@ -197,7 +201,7 @@ def test_can_update_actions(
     assert points[0]["value"] == updated_point.value
 
 
-def test_can_upsert_and_retrieve_referentiel_questions(
+def test_can_upsert_referentiel_questions(
     supabase_referentiel_repo: SupabaseReferentielRepository,
     supabase_client: SupabaseClient,
 ):
@@ -236,7 +240,7 @@ def test_can_upsert_and_retrieve_referentiel_questions(
     # Assert :
     # 1. Check that the question is there
     questions = supabase_client.db.get_by(
-        "question",
+        supabase_names.tables.question,
         {"id": f"eq.{question_id}"},
     )
     assert len(questions) == 1
@@ -256,6 +260,14 @@ def test_can_upsert_and_retrieve_referentiel_questions(
     assert len(question_action) == 1
 
 
+def test_can_get_engine_actions(
+    supabase_referentiel_repo: SupabaseReferentielRepository,
+):
+    retrieved_fake_engine_actions = supabase_referentiel_repo.get_all_engine_questions()
+    assert len(retrieved_fake_engine_actions) > 5
+    assert isinstance(retrieved_fake_engine_actions[0], QuestionEngine)
+
+
 def test_can_upsert_and_retrieve_referentiel_personnalisations(
     supabase_referentiel_repo: SupabaseReferentielRepository,
     supabase_client: SupabaseClient,
@@ -269,7 +281,7 @@ def test_can_upsert_and_retrieve_referentiel_personnalisations(
     )
 
     # Act : upsert a personnalisation to this action
-    personnalisation = Personnalisation(
+    personnalisation = ActionPersonnalisation(
         action_id=action_id,
         description="une description",
         titre="la personnalisation",

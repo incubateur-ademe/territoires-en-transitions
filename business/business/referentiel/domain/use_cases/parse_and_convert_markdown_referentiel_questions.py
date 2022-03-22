@@ -6,6 +6,7 @@ from typing import List, Literal, Optional, Tuple
 
 from marshmallow import ValidationError
 import marshmallow_dataclass
+from numpy import tri
 
 from business.referentiel.domain.models import events
 from business.referentiel.domain.models.question import Choix, Question
@@ -55,9 +56,9 @@ class ParseAndConvertMarkdownReferentielQuestions(UseCase):
         )()
 
     def execute(
-        self, trigger: events.ParseAndConvertMarkdownReferentielQuestionsTriggered
+        self, trigger: events.ParseAndConvertMarkdownPersonnalisationsTriggered
     ):
-        md_files = glob(os.path.join(trigger.folder_path, "*.md"))
+        md_files = glob(os.path.join(trigger.question_folder_path, "*.md"))
         print(f"Parsing {len(md_files)} files with questions")
 
         md_questions, parsing_errors = self.parse(md_files)
@@ -82,7 +83,11 @@ class ParseAndConvertMarkdownReferentielQuestions(UseCase):
             )
             return
 
-        self.bus.publish_event(events.QuestionMarkdownConvertedToEntities(questions))
+        self.bus.publish_event(
+            events.QuestionMarkdownConvertedToEntities(
+                questions, trigger.question_folder_path, trigger.regle_folder_path
+            )
+        )
 
     def parse(self, md_files: List[str]) -> Tuple[List[MarkdownQuestion], List[str]]:
         md_questions: List[MarkdownQuestion] = []

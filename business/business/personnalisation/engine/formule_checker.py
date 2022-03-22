@@ -8,12 +8,13 @@ from business.personnalisation.engine.models import Question
 
 TypedValue = Tuple[Type[str], str]
 
+
 class FormuleChecker(FormuleABC, Transformer):
     """In charge of checking formules are correct"""
 
     def __init__(self, questions: List[Question], visit_tokens: bool = True) -> None:
         Transformer.__init__(self, visit_tokens)
-        self.questions = {question.question_id: question for question in questions}
+        self.questions = {question.id: question for question in questions}
 
     def reponse_comparison(self, node: Tuple[Any, Any]):
         """Compute reponse to questions of type choix
@@ -108,4 +109,3 @@ class FormuleChecker(FormuleABC, Transformer):
     def string(n) -> TypedValue:
         """returns token content"""
         return str, n[0].value
-

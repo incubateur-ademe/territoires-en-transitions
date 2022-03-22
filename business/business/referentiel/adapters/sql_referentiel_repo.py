@@ -1,7 +1,7 @@
 import os
 from typing import List
 from pathlib import Path
-from business.referentiel.domain.models.personnalisation import Personnalisation
+from business.referentiel.domain.models.personnalisation import ActionPersonnalisation
 from business.referentiel.domain.models.question import Question
 
 from business.referentiel.domain.ports.referentiel_repo import (
@@ -58,7 +58,7 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
 
     def upsert_personnalisations(
         self,
-        personnalisations: List[Personnalisation],
+        personnalisations: List[ActionPersonnalisation],
     ):
         raise NotImplementedError
 
@@ -69,7 +69,7 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
 
     def get_personnalisations(
         self,
-    ) -> List[Personnalisation]:
+    ) -> List[ActionPersonnalisation]:
         raise NotImplementedError
 
     def indicateurs_to_sql(self):

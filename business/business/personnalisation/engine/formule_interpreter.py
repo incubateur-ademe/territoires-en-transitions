@@ -13,7 +13,7 @@ class FormuleInterpreter(FormuleABC, Interpreter):
 
     def __init__(self, reponses: List[Reponse], visit_tokens: bool = True) -> None:
         Interpreter.__init__(self, visit_tokens)
-        self.reponses = {reponse.question_id: reponse.value for reponse in reponses}
+        self.reponses = {reponse.id: reponse.value for reponse in reponses}
 
     def reponse_comparison(self, tree: Tree):
         """Compute reponse to questions of type choix
@@ -64,7 +64,9 @@ class FormuleInterpreter(FormuleABC, Interpreter):
         return operator.mul(self.visit(tree.children[0]), self.visit(tree.children[1]))
 
     def div(self, tree: Tree):
-        return operator.truediv(self.visit(tree.children[0]), self.visit(tree.children[1]))
+        return operator.truediv(
+            self.visit(tree.children[0]), self.visit(tree.children[1])
+        )
 
     def add(self, tree: Tree):
         return operator.add(self.visit(tree.children[0]), self.visit(tree.children[1]))

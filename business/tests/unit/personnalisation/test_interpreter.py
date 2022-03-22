@@ -1,47 +1,44 @@
 import pytest
 
 from business.personnalisation.engine.formule import (
-    Reponse, ReponseMissing,
+    ReponseMissing,
 )
 from business.personnalisation.engine.formule_interpreter import FormuleInterpreter
+from business.personnalisation.engine.models import Reponse
 from business.personnalisation.engine.parser import parser
 
 
 def test_function_reponse_on_question_type_choix():
     tree = parser.parse("reponse(question_choix_1, question_choix_1a)")
     assert (
-            FormuleInterpreter(
-                [Reponse("question_choix_1", "question_choix_1a")]
-            ).visit(tree)
-            is True
+        FormuleInterpreter([Reponse("question_choix_1", "question_choix_1a")]).visit(
+            tree
+        )
+        is True
     )
     assert (
-            FormuleInterpreter(
-                [Reponse("question_choix_1", "question_choix_1b")]
-            ).visit(tree)
-            is False
+        FormuleInterpreter([Reponse("question_choix_1", "question_choix_1b")]).visit(
+            tree
+        )
+        is False
     )
 
 
 def test_function_reponse_on_question_typebinaire():
     tree = parser.parse("reponse(question_binaire_1, OUI)")
     assert (
-            FormuleInterpreter([Reponse("question_binaire_1", "OUI")]).visit(tree)
-            is True
+        FormuleInterpreter([Reponse("question_binaire_1", "OUI")]).visit(tree) is True
     )
     assert (
-            FormuleInterpreter([Reponse("question_binaire_1", "NON")]).visit(tree)
-            is False
+        FormuleInterpreter([Reponse("question_binaire_1", "NON")]).visit(tree) is False
     )
 
 
 def test_function_reponse_on_question_type_proportion():
     tree = parser.parse("reponse(question_proportion)")
     assert (
-            FormuleInterpreter(reponses=[Reponse("question_proportion", 0.7)]).visit(
-                tree
-            )
-            is 0.7
+        FormuleInterpreter(reponses=[Reponse("question_proportion", 0.7)]).visit(tree)
+        is 0.7
     )
 
 
@@ -61,23 +58,23 @@ def test_statement_if_then():
     interpreter = FormuleInterpreter([])
 
     tree = parser.parse("si VRAI alors 2")
-    assert (interpreter.visit(tree) == 2.0)
+    assert interpreter.visit(tree) == 2.0
 
     tree = parser.parse("si FAUX alors 2")
-    assert (interpreter.visit(tree) is None)
+    assert interpreter.visit(tree) is None
 
 
 def test_statement_if_then_else():
     interpreter = FormuleInterpreter([])
 
     tree = parser.parse("si vrai alors 2 sinon si faux alors 4 sinon 8")
-    assert (interpreter.visit(tree) == 2)
+    assert interpreter.visit(tree) == 2
 
     tree = parser.parse("si faux alors 2 sinon si vrai alors 4 sinon 8")
-    assert (interpreter.visit(tree) == 4)
+    assert interpreter.visit(tree) == 4
 
     tree = parser.parse("si faux alors 2 sinon si faux alors 4 sinon 8")
-    assert (interpreter.visit(tree) == 8)
+    assert interpreter.visit(tree) == 8
 
 
 def test_logical_or():

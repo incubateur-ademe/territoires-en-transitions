@@ -1,6 +1,8 @@
-from business.personnalisation.check_regles import find_regles_errors
+from business.personnalisation.check_regles import (
+    find_regles_errors,
+    Question as EngineQuestion,
+)
 from business.referentiel.domain.models import events
-from business.personnalisation.engine.models import Question
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
@@ -17,27 +19,28 @@ class CheckPersonnalisation(UseCase):
         self.bus = bus
         self.referentiel_repo = referentiel_repo
 
-    def execute(self, trigger: events.PersonnalisationMarkdownConvertedToEntities):
-        referentiel_questions = self.referentiel_repo.get_questions()
+    def execute(
+        self, trigger: events.QuestionAndPersonnalisationMarkdownConvertedToEntities
+    ):
+
+        engine_questions = [
+            EngineQuestion(
+                question.id,
+                question.type,
+                [choix.id for choix in question.choix] if question.choix else None,
+            )
+            for question in trigger.questions
+        ]
         regles = sum(
             [personnalisation.regles for personnalisation in trigger.personnalisations],
             [],
         )
-        regles_errors = find_regles_errors(
-            regles=regles,
-            questions=[
-                Question(ref_question.id, ref_question.type, [])
-                for ref_question in referentiel_questions
-            ],
-        )
-        breakpoint()
+        regles_errors = find_regles_errors(regles=regles, questions=engine_questions)
         if regles_errors:
             self.bus.publish_event(
-                events.PersonnalisationReglesCheckingFailed(
-                    f"Erreurs dans la formulation de certaines règles : {', '.join(regles_errors)}"
+                events.ReglesCheckingFailed(
+                    f"Incompatiblité dans les formulations des questions et des régles : {', '.join(regles_errors)}"
                 )
             )
         else:
-            self.bus.publish_event(
-                events.PersonnalisationReglesChecked(trigger.personnalisations)
-            )
+            self.bus.publish_event(events.ReglesChecked(trigger.personnalisations))
