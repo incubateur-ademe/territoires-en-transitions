@@ -35,3 +35,9 @@ class Question:
             action_ids=[ActionId(action_id) for action_id in d["action_ids"]],
             choix=[Choix(**choix) for choix in d["choix"]],
         )
+
+    @dataclass
+    class EngineQuestion:
+        id: str
+        type: QuestionType
+        choix_ids: List[str]

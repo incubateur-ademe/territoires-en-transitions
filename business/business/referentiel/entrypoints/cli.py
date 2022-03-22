@@ -37,17 +37,17 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
         ParseAndConvertMarkdownIndicateursToEntities
     ],
     events.IndicateurMarkdownConvertedToEntities: [StoreReferentielIndicateurs],
-    # Questions
-    events.ParseAndConvertMarkdownReferentielQuestionsTriggered: [
+    # Personnalisation : Questions and regles
+    events.ParseAndConvertMarkdownPersonnalisationsTriggered: [
         ParseAndConvertMarkdownReferentielQuestions
     ],
-    events.QuestionMarkdownConvertedToEntities: [StoreReferentielQuestions],
-    # Personnalisations
-    events.ParseAndConvertMarkdownReferentielPersonnalisationsTriggered: [
-        ParseAndConvertMarkdownReferentielPersonnalisations
+    events.QuestionMarkdownConvertedToEntities: [
+        ParseAndConvertMarkdownReferentielRegles
     ],
-    events.PersonnalisationMarkdownConvertedToEntities: [CheckPersonnalisation],
-    events.PersonnalisationReglesChecked: [StoreReferentielPersonnalisations],
+    events.QuestionAndPersonnalisationMarkdownConvertedToEntities: [
+        CheckPersonnalisation
+    ],
+    events.ReglesChecked: [StoreReferentielPersonnalisations],
     # Csv extraction
     events.ExtractReferentielActionsToCsvTriggered: [ExtractReferentielActionsToCsv],
     # Exit on DomainFailureEvent
@@ -55,7 +55,7 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
     events.ReferentielStorageFailed: [SystemExit],
     events.IndicateurMarkdownParsingOrConvertionFailed: [SystemExit],
     events.MarkdownReferentielNodeInconsistencyFound: [SystemExit],
-    events.PersonnalisationReglesCheckingFailed: [SystemExit],
+    events.ReglesCheckingFailed: [SystemExit],
 }
 
 
@@ -82,13 +82,11 @@ class ReferentielConfig(Config):
             ParseAndConvertMarkdownIndicateursToEntities(
                 self.domain_message_bus, self.referentiel_repo
             ),
-            # Question
+            # Personnalisation
             ParseAndConvertMarkdownReferentielQuestions(
                 self.domain_message_bus, self.referentiel_repo
             ),
-            StoreReferentielQuestions(self.domain_message_bus, self.referentiel_repo),
-            # Personnalisation
-            ParseAndConvertMarkdownReferentielPersonnalisations(
+            ParseAndConvertMarkdownReferentielRegles(
                 self.domain_message_bus, self.referentiel_repo
             ),
             StoreReferentielPersonnalisations(
@@ -254,19 +252,12 @@ def prepare_bus_to_update_questions_and_personnalisations(
         config,
         event_handlers=EVENT_HANDLERS,
     )
-    questions_trigger = events.ParseAndConvertMarkdownReferentielQuestionsTriggered(
-        folder_path=os.path.join(markdown_folder, "questions")
+    personnalisation_trigger = events.ParseAndConvertMarkdownPersonnalisationsTriggered(
+        question_folder_path=os.path.join(markdown_folder, "questions"),
+        regle_folder_path=os.path.join(markdown_folder, "personnalisations"),
     )
-    personnalisations_trigger = (
-        events.ParseAndConvertMarkdownReferentielPersonnalisationsTriggered(
-            folder_path=os.path.join(markdown_folder, "personnalisations")
-        )
-    )
-    domain_message_bus.subscribe_to_event(
-        events.ReferentielQuestionsStored,
-        lambda _: domain_message_bus.publish_event(personnalisations_trigger),
-    )
-    domain_message_bus.publish_event(questions_trigger)
+
+    domain_message_bus.publish_event(personnalisation_trigger)
 
     return
 

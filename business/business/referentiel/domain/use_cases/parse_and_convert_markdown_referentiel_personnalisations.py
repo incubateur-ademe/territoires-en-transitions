@@ -9,7 +9,7 @@ import marshmallow_dataclass
 
 from business.referentiel.domain.models import events
 from business.referentiel.domain.models.personnalisation import (
-    Personnalisation,
+    ActionPersonnalisation,
     Regle,
     RegleType,
 )
@@ -56,7 +56,7 @@ regle_titre_to_type: Dict[MarkdownPersonnalisationRegleTitre, RegleType] = {
 }
 
 
-class ParseAndConvertMarkdownReferentielPersonnalisations(UseCase):
+class ParseAndConvertMarkdownReferentielRegles(UseCase):
     def __init__(
         self,
         bus: AbstractDomainMessageBus,
@@ -70,28 +70,28 @@ class ParseAndConvertMarkdownReferentielPersonnalisations(UseCase):
 
     def execute(
         self,
-        trigger: events.ParseAndConvertMarkdownReferentielPersonnalisationsTriggered,
+        trigger: events.QuestionMarkdownConvertedToEntities,
     ):
-        md_files = glob(os.path.join(trigger.folder_path, "*.md"))
+        md_files = glob(os.path.join(trigger.regle_folder_path, "*.md"))
         print(f"Parsing {len(md_files)} files with personnalisation")
         # parse
         md_personnalisation, parsing_errors = self.parse(md_files)
 
         if parsing_errors:
             self.bus.publish_event(
-                events.PersonnalisationMarkdownParsingOrConvertionFailed(
-                    f"Incohérences dans le parsing de {len(parsing_errors)} regles: \n"
+                events.ReglesMarkdownParsingOrConvertionFailed(
+                    f"Incohérences dans le parsing de {len(parsing_errors)} règles: \n"
                     + "\n".join(parsing_errors)
                 )
             )
             return
 
         # convert
-        personnalisation, conversion_errors = self.convert(md_personnalisation)
+        personnalisation_entities, conversion_errors = self.convert(md_personnalisation)
 
         if conversion_errors:
             self.bus.publish_event(
-                events.PersonnalisationMarkdownParsingOrConvertionFailed(
+                events.ReglesMarkdownParsingOrConvertionFailed(
                     f"Incohérences dans la conversion de {len(conversion_errors)} regles: \n"
                     + "\n".join(conversion_errors)
                 )
@@ -99,7 +99,9 @@ class ParseAndConvertMarkdownReferentielPersonnalisations(UseCase):
             return
 
         self.bus.publish_event(
-            events.PersonnalisationMarkdownConvertedToEntities(personnalisation)
+            events.QuestionAndPersonnalisationMarkdownConvertedToEntities(
+                trigger.questions, personnalisation_entities
+            )
         )
 
     def parse(
@@ -147,7 +149,7 @@ class ParseAndConvertMarkdownReferentielPersonnalisations(UseCase):
 
     def convert(
         self, md_personnalisations: List[MarkdownPersonnalisation]
-    ) -> Tuple[List[Personnalisation], List[str]]:
+    ) -> Tuple[List[ActionPersonnalisation], List[str]]:
         errors = []
         # 1. Check that all referenced action_id exist
         repo_action_ids = self.referentiel_repo.get_all_action_ids()
@@ -164,7 +166,7 @@ class ParseAndConvertMarkdownReferentielPersonnalisations(UseCase):
 
         # 2. todo : check that formule is correct (??)
         personnalisation = [
-            Personnalisation(
+            ActionPersonnalisation(
                 action_id=ActionId(md_personnalisation.action_id),
                 titre=md_personnalisation.titre,
                 regles=[

@@ -14,14 +14,14 @@ class Regle:
 
 
 @dataclass
-class Personnalisation:
+class ActionPersonnalisation:
     action_id: ActionId
     titre: str
     regles: List[Regle]
     description: str = ""
 
     @classmethod
-    def from_dict(cls, d: dict) -> "Personnalisation":
+    def from_dict(cls, d: dict) -> "ActionPersonnalisation":
         return cls(
             action_id=d["action_id"],
             description=d["description"],

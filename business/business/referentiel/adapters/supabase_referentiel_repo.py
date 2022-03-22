@@ -3,8 +3,9 @@ from dataclasses import asdict
 
 import marshmallow_dataclass
 
-from business.referentiel.domain.models.personnalisation import Personnalisation
+from business.referentiel.domain.models.personnalisation import ActionPersonnalisation
 from business.referentiel.domain.models.question import Question
+from business.personnalisation.engine.models import Question as EngineQuestion
 from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.evaluation.adapters import supabase_names
 from business.referentiel.domain.ports.referentiel_repo import (
@@ -19,7 +20,7 @@ from business.utils.supabase_repo import SupabaseRepository
 
 
 question_schema = marshmallow_dataclass.class_schema(Question)()
-personnalisation_schema = marshmallow_dataclass.class_schema(Personnalisation)()
+personnalisation_schema = marshmallow_dataclass.class_schema(ActionPersonnalisation)()
 
 
 class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepository):
@@ -190,7 +191,7 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
 
     def upsert_personnalisations(
         self,
-        personnalisations: List[Personnalisation],
+        personnalisations: List[ActionPersonnalisation],
     ):
         self.client.rpc.call(
             supabase_names.rpc.upsert_personnalisations,
@@ -199,17 +200,19 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
             ],
         )
 
-    def get_questions(
+    def get_all_engine_questions(
         self,
-    ) -> List[Question]:
-        rows = self.client.db.get_all(supabase_names.views.questions)
-        return [Question.from_dict(row) for row in rows]
+    ) -> List[EngineQuestion]:
+        rows = self.client.db.get_all(supabase_names.views.engine_question)
+        return [
+            EngineQuestion(row["id"], row["type"], row["choix_ids"]) for row in rows
+        ]
 
     def get_personnalisations(
         self,
-    ) -> List[Personnalisation]:
-        rows = self.client.db.get_all(supabase_names.views.personnalisations)
-        return [Personnalisation.from_dict(row) for row in rows]
+    ) -> List[ActionPersonnalisation]:
+        rows = self.client.db.get_all(supabase_names.views.personnalisation)
+        return [ActionPersonnalisation.from_dict(row) for row in rows]
 
     @staticmethod
     def flatten_list(l: List) -> List:

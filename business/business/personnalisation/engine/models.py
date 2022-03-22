@@ -6,12 +6,12 @@ from business.referentiel.domain.models.question import QuestionType
 
 @dataclass
 class Reponse:
-    question_id: str
+    id: str
     value: Union[str, float, bool]
 
 
 @dataclass
 class Question:
-    question_id: str
+    id: str
     type: QuestionType
     choix_ids: Optional[List[str]] = None

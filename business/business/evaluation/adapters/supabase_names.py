@@ -21,8 +21,8 @@ class views:
     action_children = "business_action_children"
     action_statut = "business_action_statut"
     unprocessed_action_statut_event = "unprocessed_action_statut_update_event"
-    questions = "business_questions"
-    personnalisations = "business_personnalisations"
+    engine_question = "question_engine"
+    personnalisation = "business_personnalisation"
 
 
 @dataclass

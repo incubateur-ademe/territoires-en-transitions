@@ -1,10 +1,13 @@
 from typing import Optional
 
 from pytest import fail
-from business.referentiel.domain.models.personnalisation import Personnalisation, Regle
+from business.referentiel.domain.models.personnalisation import (
+    ActionPersonnalisation,
+    Regle,
+)
 
 from business.referentiel.domain.use_cases.parse_and_convert_markdown_referentiel_personnalisations import (
-    ParseAndConvertMarkdownReferentielPersonnalisations,
+    ParseAndConvertMarkdownReferentielRegles,
 )
 from business.utils.action_id import ActionId
 from business.utils.domain_message_bus import (
@@ -29,15 +32,11 @@ def prepare_use_case(
     bus = InMemoryDomainMessageBus()
     referentiel_repo = referentiel_repo or InMemoryReferentielRepository()
 
-    use_case = ParseAndConvertMarkdownReferentielPersonnalisations(
-        bus, referentiel_repo
-    )
+    use_case = ParseAndConvertMarkdownReferentielRegles(bus, referentiel_repo)
 
-    failure_events = spy_on_event(
-        bus, events.PersonnalisationMarkdownParsingOrConvertionFailed
-    )
+    failure_events = spy_on_event(bus, events.ReglesMarkdownParsingOrConvertionFailed)
     parsed_events = spy_on_event(
-        bus, events.PersonnalisationMarkdownConvertedToEntities
+        bus, events.QuestionAndPersonnalisationMarkdownConvertedToEntities
     )
     use_case.execute(test_command)
     return failure_events, parsed_events
@@ -56,7 +55,7 @@ def test_parse_and_convert_markdown_referentiel_personnalisation_from_ok_folder(
     assert len(parsed_events) == 1
 
     assert parsed_events[0].personnalisations == [
-        Personnalisation(
+        ActionPersonnalisation(
             action_id=ActionId("cae_4.1.1"),
             titre="Petit titre sur la personnalisation de la cae 4.1.1",
             regles=[
@@ -68,7 +67,7 @@ def test_parse_and_convert_markdown_referentiel_personnalisation_from_ok_folder(
             ],
             description="",
         ),
-        Personnalisation(
+        ActionPersonnalisation(
             action_id=ActionId("cae_3.3.5"),
             titre="Petit titre sur la personnalisation de la cae 3.3.5",
             regles=[
@@ -80,7 +79,7 @@ def test_parse_and_convert_markdown_referentiel_personnalisation_from_ok_folder(
             ],
             description="",
         ),
-        Personnalisation(
+        ActionPersonnalisation(
             action_id=ActionId("eci_2.2"),
             titre="Petit titre de la reduction eci_2.2",
             regles=[

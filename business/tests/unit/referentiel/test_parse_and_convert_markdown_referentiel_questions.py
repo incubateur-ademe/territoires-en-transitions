@@ -25,8 +25,8 @@ def prepare_use_case(
     List[events.QuestionMarkdownParsingOrConvertionFailed],
     List[events.QuestionMarkdownConvertedToEntities],
 ]:
-    test_command = events.ParseAndConvertMarkdownReferentielQuestionsTriggered(
-        folder_path=folder_path
+    test_command = events.ParseAndConvertMarkdownPersonnalisationsTriggered(
+        folder_path, ""
     )
     bus = InMemoryDomainMessageBus()
     referentiel_repo = referentiel_repo or InMemoryReferentielRepository()

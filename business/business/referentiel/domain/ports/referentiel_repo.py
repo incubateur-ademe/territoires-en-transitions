@@ -4,7 +4,8 @@ from typing import Dict, List, Optional
 
 import marshmallow_dataclass
 
-from business.referentiel.domain.models.personnalisation import Personnalisation
+from business.referentiel.domain.models.personnalisation import ActionPersonnalisation
+from business.personnalisation.engine.models import Question as EngineQuestion
 from business.referentiel.domain.models.question import Question
 from ..models.action_children import ActionChildren
 from ..models.action_definition import ActionDefinition
@@ -80,22 +81,22 @@ class AbstractReferentielRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_questions(
+    def get_all_engine_questions(
         self,
-    ) -> List[Question]:
+    ) -> List[EngineQuestion]:
         raise NotImplementedError
 
     @abc.abstractmethod
     def upsert_personnalisations(
         self,
-        personnalisations: List[Personnalisation],
+        personnalisations: List[ActionPersonnalisation],
     ) -> None:
         raise NotImplementedError
 
     @abc.abstractmethod
     def get_personnalisations(
         self,
-    ) -> List[Personnalisation]:
+    ) -> List[ActionPersonnalisation]:
         raise NotImplementedError
 
 
@@ -116,7 +117,7 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         self._actions_by_ref: Dict[ActionReferentiel, ReferentielEntities] = {}
         self._indicateurs: List[Indicateur] = []
         self._questions: List[Question] = []
-        self._personnalisations: List[Personnalisation] = []
+        self._personnalisations: List[ActionPersonnalisation] = []
         if children_entities and definition_entities and points_entities:
             self.add_referentiel_actions(
                 definition_entities, children_entities, points_entities
@@ -224,16 +225,16 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
 
     def upsert_personnalisations(
         self,
-        personnalisations: List[Personnalisation],
+        personnalisations: List[ActionPersonnalisation],
     ):
         self._personnalisations += personnalisations
 
-    def get_questions(
+    def get_all_engine_questions(
         self,
     ) -> List[Question]:
         return self._questions
 
     def get_personnalisations(
         self,
-    ) -> List[Personnalisation]:
+    ) -> List[ActionPersonnalisation]:
         return self._personnalisations

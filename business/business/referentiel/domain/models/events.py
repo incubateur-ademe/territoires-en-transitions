@@ -11,7 +11,7 @@ from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.utils.domain_message_bus import DomainEvent, DomainFailureEvent
 from .markdown_action_node import MarkdownActionNode
 from .indicateur import Indicateur
-from .personnalisation import Personnalisation
+from .personnalisation import ActionPersonnalisation
 
 
 @dataclass
@@ -96,8 +96,9 @@ class ParseAndConvertMarkdownIndicateursToEntitiesTriggered(DomainEvent):
 
 
 @dataclass
-class ParseAndConvertMarkdownReferentielQuestionsTriggered(DomainEvent):
-    folder_path: str
+class ParseAndConvertMarkdownPersonnalisationsTriggered(DomainEvent):
+    question_folder_path: str
+    regle_folder_path: str
 
 
 @dataclass
@@ -108,6 +109,8 @@ class QuestionMarkdownParsingOrConvertionFailed(DomainFailureEvent):
 @dataclass
 class QuestionMarkdownConvertedToEntities(DomainEvent):
     questions: List[Question]
+    question_folder_path: str
+    regle_folder_path: str
 
 
 @dataclass
@@ -116,27 +119,23 @@ class ReferentielQuestionsStored(DomainEvent):
 
 
 @dataclass
-class ParseAndConvertMarkdownReferentielPersonnalisationsTriggered(DomainEvent):
-    folder_path: str
+class QuestionAndPersonnalisationMarkdownConvertedToEntities(DomainEvent):
+    questions: List[Question]
+    personnalisations: List[ActionPersonnalisation]
 
 
 @dataclass
-class PersonnalisationMarkdownConvertedToEntities(DomainEvent):
-    personnalisations: List[Personnalisation]
+class ReglesChecked(DomainEvent):
+    personnalisations: List[ActionPersonnalisation]
 
 
 @dataclass
-class PersonnalisationReglesChecked(DomainEvent):
-    personnalisations: List[Personnalisation]
-
-
-@dataclass
-class PersonnalisationReglesCheckingFailed(DomainFailureEvent):
+class ReglesCheckingFailed(DomainFailureEvent):
     pass
 
 
 @dataclass
-class PersonnalisationMarkdownParsingOrConvertionFailed(DomainFailureEvent):
+class ReglesMarkdownParsingOrConvertionFailed(DomainFailureEvent):
     pass
 
 

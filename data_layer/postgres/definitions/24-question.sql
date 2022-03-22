@@ -157,5 +157,5 @@ from question q
          left join lateral (select array_agg(c.id) as ids
                             from question_choix c
                             where c.question_id = q.id) cx on true;
-comment on view question_display is
+comment on view question_engine is
     'Questions avec leurs choix pour le moteur de formule';
