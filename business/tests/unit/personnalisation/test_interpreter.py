@@ -1,9 +1,9 @@
 import pytest
 
 from business.personnalisation.engine.formule import (
-    FormuleInterpreter,
     Reponse, ReponseMissing,
 )
+from business.personnalisation.engine.formule_interpreter import FormuleInterpreter
 from business.personnalisation.engine.parser import parser
 
 

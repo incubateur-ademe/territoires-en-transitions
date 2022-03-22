@@ -1,6 +1,7 @@
 from typing import List
 
-from business.personnalisation.engine.formule import FormuleChecker, Question
+from business.personnalisation.engine.formule import Question
+from business.personnalisation.engine.formule_checker import FormuleChecker
 from business.referentiel.domain.models.personnalisation import Regle
 from business.personnalisation.engine.parser import parser
 
