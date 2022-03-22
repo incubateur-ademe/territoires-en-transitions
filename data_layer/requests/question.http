@@ -25,6 +25,6 @@ Authorization: Bearer {{auth_token}}
 
 
 ### List question display
-GET {{api}}/rest/v1/question_display?action_ids=cs.{eci_4}
+GET {{api}}/rest/v1/question_display?action_ids=cs.{cae_2.3.3}
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
