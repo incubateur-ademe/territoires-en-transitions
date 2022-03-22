@@ -1,4 +1,5 @@
 import abc
+from dataclasses import dataclass
 from typing import Any
 
 from lark import Transformer
@@ -12,13 +13,6 @@ class FormuleError(Exception):
 
 class ReponseMissing(Exception):
     pass
-
-
-# @dataclass
-# class Identite:
-#     type: Set[Literal["syndicat", "commune"]]
-#     population: Set[Literal["moins_de_100000"]]
-#     localisation: Set[Literal["DOM"]]
 
 
 class FormuleABC(Transformer, abc.ABC):
