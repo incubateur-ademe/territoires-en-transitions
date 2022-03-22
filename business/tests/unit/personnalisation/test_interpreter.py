@@ -13,14 +13,14 @@ def test_function_reponse_on_question_type_choix():
     assert (
         FormuleInterpreter(
             [Reponse("question_choix_1", "question_choix_1a")]
-        ).transform(tree)
+        ).visit(tree)
         is True
     )
     assert (
         FormuleInterpreter(
             [Reponse("question_choix_1", "question_choix_1b")]
-        ).transform(tree)
-        is True
+        ).visit(tree)
+        is False
     )
 
 
