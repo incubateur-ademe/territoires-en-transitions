@@ -57,44 +57,56 @@ def test_function_reponse_comparison_raises_if_no_reponse():
         FormuleInterpreter([]).visit(tree)
 
 
-def test_function_simple_if_statement():
+def test_function_if_then_statement():
+    interpreter = FormuleInterpreter([])
+
     tree = parser.parse("si VRAI alors 2")
-    assert (FormuleInterpreter([]).visit(tree) == 2.0)
+    assert (interpreter.visit(tree) == 2.0)
 
     tree = parser.parse("si FAUX alors 2")
-    assert (FormuleInterpreter([]).visit(tree) is None)
-
-# def test_function_multiple_if_statement():
-#     context = Context(
-#         reponses=[],
-#         questions=[],
-#     )
-#     assert (
-#         FormuleTransformer(context).transform(
-#             parser.parse("si vrai alors 2 sinon si faux alors 4 sinon 8")
-#         )
-#         == 2
-#     )
-#     assert (
-#         FormuleTransformer(context).transform(
-#             parser.parse("si faux alors 2 sinon si vrai alors 4 sinon 8")
-#         )
-#         == 4
-#     )
-#     assert (
-#         FormuleTransformer(context).transform(
-#             parser.parse("si faux alors 2 sinon si faux alors 4 sinon 8")
-#         )
-#         == 8
-#     )
+    assert (interpreter.visit(tree) is None)
 
 
-# def test_function_or():
-#     context = Context(
-#         reponses=[],
-#         questions=[],
-#     )
-#     assert FormuleTransformer(context).transform(parser.parse("true ou false")) is True
-#     assert FormuleTransformer(context).transform(parser.parse("false ou true")) is False
-#     assert FormuleTransformer(context).transform(parser.parse("true ou true")) is True
-#     assert FormuleTransformer(context).transform(parser.parse("false ou false")) is True
+def test_function_if_then_else_statement():
+    interpreter = FormuleInterpreter([])
+
+    tree = parser.parse("si vrai alors 2 sinon si faux alors 4 sinon 8")
+    assert (interpreter.visit(tree) == 2)
+
+    tree = parser.parse("si faux alors 2 sinon si vrai alors 4 sinon 8")
+    assert (interpreter.visit(tree) == 4)
+
+    tree = parser.parse("si faux alors 2 sinon si faux alors 4 sinon 8")
+    assert (interpreter.visit(tree) == 8)
+
+
+def test_function_or():
+    interpreter = FormuleInterpreter([])
+
+    assert interpreter.visit(parser.parse("vrai ou faux")) == (True or False)
+    assert interpreter.visit(parser.parse("faux ou vrai")) == (False or True)
+    assert interpreter.visit(parser.parse("vrai ou vrai")) == (True or True)
+    assert interpreter.visit(parser.parse("faux ou faux")) == (False or False)
+
+
+def test_function_and():
+    interpreter = FormuleInterpreter([])
+
+    assert interpreter.visit(parser.parse("vrai et faux")) == (True and False)
+    assert interpreter.visit(parser.parse("faux et vrai")) == (False and True)
+    assert interpreter.visit(parser.parse("vrai et vrai")) == (True and True)
+    assert interpreter.visit(parser.parse("faux et faux")) == (False and False)
+
+
+def test_function_max():
+    interpreter = FormuleInterpreter([])
+
+    assert interpreter.visit(parser.parse("max(2, 3)")) == max(2.0, 3.0)
+    assert interpreter.visit(parser.parse("max(3, 2)")) == max(3.0, 2.0)
+
+
+def test_function_min():
+    interpreter = FormuleInterpreter([])
+
+    assert interpreter.visit(parser.parse("min(2, 3)")) == min(2.0, 3.0)
+    assert interpreter.visit(parser.parse("min(3, 2)")) == min(3.0, 2.0)
