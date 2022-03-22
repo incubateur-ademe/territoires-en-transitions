@@ -28,7 +28,10 @@ export const PointsPotentiels = ({
           <a
             className="fr-link fr-link--icon-left fr-fi-settings-line fr-ml-10v"
             href="#"
-            onClick={onEdit}
+            onClick={evt => {
+              evt.preventDefault();
+              onEdit(evt);
+            }}
           >
             Personnaliser
           </a>

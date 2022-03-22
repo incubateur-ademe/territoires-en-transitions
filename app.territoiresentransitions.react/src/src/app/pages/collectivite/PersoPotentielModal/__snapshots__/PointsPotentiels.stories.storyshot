@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Non Personnalise 1`] = `
+<div
+  className="fr-highlight"
+  style={
+    Object {
+      "border": "1px solid var(--yellow-moutarde-850)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "marginLeft": 0,
+      "maxWidth": "fit-content",
+      "paddingBottom": "1rem",
+      "paddingRight": "2rem",
+      "paddingTop": "1rem",
+    }
+  }
+>
+  <div
+    className="flex items-center"
+  >
+    Potentiel pour cette sous-action : 6,7 points
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Personnalise 1`] = `
+<div
+  className="fr-highlight"
+  style={
+    Object {
+      "border": "1px solid var(--yellow-moutarde-850)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "marginLeft": 0,
+      "maxWidth": "fit-content",
+      "paddingBottom": "1rem",
+      "paddingRight": "2rem",
+      "paddingTop": "1rem",
+    }
+  }
+>
+  <div
+    className="flex items-center"
+  >
+    Potentiel réduit pour cette sous-action : 3,3 points
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Personnalise Et Editable 1`] = `
+<div
+  className="fr-highlight"
+  style={
+    Object {
+      "border": "1px solid var(--yellow-moutarde-850)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "marginLeft": 0,
+      "maxWidth": "fit-content",
+      "paddingBottom": "1rem",
+      "paddingRight": "2rem",
+      "paddingTop": "1rem",
+    }
+  }
+>
+  <div
+    className="flex items-center"
+  >
+    Potentiel réduit pour cette sous-action : 3,3 points
+    <a
+      className="fr-link fr-link--icon-left fr-fi-settings-line fr-ml-10v"
+      href="#"
+      onClick={[Function]}
+    >
+      Personnaliser
+    </a>
+  </div>
+</div>
+`;
