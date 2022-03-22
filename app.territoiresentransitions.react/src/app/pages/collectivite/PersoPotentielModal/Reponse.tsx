@@ -1,5 +1,5 @@
 import {FC, FormEvent} from 'react';
-import {TReponse} from './TQuestionReponse';
+import {TReponse} from 'generated/dataLayer/reponse_read';
 import {TQuestionReponseProps} from './PersoPotentielQR';
 
 /** Affiche une réponse donnant le choix entre plusieurs énoncés */
