@@ -15,6 +15,8 @@ const Highlight = ({color, children}: {color: string; children: ReactNode}) => (
     style={{
       boxShadow: `inset 0.25rem 0 0 0 ${color}`,
       marginLeft: 0,
+      maxWidth: 'fit-content',
+      paddingRight: '2rem',
       paddingTop: '1rem',
       paddingBottom: '1rem',
       border: `1px solid ${color}`,
