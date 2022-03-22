@@ -5,8 +5,10 @@ from lark import Transformer
 from business.personnalisation.engine.formule import FormuleABC, FormuleError
 from business.personnalisation.engine.models import Question
 
-
-TypedValue = Tuple[Type[str], str]
+TypedValue = Tuple[Type, Any]
+Arg1 = Tuple[TypedValue]
+Arg2 = Tuple[TypedValue, TypedValue]
+Arg3 = Tuple[TypedValue, TypedValue, TypedValue]
 
 
 class FormuleChecker(FormuleABC, Transformer):
@@ -16,7 +18,7 @@ class FormuleChecker(FormuleABC, Transformer):
         Transformer.__init__(self, visit_tokens)
         self.questions = {question.id: question for question in questions}
 
-    def reponse_comparison(self, node: Tuple[Any, Any]):
+    def reponse_comparison(self, node: Arg2) -> TypedValue:
         """Compute reponse to questions of type choix
         Returns True if the reponse at key matches the value.
         Raises FormuleError if question_id or choix_id does not exist
@@ -38,9 +40,9 @@ class FormuleChecker(FormuleABC, Transformer):
             raise FormuleError(
                 f"L'id de choix {compared_choix_id} est inconnu pour la question {question_id}. Choix possibles : {', '.join(allowed_choix_ids)}"
             )
-        return (bool, "reponse")
+        return bool, "reponse"
 
-    def reponse_value(self, node: Tuple[Any]):
+    def reponse_value(self, node: Arg1) -> TypedValue:
         """Compute reponse to questions of type proportion or binaire
         Raises FormuleError if question_id does not exist
         """
@@ -52,49 +54,51 @@ class FormuleChecker(FormuleABC, Transformer):
             raise FormuleError(
                 f"La question d'id {question_id} est de type {question_type}, donc la fonction réponse attend deux arguments."
             )
-        return (float, "reponse")
+        return float, "reponse"
 
-    def if_then(self, node: Tuple[Any, Any, Any]):
-        test, if_return, else_return = node
+    def if_then(self, node: Arg2) -> TypedValue:
+        test, if_suite = node
         if test:
-            return if_return
-        else:
-            return else_return
+            return if_suite
+        return type(None), "if"
 
-    def if_then_else(self, node_or_tree: Any):
-        pass
+    def if_then_else(self, node: Arg3) -> TypedValue:
+        test, if_suite, else_suite = node
+        if test:
+            return if_suite
+        return else_suite
 
-    def logic_or(self, node_or_tree: Any):
-        pass
+    def logic_or(self, node: Arg2) -> TypedValue:
+        return node[0] or node[1]
 
-    def logic_and(self, node_or_tree: Any):
-        pass
+    def logic_and(self, node: Arg2) -> TypedValue:
+        return node[0] and node[1]
 
-    def min(self, node_or_tree: Any):
-        pass
+    def min(self, node: Arg2) -> TypedValue:
+        return self.math("min", node)
 
-    def max(self, node_or_tree: Any):
-        pass
+    def max(self, node: Any):
+        return self.math("max", node)
 
-    def mul(self, node_or_tree: Any):
-        pass
+    def mul(self, node: Any):
+        return self.math("mul", node)
 
-    def div(self, node_or_tree: Any):
-        pass
+    def div(self, node: Any):
+        return self.math("div", node)
 
-    def add(self, node_or_tree: Any):
-        pass
+    def add(self, node: Any):
+        return self.math("add", node)
 
-    def sub(self, node_or_tree: Any):
-        pass
+    def sub(self, node: Any):
+        return self.math("sub", node)
 
     @staticmethod
     def true(_):
-        pass
+        return bool, True
 
     @staticmethod
     def false(_):
-        pass
+        return bool, False
 
     @staticmethod
     def number(n):
@@ -109,3 +113,12 @@ class FormuleChecker(FormuleABC, Transformer):
     def string(n) -> TypedValue:
         """returns token content"""
         return str, n[0].value
+
+    @staticmethod
+    def math(function_name: str, node: Arg2):
+        if node[0][0] != float or node[1][0] != float:
+            raise FormuleError(
+                f"{function_name} ne prends que des arguments de type nombre."
+                f"\n{function_name} ({node[0][1]}, {node[0][1]}) n'est pas valide."
+            )
+        return float, function_name

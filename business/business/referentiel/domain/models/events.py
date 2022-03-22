@@ -121,16 +121,17 @@ class ReferentielQuestionsStored(DomainEvent):
 @dataclass
 class QuestionAndPersonnalisationMarkdownConvertedToEntities(DomainEvent):
     questions: List[Question]
-    personnalisations: List[ActionPersonnalisation]
+    regles: List[ActionPersonnalisation]
 
 
 @dataclass
-class ReglesChecked(DomainEvent):
-    personnalisations: List[ActionPersonnalisation]
+class QuestionAndReglesChecked(DomainEvent):
+    questions: List[Question]
+    regles: List[ActionPersonnalisation]
 
 
 @dataclass
-class ReglesCheckingFailed(DomainFailureEvent):
+class QuestionAndReglesCheckingFailed(DomainFailureEvent):
     pass
 
 

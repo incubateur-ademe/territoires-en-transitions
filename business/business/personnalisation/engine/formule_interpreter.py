@@ -12,7 +12,7 @@ class FormuleInterpreter(FormuleABC, Interpreter):
     """In charge of checking formules are correct"""
 
     def __init__(self, reponses: List[Reponse], visit_tokens: bool = True) -> None:
-        Interpreter.__init__(self, visit_tokens)
+        super().__init__(visit_tokens)
         self.reponses = {reponse.id: reponse.value for reponse in reponses}
 
     def reponse_comparison(self, tree: Tree):

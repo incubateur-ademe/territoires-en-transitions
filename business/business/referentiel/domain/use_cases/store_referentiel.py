@@ -146,9 +146,7 @@ class StoreReferentielPersonnalisations(UseCase):
         self.bus = bus
         self.referentiel_repo = referentiel_repo
 
-    def execute(
-        self, trigger: events.QuestionAndPersonnalisationMarkdownConvertedToEntities
-    ):
+    def execute(self, trigger: events.QuestionAndReglesChecked):
         self.referentiel_repo.upsert_questions(trigger.questions)
-        self.referentiel_repo.upsert_personnalisations(trigger.personnalisations)
+        self.referentiel_repo.upsert_personnalisations(trigger.regles)
         self.bus.publish_event(events.ReferentielPersonnalisationStored())
