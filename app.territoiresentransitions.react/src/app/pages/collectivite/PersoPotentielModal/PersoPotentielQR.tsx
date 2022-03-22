@@ -5,9 +5,12 @@
 import {FormEventHandler} from 'react';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {ActionScore} from 'types/ClientScore';
-import {TQuestionReponse, TChangeReponse} from './TQuestionReponse';
+import {TReponse} from 'generated/dataLayer/reponse_read';
+import {TQuestionReponse} from 'generated/dataLayer/reponse_write';
 import {PointsPotentiels} from './PointsPotentiels';
 import {traiteChgtReponseParType, reponseParType} from './Reponse';
+
+type TChangeReponse = (newValue: TReponse) => void;
 
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */
