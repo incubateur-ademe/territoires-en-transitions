@@ -6,6 +6,8 @@ from business.personnalisation.engine.formule import FormuleABC, FormuleError
 from business.personnalisation.engine.models import Question
 
 
+TypedValue = Tuple[Type[str], str]
+
 class FormuleChecker(FormuleABC, Transformer):
     """In charge of checking formules are correct"""
 
@@ -58,12 +60,52 @@ class FormuleChecker(FormuleABC, Transformer):
         else:
             return else_return
 
-    @staticmethod
-    def identifier(n) -> Tuple[Type[str], str]:
-        """returns token content as the identifier is a dict key"""
-        return (str, n[0].value)
+    def if_then_else(self, node_or_tree: Any):
+        pass
+
+    def logic_or(self, node_or_tree: Any):
+        pass
+
+    def logic_and(self, node_or_tree: Any):
+        pass
+
+    def min(self, node_or_tree: Any):
+        pass
+
+    def max(self, node_or_tree: Any):
+        pass
+
+    def mul(self, node_or_tree: Any):
+        pass
+
+    def div(self, node_or_tree: Any):
+        pass
+
+    def add(self, node_or_tree: Any):
+        pass
+
+    def sub(self, node_or_tree: Any):
+        pass
 
     @staticmethod
-    def string(n) -> Tuple[Type[str], str]:
+    def true(_):
+        pass
+
+    @staticmethod
+    def false(_):
+        pass
+
+    @staticmethod
+    def number(n):
+        return float, float(n[0].value)
+
+    @staticmethod
+    def identifier(n) -> TypedValue:
+        """returns token content as the identifier is a dict key"""
+        return str, n[0].value
+
+    @staticmethod
+    def string(n) -> TypedValue:
         """returns token content"""
-        return (str, n[0].value)
+        return str, n[0].value
+
