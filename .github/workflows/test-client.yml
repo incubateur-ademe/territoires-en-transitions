@@ -11,6 +11,7 @@ jobs:
     name: Client unit tests
     runs-on: ubuntu-latest
     env:
+      LANG: 'fr_FR.UTF-8'
       app-directory: ./app.territoiresentransitions.react
       datalayer-directory: ./data_layer
       datalayer-docker-directory: ./data_layer/test_only_docker
@@ -26,6 +27,13 @@ jobs:
           node-version: '16'
           cache: 'npm'
           cache-dependency-path: ${{env.app-directory}}/package-lock.json
+
+      # fixe la langue de l'environnement de test : permet de faire passer les
+      # tests de composant utilisant des fonctions telles que toLocaleString()
+      - name: Set locale
+        run: |
+          sudo locale-gen ${{env.LANG}}
+          sudo update-locale LANG=${{env.LANG}}
 
       # Launch docker
       - name: Launch docker
