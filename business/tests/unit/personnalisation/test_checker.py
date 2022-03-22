@@ -3,9 +3,9 @@ import pytest
 
 from business.personnalisation.engine.parser import parser
 from business.personnalisation.engine.formule import (
-    FormuleChecker,
     Question,
 )
+from business.personnalisation.engine.formule_checker import FormuleChecker
 
 
 def test_function_reponse_on_correct_question_type_choix():
