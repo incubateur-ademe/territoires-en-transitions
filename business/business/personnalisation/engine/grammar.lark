@@ -17,12 +17,12 @@
      | term "et" term -> logic_and
 
 ?term: factor
-    | factor "+" factor   -> add
-    | factor "-" factor   -> sub
+    | factor "+" term   -> add
+    | factor "-" term   -> sub
 
 ?factor: unary
-    | unary "*" unary  -> mul
-    | unary "/" unary  -> div
+    | unary "*" factor  -> mul
+    | unary "/" factor  -> div
 
 ?unary: call
 
