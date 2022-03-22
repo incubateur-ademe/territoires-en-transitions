@@ -126,6 +126,16 @@ class PersonnalisationMarkdownConvertedToEntities(DomainEvent):
 
 
 @dataclass
+class PersonnalisationReglesChecked(DomainEvent):
+    personnalisations: List[Personnalisation]
+
+
+@dataclass
+class PersonnalisationReglesCheckingFailed(DomainFailureEvent):
+    pass
+
+
+@dataclass
 class PersonnalisationMarkdownParsingOrConvertionFailed(DomainFailureEvent):
     pass
 

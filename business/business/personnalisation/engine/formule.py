@@ -1,6 +1,7 @@
 import abc
-from dataclasses import dataclass
-from typing import Any, Literal, Optional, Set, Union, List
+from typing import Any
+
+from lark import Transformer
 
 from business.referentiel.domain.models.question import QuestionType
 
@@ -20,27 +21,10 @@ class ReponseMissing(Exception):
 #     localisation: Set[Literal["DOM"]]
 
 
-@dataclass
-class Reponse:
-    question_id: str
-    value: Union[str, float, bool]
+class FormuleABC(Transformer, abc.ABC):
+    def __init__(self, visit_tokens: bool = True) -> None:
+        super().__init__(visit_tokens)
 
-
-@dataclass
-class Question:
-    question_id: str
-    type: QuestionType
-    choix_ids: Optional[List[str]] = None
-
-
-@dataclass
-class Context:
-    # identite: Identite
-    reponses: List[Reponse]
-    questions: List[Question]
-
-
-class FormuleABC(abc.ABC):
     @abc.abstractmethod
     def reponse_comparison(self, node_or_tree: Any):
         """Compute reponse to questions of type choix"""

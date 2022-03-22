@@ -4,14 +4,15 @@ from typing import List
 from lark import Tree
 from lark.visitors import Interpreter
 
-from business.personnalisation.engine.formule import FormuleABC, Reponse, ReponseMissing
+from business.personnalisation.engine.formule import FormuleABC, ReponseMissing
+from business.personnalisation.engine.models import Reponse
 
 
 class FormuleInterpreter(FormuleABC, Interpreter):
     """In charge of checking formules are correct"""
 
     def __init__(self, reponses: List[Reponse], visit_tokens: bool = True) -> None:
-        Interpreter.__init__(visit_tokens)
+        Interpreter.__init__(self, visit_tokens)
         self.reponses = {reponse.question_id: reponse.value for reponse in reponses}
 
     def reponse_comparison(self, tree: Tree):
