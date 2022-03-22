@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from typing import Any, Literal, Optional, Set, Tuple, Type, Union, List
 
 from lark import Transformer
+from lark.visitors import Interpreter
+from lark.tree import Tree
 
 from business.personnalisation.engine.math import MathTransformer
 from business.referentiel.domain.models.question import QuestionType
@@ -43,10 +45,7 @@ class Context:
     questions: List[Question]
 
 
-class FormuleABC(Transformer, abc.ABC):
-    def __init__(self, visit_tokens: bool = True) -> None:
-        super().__init__(visit_tokens)
-
+class FormuleABC(abc.ABC):
     @abc.abstractmethod
     def reponse_comparison(self, node: Tuple[Any, Any]):
         """Compute reponse to questions of type choix"""
@@ -62,11 +61,11 @@ class FormuleABC(Transformer, abc.ABC):
         raise NotImplementedError
 
 
-class FormuleChecker(FormuleABC):
+class FormuleChecker(FormuleABC, Transformer):
     """In charge of checking formules are correct"""
 
     def __init__(self, questions: List[Question], visit_tokens: bool = True) -> None:
-        super().__init__(visit_tokens)
+        super(Transformer, self).__init__(visit_tokens)
         self.questions = {question.question_id: question for question in questions}
 
     def reponse_comparison(self, node: Tuple[Any, Any]):
@@ -115,29 +114,29 @@ class FormuleChecker(FormuleABC):
             return else_return
 
     @staticmethod
-    def identifier(n) -> tuple[Type[str], str]:
+    def identifier(n) -> Tuple[Type[str], str]:
         """returns token content as the identifier is a dict key"""
         return (str, n[0].value)
 
     @staticmethod
-    def string(n) -> tuple[Type[str], str]:
+    def string(n) -> Tuple[Type[str], str]:
         """returns token content"""
         return (str, n[0].value)
 
 
-class FormuleInterpreter(FormuleABC):
+class FormuleInterpreter(Interpreter):
     """In charge of checking formules are correct"""
 
     def __init__(self, reponses: List[Reponse], visit_tokens: bool = True) -> None:
-        super().__init__(visit_tokens)
+        Interpreter.__init__(visit_tokens)
         self.reponses = {reponse.question_id: reponse.value for reponse in reponses}
 
-    def reponse_comparison(self, node: Tuple[Any, Any]):
+    def reponse_comparison(self, tree: Tree):
         """Compute reponse to questions of type choix
         Returns True if the reponse at key matches the value.
         Raise ReponseMissing if reponse can't be found
         """
-        (question_id, compared_choix_id) = node
+        (question_id, compared_choix_id) = self.visit_children(tree)
         if question_id not in self.reponses:
             raise ReponseMissing(f"No reponse for question {question_id}")
         reponse_choix_id = self.reponses[question_id]
@@ -161,14 +160,14 @@ class FormuleInterpreter(FormuleABC):
             return else_return
 
     @staticmethod
-    def identifier(n):
+    def identifier(tree):
         """returns token content as the identifier is a dict key"""
-        return n[0].value
+        return tree.children[0].value
 
     @staticmethod
-    def string(n):
+    def string(tree):
         """returns token content"""
-        return n[0].value
+        return tree.children[0].value
 
     @staticmethod
     def true(_):
