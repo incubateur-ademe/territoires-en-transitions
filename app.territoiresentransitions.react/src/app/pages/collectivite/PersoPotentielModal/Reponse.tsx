@@ -1,13 +1,25 @@
-import {FC, FormEvent} from 'react';
+import {FC, FormEvent, ReactNode} from 'react';
 import {TReponse} from 'generated/dataLayer/reponse_read';
 import {TQuestionReponseProps} from './PersoPotentielQR';
+
+const ReponseContainer = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => (
+  <div className={`fr-fieldset__content pl-4 ${className || ''}`}>
+    {children}
+  </div>
+);
 
 /** Affiche une réponse donnant le choix entre plusieurs énoncés */
 const ReponseChoix = ({qr}: TQuestionReponseProps) => {
   const {id: questionId, choix, reponse} = qr;
 
   return (
-    <div className="fr-fieldset__content">
+    <ReponseContainer>
       {choix?.map(({id: choiceId, label}) => {
         const eltId = `${questionId}-${choiceId}`;
         return (
@@ -25,9 +37,10 @@ const ReponseChoix = ({qr}: TQuestionReponseProps) => {
           </div>
         );
       })}
-    </div>
+    </ReponseContainer>
   );
 };
+
 /** Affiche une réponse donnant le choix entre oui et non */
 const ReponseBinaire = ({qr}: TQuestionReponseProps) => {
   const {id: questionId, reponse} = qr;
@@ -35,7 +48,7 @@ const ReponseBinaire = ({qr}: TQuestionReponseProps) => {
   const idNo = `${questionId}-n`;
 
   return (
-    <div className="fr-fieldset__content fr-fieldset--inline">
+    <ReponseContainer className="fr-fieldset--inline">
       <div className="fr-radio-group fr-radio-group--sm">
         <input
           type="radio"
@@ -60,9 +73,10 @@ const ReponseBinaire = ({qr}: TQuestionReponseProps) => {
           Non
         </label>
       </div>
-    </div>
+    </ReponseContainer>
   );
 };
+
 /** Affiche une réponse donnant lieu à la saisie d'une valeur entre 0 et 100 */
 const DEFAULT_RANGE = [0, 100];
 const ReponseProportion = ({qr}: TQuestionReponseProps) => {
@@ -70,7 +84,7 @@ const ReponseProportion = ({qr}: TQuestionReponseProps) => {
   const [min, max] = DEFAULT_RANGE;
 
   return (
-    <div className="fr-fieldset__content fr-fieldset--inline">
+    <ReponseContainer className="fr-fieldset--inline">
       <label className="fr-label" htmlFor={questionId}>
         Part en pourcentage
       </label>
@@ -84,15 +98,17 @@ const ReponseProportion = ({qr}: TQuestionReponseProps) => {
         className="fr-input"
         value={String(reponse)}
       />
-    </div>
+    </ReponseContainer>
   );
 };
+
 // correspondances entre un type de réponse et son composant
 export const reponseParType: {[k: string]: FC<TQuestionReponseProps>} = {
   choix: ReponseChoix,
   binaire: ReponseBinaire,
   proportion: ReponseProportion,
 };
+
 // correspondances entre un type de réponse attendue et sa fonction de
 // traitement de la valeur modifiée
 export const traiteChgtReponseParType: {

@@ -52,6 +52,12 @@ QuestionProportionModifiee.args = {
   questionReponses: [{...Q3, reponse: 60}],
 };
 
+export const PlusieursQuestions = Template.bind({});
+PlusieursQuestions.args = {
+  actionScore: SCORE_MODIFIE,
+  questionReponses: [Q1, Q2, {...Q3, reponse: 60}],
+};
+
 /*
 export const Documentation = Template.bind({});
 Documentation.args = {
