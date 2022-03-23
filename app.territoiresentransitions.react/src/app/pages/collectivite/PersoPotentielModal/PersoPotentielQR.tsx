@@ -2,7 +2,7 @@
  * Affiche l'onglet "Personnalisation du potentiel"
  */
 
-import {FormEventHandler} from 'react';
+import {FormEvent} from 'react';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {ActionScore} from 'types/ClientScore';
 import {TReponse} from 'generated/dataLayer/reponse_read';
@@ -10,7 +10,7 @@ import {TQuestionReponse} from 'generated/dataLayer/reponse_write';
 import {PointsPotentiels} from './PointsPotentiels';
 import {traiteChgtReponseParType, reponseParType} from './Reponse';
 
-type TChangeReponse = (newValue: TReponse) => void;
+type TChangeReponse = (question_id: string, reponse: TReponse) => void;
 
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */
@@ -30,29 +30,32 @@ export type TPersoPotentielQRProps = {
 export const PersoPotentielQR = (props: TPersoPotentielQRProps) => {
   const {questionReponses, onChange} = props;
 
-  const handleChange: FormEventHandler<HTMLFieldSetElement> = e => {
-    const {name} = e.target as HTMLInputElement;
-    const traiteChgt = traiteChgtReponseParType[name];
-    if (traiteChgt) {
-      onChange(traiteChgt(e));
-    }
-  };
-
   return (
     <div data-test="PersoPotentielQR">
       <PointsPotentiels {...props} />
-      <h6 className="mt-8">Caractéristique liée</h6>
+      <h6 className="mt-8 mb-0">
+        {questionReponses?.length > 1
+          ? 'Caractéristiques liées'
+          : 'Caractéristique liée'}
+      </h6>
       <div className="fr-form-group">
-        {questionReponses.map(qr => (
-          <fieldset
-            key={qr.id}
-            name={qr.type}
-            className="fr-fieldset"
-            onChange={handleChange}
-          >
-            <QuestionReponse qr={qr} />
-          </fieldset>
-        ))}
+        {questionReponses.map(qr => {
+          const {id, type} = qr;
+          return (
+            <fieldset
+              key={id}
+              className="fr-fieldset"
+              onChange={(e: FormEvent<HTMLFieldSetElement>) => {
+                const traiteChgt = traiteChgtReponseParType[type];
+                if (traiteChgt) {
+                  onChange(id, traiteChgt(e));
+                }
+              }}
+            >
+              <QuestionReponse qr={qr} />
+            </fieldset>
+          );
+        })}
       </div>
     </div>
   );
@@ -71,7 +74,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
   return (
     <>
       <legend
-        className="fr-fieldset__legend fr-text--regular"
+        className="fr-fieldset__legend fr-text--regular pt-6"
         dangerouslySetInnerHTML={{__html: formulation}}
       />
       {/*
