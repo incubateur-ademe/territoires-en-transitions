@@ -17,6 +17,7 @@ import {Switch} from '@material-ui/core';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
+import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -78,6 +79,12 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
       </div>
       <div className="mb-16">
         <div className="flex flex-col w-4/5">
+          {action.have_reduction_potentiel && (
+            <>
+              <PersoPotentiel actionDef={action} />
+              <Spacer size={2} />
+            </>
+          )}
           <div
             className="htmlContent"
             dangerouslySetInnerHTML={{
