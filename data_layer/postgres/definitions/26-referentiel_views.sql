@@ -107,7 +107,8 @@ select id,
        ressources != '' as have_ressources,
        reduction_potentiel != '' as have_reduction_potentiel,
        perimetre_evaluation != '' as have_perimetre_evaluation,
-       contexte != '' as have_contexte
+       contexte != '' as have_contexte,
+       id in (select question_id from question_choix ) as have_questions
 from action_definition
          join action_children on action_id = action_children.id
 order by naturalsort(action_id);
