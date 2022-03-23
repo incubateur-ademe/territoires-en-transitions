@@ -49,11 +49,13 @@ const getLabel = (
   const {point_referentiel, point_potentiel_perso} = actionScore;
 
   const points =
-    point_potentiel_perso.toLocaleString(undefined, {
+    (point_potentiel_perso || point_referentiel).toLocaleString(undefined, {
       maximumFractionDigits: 1,
     }) + ' points';
 
-  const isModified = point_potentiel_perso !== point_referentiel;
+  const isModified =
+    point_potentiel_perso !== undefined &&
+    point_potentiel_perso !== point_referentiel;
   if (isModified) {
     const modifLabel =
       point_potentiel_perso > point_referentiel ? 'augmenté' : 'réduit';
