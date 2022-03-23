@@ -1,31 +1,19 @@
-from lark import Lark
-
-from business.personnalisation.engine.formule import FormuleTransformer, Context, Identite, Reponses
-from business.personnalisation.engine.grammar import formule_grammar
+from business.personnalisation.engine.formule_interpreter import FormuleInterpreter
+from business.personnalisation.engine.models import Reponse
+from business.personnalisation.engine.parser import parser
 
 
 def main():
-    context = Context(
-        identite=Identite(
-            localisation=set(),
-            population={"moins_de_100000"},
-            type={"commune"}
-        ),
-        reponses=Reponses(
-            mobilite_1="OUI",
-            mobilite_2="mobilite_2_b"
-        )
-    )
-
-    parser = Lark(formule_grammar, parser="lalr")
-    transformer = FormuleTransformer(context)
+    interpreter = FormuleInterpreter([
+        Reponse("question_binaire_1", "NON")
+    ])
     while True:
         try:
             s = input('> ')
         except EOFError:
             break
         tree = parser.parse(s)
-        result = transformer.transform(tree)
+        result = interpreter.visit(tree)
         print(result)
 
 
