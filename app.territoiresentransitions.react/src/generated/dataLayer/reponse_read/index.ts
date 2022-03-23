@@ -5,5 +5,7 @@ export type TReponse = TChoixId | boolean | number | null;
 export type ReponseRead = {
   question_id: TQuestionId;
   collectivite_id: number;
-  reponse: TReponse;
+  reponse: {
+    reponse: TReponse;
+  };
 };

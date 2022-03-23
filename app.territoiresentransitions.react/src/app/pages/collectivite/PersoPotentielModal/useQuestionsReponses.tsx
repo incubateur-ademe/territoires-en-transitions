@@ -36,7 +36,7 @@ export const useQuestionsReponses: TUseQR = action_id => {
           return reponses?.length
             ? {
                 ...question,
-                reponse: reponses[0].reponse,
+                reponse: reponses[0].reponse.reponse,
               }
             : question;
         })
