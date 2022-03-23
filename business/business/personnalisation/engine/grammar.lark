@@ -11,10 +11,10 @@
 ?expression: logic_or
 
 ?logic_or: logic_and
-    | logic_and "ou" logic_and -> logic_or
+    | logic_and "ou" logic_or -> logic_or
 
 ?logic_and: term
-     | term "et" term -> logic_and
+     | term "et" logic_and -> logic_and
 
 ?term: factor
     | factor "+" term   -> add
