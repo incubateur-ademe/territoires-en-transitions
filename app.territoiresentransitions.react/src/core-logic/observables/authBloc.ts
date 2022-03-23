@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {acceptAgentInvitation} from 'core-logic/api/procedures/invitationProcedures';
+import {User} from '@supabase/supabase-js';
 
 // TODO : this should be in an other bloc : AcceptInvitationBloc
 type invitationState =
@@ -50,7 +51,7 @@ export class AuthBloc {
         if (session.user) {
           this.setUserId(session.user.id);
           this.setAuthError(null);
-          console.log('user connected ', this.userId);
+          setCrispUserData(session.user);
           if (this._invitationState === 'waitingForLogin')
             this._acceptCurrentInvitation();
         } else {
@@ -68,6 +69,7 @@ export class AuthBloc {
     supabaseClient.auth.signOut().then(response => {
       if (response.error === null) {
         this.setUserId(null);
+        clearCrispUserData();
       } else this.setAuthError(response.error.message);
     });
   }
@@ -95,5 +97,40 @@ export class AuthBloc {
     this._invitationState = success ? 'accepted' : 'rejected';
   }
 }
+
+// affecte les données de l'utilisateur connecté à la chatbox
+const setCrispUserData = (user: User) => {
+  if ('$crisp' in window) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const {$crisp} = window as any;
+
+    // lecture des dcp
+    const {id: userId, email} = user;
+    supabaseClient
+      .from('dcp')
+      .select('user_id,nom,prenom')
+      .eq('user_id', userId)
+      .then(({data}) => {
+        if (data?.length) {
+          const {nom, prenom} = data[0];
+          // enregistre le nom/prénom
+          $crisp.push(['set', 'user:nickname', [`${prenom} ${nom}`]]);
+        }
+      });
+
+    // enregistre l'email
+    $crisp.push(['set', 'user:email', [email]]);
+  }
+};
+
+// ré-initialise les données de la chatbox (appelée à la déconnexion)
+const clearCrispUserData = () => {
+  if ('$crisp' in window) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const {$crisp} = window as any;
+    $crisp.push(['set', 'user:nickname', [null]]);
+    $crisp.push(['set', 'user:email', [null]]);
+  }
+};
 
 export const authBloc = new AuthBloc();
