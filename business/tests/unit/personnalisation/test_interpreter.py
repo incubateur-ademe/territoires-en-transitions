@@ -143,6 +143,14 @@ def test_operator_precedence():
     assert interpreter.visit(parser.parse("1 + 2 * 3 - 4")) == 1 + 2 * 3 - 4
 
 
+def test_math_operation_on_proportion():
+    tree = parser.parse("reponse(question_proportion) - 0.2")
+    assert (
+            FormuleInterpreter(reponses=[Reponse("question_proportion", 1.0)]).visit(tree)
+            == 0.8
+    )
+
+
 def test_regle_cae_1_2_3():
     """
     Pour une collectivité ne possédant que **partiellement**
