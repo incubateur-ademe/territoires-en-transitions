@@ -1,0 +1,216 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematique QR Plusieurs Questions 1`] = `
+<div
+  className="flex flex-col"
+>
+  <div
+    className="bg-bf925 w-full h-28 flex items-center"
+  >
+    <h2
+      className="w-full text-center m-0"
+    >
+      Urbanisme et habitat
+    </h2>
+    <span
+      className="min-w-max absolute right-10 lg:right-20 pt-2"
+    >
+      Grand Montauban
+    </span>
+  </div>
+  <div
+    className="flex justify-center w-full"
+  >
+    <div
+      className="fr-toggle fr-toggle--label-left border-b w-[28rem] mt-6"
+    >
+      <input
+        checked={false}
+        className="fr-toggle__input absolute right-0"
+        id="onlyNoResponse"
+        onChange={[Function]}
+        type="checkbox"
+      />
+      <label
+        className="fr-toggle__label select-none"
+        htmlFor="onlyNoResponse"
+      >
+        Afficher uniquement les questions sans réponse
+      </label>
+    </div>
+  </div>
+  <div
+    className="max-w-3xl self-center mt-10"
+  >
+    <div
+      className="fr-form-group "
+    >
+      <fieldset
+        className="fr-fieldset"
+      >
+        <legend
+          className="fr-fieldset__legend fr-text--regular pt-6"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
+            }
+          }
+        />
+        <div
+          className="fr-fieldset__content pl-4 "
+        >
+          <div
+            className="fr-radio-group fr-radio-group--sm"
+          >
+            <input
+              checked={false}
+              id="q1-c1"
+              name="choix"
+              onChange={[Function]}
+              type="radio"
+              value="c1"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q1-c1"
+            >
+              Oui, pour l’ensemble de la collectivité
+            </label>
+          </div>
+          <div
+            className="fr-radio-group fr-radio-group--sm"
+          >
+            <input
+              checked={false}
+              id="q1-c2"
+              name="choix"
+              onChange={[Function]}
+              type="radio"
+              value="c2"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q1-c2"
+            >
+              Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+            </label>
+          </div>
+          <div
+            className="fr-radio-group fr-radio-group--sm"
+          >
+            <input
+              checked={false}
+              id="q1-c3"
+              name="choix"
+              onChange={[Function]}
+              type="radio"
+              value="c3"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q1-c3"
+            >
+              Non
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        className="fr-fieldset"
+      >
+        <legend
+          className="fr-fieldset__legend fr-text--regular pt-6"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
+            }
+          }
+        />
+        <div
+          className="fr-fieldset__content pl-4 fr-fieldset--inline"
+        >
+          <div
+            className="fr-radio-group fr-radio-group--sm"
+          >
+            <input
+              checked={false}
+              id="q2-y"
+              name="binaire"
+              onChange={[Function]}
+              type="radio"
+              value="true"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q2-y"
+            >
+              Oui
+            </label>
+          </div>
+          <div
+            className="fr-radio-group fr-radio-group--sm"
+          >
+            <input
+              checked={false}
+              id="q2-n"
+              name="binaire"
+              onChange={[Function]}
+              type="radio"
+              value="false"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q2-n"
+            >
+              Non
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        className="fr-fieldset"
+      >
+        <legend
+          className="fr-fieldset__legend fr-text--regular pt-6"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
+            }
+          }
+        />
+        <div
+          className="fr-fieldset__content pl-4 fr-fieldset--inline"
+        >
+          <label
+            className="fr-label"
+            htmlFor="q3"
+          >
+            Part en pourcentage
+          </label>
+          <input
+            className="fr-input"
+            id="q3"
+            max={100}
+            min={0}
+            name="proportion"
+            onChange={[Function]}
+            style={
+              Object {
+                "width": 224,
+              }
+            }
+            type="number"
+            value="60"
+          />
+        </div>
+      </fieldset>
+    </div>
+    <a
+      className="fr-btn fr-btn--icon-left fr-fi-arrow-left-line self-start mt-10"
+      href="/collectivite/1/perso_ref"
+    >
+      Revenir au sommaire
+    </a>
+  </div>
+</div>
+`;
