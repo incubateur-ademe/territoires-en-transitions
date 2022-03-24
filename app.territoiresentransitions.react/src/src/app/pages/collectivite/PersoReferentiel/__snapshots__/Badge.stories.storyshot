@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Badge A Completer 1`] = `
+<p
+  className="fr-badge fr-badge--info"
+>
+  À compléter
+</p>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Badge Complete 1`] = `
+<p
+  className="fr-badge fr-badge--success"
+>
+  Complété
+</p>
+`;
