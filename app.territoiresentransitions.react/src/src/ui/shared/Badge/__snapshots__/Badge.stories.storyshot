@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Ui/Shared/Badge/Badge Info 1`] = `
+<p
+  className="fr-badge fr-badge--info "
+>
+  Info
+</p>
+`;
+
+exports[`Storyshots Ui/Shared/Badge/Badge Success 1`] = `
+<p
+  className="fr-badge fr-badge--success "
+>
+  Succès
+</p>
+`;
