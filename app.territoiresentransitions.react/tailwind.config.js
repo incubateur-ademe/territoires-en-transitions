@@ -14,6 +14,7 @@ module.exports = {
         // Design system
         bf500: '#000091',
         bf525: '#6A6AF4',
+        bf925: '#E3E3FD',
         bf975: '#f5f5fe',
         grey425: '#666',
         grey625: '#929292',
