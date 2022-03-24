@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Literal, Optional, Set, Union
 
 from business.referentiel.domain.models.question import QuestionType
@@ -18,7 +18,7 @@ class Question:
 
 
 IdentiteTypeOption = Literal["syndicat", "commune"]
-IdentitePopulationOption = Literal["moins_de_100000"]
+IdentitePopulationOption = Literal["moins_de_5000", "moins_de_10000", "moins_de_100000"]
 IdentiteLocalisationOption = Literal["DOM"]
 
 
@@ -31,6 +31,6 @@ class IdentiteOptions:
 
 @dataclass
 class IdentiteCollectivite:
-    type: Set[IdentiteTypeOption]
-    population: Set[IdentitePopulationOption]
-    localisation: Set[IdentiteLocalisationOption]
+    type: Set[IdentiteTypeOption] = field(default_factory=lambda: set())
+    population: Set[IdentitePopulationOption] = field(default_factory=lambda: set())
+    localisation: Set[IdentiteLocalisationOption] = field(default_factory=lambda: set())

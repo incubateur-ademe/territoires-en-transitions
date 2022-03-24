@@ -3,7 +3,9 @@ from typing import Any
 
 from lark import Transformer
 
-from business.referentiel.domain.models.question import QuestionType
+
+class IdentiteError(Exception):
+    pass
 
 
 class FormuleError(Exception):

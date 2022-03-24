@@ -1,18 +1,26 @@
 import operator
+from dataclasses import asdict
 from typing import List
 
 from lark import Tree
 from lark.visitors import Interpreter
 
 from business.personnalisation.engine.formule import FormuleABC, ReponseMissing
-from business.personnalisation.engine.models import Reponse
+from business.personnalisation.engine.models import Reponse, IdentiteCollectivite
 
 
 class FormuleInterpreter(FormuleABC, Interpreter):
     """In charge of checking formules are correct"""
 
-    def __init__(self, reponses: List[Reponse], visit_tokens: bool = True) -> None:
+    def __init__(self,
+                 reponses=None,
+                 identite=IdentiteCollectivite(),
+                 visit_tokens: bool = True) -> None:
         super().__init__(visit_tokens)
+
+        if reponses is None:
+            reponses: List[Reponse] = []
+        self.identite_collectivite = asdict(identite)
         self.reponses = {reponse.id: reponse.value for reponse in reponses}
 
     def reponse_comparison(self, tree: Tree):
@@ -35,6 +43,12 @@ class FormuleInterpreter(FormuleABC, Interpreter):
         if question_id not in self.reponses:
             raise ReponseMissing(f"No reponse for question {question_id}")
         return self.reponses[question_id]
+
+    def identite(self, tree: Tree):
+        identifier, value = self.visit_children(tree)
+        if identifier not in self.identite_collectivite:
+            raise KeyError(f"Key {identifier} is not valid for 'identite', have you ran the formule checker?")
+        return value in self.identite_collectivite[identifier]
 
     def if_then(self, tree: Tree):
         test = self.visit(tree.children[0])

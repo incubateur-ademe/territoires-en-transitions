@@ -1,7 +1,6 @@
-from business.personnalisation.find_regles_errors import find_regles_errors
 from business.personnalisation.engine.models import Question
+from business.personnalisation.find_regles_errors import find_regles_errors
 from business.referentiel.domain.models.personnalisation import Regle
-
 
 questions = [
     Question(
@@ -81,3 +80,42 @@ def test_regle_desactivation_on_question_of_type_binaire_fails_if_wrong_answer()
     assert errors == [
         '\nErreur dans la régle formulée reponse(question_binaire, Ni_Oui_Ni_Non) : Error trying to process rule "reponse_comparison":\n\nL\'id de choix Ni_Oui_Ni_Non est inconnu pour la question question_binaire. Choix possibles : OUI, NON'
     ]
+
+
+def test_regle_identite_raises_on_bad_property():
+    errors = find_regles_errors([Regle("identite(yo, lo)", "desactivation")], [])
+    assert len(errors) == 1
+    assert errors[0].endswith('yo is not a valid property.')
+
+
+def test_regle_identite_raises_on_bad_type_value():
+    errors = find_regles_errors([Regle("identite(type, lo)", "desactivation")], [])
+    assert len(errors) == 1
+    assert errors[0].endswith("lo is not a valid 'type'.")
+
+
+def test_regle_identite_passes_on_valid_type_value():
+    errors = find_regles_errors([Regle("identite(type, commune)", "desactivation")], [])
+    assert len(errors) == 0
+
+
+def test_regle_identite_raises_on_bad_population_value():
+    errors = find_regles_errors([Regle("identite(population, lo)", "desactivation")], [])
+    assert len(errors) == 1
+    assert errors[0].endswith("lo is not a valid 'population'.")
+
+
+def test_regle_identite_passes_on_valid_population_value():
+    errors = find_regles_errors([Regle("identite(population, moins_de_10000)", "desactivation")], [])
+    assert len(errors) == 0
+
+
+def test_regle_identite_raises_on_bad_localisation_value():
+    errors = find_regles_errors([Regle("identite(localisation, lo)", "desactivation")], [])
+    assert len(errors) == 1
+    assert errors[0].endswith("lo is not a valid 'localisation'.")
+
+
+def test_regle_identite_passes_on_valid_localisation_value():
+    errors = find_regles_errors([Regle("identite(localisation, DOM)", "desactivation")], [])
+    assert len(errors) == 0
