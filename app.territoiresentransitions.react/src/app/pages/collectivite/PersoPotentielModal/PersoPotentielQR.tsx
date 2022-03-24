@@ -5,12 +5,12 @@
 import {FormEvent} from 'react';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {ActionScore} from 'types/ClientScore';
-import {TReponse} from 'generated/dataLayer/reponse_read';
-import {TQuestionReponse} from 'generated/dataLayer/reponse_write';
+import {
+  TQuestionReponse,
+  TChangeReponse,
+} from 'generated/dataLayer/reponse_write';
 import {PointsPotentiels} from './PointsPotentiels';
 import {traiteChgtReponseParType, reponseParType} from './Reponse';
-
-type TChangeReponse = (question_id: string, reponse: TReponse) => void;
 
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */
@@ -28,7 +28,7 @@ export type TPersoPotentielQRProps = {
  * Affiche le potentiel réduit ou augmenté ainsi que la liste des questions/réponses
  */
 export const PersoPotentielQR = (props: TPersoPotentielQRProps) => {
-  const {questionReponses, onChange} = props;
+  const {questionReponses} = props;
 
   return (
     <div data-test="PersoPotentielQR">
@@ -38,31 +38,14 @@ export const PersoPotentielQR = (props: TPersoPotentielQRProps) => {
           ? 'Caractéristiques liées'
           : 'Caractéristique liée'}
       </h6>
-      <div className="fr-form-group">
-        {questionReponses.map(qr => {
-          const {id, type} = qr;
-          return (
-            <fieldset
-              key={id}
-              className="fr-fieldset"
-              onChange={(e: FormEvent<HTMLFieldSetElement>) => {
-                const traiteChgt = traiteChgtReponseParType[type];
-                if (traiteChgt) {
-                  onChange(id, traiteChgt(e));
-                }
-              }}
-            >
-              <QuestionReponse qr={qr} />
-            </fieldset>
-          );
-        })}
-      </div>
+      <QuestionReponseList {...props} />
     </div>
   );
 };
 
 export type TQuestionReponseProps = {
   qr: TQuestionReponse;
+  onChange: (e: FormEvent<HTMLInputElement>) => void;
 };
 
 /** Affiche une question/réponse et son éventuel libellé d'aide */
@@ -82,5 +65,38 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
     */}
       <Reponse {...props} />
     </>
+  );
+};
+
+export type TQuestionReponseListProps = {
+  className?: string;
+  /** Liste des questions/réponses */
+  questionReponses: TQuestionReponse[];
+  /** Fonction appelée quand une réponse est modifiée */
+  onChange: TChangeReponse;
+};
+
+/** Affiche la liste de questions/réponses */
+export const QuestionReponseList = (props: TQuestionReponseListProps) => {
+  const {className, questionReponses, onChange} = props;
+  return (
+    <div className={`fr-form-group ${className || ''}`}>
+      {questionReponses.map(qr => {
+        const {id, type} = qr;
+        return (
+          <fieldset key={id} className="fr-fieldset">
+            <QuestionReponse
+              qr={qr}
+              onChange={(e: FormEvent<HTMLInputElement>) => {
+                const traiteChgt = traiteChgtReponseParType[type];
+                if (traiteChgt) {
+                  onChange(id, traiteChgt(e));
+                }
+              }}
+            />
+          </fieldset>
+        );
+      })}
+    </div>
   );
 };

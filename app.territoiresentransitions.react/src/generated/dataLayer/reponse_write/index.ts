@@ -10,3 +10,5 @@ export type TReponseWrite = {
   question_id: TQuestionId;
   reponse: TReponse;
 };
+
+export type TChangeReponse = (question_id: string, reponse: TReponse) => void;
