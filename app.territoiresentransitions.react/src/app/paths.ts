@@ -18,6 +18,7 @@ const actionParam = 'actionId';
 const ficheParam = 'ficheUid';
 export const planActionParam = 'planActionUid';
 export const planActionDefaultId = 'plan_collectivite';
+export const thematiqueParam = 'thematiqueId';
 
 export type ReferentielParamOption = 'cae' | 'eci';
 export type IndicateurViewParamOption = 'cae' | 'eci' | 'crte' | 'perso';
@@ -31,6 +32,8 @@ export const collectivitePlanActionPath = `${collectivitePath}/plan_action/:${pl
 export const collectiviteNouvelleFichePath = `${collectivitePath}/nouvelle_fiche`;
 export const collectiviteFichePath = `${collectivitePath}/fiche/:${ficheParam}`;
 export const collectiviteUsersPath = `${collectivitePath}/users`;
+export const collectivitePersoRefPath = `${collectivitePath}/perso_ref`;
+export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
 
 export const makeCollectiviteIndicateursUrl = ({
   collectiviteId,
@@ -131,6 +134,27 @@ export const makeCollectiviteUsersUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
+
+export const makeCollectivitePersoRefUrl = ({
+  collectivite_id,
+}: {
+  collectivite_id: number;
+}) =>
+  collectivitePersoRefPath.replace(
+    `:${collectiviteParam}`,
+    collectivite_id.toString()
+  );
+
+export const makeCollectivitePersoRefThematiqueUrl = ({
+  collectivite_id,
+  thematique_id,
+}: {
+  collectivite_id: number;
+  thematique_id: string;
+}) =>
+  collectivitePersoRefThematiquePath
+    .replace(`:${collectiviteParam}`, collectivite_id.toString())
+    .replace(`:${thematiqueParam}`, thematique_id);
 
 export const makeInvitationLandingPath = (invitationId: string) =>
   window.location.hostname +
