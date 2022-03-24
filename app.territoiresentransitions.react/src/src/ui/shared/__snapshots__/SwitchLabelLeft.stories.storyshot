@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Ui/Shared/Switch Label Left Checked 1`] = `
+<div
+  className="fr-toggle fr-toggle--label-left border-b w-40"
+>
+  <input
+    checked={true}
+    className="fr-toggle__input absolute right-0"
+    id="switch-1"
+    onChange={[Function]}
+    type="checkbox"
+  />
+  <label
+    className="fr-toggle__label select-none"
+    htmlFor="switch-1"
+  >
+    Libellé
+  </label>
+</div>
+`;
+
+exports[`Storyshots Ui/Shared/Switch Label Left Unchecked 1`] = `
+<div
+  className="fr-toggle fr-toggle--label-left border-b w-40"
+>
+  <input
+    checked={false}
+    className="fr-toggle__input absolute right-0"
+    id="switch-1"
+    onChange={[Function]}
+    type="checkbox"
+  />
+  <label
+    className="fr-toggle__label select-none"
+    htmlFor="switch-1"
+  >
+    Libellé
+  </label>
+</div>
+`;
