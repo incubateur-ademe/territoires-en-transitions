@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematique List Exemple 1 1`] = `
+<ul
+  className="w-full border pl-0 "
+>
+  <li
+    className="list-none px-2 py-3 border-b last:border-none hover:bg-grey925"
+  >
+    <a
+      className="flex justify-between"
+      href="/collectivite/1/perso_ref/dechets"
+      style={
+        Object {
+          "boxShadow": "none",
+        }
+      }
+    >
+      Déchets
+      <p
+        className="fr-badge fr-badge--success "
+      >
+        Complété
+      </p>
+    </a>
+  </li>
+  <li
+    className="list-none px-2 py-3 border-b last:border-none hover:bg-grey925"
+  >
+    <a
+      className="flex justify-between"
+      href="/collectivite/1/perso_ref/energie"
+      style={
+        Object {
+          "boxShadow": "none",
+        }
+      }
+    >
+      Énergie
+      <p
+        className="fr-badge fr-badge--info "
+      >
+        À compléter
+      </p>
+    </a>
+  </li>
+  <li
+    className="list-none px-2 py-3 border-b last:border-none hover:bg-grey925"
+  >
+    <a
+      className="flex justify-between"
+      href="/collectivite/1/perso_ref/mobilite"
+      style={
+        Object {
+          "boxShadow": "none",
+        }
+      }
+    >
+      Mobilité
+      <p
+        className="fr-badge fr-badge--success "
+      >
+        Complété
+      </p>
+    </a>
+  </li>
+</ul>
+`;
