@@ -15,7 +15,7 @@ const ReponseContainer = ({
 );
 
 /** Affiche une réponse donnant le choix entre plusieurs énoncés */
-const ReponseChoix = ({qr}: TQuestionReponseProps) => {
+const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
   const {id: questionId, choix, reponse} = qr;
 
   return (
@@ -30,6 +30,7 @@ const ReponseChoix = ({qr}: TQuestionReponseProps) => {
               id={eltId}
               checked={reponse === choiceId}
               value={choiceId}
+              onChange={onChange}
             />
             <label className="fr-label" htmlFor={eltId}>
               {label}
@@ -42,7 +43,7 @@ const ReponseChoix = ({qr}: TQuestionReponseProps) => {
 };
 
 /** Affiche une réponse donnant le choix entre oui et non */
-const ReponseBinaire = ({qr}: TQuestionReponseProps) => {
+const ReponseBinaire = ({qr, onChange}: TQuestionReponseProps) => {
   const {id: questionId, reponse} = qr;
   const idYes = `${questionId}-y`;
   const idNo = `${questionId}-n`;
@@ -56,6 +57,7 @@ const ReponseBinaire = ({qr}: TQuestionReponseProps) => {
           id={idYes}
           value="true"
           checked={reponse === true}
+          onChange={onChange}
         />
         <label className="fr-label" htmlFor={idYes}>
           Oui
@@ -68,6 +70,7 @@ const ReponseBinaire = ({qr}: TQuestionReponseProps) => {
           id={idNo}
           value="false"
           checked={reponse === false}
+          onChange={onChange}
         />
         <label className="fr-label" htmlFor={idNo}>
           Non
@@ -79,7 +82,7 @@ const ReponseBinaire = ({qr}: TQuestionReponseProps) => {
 
 /** Affiche une réponse donnant lieu à la saisie d'une valeur entre 0 et 100 */
 const DEFAULT_RANGE = [0, 100];
-const ReponseProportion = ({qr}: TQuestionReponseProps) => {
+const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
   const {id: questionId, reponse} = qr;
   const [min, max] = DEFAULT_RANGE;
 
@@ -97,6 +100,7 @@ const ReponseProportion = ({qr}: TQuestionReponseProps) => {
         style={{width: 224}}
         className="fr-input"
         value={String(reponse)}
+        onChange={onChange}
       />
     </ReponseContainer>
   );
@@ -112,7 +116,7 @@ export const reponseParType: {[k: string]: FC<TQuestionReponseProps>} = {
 // correspondances entre un type de réponse attendue et sa fonction de
 // traitement de la valeur modifiée
 export const traiteChgtReponseParType: {
-  [k: string]: (e: FormEvent<HTMLFieldSetElement>) => TReponse;
+  [k: string]: (e: FormEvent<HTMLInputElement>) => TReponse;
 } = {
   choix: e => {
     const {value} = e.target as HTMLInputElement;
