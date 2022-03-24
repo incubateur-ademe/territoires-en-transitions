@@ -4,7 +4,7 @@ from business.personnalisation.engine.formule import (
     ReponseMissing,
 )
 from business.personnalisation.engine.formule_interpreter import FormuleInterpreter
-from business.personnalisation.engine.models import Reponse
+from business.personnalisation.engine.models import Reponse, IdentiteCollectivite
 from business.personnalisation.engine.parser import parser
 
 
@@ -52,6 +52,40 @@ def test_function_reponse_comparison_raises_if_no_reponse():
     tree = parser.parse("reponse(question_X, choix_A)")
     with pytest.raises(ReponseMissing):
         FormuleInterpreter([]).visit(tree)
+
+
+def test_function_identite_on_type():
+    commune_de_moins_de_100000_hab = IdentiteCollectivite(
+        type={'commune'},
+        population={'moins_de_10000'},
+        localisation=set()
+    )
+    assert (
+            FormuleInterpreter().visit(parser.parse("identite(type, commune)"))
+            is False
+    )
+    assert (
+            FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(parser.parse("identite(type, commune)"))
+            is True
+    )
+
+    assert (
+            FormuleInterpreter().visit(parser.parse("identite(type, commune)"))
+            is False
+    )
+    assert (
+            FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(parser.parse("identite(population, moins_de_10000)"))
+            is True
+    )
+
+    assert (
+            FormuleInterpreter().visit(parser.parse("identite(localisation, DOM)"))
+            is False
+    )
+    assert (
+            FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(parser.parse("identite(localisation, DOM)"))
+            is False
+    )
 
 
 def test_statement_if_then():
@@ -203,8 +237,7 @@ def test_regle_cae_3_1_1():
               "sinon si reponse(AOD_chaleur, NON) alors 6/10 " \
               "sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 " \
               "sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 " \
-              "sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 " \
-
+              "sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 "
     tree = parser.parse(formule)
 
     # 1 Toutes les compétences
@@ -214,4 +247,4 @@ def test_regle_cae_3_1_1():
     cas2 = [Reponse("AOD_elec", "NON"), Reponse("AOD_gaz", "NON"), Reponse("AOD_chaleur", "NON")]
 
     assert (FormuleInterpreter(cas1).visit(tree) == 1.0)
-    assert (FormuleInterpreter(cas2).visit(tree) == 2/10)
+    assert (FormuleInterpreter(cas2).visit(tree) == 2 / 10)
