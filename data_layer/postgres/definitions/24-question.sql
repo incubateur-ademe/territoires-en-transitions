@@ -63,6 +63,21 @@ alter table question_action
 create policy allow_read_for_all on question_action for select using (true);
 
 
+create view question_thematique_display as
+with qt as (
+    select action_id, thematique_id
+    from question_action qa
+        join question q on qa.question_id = q.id
+), qr as (
+    select thematique_id, array_agg(referentiel) as referentiels
+    from qt
+        join action_relation r on r.id = qt.action_id
+    group by thematique_id
+)
+select t.id, t.nom, referentiels
+from question_thematique t
+    left join qr on qr.thematique_id = t.id ;
+
 create or replace function business_upsert_questions(
     questions json[]
 ) returns void as
