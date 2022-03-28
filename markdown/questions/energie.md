@@ -1,30 +1,68 @@
-# Quelle est la part de la collectivité dans la structure compétente en matière d'éclairage public ? 
+# La collectivité a-t-elle la compétence "éclairage public" ?
 ```yaml
-id: energie_1
+id: EP_1
+type: choix
+thematique_id: energie
+actions: [cae_2.3.1]
+```
+## Choix
+### Oui sur l'ensemble du territoire
+```yaml
+id: EP_1_a
+```
+### Oui partiellement (uniquement sur les zones d'intérêt communautaire par exemple)
+```yaml
+id: EP_1_b
+```
+### Non pas du tout
+```yaml
+id: EP_1_c
+```
+
+# Quelle est la part de la collectivité dans la structure compétente en matière d'éclairage public ?
+```yaml
+id: EP_2
 type: proportion
 thematique_id: energie
 actions: [cae_2.3.1]
 ```
-Quelques détails sur cette question pour aider les collectivités à répondre.
 
-# La collectivité a-t-elle la compétence éclairage public ?
+# La collectivité est-elle autorité organisatrice de la distribution (AOD) pour l'électricité ?
 ```yaml
-id: energie_2
-type: proportion
+id: AOD_elec
+type: binaire
 thematique_id: energie
-actions: [cae_2.3.1]
-```
-Quelques détails sur cette question pour aider les collectivités à répondre.
-
-## Choix 
-### si oui  uniquement sur les zones d’intérêt communautaire
-
-```yaml
-id: energie_2_a
+actions: [cae_3.1.1, cae_3.1.2]
 ```
 
-### non
-
+# La collectivité est-elle autorité organisatrice de la distribution (AOD) pour le gaz ?
 ```yaml
-id: energie_2_b
+id: AOD_gaz
+type: binaire
+thematique_id: energie
+actions: [cae_3.1.1, cae_3.1.2]
+```
+
+# La collectivité est-elle autorité organisatrice de la distribution (AOD) pour la chaleur ?
+```yaml
+id: AOD_chaleur
+type: binaire
+thematique_id: energie
+actions: [cae_3.1.1, cae_3.1.2]
+```
+
+# Existe-t-il des fournisseurs d’énergie maîtrisés par la collectivité (Société d'économie mixte (SEM) ou régie ou exploitants de réseau de chaleur urbain liés à la collectivité par délégation de service public) ?
+```yaml
+id: fournisseur_energie
+type: binaire
+thematique_id: energie
+actions: [cae_3.1.2]
+```
+
+# Existe-t-il des activités industrielles, en nombre assez important, adaptées pour la récupération de chaleur fatale ou du potentiel pour la cogénération voir la micro-cogénération (soit des chaufferies ou des consommateurs suffisants en chaleur ou des producteurs-consommateurs visant l’autoconsommation) ?
+```yaml
+id: recuperation_cogeneration
+type: binaire
+thematique_id: energie
+actions: [cae_3.2.1]
 ```
