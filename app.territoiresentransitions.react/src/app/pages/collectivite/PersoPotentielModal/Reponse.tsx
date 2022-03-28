@@ -48,7 +48,7 @@ const ReponseBinaire = ({qr}: TQuestionReponseProps) => {
   const idNo = `${questionId}-n`;
 
   return (
-    <ReponseContainer className="fr-fieldset--inline">
+    <ReponseContainer className="fr-fieldset--inline inline-radio">
       <div className="fr-radio-group fr-radio-group--sm">
         <input
           type="radio"

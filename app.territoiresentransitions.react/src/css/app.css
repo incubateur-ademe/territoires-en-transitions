@@ -40,6 +40,23 @@ main a[href] {
   box-shadow: none;
 }
 
+/** réduit l'espacement des label+bouton radio utilisés en liste verticale **/
+.fr-radio-group--sm input[type='radio'] + label {
+  padding: 0.5rem 0 !important;
+}
+.fr-radio-group--sm input[type='radio'] + label:before {
+  margin-top: 0.75rem !important;
+}
+/** réduit l'espacement entre l'élément précédent et une liste horizontale de
+ * champs ou bouton radio **/
+.fr-fieldset--inline {
+  margin-top: -0.5rem;
+  margin-bottom: -0.5rem;
+}
+.inline-radio {
+  margin-top: -0.75rem;
+}
+
 /* Checkbox styling */
 
 .fiche-action input,
