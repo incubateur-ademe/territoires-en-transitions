@@ -28,3 +28,41 @@ Authorization: Bearer {{auth_token}}
 GET {{api}}/rest/v1/question_display?action_ids=cs.{cae_2.3.3}
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
+
+
+### Upsert questions as service
+POST {{api}}/rest/v1/rpc/business_upsert_questions
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+{
+  "questions": [
+    {
+      "id": "question_1",
+      "formulation": "Est-ce que la collectivité est compétente en voirie ?",
+      "description": "Une petite description",
+      "ordonnancement": 1,
+      "types_collectivites_concernees": [
+        "commune"
+      ],
+      "thematique_id": "mobilite",
+      "action_ids": [
+        "eci_1"
+      ],
+      "type": "choix",
+      "choix": [
+        {
+          "id": "question_a",
+          "formulation": "Oui",
+          "ordonnancement": 0
+        },
+        {
+          "id": "question_b",
+          "formulation": "Non",
+          "ordonnancement": 1
+        }
+      ]
+    }
+  ]
+}
