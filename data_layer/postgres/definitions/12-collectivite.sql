@@ -4,7 +4,6 @@ create domain siren as varchar(9)
     check (
         value ~ '^\d{9}$'
         );
-create domain codegeo as varchar(5);
 
 -- Collectivité, the base type we relate to.
 create table collectivite
