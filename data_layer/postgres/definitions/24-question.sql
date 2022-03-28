@@ -15,16 +15,20 @@ alter table question_thematique
 create policy allow_read_for_all on question_thematique for select using (true);
 
 
+create type type_collectivite as enum ('EPCI', 'commune');
+
 create table question
 (
     id            question_id primary key,
     thematique_id varchar references question_thematique,
+    ordonnancement integer,
+    types_collectivites_concernees type_collectivite[] not null,
     type          question_type not null,
     description   text          not null,
     formulation   text          not null
 );
 comment on table question is
-    'Question asked to the user about a collectivité';
+    'Question a propos des caractéristiques de la collectivités, afin de personnaliser la notation des référentiels';
 
 alter table question
     enable row level security;
@@ -34,10 +38,11 @@ create table question_choix
 (
     question_id question_id references question on delete cascade,
     id          choix_id primary key,
+    ordonnancement integer,
     formulation text
 );
 comment on table question_choix is
-    'Question choix';
+    'Options de réponse aux question de type choix';
 
 alter table question_choix
     enable row level security;
@@ -58,7 +63,7 @@ alter table question_action
 create policy allow_read_for_all on question_action for select using (true);
 
 
-create or replace function business_upsert_questions(
+ccreate or replace function business_upsert_questions(
     questions json[]
 ) returns void as
 $$
@@ -73,17 +78,22 @@ begin
             loop
                 type = obj ->> 'type';
 
-                insert into question (id, thematique_id, type, description, formulation)
+                insert into question (id, thematique_id, type, description, ordonnancement, formulation, types_collectivites_concernees)
                 values (obj ->> 'id',
                         obj ->> 'thematique_id',
                         (obj ->> 'type')::question_type,
                         obj ->> 'description',
-                        obj ->> 'formulation')
+                        obj ->> 'ordonnancement',
+                        obj ->> 'formulation',
+                        obj ->> 'types_collectivites_concernees'
+                        )
                 on conflict (id) do update
                     -- we update the request fields, except for type.
                     set thematique_id = excluded.thematique_id,
                         description   = excluded.description,
-                        formulation   = excluded.formulation;
+                        formulation   = excluded.formulation,
+                        ordonnancement   = excluded.ordonnancement,
+                        types_collectivites_concernees = excluded.types_collectivites_concernees;
 
                 with action_id as (
                     select a
@@ -103,14 +113,16 @@ begin
                         from json_array_elements((obj ->> 'choix')::json) c
                     )
                     insert
-                    into question_choix (question_id, id, formulation)
+                    into question_choix (question_id, id, formulation, ordonnancement)
                     select obj ->> 'id',
                            c ->> 'id',
-                           c ->> 'formulation'
+                           c ->> 'formulation',
+                           c ->> 'ordonnancement'
                     from choix c
                     on conflict (id) do update
-                        -- we update only formulation.
-                        set formulation = excluded;
+                        -- we update only formulation and ordonnancement 
+                        set formulation = excluded.formulation,
+                        set ordonnancement = excluded.ordonnancement; 
                 end if;
             end loop;
     else
@@ -119,6 +131,9 @@ begin
 end
 $$ language plpgsql;
 
+
+
+-- TODO : filter on field types_collectivites_concernees using view 
 create view question_display
 as
 with actions as (
@@ -133,6 +148,7 @@ select q.id    as id,
        t.nom   as thematique_nom,
        description,
        formulation,
+       ordonnancement, 
        cx.json as choix
 from question q
          join question_thematique t on t.id = q.thematique_id
@@ -140,7 +156,8 @@ from question q
          left join lateral (select array_agg(
                                            json_build_object(
                                                    'id', c.id,
-                                                   'label', c.formulation
+                                                   'label', c.formulation,
+                                                   'ordonnancement', c.ordonnancement
                                                )) as json
                             from question_choix c
                             where c.question_id = q.id) cx on true;
