@@ -19,13 +19,13 @@ create type type_collectivite as enum ('EPCI', 'commune');
 
 create table question
 (
-    id            question_id primary key,
-    thematique_id varchar references question_thematique,
-    ordonnancement integer,
-    types_collectivites_concernees type_collectivite[],
-    type          question_type not null,
-    description   text          not null,
-    formulation   text          not null
+    id                             question_id primary key,
+    thematique_id                  varchar references question_thematique,
+    ordonnancement                 integer,
+    types_collectivites_concernees type_collectivite[] not null,
+    type                           question_type       not null,
+    description                    text                not null,
+    formulation                    text                not null
 );
 comment on table question is
     'Question a propos des caractéristiques de la collectivités, afin de personnaliser la notation des référentiels';
@@ -36,10 +36,10 @@ create policy allow_read_for_all on question for select using (true);
 
 create table question_choix
 (
-    question_id question_id references question on delete cascade,
-    id          choix_id primary key,
+    question_id    question_id references question on delete cascade,
+    id             choix_id primary key,
     ordonnancement integer,
-    formulation text
+    formulation    text
 );
 comment on table question_choix is
     'Options de réponse aux question de type choix';
@@ -78,21 +78,22 @@ begin
             loop
                 type = obj ->> 'type';
 
-                insert into question (id, thematique_id, type, description, ordonnancement, formulation, types_collectivites_concernees)
+                insert into question (id, thematique_id, type, description, ordonnancement, formulation,
+                                      types_collectivites_concernees)
                 values (obj ->> 'id',
                         obj ->> 'thematique_id',
                         (obj ->> 'type')::question_type,
                         obj ->> 'description',
-                        obj ->> 'ordonnancement',
+                        (obj ->> 'ordonnancement')::integer,
                         obj ->> 'formulation',
-                        obj ->> 'types_collectivites_concernees'
-                        )
+                        array(select json_array_elements_text(obj -> 'types_collectivites_concernees')
+                                         ::type_collectivite))
                 on conflict (id) do update
                     -- we update the request fields, except for type.
-                    set thematique_id = excluded.thematique_id,
-                        description   = excluded.description,
-                        formulation   = excluded.formulation,
-                        ordonnancement   = excluded.ordonnancement,
+                    set thematique_id                  = excluded.thematique_id,
+                        description                    = excluded.description,
+                        formulation                    = excluded.formulation,
+                        ordonnancement                 = excluded.ordonnancement,
                         types_collectivites_concernees = excluded.types_collectivites_concernees;
 
                 with action_id as (
@@ -117,12 +118,12 @@ begin
                     select obj ->> 'id',
                            c ->> 'id',
                            c ->> 'formulation',
-                           c ->> 'ordonnancement'
+                           (c ->> 'ordonnancement')::integer
                     from choix c
                     on conflict (id) do update
-                        -- we update only formulation and ordonnancement 
-                        set formulation = excluded.formulation,
-                            ordonnancement = excluded.ordonnancement; 
+                        -- we update only formulation and ordonnancement
+                        set formulation    = excluded.formulation,
+                            ordonnancement = excluded.ordonnancement;
                 end if;
             end loop;
     else
@@ -133,7 +134,7 @@ $$ language plpgsql;
 
 
 
--- TODO : filter on field types_collectivites_concernees using view 
+-- TODO : filter on field types_collectivites_concernees using view
 create view question_display
 as
 with actions as (
@@ -148,7 +149,7 @@ select q.id    as id,
        t.nom   as thematique_nom,
        description,
        formulation,
-       ordonnancement, 
+       ordonnancement,
        cx.json as choix
 from question q
          join question_thematique t on t.id = q.thematique_id
@@ -162,7 +163,7 @@ from question q
                             from question_choix c
                             where c.question_id = q.id) cx on true;
 comment on view question_display is
-    'Questions avec leurs choix pour l''affichage dans le client' ;
+    'Questions avec leurs choix pour l''affichage dans le client';
 
 
 create view question_engine

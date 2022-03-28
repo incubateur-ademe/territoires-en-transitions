@@ -24,7 +24,11 @@ $$
           "id": "question_1",
           "formulation": "Est-ce que la collectivité est compétente en voirie ?",
           "description": "Une petite description",
-          "thematique_id": "mobilites",
+          "ordonnancement": 0,
+          "types_collectivites_concernees": [
+            "commune"
+          ],
+          "thematique_id": "mobilite",
           "action_ids": [
             "eci_1"
           ],
@@ -32,11 +36,13 @@ $$
           "choix": [
             {
               "id": "question_a",
-              "formulation": "Oui"
+              "formulation": "Oui",
+              "ordonnancement": 0
             },
             {
               "id": "question_b",
-              "formulation": "Non"
+              "formulation": "Non",
+              "ordonnancement": 1
             }
           ]
         }'::json;
@@ -45,7 +51,7 @@ $$
 
 $$ language plpgsql;
 
-
+-- fix me broken test
 select results_eq('select count(*)::int as count from question;',
                   'select 1::int as count;',
                   'One question should be inserted');
@@ -53,7 +59,6 @@ select results_eq('select count(*)::int as count from question;',
 select results_eq('select count(*)::int as count from question_choix;',
                   'select 2::int as count;',
                   'Two choix should be inserted');
-
 
 select results_eq('select count(*)::int as count from question_action;',
                   'select 1::int as count;',
