@@ -2,6 +2,6 @@
 ```yaml
 id: ECS
 type: binaire
-thematique_id: ultra_marin
+thematique_id: ultramarin
 actions: [cae_2.2.3]
 ```

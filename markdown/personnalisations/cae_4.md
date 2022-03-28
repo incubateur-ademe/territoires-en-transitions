@@ -78,7 +78,7 @@ En l’absence de compétences voirie et stationnement et de zones de polarités
 
 # Réduction potentiel cae 4.2.2 liee stationnement
 ```yaml
-action_id: cae_4.2.1
+action_id: cae_4.2.2
 ```
 ## Regles
 ### Réduction de potentiel
@@ -135,19 +135,11 @@ action_id: cae_4.3.2
 ## Regles
 ### Réduction de potentiel
 ```formule
-si reponse(cyclable, NON) alors 0.5
+si identite(localisation,DOM) alors 14/16
+sinon si reponse(cyclable, NON) alors 0.5
 ```
 Pour une collectivité disposant de peu de compétences en matière de politique cyclable (ni AOM, ni compétente en matière d’infrastructures vélos, de stationnement vélos, de services associés aux vélos), le score de la 4.3.2 est réduit de 50 %.
 
-# Modification points cae 4.3.2 liee DOM
-```yaml
-action_id: cae_4.3.2
-```
-## Regles
-### Réduction de potentiel
-```formule
-si identite(localisation,DOM) alors 14/16
-```
 Le nombre de point max pour l'action 4.3.2 est de 16 points en Métropole et de 14 points pour les collectivités DOM.
 
 
@@ -175,17 +167,9 @@ action_id: cae_4.3.4
 ## Regles
 ### Réduction de potentiel
 ```formule
-si reponse(AOM_1, NON) alors max(reponse(AOM_2), 0.5)
-```
-Pour une collectivité non AOM, le score de la 4.3.4 est réduit proportionnellement à la part de la collectivité dans la structure AOM.
-
-# Modification points cae 4.3.4 liee DOM
-```yaml
-action_id: cae_4.3.4
-```
-## Regles
-### Réduction de potentiel
-```formule
 si identite(localisation,DOM) alors 10/8
+sinon si reponse(AOM_1, NON) alors max(reponse(AOM_2), 0.5)
 ```
 Le nombre de point max pour l'action 4.3.4 est de 8 points en Métropole et de 10 points pour les collectivités DOM.
+
+Pour une collectivité non AOM, le score de la 4.3.4 est réduit proportionnellement à la part de la collectivité dans la structure AOM.

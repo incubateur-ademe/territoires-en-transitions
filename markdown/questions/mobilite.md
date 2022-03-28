@@ -10,7 +10,7 @@ actions: [cae_1.2.2, cae_4.2.3]
 ```yaml
 id: AOM_2
 type: proportion
-thematique_id: mobilité
+thematique_id: mobilite
 actions: [cae_4.1.1]
 ```
 
@@ -39,7 +39,7 @@ id: voirie_1_c
 ```yaml
 id: voirie_2
 type: proportion
-thematique_id: mobilité
+thematique_id: mobilite
 actions: [cae_4.2.1]
 types_concernes: [commune]
 actions: [cae_2.3.3]
