@@ -25,29 +25,35 @@ Pour une collectivité dont la desserte des locaux par les transports publics es
 Pour une collectivité ne disposant pas de véhicules, le score est diminuté de 30 %.
 Ces 2 réductions sont cumulables.
 
-# Desactivation cae 4.1.2.1 liee mobilité interne
+# Désactivation cae 4.1.2.1 liee mobilité interne
 ```yaml
 action_id: cae_4.1.2.1
 ```
-### Desactivation
+
+## Regles 
+### Désactivation
 ```formule
 reponse(vehiculeCT, NON)
 ```
 
-# Desactivation cae 4.1.2.3 liee mobilité interne
+# Désactivation cae 4.1.2.3 liee mobilité interne
 ```yaml
 action_id: cae_4.1.2.3
 ```
-### Desactivation
+
+## Regles
+### Désactivation
 ```formule
 reponse(vehiculeCT, NON)
 ```
 
-# Desactivation cae 4.1.2.4 liee mobilité interne
+# Désactivation cae 4.1.2.4 liee mobilité interne
 ```yaml
 action_id: cae_4.1.2.4
 ```
-### Desactivation
+
+## Regles 
+### Désactivation
 ```formule
 reponse(vehiculeCT, NON)
 ```
@@ -85,7 +91,7 @@ sinon si reponse(voirie_1,voirie_1_b) et reponse(voirie_1,voirie_1_c) alors 2/16
 sinon si reponse(voirie_1,voirie_1_b) et reponse(trafic, NON) alors 2/16
 sinon si reponse(voirie_1,voirie_1_c) et reponse(trafic, NON) alors 2/16
 ```
-👆 Réduction de 50 % pour les collectivités ne disposant pas des compétences en matière de circulation/gestion du trafic (pouvoir de police)
+Réduction de 50 % pour les collectivités ne disposant pas des compétences en matière de circulation/gestion du trafic (pouvoir de police)
 Réduction de 50 % pour les collectivités ne disposant pas de compétences en matière de voirie (création, aménagement, entretien) ou qui possèdent uniquement les voiries et parcs de stationnements communautaires
 Réduction de 50 % pour s'il n'y a manifestement pas de potentiel d'action ou de problèmes liés à la vitesse
 Réduction cumulable, dans la limite de 2 points potentiel restant.
@@ -138,11 +144,11 @@ Pour une collectivité disposant de peu de compétences en matière de politique
 action_id: cae_4.3.2
 ```
 ## Regles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si type(localisation,DOM) alors 14/16
 ```
-👆 Le nombre de point max pour l'action 4.3.2 est de 16 points en Métropole et de 14 points pour les collectivités DOM.
+Le nombre de point max pour l'action 4.3.2 est de 16 points en Métropole et de 14 points pour les collectivités DOM.
 
 
 # Réduction potentiel cae 4.3.3 liee transports en commun
@@ -177,8 +183,8 @@ Pour une collectivité non AOM, le score de la 4.3.4 est réduit proportionnelle
 action_id: cae_4.3.4
 ```
 ## Regles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si type(localisation,DOM) alors 10/8
 ```
-👆 Le nombre de point max pour l'action 4.3.4 est de 8 points en Métropole et de 10 points pour les collectivités DOM.
+Le nombre de point max pour l'action 4.3.4 est de 8 points en Métropole et de 10 points pour les collectivités DOM.

@@ -3,7 +3,7 @@
 action_id: eci_1.2.2
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 si identite(type, syndicat) alors VRAI
 ```
@@ -14,7 +14,7 @@ si identite(type, syndicat) alors VRAI
 action_id: eci_1.2.3
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 si identite(type, syndicat) alors VRAI
 ```
@@ -24,7 +24,7 @@ si identite(type, syndicat) alors VRAI
 action_id: eci_1.2.4
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 si identite(type, syndicat) alors FAUX sinon VRAI
 ```
@@ -35,7 +35,7 @@ si identite(type, syndicat) alors FAUX sinon VRAI
 action_id: eci_2.1
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_3, NON) 
 ```
@@ -46,7 +46,7 @@ reponse(dechets_3, NON)
 action_id: eci_2.2
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
@@ -57,7 +57,7 @@ reponse(dechets_1, NON)
 action_id: eci_2.3
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_2, NON) 
 ```
@@ -68,7 +68,7 @@ reponse(dechets_2, NON)
 action_id: eci_2.4
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 si reponse(dechets_1, NON) et reponse(dechets_2, NON)
 ```
@@ -79,7 +79,7 @@ si reponse(dechets_1, NON) et reponse(dechets_2, NON)
 action_id: eci_2.4.2
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
@@ -90,7 +90,7 @@ reponse(dechets_1, NON)
 action_id: eci_2.4.3
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
@@ -101,7 +101,7 @@ reponse(dechets_1, NON)
 action_id: eci_2.4.4
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_2, NON) 
 ```
@@ -112,7 +112,7 @@ reponse(dechets_2, NON)
 action_id: eci_3.2.0
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(SPASER, NON) 
 ```
@@ -123,7 +123,7 @@ reponse(SPASER, NON)
 action_id: eci_3.4
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dev_eco_1, NON) 
 ```
@@ -134,7 +134,7 @@ reponse(dev_eco_1, NON)
 action_id: eci_3.4.2
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(formation, NON) 
 ```
@@ -169,7 +169,7 @@ si identite(population, moins_de_100000) alors 1/3
 action_id: eci_4.1
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_1, NON) et reponse(dechets_2, NON)
 ```
@@ -180,7 +180,7 @@ reponse(dechets_1, NON) et reponse(dechets_2, NON)
 action_id: eci_4.2
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_1, NON) et reponse(dechets_2, NON)
 ```
@@ -191,11 +191,11 @@ reponse(dechets_1, NON) et reponse(dechets_2, NON)
 action_id: eci_4.2.1
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
-### Desactivation
+### Désactivation
 ```formule
 reponse(REOM, OUI) 
 ```
@@ -206,7 +206,7 @@ reponse(REOM, OUI)
 action_id: eci_4.2.2
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
@@ -217,11 +217,11 @@ reponse(dechets_1, NON)
 action_id: eci_4.2.3
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
-### Desactivation
+### Désactivation
 ```formule
 reponse(REOM, OUI) 
 ```
@@ -232,7 +232,7 @@ reponse(REOM, OUI)
 action_id: eci_4.2.4
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
@@ -243,7 +243,7 @@ reponse(dechets_1, NON)
 action_id: eci_4.2.5
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 si identite(type, syndicat_traitement) alors FAUX sinon VRAI
 ```
@@ -254,7 +254,7 @@ si identite(type, syndicat_traitement) alors FAUX sinon VRAI
 action_id: eci_4.3
 ```
 ## Regles
-### Desactivation
+### Désactivation
 ```formule
 reponse(dev_eco_1, NON) 
 ```
