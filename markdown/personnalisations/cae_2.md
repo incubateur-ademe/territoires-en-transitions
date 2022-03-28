@@ -5,7 +5,7 @@ action_id: cae_2.2.3.1
 ## Regles
 ### Désactivation
 ```formule
-si identite(localisation, DOM) 
+identite(localisation, DOM) 
 ```
 Pour une collectivité hors France Métropolitaine, le statut de la tâche 2.2.3.1 est "non concernée".
 
@@ -16,7 +16,7 @@ action_id: cae_2.2.3.2
 ## Regles
 ### Désactivation
 ```formule
-si identite(localisation, DOM) 
+identite(localisation, DOM) 
 ```
 Pour une collectivité hors France Métropolitaine, le statut de la tâche 2.2.3.2 est "non concernée".
 
@@ -27,7 +27,7 @@ action_id: cae_2.2.3.3
 ## Regles
 ### Désactivation
 ```formule
-si identite(localisation, DOM) 
+identite(localisation, DOM) 
 ```
 Pour une collectivité hors France Métropolitaine, le statut de la tâche 2.2.3.3 est "non concernée".
 
@@ -56,7 +56,7 @@ sinon 1-reponse(EP_2)
 ```
 ### Désactivation
 ```formule
-si identite(type, EPCI) et reponse(EP_1, EP_1_c)
+identite(type, EPCI) et reponse(EP_1, EP_1_c)
 ```
 Si la collectivité est un EPCI sans compétence sur l'éclairage public, alors le score est réduit à 0 et les statuts sont "non concernés".
 Si la collectivité est un EPCI avec une compétence éclairage public limitée, alors la collectivité est évaluée sur 2 points (au lieu de 6).
@@ -75,7 +75,7 @@ sinon si reponse(voirie_1, voirie_1_c) alors 0/2
 ```
 ### Désactivation
 ```formule
-si reponse(voirie_1, voirie_1_c)
+reponse(voirie_1, voirie_1_c)
 ```
 Si la collectivité n'a pas la compétence voirie, alors le score est réduit à 0 et les statuts sont "non concernés".
 Si la collectivité a une compétence voirie limitée, alors la collectivité est évaluée sur 1 point (au lieu de 2).

@@ -17,7 +17,7 @@ action_id: cae_1.2.2
 ## Regles
 ### Réduction de potentiel
 ```formule
-si identite(poulation, moins_de_5000) et reponse (AOM_1, NON) alors 2/12 
+si identite(population, moins_de_5000) et reponse (AOM_1, NON) alors 2/12 
 ```
 Pour une collectivité n'ayant pas de centre urbain de plus de 5000 habitants ET n'ayant pas la compétence AOM, le score de la 1.2.2 est réduit à 2 points.
 
@@ -68,7 +68,7 @@ action_id: cae_1.3.1
 ## Regles
 ### Réduction de potentiel
 ```formule
-si reponse(urba_1, NON) et reponse (SCOT, NON) alors 6/12 
+si reponse(urba_1, NON) et reponse(SCoT, NON) alors 6/12 
 ```
 Pour une collectivité n'ayant ni la compétence PLU, ni la compétence SCOT, le score de la 1.3.1 est réduit de 50 %.
 
@@ -79,7 +79,7 @@ action_id: cae_1.3.1
 ## Regles
 ### Réduction de potentiel
 ```formule
-si reponse(urba_1, NON) et reponse (SCOT, OUI) alors 0.7 
+si reponse(urba_1, NON) et reponse(SCoT, OUI) alors 0.7 
 ```
 Pour une collectivité n'ayant pas la compétence PLU mais disposant de la compétence SCOT, le score de la 1.3.1 est réduit de 30 %.
 
@@ -91,9 +91,9 @@ action_id: cae_1.3.2
 ## Regles
 ### Réduction de potentiel
 ```formule
-si reponse(amenagement_1, NON) ou si reponse (amenagement_2, NON) alors 5/10 
+si reponse(amenagement_1, NON) ou reponse (amenagement_2, NON) alors 5/10 
 ```
-Si une collectivité n'a pas de terrains utilisables ou vendables ou si elle dispose de terrains de ce type mais n'a pas réalisé de vente ou de contrats d'utilisation alors le score de la 1.3.2 est réduit de 50 %.
+Si une collectivité n'a pas de terrains utilisables ou vendables ou elle dispose de terrains de ce type mais n'a pas réalisé de vente ou de contrats d'utilisation alors le score de la 1.3.2 est réduit de 50 %.
 
 
 # Réduction potentiel cae 1.3.3 liee competence urba
@@ -114,7 +114,7 @@ action_id: cae_1.3.3
 ## Regles
 ### Désactivation
 ```formule
-si reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON) alors VRAI
+reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON)
 ```
 Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est "non concerné".
 
@@ -125,6 +125,6 @@ action_id: cae_1.3.3
 ## Regles
 ### Réduction de potentiel
 ```formule
-si reponse(urba_1, OUI) ou si reponse (urba_2, OUI) et reponse(urba_3, OUI) alors 0.5
+si reponse(urba_1, OUI) ou reponse(urba_2, OUI) et reponse(urba_3, OUI) alors 0.5
 ```
 Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.

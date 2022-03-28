@@ -70,7 +70,7 @@ action_id: eci_2.4
 ## Regles
 ### Désactivation
 ```formule
-si reponse(dechets_1, NON) et reponse(dechets_2, NON)
+reponse(dechets_1, NON) et reponse(dechets_2, NON)
 ```
 
 
