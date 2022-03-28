@@ -1,5 +1,6 @@
 create schema if not exists raw;
 
+create domain codegeo as varchar(5);
 create table raw.population2019
 (
     REG  varchar(2),
