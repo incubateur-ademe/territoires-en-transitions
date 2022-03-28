@@ -5,20 +5,11 @@ action_id: cae_1.2.2
 ## Regles
 ### Réduction de potentiel
 ```formule
-si reponse (AOM_1, NON) alors 6/12 
+si identite(population, moins_de_5000) et reponse (AOM_1, NON) alors 2/12
+sinon si reponse (AOM_1, NON) alors 6/12 
 ```
 Pour une collectivité n'ayant pas la compétence AOM, le score de la 1.2.2 est réduit de 50 %.
 
-
-# Réduction potentiel cae 1.2.2 liee centre urbain > 5000 hab
-```yaml
-action_id: cae_1.2.2
-```
-## Regles
-### Réduction de potentiel
-```formule
-si identite(population, moins_de_5000) et reponse (AOM_1, NON) alors 2/12 
-```
 Pour une collectivité n'ayant pas de centre urbain de plus de 5000 habitants ET n'ayant pas la compétence AOM, le score de la 1.2.2 est réduit à 2 points.
 
 
@@ -46,18 +37,10 @@ action_id: cae_1.2.4
 ### Réduction de potentiel
 ```formule
 si identite(type, EPCI) et reponse(habitat_1, NON) alors 8/12 
+sinon si identite(type, commune) alors max (reponse(habitat_2), 0.5) 
 ```
 Pour un EPCI n'ayant pas la compétence habitat, le score de la 1.2.4 est réduit à 8 points.
 
-# Réduction potentiel cae 1.2.4 liee habitat
-```yaml
-action_id: cae_1.2.4
-```
-## Regles
-### Réduction de potentiel
-```formule
-si identite(type, commune) alors max (reponse(habitat_2), 0.5) 
-```
 Si la collectivité est une commune, le potentiel est réduit à la part de la commune dans la collectivité compétente en matière de Programme Local de l’Habitat (PLH), dans la limite de 50 %.
 
 
@@ -69,18 +52,9 @@ action_id: cae_1.3.1
 ### Réduction de potentiel
 ```formule
 si reponse(urba_1, NON) et reponse(SCoT, NON) alors 6/12 
+sinon si reponse(urba_1, NON) et reponse(SCoT, OUI) alors 0.7 
 ```
 Pour une collectivité n'ayant ni la compétence PLU, ni la compétence SCOT, le score de la 1.3.1 est réduit de 50 %.
-
-# Réduction potentiel cae 1.3.1 liee competence urba
-```yaml
-action_id: cae_1.3.1
-```
-## Regles
-### Réduction de potentiel
-```formule
-si reponse(urba_1, NON) et reponse(SCoT, OUI) alors 0.7 
-```
 Pour une collectivité n'ayant pas la compétence PLU mais disposant de la compétence SCOT, le score de la 1.3.1 est réduit de 30 %.
 
 
@@ -96,18 +70,7 @@ si reponse(amenagement_1, NON) ou reponse (amenagement_2, NON) alors 5/10
 Si une collectivité n'a pas de terrains utilisables ou vendables ou elle dispose de terrains de ce type mais n'a pas réalisé de vente ou de contrats d'utilisation alors le score de la 1.3.2 est réduit de 50 %.
 
 
-# Réduction potentiel cae 1.3.3 liee competence urba
-```yaml
-action_id: cae_1.3.3
-```
-## Regles
-### Réduction de potentiel
-```formule
-si reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON) alors 0
-```
-Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.
-
-# Désactivation cae_1.3.3 liee competence urba
+# Personnalisation cae 1.3.3 liee competence urba
 ```yaml
 action_id: cae_1.3.3
 ```
@@ -118,13 +81,11 @@ reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON)
 ```
 Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est "non concerné".
 
-# Réduction potentiel cae 1.3.3 liee competence urba
-```yaml
-action_id: cae_1.3.3
-```
-## Regles
 ### Réduction de potentiel
 ```formule
-si reponse(urba_1, OUI) ou reponse(urba_2, OUI) et reponse(urba_3, OUI) alors 0.5
+si reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON) alors 0
+sinon si reponse(urba_1, OUI) ou reponse(urba_2, OUI) et reponse(urba_3, OUI) alors 0.5
 ```
+Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.
+
 Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.

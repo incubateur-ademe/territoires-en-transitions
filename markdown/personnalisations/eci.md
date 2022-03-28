@@ -193,13 +193,8 @@ action_id: eci_4.2.1
 ## Regles
 ### Désactivation
 ```formule
-reponse(dechets_1, NON) 
+reponse(dechets_1, NON) ou reponse(REOM, OUI) 
 ```
-### Désactivation
-```formule
-reponse(REOM, OUI) 
-```
-
 
 # Désactivation eci_4.2.2 liee collecte dechets
 ```yaml
@@ -219,11 +214,7 @@ action_id: eci_4.2.3
 ## Regles
 ### Désactivation
 ```formule
-reponse(dechets_1, NON) 
-```
-### Désactivation
-```formule
-reponse(REOM, OUI) 
+reponse(dechets_1, NON) ou reponse(REOM, OUI) 
 ```
 
 
