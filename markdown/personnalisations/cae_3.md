@@ -4,7 +4,7 @@
 action_id: cae_3.1.1
 ```
 ## Règles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10
 sinon si reponse(AOD_chaleur, NON) alors 6/10
@@ -24,7 +24,7 @@ Ces réductions sont cumulables dans la limite de 2 points restants pour prendre
 action_id: cae_3.1.2
 ```
 ## Règles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 0.5
 ```
@@ -36,14 +36,14 @@ Pour une collectivité non autorité organisatrice de la distribution d'électri
 action_id: cae_3.1.2.2
 ```
 ## Règles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 1.0
 sinon si reponse(fournisseur_energie, NON) alors 0.8
 ```
 Si le parent est réduit de 50% alors la réduction de 20% ne s'applique pas même si il y a des fournisseurs d'energie maîtrisés par la collectivité.
 
-### Desactivation
+### Désactivation
 ```formule
 reponse(fournisseur_energie, NON) 
 ```
@@ -54,7 +54,7 @@ reponse(fournisseur_energie, NON)
 action_id: cae_3.2.1.1
 ```
 ## Règles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si reponse(recuperation_cogeneration, NON) et type(localisation,DOM) alors 2/10
 sinon si reponse(recuperation_cogeneration, NON) alors 2/12
@@ -66,7 +66,7 @@ sinon si reponse(recuperation_cogeneration, NON) alors 2/12
 action_id: cae_3.2.1
 ```
 ## Regles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si type(localisation,DOM) alors 10/12
 ```
@@ -78,11 +78,11 @@ si type(localisation,DOM) alors 10/12
 action_id: cae_3.2.1.2
 ```
 ## Règles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si reponse(recuperation_cogeneration, NON) alors 0
 ```
-### Desactivation
+### Désactivation
 ```formule
 si reponse(recuperation_cogeneration, NON) 
 ```
@@ -92,11 +92,11 @@ si reponse(recuperation_cogeneration, NON)
 action_id: cae_3.2.1.3
 ```
 ## Règles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si reponse(recuperation_cogeneration, NON) alors 0
 ```
-### Desactivation
+### Désactivation
 ```formule
 si reponse(recuperation_cogeneration, NON) 
 ```
@@ -108,7 +108,7 @@ si reponse(recuperation_cogeneration, NON)
 action_id: cae_3.2.2
 ```
 ## Regles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si type(localisation,DOM) alors 10/12
 ```
@@ -120,7 +120,7 @@ si type(localisation,DOM) alors 10/12
 action_id: cae_3.2.3
 ```
 ## Regles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si type(localisation,DOM) alors 12/8
 ```
@@ -132,11 +132,11 @@ si type(localisation,DOM) alors 12/8
 action_id: cae_3.3.1
 ```
 ## Règles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si reponse(eau_1, NON) alors 0/6 
 ```
-### Desactivation
+### Désactivation
 ```formule
 reponse(eau_1, NON) 
 ```
@@ -148,12 +148,12 @@ Pour une collectivité sans la compétence eau potable, le score de la 3.3.1 est
 action_id: cae_3.3.2
 ```
 ## Règles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
 si reponse(assainissement_1, NON) alors 0/12
 sinon si reponse(assainissement_4, NON) alors 0.5
 ```
-### Desactivation
+### Désactivation
 ```formule
 reponse(assainissement_1, NON)
 ```
@@ -166,23 +166,9 @@ En cas d'absence de potentiel de valorisation énergétique (méthanisation ou r
 action_id: cae_3.3.3
 ```
 ## Règles
-### Reduction de potentiel
+### Réduction de potentiel
 ```formule
-si identite(type, EPCI) et max(reponse(assainissement_3), 0.5)
+si identite(type, EPCI) et max(reponse(assainissement_3), 0.5) alors 1.0
 sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(assainissement_2, NON) alors 0.5
 ```
-
-# Réduction potentiel cae 3.3.5 liee dechets
-```yaml
-action_id: cae_3.3.5
-```
-## Règles
-### Reduction de potentiel
-```formule
-si identite(type, commune) et reponse(dechets_2, NON) alors 2/12
-sinon si identite(type, EPCI) et max(reponse(dechets_4),2/12)
-min(score(cae_1.2.3), score(cae_3.3.5 )) 
-```
-Pour une commune, la note est réduite à 2 points.
-Pour un EPCI ayant transféré la compétence traitement des déchets à un syndicat compétent en la matière, la note est réduite proportionnelle à sa participation dans cet syndicat, dans la limite de 2 points restants.
-Pour favoriser la prévention des déchets, la note attribuée à cette action ne peut dépasser celle obtenue dans l'action 1.2.3.
+@emeline, il manquait le alors dans cette règle. 

@@ -12,24 +12,6 @@ Pour une collectivité AOM, la réduction est proportionnelle
 à la participation dans la collectivité AOM dans la limite de 5 points (50%)
 
 
-# Petit titre sur la personnalisation de la cae 3.3.5
-```yaml
-action_id: cae_3.3.5
-```
-
-## Regles
-### Score 
-```formule
-min(score(cae_1.2.3), score(cae_3.3.5 )) 
-```
-Score de la 3.3.5 ne peut pas dépasser le score de la 1.2.3
-   
-
-# Petit titre de la reduction eci_2.2
-```yaml
-action_id: eci_2.2
-```
-
 ## Regles
 ### Désactivation
 ```formule
