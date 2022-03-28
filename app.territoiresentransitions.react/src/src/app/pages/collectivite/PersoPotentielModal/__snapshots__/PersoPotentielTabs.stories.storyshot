@@ -168,7 +168,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
             }
           />
           <div
-            className="fr-fieldset__content pl-4 fr-fieldset--inline"
+            className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
           >
             <div
               className="fr-radio-group fr-radio-group--sm"
@@ -425,7 +425,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
             }
           />
           <div
-            className="fr-fieldset__content pl-4 fr-fieldset--inline"
+            className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
           >
             <div
               className="fr-radio-group fr-radio-group--sm"
@@ -645,7 +645,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
             }
           />
           <div
-            className="fr-fieldset__content pl-4 fr-fieldset--inline"
+            className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
           >
             <div
               className="fr-radio-group fr-radio-group--sm"
