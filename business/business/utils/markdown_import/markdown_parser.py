@@ -19,6 +19,10 @@ from mistletoe import HTMLRenderer
 NodeWriter = Callable[[BlockToken, dict], None]
 
 
+class MarkdownParserError(Exception):
+    pass
+
+
 def code_writer(token: BlockToken, node: dict) -> None:
     yaml_writer(token, node)
     formule_writer(token, node)
@@ -27,8 +31,13 @@ def code_writer(token: BlockToken, node: dict) -> None:
 def yaml_writer(token: BlockToken, node: dict) -> None:
     """Update a node with the content of a parsed yaml"""
     if is_yaml(token):
-        parsed = yaml.safe_load(token.children[0].content)
-        node.update(parsed)
+        try:
+            parsed = yaml.safe_load(token.children[0].content)
+            node.update(parsed)
+        except Exception as e:
+            raise MarkdownParserError(
+                f"Erreur dans le formatage du code yaml dont le contenu est '{token.children[0].content}'.\nRaison : {str(e)}"
+            )
 
 
 def formule_writer(token: BlockToken, node: dict) -> None:

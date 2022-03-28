@@ -4,7 +4,7 @@ insert into question_thematique values ('dechets', 'Déchets');
 insert into question_thematique values ('energie', 'Énergie');
 
 -- Questions
-insert into question (id, thematique_id, type, description, formulation) values ('energie_1', 'energie', 'proportion', '', 'Quelle est la part de la collectivité dans la structure compétente en matière d''éclairage public ?');
+insert into question (id, thematique_id, type, description, formulation, ordonnancement, types_collectivites_concernees) values ('energie_1', 'energie', 'proportion', '', 'Quelle est la part de la collectivité dans la structure compétente en matière d''éclairage public ?', 1, '{"EPCI", "commune"}');
 insert into question (id, thematique_id, type, description, formulation) values ('energie_2', 'energie', 'proportion', '', 'La collectivité a-t-elle la compétence éclairage public ?');
 insert into question (id, thematique_id, type, description, formulation) values ('mobilite_1', 'mobilite', 'choix', '', 'La collectivité a-t-elle la compétence voirie ?');
 insert into question (id, thematique_id, type, description, formulation) values ('mobilite_2', 'mobilite', 'proportion', '', 'Quel est le taux de participation de la collectivité à la collectivité autorité organisatrice de la mobilité (AOM) ?');

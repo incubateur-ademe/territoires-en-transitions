@@ -3,6 +3,8 @@
 id: question_1
 type: binaire
 thematique_id: dechets
+ordonnancement: 1
+types_concernes: ["EPCI"]
 ```
 Quelques détails sur cette question pour aider les collectivités à répondre.
 
@@ -11,6 +13,8 @@ Quelques détails sur cette question pour aider les collectivités à répondre.
 id: question_2
 type: proportion
 thematique_id: dechets
+ordonnancement: 2
+types_concernes: ["commune", "EPCI"]
 ```
 Quelques détails sur cette question pour aider les collectivités à répondre.
 
@@ -20,6 +24,7 @@ id: question_3
 type: proportion
 thematique_id: dechets
 actions: [eci_1, eci_2]
+ordonnancement: 3
 ```
 Quelques détails sur cette question pour aider les collectivités à répondre.
 
@@ -36,12 +41,14 @@ Quelques détails sur cette question pour aider les collectivités à répondre.
 
 ```yaml
 id: question_4_a
+ordonnancement: 1
 ```
 
 ### Le second choix 
 
 ```yaml
 id: question_4_b
+ordonnancement: 2
 ```
 
 # Question 5 binaire 
