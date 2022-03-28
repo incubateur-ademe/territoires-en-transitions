@@ -27,7 +27,7 @@ from collectivite c
          left join type_collectivite tc on tc.collectivite_id = c.id
 ;
 
-create view question_display as
+create or replace view question_display as
 with actions as (
     select question_id, array_agg(action_id) action_ids
     from question_action
@@ -69,10 +69,12 @@ select q.id,
        population,
        localisation
 from q
-    join collectivite_identite i on q.types_collectivites_concernees && i.type
+    join collectivite_identite i
+        on q.types_collectivites_concernees && i.type
+        or q.types_collectivites_concernees is null
 ;
 comment on view question_display is
-    'Questions avec leurs choix pour l''affichage dans le client';
+    'Questions avec leurs choix par collectivité pour l''affichage dans le client';
 
 
 

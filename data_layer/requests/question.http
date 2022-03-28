@@ -30,7 +30,7 @@ apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
 
-### Upsert questions as service
+### Upsert questions choix as service
 POST {{api}}/rest/v1/rpc/business_upsert_questions
 apikey: {{service}}
 Authorization: Bearer {{service}}
@@ -41,8 +41,8 @@ Content-Type: application/json
     {
       "id": "question_1",
       "formulation": "Est-ce que la collectivité est compétente en voirie ?",
-      "description": "Une petite description",
-      "ordonnancement": 1,
+      "description": "Une toute petite description !",
+      "ordonnancement": 0,
       "types_collectivites_concernees": [
         "commune"
       ],
@@ -63,6 +63,29 @@ Content-Type: application/json
           "ordonnancement": 1
         }
       ]
+    }
+  ]
+}
+
+### Upsert binaire as service
+POST {{api}}/rest/v1/rpc/business_upsert_questions
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+{
+  "questions": [
+    {
+      "id": "question_2",
+      "formulation": "Est-ce que la collectivité est compétente en exploration spatiale ?",
+      "description": "Une description",
+      "ordonnancement": 0,
+      "types_collectivites_concernees": null,
+      "thematique_id": "mobilite",
+      "action_ids": [
+        "eci_1"
+      ],
+      "type": "binaire"
     }
   ]
 }

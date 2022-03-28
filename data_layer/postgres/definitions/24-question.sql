@@ -22,13 +22,15 @@ create table question
     id                             question_id primary key,
     thematique_id                  varchar references question_thematique,
     ordonnancement                 integer,
-    types_collectivites_concernees type_collectivite[],
+    types_collectivites_concernees type_collectivite[] null,
     type                           question_type       not null,
     description                    text                not null,
     formulation                    text                not null
 );
 comment on table question is
-    'Question a propos des caractéristiques de la collectivités, afin de personnaliser la notation des référentiels';
+    'Question à propos des caractéristiques de la collectivités, afin de personnaliser la notation des référentiels.';
+comment on column question.types_collectivites_concernees is
+    'La question ne sera posée uniquement pour types listés.';
 
 alter table question
     enable row level security;
@@ -67,16 +69,17 @@ create view question_thematique_display as
 with qt as (
     select action_id, thematique_id
     from question_action qa
-        join question q on qa.question_id = q.id
-), qr as (
-    select thematique_id, array_agg(referentiel) as referentiels
-    from qt
-        join action_relation r on r.id = qt.action_id
-    group by thematique_id
-)
+             join question q on qa.question_id = q.id
+),
+     qr as (
+         select thematique_id, array_agg(referentiel) as referentiels
+         from qt
+                  join action_relation r on r.id = qt.action_id
+         group by thematique_id
+     )
 select t.id, t.nom, referentiels
 from question_thematique t
-    left join qr on qr.thematique_id = t.id ;
+         left join qr on qr.thematique_id = t.id;
 
 create or replace function business_upsert_questions(
     questions json[]
@@ -85,6 +88,8 @@ $$
 declare
     obj  json;
     type question_type;
+    types_concernes_null boolean;
+    types_concernes_arr type_collectivite[];
 begin
     if is_service_role() -- only service role can upsert questions
     then
@@ -92,6 +97,18 @@ begin
         foreach obj in array questions
             loop
                 type = obj ->> 'type';
+
+                select (obj ->> 'types_collectivites_concernees') is null into types_concernes_null;
+                -- select obj -> 'types_collectivites_concernees' into types_concernes_js ;
+
+                if types_concernes_null
+                then
+                    select null into types_concernes_arr;
+                else
+                    select array(select json_array_elements_text((obj -> 'types_collectivites_concernees')))
+                    into
+                        types_concernes_arr;
+                end if;
 
                 insert into question (id, thematique_id, type, description, ordonnancement, formulation,
                                       types_collectivites_concernees)
@@ -101,8 +118,8 @@ begin
                         obj ->> 'description',
                         (obj ->> 'ordonnancement')::integer,
                         obj ->> 'formulation',
-                        array(select json_array_elements_text(obj -> 'types_collectivites_concernees')
-                                         ::type_collectivite))
+                        types_concernes_arr
+                        )
                 on conflict (id) do update
                     -- we update the request fields, except for type.
                     set thematique_id                  = excluded.thematique_id,
