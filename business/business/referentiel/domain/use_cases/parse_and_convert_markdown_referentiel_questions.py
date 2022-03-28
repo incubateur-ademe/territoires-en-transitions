@@ -6,10 +6,13 @@ from typing import List, Literal, Optional, Tuple
 
 from marshmallow import ValidationError
 import marshmallow_dataclass
-from numpy import tri
 
 from business.referentiel.domain.models import events
-from business.referentiel.domain.models.question import Choix, Question
+from business.referentiel.domain.models.question import (
+    Choix,
+    CollectiviteType,
+    Question,
+)
 from business.utils.action_id import ActionId
 from business.utils.domain_message_bus import (
     AbstractDomainMessageBus,
@@ -18,6 +21,7 @@ from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
 from business.utils.markdown_import.markdown_parser import (
+    MarkdownParserError,
     build_markdown_parser,
 )
 from business.utils.markdown_import.markdown_utils import load_md
@@ -28,6 +32,7 @@ from business.utils.use_case import UseCase
 class MarkdownChoix:
     id: str
     titre: str
+    ordonnancement: Optional[int] = None
 
 
 @dataclass
@@ -40,7 +45,9 @@ class MarkdownQuestion:
     thematique_id: str
     actions: Optional[List[str]]
     choix: Optional[List[MarkdownChoix]]
+    types_concernes: Optional[List[CollectiviteType]]
     description: str = ""
+    ordonnancement: Optional[int] = None
 
 
 class ParseAndConvertMarkdownReferentielQuestions(UseCase):
@@ -100,7 +107,7 @@ class ParseAndConvertMarkdownReferentielQuestions(UseCase):
                         md_question_as_dict
                     )
                     md_questions.append(md_question)  # type: ignore
-                except ValidationError as error:
+                except (ValidationError, MarkdownParserError) as error:
                     parsing_errors.append(f"In file {Path(md_file).name} {str(error)}")
         return md_questions, parsing_errors
 
@@ -165,8 +172,11 @@ class ParseAndConvertMarkdownReferentielQuestions(UseCase):
                 action_ids=[ActionId(action) for action in md_question.actions]
                 if md_question.actions
                 else [],
+                ordonnnancement=md_question.ordonnancement,
+                types_collectivites_concernees=md_question.types_concernes,
                 choix=[
-                    Choix(md_choix.id, md_choix.titre) for md_choix in md_question.choix
+                    Choix(md_choix.id, md_choix.titre, md_choix.ordonnancement)
+                    for md_choix in md_question.choix
                 ]
                 if md_question.choix
                 else None,

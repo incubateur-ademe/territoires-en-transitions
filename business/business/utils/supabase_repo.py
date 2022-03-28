@@ -99,6 +99,7 @@ def _raise_if_unexpected_status(
     )
     actual_status_code = r.status_code
     if actual_status_code not in list_expected_status_code:
+        breakpoint()
         raise SupabaseError(
             f"Error with status code {actual_status_code}, while we expected one of {list_expected_status_code}.\nReason is : {r.reason}",
             r,

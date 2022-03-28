@@ -22,7 +22,7 @@ create table question
     id            question_id primary key,
     thematique_id varchar references question_thematique,
     ordonnancement integer,
-    types_collectivites_concernees type_collectivite[] not null,
+    types_collectivites_concernees type_collectivite[],
     type          question_type not null,
     description   text          not null,
     formulation   text          not null
@@ -63,7 +63,7 @@ alter table question_action
 create policy allow_read_for_all on question_action for select using (true);
 
 
-ccreate or replace function business_upsert_questions(
+create or replace function business_upsert_questions(
     questions json[]
 ) returns void as
 $$
@@ -122,7 +122,7 @@ begin
                     on conflict (id) do update
                         -- we update only formulation and ordonnancement 
                         set formulation = excluded.formulation,
-                        set ordonnancement = excluded.ordonnancement; 
+                            ordonnancement = excluded.ordonnancement; 
                 end if;
             end loop;
     else

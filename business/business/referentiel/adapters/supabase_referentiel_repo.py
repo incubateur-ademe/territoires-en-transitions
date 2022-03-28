@@ -184,9 +184,10 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
         self,
         questions: List[Question],
     ):
+        questions_as_dict = [asdict(question) for question in questions]
         self.client.rpc.call(
             supabase_names.rpc.upsert_questions,
-            questions=[asdict(question) for question in questions],
+            questions=questions_as_dict,
         )
 
     def upsert_personnalisations(

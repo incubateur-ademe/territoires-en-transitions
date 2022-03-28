@@ -62,6 +62,8 @@ def test_parse_and_convert_markdown_referentiel_questions_from_ok_folder():
             action_ids=[],
             type="binaire",
             choix=None,
+            ordonnnancement=1,
+            types_collectivites_concernees=["EPCI"],
         ),
         Question(
             id="question_2",
@@ -71,6 +73,8 @@ def test_parse_and_convert_markdown_referentiel_questions_from_ok_folder():
             action_ids=[],
             type="proportion",
             choix=None,
+            ordonnnancement=2,
+            types_collectivites_concernees=["commune", "EPCI"],
         ),
         Question(
             id="question_3",
@@ -80,6 +84,8 @@ def test_parse_and_convert_markdown_referentiel_questions_from_ok_folder():
             action_ids=[ActionId("eci_1"), ActionId("eci_2")],
             type="proportion",
             choix=None,
+            ordonnnancement=3,
+            types_collectivites_concernees=None,
         ),
         Question(
             id="question_4",
@@ -89,9 +95,11 @@ def test_parse_and_convert_markdown_referentiel_questions_from_ok_folder():
             action_ids=[],
             type="choix",
             choix=[
-                Choix(id="question_4_a", formulation="Le premier choix"),
-                Choix(id="question_4_b", formulation="Le second choix"),
+                Choix(id="question_4_a", formulation="Le premier choix", ordonnancement=1),
+                Choix(id="question_4_b", formulation="Le second choix", ordonnancement=2),
             ],
+            ordonnnancement=None,
+            types_collectivites_concernees=None,
         ),
         Question(
             id="question_5",
@@ -101,6 +109,8 @@ def test_parse_and_convert_markdown_referentiel_questions_from_ok_folder():
             action_ids=[],
             type="binaire",
             choix=None,
+            ordonnnancement=None,
+            types_collectivites_concernees=None,
         ),
     ]
 

@@ -3,7 +3,7 @@
 id: SPASER
 type: binaire
 thematique_id: achats_responsables
-actions: eci_3.2.0
+actions: [eci_3.2.0]
 ```
 Les SPASER concernent les collectivités ayant un montant total annuel des achats supérieur à 100 millions d’euros hors-taxes.
 L’article D. 2111-3 du code de la commande publique précise les contrats à prendre en compte afin de déterminer le montant total annuel des achats et en déduire l’obligation d’établir un schéma de promotion des achats publics socialement et écologiquement responsables.
@@ -15,7 +15,7 @@ Seuls les contrats conclus doivent être pris en compte, c'est-à-dire ceux dont
 id: formation
 type: binaire
 thematique_id: formation
-actions: eci_3.4.2
+actions: [eci_3.4.2]
 ```
 
 # La collectivité est-elle en charge des équipements de l'enseignement pré-élementaire et élémentaire et/ou des activités périscolaires ?
@@ -23,7 +23,7 @@ actions: eci_3.4.2
 id: scolaire_1
 type: binaire
 thematique_id: formation
-actions: cae_6.5.3
+actions: [cae_6.5.3]
 ```
 
 # Des établissements scolaires et/ou des structure d’accueil de jeunes enfants sont-ils présents sur le territoire ?
@@ -31,7 +31,7 @@ actions: cae_6.5.3
 id: scolaire_2
 type: binaire
 thematique_id: formation
-actions: cae_6.5.3
+actions: [cae_6.5.3]
 ```
 
 # La collectivité possède-t'elle moins de 3 % de surfaces agricoles ?
@@ -39,7 +39,7 @@ actions: cae_6.5.3
 id: SAU
 type: binaire
 thematique_id: agri_alim
-actions: cae_6.4.1
+actions: [cae_6.4.1]
 ```
 
 # La collectivité possède-t'elle moins de 10 % de surfaces forestières (publiques ou privées) ?
@@ -47,7 +47,7 @@ actions: cae_6.4.1
 id: foret
 type: binaire
 thematique_id: foret
-actions: cae_6.4.2
+actions: [cae_6.4.2]
 ```
 
 # La collectivité possède-t-elle des centres-bourgs (dans le cas d'une commune) ou des communes (dans le cas d'un EPCI) de plus de 2 000 habitants ?

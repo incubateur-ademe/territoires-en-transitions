@@ -223,14 +223,18 @@ def test_can_upsert_referentiel_questions(
         thematique_id="dechets",
         action_ids=[action_id],
         type="choix",
+        types_collectivites_concernees=["EPCI"],
+        ordonnnancement=3,
         choix=[
             Choix(
                 id="question_a",
                 formulation="Oui",
+                ordonnancement=1,
             ),
             Choix(
                 id="question_b",
                 formulation="Non",
+                ordonnancement=2,
             ),
         ],
     )

@@ -42,6 +42,8 @@ type: proportion
 thematique_id: mobilité
 actions: [cae_4.2.1]
 types_concernes: [commune]
+actions: [cae_2.3.3]
+ordonnancement: 1
 ```
 
 # Les locaux de la collectivité sont-ils desservis ou desservables par les transports en commun ?
@@ -65,7 +67,7 @@ actions: [cae_4.1.2]
 id: pouvoir_police
 type: binaire
 thematique_id: mobilite
-actions: cae_4.2.2
+actions: [cae_4.2.2]
 ```
 
 # Existe-t-il un potentiel d'action ou des problèmes liés à la limitation et réduction du trafic et de la vitesse sur les axes principaux ou dans certaines zones ?
@@ -73,7 +75,7 @@ actions: cae_4.2.2
 id: trafic
 type: binaire
 thematique_id: mobilite
-actions: cae_4.2.2
+actions: [cae_4.2.2]
 ```
 
 # La collectivité dispose t'elle de compétences en matière de politique cyclable (AOM ou compétente en matière d’infrastructures vélos, de stationnement vélos, de services associés aux vélos) ?
@@ -81,7 +83,7 @@ actions: cae_4.2.2
 id: cyclable
 type: binaire
 thematique_id: mobilite
-actions: cae_4.2.3
+actions: [cae_4.2.3]
 ```
 
 # La collectivités est-elle concernée par le versement mobilité ?
@@ -89,5 +91,6 @@ actions: cae_4.2.3
 id: versement_mobilite
 type: binaire
 thematique_id: mobilite
-actions: cae_4.2.3
+actions: [cae_4.1.1]
+ordonnancement: 2
 ```
