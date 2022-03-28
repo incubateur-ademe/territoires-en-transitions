@@ -18,8 +18,8 @@ action_id: cae_4.1.2
 ### Réduction de potentiel
 ```formule
 si reponse(TC_1, NON) alors 0.8
-sinon si reponse(vehiculeCT, NON) alors 0.7
-sinon si reponse(TC_1, NON) et reponse(vehiculeCT, NON) alors 0.5
+sinon si reponse(vehiculeCT_1, NON) alors 0.7
+sinon si reponse(TC_1, NON) et reponse(vehiculeCT_1, NON) alors 0.5
 ```
 Pour une collectivité dont la desserte des locaux par les transports publics est inenvisageable, le score est diminuté de 20 %.
 Pour une collectivité ne disposant pas de véhicules, le score est diminuté de 30 %.
@@ -33,7 +33,7 @@ action_id: cae_4.1.2.1
 ## Regles 
 ### Désactivation
 ```formule
-reponse(vehiculeCT, NON)
+reponse(vehiculeCT_1, NON)
 ```
 
 # Désactivation cae 4.1.2.3 liee mobilité interne
@@ -44,7 +44,7 @@ action_id: cae_4.1.2.3
 ## Regles
 ### Désactivation
 ```formule
-reponse(vehiculeCT, NON)
+reponse(vehiculeCT_1, NON)
 ```
 
 # Désactivation cae 4.1.2.4 liee mobilité interne
@@ -55,7 +55,7 @@ action_id: cae_4.1.2.4
 ## Regles 
 ### Désactivation
 ```formule
-reponse(vehiculeCT, NON)
+reponse(vehiculeCT_1, NON)
 ```
 Pour une collectivité ne disposant pas de véhicules, les sous-actions 4.1.2.1, 4.1.2.3 et 4.1.2.4 sont "non concernées".
 
@@ -67,9 +67,9 @@ action_id: cae_4.2.1
 ## Regles
 ### Réduction de potentiel
 ```formule
-si identite(type, commune) alors max(response(voirie_2), 2/8)
-sinon si identite(type, EPCI) et response(voirie_1, voirie_1_b) alors 0.5
-sinon si response(voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors 0.25
+si identite(type, commune) alors max(reponse(voirie_2), 2/8)
+sinon si identite(type, EPCI) et reponse(voirie_1, voirie_1_b) alors 0.5
+sinon si reponse(voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors 0.25
 ```
 Pour les communes, le score est réduit proportionnelle à la part dans l’EPCI en cas de transfert de la compétence en matière de voirie/stationnement, danms la limite de 2 points pour le pouvoir de police du maire
 Pour les intercommunalités qui n’ont la compétence que sur les voiries et parcs de stationnements communautaires, le score est réduit de 50 %
@@ -83,7 +83,7 @@ action_id: cae_4.2.1
 ## Regles
 ### Réduction de potentiel
 ```formule
-si reponse(pouvoir_police, NON) ou response(voirie_1,voirie_1_b) ou response(voirie_1,voirie_1_c) ou reponse(trafic, NON) alors 0.5
+si reponse(pouvoir_police, NON) ou reponse(voirie_1,voirie_1_b) ou reponse(voirie_1,voirie_1_c) ou reponse(trafic, NON) alors 0.5
 sinon si reponse(pouvoir_police, NON) et reponse(trafic, NON) alors 2/16
 sinon si reponse(pouvoir_police, NON) et reponse(voirie_1,voirie_1_b) alors 2/16
 sinon si reponse(pouvoir_police, NON) et reponse(voirie_1,voirie_1_c) alors 2/16
@@ -121,7 +121,7 @@ action_id: cae_4.3.1
 ## Regles
 ### Réduction de potentiel
 ```formule
-si identite(type, commune) alors max(response(voirie_2), 0.5)
+si identite(type, commune) alors max(reponse(voirie_2), 0.5)
 sinon si identite(type, EPCI) et reponse(voirie_1, voirie_1_b) alors 0.5
 ```
 Pour les communes, le score de la 4.3.1 est réduit proportionnelle à la part dans l’EPCI compétent en matière de voirie (création, aménagement, entretien) dans la limite de 50 % pour prendre en compte le pouvoir de police du maire.
@@ -146,7 +146,7 @@ action_id: cae_4.3.2
 ## Regles
 ### Réduction de potentiel
 ```formule
-si type(localisation,DOM) alors 14/16
+si identite(localisation,DOM) alors 14/16
 ```
 Le nombre de point max pour l'action 4.3.2 est de 16 points en Métropole et de 14 points pour les collectivités DOM.
 
@@ -158,10 +158,11 @@ action_id: cae_4.3.3
 ## Regles
 ### Réduction de potentiel
 ```formule
-reponse(AOM_2)
+si reponse(AOM_1, OUI) alors 1.0
 sinon si reponse(versement_mobilite, NON) alors 0.5
 sinon si reponse(AOM_2) et reponse(versement_mobilite, NON) alors min(reponse(AOM_2), 0.5)
 ```
+@emeline, il manquait le si/alors dans cette règle. 
 Pour une collectivité non AOM, le score de la 4.3.3 est réduit proportionnellement à la part de la collectivité dans la structure AOM.
 Pour les collectivités non concernée par le versement mobilité, le score de la 4.3.3 est réduit de 50 %.
 La réduction la plus forte prévaut.
@@ -185,6 +186,6 @@ action_id: cae_4.3.4
 ## Regles
 ### Réduction de potentiel
 ```formule
-si type(localisation,DOM) alors 10/8
+si identite(localisation,DOM) alors 10/8
 ```
 Le nombre de point max pour l'action 4.3.4 est de 8 points en Métropole et de 10 points pour les collectivités DOM.

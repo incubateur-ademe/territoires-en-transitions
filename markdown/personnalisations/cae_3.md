@@ -56,7 +56,7 @@ action_id: cae_3.2.1.1
 ## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(recuperation_cogeneration, NON) et type(localisation,DOM) alors 2/10
+si reponse(recuperation_cogeneration, NON) et identite(localisation,DOM) alors 2/10
 sinon si reponse(recuperation_cogeneration, NON) alors 2/12
 ```
 
@@ -68,7 +68,7 @@ action_id: cae_3.2.1
 ## Regles
 ### Réduction de potentiel
 ```formule
-si type(localisation,DOM) alors 10/12
+si identite(localisation,DOM) alors 10/12
 ```
 👆 Le nombre de point max pour l'action 3.2.1 est de 12 points en Métropole et de 10 points pour les collectivités DOM.
 
@@ -84,7 +84,7 @@ si reponse(recuperation_cogeneration, NON) alors 0
 ```
 ### Désactivation
 ```formule
-si reponse(recuperation_cogeneration, NON) 
+reponse(recuperation_cogeneration, NON) 
 ```
 
 # Réduction potentiel cae 3.2.1.3
@@ -98,7 +98,7 @@ si reponse(recuperation_cogeneration, NON) alors 0
 ```
 ### Désactivation
 ```formule
-si reponse(recuperation_cogeneration, NON) 
+reponse(recuperation_cogeneration, NON) 
 ```
 👆 Pour une collectivité avec peu d'activités industrielles adaptées pour la récupération de chaleur fatale et peu de potentiel pour la cogénération voir la micro-cogénération (donc ni de chaufferies ni de consommateurs suffisants en chaleur ni de producteur-consommateur visant l’autoconsommation), le score de la 3.2.1 est réduit à 2 points et les statuts des sous-action 3.2.1.2 et 3.2.1.3 sont "non concernée".
 
@@ -110,7 +110,7 @@ action_id: cae_3.2.2
 ## Regles
 ### Réduction de potentiel
 ```formule
-si type(localisation,DOM) alors 10/12
+si identite(localisation,DOM) alors 10/12
 ```
 👆 Le nombre de point max pour l'action 3.2.2 est de 12 points en Métropole et de 10 points pour les collectivités DOM.
 
@@ -122,7 +122,7 @@ action_id: cae_3.2.3
 ## Regles
 ### Réduction de potentiel
 ```formule
-si type(localisation,DOM) alors 12/8
+si identite(localisation,DOM) alors 12/8
 ```
 👆 Le nombre de point max pour l'action 3.2.3 est de 8 points en Métropole et de 12 points pour les collectivités DOM.
 
@@ -171,4 +171,4 @@ action_id: cae_3.3.3
 si identite(type, EPCI) et max(reponse(assainissement_3), 0.5) alors 1.0
 sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(assainissement_2, NON) alors 0.5
 ```
-@emeline, il manquait le alors dans cette règle. 
+@emeline, il manquait le premier "alors" dans cette règle, on a mis alors 1.0, à corriger. 

@@ -22,7 +22,7 @@ thematique_id: dechets
 actions: [cae_1.2.3, eci_2.1]
 ```
 
-#La collectivité a-t-elle mise en place la redevance d’enlèvement des ordures ménagères (REOM) ?
+# La collectivité a-t-elle mise en place la redevance d’enlèvement des ordures ménagères (REOM) ?
 ```yaml
 id: REOM
 type: binaire
