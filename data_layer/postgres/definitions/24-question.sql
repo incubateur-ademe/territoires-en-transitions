@@ -148,39 +148,6 @@ end
 $$ language plpgsql;
 
 
-
--- TODO : filter on field types_collectivites_concernees using view
-create view question_display
-as
-with actions as (
-    select question_id, array_agg(action_id) action_ids
-    from question_action
-    group by question_id
-)
-select q.id    as id,
-       a.action_ids,
-       thematique_id,
-       type,
-       t.nom   as thematique_nom,
-       description,
-       formulation,
-       ordonnancement,
-       cx.json as choix
-from question q
-         join question_thematique t on t.id = q.thematique_id
-         join actions a on q.id = a.question_id
-         left join lateral (select array_agg(
-                                           json_build_object(
-                                                   'id', c.id,
-                                                   'label', c.formulation,
-                                                   'ordonnancement', c.ordonnancement
-                                               )) as json
-                            from question_choix c
-                            where c.question_id = q.id) cx on true;
-comment on view question_display is
-    'Questions avec leurs choix pour l''affichage dans le client';
-
-
 create view question_engine
 as
 select q.id   as id,
@@ -191,4 +158,4 @@ from question q
                             from question_choix c
                             where c.question_id = q.id) cx on true;
 comment on view question_engine is
-    'Questions avec leurs choix pour le moteur de formule';
+    'Questions avec leurs choix pour le moteur de formule -- not used';
