@@ -194,11 +194,12 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
         self,
         personnalisations: List[ActionPersonnalisation],
     ):
+        personnalisation_as_dicts = [
+            asdict(personnalisation) for personnalisation in personnalisations
+        ]
         self.client.rpc.call(
             supabase_names.rpc.upsert_personnalisations,
-            personnalisations=[
-                asdict(personnalisation) for personnalisation in personnalisations
-            ],
+            personnalisations=personnalisation_as_dicts,
         )
 
     def get_all_engine_questions(

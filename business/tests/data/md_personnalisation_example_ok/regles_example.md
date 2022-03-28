@@ -11,8 +11,6 @@ si reponse(mobilite_1, OUI) alors max(reponse(mobilite_2), 0.5)
 Pour une collectivité AOM, la réduction est proportionnelle 
 à la participation dans la collectivité AOM dans la limite de 5 points (50%)
 
-
-## Regles
 ### Désactivation
 ```formule
 reponse(dechets_1, NON) 

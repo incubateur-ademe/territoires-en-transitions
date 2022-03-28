@@ -1,8 +1,11 @@
+from typing import List
 from business.personnalisation.find_regles_errors import (
     find_regles_errors,
     Question as EngineQuestion,
 )
 from business.referentiel.domain.models import events
+from business.referentiel.domain.models import personnalisation
+from business.referentiel.domain.models.personnalisation import Regle
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
@@ -31,7 +34,34 @@ class CheckPersonnalisation(UseCase):
             )
             for question in trigger.questions
         ]
-        regles = sum(
+        personnalisation_action_ids = [
+            personnalisation.action_id for personnalisation in trigger.regles
+        ]
+        duplicated_personnalisation_action_ids = find_duplicates(
+            personnalisation_action_ids
+        )
+        if duplicated_personnalisation_action_ids:
+            self.bus.publish_event(
+                events.QuestionAndReglesCheckingFailed(
+                    f"Duplicats dans les règles pour les actions {', '.join(duplicated_personnalisation_action_ids)} ."
+                )
+            )
+            return
+
+        action_ids_with_duplicated_regles_types = [
+            regle.action_id
+            for regle in trigger.regles
+            if find_duplicates([regle.type for regle in regle.regles])
+        ]
+        if action_ids_with_duplicated_regles_types:
+            self.bus.publish_event(
+                events.QuestionAndReglesCheckingFailed(
+                    f"Duplicats dans les types (désactivation, réduction, score) pour les règles des actions suivantes {', '.join(action_ids_with_duplicated_regles_types)}. Il ne faut qu'une seule formule par type et par action. "
+                )
+            )
+            return
+
+        regles: List[Regle] = sum(
             [personnalisation.regles for personnalisation in trigger.regles],
             [],
         )
@@ -46,3 +76,7 @@ class CheckPersonnalisation(UseCase):
             self.bus.publish_event(
                 events.QuestionAndReglesChecked(trigger.questions, trigger.regles)
             )
+
+
+def find_duplicates(l: List) -> List:
+    return [x for n, x in enumerate(l) if x in l[:n]]
