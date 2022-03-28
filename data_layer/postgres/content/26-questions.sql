@@ -2,6 +2,17 @@
 insert into question_thematique values ('mobilite', 'Mobilité');
 insert into question_thematique values ('dechets', 'Déchets');
 insert into question_thematique values ('energie', 'Énergie');
+insert into question_thematique values ('eau_assainissement', 'Eau et assainissement');
+insert into question_thematique values ('dev_eco', 'Développement économique');
+insert into question_thematique values ('tourisme', 'Tourisme');
+insert into question_thematique values ('urbanisme_amenagement_habitat', 'Urbanisme, aménagement et habitat');
+insert into question_thematique values ('ultramarin', 'Outre-mer');
+insert into question_thematique values ('achats_responsables', 'Achats responsables');
+insert into question_thematique values ('centre_polarite', 'Centre polarité');
+insert into question_thematique values ('foret', 'Forêts');
+insert into question_thematique values ('agri_alim', 'Agriculture et alimentation');
+insert into question_thematique values ('formation', 'Formation');
+
 
 -- Questions
 insert into question (id, thematique_id, type, description, formulation, ordonnancement, types_collectivites_concernees) values ('energie_1', 'energie', 'proportion', '', 'Quelle est la part de la collectivité dans la structure compétente en matière d''éclairage public ?', 1, '{"EPCI", "commune"}');

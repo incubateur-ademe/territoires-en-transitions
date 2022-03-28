@@ -3,8 +3,12 @@ from typing import List, Tuple, Any, Type
 from lark import Transformer
 
 from business.personnalisation.engine.formule import FormuleABC, FormuleError
-from business.personnalisation.engine.models import Question, IdentiteTypeOption, IdentitePopulationOption, \
-    IdentiteLocalisationOption
+from business.personnalisation.engine.models import (
+    Question,
+    IdentiteTypeOption,
+    IdentitePopulationOption,
+    IdentiteLocalisationOption,
+)
 
 TypedValue = Tuple[Type, Any]
 Arg1 = Tuple[TypedValue]
@@ -15,9 +19,7 @@ Arg3 = Tuple[TypedValue, TypedValue, TypedValue]
 class FormuleChecker(FormuleABC, Transformer):
     """In charge of checking formules are correct"""
 
-    def __init__(self,
-                 questions: List[Question],
-                 visit_tokens: bool = True) -> None:
+    def __init__(self, questions: List[Question], visit_tokens: bool = True) -> None:
         Transformer.__init__(self, visit_tokens)
         self.questions = {question.id: question for question in questions}
 
@@ -60,24 +62,24 @@ class FormuleChecker(FormuleABC, Transformer):
         return float, "reponse"
 
     def identite(self, node: Arg2) -> TypedValue:
-        """ Returns true if the value is contained by the identite property
+        """Returns true if the value is contained by the identite property
         Raises FormuleError either value or property does not match.
         """
         identifier = node[0][1]
         option = node[1][1]
 
         if identifier == "type":
-            if option not in IdentiteTypeOption.__args__:
+            if option not in IdentiteTypeOption.__args__:  # type: ignore
                 raise FormuleError(f"{option} is not a valid '{identifier}'.")
             return bool, "identite"
 
         elif identifier == "population":
-            if option not in IdentitePopulationOption.__args__:
+            if option not in IdentitePopulationOption.__args__:  # type: ignore
                 raise FormuleError(f"{option} is not a valid '{identifier}'.")
             return bool, "identite"
 
         elif identifier == "localisation":
-            if option not in IdentiteLocalisationOption.__args__:
+            if option not in IdentiteLocalisationOption.__args__:  # type: ignore
                 raise FormuleError(f"{option} is not a valid '{identifier}'.")
             return bool, "identite"
 

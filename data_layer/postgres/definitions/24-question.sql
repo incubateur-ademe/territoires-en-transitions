@@ -22,7 +22,7 @@ create table question
     id                             question_id primary key,
     thematique_id                  varchar references question_thematique,
     ordonnancement                 integer,
-    types_collectivites_concernees type_collectivite[] not null,
+    types_collectivites_concernees type_collectivite[],
     type                           question_type       not null,
     description                    text                not null,
     formulation                    text                not null

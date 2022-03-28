@@ -17,16 +17,9 @@ class Question:
     choix_ids: Optional[List[str]] = None
 
 
-IdentiteTypeOption = Literal["syndicat", "commune"]
+IdentiteTypeOption = Literal["syndicat", "commune", "EPCI", "syndicat_traitement"]
 IdentitePopulationOption = Literal["moins_de_5000", "moins_de_10000", "moins_de_100000"]
 IdentiteLocalisationOption = Literal["DOM"]
-
-
-@dataclass
-class IdentiteOptions:
-    type: List[IdentiteTypeOption]  # = ["syndicat", "commune"]
-    population: List[IdentitePopulationOption]  # = ["moins_de_100000"]
-    localisation: List[IdentiteLocalisationOption]  # = ["DOM"]
 
 
 @dataclass
