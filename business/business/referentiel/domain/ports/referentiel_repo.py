@@ -4,8 +4,10 @@ from typing import Dict, List, Optional
 
 import marshmallow_dataclass
 
-from business.referentiel.domain.models.personnalisation import ActionPersonnalisation
-from business.personnalisation.engine.models import Question as EngineQuestion
+from business.referentiel.domain.models.personnalisation import (
+    ActionPersonnalisationRegles,
+)
+from business.personnalisation.models import Question as EngineQuestion
 from business.referentiel.domain.models.question import Question
 from ..models.action_children import ActionChildren
 from ..models.action_definition import ActionDefinition
@@ -89,14 +91,14 @@ class AbstractReferentielRepository(abc.ABC):
     @abc.abstractmethod
     def upsert_personnalisations(
         self,
-        personnalisations: List[ActionPersonnalisation],
+        personnalisations: List[ActionPersonnalisationRegles],
     ) -> None:
         raise NotImplementedError
 
     @abc.abstractmethod
     def get_personnalisations(
         self,
-    ) -> List[ActionPersonnalisation]:
+    ) -> List[ActionPersonnalisationRegles]:
         raise NotImplementedError
 
 
@@ -117,7 +119,7 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         self._actions_by_ref: Dict[ActionReferentiel, ReferentielEntities] = {}
         self._indicateurs: List[Indicateur] = []
         self._questions: List[Question] = []
-        self._personnalisations: List[ActionPersonnalisation] = []
+        self._personnalisations: List[ActionPersonnalisationRegles] = []
         if children_entities and definition_entities and points_entities:
             self.add_referentiel_actions(
                 definition_entities, children_entities, points_entities
@@ -225,7 +227,7 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
 
     def upsert_personnalisations(
         self,
-        personnalisations: List[ActionPersonnalisation],
+        personnalisations: List[ActionPersonnalisationRegles],
     ):
         self._personnalisations += personnalisations
 
@@ -236,5 +238,5 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
 
     def get_personnalisations(
         self,
-    ) -> List[ActionPersonnalisation]:
+    ) -> List[ActionPersonnalisationRegles]:
         return self._personnalisations

@@ -5,7 +5,6 @@ create table personnalisation_consequence
 (
     collectivite_id         integer references collectivite                    not null,
     consequences            jsonb                                              not null,
-    consequences_created_at timestamp with time zone default CURRENT_TIMESTAMP not null, -- @raph is it used ?
     primary key (collectivite_id)
 ) inherits (abstract_modified_at);
 comment on table personnalisation_consequence is

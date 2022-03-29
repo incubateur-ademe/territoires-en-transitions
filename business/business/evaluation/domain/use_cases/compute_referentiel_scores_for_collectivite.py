@@ -54,7 +54,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         self.points_trees: Dict[ActionReferentiel, ActionPointTree] = {}
         self.referentiel_action_level = referentiel_action_level or {"eci": 2, "cae": 3}
 
-    def execute(self, command: events.ActionStatutUpdatedForCollectivite):
+    def execute(self, command: events.ActionStatutOrConsequenceUpdatedForCollectivite):
         point_tree = self.points_trees.get(command.referentiel)
         action_level = self.referentiel_action_level[command.referentiel]
         if point_tree is None:
@@ -73,7 +73,6 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         statuses = self.statuses_repo.get_all_for_collectivite(
             command.collectivite_id, command.referentiel
         )
-
         print("\nFetched statuses from datalayer : ", statuses)
 
         status_by_action_id: Dict[str, ActionStatut] = {
@@ -91,7 +90,6 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         potentiels = self.compute_potentiels(
             point_tree, actions_non_concernes_ids, action_level
         )
-
         # 2. Estimate tache points based on statuses
         point_tree.map_on_taches(
             lambda tache: self.update_scores_from_tache_given_statuses(

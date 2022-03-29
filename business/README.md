@@ -54,7 +54,7 @@ pytest tests
 ### Lancer l'application
 On peut lancer l'application avec python
 ```
-python business/evaluation/entrypoints/realtime.py
+python business/evaluation/entrypoints/start_realtime.py
 ```
 
 Ou bien en utilisant un des deux Dockerfiles

@@ -10,7 +10,7 @@ from business.utils.domain_message_bus import (
 
 
 @dataclass
-class ActionStatutUpdatedForCollectivite(DomainEvent):
+class ActionStatutOrConsequenceUpdatedForCollectivite(DomainEvent):
     collectivite_id: int
     referentiel: ActionReferentiel
 
@@ -40,3 +40,23 @@ class ScoresStorageForCollectiviteFailed(DomainFailureEvent):
 @dataclass
 class RealtimeEventWithWrongFormatObserved(DomainFailureEvent):
     pass
+
+
+@dataclass
+class ReponseUpdatedForCollectivite(DomainEvent):
+    collectivite_id: int
+
+
+@dataclass
+class PersonnalisationForCollectiviteFailed(DomainFailureEvent):
+    pass
+
+
+@dataclass
+class PersonnalisationForCollectiviteStored(DomainEvent):
+    collectivite_id: int
+
+
+@dataclass
+class PersonnalisationConsequenceUpdatedForCollectivite(DomainEvent):
+    collectivite_id: int

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from business.referentiel.domain.models.personnalisation import (
-    ActionPersonnalisation,
+    ActionPersonnalisationRegles,
     Regle,
 )
 
@@ -52,7 +52,7 @@ def test_parse_and_convert_markdown_referentiel_personnalisation_from_ok_folder(
     assert len(parsed_events) == 1
 
     assert parsed_events[0].regles == [
-        ActionPersonnalisation(
+        ActionPersonnalisationRegles(
             action_id=ActionId("cae_4.1.1"),
             titre="Petit titre sur la personnalisation de la cae 4.1.1",
             regles=[

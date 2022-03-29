@@ -22,9 +22,8 @@ def supabase_client() -> SupabaseClient:
     )
 
 
-@pytest.fixture()
-def supabase_referentiel_repo(supabase_client) -> SupabaseReferentielRepository:
-    # Remove all test entities from database
+def reset_supabase_client(supabase_client: SupabaseClient):
+    """Remove all test entities from database"""
     # Note that the order matters here /!\
     supabase_client.db.delete_by(
         supabase_names.tables.indicateur_definition, {"id": "like.test%"}
@@ -47,12 +46,20 @@ def supabase_referentiel_repo(supabase_client) -> SupabaseReferentielRepository:
     supabase_client.db.delete_by(
         supabase_names.tables.personnalisation_regle, {"action_id": "like.test%"}
     )
+    supabase_client.db.delete_by(supabase_names.tables.personnalisation_consequence, {})
 
     supabase_client.db.delete_by(
         supabase_names.tables.personnalisation, {"action_id": "like.test%"}
     )
-
     supabase_client.db.delete_by(
         supabase_names.tables.action_relation, {"id": "like.test%"}
     )
+    supabase_client.db.delete_by(
+        supabase_names.tables.action_relation, {"parent": "like.test%"}
+    )
+
+
+@pytest.fixture()
+def supabase_referentiel_repo(supabase_client) -> SupabaseReferentielRepository:
+    reset_supabase_client(supabase_client)
     return SupabaseReferentielRepository(supabase_client)

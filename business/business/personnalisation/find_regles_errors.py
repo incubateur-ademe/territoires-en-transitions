@@ -1,13 +1,12 @@
 from typing import List
 
-import lark
 
 from business.personnalisation.engine.formule_checker import FormuleChecker
-from business.personnalisation.engine.models import Question
+from business.personnalisation.models import Question
 from business.personnalisation.engine.parser import parser
 from business.referentiel.domain.models.personnalisation import Regle
 
-
+# TODO : eventually use RegleParser instead of parsing here ?
 def find_regles_errors(regles: List[Regle], questions: List[Question]) -> List[str]:
     """Function to check a regle is correctly defined"""
     formule_checker = FormuleChecker(questions)

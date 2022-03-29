@@ -17,8 +17,7 @@ class ReplayRealtime(AbstractRealtime):
         path: Path,
         domain_message_bus: AbstractDomainMessageBus,
         converters=List[AbstractConverter],
-    ):  # observer: Subject
-        # self.observer = observer
+    ):
         self.events_to_replay = self.load_events_to_replay(path)
         super().__init__(domain_message_bus, converters)
 

@@ -9,7 +9,7 @@ import marshmallow_dataclass
 
 from business.referentiel.domain.models import events
 from business.referentiel.domain.models.personnalisation import (
-    ActionPersonnalisation,
+    ActionPersonnalisationRegles,
     Regle,
     RegleType,
 )
@@ -149,7 +149,7 @@ class ParseAndConvertMarkdownReferentielRegles(UseCase):
 
     def convert(
         self, md_personnalisations: List[MarkdownPersonnalisation]
-    ) -> Tuple[List[ActionPersonnalisation], List[str]]:
+    ) -> Tuple[List[ActionPersonnalisationRegles], List[str]]:
         errors = []
         # 1. Check that all referenced action_id exist
         repo_action_ids = self.referentiel_repo.get_all_action_ids()
@@ -166,7 +166,7 @@ class ParseAndConvertMarkdownReferentielRegles(UseCase):
 
         # 2. todo : check that formule is correct (??)
         personnalisation = [
-            ActionPersonnalisation(
+            ActionPersonnalisationRegles(
                 action_id=ActionId(md_personnalisation.action_id),
                 titre=md_personnalisation.titre,
                 regles=[

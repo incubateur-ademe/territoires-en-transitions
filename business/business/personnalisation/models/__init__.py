@@ -1,17 +1,23 @@
 from dataclasses import dataclass, field
 from typing import List, Literal, Optional, Set, Union
 
+from lark import ParseTree
+
 from business.referentiel.domain.models.question import QuestionType
 
 
 @dataclass
 class Reponse:
+    """Reponse to a question."""
+
     id: str
     value: Union[str, float, bool]
 
 
 @dataclass
 class Question:
+    """Question asked to a collectivite"""
+
     id: str
     type: QuestionType
     choix_ids: Optional[List[str]] = None
@@ -24,6 +30,24 @@ IdentiteLocalisationOption = Literal["DOM"]
 
 @dataclass
 class IdentiteCollectivite:
+    """Caracteristiques of a collectivite used in identite function"""
+
     type: Set[IdentiteTypeOption] = field(default_factory=lambda: set())
     population: Set[IdentitePopulationOption] = field(default_factory=lambda: set())
     localisation: Set[IdentiteLocalisationOption] = field(default_factory=lambda: set())
+
+
+@dataclass
+class ActionPersonnalisationConsequence:
+    """Computed consequence for an action"""
+
+    desactive: Optional[bool] = None
+    potentiel_perso: Optional[float] = None
+
+
+@dataclass
+class ActionPersonnalisationParsedRegles:
+    """Parsed regles for an action"""
+
+    desactivation: Optional[ParseTree] = None
+    reduction: Optional[ParseTree] = None

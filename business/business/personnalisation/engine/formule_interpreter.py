@@ -5,7 +5,7 @@ from lark import Tree
 from lark.visitors import Interpreter
 
 from business.personnalisation.engine.formule import FormuleABC, ReponseMissing
-from business.personnalisation.engine.models import IdentiteCollectivite
+from business.personnalisation.models import IdentiteCollectivite
 
 
 class FormuleInterpreter(FormuleABC, Interpreter):

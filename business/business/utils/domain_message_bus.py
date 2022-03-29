@@ -49,7 +49,6 @@ class InMemoryDomainMessageBus(AbstractDomainMessageBus):
     def publish_event(self, event: DomainEvent) -> None:
         if isinstance(event, DomainFailureEvent):
             print("Domain failure : ", event.reason)
-
         print("Published event :", type(event))
         handlers = self._event_handlers.get(type(event))
         if handlers:

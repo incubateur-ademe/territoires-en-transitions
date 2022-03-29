@@ -1,4 +1,6 @@
-from business.evaluation.domain.models.events import ActionStatutUpdatedForCollectivite
+from business.evaluation.domain.models.events import (
+    ActionStatutOrConsequenceUpdatedForCollectivite,
+)
 from business.evaluation.domain.ports.action_statut_update_event_repo import (
     AbstractActionStatutUpdateEventRepository,
 )
@@ -21,7 +23,7 @@ class CatchUpUnprocessedActionStatusUpdateEvents(UseCase):
         )
         for event in unprocessed_events:
             self.bus.publish_event(
-                ActionStatutUpdatedForCollectivite(
+                ActionStatutOrConsequenceUpdatedForCollectivite(
                     collectivite_id=event.collectivite_id,
                     referentiel=event.referentiel,
                 )

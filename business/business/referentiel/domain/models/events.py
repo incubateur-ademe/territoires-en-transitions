@@ -11,7 +11,7 @@ from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.utils.domain_message_bus import DomainEvent, DomainFailureEvent
 from .markdown_action_node import MarkdownActionNode
 from .indicateur import Indicateur
-from .personnalisation import ActionPersonnalisation
+from .personnalisation import ActionPersonnalisationRegles
 
 
 @dataclass
@@ -121,13 +121,13 @@ class ReferentielQuestionsStored(DomainEvent):
 @dataclass
 class QuestionAndPersonnalisationMarkdownConvertedToEntities(DomainEvent):
     questions: List[Question]
-    regles: List[ActionPersonnalisation]
+    regles: List[ActionPersonnalisationRegles]
 
 
 @dataclass
 class QuestionAndReglesChecked(DomainEvent):
     questions: List[Question]
-    regles: List[ActionPersonnalisation]
+    regles: List[ActionPersonnalisationRegles]
 
 
 @dataclass

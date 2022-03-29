@@ -14,6 +14,7 @@ class tables:
     question_action = "question_action"
     personnalisation = "personnalisation"
     personnalisation_regle = "personnalisation_regle"
+    personnalisation_consequence = "personnalisation_consequence"
 
 
 @dataclass
@@ -23,6 +24,8 @@ class views:
     unprocessed_action_statut_event = "unprocessed_action_statut_update_event"
     engine_question = "question_engine"
     personnalisation = "business_personnalisation"
+    reponse = "business_reponse"
+    unprocessed_reponse_event = "unprocessed_reponse_update_event"
 
 
 @dataclass
@@ -31,3 +34,10 @@ class rpc:
     update_actions = "business_update_actions"
     upsert_questions = "business_upsert_questions"
     upsert_personnalisations = "business_upsert_personnalisations"
+
+
+@dataclass
+class events:
+    statut_update = "action_statut_update_event"
+    reponse_update = "reponse_update_event"
+    consequence_update = "consequence_update_event"
