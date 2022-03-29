@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from business.utils.action_id import ActionId
 from business.referentiel.domain.models.referentiel import ActionReferentiel
@@ -17,3 +18,5 @@ class ActionScore:
     total_taches_count: int
     completed_taches_count: int
     referentiel: ActionReferentiel
+    desactive: bool
+    point_potentiel_perso: Optional[float]

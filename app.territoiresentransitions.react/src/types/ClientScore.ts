@@ -12,6 +12,8 @@ export interface ActionScore {
   concerne: boolean;
   total_taches_count: number;
   completed_taches_count: number;
+  point_potentiel_perso: number | undefined; // Undefined si aucune réduction n'est appliquée à cette action
+  desactive: boolean;
 }
 
 export interface ClientScores {

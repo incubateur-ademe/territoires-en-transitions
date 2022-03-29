@@ -1,3 +1,4 @@
+from typing import Optional
 from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.utils.action_id import ActionId
 from business.evaluation.domain.models.action_score import ActionScore
@@ -15,6 +16,8 @@ def make_action_score(
     total_taches_count: int = 1,
     completed_taches_count: int = 1,
     referentiel: ActionReferentiel = "eci",
+    point_potentiel_perso: Optional[float] = None,
+    desactive: bool = False,
 ):
     return ActionScore(
         action_id=ActionId(action_id),
@@ -28,4 +31,6 @@ def make_action_score(
         total_taches_count=total_taches_count,
         completed_taches_count=completed_taches_count,
         referentiel=referentiel,
+        point_potentiel_perso=point_potentiel_perso,
+        desactive=desactive,
     )

@@ -126,6 +126,8 @@ def test_notation_when_one_tache_is_fait():
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -139,6 +141,8 @@ def test_notation_when_one_tache_is_fait():
         total_taches_count=2,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -153,6 +157,8 @@ def test_notation_when_one_tache_is_fait():
         total_taches_count=3,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -167,6 +173,8 @@ def test_notation_when_one_tache_is_fait():
         total_taches_count=5,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
 
@@ -199,6 +207,8 @@ def test_notation_when_one_tache_is_programme():
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -212,6 +222,8 @@ def test_notation_when_one_tache_is_programme():
         total_taches_count=2,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -226,6 +238,8 @@ def test_notation_when_one_tache_is_programme():
         total_taches_count=5,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
 
@@ -258,6 +272,8 @@ def test_notation_when_one_tache_is_pas_fait():
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -271,6 +287,8 @@ def test_notation_when_one_tache_is_pas_fait():
         total_taches_count=2,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -285,6 +303,8 @@ def test_notation_when_one_tache_is_pas_fait():
         total_taches_count=5,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
 
@@ -317,6 +337,8 @@ def test_notation_when_one_tache_has_detailed_avancement():
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -330,6 +352,8 @@ def test_notation_when_one_tache_has_detailed_avancement():
         total_taches_count=2,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -344,6 +368,8 @@ def test_notation_when_one_tache_has_detailed_avancement():
         total_taches_count=5,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
 
@@ -376,6 +402,8 @@ def test_notation_when_one_tache_is_non_concerne():
         total_taches_count=1,
         concerne=False,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci_1.2")] == ActionScore(
@@ -390,6 +418,8 @@ def test_notation_when_one_tache_is_non_concerne():
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -403,6 +433,8 @@ def test_notation_when_one_tache_is_non_concerne():
         total_taches_count=2,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -417,6 +449,8 @@ def test_notation_when_one_tache_is_non_concerne():
         total_taches_count=5,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
 
@@ -454,6 +488,8 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee():
         total_taches_count=1,
         concerne=False,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     assert scores_by_id[ActionId("eci_1.2")] == ActionScore(
         action_id=ActionId("eci_1.2"),
@@ -467,6 +503,8 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee():
         total_taches_count=1,
         concerne=False,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci_1")] == ActionScore(
@@ -481,6 +519,8 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee():
         total_taches_count=2,
         concerne=False,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -495,6 +535,8 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee():
         total_taches_count=3,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -509,6 +551,8 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee():
         total_taches_count=5,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
 
@@ -546,6 +590,8 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires():
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     assert scores_by_id[ActionId("eci_2.1")] == ActionScore(
         action_id=ActionId("eci_2.1"),
@@ -559,6 +605,8 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires():
         total_taches_count=1,
         concerne=False,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci_2.2")] == ActionScore(
@@ -573,6 +621,8 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires():
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
@@ -586,6 +636,8 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires():
         total_taches_count=3,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci")] == ActionScore(
@@ -600,6 +652,8 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires():
         total_taches_count=5,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
 
@@ -682,6 +736,8 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         total_taches_count=3,
         concerne=False,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     # point_fait of 2.2 is redistributed on 2.1
     assert scores_by_id[ActionId("eci_2.1")] == ActionScore(
@@ -696,6 +752,8 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         total_taches_count=3,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     assert scores_by_id[ActionId("eci_2.1.0")] == ActionScore(
@@ -710,6 +768,8 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     assert scores_by_id[ActionId("eci_2.1.1")] == ActionScore(
         action_id=ActionId("eci_2.1.1"),
@@ -723,6 +783,8 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     assert scores_by_id[ActionId("eci_2.1.2")] == ActionScore(
         action_id=ActionId("eci_2.1.2"),
@@ -736,6 +798,8 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         total_taches_count=1,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
     # axe 2 point_fait should remain unchanged
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
@@ -750,6 +814,8 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         total_taches_count=7,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )
 
     # root point_fait should remain unchanged
@@ -765,4 +831,6 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         total_taches_count=9,
         concerne=True,
         referentiel="eci",
+        point_potentiel_perso=None,
+        desactive=False,
     )

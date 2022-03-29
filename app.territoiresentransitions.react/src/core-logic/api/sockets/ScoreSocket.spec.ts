@@ -28,6 +28,8 @@ const makeScoreRead = ({
     concerne: true,
     total_taches_count: 12,
     completed_taches_count: 10,
+    point_potentiel_perso: undefined,
+    desactive: false,
   };
 };
 
