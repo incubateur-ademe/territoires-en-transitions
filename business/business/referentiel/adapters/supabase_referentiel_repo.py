@@ -3,9 +3,11 @@ from dataclasses import asdict
 
 import marshmallow_dataclass
 
-from business.referentiel.domain.models.personnalisation import ActionPersonnalisation
+from business.referentiel.domain.models.personnalisation import (
+    ActionPersonnalisationRegles,
+)
 from business.referentiel.domain.models.question import Question
-from business.personnalisation.engine.models import Question as EngineQuestion
+from business.personnalisation.models import Question as EngineQuestion
 from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.evaluation.adapters import supabase_names
 from business.referentiel.domain.ports.referentiel_repo import (
@@ -20,7 +22,9 @@ from business.utils.supabase_repo import SupabaseRepository
 
 
 question_schema = marshmallow_dataclass.class_schema(Question)()
-personnalisation_schema = marshmallow_dataclass.class_schema(ActionPersonnalisation)()
+personnalisation_schema = marshmallow_dataclass.class_schema(
+    ActionPersonnalisationRegles
+)()
 
 
 class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepository):
@@ -192,7 +196,7 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
 
     def upsert_personnalisations(
         self,
-        personnalisations: List[ActionPersonnalisation],
+        personnalisations: List[ActionPersonnalisationRegles],
     ):
         personnalisation_as_dicts = [
             asdict(personnalisation) for personnalisation in personnalisations
@@ -212,9 +216,9 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
 
     def get_personnalisations(
         self,
-    ) -> List[ActionPersonnalisation]:
+    ) -> List[ActionPersonnalisationRegles]:
         rows = self.client.db.get_all(supabase_names.views.personnalisation)
-        return [ActionPersonnalisation.from_dict(row) for row in rows]
+        return [ActionPersonnalisationRegles.from_dict(row) for row in rows]
 
     @staticmethod
     def flatten_list(l: List) -> List:

@@ -5,6 +5,8 @@ import marshmallow_dataclass
 from marshmallow import ValidationError
 import rx.operators as op
 from rx.subject.subject import Subject
+from business.evaluation.adapters import supabase_names
+from business.evaluation.domain.models.reponse_update_event import ReponseUpdateEvent
 
 from business.utils.domain_message_bus import DomainEvent
 from business.evaluation.domain.models.action_statut_update_event import (
@@ -28,13 +30,9 @@ class AbstractConverter(abc.ABC):
         pass
 
 
-DataLayerTable = Literal["action_statut_update_event"]
-collectivite_action_statut_update_table: DataLayerTable = "action_statut_update_event"
-
-
 class CollectiviteActionStatutUpdateConverter(AbstractConverter):
     def __init__(self) -> None:
-        self.table = collectivite_action_statut_update_table
+        self.table = supabase_names.events.statut_update
         self.schema = marshmallow_dataclass.class_schema(ActionStatutUpdateEvent)()
 
     def filter(self, data: dict) -> bool:
@@ -44,10 +42,32 @@ class CollectiviteActionStatutUpdateConverter(AbstractConverter):
         try:
             raw_event: ActionStatutUpdateEvent = self.schema.load(
                 data.get("record", {})
-            )
-            return events.ActionStatutUpdatedForCollectivite(
+            )  # type: ignore
+            return events.ActionStatutOrConsequenceUpdatedForCollectivite(
                 collectivite_id=raw_event.collectivite_id,
                 referentiel=raw_event.referentiel,
+            )
+        except ValidationError as marshmallow_validation_error:
+            return events.RealtimeEventWithWrongFormatObserved(
+                f"Realtime event with wrong format: {marshmallow_validation_error}"
+            )
+
+
+class CollectiviteReponseUpdateConverter(AbstractConverter):
+    def __init__(self) -> None:
+        self.table = supabase_names.events.reponse_update
+        self.schema = marshmallow_dataclass.class_schema(ReponseUpdateEvent)()
+
+    def filter(self, data: dict) -> bool:
+        return data.get("table") == self.table
+
+    def convert(self, data: dict) -> DomainEvent:
+        try:
+            raw_event: ReponseUpdateEvent = self.schema.load(
+                data.get("record", {})
+            )  # type: ignore
+            return events.ReponseUpdatedForCollectivite(
+                collectivite_id=raw_event.collectivite_id,
             )
         except ValidationError as marshmallow_validation_error:
             return events.RealtimeEventWithWrongFormatObserved(

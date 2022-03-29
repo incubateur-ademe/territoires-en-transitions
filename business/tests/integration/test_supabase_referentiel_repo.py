@@ -4,7 +4,7 @@ from business.referentiel.adapters.supabase_referentiel_repo import (
     SupabaseReferentielRepository,
 )
 from business.referentiel.domain.models.personnalisation import (
-    ActionPersonnalisation,
+    ActionPersonnalisationRegles,
     Regle,
 )
 from business.referentiel.domain.models.question import Choix, Question
@@ -14,7 +14,7 @@ from tests.utils.referentiel_factory import (
     make_action_points,
     make_indicateur,
 )
-from business.personnalisation.engine.models import Question as QuestionEngine
+from business.personnalisation.models import Question as QuestionEngine
 from tests.utils.supabase_fixtures import *
 
 # Note : those should not change very often.
@@ -285,7 +285,7 @@ def test_can_upsert_and_retrieve_referentiel_personnalisations(
     )
 
     # Act : upsert a personnalisation to this action
-    personnalisation = ActionPersonnalisation(
+    personnalisation = ActionPersonnalisationRegles(
         action_id=action_id,
         description="une description",
         titre="la personnalisation",

@@ -3,7 +3,7 @@ from typing import List, Tuple, Any, Type
 from lark import Transformer
 
 from business.personnalisation.engine.formule import FormuleABC, FormuleError
-from business.personnalisation.engine.models import (
+from business.personnalisation.models import (
     Question,
     IdentiteTypeOption,
     IdentitePopulationOption,

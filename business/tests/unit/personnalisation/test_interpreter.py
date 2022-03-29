@@ -4,41 +4,41 @@ from business.personnalisation.engine.formule import (
     ReponseMissing,
 )
 from business.personnalisation.engine.formule_interpreter import FormuleInterpreter
-from business.personnalisation.engine.models import Reponse, IdentiteCollectivite
+from business.personnalisation.models import Reponse, IdentiteCollectivite
 from business.personnalisation.engine.parser import parser
 
 
 def test_function_reponse_on_question_type_choix():
     tree = parser.parse("reponse(question_choix_1, question_choix_1a)")
     assert (
-            FormuleInterpreter([Reponse("question_choix_1", "question_choix_1a")]).visit(
-                tree
-            )
-            is True
+        FormuleInterpreter([Reponse("question_choix_1", "question_choix_1a")]).visit(
+            tree
+        )
+        is True
     )
     assert (
-            FormuleInterpreter([Reponse("question_choix_1", "question_choix_1b")]).visit(
-                tree
-            )
-            is False
+        FormuleInterpreter([Reponse("question_choix_1", "question_choix_1b")]).visit(
+            tree
+        )
+        is False
     )
 
 
 def test_function_reponse_on_question_typebinaire():
     tree = parser.parse("reponse(question_binaire_1, OUI)")
     assert (
-            FormuleInterpreter([Reponse("question_binaire_1", "OUI")]).visit(tree) is True
+        FormuleInterpreter([Reponse("question_binaire_1", "OUI")]).visit(tree) is True
     )
     assert (
-            FormuleInterpreter([Reponse("question_binaire_1", "NON")]).visit(tree) is False
+        FormuleInterpreter([Reponse("question_binaire_1", "NON")]).visit(tree) is False
     )
 
 
 def test_function_reponse_on_question_type_proportion():
     tree = parser.parse("reponse(question_proportion)")
     assert (
-            FormuleInterpreter(reponses=[Reponse("question_proportion", 0.7)]).visit(tree)
-            is 0.7
+        FormuleInterpreter(reponses=[Reponse("question_proportion", 0.7)]).visit(tree)
+        is 0.7
     )
 
 
@@ -56,35 +56,32 @@ def test_function_reponse_comparison_raises_if_no_reponse():
 
 def test_function_identite_on_type():
     commune_de_moins_de_100000_hab = IdentiteCollectivite(
-        type={'commune'},
-        population={'moins_de_10000'},
-        localisation=set()
+        type={"commune"}, population={"moins_de_10000"}, localisation=set()
     )
+    assert FormuleInterpreter().visit(parser.parse("identite(type, commune)")) is False
     assert (
-            FormuleInterpreter().visit(parser.parse("identite(type, commune)"))
-            is False
+        FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(
+            parser.parse("identite(type, commune)")
+        )
+        is True
     )
+
+    assert FormuleInterpreter().visit(parser.parse("identite(type, commune)")) is False
     assert (
-            FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(parser.parse("identite(type, commune)"))
-            is True
+        FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(
+            parser.parse("identite(population, moins_de_10000)")
+        )
+        is True
     )
 
     assert (
-            FormuleInterpreter().visit(parser.parse("identite(type, commune)"))
-            is False
+        FormuleInterpreter().visit(parser.parse("identite(localisation, DOM)")) is False
     )
     assert (
-            FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(parser.parse("identite(population, moins_de_10000)"))
-            is True
-    )
-
-    assert (
-            FormuleInterpreter().visit(parser.parse("identite(localisation, DOM)"))
-            is False
-    )
-    assert (
-            FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(parser.parse("identite(localisation, DOM)"))
-            is False
+        FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(
+            parser.parse("identite(localisation, DOM)")
+        )
+        is False
     )
 
 
@@ -180,8 +177,8 @@ def test_operator_precedence():
 def test_math_operation_on_proportion():
     tree = parser.parse("reponse(question_proportion) - 0.2")
     assert (
-            FormuleInterpreter(reponses=[Reponse("question_proportion", 1.0)]).visit(tree)
-            == 0.8
+        FormuleInterpreter(reponses=[Reponse("question_proportion", 1.0)]).visit(tree)
+        == 0.8
     )
 
 
@@ -195,32 +192,54 @@ def test_regle_cae_1_2_3():
     les compétences collecte, traitement des déchets et plan de prévention des déchets,
     le score de la 1.2.3 est réduit à 2 points.
     """
-    formule = "si reponse(dechets_1, OUI) et reponse(dechets_2, OUI) et reponse(dechets_3, OUI) alors 1.0 " \
-              "sinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/12 " \
-              "sinon 0.75"
+    formule = (
+        "si reponse(dechets_1, OUI) et reponse(dechets_2, OUI) et reponse(dechets_3, OUI) alors 1.0 "
+        "sinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/12 "
+        "sinon 0.75"
+    )
     tree = parser.parse(formule)
 
     # 1 Toutes les compétences
-    cas1 = [Reponse("dechets_1", "OUI"), Reponse("dechets_2", "OUI"), Reponse("dechets_3", "OUI")]
+    cas1 = [
+        Reponse("dechets_1", "OUI"),
+        Reponse("dechets_2", "OUI"),
+        Reponse("dechets_3", "OUI"),
+    ]
 
     # 2 Une des compétences
-    cas2a = [Reponse("dechets_1", "OUI"), Reponse("dechets_2", "NON"), Reponse("dechets_3", "NON")]
-    cas2b = [Reponse("dechets_1", "NON"), Reponse("dechets_2", "OUI"), Reponse("dechets_3", "NON")]
-    cas2c = [Reponse("dechets_1", "NON"), Reponse("dechets_2", "NON"), Reponse("dechets_3", "OUI")]
+    cas2a = [
+        Reponse("dechets_1", "OUI"),
+        Reponse("dechets_2", "NON"),
+        Reponse("dechets_3", "NON"),
+    ]
+    cas2b = [
+        Reponse("dechets_1", "NON"),
+        Reponse("dechets_2", "OUI"),
+        Reponse("dechets_3", "NON"),
+    ]
+    cas2c = [
+        Reponse("dechets_1", "NON"),
+        Reponse("dechets_2", "NON"),
+        Reponse("dechets_3", "OUI"),
+    ]
 
     # 3 Aucune des compétences
-    cas3 = [Reponse("dechets_1", "NON"), Reponse("dechets_2", "NON"), Reponse("dechets_3", "NON")]
+    cas3 = [
+        Reponse("dechets_1", "NON"),
+        Reponse("dechets_2", "NON"),
+        Reponse("dechets_3", "NON"),
+    ]
 
-    assert (FormuleInterpreter(cas1).visit(tree) == 1.0)
+    assert FormuleInterpreter(cas1).visit(tree) == 1.0
 
     for cas in [cas2a, cas2b, cas2c]:
-        assert (FormuleInterpreter(cas).visit(tree) == 0.75)
+        assert FormuleInterpreter(cas).visit(tree) == 0.75
 
-    assert (FormuleInterpreter(cas3).visit(tree) == 2 / 12)
+    assert FormuleInterpreter(cas3).visit(tree) == 2 / 12
 
 
 def test_regle_cae_3_1_1():
-    """"
+    """ "
     Pour une collectivité non autorité organisatrice de la distribution d'électricité,
     le score de la 3.1.1 est réduit de 30 %.
     Pour une collectivité non autorité organisatrice de la distribution de gaz,
@@ -231,20 +250,30 @@ def test_regle_cae_3_1_1():
     pour prendre en compte la part d’influence dans les instances compétentes et les actions partenariales.
     """
     # todo clarifier la règle.
-    formule = "si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 " \
-              "sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10" \
-              "sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 " \
-              "sinon si reponse(AOD_chaleur, NON) alors 6/10 " \
-              "sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 " \
-              "sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 " \
-              "sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 "
+    formule = (
+        "si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 "
+        "sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10"
+        "sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 "
+        "sinon si reponse(AOD_chaleur, NON) alors 6/10 "
+        "sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 "
+        "sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 "
+        "sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 "
+    )
     tree = parser.parse(formule)
 
     # 1 Toutes les compétences
-    cas1 = [Reponse("AOD_elec", "OUI"), Reponse("AOD_gaz", "OUI"), Reponse("AOD_chaleur", "OUI")]
+    cas1 = [
+        Reponse("AOD_elec", "OUI"),
+        Reponse("AOD_gaz", "OUI"),
+        Reponse("AOD_chaleur", "OUI"),
+    ]
 
     # 2 Aucune compétence
-    cas2 = [Reponse("AOD_elec", "NON"), Reponse("AOD_gaz", "NON"), Reponse("AOD_chaleur", "NON")]
+    cas2 = [
+        Reponse("AOD_elec", "NON"),
+        Reponse("AOD_gaz", "NON"),
+        Reponse("AOD_chaleur", "NON"),
+    ]
 
-    assert (FormuleInterpreter(cas1).visit(tree) == 1.0)
-    assert (FormuleInterpreter(cas2).visit(tree) == 2 / 10)
+    assert FormuleInterpreter(cas1).visit(tree) == 1.0
+    assert FormuleInterpreter(cas2).visit(tree) == 2 / 10

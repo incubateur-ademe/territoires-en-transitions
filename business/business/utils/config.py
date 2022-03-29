@@ -18,6 +18,13 @@ from business.evaluation.domain.ports.action_statut_update_event_repo import (
     AbstractActionStatutUpdateEventRepository,
     InMemoryActionStatutUpdateEventRepository,
 )
+from business.personnalisation.adapters.supabase_personnalisation_repo import (
+    SupabasePersonnalisationRepository,
+)
+from business.personnalisation.ports.personnalisation_repo import (
+    AbstractPersonnalisationRepository,
+    InMemoryPersonnalisationRepository,
+)
 
 from business.referentiel.adapters.json_referentiel_repo import (
     JsonReferentielRepository,
@@ -34,6 +41,7 @@ from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
     AbstractRealtime,
     CollectiviteActionStatutUpdateConverter,
+    CollectiviteReponseUpdateConverter,
 )
 from business.evaluation.domain.ports.action_score_repo import (
     AbstractActionScoreRepository,
@@ -107,44 +115,55 @@ class Config:
                 f"Referentiels repo adapter {self.ENV.referentiels_repository} not yet implemented."
             )
 
+    def get_personnalisation_repo(self) -> AbstractPersonnalisationRepository:
+        if self.ENV.repositories == "IN_MEMORY":
+            return InMemoryPersonnalisationRepository()
+        elif self.ENV.repositories == "SUPABASE":
+            return SupabasePersonnalisationRepository(client=self.get_supabase_client())
+        else:
+            raise NotImplementedError(
+                f"Personnalisation repo adapter {self.ENV.repositories} not yet implemented."
+            )
+
     def get_scores_repo(self) -> AbstractActionScoreRepository:
-        if self.ENV.labelisation_repositories == "IN_MEMORY":
+        if self.ENV.repositories == "IN_MEMORY":
             return InMemoryActionScoreRepository()
-        elif self.ENV.labelisation_repositories == "SUPABASE":
+        elif self.ENV.repositories == "SUPABASE":
             return SupabaseActionScoreRepository(client=self.get_supabase_client())
         else:
             raise NotImplementedError(
-                f"Scores repo adapter {self.ENV.labelisation_repositories} not yet implemented."
+                f"Scores repo adapter {self.ENV.repositories} not yet implemented."
             )
 
     def get_statuts_repo(self) -> AbstractActionStatutRepository:
-        if self.ENV.labelisation_repositories == "IN_MEMORY":
+        if self.ENV.repositories == "IN_MEMORY":
             return InMemoryActionStatutRepository()
-        elif self.ENV.labelisation_repositories == "SUPABASE":
+        elif self.ENV.repositories == "SUPABASE":
             return SupabaseActionStatutRepository(client=self.get_supabase_client())
         else:
             raise NotImplementedError(
-                f"Statuts repo adapter {self.ENV.labelisation_repositories} not yet implemented."
+                f"Statuts repo adapter {self.ENV.repositories} not yet implemented."
             )
 
     def get_action_statut_update_event_repo(
         self,
     ) -> AbstractActionStatutUpdateEventRepository:
-        if self.ENV.labelisation_repositories == "IN_MEMORY":
+        if self.ENV.repositories == "IN_MEMORY":
             return InMemoryActionStatutUpdateEventRepository()
-        elif self.ENV.labelisation_repositories == "SUPABASE":
+        elif self.ENV.repositories == "SUPABASE":
             return SupabaseActionStatutUpdateEventRepository(
                 client=self.get_supabase_client()
             )
         else:
             raise NotImplementedError(
-                f"Statuts repo adapter {self.ENV.labelisation_repositories} not implemented."
+                f"Statuts repo adapter {self.ENV.repositories} not implemented."
             )
 
     def get_realtime(self, socket: Optional[Socket]) -> AbstractRealtime:
 
         converters: List[AbstractConverter] = [
-            CollectiviteActionStatutUpdateConverter()
+            CollectiviteActionStatutUpdateConverter(),
+            CollectiviteReponseUpdateConverter(),
         ]
 
         if self.ENV.realtime == "REPLAY":

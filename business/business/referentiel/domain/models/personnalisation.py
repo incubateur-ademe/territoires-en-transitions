@@ -14,14 +14,16 @@ class Regle:
 
 
 @dataclass
-class ActionPersonnalisation:
+class ActionPersonnalisationRegles:
+    """Regles de personnalisation pour une action, comme définie dans les markdowns, contenant une liste de regles (une seule par type !)"""
+
     action_id: ActionId
-    titre: str
     regles: List[Regle]
+    titre: str = ""
     description: str = ""
 
     @classmethod
-    def from_dict(cls, d: dict) -> "ActionPersonnalisation":
+    def from_dict(cls, d: dict) -> "ActionPersonnalisationRegles":
         return cls(
             action_id=d["action_id"],
             description=d["description"],

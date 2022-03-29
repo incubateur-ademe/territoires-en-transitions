@@ -4,6 +4,16 @@ from typing import List, Optional
 from realtime_py import Socket
 
 from business.evaluation.domain.models import events
+from business.evaluation.domain.use_cases.catch_up_unprocessed_reponse_update_event import (
+    CatchUpUnprocessedReponseUpdateEvents,
+)
+from business.evaluation.domain.use_cases.compute_and_store_referentiel_personnalisations_for_collectivite import (
+    ComputeAndStoreReferentielPersonnalisationsForCollectivite,
+)
+from business.evaluation.domain.use_cases.trigger_scores_computation_once_personnalisation_consequence_stored import (
+    TriggerScoresComputationOncePersonnalisationConsequenceStored,
+)
+from business.personnalisation.engine.regles_parser import ReglesParser
 from business.utils.domain_message_bus import (
     AbstractDomainMessageBus,
     InMemoryDomainMessageBus,
@@ -16,12 +26,17 @@ from business.utils.config import Config
 
 # 1. Define Handlers
 EVENT_HANDLERS: EventHandlers = {
-    events.ActionStatutUpdatedForCollectivite: [
+    events.ActionStatutOrConsequenceUpdatedForCollectivite: [
         ComputeReferentielScoresForCollectivite
     ],
     events.ReferentielScoresForCollectiviteComputed: [StoreScoresForCollectivite],
+    events.ReponseUpdatedForCollectivite: [
+        ComputeAndStoreReferentielPersonnalisationsForCollectivite
+    ],
+    events.PersonnalisationForCollectiviteStored: [
+        TriggerScoresComputationOncePersonnalisationConsequenceStored
+    ],
 }
-
 
 # 2. Define Config
 class EvaluationConfig(Config):
@@ -34,12 +49,20 @@ class EvaluationConfig(Config):
         env_variables: Optional[EnvironmentVariables] = None,
     ) -> None:
         super().__init__(domain_message_bus, env_variables=env_variables)
+        # Instantiate repositories
         self.referentiel_repo = self.get_referentiel_repo()
+        self.personnalisation_repo = self.get_personnalisation_repo()
         self.score_repo = self.get_scores_repo()
         self.statuses_repo = self.get_statuts_repo()
         self.action_statut_update_event_repo = (
             self.get_action_statut_update_event_repo()
         )
+        # Parse personnalisation regles before starting to avoid parsing the formules online
+        action_personnalisation_regles = (
+            self.personnalisation_repo.get_personnalisation_regles()
+        )
+        self.regles_parser = ReglesParser(action_personnalisation_regles)
+
         self.realtime = self.get_realtime(socket) or realtime
 
     def prepare_use_cases(self) -> List[UseCase]:
@@ -50,12 +73,26 @@ class EvaluationConfig(Config):
             StoreScoresForCollectivite(
                 self.domain_message_bus, score_repo=self.score_repo
             ),
+            ComputeAndStoreReferentielPersonnalisationsForCollectivite(
+                self.domain_message_bus,
+                personnalisation_repo=self.personnalisation_repo,
+                regles_parser=self.regles_parser,
+            ),
+            TriggerScoresComputationOncePersonnalisationConsequenceStored(
+                self.domain_message_bus
+            ),
         ]
 
     def prepare_catch_up_unprocessed_action_status_update_events(self):
         return CatchUpUnprocessedActionStatusUpdateEvents(
             self.domain_message_bus,
             action_statut_update_event_repo=self.action_statut_update_event_repo,
+        )
+
+    def prepare_catch_up_unprocessed_reponse_update_events(self):
+        return CatchUpUnprocessedReponseUpdateEvents(
+            self.domain_message_bus,
+            personnalisation_repo=self.personnalisation_repo,
         )
 
 
@@ -95,10 +132,8 @@ if __name__ == "__main__":
     # First, launch realtime observer
     config.realtime.start()
 
-    # Then, catch up unprocessed action status event
-    catch_up_unprocessed_action_status_update_events = (
-        config.prepare_catch_up_unprocessed_action_status_update_events()
-    )
-    catch_up_unprocessed_action_status_update_events.execute()
+    # Then, catch up unprocessed reponse and action status event
+    config.prepare_catch_up_unprocessed_reponse_update_events().execute()
+    config.prepare_catch_up_unprocessed_action_status_update_events().execute()
 
     socket.listen()

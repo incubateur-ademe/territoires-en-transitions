@@ -1,6 +1,3 @@
-from time import time
-
-
 import pytest
 
 from business.utils.domain_message_bus import (
@@ -23,7 +20,7 @@ def env_variables() -> EnvironmentVariables:
     )
 
 
-def test_action_status_updated_on_realtime_event_with_correct_format(
+def test_reponse_updated_on_realtime_event_with_correct_format(
     bus: InMemoryDomainMessageBus,
     realtime: ReplayRealtime,
     env_variables: EnvironmentVariables,
@@ -34,39 +31,36 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
         [
             {
                 "record": {
-                    "referentiel": "cae",
                     "collectivite_id": 8,
                     "created_at": "2020-01-01T12",
                     "id": 42,
                 },
-                "table": "action_statut_update_event",
+                "table": "reponse_update_event",
             }
         ]
     )
 
-    score_computed_events = spy_on_event(
-        bus, events.ReferentielScoresForCollectiviteComputed
+    trigger_compute_personnalisation_events = spy_on_event(
+        bus, events.ReponseUpdatedForCollectivite
     )
-    score_stored_events = spy_on_event(bus, events.ScoresForCollectiviteStored)
 
-    start = time()
+    personnalisation_stored_events = spy_on_event(
+        bus, events.PersonnalisationForCollectiviteStored
+    )
+    personnalisation_computation_failure_events = spy_on_event(
+        bus, events.PersonnalisationForCollectiviteFailed
+    )
+    new_scores_stored_events = spy_on_event(bus, events.ScoresForCollectiviteStored)
+
     realtime.start()
-    duration_ms = (time() - start) * 1000
 
-    assert len(score_computed_events) == 1
-    assert len(score_stored_events) == 1
+    assert len(trigger_compute_personnalisation_events) == 1
+    assert len(personnalisation_computation_failure_events) == 0
+    assert len(personnalisation_stored_events) == 1
+    assert len(new_scores_stored_events) == 2
 
     assert (
-        score_computed_events[0].collectivite_id
-        == score_computed_events[0].collectivite_id
+        personnalisation_stored_events[0].collectivite_id
+        == personnalisation_stored_events[0].collectivite_id
         == 8
     )
-    assert (
-        score_computed_events[0].referentiel
-        == score_computed_events[0].referentiel
-        == "cae"
-    )
-    # todo move assertion in a benchmark
-    # assert (
-    #     duration_ms < 2500
-    # ), "Computation took more than 2.5 seconds"
