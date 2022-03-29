@@ -1,8 +1,8 @@
 create table reponse_choix
 (
-    collectivite_id integer references collectivite not null,
-    question_id question_id references question not null,
-    reponse     choix_id  references question_choix not null,
+    collectivite_id integer references collectivite    not null,
+    question_id     question_id references question    not null,
+    reponse         choix_id references question_choix not null,
     primary key (collectivite_id, question_id)
 );
 comment on table reponse_choix is
@@ -13,7 +13,7 @@ create table reponse_binaire
 (
     collectivite_id integer references collectivite not null,
     question_id     question_id references question not null,
-    reponse         boolean not null,
+    reponse         boolean                         not null,
     primary key (collectivite_id, question_id)
 );
 comment on table reponse_choix is
@@ -23,15 +23,45 @@ create table reponse_proportion
 (
     collectivite_id integer references collectivite not null,
     question_id     question_id references question not null,
-    reponse         float not null,
+    reponse         float                           not null,
     primary key (collectivite_id, question_id)
 );
 comment on table reponse_choix is
     'Réponses saisies par la collectivité aux questions de type proportion';
 
 
-create or replace view reponse_display
-as
+create or replace view business_reponse as
+with r as (
+    select q.id                                                                 as question_id,
+           coalesce(rb.collectivite_id, rp.collectivite_id, rc.collectivite_id) as collectivite_id,
+           case
+               when q.type = 'binaire'
+                   then json_build_object('question_id', q.id,
+                                          'reponse', rb.reponse)
+               when q.type = 'proportion'
+                   then json_build_object('question_id', q.id,
+                                          'reponse', rp.reponse)
+               when q.type = 'choix'
+                   then json_build_object('question_id', q.id,
+                                          'reponse', rc.reponse)
+               end
+                                                                                as reponse
+
+    from question q
+             left join reponse_binaire rb on rb.question_id = q.id
+             left join reponse_proportion rp on rp.question_id = q.id
+             left join reponse_choix rc on rc.question_id = q.id
+)
+select r.collectivite_id,
+       array_agg(r.reponse) as reponses
+from r
+where r.collectivite_id is not null
+  and is_service_role()
+group by r.collectivite_id
+;
+
+
+create or replace view reponse_display as
 select q.id                                                                 as question_id,
        coalesce(rb.collectivite_id, rp.collectivite_id, rc.collectivite_id) as collectivite_id,
        case
@@ -96,13 +126,15 @@ begin
         select arg_collectivite_id, arg_question_id, arg_reponse::choix_id
         on conflict (collectivite_id, question_id) do update
             set reponse = arg_reponse::choix_id;
+    else
+        raise exception 'La question % n''existe pas', arg_question_id;
     end if;
 end
 $$ language plpgsql;
 
 -- Row level SECURITY
 alter table reponse_choix
-  enable row level security;
+    enable row level security;
 
 create policy allow_read
     on reponse_choix
@@ -120,7 +152,7 @@ create policy allow_update
     using (is_any_role_on(collectivite_id));
 --
 alter table reponse_binaire
-  enable row level security;
+    enable row level security;
 
 create policy allow_read
     on reponse_binaire
@@ -139,7 +171,7 @@ create policy allow_update
 
 --
 alter table reponse_proportion
-  enable row level security;
+    enable row level security;
 
 create policy allow_read
     on reponse_proportion
