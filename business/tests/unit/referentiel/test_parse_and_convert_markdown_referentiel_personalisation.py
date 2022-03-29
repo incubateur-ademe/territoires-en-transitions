@@ -1,6 +1,5 @@
 from typing import Optional
 
-from pytest import fail
 from business.referentiel.domain.models.personnalisation import (
     ActionPersonnalisation,
     Regle,

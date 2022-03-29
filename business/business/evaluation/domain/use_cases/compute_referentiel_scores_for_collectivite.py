@@ -1,4 +1,3 @@
-import math
 import logging
 from typing import Dict, List, Optional
 
@@ -152,6 +151,9 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 point_referentiel=tache_points,
                 concerne=tache_concerne,
                 referentiel=referentiel,
+                # TODO : implement those fields
+                point_potentiel_perso=None,
+                desactive=False,
             )
             return
 
@@ -194,6 +196,9 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             total_taches_count=1,
             concerne=tache_concerne,
             referentiel=referentiel,
+            # TODO : implement those fields
+            point_potentiel_perso=None,
+            desactive=False,
         )
 
     def update_scores_for_action_given_children_scores(
@@ -265,6 +270,9 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             point_referentiel=action_point_referentiel,
             concerne=concerne,
             referentiel=referentiel,
+            # TODO : implement those fields
+            point_potentiel_perso=None,
+            desactive=False,
         )
 
     def _build_points_tree(self, referentiel: ActionReferentiel) -> ActionPointTree:

@@ -39,6 +39,8 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
                 total_taches_count=100,
                 completed_taches_count=1,
                 referentiel="cae",
+                point_potentiel_perso=None,
+                desactive=False,
             )
         ],
     )
@@ -66,6 +68,8 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
                     "total_taches_count": 100,
                     "completed_taches_count": 1,
                     "referentiel": "cae",
+                    "point_potentiel_perso": None,
+                    "desactive": False,
                 }
             ],
             "score_created_at": insert_date,
@@ -92,6 +96,8 @@ def test_adding_and_updating_entities_for_different_collectivites_to_repo_should
                 total_taches_count=100,
                 completed_taches_count=10,
                 referentiel="cae",
+                point_potentiel_perso=None,
+                desactive=False,
             )
         ],
     )
