@@ -1,2 +1,2 @@
-insert into reponse_choix(collectivite_id, question_id, reponse)
-values (1, 'mobilite_1', 'mobilite_1_b');
+insert into reponse_binaire(collectivite_id, question_id, reponse)
+values (1, 'dechets_1', true);
