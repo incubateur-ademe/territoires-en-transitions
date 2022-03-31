@@ -4,59 +4,94 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {yuluCredentials} from 'test_utils/collectivites';
 
 const questionDechets4 = {
-  id: 'dechets_4',
-  action_ids: ['eci_4'],
-  thematique_id: 'dechets',
-  type: 'binaire',
-  thematique_nom: 'Déchets',
-  description: '',
-  formulation:
-    'La collectivité a-t-elle mise en place la redevance d’enlèvement des ordures ménagères (REOM) ?',
+  action_ids: [
+    'cae_1.2.3',
+    'eci_2.2',
+    'eci_2.4',
+    'eci_2.4.2',
+    'eci_2.4.3',
+    'eci_4.1',
+    'eci_4.2',
+    'eci_4.2.1',
+    'eci_4.2.2',
+    'eci_4.2.3',
+    'eci_4.2.4',
+  ],
   choix: null,
+  collectivite_id: 1,
+  description: '',
+  formulation: 'La collectivité a-t-elle la compétence collecte des déchets ?',
+  id: 'dechets_1',
+  localisation: [],
+  ordonnancement: null,
+  population: ['moins_de_100000'],
+  thematique_id: 'dechets',
+  thematique_nom: 'Déchets',
+  type: 'binaire',
+  types_collectivites_concernees: null,
 };
 
 const QuestionEnergie1 = {
-  id: 'energie_1',
   action_ids: ['cae_2.3.1'],
-  thematique_id: 'energie',
-  type: 'proportion',
-  thematique_nom: 'Énergie',
+  choix: null,
+  collectivite_id: 1,
   description: '',
   formulation:
     "Quelle est la part de la collectivité dans la structure compétente en matière d'éclairage public ?",
-  choix: null,
+  id: 'energie_1',
+  localisation: [],
+  ordonnancement: 1,
+  population: ['moins_de_100000'],
+  thematique_id: 'energie',
+  thematique_nom: 'Énergie',
+  type: 'proportion',
+  types_collectivites_concernees: ['EPCI', 'commune'],
 };
 
 const QuestionEnergie2 = {
-  id: 'energie_2',
   action_ids: ['cae_2.3.1'],
-  thematique_id: 'energie',
-  type: 'proportion',
-  thematique_nom: 'Énergie',
-  description: '',
-  formulation: 'La collectivité a-t-elle la compétence éclairage public ?',
-  choix: null,
-};
-
-const QuestionMobilite1 = {
-  id: 'mobilite_1',
-  action_ids: ['cae_2.3.3'],
-  thematique_id: 'mobilite',
-  type: 'choix',
-  thematique_nom: 'Mobilité',
-  description: '',
-  formulation: 'La collectivité a-t-elle la compétence voirie ?',
   choix: [
     {
-      id: 'mobilite_1_a',
-      label:
-        "Oui, uniquement sur trottoirs, parkings ou zones d'activités ou industrielles",
+      id: 'EP_1_a',
+      label: "Oui sur l'ensemble du territoire",
+      ordonnancement: null,
     },
     {
-      id: 'mobilite_1_b',
-      label: 'non',
+      id: 'EP_1_b',
+      label:
+        "Oui partiellement (uniquement sur les zones d'intérêt communautaire par exemple)",
+      ordonnancement: null,
     },
+    {id: 'EP_1_c', label: 'Non pas du tout', ordonnancement: null},
   ],
+  collectivite_id: 1,
+  description: '',
+  formulation: 'La collectivité a-t-elle la compétence "éclairage public" ?',
+  id: 'EP_1',
+  localisation: [],
+  ordonnancement: null,
+  population: ['moins_de_100000'],
+  thematique_id: 'energie',
+  thematique_nom: 'Énergie',
+  type: 'choix',
+  types_collectivites_concernees: null,
+};
+
+const QuestionEnergie3 = {
+  action_ids: ['cae_2.3.1'],
+  choix: null,
+  collectivite_id: 1,
+  description: '',
+  formulation:
+    "Quelle est la part de la collectivité dans la structure compétente en matière d'éclairage public ?",
+  id: 'EP_2',
+  localisation: [],
+  ordonnancement: null,
+  population: ['moins_de_100000'],
+  thematique_id: 'energie',
+  thematique_nom: 'Énergie',
+  type: 'proportion',
+  types_collectivites_concernees: null,
 };
 
 describe('Question reading endpoint ', () => {
@@ -65,7 +100,8 @@ describe('Question reading endpoint ', () => {
     await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await questionReadEndpoint.getBy({
-      action_ids: ['eci_4'],
+      collectivite_id: 1,
+      action_ids: ['eci_2.2'],
     });
 
     expect(results.length).toEqual(1);
@@ -80,15 +116,17 @@ describe('Question reading endpoint ', () => {
     await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await questionReadEndpoint.getBy({
+      collectivite_id: 1,
       action_ids: ['cae_2.3.1'],
     });
 
-    expect(results.length).toEqual(2);
+    expect(results.length).toEqual(3);
 
     expect(results).toEqual(
       expect.arrayContaining([
         expect.objectContaining(QuestionEnergie1),
         expect.objectContaining(QuestionEnergie2),
+        expect.objectContaining(QuestionEnergie3),
       ])
     );
   });
@@ -98,26 +136,10 @@ describe('Question reading endpoint ', () => {
     await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await questionReadEndpoint.getBy({
+      collectivite_id: 1,
       action_ids: ['nimp'],
     });
 
     expect(results.length).toEqual(0);
   });
-
-  /*
-  it('should group choices on the same question', async () => {
-    const questionReadEndpoint = new QuestionReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
-
-    const results = await questionReadEndpoint.getBy({
-      action_ids: ['cae_2.3.3'],
-    });
-
-    //expect(results.length).toEqual(1);
-
-    expect(results).toEqual(
-      expect.arrayContaining([expect.objectContaining(QuestionMobilite1)])
-    );
-  });
-  */
 });

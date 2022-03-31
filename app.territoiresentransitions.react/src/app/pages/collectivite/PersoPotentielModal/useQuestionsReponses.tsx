@@ -22,6 +22,7 @@ export const useQuestionsReponses: TUseQR = action_id => {
     if (collectivite_id) {
       // charge les questions associées à l'action
       const questions = await questionReadEndpoint.getBy({
+        collectivite_id,
         action_ids: [action_id],
       });
 
