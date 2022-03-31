@@ -17,6 +17,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
 >
   <div
     className="flex items-center"
+    data-test="PointsPotentiels"
   >
     Potentiel pour cette sous-action : 6,7 points
   </div>
@@ -40,6 +41,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
 >
   <div
     className="flex items-center"
+    data-test="PointsPotentiels"
   >
     Potentiel réduit pour cette sous-action : 3,3 points
   </div>
@@ -63,6 +65,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
 >
   <div
     className="flex items-center"
+    data-test="PointsPotentiels"
   >
     Potentiel réduit pour cette sous-action : 3,3 points
     <a

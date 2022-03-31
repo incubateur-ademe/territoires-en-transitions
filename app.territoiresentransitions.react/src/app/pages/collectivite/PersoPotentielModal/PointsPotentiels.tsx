@@ -1,7 +1,8 @@
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {MouseEventHandler} from 'react';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {ActionScore} from 'types/ClientScore';
 import {YellowHighlight} from 'ui/Highlight';
+import {toLocaleFixed} from 'utils/toFixed';
 
 export type TPointsPotentielsProps = {
   /** Définition de l'action */
@@ -22,7 +23,7 @@ export const PointsPotentiels = ({
 }: TPointsPotentielsProps) => {
   return (
     <YellowHighlight>
-      <div className="flex items-center">
+      <div data-test="PointsPotentiels" className="flex items-center">
         {getLabel(actionDef, actionScore)}
         {typeof onEdit === 'function' ? (
           <a
@@ -49,16 +50,14 @@ const getLabel = (
   const {point_referentiel, point_potentiel_perso} = actionScore;
 
   const points =
-    (point_potentiel_perso || point_referentiel).toLocaleString(undefined, {
-      maximumFractionDigits: 1,
-    }) + ' points';
+    toLocaleFixed(point_potentiel_perso || point_referentiel) + ' points';
 
   const isModified =
     point_potentiel_perso !== undefined &&
     point_potentiel_perso !== point_referentiel;
   if (isModified) {
     const modifLabel =
-      point_potentiel_perso > point_referentiel ? 'augmenté' : 'réduit';
+      point_potentiel_perso! > point_referentiel ? 'augmenté' : 'réduit';
     return `Potentiel ${modifLabel} pour cette ${type} : ${points}`;
   }
 
