@@ -45,7 +45,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
         <i
           className="fr-fi-information-line"
         />
-         Documentation
+         Règles applicables
       </button>
     </li>
   </ul>
@@ -75,6 +75,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
       >
         <div
           className="flex items-center"
+          data-test="PointsPotentiels"
         >
           Potentiel réduit pour cette sous-action : 3,3 points
         </div>
@@ -256,70 +257,29 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     <div
       data-test="PersoPotentielDoc"
     >
-      <span
-        className="font-bold"
-      >
-        Nombre de points pour cette sous-action
-      </span>
       <ul>
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+            }
+          }
+        />
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.</p><p>Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.</p>",
+            }
+          }
+        />
         <li>
-          Minimum : 0
-        </li>
-        <li>
-          Maximum : 6,67
+          Nombre de points initial pour cette 
+          sous-action
+           :
+           
+          6,7
         </li>
       </ul>
-      <table
-        className="fr-table fr-table--blue-ecume mt-8"
-        style={
-          Object {
-            "marginBottom": 0,
-          }
-        }
-      >
-        <thead>
-          <tr>
-            <th
-              scope="col"
-            >
-              Condition
-            </th>
-            <th
-              scope="col"
-            >
-              Pondération
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              Commune sans compétence voirie
-            </td>
-            <td
-              className="whitespace-nowrap fr-pr-8v"
-            >
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Intercommunalité sans aucune compétence voirie
-            </td>
-            <td>
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
-            </td>
-            <td>
-              Réduction à 1 sur 2 points
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -370,7 +330,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
         <i
           className="fr-fi-information-line"
         />
-         Documentation
+         Règles applicables
       </button>
     </li>
   </ul>
@@ -400,6 +360,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
       >
         <div
           className="flex items-center"
+          data-test="PointsPotentiels"
         >
           Potentiel pour cette sous-action : 6,7 points
         </div>
@@ -476,70 +437,29 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     <div
       data-test="PersoPotentielDoc"
     >
-      <span
-        className="font-bold"
-      >
-        Nombre de points pour cette sous-action
-      </span>
       <ul>
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+            }
+          }
+        />
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.</p><p>Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.</p>",
+            }
+          }
+        />
         <li>
-          Minimum : 0
-        </li>
-        <li>
-          Maximum : 6,67
+          Nombre de points initial pour cette 
+          sous-action
+           :
+           
+          6,7
         </li>
       </ul>
-      <table
-        className="fr-table fr-table--blue-ecume mt-8"
-        style={
-          Object {
-            "marginBottom": 0,
-          }
-        }
-      >
-        <thead>
-          <tr>
-            <th
-              scope="col"
-            >
-              Condition
-            </th>
-            <th
-              scope="col"
-            >
-              Pondération
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              Commune sans compétence voirie
-            </td>
-            <td
-              className="whitespace-nowrap fr-pr-8v"
-            >
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Intercommunalité sans aucune compétence voirie
-            </td>
-            <td>
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
-            </td>
-            <td>
-              Réduction à 1 sur 2 points
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -590,7 +510,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
         <i
           className="fr-fi-information-line"
         />
-         Documentation
+         Règles applicables
       </button>
     </li>
   </ul>
@@ -620,6 +540,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
       >
         <div
           className="flex items-center"
+          data-test="PointsPotentiels"
         >
           Potentiel réduit pour cette sous-action : 3,3 points
         </div>
@@ -696,70 +617,29 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     <div
       data-test="PersoPotentielDoc"
     >
-      <span
-        className="font-bold"
-      >
-        Nombre de points pour cette sous-action
-      </span>
       <ul>
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+            }
+          }
+        />
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.</p><p>Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.</p>",
+            }
+          }
+        />
         <li>
-          Minimum : 0
-        </li>
-        <li>
-          Maximum : 6,67
+          Nombre de points initial pour cette 
+          sous-action
+           :
+           
+          6,7
         </li>
       </ul>
-      <table
-        className="fr-table fr-table--blue-ecume mt-8"
-        style={
-          Object {
-            "marginBottom": 0,
-          }
-        }
-      >
-        <thead>
-          <tr>
-            <th
-              scope="col"
-            >
-              Condition
-            </th>
-            <th
-              scope="col"
-            >
-              Pondération
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              Commune sans compétence voirie
-            </td>
-            <td
-              className="whitespace-nowrap fr-pr-8v"
-            >
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Intercommunalité sans aucune compétence voirie
-            </td>
-            <td>
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
-            </td>
-            <td>
-              Réduction à 1 sur 2 points
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -810,7 +690,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
         <i
           className="fr-fi-information-line"
         />
-         Documentation
+         Règles applicables
       </button>
     </li>
   </ul>
@@ -840,6 +720,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
       >
         <div
           className="flex items-center"
+          data-test="PointsPotentiels"
         >
           Potentiel pour cette sous-action : 6,7 points
         </div>
@@ -933,70 +814,29 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     <div
       data-test="PersoPotentielDoc"
     >
-      <span
-        className="font-bold"
-      >
-        Nombre de points pour cette sous-action
-      </span>
       <ul>
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+            }
+          }
+        />
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.</p><p>Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.</p>",
+            }
+          }
+        />
         <li>
-          Minimum : 0
-        </li>
-        <li>
-          Maximum : 6,67
+          Nombre de points initial pour cette 
+          sous-action
+           :
+           
+          6,7
         </li>
       </ul>
-      <table
-        className="fr-table fr-table--blue-ecume mt-8"
-        style={
-          Object {
-            "marginBottom": 0,
-          }
-        }
-      >
-        <thead>
-          <tr>
-            <th
-              scope="col"
-            >
-              Condition
-            </th>
-            <th
-              scope="col"
-            >
-              Pondération
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              Commune sans compétence voirie
-            </td>
-            <td
-              className="whitespace-nowrap fr-pr-8v"
-            >
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Intercommunalité sans aucune compétence voirie
-            </td>
-            <td>
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
-            </td>
-            <td>
-              Réduction à 1 sur 2 points
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -1047,7 +887,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
         <i
           className="fr-fi-information-line"
         />
-         Documentation
+         Règles applicables
       </button>
     </li>
   </ul>
@@ -1077,6 +917,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
       >
         <div
           className="flex items-center"
+          data-test="PointsPotentiels"
         >
           Potentiel réduit pour cette sous-action : 3,3 points
         </div>
@@ -1170,70 +1011,29 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     <div
       data-test="PersoPotentielDoc"
     >
-      <span
-        className="font-bold"
-      >
-        Nombre de points pour cette sous-action
-      </span>
       <ul>
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+            }
+          }
+        />
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.</p><p>Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.</p>",
+            }
+          }
+        />
         <li>
-          Minimum : 0
-        </li>
-        <li>
-          Maximum : 6,67
+          Nombre de points initial pour cette 
+          sous-action
+           :
+           
+          6,7
         </li>
       </ul>
-      <table
-        className="fr-table fr-table--blue-ecume mt-8"
-        style={
-          Object {
-            "marginBottom": 0,
-          }
-        }
-      >
-        <thead>
-          <tr>
-            <th
-              scope="col"
-            >
-              Condition
-            </th>
-            <th
-              scope="col"
-            >
-              Pondération
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              Commune sans compétence voirie
-            </td>
-            <td
-              className="whitespace-nowrap fr-pr-8v"
-            >
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Intercommunalité sans aucune compétence voirie
-            </td>
-            <td>
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
-            </td>
-            <td>
-              Réduction à 1 sur 2 points
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -1284,7 +1084,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
         <i
           className="fr-fi-information-line"
         />
-         Documentation
+         Règles applicables
       </button>
     </li>
   </ul>
@@ -1314,6 +1114,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
       >
         <div
           className="flex items-center"
+          data-test="PointsPotentiels"
         >
           Potentiel pour cette sous-action : 6,7 points
         </div>
@@ -1376,70 +1177,29 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     <div
       data-test="PersoPotentielDoc"
     >
-      <span
-        className="font-bold"
-      >
-        Nombre de points pour cette sous-action
-      </span>
       <ul>
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+            }
+          }
+        />
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.</p><p>Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.</p>",
+            }
+          }
+        />
         <li>
-          Minimum : 0
-        </li>
-        <li>
-          Maximum : 6,67
+          Nombre de points initial pour cette 
+          sous-action
+           :
+           
+          6,7
         </li>
       </ul>
-      <table
-        className="fr-table fr-table--blue-ecume mt-8"
-        style={
-          Object {
-            "marginBottom": 0,
-          }
-        }
-      >
-        <thead>
-          <tr>
-            <th
-              scope="col"
-            >
-              Condition
-            </th>
-            <th
-              scope="col"
-            >
-              Pondération
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              Commune sans compétence voirie
-            </td>
-            <td
-              className="whitespace-nowrap fr-pr-8v"
-            >
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Intercommunalité sans aucune compétence voirie
-            </td>
-            <td>
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
-            </td>
-            <td>
-              Réduction à 1 sur 2 points
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -1490,7 +1250,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
         <i
           className="fr-fi-information-line"
         />
-         Documentation
+         Règles applicables
       </button>
     </li>
   </ul>
@@ -1520,6 +1280,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
       >
         <div
           className="flex items-center"
+          data-test="PointsPotentiels"
         >
           Potentiel réduit pour cette sous-action : 3,3 points
         </div>
@@ -1582,70 +1343,29 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     <div
       data-test="PersoPotentielDoc"
     >
-      <span
-        className="font-bold"
-      >
-        Nombre de points pour cette sous-action
-      </span>
       <ul>
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+            }
+          }
+        />
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.</p><p>Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.</p>",
+            }
+          }
+        />
         <li>
-          Minimum : 0
-        </li>
-        <li>
-          Maximum : 6,67
+          Nombre de points initial pour cette 
+          sous-action
+           :
+           
+          6,7
         </li>
       </ul>
-      <table
-        className="fr-table fr-table--blue-ecume mt-8"
-        style={
-          Object {
-            "marginBottom": 0,
-          }
-        }
-      >
-        <thead>
-          <tr>
-            <th
-              scope="col"
-            >
-              Condition
-            </th>
-            <th
-              scope="col"
-            >
-              Pondération
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              Commune sans compétence voirie
-            </td>
-            <td
-              className="whitespace-nowrap fr-pr-8v"
-            >
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Intercommunalité sans aucune compétence voirie
-            </td>
-            <td>
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Commune et intercommunalité avec compétence voirie uniquement sur trottoirs, parkings ou zones d'activités ou industrielles
-            </td>
-            <td>
-              Réduction à 1 sur 2 points
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>

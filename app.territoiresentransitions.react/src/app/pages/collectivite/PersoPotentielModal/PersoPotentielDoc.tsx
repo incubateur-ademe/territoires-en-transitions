@@ -1,48 +1,38 @@
 /**
  * Affiche l'onglet "Documentation"
  */
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {TPersonnalisationRegleRead} from 'generated/dataLayer/personnalisation_regle_read';
+import {ActionScore} from 'types/ClientScore';
+import {toLocaleFixed} from 'utils/toFixed';
 
-export type TPersoPotentielDocProps = {};
+export type TPersoPotentielDocProps = {
+  /** Définition de l'action */
+  actionDef: ActionDefinitionSummary;
+  /** Détail du score associé à l'action */
+  actionScore: ActionScore;
+  /** Règles de personnalisation applicables */
+  regles: TPersonnalisationRegleRead[];
+};
 
 export const PersoPotentielDoc = (props: TPersoPotentielDocProps) => {
-  //const {} = props;
+  const {actionDef, actionScore, regles} = props;
   return (
     <div data-test="PersoPotentielDoc">
-      <span className="font-bold">Nombre de points pour cette sous-action</span>
       <ul>
-        <li>Minimum : 0</li>
-        <li>Maximum : 6,67</li>
+        {regles.map(({description}, index) =>
+          description ? (
+            <li
+              key={`r${index}`}
+              dangerouslySetInnerHTML={{__html: description}}
+            />
+          ) : null
+        )}
+        <li>
+          Nombre de points initial pour cette {actionDef.type} :{' '}
+          {toLocaleFixed(actionScore.point_referentiel)}
+        </li>
       </ul>
-      <table
-        className="fr-table fr-table--blue-ecume mt-8"
-        style={{marginBottom: 0}}
-      >
-        <thead>
-          <tr>
-            <th scope="col">Condition</th>
-            <th scope="col">Pondération</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Commune sans compétence voirie</td>
-            <td className="whitespace-nowrap fr-pr-8v">
-              Réduction à 0 sur 2 points
-            </td>
-          </tr>
-          <tr>
-            <td>Intercommunalité sans aucune compétence voirie</td>
-            <td>Réduction à 0 sur 2 points</td>
-          </tr>
-          <tr>
-            <td>
-              Commune et intercommunalité avec compétence voirie uniquement sur
-              trottoirs, parkings ou zones d'activités ou industrielles
-            </td>
-            <td>Réduction à 1 sur 2 points</td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   );
 };

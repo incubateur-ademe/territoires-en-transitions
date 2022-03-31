@@ -12,14 +12,13 @@ export interface ActionScore {
    * modification. */
   point_potentiel: number;
   /** Potentiel éventuellement réduit ou augmenté par la personnalisation.
-   * Valeur identique à `point_referentiel` si pas de modification. */
-  point_potentiel_perso: number;
+   * Undefined si pas de modification. */
+  point_potentiel_perso: number | undefined;
   /** Potentiel initial (défini par le référentiel) */
   point_referentiel: number;
   concerne: boolean;
   total_taches_count: number;
   completed_taches_count: number;
-  point_potentiel_perso: number | undefined; // Undefined si aucune réduction n'est appliquée à cette action
   desactive: boolean;
 }
 
