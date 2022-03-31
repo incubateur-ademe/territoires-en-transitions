@@ -4,12 +4,13 @@
 
 import {Tabs, Tab} from '@dataesr/react-dsfr';
 import {PersoPotentielQR, TPersoPotentielQRProps} from './PersoPotentielQR';
-import {PersoPotentielDoc} from './PersoPotentielDoc';
+import {PersoPotentielDoc, TPersoPotentielDocProps} from './PersoPotentielDoc';
 
-export type TPersoPotentielTabsProps = TPersoPotentielQRProps & {
-  /** Index de l'onglet actif */
-  defaultActiveTab?: number;
-};
+export type TPersoPotentielTabsProps = TPersoPotentielQRProps &
+  TPersoPotentielDocProps & {
+    /** Index de l'onglet actif */
+    defaultActiveTab?: number;
+  };
 
 export const PersoPotentielTabs = (props: TPersoPotentielTabsProps) => {
   const {defaultActiveTab, ...other} = props;
@@ -21,8 +22,8 @@ export const PersoPotentielTabs = (props: TPersoPotentielTabsProps) => {
       >
         <PersoPotentielQR {...other} />
       </Tab>
-      <Tab label="&nbsp;Documentation" icon="fr-fi-information-line">
-        <PersoPotentielDoc />
+      <Tab label="&nbsp;Règles applicables" icon="fr-fi-information-line">
+        <PersoPotentielDoc {...other} />
       </Tab>
     </Tabs>
   );

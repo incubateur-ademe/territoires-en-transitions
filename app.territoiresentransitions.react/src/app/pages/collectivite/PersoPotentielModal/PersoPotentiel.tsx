@@ -9,6 +9,7 @@ import {useToastAlert, ToastAlert} from 'ui/shared/ToastAlert';
 import {PersoPotentielTabs} from './PersoPotentielTabs';
 import {PointsPotentiels} from './PointsPotentiels';
 import {useQuestionsReponses} from './useQuestionsReponses';
+import {useRegles} from './useRegles';
 
 export type TPersoPotentielButtonProps = {
   /** Définition de l'action */
@@ -31,6 +32,7 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
   const [opened, setOpened] = useState(false);
   const collectivite_id = useCollectiviteId();
   const [data, refetch] = useQuestionsReponses(actionId);
+  const regles = useRegles(actionId);
   const toastAlert = useToastAlert();
   const {qr} = data || {};
 
@@ -65,6 +67,7 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
                 {...props}
                 actionScore={actionScore}
                 questionReponses={qr}
+                regles={regles}
                 onChange={(question_id, reponse) => {
                   reponseWriteEndpoint
                     .save({

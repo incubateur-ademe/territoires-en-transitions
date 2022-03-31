@@ -4,7 +4,15 @@ import {
   PersoPotentielTabs,
   TPersoPotentielTabsProps,
 } from './PersoPotentielTabs';
-import {ACTION_DEF, Q1, Q2, Q3, SCORE, SCORE_MODIFIE} from './fixture.json';
+import {
+  ACTION_DEF,
+  Q1,
+  Q2,
+  Q3,
+  SCORE,
+  SCORE_MODIFIE,
+  REGLES,
+} from './fixture.json';
 
 export default {
   component: PersoPotentielTabs,
@@ -13,7 +21,12 @@ export default {
 const onChange = action('onChange');
 
 const Template: Story<TPersoPotentielTabsProps> = args => (
-  <PersoPotentielTabs actionDef={ACTION_DEF} onChange={onChange} {...args} />
+  <PersoPotentielTabs
+    actionDef={ACTION_DEF}
+    onChange={onChange}
+    regles={REGLES}
+    {...args}
+  />
 );
 
 export const QuestionChoix = Template.bind({});

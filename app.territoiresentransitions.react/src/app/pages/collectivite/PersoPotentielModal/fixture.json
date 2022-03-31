@@ -33,5 +33,19 @@
   "SCORE_MODIFIE": {
     "point_referentiel": 6.7,
     "point_potentiel_perso": 3.3
-  }
+  },
+  "REGLES": [
+    {
+      "action_id": "cae_1.3.3",
+      "description": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+      "formule": "reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON)",
+      "type": "desactivation"
+    },
+    {
+      "action_id": "cae_1.3.3",
+      "description": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.</p><p>Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.</p>",
+      "formule": "si reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON) alors 0  sinon si reponse(urba_1, OUI) ou reponse(urba_2, OUI) et reponse(urba_3, OUI) alors 0.5",
+      "type": "reduction"
+    }
+  ]
 }
