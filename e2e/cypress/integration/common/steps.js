@@ -54,7 +54,11 @@ export const checkExpectation = (selector, expectation, value) => {
   } else if (typeof c === 'function') {
     c(selector, value);
   } else {
-    cy.get(selector).should(c, value);
+    if (selector) {
+      cy.get(selector).should(c, value);
+    } else {
+      cy.root().should(c, value);
+    }
   }
 };
 
@@ -79,9 +83,11 @@ Given(
   /le "([^"]*)" vérifie les conditions suivantes/,
   function (parentName, dataTable) {
     const parent = resolveSelector(this, parentName);
-    const rows = dataTable.rows();
-    cy.wrap(rows).each(([elem, expectation, value]) => {
-      checkExpectation(parent.children[elem], expectation, value);
+    cy.get(parent.selector).within(() => {
+      const rows = dataTable.rows();
+      cy.wrap(rows).each(([elem, expectation, value]) => {
+        checkExpectation(parent.children[elem], expectation, value);
+      });
     });
   }
 );
