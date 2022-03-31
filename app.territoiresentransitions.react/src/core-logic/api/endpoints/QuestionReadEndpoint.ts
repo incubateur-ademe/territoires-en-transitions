@@ -3,6 +3,7 @@ import {TQuestionRead} from 'generated/dataLayer/question_read';
 import {PostgrestResponse} from '@supabase/supabase-js';
 
 export interface QuestionGetParams {
+  collectivite_id: number;
   action_ids?: string[];
 }
 
@@ -16,11 +17,13 @@ export class QuestionReadEndpoint extends DataLayerReadCachedEndpoint<
   async _read(
     getParams: QuestionGetParams
   ): Promise<PostgrestResponse<TQuestionRead>> {
-    const {action_ids} = getParams;
+    const {collectivite_id, action_ids} = getParams;
     if (action_ids) {
-      return this._table.contains('action_ids', action_ids);
+      return this._table
+        .eq('collectivite_id', collectivite_id)
+        .contains('action_ids', action_ids);
     }
-    return this._table.select();
+    return this._table.eq('collectivite_id', collectivite_id);
   }
 }
 
