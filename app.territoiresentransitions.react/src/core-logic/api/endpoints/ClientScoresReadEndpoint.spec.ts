@@ -20,9 +20,9 @@ describe('ClientScores reading endpoint ', () => {
     expect(results[0].scores).toHaveLength(2); // Fix datalayer `duplicate key value violates unique constraint` on second insert should fix this test.
   });
 
-  it('should retrieve 0 score for collectivite #2 ', async () => {
+  it('should retrieve 0 score for collectivite #10 ', async () => {
     const results = await clientScoresReadEndpoint.getBy({
-      collectiviteId: 2,
+      collectiviteId: 10,
     });
     expect(clientScoresReadEndpoint.lastResponse?.status).toBe(200);
     expect(results.length).toEqual(0);

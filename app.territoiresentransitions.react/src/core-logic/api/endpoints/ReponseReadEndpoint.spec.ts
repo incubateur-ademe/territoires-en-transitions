@@ -34,19 +34,19 @@ describe('Reponse reading endpoint', () => {
 
     const results = await reponseReadEndpoint.getBy({
       collectivite_id: 1,
-      question_id: 'mobilite_1',
+      question_id: 'dechets_1',
     });
 
     expect(results.length).toEqual(1);
     expect(results).toMatchObject([
       {
-        question_id: 'mobilite_1',
+        question_id: 'dechets_1',
         collectivite_id: 1,
         reponse: {
-          question_id: 'mobilite_1',
+          question_id: 'dechets_1',
           collectivite_id: 1,
-          type: 'choix',
-          reponse: 'mobilite_1_b',
+          type: 'binaire',
+          reponse: true,
         },
       },
     ]);
