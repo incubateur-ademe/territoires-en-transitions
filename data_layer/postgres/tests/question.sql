@@ -11,10 +11,13 @@ select has_table('question_action');
 select has_function('business_upsert_questions');
 
 
-insert into question_thematique
-values ('mobilites', 'Mobilités')
-on conflict do nothing;
+-- override is_service_role to run business_upsert_personnalisations as service.
+create or replace function is_service_role() returns bool as
+$$
+select True;
+$$ language sql stable;
 
+-- insert a personnalisation
 do
 $$
     declare
@@ -51,16 +54,15 @@ $$
 
 $$ language plpgsql;
 
--- fix me broken test
-select results_eq('select count(*)::int as count from question;',
-                  'select 1::int as count;',
+select results_eq('select description from question where id = ''question_1'';',
+                  'select ''Une petite description'';',
                   'One question should be inserted');
 
-select results_eq('select count(*)::int as count from question_choix;',
+select results_eq('select count(*)::int as count from question_choix where question_id = ''question_1'';',
                   'select 2::int as count;',
                   'Two choix should be inserted');
 
-select results_eq('select count(*)::int as count from question_action;',
+select results_eq('select count(*)::int as count from question_action where question_id = ''question_1'';',
                   'select 1::int as count;',
                   'One question to action relation should be inserted');
 rollback;
