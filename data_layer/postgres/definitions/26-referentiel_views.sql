@@ -108,7 +108,7 @@ select id,
        reduction_potentiel != '' as have_reduction_potentiel,
        perimetre_evaluation != '' as have_perimetre_evaluation,
        contexte != '' as have_contexte,
-       id in (select question_id from question_action ) as have_questions
+       id in (select action_id from question_action ) as have_questions
 from action_definition
          join action_children on action_id = action_children.id
 order by naturalsort(action_id);

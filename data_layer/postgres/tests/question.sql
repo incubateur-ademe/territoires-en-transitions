@@ -2,7 +2,7 @@ create extension if not exists pgtap with schema extensions;
 
 begin;
 
-select plan(8);
+select plan(10);
 
 select has_table('question_thematique');
 select has_table('question');
@@ -11,7 +11,7 @@ select has_table('question_action');
 select has_function('business_upsert_questions');
 
 
--- override is_service_role to run business_upsert_personnalisations as service.
+-- override is_service_role to run business_upsert_questions as service.
 create or replace function is_service_role() returns bool as
 $$
 select True;
@@ -54,6 +54,7 @@ $$
 
 $$ language plpgsql;
 
+-- test insertions
 select results_eq('select description from question where id = ''question_1'';',
                   'select ''Une petite description'';',
                   'One question should be inserted');
@@ -65,5 +66,14 @@ select results_eq('select count(*)::int as count from question_choix where quest
 select results_eq('select count(*)::int as count from question_action where question_id = ''question_1'';',
                   'select 1::int as count;',
                   'One question to action relation should be inserted');
+
+-- test views
+select results_eq('select description from question_display where id = ''question_1'' and collectivite_id = 1;',
+                  'select ''Une petite description'';',
+                  'Question should be in question_display');
+
+select ok((select have_questions from action_definition_summary where id = 'eci_1'),
+          'Action eci_1 of action_definition_summary should have_questions');
+
 rollback;
 
