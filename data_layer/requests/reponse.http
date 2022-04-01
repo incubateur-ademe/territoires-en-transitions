@@ -46,7 +46,6 @@ Content-Type: application/json
 }
 
 
-
 ### Post reponse
 POST {{api}}/rest/v1/rpc/save_reponse
 apikey: {{anon}}
@@ -58,6 +57,20 @@ Content-Type: application/json
   "question_id": "mobilite_1",
   "collectivite_id": 1,
   "reponse": "mobilite_1_b"
+}
+
+
+### Post a null reponse
+POST {{api}}/rest/v1/rpc/save_reponse
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+
+{
+  "question_id": "energie_1",
+  "collectivite_id": 1,
+  "reponse": null
 }
 
 
