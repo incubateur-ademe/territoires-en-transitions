@@ -1,8 +1,8 @@
 create table reponse_choix
 (
-    collectivite_id integer references collectivite    not null,
-    question_id     question_id references question    not null,
-    reponse         choix_id references question_choix not null,
+    collectivite_id integer references collectivite not null,
+    question_id     question_id references question not null,
+    reponse         choix_id references question_choix,
     primary key (collectivite_id, question_id)
 );
 comment on table reponse_choix is
@@ -13,7 +13,7 @@ create table reponse_binaire
 (
     collectivite_id integer references collectivite not null,
     question_id     question_id references question not null,
-    reponse         boolean                         not null,
+    reponse         boolean,
     primary key (collectivite_id, question_id)
 );
 comment on table reponse_choix is
@@ -23,7 +23,7 @@ create table reponse_proportion
 (
     collectivite_id integer references collectivite not null,
     question_id     question_id references question not null,
-    reponse         float                           not null,
+    reponse         float,
     primary key (collectivite_id, question_id)
 );
 comment on table reponse_choix is
@@ -48,9 +48,9 @@ with r as (
                                                                                 as reponse
 
     from question q
-             left join reponse_binaire rb on rb.question_id = q.id
-             left join reponse_proportion rp on rp.question_id = q.id
-             left join reponse_choix rc on rc.question_id = q.id
+             left join reponse_binaire rb on rb.question_id = q.id and rb.reponse is not null
+             left join reponse_proportion rp on rp.question_id = q.id and rp.reponse is not null
+             left join reponse_choix rc on rc.question_id = q.id and rc.reponse is not null
 )
 select r.collectivite_id,
        array_agg(r.reponse) as reponses
