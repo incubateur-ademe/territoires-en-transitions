@@ -25,7 +25,7 @@ Le Data-Layer est responsable des lectures/écritures en base, c'est à dire de:
 - psql (on peut l'installer sur Mac avec brew : `brew install postgresql`)
 - docker
 
-### Dev / tests avec docker
+### Dev avec le container de test
 
 Aller dans le dossier `./test_only_docker` et exécuter :
 
@@ -36,6 +36,16 @@ Ensuite
 - utiliser `insert_all.sh` pour insérer les contenus de test.
 - redémarrer le container `postgrest` après les insertions pour que l'API soit régénérée avec `docker-compose restart rest  `.
 
+### Lancer les tests
+
+Installer pg_prove (nécessite perl).
+
+```shell
+sudo cpan App::cpanminus
+sudo cpan TAP::Parser::SourceHandler::pgTAP
+```
+
+Puis utiliser `run_tests.sh`
 
 ## Créer un projet sur Supabase
 Après la création du projet
