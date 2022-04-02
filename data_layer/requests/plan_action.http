@@ -17,17 +17,17 @@ Content-Type: application/json
     client.global.set("auth_token", response.body['access_token']);
 %}
 
-### List all plans
-GET {{api}}/rest/v1/plan_action?select=*
+### List all plans of collectivite 1
+GET {{api}}/rest/v1/plan_action?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
 
-### Insert a plan
+### Upsert a plan
 POST {{api}}/rest/v1/plan_action
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-Prefer: return=representation
+Prefer: return=representation, resolution=merge-duplicates
 Content-Type: application/json
 
 {
@@ -48,8 +48,8 @@ Content-Type: application/json
   ]
 }
 
-### List all fiches
-GET {{api}}/rest/v1/fiche_action?select=*
+### List all fiches of collectivite 1
+GET {{api}}/rest/v1/fiche_action?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
@@ -59,11 +59,11 @@ Authorization: Bearer {{auth_token}}
     });
 %}
 
-### Insert a fiche
+### Upsert a fiche
 POST {{api}}/rest/v1/fiche_action
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-Prefer: return=representation
+Prefer: return=representation, resolution=merge-duplicates
 Content-Type: application/json
 
 {

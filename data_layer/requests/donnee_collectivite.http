@@ -18,7 +18,7 @@ Content-Type: application/json
 %}
 
 ### List all action_commentaire for collectivite 1
-GET {{api}}/rest/v1/action_commentaire?collectivite_id=eq.1&select=*
+GET {{api}}/rest/v1/action_commentaire?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
@@ -32,7 +32,7 @@ Authorization: Bearer {{auth_token}}
 POST {{api}}/rest/v1/action_commentaire
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-prefer: resolution=merge-duplicates
+prefer: return=representation, resolution=merge-duplicates
 Content-Type: application/json
 
 {
@@ -49,7 +49,7 @@ Content-Type: application/json
 
 
 ### List all indicateur_resultat for collectivite 1
-GET {{api}}/rest/v1/indicateur_resultat?collectivite_id=eq.1&select=*
+GET {{api}}/rest/v1/indicateur_resultat?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
@@ -63,7 +63,7 @@ Authorization: Bearer {{auth_token}}
 POST {{api}}/rest/v1/indicateur_resultat
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-prefer: resolution=merge-duplicates
+prefer: return=representation, resolution=merge-duplicates
 Content-Type: application/json
 
 {
@@ -100,7 +100,7 @@ Content-Type: application/json
 %}
 
 ### List all indicateur_objectif for collectivite 1
-GET {{api}}/rest/v1/indicateur_objectif?collectivite_id=eq.1&select=*
+GET {{api}}/rest/v1/indicateur_objectif?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
@@ -114,7 +114,7 @@ Authorization: Bearer {{auth_token}}
 POST {{api}}/rest/v1/indicateur_objectif
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-prefer: resolution=merge-duplicates
+prefer: return=representation, resolution=merge-duplicates
 Content-Type: application/json
 
 {
@@ -132,7 +132,7 @@ Content-Type: application/json
 
 
 ### List all indicateur_commentaire for collectivite 1
-GET {{api}}/rest/v1/indicateur_commentaire?collectivite_id=eq.1&select=*
+GET {{api}}/rest/v1/indicateur_commentaire?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
@@ -146,7 +146,7 @@ Authorization: Bearer {{auth_token}}
 POST {{api}}/rest/v1/indicateur_commentaire
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-prefer: resolution=merge-duplicates
+prefer: return=representation, resolution=merge-duplicates
 Content-Type: application/json
 
 {
@@ -163,7 +163,7 @@ Content-Type: application/json
 
 
 ### List all indicateur_personnalise_definition for collectivite 1
-GET {{api}}/rest/v1/indicateur_personnalise_definition?collectivite_id=eq.1&select=*
+GET {{api}}/rest/v1/indicateur_personnalise_definition?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
@@ -177,7 +177,7 @@ Authorization: Bearer {{auth_token}}
 POST {{api}}/rest/v1/indicateur_personnalise_definition
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-prefer: resolution=merge-duplicates
+prefer: return=representation, resolution=merge-duplicates
 Content-Type: application/json
 
 {
@@ -198,7 +198,7 @@ Content-Type: application/json
 
 
 ### List all indicateur_personnalise_resultat for collectivite 1
-GET {{api}}/rest/v1/indicateur_personnalise_resultat?collectivite_id=eq.1&select=*
+GET {{api}}/rest/v1/indicateur_personnalise_resultat?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
@@ -212,7 +212,7 @@ Authorization: Bearer {{auth_token}}
 POST {{api}}/rest/v1/indicateur_personnalise_resultat
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-prefer: resolution=merge-duplicates
+prefer: return=representation, resolution=merge-duplicates
 Content-Type: application/json
 
 {
@@ -229,7 +229,7 @@ Content-Type: application/json
 %}
 
 ### List all indicateur_personnalise_objectif for collectivite 1
-GET {{api}}/rest/v1/indicateur_personnalise_objectif?collectivite_id=eq.1&select=*
+GET {{api}}/rest/v1/indicateur_personnalise_objectif?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
@@ -243,7 +243,7 @@ Authorization: Bearer {{auth_token}}
 POST {{api}}/rest/v1/indicateur_personnalise_objectif
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-prefer: resolution=merge-duplicates
+prefer: return=representation, resolution=merge-duplicates
 Content-Type: application/json
 
 {

@@ -9,8 +9,15 @@ create table action_commentaire
     modified_by     uuid references auth.users default auth.uid()        not null,
     modified_at     timestamp with time zone   default CURRENT_TIMESTAMP not null,
     primary key (collectivite_id, action_id)
-
 );
+
+create trigger set_modified_at_before_action_commentaire_update
+    before update
+    on
+        action_commentaire
+    for each row
+execute procedure update_modified_at();
+
 
 alter table action_commentaire
     enable row level security;
@@ -39,7 +46,7 @@ create table abstract_any_indicateur_value
 (
     valeur float,
     annee  integer not null
-) inherits (absract_modified_at);
+) inherits (abstract_modified_at);
 
 alter table abstract_any_indicateur_value
     enable row level security;
@@ -50,6 +57,13 @@ create table indicateur_resultat
     indicateur_id   indicateur_id references indicateur_definition not null,
     primary key (collectivite_id, annee, indicateur_id)
 ) inherits (abstract_any_indicateur_value);
+
+create trigger set_modified_at_before_indicateur_resultat_update
+    before update
+    on
+        indicateur_resultat
+    for each row
+execute procedure update_modified_at();
 
 alter table indicateur_resultat
     enable row level security;
@@ -79,6 +93,13 @@ create table indicateur_objectif
     primary key (collectivite_id, annee, indicateur_id)
 ) inherits (abstract_any_indicateur_value);
 
+create trigger set_modified_at_before_indicateur_objectif_update
+    before update
+    on
+        indicateur_objectif
+    for each row
+execute procedure update_modified_at();
+
 alter table indicateur_objectif
     enable row level security;
 
@@ -106,7 +127,14 @@ create table indicateur_commentaire
     commentaire     text                                           not null,
     modified_by     uuid references auth.users default auth.uid()  not null,
     primary key (collectivite_id, indicateur_id)
-) inherits (absract_modified_at);
+) inherits ("abstract_modified_at");
+
+create trigger set_modified_at_before_indicateur_commentaire_update
+    before update
+    on
+        indicateur_commentaire
+    for each row
+execute procedure update_modified_at();
 
 alter table indicateur_commentaire
     enable row level security;
@@ -140,7 +168,14 @@ create table indicateur_personnalise_definition
     unite           text                                          not null,
     commentaire     text                                          not null,
     modified_by     uuid references auth.users default auth.uid() not null
-) inherits (absract_modified_at);
+) inherits (abstract_modified_at);
+
+create trigger set_modified_at_before_indicateur_personnalise_def_update
+    before update
+    on
+        indicateur_personnalise_definition
+    for each row
+execute procedure update_modified_at();
 
 alter table indicateur_personnalise_definition
     enable row level security;
@@ -170,6 +205,13 @@ create table indicateur_personnalise_resultat
     primary key (indicateur_id, annee, collectivite_id)
 ) inherits (abstract_any_indicateur_value);
 
+create trigger set_modified_at_before_indicateur_personnalise_res_update
+    before update
+    on
+        indicateur_personnalise_resultat
+    for each row
+execute procedure update_modified_at();
+
 alter table indicateur_personnalise_resultat
     enable row level security;
 
@@ -197,6 +239,13 @@ create table indicateur_personnalise_objectif
     indicateur_id integer references indicateur_personnalise_definition not null,
     primary key (indicateur_id, annee, collectivite_id)
 ) inherits (abstract_any_indicateur_value);
+
+create trigger set_modified_at_before_indicateur_personnalise_objectif_update
+    before update
+    on
+        indicateur_personnalise_objectif
+    for each row
+execute procedure update_modified_at();
 
 alter table indicateur_personnalise_objectif
     enable row level security;
