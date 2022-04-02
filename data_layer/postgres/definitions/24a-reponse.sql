@@ -4,10 +4,16 @@ create table reponse_choix
     question_id     question_id references question not null,
     reponse         choix_id references question_choix,
     primary key (collectivite_id, question_id)
-);
+) inherits (abstract_modified_at);
 comment on table reponse_choix is
     'Réponses saisies par la collectivité aux questions de type choix';
 
+create trigger set_modified_at_before_reponse_choix_update
+    before update
+    on
+        indicateur_commentaire
+    for each row
+execute procedure update_modified_at();
 
 create table reponse_binaire
 (
@@ -15,9 +21,16 @@ create table reponse_binaire
     question_id     question_id references question not null,
     reponse         boolean,
     primary key (collectivite_id, question_id)
-);
+) inherits (abstract_modified_at);
 comment on table reponse_choix is
     'Réponses saisies par la collectivité aux questions de type binaire';
+
+create trigger set_modified_at_before_reponse_binaire_update
+    before update
+    on
+        reponse_binaire
+    for each row
+execute procedure update_modified_at();
 
 create table reponse_proportion
 (
@@ -25,10 +38,16 @@ create table reponse_proportion
     question_id     question_id references question not null,
     reponse         float,
     primary key (collectivite_id, question_id)
-);
+) inherits (abstract_modified_at);
 comment on table reponse_choix is
     'Réponses saisies par la collectivité aux questions de type proportion';
 
+create trigger set_modified_at_before_reponse_proportion_update
+    before update
+    on
+        reponse_proportion
+    for each row
+execute procedure update_modified_at();
 
 create or replace view business_reponse as
 with r as (
