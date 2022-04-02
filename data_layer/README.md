@@ -36,16 +36,6 @@ Ensuite
 - utiliser `insert_all.sh` pour insérer les contenus de test.
 - redémarrer le container `postgrest` après les insertions pour que l'API soit régénérée avec `docker-compose restart rest  `.
 
-## Générer les types pour le Business et le Client
-
-```bash
-pipenv install
-python typedef_cli.py --help
-```
-Cette partie encore expérimentale génère les modèles client ou business à partir de 
-[json typedefs](https://jsontypedef.com/docs/jtd-in-5-minutes/) pour être utilisés par
-[json typedef codegen](https://jsontypedef.com/docs/jtd-codegen/).
-Il nous manque la génération des litérals pour l'utiliser pleinement.
 
 ## Créer un projet sur Supabase
 Après la création du projet
