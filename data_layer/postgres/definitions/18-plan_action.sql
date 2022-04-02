@@ -22,8 +22,15 @@ create table fiche_action
     action_ids                  action_id[]             not null,
     indicateur_ids              indicateur_id[]         not null,
     indicateur_personnalise_ids integer[]               not null
-) inherits (absract_modified_at);
+) inherits (abstract_modified_at);
 comment on table fiche_action is 'Fiche action used by the client';
+
+create trigger set_modified_at_before_fiche_action_update
+    before update
+    on
+        fiche_action
+    for each row
+execute procedure update_modified_at();
 
 alter table fiche_action
     enable row level security;
@@ -172,6 +179,14 @@ create table plan_action
     created_at         timestamp with time zone default CURRENT_TIMESTAMP not null,
     modified_at        timestamp with time zone default CURRENT_TIMESTAMP not null
 );
+
+create trigger set_modified_at_before_plan_action_update
+    before update
+    on
+        plan_action
+    for each row
+execute procedure update_modified_at();
+
 
 alter table plan_action
     enable row level security;

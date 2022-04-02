@@ -66,8 +66,15 @@ create table indicateur_definition
     unite             text             not null,
     obligation_eci    boolean          not null,
     parent            integer references indicateur_parent
-) inherits (absract_modified_at);
+) inherits (abstract_modified_at);
 comment on table indicateur_definition is 'Indicateur definition from markdown. Populated by business';
+
+create trigger set_modified_at_before_indicateur_definition_update
+    before update
+    on
+        indicateur_definition
+    for each row
+execute procedure update_modified_at();
 
 alter table indicateur_definition
     enable row level security;
@@ -85,8 +92,15 @@ create table indicateur_action
     action_id     action_id references action_relation
         on delete cascade, -- if action_relation is removed, indicateur_action will be deleted.
     primary key (indicateur_id, action_id)
-) inherits (absract_modified_at);
+) inherits (abstract_modified_at);
 comment on table indicateur_action is 'Indicateur <-> Action many-to-many relationship';
+
+create trigger set_modified_at_before_indicateur_action_update
+    before update
+    on
+        indicateur_action
+    for each row
+execute procedure update_modified_at();
 
 alter table indicateur_action
     enable row level security;
@@ -110,14 +124,20 @@ create table action_definition
     contexte    text        not null,
     exemples    text        not null,
     ressources  text        not null,
-    reduction_potentiel text not null, 
-    perimetre_evaluation text not null, 
+    reduction_potentiel text not null,
+    perimetre_evaluation text not null,
     preuve      text        not null,
     points      float,
     pourcentage float
-) inherits (absract_modified_at);
+) inherits (abstract_modified_at);
 comment on table action_definition is 'Action definition from markdown. Populated by business';
 
+create trigger set_modified_at_before_action_definition_update
+    before update
+    on
+        action_definition
+    for each row
+execute procedure update_modified_at();
 
 alter table action_definition
     enable row level security;
@@ -131,9 +151,16 @@ create table action_computed_points
 (
     action_id action_id primary key references action_relation,
     value     float not null
-) inherits (absract_modified_at);
+) inherits (abstract_modified_at);
 comment on table action_computed_points is
     'Action points computed by the business';
+
+create trigger set_modified_at_before_action_computed_points_update
+    before update
+    on
+        action_computed_points
+    for each row
+execute procedure update_modified_at();
 
 alter table action_computed_points
     enable row level security;
