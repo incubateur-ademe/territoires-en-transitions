@@ -33,7 +33,7 @@ services:
       KONG_DNS_ORDER: LAST,A,CNAME
       KONG_PLUGINS: request-transformer,cors,key-auth,acl
     volumes:
-      - ./volumes/api/kong.yml:/var/lib/kong/kong.yml
+      - ./supabase/kong.yml:/var/lib/kong/kong.yml
 
   auth:
     container_name: supabase-auth
@@ -156,5 +156,22 @@ services:
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      # - ./volumes/db/data:/var/lib/postgresql/data
-      - ./volumes/db/init:/docker-entrypoint-initdb.d
+      - ./supabase/init:/docker-entrypoint-initdb.d
+
+
+  # Load models and fakes once db is ready.
+  loader:
+    container_name: datalayer-loader
+    image: postgres:14 # use postgres solely for its plsql client.
+    depends_on:
+      - db
+    restart: on-failure
+    command: sh try_load.sh
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGUSER: postgres
+      PGHOST: db
+    volumes:
+      - ./postgres:/postgres
+      - ./postgres/try_load.sh:/try_load.sh
