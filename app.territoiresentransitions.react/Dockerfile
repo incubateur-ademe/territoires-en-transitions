@@ -1,4 +1,5 @@
-FROM node:14.15.1-alpine as builder
+FROM node:16
+RUN apt-get update || : && apt-get install python -y
 WORKDIR "/app"
 COPY ./package.json ./
 COPY ./package-lock.json ./
