@@ -1,76 +1,50 @@
-# name: Test Data Layer
+name: Test Datalayer
 
-# on:
-#   push:
-#     branches-ignore:
-#       - main
+on:
+  pull_request:
+    branches-ignore:
+      - production
+      - production-static
+  push:
 
-# jobs:
+jobs:
+  pgtap:
+    name: Datalayer tests
+    runs-on: ubuntu-latest
+    env:
+      business-directory:  ./business
+      datalayer-directory: ./data_layer
+      datalayer-docker-directory: ./data_layer
+      SUPABASE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
+      SUPABASE_URL: http://localhost:8000
+      SUPABASE_WS: ws://localhost:8000
 
-#   # Label of the runner job
-#   runner-job:
-#     # You must use a Linux environment when using service containers or container jobs
-#     runs-on: ubuntu-latest
-#     env:
-#       AUTH_DISABLED_DUMMY_USER: YES
-#       working-directory: ./data_layer
+    steps:
+      - uses: actions/checkout@v2
 
-#     steps:
-#       # cf. https://github.com/actions/checkout
-#       - uses: actions/checkout@v2
+      - name: install pg_prove
+        run: sudo cpan TAP::Parser::SourceHandler::pgTAP
+        env:
+          SHELL: /bin/bash
 
-#       # Restore cache or create a new one for all dependencies installed with
-#       # Python.
-#       - name: Set up Python cache
-#         uses: actions/cache@v2
-#         env:
-#           python-tools-cache-name: python-tools-cache
-#         with:
-#           path: /opt/hostedtoolcache/Python
-#           key: ${{ runner.os }}-${{ env.python-tools-cache-name }}-${{ env.python-version }}
-#           restore-keys: |
-#             ${{ runner.os }}-${{ env.python-tools-cache-name }}
-#             ${{ runner.os }}-
+      - name: install postgres dev
+        run: sudo apt-get install -y --no-install-recommends postgresql-server-dev-all
 
-#       # Restore cache or create a new one for all dependencies installed with
-#       # Pipenv
-#       - name: Set up Pipenv cache
-#         uses: actions/cache@v2
-#         env:
-#           pipenv-cache-name: pipenv-cache
-#         with:
-#           path: ~/.local/share/virtualenvs
-#           key: ${{ runner.os }}-${{ env.pipenv-cache-name }}-${{ hashFiles('Pipfile.lock') }}
-#           restore-keys: |
-#             ${{ runner.os }}-${{ env.pipenv-cache-name }}
-#             ${{ runner.os }}-
+      - name: Launch docker
+        run: |
+          cp .env.sample .env
+          docker-compose up --build -d
+        working-directory: ${{env.datalayer-docker-directory}}
 
-#       # cf. https://github.com/actions/setup-python
-#       - name: Set up Python 3.x
-#         uses: actions/setup-python@v2
-#         with:
-#           python-version: '3.9.1'
+      - name: Wait for datalayer
+        run: |
+          cp .postgres/loaded.sh .loaded.sh
+          cp .postgres/wait_until_loaded.sh .wait_until_loaded.sh
+          sh wait_until_loaded.sh
+        working-directory: ${{env.datalayer-docker-directory}}
 
-#       # Install the dependencies manager.
-#       - name: Install pipenv
-#         run: |
-#           python -m pip install --upgrade pipenv wheel
-#         working-directory: ${{env.working-directory}}
-
-#       # Install the project's dependencies.
-#       - name: Install dependencies
-#         run: |
-#           pipenv install
-#           pipenv install --dev
-#         working-directory: ${{env.working-directory}}
-
-#       # Launch docker
-#       - name: Build the stack
-#         run: |
-#           cp ./data_layer/test_only_docker/.env.sample  ./data_layer/test_only_docker/supabase_test/.env
-#           docker-compose -f ./data_layer/test_only_docker/supabase_test/docker-compose.yml up --build -d
-
-#       # Run tests
-#       - name: Run tests
-#         run: pipenv run pytest tests/unit # TODO : run all tests 
-#         working-directory: ${{env.working-directory}}
+      - name: run tests
+        run: pg_prove --host localhost --dbname postgres --username postgres --port 50001 tests/*.sql
+        working-directory: ${{env.datalayer-docker-directory}}
+        env:
+          PGPASSWORD: your-super-secret-and-long-postgres-password
