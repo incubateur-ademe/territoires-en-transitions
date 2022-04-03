@@ -4,5 +4,7 @@
 
 #  Generated files
 
-# Docker data 
+# Docker data
 docker-data
+
+.env

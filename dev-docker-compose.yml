@@ -33,7 +33,7 @@ services:
       KONG_DNS_ORDER: LAST,A,CNAME
       KONG_PLUGINS: request-transformer,cors,key-auth,acl
     volumes:
-      - ./supabase/kong.yml:/var/lib/kong/kong.yml
+      - ./data_layer/supabase/kong.yml:/var/lib/kong/kong.yml
 
   auth:
     container_name: supabase-auth
@@ -101,6 +101,7 @@ services:
     image: supabase/storage-api:v0.10.0
     depends_on:
       - db
+      - rest
     restart: unless-stopped
     environment:
       ANON_KEY: ${ANON_KEY}
@@ -142,7 +143,7 @@ services:
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ./supabase/init:/docker-entrypoint-initdb.d
+      - ./data_layer/supabase/init:/docker-entrypoint-initdb.d
 
 
   # Load models and fakes once db is ready.
@@ -164,9 +165,9 @@ services:
       PGUSER: postgres
       PGHOST: db
     volumes:
-      - ./postgres:/postgres
-      - ./postgres/try_load.sh:/try_load.sh
-      - ./postgres/loaded.sh:/loaded.sh
+      - ./data_layer/postgres:/postgres
+      - ./data_layer/postgres/try_load.sh:/try_load.sh
+      - ./data_layer/postgres/loaded.sh:/loaded.sh
 
   rest:
     container_name: supabase-rest
@@ -181,3 +182,22 @@ services:
       PGRST_DB_ANON_ROLE: anon
       PGRST_JWT_SECRET: ${JWT_SECRET}
       PGRST_DB_USE_LEGACY_GUCS: "false"
+
+  business:
+    build: ./business/.
+    depends_on:
+      - auth
+      - rest
+      - realtime
+    restart: unless-stopped
+
+  client:
+    build: ./app.territoiresentransitions.react/.
+    depends_on:
+      - auth
+      - rest
+      - realtime
+      - business
+    ports:
+      - ${CLIENT_PORT}:3000
+
