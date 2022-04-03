@@ -10,7 +10,6 @@ COPY .env.docker .env
 RUN pip install pipenv
 RUN pipenv install
 RUN pipenv install -e .
-RUN pipenv run pytest tests
 
 CMD ["pipenv", "run", "python", "-u", "business/evaluation/entrypoints/start_realtime.py"]
 
