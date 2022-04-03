@@ -30,4 +30,5 @@ for file in "$DATALAYER_DIR"/fakes/*.sql; do
     psql -v ON_ERROR_STOP=1 --file "${file}" || exit 0
 done
 
-exit 0
+echo "Done loading."
+sleep infinity

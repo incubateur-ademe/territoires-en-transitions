@@ -94,4 +94,11 @@ une solution qui intègre tous les [services](https://supabase.com/docs/architec
 
 - le `business` est développé en Python 🐍.
 
+## Lancer le projet en local pour le développement
+Le `client`, le `data layer` et le `business` peuvent être lancés à partir de docker-compose.
+- D'abord renommer le `.env.sample` en `.env`
+- Puis `docker-compose -f dev-docker-compose.yml start`
 
+## Déploiement
+Aujourd'hui le `business` et le `client` sont déployés chez Scalingo, le `data layer` est chez supabase.io en mode 
+SAAS.
