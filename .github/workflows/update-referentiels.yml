@@ -2,14 +2,14 @@ name: Update referentiels
 
 on:
   push:
-    branches: 
+    branches:
       - upcoming_production
       - upcoming_sandbox
       - upcoming_develop
   pull_request:
-    branches: 
-      - upcoming_develop 
-  
+    branches:
+      - upcoming_develop
+
 jobs:
   check:
     name: Check files
@@ -51,7 +51,7 @@ jobs:
     env:
       business-directory:  ./business
       datalayer-directory: ./data_layer
-      datalayer-docker-directory: ./data_layer/test_only_docker
+      datalayer-docker-directory: ./data_layer
 
     steps:
       # cf. https://github.com/actions/checkout
@@ -104,11 +104,11 @@ jobs:
           pipenv run python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations
 
         working-directory: ${{env.business-directory}}
-        env: 
+        env:
           SUPABASE_KEY: ${{secrets.DOCKER_SUPABASE_KEY}}
           SUPABASE_URL: http://localhost:8000
           SUPABASE_WS: ws://localhost:8000
-      
+
       # Execute CLI locally on sandbox datalayer
       - name: Execute parsing scripts to update DataLayer on Supabase Sandbox
         if: ${{ github.ref == 'refs/heads/upcoming_sandbox'}}
@@ -120,10 +120,10 @@ jobs:
           pipenv run python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations
 
         working-directory: ${{env.business-directory}}
-        env: 
+        env:
           SUPABASE_KEY: ${{secrets.SANDBOX_SUPABASE_KEY}}
-          SUPABASE_URL: https://xbrefnclajfcjlpnwyow.supabase.co	
-          SUPABASE_WS: ws://xbrefnclajfcjlpnwyow.supabase.co	
+          SUPABASE_URL: https://xbrefnclajfcjlpnwyow.supabase.co
+          SUPABASE_WS: ws://xbrefnclajfcjlpnwyow.supabase.co
 
       # Execute CLI locally on production datalayer
       - name: Execute parsing scripts to update DataLayer on Supabase Production
@@ -137,7 +137,7 @@ jobs:
 
 
         working-directory: ${{env.business-directory}}
-        env: 
+        env:
           SUPABASE_KEY: ${{secrets.PRODUCTION_SUPABASE_KEY}}
-          SUPABASE_URL: https://rlarzronkgoyvtdkltqy.supabase.co	
-          SUPABASE_WS: ws://rlarzronkgoyvtdkltqy.supabase.co	
+          SUPABASE_URL: https://rlarzronkgoyvtdkltqy.supabase.co
+          SUPABASE_WS: ws://rlarzronkgoyvtdkltqy.supabase.co
