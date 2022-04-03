@@ -44,15 +44,10 @@ jobs:
             pipenv install --dev
         working-directory: ${{env.business-directory}}
 
-
-      # [Prepare DB] Insert fakes
-      - name: Insert fake data in database
-        run: sh insert_all.sh
-        working-directory: ${{env.datalayer-directory}}
-
-      # Restart postgres service
-      - name: Restart postgres service
-        run: docker-compose restart rest
+      # Wait for the rest container
+      - name: Wait for datalayer
+        run: |
+          sh wait_for_rest.sh
         working-directory: ${{env.datalayer-docker-directory}}
 
       # Use Pytest to run tests

@@ -18,6 +18,10 @@ jobs:
       SUPABASE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       SUPABASE_URL: http://localhost:8000
       SUPABASE_WS: ws://localhost:8000
+      PGUSER: postgres
+      PGPORT: 50001
+      PGPASSWORD: your-super-secret-and-long-postgres-password
+      PGHOST: localhost
 
     steps:
       - uses: actions/checkout@v2
@@ -38,8 +42,8 @@ jobs:
 
       - name: Wait for datalayer
         run: |
-          cp .postgres/loaded.sh .loaded.sh
-          cp .postgres/wait_until_loaded.sh .wait_until_loaded.sh
+          cp ./postgres/loaded.sh ./loaded.sh
+          cp ./postgres/wait_until_loaded.sh ./wait_until_loaded.sh
           sh wait_until_loaded.sh
         working-directory: ${{env.datalayer-docker-directory}}
 
