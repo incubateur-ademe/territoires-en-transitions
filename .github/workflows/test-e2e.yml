@@ -1,0 +1,58 @@
+name: Tests end-to-end
+
+on:
+  pull_request:
+    branches-ignore:
+      - production
+      - production-static
+  push:
+jobs:
+  end-to-end-test:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    env:
+      e2e-directory: ./e2e
+      datalayer-directory: ./data_layer
+      project-docker-directory: ./
+      SUPABASE_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
+      SUPABASE_URL: http://localhost:8000
+      ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
+      SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
+      REACT_APP_CRISP_WEBSITE_ID: 96fe7866-d005-4623-80b1-bd772e99855c
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # Build docker
+      - name: Build docker
+        run: |
+          cp .env.sample .env
+          docker-compose -f dev-docker-compose.yml build
+        working-directory: ${{env.project-docker-directory}}
+
+      # Tear down docker
+      - name: Down docker
+        run: |
+          docker-compose -f dev-docker-compose.yml down
+        working-directory: ${{env.project-docker-directory}}
+
+      # Launch docker
+      - name: Launch docker
+        run: |
+          cp .env.sample .env
+          docker-compose -f dev-docker-compose.yml up
+        working-directory: ${{env.project-docker-directory}}
+
+      # Wait for the rest container
+      - name: Wait for datalayer
+        run: |
+          sh wait_for_rest.sh
+        working-directory: ${{env.datalayer-directory}}
+
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: ${{env.e2e-directory}}

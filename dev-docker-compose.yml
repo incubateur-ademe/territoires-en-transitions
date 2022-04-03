@@ -101,7 +101,6 @@ services:
     image: supabase/storage-api:v0.10.0
     depends_on:
       - db
-      - rest
     restart: unless-stopped
     environment:
       ANON_KEY: ${ANON_KEY}
@@ -154,7 +153,7 @@ services:
       test: sh loaded.sh
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 100
     depends_on:
       - db
     restart: on-failure
