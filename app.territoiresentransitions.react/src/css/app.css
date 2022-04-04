@@ -57,6 +57,11 @@ main a[href] {
   margin-top: -0.75rem;
 }
 
+/* pour supprimer la marge bas des paragraphes */
+.p-mb-0 p {
+  margin-bottom: 0;
+}
+
 /* Checkbox styling */
 
 .fiche-action input,
