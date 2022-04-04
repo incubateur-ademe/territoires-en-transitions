@@ -151,16 +151,15 @@ begin
     select id into claimed_collectivite_id;
 
     -- compute collectivite_already_claimed, which is true if a droit exist for claimed collectivite
-    select is_referent_of(claimed_collectivite_id)
+    select claimed_collectivite_id in (select collectivite_id
+                                       from private_utilisateur_droit
+                                       where active)
     into collectivite_already_claimed;
 
     if not collectivite_already_claimed
     then
         -- current user can claim collectivite as its own
         -- create a droit for current user on collectivite
-        delete
-        from private_utilisateur_droit
-        where is_referent_of(claimed_collectivite_id);
         insert
         into private_utilisateur_droit(user_id, collectivite_id, role_name, active)
         values (auth.uid(), claimed_collectivite_id, 'referent', true);
