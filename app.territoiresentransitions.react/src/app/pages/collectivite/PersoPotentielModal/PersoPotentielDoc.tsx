@@ -18,7 +18,7 @@ export type TPersoPotentielDocProps = {
 export const PersoPotentielDoc = (props: TPersoPotentielDocProps) => {
   const {actionDef, actionScore, regles} = props;
   return (
-    <div data-test="PersoPotentielDoc">
+    <div data-test="PersoPotentielDoc" className="p-mb-0">
       <ul>
         {regles.map(({description}, index) =>
           description ? (
