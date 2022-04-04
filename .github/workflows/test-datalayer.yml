@@ -22,6 +22,8 @@ jobs:
       PGPORT: 50001
       PGPASSWORD: your-super-secret-and-long-postgres-password
       PGHOST: localhost
+      SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
+      SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
 
     steps:
       - uses: actions/checkout@v2
@@ -34,10 +36,12 @@ jobs:
       - name: install postgres dev
         run: sudo apt-get install -y --no-install-recommends postgresql-server-dev-all
 
+      # Copy all projet .sample.env into .env with the variables
+      - name: Make .env files
+        run: sh make_dot_env.sh
+
       - name: Launch docker
-        run: |
-          cp .env.sample .env
-          docker-compose up --build -d
+        run: docker-compose up --build -d
         working-directory: ${{env.datalayer-docker-directory}}
 
       - name: Wait for datalayer
