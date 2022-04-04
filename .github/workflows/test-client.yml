@@ -11,13 +11,14 @@ jobs:
     name: Client unit tests
     runs-on: ubuntu-latest
     env:
-      LANG: 'fr_FR.UTF-8'
       app-directory: ./app.territoiresentransitions.react
       datalayer-directory: ./data_layer
       datalayer-docker-directory: ./data_layer
       SUPABASE_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
       SUPABASE_URL: http://localhost:8000
       REACT_APP_CRISP_WEBSITE_ID: 96fe7866-d005-4623-80b1-bd772e99855c
+      SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
+      SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
 
     steps:
       # cf. https://github.com/actions/checkout
@@ -28,30 +29,23 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ${{env.app-directory}}/package-lock.json
 
-      # fixe la langue de l'environnement de test : permet de faire passer les
-      # tests de composant utilisant des fonctions telles que toLocaleString()
-      - name: Set locale
-        run: |
-          sudo locale-gen ${{env.LANG}}
-          sudo update-locale LANG=${{env.LANG}}
+      # Copy all projet .sample.env into .env with the variables
+      - name: Make .env files
+        run: sh make_dot_env.sh
 
       # Launch docker
       - name: Launch docker
-        run: |
-          cp .env.sample .env
-          docker-compose up --build -d
+        run: docker-compose up --build -d
         working-directory: ${{env.datalayer-docker-directory}}
 
       # Install app dependencies
       - name: Install client dependencies
-        run: |
-          npm install
+        run: npm install
         working-directory: ${{env.app-directory}}
 
       # Wait for the rest container
       - name: Wait for datalayer
-        run: |
-          sh wait_for_rest.sh
+        run: sh wait_for_rest.sh
         working-directory: ${{env.datalayer-docker-directory}}
 
       # Run client unit tests

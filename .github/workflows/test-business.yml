@@ -11,21 +11,26 @@ jobs:
     name: Business tests
     runs-on: ubuntu-latest
     env:
-      business-directory:  ./business
+      business-directory: ./business
       datalayer-directory: ./data_layer
       datalayer-docker-directory: ./data_layer
       SUPABASE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       SUPABASE_URL: http://localhost:8000
       SUPABASE_WS: ws://localhost:8000
+      SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
+      SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
 
     steps:
       # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2
 
+      # Copy all projet .sample.env into .env with the variables
+      - name: Make .env files
+        run: sh make_dot_env.sh
+
       # Launch docker
       - name: Launch docker
         run: |
-          cp .env.sample .env
           docker-compose up --build -d
         working-directory: ${{env.datalayer-docker-directory}}
 
@@ -38,7 +43,6 @@ jobs:
       # Install the dependencies manager.
       - name: Install pipenv
         run: |
-          cp .env.sample .env
           python -m pip install --upgrade pipenv wheel
             pipenv install
             pipenv install --dev
@@ -52,5 +56,5 @@ jobs:
 
       # Use Pytest to run tests
       - name: Tests
-        run:  pipenv run pytest tests
+        run: pipenv run pytest tests
         working-directory: ${{env.business-directory}}

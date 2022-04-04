@@ -96,7 +96,9 @@ une solution qui intègre tous les [services](https://supabase.com/docs/architec
 
 ## Lancer le projet en local pour le développement
 Le `client`, le `data layer` et le `business` peuvent être lancés à partir de docker-compose.
-- D'abord renommer le `.env.sample` en `.env`
+- Ajouter les variables d'environnement dans les .env de chaque projet et la configuration kong ou lancer 
+  `make_dot_env.sh` avec les variables d'environnement `SUPABASE_SERVICE_ROLE_KEY` et `SUPABASE_ANON_KEY` 
+  pour renommer les `.env.sample` en `.env` en ajoutant les variables.
 - Puis `docker-compose -f dev-docker-compose.yml start`
 
 ## Déploiement
