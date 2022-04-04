@@ -1,5 +1,288 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Documentation 1`] = `
+<div
+  className="fr-tabs"
+>
+  <ul
+    className="fr-tabs__list"
+    role="tablist"
+  >
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-0"
+        aria-selected="false"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-0"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+        type="button"
+      >
+        <i
+          className="fr-fi-settings-line"
+        />
+         Personnalisation du potentiel
+      </button>
+    </li>
+    <li
+      role="presentation"
+    >
+      <button
+        aria-controls="fr-tabpanel-1"
+        aria-selected="true"
+        className="fr-tabs__tab fr-tabs__tab--icon-left"
+        id="fr-tab-1"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={0}
+        type="button"
+      >
+        <i
+          className="fr-fi-information-line"
+        />
+         Règles applicables
+      </button>
+    </li>
+  </ul>
+  <div
+    aria-labelledby="fr-tab-0"
+    className="fr-tabs__panel "
+    id="fr-tabpanel-0"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      data-test="PersoPotentielQR"
+    >
+      <div
+        className="fr-highlight"
+        style={
+          Object {
+            "border": "1px solid var(--yellow-moutarde-850)",
+            "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+            "marginLeft": 0,
+            "maxWidth": "fit-content",
+            "paddingBottom": "1rem",
+            "paddingRight": "2rem",
+            "paddingTop": "1rem",
+          }
+        }
+      >
+        <div
+          className="flex items-center"
+          data-test="PointsPotentiels"
+        >
+          Potentiel réduit pour cette sous-action : 3,3 points
+        </div>
+      </div>
+      <h6
+        className="mt-8 mb-0"
+      >
+        Caractéristiques liées
+      </h6>
+      <div
+        className="fr-form-group "
+      >
+        <fieldset
+          className="fr-fieldset"
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular pt-6"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
+              }
+            }
+          />
+          <div
+            className="fr-fieldset__content pl-4 "
+          >
+            <div
+              className="fr-radio-group fr-radio-group--sm vertical"
+            >
+              <input
+                checked={false}
+                id="q1-c1"
+                onChange={[Function]}
+                type="radio"
+                value="c1"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q1-c1"
+              >
+                Oui, pour l’ensemble de la collectivité
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm vertical"
+            >
+              <input
+                checked={false}
+                id="q1-c2"
+                onChange={[Function]}
+                type="radio"
+                value="c2"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q1-c2"
+              >
+                Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm vertical"
+            >
+              <input
+                checked={false}
+                id="q1-c3"
+                onChange={[Function]}
+                type="radio"
+                value="c3"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q1-c3"
+              >
+                Non
+              </label>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset
+          className="fr-fieldset"
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular pt-6"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
+              }
+            }
+          />
+          <div
+            className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
+          >
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={false}
+                id="q2-true"
+                onChange={[Function]}
+                type="radio"
+                value="true"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q2-true"
+              >
+                Oui
+              </label>
+            </div>
+            <div
+              className="fr-radio-group fr-radio-group--sm"
+            >
+              <input
+                checked={false}
+                id="q2-false"
+                onChange={[Function]}
+                type="radio"
+                value="false"
+              />
+              <label
+                className="fr-label"
+                htmlFor="q2-false"
+              >
+                Non
+              </label>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset
+          className="fr-fieldset"
+        >
+          <legend
+            className="fr-fieldset__legend fr-text--regular pt-6"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
+              }
+            }
+          />
+          <div
+            className="fr-fieldset__content pl-4 fr-fieldset--inline"
+          >
+            <label
+              className="fr-label"
+              htmlFor="q3"
+            >
+              Part en pourcentage
+            </label>
+            <input
+              className="fr-input"
+              id="q3"
+              max={100}
+              min={0}
+              onChange={[Function]}
+              style={
+                Object {
+                  "width": 224,
+                }
+              }
+              type="number"
+              value=""
+            />
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div
+    aria-labelledby="fr-tab-1"
+    className="fr-tabs__panel fr-tabs__panel--selected"
+    id="fr-tabpanel-1"
+    role="tabpanel"
+    tabIndex="0"
+  >
+    <div
+      className="p-mb-0"
+      data-test="PersoPotentielDoc"
+    >
+      <ul>
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+            }
+          }
+        />
+        <li
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.</p><p>Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.</p>",
+            }
+          }
+        />
+        <li>
+          Nombre de points initial pour cette 
+          sous-action
+           :
+           
+          6,7
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Plusieurs Questions 1`] = `
 <div
   className="fr-tabs"
@@ -103,12 +386,11 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
             className="fr-fieldset__content pl-4 "
           >
             <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-radio-group fr-radio-group--sm vertical"
             >
               <input
                 checked={false}
                 id="q1-c1"
-                name="choix"
                 onChange={[Function]}
                 type="radio"
                 value="c1"
@@ -121,12 +403,11 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               </label>
             </div>
             <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-radio-group fr-radio-group--sm vertical"
             >
               <input
                 checked={false}
                 id="q1-c2"
-                name="choix"
                 onChange={[Function]}
                 type="radio"
                 value="c2"
@@ -139,12 +420,11 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               </label>
             </div>
             <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-radio-group fr-radio-group--sm vertical"
             >
               <input
                 checked={false}
                 id="q1-c3"
-                name="choix"
                 onChange={[Function]}
                 type="radio"
                 value="c3"
@@ -177,15 +457,14 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
             >
               <input
                 checked={false}
-                id="q2-y"
-                name="binaire"
+                id="q2-true"
                 onChange={[Function]}
                 type="radio"
                 value="true"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-y"
+                htmlFor="q2-true"
               >
                 Oui
               </label>
@@ -195,15 +474,14 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
             >
               <input
                 checked={false}
-                id="q2-n"
-                name="binaire"
+                id="q2-false"
                 onChange={[Function]}
                 type="radio"
                 value="false"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-n"
+                htmlFor="q2-false"
               >
                 Non
               </label>
@@ -235,7 +513,6 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               id="q3"
               max={100}
               min={0}
-              name="proportion"
               onChange={[Function]}
               style={
                 Object {
@@ -258,6 +535,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     tabIndex="0"
   >
     <div
+      className="p-mb-0"
       data-test="PersoPotentielDoc"
     >
       <ul>
@@ -395,15 +673,14 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
             >
               <input
                 checked={false}
-                id="q2-y"
-                name="binaire"
+                id="q2-true"
                 onChange={[Function]}
                 type="radio"
                 value="true"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-y"
+                htmlFor="q2-true"
               >
                 Oui
               </label>
@@ -413,15 +690,14 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
             >
               <input
                 checked={false}
-                id="q2-n"
-                name="binaire"
+                id="q2-false"
                 onChange={[Function]}
                 type="radio"
                 value="false"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-n"
+                htmlFor="q2-false"
               >
                 Non
               </label>
@@ -439,6 +715,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     tabIndex="0"
   >
     <div
+      className="p-mb-0"
       data-test="PersoPotentielDoc"
     >
       <ul>
@@ -575,36 +852,23 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               className="fr-radio-group fr-radio-group--sm"
             >
               <input
-                checked={false}
-                id="q2-y"
-                name="binaire"
-                onChange={[Function]}
-                type="radio"
-                value="true"
-              />
-              <label
-                className="fr-label"
-                htmlFor="q2-y"
-              >
-                Oui
-              </label>
-            </div>
-            <div
-              className="fr-radio-group fr-radio-group--sm"
-            >
-              <input
                 checked={true}
-                id="q2-n"
-                name="binaire"
+                id="q2-false"
                 onChange={[Function]}
                 type="radio"
                 value="false"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-n"
+                htmlFor="q2-false"
               >
                 Non
+                <button
+                  className="fr-link fr-link--icon-left fr-fi-edit-line fr-ml-3w"
+                  onClick={[Function]}
+                >
+                  Modifier
+                </button>
               </label>
             </div>
           </div>
@@ -620,6 +884,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     tabIndex="0"
   >
     <div
+      className="p-mb-0"
       data-test="PersoPotentielDoc"
     >
       <ul>
@@ -753,12 +1018,11 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
             className="fr-fieldset__content pl-4 "
           >
             <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-radio-group fr-radio-group--sm vertical"
             >
               <input
                 checked={false}
                 id="q1-c1"
-                name="choix"
                 onChange={[Function]}
                 type="radio"
                 value="c1"
@@ -771,12 +1035,11 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               </label>
             </div>
             <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-radio-group fr-radio-group--sm vertical"
             >
               <input
                 checked={false}
                 id="q1-c2"
-                name="choix"
                 onChange={[Function]}
                 type="radio"
                 value="c2"
@@ -789,12 +1052,11 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               </label>
             </div>
             <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-radio-group fr-radio-group--sm vertical"
             >
               <input
                 checked={false}
                 id="q1-c3"
-                name="choix"
                 onChange={[Function]}
                 type="radio"
                 value="c3"
@@ -819,6 +1081,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     tabIndex="0"
   >
     <div
+      className="p-mb-0"
       data-test="PersoPotentielDoc"
     >
       <ul>
@@ -952,48 +1215,11 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
             className="fr-fieldset__content pl-4 "
           >
             <div
-              className="fr-radio-group fr-radio-group--sm"
-            >
-              <input
-                checked={false}
-                id="q1-c1"
-                name="choix"
-                onChange={[Function]}
-                type="radio"
-                value="c1"
-              />
-              <label
-                className="fr-label"
-                htmlFor="q1-c1"
-              >
-                Oui, pour l’ensemble de la collectivité
-              </label>
-            </div>
-            <div
-              className="fr-radio-group fr-radio-group--sm"
-            >
-              <input
-                checked={false}
-                id="q1-c2"
-                name="choix"
-                onChange={[Function]}
-                type="radio"
-                value="c2"
-              />
-              <label
-                className="fr-label"
-                htmlFor="q1-c2"
-              >
-                Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
-              </label>
-            </div>
-            <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-radio-group fr-radio-group--sm "
             >
               <input
                 checked={true}
                 id="q1-c3"
-                name="choix"
                 onChange={[Function]}
                 type="radio"
                 value="c3"
@@ -1003,6 +1229,12 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
                 htmlFor="q1-c3"
               >
                 Non
+                <button
+                  className="fr-link fr-link--icon-left fr-fi-edit-line fr-ml-3w"
+                  onClick={[Function]}
+                >
+                  Modifier
+                </button>
               </label>
             </div>
           </div>
@@ -1018,6 +1250,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     tabIndex="0"
   >
     <div
+      className="p-mb-0"
       data-test="PersoPotentielDoc"
     >
       <ul>
@@ -1161,7 +1394,6 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               id="q3"
               max={100}
               min={0}
-              name="proportion"
               onChange={[Function]}
               style={
                 Object {
@@ -1169,7 +1401,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
                 }
               }
               type="number"
-              value="undefined"
+              value=""
             />
           </div>
         </fieldset>
@@ -1184,6 +1416,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     tabIndex="0"
   >
     <div
+      className="p-mb-0"
       data-test="PersoPotentielDoc"
     >
       <ul>
@@ -1327,7 +1560,6 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               id="q3"
               max={100}
               min={0}
-              name="proportion"
               onChange={[Function]}
               style={
                 Object {
@@ -1350,6 +1582,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
     tabIndex="0"
   >
     <div
+      className="p-mb-0"
       data-test="PersoPotentielDoc"
     >
       <ul>

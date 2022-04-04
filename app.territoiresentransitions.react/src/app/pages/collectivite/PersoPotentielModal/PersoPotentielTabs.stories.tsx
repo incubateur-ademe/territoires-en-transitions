@@ -71,9 +71,9 @@ PlusieursQuestions.args = {
   questionReponses: [Q1, Q2, {...Q3, reponse: 60}],
 };
 
-/*
 export const Documentation = Template.bind({});
 Documentation.args = {
   defaultActiveTab: 1,
+  actionScore: SCORE_MODIFIE,
+  questionReponses: [Q1, Q2, Q3],
 };
-*/

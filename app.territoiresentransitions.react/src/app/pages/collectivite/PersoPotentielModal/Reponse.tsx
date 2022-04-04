@@ -1,6 +1,7 @@
-import {FC, FormEvent, ReactNode} from 'react';
+import {ChangeEvent, FC, ReactNode} from 'react';
 import {TReponse} from 'generated/dataLayer/reponse_read';
 import {TQuestionReponseProps} from './PersoPotentielQR';
+import {TListeChoix} from 'generated/dataLayer/question_read';
 
 const ReponseContainer = ({
   children,
@@ -17,24 +18,26 @@ const ReponseContainer = ({
 /** Affiche une réponse donnant le choix entre plusieurs énoncés */
 const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
   const {id: questionId, choix, reponse} = qr;
+  const hasReponse = reponse !== null && reponse !== undefined;
+  const choices = getFilteredChoices(reponse, choix || []);
 
   return (
     <ReponseContainer>
-      {choix?.map(({id: choiceId, label}) => {
-        const eltId = `${questionId}-${choiceId}`;
+      {choices?.map(({id: choiceId, label}) => {
         return (
-          <div key={choiceId} className="fr-radio-group fr-radio-group--sm">
-            <input
-              type="radio"
-              name="choix"
-              id={eltId}
-              checked={reponse === choiceId}
-              value={choiceId}
+          <div
+            key={choiceId}
+            className={`fr-radio-group fr-radio-group--sm ${
+              hasReponse ? '' : 'vertical'
+            }`}
+          >
+            <RadioButton
+              questionId={questionId}
+              choiceId={choiceId}
+              label={label}
+              reponse={reponse}
               onChange={onChange}
             />
-            <label className="fr-label" htmlFor={eltId}>
-              {label}
-            </label>
           </div>
         );
       })}
@@ -45,37 +48,24 @@ const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
 /** Affiche une réponse donnant le choix entre oui et non */
 const ReponseBinaire = ({qr, onChange}: TQuestionReponseProps) => {
   const {id: questionId, reponse} = qr;
-  const idYes = `${questionId}-y`;
-  const idNo = `${questionId}-n`;
+  const choices = getFilteredChoices(reponse, [
+    {id: 'true', label: 'Oui'},
+    {id: 'false', label: 'Non'},
+  ]);
 
   return (
     <ReponseContainer className="fr-fieldset--inline inline-radio">
-      <div className="fr-radio-group fr-radio-group--sm">
-        <input
-          type="radio"
-          name="binaire"
-          id={idYes}
-          value="true"
-          checked={reponse === true}
-          onChange={onChange}
-        />
-        <label className="fr-label" htmlFor={idYes}>
-          Oui
-        </label>
-      </div>
-      <div className="fr-radio-group fr-radio-group--sm">
-        <input
-          type="radio"
-          name="binaire"
-          id={idNo}
-          value="false"
-          checked={reponse === false}
-          onChange={onChange}
-        />
-        <label className="fr-label" htmlFor={idNo}>
-          Non
-        </label>
-      </div>
+      {choices?.map(({id: choiceId, label}) => (
+        <div key={choiceId} className="fr-radio-group fr-radio-group--sm">
+          <RadioButton
+            questionId={questionId}
+            choiceId={choiceId}
+            label={label}
+            reponse={reponse}
+            onChange={onChange}
+          />
+        </div>
+      ))}
     </ReponseContainer>
   );
 };
@@ -93,17 +83,23 @@ const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
       </label>
       <input
         type="number"
-        name="proportion"
         min={min}
         max={max}
         id={questionId}
         style={{width: 224}}
         className="fr-input"
-        value={String(reponse)}
-        onChange={onChange}
+        value={String(reponse || '')}
+        onChange={e => onChange(getReponseProportion(e))}
       />
     </ReponseContainer>
   );
+};
+
+// parse une réponse saisie dans un champ proportion
+const getReponseProportion = (e: ChangeEvent<HTMLInputElement>) => {
+  const {value, min, max} = e.target;
+  const v = Math.min(Math.max(parseInt(min), parseInt(value)), parseInt(max));
+  return isNaN(v) ? null : v;
 };
 
 // correspondances entre un type de réponse et son composant
@@ -113,22 +109,52 @@ export const reponseParType: {[k: string]: FC<TQuestionReponseProps>} = {
   proportion: ReponseProportion,
 };
 
-// correspondances entre un type de réponse attendue et sa fonction de
-// traitement de la valeur modifiée
-export const traiteChgtReponseParType: {
-  [k: string]: (e: FormEvent<HTMLInputElement>) => TReponse;
-} = {
-  choix: e => {
-    const {value} = e.target as HTMLInputElement;
-    return value;
-  },
-  binaire: e => {
-    const {value} = e.target as HTMLInputElement;
-    return value === 'true';
-  },
-  proportion: e => {
-    const {value, min, max} = e.target as HTMLInputElement;
-    const v = Math.min(Math.max(parseInt(min), parseInt(value)), parseInt(max));
-    return isNaN(v) ? null : v;
-  },
+const getFilteredChoices = (
+  reponse: TReponse | undefined,
+  choix: TListeChoix
+): TListeChoix => {
+  const hasReponse = reponse !== null && reponse !== undefined;
+  return hasReponse
+    ? choix?.filter(({id: choiceId}) => reponse?.toString() === choiceId)
+    : choix;
+};
+
+const RadioButton = ({
+  questionId,
+  choiceId,
+  label,
+  reponse,
+  onChange,
+}: {
+  questionId: string;
+  choiceId: string;
+  label: string;
+  reponse: TReponse | undefined;
+  onChange: (reponse: TReponse) => void;
+}) => {
+  const hasReponse = reponse !== null && reponse !== undefined;
+  const eltId = `${questionId}-${choiceId}`;
+
+  return (
+    <>
+      <input
+        type="radio"
+        id={eltId}
+        checked={reponse?.toString() === choiceId}
+        value={choiceId}
+        onChange={() => onChange(choiceId)}
+      />
+      <label className="fr-label" htmlFor={eltId}>
+        {label}
+        {hasReponse && (
+          <button
+            className="fr-link fr-link--icon-left fr-fi-edit-line fr-ml-3w"
+            onClick={() => onChange(null)}
+          >
+            Modifier
+          </button>
+        )}
+      </label>
+    </>
+  );
 };

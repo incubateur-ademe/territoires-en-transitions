@@ -44,7 +44,7 @@ main a[href] {
 .fr-radio-group--sm input[type='radio'] + label {
   padding: 0.5rem 0 !important;
 }
-.fr-radio-group--sm input[type='radio'] + label:before {
+.fr-radio-group--sm.vertical input[type='radio'] + label:before {
   margin-top: 0.75rem !important;
 }
 /** réduit l'espacement entre l'élément précédent et une liste horizontale de
