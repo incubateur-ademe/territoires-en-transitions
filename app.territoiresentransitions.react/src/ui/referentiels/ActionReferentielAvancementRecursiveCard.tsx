@@ -11,6 +11,7 @@ import {
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {PersoPotentiel} from 'app/pages/collectivite/PersoPotentielModal/PersoPotentiel';
 
 /**
  * Displays an actions and it's children below.
@@ -53,6 +54,7 @@ export const ActionReferentielAvancementCard = ({
         <ActionReferentielDisplayTitle action={action} />
         <Spacer size={1} />
         <ActionReferentielDescription action={action} />
+        {action.have_questions && <PersoPotentiel actionDef={action} />}
         {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
         {action.have_preuve && <ActionPreuvesExpandPanel action={action} />}
         <ActionCommentaire action={action} />
