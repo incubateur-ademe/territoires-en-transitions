@@ -2,7 +2,6 @@
  * Affiche l'onglet "Personnalisation du potentiel"
  */
 
-import {FormEvent} from 'react';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {ActionScore} from 'types/ClientScore';
 import {
@@ -10,7 +9,8 @@ import {
   TChangeReponse,
 } from 'generated/dataLayer/reponse_write';
 import {PointsPotentiels} from './PointsPotentiels';
-import {traiteChgtReponseParType, reponseParType} from './Reponse';
+import {reponseParType} from './Reponse';
+import {TReponse} from 'generated/dataLayer/reponse_read';
 
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */
@@ -45,7 +45,7 @@ export const PersoPotentielQR = (props: TPersoPotentielQRProps) => {
 
 export type TQuestionReponseProps = {
   qr: TQuestionReponse;
-  onChange: (e: FormEvent<HTMLInputElement>) => void;
+  onChange: (reponse: TReponse) => void;
 };
 
 /** Affiche une question/réponse et son éventuel libellé d'aide */
@@ -82,17 +82,12 @@ export const QuestionReponseList = (props: TQuestionReponseListProps) => {
   return (
     <div className={`fr-form-group ${className || ''}`}>
       {questionReponses.map(qr => {
-        const {id, type} = qr;
+        const {id} = qr;
         return (
           <fieldset key={id} className="fr-fieldset">
             <QuestionReponse
               qr={qr}
-              onChange={(e: FormEvent<HTMLInputElement>) => {
-                const traiteChgt = traiteChgtReponseParType[type];
-                if (traiteChgt) {
-                  onChange(id, traiteChgt(e));
-                }
-              }}
+              onChange={(reponse: TReponse) => onChange(id, reponse)}
             />
           </fieldset>
         );

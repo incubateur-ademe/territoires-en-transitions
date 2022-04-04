@@ -5,7 +5,7 @@ export type TQuestionRead = {
   type: QuestionType;
   description: string;
   formulation: string;
-  choix?: [{id: TChoixId; label: string}];
+  choix?: TListeChoix;
 };
 
 export enum QuestionType {
@@ -16,3 +16,4 @@ export enum QuestionType {
 
 export type TQuestionId = string;
 export type TChoixId = string;
+export type TListeChoix = {id: TChoixId; label: string}[];
