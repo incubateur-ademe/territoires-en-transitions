@@ -68,7 +68,10 @@ class EvaluationConfig(Config):
     def prepare_use_cases(self) -> List[UseCase]:
         return [
             ComputeReferentielScoresForCollectivite(
-                self.domain_message_bus, self.referentiel_repo, self.statuses_repo
+                self.domain_message_bus,
+                self.referentiel_repo,
+                self.personnalisation_repo,
+                self.statuses_repo,
             ),
             StoreScoresForCollectivite(
                 self.domain_message_bus, score_repo=self.score_repo

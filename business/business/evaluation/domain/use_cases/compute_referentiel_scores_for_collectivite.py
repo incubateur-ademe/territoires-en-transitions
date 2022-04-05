@@ -1,3 +1,4 @@
+from copy import deepcopy
 import logging
 from typing import Dict, List, Optional
 
@@ -6,6 +7,10 @@ from business.evaluation.domain.models.action_statut import (
     ActionStatut,
 )
 from business.evaluation.domain.models.action_score import ActionScore
+from business.personnalisation.models import ActionPersonnalisationConsequence
+from business.personnalisation.ports.personnalisation_repo import (
+    AbstractPersonnalisationRepository,
+)
 from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.evaluation.domain.ports.action_status_repo import (
     AbstractActionStatutRepository,
@@ -39,73 +44,94 @@ class ActionPointTree(ActionTree):
     def get_action_point(self, action_id: ActionId) -> float:
         return self._points_by_id[action_id]
 
+    def set_action_point(self, action_id: ActionId, value: float) -> None:
+        self._points_by_id[action_id] = value
+
 
 class ComputeReferentielScoresForCollectivite(UseCase):
     def __init__(
         self,
         bus: AbstractDomainMessageBus,
         referentiel_repo: AbstractReferentielRepository,
+        personnalisation_repo: AbstractPersonnalisationRepository,
         statuses_repo: AbstractActionStatutRepository,
         referentiel_action_level: Optional[Dict[ActionReferentiel, int]] = None,
     ) -> None:
         self.bus = bus
         self.statuses_repo = statuses_repo
         self.referentiel_repo = referentiel_repo
+        self.personnalisation_repo = personnalisation_repo
         self.points_trees: Dict[ActionReferentiel, ActionPointTree] = {}
         self.referentiel_action_level = referentiel_action_level or {"eci": 2, "cae": 3}
 
     def execute(self, command: events.ActionStatutOrConsequenceUpdatedForCollectivite):
-        point_tree = self.points_trees.get(command.referentiel)
+        point_tree_referentiel = self.points_trees.get(command.referentiel)
         action_level = self.referentiel_action_level[command.referentiel]
-        if point_tree is None:
+        if point_tree_referentiel is None:
             try:
                 print("Building point tree for referentiel ", command.referentiel)
-                point_tree = self._build_points_tree(command.referentiel)
-                self.points_trees[command.referentiel] = point_tree
+                point_tree_referentiel = self._build_points_tree(command.referentiel)
+                self.points_trees[command.referentiel] = point_tree_referentiel
             except ActionTreeError:
                 self.bus.publish_event(
                     events.ReferentielScoresForCollectiviteComputationFailed(
                         f"Referentiel tree could not be computed for referentiel {command.referentiel}"
                     )
-                )  # TODO
+                )
                 return
 
         statuses = self.statuses_repo.get_all_for_collectivite(
             command.collectivite_id, command.referentiel
         )
-        print("\nFetched statuses from datalayer : ", statuses)
-
         status_by_action_id: Dict[str, ActionStatut] = {
             action_status.action_id: action_status
             for action_status in statuses
             if action_status.is_renseigne
         }
+        personnalisation_consequences = self.personnalisation_repo.get_action_personnalisation_consequences_for_collectivite(
+            command.collectivite_id
+        )
 
-        scores: Dict[ActionId, ActionScore] = {}
+        # 0. Build point tree personnalise
+        point_tree_personnalise = self.build_point_tree_personnalise(
+            point_tree_referentiel, personnalisation_consequences
+        )
+        action_personnalises_ids = list(personnalisation_consequences.keys())
 
         # 1. First, calculate all potentiels after 'non concernee' action's points redistribution
+        scores: Dict[ActionId, ActionScore] = {}
         actions_non_concernes_ids = self.compute_actions_non_concernes_ids(
-            point_tree, statuses
+            point_tree_personnalise, statuses
         )
         potentiels = self.compute_potentiels(
-            point_tree, actions_non_concernes_ids, action_level
+            point_tree_personnalise,
+            actions_non_concernes_ids,
+            action_level,
         )
         # 2. Estimate tache points based on statuses
-        point_tree.map_on_taches(
+        point_tree_referentiel.map_on_taches(
             lambda tache: self.update_scores_from_tache_given_statuses(
-                point_tree,  # type: ignore
+                point_tree_referentiel,
+                point_tree_personnalise,
                 scores,
                 potentiels,
                 tache,
                 status_by_action_id,
                 actions_non_concernes_ids,
+                action_personnalises_ids,
                 command.referentiel,
             )
         )
         # 3. Infer all action points based on their children's
-        point_tree.map_from_sous_actions_to_root(
+        point_tree_referentiel.map_from_sous_actions_to_root(
             lambda action_id: self.update_scores_for_action_given_children_scores(
-                point_tree, scores, potentiels, action_id, command.referentiel  # type: ignore
+                point_tree_referentiel,
+                point_tree_personnalise,
+                scores,
+                potentiels,
+                action_personnalises_ids,
+                action_id,
+                command.referentiel,
             )
         )
         self.bus.publish_event(
@@ -118,23 +144,29 @@ class ComputeReferentielScoresForCollectivite(UseCase):
 
     def update_scores_from_tache_given_statuses(
         self,
-        point_tree: ActionPointTree,
+        point_tree_referentiel: ActionPointTree,
+        point_tree_personnalise: ActionPointTree,
         scores: Dict[ActionId, ActionScore],
         potentiels: Dict[ActionId, float],
         tache_id: ActionId,
         status_by_action_id: Dict[str, ActionStatut],
         actions_non_concernes_ids: List[ActionId],
+        action_personnalises_ids: List[ActionId],
         referentiel: ActionReferentiel,
     ):
 
-        tache_points = point_tree.get_action_point(tache_id)
+        tache_points_personnalise = point_tree_personnalise.get_action_point(tache_id)
+        tache_points_referentiel = point_tree_referentiel.get_action_point(tache_id)
 
         # TODO : find a softer way to tell that points cannot be None once they have been filled by referentiel constructor.
-        assert tache_points is not None
+        assert tache_points_referentiel is not None
+        assert tache_points_personnalise is not None
 
         tache_point_potentiel = potentiels[tache_id]
         tache_status = status_by_action_id.get(tache_id)
         tache_concerne = tache_id not in actions_non_concernes_ids
+        tache_is_personnalise = tache_id in action_personnalises_ids
+        tache_is_desactive = tache_is_personnalise and tache_points_personnalise == 0
 
         if not tache_concerne:
             scores[tache_id] = ActionScore(
@@ -146,12 +178,14 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 point_potentiel=tache_point_potentiel,
                 total_taches_count=1,
                 completed_taches_count=1,
-                point_referentiel=tache_points,
+                point_referentiel=tache_points_referentiel,
                 concerne=tache_concerne,
                 referentiel=referentiel,
-                # TODO : implement those fields
-                point_potentiel_perso=None,
-                desactive=False,
+                # perso
+                point_potentiel_perso=tache_points_personnalise
+                if tache_is_personnalise and not tache_is_desactive
+                else None,
+                desactive=tache_is_desactive,
             )
             return
 
@@ -189,26 +223,31 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             point_non_renseigne=point_non_renseigne,
             point_fait=point_fait,
             point_potentiel=tache_point_potentiel,
-            point_referentiel=tache_points,
+            point_referentiel=tache_points_referentiel,
             completed_taches_count=completed_taches_count,
             total_taches_count=1,
             concerne=tache_concerne,
             referentiel=referentiel,
-            # TODO : implement those fields
-            point_potentiel_perso=None,
-            desactive=False,
+            # perso
+            point_potentiel_perso=tache_points_personnalise
+            if tache_is_personnalise
+            else None,
+            desactive=tache_is_personnalise and tache_points_personnalise == 0.0,
         )
 
     def update_scores_for_action_given_children_scores(
         self,
-        point_tree: ActionPointTree,
+        point_tree_referentiel: ActionPointTree,
+        point_tree_personnalise: ActionPointTree,
         scores: Dict[ActionId, ActionScore],
         potentiels: Dict[ActionId, float],
+        action_personnalises_ids: List[ActionId],
         action_id: ActionId,
         referentiel: ActionReferentiel,
     ):
-        action_children = point_tree.get_children(action_id)
-        action_point_referentiel = point_tree.get_action_point(action_id)
+        action_children = point_tree_referentiel.get_children(action_id)
+        action_point_referentiel = point_tree_referentiel.get_action_point(action_id)
+        action_point_personnalise = point_tree_personnalise.get_action_point(action_id)
 
         action_children_with_scores = [
             child_id for child_id in action_children if child_id in scores
@@ -255,7 +294,10 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 for child_id in action_children
             ]
         )
-
+        action_is_personnalise = action_id in action_personnalises_ids
+        action_is_desactive = (
+            action_is_personnalise and action_point_personnalise == 0.0
+        )
         scores[action_id] = ActionScore(
             action_id=action_id,
             point_fait=point_fait,
@@ -268,9 +310,11 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             point_referentiel=action_point_referentiel,
             concerne=concerne,
             referentiel=referentiel,
-            # TODO : implement those fields
-            point_potentiel_perso=None,
-            desactive=False,
+            # perso
+            point_potentiel_perso=action_point_personnalise
+            if action_is_personnalise and not action_is_desactive
+            else None,
+            desactive=action_is_desactive,
         )
 
     def _build_points_tree(self, referentiel: ActionReferentiel) -> ActionPointTree:
@@ -302,10 +346,10 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         action_id: ActionId,
         original_action_potentiel: float,
         actions_non_concernes_ids: List[ActionId],
-        point_tree: ActionPointTree,
+        point_tree_personnalise: ActionPointTree,
     ):
         # If some siblings are non concernes, redistribute their points
-        action_siblings = point_tree.get_siblings(action_id)
+        action_siblings = point_tree_personnalise.get_siblings(action_id)
         action_sibling_is_non_concerne = [
             action_id in actions_non_concernes_ids for action_id in action_siblings
         ]
@@ -321,14 +365,14 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             )
             points_non_concerne_to_redistribute = sum(
                 [
-                    point_tree.get_action_point(action_id)
+                    point_tree_personnalise.get_action_point(action_id)
                     for action_id in siblings_non_concernes
                 ]
             )
             actions_to_redistribute_amongst = [
                 action_id
                 for action_id in siblings_concernes
-                if point_tree.get_action_point(action_id) != 0
+                if point_tree_personnalise.get_action_point(action_id) != 0
             ]
             if action_id in actions_to_redistribute_amongst:
                 return (
@@ -358,29 +402,30 @@ class ComputeReferentielScoresForCollectivite(UseCase):
 
     def compute_potentiels(
         self,
-        point_tree: ActionPointTree,
+        point_tree_personnalise: ActionPointTree,
         actions_non_concernes_ids: List[ActionId],
         action_level: int,
     ) -> Dict[ActionId, float]:
+
         potentiels = {}
 
         def _add_action_potentiel_after_redistribution(
             action_id: ActionId,
         ):
-            this_level = point_tree.infer_depth(action_id)
-            children = point_tree.get_children(action_id)
+            this_level = point_tree_personnalise.infer_depth(action_id)
+            children = point_tree_personnalise.get_children(action_id)
 
             if not children:  # tache
                 original_action_potentiel = (
                     0
                     if action_id in actions_non_concernes_ids
-                    else point_tree.get_action_point(action_id)
+                    else point_tree_personnalise.get_action_point(action_id)
                 )
             else:
                 original_action_potentiel = sum(
                     [
                         potentiels[child_id]
-                        for child_id in point_tree.get_children(action_id)
+                        for child_id in point_tree_personnalise.get_children(action_id)
                     ]
                 )
 
@@ -389,13 +434,13 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                     action_id,
                     original_action_potentiel,
                     actions_non_concernes_ids,
-                    point_tree,
+                    point_tree_personnalise,
                 )
                 potentiels[action_id] = potentiel
             else:
                 potentiels[action_id] = original_action_potentiel
 
-        point_tree.map_from_taches_to_root(
+        point_tree_personnalise.map_from_taches_to_root(
             lambda action_id: _add_action_potentiel_after_redistribution(
                 action_id,
             )
@@ -403,24 +448,63 @@ class ComputeReferentielScoresForCollectivite(UseCase):
 
         def _resize_children_potentiels(action_id: ActionId):
             action_potentiel = potentiels[action_id]
-            action_referentiel_points = point_tree.get_action_point(action_id)
+            action_referentiel_points = point_tree_personnalise.get_action_point(
+                action_id
+            )
             if action_potentiel != action_referentiel_points:
-                children = point_tree.get_children(action_id)
+                children = point_tree_personnalise.get_children(action_id)
                 if not children:
                     return
 
                 for child_id in children:
                     new_child_potentiel = (
-                        potentiels[child_id]
-                        / action_referentiel_points
-                        * action_potentiel
+                        (
+                            potentiels[child_id]
+                            / action_referentiel_points
+                            * action_potentiel
+                        )
+                        if action_referentiel_points
+                        else 0.0
                     )
                     potentiels[child_id] = new_child_potentiel
 
-        point_tree.map_from_action_to_taches(
+        point_tree_personnalise.map_from_actions_to_taches(
             lambda action_id: _resize_children_potentiels(
                 action_id,
             ),
             action_level,
         )
         return potentiels
+
+    def build_point_tree_personnalise(
+        self,
+        point_tree_referentiel: ActionPointTree,
+        personnalisation_consequences: Dict[
+            ActionId, ActionPersonnalisationConsequence
+        ],
+    ) -> ActionPointTree:
+        point_tree_personnalise = deepcopy(point_tree_referentiel)
+        for action_id, consequence in personnalisation_consequences.items():
+            if consequence.desactive:
+                personnalisation = (
+                    lambda action_id: point_tree_personnalise.set_action_point(
+                        action_id, 0.0
+                    )
+                )
+                point_tree_personnalise.map_from_action_to_taches(
+                    personnalisation,
+                    action_id,
+                )
+            elif consequence.potentiel_perso is not None:
+                factor = consequence.potentiel_perso
+                personnalisation = (
+                    lambda action_id: point_tree_personnalise.set_action_point(
+                        action_id,
+                        point_tree_referentiel.get_action_point(action_id) * factor,
+                    )
+                )
+                point_tree_personnalise.map_from_action_to_taches(
+                    personnalisation,
+                    action_id,
+                )
+        return point_tree_personnalise

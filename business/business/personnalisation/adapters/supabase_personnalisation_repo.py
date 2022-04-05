@@ -91,5 +91,19 @@ class SupabasePersonnalisationRepository(
         )
         return [ReponseUpdatedForCollectivite(row["collectivite_id"]) for row in rows]
 
-    def get_now(self) -> str:
-        return datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+    def get_action_personnalisation_consequences_for_collectivite(
+        self,
+        collectivite_id: int,
+    ) -> Dict[ActionId, ActionPersonnalisationConsequence]:
+        rows = self.client.db.get_by(
+            supabase_names.tables.personnalisation_consequence,
+            {
+                "collectivite_id": f"eq.{collectivite_id}",
+            },
+        )
+        if not rows:
+            return {}
+        return {
+            action_id: ActionPersonnalisationConsequence(**serialized_consequence)
+            for action_id, serialized_consequence in rows[0]["consequences"].items()
+        }

@@ -18,11 +18,6 @@ def test_save_action_personnalisation_consequences_for_collectivite_to_repo_shou
     supabase_repo: SupabasePersonnalisationRepository, supabase_client: SupabaseClient
 ):
     collectivite_id = 23
-
-    # Mock get_now method
-    insert_date = "2022-02-02T16:00:00+00:00"
-    supabase_repo.get_now = lambda: insert_date
-
     # 1. Save personnalisation consequences on this collectivite
     supabase_repo.save_action_personnalisation_consequences_for_collectivite(
         collectivite_id=collectivite_id,
@@ -49,10 +44,6 @@ def test_save_action_personnalisation_consequences_for_collectivite_to_repo_shou
     }
 
     # 2. Update the score for same collectivite, same referentiel
-    # Mock get_now method
-    update_date = "2022-02-02T18:00:00+00:00"
-    supabase_repo.get_now = lambda: update_date
-
     supabase_repo.save_action_personnalisation_consequences_for_collectivite(
         collectivite_id=collectivite_id,
         action_personnalisation_consequences={
@@ -165,6 +156,29 @@ def test_get_reponses_for_collectivite_returns_empty_list_for_collectivite_3(
 ):
     collectivite_3_fake_responses = supabase_repo.get_reponses_for_collectivite(3)
     assert collectivite_3_fake_responses == []
+
+
+def test_get_action_personnalisation_consequences_for_collectivite(
+    supabase_repo: SupabasePersonnalisationRepository,
+    supabase_client: SupabaseClient,
+):
+    # Prepare : insert consequence for collectivite 1
+    supabase_client.db.insert(
+        supabase_names.tables.personnalisation_consequence,
+        {
+            "collectivite_id": 1,
+            "consequences": {"test_1": {"desactive": True, "potentiel_perso": 0.9}},
+        },
+        merge_duplicates=True,
+    )
+
+    # Retrieve consequence for collectivite 1
+    retrieved_consequences = (
+        supabase_repo.get_action_personnalisation_consequences_for_collectivite(1)
+    )
+    assert retrieved_consequences == {
+        "test_1": ActionPersonnalisationConsequence(desactive=True, potentiel_perso=0.9)
+    }
 
 
 def manual_test_can_get_unprocessed_events(

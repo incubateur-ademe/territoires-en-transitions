@@ -1,6 +1,4 @@
 from __future__ import annotations
-from ast import Dict
-from time import time
 from typing import Callable, List, Optional
 
 from tqdm import tqdm
@@ -62,13 +60,21 @@ class ActionTree:
             callback(action_id)
 
     @timeit("map from actions to taches")
-    def map_from_action_to_taches(
+    def map_from_actions_to_taches(
         self, callback: Callable[[ActionId], None], action_depth: int
     ):
         for action_id in tqdm(self._forward_ids):
             this_depth = self._depths_by_action_ids[action_id]
             if this_depth >= action_depth:
                 callback(action_id)
+
+    @timeit("map from action to taches")
+    def map_from_action_to_taches(
+        self, callback: Callable[[ActionId], None], action_id: ActionId
+    ):
+        callback(action_id)
+        for action_child in self.get_children(action_id):
+            self.map_from_action_to_taches(callback, action_child)
 
     def infer_depth(self, action_id: ActionId) -> int:
         parent_id = self._get_parent(action_id)
