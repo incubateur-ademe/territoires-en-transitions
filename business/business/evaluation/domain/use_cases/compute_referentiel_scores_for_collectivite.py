@@ -104,7 +104,6 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             point_tree_referentiel, personnalisation_consequences
         )
         action_personnalises_ids = list(personnalisation_consequences.keys())
-
         # 1. First, calculate all potentiels after 'non concernee' action's points redistribution
         scores: Dict[ActionId, ActionScore] = {}
         actions_non_concernes_ids = self.compute_actions_non_concernes_ids(

@@ -55,8 +55,14 @@ with r as (
            coalesce(rb.collectivite_id, rp.collectivite_id, rc.collectivite_id) as collectivite_id,
            case
                when q.type = 'binaire'
-                   then json_build_object('question_id', q.id,
-                                          'reponse', rb.reponse)
+                then 
+                   case when rb.reponse 
+                        then json_build_object('question_id', q.id,
+                                            'reponse', 'OUI')
+                   else 
+                        json_build_object('question_id', q.id,
+                                            'reponse', 'NON')
+                    end
                when q.type = 'proportion'
                    then json_build_object('question_id', q.id,
                                           'reponse', rp.reponse)
