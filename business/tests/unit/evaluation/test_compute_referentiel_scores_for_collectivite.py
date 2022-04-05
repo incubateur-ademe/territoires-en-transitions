@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 import copy
 
 from business.evaluation.domain.models import events
@@ -7,6 +7,10 @@ from business.evaluation.domain.models.action_score import ActionScore
 from business.evaluation.domain.models.action_statut import (
     ActionStatut,
     DetailedAvancement,
+)
+from business.personnalisation.models import ActionPersonnalisationConsequence
+from business.personnalisation.ports.personnalisation_repo import (
+    InMemoryPersonnalisationRepository,
 )
 from business.referentiel.domain.ports.referentiel_repo import (
     InMemoryReferentielRepository,
@@ -68,6 +72,9 @@ referentiel_repo.add_referentiel_actions(
 
 def prepare_use_case(
     statuses: List[ActionStatut],
+    consequences_by_action_id: Optional[
+        Dict[ActionId, ActionPersonnalisationConsequence]
+    ] = None,
     trigger: Optional[events.ActionStatutOrConsequenceUpdatedForCollectivite] = None,
     referentiel_repo: InMemoryReferentielRepository = referentiel_repo,
 ) -> Tuple[
@@ -76,9 +83,14 @@ def prepare_use_case(
 ]:
     bus = InMemoryDomainMessageBus()
     statuses_repo = InMemoryActionStatutRepository(statuses)
+    personnalisation_repo = InMemoryPersonnalisationRepository()
+    personnalisation_repo.set_personnalisation_consequence_by_action_id(
+        consequences_by_action_id or {}
+    )
     use_case = ComputeReferentielScoresForCollectivite(
         bus,
         referentiel_repo,
+        personnalisation_repo,
         statuses_repo,
         referentiel_action_level={"eci": 1, "cae": 2},
     )
@@ -833,4 +845,239 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         referentiel="eci",
         point_potentiel_perso=None,
         desactive=False,
+    )
+
+
+def test_notation_when_one_action_is_desactivee():
+    consequences = {
+        ActionId("eci_1"): ActionPersonnalisationConsequence(desactive=True)
+    }
+    statuses: List[ActionStatut] = [
+        ActionStatut(
+            action_id=ActionId("eci_2.2"),
+            detailed_avancement=DetailedAvancement(1, 0, 0),
+            concerne=True,
+        )
+    ]
+    converted_events, failure_events = prepare_use_case(statuses, consequences)
+    assert len(converted_events) == 1
+    assert len(failure_events) == 0
+
+    actual_scores = converted_events[0].scores
+
+    scores_by_id = {score.action_id: score for score in actual_scores}
+    # Only action eci_1 should de desactive and potentiel reduced to 0
+    assert scores_by_id[ActionId("eci_1")].desactive == True
+    assert scores_by_id[ActionId("eci_1")].point_potentiel_perso == None
+    # Point potentiel is impacted by desactivation
+    assert scores_by_id[ActionId("eci_1")].point_potentiel == 0
+    # Point referentiel is not impacted by desactivation
+    assert scores_by_id[ActionId("eci_1")].point_referentiel == 30
+
+    # Consequences on action children should affect point_potentiel (reduced to 0) but not point_potentiel_perso that is None
+    assert (
+        scores_by_id[ActionId("eci_1.1")].desactive
+        == scores_by_id[ActionId("eci_1.2")].desactive
+        == False
+    )
+    assert (
+        scores_by_id[ActionId("eci_1.1")].point_potentiel
+        == scores_by_id[ActionId("eci_1.2")].point_potentiel
+        == 0
+    )
+    assert (
+        scores_by_id[ActionId("eci_1.1")].point_potentiel_perso
+        == scores_by_id[ActionId("eci_1.1")].point_potentiel_perso
+        == None
+    )
+
+    assert scores_by_id[ActionId("eci_1.1")].point_referentiel == 10
+    assert scores_by_id[ActionId("eci_1.2")].point_referentiel == 20
+
+    # Consequences should also affect action parent potentiel points
+    assert scores_by_id[ActionId("eci")].point_potentiel == 70
+    # Consequences should not affect parent point referentiel, desactive and point_potentiel_perso
+    assert scores_by_id[ActionId("eci")].desactive == False
+    assert scores_by_id[ActionId("eci")].point_potentiel_perso == None
+    assert scores_by_id[ActionId("eci")].point_referentiel == 100
+
+    # Check scores are still calculated correctly
+    assert (
+        scores_by_id[ActionId("eci")].point_fait
+        == scores_by_id[ActionId("eci_2.2")].point_fait
+        == 5
+    )
+
+
+def test_notation_when_one_action_is_reduced():
+    consequences = {
+        ActionId("eci_1"): ActionPersonnalisationConsequence(
+            potentiel_perso=0.2
+        )  # Action eci_1 officially worse 30 points, so will be reduced to 6 points
+    }
+    statuses: List[ActionStatut] = [
+        ActionStatut(
+            action_id=ActionId("eci_1.1"),
+            detailed_avancement=DetailedAvancement(1, 0, 0),
+            concerne=True,
+        )
+    ]
+    converted_events, failure_events = prepare_use_case(statuses, consequences)
+    assert len(converted_events) == 1
+    assert len(failure_events) == 0
+
+    actual_scores = converted_events[0].scores
+
+    scores_by_id = {score.action_id: score for score in actual_scores}
+
+    # Actions eci_1.1 and eci_1.2 should also have been reduced with a factor of 0.2
+    assert scores_by_id[ActionId("eci_1.1")] == ActionScore(
+        action_id=ActionId("eci_1.1"),
+        point_fait=2.0,
+        point_programme=0.0,
+        point_pas_fait=0.0,
+        point_non_renseigne=0.0,
+        point_potentiel=2.0,
+        point_referentiel=10,
+        concerne=True,
+        total_taches_count=1,
+        completed_taches_count=1,
+        referentiel="eci",
+        desactive=False,
+        point_potentiel_perso=None,  # None because the consequence is derived from the parent
+    )
+    assert scores_by_id[ActionId("eci_1.2")] == ActionScore(
+        action_id=ActionId("eci_1.2"),
+        point_fait=0.0,
+        point_programme=0.0,
+        point_pas_fait=0.0,
+        point_non_renseigne=4.0,
+        point_potentiel=4.0,
+        point_referentiel=20,
+        concerne=True,
+        total_taches_count=1,
+        completed_taches_count=0,
+        referentiel="eci",
+        desactive=False,
+        point_potentiel_perso=None,  # None because the consequence is derived from the parent
+    )
+
+    # Action eci_1 should be reduced to 6 points
+    assert scores_by_id[ActionId("eci_1")] == ActionScore(
+        action_id=ActionId("eci_1"),
+        point_fait=2.0,
+        point_programme=0.0,
+        point_pas_fait=0.0,
+        point_non_renseigne=4.0,
+        point_potentiel=6.0,
+        point_referentiel=30,
+        concerne=True,
+        total_taches_count=2,
+        completed_taches_count=1,
+        referentiel="eci",
+        desactive=False,
+        point_potentiel_perso=6.0,
+    )
+    # Root action eci should be reduced to 76 points (6 points from eci_1 and 70 points from eci_2)
+    assert scores_by_id[ActionId("eci")] == ActionScore(
+        action_id=ActionId("eci"),
+        point_fait=2.0,
+        point_programme=0.0,
+        point_pas_fait=0.0,
+        point_non_renseigne=74.0,
+        point_potentiel=76.0,
+        point_referentiel=100,
+        concerne=True,
+        total_taches_count=5,
+        completed_taches_count=1,
+        referentiel="eci",
+        desactive=False,
+        point_potentiel_perso=None,
+    )
+
+
+def test_notation_when_one_action_is_increased():
+    consequences = {
+        ActionId("eci_1"): ActionPersonnalisationConsequence(
+            potentiel_perso=1.2
+        )  # Action eci_1 officially worse 30 points, so will be increased to 36 points
+    }
+    statuses: List[ActionStatut] = [
+        ActionStatut(
+            action_id=ActionId("eci_1.1"),
+            detailed_avancement=DetailedAvancement(1, 0, 0),
+            concerne=True,
+        )
+    ]
+    converted_events, failure_events = prepare_use_case(statuses, consequences)
+    assert len(converted_events) == 1
+    assert len(failure_events) == 0
+
+    actual_scores = converted_events[0].scores
+
+    scores_by_id = {score.action_id: score for score in actual_scores}
+
+    # Actions eci_1.1 and eci_1.2 should also have been increased with a factor of 1.2
+    assert scores_by_id[ActionId("eci_1.1")] == ActionScore(
+        action_id=ActionId("eci_1.1"),
+        point_fait=12.0,
+        point_programme=0.0,
+        point_pas_fait=0.0,
+        point_non_renseigne=0.0,
+        point_potentiel=12.0,  # (10 * 1.2)
+        point_referentiel=10,
+        concerne=True,
+        total_taches_count=1,
+        completed_taches_count=1,
+        referentiel="eci",
+        desactive=False,
+        point_potentiel_perso=None,  # None because the consequence is derived from the parent
+    )
+    assert scores_by_id[ActionId("eci_1.2")] == ActionScore(
+        action_id=ActionId("eci_1.2"),
+        point_fait=0.0,
+        point_programme=0.0,
+        point_pas_fait=0.0,
+        point_non_renseigne=24.0,
+        point_potentiel=24.0,  # (20 * 1.2)
+        point_referentiel=20,
+        concerne=True,
+        total_taches_count=1,
+        completed_taches_count=0,
+        referentiel="eci",
+        desactive=False,
+        point_potentiel_perso=None,  # None because the consequence is derived from the parent
+    )
+
+    # Action eci_1 should be reduced to 6 points
+    assert scores_by_id[ActionId("eci_1")] == ActionScore(
+        action_id=ActionId("eci_1"),
+        point_fait=12.0,  # From eci_1.1
+        point_programme=0.0,
+        point_pas_fait=0.0,
+        point_non_renseigne=24.0,  # From eci_1.2
+        point_potentiel=36.0,  # (30 * 1.2)
+        point_referentiel=30,
+        concerne=True,
+        total_taches_count=2,
+        completed_taches_count=1,
+        referentiel="eci",
+        desactive=False,
+        point_potentiel_perso=36.0,  # Consequence applied here ! (30 * 1.2)
+    )
+    # Root action eci should be reduced to 76 points (6 points from eci_1 and 70 points from eci_2)
+    assert scores_by_id[ActionId("eci")] == ActionScore(
+        action_id=ActionId("eci"),
+        point_fait=12.0,
+        point_programme=0.0,
+        point_pas_fait=0.0,
+        point_non_renseigne=94,
+        point_potentiel=106.0,  # (70 from eci_2 and 36 from eci_1)
+        point_referentiel=100,
+        concerne=True,
+        total_taches_count=5,
+        completed_taches_count=1,
+        referentiel="eci",
+        desactive=False,
+        point_potentiel_perso=None,
     )

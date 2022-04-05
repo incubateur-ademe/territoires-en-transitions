@@ -37,6 +37,13 @@ class AbstractPersonnalisationRepository(abc.ABC):
     def get_unprocessed_reponse_events() -> List[ReponseUpdatedForCollectivite]:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def get_action_personnalisation_consequences_for_collectivite(
+        self,
+        collectivite_id: int,
+    ) -> Dict[ActionId, ActionPersonnalisationConsequence]:
+        raise NotImplementedError
+
 
 class InMemoryPersonnalisationRepository(AbstractPersonnalisationRepository):
     def __init__(self) -> None:
@@ -68,6 +75,12 @@ class InMemoryPersonnalisationRepository(AbstractPersonnalisationRepository):
 
     def get_unprocessed_reponse_events(self) -> List[ReponseUpdatedForCollectivite]:
         return self._unprocessed_reponse_events
+
+    def get_action_personnalisation_consequences_for_collectivite(
+        self,
+        collectivite_id: int,
+    ) -> Dict[ActionId, ActionPersonnalisationConsequence]:
+        return self._personnalisation_consequences_by_action_id
 
     # for test purposes only
     def set_action_personnalisation_regles(
