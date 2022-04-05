@@ -142,7 +142,7 @@ def test_get_reponses_for_collectivite_returns_fakes_for_collectivite_1(
 ):
     collectivite_1_retrieved_responses = supabase_repo.get_reponses_for_collectivite(1)
     expected_reponses = [
-        Reponse(id="dechets_1", value=True),
+        Reponse(id="dechets_1", value="OUI"),
         Reponse(id="habitat_2", value=0.8),
         Reponse(id="EP_1", value="EP_1_b"),
     ]

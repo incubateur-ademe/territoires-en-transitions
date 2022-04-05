@@ -48,7 +48,7 @@ class AbstractPersonnalisationRepository(abc.ABC):
 class InMemoryPersonnalisationRepository(AbstractPersonnalisationRepository):
     def __init__(self) -> None:
         self._reponses: List[Reponse] = []
-        self._personnalisation_consequences_by_action_id: Dict[
+        self._action_personnalisation_consequences: Dict[
             ActionId, ActionPersonnalisationConsequence
         ] = {}
         self._action_personnalisation_regles: List[ActionPersonnalisationRegles] = []
@@ -80,7 +80,7 @@ class InMemoryPersonnalisationRepository(AbstractPersonnalisationRepository):
         self,
         collectivite_id: int,
     ) -> Dict[ActionId, ActionPersonnalisationConsequence]:
-        return self._personnalisation_consequences_by_action_id
+        return self._action_personnalisation_consequences
 
     # for test purposes only
     def set_action_personnalisation_regles(
@@ -92,13 +92,13 @@ class InMemoryPersonnalisationRepository(AbstractPersonnalisationRepository):
     def set_reponses(self, reponses: List[Reponse]) -> None:
         self._reponses = reponses
 
-    def set_personnalisation_consequence_by_action_id(
+    def set_action_personnalisation_consequences(
         self,
         personnalisation_consequences_by_action_id: Dict[
             ActionId, ActionPersonnalisationConsequence
         ],
     ) -> None:
-        self._personnalisation_consequences_by_action_id = (
+        self._action_personnalisation_consequences = (
             personnalisation_consequences_by_action_id
         )
 

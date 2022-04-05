@@ -60,6 +60,6 @@ def reset_supabase_client(supabase_client: SupabaseClient):
 
 
 @pytest.fixture()
-def supabase_referentiel_repo(supabase_client) -> SupabaseReferentielRepository:
+def supabase_referentiel_repo(supabase_client):
+    yield SupabaseReferentielRepository(supabase_client)
     reset_supabase_client(supabase_client)
-    return SupabaseReferentielRepository(supabase_client)

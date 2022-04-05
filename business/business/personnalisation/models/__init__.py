@@ -11,7 +11,7 @@ class Reponse:
     """Reponse to a question."""
 
     id: str
-    value: Union[str, float, bool]
+    value: Union[str, float]
 
 
 @dataclass

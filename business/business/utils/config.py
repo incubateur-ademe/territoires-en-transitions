@@ -80,7 +80,8 @@ class Config:
     def prepare_use_cases(self) -> List[UseCase]:
         raise NotImplementedError
 
-    def get_supabase_client(self) -> SupabaseClient:
+    @staticmethod
+    def get_supabase_client() -> SupabaseClient:
 
         url = os.getenv("SUPABASE_URL")
         key = os.getenv("SUPABASE_KEY")

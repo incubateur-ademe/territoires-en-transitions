@@ -84,7 +84,7 @@ def prepare_use_case(
     bus = InMemoryDomainMessageBus()
     statuses_repo = InMemoryActionStatutRepository(statuses)
     personnalisation_repo = InMemoryPersonnalisationRepository()
-    personnalisation_repo.set_personnalisation_consequence_by_action_id(
+    personnalisation_repo.set_action_personnalisation_consequences(
         consequences_by_action_id or {}
     )
     use_case = ComputeReferentielScoresForCollectivite(
