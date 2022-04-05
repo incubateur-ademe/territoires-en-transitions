@@ -1081,3 +1081,19 @@ def test_notation_when_one_action_is_increased():
         desactive=False,
         point_potentiel_perso=None,
     )
+
+
+def test_notation_when_regles_concern_an_other_referentiel():
+    consequences = {
+        ActionId("cae_1"): ActionPersonnalisationConsequence(potentiel_perso=1.2)
+    }
+    statuses: List[ActionStatut] = [
+        ActionStatut(
+            action_id=ActionId("eci_1.1"),
+            detailed_avancement=DetailedAvancement(1, 0, 0),
+            concerne=True,
+        )
+    ]
+    converted_events, failure_events = prepare_use_case(statuses, consequences)
+    assert len(converted_events) == 1
+    assert len(failure_events) == 0

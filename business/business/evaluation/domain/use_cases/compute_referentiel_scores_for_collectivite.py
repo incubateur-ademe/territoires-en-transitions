@@ -88,9 +88,16 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             for action_status in statuses
             if action_status.is_renseigne
         }
-        personnalisation_consequences = self.personnalisation_repo.get_action_personnalisation_consequences_for_collectivite(
-            command.collectivite_id
-        )
+        personnalisation_consequences = {
+            action_id: personnalisation_consequence
+            for (
+                action_id,
+                personnalisation_consequence,
+            ) in self.personnalisation_repo.get_action_personnalisation_consequences_for_collectivite(
+                command.collectivite_id
+            ).items()
+            if action_id in point_tree_referentiel.backward_ids
+        }
 
         # 0. Build point tree personnalise
         point_tree_personnalise = self.build_point_tree_personnalise(
