@@ -17,7 +17,6 @@ Le Data-Layer est responsable des lectures/écritures en base, c'est à dire de:
 - `postgres/fakes` : des fausses données utilisées pour développer/tester [readme](data_layer/postgres/fakes/README.md)
 - `postgres/tests` : début de tests en sql, on utilisera [pgtap](https://pgtap.org/) par la suite 
 - `requests` : des requêtes http pour tester l'API [readme](data_layer/requests/README.md)
-- `test_only_docker` : une appli docker compose utilisée pour développer/tester
 
 ## Mode d'emploi
 
@@ -25,18 +24,7 @@ Le Data-Layer est responsable des lectures/écritures en base, c'est à dire de:
 - psql (on peut l'installer sur Mac avec brew : `brew install postgresql`)
 - docker
 
-### Dev avec le container de test
-
-Aller dans le dossier `./test_only_docker` et exécuter :
-
-```bash
- docker-compose up --build
-```
-Ensuite 
-- utiliser `insert_all.sh` pour insérer les contenus de test.
-- redémarrer le container `postgrest` après les insertions pour que l'API soit régénérée avec `docker-compose restart rest  `.
-
-### Lancer les tests
+### Lancer les tests en local
 
 Installer pg_prove (nécessite perl).
 
@@ -45,7 +33,7 @@ sudo cpan App::cpanminus
 sudo cpan TAP::Parser::SourceHandler::pgTAP
 ```
 
-Puis utiliser `run_tests.sh`
+Puis utiliser `sh scripts/run_tests.sh`
 
 ## Créer un projet sur Supabase
 Après la création du projet

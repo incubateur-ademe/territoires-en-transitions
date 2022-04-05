@@ -11,12 +11,6 @@ jobs:
     name: Business tests
     runs-on: ubuntu-latest
     env:
-      business-directory: ./business
-      datalayer-directory: ./data_layer
-      datalayer-docker-directory: ./data_layer
-      SUPABASE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
-      SUPABASE_URL: http://localhost:8000
-      SUPABASE_WS: ws://localhost:8000
       SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
 
@@ -28,33 +22,6 @@ jobs:
       - name: Make .env files
         run: sh make_dot_env.sh
 
-      # Launch docker
-      - name: Launch docker
-        run: |
-          docker-compose up --build -d
-        working-directory: ${{env.datalayer-docker-directory}}
-
-      # Set up Python
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9.1'
-
-      # Install the dependencies manager.
-      - name: Install pipenv
-        run: |
-          python -m pip install --upgrade pipenv wheel
-            pipenv install
-            pipenv install --dev
-        working-directory: ${{env.business-directory}}
-
-      # Wait for the rest container
-      - name: Wait for datalayer
-        run: |
-          sh wait_for_rest.sh
-        working-directory: ${{env.datalayer-docker-directory}}
-
-      # Use Pytest to run tests
-      - name: Tests
-        run: pipenv run pytest tests
-        working-directory: ${{env.business-directory}}
+      # Run test container.
+      - name: Run pytest tests in docker compose
+        run: docker-compose run business-test

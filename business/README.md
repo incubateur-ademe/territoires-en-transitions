@@ -57,10 +57,7 @@ On peut lancer l'application avec python
 python business/evaluation/entrypoints/start_realtime.py
 ```
 
-Ou bien en utilisant un des deux Dockerfiles
-
-- `dev.Dockerfile`: pour lancer le service
-- `debug.Dockerfile`: pour connecter un debugger, n'utilise pas pipenv et ressemble moins à la production.
+Ou bien en utilisant le container Docker.
 
 ```sh
 # build de l'image

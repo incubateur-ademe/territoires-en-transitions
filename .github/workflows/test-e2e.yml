@@ -32,22 +32,22 @@ jobs:
 
       # Build docker
       - name: Build docker
-        run: docker-compose -f dev-docker-compose.yml build
+        run: docker-compose build
         working-directory: ${{env.project-docker-directory}}
 
       # Tear down docker
       - name: Down docker
-        run: docker-compose -f dev-docker-compose.yml down
+        run: docker-compose down
         working-directory: ${{env.project-docker-directory}}
 
       # Launch docker
       - name: Launch docker
-        run: docker-compose -f dev-docker-compose.yml up -d
+        run: docker-compose up -d
         working-directory: ${{env.project-docker-directory}}
 
       # Wait for the rest container
-      - name: Wait for datalayer
-        run: sh wait_for_rest.sh
+      - name: Wait for rest
+        run: sh scripts/wait_for_rest.sh
         working-directory: ${{env.datalayer-directory}}
 
       # Install NPM dependencies, cache them correctly

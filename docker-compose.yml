@@ -147,17 +147,19 @@ services:
 
   # Load models and fakes once db is ready.
   loader:
-    container_name: datalayer-loader
+    container_name: tet-datalayer-loader
     image: postgres:14 # use postgres solely for its plsql client.
     healthcheck:
-      test: sh loaded.sh
+      test: sh /scripts/loaded.sh
       interval: 10s
       timeout: 5s
       retries: 100
     depends_on:
       - db
-    restart: on-failure
-    command: sh try_load.sh
+      # need auth and storage migrations to be applied.
+      - auth
+      - storage
+    command: sh /scripts/try_load.sh
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGPASSWORD: ${POSTGRES_PASSWORD}
@@ -165,8 +167,26 @@ services:
       PGHOST: db
     volumes:
       - ./data_layer/postgres:/postgres
-      - ./data_layer/postgres/try_load.sh:/try_load.sh
-      - ./data_layer/postgres/loaded.sh:/loaded.sh
+      - ./data_layer/scripts/try_load.sh:/scripts/try_load.sh
+      - ./data_layer/scripts/loaded.sh:/scripts/loaded.sh
+
+  datalayer-test:
+    container_name: tet-datalayer-test
+    build: ./data_layer/test_docker/.
+    depends_on:
+      loader:
+        condition: service_healthy
+    profiles:
+      - donotstart
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGUSER: postgres
+      PGHOST: db
+    command: >
+      bash -c "pg_prove --dbname postgres --port 5432 tests/*.sql"
+    volumes:
+      - ./data_layer/tests:/tests
 
   rest:
     container_name: supabase-rest
@@ -183,20 +203,67 @@ services:
       PGRST_DB_USE_LEGACY_GUCS: "false"
 
   business:
+    container_name: tet-business
     build: ./business/.
     depends_on:
-      - auth
+      - kong
       - rest
       - realtime
     restart: unless-stopped
+    command: >
+      bash -c "pipenv run python -u business/evaluation/entrypoints/start_realtime.py"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_WS: ${SUPABASE_WS}
+
+  business-test:
+    container_name: tet-business-test
+    build: ./business/.
+    profiles:
+      - donotstart
+    depends_on:
+      - kong
+      - rest
+      - realtime
+    command: >
+      bash -c "pipenv run pytest tests"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_WS: ${SUPABASE_WS}
 
   client:
+    container_name: tet-client
     build: ./app.territoiresentransitions.react/.
     depends_on:
+      - kong
       - auth
       - rest
       - realtime
       - business
     ports:
       - ${CLIENT_PORT}:3000
+    command: >
+      bash -c "npm run dev"
+    environment:
+      REACT_APP_SUPABASE_KEY: ${ANON_KEY}
+      REACT_APP_SUPABASE_URL: http://localhost:8000
 
+  client-test:
+    container_name: tet-client-test
+    build: ./app.territoiresentransitions.react/.
+    profiles:
+      - donotstart
+    depends_on:
+      - kong
+      - auth
+      - rest
+      - realtime
+      - business
+    ports:
+      - ${CLIENT_PORT}:3000
+    command: >
+      bash -c "npm run test"
+    environment:
+      REACT_APP_SUPABASE_KEY: ${ANON_KEY}
+      REACT_APP_SUPABASE_URL: http://kong:8000
+      CI: "true"

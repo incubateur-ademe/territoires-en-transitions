@@ -1,8 +1,8 @@
 #!/bin/bash
+# This script waits for the db to be ready then load the content
 
 
-DATALAYER_DIR="./postgres"
-
+DATALAYER_DIR="./../postgres"
 
 until psql -c "select 1"; do
   echo "Waiting for supabase-db..."
@@ -17,17 +17,17 @@ done
 
 echo "Loading definitions..."
 for file in "$DATALAYER_DIR"/definitions/*.sql; do
-    psql -v ON_ERROR_STOP=1 --file "${file}" || exit 0
+    psql -v ON_ERROR_STOP=1 --file "${file}" || exit 1
 done
 
 echo "Loading content..."
 for file in "$DATALAYER_DIR"/content/*.sql; do
-    psql -v ON_ERROR_STOP=1 --file "${file}" || exit 0
+    psql -v ON_ERROR_STOP=1 --file "${file}" || exit 1
 done
 
 echo "Loading fakes..."
 for file in "$DATALAYER_DIR"/fakes/*.sql; do
-    psql -v ON_ERROR_STOP=1 --file "${file}" || exit 0
+    psql -v ON_ERROR_STOP=1 --file "${file}" || exit 1
 done
 
 echo "Done loading."

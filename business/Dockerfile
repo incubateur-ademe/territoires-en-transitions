@@ -6,7 +6,6 @@ RUN mkdir -p /business
 WORKDIR /business
 
 COPY . .
-COPY .env.sample .env
 RUN pip install pipenv
 RUN pipenv install
 RUN pipenv install -e .
