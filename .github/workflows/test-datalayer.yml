@@ -12,47 +12,17 @@ jobs:
     name: Datalayer tests
     runs-on: ubuntu-latest
     env:
-      business-directory:  ./business
-      datalayer-directory: ./data_layer
-      datalayer-docker-directory: ./data_layer
-      SUPABASE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
-      SUPABASE_URL: http://localhost:8000
-      SUPABASE_WS: ws://localhost:8000
-      PGUSER: postgres
-      PGPORT: 50001
-      PGPASSWORD: your-super-secret-and-long-postgres-password
-      PGHOST: localhost
       SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
 
     steps:
+      # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2
-
-      - name: install pg_prove
-        run: sudo cpan TAP::Parser::SourceHandler::pgTAP
-        env:
-          SHELL: /bin/bash
-
-      - name: install postgres dev
-        run: sudo apt-get install -y --no-install-recommends postgresql-server-dev-all
 
       # Copy all projet .sample.env into .env with the variables
       - name: Make .env files
         run: sh make_dot_env.sh
 
-      - name: Launch docker
-        run: docker-compose up --build -d
-        working-directory: ${{env.datalayer-docker-directory}}
-
-      - name: Wait for datalayer
-        run: |
-          cp ./postgres/loaded.sh ./loaded.sh
-          cp ./postgres/wait_until_loaded.sh ./wait_until_loaded.sh
-          sh wait_until_loaded.sh
-        working-directory: ${{env.datalayer-docker-directory}}
-
-      - name: run tests
-        run: pg_prove --host localhost --dbname postgres --username postgres --port 50001 tests/*.sql
-        working-directory: ${{env.datalayer-docker-directory}}
-        env:
-          PGPASSWORD: your-super-secret-and-long-postgres-password
+      # Run test container.
+      - name: Run pg_tap tests in docker compose
+        run: docker-compose run datalayer-test
