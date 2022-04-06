@@ -42,8 +42,6 @@ type: proportion
 thematique_id: mobilite
 actions: [cae_4.2.1]
 types_concernes: [commune]
-actions: [cae_2.3.3]
-ordonnancement: 1
 ```
 
 # Les locaux de la collectivité sont-ils desservis ou desservables par les transports en commun ?
