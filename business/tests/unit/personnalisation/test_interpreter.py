@@ -249,31 +249,70 @@ def test_regle_cae_3_1_1():
     Ces réductions sont cumulables dans la limite de 2 points restants
     pour prendre en compte la part d’influence dans les instances compétentes et les actions partenariales.
     """
-    # todo clarifier la règle.
     formule = (
         "si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 "
-        "sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10"
-        "sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 "
-        "sinon si reponse(AOD_chaleur, NON) alors 6/10 "
+        "sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10 "
         "sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 "
         "sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 "
         "sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 "
+        "sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 "
+        "sinon si reponse(AOD_chaleur, NON) alors 6/10 "
     )
     tree = parser.parse(formule)
 
-    # 1 Toutes les compétences
-    cas1 = [
+    cas_toutes = [
         Reponse("AOD_elec", "OUI"),
         Reponse("AOD_gaz", "OUI"),
         Reponse("AOD_chaleur", "OUI"),
     ]
 
-    # 2 Aucune compétence
-    cas2 = [
+    cas_aucune = [
         Reponse("AOD_elec", "NON"),
         Reponse("AOD_gaz", "NON"),
         Reponse("AOD_chaleur", "NON"),
     ]
 
-    assert FormuleInterpreter(cas1).visit(tree) == 1.0
-    assert FormuleInterpreter(cas2).visit(tree) == 2 / 10
+    cas_elec_only = [
+        Reponse("AOD_elec", "OUI"),
+        Reponse("AOD_gaz", "NON"),
+        Reponse("AOD_chaleur", "NON"),
+    ]
+
+    cas_gaz_only = [
+        Reponse("AOD_elec", "NON"),
+        Reponse("AOD_gaz", "OUI"),
+        Reponse("AOD_chaleur", "NON"),
+    ]
+
+    cas_chaleur_only = [
+        Reponse("AOD_elec", "NON"),
+        Reponse("AOD_gaz", "NON"),
+        Reponse("AOD_chaleur", "OUI"),
+    ]
+
+    cas_chaleur_gaz = [
+        Reponse("AOD_elec", "NON"),
+        Reponse("AOD_gaz", "OUI"),
+        Reponse("AOD_chaleur", "OUI"),
+    ]
+
+    cas_gaz_elec = [
+        Reponse("AOD_elec", "OUI"),
+        Reponse("AOD_gaz", "OUI"),
+        Reponse("AOD_chaleur", "NON"),
+    ]
+
+    cas_chaleur_elec = [
+        Reponse("AOD_elec", "OUI"),
+        Reponse("AOD_gaz", "NON"),
+        Reponse("AOD_chaleur", "OUI"),
+    ]
+
+    assert FormuleInterpreter(cas_toutes).visit(tree) == 1.0
+    assert FormuleInterpreter(cas_aucune).visit(tree) == 2 / 10
+    assert FormuleInterpreter(cas_elec_only).visit(tree) == 3 / 10
+    assert FormuleInterpreter(cas_gaz_only).visit(tree) == 3 / 10
+    assert FormuleInterpreter(cas_chaleur_only).visit(tree) == 4 / 10
+    assert FormuleInterpreter(cas_chaleur_gaz).visit(tree) == 7 / 10
+    assert FormuleInterpreter(cas_gaz_elec).visit(tree) == 6 / 10
+    assert FormuleInterpreter(cas_chaleur_elec).visit(tree) == 7 / 10
