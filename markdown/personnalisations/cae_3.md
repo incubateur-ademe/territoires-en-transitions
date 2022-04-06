@@ -6,12 +6,13 @@ action_id: cae_3.1.1
 ## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10
-sinon si reponse(AOD_chaleur, NON) alors 6/10
-sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10
-sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10
-sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10
-sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10
+si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 
+sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10 
+sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 
+sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 
+sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 
+sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 
+sinon si reponse(AOD_chaleur, NON) alors 6/10 
 ```
 Pour une collectivité non autorité organisatrice de la distribution d'électricité, le score de la 3.1.1 est réduit de 30 %.
 Pour une collectivité non autorité organisatrice de la distribution de gaz, le score de la 3.1.1 est réduit de 30 %.
