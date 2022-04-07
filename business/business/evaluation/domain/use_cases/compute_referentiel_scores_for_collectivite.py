@@ -109,6 +109,14 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         actions_non_concernes_ids = self.compute_actions_non_concernes_ids(
             point_tree_personnalise, statuses
         )
+        actions_desactivees_ids = self.compute_actions_desactivees_ids(
+            point_tree_personnalise,
+            [
+                action_id
+                for action_id, consequence in personnalisation_consequences.items()
+                if consequence.desactive
+            ],
+        )
         potentiels = self.compute_potentiels(
             point_tree_personnalise,
             actions_non_concernes_ids,
@@ -125,6 +133,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 status_by_action_id,
                 actions_non_concernes_ids,
                 action_personnalises_ids,
+                actions_desactivees_ids,
                 command.referentiel,
             )
         )
@@ -136,6 +145,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
                 scores,
                 potentiels,
                 action_personnalises_ids,
+                actions_desactivees_ids,
                 action_id,
                 command.referentiel,
             )
@@ -158,6 +168,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         status_by_action_id: Dict[str, ActionStatut],
         actions_non_concernes_ids: List[ActionId],
         action_personnalises_ids: List[ActionId],
+        actions_desactivees_ids: List[ActionId],
         referentiel: ActionReferentiel,
     ):
 
@@ -172,7 +183,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         tache_status = status_by_action_id.get(tache_id)
         tache_concerne = tache_id not in actions_non_concernes_ids
         tache_is_personnalise = tache_id in action_personnalises_ids
-        tache_is_desactive = tache_is_personnalise and tache_points_personnalise == 0
+        tache_is_desactive = tache_id in actions_desactivees_ids
 
         if not tache_concerne:
             scores[tache_id] = ActionScore(
@@ -238,7 +249,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             point_potentiel_perso=tache_points_personnalise
             if tache_is_personnalise
             else None,
-            desactive=tache_is_personnalise and tache_points_personnalise == 0.0,
+            desactive=tache_is_desactive,
         )
 
     def update_scores_for_action_given_children_scores(
@@ -248,6 +259,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         scores: Dict[ActionId, ActionScore],
         potentiels: Dict[ActionId, float],
         action_personnalises_ids: List[ActionId],
+        actions_desactivees_ids: List[ActionId],
         action_id: ActionId,
         referentiel: ActionReferentiel,
     ):
@@ -301,9 +313,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             ]
         )
         action_is_personnalise = action_id in action_personnalises_ids
-        action_is_desactive = (
-            action_is_personnalise and action_point_personnalise == 0.0
-        )
+        action_is_desactive = action_id in actions_desactivees_ids
         scores[action_id] = ActionScore(
             action_id=action_id,
             point_fait=point_fait,
@@ -405,6 +415,19 @@ class ComputeReferentielScoresForCollectivite(UseCase):
             )
         )
         return actions_non_concernes_ids
+
+    def compute_actions_desactivees_ids(
+        self,
+        point_tree_personnalise: ActionPointTree,
+        actions_personnalises_desactivees_ids: List[ActionId],
+    ) -> List[ActionId]:
+        all_actions_desactivees_ids = []
+        for action_id in actions_personnalises_desactivees_ids:
+            point_tree_personnalise.map_from_action_to_taches(
+                lambda child_id: all_actions_desactivees_ids.append(child_id),
+                action_id,
+            )
+        return all_actions_desactivees_ids
 
     def compute_potentiels(
         self,

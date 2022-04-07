@@ -878,7 +878,7 @@ def test_notation_when_one_action_is_desactivee():
     assert (
         scores_by_id[ActionId("eci_1.1")].desactive
         == scores_by_id[ActionId("eci_1.2")].desactive
-        == False
+        == True
     )
     assert (
         scores_by_id[ActionId("eci_1.1")].point_potentiel
