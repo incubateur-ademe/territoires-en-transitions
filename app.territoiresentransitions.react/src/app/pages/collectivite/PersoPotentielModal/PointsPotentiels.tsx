@@ -26,16 +26,12 @@ export const PointsPotentiels = ({
       <div data-test="PointsPotentiels" className="flex items-center">
         {getLabel(actionDef, actionScore)}
         {typeof onEdit === 'function' ? (
-          <a
+          <button
             className="fr-link fr-link--icon-left fr-fi-settings-line fr-ml-10v"
-            href="#"
-            onClick={evt => {
-              evt.preventDefault();
-              onEdit(evt);
-            }}
+            onClick={onEdit}
           >
             Personnaliser
-          </a>
+          </button>
         ) : null}
       </div>
     </YellowHighlight>
@@ -47,10 +43,14 @@ const getLabel = (
   actionScore: ActionScore
 ): string => {
   const {type} = actionDef;
-  const {point_referentiel, point_potentiel_perso} = actionScore;
+  const {point_referentiel, point_potentiel_perso, desactive} = actionScore;
 
-  const points =
-    toLocaleFixed(point_potentiel_perso || point_referentiel) + ' points';
+  if (desactive) {
+    return `Potentiel pour cette ${type} : 0 point`;
+  }
+
+  const value = point_potentiel_perso || point_referentiel;
+  const points = toLocaleFixed(value) + ' point' + (value > 1 ? 's' : '');
 
   const isModified =
     point_potentiel_perso !== undefined &&

@@ -68,13 +68,12 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
     data-test="PointsPotentiels"
   >
     Potentiel réduit pour cette sous-action : 3,3 points
-    <a
+    <button
       className="fr-link fr-link--icon-left fr-fi-settings-line fr-ml-10v"
-      href="#"
       onClick={[Function]}
     >
       Personnaliser
-    </a>
+    </button>
   </div>
 </div>
 `;

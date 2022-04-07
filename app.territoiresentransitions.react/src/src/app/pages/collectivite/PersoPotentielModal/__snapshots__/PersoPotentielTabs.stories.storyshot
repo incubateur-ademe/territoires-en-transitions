@@ -237,7 +237,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
                 }
               }
               type="number"
-              value=""
+              value="undefined"
             />
           </div>
         </fieldset>
@@ -1401,7 +1401,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
                 }
               }
               type="number"
-              value=""
+              value="undefined"
             />
           </div>
         </fieldset>
