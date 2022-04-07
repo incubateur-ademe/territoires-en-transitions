@@ -87,7 +87,7 @@ export const QuestionReponseList = (props: TQuestionReponseListProps) => {
           <fieldset key={id} className="fr-fieldset">
             <QuestionReponse
               qr={qr}
-              onChange={(reponse: TReponse) => onChange(id, reponse)}
+              onChange={(reponse: TReponse) => onChange(qr, reponse)}
             />
           </fieldset>
         );

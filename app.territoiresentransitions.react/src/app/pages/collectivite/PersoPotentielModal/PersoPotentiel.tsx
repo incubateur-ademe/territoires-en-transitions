@@ -71,11 +71,11 @@ export const PersoPotentiel = observer((props: TPersoPotentielButtonProps) => {
                 actionScore={actionScore}
                 questionReponses={qr}
                 regles={regles}
-                onChange={(question_id, reponse) => {
+                onChange={(question, reponse) => {
                   reponseWriteEndpoint
                     .save({
                       collectivite_id,
-                      question_id,
+                      question,
                       reponse,
                     })
                     .then(toastAlert.showSuccess, toastAlert.showError)
@@ -91,4 +91,4 @@ export const PersoPotentiel = observer((props: TPersoPotentielButtonProps) => {
       </ToastAlert>
     </div>
   );
-};
+});
