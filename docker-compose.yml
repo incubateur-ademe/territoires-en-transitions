@@ -216,6 +216,28 @@ services:
       SUPABASE_URL: ${SUPABASE_URL}
       SUPABASE_WS: ${SUPABASE_WS}
 
+  business-update-content:
+    container_name: tet-business-update-content
+    build: ./business/.
+    profiles:
+      - donotstart
+    depends_on:
+      - kong
+      - rest
+    restart: unless-stopped
+    command: >
+      bash -c "pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel eci
+      && pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel cae
+      && pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel crte
+      && pipenv run python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_WS: ${SUPABASE_WS}
+      REPOSITORIES: SUPABASE
+      REFERENTIELS_REPOSITORY: SUPABASE
+    volumes:
+      - ./markdown:/markdown
+
   business-test:
     container_name: tet-business-test
     build: ./business/.
@@ -230,6 +252,7 @@ services:
     environment:
       SUPABASE_URL: ${SUPABASE_URL}
       SUPABASE_WS: ${SUPABASE_WS}
+      REPOSITORIES: SUPABASE
 
   client:
     container_name: tet-client
