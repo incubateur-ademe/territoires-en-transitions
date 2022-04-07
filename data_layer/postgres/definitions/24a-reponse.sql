@@ -11,7 +11,7 @@ comment on table reponse_choix is
 create trigger set_modified_at_before_reponse_choix_update
     before update
     on
-        indicateur_commentaire
+        reponse_choix
     for each row
 execute procedure update_modified_at();
 
@@ -55,11 +55,11 @@ with r as (
            coalesce(rb.collectivite_id, rp.collectivite_id, rc.collectivite_id) as collectivite_id,
            case
                when q.type = 'binaire'
-                then 
-                   case when rb.reponse 
+                then
+                   case when rb.reponse
                         then json_build_object('question_id', q.id,
                                             'reponse', 'OUI')
-                   else 
+                   else
                         json_build_object('question_id', q.id,
                                             'reponse', 'NON')
                     end
