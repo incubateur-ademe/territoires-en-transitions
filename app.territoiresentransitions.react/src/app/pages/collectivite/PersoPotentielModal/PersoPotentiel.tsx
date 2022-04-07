@@ -1,7 +1,8 @@
 import {useState} from 'react';
+import {observer} from 'mobx-react-lite';
 import {Dialog} from '@material-ui/core';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {scoreBloc} from 'core-logic/observables/scoreBloc';
+import {ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {reponseWriteEndpoint} from 'core-logic/api/endpoints/ReponseWriteEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
@@ -14,6 +15,8 @@ import {useRegles} from './useRegles';
 export type TPersoPotentielButtonProps = {
   /** Définition de l'action */
   actionDef: ActionDefinitionSummary;
+  /** Données score */
+  scoreBloc: ScoreBloc;
 };
 
 const labelBySaveStatus = {
@@ -26,8 +29,8 @@ const labelBySaveStatus = {
  * bouton permettant d'ouvrir le dialogue "personnaliser le potentiel de points"
  * d'une action, et le dialogue lui-même
  */
-export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
-  const {actionDef} = props;
+export const PersoPotentiel = observer((props: TPersoPotentielButtonProps) => {
+  const {actionDef, scoreBloc} = props;
   const {id: actionId, type, identifiant, nom, referentiel} = actionDef;
   const [opened, setOpened] = useState(false);
   const collectivite_id = useCollectiviteId();

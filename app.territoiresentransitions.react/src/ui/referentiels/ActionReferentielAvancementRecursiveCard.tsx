@@ -54,7 +54,9 @@ export const ActionReferentielAvancementCard = ({
         <ActionReferentielDisplayTitle action={action} />
         <Spacer size={1} />
         <ActionReferentielDescription action={action} />
-        {action.have_questions && <PersoPotentiel actionDef={action} />}
+        {action.have_questions && (
+          <PersoPotentiel actionDef={action} scoreBloc={scoreBloc} />
+        )}
         {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
         {action.have_preuve && <ActionPreuvesExpandPanel action={action} />}
         <ActionCommentaire action={action} />
@@ -71,7 +73,10 @@ export const ActionReferentielAvancementCard = ({
               className="pt-2 flex justify-end"
               data-test={`task-${action.id}`}
             >
-              <ActionStatusDropdown actionId={action.id} />
+              <ActionStatusDropdown
+                actionId={action.id}
+                scoreBloc={scoreBloc}
+              />
             </div>
           )}
         </div>
