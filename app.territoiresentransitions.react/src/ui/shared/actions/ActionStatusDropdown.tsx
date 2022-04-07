@@ -3,6 +3,7 @@ import {
   ActionAvancement,
 } from 'generated/dataLayer/action_statut_read';
 import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
+import {ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {makeAutoObservable} from 'mobx';
 import {observer} from 'mobx-react-lite';
 import {useState} from 'react';
@@ -16,19 +17,35 @@ import {toPercentString} from 'utils/score';
 import {CloseDialogButton} from '../CloseDialogButton';
 import {DetailedScore} from '../DetailedScore/DetailedScore';
 import {AvancementValues} from '../DetailedScore/DetailedScoreSlider';
+import {referentielId} from 'utils/actions';
 
-export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
-  const collectiviteId = useCollectiviteId()!;
-  const actionStatusAvancementBloc = new ActionStatusAvancementRadioButtonBloc({
-    actionId,
-    collectiviteId,
-  });
-  return (
-    <_ActionStatusAvancementRadioButton
-      actionStatusAvancementBloc={actionStatusAvancementBloc}
-    />
-  );
-};
+export const ActionStatusDropdown = observer(
+  ({actionId, scoreBloc}: {actionId: string; scoreBloc: ScoreBloc}) => {
+    const collectiviteId = useCollectiviteId()!;
+    const actionStatusAvancementBloc =
+      new ActionStatusAvancementRadioButtonBloc({
+        actionId,
+        collectiviteId,
+      });
+    const score = scoreBloc.getScore(actionId, referentielId(actionId));
+
+    const {color, label} = nonConcerneStatut;
+    if (score?.desactive) {
+      return (
+        <div>
+          <span style={{color}}>&#9679;</span>
+          &nbsp;{label}
+        </div>
+      );
+    }
+
+    return (
+      <_ActionStatusAvancementRadioButton
+        actionStatusAvancementBloc={actionStatusAvancementBloc}
+      />
+    );
+  }
+);
 
 interface SelectableStatut {
   value: number;
