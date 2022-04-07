@@ -1,7 +1,8 @@
-import {ChangeEvent, FC, ReactNode} from 'react';
+import {FC, ReactNode} from 'react';
 import {TReponse} from 'generated/dataLayer/reponse_read';
 import {TQuestionReponseProps} from './PersoPotentielQR';
 import {TListeChoix} from 'generated/dataLayer/question_read';
+import {useDebouncedInput} from 'ui/shared/useDebouncedInput';
 
 const ReponseContainer = ({
   children,
@@ -75,6 +76,14 @@ const DEFAULT_RANGE = [0, 100];
 const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
   const {id: questionId, reponse} = qr;
   const [min, max] = DEFAULT_RANGE;
+  const [value, handleChange, setValue] = useDebouncedInput(
+    proportionToString(reponse as number),
+    query => {
+      const proportion = stringToProportion(query, min, max);
+      setValue(proportionToString(proportion));
+      onChange(proportion);
+    }
+  );
 
   return (
     <ReponseContainer className="fr-fieldset--inline">
@@ -88,19 +97,24 @@ const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
         id={questionId}
         style={{width: 224}}
         className="fr-input"
-        value={String(reponse || '')}
-        onChange={e => onChange(getReponseProportion(e))}
+        value={value === null ? '' : String(value)}
+        onChange={handleChange}
       />
     </ReponseContainer>
   );
 };
 
 // parse une réponse saisie dans un champ proportion
-const getReponseProportion = (e: ChangeEvent<HTMLInputElement>) => {
-  const {value, min, max} = e.target;
-  const v = Math.min(Math.max(parseInt(min), parseInt(value)), parseInt(max));
+const stringToProportion = (str: string, min: number, max: number) => {
+  if (str === '') {
+    return null;
+  }
+  const v = Math.min(Math.max(min, parseInt(str)), max);
   return isNaN(v) ? null : v;
 };
+
+const proportionToString = (value: number | null) =>
+  value === null ? '' : String(value);
 
 // correspondances entre un type de réponse et son composant
 export const reponseParType: {[k: string]: FC<TQuestionReponseProps>} = {
