@@ -15,6 +15,7 @@ export class AuthBloc {
   get invitationState(): invitationState | null {
     return this._invitationState;
   }
+
   get invitationId(): string | null {
     return this._invitationId;
   }
@@ -31,6 +32,7 @@ export class AuthBloc {
       this._invitationState = 'waitingForLogin';
     }
   }
+
   private _userId: string | null = null;
   private _authError: string | null = null;
   private _invitationId: string | null = null;
@@ -38,23 +40,24 @@ export class AuthBloc {
 
   constructor() {
     makeAutoObservable(this);
-    const connectedUser = supabaseClient.auth.user();
-    if (connectedUser) {
-      this.setUserId(connectedUser.id);
-    }
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (session && session.user) {
+        this.setUserId(session.user.id);
+        this.setUserId(session.user.id);
+        this.setAuthError(null);
+        setCrispUserData(session.user);
+        if (this._invitationState === 'waitingForLogin') {
+          this._acceptCurrentInvitation();
+        }
+      }
+    });
   }
 
   connect({email, password}: {email: string; password: string}) {
     supabaseClient.auth
       .signIn({email, password})
       .then(session => {
-        if (session.user) {
-          this.setUserId(session.user.id);
-          this.setAuthError(null);
-          setCrispUserData(session.user);
-          if (this._invitationState === 'waitingForLogin')
-            this._acceptCurrentInvitation();
-        } else {
+        if (!session.user) {
           console.log(session.error?.message);
           this.setAuthError("L'email et le mot de passe ne correspondent pas.");
           this.setUserId(null);
@@ -77,9 +80,11 @@ export class AuthBloc {
   get connected() {
     return this.userId !== null;
   }
+
   get authError() {
     return this._authError;
   }
+
   get userId() {
     return this._userId;
   }
@@ -87,6 +92,7 @@ export class AuthBloc {
   private setUserId(userId: string | null) {
     this._userId = userId;
   }
+
   private setAuthError(authError: string | null) {
     this._authError = authError;
   }
