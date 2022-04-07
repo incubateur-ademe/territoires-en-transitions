@@ -28,7 +28,8 @@ function AnyIndicateurValueInput<T extends string | number>({
     repo
       .fetchIndicateurValueForIdForYear({collectiviteId, indicateurId, year})
       .then(indicateurValueRead => {
-        setInputValue(indicateurValueRead?.valeur || '');
+        const valeur = indicateurValueRead?.valeur;
+        setInputValue(typeof valeur === 'number' ? valeur : '');
       });
   }, []);
 
