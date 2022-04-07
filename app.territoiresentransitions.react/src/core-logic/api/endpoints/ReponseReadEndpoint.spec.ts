@@ -3,6 +3,30 @@ import {ReponseReadEndpoint} from 'core-logic/api/endpoints/ReponseReadEndpoint'
 import {supabaseClient} from 'core-logic/api/supabase';
 import {yoloCredentials, yuluCredentials} from 'test_utils/collectivites';
 
+export const checkReponseProportion = async () => {
+  const reponseReadEndpoint = new ReponseReadEndpoint([]);
+  await supabaseClient.auth.signIn(yoloCredentials);
+
+  const results = await reponseReadEndpoint.getBy({
+    collectivite_id: 1,
+    question_id: 'habitat_2',
+  });
+
+  expect(results.length).toEqual(1);
+  expect(results).toMatchObject([
+    {
+      question_id: 'habitat_2',
+      collectivite_id: 1,
+      reponse: {
+        question_id: 'habitat_2',
+        collectivite_id: 1,
+        type: 'proportion',
+        reponse: 80,
+      },
+    },
+  ]);
+};
+
 describe('Reponse reading endpoint', () => {
   it('should return an empty array if there is no response for a question', async () => {
     const reponseReadEndpoint = new ReponseReadEndpoint([]);
@@ -28,7 +52,7 @@ describe('Reponse reading endpoint', () => {
     expect(results.length).toEqual(0);
   });
 
-  it('should return the response to a question', async () => {
+  it('should return the response to a question (binaire)', async () => {
     const reponseReadEndpoint = new ReponseReadEndpoint([]);
     await supabaseClient.auth.signIn(yoloCredentials);
 
@@ -51,4 +75,9 @@ describe('Reponse reading endpoint', () => {
       },
     ]);
   });
+
+  it(
+    'should return the response to a question (proportion)',
+    checkReponseProportion
+  );
 });
