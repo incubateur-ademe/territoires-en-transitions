@@ -73,5 +73,7 @@ select results_eq('select description from question_display where id = ''questio
 select ok((select have_questions from action_definition_summary where id = 'eci_1'),
           'Action eci_1 of action_definition_summary should have_questions');
 
+
+
 rollback;
 
