@@ -50,6 +50,11 @@ jobs:
         run: sh scripts/wait_for_rest.sh
         working-directory: ${{env.datalayer-directory}}
 
+      # Wait for the front container
+      - name: Wait for front
+        run: sh scripts/wait_for_front.sh
+        working-directory: ${{env.datalayer-directory}}
+
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
