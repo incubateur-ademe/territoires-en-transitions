@@ -23,7 +23,7 @@ beforeEach(() => {
 });
 
 Given("j'ouvre le site", () => {
-  cy.get(SignInPage.selector).should('be.visible');
+  cy.get('[data-test=home]').should('be.visible');
 });
 
 const Users = {

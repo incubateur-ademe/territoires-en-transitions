@@ -7,13 +7,16 @@ beforeEach(() => {
   cy.wrap(LocalSelectors).as('LocalSelectors');
 });
 
-Given(
-  /la liste des questions\/réponses contient les entrées suivantes/,
-  (dataTable) => {
-    // sélectionne le dialogue
-    cy.get(
-      LocalSelectors['dialogue Personnaliser le potentiel'].selector
-    ).within(() => {
+Given(/la liste des questions contient les entrées suivantes/, (dataString) => {
+  // sélectionne le dialogue
+  cy.get(LocalSelectors['dialogue Personnaliser le potentiel'].selector).within(
+    () => {
+      cy.wrap(dataString.split('\n')).each((line) => {
+        if (line) {
+        }
+      });
+
+      /*
       // pour chaque question
       cy.wrap(dataTable.rows()).each(([question, type, reponse], index) => {
         cy.get(
@@ -24,16 +27,14 @@ Given(
           // et la réponse
           switch (type) {
             case 'proportion':
-              cy.get('input[name=proportion]').should(
-                'have.value',
-                reponse || ''
-              );
+              cy.get('input').should('have.value', reponse);
           }
         });
       });
-    });
-  }
-);
+      */
+    }
+  );
+});
 
 Given(
   /je saisi une proportion de (\d+) pour la question (\d+)/,
