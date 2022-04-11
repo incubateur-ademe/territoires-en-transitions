@@ -15,7 +15,7 @@ initStoryshots({
   // fonction de test spécifique pour éviter certains avertissements
   // Ref: https://github.com/storybookjs/storybook/issues/7745
   test: async ({story, context, done}) => {
-    const filename = converter.getSnapshotFileName(context);
+    const filename = '../' + converter.getSnapshotFileName(context);
     if (!filename) {
       return;
     }
