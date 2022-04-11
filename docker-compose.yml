@@ -11,6 +11,8 @@ services:
     container_name: supabase-studio
     image: supabase/studio:latest
     restart: unless-stopped
+    depends_on:
+      - meta
     ports:
       - ${STUDIO_PORT}:3000/tcp
     environment:
