@@ -2,8 +2,8 @@ export const LocalSelectors = {
   'cartouche de personnalisation': {
     selector: '[data-test=PointsPotentiels]',
     children: {
-      'bouton Personnaliser': 'a',
-      Personnaliser: 'a',
+      'bouton Personnaliser': 'button',
+      Personnaliser: 'button',
     },
   },
   'dialogue Personnaliser le potentiel': {
