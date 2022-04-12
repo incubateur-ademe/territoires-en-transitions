@@ -5,7 +5,7 @@ on:
     branches-ignore:
       - production
       - production-static
-  push:
+
 jobs:
   end-to-end-test:
     name: End-to-end tests
