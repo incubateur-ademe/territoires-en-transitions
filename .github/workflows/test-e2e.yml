@@ -15,7 +15,6 @@ jobs:
       datalayer-directory: ./data_layer
       project-docker-directory: ./
       SUPABASE_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
-      SUPABASE_URL: http://localhost:8000
       ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
       SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       REACT_APP_CRISP_WEBSITE_ID: 96fe7866-d005-4623-80b1-bd772e99855c
