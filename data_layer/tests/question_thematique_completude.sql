@@ -1,5 +1,5 @@
 begin;
-select plan(11);
+select plan(10);
 
 select has_view('question_thematique_completude');
 select has_column('question_thematique_completude', 'collectivite_id');
@@ -12,22 +12,24 @@ truncate reponse_binaire;
 truncate reponse_proportion;
 truncate reponse_choix;
 
-select is_empty(
-               'select * from question_thematique_completude where collectivite_id = 1 and completude = ''complete'';',
-               'No thematique should be `complete`.'
+select ((select bool_or(completude != 'complete')
+         from question_thematique_completude
+         where collectivite_id = 1),
+        'No thematique should be `complete`.'
            );
 
-select results_eq(
-               'select * from question_thematique_completude where collectivite_id = 1 and completude = ''a_completer'';',
-               'select * from question_thematique_completude where collectivite_id = 1',
-               'All thematiques should be `à completer`'
+select ok((select bool_and(completude = 'a_completer')
+           from question_thematique_completude
+           where collectivite_id = 1),
+          'All thematiques should be `à completer`'
            );
 
-select results_eq(
-               'select * from question where id = ''dechets'' and type = ''binaire'';',
-               'select * from question where id = ''dechets'';',
-               'All questions `dechets` should be of type `binaire` for the test to work.'
+select ok((select bool_and(type = 'binaire')
+           from question
+           where thematique_id = 'dechets'),
+          'All thematiques should be `à completer`'
            );
+
 
 -- Insert all réponses for déchets
 insert into reponse_binaire
@@ -35,19 +37,17 @@ select now(), 1, q.id, true
 from question q
 where q.thematique_id = 'dechets';
 
-select ok(
-               (select completude = 'complete'
-                from question_thematique_completude
-                where collectivite_id = 1
-                  and id = 'dechets'),
-               'Thematique `déchets` should be `complete`.'
+select ok((select completude = 'complete'
+           from question_thematique_completude
+           where collectivite_id = 1
+             and id = 'dechets'),
+          'Thematique `déchets` should be `complete`.'
            );
 
-select ok(
-               (select bool_and(completude = 'a_completer')
-                from question_thematique_completude
-                where collectivite_id = 1
-                  and id != 'dechets'),
-               'Thematiques other than `déchets` should be `à completer`.'
+select ok((select bool_and(completude = 'a_completer')
+           from question_thematique_completude
+           where collectivite_id = 1
+             and id != 'dechets'),
+          'Thematiques other than `déchets` should be `à completer`.'
            );
 rollback;
