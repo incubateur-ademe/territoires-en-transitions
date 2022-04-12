@@ -6,52 +6,18 @@ on:
       - upcoming_production
       - upcoming_sandbox
       - upcoming_develop
+    paths:
+      - 'markdown/**/*.md'
   pull_request:
-    branches:
-      - upcoming_develop
+    branches-ignore:
+      - production
+      - production-static
 
 jobs:
-  check:
-    name: Check files
-    outputs:
-      run_job: ${{ steps.check_files.outputs.run_job }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-
-      - name: check modified markdown referentiel definition files
-        id: check_files
-        run: |
-          echo "=============== list modified files ==============="
-          git diff --name-only HEAD^ HEAD
-          echo "========== check paths of modified files =========="
-          git diff --name-only HEAD^ HEAD > files.txt
-          while IFS= read -r file
-          do
-            echo $file
-            if [[ $file != markdown/* ]]; then
-              echo "This modified file is not under the 'markdown' folder."     
-            else
-              echo "This modified file is under the 'markdown' folder. Returns true !"     
-              echo "::set-output name=run_job::true"
-              break
-            fi
-            echo "None of modified files is under the 'markdown' folder. Returns false !"   
-            echo "::set-output name=run_job::false"
-          done < files.txt
-
   update-referentiels:
     name: Business updates referentiel from markdowns
-    needs: check
-    if: needs.check.outputs.run_job == 'true'
     runs-on: ubuntu-latest
     env:
-      business-directory:  ./business
-      datalayer-directory: ./data_layer
-      datalayer-docker-directory: ./data_layer
       SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
 
@@ -63,66 +29,15 @@ jobs:
       - name: Make .env files
         run: sh make_dot_env.sh
 
-      # Launch docker
-      - name: Launch docker
-        if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
-        run: docker-compose up --build -d
-        working-directory: ${{env.datalayer-docker-directory}}
-
-      # Set up Python
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9.1'
-
-      # Install the dependencies manager.
-      - name: Install pipenv
-        run: |
-          python -m pip install --upgrade pipenv wheel
-          pipenv install
-          pipenv install --dev
-        working-directory: ${{env.business-directory}}
-
-
-      # [Prepare DB] Insert fakes
-      - name: Insert fake data in database
-        if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
-        run: sh insert_all.sh
-        working-directory: ${{env.datalayer-directory}}
-
-      # Restart postgres service
-      - name: Restart postgres service
-        if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
-        run: docker-compose restart rest
-        working-directory: ${{env.datalayer-docker-directory}}
-
       # Execute CLI on local datalayer if branch not in [upcoming-sandbox, upcoming-production]
-      - name: Execute parsing scripts to update DataLayer on local datalayer (docker)
+      - name: Execute parsing scripts to update the test DataLayer inside docker-compose.
         if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
-        run: |
-          echo "Parsing markdown folder on branch $GITHUB_REF"
-          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel eci
-          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel cae
-          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel crte
-          pipenv run python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations
-
-        working-directory: ${{env.business-directory}}
-        env:
-          SUPABASE_KEY: ${{secrets.DOCKER_SUPABASE_KEY}}
-          SUPABASE_URL: http://localhost:8000
-          SUPABASE_WS: ws://localhost:8000
+        run: docker-compose run business-update-content
 
       # Execute CLI locally on sandbox datalayer
       - name: Execute parsing scripts to update DataLayer on Supabase Sandbox
         if: ${{ github.ref == 'refs/heads/upcoming_sandbox'}}
-        run: |
-          echo "Parsing markdown folder on branch $GITHUB_REF"
-          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel eci
-          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel cae
-          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel crte
-          pipenv run python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations
-
-        working-directory: ${{env.business-directory}}
+        run: docker-compose run --no-deps business-update-content
         env:
           SUPABASE_KEY: ${{secrets.SANDBOX_SUPABASE_KEY}}
           SUPABASE_URL: https://xbrefnclajfcjlpnwyow.supabase.co
@@ -131,15 +46,7 @@ jobs:
       # Execute CLI locally on production datalayer
       - name: Execute parsing scripts to update DataLayer on Supabase Production
         if: ${{ github.ref == 'refs/heads/upcoming_production'}}
-        run: |
-          echo "Parsing markdown folder on branch $GITHUB_REF"
-          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel eci
-          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel cae
-          pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel crte
-          pipenv run python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations
-
-
-        working-directory: ${{env.business-directory}}
+        run: docker-compose run --no-deps business-update-content
         env:
           SUPABASE_KEY: ${{secrets.PRODUCTION_SUPABASE_KEY}}
           SUPABASE_URL: https://rlarzronkgoyvtdkltqy.supabase.co
