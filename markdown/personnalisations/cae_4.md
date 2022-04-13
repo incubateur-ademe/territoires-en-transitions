@@ -83,13 +83,13 @@ action_id: cae_4.2.2
 ## Regles
 ### Réduction de potentiel
 ```formule
-si reponse(pouvoir_police, NON) ou reponse(voirie_1,voirie_1_b) ou reponse(voirie_1,voirie_1_c) ou reponse(trafic, NON) alors 0.5
 sinon si reponse(pouvoir_police, NON) et reponse(trafic, NON) alors 2/16
 sinon si reponse(pouvoir_police, NON) et reponse(voirie_1,voirie_1_b) alors 2/16
 sinon si reponse(pouvoir_police, NON) et reponse(voirie_1,voirie_1_c) alors 2/16
 sinon si reponse(voirie_1,voirie_1_b) et reponse(voirie_1,voirie_1_c) alors 2/16
 sinon si reponse(voirie_1,voirie_1_b) et reponse(trafic, NON) alors 2/16
 sinon si reponse(voirie_1,voirie_1_c) et reponse(trafic, NON) alors 2/16
+si reponse(pouvoir_police, NON) ou reponse(voirie_1,voirie_1_b) ou reponse(voirie_1,voirie_1_c) ou reponse(trafic, NON) alors 0.5
 ```
 Réduction de 50 % pour les collectivités ne disposant pas des compétences en matière de circulation/gestion du trafic (pouvoir de police)
 Réduction de 50 % pour les collectivités ne disposant pas de compétences en matière de voirie (création, aménagement, entretien) ou qui possèdent uniquement les voiries et parcs de stationnements communautaires

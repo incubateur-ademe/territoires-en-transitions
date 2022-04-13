@@ -37,7 +37,7 @@ Il s'agit de la compétence Banatic 4505
 id: urba_2
 type: binaire
 thematique_id: urbanisme_habitat
-actions: [cae_1.3.2]
+actions: [cae_1.3.3]
 ```
 
 # La collectivité a-t-elle la compétence d'octroi des permis de construire ?
@@ -45,7 +45,7 @@ actions: [cae_1.3.2]
 id: urba_3
 type: binaire
 thematique_id: urbanisme_habitat
-actions: [cae_1.3.2]
+actions: [cae_1.3.3]
 ```
 Il s'agit de la compétence Banatic 4560
 

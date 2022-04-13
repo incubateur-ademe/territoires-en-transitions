@@ -1,4 +1,4 @@
-# Le montant annuel des achats publics de la collectivité est-il inférieur à 100 000 000 € ?
+# Le montant annuel des achats publics de la collectivité est-il inférieur à 100 000 000 € hors-taxes ?
 ```yaml
 id: SPASER
 type: binaire

@@ -169,7 +169,11 @@ action_id: cae_3.3.3
 ## Règles
 ### Réduction de potentiel
 ```formule
-si identite(type, EPCI) et max(reponse(assainissement_3), 0.5) alors 1.0
+si identite(type, EPCI) alors max(reponse(assainissement_3), 0.5)
 sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(assainissement_2, NON) alors 0.5
 ```
-@emeline, il manquait le premier "alors" dans cette règle, on a mis alors 1.0, à corriger. 
+Réduction de potentiel en fonction de la compétence assainissement :
+- EPCI : en cas de compétence partagée ou variable sur le territoire, réduction proportionnelle à la part des 
+communes ayant délégué leur compétence assainissement, dans la limite de moins 50% (des actions sont possibles sur d’autres compétences, notamment « gestion des milieux aquatiques et prévention des inondations »)
+- Commune : réduction de 50% en l’absence de la compétence assainissement (des actions sont possibles sur d’autres 
+  compétences)

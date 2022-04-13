@@ -3,7 +3,7 @@
 id: dev_eco_1
 type: binaire
 thematique_id: developpement_economique
-actions: [eci_4.3, eci_3.4]
+actions: [eci_4.3, eci_3.4, eci_1.2.2, eci_1.2.3]
 ```
 Il s'agit de la compétence "Développement et aménagement économique".
 
