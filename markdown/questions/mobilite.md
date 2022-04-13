@@ -3,7 +3,7 @@
 id: AOM_1
 type: binaire
 thematique_id: mobilite
-actions: [cae_1.2.2, cae_4.2.3]
+actions: [cae_1.2.2, cae_4.2.3, cae_4.3.4]
 ```
 
 # Quelle est la part de la collectivité autorité organisatrice de la mobilité (AOM) ?
@@ -11,7 +11,7 @@ actions: [cae_1.2.2, cae_4.2.3]
 id: AOM_2
 type: proportion
 thematique_id: mobilite
-actions: [cae_4.1.1]
+actions: [cae_4.1.1, cae_4.3.3, cae_4.3.4]
 ```
 La part se rapporte au nombre d'habitants (nombre d'habitants de la collectivité / nombre d'habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d'élu de la collectivité / nombre de voix total dans l'organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d'habitants.
 
@@ -20,7 +20,7 @@ La part se rapporte au nombre d'habitants (nombre d'habitants de la collectivit�
 id: voirie_1
 type: choix
 thematique_id: mobilite
-actions: [cae_2.3.3, cae_4.2.3, cae_4.2.2]
+actions: [cae_2.3.3, cae_4.2.3, cae_4.2.2, cae_4.3.1]
 ```
 ## Choix
 ### Oui sur l'ensemble du territoire
@@ -41,7 +41,7 @@ id: voirie_1_c
 id: voirie_2
 type: proportion
 thematique_id: mobilite
-actions: [cae_4.2.1]
+actions: [cae_4.2.1, cae_4.3.1]
 types_concernes: [commune]
 ```
 
@@ -82,14 +82,14 @@ actions: [cae_4.2.2]
 id: cyclable
 type: binaire
 thematique_id: mobilite
-actions: [cae_4.2.3]
+actions: [cae_4.3.2]
 ```
 
-# La collectivités est-elle concernée par le versement mobilité ?
+# La collectivité est-elle concernée par le versement mobilité ?
 ```yaml
 id: versement_mobilite
 type: binaire
 thematique_id: mobilite
-actions: [cae_4.1.1]
+actions: [cae_4.3.3]
 ordonnancement: 2
 ```

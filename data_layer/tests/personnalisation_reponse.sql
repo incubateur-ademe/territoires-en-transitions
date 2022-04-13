@@ -33,7 +33,7 @@ $$
     begin
         reponse = '
         {
-          "question_id": "energie_1",
+          "question_id": "dechets_4",
           "collectivite_id": 1,
           "reponse": 0.5
         }
@@ -43,18 +43,18 @@ $$
 $$ language plpgsql;
 
 
-select results_eq('select reponse from reponse_proportion where collectivite_id = 1 and question_id = ''energie_1'';',
+select results_eq('select reponse from reponse_proportion where collectivite_id = 1 and question_id = ''dechets_4'';',
                   'select 0.5::float as reponse',
                   'Reponse proportion value should be present');
 
 select results_eq('select max(created_at) as time from reponse_update_event where collectivite_id = 1',
                   'select modified_at as time '
-                      'from reponse_proportion where collectivite_id = 1 and question_id = ''energie_1'';',
+                      'from reponse_proportion where collectivite_id = 1 and question_id = ''dechets_4'';',
                   'An event should be present with the same time as the reponse.');
 
 select results_eq('select created_at as time from unprocessed_reponse_update_event where collectivite_id = 1',
                   'select modified_at as time '
-                      'from reponse_proportion where collectivite_id = 1 and question_id = ''energie_1'';',
+                      'from reponse_proportion where collectivite_id = 1 and question_id = ''dechets_4'';',
                   'An unprocessed event should be present with the same time as the reponse.');
 
 -- drop timestamp trigger

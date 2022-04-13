@@ -11,34 +11,34 @@ from business.personnalisation.engine.parser import parser
 def test_function_reponse_on_question_type_choix():
     tree = parser.parse("reponse(question_choix_1, question_choix_1a)")
     assert (
-        FormuleInterpreter([Reponse("question_choix_1", "question_choix_1a")]).visit(
-            tree
-        )
-        is True
+            FormuleInterpreter([Reponse("question_choix_1", "question_choix_1a")]).visit(
+                tree
+            )
+            is True
     )
     assert (
-        FormuleInterpreter([Reponse("question_choix_1", "question_choix_1b")]).visit(
-            tree
-        )
-        is False
+            FormuleInterpreter([Reponse("question_choix_1", "question_choix_1b")]).visit(
+                tree
+            )
+            is False
     )
 
 
 def test_function_reponse_on_question_typebinaire():
     tree = parser.parse("reponse(question_binaire_1, OUI)")
     assert (
-        FormuleInterpreter([Reponse("question_binaire_1", "OUI")]).visit(tree) is True
+            FormuleInterpreter([Reponse("question_binaire_1", "OUI")]).visit(tree) is True
     )
     assert (
-        FormuleInterpreter([Reponse("question_binaire_1", "NON")]).visit(tree) is False
+            FormuleInterpreter([Reponse("question_binaire_1", "NON")]).visit(tree) is False
     )
 
 
 def test_function_reponse_on_question_type_proportion():
     tree = parser.parse("reponse(question_proportion)")
     assert (
-        FormuleInterpreter(reponses=[Reponse("question_proportion", 0.7)]).visit(tree)
-        is 0.7
+            FormuleInterpreter(reponses=[Reponse("question_proportion", 0.7)]).visit(tree)
+            is 0.7
     )
 
 
@@ -60,28 +60,28 @@ def test_function_identite_on_type():
     )
     assert FormuleInterpreter().visit(parser.parse("identite(type, commune)")) is False
     assert (
-        FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(
-            parser.parse("identite(type, commune)")
-        )
-        is True
+            FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(
+                parser.parse("identite(type, commune)")
+            )
+            is True
     )
 
     assert FormuleInterpreter().visit(parser.parse("identite(type, commune)")) is False
     assert (
-        FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(
-            parser.parse("identite(population, moins_de_10000)")
-        )
-        is True
+            FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(
+                parser.parse("identite(population, moins_de_10000)")
+            )
+            is True
     )
 
     assert (
-        FormuleInterpreter().visit(parser.parse("identite(localisation, DOM)")) is False
+            FormuleInterpreter().visit(parser.parse("identite(localisation, DOM)")) is False
     )
     assert (
-        FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(
-            parser.parse("identite(localisation, DOM)")
-        )
-        is False
+            FormuleInterpreter(identite=commune_de_moins_de_100000_hab).visit(
+                parser.parse("identite(localisation, DOM)")
+            )
+            is False
     )
 
 
@@ -177,8 +177,8 @@ def test_operator_precedence():
 def test_math_operation_on_proportion():
     tree = parser.parse("reponse(question_proportion) - 0.2")
     assert (
-        FormuleInterpreter(reponses=[Reponse("question_proportion", 1.0)]).visit(tree)
-        == 0.8
+            FormuleInterpreter(reponses=[Reponse("question_proportion", 1.0)]).visit(tree)
+            == 0.8
     )
 
 
@@ -316,3 +316,50 @@ def test_regle_cae_3_1_1():
     assert FormuleInterpreter(cas_chaleur_gaz).visit(tree) == 7 / 10
     assert FormuleInterpreter(cas_gaz_elec).visit(tree) == 6 / 10
     assert FormuleInterpreter(cas_chaleur_elec).visit(tree) == 7 / 10
+
+
+def test_regle_cae_3_3_3():
+    """
+    Pour un EPCI, en cas de compétence "assainissement" partagée ou variable sur le territoire,
+    la réduction de potentielle est proportionnelle à la part des communes ayant délégué leur compétence assainissement,
+    dans la limite de moins 50%.
+
+    Pour les communes sans compétence assainissement,
+    le score de la 3.3.3 est réduit de 50 %.
+    """
+    formule = (
+        "si identite(type, EPCI) alors max(reponse(assainissement_3), 0.5)"
+        "sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(assainissement_2, NON) alors 0.5"
+    )
+    tree = parser.parse(formule)
+
+    commune = IdentiteCollectivite(type={"commune"})
+    epci = IdentiteCollectivite(type={"EPCI"})
+
+    # 1, une commune avec toutes les compétences.
+    assert FormuleInterpreter(reponses=[
+        Reponse("assainissement_1", "OUI"),
+        Reponse("assainissement_2", "OUI"),
+        Reponse("assainissement_3", 0.7),
+    ], identite=commune).visit(tree) is None
+
+    # 2, une commune sans aucune compétence.
+    assert FormuleInterpreter(reponses=[
+        Reponse("assainissement_1", "NON"),
+        Reponse("assainissement_2", "NON"),
+        Reponse("assainissement_3", 0.7),
+    ], identite=commune).visit(tree) == 0.5
+
+    # 3, un EPCI avec une part déléguée à 70 %
+    assert FormuleInterpreter(reponses=[
+        Reponse("assainissement_1", "NON"),
+        Reponse("assainissement_2", "NON"),
+        Reponse("assainissement_3", 0.7),
+    ], identite=epci).visit(tree) == 0.7
+
+    # 4, un EPCI avec une part déléguée à 30 %
+    assert FormuleInterpreter(reponses=[
+        Reponse("assainissement_1", "NON"),
+        Reponse("assainissement_2", "NON"),
+        Reponse("assainissement_3", 0.3),
+    ], identite=epci).visit(tree) == 0.5

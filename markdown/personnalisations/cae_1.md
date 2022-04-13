@@ -2,7 +2,7 @@
 ```yaml
 action_id: cae_1.2.2
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(population, moins_de_5000) et reponse (AOM_1, NON) alors 2/12
@@ -17,7 +17,7 @@ Pour une collectivité n'ayant pas de centre urbain de plus de 5000 habitants ET
 ```yaml
 action_id: cae_1.2.3
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si reponse(dechets_1, OUI) et reponse(dechets_2, OUI) et reponse(dechets_3, OUI) alors 1.0
@@ -33,7 +33,7 @@ Pour une collectivité n'ayant aucune des compétences collecte, traitement des 
 ```yaml
 action_id: cae_1.2.4
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(type, EPCI) et reponse(habitat_1, NON) alors 8/12 
@@ -48,7 +48,7 @@ Si la collectivité est une commune, le potentiel est réduit à la part de la c
 ```yaml
 action_id: cae_1.3.1
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si reponse(urba_1, NON) et reponse(SCoT, NON) alors 6/12 
@@ -62,7 +62,7 @@ Pour une collectivité n'ayant pas la compétence PLU mais disposant de la comp�
 ```yaml
 action_id: cae_1.3.2
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si reponse(amenagement_1, NON) ou reponse (amenagement_2, NON) alors 5/10 
@@ -74,7 +74,7 @@ Si une collectivité n'a pas de terrains utilisables ou vendables ou elle dispos
 ```yaml
 action_id: cae_1.3.3
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON)

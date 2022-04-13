@@ -2,7 +2,7 @@
 ```yaml
 action_id: cae_4.1.1
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 max(reponse(AOM_2), 0.5) 
@@ -14,15 +14,15 @@ Pour une collectivité non AOM, le score est proportionnel à la participation d
 ```yaml
 action_id: cae_4.1.2
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(TC_1, NON) alors 0.8
+si reponse(TC_1, NON) et reponse(vehiculeCT_1, NON) alors 0.5
+sinon si reponse(TC_1, NON) alors 0.8
 sinon si reponse(vehiculeCT_1, NON) alors 0.7
-sinon si reponse(TC_1, NON) et reponse(vehiculeCT_1, NON) alors 0.5
 ```
-Pour une collectivité dont la desserte des locaux par les transports publics est inenvisageable, le score est diminuté de 20 %.
-Pour une collectivité ne disposant pas de véhicules, le score est diminuté de 30 % et les statuts des sous-actions 4.1.2.1, 4.1.2.3 et 4.1.2.4 sont "non concerné".
+Pour une collectivité dont la desserte des locaux par les transports publics est inenvisageable, le score est diminué de 20 %.
+Pour une collectivité ne disposant pas de véhicules, le score est diminué de 30 % et les statuts des sous-actions 4.1.2.1, 4.1.2.3 et 4.1.2.4 sont "non concerné".
 Ces 2 réductions sont cumulables.
 
 # Désactivation cae 4.1.2.1 liee mobilité interne
@@ -30,7 +30,7 @@ Ces 2 réductions sont cumulables.
 action_id: cae_4.1.2.1
 ```
 
-## Regles 
+## Règles 
 ### Désactivation
 ```formule
 reponse(vehiculeCT_1, NON)
@@ -41,7 +41,7 @@ reponse(vehiculeCT_1, NON)
 action_id: cae_4.1.2.3
 ```
 
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(vehiculeCT_1, NON)
@@ -52,7 +52,7 @@ reponse(vehiculeCT_1, NON)
 action_id: cae_4.1.2.4
 ```
 
-## Regles 
+## Règles 
 ### Désactivation
 ```formule
 reponse(vehiculeCT_1, NON)
@@ -64,7 +64,7 @@ reponse(vehiculeCT_1, NON)
 ```yaml
 action_id: cae_4.2.1
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(type, commune) alors max(reponse(voirie_2), 2/8)
@@ -80,16 +80,17 @@ En l’absence de compétences voirie et stationnement et de zones de polarités
 ```yaml
 action_id: cae_4.2.2
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(pouvoir_police, NON) ou reponse(voirie_1,voirie_1_b) ou reponse(voirie_1,voirie_1_c) ou reponse(trafic, NON) alors 0.5
-sinon si reponse(pouvoir_police, NON) et reponse(trafic, NON) alors 2/16
+si reponse(pouvoir_police, NON) et reponse(trafic, NON) alors 2/16
 sinon si reponse(pouvoir_police, NON) et reponse(voirie_1,voirie_1_b) alors 2/16
 sinon si reponse(pouvoir_police, NON) et reponse(voirie_1,voirie_1_c) alors 2/16
 sinon si reponse(voirie_1,voirie_1_b) et reponse(voirie_1,voirie_1_c) alors 2/16
 sinon si reponse(voirie_1,voirie_1_b) et reponse(trafic, NON) alors 2/16
 sinon si reponse(voirie_1,voirie_1_c) et reponse(trafic, NON) alors 2/16
+sinon si reponse(pouvoir_police, NON) ou reponse(voirie_1,voirie_1_b) ou reponse(voirie_1,voirie_1_c) ou reponse
+(trafic, NON) alors 0.5
 ```
 Pour les collectivités ne disposant pas des compétences en matière de circulation/gestion du trafic (pouvoir de police), le score est réduit de 50 %.
 Pour les collectivités ne disposant pas de compétences en matière de voirie (création, aménagement, entretien) ou qui possèdent uniquement les voiries et parcs de stationnements communautaires, le score est réduit de 50 %.
@@ -101,7 +102,7 @@ Ces réductions sont cumulables, dans la limite de 2 points potentiel restant.
 ```yaml
 action_id: cae_4.2.3
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) alors 0.5 
@@ -118,7 +119,7 @@ Les deux réductions sont cumulables.
 ```yaml
 action_id: cae_4.3.1
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(type, commune) alors max(reponse(voirie_2), 0.5)
@@ -132,7 +133,7 @@ Pour les intercommunalités qui n’ont la compétence que sur les voiries et pa
 ```yaml
 action_id: cae_4.3.2
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(localisation,DOM) alors 14/16
@@ -146,7 +147,7 @@ Le nombre de point max pour l'action 4.3.2 est de 16 points en Métropole et de 
 ```yaml
 action_id: cae_4.3.3
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si reponse(AOM_1, OUI) alors 1.0
@@ -162,7 +163,7 @@ La réduction la plus forte prévaut.
 ```yaml
 action_id: cae_4.3.4
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(localisation,DOM) alors 10/8

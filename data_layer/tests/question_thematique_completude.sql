@@ -24,10 +24,10 @@ select ok((select bool_and(completude = 'a_completer')
           'All thematiques should be `à completer`'
            );
 
-select ok((select bool_and(type = 'binaire')
+select ok((select bool_and(type = 'binaire' or type = 'proportion')
            from question
            where thematique_id = 'dechets'),
-          'All thematiques should be `à completer`'
+          'For testing question `dechets` should either `binaire` or `proportion`'
            );
 
 
@@ -35,7 +35,12 @@ select ok((select bool_and(type = 'binaire')
 insert into reponse_binaire
 select now(), 1, q.id, true
 from question q
-where q.thematique_id = 'dechets';
+where q.thematique_id = 'dechets' and type = 'binaire';
+
+insert into reponse_proportion
+select now(), 1, q.id, 1.0
+from question q
+where q.thematique_id = 'dechets' and type = 'proportion';
 
 select ok((select completude = 'complete'
            from question_thematique_completude

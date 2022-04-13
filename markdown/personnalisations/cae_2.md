@@ -2,7 +2,7 @@
 ```yaml
 action_id: cae_2.2.3.1
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 identite(localisation, DOM) 
@@ -13,7 +13,7 @@ Pour une collectivité hors France Métropolitaine, le statut de la tâche 2.2.3
 ```yaml
 action_id: cae_2.2.3.2
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 identite(localisation, DOM) 
@@ -24,7 +24,7 @@ Pour une collectivité hors France Métropolitaine, le statut de la tâche 2.2.3
 ```yaml
 action_id: cae_2.2.3.3
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 identite(localisation, DOM) 
@@ -35,7 +35,7 @@ Pour une collectivité hors France Métropolitaine, le statut de la tâche 2.2.3
 ```yaml
 action_id: cae_2.2.3
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(localisation, DOM) et reponse(ECS, NON) alors 0.3
@@ -48,7 +48,7 @@ Pour une collectivité hors France Métropolitaine, le statut des tâches 2.2.3.
 ```yaml
 action_id: cae_2.3.1
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(type, EPCI) et reponse(EP_1, EP_1_b) alors 2/6
@@ -68,7 +68,7 @@ Si la collectivité a délégué sa compétence éclairage public à une autre s
 ```yaml
 action_id: cae_2.3.3
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si reponse(voirie_1, voirie_1_b) alors 0.5

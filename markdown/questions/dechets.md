@@ -11,7 +11,7 @@ actions: [cae_1.2.3, eci_2.2, eci_2.4, eci_2.4.2, eci_2.4.3, eci_4.1, eci_4.2, e
 id: dechets_2
 type: binaire
 thematique_id: dechets
-actions: [eci_2.3, eci_2.4, eci_2.4.4, eci_4.1, eci_4.2]
+actions: [cae_1.2.3, cae_3.3.5, eci_2.3, eci_2.4, eci_2.4.4, eci_4.1, eci_4.2]
 ```
 
 # La collectivité est-elle chargée de la réalisation d'un "Programme local de prévention des déchets ménagers et assimilés" (PLPDMA) du fait de sa compétence collecte et/ou par délégation d'une autre collectivité ?
@@ -27,7 +27,7 @@ actions: [cae_1.2.3, eci_2.1]
 id: REOM
 type: binaire
 thematique_id: dechets
-actions: [cae_4.2.1, eci_4.2.3]
+actions: [eci_4.2.1, eci_4.2.3]
 ```
 
 # Si la collectivité a transféré le traitement des déchets à un syndicat compétent en la matière, quelle est la part de la collectivité dans ce syndicat ?
