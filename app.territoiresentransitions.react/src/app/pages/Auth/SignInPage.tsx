@@ -1,5 +1,7 @@
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
+import {useHistory} from 'react-router-dom';
+import {myCollectivitesPath} from 'app/paths';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {AuthBloc, authBloc} from 'core-logic/observables/authBloc';
 import {ValiderButton} from 'ui/shared/ValiderButton';
@@ -24,6 +26,7 @@ export const SignInPage = () => {
       .required('Champ requis'),
     password: Yup.string().required('Champ requis'),
   });
+  const history = useHistory();
 
   return (
     <section data-test="SignInPage" className="max-w-xl mx-auto p-5">
@@ -34,8 +37,11 @@ export const SignInPage = () => {
           initialValues={{email: '', password: ''}}
           validationSchema={validation}
           onSubmit={credentials => {
-            authBloc.connect(credentials);
-            console.log(authBloc.connected);
+            authBloc.connect(credentials).then(connected => {
+              if (connected) {
+                history.push(myCollectivitesPath);
+              }
+            });
           }}
         >
           {({values}) => (
