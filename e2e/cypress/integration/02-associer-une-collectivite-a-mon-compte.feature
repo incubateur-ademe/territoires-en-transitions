@@ -4,7 +4,9 @@ Fonctionnalité: Associer une collectivité à mon compte
 
   Scénario: Sélectionner une collectivité à associer à mon compte
     Etant donné que je suis connecté en tant que "yolo"
-    Quand je clique sur le bouton "Associer une collectivité à mon compte" de la page "Mes collectivités"
+
+    Quand je visite la vue "Mes collectivités"
+    Et que je clique sur le bouton "Associer une collectivité à mon compte" de la page "Mes collectivités"
     Alors le "dialogue Associer une collectivité à mon compte" vérifie les conditions suivantes :
       | Element                                               | Condition |
       | Nom de la collectivité                                | vide      |

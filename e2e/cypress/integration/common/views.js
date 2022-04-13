@@ -4,4 +4,8 @@ export const Views = {
     route: '/toutes_collectivites',
     selector: '[data-test=ElsesCollectivites]',
   },
+  'Mes collectivités': {
+    route: '/mes_collectivites',
+    selector: '[data-test=CurrentUserCollectivites]',
+  },
 };
