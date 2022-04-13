@@ -43,7 +43,6 @@ export class AuthBloc {
     supabaseClient.auth.onAuthStateChange((event, session) => {
       if (session && session.user) {
         this.setUserId(session.user.id);
-        this.setUserId(session.user.id);
         this.setAuthError(null);
         setCrispUserData(session.user);
         if (this._invitationState === 'waitingForLogin') {
@@ -53,18 +52,27 @@ export class AuthBloc {
     });
   }
 
-  connect({email, password}: {email: string; password: string}) {
-    supabaseClient.auth
+  connect({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<boolean> {
+    return supabaseClient.auth
       .signIn({email, password})
       .then(session => {
         if (!session.user) {
           console.log(session.error?.message);
           this.setAuthError("L'email et le mot de passe ne correspondent pas.");
           this.setUserId(null);
+          return false;
         }
+        return true;
       })
       .catch(error => {
         console.log('Connection error: ', error);
+        return false;
       });
   }
 

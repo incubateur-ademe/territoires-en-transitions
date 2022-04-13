@@ -11,7 +11,7 @@ import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import StatisticsPage from 'app/pages/StatisticsPage';
 import Home from 'app/pages/Home';
-import {ConnectedRedirector} from 'app/Redirector';
+import {InvitationRedirector} from 'app/Redirector';
 import {Toasters} from 'app/Toasters';
 import {ScrollToTop} from 'app/ScrollToTop';
 import {createTheme, MuiThemeProvider} from '@material-ui/core';
@@ -46,7 +46,7 @@ export const App = () => {
           <E2E />
           <ScrollToTop />
           <Toasters />
-          <ConnectedRedirector />
+          <InvitationRedirector />
 
           <Switch>
             <HomeRoute exact path="/">
