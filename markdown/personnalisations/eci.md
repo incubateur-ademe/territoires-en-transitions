@@ -2,10 +2,11 @@
 ```yaml
 action_id: eci_1.2.2
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 si identite(type, syndicat) alors VRAI
+sinon si reponse(dev_eco_1, NON) alors VRAI
 ```
 Les syndicats ne sont pas concernés par la sous-action 1.2.2.
 
@@ -13,10 +14,11 @@ Les syndicats ne sont pas concernés par la sous-action 1.2.2.
 ```yaml
 action_id: eci_1.2.3
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 si identite(type, syndicat) alors VRAI
+sinon si reponse(dev_eco_1, NON) alors VRAI
 ```
 Les syndicats ne sont pas concernés par la sous-action 1.2.3.
 
@@ -24,7 +26,7 @@ Les syndicats ne sont pas concernés par la sous-action 1.2.3.
 ```yaml
 action_id: eci_1.2.4
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 si identite(type, syndicat) alors FAUX sinon VRAI
@@ -35,7 +37,7 @@ Les syndicats ne sont pas concernés par la sous-action 1.2.4.
 ```yaml
 action_id: eci_2.1
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_3, NON) 
@@ -46,7 +48,7 @@ Pour les collectivités n'ayant pas la compétence "collecte des déchets", le s
 ```yaml
 action_id: eci_2.2
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_1, NON) 
@@ -57,18 +59,19 @@ Pour les collectivités n'ayant pas la compétence "collecte des déchets", le s
 ```yaml
 action_id: eci_2.3
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_2, NON) 
 ```
 Pour les collectivités n'ayant pas la compétence "traitement des déchets", le score de l'action 2.3. est réduit à 0 et les statuts sont "non concerné".
+   
 
-# Désactivation eci_2.4 liee collecte et traitement dechets
+# Désactivation eci_2.4.0 liee collecte dechets
 ```yaml
-action_id: eci_2.4
+action_id: eci_2.4.0
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_1, NON) et reponse(dechets_2, NON)
@@ -77,36 +80,54 @@ Pour les collectivités n'ayant ni la compétence "collecte des déchets", ni la
 Pour les collectivités n'ayant pas la compétence "collecte des déchets", les scores des sous-actions 2.4.2 et 2.4.3 sont réduits à 0 et les statuts de ces 2 sous-actions sont "non concerné".
 Pour les collectivités n'ayant pas la compétence "traitement des déchets", le score de la sous-action 2.4.4 est réduit à 0 et le statut de cette sous-action est "non concerné".
 
+# Désactivation eci_2.4.1 liee collecte dechets
+```yaml
+action_id: eci_2.4.1
+```
+## Règles
+### Désactivation
+```formule
+reponse(dechets_1, NON) et reponse(dechets_2, NON)
+```
+
 # Désactivation eci_2.4.2 liee collecte dechets
 ```yaml
 action_id: eci_2.4.2
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
-
 
 # Désactivation eci_2.4.3 liee collecte dechets
 ```yaml
 action_id: eci_2.4.3
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
-
-
+                                                   ˚
 # Désactivation eci_2.4.4 liee traitement dechets
 ```yaml
 action_id: eci_2.4.4
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_2, NON) 
+```
+
+# Désactivation eci_2.4.5 liee traitement dechets
+```yaml
+action_id: eci_2.4.5
+```
+## Règles
+### Désactivation
+```formule
+reponse(dechets_1, NON) et reponse(dechets_2, NON)
 ```
 
 
@@ -114,7 +135,7 @@ reponse(dechets_2, NON)
 ```yaml
 action_id: eci_3.2.0
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(SPASER, NON) 
@@ -125,7 +146,7 @@ Les collectivités ayant un montant total annuel des achats inférieur à 100 mi
 ```yaml
 action_id: eci_3.4
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dev_eco_1, NON) 
@@ -137,7 +158,7 @@ Pour les collectivités ne possédant pas d'établissements de formation initial
 ```yaml
 action_id: eci_3.4.2
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(formation, NON) 
@@ -148,7 +169,7 @@ reponse(formation, NON)
 ```yaml
 action_id: eci_3.7.1
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(population, moins_de_100000) alors 3 
@@ -160,7 +181,7 @@ La note du référentiel actuel est à 25 %. Pour les collectivités ayant une p
 ```yaml
 action_id: eci_3.7.2
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(population, moins_de_100000) alors 1/3
@@ -172,86 +193,81 @@ La note du référentiel actuel est à 75 %. Pour les collectivités ayant une p
 ```yaml
 action_id: eci_4.1
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_1, NON) et reponse(dechets_2, NON)
 ```
 Pour les collectivités n'ayant ni la compétence "collecte des déchets", ni la compétence "traitement des déchets", le score de l'action 4.1. est réduit à 0 et les statuts sont "non concerné".
 
-# Désactivation eci_4.2 liee collecte et traitement dechets
-```yaml
-action_id: eci_4.2
-```
-## Regles
-### Désactivation
-```formule
-reponse(dechets_1, NON) et reponse(dechets_2, NON)
-```
-Pour les collectivités n'ayant ni la compétence "collecte des déchets", ni la compétence "traitement des déchets", le score de l'action 4.2. est réduit à 0 et les statuts sont "non concerné".
-Pour les collectivités n'ayant pas la compétence "collecte des déchets", les scores des sous-actions 4.2.1 à 4.2.4 sont réduits à 0 et les statuts de ces 4 sous-actions sont "non concerné".
-Pour les collectivités ayant mis en place la redevance d’enlèvement des ordures ménagères (REOM), les scores des sous-action 4.2.1 et 4.2.3 sont réduits à 0 et les statuts de ces 2 sous-actions sont "non concerné".
-La sous-action 4.2.5 ne s'adressent qu'aux syndicats de traitement.
 
 # Désactivation eci_4.2.1 liee collecte dechets
 ```yaml
 action_id: eci_4.2.1
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_1, NON) ou reponse(REOM, OUI) 
 ```
+Pour les collectivités n'ayant ni la compétence "collecte des déchets", ni la compétence "traitement des déchets", le score de l'action 4.2 est réduit à 0 et les statuts sont "non concerné".
+Pour les collectivités n'ayant pas la compétence "collecte des déchets", les scores des sous-actions 4.2.1 à 4.2.4 sont réduits à 0 et les statuts de ces 4 sous-actions sont "non concerné".
+Pour les collectivités ayant mis en place la redevance d’enlèvement des ordures ménagères (REOM), les scores des sous-action 4.2.1 et 4.2.3 sont réduits à 0 et les statuts de ces 2 sous-actions sont "non concerné".
+La sous-action 4.2.5 ne s'adressent qu'aux syndicats de traitement.
 
 # Désactivation eci_4.2.2 liee collecte dechets
 ```yaml
 action_id: eci_4.2.2
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
-
+Pour les collectivités n'ayant ni la compétence "collecte des déchets", ni la compétence "traitement des déchets", le score de l'action 4.2 est réduit à 0 et les statuts sont "non concerné".
 
 # Désactivation eci_4.2.3 liee collecte dechets
 ```yaml
 action_id: eci_4.2.3
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_1, NON) ou reponse(REOM, OUI) 
 ```
-
+Pour les collectivités n'ayant ni la compétence "collecte des déchets", ni la compétence "traitement des déchets", le score de l'action 4.2 est réduit à 0 et les statuts sont "non concerné".
+Pour les collectivités ayant mis en place la redevance d’enlèvement des ordures ménagères (REOM), les scores des sous-action 4.2.1 et 4.2.3 sont réduits à 0 et les statuts de ces 2 sous-actions sont "non concerné".
 
 # Désactivation eci_4.2.4 liee collecte dechets
 ```yaml
 action_id: eci_4.2.4
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dechets_1, NON) 
 ```
-
+Pour les collectivités n'ayant ni la compétence "collecte des déchets", ni la compétence "traitement des déchets", le score de l'action 4.2 est réduit à 0 et les statuts sont "non concerné".
+Pour les collectivités n'ayant pas la compétence "collecte des déchets", les scores des sous-actions 4.2.1 à 4.2.4 sont réduits à 0 et les statuts de ces 4 sous-actions sont "non concerné".
 
 # Désactivation eci_4.2.5 liee syndicat de traitement
 ```yaml
 action_id: eci_4.2.5
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
-si identite(type, syndicat_traitement) alors FAUX sinon VRAI
+si identite(type, syndicat) et reponse(dechets_2, OUI) alors FAUX sinon VRAI
 ```
+Pour les collectivités n'ayant ni la compétence "collecte des déchets", ni la compétence "traitement des déchets", le score de l'action 4.2 est réduit à 0 et les statuts sont "non concerné".
+La sous-action 4.2.5 ne s'adressent qu'aux syndicats de traitement.
 
 
 # Désactivation eci_4.3 liee competence dev eco
 ```yaml
 action_id: eci_4.3
 ```
-## Regles
+## Règles
 ### Désactivation
 ```formule
 reponse(dev_eco_1, NON) 

@@ -67,7 +67,7 @@ sinon si reponse(recuperation_cogeneration, NON) alors 2/12
 ```yaml
 action_id: cae_3.2.1
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(localisation,DOM) alors 10/12
@@ -109,7 +109,7 @@ reponse(recuperation_cogeneration, NON)
 ```yaml
 action_id: cae_3.2.2
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(localisation,DOM) alors 10/12
@@ -121,7 +121,7 @@ Le nombre de point max pour l'action 3.2.2 est de 12 points en Métropole et de 
 ```yaml
 action_id: cae_3.2.3
 ```
-## Regles
+## Règles
 ### Réduction de potentiel
 ```formule
 si identite(localisation,DOM) alors 12/8
@@ -174,20 +174,5 @@ si identite(type, EPCI) et max(reponse(assainissement_3), 0.5) alors 1.0
 sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(assainissement_2, NON) alors 0.5
 ```
 Pour un EPCI, en cas de compétence "assainissement" partagée ou variable sur le territoire, la réduction de potentielle est proportionnelle à la part des communes ayant délégué leur compétence assainissement, dans la limite de moins 50%. Des actions sont possibles sur d’autres compétences, notamment « gestion des milieux aquatiques et prévention des inondations ».
-Pour les communes sans compétence assainissement, le score de la 3.3.3 est réduit de 50 %. 
+Pour les communes sans compétence assainissement, le score de la 3.3.3 est réduit de 50 %.
 
-
-# Réduction potentiel cae 3.3.5 liee dechets 
-```yaml
-action_id: cae_3.3.5
-```
-## Règles
-### Reduction de potentiel
-```formule
-si identite(type, commune) et reponse(dechets_2, NON) alors min(score(cae_1.2.3), 2/12)
-sinon si identite (type,EPCI) et reponse(dechets_2, OUI) alors min(score(cae_1.2.3), 1.0)
-sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2.3), max(reponse(dechets_4),2/12))
-```
-Pour une commune, la note est réduite à 2 points.
-Pour un EPCI ayant transféré la compétence traitement des déchets à un syndicat compétent en la matière, la note est réduite proportionnelle à sa participation dans cet syndicat, dans la limite de 2 points restants.
-Pour favoriser la prévention des déchets, la note attribuée à cette action ne peut dépasser celle obtenue dans l'action 1.2.3.

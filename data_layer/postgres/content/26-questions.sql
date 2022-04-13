@@ -70,7 +70,6 @@ INSERT INTO public.question (id, thematique_id, ordonnancement, types_collectivi
 
 
 -- Questions Actions
-INSERT INTO public.question_action (question_id, action_id) VALUES ('energie_1', 'cae_2.3.1');
 INSERT INTO public.question_action (question_id, action_id) VALUES ('ECS', 'cae_2.2.3');
 INSERT INTO public.question_action (question_id, action_id) VALUES ('eau_1', 'cae_3.3.1');
 INSERT INTO public.question_action (question_id, action_id) VALUES ('assainissement_1', 'cae_3.3.2');
@@ -123,7 +122,6 @@ INSERT INTO public.question_action (question_id, action_id) VALUES ('AOM_2', 'ca
 INSERT INTO public.question_action (question_id, action_id) VALUES ('voirie_1', 'cae_2.3.3');
 INSERT INTO public.question_action (question_id, action_id) VALUES ('voirie_1', 'cae_4.2.3');
 INSERT INTO public.question_action (question_id, action_id) VALUES ('voirie_1', 'cae_4.2.2');
-INSERT INTO public.question_action (question_id, action_id) VALUES ('voirie_2', 'cae_2.3.3');
 INSERT INTO public.question_action (question_id, action_id) VALUES ('TC_1', 'cae_4.1.2');
 INSERT INTO public.question_action (question_id, action_id) VALUES ('vehiculeCT_1', 'cae_4.1.2');
 INSERT INTO public.question_action (question_id, action_id) VALUES ('pouvoir_police', 'cae_4.2.2');
