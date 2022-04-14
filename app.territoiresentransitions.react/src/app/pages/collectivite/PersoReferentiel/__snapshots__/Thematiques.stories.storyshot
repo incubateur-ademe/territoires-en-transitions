@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematiques Exemple 1 1`] = `
+Array [
+  <div
+    className="flex flex-col items-center"
+  >
+    <h1>
+      Personnalisation des référentiels
+    </h1>
+    <h3>
+      Grand Montauban
+    </h3>
+  </div>,
+  <p
+    className="fr-text--lg"
+  >
+    Les actions proposées dans les référentiels Climat Air Énergie et Économie circulaire dépendent des compétences et caractéristiques de chaque collectivité.
+  </p>,
+  <p>
+    Vos réponses aux questions suivantes permettront d’identifier les actions qui ne concernent pas votre collectivité et de prendre en compte les réductions de potentiel lorsqu’elles sont applicables.
+  </p>,
+  <fieldset
+    className="fr-fieldset fr-fieldset--inline"
+  >
+    <legend
+      className="fr-fieldset__legend font-bold"
+    >
+      Référentiels à personnaliser
+    </legend>
+    <div
+      className="fr-fieldset__content"
+    >
+      <div
+        className="fr-checkbox-group fr-checkbox-inline"
+      >
+        <input
+          checked={true}
+          className="py-0"
+          id="cae"
+          name="cae"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          className="fr-label"
+          htmlFor="cae"
+        >
+          Climat Air Énergie
+        </label>
+      </div>
+      <div
+        className="fr-checkbox-group fr-checkbox-inline"
+      >
+        <input
+          checked={true}
+          className="py-0"
+          id="eci"
+          name="eci"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          className="fr-label"
+          htmlFor="eci"
+        >
+          Économie Circulaire
+        </label>
+      </div>
+    </div>
+  </fieldset>,
+  <ul
+    className="w-full border pl-0 mt-8"
+  >
+    <li
+      className="list-none px-2 py-3 border-b last:border-none hover:bg-grey925"
+    >
+      <a
+        className="flex justify-between"
+        href="/collectivite/1/perso_ref/dechets"
+        style={
+          Object {
+            "boxShadow": "none",
+          }
+        }
+      >
+        Déchets
+        <p
+          className="fr-badge fr-badge--success "
+        >
+          Complété
+        </p>
+      </a>
+    </li>
+    <li
+      className="list-none px-2 py-3 border-b last:border-none hover:bg-grey925"
+    >
+      <a
+        className="flex justify-between"
+        href="/collectivite/1/perso_ref/energie"
+        style={
+          Object {
+            "boxShadow": "none",
+          }
+        }
+      >
+        Énergie
+        <p
+          className="fr-badge fr-badge--info "
+        >
+          À compléter
+        </p>
+      </a>
+    </li>
+    <li
+      className="list-none px-2 py-3 border-b last:border-none hover:bg-grey925"
+    >
+      <a
+        className="flex justify-between"
+        href="/collectivite/1/perso_ref/mobilite"
+        style={
+          Object {
+            "boxShadow": "none",
+          }
+        }
+      >
+        Mobilité
+        <p
+          className="fr-badge fr-badge--success "
+        >
+          Complété
+        </p>
+      </a>
+    </li>
+  </ul>,
+]
+`;
