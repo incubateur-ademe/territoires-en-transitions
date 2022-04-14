@@ -33,7 +33,7 @@ actions: [cae_4.2.1, eci_4.2.3]
 # Si la collectivité a transféré le traitement des déchets à un syndicat compétent en la matière, quelle est la part de la collectivité dans ce syndicat ?
 ```yaml
 id: dechets_4
-type: binaire
+type: proportion
 thematique_id: dechets
 actions: [cae_3.3.5]
 types_concernes: [EPCI]

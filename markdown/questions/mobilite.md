@@ -13,6 +13,7 @@ type: proportion
 thematique_id: mobilite
 actions: [cae_4.1.1]
 ```
+La part se rapporte au nombre d'habitants (nombre d'habitants de la collectivité / nombre d'habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d'élu de la collectivité / nombre de voix total dans l'organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d'habitants.
 
 # La collectivité a-t-elle la compétence voirie ?
 ```yaml
