@@ -142,4 +142,36 @@ describe('Question reading endpoint ', () => {
 
     expect(results.length).toEqual(0);
   });
+
+  it('should return questions related to thematique_id', async () => {
+    const questionReadEndpoint = new QuestionReadEndpoint([]);
+    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+
+    const results = await questionReadEndpoint.getBy({
+      collectivite_id: 1,
+      thematique_id: 'dechets',
+    });
+
+    expect(results.length).toEqual(4);
+    expect(results).toEqual(
+      expect.arrayContaining([
+        {
+          id: 'dechets_3',
+          action_ids: ['cae_1.2.3', 'eci_2.1'],
+          collectivite_id: 1,
+          thematique_id: 'dechets',
+          type: 'binaire',
+          thematique_nom: 'Déchets',
+          description: '',
+          types_collectivites_concernees: null,
+          formulation:
+            'La collectivité est-elle chargée de la réalisation d\'un "Programme local de prévention des déchets ménagers et assimilés" (PLPDMA) du fait de sa compétence collecte et/ou par délégation d\'une autre collectivité ?',
+          ordonnancement: null,
+          choix: null,
+          population: ['moins_de_100000'],
+          localisation: [],
+        },
+      ])
+    );
+  });
 });
