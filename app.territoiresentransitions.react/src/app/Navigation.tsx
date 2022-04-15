@@ -3,6 +3,8 @@ import {
   allCollectivitesPath,
   makeCollectiviteDefaultPlanActionUrl,
   makeCollectiviteIndicateursUrl,
+  makeCollectivitePersoRefThematiqueUrl,
+  makeCollectivitePersoRefUrl,
   makeCollectiviteReferentielUrl,
   makeCollectiviteTableauBordUrl,
   makeCollectiviteUsersUrl,
@@ -101,15 +103,19 @@ const CollectiviteNavigationDropdownTab = (props: {
 };
 
 export const CollectiviteNavigation = () => {
+  if (!currentCollectiviteBloc.currentCollectivite) {
+    return null;
+  }
+
+  const {collectivite_id: collectiviteId} =
+    currentCollectiviteBloc.currentCollectivite;
+
   return (
     currentCollectiviteBloc.currentCollectivite && (
       <nav className="flex flex-row gap-5" aria-label="Menu principal">
         <CollectiviteNavigationDirectTab
           label="Tableau de bord"
-          path={makeCollectiviteTableauBordUrl({
-            collectiviteId:
-              currentCollectiviteBloc.currentCollectivite.collectivite_id,
-          })}
+          path={makeCollectiviteTableauBordUrl({collectiviteId})}
         />
 
         <CollectiviteNavigationDropdownTab
@@ -117,8 +123,7 @@ export const CollectiviteNavigation = () => {
           listPathsAndLabels={[
             {
               path: makeCollectiviteReferentielUrl({
-                collectiviteId:
-                  currentCollectiviteBloc.currentCollectivite.collectivite_id,
+                collectiviteId,
                 referentielId: 'eci',
               }),
 
@@ -126,8 +131,7 @@ export const CollectiviteNavigation = () => {
             },
             {
               path: makeCollectiviteReferentielUrl({
-                collectiviteId:
-                  currentCollectiviteBloc.currentCollectivite.collectivite_id,
+                collectiviteId,
                 referentielId: 'cae',
               }),
               label: 'Climat Air Énergie',
@@ -139,32 +143,28 @@ export const CollectiviteNavigation = () => {
           listPathsAndLabels={[
             {
               path: makeCollectiviteIndicateursUrl({
-                collectiviteId:
-                  currentCollectiviteBloc.currentCollectivite.collectivite_id,
+                collectiviteId,
                 indicateurView: 'eci',
               }),
               label: 'Économie Circulaire',
             },
             {
               path: makeCollectiviteIndicateursUrl({
-                collectiviteId:
-                  currentCollectiviteBloc.currentCollectivite.collectivite_id,
+                collectiviteId,
                 indicateurView: 'cae',
               }),
               label: 'Climat Air Énergie',
             },
             {
               path: makeCollectiviteIndicateursUrl({
-                collectiviteId:
-                  currentCollectiviteBloc.currentCollectivite.collectivite_id,
+                collectiviteId,
                 indicateurView: 'crte',
               }),
               label: 'CRTE',
             },
             {
               path: makeCollectiviteIndicateursUrl({
-                collectiviteId:
-                  currentCollectiviteBloc.currentCollectivite.collectivite_id,
+                collectiviteId,
                 indicateurView: 'perso',
               }),
               label: 'Personnalisés',
@@ -173,20 +173,21 @@ export const CollectiviteNavigation = () => {
         />
         <CollectiviteNavigationDirectTab
           label="Plans d'action"
-          path={makeCollectiviteDefaultPlanActionUrl({
-            collectiviteId:
-              currentCollectiviteBloc.currentCollectivite.collectivite_id,
-          })}
+          path={makeCollectiviteDefaultPlanActionUrl({collectiviteId})}
         />
-        {currentCollectiviteBloc.isReferent && (
-          <CollectiviteNavigationDirectTab
-            label="Gestion des accès"
-            path={makeCollectiviteUsersUrl({
-              collectiviteId:
-                currentCollectiviteBloc.currentCollectivite.collectivite_id,
-            })}
-          />
-        )}
+        <CollectiviteNavigationDropdownTab
+          menuLabel="Paramètres"
+          listPathsAndLabels={[
+            {
+              label: 'Gestion des accès',
+              path: makeCollectiviteUsersUrl({collectiviteId}),
+            },
+            {
+              label: 'Personnalisation des référentiels',
+              path: makeCollectivitePersoRefUrl({collectiviteId}),
+            },
+          ]}
+        />
       </nav>
     )
   );
