@@ -3,25 +3,19 @@ import {observer} from 'mobx-react-lite';
 import {Dialog} from '@material-ui/core';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {ScoreBloc} from 'core-logic/observables/scoreBloc';
-import {reponseWriteEndpoint} from 'core-logic/api/endpoints/ReponseWriteEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
-import {useToastAlert, ToastAlert} from 'ui/shared/ToastAlert';
 import {PersoPotentielTabs} from './PersoPotentielTabs';
 import {PointsPotentiels} from './PointsPotentiels';
 import {useQuestionsReponses} from './useQuestionsReponses';
 import {useRegles} from './useRegles';
+import {useChangeReponseHandler} from './useChangeReponseHandler';
 
 export type TPersoPotentielButtonProps = {
   /** Définition de l'action */
   actionDef: ActionDefinitionSummary;
   /** Données score */
   scoreBloc: ScoreBloc;
-};
-
-const labelBySaveStatus = {
-  success: 'La personnalisation du potentiel est enregistrée',
-  error: "La personnalisation du potentiel n'a pas été enregistrée",
 };
 
 /**
@@ -36,7 +30,10 @@ export const PersoPotentiel = observer((props: TPersoPotentielButtonProps) => {
   const collectivite_id = useCollectiviteId();
   const [data, refetch] = useQuestionsReponses(actionId);
   const regles = useRegles(actionId);
-  const toastAlert = useToastAlert();
+  const [handleChange, renderToast] = useChangeReponseHandler(
+    collectivite_id,
+    refetch
+  );
   const {qr} = data || {};
 
   const actionScore = scoreBloc.getScore(actionId, referentiel);
@@ -71,24 +68,13 @@ export const PersoPotentiel = observer((props: TPersoPotentielButtonProps) => {
                 actionScore={actionScore}
                 questionReponses={qr}
                 regles={regles}
-                onChange={(question, reponse) => {
-                  reponseWriteEndpoint
-                    .save({
-                      collectivite_id,
-                      question,
-                      reponse,
-                    })
-                    .then(toastAlert.showSuccess, toastAlert.showError)
-                    .finally(refetch);
-                }}
+                onChange={handleChange}
               />
             ) : null}
           </div>
         </div>
       </Dialog>
-      <ToastAlert toastAlert={toastAlert}>
-        {status => (status ? labelBySaveStatus[status] : '')}
-      </ToastAlert>
+      {renderToast()}
     </div>
   );
 });
