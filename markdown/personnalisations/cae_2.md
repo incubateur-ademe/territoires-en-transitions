@@ -41,6 +41,7 @@ action_id: cae_2.2.3
 si identite(localisation, DOM) et reponse(ECS, NON) alors 0.3
 ```
 Pour une collectivité hors France Métropolitaine, et en l'absence de besoin d'eau chaude sanitaire, le score de la 2.2.3 est réduit de 70 %.
+Pour une collectivité hors France Métropolitaine, le statut des tâches 2.2.3.1 à 2.2.3.3 est "non concerné".
 
 
 # Réduction potentiel cae 2.3.1 liee eclairage public
