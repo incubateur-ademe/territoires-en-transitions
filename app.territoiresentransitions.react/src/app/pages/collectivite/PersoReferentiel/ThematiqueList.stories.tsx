@@ -19,17 +19,17 @@ Exemple1.args = {
     {
       id: 'dechets',
       nom: 'Déchets',
-      perso_thematique_status: 'done',
+      completude: 'complete',
     },
     {
       id: 'energie',
       nom: 'Énergie',
-      perso_thematique_status: 'todo',
+      completude: 'a_completer',
     },
     {
       id: 'mobilite',
       nom: 'Mobilité',
-      perso_thematique_status: 'done',
+      completude: 'complete',
     },
   ],
 };

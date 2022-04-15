@@ -32,7 +32,7 @@ export const collectivitePlanActionPath = `${collectivitePath}/plan_action/:${pl
 export const collectiviteNouvelleFichePath = `${collectivitePath}/nouvelle_fiche`;
 export const collectiviteFichePath = `${collectivitePath}/fiche/:${ficheParam}`;
 export const collectiviteUsersPath = `${collectivitePath}/users`;
-export const collectivitePersoRefPath = `${collectivitePath}/perso_ref`;
+export const collectivitePersoRefPath = `${collectivitePath}/personnalisation`;
 export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
 
 export const makeCollectiviteIndicateursUrl = ({
@@ -136,25 +136,25 @@ export const makeCollectiviteUsersUrl = ({
   );
 
 export const makeCollectivitePersoRefUrl = ({
-  collectivite_id,
+  collectiviteId,
 }: {
-  collectivite_id: number;
+  collectiviteId: number;
 }) =>
   collectivitePersoRefPath.replace(
     `:${collectiviteParam}`,
-    collectivite_id.toString()
+    collectiviteId.toString()
   );
 
 export const makeCollectivitePersoRefThematiqueUrl = ({
-  collectivite_id,
-  thematique_id,
+  collectiviteId,
+  thematiqueId,
 }: {
-  collectivite_id: number;
-  thematique_id: string;
+  collectiviteId: number;
+  thematiqueId: string;
 }) =>
   collectivitePersoRefThematiquePath
-    .replace(`:${collectiviteParam}`, collectivite_id.toString())
-    .replace(`:${thematiqueParam}`, thematique_id);
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${thematiqueParam}`, thematiqueId);
 
 export const makeInvitationLandingPath = (invitationId: string) =>
   window.location.hostname +

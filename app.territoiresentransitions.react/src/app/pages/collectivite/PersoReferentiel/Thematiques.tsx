@@ -7,7 +7,7 @@ import {ThematiqueList, TThematiqueListProps} from './ThematiqueList';
 
 export type TThematiquesProps = TThematiqueFilterProps & TThematiqueListProps;
 
-export const Thematiques = (props: TThematiquesProps) => {
+export default (props: TThematiquesProps) => {
   const {collectivite, selected, items, onChange} = props;
   return (
     <>

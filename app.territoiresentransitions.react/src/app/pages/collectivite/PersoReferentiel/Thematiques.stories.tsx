@@ -1,5 +1,5 @@
 import {Story, Meta} from '@storybook/react';
-import {Thematiques, TThematiquesProps} from './Thematiques';
+import Thematiques, {TThematiquesProps} from './Thematiques';
 
 export default {
   component: Thematiques,
@@ -17,17 +17,17 @@ Exemple1.args = {
     {
       id: 'dechets',
       nom: 'Déchets',
-      perso_thematique_status: 'done',
+      completude: 'complete',
     },
     {
       id: 'energie',
       nom: 'Énergie',
-      perso_thematique_status: 'todo',
+      completude: 'a_completer',
     },
     {
       id: 'mobilite',
       nom: 'Mobilité',
-      perso_thematique_status: 'done',
+      completude: 'complete',
     },
   ],
   selected: ['eci', 'cae'],
