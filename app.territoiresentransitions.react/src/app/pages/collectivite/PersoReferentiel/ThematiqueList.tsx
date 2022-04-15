@@ -1,4 +1,5 @@
 import {makeCollectivitePersoRefThematiqueUrl} from 'app/paths';
+import {TQuestionThematiqueCompletudeRead} from 'generated/dataLayer/question_thematique_completude_read';
 import {Badge} from 'ui/shared/Badge';
 
 export type TThematiqueListProps = {
@@ -6,7 +7,7 @@ export type TThematiqueListProps = {
     id: number;
     nom: string;
   };
-  items: TItemProps[];
+  items: TQuestionThematiqueCompletudeRead[];
   className?: string;
 };
 
@@ -24,21 +25,14 @@ export const ThematiqueList = (props: TThematiqueListProps) => {
   );
 };
 
-export type TItemProps = {
-  collectivite_id: number;
-  id: string;
-  nom: string;
-  perso_thematique_status: 'done' | 'todo';
-};
-
 /**
- * Affiche un item de la liste des personnaliations par thématique
+ * Affiche un item de la liste des personnalisations par thématique
  */
-const Item = (props: TItemProps) => {
-  const {collectivite_id, id, nom, perso_thematique_status} = props;
+const Item = (props: TQuestionThematiqueCompletudeRead) => {
+  const {collectivite_id, id, nom, completude} = props;
   const url = makeCollectivitePersoRefThematiqueUrl({
-    collectivite_id,
-    thematique_id: id,
+    collectiviteId: collectivite_id,
+    thematiqueId: id,
   });
 
   return (
@@ -49,13 +43,13 @@ const Item = (props: TItemProps) => {
         href={url}
       >
         {nom}
-        {renderByStatus[perso_thematique_status]}
+        {renderByStatus[completude]}
       </a>
     </li>
   );
 };
 
 const renderByStatus = {
-  done: <Badge status="success">Complété</Badge>,
-  todo: <Badge status="info">À compléter</Badge>,
+  complete: <Badge status="success">Complété</Badge>,
+  a_completer: <Badge status="info">À compléter</Badge>,
 };

@@ -77,7 +77,7 @@ Array [
     >
       <a
         className="flex justify-between"
-        href="/collectivite/1/perso_ref/dechets"
+        href="/collectivite/1/personnalisation/dechets"
         style={
           Object {
             "boxShadow": "none",
@@ -97,7 +97,7 @@ Array [
     >
       <a
         className="flex justify-between"
-        href="/collectivite/1/perso_ref/energie"
+        href="/collectivite/1/personnalisation/energie"
         style={
           Object {
             "boxShadow": "none",
@@ -117,7 +117,7 @@ Array [
     >
       <a
         className="flex justify-between"
-        href="/collectivite/1/perso_ref/mobilite"
+        href="/collectivite/1/personnalisation/mobilite"
         style={
           Object {
             "boxShadow": "none",
