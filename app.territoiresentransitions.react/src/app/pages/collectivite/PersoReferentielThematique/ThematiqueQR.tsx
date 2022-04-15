@@ -4,7 +4,8 @@
 
 import {useState} from 'react';
 import {QuestionReponseList} from '../PersoPotentielModal/PersoPotentielQR';
-import {SwitchLabelLeft} from '../../../../ui/shared/SwitchLabelLeft';
+import {SwitchLabelLeft} from 'ui/shared/SwitchLabelLeft';
+import {TQuestionThematiqueRead} from 'generated/dataLayer/question_thematique_read';
 import {
   TChangeReponse,
   TQuestionReponse,
@@ -12,10 +13,7 @@ import {
 import {makeCollectivitePersoRefUrl} from 'app/paths';
 
 export type TThematiqueQRProps = {
-  thematique: {
-    id: number;
-    nom: string;
-  };
+  thematique: TQuestionThematiqueRead;
   collectivite: {
     id: number;
     nom: string;
@@ -27,7 +25,7 @@ export type TThematiqueQRProps = {
 };
 
 export const ThematiqueQR = (props: TThematiqueQRProps) => {
-  const {collectivite, thematique, questionReponses, onChange} = props;
+  const {collectivite, questionReponses, onChange} = props;
   const [onlyNoResponse, setOnlyNoResponse] = useState(false);
 
   const qrList = onlyNoResponse
@@ -38,12 +36,6 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
 
   return (
     <div className="flex flex-col">
-      <div className="bg-bf925 w-full h-28 flex items-center">
-        <h2 className="w-full text-center m-0">{thematique.nom}</h2>
-        <span className="min-w-max absolute right-10 lg:right-20 pt-2">
-          {collectivite.nom}
-        </span>
-      </div>
       <div className="flex justify-center w-full">
         <SwitchLabelLeft
           id="onlyNoResponse"
@@ -58,7 +50,7 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
         <QuestionReponseList questionReponses={qrList} onChange={onChange} />
         <a
           className="fr-btn fr-btn--icon-left fr-fi-arrow-left-line self-start mt-10"
-          href={makeCollectivitePersoRefUrl({collectivite_id: collectivite.id})}
+          href={makeCollectivitePersoRefUrl({collectiviteId: collectivite.id})}
         >
           Revenir au sommaire
         </a>
