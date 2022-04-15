@@ -26,10 +26,10 @@ describe('Question completude by thematique reading endpoint ', () => {
         },
         {
           collectivite_id: 1,
-          id: 'centre_polarite',
-          nom: 'Centre polarité',
+          completude: 'a_completer',
+          id: 'eau_assainissement',
+          nom: 'Eau et assainissement',
           referentiels: ['cae'],
-          completude: 'complete',
         },
       ])
     );
