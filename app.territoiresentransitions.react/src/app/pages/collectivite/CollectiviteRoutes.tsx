@@ -11,12 +11,16 @@ import {
   collectiviteReferentielPath,
   collectiviteTableauBordPath,
   collectiviteUsersPath,
+  collectivitePersoRefPath,
+  collectivitePersoRefThematiquePath,
 } from 'app/paths';
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
 import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
 import {TableauBordPage} from 'app/pages/collectivite/TableauBord/TableauBordPage';
 import {UsersPage} from 'app/pages/collectivite/Users/UsersPage';
+import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
+import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -50,6 +54,12 @@ export const CollectiviteRoutes = () => {
       </Route>
       <Route path={collectiviteUsersPath}>
         <UsersPage />
+      </Route>
+      <Route path={collectivitePersoRefPath} exact>
+        <PersoReferentielPage />
+      </Route>
+      <Route path={collectivitePersoRefThematiquePath}>
+        <PersoReferentielThematiquePage />
       </Route>
     </>
   );
