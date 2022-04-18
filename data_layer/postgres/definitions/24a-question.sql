@@ -15,7 +15,7 @@ alter table question_thematique
 create policy allow_read_for_all on question_thematique for select using (true);
 
 
-create type type_collectivite as enum ('EPCI', 'commune');
+create type type_collectivite as enum ('EPCI', 'commune', 'syndicat');
 
 create table question
 (

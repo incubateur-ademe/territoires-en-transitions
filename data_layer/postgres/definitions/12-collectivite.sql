@@ -1,9 +1,4 @@
 create extension if not exists unaccent;
-create type nature as enum ('SMF', 'CU', 'CC', 'SIVOM', 'POLEM', 'METRO', 'SMO', 'CA', 'EPT', 'SIVU', 'PETR');
-create domain siren as varchar(9)
-    check (
-        value ~ '^\d{9}$'
-        );
 
 -- Collectivité, the base type we relate to.
 create table collectivite

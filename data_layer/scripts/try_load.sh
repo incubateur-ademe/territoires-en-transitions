@@ -25,6 +25,11 @@ for file in "$DATALAYER_DIR"/content/*.sql; do
     psql -v ON_ERROR_STOP=1 --file "${file}" || exit 1
 done
 
+echo "Loading imports..."
+for file in "$DATALAYER_DIR"/imports/*.sql; do
+    psql -v ON_ERROR_STOP=1 --file "${file}" || exit 1
+done
+
 echo "Loading fakes..."
 for file in "$DATALAYER_DIR"/fakes/*.sql; do
     psql -v ON_ERROR_STOP=1 --file "${file}" || exit 1
