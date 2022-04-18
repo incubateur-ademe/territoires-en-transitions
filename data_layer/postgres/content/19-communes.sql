@@ -1,3809 +1,3810 @@
-insert into commune(nom, code) values ('Ambérieu-en-Bugey', '01004');
-insert into commune(nom, code) values ('Arbent', '01014');
-insert into commune(nom, code) values ('Attignat', '01024');
-insert into commune(nom, code) values ('Bâgé-Dommartin', '01025');
-insert into commune(nom, code) values ('Bellignat', '01031');
-insert into commune(nom, code) values ('Béligneux', '01032');
-insert into commune(nom, code) values ('Valserhône', '01033');
-insert into commune(nom, code) values ('Belley', '01034');
-insert into commune(nom, code) values ('Beynost', '01043');
-insert into commune(nom, code) values ('La Boisse', '01049');
-insert into commune(nom, code) values ('Bourg-en-Bresse', '01053');
-insert into commune(nom, code) values ('Cessy', '01071');
-insert into commune(nom, code) values ('Ceyzériat', '01072');
-insert into commune(nom, code) values ('Châtillon-sur-Chalaronne', '01093');
-insert into commune(nom, code) values ('Culoz', '01138');
-insert into commune(nom, code) values ('Dagneux', '01142');
-insert into commune(nom, code) values ('Divonne-les-Bains', '01143');
-insert into commune(nom, code) values ('Feillens', '01159');
-insert into commune(nom, code) values ('Ferney-Voltaire', '01160');
-insert into commune(nom, code) values ('Gex', '01173');
-insert into commune(nom, code) values ('Plateau d''Hauteville', '01185');
-insert into commune(nom, code) values ('Jassans-Riottier', '01194');
-insert into commune(nom, code) values ('Lagnieu', '01202');
-insert into commune(nom, code) values ('Loyettes', '01224');
-insert into commune(nom, code) values ('Meximieux', '01244');
-insert into commune(nom, code) values ('Miribel', '01249');
-insert into commune(nom, code) values ('Montluel', '01262');
-insert into commune(nom, code) values ('Montmerle-sur-Saône', '01263');
-insert into commune(nom, code) values ('Montréal-la-Cluse', '01265');
-insert into commune(nom, code) values ('Nantua', '01269');
-insert into commune(nom, code) values ('Ornex', '01281');
-insert into commune(nom, code) values ('Oyonnax', '01283');
-insert into commune(nom, code) values ('Péronnas', '01289');
-insert into commune(nom, code) values ('Prévessin-Moëns', '01313');
-insert into commune(nom, code) values ('Replonges', '01320');
-insert into commune(nom, code) values ('Reyrieux', '01322');
-insert into commune(nom, code) values ('Saint-André-de-Corcy', '01333');
-insert into commune(nom, code) values ('Saint-Denis-lès-Bourg', '01344');
-insert into commune(nom, code) values ('Saint-Didier-sur-Chalaronne', '01348');
-insert into commune(nom, code) values ('Saint-Genis-Pouilly', '01354');
-insert into commune(nom, code) values ('Saint-Maurice-de-Beynost', '01376');
-insert into commune(nom, code) values ('Thoiry', '01419');
-insert into commune(nom, code) values ('Trévoux', '01427');
-insert into commune(nom, code) values ('Villars-les-Dombes', '01443');
-insert into commune(nom, code) values ('Villieu-Loyes-Mollon', '01450');
-insert into commune(nom, code) values ('Viriat', '01451');
-insert into commune(nom, code) values ('Vonnas', '01457');
-insert into commune(nom, code) values ('Belleu', '02064');
-insert into commune(nom, code) values ('Bohain-en-Vermandois', '02095');
-insert into commune(nom, code) values ('Château-Thierry', '02168');
-insert into commune(nom, code) values ('Chauny', '02173');
-insert into commune(nom, code) values ('Fère-en-Tardenois', '02305');
-insert into commune(nom, code) values ('Fresnoy-le-Grand', '02334');
-insert into commune(nom, code) values ('Gauchy', '02340');
-insert into commune(nom, code) values ('Guise', '02361');
-insert into commune(nom, code) values ('Hirson', '02381');
-insert into commune(nom, code) values ('Laon', '02408');
-insert into commune(nom, code) values ('Saint-Michel', '02684');
-insert into commune(nom, code) values ('Saint-Quentin', '02691');
-insert into commune(nom, code) values ('Soissons', '02722');
-insert into commune(nom, code) values ('Tergnier', '02738');
-insert into commune(nom, code) values ('Villers-Cotterêts', '02810');
-insert into commune(nom, code) values ('Avermes', '03013');
-insert into commune(nom, code) values ('Bellerive-sur-Allier', '03023');
-insert into commune(nom, code) values ('Commentry', '03082');
-insert into commune(nom, code) values ('Creuzier-le-Vieux', '03094');
-insert into commune(nom, code) values ('Cusset', '03095');
-insert into commune(nom, code) values ('Désertines', '03098');
-insert into commune(nom, code) values ('Domérat', '03101');
-insert into commune(nom, code) values ('Dompierre-sur-Besbre', '03102');
-insert into commune(nom, code) values ('Gannat', '03118');
-insert into commune(nom, code) values ('Lapalisse', '03138');
-insert into commune(nom, code) values ('Montluçon', '03185');
-insert into commune(nom, code) values ('Moulins', '03190');
-insert into commune(nom, code) values ('Saint-Germain-des-Fossés', '03236');
-insert into commune(nom, code) values ('Saint-Pourçain-sur-Sioule', '03254');
-insert into commune(nom, code) values ('Varennes-sur-Allier', '03298');
-insert into commune(nom, code) values ('Vichy', '03310');
-insert into commune(nom, code) values ('Yzeure', '03321');
-insert into commune(nom, code) values ('Château-Arnoux-Saint-Auban', '04049');
-insert into commune(nom, code) values ('Digne-les-Bains', '04070');
-insert into commune(nom, code) values ('Forcalquier', '04088');
-insert into commune(nom, code) values ('Manosque', '04112');
-insert into commune(nom, code) values ('Les Mées', '04116');
-insert into commune(nom, code) values ('Oraison', '04143');
-insert into commune(nom, code) values ('Pierrevert', '04152');
-insert into commune(nom, code) values ('Sainte-Tulle', '04197');
-insert into commune(nom, code) values ('Sisteron', '04209');
-insert into commune(nom, code) values ('Valensole', '04230');
-insert into commune(nom, code) values ('Villeneuve', '04242');
-insert into commune(nom, code) values ('Volx', '04245');
-insert into commune(nom, code) values ('Briançon', '05023');
-insert into commune(nom, code) values ('Chorges', '05040');
-insert into commune(nom, code) values ('Embrun', '05046');
-insert into commune(nom, code) values ('Gap', '05061');
-insert into commune(nom, code) values ('Laragne-Montéglin', '05070');
-insert into commune(nom, code) values ('Veynes', '05179');
-insert into commune(nom, code) values ('Antibes', '06004');
-insert into commune(nom, code) values ('Auribeau-sur-Siagne', '06007');
-insert into commune(nom, code) values ('Beaulieu-sur-Mer', '06011');
-insert into commune(nom, code) values ('Beausoleil', '06012');
-insert into commune(nom, code) values ('Biot', '06018');
-insert into commune(nom, code) values ('Cagnes-sur-Mer', '06027');
-insert into commune(nom, code) values ('Cannes', '06029');
-insert into commune(nom, code) values ('Le Cannet', '06030');
-insert into commune(nom, code) values ('Cap-d''Ail', '06032');
-insert into commune(nom, code) values ('Carros', '06033');
-insert into commune(nom, code) values ('Châteauneuf-Grasse', '06038');
-insert into commune(nom, code) values ('La Colle-sur-Loup', '06044');
-insert into commune(nom, code) values ('Colomars', '06046');
-insert into commune(nom, code) values ('Contes', '06048');
-insert into commune(nom, code) values ('Drap', '06054');
-insert into commune(nom, code) values ('Gattières', '06064');
-insert into commune(nom, code) values ('La Gaude', '06065');
-insert into commune(nom, code) values ('Grasse', '06069');
-insert into commune(nom, code) values ('Levens', '06075');
-insert into commune(nom, code) values ('Mandelieu-la-Napoule', '06079');
-insert into commune(nom, code) values ('Menton', '06083');
-insert into commune(nom, code) values ('Mouans-Sartoux', '06084');
-insert into commune(nom, code) values ('Mougins', '06085');
-insert into commune(nom, code) values ('Nice', '06088');
-insert into commune(nom, code) values ('Pégomas', '06090');
-insert into commune(nom, code) values ('Peymeinade', '06095');
-insert into commune(nom, code) values ('Roquebrune-Cap-Martin', '06104');
-insert into commune(nom, code) values ('Roquefort-les-Pins', '06105');
-insert into commune(nom, code) values ('La Roquette-sur-Siagne', '06108');
-insert into commune(nom, code) values ('Le Rouret', '06112');
-insert into commune(nom, code) values ('Saint-André-de-la-Roche', '06114');
-insert into commune(nom, code) values ('Saint-Cézaire-sur-Siagne', '06118');
-insert into commune(nom, code) values ('Saint-Jeannet', '06122');
-insert into commune(nom, code) values ('Saint-Laurent-du-Var', '06123');
-insert into commune(nom, code) values ('Saint-Martin-du-Var', '06126');
-insert into commune(nom, code) values ('Saint-Paul-de-Vence', '06128');
-insert into commune(nom, code) values ('Saint-Vallier-de-Thiey', '06130');
-insert into commune(nom, code) values ('Sospel', '06136');
-insert into commune(nom, code) values ('Le Tignet', '06140');
-insert into commune(nom, code) values ('Tourrette-Levens', '06147');
-insert into commune(nom, code) values ('Tourrettes-sur-Loup', '06148');
-insert into commune(nom, code) values ('La Trinité', '06149');
-insert into commune(nom, code) values ('La Turbie', '06150');
-insert into commune(nom, code) values ('Valbonne', '06152');
-insert into commune(nom, code) values ('Vallauris', '06155');
-insert into commune(nom, code) values ('Vence', '06157');
-insert into commune(nom, code) values ('Villefranche-sur-Mer', '06159');
-insert into commune(nom, code) values ('Villeneuve-Loubet', '06161');
-insert into commune(nom, code) values ('Annonay', '07010');
-insert into commune(nom, code) values ('Aubenas', '07019');
-insert into commune(nom, code) values ('Bourg-Saint-Andéol', '07042');
-insert into commune(nom, code) values ('Charmes-sur-Rhône', '07055');
-insert into commune(nom, code) values ('Le Cheylard', '07064');
-insert into commune(nom, code) values ('Chomérac', '07066');
-insert into commune(nom, code) values ('Cruas', '07076');
-insert into commune(nom, code) values ('Davézieux', '07078');
-insert into commune(nom, code) values ('Guilherand-Granges', '07102');
-insert into commune(nom, code) values ('Privas', '07186');
-insert into commune(nom, code) values ('Saint-Péray', '07281');
-insert into commune(nom, code) values ('Le Teil', '07319');
-insert into commune(nom, code) values ('Tournon-sur-Rhône', '07324');
-insert into commune(nom, code) values ('Vals-les-Bains', '07331');
-insert into commune(nom, code) values ('Villeneuve-de-Berg', '07341');
-insert into commune(nom, code) values ('Viviers', '07346');
-insert into commune(nom, code) values ('La Voulte-sur-Rhône', '07349');
-insert into commune(nom, code) values ('Bogny-sur-Meuse', '08081');
-insert into commune(nom, code) values ('Charleville-Mézières', '08105');
-insert into commune(nom, code) values ('Fumay', '08185');
-insert into commune(nom, code) values ('Givet', '08190');
-insert into commune(nom, code) values ('Nouzonville', '08328');
-insert into commune(nom, code) values ('Rethel', '08362');
-insert into commune(nom, code) values ('Revin', '08363');
-insert into commune(nom, code) values ('Sedan', '08409');
-insert into commune(nom, code) values ('Villers-Semeuse', '08480');
-insert into commune(nom, code) values ('Vivier-au-Court', '08488');
-insert into commune(nom, code) values ('Vouziers', '08490');
-insert into commune(nom, code) values ('Vrigne aux Bois', '08491');
-insert into commune(nom, code) values ('Foix', '09122');
-insert into commune(nom, code) values ('Lavelanet', '09160');
-insert into commune(nom, code) values ('Mazères', '09185');
-insert into commune(nom, code) values ('Mirepoix', '09194');
-insert into commune(nom, code) values ('Pamiers', '09225');
-insert into commune(nom, code) values ('Saint-Girons', '09261');
-insert into commune(nom, code) values ('Saverdun', '09282');
-insert into commune(nom, code) values ('Tarascon-sur-Ariège', '09306');
-insert into commune(nom, code) values ('La Tour-du-Crieu', '09312');
-insert into commune(nom, code) values ('Varilhes', '09324');
-insert into commune(nom, code) values ('Aix-Villemaur-Pâlis', '10003');
-insert into commune(nom, code) values ('Bar-sur-Aube', '10033');
-insert into commune(nom, code) values ('Bar-sur-Seine', '10034');
-insert into commune(nom, code) values ('La Chapelle-Saint-Luc', '10081');
-insert into commune(nom, code) values ('Les Noës-près-Troyes', '10265');
-insert into commune(nom, code) values ('Nogent-sur-Seine', '10268');
-insert into commune(nom, code) values ('Pont-Sainte-Marie', '10297');
-insert into commune(nom, code) values ('La Rivière-de-Corps', '10321');
-insert into commune(nom, code) values ('Romilly-sur-Seine', '10323');
-insert into commune(nom, code) values ('Rosières-près-Troyes', '10325');
-insert into commune(nom, code) values ('Saint-André-les-Vergers', '10333');
-insert into commune(nom, code) values ('Saint-Julien-les-Villas', '10343');
-insert into commune(nom, code) values ('Saint-Parres-aux-Tertres', '10357');
-insert into commune(nom, code) values ('Sainte-Savine', '10362');
-insert into commune(nom, code) values ('Troyes', '10387');
-insert into commune(nom, code) values ('Bram', '11049');
-insert into commune(nom, code) values ('Carcassonne', '11069');
-insert into commune(nom, code) values ('Castelnaudary', '11076');
-insert into commune(nom, code) values ('Coursan', '11106');
-insert into commune(nom, code) values ('Cuxac-d''Aude', '11116');
-insert into commune(nom, code) values ('Fleury', '11145');
-insert into commune(nom, code) values ('Gruissan', '11170');
-insert into commune(nom, code) values ('Leucate', '11202');
-insert into commune(nom, code) values ('Lézignan-Corbières', '11203');
-insert into commune(nom, code) values ('Limoux', '11206');
-insert into commune(nom, code) values ('Narbonne', '11262');
-insert into commune(nom, code) values ('Port-la-Nouvelle', '11266');
-insert into commune(nom, code) values ('Quillan', '11304');
-insert into commune(nom, code) values ('Sallèles-d''Aude', '11369');
-insert into commune(nom, code) values ('Salles-d''Aude', '11370');
-insert into commune(nom, code) values ('Sigean', '11379');
-insert into commune(nom, code) values ('Trèbes', '11397');
-insert into commune(nom, code) values ('Villemoustaussou', '11429');
-insert into commune(nom, code) values ('Aubin', '12013');
-insert into commune(nom, code) values ('Capdenac-Gare', '12052');
-insert into commune(nom, code) values ('Baraqueville', '12056');
-insert into commune(nom, code) values ('Decazeville', '12089');
-insert into commune(nom, code) values ('Druelle Balsac', '12090');
-insert into commune(nom, code) values ('Espalion', '12096');
-insert into commune(nom, code) values ('Luc-la-Primaube', '12133');
-insert into commune(nom, code) values ('Millau', '12145');
-insert into commune(nom, code) values ('Olemps', '12174');
-insert into commune(nom, code) values ('Onet-le-Château', '12176');
-insert into commune(nom, code) values ('Rodez', '12202');
-insert into commune(nom, code) values ('Saint-Affrique', '12208');
-insert into commune(nom, code) values ('Sébazac-Concourès', '12264');
-insert into commune(nom, code) values ('Sévérac d''Aveyron', '12270');
-insert into commune(nom, code) values ('Villefranche-de-Rouergue', '12300');
-insert into commune(nom, code) values ('Aix-en-Provence', '13001');
-insert into commune(nom, code) values ('Allauch', '13002');
-insert into commune(nom, code) values ('Arles', '13004');
-insert into commune(nom, code) values ('Aubagne', '13005');
-insert into commune(nom, code) values ('Auriol', '13007');
-insert into commune(nom, code) values ('Barbentane', '13010');
-insert into commune(nom, code) values ('Berre-l''Étang', '13014');
-insert into commune(nom, code) values ('Bouc-Bel-Air', '13015');
-insert into commune(nom, code) values ('La Bouilladisse', '13016');
-insert into commune(nom, code) values ('Cabannes', '13018');
-insert into commune(nom, code) values ('Cabriès', '13019');
-insert into commune(nom, code) values ('Carry-le-Rouet', '13021');
-insert into commune(nom, code) values ('Cassis', '13022');
-insert into commune(nom, code) values ('Ceyreste', '13023');
-insert into commune(nom, code) values ('Châteauneuf-les-Martigues', '13026');
-insert into commune(nom, code) values ('Châteaurenard', '13027');
-insert into commune(nom, code) values ('La Ciotat', '13028');
-insert into commune(nom, code) values ('Cuges-les-Pins', '13030');
-insert into commune(nom, code) values ('La Destrousse', '13031');
-insert into commune(nom, code) values ('Éguilles', '13032');
-insert into commune(nom, code) values ('Ensuès-la-Redonne', '13033');
-insert into commune(nom, code) values ('Eyguières', '13035');
-insert into commune(nom, code) values ('Eyragues', '13036');
-insert into commune(nom, code) values ('La Fare-les-Oliviers', '13037');
-insert into commune(nom, code) values ('Fontvieille', '13038');
-insert into commune(nom, code) values ('Fos-sur-Mer', '13039');
-insert into commune(nom, code) values ('Fuveau', '13040');
-insert into commune(nom, code) values ('Gardanne', '13041');
-insert into commune(nom, code) values ('Gémenos', '13042');
-insert into commune(nom, code) values ('Gignac-la-Nerthe', '13043');
-insert into commune(nom, code) values ('Grans', '13044');
-insert into commune(nom, code) values ('Graveson', '13045');
-insert into commune(nom, code) values ('Gréasque', '13046');
-insert into commune(nom, code) values ('Istres', '13047');
-insert into commune(nom, code) values ('Jouques', '13048');
-insert into commune(nom, code) values ('Lambesc', '13050');
-insert into commune(nom, code) values ('Lançon-Provence', '13051');
-insert into commune(nom, code) values ('Mallemort', '13053');
-insert into commune(nom, code) values ('Marignane', '13054');
-insert into commune(nom, code) values ('Martigues', '13056');
-insert into commune(nom, code) values ('Meyrargues', '13059');
-insert into commune(nom, code) values ('Meyreuil', '13060');
-insert into commune(nom, code) values ('Mimet', '13062');
-insert into commune(nom, code) values ('Miramas', '13063');
-insert into commune(nom, code) values ('Mouriès', '13065');
-insert into commune(nom, code) values ('Noves', '13066');
-insert into commune(nom, code) values ('Pélissanne', '13069');
-insert into commune(nom, code) values ('La Penne-sur-Huveaune', '13070');
-insert into commune(nom, code) values ('Les Pennes-Mirabeau', '13071');
-insert into commune(nom, code) values ('Peynier', '13072');
-insert into commune(nom, code) values ('Peypin', '13073');
-insert into commune(nom, code) values ('Peyrolles-en-Provence', '13074');
-insert into commune(nom, code) values ('Plan-de-Cuques', '13075');
-insert into commune(nom, code) values ('Plan-d''Orgon', '13076');
-insert into commune(nom, code) values ('Port-de-Bouc', '13077');
-insert into commune(nom, code) values ('Port-Saint-Louis-du-Rhône', '13078');
-insert into commune(nom, code) values ('Le Puy-Sainte-Réparade', '13080');
-insert into commune(nom, code) values ('Rognac', '13081');
-insert into commune(nom, code) values ('Rognes', '13082');
-insert into commune(nom, code) values ('Rognonas', '13083');
-insert into commune(nom, code) values ('La Roque-d''Anthéron', '13084');
-insert into commune(nom, code) values ('Roquefort-la-Bédoule', '13085');
-insert into commune(nom, code) values ('Roquevaire', '13086');
-insert into commune(nom, code) values ('Rousset', '13087');
-insert into commune(nom, code) values ('Le Rove', '13088');
-insert into commune(nom, code) values ('Saint-Andiol', '13089');
-insert into commune(nom, code) values ('Saint-Cannat', '13091');
-insert into commune(nom, code) values ('Saint-Chamas', '13092');
-insert into commune(nom, code) values ('Saint-Martin-de-Crau', '13097');
-insert into commune(nom, code) values ('Saint-Mitre-les-Remparts', '13098');
-insert into commune(nom, code) values ('Saint-Rémy-de-Provence', '13100');
-insert into commune(nom, code) values ('Saint-Savournin', '13101');
-insert into commune(nom, code) values ('Saint-Victoret', '13102');
-insert into commune(nom, code) values ('Salon-de-Provence', '13103');
-insert into commune(nom, code) values ('Sausset-les-Pins', '13104');
-insert into commune(nom, code) values ('Sénas', '13105');
-insert into commune(nom, code) values ('Septèmes-les-Vallons', '13106');
-insert into commune(nom, code) values ('Simiane-Collongue', '13107');
-insert into commune(nom, code) values ('Tarascon', '13108');
-insert into commune(nom, code) values ('Trets', '13110');
-insert into commune(nom, code) values ('Velaux', '13112');
-insert into commune(nom, code) values ('Venelles', '13113');
-insert into commune(nom, code) values ('Ventabren', '13114');
-insert into commune(nom, code) values ('Vitrolles', '13117');
-insert into commune(nom, code) values ('Coudoux', '13118');
-insert into commune(nom, code) values ('Carnoux-en-Provence', '13119');
-insert into commune(nom, code) values ('Marseille 1er Arrondissement', '13201');
-insert into commune(nom, code) values ('Marseille 2e Arrondissement', '13202');
-insert into commune(nom, code) values ('Marseille 3e Arrondissement', '13203');
-insert into commune(nom, code) values ('Marseille 4e Arrondissement', '13204');
-insert into commune(nom, code) values ('Marseille 5e Arrondissement', '13205');
-insert into commune(nom, code) values ('Marseille 6e Arrondissement', '13206');
-insert into commune(nom, code) values ('Marseille 7e Arrondissement', '13207');
-insert into commune(nom, code) values ('Marseille 8e Arrondissement', '13208');
-insert into commune(nom, code) values ('Marseille 9e Arrondissement', '13209');
-insert into commune(nom, code) values ('Marseille 10e Arrondissement', '13210');
-insert into commune(nom, code) values ('Marseille 11e Arrondissement', '13211');
-insert into commune(nom, code) values ('Marseille 12e Arrondissement', '13212');
-insert into commune(nom, code) values ('Marseille 13e Arrondissement', '13213');
-insert into commune(nom, code) values ('Marseille 14e Arrondissement', '13214');
-insert into commune(nom, code) values ('Marseille 15e Arrondissement', '13215');
-insert into commune(nom, code) values ('Marseille 16e Arrondissement', '13216');
-insert into commune(nom, code) values ('Argences', '14020');
-insert into commune(nom, code) values ('Les Monts d''Aunay', '14027');
-insert into commune(nom, code) values ('Bayeux', '14047');
-insert into commune(nom, code) values ('Souleuvre en Bocage', '14061');
-insert into commune(nom, code) values ('Biéville-Beuville', '14068');
-insert into commune(nom, code) values ('Blainville-sur-Orne', '14076');
-insert into commune(nom, code) values ('Thue et Mue', '14098');
-insert into commune(nom, code) values ('Bretteville-sur-Odon', '14101');
-insert into commune(nom, code) values ('Cabourg', '14117');
-insert into commune(nom, code) values ('Caen', '14118');
-insert into commune(nom, code) values ('Colombelles', '14167');
-insert into commune(nom, code) values ('Condé-en-Normandie', '14174');
-insert into commune(nom, code) values ('Cormelles-le-Royal', '14181');
-insert into commune(nom, code) values ('Courseulles-sur-Mer', '14191');
-insert into commune(nom, code) values ('Deauville', '14220');
-insert into commune(nom, code) values ('Démouville', '14221');
-insert into commune(nom, code) values ('Dives-sur-Mer', '14225');
-insert into commune(nom, code) values ('Douvres-la-Délivrande', '14228');
-insert into commune(nom, code) values ('Falaise', '14258');
-insert into commune(nom, code) values ('Fleury-sur-Orne', '14271');
-insert into commune(nom, code) values ('Giberville', '14301');
-insert into commune(nom, code) values ('Hermanville-sur-Mer', '14325');
-insert into commune(nom, code) values ('Hérouville-Saint-Clair', '14327');
-insert into commune(nom, code) values ('Honfleur', '14333');
-insert into commune(nom, code) values ('Ifs', '14341');
-insert into commune(nom, code) values ('Isigny-sur-Mer', '14342');
-insert into commune(nom, code) values ('Lisieux', '14366');
-insert into commune(nom, code) values ('Le Molay-Littry', '14370');
-insert into commune(nom, code) values ('Livarot-Pays-d''Auge', '14371');
-insert into commune(nom, code) values ('Luc-sur-Mer', '14384');
-insert into commune(nom, code) values ('Mézidon Vallée d''Auge', '14431');
-insert into commune(nom, code) values ('Mondeville', '14437');
-insert into commune(nom, code) values ('Moult-Chicheboville', '14456');
-insert into commune(nom, code) values ('Ouistreham', '14488');
-insert into commune(nom, code) values ('Pont-l''Évêque', '14514');
-insert into commune(nom, code) values ('Saint-Pierre-en-Auge', '14654');
-insert into commune(nom, code) values ('Noues de Sienne', '14658');
-insert into commune(nom, code) values ('Le Hom', '14689');
-insert into commune(nom, code) values ('Touques', '14699');
-insert into commune(nom, code) values ('Troarn', '14712');
-insert into commune(nom, code) values ('Trouville-sur-Mer', '14715');
-insert into commune(nom, code) values ('Valdallière', '14726');
-insert into commune(nom, code) values ('Verson', '14738');
-insert into commune(nom, code) values ('Villers-Bocage', '14752');
-insert into commune(nom, code) values ('Vire Normandie', '14762');
-insert into commune(nom, code) values ('Arpajon-sur-Cère', '15012');
-insert into commune(nom, code) values ('Aurillac', '15014');
-insert into commune(nom, code) values ('Mauriac', '15120');
-insert into commune(nom, code) values ('Saint-Flour', '15187');
-insert into commune(nom, code) values ('Ytrac', '15267');
-insert into commune(nom, code) values ('Angoulême', '16015');
-insert into commune(nom, code) values ('Barbezieux-Saint-Hilaire', '16028');
-insert into commune(nom, code) values ('Brie', '16061');
-insert into commune(nom, code) values ('Champniers', '16078');
-insert into commune(nom, code) values ('Chasseneuil-sur-Bonnieure', '16085');
-insert into commune(nom, code) values ('Châteaubernard', '16089');
-insert into commune(nom, code) values ('Châteauneuf-sur-Charente', '16090');
-insert into commune(nom, code) values ('Cognac', '16102');
-insert into commune(nom, code) values ('La Couronne', '16113');
-insert into commune(nom, code) values ('Fléac', '16138');
-insert into commune(nom, code) values ('Gond-Pontouvre', '16154');
-insert into commune(nom, code) values ('L''Isle-d''Espagnac', '16166');
-insert into commune(nom, code) values ('Jarnac', '16167');
-insert into commune(nom, code) values ('Terres-de-Haute-Charente', '16192');
-insert into commune(nom, code) values ('Magnac-sur-Touvre', '16199');
-insert into commune(nom, code) values ('La Rochefoucauld-en-Angoumois', '16281');
-insert into commune(nom, code) values ('Rouillac', '16286');
-insert into commune(nom, code) values ('Roullet-Saint-Estèphe', '16287');
-insert into commune(nom, code) values ('Ruelle-sur-Touvre', '16291');
-insert into commune(nom, code) values ('Ruffec', '16292');
-insert into commune(nom, code) values ('Saint-Michel', '16341');
-insert into commune(nom, code) values ('Saint-Yrieix-sur-Charente', '16358');
-insert into commune(nom, code) values ('Soyaux', '16374');
-insert into commune(nom, code) values ('Aigrefeuille-d''Aunis', '17003');
-insert into commune(nom, code) values ('Angoulins', '17010');
-insert into commune(nom, code) values ('Arvert', '17021');
-insert into commune(nom, code) values ('Aytré', '17028');
-insert into commune(nom, code) values ('Bourcefranc-le-Chapus', '17058');
-insert into commune(nom, code) values ('Breuillet', '17064');
-insert into commune(nom, code) values ('Chaniers', '17086');
-insert into commune(nom, code) values ('Le Château-d''Oléron', '17093');
-insert into commune(nom, code) values ('Châtelaillon-Plage', '17094');
-insert into commune(nom, code) values ('Dolus-d''Oléron', '17140');
-insert into commune(nom, code) values ('Dompierre-sur-Mer', '17142');
-insert into commune(nom, code) values ('Échillais', '17146');
-insert into commune(nom, code) values ('Fouras', '17168');
-insert into commune(nom, code) values ('La Jarrie', '17194');
-insert into commune(nom, code) values ('Jonzac', '17197');
-insert into commune(nom, code) values ('Lagord', '17200');
-insert into commune(nom, code) values ('Marans', '17218');
-insert into commune(nom, code) values ('Marennes-Hiers-Brouage', '17219');
-insert into commune(nom, code) values ('Marsilly', '17222');
-insert into commune(nom, code) values ('Médis', '17228');
-insert into commune(nom, code) values ('Meschers-sur-Gironde', '17230');
-insert into commune(nom, code) values ('Montendre', '17240');
-insert into commune(nom, code) values ('Nieul-sur-Mer', '17264');
-insert into commune(nom, code) values ('Périgny', '17274');
-insert into commune(nom, code) values ('Pons', '17283');
-insert into commune(nom, code) values ('Puilboreau', '17291');
-insert into commune(nom, code) values ('Rochefort', '17299');
-insert into commune(nom, code) values ('La Rochelle', '17300');
-insert into commune(nom, code) values ('Royan', '17306');
-insert into commune(nom, code) values ('Saint-Georges-de-Didonne', '17333');
-insert into commune(nom, code) values ('Saint-Georges-d''Oléron', '17337');
-insert into commune(nom, code) values ('Saint-Jean-d''Angély', '17347');
-insert into commune(nom, code) values ('Saint-Jean-de-Liversay', '17349');
-insert into commune(nom, code) values ('Sainte-Marie-de-Ré', '17360');
-insert into commune(nom, code) values ('Saint-Palais-sur-Mer', '17380');
-insert into commune(nom, code) values ('Saint-Pierre-d''Oléron', '17385');
-insert into commune(nom, code) values ('Sainte-Soulle', '17407');
-insert into commune(nom, code) values ('Saint-Sulpice-de-Royan', '17409');
-insert into commune(nom, code) values ('Saint-Xandre', '17414');
-insert into commune(nom, code) values ('Saintes', '17415');
-insert into commune(nom, code) values ('Saujon', '17421');
-insert into commune(nom, code) values ('Soubise', '17429');
-insert into commune(nom, code) values ('Surgères', '17434');
-insert into commune(nom, code) values ('Tonnay-Charente', '17449');
-insert into commune(nom, code) values ('La Tremblade', '17452');
-insert into commune(nom, code) values ('Vaux-sur-Mer', '17461');
-insert into commune(nom, code) values ('Aubigny-sur-Nère', '18015');
-insert into commune(nom, code) values ('Bourges', '18033');
-insert into commune(nom, code) values ('La Chapelle-Saint-Ursin', '18050');
-insert into commune(nom, code) values ('Dun-sur-Auron', '18087');
-insert into commune(nom, code) values ('La Guerche-sur-l''Aubois', '18108');
-insert into commune(nom, code) values ('Mehun-sur-Yèvre', '18141');
-insert into commune(nom, code) values ('Saint-Amand-Montrond', '18197');
-insert into commune(nom, code) values ('Saint-Doulchard', '18205');
-insert into commune(nom, code) values ('Saint-Florent-sur-Cher', '18207');
-insert into commune(nom, code) values ('Saint-Germain-du-Puy', '18213');
-insert into commune(nom, code) values ('Sancoins', '18242');
-insert into commune(nom, code) values ('Trouy', '18267');
-insert into commune(nom, code) values ('Vierzon', '18279');
-insert into commune(nom, code) values ('Allassac', '19005');
-insert into commune(nom, code) values ('Argentat-sur-Dordogne', '19010');
-insert into commune(nom, code) values ('Brive-la-Gaillarde', '19031');
-insert into commune(nom, code) values ('Cosnac', '19063');
-insert into commune(nom, code) values ('Égletons', '19073');
-insert into commune(nom, code) values ('Malemort', '19123');
-insert into commune(nom, code) values ('Objat', '19153');
-insert into commune(nom, code) values ('Saint-Pantaléon-de-Larche', '19229');
-insert into commune(nom, code) values ('Tulle', '19272');
-insert into commune(nom, code) values ('Ussac', '19274');
-insert into commune(nom, code) values ('Ussel', '19275');
-insert into commune(nom, code) values ('Auxonne', '21038');
-insert into commune(nom, code) values ('Beaune', '21054');
-insert into commune(nom, code) values ('Châtillon-sur-Seine', '21154');
-insert into commune(nom, code) values ('Chenôve', '21166');
-insert into commune(nom, code) values ('Chevigny-Saint-Sauveur', '21171');
-insert into commune(nom, code) values ('Dijon', '21231');
-insert into commune(nom, code) values ('Fontaine-lès-Dijon', '21278');
-insert into commune(nom, code) values ('Genlis', '21292');
-insert into commune(nom, code) values ('Gevrey-Chambertin', '21295');
-insert into commune(nom, code) values ('Is-sur-Tille', '21317');
-insert into commune(nom, code) values ('Longvic', '21355');
-insert into commune(nom, code) values ('Marsannay-la-Côte', '21390');
-insert into commune(nom, code) values ('Montbard', '21425');
-insert into commune(nom, code) values ('Neuilly-Crimolois', '21452');
-insert into commune(nom, code) values ('Nuits-Saint-Georges', '21464');
-insert into commune(nom, code) values ('Quetigny', '21515');
-insert into commune(nom, code) values ('Saint-Apollinaire', '21540');
-insert into commune(nom, code) values ('Semur-en-Auxois', '21603');
-insert into commune(nom, code) values ('Talant', '21617');
-insert into commune(nom, code) values ('Bégard', '22004');
-insert into commune(nom, code) values ('Le Mené', '22046');
-insert into commune(nom, code) values ('Dinan', '22050');
-insert into commune(nom, code) values ('Erquy', '22054');
-insert into commune(nom, code) values ('Binic-Étables-sur-Mer', '22055');
-insert into commune(nom, code) values ('Guingamp', '22070');
-insert into commune(nom, code) values ('Hillion', '22081');
-insert into commune(nom, code) values ('Lamballe-Armor', '22093');
-insert into commune(nom, code) values ('Langueux', '22106');
-insert into commune(nom, code) values ('Lannion', '22113');
-insert into commune(nom, code) values ('Lanvallay', '22118');
-insert into commune(nom, code) values ('Louannec', '22134');
-insert into commune(nom, code) values ('Loudéac', '22136');
-insert into commune(nom, code) values ('Merdrignac', '22147');
-insert into commune(nom, code) values ('Paimpol', '22162');
-insert into commune(nom, code) values ('Perros-Guirec', '22168');
-insert into commune(nom, code) values ('Plaintel', '22171');
-insert into commune(nom, code) values ('Plancoët', '22172');
-insert into commune(nom, code) values ('Plédran', '22176');
-insert into commune(nom, code) values ('Plélo', '22182');
-insert into commune(nom, code) values ('Plémet', '22183');
-insert into commune(nom, code) values ('Pléneuf-Val-André', '22186');
-insert into commune(nom, code) values ('Plérin', '22187');
-insert into commune(nom, code) values ('Pleslin-Trigavou', '22190');
-insert into commune(nom, code) values ('Plestin-les-Grèves', '22194');
-insert into commune(nom, code) values ('Pleudihen-sur-Rance', '22197');
-insert into commune(nom, code) values ('Pleumeur-Bodou', '22198');
-insert into commune(nom, code) values ('Plœuc-L''Hermitage', '22203');
-insert into commune(nom, code) values ('Châtelaudren-Plouagat', '22206');
-insert into commune(nom, code) values ('Beaussais-sur-Mer', '22209');
-insert into commune(nom, code) values ('Ploubazlanec', '22210');
-insert into commune(nom, code) values ('Ploubezre', '22211');
-insert into commune(nom, code) values ('Plouër-sur-Rance', '22213');
-insert into commune(nom, code) values ('Plouézec', '22214');
-insert into commune(nom, code) values ('Ploufragan', '22215');
-insert into commune(nom, code) values ('Plouha', '22222');
-insert into commune(nom, code) values ('Ploumagoar', '22225');
-insert into commune(nom, code) values ('Pordic', '22251');
-insert into commune(nom, code) values ('Quessoy', '22258');
-insert into commune(nom, code) values ('Quévert', '22259');
-insert into commune(nom, code) values ('Quintin', '22262');
-insert into commune(nom, code) values ('La Roche-Jaudy', '22264');
-insert into commune(nom, code) values ('Rostrenen', '22266');
-insert into commune(nom, code) values ('Saint-Brieuc', '22278');
-insert into commune(nom, code) values ('Saint-Cast-le-Guildo', '22282');
-insert into commune(nom, code) values ('Saint-Quay-Portrieux', '22325');
-insert into commune(nom, code) values ('Trébeurden', '22343');
-insert into commune(nom, code) values ('Trégueux', '22360');
-insert into commune(nom, code) values ('Yffiniac', '22389');
-insert into commune(nom, code) values ('Aubusson', '23008');
-insert into commune(nom, code) values ('Guéret', '23096');
-insert into commune(nom, code) values ('La Souterraine', '23176');
-insert into commune(nom, code) values ('Bassillac et Auberoche', '24026');
-insert into commune(nom, code) values ('Bergerac', '24037');
-insert into commune(nom, code) values ('Boulazac Isle Manoire', '24053');
-insert into commune(nom, code) values ('Brantôme en Périgord', '24064');
-insert into commune(nom, code) values ('Champcevinel', '24098');
-insert into commune(nom, code) values ('Chancelade', '24102');
-insert into commune(nom, code) values ('Coulounieix-Chamiers', '24138');
-insert into commune(nom, code) values ('Marsac-sur-l''Isle', '24256');
-insert into commune(nom, code) values ('Montpon-Ménestérol', '24294');
-insert into commune(nom, code) values ('Neuvic', '24309');
-insert into commune(nom, code) values ('Nontron', '24311');
-insert into commune(nom, code) values ('Sanilhac', '24312');
-insert into commune(nom, code) values ('Périgueux', '24322');
-insert into commune(nom, code) values ('Prigonrieux', '24340');
-insert into commune(nom, code) values ('Ribérac', '24352');
-insert into commune(nom, code) values ('La Roche-Chalais', '24354');
-insert into commune(nom, code) values ('Saint-Astier', '24372');
-insert into commune(nom, code) values ('Sarlat-la-Canéda', '24520');
-insert into commune(nom, code) values ('Terrasson-Lavilledieu', '24547');
-insert into commune(nom, code) values ('Thiviers', '24551');
-insert into commune(nom, code) values ('Trélissac', '24557');
-insert into commune(nom, code) values ('Audincourt', '25031');
-insert into commune(nom, code) values ('Baume-les-Dames', '25047');
-insert into commune(nom, code) values ('Bavans', '25048');
-insert into commune(nom, code) values ('Besançon', '25056');
-insert into commune(nom, code) values ('Bethoncourt', '25057');
-insert into commune(nom, code) values ('Doubs', '25204');
-insert into commune(nom, code) values ('Étupes', '25228');
-insert into commune(nom, code) values ('Exincourt', '25230');
-insert into commune(nom, code) values ('Les Fins', '25240');
-insert into commune(nom, code) values ('Grand-Charmont', '25284');
-insert into commune(nom, code) values ('Hérimoncourt', '25304');
-insert into commune(nom, code) values ('Villers-le-Lac', '25321');
-insert into commune(nom, code) values ('Maîche', '25356');
-insert into commune(nom, code) values ('Mandeure', '25367');
-insert into commune(nom, code) values ('Montbéliard', '25388');
-insert into commune(nom, code) values ('Morteau', '25411');
-insert into commune(nom, code) values ('Ornans', '25434');
-insert into commune(nom, code) values ('Pontarlier', '25462');
-insert into commune(nom, code) values ('Pont-de-Roide-Vermondans', '25463');
-insert into commune(nom, code) values ('Saint-Vit', '25527');
-insert into commune(nom, code) values ('Saône', '25532');
-insert into commune(nom, code) values ('Seloncourt', '25539');
-insert into commune(nom, code) values ('Sochaux', '25547');
-insert into commune(nom, code) values ('Thise', '25560');
-insert into commune(nom, code) values ('Valdahon', '25578');
-insert into commune(nom, code) values ('Valentigney', '25580');
-insert into commune(nom, code) values ('Voujeaucourt', '25632');
-insert into commune(nom, code) values ('Anneyron', '26010');
-insert into commune(nom, code) values ('Beaumont-lès-Valence', '26037');
-insert into commune(nom, code) values ('Bourg-de-Péage', '26057');
-insert into commune(nom, code) values ('Bourg-lès-Valence', '26058');
-insert into commune(nom, code) values ('Chabeuil', '26064');
-insert into commune(nom, code) values ('Châteauneuf-sur-Isère', '26084');
-insert into commune(nom, code) values ('Chatuzange-le-Goubet', '26088');
-insert into commune(nom, code) values ('Crest', '26108');
-insert into commune(nom, code) values ('Die', '26113');
-insert into commune(nom, code) values ('Dieulefit', '26114');
-insert into commune(nom, code) values ('Donzère', '26116');
-insert into commune(nom, code) values ('Étoile-sur-Rhône', '26124');
-insert into commune(nom, code) values ('Livron-sur-Drôme', '26165');
-insert into commune(nom, code) values ('Loriol-sur-Drôme', '26166');
-insert into commune(nom, code) values ('Malissard', '26170');
-insert into commune(nom, code) values ('Montélier', '26197');
-insert into commune(nom, code) values ('Montélimar', '26198');
-insert into commune(nom, code) values ('Montmeyran', '26206');
-insert into commune(nom, code) values ('Mours-Saint-Eusèbe', '26218');
-insert into commune(nom, code) values ('Nyons', '26220');
-insert into commune(nom, code) values ('Pierrelatte', '26235');
-insert into commune(nom, code) values ('Pont-de-l''Isère', '26250');
-insert into commune(nom, code) values ('Portes-lès-Valence', '26252');
-insert into commune(nom, code) values ('La Roche-de-Glun', '26271');
-insert into commune(nom, code) values ('Romans-sur-Isère', '26281');
-insert into commune(nom, code) values ('Saint-Donat-sur-l''Herbasse', '26301');
-insert into commune(nom, code) values ('Saint-Marcel-lès-Valence', '26313');
-insert into commune(nom, code) values ('Saint-Paul-Trois-Châteaux', '26324');
-insert into commune(nom, code) values ('Saint-Rambert-d''Albon', '26325');
-insert into commune(nom, code) values ('Saint-Vallier', '26333');
-insert into commune(nom, code) values ('Tain-l''Hermitage', '26347');
-insert into commune(nom, code) values ('Valence', '26362');
-insert into commune(nom, code) values ('Les Andelys', '27016');
-insert into commune(nom, code) values ('Le Val d''Hazey', '27022');
-insert into commune(nom, code) values ('Mesnil-en-Ouche', '27049');
-insert into commune(nom, code) values ('Bernay', '27056');
-insert into commune(nom, code) values ('Beuzeville', '27065');
-insert into commune(nom, code) values ('Bosroumois', '27090');
-insert into commune(nom, code) values ('Bourg-Achard', '27103');
-insert into commune(nom, code) values ('Grand Bourgtheroulde', '27105');
-insert into commune(nom, code) values ('Breteuil', '27112');
-insert into commune(nom, code) values ('Brionne', '27116');
-insert into commune(nom, code) values ('Conches-en-Ouche', '27165');
-insert into commune(nom, code) values ('Mesnils-sur-Iton', '27198');
-insert into commune(nom, code) values ('Vexin-sur-Epte', '27213');
-insert into commune(nom, code) values ('Étrépagny', '27226');
-insert into commune(nom, code) values ('Évreux', '27229');
-insert into commune(nom, code) values ('Ézy-sur-Eure', '27230');
-insert into commune(nom, code) values ('Gaillon', '27275');
-insert into commune(nom, code) values ('Gasny', '27279');
-insert into commune(nom, code) values ('Gisors', '27284');
-insert into commune(nom, code) values ('Gravigny', '27299');
-insert into commune(nom, code) values ('Guichainville', '27306');
-insert into commune(nom, code) values ('Louviers', '27375');
-insert into commune(nom, code) values ('Le Neubourg', '27428');
-insert into commune(nom, code) values ('Pacy-sur-Eure', '27448');
-insert into commune(nom, code) values ('Pont-Audemer', '27467');
-insert into commune(nom, code) values ('Pont-de-l''Arche', '27469');
-insert into commune(nom, code) values ('Romilly-sur-Andelle', '27493');
-insert into commune(nom, code) values ('Saint-André-de-l''Eure', '27507');
-insert into commune(nom, code) values ('Le Vaudreuil', '27528');
-insert into commune(nom, code) values ('La Chapelle-Longueville', '27554');
-insert into commune(nom, code) values ('Saint-Marcel', '27562');
-insert into commune(nom, code) values ('Saint-Sébastien-de-Morsent', '27602');
-insert into commune(nom, code) values ('Le Thuit de l''Oison', '27638');
-insert into commune(nom, code) values ('Verneuil d''Avre et d''Iton', '27679');
-insert into commune(nom, code) values ('Vernon', '27681');
-insert into commune(nom, code) values ('Val-de-Reuil', '27701');
-insert into commune(nom, code) values ('Commune nouvelle d''Arrou', '28012');
-insert into commune(nom, code) values ('Auneau-Bleury-Saint-Symphorien', '28015');
-insert into commune(nom, code) values ('Bonneval', '28051');
-insert into commune(nom, code) values ('Brou', '28061');
-insert into commune(nom, code) values ('Champhol', '28070');
-insert into commune(nom, code) values ('Chartres', '28085');
-insert into commune(nom, code) values ('Châteaudun', '28088');
-insert into commune(nom, code) values ('Cloyes-les-Trois-Rivières', '28103');
-insert into commune(nom, code) values ('Le Coudray', '28110');
-insert into commune(nom, code) values ('Dreux', '28134');
-insert into commune(nom, code) values ('Épernon', '28140');
-insert into commune(nom, code) values ('Gallardon', '28168');
-insert into commune(nom, code) values ('Illiers-Combray', '28196');
-insert into commune(nom, code) values ('Lèves', '28209');
-insert into commune(nom, code) values ('La Loupe', '28214');
-insert into commune(nom, code) values ('Lucé', '28218');
-insert into commune(nom, code) values ('Luisant', '28220');
-insert into commune(nom, code) values ('Maintenon', '28227');
-insert into commune(nom, code) values ('Mainvilliers', '28229');
-insert into commune(nom, code) values ('Nogent-le-Roi', '28279');
-insert into commune(nom, code) values ('Nogent-le-Rotrou', '28280');
-insert into commune(nom, code) values ('Saint-Lubin-des-Joncherets', '28348');
-insert into commune(nom, code) values ('Saint-Rémy-sur-Avre', '28359');
-insert into commune(nom, code) values ('Senonches', '28373');
-insert into commune(nom, code) values ('Vernouillet', '28404');
-insert into commune(nom, code) values ('Les Villages Vovéens', '28422');
-insert into commune(nom, code) values ('Audierne', '29003');
-insert into commune(nom, code) values ('Bannalec', '29004');
-insert into commune(nom, code) values ('Bénodet', '29006');
-insert into commune(nom, code) values ('Bohars', '29011');
-insert into commune(nom, code) values ('Bourg-Blanc', '29015');
-insert into commune(nom, code) values ('Brest', '29019');
-insert into commune(nom, code) values ('Briec', '29020');
-insert into commune(nom, code) values ('Carantec', '29023');
-insert into commune(nom, code) values ('Carhaix-Plouguer', '29024');
-insert into commune(nom, code) values ('Châteaulin', '29026');
-insert into commune(nom, code) values ('Châteauneuf-du-Faou', '29027');
-insert into commune(nom, code) values ('Cléder', '29030');
-insert into commune(nom, code) values ('Clohars-Carnoët', '29031');
-insert into commune(nom, code) values ('Combrit', '29037');
-insert into commune(nom, code) values ('Concarneau', '29039');
-insert into commune(nom, code) values ('Crozon', '29042');
-insert into commune(nom, code) values ('Douarnenez', '29046');
-insert into commune(nom, code) values ('Elliant', '29049');
-insert into commune(nom, code) values ('Ergué-Gabéric', '29051');
-insert into commune(nom, code) values ('Le Folgoët', '29055');
-insert into commune(nom, code) values ('La Forêt-Fouesnant', '29057');
-insert into commune(nom, code) values ('Fouesnant', '29058');
-insert into commune(nom, code) values ('Gouesnou', '29061');
-insert into commune(nom, code) values ('Guilers', '29069');
-insert into commune(nom, code) values ('Guipavas', '29075');
-insert into commune(nom, code) values ('Milizac-Guipronvel', '29076');
-insert into commune(nom, code) values ('Landéda', '29101');
-insert into commune(nom, code) values ('Landerneau', '29103');
-insert into commune(nom, code) values ('Landivisiau', '29105');
-insert into commune(nom, code) values ('Lannilis', '29117');
-insert into commune(nom, code) values ('Lesneven', '29124');
-insert into commune(nom, code) values ('Locmaria-Plouzané', '29130');
-insert into commune(nom, code) values ('Loctudy', '29135');
-insert into commune(nom, code) values ('Loperhet', '29140');
-insert into commune(nom, code) values ('Melgven', '29146');
-insert into commune(nom, code) values ('Mellac', '29147');
-insert into commune(nom, code) values ('Moëlan-sur-Mer', '29150');
-insert into commune(nom, code) values ('Morlaix', '29151');
-insert into commune(nom, code) values ('Penmarch', '29158');
-insert into commune(nom, code) values ('Plabennec', '29160');
-insert into commune(nom, code) values ('Pleuven', '29161');
-insert into commune(nom, code) values ('Pleyben', '29162');
-insert into commune(nom, code) values ('Pleyber-Christ', '29163');
-insert into commune(nom, code) values ('Plobannalec-Lesconil', '29165');
-insert into commune(nom, code) values ('Plogonnec', '29169');
-insert into commune(nom, code) values ('Plomelin', '29170');
-insert into commune(nom, code) values ('Plomeur', '29171');
-insert into commune(nom, code) values ('Plonéour-Lanvern', '29174');
-insert into commune(nom, code) values ('Plouarzel', '29177');
-insert into commune(nom, code) values ('Ploudalmézeau', '29178');
-insert into commune(nom, code) values ('Ploudaniel', '29179');
-insert into commune(nom, code) values ('Plouédern', '29181');
-insert into commune(nom, code) values ('Plouescat', '29185');
-insert into commune(nom, code) values ('Plougastel-Daoulas', '29189');
-insert into commune(nom, code) values ('Plougonvelin', '29190');
-insert into commune(nom, code) values ('Plougonven', '29191');
-insert into commune(nom, code) values ('Plouguerneau', '29195');
-insert into commune(nom, code) values ('Plouhinec', '29197');
-insert into commune(nom, code) values ('Plouigneau', '29199');
-insert into commune(nom, code) values ('Plourin-lès-Morlaix', '29207');
-insert into commune(nom, code) values ('Plouvien', '29209');
-insert into commune(nom, code) values ('Plouzané', '29212');
-insert into commune(nom, code) values ('Plozévet', '29215');
-insert into commune(nom, code) values ('Pluguffan', '29216');
-insert into commune(nom, code) values ('Pont-l''Abbé', '29220');
-insert into commune(nom, code) values ('Quimper', '29232');
-insert into commune(nom, code) values ('Quimperlé', '29233');
-insert into commune(nom, code) values ('Le Relecq-Kerhuon', '29235');
-insert into commune(nom, code) values ('Riec-sur-Bélon', '29236');
-insert into commune(nom, code) values ('Roscoff', '29239');
-insert into commune(nom, code) values ('Rosporden', '29241');
-insert into commune(nom, code) values ('Saint-Évarzec', '29247');
-insert into commune(nom, code) values ('Saint-Martin-des-Champs', '29254');
-insert into commune(nom, code) values ('Saint-Pol-de-Léon', '29259');
-insert into commune(nom, code) values ('Saint-Renan', '29260');
-insert into commune(nom, code) values ('Saint-Thégonnec Loc-Eguiner', '29266');
-insert into commune(nom, code) values ('Saint-Yvi', '29272');
-insert into commune(nom, code) values ('Scaër', '29274');
-insert into commune(nom, code) values ('Trégunc', '29293');
-insert into commune(nom, code) values ('Pont-de-Buis-lès-Quimerch', '29302');
-insert into commune(nom, code) values ('Afa', '2A001');
-insert into commune(nom, code) values ('Ajaccio', '2A004');
-insert into commune(nom, code) values ('Alata', '2A006');
-insert into commune(nom, code) values ('Bastelicaccia', '2A032');
-insert into commune(nom, code) values ('Bonifacio', '2A041');
-insert into commune(nom, code) values ('Grosseto-Prugna', '2A130');
-insert into commune(nom, code) values ('Porto-Vecchio', '2A247');
-insert into commune(nom, code) values ('Propriano', '2A249');
-insert into commune(nom, code) values ('Sarrola-Carcopino', '2A271');
-insert into commune(nom, code) values ('Sartène', '2A272');
-insert into commune(nom, code) values ('Bastia', '2B033');
-insert into commune(nom, code) values ('Biguglia', '2B037');
-insert into commune(nom, code) values ('Borgo', '2B042');
-insert into commune(nom, code) values ('Calvi', '2B050');
-insert into commune(nom, code) values ('Corte', '2B096');
-insert into commune(nom, code) values ('Furiani', '2B120');
-insert into commune(nom, code) values ('Ghisonaccia', '2B123');
-insert into commune(nom, code) values ('L''Île-Rousse', '2B134');
-insert into commune(nom, code) values ('Lucciana', '2B148');
-insert into commune(nom, code) values ('Penta-di-Casinca', '2B207');
-insert into commune(nom, code) values ('Prunelli-di-Fiumorbo', '2B251');
-insert into commune(nom, code) values ('Ville-di-Pietrabugno', '2B353');
-insert into commune(nom, code) values ('Aigues-Mortes', '30003');
-insert into commune(nom, code) values ('Aigues-Vives', '30004');
-insert into commune(nom, code) values ('Aimargues', '30006');
-insert into commune(nom, code) values ('Alès', '30007');
-insert into commune(nom, code) values ('Anduze', '30010');
-insert into commune(nom, code) values ('Les Angles', '30011');
-insert into commune(nom, code) values ('Aramon', '30012');
-insert into commune(nom, code) values ('Bagnols-sur-Cèze', '30028');
-insert into commune(nom, code) values ('Beaucaire', '30032');
-insert into commune(nom, code) values ('Beauvoisin', '30033');
-insert into commune(nom, code) values ('Bellegarde', '30034');
-insert into commune(nom, code) values ('Bernis', '30036');
-insert into commune(nom, code) values ('Bouillargues', '30047');
-insert into commune(nom, code) values ('Caissargues', '30060');
-insert into commune(nom, code) values ('Calvisson', '30062');
-insert into commune(nom, code) values ('Caveirac', '30075');
-insert into commune(nom, code) values ('Clarensac', '30082');
-insert into commune(nom, code) values ('Gallargues-le-Montueux', '30123');
-insert into commune(nom, code) values ('Garons', '30125');
-insert into commune(nom, code) values ('Générac', '30128');
-insert into commune(nom, code) values ('La Grand-Combe', '30132');
-insert into commune(nom, code) values ('Le Grau-du-Roi', '30133');
-insert into commune(nom, code) values ('Jonquières-Saint-Vincent', '30135');
-insert into commune(nom, code) values ('Laudun-l''Ardoise', '30141');
-insert into commune(nom, code) values ('Manduel', '30155');
-insert into commune(nom, code) values ('Marguerittes', '30156');
-insert into commune(nom, code) values ('Milhaud', '30169');
-insert into commune(nom, code) values ('Montfrin', '30179');
-insert into commune(nom, code) values ('Nîmes', '30189');
-insert into commune(nom, code) values ('Pont-Saint-Esprit', '30202');
-insert into commune(nom, code) values ('Poulx', '30206');
-insert into commune(nom, code) values ('Pujaut', '30209');
-insert into commune(nom, code) values ('Quissac', '30210');
-insert into commune(nom, code) values ('Redessan', '30211');
-insert into commune(nom, code) values ('Rochefort-du-Gard', '30217');
-insert into commune(nom, code) values ('Roquemaure', '30221');
-insert into commune(nom, code) values ('Rousson', '30223');
-insert into commune(nom, code) values ('Saint-Ambroix', '30227');
-insert into commune(nom, code) values ('Saint-Christol-lez-Alès', '30243');
-insert into commune(nom, code) values ('Saint-Geniès-de-Malgoirès', '30255');
-insert into commune(nom, code) values ('Saint-Gilles', '30258');
-insert into commune(nom, code) values ('Saint-Hilaire-de-Brethmas', '30259');
-insert into commune(nom, code) values ('Saint-Hippolyte-du-Fort', '30263');
-insert into commune(nom, code) values ('Saint-Julien-les-Rosiers', '30274');
-insert into commune(nom, code) values ('Saint-Laurent-d''Aigouze', '30276');
-insert into commune(nom, code) values ('Saint-Laurent-des-Arbres', '30278');
-insert into commune(nom, code) values ('Saint-Martin-de-Valgalgues', '30284');
-insert into commune(nom, code) values ('Saint-Privat-des-Vieux', '30294');
-insert into commune(nom, code) values ('Saint-Quentin-la-Poterie', '30295');
-insert into commune(nom, code) values ('Salindres', '30305');
-insert into commune(nom, code) values ('Sommières', '30321');
-insert into commune(nom, code) values ('Uchaud', '30333');
-insert into commune(nom, code) values ('Uzès', '30334');
-insert into commune(nom, code) values ('Vauvert', '30341');
-insert into commune(nom, code) values ('Vergèze', '30344');
-insert into commune(nom, code) values ('Le Vigan', '30350');
-insert into commune(nom, code) values ('Villeneuve-lès-Avignon', '30351');
-insert into commune(nom, code) values ('Rodilhan', '30356');
-insert into commune(nom, code) values ('Aucamville', '31022');
-insert into commune(nom, code) values ('Aussonne', '31032');
-insert into commune(nom, code) values ('Auterive', '31033');
-insert into commune(nom, code) values ('Auzeville-Tolosane', '31035');
-insert into commune(nom, code) values ('Balma', '31044');
-insert into commune(nom, code) values ('Baziège', '31048');
-insert into commune(nom, code) values ('Beauzelle', '31056');
-insert into commune(nom, code) values ('Bérat', '31065');
-insert into commune(nom, code) values ('Bessières', '31066');
-insert into commune(nom, code) values ('Blagnac', '31069');
-insert into commune(nom, code) values ('Bouloc', '31079');
-insert into commune(nom, code) values ('Bruguières', '31091');
-insert into commune(nom, code) values ('Carbonne', '31107');
-insert into commune(nom, code) values ('Castanet-Tolosan', '31113');
-insert into commune(nom, code) values ('Castelginest', '31116');
-insert into commune(nom, code) values ('Castelmaurou', '31117');
-insert into commune(nom, code) values ('Castelnau-d''Estrétefonds', '31118');
-insert into commune(nom, code) values ('Cazères', '31135');
-insert into commune(nom, code) values ('Colomiers', '31149');
-insert into commune(nom, code) values ('Cornebarrieu', '31150');
-insert into commune(nom, code) values ('Cugnaux', '31157');
-insert into commune(nom, code) values ('Eaunes', '31165');
-insert into commune(nom, code) values ('Escalquens', '31169');
-insert into commune(nom, code) values ('Fenouillet', '31182');
-insert into commune(nom, code) values ('Fonbeauzard', '31186');
-insert into commune(nom, code) values ('Fonsorbes', '31187');
-insert into commune(nom, code) values ('Fontenilles', '31188');
-insert into commune(nom, code) values ('Fronton', '31202');
-insert into commune(nom, code) values ('Frouzins', '31203');
-insert into commune(nom, code) values ('Gagnac-sur-Garonne', '31205');
-insert into commune(nom, code) values ('Gratentour', '31230');
-insert into commune(nom, code) values ('Grenade', '31232');
-insert into commune(nom, code) values ('Labarthe-sur-Lèze', '31248');
-insert into commune(nom, code) values ('Labège', '31254');
-insert into commune(nom, code) values ('Lagardelle-sur-Lèze', '31263');
-insert into commune(nom, code) values ('Launaguet', '31282');
-insert into commune(nom, code) values ('Lavernose-Lacasse', '31287');
-insert into commune(nom, code) values ('Léguevin', '31291');
-insert into commune(nom, code) values ('Lherm', '31299');
-insert into commune(nom, code) values ('Longages', '31303');
-insert into commune(nom, code) values ('Merville', '31341');
-insert into commune(nom, code) values ('Mondonville', '31351');
-insert into commune(nom, code) values ('Montastruc-la-Conseillère', '31358');
-insert into commune(nom, code) values ('Montberon', '31364');
-insert into commune(nom, code) values ('Montesquieu-Volvestre', '31375');
-insert into commune(nom, code) values ('Montrabé', '31389');
-insert into commune(nom, code) values ('Muret', '31395');
-insert into commune(nom, code) values ('Nailloux', '31396');
-insert into commune(nom, code) values ('Pechbonnieu', '31410');
-insert into commune(nom, code) values ('Pibrac', '31417');
-insert into commune(nom, code) values ('Pins-Justaret', '31421');
-insert into commune(nom, code) values ('Plaisance-du-Touch', '31424');
-insert into commune(nom, code) values ('Portet-sur-Garonne', '31433');
-insert into commune(nom, code) values ('Quint-Fonsegrives', '31445');
-insert into commune(nom, code) values ('Ramonville-Saint-Agne', '31446');
-insert into commune(nom, code) values ('Revel', '31451');
-insert into commune(nom, code) values ('Rieumes', '31454');
-insert into commune(nom, code) values ('Roques', '31458');
-insert into commune(nom, code) values ('Roquettes', '31460');
-insert into commune(nom, code) values ('Saint-Alban', '31467');
-insert into commune(nom, code) values ('Saint-Gaudens', '31483');
-insert into commune(nom, code) values ('Saint-Jean', '31488');
-insert into commune(nom, code) values ('Saint-Jory', '31490');
-insert into commune(nom, code) values ('Saint-Lys', '31499');
-insert into commune(nom, code) values ('Saint-Orens-de-Gameville', '31506');
-insert into commune(nom, code) values ('La Salvetat-Saint-Gilles', '31526');
-insert into commune(nom, code) values ('Seilh', '31541');
-insert into commune(nom, code) values ('Seysses', '31547');
-insert into commune(nom, code) values ('Toulouse', '31555');
-insert into commune(nom, code) values ('Tournefeuille', '31557');
-insert into commune(nom, code) values ('L''Union', '31561');
-insert into commune(nom, code) values ('Verfeil', '31573');
-insert into commune(nom, code) values ('Vernet', '31574');
-insert into commune(nom, code) values ('Villefranche-de-Lauragais', '31582');
-insert into commune(nom, code) values ('Villemur-sur-Tarn', '31584');
-insert into commune(nom, code) values ('Villeneuve-Tolosane', '31588');
-insert into commune(nom, code) values ('Auch', '32013');
-insert into commune(nom, code) values ('Condom', '32107');
-insert into commune(nom, code) values ('Eauze', '32119');
-insert into commune(nom, code) values ('Fleurance', '32132');
-insert into commune(nom, code) values ('Gimont', '32147');
-insert into commune(nom, code) values ('L''Isle-Jourdain', '32160');
-insert into commune(nom, code) values ('Lectoure', '32208');
-insert into commune(nom, code) values ('Mirande', '32256');
-insert into commune(nom, code) values ('Vic-Fezensac', '32462');
-insert into commune(nom, code) values ('Ambarès-et-Lagrave', '33003');
-insert into commune(nom, code) values ('Ambès', '33004');
-insert into commune(nom, code) values ('Andernos-les-Bains', '33005');
-insert into commune(nom, code) values ('Arcachon', '33009');
-insert into commune(nom, code) values ('Arès', '33011');
-insert into commune(nom, code) values ('Arsac', '33012');
-insert into commune(nom, code) values ('Artigues-près-Bordeaux', '33013');
-insert into commune(nom, code) values ('Val de Virvée', '33018');
-insert into commune(nom, code) values ('Audenge', '33019');
-insert into commune(nom, code) values ('Avensan', '33022');
-insert into commune(nom, code) values ('Le Barp', '33029');
-insert into commune(nom, code) values ('Bassens', '33032');
-insert into commune(nom, code) values ('Bazas', '33036');
-insert into commune(nom, code) values ('Bègles', '33039');
-insert into commune(nom, code) values ('Belin-Béliet', '33042');
-insert into commune(nom, code) values ('Biganos', '33051');
-insert into commune(nom, code) values ('Blanquefort', '33056');
-insert into commune(nom, code) values ('Blaye', '33058');
-insert into commune(nom, code) values ('Bordeaux', '33063');
-insert into commune(nom, code) values ('Bouliac', '33065');
-insert into commune(nom, code) values ('Le Bouscat', '33069');
-insert into commune(nom, code) values ('Bruges', '33075');
-insert into commune(nom, code) values ('Cadaujac', '33080');
-insert into commune(nom, code) values ('Camblanes-et-Meynac', '33085');
-insert into commune(nom, code) values ('Canéjan', '33090');
-insert into commune(nom, code) values ('Carbon-Blanc', '33096');
-insert into commune(nom, code) values ('Carignan-de-Bordeaux', '33099');
-insert into commune(nom, code) values ('Castelnau-de-Médoc', '33104');
-insert into commune(nom, code) values ('Castillon-la-Bataille', '33108');
-insert into commune(nom, code) values ('Cenon', '33119');
-insert into commune(nom, code) values ('Cestas', '33122');
-insert into commune(nom, code) values ('Coutras', '33138');
-insert into commune(nom, code) values ('Créon', '33140');
-insert into commune(nom, code) values ('Eysines', '33162');
-insert into commune(nom, code) values ('Fargues-Saint-Hilaire', '33165');
-insert into commune(nom, code) values ('Floirac', '33167');
-insert into commune(nom, code) values ('Galgon', '33179');
-insert into commune(nom, code) values ('Gradignan', '33192');
-insert into commune(nom, code) values ('Gujan-Mestras', '33199');
-insert into commune(nom, code) values ('Le Haillan', '33200');
-insert into commune(nom, code) values ('Hourtin', '33203');
-insert into commune(nom, code) values ('Izon', '33207');
-insert into commune(nom, code) values ('La Brède', '33213');
-insert into commune(nom, code) values ('Lacanau', '33214');
-insert into commune(nom, code) values ('Langon', '33227');
-insert into commune(nom, code) values ('Lanton', '33229');
-insert into commune(nom, code) values ('Latresne', '33234');
-insert into commune(nom, code) values ('Lège-Cap-Ferret', '33236');
-insert into commune(nom, code) values ('Léognan', '33238');
-insert into commune(nom, code) values ('Lesparre-Médoc', '33240');
-insert into commune(nom, code) values ('Libourne', '33243');
-insert into commune(nom, code) values ('Lormont', '33249');
-insert into commune(nom, code) values ('Ludon-Médoc', '33256');
-insert into commune(nom, code) values ('Macau', '33262');
-insert into commune(nom, code) values ('Martignas-sur-Jalle', '33273');
-insert into commune(nom, code) values ('Martillac', '33274');
-insert into commune(nom, code) values ('Mérignac', '33281');
-insert into commune(nom, code) values ('Mios', '33284');
-insert into commune(nom, code) values ('Montussan', '33293');
-insert into commune(nom, code) values ('Parempuyre', '33312');
-insert into commune(nom, code) values ('Pauillac', '33314');
-insert into commune(nom, code) values ('Pessac', '33318');
-insert into commune(nom, code) values ('Le Pian-Médoc', '33322');
-insert into commune(nom, code) values ('Pineuilh', '33324');
-insert into commune(nom, code) values ('Podensac', '33327');
-insert into commune(nom, code) values ('Pompignac', '33330');
-insert into commune(nom, code) values ('Le Porge', '33333');
-insert into commune(nom, code) values ('La Réole', '33352');
-insert into commune(nom, code) values ('Sadirac', '33363');
-insert into commune(nom, code) values ('Saint-André-de-Cubzac', '33366');
-insert into commune(nom, code) values ('Saint-Aubin-de-Médoc', '33376');
-insert into commune(nom, code) values ('Saint-Caprais-de-Bordeaux', '33381');
-insert into commune(nom, code) values ('Saint-Ciers-sur-Gironde', '33389');
-insert into commune(nom, code) values ('Saint-Denis-de-Pile', '33393');
-insert into commune(nom, code) values ('Sainte-Eulalie', '33397');
-insert into commune(nom, code) values ('Saint-Jean-d''Illac', '33422');
-insert into commune(nom, code) values ('Saint-Laurent-Médoc', '33424');
-insert into commune(nom, code) values ('Saint-Loubès', '33433');
-insert into commune(nom, code) values ('Saint-Médard-d''Eyrans', '33448');
-insert into commune(nom, code) values ('Saint-Médard-en-Jalles', '33449');
-insert into commune(nom, code) values ('Saint-Savin', '33473');
-insert into commune(nom, code) values ('Saint-Selve', '33474');
-insert into commune(nom, code) values ('Saint-Seurin-sur-l''Isle', '33478');
-insert into commune(nom, code) values ('Saint-Sulpice-et-Cameyrac', '33483');
-insert into commune(nom, code) values ('Salles', '33498');
-insert into commune(nom, code) values ('Saucats', '33501');
-insert into commune(nom, code) values ('Le Taillan-Médoc', '33519');
-insert into commune(nom, code) values ('Talence', '33522');
-insert into commune(nom, code) values ('Le Teich', '33527');
-insert into commune(nom, code) values ('La Teste-de-Buch', '33529');
-insert into commune(nom, code) values ('Tresses', '33535');
-insert into commune(nom, code) values ('Vayres', '33539');
-insert into commune(nom, code) values ('Villenave-d''Ornon', '33550');
-insert into commune(nom, code) values ('Marcheprime', '33555');
-insert into commune(nom, code) values ('Agde', '34003');
-insert into commune(nom, code) values ('Baillargues', '34022');
-insert into commune(nom, code) values ('Balaruc-les-Bains', '34023');
-insert into commune(nom, code) values ('Bédarieux', '34028');
-insert into commune(nom, code) values ('Bessan', '34031');
-insert into commune(nom, code) values ('Béziers', '34032');
-insert into commune(nom, code) values ('Boujan-sur-Libron', '34037');
-insert into commune(nom, code) values ('Canet', '34051');
-insert into commune(nom, code) values ('Capestang', '34052');
-insert into commune(nom, code) values ('Castelnau-le-Lez', '34057');
-insert into commune(nom, code) values ('Castries', '34058');
-insert into commune(nom, code) values ('Cazouls-lès-Béziers', '34069');
-insert into commune(nom, code) values ('Clapiers', '34077');
-insert into commune(nom, code) values ('Clermont-l''Hérault', '34079');
-insert into commune(nom, code) values ('Cournonsec', '34087');
-insert into commune(nom, code) values ('Cournonterral', '34088');
-insert into commune(nom, code) values ('Le Crès', '34090');
-insert into commune(nom, code) values ('Fabrègues', '34095');
-insert into commune(nom, code) values ('Florensac', '34101');
-insert into commune(nom, code) values ('Frontignan', '34108');
-insert into commune(nom, code) values ('Ganges', '34111');
-insert into commune(nom, code) values ('Gigean', '34113');
-insert into commune(nom, code) values ('Gignac', '34114');
-insert into commune(nom, code) values ('Grabels', '34116');
-insert into commune(nom, code) values ('Jacou', '34120');
-insert into commune(nom, code) values ('Juvignac', '34123');
-insert into commune(nom, code) values ('Lansargues', '34127');
-insert into commune(nom, code) values ('Lattes', '34129');
-insert into commune(nom, code) values ('Lavérune', '34134');
-insert into commune(nom, code) values ('Lespignan', '34135');
-insert into commune(nom, code) values ('Lignan-sur-Orb', '34140');
-insert into commune(nom, code) values ('Lodève', '34142');
-insert into commune(nom, code) values ('Lunel', '34145');
-insert into commune(nom, code) values ('Lunel-Viel', '34146');
-insert into commune(nom, code) values ('Magalas', '34147');
-insert into commune(nom, code) values ('Maraussan', '34148');
-insert into commune(nom, code) values ('Marseillan', '34150');
-insert into commune(nom, code) values ('Marsillargues', '34151');
-insert into commune(nom, code) values ('Mauguio', '34154');
-insert into commune(nom, code) values ('Mèze', '34157');
-insert into commune(nom, code) values ('Mireval', '34159');
-insert into commune(nom, code) values ('Montady', '34161');
-insert into commune(nom, code) values ('Montagnac', '34162');
-insert into commune(nom, code) values ('Montarnaud', '34163');
-insert into commune(nom, code) values ('Montferrier-sur-Lez', '34169');
-insert into commune(nom, code) values ('Montpellier', '34172');
-insert into commune(nom, code) values ('Murviel-lès-Béziers', '34178');
-insert into commune(nom, code) values ('Nissan-lez-Enserune', '34183');
-insert into commune(nom, code) values ('Palavas-les-Flots', '34192');
-insert into commune(nom, code) values ('Paulhan', '34194');
-insert into commune(nom, code) values ('Pérols', '34198');
-insert into commune(nom, code) values ('Pézenas', '34199');
-insert into commune(nom, code) values ('Pignan', '34202');
-insert into commune(nom, code) values ('Portiragnes', '34209');
-insert into commune(nom, code) values ('Poussan', '34213');
-insert into commune(nom, code) values ('Prades-le-Lez', '34217');
-insert into commune(nom, code) values ('Puisserguier', '34225');
-insert into commune(nom, code) values ('Saint-André-de-Sangonis', '34239');
-insert into commune(nom, code) values ('Saint-Aunès', '34240');
-insert into commune(nom, code) values ('Saint-Brès', '34244');
-insert into commune(nom, code) values ('Saint-Clément-de-Rivière', '34247');
-insert into commune(nom, code) values ('Saint-Gély-du-Fesc', '34255');
-insert into commune(nom, code) values ('Saint-Georges-d''Orques', '34259');
-insert into commune(nom, code) values ('Saint-Jean-de-Védas', '34270');
-insert into commune(nom, code) values ('Saint-Just', '34272');
-insert into commune(nom, code) values ('Saint-Mathieu-de-Tréviers', '34276');
-insert into commune(nom, code) values ('Sauvian', '34298');
-insert into commune(nom, code) values ('Sérignan', '34299');
-insert into commune(nom, code) values ('Servian', '34300');
-insert into commune(nom, code) values ('Sète', '34301');
-insert into commune(nom, code) values ('Teyran', '34309');
-insert into commune(nom, code) values ('Thézan-lès-Béziers', '34310');
-insert into commune(nom, code) values ('Valras-Plage', '34324');
-insert into commune(nom, code) values ('Vendargues', '34327');
-insert into commune(nom, code) values ('Vias', '34332');
-insert into commune(nom, code) values ('Vic-la-Gardiole', '34333');
-insert into commune(nom, code) values ('Villeneuve-lès-Béziers', '34336');
-insert into commune(nom, code) values ('Villeneuve-lès-Maguelone', '34337');
-insert into commune(nom, code) values ('Villeveyrac', '34341');
-insert into commune(nom, code) values ('La Grande-Motte', '34344');
-insert into commune(nom, code) values ('Acigné', '35001');
-insert into commune(nom, code) values ('Val-Couesnon', '35004');
-insert into commune(nom, code) values ('Argentré-du-Plessis', '35006');
-insert into commune(nom, code) values ('Bain-de-Bretagne', '35012');
-insert into commune(nom, code) values ('Bains-sur-Oust', '35013');
-insert into commune(nom, code) values ('Bédée', '35023');
-insert into commune(nom, code) values ('Betton', '35024');
-insert into commune(nom, code) values ('La Bouëxière', '35031');
-insert into commune(nom, code) values ('Bourgbarré', '35032');
-insert into commune(nom, code) values ('Bourg-des-Comptes', '35033');
-insert into commune(nom, code) values ('Bréal-sous-Montfort', '35037');
-insert into commune(nom, code) values ('Breteil', '35040');
-insert into commune(nom, code) values ('Bruz', '35047');
-insert into commune(nom, code) values ('Cancale', '35049');
-insert into commune(nom, code) values ('Cesson-Sévigné', '35051');
-insert into commune(nom, code) values ('Chantepie', '35055');
-insert into commune(nom, code) values ('La Chapelle-des-Fougeretz', '35059');
-insert into commune(nom, code) values ('Chartres-de-Bretagne', '35066');
-insert into commune(nom, code) values ('Châteaubourg', '35068');
-insert into commune(nom, code) values ('Châteaugiron', '35069');
-insert into commune(nom, code) values ('Chavagne', '35076');
-insert into commune(nom, code) values ('Combourg', '35085');
-insert into commune(nom, code) values ('Corps-Nuds', '35088');
-insert into commune(nom, code) values ('Dinard', '35093');
-insert into commune(nom, code) values ('Dol-de-Bretagne', '35095');
-insert into commune(nom, code) values ('Domloup', '35099');
-insert into commune(nom, code) values ('Fougères', '35115');
-insert into commune(nom, code) values ('Gévezé', '35120');
-insert into commune(nom, code) values ('Goven', '35123');
-insert into commune(nom, code) values ('La Guerche-de-Bretagne', '35125');
-insert into commune(nom, code) values ('Guichen', '35126');
-insert into commune(nom, code) values ('Guignen', '35127');
-insert into commune(nom, code) values ('L''Hermitage', '35131');
-insert into commune(nom, code) values ('Iffendic', '35133');
-insert into commune(nom, code) values ('Janzé', '35136');
-insert into commune(nom, code) values ('Laillé', '35139');
-insert into commune(nom, code) values ('Lécousse', '35150');
-insert into commune(nom, code) values ('Liffré', '35152');
-insert into commune(nom, code) values ('Louvigné-du-Désert', '35162');
-insert into commune(nom, code) values ('Val d''Anast', '35168');
-insert into commune(nom, code) values ('Melesse', '35173');
-insert into commune(nom, code) values ('Guipry-Messac', '35176');
-insert into commune(nom, code) values ('La Mézière', '35177');
-insert into commune(nom, code) values ('Miniac-Morvan', '35179');
-insert into commune(nom, code) values ('Montauban-de-Bretagne', '35184');
-insert into commune(nom, code) values ('Montfort-sur-Meu', '35188');
-insert into commune(nom, code) values ('Montgermont', '35189');
-insert into commune(nom, code) values ('Mordelles', '35196');
-insert into commune(nom, code) values ('Nouvoitou', '35204');
-insert into commune(nom, code) values ('Noyal-Châtillon-sur-Seiche', '35206');
-insert into commune(nom, code) values ('Noyal-sur-Vilaine', '35207');
-insert into commune(nom, code) values ('Orgères', '35208');
-insert into commune(nom, code) values ('Pacé', '35210');
-insert into commune(nom, code) values ('Pipriac', '35219');
-insert into commune(nom, code) values ('Piré-Chancé', '35220');
-insert into commune(nom, code) values ('Plélan-le-Grand', '35223');
-insert into commune(nom, code) values ('Pleumeleuc', '35227');
-insert into commune(nom, code) values ('Pleurtuit', '35228');
-insert into commune(nom, code) values ('Redon', '35236');
-insert into commune(nom, code) values ('Rennes', '35238');
-insert into commune(nom, code) values ('Retiers', '35239');
-insert into commune(nom, code) values ('Le Rheu', '35240');
-insert into commune(nom, code) values ('Romillé', '35245');
-insert into commune(nom, code) values ('Saint-Aubin-d''Aubigné', '35251');
-insert into commune(nom, code) values ('Saint-Aubin-du-Cormier', '35253');
-insert into commune(nom, code) values ('Maen Roch', '35257');
-insert into commune(nom, code) values ('Saint-Erblon', '35266');
-insert into commune(nom, code) values ('Saint-Gilles', '35275');
-insert into commune(nom, code) values ('Saint-Grégoire', '35278');
-insert into commune(nom, code) values ('Saint-Jacques-de-la-Lande', '35281');
-insert into commune(nom, code) values ('Saint-Malo', '35288');
-insert into commune(nom, code) values ('Saint-Méen-le-Grand', '35297');
-insert into commune(nom, code) values ('Saint-Méloir-des-Ondes', '35299');
-insert into commune(nom, code) values ('Mesnil-Roc''h', '35308');
-insert into commune(nom, code) values ('Servon-sur-Vilaine', '35327');
-insert into commune(nom, code) values ('Thorigné-Fouillard', '35334');
-insert into commune(nom, code) values ('Tinténiac', '35337');
-insert into commune(nom, code) values ('Vern-sur-Seiche', '35352');
-insert into commune(nom, code) values ('Vezin-le-Coquet', '35353');
-insert into commune(nom, code) values ('Vitré', '35360');
-insert into commune(nom, code) values ('Pont-Péan', '35363');
-insert into commune(nom, code) values ('Ardentes', '36005');
-insert into commune(nom, code) values ('Argenton-sur-Creuse', '36006');
-insert into commune(nom, code) values ('Le Blanc', '36018');
-insert into commune(nom, code) values ('Buzançais', '36031');
-insert into commune(nom, code) values ('Châteauroux', '36044');
-insert into commune(nom, code) values ('La Châtre', '36046');
-insert into commune(nom, code) values ('Déols', '36063');
-insert into commune(nom, code) values ('Issoudun', '36088');
-insert into commune(nom, code) values ('Le Poinçonnet', '36159');
-insert into commune(nom, code) values ('Saint-Maur', '36202');
-insert into commune(nom, code) values ('Amboise', '37003');
-insert into commune(nom, code) values ('Azay-le-Rideau', '37014');
-insert into commune(nom, code) values ('Azay-sur-Cher', '37015');
-insert into commune(nom, code) values ('Ballan-Miré', '37018');
-insert into commune(nom, code) values ('Bléré', '37027');
-insert into commune(nom, code) values ('Bourgueil', '37031');
-insert into commune(nom, code) values ('Chambray-lès-Tours', '37050');
-insert into commune(nom, code) values ('Chanceaux-sur-Choisille', '37054');
-insert into commune(nom, code) values ('Château-Renault', '37063');
-insert into commune(nom, code) values ('Chinon', '37072');
-insert into commune(nom, code) values ('Cinq-Mars-la-Pile', '37077');
-insert into commune(nom, code) values ('Esvres', '37104');
-insert into commune(nom, code) values ('Fondettes', '37109');
-insert into commune(nom, code) values ('Descartes', '37115');
-insert into commune(nom, code) values ('Joué-lès-Tours', '37122');
-insert into commune(nom, code) values ('Langeais', '37123');
-insert into commune(nom, code) values ('Loches', '37132');
-insert into commune(nom, code) values ('Luynes', '37139');
-insert into commune(nom, code) values ('La Membrolle-sur-Choisille', '37151');
-insert into commune(nom, code) values ('Monnaie', '37153');
-insert into commune(nom, code) values ('Montbazon', '37154');
-insert into commune(nom, code) values ('Montlouis-sur-Loire', '37156');
-insert into commune(nom, code) values ('Monts', '37159');
-insert into commune(nom, code) values ('Nazelles-Négron', '37163');
-insert into commune(nom, code) values ('Notre-Dame-d''Oé', '37172');
-insert into commune(nom, code) values ('La Riche', '37195');
-insert into commune(nom, code) values ('Rochecorbon', '37203');
-insert into commune(nom, code) values ('Saint-Avertin', '37208');
-insert into commune(nom, code) values ('Saint-Cyr-sur-Loire', '37214');
-insert into commune(nom, code) values ('Saint-Martin-le-Beau', '37225');
-insert into commune(nom, code) values ('Sainte-Maure-de-Touraine', '37226');
-insert into commune(nom, code) values ('Saint-Pierre-des-Corps', '37233');
-insert into commune(nom, code) values ('Savonnières', '37243');
-insert into commune(nom, code) values ('Tours', '37261');
-insert into commune(nom, code) values ('Veigné', '37266');
-insert into commune(nom, code) values ('Véretz', '37267');
-insert into commune(nom, code) values ('La Ville-aux-Dames', '37273');
-insert into commune(nom, code) values ('Vouvray', '37281');
-insert into commune(nom, code) values ('Les Abrets en Dauphiné', '38001');
-insert into commune(nom, code) values ('Allevard', '38006');
-insert into commune(nom, code) values ('Apprieu', '38013');
-insert into commune(nom, code) values ('Les Avenières Veyrins-Thuellin', '38022');
-insert into commune(nom, code) values ('Beaurepaire', '38034');
-insert into commune(nom, code) values ('Bernin', '38039');
-insert into commune(nom, code) values ('Le Bourg-d''Oisans', '38052');
-insert into commune(nom, code) values ('Bourgoin-Jallieu', '38053');
-insert into commune(nom, code) values ('La Buisse', '38061');
-insert into commune(nom, code) values ('Cessieu', '38064');
-insert into commune(nom, code) values ('Champ-sur-Drac', '38071');
-insert into commune(nom, code) values ('Chapareillan', '38075');
-insert into commune(nom, code) values ('Charvieu-Chavagneux', '38085');
-insert into commune(nom, code) values ('Chasse-sur-Rhône', '38087');
-insert into commune(nom, code) values ('Chavanoz', '38097');
-insert into commune(nom, code) values ('Claix', '38111');
-insert into commune(nom, code) values ('Corenc', '38126');
-insert into commune(nom, code) values ('La Côte-Saint-André', '38130');
-insert into commune(nom, code) values ('Coublevie', '38133');
-insert into commune(nom, code) values ('Crémieu', '38138');
-insert into commune(nom, code) values ('Crolles', '38140');
-insert into commune(nom, code) values ('Dolomieu', '38148');
-insert into commune(nom, code) values ('Domène', '38150');
-insert into commune(nom, code) values ('Échirolles', '38151');
-insert into commune(nom, code) values ('Estrablin', '38157');
-insert into commune(nom, code) values ('Eybens', '38158');
-insert into commune(nom, code) values ('Fontaine', '38169');
-insert into commune(nom, code) values ('Fontanil-Cornillon', '38170');
-insert into commune(nom, code) values ('Froges', '38175');
-insert into commune(nom, code) values ('Gières', '38179');
-insert into commune(nom, code) values ('Le Grand-Lemps', '38182');
-insert into commune(nom, code) values ('Grenoble', '38185');
-insert into commune(nom, code) values ('Heyrieux', '38189');
-insert into commune(nom, code) values ('L''Isle-d''Abeau', '38193');
-insert into commune(nom, code) values ('Jarrie', '38200');
-insert into commune(nom, code) values ('Autrans-Méaudre en Vercors', '38225');
-insert into commune(nom, code) values ('Meylan', '38229');
-insert into commune(nom, code) values ('Moirans', '38239');
-insert into commune(nom, code) values ('Montalieu-Vercieu', '38247');
-insert into commune(nom, code) values ('Montbonnot-Saint-Martin', '38249');
-insert into commune(nom, code) values ('Morestel', '38261');
-insert into commune(nom, code) values ('La Mure', '38269');
-insert into commune(nom, code) values ('Le Péage-de-Roussillon', '38298');
-insert into commune(nom, code) values ('Pontcharra', '38314');
-insert into commune(nom, code) values ('Le Pont-de-Beauvoisin', '38315');
-insert into commune(nom, code) values ('Pont-de-Chéruy', '38316');
-insert into commune(nom, code) values ('Le Pont-de-Claix', '38317');
-insert into commune(nom, code) values ('Pont-Évêque', '38318');
-insert into commune(nom, code) values ('Renage', '38332');
-insert into commune(nom, code) values ('Rives', '38337');
-insert into commune(nom, code) values ('Roussillon', '38344');
-insert into commune(nom, code) values ('Ruy-Montceau', '38348');
-insert into commune(nom, code) values ('Saint-Chef', '38374');
-insert into commune(nom, code) values ('Saint-Clair-de-la-Tour', '38377');
-insert into commune(nom, code) values ('Saint-Clair-du-Rhône', '38378');
-insert into commune(nom, code) values ('Saint-Égrève', '38382');
-insert into commune(nom, code) values ('Saint-Étienne-de-Saint-Geoirs', '38384');
-insert into commune(nom, code) values ('Saint-Georges-d''Espéranche', '38389');
-insert into commune(nom, code) values ('Saint-Ismier', '38397');
-insert into commune(nom, code) values ('Saint-Jean-de-Bournay', '38399');
-insert into commune(nom, code) values ('Saint-Jean-de-Moirans', '38400');
-insert into commune(nom, code) values ('Saint-Laurent-du-Pont', '38412');
-insert into commune(nom, code) values ('Saint-Marcellin', '38416');
-insert into commune(nom, code) values ('Saint-Martin-d''Hères', '38421');
-insert into commune(nom, code) values ('Saint-Martin-d''Uriage', '38422');
-insert into commune(nom, code) values ('Saint-Martin-le-Vinoux', '38423');
-insert into commune(nom, code) values ('Saint-Maurice-l''Exil', '38425');
-insert into commune(nom, code) values ('Saint-Nazaire-les-Eymes', '38431');
-insert into commune(nom, code) values ('Crêts en Belledonne', '38439');
-insert into commune(nom, code) values ('Saint-Quentin-Fallavier', '38449');
-insert into commune(nom, code) values ('Saint-Romain-de-Jalionas', '38451');
-insert into commune(nom, code) values ('Saint-Savin', '38455');
-insert into commune(nom, code) values ('Salaise-sur-Sanne', '38468');
-insert into commune(nom, code) values ('Sassenage', '38474');
-insert into commune(nom, code) values ('Seyssinet-Pariset', '38485');
-insert into commune(nom, code) values ('Seyssins', '38486');
-insert into commune(nom, code) values ('Tignieu-Jameyzieu', '38507');
-insert into commune(nom, code) values ('La Tour-du-Pin', '38509');
-insert into commune(nom, code) values ('Le Touvet', '38511');
-insert into commune(nom, code) values ('La Tronche', '38516');
-insert into commune(nom, code) values ('Tullins', '38517');
-insert into commune(nom, code) values ('Varces-Allières-et-Risset', '38524');
-insert into commune(nom, code) values ('Vaulnaveys-le-Haut', '38529');
-insert into commune(nom, code) values ('La Verpillière', '38537');
-insert into commune(nom, code) values ('Le Versoud', '38538');
-insert into commune(nom, code) values ('Vienne', '38544');
-insert into commune(nom, code) values ('Vif', '38545');
-insert into commune(nom, code) values ('Villard-Bonnot', '38547');
-insert into commune(nom, code) values ('Villard-de-Lans', '38548');
-insert into commune(nom, code) values ('Villefontaine', '38553');
-insert into commune(nom, code) values ('Villette-d''Anthon', '38557');
-insert into commune(nom, code) values ('Vinay', '38559');
-insert into commune(nom, code) values ('Vizille', '38562');
-insert into commune(nom, code) values ('Voiron', '38563');
-insert into commune(nom, code) values ('Voreppe', '38565');
-insert into commune(nom, code) values ('Arbois', '39013');
-insert into commune(nom, code) values ('Champagnole', '39097');
-insert into commune(nom, code) values ('Dole', '39198');
-insert into commune(nom, code) values ('Lons-le-Saunier', '39300');
-insert into commune(nom, code) values ('Montmorot', '39362');
-insert into commune(nom, code) values ('Hauts de Bienne', '39368');
-insert into commune(nom, code) values ('Poligny', '39434');
-insert into commune(nom, code) values ('Les Rousses', '39470');
-insert into commune(nom, code) values ('Saint-Claude', '39478');
-insert into commune(nom, code) values ('Tavaux', '39526');
-insert into commune(nom, code) values ('Aire-sur-l''Adour', '40001');
-insert into commune(nom, code) values ('Bénesse-Maremne', '40036');
-insert into commune(nom, code) values ('Biscarrosse', '40046');
-insert into commune(nom, code) values ('Capbreton', '40065');
-insert into commune(nom, code) values ('Dax', '40088');
-insert into commune(nom, code) values ('Hagetmau', '40119');
-insert into commune(nom, code) values ('Labenne', '40133');
-insert into commune(nom, code) values ('Mimizan', '40184');
-insert into commune(nom, code) values ('Mont-de-Marsan', '40192');
-insert into commune(nom, code) values ('Morcenx-la-Nouvelle', '40197');
-insert into commune(nom, code) values ('Narrosse', '40202');
-insert into commune(nom, code) values ('Ondres', '40209');
-insert into commune(nom, code) values ('Parentis-en-Born', '40217');
-insert into commune(nom, code) values ('Peyrehorade', '40224');
-insert into commune(nom, code) values ('Pouillon', '40233');
-insert into commune(nom, code) values ('Rion-des-Landes', '40243');
-insert into commune(nom, code) values ('Saint-Martin-de-Seignanx', '40273');
-insert into commune(nom, code) values ('Saint-Paul-lès-Dax', '40279');
-insert into commune(nom, code) values ('Saint-Pierre-du-Mont', '40281');
-insert into commune(nom, code) values ('Saint-Sever', '40282');
-insert into commune(nom, code) values ('Saint-Vincent-de-Paul', '40283');
-insert into commune(nom, code) values ('Saint-Vincent-de-Tyrosse', '40284');
-insert into commune(nom, code) values ('Sanguinet', '40287');
-insert into commune(nom, code) values ('Seignosse', '40296');
-insert into commune(nom, code) values ('Soorts-Hossegor', '40304');
-insert into commune(nom, code) values ('Soustons', '40310');
-insert into commune(nom, code) values ('Tarnos', '40312');
-insert into commune(nom, code) values ('Tartas', '40313');
-insert into commune(nom, code) values ('Tosse', '40317');
-insert into commune(nom, code) values ('Blois', '41018');
-insert into commune(nom, code) values ('La Chaussée-Saint-Victor', '41047');
-insert into commune(nom, code) values ('Le Controis-en-Sologne', '41059');
-insert into commune(nom, code) values ('Lamotte-Beuvron', '41106');
-insert into commune(nom, code) values ('Mer', '41136');
-insert into commune(nom, code) values ('Montoire-sur-le-Loir', '41149');
-insert into commune(nom, code) values ('Mont-près-Chambord', '41150');
-insert into commune(nom, code) values ('Montrichard Val de Cher', '41151');
-insert into commune(nom, code) values ('Veuzain-sur-Loire', '41167');
-insert into commune(nom, code) values ('Beauce la Romaine', '41173');
-insert into commune(nom, code) values ('Romorantin-Lanthenay', '41194');
-insert into commune(nom, code) values ('Saint-Gervais-la-Forêt', '41212');
-insert into commune(nom, code) values ('Saint-Laurent-Nouan', '41220');
-insert into commune(nom, code) values ('Saint-Ouen', '41226');
-insert into commune(nom, code) values ('Salbris', '41232');
-insert into commune(nom, code) values ('Selles-sur-Cher', '41242');
-insert into commune(nom, code) values ('Vendôme', '41269');
-insert into commune(nom, code) values ('Vineuil', '41295');
-insert into commune(nom, code) values ('Andrézieux-Bouthéon', '42005');
-insert into commune(nom, code) values ('Boën-sur-Lignon', '42019');
-insert into commune(nom, code) values ('Bonson', '42022');
-insert into commune(nom, code) values ('Le Chambon-Feugerolles', '42044');
-insert into commune(nom, code) values ('Charlieu', '42052');
-insert into commune(nom, code) values ('Chazelles-sur-Lyon', '42059');
-insert into commune(nom, code) values ('Commelle-Vernay', '42069');
-insert into commune(nom, code) values ('Le Coteau', '42071');
-insert into commune(nom, code) values ('Feurs', '42094');
-insert into commune(nom, code) values ('Firminy', '42095');
-insert into commune(nom, code) values ('La Fouillouse', '42097');
-insert into commune(nom, code) values ('Fraisses', '42099');
-insert into commune(nom, code) values ('La Grand-Croix', '42103');
-insert into commune(nom, code) values ('L''Horme', '42110');
-insert into commune(nom, code) values ('Lorette', '42123');
-insert into commune(nom, code) values ('Mably', '42127');
-insert into commune(nom, code) values ('Montbrison', '42147');
-insert into commune(nom, code) values ('Montrond-les-Bains', '42149');
-insert into commune(nom, code) values ('Pélussin', '42168');
-insert into commune(nom, code) values ('Renaison', '42182');
-insert into commune(nom, code) values ('La Ricamarie', '42183');
-insert into commune(nom, code) values ('Riorges', '42184');
-insert into commune(nom, code) values ('Rive-de-Gier', '42186');
-insert into commune(nom, code) values ('Roanne', '42187');
-insert into commune(nom, code) values ('Roche-la-Molière', '42189');
-insert into commune(nom, code) values ('Saint-Chamond', '42207');
-insert into commune(nom, code) values ('Saint-Étienne', '42218');
-insert into commune(nom, code) values ('Saint-Galmier', '42222');
-insert into commune(nom, code) values ('Saint-Genest-Lerpt', '42223');
-insert into commune(nom, code) values ('Saint-Genest-Malifaux', '42224');
-insert into commune(nom, code) values ('Genilac', '42225');
-insert into commune(nom, code) values ('Saint-Héand', '42234');
-insert into commune(nom, code) values ('Saint-Jean-Bonnefonds', '42237');
-insert into commune(nom, code) values ('Saint-Marcellin-en-Forez', '42256');
-insert into commune(nom, code) values ('Saint-Martin-la-Plaine', '42259');
-insert into commune(nom, code) values ('Saint-Paul-en-Jarez', '42271');
-insert into commune(nom, code) values ('Saint-Priest-en-Jarez', '42275');
-insert into commune(nom, code) values ('Saint-Just-Saint-Rambert', '42279');
-insert into commune(nom, code) values ('Saint-Romain-le-Puy', '42285');
-insert into commune(nom, code) values ('Savigneux', '42299');
-insert into commune(nom, code) values ('Sorbiers', '42302');
-insert into commune(nom, code) values ('Sury-le-Comtal', '42304');
-insert into commune(nom, code) values ('La Talaudière', '42305');
-insert into commune(nom, code) values ('Unieux', '42316');
-insert into commune(nom, code) values ('Veauche', '42323');
-insert into commune(nom, code) values ('Villars', '42330');
-insert into commune(nom, code) values ('Villerest', '42332');
-insert into commune(nom, code) values ('Aurec-sur-Loire', '43012');
-insert into commune(nom, code) values ('Bas-en-Basset', '43020');
-insert into commune(nom, code) values ('Beauzac', '43025');
-insert into commune(nom, code) values ('Brioude', '43040');
-insert into commune(nom, code) values ('Brives-Charensac', '43041');
-insert into commune(nom, code) values ('Coubon', '43078');
-insert into commune(nom, code) values ('Espaly-Saint-Marcel', '43089');
-insert into commune(nom, code) values ('Langeac', '43112');
-insert into commune(nom, code) values ('Monistrol-sur-Loire', '43137');
-insert into commune(nom, code) values ('Le Puy-en-Velay', '43157');
-insert into commune(nom, code) values ('Retournac', '43162');
-insert into commune(nom, code) values ('Saint-Didier-en-Velay', '43177');
-insert into commune(nom, code) values ('Sainte-Florine', '43185');
-insert into commune(nom, code) values ('Saint-Germain-Laprade', '43190');
-insert into commune(nom, code) values ('Saint-Just-Malmont', '43205');
-insert into commune(nom, code) values ('Sainte-Sigolène', '43224');
-insert into commune(nom, code) values ('Tence', '43244');
-insert into commune(nom, code) values ('Vals-près-le-Puy', '43251');
-insert into commune(nom, code) values ('Yssingeaux', '43268');
-insert into commune(nom, code) values ('Aigrefeuille-sur-Maine', '44002');
-insert into commune(nom, code) values ('Ancenis-Saint-Géréon', '44003');
-insert into commune(nom, code) values ('Chaumes-en-Retz', '44005');
-insert into commune(nom, code) values ('Basse-Goulaine', '44009');
-insert into commune(nom, code) values ('La Bernerie-en-Retz', '44012');
-insert into commune(nom, code) values ('Besné', '44013');
-insert into commune(nom, code) values ('Le Bignon', '44014');
-insert into commune(nom, code) values ('Blain', '44015');
-insert into commune(nom, code) values ('Bouaye', '44018');
-insert into commune(nom, code) values ('Bouguenais', '44020');
-insert into commune(nom, code) values ('Villeneuve-en-Retz', '44021');
-insert into commune(nom, code) values ('Bouvron', '44023');
-insert into commune(nom, code) values ('Campbon', '44025');
-insert into commune(nom, code) values ('Carquefou', '44026');
-insert into commune(nom, code) values ('Le Cellier', '44028');
-insert into commune(nom, code) values ('Divatte-sur-Loire', '44029');
-insert into commune(nom, code) values ('La Chapelle-des-Marais', '44030');
-insert into commune(nom, code) values ('La Chapelle-Heulin', '44032');
-insert into commune(nom, code) values ('La Chapelle-Launay', '44033');
-insert into commune(nom, code) values ('La Chapelle-sur-Erdre', '44035');
-insert into commune(nom, code) values ('Châteaubriant', '44036');
-insert into commune(nom, code) values ('Château-Thébaud', '44037');
-insert into commune(nom, code) values ('La Chevrolière', '44041');
-insert into commune(nom, code) values ('Clisson', '44043');
-insert into commune(nom, code) values ('Cordemais', '44045');
-insert into commune(nom, code) values ('Couëron', '44047');
-insert into commune(nom, code) values ('Le Croisic', '44049');
-insert into commune(nom, code) values ('Crossac', '44050');
-insert into commune(nom, code) values ('Derval', '44051');
-insert into commune(nom, code) values ('Donges', '44052');
-insert into commune(nom, code) values ('Erbray', '44054');
-insert into commune(nom, code) values ('La Baule-Escoublac', '44055');
-insert into commune(nom, code) values ('Fay-de-Bretagne', '44056');
-insert into commune(nom, code) values ('Frossay', '44061');
-insert into commune(nom, code) values ('Gétigné', '44063');
-insert into commune(nom, code) values ('Gorges', '44064');
-insert into commune(nom, code) values ('Grandchamps-des-Fontaines', '44066');
-insert into commune(nom, code) values ('Guémené-Penfao', '44067');
-insert into commune(nom, code) values ('Guenrouet', '44068');
-insert into commune(nom, code) values ('Guérande', '44069');
-insert into commune(nom, code) values ('La Haie-Fouassière', '44070');
-insert into commune(nom, code) values ('Haute-Goulaine', '44071');
-insert into commune(nom, code) values ('Herbignac', '44072');
-insert into commune(nom, code) values ('Héric', '44073');
-insert into commune(nom, code) values ('Indre', '44074');
-insert into commune(nom, code) values ('Le Landreau', '44079');
-insert into commune(nom, code) values ('Legé', '44081');
-insert into commune(nom, code) values ('Ligné', '44082');
-insert into commune(nom, code) values ('Le Loroux-Bottereau', '44084');
-insert into commune(nom, code) values ('Machecoul-Saint-Même', '44087');
-insert into commune(nom, code) values ('Maisdon-sur-Sèvre', '44088');
-insert into commune(nom, code) values ('Malville', '44089');
-insert into commune(nom, code) values ('Mauves-sur-Loire', '44094');
-insert into commune(nom, code) values ('Mésanger', '44096');
-insert into commune(nom, code) values ('Missillac', '44098');
-insert into commune(nom, code) values ('La Montagne', '44101');
-insert into commune(nom, code) values ('Montbert', '44102');
-insert into commune(nom, code) values ('Montoir-de-Bretagne', '44103');
-insert into commune(nom, code) values ('Nantes', '44109');
-insert into commune(nom, code) values ('Nort-sur-Erdre', '44110');
-insert into commune(nom, code) values ('Nozay', '44113');
-insert into commune(nom, code) values ('Orvault', '44114');
-insert into commune(nom, code) values ('Oudon', '44115');
-insert into commune(nom, code) values ('Paimbœuf', '44116');
-insert into commune(nom, code) values ('Le Pallet', '44117');
-insert into commune(nom, code) values ('Le Pellerin', '44120');
-insert into commune(nom, code) values ('Petit-Mars', '44122');
-insert into commune(nom, code) values ('La Plaine-sur-Mer', '44126');
-insert into commune(nom, code) values ('Plessé', '44128');
-insert into commune(nom, code) values ('Pontchâteau', '44129');
-insert into commune(nom, code) values ('Pont-Saint-Martin', '44130');
-insert into commune(nom, code) values ('Pornic', '44131');
-insert into commune(nom, code) values ('Pornichet', '44132');
-insert into commune(nom, code) values ('Le Pouliguen', '44135');
-insert into commune(nom, code) values ('Prinquiau', '44137');
-insert into commune(nom, code) values ('Rezé', '44143');
-insert into commune(nom, code) values ('Rouans', '44145');
-insert into commune(nom, code) values ('Saffré', '44149');
-insert into commune(nom, code) values ('Saint-Aignan-Grandlieu', '44150');
-insert into commune(nom, code) values ('Saint-André-des-Eaux', '44151');
-insert into commune(nom, code) values ('Saint-Brevin-les-Pins', '44154');
-insert into commune(nom, code) values ('Saint-Colomban', '44155');
-insert into commune(nom, code) values ('Corcoué-sur-Logne', '44156');
-insert into commune(nom, code) values ('Saint-Étienne-de-Montluc', '44158');
-insert into commune(nom, code) values ('Saint-Gildas-des-Bois', '44161');
-insert into commune(nom, code) values ('Saint-Herblain', '44162');
-insert into commune(nom, code) values ('Vair-sur-Loire', '44163');
-insert into commune(nom, code) values ('Saint-Jean-de-Boiseau', '44166');
-insert into commune(nom, code) values ('Saint-Joachim', '44168');
-insert into commune(nom, code) values ('Saint-Julien-de-Concelles', '44169');
-insert into commune(nom, code) values ('Sainte-Luce-sur-Loire', '44172');
-insert into commune(nom, code) values ('Saint-Lyphard', '44175');
-insert into commune(nom, code) values ('Saint-Malo-de-Guersac', '44176');
-insert into commune(nom, code) values ('Saint-Mars-du-Désert', '44179');
-insert into commune(nom, code) values ('Vallons-de-l''Erdre', '44180');
-insert into commune(nom, code) values ('Saint-Michel-Chef-Chef', '44182');
-insert into commune(nom, code) values ('Saint-Nazaire', '44184');
-insert into commune(nom, code) values ('Saint-Nicolas-de-Redon', '44185');
-insert into commune(nom, code) values ('Sainte-Pazanne', '44186');
-insert into commune(nom, code) values ('Saint-Père-en-Retz', '44187');
-insert into commune(nom, code) values ('Saint-Philbert-de-Grand-Lieu', '44188');
-insert into commune(nom, code) values ('Saint-Sébastien-sur-Loire', '44190');
-insert into commune(nom, code) values ('Sautron', '44194');
-insert into commune(nom, code) values ('Savenay', '44195');
-insert into commune(nom, code) values ('Les Sorinières', '44198');
-insert into commune(nom, code) values ('Sucé-sur-Erdre', '44201');
-insert into commune(nom, code) values ('Thouaré-sur-Loire', '44204');
-insert into commune(nom, code) values ('Treillières', '44209');
-insert into commune(nom, code) values ('Trignac', '44210');
-insert into commune(nom, code) values ('La Turballe', '44211');
-insert into commune(nom, code) values ('Vallet', '44212');
-insert into commune(nom, code) values ('Loireauxence', '44213');
-insert into commune(nom, code) values ('Vertou', '44215');
-insert into commune(nom, code) values ('Vieillevigne', '44216');
-insert into commune(nom, code) values ('Vigneux-de-Bretagne', '44217');
-insert into commune(nom, code) values ('Geneston', '44223');
-insert into commune(nom, code) values ('Amilly', '45004');
-insert into commune(nom, code) values ('Beaugency', '45028');
-insert into commune(nom, code) values ('Briare', '45053');
-insert into commune(nom, code) values ('Chaingy', '45067');
-insert into commune(nom, code) values ('Châlette-sur-Loing', '45068');
-insert into commune(nom, code) values ('La Chapelle-Saint-Mesmin', '45075');
-insert into commune(nom, code) values ('Châteauneuf-sur-Loire', '45082');
-insert into commune(nom, code) values ('Châtillon-sur-Loire', '45087');
-insert into commune(nom, code) values ('Chécy', '45089');
-insert into commune(nom, code) values ('Cléry-Saint-André', '45098');
-insert into commune(nom, code) values ('Courtenay', '45115');
-insert into commune(nom, code) values ('Dordives', '45127');
-insert into commune(nom, code) values ('Fay-aux-Loges', '45142');
-insert into commune(nom, code) values ('Ferrières-en-Gâtinais', '45145');
-insert into commune(nom, code) values ('La Ferté-Saint-Aubin', '45146');
-insert into commune(nom, code) values ('Fleury-les-Aubrais', '45147');
-insert into commune(nom, code) values ('Gien', '45155');
-insert into commune(nom, code) values ('Ingré', '45169');
-insert into commune(nom, code) values ('Jargeau', '45173');
-insert into commune(nom, code) values ('Lailly-en-Val', '45179');
-insert into commune(nom, code) values ('Lorris', '45187');
-insert into commune(nom, code) values ('Le Malesherbois', '45191');
-insert into commune(nom, code) values ('Meung-sur-Loire', '45203');
-insert into commune(nom, code) values ('Montargis', '45208');
-insert into commune(nom, code) values ('Neuville-aux-Bois', '45224');
-insert into commune(nom, code) values ('Olivet', '45232');
-insert into commune(nom, code) values ('Orléans', '45234');
-insert into commune(nom, code) values ('Ormes', '45235');
-insert into commune(nom, code) values ('Pannes', '45247');
-insert into commune(nom, code) values ('Pithiviers', '45252');
-insert into commune(nom, code) values ('Puiseaux', '45258');
-insert into commune(nom, code) values ('Saint-Ay', '45269');
-insert into commune(nom, code) values ('Saint-Cyr-en-Val', '45272');
-insert into commune(nom, code) values ('Saint-Denis-de-l''Hôtel', '45273');
-insert into commune(nom, code) values ('Saint-Denis-en-Val', '45274');
-insert into commune(nom, code) values ('Saint-Hilaire-Saint-Mesmin', '45282');
-insert into commune(nom, code) values ('Saint-Jean-de-Braye', '45284');
-insert into commune(nom, code) values ('Saint-Jean-de-la-Ruelle', '45285');
-insert into commune(nom, code) values ('Saint-Jean-le-Blanc', '45286');
-insert into commune(nom, code) values ('Saint-Pryvé-Saint-Mesmin', '45298');
-insert into commune(nom, code) values ('Sandillon', '45300');
-insert into commune(nom, code) values ('Saran', '45302');
-insert into commune(nom, code) values ('Semoy', '45308');
-insert into commune(nom, code) values ('Sully-sur-Loire', '45315');
-insert into commune(nom, code) values ('Traînou', '45327');
-insert into commune(nom, code) values ('Villemandeur', '45338');
-insert into commune(nom, code) values ('Cahors', '46042');
-insert into commune(nom, code) values ('Figeac', '46102');
-insert into commune(nom, code) values ('Gourdon', '46127');
-insert into commune(nom, code) values ('Gramat', '46128');
-insert into commune(nom, code) values ('Pradines', '46224');
-insert into commune(nom, code) values ('Saint-Céré', '46251');
-insert into commune(nom, code) values ('Souillac', '46309');
-insert into commune(nom, code) values ('Agen', '47001');
-insert into commune(nom, code) values ('Aiguillon', '47004');
-insert into commune(nom, code) values ('Bias', '47027');
-insert into commune(nom, code) values ('Boé', '47031');
-insert into commune(nom, code) values ('Bon-Encontre', '47032');
-insert into commune(nom, code) values ('Casteljaloux', '47052');
-insert into commune(nom, code) values ('Colayrac-Saint-Cirq', '47069');
-insert into commune(nom, code) values ('Foulayronnes', '47100');
-insert into commune(nom, code) values ('Fumel', '47106');
-insert into commune(nom, code) values ('Layrac', '47145');
-insert into commune(nom, code) values ('Marmande', '47157');
-insert into commune(nom, code) values ('Miramont-de-Guyenne', '47168');
-insert into commune(nom, code) values ('Nérac', '47195');
-insert into commune(nom, code) values ('Le Passage', '47201');
-insert into commune(nom, code) values ('Pont-du-Casse', '47209');
-insert into commune(nom, code) values ('Pujols', '47215');
-insert into commune(nom, code) values ('Sainte-Bazeille', '47233');
-insert into commune(nom, code) values ('Sainte-Livrade-sur-Lot', '47252');
-insert into commune(nom, code) values ('Tonneins', '47310');
-insert into commune(nom, code) values ('Villeneuve-sur-Lot', '47323');
-insert into commune(nom, code) values ('Langogne', '48080');
-insert into commune(nom, code) values ('Marvejols', '48092');
-insert into commune(nom, code) values ('Mende', '48095');
-insert into commune(nom, code) values ('Saint-Chély-d''Apcher', '48140');
-insert into commune(nom, code) values ('Allonnes', '49002');
-insert into commune(nom, code) values ('Angers', '49007');
-insert into commune(nom, code) values ('Avrillé', '49015');
-insert into commune(nom, code) values ('Baugé-en-Anjou', '49018');
-insert into commune(nom, code) values ('Beaucouzé', '49020');
-insert into commune(nom, code) values ('Beaufort-en-Anjou', '49021');
-insert into commune(nom, code) values ('Beaupréau-en-Mauges', '49023');
-insert into commune(nom, code) values ('Bouchemaine', '49035');
-insert into commune(nom, code) values ('Briollay', '49048');
-insert into commune(nom, code) values ('Brissac Loire Aubance', '49050');
-insert into commune(nom, code) values ('Bellevigne-les-Châteaux', '49060');
-insert into commune(nom, code) values ('Chalonnes-sur-Loire', '49063');
-insert into commune(nom, code) values ('Orée d''Anjou', '49069');
-insert into commune(nom, code) values ('Les Hauts-d''Anjou', '49080');
-insert into commune(nom, code) values ('Terranjou', '49086');
-insert into commune(nom, code) values ('Chemillé-en-Anjou', '49092');
-insert into commune(nom, code) values ('Cholet', '49099');
-insert into commune(nom, code) values ('Doué-en-Anjou', '49125');
-insert into commune(nom, code) values ('Durtal', '49127');
-insert into commune(nom, code) values ('Écouflant', '49129');
-insert into commune(nom, code) values ('Les Garennes sur Loire', '49167');
-insert into commune(nom, code) values ('Le Lion-d''Angers', '49176');
-insert into commune(nom, code) values ('Longué-Jumelles', '49180');
-insert into commune(nom, code) values ('Val d''Erdre-Auxence', '49183');
-insert into commune(nom, code) values ('Maulévrier', '49192');
-insert into commune(nom, code) values ('Le May-sur-Èvre', '49193');
-insert into commune(nom, code) values ('Mazé-Milon', '49194');
-insert into commune(nom, code) values ('Longuenée-en-Anjou', '49200');
-insert into commune(nom, code) values ('Montreuil-Juigné', '49214');
-insert into commune(nom, code) values ('Montreuil-Bellay', '49215');
-insert into commune(nom, code) values ('Montrevault-sur-Èvre', '49218');
-insert into commune(nom, code) values ('Morannes sur Sarthe-Daumeray', '49220');
-insert into commune(nom, code) values ('Mûrs-Erigné', '49223');
-insert into commune(nom, code) values ('Noyant-Villages', '49228');
-insert into commune(nom, code) values ('Mauges-sur-Loire', '49244');
-insert into commune(nom, code) values ('Les Ponts-de-Cé', '49246');
-insert into commune(nom, code) values ('Ombrée d''Anjou', '49248');
-insert into commune(nom, code) values ('Gennes-Val-de-Loire', '49261');
-insert into commune(nom, code) values ('Saint-Barthélemy-d''Anjou', '49267');
-insert into commune(nom, code) values ('Sainte-Gemmes-sur-Loire', '49278');
-insert into commune(nom, code) values ('Saint-Georges-sur-Loire', '49283');
-insert into commune(nom, code) values ('Val-du-Layon', '49292');
-insert into commune(nom, code) values ('Saint-Léger-de-Linières', '49298');
-insert into commune(nom, code) values ('Saint-Léger-sous-Cholet', '49299');
-insert into commune(nom, code) values ('Sèvremoine', '49301');
-insert into commune(nom, code) values ('Loire-Authion', '49307');
-insert into commune(nom, code) values ('Verrières-en-Anjou', '49323');
-insert into commune(nom, code) values ('Saumur', '49328');
-insert into commune(nom, code) values ('Segré-en-Anjou Bleu', '49331');
-insert into commune(nom, code) values ('La Séguinière', '49332');
-insert into commune(nom, code) values ('La Tessoualle', '49343');
-insert into commune(nom, code) values ('Bellevigne-en-Layon', '49345');
-insert into commune(nom, code) values ('Tiercé', '49347');
-insert into commune(nom, code) values ('Trélazé', '49353');
-insert into commune(nom, code) values ('Trémentines', '49355');
-insert into commune(nom, code) values ('Erdre-en-Anjou', '49367');
-insert into commune(nom, code) values ('Lys-Haut-Layon', '49373');
-insert into commune(nom, code) values ('Rives-du-Loir-en-Anjou', '49377');
-insert into commune(nom, code) values ('Agneaux', '50002');
-insert into commune(nom, code) values ('Avranches', '50025');
-insert into commune(nom, code) values ('La Hague', '50041');
-insert into commune(nom, code) values ('Bréhal', '50076');
-insert into commune(nom, code) values ('Bricquebec-en-Cotentin', '50082');
-insert into commune(nom, code) values ('Carentan-les-Marais', '50099');
-insert into commune(nom, code) values ('Cherbourg-en-Cotentin', '50129');
-insert into commune(nom, code) values ('Condé-sur-Vire', '50139');
-insert into commune(nom, code) values ('Coutances', '50147');
-insert into commune(nom, code) values ('Donville-les-Bains', '50165');
-insert into commune(nom, code) values ('Gouville-sur-Mer', '50215');
-insert into commune(nom, code) values ('Granville', '50218');
-insert into commune(nom, code) values ('La Haye', '50236');
-insert into commune(nom, code) values ('Isigny-le-Buat', '50256');
-insert into commune(nom, code) values ('Mortain-Bocage', '50359');
-insert into commune(nom, code) values ('Picauville', '50400');
-insert into commune(nom, code) values ('Les Pieux', '50402');
-insert into commune(nom, code) values ('Pontorson', '50410');
-insert into commune(nom, code) values ('Quettreville-sur-Sienne', '50419');
-insert into commune(nom, code) values ('Saint-Hilaire-du-Harcouët', '50484');
-insert into commune(nom, code) values ('Saint-James', '50487');
-insert into commune(nom, code) values ('Saint-Lô', '50502');
-insert into commune(nom, code) values ('Sainte-Mère-Église', '50523');
-insert into commune(nom, code) values ('Saint-Pair-sur-Mer', '50532');
-insert into commune(nom, code) values ('Bourgvallées', '50546');
-insert into commune(nom, code) values ('Saint-Sauveur-Villages', '50550');
-insert into commune(nom, code) values ('Sourdeval', '50582');
-insert into commune(nom, code) values ('Torigny-les-Villes', '50601');
-insert into commune(nom, code) values ('Valognes', '50615');
-insert into commune(nom, code) values ('Villedieu-les-Poêles-Rouffigny', '50639');
-insert into commune(nom, code) values ('Aÿ-Champagne', '51030');
-insert into commune(nom, code) values ('Bétheny', '51055');
-insert into commune(nom, code) values ('Bezannes', '51058');
-insert into commune(nom, code) values ('Châlons-en-Champagne', '51108');
-insert into commune(nom, code) values ('Cormontreuil', '51172');
-insert into commune(nom, code) values ('Épernay', '51230');
-insert into commune(nom, code) values ('Fagnières', '51242');
-insert into commune(nom, code) values ('Fismes', '51250');
-insert into commune(nom, code) values ('Montmirail', '51380');
-insert into commune(nom, code) values ('Mourmelon-le-Grand', '51388');
-insert into commune(nom, code) values ('Reims', '51454');
-insert into commune(nom, code) values ('Saint-Brice-Courcelles', '51474');
-insert into commune(nom, code) values ('Saint-Memmie', '51506');
-insert into commune(nom, code) values ('Sainte-Menehould', '51507');
-insert into commune(nom, code) values ('Sézanne', '51535');
-insert into commune(nom, code) values ('Suippes', '51559');
-insert into commune(nom, code) values ('Tinqueux', '51573');
-insert into commune(nom, code) values ('Blancs-Coteaux', '51612');
-insert into commune(nom, code) values ('Vitry-le-François', '51649');
-insert into commune(nom, code) values ('Witry-lès-Reims', '51662');
-insert into commune(nom, code) values ('Chaumont', '52121');
-insert into commune(nom, code) values ('Joinville', '52250');
-insert into commune(nom, code) values ('Langres', '52269');
-insert into commune(nom, code) values ('Nogent', '52353');
-insert into commune(nom, code) values ('Saint-Dizier', '52448');
-insert into commune(nom, code) values ('Bonchamp-lès-Laval', '53034');
-insert into commune(nom, code) values ('Changé', '53054');
-insert into commune(nom, code) values ('Château-Gontier-sur-Mayenne', '53062');
-insert into commune(nom, code) values ('Cossé-le-Vivien', '53077');
-insert into commune(nom, code) values ('Craon', '53084');
-insert into commune(nom, code) values ('Ernée', '53096');
-insert into commune(nom, code) values ('Évron', '53097');
-insert into commune(nom, code) values ('L''Huisserie', '53119');
-insert into commune(nom, code) values ('Laval', '53130');
-insert into commune(nom, code) values ('Louverné', '53140');
-insert into commune(nom, code) values ('Mayenne', '53147');
-insert into commune(nom, code) values ('Montsûrs', '53161');
-insert into commune(nom, code) values ('Saint-Berthevin', '53201');
-insert into commune(nom, code) values ('Baccarat', '54039');
-insert into commune(nom, code) values ('Blainville-sur-l''Eau', '54076');
-insert into commune(nom, code) values ('Blénod-lès-Pont-à-Mousson', '54079');
-insert into commune(nom, code) values ('Bouxières-aux-Dames', '54090');
-insert into commune(nom, code) values ('Val de Briey', '54099');
-insert into commune(nom, code) values ('Champigneulles', '54115');
-insert into commune(nom, code) values ('Custines', '54150');
-insert into commune(nom, code) values ('Damelevières', '54152');
-insert into commune(nom, code) values ('Dieulouard', '54157');
-insert into commune(nom, code) values ('Dombasle-sur-Meurthe', '54159');
-insert into commune(nom, code) values ('Écrouves', '54174');
-insert into commune(nom, code) values ('Essey-lès-Nancy', '54184');
-insert into commune(nom, code) values ('Frouard', '54215');
-insert into commune(nom, code) values ('Haucourt-Moulaine', '54254');
-insert into commune(nom, code) values ('Heillecourt', '54257');
-insert into commune(nom, code) values ('Herserange', '54261');
-insert into commune(nom, code) values ('Homécourt', '54263');
-insert into commune(nom, code) values ('Hussigny-Godbrange', '54270');
-insert into commune(nom, code) values ('Jarny', '54273');
-insert into commune(nom, code) values ('Jarville-la-Malgrange', '54274');
-insert into commune(nom, code) values ('Jœuf', '54280');
-insert into commune(nom, code) values ('Laneuveville-devant-Nancy', '54300');
-insert into commune(nom, code) values ('Laxou', '54304');
-insert into commune(nom, code) values ('Lexy', '54314');
-insert into commune(nom, code) values ('Liverdun', '54318');
-insert into commune(nom, code) values ('Longuyon', '54322');
-insert into commune(nom, code) values ('Longwy', '54323');
-insert into commune(nom, code) values ('Ludres', '54328');
-insert into commune(nom, code) values ('Lunéville', '54329');
-insert into commune(nom, code) values ('Malzéville', '54339');
-insert into commune(nom, code) values ('Maxéville', '54357');
-insert into commune(nom, code) values ('Mont-Saint-Martin', '54382');
-insert into commune(nom, code) values ('Nancy', '54395');
-insert into commune(nom, code) values ('Neuves-Maisons', '54397');
-insert into commune(nom, code) values ('Pagny-sur-Moselle', '54415');
-insert into commune(nom, code) values ('Pompey', '54430');
-insert into commune(nom, code) values ('Pont-à-Mousson', '54431');
-insert into commune(nom, code) values ('Pulnoy', '54439');
-insert into commune(nom, code) values ('Réhon', '54451');
-insert into commune(nom, code) values ('Saint-Max', '54482');
-insert into commune(nom, code) values ('Saint-Nicolas-de-Port', '54483');
-insert into commune(nom, code) values ('Saulxures-lès-Nancy', '54495');
-insert into commune(nom, code) values ('Seichamps', '54498');
-insert into commune(nom, code) values ('Tomblaine', '54526');
-insert into commune(nom, code) values ('Toul', '54528');
-insert into commune(nom, code) values ('Vandœuvre-lès-Nancy', '54547');
-insert into commune(nom, code) values ('Varangéville', '54549');
-insert into commune(nom, code) values ('Villers-lès-Nancy', '54578');
-insert into commune(nom, code) values ('Villerupt', '54580');
-insert into commune(nom, code) values ('Bar-le-Duc', '55029');
-insert into commune(nom, code) values ('Belleville-sur-Meuse', '55043');
-insert into commune(nom, code) values ('Commercy', '55122');
-insert into commune(nom, code) values ('Étain', '55181');
-insert into commune(nom, code) values ('Ligny-en-Barrois', '55291');
-insert into commune(nom, code) values ('Saint-Mihiel', '55463');
-insert into commune(nom, code) values ('Thierville-sur-Meuse', '55505');
-insert into commune(nom, code) values ('Verdun', '55545');
-insert into commune(nom, code) values ('Allaire', '56001');
-insert into commune(nom, code) values ('Arradon', '56003');
-insert into commune(nom, code) values ('Auray', '56007');
-insert into commune(nom, code) values ('Baden', '56008');
-insert into commune(nom, code) values ('Baud', '56010');
-insert into commune(nom, code) values ('Belz', '56013');
-insert into commune(nom, code) values ('Brech', '56023');
-insert into commune(nom, code) values ('Camors', '56031');
-insert into commune(nom, code) values ('Carentoir', '56033');
-insert into commune(nom, code) values ('Carnac', '56034');
-insert into commune(nom, code) values ('Caudan', '56036');
-insert into commune(nom, code) values ('Cléguer', '56040');
-insert into commune(nom, code) values ('Crach', '56046');
-insert into commune(nom, code) values ('Elven', '56053');
-insert into commune(nom, code) values ('Erdeven', '56054');
-insert into commune(nom, code) values ('Férel', '56058');
-insert into commune(nom, code) values ('La Gacilly', '56061');
-insert into commune(nom, code) values ('Gourin', '56066');
-insert into commune(nom, code) values ('Grand-Champ', '56067');
-insert into commune(nom, code) values ('Guer', '56075');
-insert into commune(nom, code) values ('Guidel', '56078');
-insert into commune(nom, code) values ('Hennebont', '56083');
-insert into commune(nom, code) values ('Inzinzac-Lochrist', '56090');
-insert into commune(nom, code) values ('Kervignac', '56094');
-insert into commune(nom, code) values ('Landévant', '56097');
-insert into commune(nom, code) values ('Lanester', '56098');
-insert into commune(nom, code) values ('Languidic', '56101');
-insert into commune(nom, code) values ('Larmor-Plage', '56107');
-insert into commune(nom, code) values ('Locminé', '56117');
-insert into commune(nom, code) values ('Locmiquélic', '56118');
-insert into commune(nom, code) values ('Locoal-Mendon', '56119');
-insert into commune(nom, code) values ('Lorient', '56121');
-insert into commune(nom, code) values ('Mauron', '56127');
-insert into commune(nom, code) values ('Merlevenez', '56130');
-insert into commune(nom, code) values ('Monterblanc', '56137');
-insert into commune(nom, code) values ('Moréac', '56140');
-insert into commune(nom, code) values ('Muzillac', '56143');
-insert into commune(nom, code) values ('Évellys', '56144');
-insert into commune(nom, code) values ('Nivillac', '56147');
-insert into commune(nom, code) values ('Noyal-Pontivy', '56151');
-insert into commune(nom, code) values ('Plescop', '56158');
-insert into commune(nom, code) values ('Ploemel', '56161');
-insert into commune(nom, code) values ('Ploemeur', '56162');
-insert into commune(nom, code) values ('Ploeren', '56164');
-insert into commune(nom, code) values ('Ploërmel', '56165');
-insert into commune(nom, code) values ('Plouay', '56166');
-insert into commune(nom, code) values ('Plouhinec', '56169');
-insert into commune(nom, code) values ('Pluméliau-Bieuzy', '56173');
-insert into commune(nom, code) values ('Plumergat', '56175');
-insert into commune(nom, code) values ('Pluneret', '56176');
-insert into commune(nom, code) values ('Pluvigner', '56177');
-insert into commune(nom, code) values ('Pontivy', '56178');
-insert into commune(nom, code) values ('Pont-Scorff', '56179');
-insert into commune(nom, code) values ('Questembert', '56184');
-insert into commune(nom, code) values ('Quéven', '56185');
-insert into commune(nom, code) values ('Quiberon', '56186');
-insert into commune(nom, code) values ('Riantec', '56193');
-insert into commune(nom, code) values ('Saint-Avé', '56206');
-insert into commune(nom, code) values ('Saint-Nolff', '56231');
-insert into commune(nom, code) values ('Sarzeau', '56240');
-insert into commune(nom, code) values ('Séné', '56243');
-insert into commune(nom, code) values ('Sérent', '56244');
-insert into commune(nom, code) values ('Sulniac', '56247');
-insert into commune(nom, code) values ('Surzur', '56248');
-insert into commune(nom, code) values ('Theix-Noyalo', '56251');
-insert into commune(nom, code) values ('Vannes', '56260');
-insert into commune(nom, code) values ('Algrange', '57012');
-insert into commune(nom, code) values ('Amnéville', '57019');
-insert into commune(nom, code) values ('Ars-sur-Moselle', '57032');
-insert into commune(nom, code) values ('Audun-le-Tiche', '57038');
-insert into commune(nom, code) values ('Le Ban-Saint-Martin', '57049');
-insert into commune(nom, code) values ('Behren-lès-Forbach', '57058');
-insert into commune(nom, code) values ('Bitche', '57089');
-insert into commune(nom, code) values ('Boulay-Moselle', '57097');
-insert into commune(nom, code) values ('Bousse', '57102');
-insert into commune(nom, code) values ('Bouzonville', '57106');
-insert into commune(nom, code) values ('Carling', '57123');
-insert into commune(nom, code) values ('Clouange', '57143');
-insert into commune(nom, code) values ('Cocheren', '57144');
-insert into commune(nom, code) values ('Courcelles-Chaussy', '57155');
-insert into commune(nom, code) values ('Créhange', '57159');
-insert into commune(nom, code) values ('Creutzwald', '57160');
-insert into commune(nom, code) values ('Dieuze', '57177');
-insert into commune(nom, code) values ('Fameck', '57206');
-insert into commune(nom, code) values ('Farébersviller', '57207');
-insert into commune(nom, code) values ('Faulquemont', '57209');
-insert into commune(nom, code) values ('Florange', '57221');
-insert into commune(nom, code) values ('Folschviller', '57224');
-insert into commune(nom, code) values ('Fontoy', '57226');
-insert into commune(nom, code) values ('Forbach', '57227');
-insert into commune(nom, code) values ('Freyming-Merlebach', '57240');
-insert into commune(nom, code) values ('Gandrange', '57242');
-insert into commune(nom, code) values ('Grosbliederstroff', '57260');
-insert into commune(nom, code) values ('Guénange', '57269');
-insert into commune(nom, code) values ('Hagondange', '57283');
-insert into commune(nom, code) values ('Hayange', '57306');
-insert into commune(nom, code) values ('Hettange-Grande', '57323');
-insert into commune(nom, code) values ('Hombourg-Haut', '57332');
-insert into commune(nom, code) values ('L''Hôpital', '57336');
-insert into commune(nom, code) values ('Knutange', '57368');
-insert into commune(nom, code) values ('Longeville-lès-Metz', '57412');
-insert into commune(nom, code) values ('Longeville-lès-Saint-Avold', '57413');
-insert into commune(nom, code) values ('Maizières-lès-Metz', '57433');
-insert into commune(nom, code) values ('Marange-Silvange', '57443');
-insert into commune(nom, code) values ('Marly', '57447');
-insert into commune(nom, code) values ('Metz', '57463');
-insert into commune(nom, code) values ('Mondelange', '57474');
-insert into commune(nom, code) values ('Montigny-lès-Metz', '57480');
-insert into commune(nom, code) values ('Morhange', '57483');
-insert into commune(nom, code) values ('Moulins-lès-Metz', '57487');
-insert into commune(nom, code) values ('Moyeuvre-Grande', '57491');
-insert into commune(nom, code) values ('Nilvange', '57508');
-insert into commune(nom, code) values ('Ottange', '57529');
-insert into commune(nom, code) values ('Petite-Rosselle', '57537');
-insert into commune(nom, code) values ('Phalsbourg', '57540');
-insert into commune(nom, code) values ('Puttelange-aux-Lacs', '57556');
-insert into commune(nom, code) values ('Rombas', '57591');
-insert into commune(nom, code) values ('Saint-Avold', '57606');
-insert into commune(nom, code) values ('Saint-Julien-lès-Metz', '57616');
-insert into commune(nom, code) values ('Sainte-Marie-aux-Chênes', '57620');
-insert into commune(nom, code) values ('Sarralbe', '57628');
-insert into commune(nom, code) values ('Sarrebourg', '57630');
-insert into commune(nom, code) values ('Sarreguemines', '57631');
-insert into commune(nom, code) values ('Serémange-Erzange', '57647');
-insert into commune(nom, code) values ('Spicheren', '57659');
-insert into commune(nom, code) values ('Stiring-Wendel', '57660');
-insert into commune(nom, code) values ('Talange', '57663');
-insert into commune(nom, code) values ('Terville', '57666');
-insert into commune(nom, code) values ('Thionville', '57672');
-insert into commune(nom, code) values ('Uckange', '57683');
-insert into commune(nom, code) values ('Valmont', '57690');
-insert into commune(nom, code) values ('Vitry-sur-Orne', '57724');
-insert into commune(nom, code) values ('Woippy', '57751');
-insert into commune(nom, code) values ('Woustviller', '57752');
-insert into commune(nom, code) values ('Yutz', '57757');
-insert into commune(nom, code) values ('La Charité-sur-Loire', '58059');
-insert into commune(nom, code) values ('Clamecy', '58079');
-insert into commune(nom, code) values ('Cosne-Cours-sur-Loire', '58086');
-insert into commune(nom, code) values ('Coulanges-lès-Nevers', '58088');
-insert into commune(nom, code) values ('Decize', '58095');
-insert into commune(nom, code) values ('Fourchambault', '58117');
-insert into commune(nom, code) values ('Garchizy', '58121');
-insert into commune(nom, code) values ('Imphy', '58134');
-insert into commune(nom, code) values ('La Machine', '58151');
-insert into commune(nom, code) values ('Marzy', '58160');
-insert into commune(nom, code) values ('Nevers', '58194');
-insert into commune(nom, code) values ('Varennes-Vauzelles', '58303');
-insert into commune(nom, code) values ('Abscon', '59002');
-insert into commune(nom, code) values ('Allennes-les-Marais', '59005');
-insert into commune(nom, code) values ('Aniche', '59008');
-insert into commune(nom, code) values ('Villeneuve-d''Ascq', '59009');
-insert into commune(nom, code) values ('Annœullin', '59011');
-insert into commune(nom, code) values ('Anor', '59012');
-insert into commune(nom, code) values ('Anzin', '59014');
-insert into commune(nom, code) values ('Arleux', '59015');
-insert into commune(nom, code) values ('Armentières', '59017');
-insert into commune(nom, code) values ('Auberchicourt', '59024');
-insert into commune(nom, code) values ('Auby', '59028');
-insert into commune(nom, code) values ('Aulnoy-lez-Valenciennes', '59032');
-insert into commune(nom, code) values ('Aulnoye-Aymeries', '59033');
-insert into commune(nom, code) values ('Avesnes-sur-Helpe', '59036');
-insert into commune(nom, code) values ('Avesnes-les-Aubert', '59037');
-insert into commune(nom, code) values ('Bailleul', '59043');
-insert into commune(nom, code) values ('Baisieux', '59044');
-insert into commune(nom, code) values ('La Bassée', '59051');
-insert into commune(nom, code) values ('Bauvin', '59052');
-insert into commune(nom, code) values ('Bavay', '59053');
-insert into commune(nom, code) values ('Bergues', '59067');
-insert into commune(nom, code) values ('Berlaimont', '59068');
-insert into commune(nom, code) values ('Beuvrages', '59079');
-insert into commune(nom, code) values ('Bondues', '59090');
-insert into commune(nom, code) values ('Bouchain', '59092');
-insert into commune(nom, code) values ('Bourbourg', '59094');
-insert into commune(nom, code) values ('Bousbecque', '59098');
-insert into commune(nom, code) values ('Boussois', '59104');
-insert into commune(nom, code) values ('Bray-Dunes', '59107');
-insert into commune(nom, code) values ('Bruay-sur-l''Escaut', '59112');
-insert into commune(nom, code) values ('Cambrai', '59122');
-insert into commune(nom, code) values ('Cappelle-la-Grande', '59131');
-insert into commune(nom, code) values ('Le Cateau-Cambrésis', '59136');
-insert into commune(nom, code) values ('Caudry', '59139');
-insert into commune(nom, code) values ('La Chapelle-d''Armentières', '59143');
-insert into commune(nom, code) values ('Chéreng', '59146');
-insert into commune(nom, code) values ('Comines', '59152');
-insert into commune(nom, code) values ('Condé-sur-l''Escaut', '59153');
-insert into commune(nom, code) values ('Coudekerque-Branche', '59155');
-insert into commune(nom, code) values ('Coutiches', '59158');
-insert into commune(nom, code) values ('Crespin', '59160');
-insert into commune(nom, code) values ('Croix', '59163');
-insert into commune(nom, code) values ('Cuincy', '59165');
-insert into commune(nom, code) values ('Cysoing', '59168');
-insert into commune(nom, code) values ('Dechy', '59170');
-insert into commune(nom, code) values ('Denain', '59172');
-insert into commune(nom, code) values ('Douai', '59178');
-insert into commune(nom, code) values ('Douchy-les-Mines', '59179');
-insert into commune(nom, code) values ('Dunkerque', '59183');
-insert into commune(nom, code) values ('Emmerin', '59193');
-insert into commune(nom, code) values ('Erquinghem-Lys', '59202');
-insert into commune(nom, code) values ('Escaudain', '59205');
-insert into commune(nom, code) values ('Escaudœuvres', '59206');
-insert into commune(nom, code) values ('Escautpont', '59207');
-insert into commune(nom, code) values ('Estaires', '59212');
-insert into commune(nom, code) values ('Faches-Thumesnil', '59220');
-insert into commune(nom, code) values ('Feignies', '59225');
-insert into commune(nom, code) values ('Fenain', '59227');
-insert into commune(nom, code) values ('Ferrière-la-Grande', '59230');
-insert into commune(nom, code) values ('Flers-en-Escrebieux', '59234');
-insert into commune(nom, code) values ('Flines-lez-Raches', '59239');
-insert into commune(nom, code) values ('Fourmies', '59249');
-insert into commune(nom, code) values ('Fresnes-sur-Escaut', '59253');
-insert into commune(nom, code) values ('Fretin', '59256');
-insert into commune(nom, code) values ('Genech', '59258');
-insert into commune(nom, code) values ('Ghyvelde', '59260');
-insert into commune(nom, code) values ('Gondecourt', '59266');
-insert into commune(nom, code) values ('La Gorgue', '59268');
-insert into commune(nom, code) values ('Grande-Synthe', '59271');
-insert into commune(nom, code) values ('Grand-Fort-Philippe', '59272');
-insert into commune(nom, code) values ('Gravelines', '59273');
-insert into commune(nom, code) values ('Guesnain', '59276');
-insert into commune(nom, code) values ('Hallennes-lez-Haubourdin', '59278');
-insert into commune(nom, code) values ('Halluin', '59279');
-insert into commune(nom, code) values ('Hasnon', '59284');
-insert into commune(nom, code) values ('Haubourdin', '59286');
-insert into commune(nom, code) values ('Hautmont', '59291');
-insert into commune(nom, code) values ('Haveluy', '59292');
-insert into commune(nom, code) values ('Hazebrouck', '59295');
-insert into commune(nom, code) values ('Hem', '59299');
-insert into commune(nom, code) values ('Hergnies', '59301');
-insert into commune(nom, code) values ('Hérin', '59302');
-insert into commune(nom, code) values ('Hondschoote', '59309');
-insert into commune(nom, code) values ('Hornaing', '59314');
-insert into commune(nom, code) values ('Houplin-Ancoisne', '59316');
-insert into commune(nom, code) values ('Houplines', '59317');
-insert into commune(nom, code) values ('Hoymille', '59319');
-insert into commune(nom, code) values ('Iwuy', '59322');
-insert into commune(nom, code) values ('Jeumont', '59324');
-insert into commune(nom, code) values ('Lallaing', '59327');
-insert into commune(nom, code) values ('Lambersart', '59328');
-insert into commune(nom, code) values ('Lambres-lez-Douai', '59329');
-insert into commune(nom, code) values ('Landrecies', '59331');
-insert into commune(nom, code) values ('Leers', '59339');
-insert into commune(nom, code) values ('Leffrinckoucke', '59340');
-insert into commune(nom, code) values ('Lesquin', '59343');
-insert into commune(nom, code) values ('Lezennes', '59346');
-insert into commune(nom, code) values ('Lille', '59350');
-insert into commune(nom, code) values ('Linselles', '59352');
-insert into commune(nom, code) values ('Loon-Plage', '59359');
-insert into commune(nom, code) values ('Loos', '59360');
-insert into commune(nom, code) values ('Lourches', '59361');
-insert into commune(nom, code) values ('Louvroil', '59365');
-insert into commune(nom, code) values ('Lys-lez-Lannoy', '59367');
-insert into commune(nom, code) values ('La Madeleine', '59368');
-insert into commune(nom, code) values ('Maing', '59369');
-insert into commune(nom, code) values ('Marchiennes', '59375');
-insert into commune(nom, code) values ('Marcq-en-Barœul', '59378');
-insert into commune(nom, code) values ('Marly', '59383');
-insert into commune(nom, code) values ('Marquette-lez-Lille', '59386');
-insert into commune(nom, code) values ('Masny', '59390');
-insert into commune(nom, code) values ('Maubeuge', '59392');
-insert into commune(nom, code) values ('Mérignies', '59398');
-insert into commune(nom, code) values ('Merville', '59400');
-insert into commune(nom, code) values ('Mons-en-Barœul', '59410');
-insert into commune(nom, code) values ('Montigny-en-Ostrevent', '59414');
-insert into commune(nom, code) values ('Mouvaux', '59421');
-insert into commune(nom, code) values ('Neuville-en-Ferrain', '59426');
-insert into commune(nom, code) values ('Neuville-Saint-Rémy', '59428');
-insert into commune(nom, code) values ('Nieppe', '59431');
-insert into commune(nom, code) values ('Onnaing', '59447');
-insert into commune(nom, code) values ('Orchies', '59449');
-insert into commune(nom, code) values ('Ostricourt', '59452');
-insert into commune(nom, code) values ('Pecquencourt', '59456');
-insert into commune(nom, code) values ('Pérenchies', '59457');
-insert into commune(nom, code) values ('Petite-Forêt', '59459');
-insert into commune(nom, code) values ('Phalempin', '59462');
-insert into commune(nom, code) values ('Pont-à-Marcq', '59466');
-insert into commune(nom, code) values ('Proville', '59476');
-insert into commune(nom, code) values ('Provin', '59477');
-insert into commune(nom, code) values ('Quarouble', '59479');
-insert into commune(nom, code) values ('Le Quesnoy', '59481');
-insert into commune(nom, code) values ('Quesnoy-sur-Deûle', '59482');
-insert into commune(nom, code) values ('Quiévrechain', '59484');
-insert into commune(nom, code) values ('Raimbeaucourt', '59489');
-insert into commune(nom, code) values ('Raismes', '59491');
-insert into commune(nom, code) values ('Rœulx', '59504');
-insert into commune(nom, code) values ('Ronchin', '59507');
-insert into commune(nom, code) values ('Roncq', '59508');
-insert into commune(nom, code) values ('Roost-Warendin', '59509');
-insert into commune(nom, code) values ('Roubaix', '59512');
-insert into commune(nom, code) values ('Rousies', '59514');
-insert into commune(nom, code) values ('Sainghin-en-Weppes', '59524');
-insert into commune(nom, code) values ('Saint-Amand-les-Eaux', '59526');
-insert into commune(nom, code) values ('Saint-André-lez-Lille', '59527');
-insert into commune(nom, code) values ('Saint-Saulve', '59544');
-insert into commune(nom, code) values ('Santes', '59553');
-insert into commune(nom, code) values ('Seclin', '59560');
-insert into commune(nom, code) values ('La Sentinelle', '59564');
-insert into commune(nom, code) values ('Sequedin', '59566');
-insert into commune(nom, code) values ('Sin-le-Noble', '59569');
-insert into commune(nom, code) values ('Solesmes', '59571');
-insert into commune(nom, code) values ('Somain', '59574');
-insert into commune(nom, code) values ('Steenvoorde', '59580');
-insert into commune(nom, code) values ('Steenwerck', '59581');
-insert into commune(nom, code) values ('Templemars', '59585');
-insert into commune(nom, code) values ('Templeuve-en-Pévèle', '59586');
-insert into commune(nom, code) values ('Téteghem-Coudekerque-Village', '59588');
-insert into commune(nom, code) values ('Thiant', '59589');
-insert into commune(nom, code) values ('Thumeries', '59592');
-insert into commune(nom, code) values ('Toufflers', '59598');
-insert into commune(nom, code) values ('Tourcoing', '59599');
-insert into commune(nom, code) values ('Trith-Saint-Léger', '59603');
-insert into commune(nom, code) values ('Valenciennes', '59606');
-insert into commune(nom, code) values ('Vieux-Condé', '59616');
-insert into commune(nom, code) values ('Wallers', '59632');
-insert into commune(nom, code) values ('Wambrechies', '59636');
-insert into commune(nom, code) values ('Wasquehal', '59646');
-insert into commune(nom, code) values ('Wattignies', '59648');
-insert into commune(nom, code) values ('Wattrelos', '59650');
-insert into commune(nom, code) values ('Wavrin', '59653');
-insert into commune(nom, code) values ('Waziers', '59654');
-insert into commune(nom, code) values ('Wervicq-Sud', '59656');
-insert into commune(nom, code) values ('Willems', '59660');
-insert into commune(nom, code) values ('Wormhout', '59663');
-insert into commune(nom, code) values ('Agnetz', '60007');
-insert into commune(nom, code) values ('Andeville', '60012');
-insert into commune(nom, code) values ('Beauvais', '60057');
-insert into commune(nom, code) values ('Béthisy-Saint-Pierre', '60068');
-insert into commune(nom, code) values ('Bornel', '60088');
-insert into commune(nom, code) values ('Bresles', '60103');
-insert into commune(nom, code) values ('Breteuil', '60104');
-insert into commune(nom, code) values ('Breuil-le-Vert', '60107');
-insert into commune(nom, code) values ('Chambly', '60139');
-insert into commune(nom, code) values ('Chantilly', '60141');
-insert into commune(nom, code) values ('La Chapelle-en-Serval', '60142');
-insert into commune(nom, code) values ('Chaumont-en-Vexin', '60143');
-insert into commune(nom, code) values ('Choisy-au-Bac', '60151');
-insert into commune(nom, code) values ('Cires-lès-Mello', '60155');
-insert into commune(nom, code) values ('Clermont', '60157');
-insert into commune(nom, code) values ('Compiègne', '60159');
-insert into commune(nom, code) values ('Coye-la-Forêt', '60172');
-insert into commune(nom, code) values ('Creil', '60175');
-insert into commune(nom, code) values ('Crépy-en-Valois', '60176');
-insert into commune(nom, code) values ('Crèvecœur-le-Grand', '60178');
-insert into commune(nom, code) values ('Estrées-Saint-Denis', '60223');
-insert into commune(nom, code) values ('Gouvieux', '60282');
-insert into commune(nom, code) values ('Lacroix-Saint-Ouen', '60338');
-insert into commune(nom, code) values ('Laigneville', '60342');
-insert into commune(nom, code) values ('Lamorlaye', '60346');
-insert into commune(nom, code) values ('Liancourt', '60360');
-insert into commune(nom, code) values ('Margny-lès-Compiègne', '60382');
-insert into commune(nom, code) values ('Méru', '60395');
-insert into commune(nom, code) values ('Montataire', '60414');
-insert into commune(nom, code) values ('Mouy', '60439');
-insert into commune(nom, code) values ('Nanteuil-le-Haudouin', '60446');
-insert into commune(nom, code) values ('Neuilly-en-Thelle', '60450');
-insert into commune(nom, code) values ('Nogent-sur-Oise', '60463');
-insert into commune(nom, code) values ('Noyon', '60471');
-insert into commune(nom, code) values ('Orry-la-Ville', '60482');
-insert into commune(nom, code) values ('Le Plessis-Belleville', '60500');
-insert into commune(nom, code) values ('Pontpoint', '60508');
-insert into commune(nom, code) values ('Pont-Sainte-Maxence', '60509');
-insert into commune(nom, code) values ('Précy-sur-Oise', '60513');
-insert into commune(nom, code) values ('Ribécourt-Dreslincourt', '60537');
-insert into commune(nom, code) values ('Sainte-Geneviève', '60575');
-insert into commune(nom, code) values ('Saint-Just-en-Chaussée', '60581');
-insert into commune(nom, code) values ('Saint-Leu-d''Esserent', '60584');
-insert into commune(nom, code) values ('Senlis', '60612');
-insert into commune(nom, code) values ('Thourotte', '60636');
-insert into commune(nom, code) values ('Verberie', '60667');
-insert into commune(nom, code) values ('Verneuil-en-Halatte', '60670');
-insert into commune(nom, code) values ('Villers-Saint-Paul', '60684');
-insert into commune(nom, code) values ('Alençon', '61001');
-insert into commune(nom, code) values ('Argentan', '61006');
-insert into commune(nom, code) values ('Athis-Val de Rouvre', '61007');
-insert into commune(nom, code) values ('Rives d''Andaine', '61096');
-insert into commune(nom, code) values ('Domfront en Poiraie', '61145');
-insert into commune(nom, code) values ('La Ferté-en-Ouche', '61167');
-insert into commune(nom, code) values ('La Ferté Macé', '61168');
-insert into commune(nom, code) values ('Flers', '61169');
-insert into commune(nom, code) values ('L''Aigle', '61214');
-insert into commune(nom, code) values ('Longny les Villages', '61230');
-insert into commune(nom, code) values ('Mortagne-au-Perche', '61293');
-insert into commune(nom, code) values ('Saint-Georges-des-Groseillers', '61391');
-insert into commune(nom, code) values ('Saint-Germain-du-Corbéis', '61397');
-insert into commune(nom, code) values ('Sées', '61464');
-insert into commune(nom, code) values ('Gouffern en Auge', '61474');
-insert into commune(nom, code) values ('Val-au-Perche', '61484');
-insert into commune(nom, code) values ('Tinchebray-Bocage', '61486');
-insert into commune(nom, code) values ('Tourouvre au Perche', '61491');
-insert into commune(nom, code) values ('Vimoutiers', '61508');
-insert into commune(nom, code) values ('Achicourt', '62004');
-insert into commune(nom, code) values ('Aire-sur-la-Lys', '62014');
-insert into commune(nom, code) values ('Aix-Noulette', '62019');
-insert into commune(nom, code) values ('Angres', '62032');
-insert into commune(nom, code) values ('Annay', '62033');
-insert into commune(nom, code) values ('Annezin', '62035');
-insert into commune(nom, code) values ('Ardres', '62038');
-insert into commune(nom, code) values ('Arques', '62040');
-insert into commune(nom, code) values ('Arras', '62041');
-insert into commune(nom, code) values ('Auchel', '62048');
-insert into commune(nom, code) values ('Auchy-les-Mines', '62051');
-insert into commune(nom, code) values ('Audruicq', '62057');
-insert into commune(nom, code) values ('Avion', '62065');
-insert into commune(nom, code) values ('Bapaume', '62080');
-insert into commune(nom, code) values ('Barlin', '62083');
-insert into commune(nom, code) values ('Beaurains', '62099');
-insert into commune(nom, code) values ('Berck', '62108');
-insert into commune(nom, code) values ('Béthune', '62119');
-insert into commune(nom, code) values ('Beuvry', '62126');
-insert into commune(nom, code) values ('Biache-Saint-Vaast', '62128');
-insert into commune(nom, code) values ('Billy-Berclau', '62132');
-insert into commune(nom, code) values ('Billy-Montigny', '62133');
-insert into commune(nom, code) values ('Blendecques', '62139');
-insert into commune(nom, code) values ('Boulogne-sur-Mer', '62160');
-insert into commune(nom, code) values ('Brebières', '62173');
-insert into commune(nom, code) values ('Bruay-la-Buissière', '62178');
-insert into commune(nom, code) values ('Bully-les-Mines', '62186');
-insert into commune(nom, code) values ('Calais', '62193');
-insert into commune(nom, code) values ('Calonne-Ricouart', '62194');
-insert into commune(nom, code) values ('Carvin', '62215');
-insert into commune(nom, code) values ('Coulogne', '62244');
-insert into commune(nom, code) values ('Courcelles-lès-Lens', '62249');
-insert into commune(nom, code) values ('Courrières', '62250');
-insert into commune(nom, code) values ('Cucq', '62261');
-insert into commune(nom, code) values ('Dainville', '62263');
-insert into commune(nom, code) values ('Desvres', '62268');
-insert into commune(nom, code) values ('Divion', '62270');
-insert into commune(nom, code) values ('Dourges', '62274');
-insert into commune(nom, code) values ('Douvrin', '62276');
-insert into commune(nom, code) values ('Éperlecques', '62297');
-insert into commune(nom, code) values ('Étaples', '62318');
-insert into commune(nom, code) values ('Évin-Malmaison', '62321');
-insert into commune(nom, code) values ('Fouquières-lès-Lens', '62351');
-insert into commune(nom, code) values ('Frévent', '62361');
-insert into commune(nom, code) values ('Grenay', '62386');
-insert into commune(nom, code) values ('Guînes', '62397');
-insert into commune(nom, code) values ('Haillicourt', '62400');
-insert into commune(nom, code) values ('Haisnes', '62401');
-insert into commune(nom, code) values ('Harnes', '62413');
-insert into commune(nom, code) values ('Hénin-Beaumont', '62427');
-insert into commune(nom, code) values ('Hersin-Coupigny', '62443');
-insert into commune(nom, code) values ('Houdain', '62457');
-insert into commune(nom, code) values ('Hulluch', '62464');
-insert into commune(nom, code) values ('Isbergues', '62473');
-insert into commune(nom, code) values ('Lapugnoy', '62489');
-insert into commune(nom, code) values ('Laventie', '62491');
-insert into commune(nom, code) values ('Leforest', '62497');
-insert into commune(nom, code) values ('Lens', '62498');
-insert into commune(nom, code) values ('Lestrem', '62502');
-insert into commune(nom, code) values ('Liévin', '62510');
-insert into commune(nom, code) values ('Lillers', '62516');
-insert into commune(nom, code) values ('Loison-sous-Lens', '62523');
-insert into commune(nom, code) values ('Longuenesse', '62525');
-insert into commune(nom, code) values ('Loos-en-Gohelle', '62528');
-insert into commune(nom, code) values ('Lumbres', '62534');
-insert into commune(nom, code) values ('Marck', '62548');
-insert into commune(nom, code) values ('Marles-les-Mines', '62555');
-insert into commune(nom, code) values ('Marquise', '62560');
-insert into commune(nom, code) values ('Mazingarbe', '62563');
-insert into commune(nom, code) values ('Méricourt', '62570');
-insert into commune(nom, code) values ('Merlimont', '62571');
-insert into commune(nom, code) values ('Meurchin', '62573');
-insert into commune(nom, code) values ('Montigny-en-Gohelle', '62587');
-insert into commune(nom, code) values ('Neufchâtel-Hardelot', '62604');
-insert into commune(nom, code) values ('Nœux-les-Mines', '62617');
-insert into commune(nom, code) values ('Noyelles-Godault', '62624');
-insert into commune(nom, code) values ('Noyelles-sous-Lens', '62628');
-insert into commune(nom, code) values ('Oignies', '62637');
-insert into commune(nom, code) values ('Outreau', '62643');
-insert into commune(nom, code) values ('Oye-Plage', '62645');
-insert into commune(nom, code) values ('Pont-à-Vendin', '62666');
-insert into commune(nom, code) values ('Le Portel', '62667');
-insert into commune(nom, code) values ('Rang-du-Fliers', '62688');
-insert into commune(nom, code) values ('Rinxent', '62711');
-insert into commune(nom, code) values ('Rouvroy', '62724');
-insert into commune(nom, code) values ('Sailly-sur-la-Lys', '62736');
-insert into commune(nom, code) values ('Sains-en-Gohelle', '62737');
-insert into commune(nom, code) values ('Sainte-Catherine', '62744');
-insert into commune(nom, code) values ('Saint-Étienne-au-Mont', '62746');
-insert into commune(nom, code) values ('Saint-Laurent-Blangy', '62753');
-insert into commune(nom, code) values ('Saint-Léonard', '62755');
-insert into commune(nom, code) values ('Saint-Martin-lez-Tatinghem', '62757');
-insert into commune(nom, code) values ('Saint-Martin-Boulogne', '62758');
-insert into commune(nom, code) values ('Saint-Nicolas', '62764');
-insert into commune(nom, code) values ('Saint-Omer', '62765');
-insert into commune(nom, code) values ('Saint-Pol-sur-Ternoise', '62767');
-insert into commune(nom, code) values ('Saint-Venant', '62770');
-insert into commune(nom, code) values ('Sallaumines', '62771');
-insert into commune(nom, code) values ('Samer', '62773');
-insert into commune(nom, code) values ('Sangatte', '62774');
-insert into commune(nom, code) values ('Le Touquet-Paris-Plage', '62826');
-insert into commune(nom, code) values ('Vendin-le-Vieil', '62842');
-insert into commune(nom, code) values ('Vermelles', '62846');
-insert into commune(nom, code) values ('Verquin', '62848');
-insert into commune(nom, code) values ('Vimy', '62861');
-insert into commune(nom, code) values ('Violaines', '62863');
-insert into commune(nom, code) values ('Vitry-en-Artois', '62865');
-insert into commune(nom, code) values ('Wimereux', '62893');
-insert into commune(nom, code) values ('Wimille', '62894');
-insert into commune(nom, code) values ('Wingles', '62895');
-insert into commune(nom, code) values ('Wizernes', '62902');
-insert into commune(nom, code) values ('Libercourt', '62907');
-insert into commune(nom, code) values ('Ambert', '63003');
-insert into commune(nom, code) values ('Aubière', '63014');
-insert into commune(nom, code) values ('Aulnat', '63019');
-insert into commune(nom, code) values ('Beaumont', '63032');
-insert into commune(nom, code) values ('Billom', '63040');
-insert into commune(nom, code) values ('Blanzat', '63042');
-insert into commune(nom, code) values ('Brassac-les-Mines', '63050');
-insert into commune(nom, code) values ('Cébazat', '63063');
-insert into commune(nom, code) values ('Le Cendre', '63069');
-insert into commune(nom, code) values ('Ceyrat', '63070');
-insert into commune(nom, code) values ('Chamalières', '63075');
-insert into commune(nom, code) values ('Châteaugay', '63099');
-insert into commune(nom, code) values ('Châtel-Guyon', '63103');
-insert into commune(nom, code) values ('Clermont-Ferrand', '63113');
-insert into commune(nom, code) values ('Cournon-d''Auvergne', '63124');
-insert into commune(nom, code) values ('Courpière', '63125');
-insert into commune(nom, code) values ('Gerzat', '63164');
-insert into commune(nom, code) values ('Issoire', '63178');
-insert into commune(nom, code) values ('Lempdes', '63193');
-insert into commune(nom, code) values ('Lezoux', '63195');
-insert into commune(nom, code) values ('Maringues', '63210');
-insert into commune(nom, code) values ('Les Martres-de-Veyre', '63214');
-insert into commune(nom, code) values ('Mur-sur-Allier', '63226');
-insert into commune(nom, code) values ('Mozac', '63245');
-insert into commune(nom, code) values ('Orcines', '63263');
-insert into commune(nom, code) values ('Pont-du-Château', '63284');
-insert into commune(nom, code) values ('Riom', '63300');
-insert into commune(nom, code) values ('La Roche-Blanche', '63302');
-insert into commune(nom, code) values ('Romagnat', '63307');
-insert into commune(nom, code) values ('Royat', '63308');
-insert into commune(nom, code) values ('Saint-Éloy-les-Mines', '63338');
-insert into commune(nom, code) values ('Saint-Genès-Champanelle', '63345');
-insert into commune(nom, code) values ('Thiers', '63430');
-insert into commune(nom, code) values ('Vertaizon', '63453');
-insert into commune(nom, code) values ('Veyre-Monton', '63455');
-insert into commune(nom, code) values ('Vic-le-Comte', '63457');
-insert into commune(nom, code) values ('Volvic', '63470');
-insert into commune(nom, code) values ('Anglet', '64024');
-insert into commune(nom, code) values ('Arcangues', '64038');
-insert into commune(nom, code) values ('Artix', '64061');
-insert into commune(nom, code) values ('Ascain', '64065');
-insert into commune(nom, code) values ('Bassussarry', '64100');
-insert into commune(nom, code) values ('Bayonne', '64102');
-insert into commune(nom, code) values ('Biarritz', '64122');
-insert into commune(nom, code) values ('Bidart', '64125');
-insert into commune(nom, code) values ('Billère', '64129');
-insert into commune(nom, code) values ('Bizanos', '64132');
-insert into commune(nom, code) values ('Boucau', '64140');
-insert into commune(nom, code) values ('Cambo-les-Bains', '64160');
-insert into commune(nom, code) values ('Ciboure', '64189');
-insert into commune(nom, code) values ('Gan', '64230');
-insert into commune(nom, code) values ('Gelos', '64237');
-insert into commune(nom, code) values ('Hasparren', '64256');
-insert into commune(nom, code) values ('Hendaye', '64260');
-insert into commune(nom, code) values ('Idron', '64269');
-insert into commune(nom, code) values ('Jurançon', '64284');
-insert into commune(nom, code) values ('Lescar', '64335');
-insert into commune(nom, code) values ('Lons', '64348');
-insert into commune(nom, code) values ('Mauléon-Licharre', '64371');
-insert into commune(nom, code) values ('Monein', '64393');
-insert into commune(nom, code) values ('Morlaàs', '64405');
-insert into commune(nom, code) values ('Mouguerre', '64407');
-insert into commune(nom, code) values ('Mourenx', '64410');
-insert into commune(nom, code) values ('Nay', '64417');
-insert into commune(nom, code) values ('Oloron-Sainte-Marie', '64422');
-insert into commune(nom, code) values ('Orthez', '64430');
-insert into commune(nom, code) values ('Pau', '64445');
-insert into commune(nom, code) values ('Saint-Jean-de-Luz', '64483');
-insert into commune(nom, code) values ('Saint-Pée-sur-Nivelle', '64495');
-insert into commune(nom, code) values ('Saint-Pierre-d''Irube', '64496');
-insert into commune(nom, code) values ('Salies-de-Béarn', '64499');
-insert into commune(nom, code) values ('Sauvagnon', '64511');
-insert into commune(nom, code) values ('Serres-Castet', '64519');
-insert into commune(nom, code) values ('Urrugne', '64545');
-insert into commune(nom, code) values ('Ustaritz', '64547');
-insert into commune(nom, code) values ('Argelès-Gazost', '65025');
-insert into commune(nom, code) values ('Aureilhan', '65047');
-insert into commune(nom, code) values ('Bagnères-de-Bigorre', '65059');
-insert into commune(nom, code) values ('Barbazan-Debat', '65062');
-insert into commune(nom, code) values ('Bordères-sur-l''Échez', '65100');
-insert into commune(nom, code) values ('Ibos', '65226');
-insert into commune(nom, code) values ('Juillan', '65235');
-insert into commune(nom, code) values ('Lannemezan', '65258');
-insert into commune(nom, code) values ('Lourdes', '65286');
-insert into commune(nom, code) values ('Odos', '65331');
-insert into commune(nom, code) values ('Séméac', '65417');
-insert into commune(nom, code) values ('Soues', '65433');
-insert into commune(nom, code) values ('Tarbes', '65440');
-insert into commune(nom, code) values ('Vic-en-Bigorre', '65460');
-insert into commune(nom, code) values ('Alénya', '66002');
-insert into commune(nom, code) values ('Amélie-les-Bains-Palalda', '66003');
-insert into commune(nom, code) values ('Argelès-sur-Mer', '66008');
-insert into commune(nom, code) values ('Bages', '66011');
-insert into commune(nom, code) values ('Baho', '66012');
-insert into commune(nom, code) values ('Banyuls-sur-Mer', '66016');
-insert into commune(nom, code) values ('Le Barcarès', '66017');
-insert into commune(nom, code) values ('Bompas', '66021');
-insert into commune(nom, code) values ('Le Boulou', '66024');
-insert into commune(nom, code) values ('Cabestany', '66028');
-insert into commune(nom, code) values ('Canet-en-Roussillon', '66037');
-insert into commune(nom, code) values ('Canohès', '66038');
-insert into commune(nom, code) values ('Céret', '66049');
-insert into commune(nom, code) values ('Claira', '66050');
-insert into commune(nom, code) values ('Elne', '66065');
-insert into commune(nom, code) values ('Espira-de-l''Agly', '66069');
-insert into commune(nom, code) values ('Ille-sur-Têt', '66088');
-insert into commune(nom, code) values ('Latour-Bas-Elne', '66094');
-insert into commune(nom, code) values ('Millas', '66108');
-insert into commune(nom, code) values ('Palau-del-Vidre', '66133');
-insert into commune(nom, code) values ('Perpignan', '66136');
-insert into commune(nom, code) values ('Pézilla-la-Rivière', '66140');
-insert into commune(nom, code) values ('Pia', '66141');
-insert into commune(nom, code) values ('Pollestres', '66144');
-insert into commune(nom, code) values ('Port-Vendres', '66148');
-insert into commune(nom, code) values ('Prades', '66149');
-insert into commune(nom, code) values ('Rivesaltes', '66164');
-insert into commune(nom, code) values ('Saint-André', '66168');
-insert into commune(nom, code) values ('Saint-Cyprien', '66171');
-insert into commune(nom, code) values ('Saint-Estève', '66172');
-insert into commune(nom, code) values ('Saint-Hippolyte', '66176');
-insert into commune(nom, code) values ('Saint-Laurent-de-la-Salanque', '66180');
-insert into commune(nom, code) values ('Sainte-Marie-la-Mer', '66182');
-insert into commune(nom, code) values ('Saleilles', '66189');
-insert into commune(nom, code) values ('Salses-le-Château', '66190');
-insert into commune(nom, code) values ('Le Soler', '66195');
-insert into commune(nom, code) values ('Sorède', '66196');
-insert into commune(nom, code) values ('Thuir', '66210');
-insert into commune(nom, code) values ('Torreilles', '66212');
-insert into commune(nom, code) values ('Toulouges', '66213');
-insert into commune(nom, code) values ('Villelongue-de-la-Salanque', '66224');
-insert into commune(nom, code) values ('Villeneuve-de-la-Raho', '66227');
-insert into commune(nom, code) values ('Barr', '67021');
-insert into commune(nom, code) values ('Benfeld', '67028');
-insert into commune(nom, code) values ('Bischheim', '67043');
-insert into commune(nom, code) values ('Bischoffsheim', '67045');
-insert into commune(nom, code) values ('Bischwiller', '67046');
-insert into commune(nom, code) values ('Bouxwiller', '67061');
-insert into commune(nom, code) values ('Brumath', '67067');
-insert into commune(nom, code) values ('Châtenois', '67073');
-insert into commune(nom, code) values ('Drusenheim', '67106');
-insert into commune(nom, code) values ('Eckbolsheim', '67118');
-insert into commune(nom, code) values ('Erstein', '67130');
-insert into commune(nom, code) values ('Eschau', '67131');
-insert into commune(nom, code) values ('Fegersheim', '67137');
-insert into commune(nom, code) values ('Gambsheim', '67151');
-insert into commune(nom, code) values ('Geispolsheim', '67152');
-insert into commune(nom, code) values ('Gerstheim', '67154');
-insert into commune(nom, code) values ('Gundershoffen', '67176');
-insert into commune(nom, code) values ('Haguenau', '67180');
-insert into commune(nom, code) values ('Herrlisheim', '67194');
-insert into commune(nom, code) values ('Hochfelden', '67202');
-insert into commune(nom, code) values ('Hœnheim', '67204');
-insert into commune(nom, code) values ('Hœrdt', '67205');
-insert into commune(nom, code) values ('Holtzheim', '67212');
-insert into commune(nom, code) values ('Illkirch-Graffenstaden', '67218');
-insert into commune(nom, code) values ('Ingwiller', '67222');
-insert into commune(nom, code) values ('Lampertheim', '67256');
-insert into commune(nom, code) values ('Lingolsheim', '67267');
-insert into commune(nom, code) values ('Marckolsheim', '67281');
-insert into commune(nom, code) values ('Marlenheim', '67282');
-insert into commune(nom, code) values ('Mertzwiller', '67291');
-insert into commune(nom, code) values ('Molsheim', '67300');
-insert into commune(nom, code) values ('Mundolsheim', '67309');
-insert into commune(nom, code) values ('Mutzig', '67313');
-insert into commune(nom, code) values ('Niederbronn-les-Bains', '67324');
-insert into commune(nom, code) values ('Betschdorf', '67339');
-insert into commune(nom, code) values ('Oberhausbergen', '67343');
-insert into commune(nom, code) values ('Oberhoffen-sur-Moder', '67345');
-insert into commune(nom, code) values ('Obernai', '67348');
-insert into commune(nom, code) values ('Ostwald', '67365');
-insert into commune(nom, code) values ('Val-de-Moder', '67372');
-insert into commune(nom, code) values ('Plobsheim', '67378');
-insert into commune(nom, code) values ('Reichshoffen', '67388');
-insert into commune(nom, code) values ('Reichstett', '67389');
-insert into commune(nom, code) values ('Rosheim', '67411');
-insert into commune(nom, code) values ('Saverne', '67437');
-insert into commune(nom, code) values ('Scherwiller', '67445');
-insert into commune(nom, code) values ('Schiltigheim', '67447');
-insert into commune(nom, code) values ('Schweighouse-sur-Moder', '67458');
-insert into commune(nom, code) values ('Sélestat', '67462');
-insert into commune(nom, code) values ('Seltz', '67463');
-insert into commune(nom, code) values ('Souffelweyersheim', '67471');
-insert into commune(nom, code) values ('Soufflenheim', '67472');
-insert into commune(nom, code) values ('Soultz-sous-Forêts', '67474');
-insert into commune(nom, code) values ('Strasbourg', '67482');
-insert into commune(nom, code) values ('Truchtersheim', '67495');
-insert into commune(nom, code) values ('Vendenheim', '67506');
-insert into commune(nom, code) values ('La Wantzenau', '67519');
-insert into commune(nom, code) values ('Wasselonne', '67520');
-insert into commune(nom, code) values ('Weyersheim', '67529');
-insert into commune(nom, code) values ('Wissembourg', '67544');
-insert into commune(nom, code) values ('Wolfisheim', '67551');
-insert into commune(nom, code) values ('Altkirch', '68004');
-insert into commune(nom, code) values ('Bartenheim', '68021');
-insert into commune(nom, code) values ('Blotzheim', '68042');
-insert into commune(nom, code) values ('Bollwiller', '68043');
-insert into commune(nom, code) values ('Brunstatt-Didenheim', '68056');
-insert into commune(nom, code) values ('Buhl', '68058');
-insert into commune(nom, code) values ('Cernay', '68063');
-insert into commune(nom, code) values ('Colmar', '68066');
-insert into commune(nom, code) values ('Ensisheim', '68082');
-insert into commune(nom, code) values ('Guebwiller', '68112');
-insert into commune(nom, code) values ('Habsheim', '68118');
-insert into commune(nom, code) values ('Hégenheim', '68126');
-insert into commune(nom, code) values ('Horbourg-Wihr', '68145');
-insert into commune(nom, code) values ('Huningue', '68149');
-insert into commune(nom, code) values ('Illzach', '68154');
-insert into commune(nom, code) values ('Ingersheim', '68155');
-insert into commune(nom, code) values ('Issenheim', '68156');
-insert into commune(nom, code) values ('Kaysersberg Vignoble', '68162');
-insert into commune(nom, code) values ('Kembs', '68163');
-insert into commune(nom, code) values ('Kingersheim', '68166');
-insert into commune(nom, code) values ('Lutterbach', '68195');
-insert into commune(nom, code) values ('Masevaux-Niederbruck', '68201');
-insert into commune(nom, code) values ('Morschwiller-le-Bas', '68218');
-insert into commune(nom, code) values ('Mulhouse', '68224');
-insert into commune(nom, code) values ('Munster', '68226');
-insert into commune(nom, code) values ('Orbey', '68249');
-insert into commune(nom, code) values ('Pfastatt', '68256');
-insert into commune(nom, code) values ('Pulversheim', '68258');
-insert into commune(nom, code) values ('Ribeauvillé', '68269');
-insert into commune(nom, code) values ('Richwiller', '68270');
-insert into commune(nom, code) values ('Riedisheim', '68271');
-insert into commune(nom, code) values ('Rixheim', '68278');
-insert into commune(nom, code) values ('Rouffach', '68287');
-insert into commune(nom, code) values ('Sainte-Croix-en-Plaine', '68295');
-insert into commune(nom, code) values ('Saint-Louis', '68297');
-insert into commune(nom, code) values ('Sainte-Marie-aux-Mines', '68298');
-insert into commune(nom, code) values ('Sausheim', '68300');
-insert into commune(nom, code) values ('Sierentz', '68309');
-insert into commune(nom, code) values ('Soultz-Haut-Rhin', '68315');
-insert into commune(nom, code) values ('Staffelfelden', '68321');
-insert into commune(nom, code) values ('Thann', '68334');
-insert into commune(nom, code) values ('Turckheim', '68338');
-insert into commune(nom, code) values ('Village-Neuf', '68349');
-insert into commune(nom, code) values ('Wintzenheim', '68374');
-insert into commune(nom, code) values ('Wittelsheim', '68375');
-insert into commune(nom, code) values ('Wittenheim', '68376');
-insert into commune(nom, code) values ('Amplepuis', '69006');
-insert into commune(nom, code) values ('Anse', '69009');
-insert into commune(nom, code) values ('L''Arbresle', '69010');
-insert into commune(nom, code) values ('Arnas', '69013');
-insert into commune(nom, code) values ('Belleville-en-Beaujolais', '69019');
-insert into commune(nom, code) values ('Val d''Oingt', '69024');
-insert into commune(nom, code) values ('Brignais', '69027');
-insert into commune(nom, code) values ('Brindas', '69028');
-insert into commune(nom, code) values ('Bron', '69029');
-insert into commune(nom, code) values ('Caluire-et-Cuire', '69034');
-insert into commune(nom, code) values ('Champagne-au-Mont-d''Or', '69040');
-insert into commune(nom, code) values ('Chaponost', '69043');
-insert into commune(nom, code) values ('Charbonnières-les-Bains', '69044');
-insert into commune(nom, code) values ('Charly', '69046');
-insert into commune(nom, code) values ('Chazay-d''Azergues', '69052');
-insert into commune(nom, code) values ('Collonges-au-Mont-d''Or', '69063');
-insert into commune(nom, code) values ('Condrieu', '69064');
-insert into commune(nom, code) values ('Cours', '69066');
-insert into commune(nom, code) values ('Craponne', '69069');
-insert into commune(nom, code) values ('Dardilly', '69072');
-insert into commune(nom, code) values ('Écully', '69081');
-insert into commune(nom, code) values ('Fontaines-Saint-Martin', '69087');
-insert into commune(nom, code) values ('Fontaines-sur-Saône', '69088');
-insert into commune(nom, code) values ('Francheville', '69089');
-insert into commune(nom, code) values ('Givors', '69091');
-insert into commune(nom, code) values ('Gleizé', '69092');
-insert into commune(nom, code) values ('Grézieu-la-Varenne', '69094');
-insert into commune(nom, code) values ('Grigny', '69096');
-insert into commune(nom, code) values ('Irigny', '69100');
-insert into commune(nom, code) values ('Lentilly', '69112');
-insert into commune(nom, code) values ('Limas', '69115');
-insert into commune(nom, code) values ('Limonest', '69116');
-insert into commune(nom, code) values ('Lissieu', '69117');
-insert into commune(nom, code) values ('Marcy-l''Étoile', '69127');
-insert into commune(nom, code) values ('Messimy', '69131');
-insert into commune(nom, code) values ('Millery', '69133');
-insert into commune(nom, code) values ('Montagny', '69136');
-insert into commune(nom, code) values ('Mornant', '69141');
-insert into commune(nom, code) values ('La Mulatière', '69142');
-insert into commune(nom, code) values ('Neuville-sur-Saône', '69143');
-insert into commune(nom, code) values ('Oullins', '69149');
-insert into commune(nom, code) values ('Pierre-Bénite', '69152');
-insert into commune(nom, code) values ('Vindry-sur-Turdine', '69157');
-insert into commune(nom, code) values ('Porte des Pierres Dorées', '69159');
-insert into commune(nom, code) values ('Quincieux', '69163');
-insert into commune(nom, code) values ('Soucieu-en-Jarrest', '69176');
-insert into commune(nom, code) values ('Beauvallon', '69179');
-insert into commune(nom, code) values ('Saint-Cyr-au-Mont-d''Or', '69191');
-insert into commune(nom, code) values ('Saint-Didier-au-Mont-d''Or', '69194');
-insert into commune(nom, code) values ('Saint-Fons', '69199');
-insert into commune(nom, code) values ('Sainte-Foy-lès-Lyon', '69202');
-insert into commune(nom, code) values ('Saint-Genis-Laval', '69204');
-insert into commune(nom, code) values ('Saint-Genis-les-Ollières', '69205');
-insert into commune(nom, code) values ('Saint-Georges-de-Reneins', '69206');
-insert into commune(nom, code) values ('Saint-Germain-au-Mont-d''Or', '69207');
-insert into commune(nom, code) values ('Saint-Martin-en-Haut', '69227');
-insert into commune(nom, code) values ('Chabanière', '69228');
-insert into commune(nom, code) values ('Saint-Symphorien-sur-Coise', '69238');
-insert into commune(nom, code) values ('Tarare', '69243');
-insert into commune(nom, code) values ('Tassin-la-Demi-Lune', '69244');
-insert into commune(nom, code) values ('Thizy-les-Bourgs', '69248');
-insert into commune(nom, code) values ('Thurins', '69249');
-insert into commune(nom, code) values ('La Tour-de-Salvagny', '69250');
-insert into commune(nom, code) values ('Vaugneray', '69255');
-insert into commune(nom, code) values ('Vaulx-en-Velin', '69256');
-insert into commune(nom, code) values ('Vénissieux', '69259');
-insert into commune(nom, code) values ('Vernaison', '69260');
-insert into commune(nom, code) values ('Villefranche-sur-Saône', '69264');
-insert into commune(nom, code) values ('Villeurbanne', '69266');
-insert into commune(nom, code) values ('Vourles', '69268');
-insert into commune(nom, code) values ('Chaponnay', '69270');
-insert into commune(nom, code) values ('Chassieu', '69271');
-insert into commune(nom, code) values ('Communay', '69272');
-insert into commune(nom, code) values ('Corbas', '69273');
-insert into commune(nom, code) values ('Décines-Charpieu', '69275');
-insert into commune(nom, code) values ('Feyzin', '69276');
-insert into commune(nom, code) values ('Genas', '69277');
-insert into commune(nom, code) values ('Genay', '69278');
-insert into commune(nom, code) values ('Jonage', '69279');
-insert into commune(nom, code) values ('Meyzieu', '69282');
-insert into commune(nom, code) values ('Mions', '69283');
-insert into commune(nom, code) values ('Montanay', '69284');
-insert into commune(nom, code) values ('Pusignan', '69285');
-insert into commune(nom, code) values ('Rillieux-la-Pape', '69286');
-insert into commune(nom, code) values ('Saint-Bonnet-de-Mure', '69287');
-insert into commune(nom, code) values ('Saint-Laurent-de-Mure', '69288');
-insert into commune(nom, code) values ('Saint-Pierre-de-Chandieu', '69289');
-insert into commune(nom, code) values ('Saint-Priest', '69290');
-insert into commune(nom, code) values ('Saint-Symphorien-d''Ozon', '69291');
-insert into commune(nom, code) values ('Sathonay-Camp', '69292');
-insert into commune(nom, code) values ('Solaize', '69296');
-insert into commune(nom, code) values ('Ternay', '69297');
-insert into commune(nom, code) values ('Toussieu', '69298');
-insert into commune(nom, code) values ('Lyon 1er Arrondissement', '69381');
-insert into commune(nom, code) values ('Lyon 2e Arrondissement', '69382');
-insert into commune(nom, code) values ('Lyon 3e Arrondissement', '69383');
-insert into commune(nom, code) values ('Lyon 4e Arrondissement', '69384');
-insert into commune(nom, code) values ('Lyon 5e Arrondissement', '69385');
-insert into commune(nom, code) values ('Lyon 6e Arrondissement', '69386');
-insert into commune(nom, code) values ('Lyon 7e Arrondissement', '69387');
-insert into commune(nom, code) values ('Lyon 8e Arrondissement', '69388');
-insert into commune(nom, code) values ('Lyon 9e Arrondissement', '69389');
-insert into commune(nom, code) values ('Champagney', '70120');
-insert into commune(nom, code) values ('Échenoz-la-Méline', '70207');
-insert into commune(nom, code) values ('Fougerolles-Saint-Valbert', '70245');
-insert into commune(nom, code) values ('Gray', '70279');
-insert into commune(nom, code) values ('Héricourt', '70285');
-insert into commune(nom, code) values ('Lure', '70310');
-insert into commune(nom, code) values ('Luxeuil-les-Bains', '70311');
-insert into commune(nom, code) values ('Port-sur-Saône', '70421');
-insert into commune(nom, code) values ('Saint-Loup-sur-Semouse', '70467');
-insert into commune(nom, code) values ('Vesoul', '70550');
-insert into commune(nom, code) values ('Autun', '71014');
-insert into commune(nom, code) values ('Blanzy', '71040');
-insert into commune(nom, code) values ('Bourbon-Lancy', '71047');
-insert into commune(nom, code) values ('Le Breuil', '71059');
-insert into commune(nom, code) values ('Chagny', '71073');
-insert into commune(nom, code) values ('Chalon-sur-Saône', '71076');
-insert into commune(nom, code) values ('La Chapelle-de-Guinchay', '71090');
-insert into commune(nom, code) values ('Charnay-lès-Mâcon', '71105');
-insert into commune(nom, code) values ('Charolles', '71106');
-insert into commune(nom, code) values ('Châtenoy-le-Royal', '71118');
-insert into commune(nom, code) values ('Chauffailles', '71120');
-insert into commune(nom, code) values ('Cluny', '71137');
-insert into commune(nom, code) values ('Crêches-sur-Saône', '71150');
-insert into commune(nom, code) values ('Le Creusot', '71153');
-insert into commune(nom, code) values ('Digoin', '71176');
-insert into commune(nom, code) values ('Givry', '71221');
-insert into commune(nom, code) values ('Gueugnon', '71230');
-insert into commune(nom, code) values ('Louhans', '71263');
-insert into commune(nom, code) values ('Mâcon', '71270');
-insert into commune(nom, code) values ('Montceau-les-Mines', '71306');
-insert into commune(nom, code) values ('Montchanin', '71310');
-insert into commune(nom, code) values ('Ouroux-sur-Saône', '71336');
-insert into commune(nom, code) values ('Paray-le-Monial', '71342');
-insert into commune(nom, code) values ('Saint-Marcel', '71445');
-insert into commune(nom, code) values ('Saint-Rémy', '71475');
-insert into commune(nom, code) values ('Saint-Vallier', '71486');
-insert into commune(nom, code) values ('Sanvignes-les-Mines', '71499');
-insert into commune(nom, code) values ('Sennecey-le-Grand', '71512');
-insert into commune(nom, code) values ('Tournus', '71543');
-insert into commune(nom, code) values ('Allonnes', '72003');
-insert into commune(nom, code) values ('Arnage', '72008');
-insert into commune(nom, code) values ('La Bazoge', '72024');
-insert into commune(nom, code) values ('Bonnétable', '72039');
-insert into commune(nom, code) values ('Cérans-Foulletourte', '72051');
-insert into commune(nom, code) values ('Champagné', '72054');
-insert into commune(nom, code) values ('Changé', '72058');
-insert into commune(nom, code) values ('Montval-sur-Loir', '72071');
-insert into commune(nom, code) values ('Connerré', '72090');
-insert into commune(nom, code) values ('Coulaines', '72095');
-insert into commune(nom, code) values ('Écommoy', '72124');
-insert into commune(nom, code) values ('La Ferté-Bernard', '72132');
-insert into commune(nom, code) values ('Guécélard', '72146');
-insert into commune(nom, code) values ('La Flèche', '72154');
-insert into commune(nom, code) values ('Le Lude', '72176');
-insert into commune(nom, code) values ('Mamers', '72180');
-insert into commune(nom, code) values ('Le Mans', '72181');
-insert into commune(nom, code) values ('Mayet', '72191');
-insert into commune(nom, code) values ('Moncé-en-Belin', '72200');
-insert into commune(nom, code) values ('Mulsanne', '72213');
-insert into commune(nom, code) values ('Parigné-l''Évêque', '72231');
-insert into commune(nom, code) values ('Précigné', '72244');
-insert into commune(nom, code) values ('Ruaudin', '72260');
-insert into commune(nom, code) values ('Sablé-sur-Sarthe', '72264');
-insert into commune(nom, code) values ('Saint-Calais', '72269');
-insert into commune(nom, code) values ('Sargé-lès-le-Mans', '72328');
-insert into commune(nom, code) values ('Savigné-l''Évêque', '72329');
-insert into commune(nom, code) values ('La Suze-sur-Sarthe', '72346');
-insert into commune(nom, code) values ('Teloché', '72350');
-insert into commune(nom, code) values ('Yvré-l''Évêque', '72386');
-insert into commune(nom, code) values ('Grand-Aigueblanche', '73003');
-insert into commune(nom, code) values ('Aime-la-Plagne', '73006');
-insert into commune(nom, code) values ('Aix-les-Bains', '73008');
-insert into commune(nom, code) values ('Entrelacs', '73010');
-insert into commune(nom, code) values ('Albertville', '73011');
-insert into commune(nom, code) values ('Barberaz', '73029');
-insert into commune(nom, code) values ('Barby', '73030');
-insert into commune(nom, code) values ('Bassens', '73031');
-insert into commune(nom, code) values ('Le Bourget-du-Lac', '73051');
-insert into commune(nom, code) values ('Bourg-Saint-Maurice', '73054');
-insert into commune(nom, code) values ('Challes-les-Eaux', '73064');
-insert into commune(nom, code) values ('Chambéry', '73065');
-insert into commune(nom, code) values ('Cognin', '73087');
-insert into commune(nom, code) values ('Drumettaz-Clarafond', '73103');
-insert into commune(nom, code) values ('Gilly-sur-Isère', '73124');
-insert into commune(nom, code) values ('Grésy-sur-Aix', '73128');
-insert into commune(nom, code) values ('Jacob-Bellecombette', '73137');
-insert into commune(nom, code) values ('La Plagne Tarentaise', '73150');
-insert into commune(nom, code) values ('Porte-de-Savoie', '73151');
-insert into commune(nom, code) values ('Mercury', '73154');
-insert into commune(nom, code) values ('Modane', '73157');
-insert into commune(nom, code) values ('Montmélian', '73171');
-insert into commune(nom, code) values ('La Motte-Servolex', '73179');
-insert into commune(nom, code) values ('Moûtiers', '73181');
-insert into commune(nom, code) values ('La Ravoire', '73213');
-insert into commune(nom, code) values ('Valgelon-La Rochette', '73215');
-insert into commune(nom, code) values ('Saint-Alban-Leysse', '73222');
-insert into commune(nom, code) values ('Saint-Jean-de-Maurienne', '73248');
-insert into commune(nom, code) values ('Les Belleville', '73257');
-insert into commune(nom, code) values ('Saint-Pierre-d''Albigny', '73270');
-insert into commune(nom, code) values ('Tresserve', '73300');
-insert into commune(nom, code) values ('Ugine', '73303');
-insert into commune(nom, code) values ('Yenne', '73330');
-insert into commune(nom, code) values ('Allinges', '74005');
-insert into commune(nom, code) values ('Ambilly', '74008');
-insert into commune(nom, code) values ('Annecy', '74010');
-insert into commune(nom, code) values ('Annemasse', '74012');
-insert into commune(nom, code) values ('Argonay', '74019');
-insert into commune(nom, code) values ('La Balme-de-Sillingy', '74026');
-insert into commune(nom, code) values ('Beaumont', '74031');
-insert into commune(nom, code) values ('Bonne', '74040');
-insert into commune(nom, code) values ('Bonneville', '74042');
-insert into commune(nom, code) values ('Bons-en-Chablais', '74043');
-insert into commune(nom, code) values ('Chamonix-Mont-Blanc', '74056');
-insert into commune(nom, code) values ('Cluses', '74081');
-insert into commune(nom, code) values ('Collonges-sous-Salève', '74082');
-insert into commune(nom, code) values ('Cranves-Sales', '74094');
-insert into commune(nom, code) values ('Cruseilles', '74096');
-insert into commune(nom, code) values ('Doussard', '74104');
-insert into commune(nom, code) values ('Douvaine', '74105');
-insert into commune(nom, code) values ('Epagny Metz-Tessy', '74112');
-insert into commune(nom, code) values ('Évian-les-Bains', '74119');
-insert into commune(nom, code) values ('Faverges-Seythenex', '74123');
-insert into commune(nom, code) values ('Fillinges', '74128');
-insert into commune(nom, code) values ('Gaillard', '74133');
-insert into commune(nom, code) values ('Groisy', '74137');
-insert into commune(nom, code) values ('Les Houches', '74143');
-insert into commune(nom, code) values ('Magland', '74159');
-insert into commune(nom, code) values ('Marignier', '74164');
-insert into commune(nom, code) values ('Marnaz', '74169');
-insert into commune(nom, code) values ('Megève', '74173');
-insert into commune(nom, code) values ('Neuvecelle', '74200');
-insert into commune(nom, code) values ('Passy', '74208');
-insert into commune(nom, code) values ('Pers-Jussy', '74211');
-insert into commune(nom, code) values ('Poisy', '74213');
-insert into commune(nom, code) values ('Publier', '74218');
-insert into commune(nom, code) values ('Reignier-Ésery', '74220');
-insert into commune(nom, code) values ('La Roche-sur-Foron', '74224');
-insert into commune(nom, code) values ('Rumilly', '74225');
-insert into commune(nom, code) values ('Saint-Cergues', '74229');
-insert into commune(nom, code) values ('Saint-Gervais-les-Bains', '74236');
-insert into commune(nom, code) values ('Saint-Jeoire', '74241');
-insert into commune(nom, code) values ('Saint-Jorioz', '74242');
-insert into commune(nom, code) values ('Saint-Julien-en-Genevois', '74243');
-insert into commune(nom, code) values ('Saint-Pierre-en-Faucigny', '74250');
-insert into commune(nom, code) values ('Sallanches', '74256');
-insert into commune(nom, code) values ('Sciez', '74263');
-insert into commune(nom, code) values ('Scionzier', '74264');
-insert into commune(nom, code) values ('Sevrier', '74267');
-insert into commune(nom, code) values ('Sillingy', '74272');
-insert into commune(nom, code) values ('Taninges', '74276');
-insert into commune(nom, code) values ('Thyez', '74278');
-insert into commune(nom, code) values ('Thônes', '74280');
-insert into commune(nom, code) values ('Thonon-les-Bains', '74281');
-insert into commune(nom, code) values ('Fillière', '74282');
-insert into commune(nom, code) values ('Valleiry', '74288');
-insert into commune(nom, code) values ('Veigy-Foncenex', '74293');
-insert into commune(nom, code) values ('Vétraz-Monthoux', '74298');
-insert into commune(nom, code) values ('Villaz', '74303');
-insert into commune(nom, code) values ('Ville-la-Grand', '74305');
-insert into commune(nom, code) values ('Viry', '74309');
-insert into commune(nom, code) values ('Viuz-en-Sallaz', '74311');
-insert into commune(nom, code) values ('Paris 1er Arrondissement', '75101');
-insert into commune(nom, code) values ('Paris 2e Arrondissement', '75102');
-insert into commune(nom, code) values ('Paris 3e Arrondissement', '75103');
-insert into commune(nom, code) values ('Paris 4e Arrondissement', '75104');
-insert into commune(nom, code) values ('Paris 5e Arrondissement', '75105');
-insert into commune(nom, code) values ('Paris 6e Arrondissement', '75106');
-insert into commune(nom, code) values ('Paris 7e Arrondissement', '75107');
-insert into commune(nom, code) values ('Paris 8e Arrondissement', '75108');
-insert into commune(nom, code) values ('Paris 9e Arrondissement', '75109');
-insert into commune(nom, code) values ('Paris 10e Arrondissement', '75110');
-insert into commune(nom, code) values ('Paris 11e Arrondissement', '75111');
-insert into commune(nom, code) values ('Paris 12e Arrondissement', '75112');
-insert into commune(nom, code) values ('Paris 13e Arrondissement', '75113');
-insert into commune(nom, code) values ('Paris 14e Arrondissement', '75114');
-insert into commune(nom, code) values ('Paris 15e Arrondissement', '75115');
-insert into commune(nom, code) values ('Paris 16e Arrondissement', '75116');
-insert into commune(nom, code) values ('Paris 17e Arrondissement', '75117');
-insert into commune(nom, code) values ('Paris 18e Arrondissement', '75118');
-insert into commune(nom, code) values ('Paris 19e Arrondissement', '75119');
-insert into commune(nom, code) values ('Paris 20e Arrondissement', '75120');
-insert into commune(nom, code) values ('Amfreville-la-Mi-Voie', '76005');
-insert into commune(nom, code) values ('Barentin', '76057');
-insert into commune(nom, code) values ('Bihorel', '76095');
-insert into commune(nom, code) values ('Bonsecours', '76103');
-insert into commune(nom, code) values ('Bois-Guillaume', '76108');
-insert into commune(nom, code) values ('Bolbec', '76114');
-insert into commune(nom, code) values ('Boos', '76116');
-insert into commune(nom, code) values ('Canteleu', '76157');
-insert into commune(nom, code) values ('Cany-Barville', '76159');
-insert into commune(nom, code) values ('Rives-en-Seine', '76164');
-insert into commune(nom, code) values ('Caudebec-lès-Elbeuf', '76165');
-insert into commune(nom, code) values ('Cléon', '76178');
-insert into commune(nom, code) values ('Darnétal', '76212');
-insert into commune(nom, code) values ('Déville-lès-Rouen', '76216');
-insert into commune(nom, code) values ('Dieppe', '76217');
-insert into commune(nom, code) values ('Duclair', '76222');
-insert into commune(nom, code) values ('Elbeuf', '76231');
-insert into commune(nom, code) values ('Eu', '76255');
-insert into commune(nom, code) values ('Terres-de-Caux', '76258');
-insert into commune(nom, code) values ('Fécamp', '76259');
-insert into commune(nom, code) values ('Forges-les-Eaux', '76276');
-insert into commune(nom, code) values ('Gonfreville-l''Orcher', '76305');
-insert into commune(nom, code) values ('Gournay-en-Bray', '76312');
-insert into commune(nom, code) values ('Grand-Couronne', '76319');
-insert into commune(nom, code) values ('Le Grand-Quevilly', '76322');
-insert into commune(nom, code) values ('Gruchet-le-Valasse', '76329');
-insert into commune(nom, code) values ('Harfleur', '76341');
-insert into commune(nom, code) values ('Le Havre', '76351');
-insert into commune(nom, code) values ('Le Houlme', '76366');
-insert into commune(nom, code) values ('Isneauville', '76377');
-insert into commune(nom, code) values ('Lillebonne', '76384');
-insert into commune(nom, code) values ('Malaunay', '76402');
-insert into commune(nom, code) values ('Maromme', '76410');
-insert into commune(nom, code) values ('Le Mesnil-Esnard', '76429');
-insert into commune(nom, code) values ('Montivilliers', '76447');
-insert into commune(nom, code) values ('Mont-Saint-Aignan', '76451');
-insert into commune(nom, code) values ('Montville', '76452');
-insert into commune(nom, code) values ('Neufchâtel-en-Bray', '76462');
-insert into commune(nom, code) values ('Notre-Dame-de-Bondeville', '76474');
-insert into commune(nom, code) values ('Franqueville-Saint-Pierre', '76475');
-insert into commune(nom, code) values ('Port-Jérôme-sur-Seine', '76476');
-insert into commune(nom, code) values ('Octeville-sur-Mer', '76481');
-insert into commune(nom, code) values ('Offranville', '76482');
-insert into commune(nom, code) values ('Oissel', '76484');
-insert into commune(nom, code) values ('Pavilly', '76495');
-insert into commune(nom, code) values ('Petit-Couronne', '76497');
-insert into commune(nom, code) values ('Le Petit-Quevilly', '76498');
-insert into commune(nom, code) values ('Quincampoix', '76517');
-insert into commune(nom, code) values ('Rouen', '76540');
-insert into commune(nom, code) values ('Sainte-Adresse', '76552');
-insert into commune(nom, code) values ('Saint-Aubin-lès-Elbeuf', '76561');
-insert into commune(nom, code) values ('Saint-Étienne-du-Rouvray', '76575');
-insert into commune(nom, code) values ('Saint-Jacques-sur-Darnétal', '76591');
-insert into commune(nom, code) values ('Saint-Léger-du-Bourg-Denis', '76599');
-insert into commune(nom, code) values ('Petit-Caux', '76618');
-insert into commune(nom, code) values ('Saint-Nicolas-d''Aliermont', '76624');
-insert into commune(nom, code) values ('Saint-Pierre-lès-Elbeuf', '76640');
-insert into commune(nom, code) values ('Saint-Romain-de-Colbosc', '76647');
-insert into commune(nom, code) values ('Saint-Valery-en-Caux', '76655');
-insert into commune(nom, code) values ('Sotteville-lès-Rouen', '76681');
-insert into commune(nom, code) values ('Le Trait', '76709');
-insert into commune(nom, code) values ('Le Tréport', '76711');
-insert into commune(nom, code) values ('Yvetot', '76758');
-insert into commune(nom, code) values ('Annet-sur-Marne', '77005');
-insert into commune(nom, code) values ('Avon', '77014');
-insert into commune(nom, code) values ('Bailly-Romainvilliers', '77018');
-insert into commune(nom, code) values ('Bois-le-Roi', '77037');
-insert into commune(nom, code) values ('Boissise-le-Roi', '77040');
-insert into commune(nom, code) values ('Boissy-le-Châtel', '77042');
-insert into commune(nom, code) values ('Brie-Comte-Robert', '77053');
-insert into commune(nom, code) values ('Brou-sur-Chantereine', '77055');
-insert into commune(nom, code) values ('Bussy-Saint-Georges', '77058');
-insert into commune(nom, code) values ('Cesson', '77067');
-insert into commune(nom, code) values ('Champagne-sur-Seine', '77079');
-insert into commune(nom, code) values ('Champs-sur-Marne', '77083');
-insert into commune(nom, code) values ('Chanteloup-en-Brie', '77085');
-insert into commune(nom, code) values ('Château-Landon', '77099');
-insert into commune(nom, code) values ('Le Châtelet-en-Brie', '77100');
-insert into commune(nom, code) values ('Chaumes-en-Brie', '77107');
-insert into commune(nom, code) values ('Chelles', '77108');
-insert into commune(nom, code) values ('Chessy', '77111');
-insert into commune(nom, code) values ('Chevry-Cossigny', '77114');
-insert into commune(nom, code) values ('Claye-Souilly', '77118');
-insert into commune(nom, code) values ('Collégien', '77121');
-insert into commune(nom, code) values ('Combs-la-Ville', '77122');
-insert into commune(nom, code) values ('Coulommiers', '77131');
-insert into commune(nom, code) values ('Courtry', '77139');
-insert into commune(nom, code) values ('Crécy-la-Chapelle', '77142');
-insert into commune(nom, code) values ('Crégy-lès-Meaux', '77143');
-insert into commune(nom, code) values ('Dammarie-les-Lys', '77152');
-insert into commune(nom, code) values ('Dammartin-en-Goële', '77153');
-insert into commune(nom, code) values ('Dampmart', '77155');
-insert into commune(nom, code) values ('Émerainville', '77169');
-insert into commune(nom, code) values ('Esbly', '77171');
-insert into commune(nom, code) values ('Évry-Grégy-sur-Yerre', '77175');
-insert into commune(nom, code) values ('Ferrières-en-Brie', '77181');
-insert into commune(nom, code) values ('La Ferté-Gaucher', '77182');
-insert into commune(nom, code) values ('La Ferté-sous-Jouarre', '77183');
-insert into commune(nom, code) values ('Fontainebleau', '77186');
-insert into commune(nom, code) values ('Fontenay-Trésigny', '77192');
-insert into commune(nom, code) values ('Gretz-Armainvilliers', '77215');
-insert into commune(nom, code) values ('Guignes', '77222');
-insert into commune(nom, code) values ('Jouarre', '77238');
-insert into commune(nom, code) values ('Lagny-sur-Marne', '77243');
-insert into commune(nom, code) values ('Lésigny', '77249');
-insert into commune(nom, code) values ('Lieusaint', '77251');
-insert into commune(nom, code) values ('Lizy-sur-Ourcq', '77257');
-insert into commune(nom, code) values ('Lognes', '77258');
-insert into commune(nom, code) values ('Magny-le-Hongre', '77268');
-insert into commune(nom, code) values ('Mareuil-lès-Meaux', '77276');
-insert into commune(nom, code) values ('Meaux', '77284');
-insert into commune(nom, code) values ('Le Mée-sur-Seine', '77285');
-insert into commune(nom, code) values ('Melun', '77288');
-insert into commune(nom, code) values ('Mitry-Mory', '77294');
-insert into commune(nom, code) values ('Moissy-Cramayel', '77296');
-insert into commune(nom, code) values ('Montereau-Fault-Yonne', '77305');
-insert into commune(nom, code) values ('Montévrain', '77307');
-insert into commune(nom, code) values ('Montry', '77315');
-insert into commune(nom, code) values ('Moret-Loing-et-Orvanne', '77316');
-insert into commune(nom, code) values ('Mormant', '77317');
-insert into commune(nom, code) values ('Mouroux', '77320');
-insert into commune(nom, code) values ('Moussy-le-Neuf', '77322');
-insert into commune(nom, code) values ('Nandy', '77326');
-insert into commune(nom, code) values ('Nangis', '77327');
-insert into commune(nom, code) values ('Nanteuil-lès-Meaux', '77330');
-insert into commune(nom, code) values ('Nemours', '77333');
-insert into commune(nom, code) values ('Chauconin-Neufmontiers', '77335');
-insert into commune(nom, code) values ('Noisiel', '77337');
-insert into commune(nom, code) values ('Othis', '77349');
-insert into commune(nom, code) values ('Ozoir-la-Ferrière', '77350');
-insert into commune(nom, code) values ('Pomponne', '77372');
-insert into commune(nom, code) values ('Pontault-Combault', '77373');
-insert into commune(nom, code) values ('Provins', '77379');
-insert into commune(nom, code) values ('Quincy-Voisins', '77382');
-insert into commune(nom, code) values ('La Rochette', '77389');
-insert into commune(nom, code) values ('Roissy-en-Brie', '77390');
-insert into commune(nom, code) values ('Saint-Fargeau-Ponthierry', '77407');
-insert into commune(nom, code) values ('Saint-Germain-sur-Morin', '77413');
-insert into commune(nom, code) values ('Saint-Mammès', '77419');
-insert into commune(nom, code) values ('Saint-Mard', '77420');
-insert into commune(nom, code) values ('Saint-Pathus', '77430');
-insert into commune(nom, code) values ('Saint-Pierre-lès-Nemours', '77431');
-insert into commune(nom, code) values ('Saint-Soupplets', '77437');
-insert into commune(nom, code) values ('Saint-Thibault-des-Vignes', '77438');
-insert into commune(nom, code) values ('Savigny-le-Temple', '77445');
-insert into commune(nom, code) values ('Serris', '77449');
-insert into commune(nom, code) values ('Servon', '77450');
-insert into commune(nom, code) values ('Souppes-sur-Loing', '77458');
-insert into commune(nom, code) values ('Thomery', '77463');
-insert into commune(nom, code) values ('Thorigny-sur-Marne', '77464');
-insert into commune(nom, code) values ('Torcy', '77468');
-insert into commune(nom, code) values ('Tournan-en-Brie', '77470');
-insert into commune(nom, code) values ('Trilport', '77475');
-insert into commune(nom, code) values ('Vaires-sur-Marne', '77479');
-insert into commune(nom, code) values ('Varennes-sur-Seine', '77482');
-insert into commune(nom, code) values ('Vaux-le-Pénil', '77487');
-insert into commune(nom, code) values ('Verneuil-l''Étang', '77493');
-insert into commune(nom, code) values ('Vert-Saint-Denis', '77495');
-insert into commune(nom, code) values ('Villenoy', '77513');
-insert into commune(nom, code) values ('Villeparisis', '77514');
-insert into commune(nom, code) values ('Ablis', '78003');
-insert into commune(nom, code) values ('Achères', '78005');
-insert into commune(nom, code) values ('Andrésy', '78015');
-insert into commune(nom, code) values ('Aubergenville', '78029');
-insert into commune(nom, code) values ('Bailly', '78043');
-insert into commune(nom, code) values ('Beynes', '78062');
-insert into commune(nom, code) values ('Bois-d''Arcy', '78073');
-insert into commune(nom, code) values ('Bonnières-sur-Seine', '78089');
-insert into commune(nom, code) values ('Bougival', '78092');
-insert into commune(nom, code) values ('Buc', '78117');
-insert into commune(nom, code) values ('Buchelay', '78118');
-insert into commune(nom, code) values ('Carrières-sous-Poissy', '78123');
-insert into commune(nom, code) values ('Carrières-sur-Seine', '78124');
-insert into commune(nom, code) values ('La Celle-Saint-Cloud', '78126');
-insert into commune(nom, code) values ('Chambourcy', '78133');
-insert into commune(nom, code) values ('Chanteloup-les-Vignes', '78138');
-insert into commune(nom, code) values ('Chatou', '78146');
-insert into commune(nom, code) values ('Le Chesnay-Rocquencourt', '78158');
-insert into commune(nom, code) values ('Chevreuse', '78160');
-insert into commune(nom, code) values ('Les Clayes-sous-Bois', '78165');
-insert into commune(nom, code) values ('Coignières', '78168');
-insert into commune(nom, code) values ('Conflans-Sainte-Honorine', '78172');
-insert into commune(nom, code) values ('Croissy-sur-Seine', '78190');
-insert into commune(nom, code) values ('Ecquevilly', '78206');
-insert into commune(nom, code) values ('Élancourt', '78208');
-insert into commune(nom, code) values ('Épône', '78217');
-insert into commune(nom, code) values ('Les Essarts-le-Roi', '78220');
-insert into commune(nom, code) values ('L''Étang-la-Ville', '78224');
-insert into commune(nom, code) values ('Feucherolles', '78233');
-insert into commune(nom, code) values ('Fontenay-le-Fleury', '78242');
-insert into commune(nom, code) values ('Freneuse', '78255');
-insert into commune(nom, code) values ('Gargenville', '78267');
-insert into commune(nom, code) values ('Guyancourt', '78297');
-insert into commune(nom, code) values ('Houdan', '78310');
-insert into commune(nom, code) values ('Houilles', '78311');
-insert into commune(nom, code) values ('Issou', '78314');
-insert into commune(nom, code) values ('Jouars-Pontchartrain', '78321');
-insert into commune(nom, code) values ('Jouy-en-Josas', '78322');
-insert into commune(nom, code) values ('Juziers', '78327');
-insert into commune(nom, code) values ('Limay', '78335');
-insert into commune(nom, code) values ('Louveciennes', '78350');
-insert into commune(nom, code) values ('Magnanville', '78354');
-insert into commune(nom, code) values ('Magny-les-Hameaux', '78356');
-insert into commune(nom, code) values ('Maisons-Laffitte', '78358');
-insert into commune(nom, code) values ('Mantes-la-Jolie', '78361');
-insert into commune(nom, code) values ('Mantes-la-Ville', '78362');
-insert into commune(nom, code) values ('Mareil-Marly', '78367');
-insert into commune(nom, code) values ('Marly-le-Roi', '78372');
-insert into commune(nom, code) values ('Maule', '78380');
-insert into commune(nom, code) values ('Maurecourt', '78382');
-insert into commune(nom, code) values ('Maurepas', '78383');
-insert into commune(nom, code) values ('Le Mesnil-le-Roi', '78396');
-insert into commune(nom, code) values ('Le Mesnil-Saint-Denis', '78397');
-insert into commune(nom, code) values ('Meulan-en-Yvelines', '78401');
-insert into commune(nom, code) values ('Mézières-sur-Seine', '78402');
-insert into commune(nom, code) values ('Montesson', '78418');
-insert into commune(nom, code) values ('Montfort-l''Amaury', '78420');
-insert into commune(nom, code) values ('Montigny-le-Bretonneux', '78423');
-insert into commune(nom, code) values ('Morainvilliers', '78431');
-insert into commune(nom, code) values ('Les Mureaux', '78440');
-insert into commune(nom, code) values ('Neauphle-le-Château', '78442');
-insert into commune(nom, code) values ('Noisy-le-Roi', '78455');
-insert into commune(nom, code) values ('Orgeval', '78466');
-insert into commune(nom, code) values ('Le Pecq', '78481');
-insert into commune(nom, code) values ('Le Perray-en-Yvelines', '78486');
-insert into commune(nom, code) values ('Plaisir', '78490');
-insert into commune(nom, code) values ('Poissy', '78498');
-insert into commune(nom, code) values ('Porcheville', '78501');
-insert into commune(nom, code) values ('Le Port-Marly', '78502');
-insert into commune(nom, code) values ('Rambouillet', '78517');
-insert into commune(nom, code) values ('Rosny-sur-Seine', '78531');
-insert into commune(nom, code) values ('Saint-Arnoult-en-Yvelines', '78537');
-insert into commune(nom, code) values ('Saint-Cyr-l''École', '78545');
-insert into commune(nom, code) values ('Saint-Germain-en-Laye', '78551');
-insert into commune(nom, code) values ('Saint-Nom-la-Bretèche', '78571');
-insert into commune(nom, code) values ('Saint-Rémy-lès-Chevreuse', '78575');
-insert into commune(nom, code) values ('Sartrouville', '78586');
-insert into commune(nom, code) values ('Trappes', '78621');
-insert into commune(nom, code) values ('Triel-sur-Seine', '78624');
-insert into commune(nom, code) values ('Vaux-sur-Seine', '78638');
-insert into commune(nom, code) values ('Vélizy-Villacoublay', '78640');
-insert into commune(nom, code) values ('Verneuil-sur-Seine', '78642');
-insert into commune(nom, code) values ('Vernouillet', '78643');
-insert into commune(nom, code) values ('La Verrière', '78644');
-insert into commune(nom, code) values ('Versailles', '78646');
-insert into commune(nom, code) values ('Le Vésinet', '78650');
-insert into commune(nom, code) values ('Villennes-sur-Seine', '78672');
-insert into commune(nom, code) values ('Villepreux', '78674');
-insert into commune(nom, code) values ('Villiers-Saint-Frédéric', '78683');
-insert into commune(nom, code) values ('Viroflay', '78686');
-insert into commune(nom, code) values ('Voisins-le-Bretonneux', '78688');
-insert into commune(nom, code) values ('Aiffres', '79003');
-insert into commune(nom, code) values ('Airvault', '79005');
-insert into commune(nom, code) values ('Argentonnay', '79013');
-insert into commune(nom, code) values ('La Crèche', '79048');
-insert into commune(nom, code) values ('Bressuire', '79049');
-insert into commune(nom, code) values ('Celles-sur-Belle', '79061');
-insert into commune(nom, code) values ('Cerizay', '79062');
-insert into commune(nom, code) values ('Mauléon', '79079');
-insert into commune(nom, code) values ('Chauray', '79081');
-insert into commune(nom, code) values ('Échiré', '79109');
-insert into commune(nom, code) values ('Melle', '79174');
-insert into commune(nom, code) values ('Moncoutant-sur-Sèvre', '79179');
-insert into commune(nom, code) values ('Aigondigné', '79185');
-insert into commune(nom, code) values ('Niort', '79191');
-insert into commune(nom, code) values ('Nueil-les-Aubiers', '79195');
-insert into commune(nom, code) values ('Parthenay', '79202');
-insert into commune(nom, code) values ('Saint-Maixent-l''École', '79270');
-insert into commune(nom, code) values ('Thouars', '79329');
-insert into commune(nom, code) values ('Vouillé', '79355');
-insert into commune(nom, code) values ('Abbeville', '80001');
-insert into commune(nom, code) values ('Albert', '80016');
-insert into commune(nom, code) values ('Amiens', '80021');
-insert into commune(nom, code) values ('Boves', '80131');
-insert into commune(nom, code) values ('Camon', '80164');
-insert into commune(nom, code) values ('Corbie', '80212');
-insert into commune(nom, code) values ('Doullens', '80253');
-insert into commune(nom, code) values ('Flixecourt', '80318');
-insert into commune(nom, code) values ('Friville-Escarbotin', '80368');
-insert into commune(nom, code) values ('Ham', '80410');
-insert into commune(nom, code) values ('Longueau', '80489');
-insert into commune(nom, code) values ('Montdidier', '80561');
-insert into commune(nom, code) values ('Moreuil', '80570');
-insert into commune(nom, code) values ('Péronne', '80620');
-insert into commune(nom, code) values ('Rivery', '80674');
-insert into commune(nom, code) values ('Rosières-en-Santerre', '80680');
-insert into commune(nom, code) values ('Roye', '80685');
-insert into commune(nom, code) values ('Rue', '80688');
-insert into commune(nom, code) values ('Salouël', '80725');
-insert into commune(nom, code) values ('Villers-Bretonneux', '80799');
-insert into commune(nom, code) values ('Albi', '81004');
-insert into commune(nom, code) values ('Aussillon', '81021');
-insert into commune(nom, code) values ('Blaye-les-Mines', '81033');
-insert into commune(nom, code) values ('Carmaux', '81060');
-insert into commune(nom, code) values ('Castres', '81065');
-insert into commune(nom, code) values ('Gaillac', '81099');
-insert into commune(nom, code) values ('Graulhet', '81105');
-insert into commune(nom, code) values ('Labruguière', '81120');
-insert into commune(nom, code) values ('Lavaur', '81140');
-insert into commune(nom, code) values ('Lescure-d''Albigeois', '81144');
-insert into commune(nom, code) values ('Lisle-sur-Tarn', '81145');
-insert into commune(nom, code) values ('Marssac-sur-Tarn', '81156');
-insert into commune(nom, code) values ('Mazamet', '81163');
-insert into commune(nom, code) values ('Puygouzon', '81218');
-insert into commune(nom, code) values ('Puylaurens', '81219');
-insert into commune(nom, code) values ('Rabastens', '81220');
-insert into commune(nom, code) values ('Réalmont', '81222');
-insert into commune(nom, code) values ('Saint-Juéry', '81257');
-insert into commune(nom, code) values ('Saint-Sulpice-la-Pointe', '81271');
-insert into commune(nom, code) values ('Saïx', '81273');
-insert into commune(nom, code) values ('Albias', '82002');
-insert into commune(nom, code) values ('Beaumont-de-Lomagne', '82013');
-insert into commune(nom, code) values ('Bressols', '82025');
-insert into commune(nom, code) values ('Castelsarrasin', '82033');
-insert into commune(nom, code) values ('Caussade', '82037');
-insert into commune(nom, code) values ('Grisolles', '82075');
-insert into commune(nom, code) values ('Labastide-Saint-Pierre', '82079');
-insert into commune(nom, code) values ('La Ville-Dieu-du-Temple', '82096');
-insert into commune(nom, code) values ('Moissac', '82112');
-insert into commune(nom, code) values ('Montauban', '82121');
-insert into commune(nom, code) values ('Montbeton', '82124');
-insert into commune(nom, code) values ('Montech', '82125');
-insert into commune(nom, code) values ('Nègrepelisse', '82134');
-insert into commune(nom, code) values ('Saint-Étienne-de-Tulmont', '82161');
-insert into commune(nom, code) values ('Valence', '82186');
-insert into commune(nom, code) values ('Verdun-sur-Garonne', '82190');
-insert into commune(nom, code) values ('Les Arcs', '83004');
-insert into commune(nom, code) values ('Bandol', '83009');
-insert into commune(nom, code) values ('Barjols', '83012');
-insert into commune(nom, code) values ('Le Beausset', '83016');
-insert into commune(nom, code) values ('Besse-sur-Issole', '83018');
-insert into commune(nom, code) values ('Bormes-les-Mimosas', '83019');
-insert into commune(nom, code) values ('Brignoles', '83023');
-insert into commune(nom, code) values ('La Cadière-d''Azur', '83027');
-insert into commune(nom, code) values ('Callian', '83029');
-insert into commune(nom, code) values ('Le Cannet-des-Maures', '83031');
-insert into commune(nom, code) values ('Carcès', '83032');
-insert into commune(nom, code) values ('Carnoules', '83033');
-insert into commune(nom, code) values ('Carqueiranne', '83034');
-insert into commune(nom, code) values ('Le Castellet', '83035');
-insert into commune(nom, code) values ('Cavalaire-sur-Mer', '83036');
-insert into commune(nom, code) values ('Cogolin', '83042');
-insert into commune(nom, code) values ('La Crau', '83047');
-insert into commune(nom, code) values ('La Croix-Valmer', '83048');
-insert into commune(nom, code) values ('Cuers', '83049');
-insert into commune(nom, code) values ('Draguignan', '83050');
-insert into commune(nom, code) values ('La Farlède', '83054');
-insert into commune(nom, code) values ('Fayence', '83055');
-insert into commune(nom, code) values ('Flassans-sur-Issole', '83057');
-insert into commune(nom, code) values ('Flayosc', '83058');
-insert into commune(nom, code) values ('Forcalqueiret', '83059');
-insert into commune(nom, code) values ('Fréjus', '83061');
-insert into commune(nom, code) values ('La Garde', '83062');
-insert into commune(nom, code) values ('Garéoult', '83064');
-insert into commune(nom, code) values ('Gonfaron', '83067');
-insert into commune(nom, code) values ('Grimaud', '83068');
-insert into commune(nom, code) values ('Hyères', '83069');
-insert into commune(nom, code) values ('Le Lavandou', '83070');
-insert into commune(nom, code) values ('La Londe-les-Maures', '83071');
-insert into commune(nom, code) values ('Lorgues', '83072');
-insert into commune(nom, code) values ('Le Luc', '83073');
-insert into commune(nom, code) values ('Montauroux', '83081');
-insert into commune(nom, code) values ('Le Muy', '83086');
-insert into commune(nom, code) values ('Nans-les-Pins', '83087');
-insert into commune(nom, code) values ('Ollioules', '83090');
-insert into commune(nom, code) values ('Pierrefeu-du-Var', '83091');
-insert into commune(nom, code) values ('Pignans', '83092');
-insert into commune(nom, code) values ('Le Plan-de-la-Tour', '83094');
-insert into commune(nom, code) values ('Pourrières', '83097');
-insert into commune(nom, code) values ('Le Pradet', '83098');
-insert into commune(nom, code) values ('Puget-sur-Argens', '83099');
-insert into commune(nom, code) values ('Puget-Ville', '83100');
-insert into commune(nom, code) values ('Le Revest-les-Eaux', '83103');
-insert into commune(nom, code) values ('Rians', '83104');
-insert into commune(nom, code) values ('Rocbaron', '83106');
-insert into commune(nom, code) values ('Roquebrune-sur-Argens', '83107');
-insert into commune(nom, code) values ('Saint-Cyr-sur-Mer', '83112');
-insert into commune(nom, code) values ('Sainte-Maxime', '83115');
-insert into commune(nom, code) values ('Saint-Maximin-la-Sainte-Baume', '83116');
-insert into commune(nom, code) values ('Saint-Raphaël', '83118');
-insert into commune(nom, code) values ('Saint-Tropez', '83119');
-insert into commune(nom, code) values ('Saint-Zacharie', '83120');
-insert into commune(nom, code) values ('Salernes', '83121');
-insert into commune(nom, code) values ('Sanary-sur-Mer', '83123');
-insert into commune(nom, code) values ('La Seyne-sur-Mer', '83126');
-insert into commune(nom, code) values ('Six-Fours-les-Plages', '83129');
-insert into commune(nom, code) values ('Solliès-Pont', '83130');
-insert into commune(nom, code) values ('Solliès-Toucas', '83131');
-insert into commune(nom, code) values ('Toulon', '83137');
-insert into commune(nom, code) values ('Tourves', '83140');
-insert into commune(nom, code) values ('Trans-en-Provence', '83141');
-insert into commune(nom, code) values ('Le Val', '83143');
-insert into commune(nom, code) values ('La Valette-du-Var', '83144');
-insert into commune(nom, code) values ('Vidauban', '83148');
-insert into commune(nom, code) values ('Vinon-sur-Verdon', '83150');
-insert into commune(nom, code) values ('Saint-Mandrier-sur-Mer', '83153');
-insert into commune(nom, code) values ('Apt', '84003');
-insert into commune(nom, code) values ('Aubignan', '84004');
-insert into commune(nom, code) values ('Avignon', '84007');
-insert into commune(nom, code) values ('Bédarrides', '84016');
-insert into commune(nom, code) values ('Bédoin', '84017');
-insert into commune(nom, code) values ('Bollène', '84019');
-insert into commune(nom, code) values ('Cadenet', '84026');
-insert into commune(nom, code) values ('Camaret-sur-Aigues', '84029');
-insert into commune(nom, code) values ('Caromb', '84030');
-insert into commune(nom, code) values ('Carpentras', '84031');
-insert into commune(nom, code) values ('Caumont-sur-Durance', '84034');
-insert into commune(nom, code) values ('Cavaillon', '84035');
-insert into commune(nom, code) values ('Châteauneuf-de-Gadagne', '84036');
-insert into commune(nom, code) values ('Cheval-Blanc', '84038');
-insert into commune(nom, code) values ('Courthézon', '84039');
-insert into commune(nom, code) values ('Entraigues-sur-la-Sorgue', '84043');
-insert into commune(nom, code) values ('Gargas', '84047');
-insert into commune(nom, code) values ('L''Isle-sur-la-Sorgue', '84054');
-insert into commune(nom, code) values ('Jonquières', '84056');
-insert into commune(nom, code) values ('Lapalud', '84064');
-insert into commune(nom, code) values ('Lauris', '84065');
-insert into commune(nom, code) values ('Mazan', '84072');
-insert into commune(nom, code) values ('Mondragon', '84078');
-insert into commune(nom, code) values ('Monteux', '84080');
-insert into commune(nom, code) values ('Morières-lès-Avignon', '84081');
-insert into commune(nom, code) values ('Orange', '84087');
-insert into commune(nom, code) values ('Pernes-les-Fontaines', '84088');
-insert into commune(nom, code) values ('Pertuis', '84089');
-insert into commune(nom, code) values ('Piolenc', '84091');
-insert into commune(nom, code) values ('Le Pontet', '84092');
-insert into commune(nom, code) values ('Robion', '84099');
-insert into commune(nom, code) values ('Saint-Saturnin-lès-Avignon', '84119');
-insert into commune(nom, code) values ('Sarrians', '84122');
-insert into commune(nom, code) values ('Sorgues', '84129');
-insert into commune(nom, code) values ('Le Thor', '84132');
-insert into commune(nom, code) values ('La Tour-d''Aigues', '84133');
-insert into commune(nom, code) values ('Vaison-la-Romaine', '84137');
-insert into commune(nom, code) values ('Valréas', '84138');
-insert into commune(nom, code) values ('Vedène', '84141');
-insert into commune(nom, code) values ('Velleron', '84142');
-insert into commune(nom, code) values ('Villelaure', '84147');
-insert into commune(nom, code) values ('Aizenay', '85003');
-insert into commune(nom, code) values ('Aubigny-Les Clouzeaux', '85008');
-insert into commune(nom, code) values ('Beauvoir-sur-Mer', '85018');
-insert into commune(nom, code) values ('Bellevigny', '85019');
-insert into commune(nom, code) values ('Benet', '85020');
-insert into commune(nom, code) values ('Le Boupère', '85031');
-insert into commune(nom, code) values ('Bournezeau', '85034');
-insert into commune(nom, code) values ('Bretignolles-sur-Mer', '85035');
-insert into commune(nom, code) values ('La Bruffière', '85039');
-insert into commune(nom, code) values ('La Chaize-le-Vicomte', '85046');
-insert into commune(nom, code) values ('Challans', '85047');
-insert into commune(nom, code) values ('Chantonnay', '85051');
-insert into commune(nom, code) values ('Chavagnes-en-Paillers', '85065');
-insert into commune(nom, code) values ('Coëx', '85070');
-insert into commune(nom, code) values ('Commequiers', '85071');
-insert into commune(nom, code) values ('Cugand', '85076');
-insert into commune(nom, code) values ('Dompierre-sur-Yon', '85081');
-insert into commune(nom, code) values ('Essarts en Bocage', '85084');
-insert into commune(nom, code) values ('Le Fenouiller', '85088');
-insert into commune(nom, code) values ('La Ferrière', '85089');
-insert into commune(nom, code) values ('Sèvremont', '85090');
-insert into commune(nom, code) values ('Fontenay-le-Comte', '85092');
-insert into commune(nom, code) values ('La Garnache', '85096');
-insert into commune(nom, code) values ('La Gaubretière', '85097');
-insert into commune(nom, code) values ('L''Herbergement', '85108');
-insert into commune(nom, code) values ('Les Herbiers', '85109');
-insert into commune(nom, code) values ('L''Île-d''Yeu', '85113');
-insert into commune(nom, code) values ('Luçon', '85128');
-insert into commune(nom, code) values ('Les Lucs-sur-Boulogne', '85129');
-insert into commune(nom, code) values ('Montaigu-Vendée', '85146');
-insert into commune(nom, code) values ('Mortagne-sur-Sèvre', '85151');
-insert into commune(nom, code) values ('Les Achards', '85152');
-insert into commune(nom, code) values ('Mouilleron-le-Captif', '85155');
-insert into commune(nom, code) values ('Noirmoutier-en-l''Île', '85163');
-insert into commune(nom, code) values ('Le Poiré-sur-Vie', '85178');
-insert into commune(nom, code) values ('Pouzauges', '85182');
-insert into commune(nom, code) values ('Rocheservière', '85190');
-insert into commune(nom, code) values ('La Roche-sur-Yon', '85191');
-insert into commune(nom, code) values ('Les Sables-d''Olonne', '85194');
-insert into commune(nom, code) values ('Montréverd', '85197');
-insert into commune(nom, code) values ('Rives de l''Yon', '85213');
-insert into commune(nom, code) values ('Saint-Fulgent', '85215');
-insert into commune(nom, code) values ('Saint-Gilles-Croix-de-Vie', '85222');
-insert into commune(nom, code) values ('Sainte-Hermine', '85223');
-insert into commune(nom, code) values ('Saint-Hilaire-de-Riez', '85226');
-insert into commune(nom, code) values ('Saint-Jean-de-Monts', '85234');
-insert into commune(nom, code) values ('Saint-Laurent-sur-Sèvre', '85238');
-insert into commune(nom, code) values ('Saint-Philbert-de-Bouaine', '85262');
-insert into commune(nom, code) values ('Sallertaine', '85280');
-insert into commune(nom, code) values ('Soullans', '85284');
-insert into commune(nom, code) values ('Talmont-Saint-Hilaire', '85288');
-insert into commune(nom, code) values ('Treize-Septiers', '85295');
-insert into commune(nom, code) values ('Venansault', '85300');
-insert into commune(nom, code) values ('Chanverrie', '85302');
-insert into commune(nom, code) values ('Beaumont Saint-Cyr', '86019');
-insert into commune(nom, code) values ('Buxerolles', '86041');
-insert into commune(nom, code) values ('Chasseneuil-du-Poitou', '86062');
-insert into commune(nom, code) values ('Châtellerault', '86066');
-insert into commune(nom, code) values ('Chauvigny', '86070');
-insert into commune(nom, code) values ('Valence-en-Poitou', '86082');
-insert into commune(nom, code) values ('Dangé-Saint-Romain', '86092');
-insert into commune(nom, code) values ('Dissay', '86095');
-insert into commune(nom, code) values ('Fontaine-le-Comte', '86100');
-insert into commune(nom, code) values ('Iteuil', '86113');
-insert into commune(nom, code) values ('Jaunay-Marigny', '86115');
-insert into commune(nom, code) values ('Boivre-la-Vallée', '86123');
-insert into commune(nom, code) values ('Ligugé', '86133');
-insert into commune(nom, code) values ('Loudun', '86137');
-insert into commune(nom, code) values ('Mignaloux-Beauvoir', '86157');
-insert into commune(nom, code) values ('Migné-Auxances', '86158');
-insert into commune(nom, code) values ('Montamisé', '86163');
-insert into commune(nom, code) values ('Montmorillon', '86165');
-insert into commune(nom, code) values ('Naintré', '86174');
-insert into commune(nom, code) values ('Neuville-de-Poitou', '86177');
-insert into commune(nom, code) values ('Poitiers', '86194');
-insert into commune(nom, code) values ('Saint-Benoît', '86214');
-insert into commune(nom, code) values ('Saint-Georges-lès-Baillargeaux', '86222');
-insert into commune(nom, code) values ('Thuré', '86272');
-insert into commune(nom, code) values ('Saint-Martin-la-Pallu', '86281');
-insert into commune(nom, code) values ('Vivonne', '86293');
-insert into commune(nom, code) values ('Vouillé', '86294');
-insert into commune(nom, code) values ('Vouneuil-sous-Biard', '86297');
-insert into commune(nom, code) values ('Aixe-sur-Vienne', '87001');
-insert into commune(nom, code) values ('Ambazac', '87002');
-insert into commune(nom, code) values ('Bellac', '87011');
-insert into commune(nom, code) values ('Condat-sur-Vienne', '87048');
-insert into commune(nom, code) values ('Couzeix', '87050');
-insert into commune(nom, code) values ('Feytiat', '87065');
-insert into commune(nom, code) values ('Isle', '87075');
-insert into commune(nom, code) values ('Limoges', '87085');
-insert into commune(nom, code) values ('Le Palais-sur-Vienne', '87113');
-insert into commune(nom, code) values ('Panazol', '87114');
-insert into commune(nom, code) values ('Rilhac-Rancon', '87125');
-insert into commune(nom, code) values ('Rochechouart', '87126');
-insert into commune(nom, code) values ('Saint-Junien', '87154');
-insert into commune(nom, code) values ('Saint-Léonard-de-Noblat', '87161');
-insert into commune(nom, code) values ('Saint-Yrieix-la-Perche', '87187');
-insert into commune(nom, code) values ('Verneuil-sur-Vienne', '87201');
-insert into commune(nom, code) values ('Anould', '88009');
-insert into commune(nom, code) values ('La Bresse', '88075');
-insert into commune(nom, code) values ('Bruyères', '88078');
-insert into commune(nom, code) values ('Chantraine', '88087');
-insert into commune(nom, code) values ('Charmes', '88090');
-insert into commune(nom, code) values ('Contrexéville', '88114');
-insert into commune(nom, code) values ('Cornimont', '88116');
-insert into commune(nom, code) values ('Éloyes', '88158');
-insert into commune(nom, code) values ('Épinal', '88160');
-insert into commune(nom, code) values ('Gérardmer', '88196');
-insert into commune(nom, code) values ('Golbey', '88209');
-insert into commune(nom, code) values ('Mirecourt', '88304');
-insert into commune(nom, code) values ('Moyenmoutier', '88319');
-insert into commune(nom, code) values ('Neufchâteau', '88321');
-insert into commune(nom, code) values ('Rambervillers', '88367');
-insert into commune(nom, code) values ('Raon-l''Étape', '88372');
-insert into commune(nom, code) values ('Remiremont', '88383');
-insert into commune(nom, code) values ('Rupt-sur-Moselle', '88408');
-insert into commune(nom, code) values ('Saint-Dié-des-Vosges', '88413');
-insert into commune(nom, code) values ('Saint-Étienne-lès-Remiremont', '88415');
-insert into commune(nom, code) values ('Saint-Nabord', '88429');
-insert into commune(nom, code) values ('Capavenir Vosges', '88465');
-insert into commune(nom, code) values ('Le Thillot', '88468');
-insert into commune(nom, code) values ('Vagney', '88486');
-insert into commune(nom, code) values ('Le Val-d''Ajol', '88487');
-insert into commune(nom, code) values ('Vittel', '88516');
-insert into commune(nom, code) values ('Appoigny', '89013');
-insert into commune(nom, code) values ('Auxerre', '89024');
-insert into commune(nom, code) values ('Avallon', '89025');
-insert into commune(nom, code) values ('Brienon-sur-Armançon', '89055');
-insert into commune(nom, code) values ('Charny Orée de Puisaye', '89086');
-insert into commune(nom, code) values ('Joigny', '89206');
-insert into commune(nom, code) values ('Migennes', '89257');
-insert into commune(nom, code) values ('Monéteau', '89263');
-insert into commune(nom, code) values ('Paron', '89287');
-insert into commune(nom, code) values ('Pont-sur-Yonne', '89309');
-insert into commune(nom, code) values ('Saint-Florentin', '89345');
-insert into commune(nom, code) values ('Saint-Georges-sur-Baulche', '89346');
-insert into commune(nom, code) values ('Sens', '89387');
-insert into commune(nom, code) values ('Tonnerre', '89418');
-insert into commune(nom, code) values ('Villeneuve-la-Guyard', '89460');
-insert into commune(nom, code) values ('Villeneuve-sur-Yonne', '89464');
-insert into commune(nom, code) values ('Bavilliers', '90008');
-insert into commune(nom, code) values ('Beaucourt', '90009');
-insert into commune(nom, code) values ('Belfort', '90010');
-insert into commune(nom, code) values ('Danjoutin', '90032');
-insert into commune(nom, code) values ('Delle', '90033');
-insert into commune(nom, code) values ('Essert', '90039');
-insert into commune(nom, code) values ('Giromagny', '90052');
-insert into commune(nom, code) values ('Grandvillars', '90053');
-insert into commune(nom, code) values ('Offemont', '90075');
-insert into commune(nom, code) values ('Valdoie', '90099');
-insert into commune(nom, code) values ('Angerville', '91016');
-insert into commune(nom, code) values ('Arpajon', '91021');
-insert into commune(nom, code) values ('Athis-Mons', '91027');
-insert into commune(nom, code) values ('Ballainvilliers', '91044');
-insert into commune(nom, code) values ('Ballancourt-sur-Essonne', '91045');
-insert into commune(nom, code) values ('Bièvres', '91064');
-insert into commune(nom, code) values ('Boissy-sous-Saint-Yon', '91085');
-insert into commune(nom, code) values ('Bondoufle', '91086');
-insert into commune(nom, code) values ('Boussy-Saint-Antoine', '91097');
-insert into commune(nom, code) values ('Boutigny-sur-Essonne', '91099');
-insert into commune(nom, code) values ('Brétigny-sur-Orge', '91103');
-insert into commune(nom, code) values ('Breuillet', '91105');
-insert into commune(nom, code) values ('Briis-sous-Forges', '91111');
-insert into commune(nom, code) values ('Brunoy', '91114');
-insert into commune(nom, code) values ('Bruyères-le-Châtel', '91115');
-insert into commune(nom, code) values ('Bures-sur-Yvette', '91122');
-insert into commune(nom, code) values ('Cerny', '91129');
-insert into commune(nom, code) values ('Chilly-Mazarin', '91161');
-insert into commune(nom, code) values ('Corbeil-Essonnes', '91174');
-insert into commune(nom, code) values ('Le Coudray-Montceaux', '91179');
-insert into commune(nom, code) values ('Crosne', '91191');
-insert into commune(nom, code) values ('Dourdan', '91200');
-insert into commune(nom, code) values ('Draveil', '91201');
-insert into commune(nom, code) values ('Égly', '91207');
-insert into commune(nom, code) values ('Épinay-sous-Sénart', '91215');
-insert into commune(nom, code) values ('Épinay-sur-Orge', '91216');
-insert into commune(nom, code) values ('Étampes', '91223');
-insert into commune(nom, code) values ('Étiolles', '91225');
-insert into commune(nom, code) values ('Étréchy', '91226');
-insert into commune(nom, code) values ('Évry-Courcouronnes', '91228');
-insert into commune(nom, code) values ('La Ferté-Alais', '91232');
-insert into commune(nom, code) values ('Fleury-Mérogis', '91235');
-insert into commune(nom, code) values ('Forges-les-Bains', '91249');
-insert into commune(nom, code) values ('Gif-sur-Yvette', '91272');
-insert into commune(nom, code) values ('Grigny', '91286');
-insert into commune(nom, code) values ('Igny', '91312');
-insert into commune(nom, code) values ('Itteville', '91315');
-insert into commune(nom, code) values ('Juvisy-sur-Orge', '91326');
-insert into commune(nom, code) values ('Lardy', '91330');
-insert into commune(nom, code) values ('Leuville-sur-Orge', '91333');
-insert into commune(nom, code) values ('Limours', '91338');
-insert into commune(nom, code) values ('Linas', '91339');
-insert into commune(nom, code) values ('Lisses', '91340');
-insert into commune(nom, code) values ('Longjumeau', '91345');
-insert into commune(nom, code) values ('Longpont-sur-Orge', '91347');
-insert into commune(nom, code) values ('Marcoussis', '91363');
-insert into commune(nom, code) values ('Marolles-en-Hurepoix', '91376');
-insert into commune(nom, code) values ('Massy', '91377');
-insert into commune(nom, code) values ('Mennecy', '91386');
-insert into commune(nom, code) values ('Le Mérévillois', '91390');
-insert into commune(nom, code) values ('Milly-la-Forêt', '91405');
-insert into commune(nom, code) values ('Montgeron', '91421');
-insert into commune(nom, code) values ('Montlhéry', '91425');
-insert into commune(nom, code) values ('Morangis', '91432');
-insert into commune(nom, code) values ('Morigny-Champigny', '91433');
-insert into commune(nom, code) values ('Morsang-sur-Orge', '91434');
-insert into commune(nom, code) values ('La Norville', '91457');
-insert into commune(nom, code) values ('Nozay', '91458');
-insert into commune(nom, code) values ('Ollainville', '91461');
-insert into commune(nom, code) values ('Orsay', '91471');
-insert into commune(nom, code) values ('Palaiseau', '91477');
-insert into commune(nom, code) values ('Paray-Vieille-Poste', '91479');
-insert into commune(nom, code) values ('Le Plessis-Pâté', '91494');
-insert into commune(nom, code) values ('Quincy-sous-Sénart', '91514');
-insert into commune(nom, code) values ('Ris-Orangis', '91521');
-insert into commune(nom, code) values ('Saclay', '91534');
-insert into commune(nom, code) values ('Saint-Chéron', '91540');
-insert into commune(nom, code) values ('Sainte-Geneviève-des-Bois', '91549');
-insert into commune(nom, code) values ('Saint-Germain-lès-Arpajon', '91552');
-insert into commune(nom, code) values ('Saint-Germain-lès-Corbeil', '91553');
-insert into commune(nom, code) values ('Saint-Michel-sur-Orge', '91570');
-insert into commune(nom, code) values ('Saint-Pierre-du-Perray', '91573');
-insert into commune(nom, code) values ('Saintry-sur-Seine', '91577');
-insert into commune(nom, code) values ('Saint-Vrain', '91579');
-insert into commune(nom, code) values ('Saulx-les-Chartreux', '91587');
-insert into commune(nom, code) values ('Savigny-sur-Orge', '91589');
-insert into commune(nom, code) values ('Soisy-sur-Seine', '91600');
-insert into commune(nom, code) values ('Tigery', '91617');
-insert into commune(nom, code) values ('Verrières-le-Buisson', '91645');
-insert into commune(nom, code) values ('Vigneux-sur-Seine', '91657');
-insert into commune(nom, code) values ('Villabé', '91659');
-insert into commune(nom, code) values ('Villebon-sur-Yvette', '91661');
-insert into commune(nom, code) values ('La Ville-du-Bois', '91665');
-insert into commune(nom, code) values ('Villemoisson-sur-Orge', '91667');
-insert into commune(nom, code) values ('Villiers-sur-Orge', '91685');
-insert into commune(nom, code) values ('Viry-Châtillon', '91687');
-insert into commune(nom, code) values ('Wissous', '91689');
-insert into commune(nom, code) values ('Yerres', '91691');
-insert into commune(nom, code) values ('Les Ulis', '91692');
-insert into commune(nom, code) values ('Antony', '92002');
-insert into commune(nom, code) values ('Asnières-sur-Seine', '92004');
-insert into commune(nom, code) values ('Bagneux', '92007');
-insert into commune(nom, code) values ('Bois-Colombes', '92009');
-insert into commune(nom, code) values ('Boulogne-Billancourt', '92012');
-insert into commune(nom, code) values ('Bourg-la-Reine', '92014');
-insert into commune(nom, code) values ('Châtenay-Malabry', '92019');
-insert into commune(nom, code) values ('Châtillon', '92020');
-insert into commune(nom, code) values ('Chaville', '92022');
-insert into commune(nom, code) values ('Clamart', '92023');
-insert into commune(nom, code) values ('Clichy', '92024');
-insert into commune(nom, code) values ('Colombes', '92025');
-insert into commune(nom, code) values ('Courbevoie', '92026');
-insert into commune(nom, code) values ('Fontenay-aux-Roses', '92032');
-insert into commune(nom, code) values ('Garches', '92033');
-insert into commune(nom, code) values ('La Garenne-Colombes', '92035');
-insert into commune(nom, code) values ('Gennevilliers', '92036');
-insert into commune(nom, code) values ('Issy-les-Moulineaux', '92040');
-insert into commune(nom, code) values ('Levallois-Perret', '92044');
-insert into commune(nom, code) values ('Malakoff', '92046');
-insert into commune(nom, code) values ('Meudon', '92048');
-insert into commune(nom, code) values ('Montrouge', '92049');
-insert into commune(nom, code) values ('Nanterre', '92050');
-insert into commune(nom, code) values ('Neuilly-sur-Seine', '92051');
-insert into commune(nom, code) values ('Le Plessis-Robinson', '92060');
-insert into commune(nom, code) values ('Puteaux', '92062');
-insert into commune(nom, code) values ('Rueil-Malmaison', '92063');
-insert into commune(nom, code) values ('Saint-Cloud', '92064');
-insert into commune(nom, code) values ('Sceaux', '92071');
-insert into commune(nom, code) values ('Sèvres', '92072');
-insert into commune(nom, code) values ('Suresnes', '92073');
-insert into commune(nom, code) values ('Vanves', '92075');
-insert into commune(nom, code) values ('Vaucresson', '92076');
-insert into commune(nom, code) values ('Ville-d''Avray', '92077');
-insert into commune(nom, code) values ('Villeneuve-la-Garenne', '92078');
-insert into commune(nom, code) values ('Aubervilliers', '93001');
-insert into commune(nom, code) values ('Aulnay-sous-Bois', '93005');
-insert into commune(nom, code) values ('Bagnolet', '93006');
-insert into commune(nom, code) values ('Le Blanc-Mesnil', '93007');
-insert into commune(nom, code) values ('Bobigny', '93008');
-insert into commune(nom, code) values ('Bondy', '93010');
-insert into commune(nom, code) values ('Le Bourget', '93013');
-insert into commune(nom, code) values ('Clichy-sous-Bois', '93014');
-insert into commune(nom, code) values ('Coubron', '93015');
-insert into commune(nom, code) values ('La Courneuve', '93027');
-insert into commune(nom, code) values ('Drancy', '93029');
-insert into commune(nom, code) values ('Dugny', '93030');
-insert into commune(nom, code) values ('Épinay-sur-Seine', '93031');
-insert into commune(nom, code) values ('Gagny', '93032');
-insert into commune(nom, code) values ('Gournay-sur-Marne', '93033');
-insert into commune(nom, code) values ('L''Île-Saint-Denis', '93039');
-insert into commune(nom, code) values ('Les Lilas', '93045');
-insert into commune(nom, code) values ('Livry-Gargan', '93046');
-insert into commune(nom, code) values ('Montfermeil', '93047');
-insert into commune(nom, code) values ('Montreuil', '93048');
-insert into commune(nom, code) values ('Neuilly-Plaisance', '93049');
-insert into commune(nom, code) values ('Neuilly-sur-Marne', '93050');
-insert into commune(nom, code) values ('Noisy-le-Grand', '93051');
-insert into commune(nom, code) values ('Noisy-le-Sec', '93053');
-insert into commune(nom, code) values ('Pantin', '93055');
-insert into commune(nom, code) values ('Les Pavillons-sous-Bois', '93057');
-insert into commune(nom, code) values ('Pierrefitte-sur-Seine', '93059');
-insert into commune(nom, code) values ('Le Pré-Saint-Gervais', '93061');
-insert into commune(nom, code) values ('Le Raincy', '93062');
-insert into commune(nom, code) values ('Romainville', '93063');
-insert into commune(nom, code) values ('Rosny-sous-Bois', '93064');
-insert into commune(nom, code) values ('Saint-Denis', '93066');
-insert into commune(nom, code) values ('Saint-Ouen-sur-Seine', '93070');
-insert into commune(nom, code) values ('Sevran', '93071');
-insert into commune(nom, code) values ('Stains', '93072');
-insert into commune(nom, code) values ('Tremblay-en-France', '93073');
-insert into commune(nom, code) values ('Vaujours', '93074');
-insert into commune(nom, code) values ('Villemomble', '93077');
-insert into commune(nom, code) values ('Villepinte', '93078');
-insert into commune(nom, code) values ('Villetaneuse', '93079');
-insert into commune(nom, code) values ('Ablon-sur-Seine', '94001');
-insert into commune(nom, code) values ('Alfortville', '94002');
-insert into commune(nom, code) values ('Arcueil', '94003');
-insert into commune(nom, code) values ('Boissy-Saint-Léger', '94004');
-insert into commune(nom, code) values ('Bonneuil-sur-Marne', '94011');
-insert into commune(nom, code) values ('Bry-sur-Marne', '94015');
-insert into commune(nom, code) values ('Cachan', '94016');
-insert into commune(nom, code) values ('Champigny-sur-Marne', '94017');
-insert into commune(nom, code) values ('Charenton-le-Pont', '94018');
-insert into commune(nom, code) values ('Chennevières-sur-Marne', '94019');
-insert into commune(nom, code) values ('Chevilly-Larue', '94021');
-insert into commune(nom, code) values ('Choisy-le-Roi', '94022');
-insert into commune(nom, code) values ('Créteil', '94028');
-insert into commune(nom, code) values ('Fontenay-sous-Bois', '94033');
-insert into commune(nom, code) values ('Fresnes', '94034');
-insert into commune(nom, code) values ('Gentilly', '94037');
-insert into commune(nom, code) values ('L''Haÿ-les-Roses', '94038');
-insert into commune(nom, code) values ('Ivry-sur-Seine', '94041');
-insert into commune(nom, code) values ('Joinville-le-Pont', '94042');
-insert into commune(nom, code) values ('Le Kremlin-Bicêtre', '94043');
-insert into commune(nom, code) values ('Limeil-Brévannes', '94044');
-insert into commune(nom, code) values ('Maisons-Alfort', '94046');
-insert into commune(nom, code) values ('Mandres-les-Roses', '94047');
-insert into commune(nom, code) values ('Marolles-en-Brie', '94048');
-insert into commune(nom, code) values ('Nogent-sur-Marne', '94052');
-insert into commune(nom, code) values ('Noiseau', '94053');
-insert into commune(nom, code) values ('Orly', '94054');
-insert into commune(nom, code) values ('Ormesson-sur-Marne', '94055');
-insert into commune(nom, code) values ('Le Perreux-sur-Marne', '94058');
-insert into commune(nom, code) values ('Le Plessis-Trévise', '94059');
-insert into commune(nom, code) values ('La Queue-en-Brie', '94060');
-insert into commune(nom, code) values ('Rungis', '94065');
-insert into commune(nom, code) values ('Saint-Mandé', '94067');
-insert into commune(nom, code) values ('Saint-Maur-des-Fossés', '94068');
-insert into commune(nom, code) values ('Saint-Maurice', '94069');
-insert into commune(nom, code) values ('Santeny', '94070');
-insert into commune(nom, code) values ('Sucy-en-Brie', '94071');
-insert into commune(nom, code) values ('Thiais', '94073');
-insert into commune(nom, code) values ('Valenton', '94074');
-insert into commune(nom, code) values ('Villecresnes', '94075');
-insert into commune(nom, code) values ('Villejuif', '94076');
-insert into commune(nom, code) values ('Villeneuve-le-Roi', '94077');
-insert into commune(nom, code) values ('Villeneuve-Saint-Georges', '94078');
-insert into commune(nom, code) values ('Villiers-sur-Marne', '94079');
-insert into commune(nom, code) values ('Vincennes', '94080');
-insert into commune(nom, code) values ('Vitry-sur-Seine', '94081');
-insert into commune(nom, code) values ('Argenteuil', '95018');
-insert into commune(nom, code) values ('Arnouville', '95019');
-insert into commune(nom, code) values ('Auvers-sur-Oise', '95039');
-insert into commune(nom, code) values ('Beauchamp', '95051');
-insert into commune(nom, code) values ('Beaumont-sur-Oise', '95052');
-insert into commune(nom, code) values ('Bessancourt', '95060');
-insert into commune(nom, code) values ('Bezons', '95063');
-insert into commune(nom, code) values ('Bouffémont', '95091');
-insert into commune(nom, code) values ('Bruyères-sur-Oise', '95116');
-insert into commune(nom, code) values ('Cergy', '95127');
-insert into commune(nom, code) values ('Champagne-sur-Oise', '95134');
-insert into commune(nom, code) values ('Chaumontel', '95149');
-insert into commune(nom, code) values ('Cormeilles-en-Parisis', '95176');
-insert into commune(nom, code) values ('Courdimanche', '95183');
-insert into commune(nom, code) values ('Deuil-la-Barre', '95197');
-insert into commune(nom, code) values ('Domont', '95199');
-insert into commune(nom, code) values ('Eaubonne', '95203');
-insert into commune(nom, code) values ('Écouen', '95205');
-insert into commune(nom, code) values ('Enghien-les-Bains', '95210');
-insert into commune(nom, code) values ('Éragny', '95218');
-insert into commune(nom, code) values ('Ermont', '95219');
-insert into commune(nom, code) values ('Ézanville', '95229');
-insert into commune(nom, code) values ('Fosses', '95250');
-insert into commune(nom, code) values ('Franconville', '95252');
-insert into commune(nom, code) values ('Frépillon', '95256');
-insert into commune(nom, code) values ('La Frette-sur-Seine', '95257');
-insert into commune(nom, code) values ('Garges-lès-Gonesse', '95268');
-insert into commune(nom, code) values ('Gonesse', '95277');
-insert into commune(nom, code) values ('Goussainville', '95280');
-insert into commune(nom, code) values ('Groslay', '95288');
-insert into commune(nom, code) values ('Herblay-sur-Seine', '95306');
-insert into commune(nom, code) values ('L''Isle-Adam', '95313');
-insert into commune(nom, code) values ('Jouy-le-Moutier', '95323');
-insert into commune(nom, code) values ('Louvres', '95351');
-insert into commune(nom, code) values ('Luzarches', '95352');
-insert into commune(nom, code) values ('Magny-en-Vexin', '95355');
-insert into commune(nom, code) values ('Marines', '95370');
-insert into commune(nom, code) values ('Marly-la-Ville', '95371');
-insert into commune(nom, code) values ('Menucourt', '95388');
-insert into commune(nom, code) values ('Mériel', '95392');
-insert into commune(nom, code) values ('Méry-sur-Oise', '95394');
-insert into commune(nom, code) values ('Montigny-lès-Cormeilles', '95424');
-insert into commune(nom, code) values ('Montlignon', '95426');
-insert into commune(nom, code) values ('Montmagny', '95427');
-insert into commune(nom, code) values ('Montmorency', '95428');
-insert into commune(nom, code) values ('Montsoult', '95430');
-insert into commune(nom, code) values ('Osny', '95476');
-insert into commune(nom, code) values ('Parmain', '95480');
-insert into commune(nom, code) values ('Persan', '95487');
-insert into commune(nom, code) values ('Pierrelaye', '95488');
-insert into commune(nom, code) values ('Le Plessis-Bouchard', '95491');
-insert into commune(nom, code) values ('Pontoise', '95500');
-insert into commune(nom, code) values ('Presles', '95504');
-insert into commune(nom, code) values ('Puiseux-en-France', '95509');
-insert into commune(nom, code) values ('Saint-Brice-sous-Forêt', '95539');
-insert into commune(nom, code) values ('Saint-Gratien', '95555');
-insert into commune(nom, code) values ('Saint-Leu-la-Forêt', '95563');
-insert into commune(nom, code) values ('Saint-Ouen-l''Aumône', '95572');
-insert into commune(nom, code) values ('Saint-Prix', '95574');
-insert into commune(nom, code) values ('Sannois', '95582');
-insert into commune(nom, code) values ('Sarcelles', '95585');
-insert into commune(nom, code) values ('Soisy-sous-Montmorency', '95598');
-insert into commune(nom, code) values ('Survilliers', '95604');
-insert into commune(nom, code) values ('Taverny', '95607');
-insert into commune(nom, code) values ('Le Thillay', '95612');
-insert into commune(nom, code) values ('Vauréal', '95637');
-insert into commune(nom, code) values ('Viarmes', '95652');
-insert into commune(nom, code) values ('Villiers-le-Bel', '95680');
-insert into commune(nom, code) values ('Les Abymes', '97101');
-insert into commune(nom, code) values ('Anse-Bertrand', '97102');
-insert into commune(nom, code) values ('Baie-Mahault', '97103');
-insert into commune(nom, code) values ('Baillif', '97104');
-insert into commune(nom, code) values ('Basse-Terre', '97105');
-insert into commune(nom, code) values ('Bouillante', '97106');
-insert into commune(nom, code) values ('Capesterre-Belle-Eau', '97107');
-insert into commune(nom, code) values ('Capesterre-de-Marie-Galante', '97108');
-insert into commune(nom, code) values ('Gourbeyre', '97109');
-insert into commune(nom, code) values ('Deshaies', '97111');
-insert into commune(nom, code) values ('Grand-Bourg', '97112');
-insert into commune(nom, code) values ('Le Gosier', '97113');
-insert into commune(nom, code) values ('Goyave', '97114');
-insert into commune(nom, code) values ('Lamentin', '97115');
-insert into commune(nom, code) values ('Morne-à-l''Eau', '97116');
-insert into commune(nom, code) values ('Le Moule', '97117');
-insert into commune(nom, code) values ('Petit-Bourg', '97118');
-insert into commune(nom, code) values ('Petit-Canal', '97119');
-insert into commune(nom, code) values ('Pointe-à-Pitre', '97120');
-insert into commune(nom, code) values ('Pointe-Noire', '97121');
-insert into commune(nom, code) values ('Port-Louis', '97122');
-insert into commune(nom, code) values ('Saint-Claude', '97124');
-insert into commune(nom, code) values ('Saint-François', '97125');
-insert into commune(nom, code) values ('Sainte-Anne', '97128');
-insert into commune(nom, code) values ('Sainte-Rose', '97129');
-insert into commune(nom, code) values ('Trois-Rivières', '97132');
-insert into commune(nom, code) values ('Vieux-Habitants', '97134');
-insert into commune(nom, code) values ('Les Anses-d''Arlet', '97202');
-insert into commune(nom, code) values ('Le Carbet', '97204');
-insert into commune(nom, code) values ('Case-Pilote', '97205');
-insert into commune(nom, code) values ('Le Diamant', '97206');
-insert into commune(nom, code) values ('Ducos', '97207');
-insert into commune(nom, code) values ('Fort-de-France', '97209');
-insert into commune(nom, code) values ('Le François', '97210');
-insert into commune(nom, code) values ('Gros-Morne', '97212');
-insert into commune(nom, code) values ('Le Lamentin', '97213');
-insert into commune(nom, code) values ('Le Lorrain', '97214');
-insert into commune(nom, code) values ('Le Marigot', '97216');
-insert into commune(nom, code) values ('Le Marin', '97217');
-insert into commune(nom, code) values ('Le Morne-Rouge', '97218');
-insert into commune(nom, code) values ('Rivière-Pilote', '97220');
-insert into commune(nom, code) values ('Rivière-Salée', '97221');
-insert into commune(nom, code) values ('Le Robert', '97222');
-insert into commune(nom, code) values ('Saint-Esprit', '97223');
-insert into commune(nom, code) values ('Saint-Joseph', '97224');
-insert into commune(nom, code) values ('Saint-Pierre', '97225');
-insert into commune(nom, code) values ('Sainte-Anne', '97226');
-insert into commune(nom, code) values ('Sainte-Luce', '97227');
-insert into commune(nom, code) values ('Sainte-Marie', '97228');
-insert into commune(nom, code) values ('Schœlcher', '97229');
-insert into commune(nom, code) values ('La Trinité', '97230');
-insert into commune(nom, code) values ('Les Trois-Îlets', '97231');
-insert into commune(nom, code) values ('Le Vauclin', '97232');
-insert into commune(nom, code) values ('Cayenne', '97302');
-insert into commune(nom, code) values ('Kourou', '97304');
-insert into commune(nom, code) values ('Macouria', '97305');
-insert into commune(nom, code) values ('Mana', '97306');
-insert into commune(nom, code) values ('Matoury', '97307');
-insert into commune(nom, code) values ('Saint-Georges', '97308');
-insert into commune(nom, code) values ('Remire-Montjoly', '97309');
-insert into commune(nom, code) values ('Roura', '97310');
-insert into commune(nom, code) values ('Saint-Laurent-du-Maroni', '97311');
-insert into commune(nom, code) values ('Maripasoula', '97353');
-insert into commune(nom, code) values ('Grand-Santi', '97357');
-insert into commune(nom, code) values ('Apatou', '97360');
-insert into commune(nom, code) values ('Papaichton', '97362');
-insert into commune(nom, code) values ('Les Avirons', '97401');
-insert into commune(nom, code) values ('Bras-Panon', '97402');
-insert into commune(nom, code) values ('Entre-Deux', '97403');
-insert into commune(nom, code) values ('L''Étang-Salé', '97404');
-insert into commune(nom, code) values ('Petite-Île', '97405');
-insert into commune(nom, code) values ('La Plaine-des-Palmistes', '97406');
-insert into commune(nom, code) values ('Le Port', '97407');
-insert into commune(nom, code) values ('La Possession', '97408');
-insert into commune(nom, code) values ('Saint-André', '97409');
-insert into commune(nom, code) values ('Saint-Benoît', '97410');
-insert into commune(nom, code) values ('Saint-Denis', '97411');
-insert into commune(nom, code) values ('Saint-Joseph', '97412');
-insert into commune(nom, code) values ('Saint-Leu', '97413');
-insert into commune(nom, code) values ('Saint-Louis', '97414');
-insert into commune(nom, code) values ('Saint-Paul', '97415');
-insert into commune(nom, code) values ('Saint-Pierre', '97416');
-insert into commune(nom, code) values ('Saint-Philippe', '97417');
-insert into commune(nom, code) values ('Sainte-Marie', '97418');
-insert into commune(nom, code) values ('Sainte-Rose', '97419');
-insert into commune(nom, code) values ('Sainte-Suzanne', '97420');
-insert into commune(nom, code) values ('Salazie', '97421');
-insert into commune(nom, code) values ('Le Tampon', '97422');
-insert into commune(nom, code) values ('Les Trois-Bassins', '97423');
-insert into commune(nom, code) values ('Cilaos', '97424');
+insert into commune(nom, code)
+values ('Ambérieu-en-Bugey', '01004'),
+       ('Arbent', '01014'),
+       ('Attignat', '01024'),
+       ('Bâgé-Dommartin', '01025'),
+       ('Bellignat', '01031'),
+       ('Béligneux', '01032'),
+       ('Valserhône', '01033'),
+       ('Belley', '01034'),
+       ('Beynost', '01043'),
+       ('La Boisse', '01049'),
+       ('Bourg-en-Bresse', '01053'),
+       ('Cessy', '01071'),
+       ('Ceyzériat', '01072'),
+       ('Châtillon-sur-Chalaronne', '01093'),
+       ('Culoz', '01138'),
+       ('Dagneux', '01142'),
+       ('Divonne-les-Bains', '01143'),
+       ('Feillens', '01159'),
+       ('Ferney-Voltaire', '01160'),
+       ('Gex', '01173'),
+       ('Plateau d''Hauteville', '01185'),
+       ('Jassans-Riottier', '01194'),
+       ('Lagnieu', '01202'),
+       ('Loyettes', '01224'),
+       ('Meximieux', '01244'),
+       ('Miribel', '01249'),
+       ('Montluel', '01262'),
+       ('Montmerle-sur-Saône', '01263'),
+       ('Montréal-la-Cluse', '01265'),
+       ('Nantua', '01269'),
+       ('Ornex', '01281'),
+       ('Oyonnax', '01283'),
+       ('Péronnas', '01289'),
+       ('Prévessin-Moëns', '01313'),
+       ('Replonges', '01320'),
+       ('Reyrieux', '01322'),
+       ('Saint-André-de-Corcy', '01333'),
+       ('Saint-Denis-lès-Bourg', '01344'),
+       ('Saint-Didier-sur-Chalaronne', '01348'),
+       ('Saint-Genis-Pouilly', '01354'),
+       ('Saint-Maurice-de-Beynost', '01376'),
+       ('Thoiry', '01419'),
+       ('Trévoux', '01427'),
+       ('Villars-les-Dombes', '01443'),
+       ('Villieu-Loyes-Mollon', '01450'),
+       ('Viriat', '01451'),
+       ('Vonnas', '01457'),
+       ('Belleu', '02064'),
+       ('Bohain-en-Vermandois', '02095'),
+       ('Château-Thierry', '02168'),
+       ('Chauny', '02173'),
+       ('Fère-en-Tardenois', '02305'),
+       ('Fresnoy-le-Grand', '02334'),
+       ('Gauchy', '02340'),
+       ('Guise', '02361'),
+       ('Hirson', '02381'),
+       ('Laon', '02408'),
+       ('Saint-Michel', '02684'),
+       ('Saint-Quentin', '02691'),
+       ('Soissons', '02722'),
+       ('Tergnier', '02738'),
+       ('Villers-Cotterêts', '02810'),
+       ('Avermes', '03013'),
+       ('Bellerive-sur-Allier', '03023'),
+       ('Commentry', '03082'),
+       ('Creuzier-le-Vieux', '03094'),
+       ('Cusset', '03095'),
+       ('Désertines', '03098'),
+       ('Domérat', '03101'),
+       ('Dompierre-sur-Besbre', '03102'),
+       ('Gannat', '03118'),
+       ('Lapalisse', '03138'),
+       ('Montluçon', '03185'),
+       ('Moulins', '03190'),
+       ('Saint-Germain-des-Fossés', '03236'),
+       ('Saint-Pourçain-sur-Sioule', '03254'),
+       ('Varennes-sur-Allier', '03298'),
+       ('Vichy', '03310'),
+       ('Yzeure', '03321'),
+       ('Château-Arnoux-Saint-Auban', '04049'),
+       ('Digne-les-Bains', '04070'),
+       ('Forcalquier', '04088'),
+       ('Manosque', '04112'),
+       ('Les Mées', '04116'),
+       ('Oraison', '04143'),
+       ('Pierrevert', '04152'),
+       ('Sainte-Tulle', '04197'),
+       ('Sisteron', '04209'),
+       ('Valensole', '04230'),
+       ('Villeneuve', '04242'),
+       ('Volx', '04245'),
+       ('Briançon', '05023'),
+       ('Chorges', '05040'),
+       ('Embrun', '05046'),
+       ('Gap', '05061'),
+       ('Laragne-Montéglin', '05070'),
+       ('Veynes', '05179'),
+       ('Antibes', '06004'),
+       ('Auribeau-sur-Siagne', '06007'),
+       ('Beaulieu-sur-Mer', '06011'),
+       ('Beausoleil', '06012'),
+       ('Biot', '06018'),
+       ('Cagnes-sur-Mer', '06027'),
+       ('Cannes', '06029'),
+       ('Le Cannet', '06030'),
+       ('Cap-d''Ail', '06032'),
+       ('Carros', '06033'),
+       ('Châteauneuf-Grasse', '06038'),
+       ('La Colle-sur-Loup', '06044'),
+       ('Colomars', '06046'),
+       ('Contes', '06048'),
+       ('Drap', '06054'),
+       ('Gattières', '06064'),
+       ('La Gaude', '06065'),
+       ('Grasse', '06069'),
+       ('Levens', '06075'),
+       ('Mandelieu-la-Napoule', '06079'),
+       ('Menton', '06083'),
+       ('Mouans-Sartoux', '06084'),
+       ('Mougins', '06085'),
+       ('Nice', '06088'),
+       ('Pégomas', '06090'),
+       ('Peymeinade', '06095'),
+       ('Roquebrune-Cap-Martin', '06104'),
+       ('Roquefort-les-Pins', '06105'),
+       ('La Roquette-sur-Siagne', '06108'),
+       ('Le Rouret', '06112'),
+       ('Saint-André-de-la-Roche', '06114'),
+       ('Saint-Cézaire-sur-Siagne', '06118'),
+       ('Saint-Jeannet', '06122'),
+       ('Saint-Laurent-du-Var', '06123'),
+       ('Saint-Martin-du-Var', '06126'),
+       ('Saint-Paul-de-Vence', '06128'),
+       ('Saint-Vallier-de-Thiey', '06130'),
+       ('Sospel', '06136'),
+       ('Le Tignet', '06140'),
+       ('Tourrette-Levens', '06147'),
+       ('Tourrettes-sur-Loup', '06148'),
+       ('La Trinité', '06149'),
+       ('La Turbie', '06150'),
+       ('Valbonne', '06152'),
+       ('Vallauris', '06155'),
+       ('Vence', '06157'),
+       ('Villefranche-sur-Mer', '06159'),
+       ('Villeneuve-Loubet', '06161'),
+       ('Annonay', '07010'),
+       ('Aubenas', '07019'),
+       ('Bourg-Saint-Andéol', '07042'),
+       ('Charmes-sur-Rhône', '07055'),
+       ('Le Cheylard', '07064'),
+       ('Chomérac', '07066'),
+       ('Cruas', '07076'),
+       ('Davézieux', '07078'),
+       ('Guilherand-Granges', '07102'),
+       ('Privas', '07186'),
+       ('Saint-Péray', '07281'),
+       ('Le Teil', '07319'),
+       ('Tournon-sur-Rhône', '07324'),
+       ('Vals-les-Bains', '07331'),
+       ('Villeneuve-de-Berg', '07341'),
+       ('Viviers', '07346'),
+       ('La Voulte-sur-Rhône', '07349'),
+       ('Bogny-sur-Meuse', '08081'),
+       ('Charleville-Mézières', '08105'),
+       ('Fumay', '08185'),
+       ('Givet', '08190'),
+       ('Nouzonville', '08328'),
+       ('Rethel', '08362'),
+       ('Revin', '08363'),
+       ('Sedan', '08409'),
+       ('Villers-Semeuse', '08480'),
+       ('Vivier-au-Court', '08488'),
+       ('Vouziers', '08490'),
+       ('Vrigne aux Bois', '08491'),
+       ('Foix', '09122'),
+       ('Lavelanet', '09160'),
+       ('Mazères', '09185'),
+       ('Mirepoix', '09194'),
+       ('Pamiers', '09225'),
+       ('Saint-Girons', '09261'),
+       ('Saverdun', '09282'),
+       ('Tarascon-sur-Ariège', '09306'),
+       ('La Tour-du-Crieu', '09312'),
+       ('Varilhes', '09324'),
+       ('Aix-Villemaur-Pâlis', '10003'),
+       ('Bar-sur-Aube', '10033'),
+       ('Bar-sur-Seine', '10034'),
+       ('La Chapelle-Saint-Luc', '10081'),
+       ('Les Noës-près-Troyes', '10265'),
+       ('Nogent-sur-Seine', '10268'),
+       ('Pont-Sainte-Marie', '10297'),
+       ('La Rivière-de-Corps', '10321'),
+       ('Romilly-sur-Seine', '10323'),
+       ('Rosières-près-Troyes', '10325'),
+       ('Saint-André-les-Vergers', '10333'),
+       ('Saint-Julien-les-Villas', '10343'),
+       ('Saint-Parres-aux-Tertres', '10357'),
+       ('Sainte-Savine', '10362'),
+       ('Troyes', '10387'),
+       ('Bram', '11049'),
+       ('Carcassonne', '11069'),
+       ('Castelnaudary', '11076'),
+       ('Coursan', '11106'),
+       ('Cuxac-d''Aude', '11116'),
+       ('Fleury', '11145'),
+       ('Gruissan', '11170'),
+       ('Leucate', '11202'),
+       ('Lézignan-Corbières', '11203'),
+       ('Limoux', '11206'),
+       ('Narbonne', '11262'),
+       ('Port-la-Nouvelle', '11266'),
+       ('Quillan', '11304'),
+       ('Sallèles-d''Aude', '11369'),
+       ('Salles-d''Aude', '11370'),
+       ('Sigean', '11379'),
+       ('Trèbes', '11397'),
+       ('Villemoustaussou', '11429'),
+       ('Aubin', '12013'),
+       ('Capdenac-Gare', '12052'),
+       ('Baraqueville', '12056'),
+       ('Decazeville', '12089'),
+       ('Druelle Balsac', '12090'),
+       ('Espalion', '12096'),
+       ('Luc-la-Primaube', '12133'),
+       ('Millau', '12145'),
+       ('Olemps', '12174'),
+       ('Onet-le-Château', '12176'),
+       ('Rodez', '12202'),
+       ('Saint-Affrique', '12208'),
+       ('Sébazac-Concourès', '12264'),
+       ('Sévérac d''Aveyron', '12270'),
+       ('Villefranche-de-Rouergue', '12300'),
+       ('Aix-en-Provence', '13001'),
+       ('Allauch', '13002'),
+       ('Arles', '13004'),
+       ('Aubagne', '13005'),
+       ('Auriol', '13007'),
+       ('Barbentane', '13010'),
+       ('Berre-l''Étang', '13014'),
+       ('Bouc-Bel-Air', '13015'),
+       ('La Bouilladisse', '13016'),
+       ('Cabannes', '13018'),
+       ('Cabriès', '13019'),
+       ('Carry-le-Rouet', '13021'),
+       ('Cassis', '13022'),
+       ('Ceyreste', '13023'),
+       ('Châteauneuf-les-Martigues', '13026'),
+       ('Châteaurenard', '13027'),
+       ('La Ciotat', '13028'),
+       ('Cuges-les-Pins', '13030'),
+       ('La Destrousse', '13031'),
+       ('Éguilles', '13032'),
+       ('Ensuès-la-Redonne', '13033'),
+       ('Eyguières', '13035'),
+       ('Eyragues', '13036'),
+       ('La Fare-les-Oliviers', '13037'),
+       ('Fontvieille', '13038'),
+       ('Fos-sur-Mer', '13039'),
+       ('Fuveau', '13040'),
+       ('Gardanne', '13041'),
+       ('Gémenos', '13042'),
+       ('Gignac-la-Nerthe', '13043'),
+       ('Grans', '13044'),
+       ('Graveson', '13045'),
+       ('Gréasque', '13046'),
+       ('Istres', '13047'),
+       ('Jouques', '13048'),
+       ('Lambesc', '13050'),
+       ('Lançon-Provence', '13051'),
+       ('Mallemort', '13053'),
+       ('Marignane', '13054'),
+       ('Martigues', '13056'),
+       ('Meyrargues', '13059'),
+       ('Meyreuil', '13060'),
+       ('Mimet', '13062'),
+       ('Miramas', '13063'),
+       ('Mouriès', '13065'),
+       ('Noves', '13066'),
+       ('Pélissanne', '13069'),
+       ('La Penne-sur-Huveaune', '13070'),
+       ('Les Pennes-Mirabeau', '13071'),
+       ('Peynier', '13072'),
+       ('Peypin', '13073'),
+       ('Peyrolles-en-Provence', '13074'),
+       ('Plan-de-Cuques', '13075'),
+       ('Plan-d''Orgon', '13076'),
+       ('Port-de-Bouc', '13077'),
+       ('Port-Saint-Louis-du-Rhône', '13078'),
+       ('Le Puy-Sainte-Réparade', '13080'),
+       ('Rognac', '13081'),
+       ('Rognes', '13082'),
+       ('Rognonas', '13083'),
+       ('La Roque-d''Anthéron', '13084'),
+       ('Roquefort-la-Bédoule', '13085'),
+       ('Roquevaire', '13086'),
+       ('Rousset', '13087'),
+       ('Le Rove', '13088'),
+       ('Saint-Andiol', '13089'),
+       ('Saint-Cannat', '13091'),
+       ('Saint-Chamas', '13092'),
+       ('Saint-Martin-de-Crau', '13097'),
+       ('Saint-Mitre-les-Remparts', '13098'),
+       ('Saint-Rémy-de-Provence', '13100'),
+       ('Saint-Savournin', '13101'),
+       ('Saint-Victoret', '13102'),
+       ('Salon-de-Provence', '13103'),
+       ('Sausset-les-Pins', '13104'),
+       ('Sénas', '13105'),
+       ('Septèmes-les-Vallons', '13106'),
+       ('Simiane-Collongue', '13107'),
+       ('Tarascon', '13108'),
+       ('Trets', '13110'),
+       ('Velaux', '13112'),
+       ('Venelles', '13113'),
+       ('Ventabren', '13114'),
+       ('Vitrolles', '13117'),
+       ('Coudoux', '13118'),
+       ('Carnoux-en-Provence', '13119'),
+       ('Marseille 1er Arrondissement', '13201'),
+       ('Marseille 2e Arrondissement', '13202'),
+       ('Marseille 3e Arrondissement', '13203'),
+       ('Marseille 4e Arrondissement', '13204'),
+       ('Marseille 5e Arrondissement', '13205'),
+       ('Marseille 6e Arrondissement', '13206'),
+       ('Marseille 7e Arrondissement', '13207'),
+       ('Marseille 8e Arrondissement', '13208'),
+       ('Marseille 9e Arrondissement', '13209'),
+       ('Marseille 10e Arrondissement', '13210'),
+       ('Marseille 11e Arrondissement', '13211'),
+       ('Marseille 12e Arrondissement', '13212'),
+       ('Marseille 13e Arrondissement', '13213'),
+       ('Marseille 14e Arrondissement', '13214'),
+       ('Marseille 15e Arrondissement', '13215'),
+       ('Marseille 16e Arrondissement', '13216'),
+       ('Argences', '14020'),
+       ('Les Monts d''Aunay', '14027'),
+       ('Bayeux', '14047'),
+       ('Souleuvre en Bocage', '14061'),
+       ('Biéville-Beuville', '14068'),
+       ('Blainville-sur-Orne', '14076'),
+       ('Thue et Mue', '14098'),
+       ('Bretteville-sur-Odon', '14101'),
+       ('Cabourg', '14117'),
+       ('Caen', '14118'),
+       ('Colombelles', '14167'),
+       ('Condé-en-Normandie', '14174'),
+       ('Cormelles-le-Royal', '14181'),
+       ('Courseulles-sur-Mer', '14191'),
+       ('Deauville', '14220'),
+       ('Démouville', '14221'),
+       ('Dives-sur-Mer', '14225'),
+       ('Douvres-la-Délivrande', '14228'),
+       ('Falaise', '14258'),
+       ('Fleury-sur-Orne', '14271'),
+       ('Giberville', '14301'),
+       ('Hermanville-sur-Mer', '14325'),
+       ('Hérouville-Saint-Clair', '14327'),
+       ('Honfleur', '14333'),
+       ('Ifs', '14341'),
+       ('Isigny-sur-Mer', '14342'),
+       ('Lisieux', '14366'),
+       ('Le Molay-Littry', '14370'),
+       ('Livarot-Pays-d''Auge', '14371'),
+       ('Luc-sur-Mer', '14384'),
+       ('Mézidon Vallée d''Auge', '14431'),
+       ('Mondeville', '14437'),
+       ('Moult-Chicheboville', '14456'),
+       ('Ouistreham', '14488'),
+       ('Pont-l''Évêque', '14514'),
+       ('Saint-Pierre-en-Auge', '14654'),
+       ('Noues de Sienne', '14658'),
+       ('Le Hom', '14689'),
+       ('Touques', '14699'),
+       ('Troarn', '14712'),
+       ('Trouville-sur-Mer', '14715'),
+       ('Valdallière', '14726'),
+       ('Verson', '14738'),
+       ('Villers-Bocage', '14752'),
+       ('Vire Normandie', '14762'),
+       ('Arpajon-sur-Cère', '15012'),
+       ('Aurillac', '15014'),
+       ('Mauriac', '15120'),
+       ('Saint-Flour', '15187'),
+       ('Ytrac', '15267'),
+       ('Angoulême', '16015'),
+       ('Barbezieux-Saint-Hilaire', '16028'),
+       ('Brie', '16061'),
+       ('Champniers', '16078'),
+       ('Chasseneuil-sur-Bonnieure', '16085'),
+       ('Châteaubernard', '16089'),
+       ('Châteauneuf-sur-Charente', '16090'),
+       ('Cognac', '16102'),
+       ('La Couronne', '16113'),
+       ('Fléac', '16138'),
+       ('Gond-Pontouvre', '16154'),
+       ('L''Isle-d''Espagnac', '16166'),
+       ('Jarnac', '16167'),
+       ('Terres-de-Haute-Charente', '16192'),
+       ('Magnac-sur-Touvre', '16199'),
+       ('La Rochefoucauld-en-Angoumois', '16281'),
+       ('Rouillac', '16286'),
+       ('Roullet-Saint-Estèphe', '16287'),
+       ('Ruelle-sur-Touvre', '16291'),
+       ('Ruffec', '16292'),
+       ('Saint-Michel', '16341'),
+       ('Saint-Yrieix-sur-Charente', '16358'),
+       ('Soyaux', '16374'),
+       ('Aigrefeuille-d''Aunis', '17003'),
+       ('Angoulins', '17010'),
+       ('Arvert', '17021'),
+       ('Aytré', '17028'),
+       ('Bourcefranc-le-Chapus', '17058'),
+       ('Breuillet', '17064'),
+       ('Chaniers', '17086'),
+       ('Le Château-d''Oléron', '17093'),
+       ('Châtelaillon-Plage', '17094'),
+       ('Dolus-d''Oléron', '17140'),
+       ('Dompierre-sur-Mer', '17142'),
+       ('Échillais', '17146'),
+       ('Fouras', '17168'),
+       ('La Jarrie', '17194'),
+       ('Jonzac', '17197'),
+       ('Lagord', '17200'),
+       ('Marans', '17218'),
+       ('Marennes-Hiers-Brouage', '17219'),
+       ('Marsilly', '17222'),
+       ('Médis', '17228'),
+       ('Meschers-sur-Gironde', '17230'),
+       ('Montendre', '17240'),
+       ('Nieul-sur-Mer', '17264'),
+       ('Périgny', '17274'),
+       ('Pons', '17283'),
+       ('Puilboreau', '17291'),
+       ('Rochefort', '17299'),
+       ('La Rochelle', '17300'),
+       ('Royan', '17306'),
+       ('Saint-Georges-de-Didonne', '17333'),
+       ('Saint-Georges-d''Oléron', '17337'),
+       ('Saint-Jean-d''Angély', '17347'),
+       ('Saint-Jean-de-Liversay', '17349'),
+       ('Sainte-Marie-de-Ré', '17360'),
+       ('Saint-Palais-sur-Mer', '17380'),
+       ('Saint-Pierre-d''Oléron', '17385'),
+       ('Sainte-Soulle', '17407'),
+       ('Saint-Sulpice-de-Royan', '17409'),
+       ('Saint-Xandre', '17414'),
+       ('Saintes', '17415'),
+       ('Saujon', '17421'),
+       ('Soubise', '17429'),
+       ('Surgères', '17434'),
+       ('Tonnay-Charente', '17449'),
+       ('La Tremblade', '17452'),
+       ('Vaux-sur-Mer', '17461'),
+       ('Aubigny-sur-Nère', '18015'),
+       ('Bourges', '18033'),
+       ('La Chapelle-Saint-Ursin', '18050'),
+       ('Dun-sur-Auron', '18087'),
+       ('La Guerche-sur-l''Aubois', '18108'),
+       ('Mehun-sur-Yèvre', '18141'),
+       ('Saint-Amand-Montrond', '18197'),
+       ('Saint-Doulchard', '18205'),
+       ('Saint-Florent-sur-Cher', '18207'),
+       ('Saint-Germain-du-Puy', '18213'),
+       ('Sancoins', '18242'),
+       ('Trouy', '18267'),
+       ('Vierzon', '18279'),
+       ('Allassac', '19005'),
+       ('Argentat-sur-Dordogne', '19010'),
+       ('Brive-la-Gaillarde', '19031'),
+       ('Cosnac', '19063'),
+       ('Égletons', '19073'),
+       ('Malemort', '19123'),
+       ('Objat', '19153'),
+       ('Saint-Pantaléon-de-Larche', '19229'),
+       ('Tulle', '19272'),
+       ('Ussac', '19274'),
+       ('Ussel', '19275'),
+       ('Auxonne', '21038'),
+       ('Beaune', '21054'),
+       ('Châtillon-sur-Seine', '21154'),
+       ('Chenôve', '21166'),
+       ('Chevigny-Saint-Sauveur', '21171'),
+       ('Dijon', '21231'),
+       ('Fontaine-lès-Dijon', '21278'),
+       ('Genlis', '21292'),
+       ('Gevrey-Chambertin', '21295'),
+       ('Is-sur-Tille', '21317'),
+       ('Longvic', '21355'),
+       ('Marsannay-la-Côte', '21390'),
+       ('Montbard', '21425'),
+       ('Neuilly-Crimolois', '21452'),
+       ('Nuits-Saint-Georges', '21464'),
+       ('Quetigny', '21515'),
+       ('Saint-Apollinaire', '21540'),
+       ('Semur-en-Auxois', '21603'),
+       ('Talant', '21617'),
+       ('Bégard', '22004'),
+       ('Le Mené', '22046'),
+       ('Dinan', '22050'),
+       ('Erquy', '22054'),
+       ('Binic-Étables-sur-Mer', '22055'),
+       ('Guingamp', '22070'),
+       ('Hillion', '22081'),
+       ('Lamballe-Armor', '22093'),
+       ('Langueux', '22106'),
+       ('Lannion', '22113'),
+       ('Lanvallay', '22118'),
+       ('Louannec', '22134'),
+       ('Loudéac', '22136'),
+       ('Merdrignac', '22147'),
+       ('Paimpol', '22162'),
+       ('Perros-Guirec', '22168'),
+       ('Plaintel', '22171'),
+       ('Plancoët', '22172'),
+       ('Plédran', '22176'),
+       ('Plélo', '22182'),
+       ('Plémet', '22183'),
+       ('Pléneuf-Val-André', '22186'),
+       ('Plérin', '22187'),
+       ('Pleslin-Trigavou', '22190'),
+       ('Plestin-les-Grèves', '22194'),
+       ('Pleudihen-sur-Rance', '22197'),
+       ('Pleumeur-Bodou', '22198'),
+       ('Plœuc-L''Hermitage', '22203'),
+       ('Châtelaudren-Plouagat', '22206'),
+       ('Beaussais-sur-Mer', '22209'),
+       ('Ploubazlanec', '22210'),
+       ('Ploubezre', '22211'),
+       ('Plouër-sur-Rance', '22213'),
+       ('Plouézec', '22214'),
+       ('Ploufragan', '22215'),
+       ('Plouha', '22222'),
+       ('Ploumagoar', '22225'),
+       ('Pordic', '22251'),
+       ('Quessoy', '22258'),
+       ('Quévert', '22259'),
+       ('Quintin', '22262'),
+       ('La Roche-Jaudy', '22264'),
+       ('Rostrenen', '22266'),
+       ('Saint-Brieuc', '22278'),
+       ('Saint-Cast-le-Guildo', '22282'),
+       ('Saint-Quay-Portrieux', '22325'),
+       ('Trébeurden', '22343'),
+       ('Trégueux', '22360'),
+       ('Yffiniac', '22389'),
+       ('Aubusson', '23008'),
+       ('Guéret', '23096'),
+       ('La Souterraine', '23176'),
+       ('Bassillac et Auberoche', '24026'),
+       ('Bergerac', '24037'),
+       ('Boulazac Isle Manoire', '24053'),
+       ('Brantôme en Périgord', '24064'),
+       ('Champcevinel', '24098'),
+       ('Chancelade', '24102'),
+       ('Coulounieix-Chamiers', '24138'),
+       ('Marsac-sur-l''Isle', '24256'),
+       ('Montpon-Ménestérol', '24294'),
+       ('Neuvic', '24309'),
+       ('Nontron', '24311'),
+       ('Sanilhac', '24312'),
+       ('Périgueux', '24322'),
+       ('Prigonrieux', '24340'),
+       ('Ribérac', '24352'),
+       ('La Roche-Chalais', '24354'),
+       ('Saint-Astier', '24372'),
+       ('Sarlat-la-Canéda', '24520'),
+       ('Terrasson-Lavilledieu', '24547'),
+       ('Thiviers', '24551'),
+       ('Trélissac', '24557'),
+       ('Audincourt', '25031'),
+       ('Baume-les-Dames', '25047'),
+       ('Bavans', '25048'),
+       ('Besançon', '25056'),
+       ('Bethoncourt', '25057'),
+       ('Doubs', '25204'),
+       ('Étupes', '25228'),
+       ('Exincourt', '25230'),
+       ('Les Fins', '25240'),
+       ('Grand-Charmont', '25284'),
+       ('Hérimoncourt', '25304'),
+       ('Villers-le-Lac', '25321'),
+       ('Maîche', '25356'),
+       ('Mandeure', '25367'),
+       ('Montbéliard', '25388'),
+       ('Morteau', '25411'),
+       ('Ornans', '25434'),
+       ('Pontarlier', '25462'),
+       ('Pont-de-Roide-Vermondans', '25463'),
+       ('Saint-Vit', '25527'),
+       ('Saône', '25532'),
+       ('Seloncourt', '25539'),
+       ('Sochaux', '25547'),
+       ('Thise', '25560'),
+       ('Valdahon', '25578'),
+       ('Valentigney', '25580'),
+       ('Voujeaucourt', '25632'),
+       ('Anneyron', '26010'),
+       ('Beaumont-lès-Valence', '26037'),
+       ('Bourg-de-Péage', '26057'),
+       ('Bourg-lès-Valence', '26058'),
+       ('Chabeuil', '26064'),
+       ('Châteauneuf-sur-Isère', '26084'),
+       ('Chatuzange-le-Goubet', '26088'),
+       ('Crest', '26108'),
+       ('Die', '26113'),
+       ('Dieulefit', '26114'),
+       ('Donzère', '26116'),
+       ('Étoile-sur-Rhône', '26124'),
+       ('Livron-sur-Drôme', '26165'),
+       ('Loriol-sur-Drôme', '26166'),
+       ('Malissard', '26170'),
+       ('Montélier', '26197'),
+       ('Montélimar', '26198'),
+       ('Montmeyran', '26206'),
+       ('Mours-Saint-Eusèbe', '26218'),
+       ('Nyons', '26220'),
+       ('Pierrelatte', '26235'),
+       ('Pont-de-l''Isère', '26250'),
+       ('Portes-lès-Valence', '26252'),
+       ('La Roche-de-Glun', '26271'),
+       ('Romans-sur-Isère', '26281'),
+       ('Saint-Donat-sur-l''Herbasse', '26301'),
+       ('Saint-Marcel-lès-Valence', '26313'),
+       ('Saint-Paul-Trois-Châteaux', '26324'),
+       ('Saint-Rambert-d''Albon', '26325'),
+       ('Saint-Vallier', '26333'),
+       ('Tain-l''Hermitage', '26347'),
+       ('Valence', '26362'),
+       ('Les Andelys', '27016'),
+       ('Le Val d''Hazey', '27022'),
+       ('Mesnil-en-Ouche', '27049'),
+       ('Bernay', '27056'),
+       ('Beuzeville', '27065'),
+       ('Bosroumois', '27090'),
+       ('Bourg-Achard', '27103'),
+       ('Grand Bourgtheroulde', '27105'),
+       ('Breteuil', '27112'),
+       ('Brionne', '27116'),
+       ('Conches-en-Ouche', '27165'),
+       ('Mesnils-sur-Iton', '27198'),
+       ('Vexin-sur-Epte', '27213'),
+       ('Étrépagny', '27226'),
+       ('Évreux', '27229'),
+       ('Ézy-sur-Eure', '27230'),
+       ('Gaillon', '27275'),
+       ('Gasny', '27279'),
+       ('Gisors', '27284'),
+       ('Gravigny', '27299'),
+       ('Guichainville', '27306'),
+       ('Louviers', '27375'),
+       ('Le Neubourg', '27428'),
+       ('Pacy-sur-Eure', '27448'),
+       ('Pont-Audemer', '27467'),
+       ('Pont-de-l''Arche', '27469'),
+       ('Romilly-sur-Andelle', '27493'),
+       ('Saint-André-de-l''Eure', '27507'),
+       ('Le Vaudreuil', '27528'),
+       ('La Chapelle-Longueville', '27554'),
+       ('Saint-Marcel', '27562'),
+       ('Saint-Sébastien-de-Morsent', '27602'),
+       ('Le Thuit de l''Oison', '27638'),
+       ('Verneuil d''Avre et d''Iton', '27679'),
+       ('Vernon', '27681'),
+       ('Val-de-Reuil', '27701'),
+       ('Commune nouvelle d''Arrou', '28012'),
+       ('Auneau-Bleury-Saint-Symphorien', '28015'),
+       ('Bonneval', '28051'),
+       ('Brou', '28061'),
+       ('Champhol', '28070'),
+       ('Chartres', '28085'),
+       ('Châteaudun', '28088'),
+       ('Cloyes-les-Trois-Rivières', '28103'),
+       ('Le Coudray', '28110'),
+       ('Dreux', '28134'),
+       ('Épernon', '28140'),
+       ('Gallardon', '28168'),
+       ('Illiers-Combray', '28196'),
+       ('Lèves', '28209'),
+       ('La Loupe', '28214'),
+       ('Lucé', '28218'),
+       ('Luisant', '28220'),
+       ('Maintenon', '28227'),
+       ('Mainvilliers', '28229'),
+       ('Nogent-le-Roi', '28279'),
+       ('Nogent-le-Rotrou', '28280'),
+       ('Saint-Lubin-des-Joncherets', '28348'),
+       ('Saint-Rémy-sur-Avre', '28359'),
+       ('Senonches', '28373'),
+       ('Vernouillet', '28404'),
+       ('Les Villages Vovéens', '28422'),
+       ('Audierne', '29003'),
+       ('Bannalec', '29004'),
+       ('Bénodet', '29006'),
+       ('Bohars', '29011'),
+       ('Bourg-Blanc', '29015'),
+       ('Brest', '29019'),
+       ('Briec', '29020'),
+       ('Carantec', '29023'),
+       ('Carhaix-Plouguer', '29024'),
+       ('Châteaulin', '29026'),
+       ('Châteauneuf-du-Faou', '29027'),
+       ('Cléder', '29030'),
+       ('Clohars-Carnoët', '29031'),
+       ('Combrit', '29037'),
+       ('Concarneau', '29039'),
+       ('Crozon', '29042'),
+       ('Douarnenez', '29046'),
+       ('Elliant', '29049'),
+       ('Ergué-Gabéric', '29051'),
+       ('Le Folgoët', '29055'),
+       ('La Forêt-Fouesnant', '29057'),
+       ('Fouesnant', '29058'),
+       ('Gouesnou', '29061'),
+       ('Guilers', '29069'),
+       ('Guipavas', '29075'),
+       ('Milizac-Guipronvel', '29076'),
+       ('Landéda', '29101'),
+       ('Landerneau', '29103'),
+       ('Landivisiau', '29105'),
+       ('Lannilis', '29117'),
+       ('Lesneven', '29124'),
+       ('Locmaria-Plouzané', '29130'),
+       ('Loctudy', '29135'),
+       ('Loperhet', '29140'),
+       ('Melgven', '29146'),
+       ('Mellac', '29147'),
+       ('Moëlan-sur-Mer', '29150'),
+       ('Morlaix', '29151'),
+       ('Penmarch', '29158'),
+       ('Plabennec', '29160'),
+       ('Pleuven', '29161'),
+       ('Pleyben', '29162'),
+       ('Pleyber-Christ', '29163'),
+       ('Plobannalec-Lesconil', '29165'),
+       ('Plogonnec', '29169'),
+       ('Plomelin', '29170'),
+       ('Plomeur', '29171'),
+       ('Plonéour-Lanvern', '29174'),
+       ('Plouarzel', '29177'),
+       ('Ploudalmézeau', '29178'),
+       ('Ploudaniel', '29179'),
+       ('Plouédern', '29181'),
+       ('Plouescat', '29185'),
+       ('Plougastel-Daoulas', '29189'),
+       ('Plougonvelin', '29190'),
+       ('Plougonven', '29191'),
+       ('Plouguerneau', '29195'),
+       ('Plouhinec', '29197'),
+       ('Plouigneau', '29199'),
+       ('Plourin-lès-Morlaix', '29207'),
+       ('Plouvien', '29209'),
+       ('Plouzané', '29212'),
+       ('Plozévet', '29215'),
+       ('Pluguffan', '29216'),
+       ('Pont-l''Abbé', '29220'),
+       ('Quimper', '29232'),
+       ('Quimperlé', '29233'),
+       ('Le Relecq-Kerhuon', '29235'),
+       ('Riec-sur-Bélon', '29236'),
+       ('Roscoff', '29239'),
+       ('Rosporden', '29241'),
+       ('Saint-Évarzec', '29247'),
+       ('Saint-Martin-des-Champs', '29254'),
+       ('Saint-Pol-de-Léon', '29259'),
+       ('Saint-Renan', '29260'),
+       ('Saint-Thégonnec Loc-Eguiner', '29266'),
+       ('Saint-Yvi', '29272'),
+       ('Scaër', '29274'),
+       ('Trégunc', '29293'),
+       ('Pont-de-Buis-lès-Quimerch', '29302'),
+       ('Afa', '2A001'),
+       ('Ajaccio', '2A004'),
+       ('Alata', '2A006'),
+       ('Bastelicaccia', '2A032'),
+       ('Bonifacio', '2A041'),
+       ('Grosseto-Prugna', '2A130'),
+       ('Porto-Vecchio', '2A247'),
+       ('Propriano', '2A249'),
+       ('Sarrola-Carcopino', '2A271'),
+       ('Sartène', '2A272'),
+       ('Bastia', '2B033'),
+       ('Biguglia', '2B037'),
+       ('Borgo', '2B042'),
+       ('Calvi', '2B050'),
+       ('Corte', '2B096'),
+       ('Furiani', '2B120'),
+       ('Ghisonaccia', '2B123'),
+       ('L''Île-Rousse', '2B134'),
+       ('Lucciana', '2B148'),
+       ('Penta-di-Casinca', '2B207'),
+       ('Prunelli-di-Fiumorbo', '2B251'),
+       ('Ville-di-Pietrabugno', '2B353'),
+       ('Aigues-Mortes', '30003'),
+       ('Aigues-Vives', '30004'),
+       ('Aimargues', '30006'),
+       ('Alès', '30007'),
+       ('Anduze', '30010'),
+       ('Les Angles', '30011'),
+       ('Aramon', '30012'),
+       ('Bagnols-sur-Cèze', '30028'),
+       ('Beaucaire', '30032'),
+       ('Beauvoisin', '30033'),
+       ('Bellegarde', '30034'),
+       ('Bernis', '30036'),
+       ('Bouillargues', '30047'),
+       ('Caissargues', '30060'),
+       ('Calvisson', '30062'),
+       ('Caveirac', '30075'),
+       ('Clarensac', '30082'),
+       ('Gallargues-le-Montueux', '30123'),
+       ('Garons', '30125'),
+       ('Générac', '30128'),
+       ('La Grand-Combe', '30132'),
+       ('Le Grau-du-Roi', '30133'),
+       ('Jonquières-Saint-Vincent', '30135'),
+       ('Laudun-l''Ardoise', '30141'),
+       ('Manduel', '30155'),
+       ('Marguerittes', '30156'),
+       ('Milhaud', '30169'),
+       ('Montfrin', '30179'),
+       ('Nîmes', '30189'),
+       ('Pont-Saint-Esprit', '30202'),
+       ('Poulx', '30206'),
+       ('Pujaut', '30209'),
+       ('Quissac', '30210'),
+       ('Redessan', '30211'),
+       ('Rochefort-du-Gard', '30217'),
+       ('Roquemaure', '30221'),
+       ('Rousson', '30223'),
+       ('Saint-Ambroix', '30227'),
+       ('Saint-Christol-lez-Alès', '30243'),
+       ('Saint-Geniès-de-Malgoirès', '30255'),
+       ('Saint-Gilles', '30258'),
+       ('Saint-Hilaire-de-Brethmas', '30259'),
+       ('Saint-Hippolyte-du-Fort', '30263'),
+       ('Saint-Julien-les-Rosiers', '30274'),
+       ('Saint-Laurent-d''Aigouze', '30276'),
+       ('Saint-Laurent-des-Arbres', '30278'),
+       ('Saint-Martin-de-Valgalgues', '30284'),
+       ('Saint-Privat-des-Vieux', '30294'),
+       ('Saint-Quentin-la-Poterie', '30295'),
+       ('Salindres', '30305'),
+       ('Sommières', '30321'),
+       ('Uchaud', '30333'),
+       ('Uzès', '30334'),
+       ('Vauvert', '30341'),
+       ('Vergèze', '30344'),
+       ('Le Vigan', '30350'),
+       ('Villeneuve-lès-Avignon', '30351'),
+       ('Rodilhan', '30356'),
+       ('Aucamville', '31022'),
+       ('Aussonne', '31032'),
+       ('Auterive', '31033'),
+       ('Auzeville-Tolosane', '31035'),
+       ('Balma', '31044'),
+       ('Baziège', '31048'),
+       ('Beauzelle', '31056'),
+       ('Bérat', '31065'),
+       ('Bessières', '31066'),
+       ('Blagnac', '31069'),
+       ('Bouloc', '31079'),
+       ('Bruguières', '31091'),
+       ('Carbonne', '31107'),
+       ('Castanet-Tolosan', '31113'),
+       ('Castelginest', '31116'),
+       ('Castelmaurou', '31117'),
+       ('Castelnau-d''Estrétefonds', '31118'),
+       ('Cazères', '31135'),
+       ('Colomiers', '31149'),
+       ('Cornebarrieu', '31150'),
+       ('Cugnaux', '31157'),
+       ('Eaunes', '31165'),
+       ('Escalquens', '31169'),
+       ('Fenouillet', '31182'),
+       ('Fonbeauzard', '31186'),
+       ('Fonsorbes', '31187'),
+       ('Fontenilles', '31188'),
+       ('Fronton', '31202'),
+       ('Frouzins', '31203'),
+       ('Gagnac-sur-Garonne', '31205'),
+       ('Gratentour', '31230'),
+       ('Grenade', '31232'),
+       ('Labarthe-sur-Lèze', '31248'),
+       ('Labège', '31254'),
+       ('Lagardelle-sur-Lèze', '31263'),
+       ('Launaguet', '31282'),
+       ('Lavernose-Lacasse', '31287'),
+       ('Léguevin', '31291'),
+       ('Lherm', '31299'),
+       ('Longages', '31303'),
+       ('Merville', '31341'),
+       ('Mondonville', '31351'),
+       ('Montastruc-la-Conseillère', '31358'),
+       ('Montberon', '31364'),
+       ('Montesquieu-Volvestre', '31375'),
+       ('Montrabé', '31389'),
+       ('Muret', '31395'),
+       ('Nailloux', '31396'),
+       ('Pechbonnieu', '31410'),
+       ('Pibrac', '31417'),
+       ('Pins-Justaret', '31421'),
+       ('Plaisance-du-Touch', '31424'),
+       ('Portet-sur-Garonne', '31433'),
+       ('Quint-Fonsegrives', '31445'),
+       ('Ramonville-Saint-Agne', '31446'),
+       ('Revel', '31451'),
+       ('Rieumes', '31454'),
+       ('Roques', '31458'),
+       ('Roquettes', '31460'),
+       ('Saint-Alban', '31467'),
+       ('Saint-Gaudens', '31483'),
+       ('Saint-Jean', '31488'),
+       ('Saint-Jory', '31490'),
+       ('Saint-Lys', '31499'),
+       ('Saint-Orens-de-Gameville', '31506'),
+       ('La Salvetat-Saint-Gilles', '31526'),
+       ('Seilh', '31541'),
+       ('Seysses', '31547'),
+       ('Toulouse', '31555'),
+       ('Tournefeuille', '31557'),
+       ('L''Union', '31561'),
+       ('Verfeil', '31573'),
+       ('Vernet', '31574'),
+       ('Villefranche-de-Lauragais', '31582'),
+       ('Villemur-sur-Tarn', '31584'),
+       ('Villeneuve-Tolosane', '31588'),
+       ('Auch', '32013'),
+       ('Condom', '32107'),
+       ('Eauze', '32119'),
+       ('Fleurance', '32132'),
+       ('Gimont', '32147'),
+       ('L''Isle-Jourdain', '32160'),
+       ('Lectoure', '32208'),
+       ('Mirande', '32256'),
+       ('Vic-Fezensac', '32462'),
+       ('Ambarès-et-Lagrave', '33003'),
+       ('Ambès', '33004'),
+       ('Andernos-les-Bains', '33005'),
+       ('Arcachon', '33009'),
+       ('Arès', '33011'),
+       ('Arsac', '33012'),
+       ('Artigues-près-Bordeaux', '33013'),
+       ('Val de Virvée', '33018'),
+       ('Audenge', '33019'),
+       ('Avensan', '33022'),
+       ('Le Barp', '33029'),
+       ('Bassens', '33032'),
+       ('Bazas', '33036'),
+       ('Bègles', '33039'),
+       ('Belin-Béliet', '33042'),
+       ('Biganos', '33051'),
+       ('Blanquefort', '33056'),
+       ('Blaye', '33058'),
+       ('Bordeaux', '33063'),
+       ('Bouliac', '33065'),
+       ('Le Bouscat', '33069'),
+       ('Bruges', '33075'),
+       ('Cadaujac', '33080'),
+       ('Camblanes-et-Meynac', '33085'),
+       ('Canéjan', '33090'),
+       ('Carbon-Blanc', '33096'),
+       ('Carignan-de-Bordeaux', '33099'),
+       ('Castelnau-de-Médoc', '33104'),
+       ('Castillon-la-Bataille', '33108'),
+       ('Cenon', '33119'),
+       ('Cestas', '33122'),
+       ('Coutras', '33138'),
+       ('Créon', '33140'),
+       ('Eysines', '33162'),
+       ('Fargues-Saint-Hilaire', '33165'),
+       ('Floirac', '33167'),
+       ('Galgon', '33179'),
+       ('Gradignan', '33192'),
+       ('Gujan-Mestras', '33199'),
+       ('Le Haillan', '33200'),
+       ('Hourtin', '33203'),
+       ('Izon', '33207'),
+       ('La Brède', '33213'),
+       ('Lacanau', '33214'),
+       ('Langon', '33227'),
+       ('Lanton', '33229'),
+       ('Latresne', '33234'),
+       ('Lège-Cap-Ferret', '33236'),
+       ('Léognan', '33238'),
+       ('Lesparre-Médoc', '33240'),
+       ('Libourne', '33243'),
+       ('Lormont', '33249'),
+       ('Ludon-Médoc', '33256'),
+       ('Macau', '33262'),
+       ('Martignas-sur-Jalle', '33273'),
+       ('Martillac', '33274'),
+       ('Mérignac', '33281'),
+       ('Mios', '33284'),
+       ('Montussan', '33293'),
+       ('Parempuyre', '33312'),
+       ('Pauillac', '33314'),
+       ('Pessac', '33318'),
+       ('Le Pian-Médoc', '33322'),
+       ('Pineuilh', '33324'),
+       ('Podensac', '33327'),
+       ('Pompignac', '33330'),
+       ('Le Porge', '33333'),
+       ('La Réole', '33352'),
+       ('Sadirac', '33363'),
+       ('Saint-André-de-Cubzac', '33366'),
+       ('Saint-Aubin-de-Médoc', '33376'),
+       ('Saint-Caprais-de-Bordeaux', '33381'),
+       ('Saint-Ciers-sur-Gironde', '33389'),
+       ('Saint-Denis-de-Pile', '33393'),
+       ('Sainte-Eulalie', '33397'),
+       ('Saint-Jean-d''Illac', '33422'),
+       ('Saint-Laurent-Médoc', '33424'),
+       ('Saint-Loubès', '33433'),
+       ('Saint-Médard-d''Eyrans', '33448'),
+       ('Saint-Médard-en-Jalles', '33449'),
+       ('Saint-Savin', '33473'),
+       ('Saint-Selve', '33474'),
+       ('Saint-Seurin-sur-l''Isle', '33478'),
+       ('Saint-Sulpice-et-Cameyrac', '33483'),
+       ('Salles', '33498'),
+       ('Saucats', '33501'),
+       ('Le Taillan-Médoc', '33519'),
+       ('Talence', '33522'),
+       ('Le Teich', '33527'),
+       ('La Teste-de-Buch', '33529'),
+       ('Tresses', '33535'),
+       ('Vayres', '33539'),
+       ('Villenave-d''Ornon', '33550'),
+       ('Marcheprime', '33555'),
+       ('Agde', '34003'),
+       ('Baillargues', '34022'),
+       ('Balaruc-les-Bains', '34023'),
+       ('Bédarieux', '34028'),
+       ('Bessan', '34031'),
+       ('Béziers', '34032'),
+       ('Boujan-sur-Libron', '34037'),
+       ('Canet', '34051'),
+       ('Capestang', '34052'),
+       ('Castelnau-le-Lez', '34057'),
+       ('Castries', '34058'),
+       ('Cazouls-lès-Béziers', '34069'),
+       ('Clapiers', '34077'),
+       ('Clermont-l''Hérault', '34079'),
+       ('Cournonsec', '34087'),
+       ('Cournonterral', '34088'),
+       ('Le Crès', '34090'),
+       ('Fabrègues', '34095'),
+       ('Florensac', '34101'),
+       ('Frontignan', '34108'),
+       ('Ganges', '34111'),
+       ('Gigean', '34113'),
+       ('Gignac', '34114'),
+       ('Grabels', '34116'),
+       ('Jacou', '34120'),
+       ('Juvignac', '34123'),
+       ('Lansargues', '34127'),
+       ('Lattes', '34129'),
+       ('Lavérune', '34134'),
+       ('Lespignan', '34135'),
+       ('Lignan-sur-Orb', '34140'),
+       ('Lodève', '34142'),
+       ('Lunel', '34145'),
+       ('Lunel-Viel', '34146'),
+       ('Magalas', '34147'),
+       ('Maraussan', '34148'),
+       ('Marseillan', '34150'),
+       ('Marsillargues', '34151'),
+       ('Mauguio', '34154'),
+       ('Mèze', '34157'),
+       ('Mireval', '34159'),
+       ('Montady', '34161'),
+       ('Montagnac', '34162'),
+       ('Montarnaud', '34163'),
+       ('Montferrier-sur-Lez', '34169'),
+       ('Montpellier', '34172'),
+       ('Murviel-lès-Béziers', '34178'),
+       ('Nissan-lez-Enserune', '34183'),
+       ('Palavas-les-Flots', '34192'),
+       ('Paulhan', '34194'),
+       ('Pérols', '34198'),
+       ('Pézenas', '34199'),
+       ('Pignan', '34202'),
+       ('Portiragnes', '34209'),
+       ('Poussan', '34213'),
+       ('Prades-le-Lez', '34217'),
+       ('Puisserguier', '34225'),
+       ('Saint-André-de-Sangonis', '34239'),
+       ('Saint-Aunès', '34240'),
+       ('Saint-Brès', '34244'),
+       ('Saint-Clément-de-Rivière', '34247'),
+       ('Saint-Gély-du-Fesc', '34255'),
+       ('Saint-Georges-d''Orques', '34259'),
+       ('Saint-Jean-de-Védas', '34270'),
+       ('Saint-Just', '34272'),
+       ('Saint-Mathieu-de-Tréviers', '34276'),
+       ('Sauvian', '34298'),
+       ('Sérignan', '34299'),
+       ('Servian', '34300'),
+       ('Sète', '34301'),
+       ('Teyran', '34309'),
+       ('Thézan-lès-Béziers', '34310'),
+       ('Valras-Plage', '34324'),
+       ('Vendargues', '34327'),
+       ('Vias', '34332'),
+       ('Vic-la-Gardiole', '34333'),
+       ('Villeneuve-lès-Béziers', '34336'),
+       ('Villeneuve-lès-Maguelone', '34337'),
+       ('Villeveyrac', '34341'),
+       ('La Grande-Motte', '34344'),
+       ('Acigné', '35001'),
+       ('Val-Couesnon', '35004'),
+       ('Argentré-du-Plessis', '35006'),
+       ('Bain-de-Bretagne', '35012'),
+       ('Bains-sur-Oust', '35013'),
+       ('Bédée', '35023'),
+       ('Betton', '35024'),
+       ('La Bouëxière', '35031'),
+       ('Bourgbarré', '35032'),
+       ('Bourg-des-Comptes', '35033'),
+       ('Bréal-sous-Montfort', '35037'),
+       ('Breteil', '35040'),
+       ('Bruz', '35047'),
+       ('Cancale', '35049'),
+       ('Cesson-Sévigné', '35051'),
+       ('Chantepie', '35055'),
+       ('La Chapelle-des-Fougeretz', '35059'),
+       ('Chartres-de-Bretagne', '35066'),
+       ('Châteaubourg', '35068'),
+       ('Châteaugiron', '35069'),
+       ('Chavagne', '35076'),
+       ('Combourg', '35085'),
+       ('Corps-Nuds', '35088'),
+       ('Dinard', '35093'),
+       ('Dol-de-Bretagne', '35095'),
+       ('Domloup', '35099'),
+       ('Fougères', '35115'),
+       ('Gévezé', '35120'),
+       ('Goven', '35123'),
+       ('La Guerche-de-Bretagne', '35125'),
+       ('Guichen', '35126'),
+       ('Guignen', '35127'),
+       ('L''Hermitage', '35131'),
+       ('Iffendic', '35133'),
+       ('Janzé', '35136'),
+       ('Laillé', '35139'),
+       ('Lécousse', '35150'),
+       ('Liffré', '35152'),
+       ('Louvigné-du-Désert', '35162'),
+       ('Val d''Anast', '35168'),
+       ('Melesse', '35173'),
+       ('Guipry-Messac', '35176'),
+       ('La Mézière', '35177'),
+       ('Miniac-Morvan', '35179'),
+       ('Montauban-de-Bretagne', '35184'),
+       ('Montfort-sur-Meu', '35188'),
+       ('Montgermont', '35189'),
+       ('Mordelles', '35196'),
+       ('Nouvoitou', '35204'),
+       ('Noyal-Châtillon-sur-Seiche', '35206'),
+       ('Noyal-sur-Vilaine', '35207'),
+       ('Orgères', '35208'),
+       ('Pacé', '35210'),
+       ('Pipriac', '35219'),
+       ('Piré-Chancé', '35220'),
+       ('Plélan-le-Grand', '35223'),
+       ('Pleumeleuc', '35227'),
+       ('Pleurtuit', '35228'),
+       ('Redon', '35236'),
+       ('Rennes', '35238'),
+       ('Retiers', '35239'),
+       ('Le Rheu', '35240'),
+       ('Romillé', '35245'),
+       ('Saint-Aubin-d''Aubigné', '35251'),
+       ('Saint-Aubin-du-Cormier', '35253'),
+       ('Maen Roch', '35257'),
+       ('Saint-Erblon', '35266'),
+       ('Saint-Gilles', '35275'),
+       ('Saint-Grégoire', '35278'),
+       ('Saint-Jacques-de-la-Lande', '35281'),
+       ('Saint-Malo', '35288'),
+       ('Saint-Méen-le-Grand', '35297'),
+       ('Saint-Méloir-des-Ondes', '35299'),
+       ('Mesnil-Roc''h', '35308'),
+       ('Servon-sur-Vilaine', '35327'),
+       ('Thorigné-Fouillard', '35334'),
+       ('Tinténiac', '35337'),
+       ('Vern-sur-Seiche', '35352'),
+       ('Vezin-le-Coquet', '35353'),
+       ('Vitré', '35360'),
+       ('Pont-Péan', '35363'),
+       ('Ardentes', '36005'),
+       ('Argenton-sur-Creuse', '36006'),
+       ('Le Blanc', '36018'),
+       ('Buzançais', '36031'),
+       ('Châteauroux', '36044'),
+       ('La Châtre', '36046'),
+       ('Déols', '36063'),
+       ('Issoudun', '36088'),
+       ('Le Poinçonnet', '36159'),
+       ('Saint-Maur', '36202'),
+       ('Amboise', '37003'),
+       ('Azay-le-Rideau', '37014'),
+       ('Azay-sur-Cher', '37015'),
+       ('Ballan-Miré', '37018'),
+       ('Bléré', '37027'),
+       ('Bourgueil', '37031'),
+       ('Chambray-lès-Tours', '37050'),
+       ('Chanceaux-sur-Choisille', '37054'),
+       ('Château-Renault', '37063'),
+       ('Chinon', '37072'),
+       ('Cinq-Mars-la-Pile', '37077'),
+       ('Esvres', '37104'),
+       ('Fondettes', '37109'),
+       ('Descartes', '37115'),
+       ('Joué-lès-Tours', '37122'),
+       ('Langeais', '37123'),
+       ('Loches', '37132'),
+       ('Luynes', '37139'),
+       ('La Membrolle-sur-Choisille', '37151'),
+       ('Monnaie', '37153'),
+       ('Montbazon', '37154'),
+       ('Montlouis-sur-Loire', '37156'),
+       ('Monts', '37159'),
+       ('Nazelles-Négron', '37163'),
+       ('Notre-Dame-d''Oé', '37172'),
+       ('La Riche', '37195'),
+       ('Rochecorbon', '37203'),
+       ('Saint-Avertin', '37208'),
+       ('Saint-Cyr-sur-Loire', '37214'),
+       ('Saint-Martin-le-Beau', '37225'),
+       ('Sainte-Maure-de-Touraine', '37226'),
+       ('Saint-Pierre-des-Corps', '37233'),
+       ('Savonnières', '37243'),
+       ('Tours', '37261'),
+       ('Veigné', '37266'),
+       ('Véretz', '37267'),
+       ('La Ville-aux-Dames', '37273'),
+       ('Vouvray', '37281'),
+       ('Les Abrets en Dauphiné', '38001'),
+       ('Allevard', '38006'),
+       ('Apprieu', '38013'),
+       ('Les Avenières Veyrins-Thuellin', '38022'),
+       ('Beaurepaire', '38034'),
+       ('Bernin', '38039'),
+       ('Le Bourg-d''Oisans', '38052'),
+       ('Bourgoin-Jallieu', '38053'),
+       ('La Buisse', '38061'),
+       ('Cessieu', '38064'),
+       ('Champ-sur-Drac', '38071'),
+       ('Chapareillan', '38075'),
+       ('Charvieu-Chavagneux', '38085'),
+       ('Chasse-sur-Rhône', '38087'),
+       ('Chavanoz', '38097'),
+       ('Claix', '38111'),
+       ('Corenc', '38126'),
+       ('La Côte-Saint-André', '38130'),
+       ('Coublevie', '38133'),
+       ('Crémieu', '38138'),
+       ('Crolles', '38140'),
+       ('Dolomieu', '38148'),
+       ('Domène', '38150'),
+       ('Échirolles', '38151'),
+       ('Estrablin', '38157'),
+       ('Eybens', '38158'),
+       ('Fontaine', '38169'),
+       ('Fontanil-Cornillon', '38170'),
+       ('Froges', '38175'),
+       ('Gières', '38179'),
+       ('Le Grand-Lemps', '38182'),
+       ('Grenoble', '38185'),
+       ('Heyrieux', '38189'),
+       ('L''Isle-d''Abeau', '38193'),
+       ('Jarrie', '38200'),
+       ('Autrans-Méaudre en Vercors', '38225'),
+       ('Meylan', '38229'),
+       ('Moirans', '38239'),
+       ('Montalieu-Vercieu', '38247'),
+       ('Montbonnot-Saint-Martin', '38249'),
+       ('Morestel', '38261'),
+       ('La Mure', '38269'),
+       ('Le Péage-de-Roussillon', '38298'),
+       ('Pontcharra', '38314'),
+       ('Le Pont-de-Beauvoisin', '38315'),
+       ('Pont-de-Chéruy', '38316'),
+       ('Le Pont-de-Claix', '38317'),
+       ('Pont-Évêque', '38318'),
+       ('Renage', '38332'),
+       ('Rives', '38337'),
+       ('Roussillon', '38344'),
+       ('Ruy-Montceau', '38348'),
+       ('Saint-Chef', '38374'),
+       ('Saint-Clair-de-la-Tour', '38377'),
+       ('Saint-Clair-du-Rhône', '38378'),
+       ('Saint-Égrève', '38382'),
+       ('Saint-Étienne-de-Saint-Geoirs', '38384'),
+       ('Saint-Georges-d''Espéranche', '38389'),
+       ('Saint-Ismier', '38397'),
+       ('Saint-Jean-de-Bournay', '38399'),
+       ('Saint-Jean-de-Moirans', '38400'),
+       ('Saint-Laurent-du-Pont', '38412'),
+       ('Saint-Marcellin', '38416'),
+       ('Saint-Martin-d''Hères', '38421'),
+       ('Saint-Martin-d''Uriage', '38422'),
+       ('Saint-Martin-le-Vinoux', '38423'),
+       ('Saint-Maurice-l''Exil', '38425'),
+       ('Saint-Nazaire-les-Eymes', '38431'),
+       ('Crêts en Belledonne', '38439'),
+       ('Saint-Quentin-Fallavier', '38449'),
+       ('Saint-Romain-de-Jalionas', '38451'),
+       ('Saint-Savin', '38455'),
+       ('Salaise-sur-Sanne', '38468'),
+       ('Sassenage', '38474'),
+       ('Seyssinet-Pariset', '38485'),
+       ('Seyssins', '38486'),
+       ('Tignieu-Jameyzieu', '38507'),
+       ('La Tour-du-Pin', '38509'),
+       ('Le Touvet', '38511'),
+       ('La Tronche', '38516'),
+       ('Tullins', '38517'),
+       ('Varces-Allières-et-Risset', '38524'),
+       ('Vaulnaveys-le-Haut', '38529'),
+       ('La Verpillière', '38537'),
+       ('Le Versoud', '38538'),
+       ('Vienne', '38544'),
+       ('Vif', '38545'),
+       ('Villard-Bonnot', '38547'),
+       ('Villard-de-Lans', '38548'),
+       ('Villefontaine', '38553'),
+       ('Villette-d''Anthon', '38557'),
+       ('Vinay', '38559'),
+       ('Vizille', '38562'),
+       ('Voiron', '38563'),
+       ('Voreppe', '38565'),
+       ('Arbois', '39013'),
+       ('Champagnole', '39097'),
+       ('Dole', '39198'),
+       ('Lons-le-Saunier', '39300'),
+       ('Montmorot', '39362'),
+       ('Hauts de Bienne', '39368'),
+       ('Poligny', '39434'),
+       ('Les Rousses', '39470'),
+       ('Saint-Claude', '39478'),
+       ('Tavaux', '39526'),
+       ('Aire-sur-l''Adour', '40001'),
+       ('Bénesse-Maremne', '40036'),
+       ('Biscarrosse', '40046'),
+       ('Capbreton', '40065'),
+       ('Dax', '40088'),
+       ('Hagetmau', '40119'),
+       ('Labenne', '40133'),
+       ('Mimizan', '40184'),
+       ('Mont-de-Marsan', '40192'),
+       ('Morcenx-la-Nouvelle', '40197'),
+       ('Narrosse', '40202'),
+       ('Ondres', '40209'),
+       ('Parentis-en-Born', '40217'),
+       ('Peyrehorade', '40224'),
+       ('Pouillon', '40233'),
+       ('Rion-des-Landes', '40243'),
+       ('Saint-Martin-de-Seignanx', '40273'),
+       ('Saint-Paul-lès-Dax', '40279'),
+       ('Saint-Pierre-du-Mont', '40281'),
+       ('Saint-Sever', '40282'),
+       ('Saint-Vincent-de-Paul', '40283'),
+       ('Saint-Vincent-de-Tyrosse', '40284'),
+       ('Sanguinet', '40287'),
+       ('Seignosse', '40296'),
+       ('Soorts-Hossegor', '40304'),
+       ('Soustons', '40310'),
+       ('Tarnos', '40312'),
+       ('Tartas', '40313'),
+       ('Tosse', '40317'),
+       ('Blois', '41018'),
+       ('La Chaussée-Saint-Victor', '41047'),
+       ('Le Controis-en-Sologne', '41059'),
+       ('Lamotte-Beuvron', '41106'),
+       ('Mer', '41136'),
+       ('Montoire-sur-le-Loir', '41149'),
+       ('Mont-près-Chambord', '41150'),
+       ('Montrichard Val de Cher', '41151'),
+       ('Veuzain-sur-Loire', '41167'),
+       ('Beauce la Romaine', '41173'),
+       ('Romorantin-Lanthenay', '41194'),
+       ('Saint-Gervais-la-Forêt', '41212'),
+       ('Saint-Laurent-Nouan', '41220'),
+       ('Saint-Ouen', '41226'),
+       ('Salbris', '41232'),
+       ('Selles-sur-Cher', '41242'),
+       ('Vendôme', '41269'),
+       ('Vineuil', '41295'),
+       ('Andrézieux-Bouthéon', '42005'),
+       ('Boën-sur-Lignon', '42019'),
+       ('Bonson', '42022'),
+       ('Le Chambon-Feugerolles', '42044'),
+       ('Charlieu', '42052'),
+       ('Chazelles-sur-Lyon', '42059'),
+       ('Commelle-Vernay', '42069'),
+       ('Le Coteau', '42071'),
+       ('Feurs', '42094'),
+       ('Firminy', '42095'),
+       ('La Fouillouse', '42097'),
+       ('Fraisses', '42099'),
+       ('La Grand-Croix', '42103'),
+       ('L''Horme', '42110'),
+       ('Lorette', '42123'),
+       ('Mably', '42127'),
+       ('Montbrison', '42147'),
+       ('Montrond-les-Bains', '42149'),
+       ('Pélussin', '42168'),
+       ('Renaison', '42182'),
+       ('La Ricamarie', '42183'),
+       ('Riorges', '42184'),
+       ('Rive-de-Gier', '42186'),
+       ('Roanne', '42187'),
+       ('Roche-la-Molière', '42189'),
+       ('Saint-Chamond', '42207'),
+       ('Saint-Étienne', '42218'),
+       ('Saint-Galmier', '42222'),
+       ('Saint-Genest-Lerpt', '42223'),
+       ('Saint-Genest-Malifaux', '42224'),
+       ('Genilac', '42225'),
+       ('Saint-Héand', '42234'),
+       ('Saint-Jean-Bonnefonds', '42237'),
+       ('Saint-Marcellin-en-Forez', '42256'),
+       ('Saint-Martin-la-Plaine', '42259'),
+       ('Saint-Paul-en-Jarez', '42271'),
+       ('Saint-Priest-en-Jarez', '42275'),
+       ('Saint-Just-Saint-Rambert', '42279'),
+       ('Saint-Romain-le-Puy', '42285'),
+       ('Savigneux', '42299'),
+       ('Sorbiers', '42302'),
+       ('Sury-le-Comtal', '42304'),
+       ('La Talaudière', '42305'),
+       ('Unieux', '42316'),
+       ('Veauche', '42323'),
+       ('Villars', '42330'),
+       ('Villerest', '42332'),
+       ('Aurec-sur-Loire', '43012'),
+       ('Bas-en-Basset', '43020'),
+       ('Beauzac', '43025'),
+       ('Brioude', '43040'),
+       ('Brives-Charensac', '43041'),
+       ('Coubon', '43078'),
+       ('Espaly-Saint-Marcel', '43089'),
+       ('Langeac', '43112'),
+       ('Monistrol-sur-Loire', '43137'),
+       ('Le Puy-en-Velay', '43157'),
+       ('Retournac', '43162'),
+       ('Saint-Didier-en-Velay', '43177'),
+       ('Sainte-Florine', '43185'),
+       ('Saint-Germain-Laprade', '43190'),
+       ('Saint-Just-Malmont', '43205'),
+       ('Sainte-Sigolène', '43224'),
+       ('Tence', '43244'),
+       ('Vals-près-le-Puy', '43251'),
+       ('Yssingeaux', '43268'),
+       ('Aigrefeuille-sur-Maine', '44002'),
+       ('Ancenis-Saint-Géréon', '44003'),
+       ('Chaumes-en-Retz', '44005'),
+       ('Basse-Goulaine', '44009'),
+       ('La Bernerie-en-Retz', '44012'),
+       ('Besné', '44013'),
+       ('Le Bignon', '44014'),
+       ('Blain', '44015'),
+       ('Bouaye', '44018'),
+       ('Bouguenais', '44020'),
+       ('Villeneuve-en-Retz', '44021'),
+       ('Bouvron', '44023'),
+       ('Campbon', '44025'),
+       ('Carquefou', '44026'),
+       ('Le Cellier', '44028'),
+       ('Divatte-sur-Loire', '44029'),
+       ('La Chapelle-des-Marais', '44030'),
+       ('La Chapelle-Heulin', '44032'),
+       ('La Chapelle-Launay', '44033'),
+       ('La Chapelle-sur-Erdre', '44035'),
+       ('Châteaubriant', '44036'),
+       ('Château-Thébaud', '44037'),
+       ('La Chevrolière', '44041'),
+       ('Clisson', '44043'),
+       ('Cordemais', '44045'),
+       ('Couëron', '44047'),
+       ('Le Croisic', '44049'),
+       ('Crossac', '44050'),
+       ('Derval', '44051'),
+       ('Donges', '44052'),
+       ('Erbray', '44054'),
+       ('La Baule-Escoublac', '44055'),
+       ('Fay-de-Bretagne', '44056'),
+       ('Frossay', '44061'),
+       ('Gétigné', '44063'),
+       ('Gorges', '44064'),
+       ('Grandchamps-des-Fontaines', '44066'),
+       ('Guémené-Penfao', '44067'),
+       ('Guenrouet', '44068'),
+       ('Guérande', '44069'),
+       ('La Haie-Fouassière', '44070'),
+       ('Haute-Goulaine', '44071'),
+       ('Herbignac', '44072'),
+       ('Héric', '44073'),
+       ('Indre', '44074'),
+       ('Le Landreau', '44079'),
+       ('Legé', '44081'),
+       ('Ligné', '44082'),
+       ('Le Loroux-Bottereau', '44084'),
+       ('Machecoul-Saint-Même', '44087'),
+       ('Maisdon-sur-Sèvre', '44088'),
+       ('Malville', '44089'),
+       ('Mauves-sur-Loire', '44094'),
+       ('Mésanger', '44096'),
+       ('Missillac', '44098'),
+       ('La Montagne', '44101'),
+       ('Montbert', '44102'),
+       ('Montoir-de-Bretagne', '44103'),
+       ('Nantes', '44109'),
+       ('Nort-sur-Erdre', '44110'),
+       ('Nozay', '44113'),
+       ('Orvault', '44114'),
+       ('Oudon', '44115'),
+       ('Paimbœuf', '44116'),
+       ('Le Pallet', '44117'),
+       ('Le Pellerin', '44120'),
+       ('Petit-Mars', '44122'),
+       ('La Plaine-sur-Mer', '44126'),
+       ('Plessé', '44128'),
+       ('Pontchâteau', '44129'),
+       ('Pont-Saint-Martin', '44130'),
+       ('Pornic', '44131'),
+       ('Pornichet', '44132'),
+       ('Le Pouliguen', '44135'),
+       ('Prinquiau', '44137'),
+       ('Rezé', '44143'),
+       ('Rouans', '44145'),
+       ('Saffré', '44149'),
+       ('Saint-Aignan-Grandlieu', '44150'),
+       ('Saint-André-des-Eaux', '44151'),
+       ('Saint-Brevin-les-Pins', '44154'),
+       ('Saint-Colomban', '44155'),
+       ('Corcoué-sur-Logne', '44156'),
+       ('Saint-Étienne-de-Montluc', '44158'),
+       ('Saint-Gildas-des-Bois', '44161'),
+       ('Saint-Herblain', '44162'),
+       ('Vair-sur-Loire', '44163'),
+       ('Saint-Jean-de-Boiseau', '44166'),
+       ('Saint-Joachim', '44168'),
+       ('Saint-Julien-de-Concelles', '44169'),
+       ('Sainte-Luce-sur-Loire', '44172'),
+       ('Saint-Lyphard', '44175'),
+       ('Saint-Malo-de-Guersac', '44176'),
+       ('Saint-Mars-du-Désert', '44179'),
+       ('Vallons-de-l''Erdre', '44180'),
+       ('Saint-Michel-Chef-Chef', '44182'),
+       ('Saint-Nazaire', '44184'),
+       ('Saint-Nicolas-de-Redon', '44185'),
+       ('Sainte-Pazanne', '44186'),
+       ('Saint-Père-en-Retz', '44187'),
+       ('Saint-Philbert-de-Grand-Lieu', '44188'),
+       ('Saint-Sébastien-sur-Loire', '44190'),
+       ('Sautron', '44194'),
+       ('Savenay', '44195'),
+       ('Les Sorinières', '44198'),
+       ('Sucé-sur-Erdre', '44201'),
+       ('Thouaré-sur-Loire', '44204'),
+       ('Treillières', '44209'),
+       ('Trignac', '44210'),
+       ('La Turballe', '44211'),
+       ('Vallet', '44212'),
+       ('Loireauxence', '44213'),
+       ('Vertou', '44215'),
+       ('Vieillevigne', '44216'),
+       ('Vigneux-de-Bretagne', '44217'),
+       ('Geneston', '44223'),
+       ('Amilly', '45004'),
+       ('Beaugency', '45028'),
+       ('Briare', '45053'),
+       ('Chaingy', '45067'),
+       ('Châlette-sur-Loing', '45068'),
+       ('La Chapelle-Saint-Mesmin', '45075'),
+       ('Châteauneuf-sur-Loire', '45082'),
+       ('Châtillon-sur-Loire', '45087'),
+       ('Chécy', '45089'),
+       ('Cléry-Saint-André', '45098'),
+       ('Courtenay', '45115'),
+       ('Dordives', '45127'),
+       ('Fay-aux-Loges', '45142'),
+       ('Ferrières-en-Gâtinais', '45145'),
+       ('La Ferté-Saint-Aubin', '45146'),
+       ('Fleury-les-Aubrais', '45147'),
+       ('Gien', '45155'),
+       ('Ingré', '45169'),
+       ('Jargeau', '45173'),
+       ('Lailly-en-Val', '45179'),
+       ('Lorris', '45187'),
+       ('Le Malesherbois', '45191'),
+       ('Meung-sur-Loire', '45203'),
+       ('Montargis', '45208'),
+       ('Neuville-aux-Bois', '45224'),
+       ('Olivet', '45232'),
+       ('Orléans', '45234'),
+       ('Ormes', '45235'),
+       ('Pannes', '45247'),
+       ('Pithiviers', '45252'),
+       ('Puiseaux', '45258'),
+       ('Saint-Ay', '45269'),
+       ('Saint-Cyr-en-Val', '45272'),
+       ('Saint-Denis-de-l''Hôtel', '45273'),
+       ('Saint-Denis-en-Val', '45274'),
+       ('Saint-Hilaire-Saint-Mesmin', '45282'),
+       ('Saint-Jean-de-Braye', '45284'),
+       ('Saint-Jean-de-la-Ruelle', '45285'),
+       ('Saint-Jean-le-Blanc', '45286'),
+       ('Saint-Pryvé-Saint-Mesmin', '45298'),
+       ('Sandillon', '45300'),
+       ('Saran', '45302'),
+       ('Semoy', '45308'),
+       ('Sully-sur-Loire', '45315'),
+       ('Traînou', '45327'),
+       ('Villemandeur', '45338'),
+       ('Cahors', '46042'),
+       ('Figeac', '46102'),
+       ('Gourdon', '46127'),
+       ('Gramat', '46128'),
+       ('Pradines', '46224'),
+       ('Saint-Céré', '46251'),
+       ('Souillac', '46309'),
+       ('Agen', '47001'),
+       ('Aiguillon', '47004'),
+       ('Bias', '47027'),
+       ('Boé', '47031'),
+       ('Bon-Encontre', '47032'),
+       ('Casteljaloux', '47052'),
+       ('Colayrac-Saint-Cirq', '47069'),
+       ('Foulayronnes', '47100'),
+       ('Fumel', '47106'),
+       ('Layrac', '47145'),
+       ('Marmande', '47157'),
+       ('Miramont-de-Guyenne', '47168'),
+       ('Nérac', '47195'),
+       ('Le Passage', '47201'),
+       ('Pont-du-Casse', '47209'),
+       ('Pujols', '47215'),
+       ('Sainte-Bazeille', '47233'),
+       ('Sainte-Livrade-sur-Lot', '47252'),
+       ('Tonneins', '47310'),
+       ('Villeneuve-sur-Lot', '47323'),
+       ('Langogne', '48080'),
+       ('Marvejols', '48092'),
+       ('Mende', '48095'),
+       ('Saint-Chély-d''Apcher', '48140'),
+       ('Allonnes', '49002'),
+       ('Angers', '49007'),
+       ('Avrillé', '49015'),
+       ('Baugé-en-Anjou', '49018'),
+       ('Beaucouzé', '49020'),
+       ('Beaufort-en-Anjou', '49021'),
+       ('Beaupréau-en-Mauges', '49023'),
+       ('Bouchemaine', '49035'),
+       ('Briollay', '49048'),
+       ('Brissac Loire Aubance', '49050'),
+       ('Bellevigne-les-Châteaux', '49060'),
+       ('Chalonnes-sur-Loire', '49063'),
+       ('Orée d''Anjou', '49069'),
+       ('Les Hauts-d''Anjou', '49080'),
+       ('Terranjou', '49086'),
+       ('Chemillé-en-Anjou', '49092'),
+       ('Cholet', '49099'),
+       ('Doué-en-Anjou', '49125'),
+       ('Durtal', '49127'),
+       ('Écouflant', '49129'),
+       ('Les Garennes sur Loire', '49167'),
+       ('Le Lion-d''Angers', '49176'),
+       ('Longué-Jumelles', '49180'),
+       ('Val d''Erdre-Auxence', '49183'),
+       ('Maulévrier', '49192'),
+       ('Le May-sur-Èvre', '49193'),
+       ('Mazé-Milon', '49194'),
+       ('Longuenée-en-Anjou', '49200'),
+       ('Montreuil-Juigné', '49214'),
+       ('Montreuil-Bellay', '49215'),
+       ('Montrevault-sur-Èvre', '49218'),
+       ('Morannes sur Sarthe-Daumeray', '49220'),
+       ('Mûrs-Erigné', '49223'),
+       ('Noyant-Villages', '49228'),
+       ('Mauges-sur-Loire', '49244'),
+       ('Les Ponts-de-Cé', '49246'),
+       ('Ombrée d''Anjou', '49248'),
+       ('Gennes-Val-de-Loire', '49261'),
+       ('Saint-Barthélemy-d''Anjou', '49267'),
+       ('Sainte-Gemmes-sur-Loire', '49278'),
+       ('Saint-Georges-sur-Loire', '49283'),
+       ('Val-du-Layon', '49292'),
+       ('Saint-Léger-de-Linières', '49298'),
+       ('Saint-Léger-sous-Cholet', '49299'),
+       ('Sèvremoine', '49301'),
+       ('Loire-Authion', '49307'),
+       ('Verrières-en-Anjou', '49323'),
+       ('Saumur', '49328'),
+       ('Segré-en-Anjou Bleu', '49331'),
+       ('La Séguinière', '49332'),
+       ('La Tessoualle', '49343'),
+       ('Bellevigne-en-Layon', '49345'),
+       ('Tiercé', '49347'),
+       ('Trélazé', '49353'),
+       ('Trémentines', '49355'),
+       ('Erdre-en-Anjou', '49367'),
+       ('Lys-Haut-Layon', '49373'),
+       ('Rives-du-Loir-en-Anjou', '49377'),
+       ('Agneaux', '50002'),
+       ('Avranches', '50025'),
+       ('La Hague', '50041'),
+       ('Bréhal', '50076'),
+       ('Bricquebec-en-Cotentin', '50082'),
+       ('Carentan-les-Marais', '50099'),
+       ('Cherbourg-en-Cotentin', '50129'),
+       ('Condé-sur-Vire', '50139'),
+       ('Coutances', '50147'),
+       ('Donville-les-Bains', '50165'),
+       ('Gouville-sur-Mer', '50215'),
+       ('Granville', '50218'),
+       ('La Haye', '50236'),
+       ('Isigny-le-Buat', '50256'),
+       ('Mortain-Bocage', '50359'),
+       ('Picauville', '50400'),
+       ('Les Pieux', '50402'),
+       ('Pontorson', '50410'),
+       ('Quettreville-sur-Sienne', '50419'),
+       ('Saint-Hilaire-du-Harcouët', '50484'),
+       ('Saint-James', '50487'),
+       ('Saint-Lô', '50502'),
+       ('Sainte-Mère-Église', '50523'),
+       ('Saint-Pair-sur-Mer', '50532'),
+       ('Bourgvallées', '50546'),
+       ('Saint-Sauveur-Villages', '50550'),
+       ('Sourdeval', '50582'),
+       ('Torigny-les-Villes', '50601'),
+       ('Valognes', '50615'),
+       ('Villedieu-les-Poêles-Rouffigny', '50639'),
+       ('Aÿ-Champagne', '51030'),
+       ('Bétheny', '51055'),
+       ('Bezannes', '51058'),
+       ('Châlons-en-Champagne', '51108'),
+       ('Cormontreuil', '51172'),
+       ('Épernay', '51230'),
+       ('Fagnières', '51242'),
+       ('Fismes', '51250'),
+       ('Montmirail', '51380'),
+       ('Mourmelon-le-Grand', '51388'),
+       ('Reims', '51454'),
+       ('Saint-Brice-Courcelles', '51474'),
+       ('Saint-Memmie', '51506'),
+       ('Sainte-Menehould', '51507'),
+       ('Sézanne', '51535'),
+       ('Suippes', '51559'),
+       ('Tinqueux', '51573'),
+       ('Blancs-Coteaux', '51612'),
+       ('Vitry-le-François', '51649'),
+       ('Witry-lès-Reims', '51662'),
+       ('Chaumont', '52121'),
+       ('Joinville', '52250'),
+       ('Langres', '52269'),
+       ('Nogent', '52353'),
+       ('Saint-Dizier', '52448'),
+       ('Bonchamp-lès-Laval', '53034'),
+       ('Changé', '53054'),
+       ('Château-Gontier-sur-Mayenne', '53062'),
+       ('Cossé-le-Vivien', '53077'),
+       ('Craon', '53084'),
+       ('Ernée', '53096'),
+       ('Évron', '53097'),
+       ('L''Huisserie', '53119'),
+       ('Laval', '53130'),
+       ('Louverné', '53140'),
+       ('Mayenne', '53147'),
+       ('Montsûrs', '53161'),
+       ('Saint-Berthevin', '53201'),
+       ('Baccarat', '54039'),
+       ('Blainville-sur-l''Eau', '54076'),
+       ('Blénod-lès-Pont-à-Mousson', '54079'),
+       ('Bouxières-aux-Dames', '54090'),
+       ('Val de Briey', '54099'),
+       ('Champigneulles', '54115'),
+       ('Custines', '54150'),
+       ('Damelevières', '54152'),
+       ('Dieulouard', '54157'),
+       ('Dombasle-sur-Meurthe', '54159'),
+       ('Écrouves', '54174'),
+       ('Essey-lès-Nancy', '54184'),
+       ('Frouard', '54215'),
+       ('Haucourt-Moulaine', '54254'),
+       ('Heillecourt', '54257'),
+       ('Herserange', '54261'),
+       ('Homécourt', '54263'),
+       ('Hussigny-Godbrange', '54270'),
+       ('Jarny', '54273'),
+       ('Jarville-la-Malgrange', '54274'),
+       ('Jœuf', '54280'),
+       ('Laneuveville-devant-Nancy', '54300'),
+       ('Laxou', '54304'),
+       ('Lexy', '54314'),
+       ('Liverdun', '54318'),
+       ('Longuyon', '54322'),
+       ('Longwy', '54323'),
+       ('Ludres', '54328'),
+       ('Lunéville', '54329'),
+       ('Malzéville', '54339'),
+       ('Maxéville', '54357'),
+       ('Mont-Saint-Martin', '54382'),
+       ('Nancy', '54395'),
+       ('Neuves-Maisons', '54397'),
+       ('Pagny-sur-Moselle', '54415'),
+       ('Pompey', '54430'),
+       ('Pont-à-Mousson', '54431'),
+       ('Pulnoy', '54439'),
+       ('Réhon', '54451'),
+       ('Saint-Max', '54482'),
+       ('Saint-Nicolas-de-Port', '54483'),
+       ('Saulxures-lès-Nancy', '54495'),
+       ('Seichamps', '54498'),
+       ('Tomblaine', '54526'),
+       ('Toul', '54528'),
+       ('Vandœuvre-lès-Nancy', '54547'),
+       ('Varangéville', '54549'),
+       ('Villers-lès-Nancy', '54578'),
+       ('Villerupt', '54580'),
+       ('Bar-le-Duc', '55029'),
+       ('Belleville-sur-Meuse', '55043'),
+       ('Commercy', '55122'),
+       ('Étain', '55181'),
+       ('Ligny-en-Barrois', '55291'),
+       ('Saint-Mihiel', '55463'),
+       ('Thierville-sur-Meuse', '55505'),
+       ('Verdun', '55545'),
+       ('Allaire', '56001'),
+       ('Arradon', '56003'),
+       ('Auray', '56007'),
+       ('Baden', '56008'),
+       ('Baud', '56010'),
+       ('Belz', '56013'),
+       ('Brech', '56023'),
+       ('Camors', '56031'),
+       ('Carentoir', '56033'),
+       ('Carnac', '56034'),
+       ('Caudan', '56036'),
+       ('Cléguer', '56040'),
+       ('Crach', '56046'),
+       ('Elven', '56053'),
+       ('Erdeven', '56054'),
+       ('Férel', '56058'),
+       ('La Gacilly', '56061'),
+       ('Gourin', '56066'),
+       ('Grand-Champ', '56067'),
+       ('Guer', '56075'),
+       ('Guidel', '56078'),
+       ('Hennebont', '56083'),
+       ('Inzinzac-Lochrist', '56090'),
+       ('Kervignac', '56094'),
+       ('Landévant', '56097'),
+       ('Lanester', '56098'),
+       ('Languidic', '56101'),
+       ('Larmor-Plage', '56107'),
+       ('Locminé', '56117'),
+       ('Locmiquélic', '56118'),
+       ('Locoal-Mendon', '56119'),
+       ('Lorient', '56121'),
+       ('Mauron', '56127'),
+       ('Merlevenez', '56130'),
+       ('Monterblanc', '56137'),
+       ('Moréac', '56140'),
+       ('Muzillac', '56143'),
+       ('Évellys', '56144'),
+       ('Nivillac', '56147'),
+       ('Noyal-Pontivy', '56151'),
+       ('Plescop', '56158'),
+       ('Ploemel', '56161'),
+       ('Ploemeur', '56162'),
+       ('Ploeren', '56164'),
+       ('Ploërmel', '56165'),
+       ('Plouay', '56166'),
+       ('Plouhinec', '56169'),
+       ('Pluméliau-Bieuzy', '56173'),
+       ('Plumergat', '56175'),
+       ('Pluneret', '56176'),
+       ('Pluvigner', '56177'),
+       ('Pontivy', '56178'),
+       ('Pont-Scorff', '56179'),
+       ('Questembert', '56184'),
+       ('Quéven', '56185'),
+       ('Quiberon', '56186'),
+       ('Riantec', '56193'),
+       ('Saint-Avé', '56206'),
+       ('Saint-Nolff', '56231'),
+       ('Sarzeau', '56240'),
+       ('Séné', '56243'),
+       ('Sérent', '56244'),
+       ('Sulniac', '56247'),
+       ('Surzur', '56248'),
+       ('Theix-Noyalo', '56251'),
+       ('Vannes', '56260'),
+       ('Algrange', '57012'),
+       ('Amnéville', '57019'),
+       ('Ars-sur-Moselle', '57032'),
+       ('Audun-le-Tiche', '57038'),
+       ('Le Ban-Saint-Martin', '57049'),
+       ('Behren-lès-Forbach', '57058'),
+       ('Bitche', '57089'),
+       ('Boulay-Moselle', '57097'),
+       ('Bousse', '57102'),
+       ('Bouzonville', '57106'),
+       ('Carling', '57123'),
+       ('Clouange', '57143'),
+       ('Cocheren', '57144'),
+       ('Courcelles-Chaussy', '57155'),
+       ('Créhange', '57159'),
+       ('Creutzwald', '57160'),
+       ('Dieuze', '57177'),
+       ('Fameck', '57206'),
+       ('Farébersviller', '57207'),
+       ('Faulquemont', '57209'),
+       ('Florange', '57221'),
+       ('Folschviller', '57224'),
+       ('Fontoy', '57226'),
+       ('Forbach', '57227'),
+       ('Freyming-Merlebach', '57240'),
+       ('Gandrange', '57242'),
+       ('Grosbliederstroff', '57260'),
+       ('Guénange', '57269'),
+       ('Hagondange', '57283'),
+       ('Hayange', '57306'),
+       ('Hettange-Grande', '57323'),
+       ('Hombourg-Haut', '57332'),
+       ('L''Hôpital', '57336'),
+       ('Knutange', '57368'),
+       ('Longeville-lès-Metz', '57412'),
+       ('Longeville-lès-Saint-Avold', '57413'),
+       ('Maizières-lès-Metz', '57433'),
+       ('Marange-Silvange', '57443'),
+       ('Marly', '57447'),
+       ('Metz', '57463'),
+       ('Mondelange', '57474'),
+       ('Montigny-lès-Metz', '57480'),
+       ('Morhange', '57483'),
+       ('Moulins-lès-Metz', '57487'),
+       ('Moyeuvre-Grande', '57491'),
+       ('Nilvange', '57508'),
+       ('Ottange', '57529'),
+       ('Petite-Rosselle', '57537'),
+       ('Phalsbourg', '57540'),
+       ('Puttelange-aux-Lacs', '57556'),
+       ('Rombas', '57591'),
+       ('Saint-Avold', '57606'),
+       ('Saint-Julien-lès-Metz', '57616'),
+       ('Sainte-Marie-aux-Chênes', '57620'),
+       ('Sarralbe', '57628'),
+       ('Sarrebourg', '57630'),
+       ('Sarreguemines', '57631'),
+       ('Serémange-Erzange', '57647'),
+       ('Spicheren', '57659'),
+       ('Stiring-Wendel', '57660'),
+       ('Talange', '57663'),
+       ('Terville', '57666'),
+       ('Thionville', '57672'),
+       ('Uckange', '57683'),
+       ('Valmont', '57690'),
+       ('Vitry-sur-Orne', '57724'),
+       ('Woippy', '57751'),
+       ('Woustviller', '57752'),
+       ('Yutz', '57757'),
+       ('La Charité-sur-Loire', '58059'),
+       ('Clamecy', '58079'),
+       ('Cosne-Cours-sur-Loire', '58086'),
+       ('Coulanges-lès-Nevers', '58088'),
+       ('Decize', '58095'),
+       ('Fourchambault', '58117'),
+       ('Garchizy', '58121'),
+       ('Imphy', '58134'),
+       ('La Machine', '58151'),
+       ('Marzy', '58160'),
+       ('Nevers', '58194'),
+       ('Varennes-Vauzelles', '58303'),
+       ('Abscon', '59002'),
+       ('Allennes-les-Marais', '59005'),
+       ('Aniche', '59008'),
+       ('Villeneuve-d''Ascq', '59009'),
+       ('Annœullin', '59011'),
+       ('Anor', '59012'),
+       ('Anzin', '59014'),
+       ('Arleux', '59015'),
+       ('Armentières', '59017'),
+       ('Auberchicourt', '59024'),
+       ('Auby', '59028'),
+       ('Aulnoy-lez-Valenciennes', '59032'),
+       ('Aulnoye-Aymeries', '59033'),
+       ('Avesnes-sur-Helpe', '59036'),
+       ('Avesnes-les-Aubert', '59037'),
+       ('Bailleul', '59043'),
+       ('Baisieux', '59044'),
+       ('La Bassée', '59051'),
+       ('Bauvin', '59052'),
+       ('Bavay', '59053'),
+       ('Bergues', '59067'),
+       ('Berlaimont', '59068'),
+       ('Beuvrages', '59079'),
+       ('Bondues', '59090'),
+       ('Bouchain', '59092'),
+       ('Bourbourg', '59094'),
+       ('Bousbecque', '59098'),
+       ('Boussois', '59104'),
+       ('Bray-Dunes', '59107'),
+       ('Bruay-sur-l''Escaut', '59112'),
+       ('Cambrai', '59122'),
+       ('Cappelle-la-Grande', '59131'),
+       ('Le Cateau-Cambrésis', '59136'),
+       ('Caudry', '59139'),
+       ('La Chapelle-d''Armentières', '59143'),
+       ('Chéreng', '59146'),
+       ('Comines', '59152'),
+       ('Condé-sur-l''Escaut', '59153'),
+       ('Coudekerque-Branche', '59155'),
+       ('Coutiches', '59158'),
+       ('Crespin', '59160'),
+       ('Croix', '59163'),
+       ('Cuincy', '59165'),
+       ('Cysoing', '59168'),
+       ('Dechy', '59170'),
+       ('Denain', '59172'),
+       ('Douai', '59178'),
+       ('Douchy-les-Mines', '59179'),
+       ('Dunkerque', '59183'),
+       ('Emmerin', '59193'),
+       ('Erquinghem-Lys', '59202'),
+       ('Escaudain', '59205'),
+       ('Escaudœuvres', '59206'),
+       ('Escautpont', '59207'),
+       ('Estaires', '59212'),
+       ('Faches-Thumesnil', '59220'),
+       ('Feignies', '59225'),
+       ('Fenain', '59227'),
+       ('Ferrière-la-Grande', '59230'),
+       ('Flers-en-Escrebieux', '59234'),
+       ('Flines-lez-Raches', '59239'),
+       ('Fourmies', '59249'),
+       ('Fresnes-sur-Escaut', '59253'),
+       ('Fretin', '59256'),
+       ('Genech', '59258'),
+       ('Ghyvelde', '59260'),
+       ('Gondecourt', '59266'),
+       ('La Gorgue', '59268'),
+       ('Grande-Synthe', '59271'),
+       ('Grand-Fort-Philippe', '59272'),
+       ('Gravelines', '59273'),
+       ('Guesnain', '59276'),
+       ('Hallennes-lez-Haubourdin', '59278'),
+       ('Halluin', '59279'),
+       ('Hasnon', '59284'),
+       ('Haubourdin', '59286'),
+       ('Hautmont', '59291'),
+       ('Haveluy', '59292'),
+       ('Hazebrouck', '59295'),
+       ('Hem', '59299'),
+       ('Hergnies', '59301'),
+       ('Hérin', '59302'),
+       ('Hondschoote', '59309'),
+       ('Hornaing', '59314'),
+       ('Houplin-Ancoisne', '59316'),
+       ('Houplines', '59317'),
+       ('Hoymille', '59319'),
+       ('Iwuy', '59322'),
+       ('Jeumont', '59324'),
+       ('Lallaing', '59327'),
+       ('Lambersart', '59328'),
+       ('Lambres-lez-Douai', '59329'),
+       ('Landrecies', '59331'),
+       ('Leers', '59339'),
+       ('Leffrinckoucke', '59340'),
+       ('Lesquin', '59343'),
+       ('Lezennes', '59346'),
+       ('Lille', '59350'),
+       ('Linselles', '59352'),
+       ('Loon-Plage', '59359'),
+       ('Loos', '59360'),
+       ('Lourches', '59361'),
+       ('Louvroil', '59365'),
+       ('Lys-lez-Lannoy', '59367'),
+       ('La Madeleine', '59368'),
+       ('Maing', '59369'),
+       ('Marchiennes', '59375'),
+       ('Marcq-en-Barœul', '59378'),
+       ('Marly', '59383'),
+       ('Marquette-lez-Lille', '59386'),
+       ('Masny', '59390'),
+       ('Maubeuge', '59392'),
+       ('Mérignies', '59398'),
+       ('Merville', '59400'),
+       ('Mons-en-Barœul', '59410'),
+       ('Montigny-en-Ostrevent', '59414'),
+       ('Mouvaux', '59421'),
+       ('Neuville-en-Ferrain', '59426'),
+       ('Neuville-Saint-Rémy', '59428'),
+       ('Nieppe', '59431'),
+       ('Onnaing', '59447'),
+       ('Orchies', '59449'),
+       ('Ostricourt', '59452'),
+       ('Pecquencourt', '59456'),
+       ('Pérenchies', '59457'),
+       ('Petite-Forêt', '59459'),
+       ('Phalempin', '59462'),
+       ('Pont-à-Marcq', '59466'),
+       ('Proville', '59476'),
+       ('Provin', '59477'),
+       ('Quarouble', '59479'),
+       ('Le Quesnoy', '59481'),
+       ('Quesnoy-sur-Deûle', '59482'),
+       ('Quiévrechain', '59484'),
+       ('Raimbeaucourt', '59489'),
+       ('Raismes', '59491'),
+       ('Rœulx', '59504'),
+       ('Ronchin', '59507'),
+       ('Roncq', '59508'),
+       ('Roost-Warendin', '59509'),
+       ('Roubaix', '59512'),
+       ('Rousies', '59514'),
+       ('Sainghin-en-Weppes', '59524'),
+       ('Saint-Amand-les-Eaux', '59526'),
+       ('Saint-André-lez-Lille', '59527'),
+       ('Saint-Saulve', '59544'),
+       ('Santes', '59553'),
+       ('Seclin', '59560'),
+       ('La Sentinelle', '59564'),
+       ('Sequedin', '59566'),
+       ('Sin-le-Noble', '59569'),
+       ('Solesmes', '59571'),
+       ('Somain', '59574'),
+       ('Steenvoorde', '59580'),
+       ('Steenwerck', '59581'),
+       ('Templemars', '59585'),
+       ('Templeuve-en-Pévèle', '59586'),
+       ('Téteghem-Coudekerque-Village', '59588'),
+       ('Thiant', '59589'),
+       ('Thumeries', '59592'),
+       ('Toufflers', '59598'),
+       ('Tourcoing', '59599'),
+       ('Trith-Saint-Léger', '59603'),
+       ('Valenciennes', '59606'),
+       ('Vieux-Condé', '59616'),
+       ('Wallers', '59632'),
+       ('Wambrechies', '59636'),
+       ('Wasquehal', '59646'),
+       ('Wattignies', '59648'),
+       ('Wattrelos', '59650'),
+       ('Wavrin', '59653'),
+       ('Waziers', '59654'),
+       ('Wervicq-Sud', '59656'),
+       ('Willems', '59660'),
+       ('Wormhout', '59663'),
+       ('Agnetz', '60007'),
+       ('Andeville', '60012'),
+       ('Beauvais', '60057'),
+       ('Béthisy-Saint-Pierre', '60068'),
+       ('Bornel', '60088'),
+       ('Bresles', '60103'),
+       ('Breteuil', '60104'),
+       ('Breuil-le-Vert', '60107'),
+       ('Chambly', '60139'),
+       ('Chantilly', '60141'),
+       ('La Chapelle-en-Serval', '60142'),
+       ('Chaumont-en-Vexin', '60143'),
+       ('Choisy-au-Bac', '60151'),
+       ('Cires-lès-Mello', '60155'),
+       ('Clermont', '60157'),
+       ('Compiègne', '60159'),
+       ('Coye-la-Forêt', '60172'),
+       ('Creil', '60175'),
+       ('Crépy-en-Valois', '60176'),
+       ('Crèvecœur-le-Grand', '60178'),
+       ('Estrées-Saint-Denis', '60223'),
+       ('Gouvieux', '60282'),
+       ('Lacroix-Saint-Ouen', '60338'),
+       ('Laigneville', '60342'),
+       ('Lamorlaye', '60346'),
+       ('Liancourt', '60360'),
+       ('Margny-lès-Compiègne', '60382'),
+       ('Méru', '60395'),
+       ('Montataire', '60414'),
+       ('Mouy', '60439'),
+       ('Nanteuil-le-Haudouin', '60446'),
+       ('Neuilly-en-Thelle', '60450'),
+       ('Nogent-sur-Oise', '60463'),
+       ('Noyon', '60471'),
+       ('Orry-la-Ville', '60482'),
+       ('Le Plessis-Belleville', '60500'),
+       ('Pontpoint', '60508'),
+       ('Pont-Sainte-Maxence', '60509'),
+       ('Précy-sur-Oise', '60513'),
+       ('Ribécourt-Dreslincourt', '60537'),
+       ('Sainte-Geneviève', '60575'),
+       ('Saint-Just-en-Chaussée', '60581'),
+       ('Saint-Leu-d''Esserent', '60584'),
+       ('Senlis', '60612'),
+       ('Thourotte', '60636'),
+       ('Verberie', '60667'),
+       ('Verneuil-en-Halatte', '60670'),
+       ('Villers-Saint-Paul', '60684'),
+       ('Alençon', '61001'),
+       ('Argentan', '61006'),
+       ('Athis-Val de Rouvre', '61007'),
+       ('Rives d''Andaine', '61096'),
+       ('Domfront en Poiraie', '61145'),
+       ('La Ferté-en-Ouche', '61167'),
+       ('La Ferté Macé', '61168'),
+       ('Flers', '61169'),
+       ('L''Aigle', '61214'),
+       ('Longny les Villages', '61230'),
+       ('Mortagne-au-Perche', '61293'),
+       ('Saint-Georges-des-Groseillers', '61391'),
+       ('Saint-Germain-du-Corbéis', '61397'),
+       ('Sées', '61464'),
+       ('Gouffern en Auge', '61474'),
+       ('Val-au-Perche', '61484'),
+       ('Tinchebray-Bocage', '61486'),
+       ('Tourouvre au Perche', '61491'),
+       ('Vimoutiers', '61508'),
+       ('Achicourt', '62004'),
+       ('Aire-sur-la-Lys', '62014'),
+       ('Aix-Noulette', '62019'),
+       ('Angres', '62032'),
+       ('Annay', '62033'),
+       ('Annezin', '62035'),
+       ('Ardres', '62038'),
+       ('Arques', '62040'),
+       ('Arras', '62041'),
+       ('Auchel', '62048'),
+       ('Auchy-les-Mines', '62051'),
+       ('Audruicq', '62057'),
+       ('Avion', '62065'),
+       ('Bapaume', '62080'),
+       ('Barlin', '62083'),
+       ('Beaurains', '62099'),
+       ('Berck', '62108'),
+       ('Béthune', '62119'),
+       ('Beuvry', '62126'),
+       ('Biache-Saint-Vaast', '62128'),
+       ('Billy-Berclau', '62132'),
+       ('Billy-Montigny', '62133'),
+       ('Blendecques', '62139'),
+       ('Boulogne-sur-Mer', '62160'),
+       ('Brebières', '62173'),
+       ('Bruay-la-Buissière', '62178'),
+       ('Bully-les-Mines', '62186'),
+       ('Calais', '62193'),
+       ('Calonne-Ricouart', '62194'),
+       ('Carvin', '62215'),
+       ('Coulogne', '62244'),
+       ('Courcelles-lès-Lens', '62249'),
+       ('Courrières', '62250'),
+       ('Cucq', '62261'),
+       ('Dainville', '62263'),
+       ('Desvres', '62268'),
+       ('Divion', '62270'),
+       ('Dourges', '62274'),
+       ('Douvrin', '62276'),
+       ('Éperlecques', '62297'),
+       ('Étaples', '62318'),
+       ('Évin-Malmaison', '62321'),
+       ('Fouquières-lès-Lens', '62351'),
+       ('Frévent', '62361'),
+       ('Grenay', '62386'),
+       ('Guînes', '62397'),
+       ('Haillicourt', '62400'),
+       ('Haisnes', '62401'),
+       ('Harnes', '62413'),
+       ('Hénin-Beaumont', '62427'),
+       ('Hersin-Coupigny', '62443'),
+       ('Houdain', '62457'),
+       ('Hulluch', '62464'),
+       ('Isbergues', '62473'),
+       ('Lapugnoy', '62489'),
+       ('Laventie', '62491'),
+       ('Leforest', '62497'),
+       ('Lens', '62498'),
+       ('Lestrem', '62502'),
+       ('Liévin', '62510'),
+       ('Lillers', '62516'),
+       ('Loison-sous-Lens', '62523'),
+       ('Longuenesse', '62525'),
+       ('Loos-en-Gohelle', '62528'),
+       ('Lumbres', '62534'),
+       ('Marck', '62548'),
+       ('Marles-les-Mines', '62555'),
+       ('Marquise', '62560'),
+       ('Mazingarbe', '62563'),
+       ('Méricourt', '62570'),
+       ('Merlimont', '62571'),
+       ('Meurchin', '62573'),
+       ('Montigny-en-Gohelle', '62587'),
+       ('Neufchâtel-Hardelot', '62604'),
+       ('Nœux-les-Mines', '62617'),
+       ('Noyelles-Godault', '62624'),
+       ('Noyelles-sous-Lens', '62628'),
+       ('Oignies', '62637'),
+       ('Outreau', '62643'),
+       ('Oye-Plage', '62645'),
+       ('Pont-à-Vendin', '62666'),
+       ('Le Portel', '62667'),
+       ('Rang-du-Fliers', '62688'),
+       ('Rinxent', '62711'),
+       ('Rouvroy', '62724'),
+       ('Sailly-sur-la-Lys', '62736'),
+       ('Sains-en-Gohelle', '62737'),
+       ('Sainte-Catherine', '62744'),
+       ('Saint-Étienne-au-Mont', '62746'),
+       ('Saint-Laurent-Blangy', '62753'),
+       ('Saint-Léonard', '62755'),
+       ('Saint-Martin-lez-Tatinghem', '62757'),
+       ('Saint-Martin-Boulogne', '62758'),
+       ('Saint-Nicolas', '62764'),
+       ('Saint-Omer', '62765'),
+       ('Saint-Pol-sur-Ternoise', '62767'),
+       ('Saint-Venant', '62770'),
+       ('Sallaumines', '62771'),
+       ('Samer', '62773'),
+       ('Sangatte', '62774'),
+       ('Le Touquet-Paris-Plage', '62826'),
+       ('Vendin-le-Vieil', '62842'),
+       ('Vermelles', '62846'),
+       ('Verquin', '62848'),
+       ('Vimy', '62861'),
+       ('Violaines', '62863'),
+       ('Vitry-en-Artois', '62865'),
+       ('Wimereux', '62893'),
+       ('Wimille', '62894'),
+       ('Wingles', '62895'),
+       ('Wizernes', '62902'),
+       ('Libercourt', '62907'),
+       ('Ambert', '63003'),
+       ('Aubière', '63014'),
+       ('Aulnat', '63019'),
+       ('Beaumont', '63032'),
+       ('Billom', '63040'),
+       ('Blanzat', '63042'),
+       ('Brassac-les-Mines', '63050'),
+       ('Cébazat', '63063'),
+       ('Le Cendre', '63069'),
+       ('Ceyrat', '63070'),
+       ('Chamalières', '63075'),
+       ('Châteaugay', '63099'),
+       ('Châtel-Guyon', '63103'),
+       ('Clermont-Ferrand', '63113'),
+       ('Cournon-d''Auvergne', '63124'),
+       ('Courpière', '63125'),
+       ('Gerzat', '63164'),
+       ('Issoire', '63178'),
+       ('Lempdes', '63193'),
+       ('Lezoux', '63195'),
+       ('Maringues', '63210'),
+       ('Les Martres-de-Veyre', '63214'),
+       ('Mur-sur-Allier', '63226'),
+       ('Mozac', '63245'),
+       ('Orcines', '63263'),
+       ('Pont-du-Château', '63284'),
+       ('Riom', '63300'),
+       ('La Roche-Blanche', '63302'),
+       ('Romagnat', '63307'),
+       ('Royat', '63308'),
+       ('Saint-Éloy-les-Mines', '63338'),
+       ('Saint-Genès-Champanelle', '63345'),
+       ('Thiers', '63430'),
+       ('Vertaizon', '63453'),
+       ('Veyre-Monton', '63455'),
+       ('Vic-le-Comte', '63457'),
+       ('Volvic', '63470'),
+       ('Anglet', '64024'),
+       ('Arcangues', '64038'),
+       ('Artix', '64061'),
+       ('Ascain', '64065'),
+       ('Bassussarry', '64100'),
+       ('Bayonne', '64102'),
+       ('Biarritz', '64122'),
+       ('Bidart', '64125'),
+       ('Billère', '64129'),
+       ('Bizanos', '64132'),
+       ('Boucau', '64140'),
+       ('Cambo-les-Bains', '64160'),
+       ('Ciboure', '64189'),
+       ('Gan', '64230'),
+       ('Gelos', '64237'),
+       ('Hasparren', '64256'),
+       ('Hendaye', '64260'),
+       ('Idron', '64269'),
+       ('Jurançon', '64284'),
+       ('Lescar', '64335'),
+       ('Lons', '64348'),
+       ('Mauléon-Licharre', '64371'),
+       ('Monein', '64393'),
+       ('Morlaàs', '64405'),
+       ('Mouguerre', '64407'),
+       ('Mourenx', '64410'),
+       ('Nay', '64417'),
+       ('Oloron-Sainte-Marie', '64422'),
+       ('Orthez', '64430'),
+       ('Pau', '64445'),
+       ('Saint-Jean-de-Luz', '64483'),
+       ('Saint-Pée-sur-Nivelle', '64495'),
+       ('Saint-Pierre-d''Irube', '64496'),
+       ('Salies-de-Béarn', '64499'),
+       ('Sauvagnon', '64511'),
+       ('Serres-Castet', '64519'),
+       ('Urrugne', '64545'),
+       ('Ustaritz', '64547'),
+       ('Argelès-Gazost', '65025'),
+       ('Aureilhan', '65047'),
+       ('Bagnères-de-Bigorre', '65059'),
+       ('Barbazan-Debat', '65062'),
+       ('Bordères-sur-l''Échez', '65100'),
+       ('Ibos', '65226'),
+       ('Juillan', '65235'),
+       ('Lannemezan', '65258'),
+       ('Lourdes', '65286'),
+       ('Odos', '65331'),
+       ('Séméac', '65417'),
+       ('Soues', '65433'),
+       ('Tarbes', '65440'),
+       ('Vic-en-Bigorre', '65460'),
+       ('Alénya', '66002'),
+       ('Amélie-les-Bains-Palalda', '66003'),
+       ('Argelès-sur-Mer', '66008'),
+       ('Bages', '66011'),
+       ('Baho', '66012'),
+       ('Banyuls-sur-Mer', '66016'),
+       ('Le Barcarès', '66017'),
+       ('Bompas', '66021'),
+       ('Le Boulou', '66024'),
+       ('Cabestany', '66028'),
+       ('Canet-en-Roussillon', '66037'),
+       ('Canohès', '66038'),
+       ('Céret', '66049'),
+       ('Claira', '66050'),
+       ('Elne', '66065'),
+       ('Espira-de-l''Agly', '66069'),
+       ('Ille-sur-Têt', '66088'),
+       ('Latour-Bas-Elne', '66094'),
+       ('Millas', '66108'),
+       ('Palau-del-Vidre', '66133'),
+       ('Perpignan', '66136'),
+       ('Pézilla-la-Rivière', '66140'),
+       ('Pia', '66141'),
+       ('Pollestres', '66144'),
+       ('Port-Vendres', '66148'),
+       ('Prades', '66149'),
+       ('Rivesaltes', '66164'),
+       ('Saint-André', '66168'),
+       ('Saint-Cyprien', '66171'),
+       ('Saint-Estève', '66172'),
+       ('Saint-Hippolyte', '66176'),
+       ('Saint-Laurent-de-la-Salanque', '66180'),
+       ('Sainte-Marie-la-Mer', '66182'),
+       ('Saleilles', '66189'),
+       ('Salses-le-Château', '66190'),
+       ('Le Soler', '66195'),
+       ('Sorède', '66196'),
+       ('Thuir', '66210'),
+       ('Torreilles', '66212'),
+       ('Toulouges', '66213'),
+       ('Villelongue-de-la-Salanque', '66224'),
+       ('Villeneuve-de-la-Raho', '66227'),
+       ('Barr', '67021'),
+       ('Benfeld', '67028'),
+       ('Bischheim', '67043'),
+       ('Bischoffsheim', '67045'),
+       ('Bischwiller', '67046'),
+       ('Bouxwiller', '67061'),
+       ('Brumath', '67067'),
+       ('Châtenois', '67073'),
+       ('Drusenheim', '67106'),
+       ('Eckbolsheim', '67118'),
+       ('Erstein', '67130'),
+       ('Eschau', '67131'),
+       ('Fegersheim', '67137'),
+       ('Gambsheim', '67151'),
+       ('Geispolsheim', '67152'),
+       ('Gerstheim', '67154'),
+       ('Gundershoffen', '67176'),
+       ('Haguenau', '67180'),
+       ('Herrlisheim', '67194'),
+       ('Hochfelden', '67202'),
+       ('Hœnheim', '67204'),
+       ('Hœrdt', '67205'),
+       ('Holtzheim', '67212'),
+       ('Illkirch-Graffenstaden', '67218'),
+       ('Ingwiller', '67222'),
+       ('Lampertheim', '67256'),
+       ('Lingolsheim', '67267'),
+       ('Marckolsheim', '67281'),
+       ('Marlenheim', '67282'),
+       ('Mertzwiller', '67291'),
+       ('Molsheim', '67300'),
+       ('Mundolsheim', '67309'),
+       ('Mutzig', '67313'),
+       ('Niederbronn-les-Bains', '67324'),
+       ('Betschdorf', '67339'),
+       ('Oberhausbergen', '67343'),
+       ('Oberhoffen-sur-Moder', '67345'),
+       ('Obernai', '67348'),
+       ('Ostwald', '67365'),
+       ('Val-de-Moder', '67372'),
+       ('Plobsheim', '67378'),
+       ('Reichshoffen', '67388'),
+       ('Reichstett', '67389'),
+       ('Rosheim', '67411'),
+       ('Saverne', '67437'),
+       ('Scherwiller', '67445'),
+       ('Schiltigheim', '67447'),
+       ('Schweighouse-sur-Moder', '67458'),
+       ('Sélestat', '67462'),
+       ('Seltz', '67463'),
+       ('Souffelweyersheim', '67471'),
+       ('Soufflenheim', '67472'),
+       ('Soultz-sous-Forêts', '67474'),
+       ('Strasbourg', '67482'),
+       ('Truchtersheim', '67495'),
+       ('Vendenheim', '67506'),
+       ('La Wantzenau', '67519'),
+       ('Wasselonne', '67520'),
+       ('Weyersheim', '67529'),
+       ('Wissembourg', '67544'),
+       ('Wolfisheim', '67551'),
+       ('Altkirch', '68004'),
+       ('Bartenheim', '68021'),
+       ('Blotzheim', '68042'),
+       ('Bollwiller', '68043'),
+       ('Brunstatt-Didenheim', '68056'),
+       ('Buhl', '68058'),
+       ('Cernay', '68063'),
+       ('Colmar', '68066'),
+       ('Ensisheim', '68082'),
+       ('Guebwiller', '68112'),
+       ('Habsheim', '68118'),
+       ('Hégenheim', '68126'),
+       ('Horbourg-Wihr', '68145'),
+       ('Huningue', '68149'),
+       ('Illzach', '68154'),
+       ('Ingersheim', '68155'),
+       ('Issenheim', '68156'),
+       ('Kaysersberg Vignoble', '68162'),
+       ('Kembs', '68163'),
+       ('Kingersheim', '68166'),
+       ('Lutterbach', '68195'),
+       ('Masevaux-Niederbruck', '68201'),
+       ('Morschwiller-le-Bas', '68218'),
+       ('Mulhouse', '68224'),
+       ('Munster', '68226'),
+       ('Orbey', '68249'),
+       ('Pfastatt', '68256'),
+       ('Pulversheim', '68258'),
+       ('Ribeauvillé', '68269'),
+       ('Richwiller', '68270'),
+       ('Riedisheim', '68271'),
+       ('Rixheim', '68278'),
+       ('Rouffach', '68287'),
+       ('Sainte-Croix-en-Plaine', '68295'),
+       ('Saint-Louis', '68297'),
+       ('Sainte-Marie-aux-Mines', '68298'),
+       ('Sausheim', '68300'),
+       ('Sierentz', '68309'),
+       ('Soultz-Haut-Rhin', '68315'),
+       ('Staffelfelden', '68321'),
+       ('Thann', '68334'),
+       ('Turckheim', '68338'),
+       ('Village-Neuf', '68349'),
+       ('Wintzenheim', '68374'),
+       ('Wittelsheim', '68375'),
+       ('Wittenheim', '68376'),
+       ('Amplepuis', '69006'),
+       ('Anse', '69009'),
+       ('L''Arbresle', '69010'),
+       ('Arnas', '69013'),
+       ('Belleville-en-Beaujolais', '69019'),
+       ('Val d''Oingt', '69024'),
+       ('Brignais', '69027'),
+       ('Brindas', '69028'),
+       ('Bron', '69029'),
+       ('Caluire-et-Cuire', '69034'),
+       ('Champagne-au-Mont-d''Or', '69040'),
+       ('Chaponost', '69043'),
+       ('Charbonnières-les-Bains', '69044'),
+       ('Charly', '69046'),
+       ('Chazay-d''Azergues', '69052'),
+       ('Collonges-au-Mont-d''Or', '69063'),
+       ('Condrieu', '69064'),
+       ('Cours', '69066'),
+       ('Craponne', '69069'),
+       ('Dardilly', '69072'),
+       ('Écully', '69081'),
+       ('Fontaines-Saint-Martin', '69087'),
+       ('Fontaines-sur-Saône', '69088'),
+       ('Francheville', '69089'),
+       ('Givors', '69091'),
+       ('Gleizé', '69092'),
+       ('Grézieu-la-Varenne', '69094'),
+       ('Grigny', '69096'),
+       ('Irigny', '69100'),
+       ('Lentilly', '69112'),
+       ('Limas', '69115'),
+       ('Limonest', '69116'),
+       ('Lissieu', '69117'),
+       ('Marcy-l''Étoile', '69127'),
+       ('Messimy', '69131'),
+       ('Millery', '69133'),
+       ('Montagny', '69136'),
+       ('Mornant', '69141'),
+       ('La Mulatière', '69142'),
+       ('Neuville-sur-Saône', '69143'),
+       ('Oullins', '69149'),
+       ('Pierre-Bénite', '69152'),
+       ('Vindry-sur-Turdine', '69157'),
+       ('Porte des Pierres Dorées', '69159'),
+       ('Quincieux', '69163'),
+       ('Soucieu-en-Jarrest', '69176'),
+       ('Beauvallon', '69179'),
+       ('Saint-Cyr-au-Mont-d''Or', '69191'),
+       ('Saint-Didier-au-Mont-d''Or', '69194'),
+       ('Saint-Fons', '69199'),
+       ('Sainte-Foy-lès-Lyon', '69202'),
+       ('Saint-Genis-Laval', '69204'),
+       ('Saint-Genis-les-Ollières', '69205'),
+       ('Saint-Georges-de-Reneins', '69206'),
+       ('Saint-Germain-au-Mont-d''Or', '69207'),
+       ('Saint-Martin-en-Haut', '69227'),
+       ('Chabanière', '69228'),
+       ('Saint-Symphorien-sur-Coise', '69238'),
+       ('Tarare', '69243'),
+       ('Tassin-la-Demi-Lune', '69244'),
+       ('Thizy-les-Bourgs', '69248'),
+       ('Thurins', '69249'),
+       ('La Tour-de-Salvagny', '69250'),
+       ('Vaugneray', '69255'),
+       ('Vaulx-en-Velin', '69256'),
+       ('Vénissieux', '69259'),
+       ('Vernaison', '69260'),
+       ('Villefranche-sur-Saône', '69264'),
+       ('Villeurbanne', '69266'),
+       ('Vourles', '69268'),
+       ('Chaponnay', '69270'),
+       ('Chassieu', '69271'),
+       ('Communay', '69272'),
+       ('Corbas', '69273'),
+       ('Décines-Charpieu', '69275'),
+       ('Feyzin', '69276'),
+       ('Genas', '69277'),
+       ('Genay', '69278'),
+       ('Jonage', '69279'),
+       ('Meyzieu', '69282'),
+       ('Mions', '69283'),
+       ('Montanay', '69284'),
+       ('Pusignan', '69285'),
+       ('Rillieux-la-Pape', '69286'),
+       ('Saint-Bonnet-de-Mure', '69287'),
+       ('Saint-Laurent-de-Mure', '69288'),
+       ('Saint-Pierre-de-Chandieu', '69289'),
+       ('Saint-Priest', '69290'),
+       ('Saint-Symphorien-d''Ozon', '69291'),
+       ('Sathonay-Camp', '69292'),
+       ('Solaize', '69296'),
+       ('Ternay', '69297'),
+       ('Toussieu', '69298'),
+       ('Lyon 1er Arrondissement', '69381'),
+       ('Lyon 2e Arrondissement', '69382'),
+       ('Lyon 3e Arrondissement', '69383'),
+       ('Lyon 4e Arrondissement', '69384'),
+       ('Lyon 5e Arrondissement', '69385'),
+       ('Lyon 6e Arrondissement', '69386'),
+       ('Lyon 7e Arrondissement', '69387'),
+       ('Lyon 8e Arrondissement', '69388'),
+       ('Lyon 9e Arrondissement', '69389'),
+       ('Champagney', '70120'),
+       ('Échenoz-la-Méline', '70207'),
+       ('Fougerolles-Saint-Valbert', '70245'),
+       ('Gray', '70279'),
+       ('Héricourt', '70285'),
+       ('Lure', '70310'),
+       ('Luxeuil-les-Bains', '70311'),
+       ('Port-sur-Saône', '70421'),
+       ('Saint-Loup-sur-Semouse', '70467'),
+       ('Vesoul', '70550'),
+       ('Autun', '71014'),
+       ('Blanzy', '71040'),
+       ('Bourbon-Lancy', '71047'),
+       ('Le Breuil', '71059'),
+       ('Chagny', '71073'),
+       ('Chalon-sur-Saône', '71076'),
+       ('La Chapelle-de-Guinchay', '71090'),
+       ('Charnay-lès-Mâcon', '71105'),
+       ('Charolles', '71106'),
+       ('Châtenoy-le-Royal', '71118'),
+       ('Chauffailles', '71120'),
+       ('Cluny', '71137'),
+       ('Crêches-sur-Saône', '71150'),
+       ('Le Creusot', '71153'),
+       ('Digoin', '71176'),
+       ('Givry', '71221'),
+       ('Gueugnon', '71230'),
+       ('Louhans', '71263'),
+       ('Mâcon', '71270'),
+       ('Montceau-les-Mines', '71306'),
+       ('Montchanin', '71310'),
+       ('Ouroux-sur-Saône', '71336'),
+       ('Paray-le-Monial', '71342'),
+       ('Saint-Marcel', '71445'),
+       ('Saint-Rémy', '71475'),
+       ('Saint-Vallier', '71486'),
+       ('Sanvignes-les-Mines', '71499'),
+       ('Sennecey-le-Grand', '71512'),
+       ('Tournus', '71543'),
+       ('Allonnes', '72003'),
+       ('Arnage', '72008'),
+       ('La Bazoge', '72024'),
+       ('Bonnétable', '72039'),
+       ('Cérans-Foulletourte', '72051'),
+       ('Champagné', '72054'),
+       ('Changé', '72058'),
+       ('Montval-sur-Loir', '72071'),
+       ('Connerré', '72090'),
+       ('Coulaines', '72095'),
+       ('Écommoy', '72124'),
+       ('La Ferté-Bernard', '72132'),
+       ('Guécélard', '72146'),
+       ('La Flèche', '72154'),
+       ('Le Lude', '72176'),
+       ('Mamers', '72180'),
+       ('Le Mans', '72181'),
+       ('Mayet', '72191'),
+       ('Moncé-en-Belin', '72200'),
+       ('Mulsanne', '72213'),
+       ('Parigné-l''Évêque', '72231'),
+       ('Précigné', '72244'),
+       ('Ruaudin', '72260'),
+       ('Sablé-sur-Sarthe', '72264'),
+       ('Saint-Calais', '72269'),
+       ('Sargé-lès-le-Mans', '72328'),
+       ('Savigné-l''Évêque', '72329'),
+       ('La Suze-sur-Sarthe', '72346'),
+       ('Teloché', '72350'),
+       ('Yvré-l''Évêque', '72386'),
+       ('Grand-Aigueblanche', '73003'),
+       ('Aime-la-Plagne', '73006'),
+       ('Aix-les-Bains', '73008'),
+       ('Entrelacs', '73010'),
+       ('Albertville', '73011'),
+       ('Barberaz', '73029'),
+       ('Barby', '73030'),
+       ('Bassens', '73031'),
+       ('Le Bourget-du-Lac', '73051'),
+       ('Bourg-Saint-Maurice', '73054'),
+       ('Challes-les-Eaux', '73064'),
+       ('Chambéry', '73065'),
+       ('Cognin', '73087'),
+       ('Drumettaz-Clarafond', '73103'),
+       ('Gilly-sur-Isère', '73124'),
+       ('Grésy-sur-Aix', '73128'),
+       ('Jacob-Bellecombette', '73137'),
+       ('La Plagne Tarentaise', '73150'),
+       ('Porte-de-Savoie', '73151'),
+       ('Mercury', '73154'),
+       ('Modane', '73157'),
+       ('Montmélian', '73171'),
+       ('La Motte-Servolex', '73179'),
+       ('Moûtiers', '73181'),
+       ('La Ravoire', '73213'),
+       ('Valgelon-La Rochette', '73215'),
+       ('Saint-Alban-Leysse', '73222'),
+       ('Saint-Jean-de-Maurienne', '73248'),
+       ('Les Belleville', '73257'),
+       ('Saint-Pierre-d''Albigny', '73270'),
+       ('Tresserve', '73300'),
+       ('Ugine', '73303'),
+       ('Yenne', '73330'),
+       ('Allinges', '74005'),
+       ('Ambilly', '74008'),
+       ('Annecy', '74010'),
+       ('Annemasse', '74012'),
+       ('Argonay', '74019'),
+       ('La Balme-de-Sillingy', '74026'),
+       ('Beaumont', '74031'),
+       ('Bonne', '74040'),
+       ('Bonneville', '74042'),
+       ('Bons-en-Chablais', '74043'),
+       ('Chamonix-Mont-Blanc', '74056'),
+       ('Cluses', '74081'),
+       ('Collonges-sous-Salève', '74082'),
+       ('Cranves-Sales', '74094'),
+       ('Cruseilles', '74096'),
+       ('Doussard', '74104'),
+       ('Douvaine', '74105'),
+       ('Epagny Metz-Tessy', '74112'),
+       ('Évian-les-Bains', '74119'),
+       ('Faverges-Seythenex', '74123'),
+       ('Fillinges', '74128'),
+       ('Gaillard', '74133'),
+       ('Groisy', '74137'),
+       ('Les Houches', '74143'),
+       ('Magland', '74159'),
+       ('Marignier', '74164'),
+       ('Marnaz', '74169'),
+       ('Megève', '74173'),
+       ('Neuvecelle', '74200'),
+       ('Passy', '74208'),
+       ('Pers-Jussy', '74211'),
+       ('Poisy', '74213'),
+       ('Publier', '74218'),
+       ('Reignier-Ésery', '74220'),
+       ('La Roche-sur-Foron', '74224'),
+       ('Rumilly', '74225'),
+       ('Saint-Cergues', '74229'),
+       ('Saint-Gervais-les-Bains', '74236'),
+       ('Saint-Jeoire', '74241'),
+       ('Saint-Jorioz', '74242'),
+       ('Saint-Julien-en-Genevois', '74243'),
+       ('Saint-Pierre-en-Faucigny', '74250'),
+       ('Sallanches', '74256'),
+       ('Sciez', '74263'),
+       ('Scionzier', '74264'),
+       ('Sevrier', '74267'),
+       ('Sillingy', '74272'),
+       ('Taninges', '74276'),
+       ('Thyez', '74278'),
+       ('Thônes', '74280'),
+       ('Thonon-les-Bains', '74281'),
+       ('Fillière', '74282'),
+       ('Valleiry', '74288'),
+       ('Veigy-Foncenex', '74293'),
+       ('Vétraz-Monthoux', '74298'),
+       ('Villaz', '74303'),
+       ('Ville-la-Grand', '74305'),
+       ('Viry', '74309'),
+       ('Viuz-en-Sallaz', '74311'),
+       ('Paris 1er Arrondissement', '75101'),
+       ('Paris 2e Arrondissement', '75102'),
+       ('Paris 3e Arrondissement', '75103'),
+       ('Paris 4e Arrondissement', '75104'),
+       ('Paris 5e Arrondissement', '75105'),
+       ('Paris 6e Arrondissement', '75106'),
+       ('Paris 7e Arrondissement', '75107'),
+       ('Paris 8e Arrondissement', '75108'),
+       ('Paris 9e Arrondissement', '75109'),
+       ('Paris 10e Arrondissement', '75110'),
+       ('Paris 11e Arrondissement', '75111'),
+       ('Paris 12e Arrondissement', '75112'),
+       ('Paris 13e Arrondissement', '75113'),
+       ('Paris 14e Arrondissement', '75114'),
+       ('Paris 15e Arrondissement', '75115'),
+       ('Paris 16e Arrondissement', '75116'),
+       ('Paris 17e Arrondissement', '75117'),
+       ('Paris 18e Arrondissement', '75118'),
+       ('Paris 19e Arrondissement', '75119'),
+       ('Paris 20e Arrondissement', '75120'),
+       ('Amfreville-la-Mi-Voie', '76005'),
+       ('Barentin', '76057'),
+       ('Bihorel', '76095'),
+       ('Bonsecours', '76103'),
+       ('Bois-Guillaume', '76108'),
+       ('Bolbec', '76114'),
+       ('Boos', '76116'),
+       ('Canteleu', '76157'),
+       ('Cany-Barville', '76159'),
+       ('Rives-en-Seine', '76164'),
+       ('Caudebec-lès-Elbeuf', '76165'),
+       ('Cléon', '76178'),
+       ('Darnétal', '76212'),
+       ('Déville-lès-Rouen', '76216'),
+       ('Dieppe', '76217'),
+       ('Duclair', '76222'),
+       ('Elbeuf', '76231'),
+       ('Eu', '76255'),
+       ('Terres-de-Caux', '76258'),
+       ('Fécamp', '76259'),
+       ('Forges-les-Eaux', '76276'),
+       ('Gonfreville-l''Orcher', '76305'),
+       ('Gournay-en-Bray', '76312'),
+       ('Grand-Couronne', '76319'),
+       ('Le Grand-Quevilly', '76322'),
+       ('Gruchet-le-Valasse', '76329'),
+       ('Harfleur', '76341'),
+       ('Le Havre', '76351'),
+       ('Le Houlme', '76366'),
+       ('Isneauville', '76377'),
+       ('Lillebonne', '76384'),
+       ('Malaunay', '76402'),
+       ('Maromme', '76410'),
+       ('Le Mesnil-Esnard', '76429'),
+       ('Montivilliers', '76447'),
+       ('Mont-Saint-Aignan', '76451'),
+       ('Montville', '76452'),
+       ('Neufchâtel-en-Bray', '76462'),
+       ('Notre-Dame-de-Bondeville', '76474'),
+       ('Franqueville-Saint-Pierre', '76475'),
+       ('Port-Jérôme-sur-Seine', '76476'),
+       ('Octeville-sur-Mer', '76481'),
+       ('Offranville', '76482'),
+       ('Oissel', '76484'),
+       ('Pavilly', '76495'),
+       ('Petit-Couronne', '76497'),
+       ('Le Petit-Quevilly', '76498'),
+       ('Quincampoix', '76517'),
+       ('Rouen', '76540'),
+       ('Sainte-Adresse', '76552'),
+       ('Saint-Aubin-lès-Elbeuf', '76561'),
+       ('Saint-Étienne-du-Rouvray', '76575'),
+       ('Saint-Jacques-sur-Darnétal', '76591'),
+       ('Saint-Léger-du-Bourg-Denis', '76599'),
+       ('Petit-Caux', '76618'),
+       ('Saint-Nicolas-d''Aliermont', '76624'),
+       ('Saint-Pierre-lès-Elbeuf', '76640'),
+       ('Saint-Romain-de-Colbosc', '76647'),
+       ('Saint-Valery-en-Caux', '76655'),
+       ('Sotteville-lès-Rouen', '76681'),
+       ('Le Trait', '76709'),
+       ('Le Tréport', '76711'),
+       ('Yvetot', '76758'),
+       ('Annet-sur-Marne', '77005'),
+       ('Avon', '77014'),
+       ('Bailly-Romainvilliers', '77018'),
+       ('Bois-le-Roi', '77037'),
+       ('Boissise-le-Roi', '77040'),
+       ('Boissy-le-Châtel', '77042'),
+       ('Brie-Comte-Robert', '77053'),
+       ('Brou-sur-Chantereine', '77055'),
+       ('Bussy-Saint-Georges', '77058'),
+       ('Cesson', '77067'),
+       ('Champagne-sur-Seine', '77079'),
+       ('Champs-sur-Marne', '77083'),
+       ('Chanteloup-en-Brie', '77085'),
+       ('Château-Landon', '77099'),
+       ('Le Châtelet-en-Brie', '77100'),
+       ('Chaumes-en-Brie', '77107'),
+       ('Chelles', '77108'),
+       ('Chessy', '77111'),
+       ('Chevry-Cossigny', '77114'),
+       ('Claye-Souilly', '77118'),
+       ('Collégien', '77121'),
+       ('Combs-la-Ville', '77122'),
+       ('Coulommiers', '77131'),
+       ('Courtry', '77139'),
+       ('Crécy-la-Chapelle', '77142'),
+       ('Crégy-lès-Meaux', '77143'),
+       ('Dammarie-les-Lys', '77152'),
+       ('Dammartin-en-Goële', '77153'),
+       ('Dampmart', '77155'),
+       ('Émerainville', '77169'),
+       ('Esbly', '77171'),
+       ('Évry-Grégy-sur-Yerre', '77175'),
+       ('Ferrières-en-Brie', '77181'),
+       ('La Ferté-Gaucher', '77182'),
+       ('La Ferté-sous-Jouarre', '77183'),
+       ('Fontainebleau', '77186'),
+       ('Fontenay-Trésigny', '77192'),
+       ('Gretz-Armainvilliers', '77215'),
+       ('Guignes', '77222'),
+       ('Jouarre', '77238'),
+       ('Lagny-sur-Marne', '77243'),
+       ('Lésigny', '77249'),
+       ('Lieusaint', '77251'),
+       ('Lizy-sur-Ourcq', '77257'),
+       ('Lognes', '77258'),
+       ('Magny-le-Hongre', '77268'),
+       ('Mareuil-lès-Meaux', '77276'),
+       ('Meaux', '77284'),
+       ('Le Mée-sur-Seine', '77285'),
+       ('Melun', '77288'),
+       ('Mitry-Mory', '77294'),
+       ('Moissy-Cramayel', '77296'),
+       ('Montereau-Fault-Yonne', '77305'),
+       ('Montévrain', '77307'),
+       ('Montry', '77315'),
+       ('Moret-Loing-et-Orvanne', '77316'),
+       ('Mormant', '77317'),
+       ('Mouroux', '77320'),
+       ('Moussy-le-Neuf', '77322'),
+       ('Nandy', '77326'),
+       ('Nangis', '77327'),
+       ('Nanteuil-lès-Meaux', '77330'),
+       ('Nemours', '77333'),
+       ('Chauconin-Neufmontiers', '77335'),
+       ('Noisiel', '77337'),
+       ('Othis', '77349'),
+       ('Ozoir-la-Ferrière', '77350'),
+       ('Pomponne', '77372'),
+       ('Pontault-Combault', '77373'),
+       ('Provins', '77379'),
+       ('Quincy-Voisins', '77382'),
+       ('La Rochette', '77389'),
+       ('Roissy-en-Brie', '77390'),
+       ('Saint-Fargeau-Ponthierry', '77407'),
+       ('Saint-Germain-sur-Morin', '77413'),
+       ('Saint-Mammès', '77419'),
+       ('Saint-Mard', '77420'),
+       ('Saint-Pathus', '77430'),
+       ('Saint-Pierre-lès-Nemours', '77431'),
+       ('Saint-Soupplets', '77437'),
+       ('Saint-Thibault-des-Vignes', '77438'),
+       ('Savigny-le-Temple', '77445'),
+       ('Serris', '77449'),
+       ('Servon', '77450'),
+       ('Souppes-sur-Loing', '77458'),
+       ('Thomery', '77463'),
+       ('Thorigny-sur-Marne', '77464'),
+       ('Torcy', '77468'),
+       ('Tournan-en-Brie', '77470'),
+       ('Trilport', '77475'),
+       ('Vaires-sur-Marne', '77479'),
+       ('Varennes-sur-Seine', '77482'),
+       ('Vaux-le-Pénil', '77487'),
+       ('Verneuil-l''Étang', '77493'),
+       ('Vert-Saint-Denis', '77495'),
+       ('Villenoy', '77513'),
+       ('Villeparisis', '77514'),
+       ('Ablis', '78003'),
+       ('Achères', '78005'),
+       ('Andrésy', '78015'),
+       ('Aubergenville', '78029'),
+       ('Bailly', '78043'),
+       ('Beynes', '78062'),
+       ('Bois-d''Arcy', '78073'),
+       ('Bonnières-sur-Seine', '78089'),
+       ('Bougival', '78092'),
+       ('Buc', '78117'),
+       ('Buchelay', '78118'),
+       ('Carrières-sous-Poissy', '78123'),
+       ('Carrières-sur-Seine', '78124'),
+       ('La Celle-Saint-Cloud', '78126'),
+       ('Chambourcy', '78133'),
+       ('Chanteloup-les-Vignes', '78138'),
+       ('Chatou', '78146'),
+       ('Le Chesnay-Rocquencourt', '78158'),
+       ('Chevreuse', '78160'),
+       ('Les Clayes-sous-Bois', '78165'),
+       ('Coignières', '78168'),
+       ('Conflans-Sainte-Honorine', '78172'),
+       ('Croissy-sur-Seine', '78190'),
+       ('Ecquevilly', '78206'),
+       ('Élancourt', '78208'),
+       ('Épône', '78217'),
+       ('Les Essarts-le-Roi', '78220'),
+       ('L''Étang-la-Ville', '78224'),
+       ('Feucherolles', '78233'),
+       ('Fontenay-le-Fleury', '78242'),
+       ('Freneuse', '78255'),
+       ('Gargenville', '78267'),
+       ('Guyancourt', '78297'),
+       ('Houdan', '78310'),
+       ('Houilles', '78311'),
+       ('Issou', '78314'),
+       ('Jouars-Pontchartrain', '78321'),
+       ('Jouy-en-Josas', '78322'),
+       ('Juziers', '78327'),
+       ('Limay', '78335'),
+       ('Louveciennes', '78350'),
+       ('Magnanville', '78354'),
+       ('Magny-les-Hameaux', '78356'),
+       ('Maisons-Laffitte', '78358'),
+       ('Mantes-la-Jolie', '78361'),
+       ('Mantes-la-Ville', '78362'),
+       ('Mareil-Marly', '78367'),
+       ('Marly-le-Roi', '78372'),
+       ('Maule', '78380'),
+       ('Maurecourt', '78382'),
+       ('Maurepas', '78383'),
+       ('Le Mesnil-le-Roi', '78396'),
+       ('Le Mesnil-Saint-Denis', '78397'),
+       ('Meulan-en-Yvelines', '78401'),
+       ('Mézières-sur-Seine', '78402'),
+       ('Montesson', '78418'),
+       ('Montfort-l''Amaury', '78420'),
+       ('Montigny-le-Bretonneux', '78423'),
+       ('Morainvilliers', '78431'),
+       ('Les Mureaux', '78440'),
+       ('Neauphle-le-Château', '78442'),
+       ('Noisy-le-Roi', '78455'),
+       ('Orgeval', '78466'),
+       ('Le Pecq', '78481'),
+       ('Le Perray-en-Yvelines', '78486'),
+       ('Plaisir', '78490'),
+       ('Poissy', '78498'),
+       ('Porcheville', '78501'),
+       ('Le Port-Marly', '78502'),
+       ('Rambouillet', '78517'),
+       ('Rosny-sur-Seine', '78531'),
+       ('Saint-Arnoult-en-Yvelines', '78537'),
+       ('Saint-Cyr-l''École', '78545'),
+       ('Saint-Germain-en-Laye', '78551'),
+       ('Saint-Nom-la-Bretèche', '78571'),
+       ('Saint-Rémy-lès-Chevreuse', '78575'),
+       ('Sartrouville', '78586'),
+       ('Trappes', '78621'),
+       ('Triel-sur-Seine', '78624'),
+       ('Vaux-sur-Seine', '78638'),
+       ('Vélizy-Villacoublay', '78640'),
+       ('Verneuil-sur-Seine', '78642'),
+       ('Vernouillet', '78643'),
+       ('La Verrière', '78644'),
+       ('Versailles', '78646'),
+       ('Le Vésinet', '78650'),
+       ('Villennes-sur-Seine', '78672'),
+       ('Villepreux', '78674'),
+       ('Villiers-Saint-Frédéric', '78683'),
+       ('Viroflay', '78686'),
+       ('Voisins-le-Bretonneux', '78688'),
+       ('Aiffres', '79003'),
+       ('Airvault', '79005'),
+       ('Argentonnay', '79013'),
+       ('La Crèche', '79048'),
+       ('Bressuire', '79049'),
+       ('Celles-sur-Belle', '79061'),
+       ('Cerizay', '79062'),
+       ('Mauléon', '79079'),
+       ('Chauray', '79081'),
+       ('Échiré', '79109'),
+       ('Melle', '79174'),
+       ('Moncoutant-sur-Sèvre', '79179'),
+       ('Aigondigné', '79185'),
+       ('Niort', '79191'),
+       ('Nueil-les-Aubiers', '79195'),
+       ('Parthenay', '79202'),
+       ('Saint-Maixent-l''École', '79270'),
+       ('Thouars', '79329'),
+       ('Vouillé', '79355'),
+       ('Abbeville', '80001'),
+       ('Albert', '80016'),
+       ('Amiens', '80021'),
+       ('Boves', '80131'),
+       ('Camon', '80164'),
+       ('Corbie', '80212'),
+       ('Doullens', '80253'),
+       ('Flixecourt', '80318'),
+       ('Friville-Escarbotin', '80368'),
+       ('Ham', '80410'),
+       ('Longueau', '80489'),
+       ('Montdidier', '80561'),
+       ('Moreuil', '80570'),
+       ('Péronne', '80620'),
+       ('Rivery', '80674'),
+       ('Rosières-en-Santerre', '80680'),
+       ('Roye', '80685'),
+       ('Rue', '80688'),
+       ('Salouël', '80725'),
+       ('Villers-Bretonneux', '80799'),
+       ('Albi', '81004'),
+       ('Aussillon', '81021'),
+       ('Blaye-les-Mines', '81033'),
+       ('Carmaux', '81060'),
+       ('Castres', '81065'),
+       ('Gaillac', '81099'),
+       ('Graulhet', '81105'),
+       ('Labruguière', '81120'),
+       ('Lavaur', '81140'),
+       ('Lescure-d''Albigeois', '81144'),
+       ('Lisle-sur-Tarn', '81145'),
+       ('Marssac-sur-Tarn', '81156'),
+       ('Mazamet', '81163'),
+       ('Puygouzon', '81218'),
+       ('Puylaurens', '81219'),
+       ('Rabastens', '81220'),
+       ('Réalmont', '81222'),
+       ('Saint-Juéry', '81257'),
+       ('Saint-Sulpice-la-Pointe', '81271'),
+       ('Saïx', '81273'),
+       ('Albias', '82002'),
+       ('Beaumont-de-Lomagne', '82013'),
+       ('Bressols', '82025'),
+       ('Castelsarrasin', '82033'),
+       ('Caussade', '82037'),
+       ('Grisolles', '82075'),
+       ('Labastide-Saint-Pierre', '82079'),
+       ('La Ville-Dieu-du-Temple', '82096'),
+       ('Moissac', '82112'),
+       ('Montauban', '82121'),
+       ('Montbeton', '82124'),
+       ('Montech', '82125'),
+       ('Nègrepelisse', '82134'),
+       ('Saint-Étienne-de-Tulmont', '82161'),
+       ('Valence', '82186'),
+       ('Verdun-sur-Garonne', '82190'),
+       ('Les Arcs', '83004'),
+       ('Bandol', '83009'),
+       ('Barjols', '83012'),
+       ('Le Beausset', '83016'),
+       ('Besse-sur-Issole', '83018'),
+       ('Bormes-les-Mimosas', '83019'),
+       ('Brignoles', '83023'),
+       ('La Cadière-d''Azur', '83027'),
+       ('Callian', '83029'),
+       ('Le Cannet-des-Maures', '83031'),
+       ('Carcès', '83032'),
+       ('Carnoules', '83033'),
+       ('Carqueiranne', '83034'),
+       ('Le Castellet', '83035'),
+       ('Cavalaire-sur-Mer', '83036'),
+       ('Cogolin', '83042'),
+       ('La Crau', '83047'),
+       ('La Croix-Valmer', '83048'),
+       ('Cuers', '83049'),
+       ('Draguignan', '83050'),
+       ('La Farlède', '83054'),
+       ('Fayence', '83055'),
+       ('Flassans-sur-Issole', '83057'),
+       ('Flayosc', '83058'),
+       ('Forcalqueiret', '83059'),
+       ('Fréjus', '83061'),
+       ('La Garde', '83062'),
+       ('Garéoult', '83064'),
+       ('Gonfaron', '83067'),
+       ('Grimaud', '83068'),
+       ('Hyères', '83069'),
+       ('Le Lavandou', '83070'),
+       ('La Londe-les-Maures', '83071'),
+       ('Lorgues', '83072'),
+       ('Le Luc', '83073'),
+       ('Montauroux', '83081'),
+       ('Le Muy', '83086'),
+       ('Nans-les-Pins', '83087'),
+       ('Ollioules', '83090'),
+       ('Pierrefeu-du-Var', '83091'),
+       ('Pignans', '83092'),
+       ('Le Plan-de-la-Tour', '83094'),
+       ('Pourrières', '83097'),
+       ('Le Pradet', '83098'),
+       ('Puget-sur-Argens', '83099'),
+       ('Puget-Ville', '83100'),
+       ('Le Revest-les-Eaux', '83103'),
+       ('Rians', '83104'),
+       ('Rocbaron', '83106'),
+       ('Roquebrune-sur-Argens', '83107'),
+       ('Saint-Cyr-sur-Mer', '83112'),
+       ('Sainte-Maxime', '83115'),
+       ('Saint-Maximin-la-Sainte-Baume', '83116'),
+       ('Saint-Raphaël', '83118'),
+       ('Saint-Tropez', '83119'),
+       ('Saint-Zacharie', '83120'),
+       ('Salernes', '83121'),
+       ('Sanary-sur-Mer', '83123'),
+       ('La Seyne-sur-Mer', '83126'),
+       ('Six-Fours-les-Plages', '83129'),
+       ('Solliès-Pont', '83130'),
+       ('Solliès-Toucas', '83131'),
+       ('Toulon', '83137'),
+       ('Tourves', '83140'),
+       ('Trans-en-Provence', '83141'),
+       ('Le Val', '83143'),
+       ('La Valette-du-Var', '83144'),
+       ('Vidauban', '83148'),
+       ('Vinon-sur-Verdon', '83150'),
+       ('Saint-Mandrier-sur-Mer', '83153'),
+       ('Apt', '84003'),
+       ('Aubignan', '84004'),
+       ('Avignon', '84007'),
+       ('Bédarrides', '84016'),
+       ('Bédoin', '84017'),
+       ('Bollène', '84019'),
+       ('Cadenet', '84026'),
+       ('Camaret-sur-Aigues', '84029'),
+       ('Caromb', '84030'),
+       ('Carpentras', '84031'),
+       ('Caumont-sur-Durance', '84034'),
+       ('Cavaillon', '84035'),
+       ('Châteauneuf-de-Gadagne', '84036'),
+       ('Cheval-Blanc', '84038'),
+       ('Courthézon', '84039'),
+       ('Entraigues-sur-la-Sorgue', '84043'),
+       ('Gargas', '84047'),
+       ('L''Isle-sur-la-Sorgue', '84054'),
+       ('Jonquières', '84056'),
+       ('Lapalud', '84064'),
+       ('Lauris', '84065'),
+       ('Mazan', '84072'),
+       ('Mondragon', '84078'),
+       ('Monteux', '84080'),
+       ('Morières-lès-Avignon', '84081'),
+       ('Orange', '84087'),
+       ('Pernes-les-Fontaines', '84088'),
+       ('Pertuis', '84089'),
+       ('Piolenc', '84091'),
+       ('Le Pontet', '84092'),
+       ('Robion', '84099'),
+       ('Saint-Saturnin-lès-Avignon', '84119'),
+       ('Sarrians', '84122'),
+       ('Sorgues', '84129'),
+       ('Le Thor', '84132'),
+       ('La Tour-d''Aigues', '84133'),
+       ('Vaison-la-Romaine', '84137'),
+       ('Valréas', '84138'),
+       ('Vedène', '84141'),
+       ('Velleron', '84142'),
+       ('Villelaure', '84147'),
+       ('Aizenay', '85003'),
+       ('Aubigny-Les Clouzeaux', '85008'),
+       ('Beauvoir-sur-Mer', '85018'),
+       ('Bellevigny', '85019'),
+       ('Benet', '85020'),
+       ('Le Boupère', '85031'),
+       ('Bournezeau', '85034'),
+       ('Bretignolles-sur-Mer', '85035'),
+       ('La Bruffière', '85039'),
+       ('La Chaize-le-Vicomte', '85046'),
+       ('Challans', '85047'),
+       ('Chantonnay', '85051'),
+       ('Chavagnes-en-Paillers', '85065'),
+       ('Coëx', '85070'),
+       ('Commequiers', '85071'),
+       ('Cugand', '85076'),
+       ('Dompierre-sur-Yon', '85081'),
+       ('Essarts en Bocage', '85084'),
+       ('Le Fenouiller', '85088'),
+       ('La Ferrière', '85089'),
+       ('Sèvremont', '85090'),
+       ('Fontenay-le-Comte', '85092'),
+       ('La Garnache', '85096'),
+       ('La Gaubretière', '85097'),
+       ('L''Herbergement', '85108'),
+       ('Les Herbiers', '85109'),
+       ('L''Île-d''Yeu', '85113'),
+       ('Luçon', '85128'),
+       ('Les Lucs-sur-Boulogne', '85129'),
+       ('Montaigu-Vendée', '85146'),
+       ('Mortagne-sur-Sèvre', '85151'),
+       ('Les Achards', '85152'),
+       ('Mouilleron-le-Captif', '85155'),
+       ('Noirmoutier-en-l''Île', '85163'),
+       ('Le Poiré-sur-Vie', '85178'),
+       ('Pouzauges', '85182'),
+       ('Rocheservière', '85190'),
+       ('La Roche-sur-Yon', '85191'),
+       ('Les Sables-d''Olonne', '85194'),
+       ('Montréverd', '85197'),
+       ('Rives de l''Yon', '85213'),
+       ('Saint-Fulgent', '85215'),
+       ('Saint-Gilles-Croix-de-Vie', '85222'),
+       ('Sainte-Hermine', '85223'),
+       ('Saint-Hilaire-de-Riez', '85226'),
+       ('Saint-Jean-de-Monts', '85234'),
+       ('Saint-Laurent-sur-Sèvre', '85238'),
+       ('Saint-Philbert-de-Bouaine', '85262'),
+       ('Sallertaine', '85280'),
+       ('Soullans', '85284'),
+       ('Talmont-Saint-Hilaire', '85288'),
+       ('Treize-Septiers', '85295'),
+       ('Venansault', '85300'),
+       ('Chanverrie', '85302'),
+       ('Beaumont Saint-Cyr', '86019'),
+       ('Buxerolles', '86041'),
+       ('Chasseneuil-du-Poitou', '86062'),
+       ('Châtellerault', '86066'),
+       ('Chauvigny', '86070'),
+       ('Valence-en-Poitou', '86082'),
+       ('Dangé-Saint-Romain', '86092'),
+       ('Dissay', '86095'),
+       ('Fontaine-le-Comte', '86100'),
+       ('Iteuil', '86113'),
+       ('Jaunay-Marigny', '86115'),
+       ('Boivre-la-Vallée', '86123'),
+       ('Ligugé', '86133'),
+       ('Loudun', '86137'),
+       ('Mignaloux-Beauvoir', '86157'),
+       ('Migné-Auxances', '86158'),
+       ('Montamisé', '86163'),
+       ('Montmorillon', '86165'),
+       ('Naintré', '86174'),
+       ('Neuville-de-Poitou', '86177'),
+       ('Poitiers', '86194'),
+       ('Saint-Benoît', '86214'),
+       ('Saint-Georges-lès-Baillargeaux', '86222'),
+       ('Thuré', '86272'),
+       ('Saint-Martin-la-Pallu', '86281'),
+       ('Vivonne', '86293'),
+       ('Vouillé', '86294'),
+       ('Vouneuil-sous-Biard', '86297'),
+       ('Aixe-sur-Vienne', '87001'),
+       ('Ambazac', '87002'),
+       ('Bellac', '87011'),
+       ('Condat-sur-Vienne', '87048'),
+       ('Couzeix', '87050'),
+       ('Feytiat', '87065'),
+       ('Isle', '87075'),
+       ('Limoges', '87085'),
+       ('Le Palais-sur-Vienne', '87113'),
+       ('Panazol', '87114'),
+       ('Rilhac-Rancon', '87125'),
+       ('Rochechouart', '87126'),
+       ('Saint-Junien', '87154'),
+       ('Saint-Léonard-de-Noblat', '87161'),
+       ('Saint-Yrieix-la-Perche', '87187'),
+       ('Verneuil-sur-Vienne', '87201'),
+       ('Anould', '88009'),
+       ('La Bresse', '88075'),
+       ('Bruyères', '88078'),
+       ('Chantraine', '88087'),
+       ('Charmes', '88090'),
+       ('Contrexéville', '88114'),
+       ('Cornimont', '88116'),
+       ('Éloyes', '88158'),
+       ('Épinal', '88160'),
+       ('Gérardmer', '88196'),
+       ('Golbey', '88209'),
+       ('Mirecourt', '88304'),
+       ('Moyenmoutier', '88319'),
+       ('Neufchâteau', '88321'),
+       ('Rambervillers', '88367'),
+       ('Raon-l''Étape', '88372'),
+       ('Remiremont', '88383'),
+       ('Rupt-sur-Moselle', '88408'),
+       ('Saint-Dié-des-Vosges', '88413'),
+       ('Saint-Étienne-lès-Remiremont', '88415'),
+       ('Saint-Nabord', '88429'),
+       ('Capavenir Vosges', '88465'),
+       ('Le Thillot', '88468'),
+       ('Vagney', '88486'),
+       ('Le Val-d''Ajol', '88487'),
+       ('Vittel', '88516'),
+       ('Appoigny', '89013'),
+       ('Auxerre', '89024'),
+       ('Avallon', '89025'),
+       ('Brienon-sur-Armançon', '89055'),
+       ('Charny Orée de Puisaye', '89086'),
+       ('Joigny', '89206'),
+       ('Migennes', '89257'),
+       ('Monéteau', '89263'),
+       ('Paron', '89287'),
+       ('Pont-sur-Yonne', '89309'),
+       ('Saint-Florentin', '89345'),
+       ('Saint-Georges-sur-Baulche', '89346'),
+       ('Sens', '89387'),
+       ('Tonnerre', '89418'),
+       ('Villeneuve-la-Guyard', '89460'),
+       ('Villeneuve-sur-Yonne', '89464'),
+       ('Bavilliers', '90008'),
+       ('Beaucourt', '90009'),
+       ('Belfort', '90010'),
+       ('Danjoutin', '90032'),
+       ('Delle', '90033'),
+       ('Essert', '90039'),
+       ('Giromagny', '90052'),
+       ('Grandvillars', '90053'),
+       ('Offemont', '90075'),
+       ('Valdoie', '90099'),
+       ('Angerville', '91016'),
+       ('Arpajon', '91021'),
+       ('Athis-Mons', '91027'),
+       ('Ballainvilliers', '91044'),
+       ('Ballancourt-sur-Essonne', '91045'),
+       ('Bièvres', '91064'),
+       ('Boissy-sous-Saint-Yon', '91085'),
+       ('Bondoufle', '91086'),
+       ('Boussy-Saint-Antoine', '91097'),
+       ('Boutigny-sur-Essonne', '91099'),
+       ('Brétigny-sur-Orge', '91103'),
+       ('Breuillet', '91105'),
+       ('Briis-sous-Forges', '91111'),
+       ('Brunoy', '91114'),
+       ('Bruyères-le-Châtel', '91115'),
+       ('Bures-sur-Yvette', '91122'),
+       ('Cerny', '91129'),
+       ('Chilly-Mazarin', '91161'),
+       ('Corbeil-Essonnes', '91174'),
+       ('Le Coudray-Montceaux', '91179'),
+       ('Crosne', '91191'),
+       ('Dourdan', '91200'),
+       ('Draveil', '91201'),
+       ('Égly', '91207'),
+       ('Épinay-sous-Sénart', '91215'),
+       ('Épinay-sur-Orge', '91216'),
+       ('Étampes', '91223'),
+       ('Étiolles', '91225'),
+       ('Étréchy', '91226'),
+       ('Évry-Courcouronnes', '91228'),
+       ('La Ferté-Alais', '91232'),
+       ('Fleury-Mérogis', '91235'),
+       ('Forges-les-Bains', '91249'),
+       ('Gif-sur-Yvette', '91272'),
+       ('Grigny', '91286'),
+       ('Igny', '91312'),
+       ('Itteville', '91315'),
+       ('Juvisy-sur-Orge', '91326'),
+       ('Lardy', '91330'),
+       ('Leuville-sur-Orge', '91333'),
+       ('Limours', '91338'),
+       ('Linas', '91339'),
+       ('Lisses', '91340'),
+       ('Longjumeau', '91345'),
+       ('Longpont-sur-Orge', '91347'),
+       ('Marcoussis', '91363'),
+       ('Marolles-en-Hurepoix', '91376'),
+       ('Massy', '91377'),
+       ('Mennecy', '91386'),
+       ('Le Mérévillois', '91390'),
+       ('Milly-la-Forêt', '91405'),
+       ('Montgeron', '91421'),
+       ('Montlhéry', '91425'),
+       ('Morangis', '91432'),
+       ('Morigny-Champigny', '91433'),
+       ('Morsang-sur-Orge', '91434'),
+       ('La Norville', '91457'),
+       ('Nozay', '91458'),
+       ('Ollainville', '91461'),
+       ('Orsay', '91471'),
+       ('Palaiseau', '91477'),
+       ('Paray-Vieille-Poste', '91479'),
+       ('Le Plessis-Pâté', '91494'),
+       ('Quincy-sous-Sénart', '91514'),
+       ('Ris-Orangis', '91521'),
+       ('Saclay', '91534'),
+       ('Saint-Chéron', '91540'),
+       ('Sainte-Geneviève-des-Bois', '91549'),
+       ('Saint-Germain-lès-Arpajon', '91552'),
+       ('Saint-Germain-lès-Corbeil', '91553'),
+       ('Saint-Michel-sur-Orge', '91570'),
+       ('Saint-Pierre-du-Perray', '91573'),
+       ('Saintry-sur-Seine', '91577'),
+       ('Saint-Vrain', '91579'),
+       ('Saulx-les-Chartreux', '91587'),
+       ('Savigny-sur-Orge', '91589'),
+       ('Soisy-sur-Seine', '91600'),
+       ('Tigery', '91617'),
+       ('Verrières-le-Buisson', '91645'),
+       ('Vigneux-sur-Seine', '91657'),
+       ('Villabé', '91659'),
+       ('Villebon-sur-Yvette', '91661'),
+       ('La Ville-du-Bois', '91665'),
+       ('Villemoisson-sur-Orge', '91667'),
+       ('Villiers-sur-Orge', '91685'),
+       ('Viry-Châtillon', '91687'),
+       ('Wissous', '91689'),
+       ('Yerres', '91691'),
+       ('Les Ulis', '91692'),
+       ('Antony', '92002'),
+       ('Asnières-sur-Seine', '92004'),
+       ('Bagneux', '92007'),
+       ('Bois-Colombes', '92009'),
+       ('Boulogne-Billancourt', '92012'),
+       ('Bourg-la-Reine', '92014'),
+       ('Châtenay-Malabry', '92019'),
+       ('Châtillon', '92020'),
+       ('Chaville', '92022'),
+       ('Clamart', '92023'),
+       ('Clichy', '92024'),
+       ('Colombes', '92025'),
+       ('Courbevoie', '92026'),
+       ('Fontenay-aux-Roses', '92032'),
+       ('Garches', '92033'),
+       ('La Garenne-Colombes', '92035'),
+       ('Gennevilliers', '92036'),
+       ('Issy-les-Moulineaux', '92040'),
+       ('Levallois-Perret', '92044'),
+       ('Malakoff', '92046'),
+       ('Meudon', '92048'),
+       ('Montrouge', '92049'),
+       ('Nanterre', '92050'),
+       ('Neuilly-sur-Seine', '92051'),
+       ('Le Plessis-Robinson', '92060'),
+       ('Puteaux', '92062'),
+       ('Rueil-Malmaison', '92063'),
+       ('Saint-Cloud', '92064'),
+       ('Sceaux', '92071'),
+       ('Sèvres', '92072'),
+       ('Suresnes', '92073'),
+       ('Vanves', '92075'),
+       ('Vaucresson', '92076'),
+       ('Ville-d''Avray', '92077'),
+       ('Villeneuve-la-Garenne', '92078'),
+       ('Aubervilliers', '93001'),
+       ('Aulnay-sous-Bois', '93005'),
+       ('Bagnolet', '93006'),
+       ('Le Blanc-Mesnil', '93007'),
+       ('Bobigny', '93008'),
+       ('Bondy', '93010'),
+       ('Le Bourget', '93013'),
+       ('Clichy-sous-Bois', '93014'),
+       ('Coubron', '93015'),
+       ('La Courneuve', '93027'),
+       ('Drancy', '93029'),
+       ('Dugny', '93030'),
+       ('Épinay-sur-Seine', '93031'),
+       ('Gagny', '93032'),
+       ('Gournay-sur-Marne', '93033'),
+       ('L''Île-Saint-Denis', '93039'),
+       ('Les Lilas', '93045'),
+       ('Livry-Gargan', '93046'),
+       ('Montfermeil', '93047'),
+       ('Montreuil', '93048'),
+       ('Neuilly-Plaisance', '93049'),
+       ('Neuilly-sur-Marne', '93050'),
+       ('Noisy-le-Grand', '93051'),
+       ('Noisy-le-Sec', '93053'),
+       ('Pantin', '93055'),
+       ('Les Pavillons-sous-Bois', '93057'),
+       ('Pierrefitte-sur-Seine', '93059'),
+       ('Le Pré-Saint-Gervais', '93061'),
+       ('Le Raincy', '93062'),
+       ('Romainville', '93063'),
+       ('Rosny-sous-Bois', '93064'),
+       ('Saint-Denis', '93066'),
+       ('Saint-Ouen-sur-Seine', '93070'),
+       ('Sevran', '93071'),
+       ('Stains', '93072'),
+       ('Tremblay-en-France', '93073'),
+       ('Vaujours', '93074'),
+       ('Villemomble', '93077'),
+       ('Villepinte', '93078'),
+       ('Villetaneuse', '93079'),
+       ('Ablon-sur-Seine', '94001'),
+       ('Alfortville', '94002'),
+       ('Arcueil', '94003'),
+       ('Boissy-Saint-Léger', '94004'),
+       ('Bonneuil-sur-Marne', '94011'),
+       ('Bry-sur-Marne', '94015'),
+       ('Cachan', '94016'),
+       ('Champigny-sur-Marne', '94017'),
+       ('Charenton-le-Pont', '94018'),
+       ('Chennevières-sur-Marne', '94019'),
+       ('Chevilly-Larue', '94021'),
+       ('Choisy-le-Roi', '94022'),
+       ('Créteil', '94028'),
+       ('Fontenay-sous-Bois', '94033'),
+       ('Fresnes', '94034'),
+       ('Gentilly', '94037'),
+       ('L''Haÿ-les-Roses', '94038'),
+       ('Ivry-sur-Seine', '94041'),
+       ('Joinville-le-Pont', '94042'),
+       ('Le Kremlin-Bicêtre', '94043'),
+       ('Limeil-Brévannes', '94044'),
+       ('Maisons-Alfort', '94046'),
+       ('Mandres-les-Roses', '94047'),
+       ('Marolles-en-Brie', '94048'),
+       ('Nogent-sur-Marne', '94052'),
+       ('Noiseau', '94053'),
+       ('Orly', '94054'),
+       ('Ormesson-sur-Marne', '94055'),
+       ('Le Perreux-sur-Marne', '94058'),
+       ('Le Plessis-Trévise', '94059'),
+       ('La Queue-en-Brie', '94060'),
+       ('Rungis', '94065'),
+       ('Saint-Mandé', '94067'),
+       ('Saint-Maur-des-Fossés', '94068'),
+       ('Saint-Maurice', '94069'),
+       ('Santeny', '94070'),
+       ('Sucy-en-Brie', '94071'),
+       ('Thiais', '94073'),
+       ('Valenton', '94074'),
+       ('Villecresnes', '94075'),
+       ('Villejuif', '94076'),
+       ('Villeneuve-le-Roi', '94077'),
+       ('Villeneuve-Saint-Georges', '94078'),
+       ('Villiers-sur-Marne', '94079'),
+       ('Vincennes', '94080'),
+       ('Vitry-sur-Seine', '94081'),
+       ('Argenteuil', '95018'),
+       ('Arnouville', '95019'),
+       ('Auvers-sur-Oise', '95039'),
+       ('Beauchamp', '95051'),
+       ('Beaumont-sur-Oise', '95052'),
+       ('Bessancourt', '95060'),
+       ('Bezons', '95063'),
+       ('Bouffémont', '95091'),
+       ('Bruyères-sur-Oise', '95116'),
+       ('Cergy', '95127'),
+       ('Champagne-sur-Oise', '95134'),
+       ('Chaumontel', '95149'),
+       ('Cormeilles-en-Parisis', '95176'),
+       ('Courdimanche', '95183'),
+       ('Deuil-la-Barre', '95197'),
+       ('Domont', '95199'),
+       ('Eaubonne', '95203'),
+       ('Écouen', '95205'),
+       ('Enghien-les-Bains', '95210'),
+       ('Éragny', '95218'),
+       ('Ermont', '95219'),
+       ('Ézanville', '95229'),
+       ('Fosses', '95250'),
+       ('Franconville', '95252'),
+       ('Frépillon', '95256'),
+       ('La Frette-sur-Seine', '95257'),
+       ('Garges-lès-Gonesse', '95268'),
+       ('Gonesse', '95277'),
+       ('Goussainville', '95280'),
+       ('Groslay', '95288'),
+       ('Herblay-sur-Seine', '95306'),
+       ('L''Isle-Adam', '95313'),
+       ('Jouy-le-Moutier', '95323'),
+       ('Louvres', '95351'),
+       ('Luzarches', '95352'),
+       ('Magny-en-Vexin', '95355'),
+       ('Marines', '95370'),
+       ('Marly-la-Ville', '95371'),
+       ('Menucourt', '95388'),
+       ('Mériel', '95392'),
+       ('Méry-sur-Oise', '95394'),
+       ('Montigny-lès-Cormeilles', '95424'),
+       ('Montlignon', '95426'),
+       ('Montmagny', '95427'),
+       ('Montmorency', '95428'),
+       ('Montsoult', '95430'),
+       ('Osny', '95476'),
+       ('Parmain', '95480'),
+       ('Persan', '95487'),
+       ('Pierrelaye', '95488'),
+       ('Le Plessis-Bouchard', '95491'),
+       ('Pontoise', '95500'),
+       ('Presles', '95504'),
+       ('Puiseux-en-France', '95509'),
+       ('Saint-Brice-sous-Forêt', '95539'),
+       ('Saint-Gratien', '95555'),
+       ('Saint-Leu-la-Forêt', '95563'),
+       ('Saint-Ouen-l''Aumône', '95572'),
+       ('Saint-Prix', '95574'),
+       ('Sannois', '95582'),
+       ('Sarcelles', '95585'),
+       ('Soisy-sous-Montmorency', '95598'),
+       ('Survilliers', '95604'),
+       ('Taverny', '95607'),
+       ('Le Thillay', '95612'),
+       ('Vauréal', '95637'),
+       ('Viarmes', '95652'),
+       ('Villiers-le-Bel', '95680'),
+       ('Les Abymes', '97101'),
+       ('Anse-Bertrand', '97102'),
+       ('Baie-Mahault', '97103'),
+       ('Baillif', '97104'),
+       ('Basse-Terre', '97105'),
+       ('Bouillante', '97106'),
+       ('Capesterre-Belle-Eau', '97107'),
+       ('Capesterre-de-Marie-Galante', '97108'),
+       ('Gourbeyre', '97109'),
+       ('Deshaies', '97111'),
+       ('Grand-Bourg', '97112'),
+       ('Le Gosier', '97113'),
+       ('Goyave', '97114'),
+       ('Lamentin', '97115'),
+       ('Morne-à-l''Eau', '97116'),
+       ('Le Moule', '97117'),
+       ('Petit-Bourg', '97118'),
+       ('Petit-Canal', '97119'),
+       ('Pointe-à-Pitre', '97120'),
+       ('Pointe-Noire', '97121'),
+       ('Port-Louis', '97122'),
+       ('Saint-Claude', '97124'),
+       ('Saint-François', '97125'),
+       ('Sainte-Anne', '97128'),
+       ('Sainte-Rose', '97129'),
+       ('Trois-Rivières', '97132'),
+       ('Vieux-Habitants', '97134'),
+       ('Les Anses-d''Arlet', '97202'),
+       ('Le Carbet', '97204'),
+       ('Case-Pilote', '97205'),
+       ('Le Diamant', '97206'),
+       ('Ducos', '97207'),
+       ('Fort-de-France', '97209'),
+       ('Le François', '97210'),
+       ('Gros-Morne', '97212'),
+       ('Le Lamentin', '97213'),
+       ('Le Lorrain', '97214'),
+       ('Le Marigot', '97216'),
+       ('Le Marin', '97217'),
+       ('Le Morne-Rouge', '97218'),
+       ('Rivière-Pilote', '97220'),
+       ('Rivière-Salée', '97221'),
+       ('Le Robert', '97222'),
+       ('Saint-Esprit', '97223'),
+       ('Saint-Joseph', '97224'),
+       ('Saint-Pierre', '97225'),
+       ('Sainte-Anne', '97226'),
+       ('Sainte-Luce', '97227'),
+       ('Sainte-Marie', '97228'),
+       ('Schœlcher', '97229'),
+       ('La Trinité', '97230'),
+       ('Les Trois-Îlets', '97231'),
+       ('Le Vauclin', '97232'),
+       ('Cayenne', '97302'),
+       ('Kourou', '97304'),
+       ('Macouria', '97305'),
+       ('Mana', '97306'),
+       ('Matoury', '97307'),
+       ('Saint-Georges', '97308'),
+       ('Remire-Montjoly', '97309'),
+       ('Roura', '97310'),
+       ('Saint-Laurent-du-Maroni', '97311'),
+       ('Maripasoula', '97353'),
+       ('Grand-Santi', '97357'),
+       ('Apatou', '97360'),
+       ('Papaichton', '97362'),
+       ('Les Avirons', '97401'),
+       ('Bras-Panon', '97402'),
+       ('Entre-Deux', '97403'),
+       ('L''Étang-Salé', '97404'),
+       ('Petite-Île', '97405'),
+       ('La Plaine-des-Palmistes', '97406'),
+       ('Le Port', '97407'),
+       ('La Possession', '97408'),
+       ('Saint-André', '97409'),
+       ('Saint-Benoît', '97410'),
+       ('Saint-Denis', '97411'),
+       ('Saint-Joseph', '97412'),
+       ('Saint-Leu', '97413'),
+       ('Saint-Louis', '97414'),
+       ('Saint-Paul', '97415'),
+       ('Saint-Pierre', '97416'),
+       ('Saint-Philippe', '97417'),
+       ('Sainte-Marie', '97418'),
+       ('Sainte-Rose', '97419'),
+       ('Sainte-Suzanne', '97420'),
+       ('Salazie', '97421'),
+       ('Le Tampon', '97422'),
+       ('Les Trois-Bassins', '97423'),
+       ('Cilaos', '97424');

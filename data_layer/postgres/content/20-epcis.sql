@@ -1,1628 +1,1677 @@
-insert into epci(nom, siren, nature) values ('Haut - Bugey Agglomération', '200042935', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Bassin de Bourg-en-Bresse', '200071751', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Pays de Gex', '240100750', 'CA');
-insert into epci(nom, siren, nature) values ('CC Rives de l''Ain - Pays du Cerdon', '200029999', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bugey Sud', '200040350', 'CC');
-insert into epci(nom, siren, nature) values ('CC Dombes Saône Vallée', '200042497', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Dombes', '200069193', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val de Saône Centre', '200070118', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Veyle', '200070555', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bresse et Saône', '200071371', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Côtière à Montluel', '240100610', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Miribel et du Plateau', '240100800', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Plaine de l''Ain', '240100883', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Bellegardien (CCPB)', '240100891', 'CC');
-insert into epci(nom, siren, nature) values ('SM intercommunal de destruction des ordures ménagères Veyle Saône', '250101086', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de traitement des déchets ménagers et assimilés (ORGANOM)', '250102365', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour le traitement des déchets ménagers et assimilés (SM de Crocu)', '250102373', 'SMF');
-insert into epci(nom, siren, nature) values ('SM intercommunal de gestion des déchets du Faucigny Genevois (SIDEFAGE)', '257401620', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Pays de Laon', '200043495', 'CA');
-insert into epci(nom, siren, nature) values ('CA Chauny Tergnier La Fère', '200071785', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Saint-Quentinois', '200071892', 'CA');
-insert into epci(nom, siren, nature) values ('CA de la Région de Château-Thierry', '200072031', 'CA');
-insert into epci(nom, siren, nature) values ('GrandSoissons Agglomération', '240200477', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Val de l''Oise', '200040426', 'CC');
-insert into epci(nom, siren, nature) values ('CC Picardie des Châteaux', '200071769', 'CC');
-insert into epci(nom, siren, nature) values ('CC Thiérache Sambre et Oise', '200071983', 'CC');
-insert into epci(nom, siren, nature) values ('CC Retz en Valois', '200071991', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Thiérache du Centre', '240200444', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de la Serre', '240200469', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays du Vermandois', '240200493', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val de l''Aisne', '240200501', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Canton d''Oulchy le Château', '240200519', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Champagne Picarde', '240200576', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Canton de Charly sur Marne', '240200584', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Chemin des Dames', '240200592', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Trois Rivières', '240200600', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Portes de la Thiérache', '240200634', 'CC');
-insert into epci(nom, siren, nature) values ('SI de ramassage et de traitement des ordures ménagères (SIRTOM) de la région de Laon ', '250200383', 'SMF');
-insert into epci(nom, siren, nature) values ('Valor''Aisne (Syndicat départemental de traitement des déchets ménagers de l''Aisne)', '250208790', 'SMO');
-insert into epci(nom, siren, nature) values ('PETR du Soissonnais et du Valois', '200085694', 'PETR');
-insert into epci(nom, siren, nature) values ('CA Montluçon Communauté', '200071082', 'CA');
-insert into epci(nom, siren, nature) values ('CA Moulins Communauté', '200071140', 'CA');
-insert into epci(nom, siren, nature) values ('CA Vichy Communauté', '200071363', 'CA');
-insert into epci(nom, siren, nature) values ('CC Saint-Pourçain Sioule Limagne', '200071389', 'CC');
-insert into epci(nom, siren, nature) values ('CC Entr''Allier Besbre et Loire', '200071470', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bocage Bourbonnais', '200071496', 'CC');
-insert into epci(nom, siren, nature) values ('CC Commentry Montmarault Néris Communauté', '200071512', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Lapalisse', '240300491', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Tronçais', '240300558', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val de Cher', '240300566', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Huriel', '240300657', 'CC');
-insert into epci(nom, siren, nature) values ('SI de collecte et de traitement des ordures ménagères (SICTOM) Sud-Allier', '250300050', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des ordures ménagères Nord-Allier (SICTOM Nord Allier)', '250300217', 'SMF');
-insert into epci(nom, siren, nature) values ('SI de collecte et de traitement des ordures ménagères (SICTOM) du secteur de Cérilly', '250303039', 'SMF');
-insert into epci(nom, siren, nature) values ('SM intercommunal de collecte et de traitement d''ordures ménagères de la région montluçonnaise', '250303294', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Durance-Lubéron-Verdon Agglomération', '200034700', 'CA');
-insert into epci(nom, siren, nature) values ('CA Provence-Alpes-Agglomération', '200067437', 'CA');
-insert into epci(nom, siren, nature) values ('CC Alpes-Provence-Verdon "Sources de lumière"', '200068625', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sisteronais-Buëch', '200068765', 'CC');
-insert into epci(nom, siren, nature) values ('CC Haute-Provence-Pays de Banon', '200071025', 'CC');
-insert into epci(nom, siren, nature) values ('CC Jabron-Lure-Vançon-Durance', '200071033', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vallée de l''Ubaye - Serre-Ponçon', '200072304', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays Forcalquier et Montagne de Lure', '240400440', 'CC');
-insert into epci(nom, siren, nature) values ('SM départemental d''élimination et de valorisation des ordures ménagères (SYDEVOM) des Alpes-de-Haute-Provence', '250401221', 'SMO');
-insert into epci(nom, siren, nature) values ('CA Gap-Tallard-Durance', '200067825', 'CA');
-insert into epci(nom, siren, nature) values ('CC Serre-Ponçon Val d''Avance', '200067320', 'CC');
-insert into epci(nom, siren, nature) values ('CC Buëch-Dévoluy', '200067445', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Guillestrois et du Queyras', '200067452', 'CC');
-insert into epci(nom, siren, nature) values ('CC Serre-Ponçon', '200067742', 'CC');
-insert into epci(nom, siren, nature) values ('CC Champsaur-Valgaudemar', '200068096', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Briançonnais', '240500439', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays des Ecrins', '240500462', 'CC');
-insert into epci(nom, siren, nature) values ('Syndicat Mixte de Traitement des Ordures Ménagères du Guillestrois, du Queyras et de l''Argentiérois (SMITOMGA)', '250500790', 'SMF');
-insert into epci(nom, siren, nature) values ('Métropole Nice Côte d''Azur', '200030195', 'METRO');
-insert into epci(nom, siren, nature) values ('CA du Pays de Grasse', '200039857', 'CA');
-insert into epci(nom, siren, nature) values ('CA Cannes Pays de Lérins', '200039915', 'CA');
-insert into epci(nom, siren, nature) values ('CA de la Riviera Française', '240600551', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Sophia Antipolis', '240600585', 'CA');
-insert into epci(nom, siren, nature) values ('CC Alpes d''Azur', '200039931', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays des Paillons', '240600593', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM de Valberg', '240600023', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SM d''élimination des déchets (SMED)', '200000586', 'SMO');
-insert into epci(nom, siren, nature) values ('SM pour la valorisation des déchets UNIVALOM', '200046076', 'SMO');
-insert into epci(nom, siren, nature) values ('CA Privas Centre Ardèche', '200071413', 'CA');
-insert into epci(nom, siren, nature) values ('CA Annonay Rhône Agglo', '200072015', 'CA');
-insert into epci(nom, siren, nature) values ('CA Arche Agglo', '200073096', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Pays de Lamastre', '200016905', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Gorges de l''Ardèche', '200039808', 'CC');
-insert into epci(nom, siren, nature) values ('CC Ardèche des Sources et Volcans', '200039824', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays des Vans en Cévennes', '200039832', 'CC');
-insert into epci(nom, siren, nature) values ('CC Rhône Crussol', '200041366', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val Eyrieux', '200041465', 'CC');
-insert into epci(nom, siren, nature) values ('CC Ardèche Rhône Coiron', '200071405', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Montagne d''Ardèche', '200072007', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bassin d''Aubenas', '200073245', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Beaume-Drobie', '240700302', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val de Ligne', '240700617', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val d''Ay', '240700716', 'CC');
-insert into epci(nom, siren, nature) values ('CC Berg et Coiron', '240700815', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Rhône aux Gorges de l''Ardèche', '240700864', 'CC');
-insert into epci(nom, siren, nature) values ('SI de collecte et de traitement des ordures ménagères du secteur Eyrieux-Doux (SICTOMSED)', '250700135', 'SMF');
-insert into epci(nom, siren, nature) values ('SI de collecte et de traitement des ordures ménagères de la Basse-Ardèche (SICTOBA)', '250700218', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat pour la destruction des ordures ménagères du secteur d''Aubenas (SIDOMSA)', '250701851', 'SMF');
-insert into epci(nom, siren, nature) values ('Ardenne Métropole', '200041630', 'CA');
-insert into epci(nom, siren, nature) values ('CC Ardennes Thiérache', '200041622', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Réthelois', '200043156', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vallées et Plateau d''Ardenne', '200067759', 'CC');
-insert into epci(nom, siren, nature) values ('CC Ardenne, Rives de Meuse', '240800821', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Portes du Luxembourg', '240800847', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Crêtes Préardennaises', '240800862', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Argonne Ardennaise', '240800920', 'CC');
-insert into epci(nom, siren, nature) values ('SM du SCOT "Nord Ardennes"', '200088730', 'SMF');
-insert into epci(nom, siren, nature) values ('SICOMAR de l''arrondissement de Réthel', '250800646', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de traitement des déchets Ardennais (VALODEA)', '250800489', 'SMO');
-insert into epci(nom, siren, nature) values ('CA Pays Foix-Varilhes', '200067791', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Pays de Mirepoix', '200044469', 'CC');
-insert into epci(nom, siren, nature) values ('CC Arize Lèze', '200066223', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Portes d''Ariège Pyrénées', '200066231', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Haute Ariège', '200066363', 'CC');
-insert into epci(nom, siren, nature) values ('CC Couserans-Pyrénées', '200067940', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Tarascon', '240900431', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Olmes', '240900464', 'CC');
-insert into epci(nom, siren, nature) values ('SM d''étude, de collecte et de traitement des déchets ménagers et assimilés du Plantaurel (SMECTOM du Plantaurel)', '240900399', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Troyes Champagne Métropole', '200069250', 'CA');
-insert into epci(nom, siren, nature) values ('CC des Portes de Romilly sur Seine', '200000545', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Nogentais', '200006716', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Lacs de Champagne', '200040137', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Vendeuvre-Soulaines', '200066892', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Barséquanais en Champagne', '200069003', 'CC');
-insert into epci(nom, siren, nature) values ('CC Seine et Aube', '200070126', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Chaourçois et du Val d''Armance', '200071041', 'CC');
-insert into epci(nom, siren, nature) values ('CC d''Arcis, Mailly, Ramerupt', '200071777', 'CC');
-insert into epci(nom, siren, nature) values ('CC Forêts, Lacs, Terres en Champagne', '241000223', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Région de Bar sur Aube', '241000405', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Othe', '241000447', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Orvin et de l''Ardusson', '241000488', 'CC');
-insert into epci(nom, siren, nature) values ('SM d''élimination des déchets ménagers du territoire d''Orient', '251002515', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat départemental d''élimination des déchets de l''Aube (SDEDA)', '251002531', 'SMO');
-insert into epci(nom, siren, nature) values ('CA Carcassonne Agglo', '200035715', 'CA');
-insert into epci(nom, siren, nature) values ('CA Le Grand Narbonne', '241100593', 'CA');
-insert into epci(nom, siren, nature) values ('CC Piège Lauragais Malepère', '200035707', 'CC');
-insert into epci(nom, siren, nature) values ('CC Castelnaudary Lauragais Audois', '200035855', 'CC');
-insert into epci(nom, siren, nature) values ('CC Région Lézignanaise, Corbières et Minervois', '200035863', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Montagne Noire', '200042463', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pyrénées audoises', '200043776', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Limouxin', '200071926', 'CC');
-insert into epci(nom, siren, nature) values ('COVALDEM 11 ', '200036101', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM de l''Ouest Audois', '251100236', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Rodez Agglomération', '241200187', 'CA');
-insert into epci(nom, siren, nature) values ('CC Decazeville Communauté', '200067064', 'CC');
-insert into epci(nom, siren, nature) values ('CC Saint Affricain, Roquefort, Sept Vallons', '200067155', 'CC');
-insert into epci(nom, siren, nature) values ('CC Monts, Rance et Rougier', '200067163', 'CC');
-insert into epci(nom, siren, nature) values ('CC Aubrac, Carladez et Viadène', '200067171', 'CC');
-insert into epci(nom, siren, nature) values ('CC Comtal Lot et Truyère', '200067478', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Causses à l''Aubrac', '200068484', 'CC');
-insert into epci(nom, siren, nature) values ('Pays Ségali Communauté', '200068831', 'CC');
-insert into epci(nom, siren, nature) values ('Ouest Aveyron Communauté', '200069383', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Réquistanais', '241200542', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Millau Grands Causses', '241200567', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Rignacois', '241200625', 'CC');
-insert into epci(nom, siren, nature) values ('CC Conques-Marcillac', '241200641', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Salars', '241200658', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Plateau de Montbazens', '241200674', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Lévézou Pareloup', '241200765', 'CC');
-insert into epci(nom, siren, nature) values ('CC Aveyron Bas Ségala Viaur', '241200807', 'CC');
-insert into epci(nom, siren, nature) values ('CC Larzac et Vallées', '241200906', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Muse et des Raspes du Tarn', '241200914', 'CC');
-insert into epci(nom, siren, nature) values ('SMICTOM Nord Aveyron', '251200978', 'SMF');
-insert into epci(nom, siren, nature) values ('SM départemental pour le traitement et la valorisation des déchets ménagers et assimilés (SYDOM Aveyron)', '251201588', 'SMO');
-insert into epci(nom, siren, nature) values ('Métropole d''Aix-Marseille-Provence', '200054807', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Terre de Provence', '200035087', 'CA');
-insert into epci(nom, siren, nature) values ('CA d''Arles-Crau-Camargue-Montagnette', '241300417', 'CA');
-insert into epci(nom, siren, nature) values ('CC  Vallée des Baux-Alpilles (CC VBA)', '241300375', 'CC');
-insert into epci(nom, siren, nature) values ('CU Caen la Mer', '200065597', 'CU');
-insert into epci(nom, siren, nature) values ('CA Lisieux Normandie', '200069532', 'CA');
-insert into epci(nom, siren, nature) values ('CC Normandie-Cabourg-Pays d''Auge', '200065563', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val ès Dunes', '200065589', 'CC');
-insert into epci(nom, siren, nature) values ('CC Cingal-Suisse Normande', '200066710', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vallées de l''Orne et de l''Odon', '200066728', 'CC');
-insert into epci(nom, siren, nature) values ('CC Isigny-Omaha Intercom', '200066801', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Honfleur-Beuzeville', '200066827', 'CC');
-insert into epci(nom, siren, nature) values ('CC Intercom de la Vire au Noireau', '200068799', 'CC');
-insert into epci(nom, siren, nature) values ('CC Seulles Terre et Mer', '200069516', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pré-Bocage Intercom', '200069524', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur Côte Fleurie', '241400415', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Falaise', '241400514', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Bayeux Intercom', '241400555', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Nacre', '241400860', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terre d''Auge', '241400878', 'CC');
-insert into epci(nom, siren, nature) values ('SM intercommunal des surplus ménagers du Bessin (COLLECTEA)', '251402723', 'SMF');
-insert into epci(nom, siren, nature) values ('SM SICTOM de la Bruyère', '251402756', 'SMF');
-insert into epci(nom, siren, nature) values ('SM traitement valorisation des déchets ménagers région Ouest Calvados (SEROC)', '251405031', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Bassin d''Aurillac', '241500230', 'CA');
-insert into epci(nom, siren, nature) values ('CC Hautes Terres', '200066637', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Saint-Flour', '200066660', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Châtaigneraie Cantalienne', '200066678', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Gentiane', '241500255', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Mauriac', '241500271', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sumène - Artense', '241501055', 'CC');
-insert into epci(nom, siren, nature) values ('CC Cère et Goul en Carladès', '241501089', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Salers', '241501139', 'CC');
-insert into epci(nom, siren, nature) values ('SM du SCOT du bassin d''Aurillac, du Carladès et de la Châtaigneraie', '200038149', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''élimination des ordures ménagères de la région de Mauriac, Pléaux, Salers, Saint-Cernin (SIETOM de Drugeac)', '251500963', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de la station du Lioran', '251500948', 'SMO');
-insert into epci(nom, siren, nature) values ('SM du lac de Garabit-Grandval', '251502944', 'SMO');
-insert into epci(nom, siren, nature) values ('CA du Grand Cognac', '200070514', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Grand Angoulême', '200071827', 'CA');
-insert into epci(nom, siren, nature) values ('CC des 4B Sud Charente', '200029734', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val de Charente', '200043016', 'CC');
-insert into epci(nom, siren, nature) values ('CC La Rochefoucauld - Porte du Périgord', '200068914', 'CC');
-insert into epci(nom, siren, nature) values ('CC Lavalette Tude Dronne', '200070282', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Charente', '200072023', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Charente Limousine', '200072049', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Rouillacais', '241600303', 'CC');
-insert into epci(nom, siren, nature) values ('Syndicat de valorisation des déchets ménagers de la Charente (CALITOM)', '251602660', 'SMF');
-insert into epci(nom, siren, nature) values ('CA de Saintes', '200036473', 'CA');
-insert into epci(nom, siren, nature) values ('CA Rochefort Océan', '200041762', 'CA');
-insert into epci(nom, siren, nature) values ('CA de La Rochelle', '241700434', 'CA');
-insert into epci(nom, siren, nature) values ('CA Royan Atlantique', '241700640', 'CA');
-insert into epci(nom, siren, nature) values ('CC Aunis Atlantique', '200041499', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Haute Saintonge', '200041523', 'CC');
-insert into epci(nom, siren, nature) values ('CC Aunis Sud', '200041614', 'CC');
-insert into epci(nom, siren, nature) values ('Vals de Saintonge Communauté', '200041689', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Ile de Ré', '241700459', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Saintonge', '241700517', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Ile d''Oléron', '241700624', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Gémozac et de la Saintonge Viticole', '241700632', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bassin de Marennes', '241700699', 'CC');
-insert into epci(nom, siren, nature) values ('SM CYCLAD', '251701900', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat intercommunautaire du littoral', '251710687', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Bourges Plus', '241800507', 'CA');
-insert into epci(nom, siren, nature) values ('CC Sauldre et Sologne', '200000933', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays de Nérondes', '200007177', 'CC');
-insert into epci(nom, siren, nature) values ('CC Portes du Berry entre Loire et Val d''Aubois', '200011781', 'CC');
-insert into epci(nom, siren, nature) values ('CC Arnon Boischaut Cher', '200027076', 'CC');
-insert into epci(nom, siren, nature) values ('CC Berry-Loire-Vauvise', '200032514', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de France', '200036135', 'CC');
-insert into epci(nom, siren, nature) values ('CC Berry Grand Sud', '200049484', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terres du Haut Berry', '200066330', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays Fort Sancerrois Val de Loire', '200069227', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Berry', '200070571', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vierzon-Sologne-Berry', '200090561', 'CC');
-insert into epci(nom, siren, nature) values ('CC la Septaine', '241800374', 'CC');
-insert into epci(nom, siren, nature) values ('CC le Dunois', '241800424', 'CC');
-insert into epci(nom, siren, nature) values ('CC les Trois Provinces', '241800432', 'CC');
-insert into epci(nom, siren, nature) values ('CC Fercher Pays Florentais', '241800457', 'CC');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des résidus ménagers des régions de Léré, Sancerre et Vailly-sur-Sauldre', '200033140', 'SMF');
-insert into epci(nom, siren, nature) values ('SMIRTOM du Saint Amandois', '251801817', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTREM de Baugy', '251887873', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Bassin de Brive', '200043172', 'CA');
-insert into epci(nom, siren, nature) values ('CA Tulle Agglo', '241927201', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Pays de Lubersac-Pompadour', '200066603', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vézère-Monédières-Millesources', '200066645', 'CC');
-insert into epci(nom, siren, nature) values ('CC Haute-Corrèze Communauté', '200066744', 'CC');
-insert into epci(nom, siren, nature) values ('CC Xaintrie Val''Dordogne', '200066751', 'CC');
-insert into epci(nom, siren, nature) values ('CC Midi Corrézien', '200066769', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Ventadour - Egletons - Monédières', '241900133', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Uzerche', '241927243', 'CC');
-insert into epci(nom, siren, nature) values ('SIVU d''Ambrugeat-Davignac', '251907101', 'SIVU');
-insert into epci(nom, siren, nature) values ('SM pour le ramassage et le traitement des ordures ménagères de la région de Brive', '251903100', 'SMF');
-insert into epci(nom, siren, nature) values ('SM départemental pour le transport et le traitement des ordures ménagères (SYTTOM 19)', '200044980', 'SMO');
-insert into epci(nom, siren, nature) values ('Dijon Métropole', '242100410', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Beaune, Côte et Sud - Communauté Beaune-Chagny-Nolay', '200006682', 'CA');
-insert into epci(nom, siren, nature) values ('CC de la Plaine Dijonnaise', '200000925', 'CC');
-insert into epci(nom, siren, nature) values ('CC Ouche et Montagne', '200039055', 'CC');
-insert into epci(nom, siren, nature) values ('CC Forêts, Seine et Suzon', '200039063', 'CC');
-insert into epci(nom, siren, nature) values ('CC Norge et Tille', '200069540', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Gevrey-Chambertin et de Nuits-Saint-Georges', '200070894', 'CC');
-insert into epci(nom, siren, nature) values ('CC Auxonne Pontailler Val de Saône', '200070902', 'CC');
-insert into epci(nom, siren, nature) values ('CC Tille et Venelle', '200070910', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Terres d''Auxois', '200071017', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Arnay Liernais', '200071173', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Pouilly en Auxois/Bligny sur Ouche', '200071207', 'CC');
-insert into epci(nom, siren, nature) values ('CC Mirebellois et Fontenois', '200072825', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Vallées de la Tille et de l''Ignon', '242100154', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Châtillonnais', '242101434', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Saulieu', '242101442', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Alésia et de la Seine', '242101459', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Montbardois', '242101491', 'CC');
-insert into epci(nom, siren, nature) values ('CC Rives de Saône', '242101509', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM de Aignay-le-Duc', '242100014', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SIVOM de Baigneux-les-Juifs', '242100055', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SIVOM de Montigny-sur-Aube', '242100212', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SM des ordures ménagères', '252108667', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de Haute Côte-d''Or pour le traitement des déchets ménagers et assimilés', '252108972', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des déchets ménagers et assimilés de la Plaine Dijonnaise', '252109434', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Lannion-Trégor Communauté', '200065928', 'CA');
-insert into epci(nom, siren, nature) values ('CA Guingamp-Paimpol Agglomération de l''Armor à l''Argoat', '200067981', 'CA');
-insert into epci(nom, siren, nature) values ('CA Dinan Agglomération', '200068989', 'CA');
-insert into epci(nom, siren, nature) values ('CA Lamballe Terre et Mer', '200069391', 'CA');
-insert into epci(nom, siren, nature) values ('CA Saint-Brieuc Armor Agglomération', '200069409', 'CA');
-insert into epci(nom, siren, nature) values ('CC Loudéac Communauté - Bretagne Centre', '200067460', 'CC');
-insert into epci(nom, siren, nature) values ('CC Leff Armor Communauté', '200069086', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Kreiz-Breizh (CCKB)', '242200715', 'CC');
-insert into epci(nom, siren, nature) values ('SM Kerval Centre Armor', '200043677', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM du Ménez Bré', '252202106', 'SMF');
-insert into epci(nom, siren, nature) values ('SMITRED Ouest-Armor', '252203161', 'SMF');
-insert into epci(nom, siren, nature) values ('SM des déchets des Pays de la Rance et de la Baie', '252203195', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Grand Guéret', '200034825', 'CA');
-insert into epci(nom, siren, nature) values ('CC Portes de la Creuse en Marche', '200041556', 'CC');
-insert into epci(nom, siren, nature) values ('CC Creuse Grand Sud', '200044014', 'CC');
-insert into epci(nom, siren, nature) values ('CC Creuse Sud Ouest', '200067189', 'CC');
-insert into epci(nom, siren, nature) values ('Creuse Confluence', '200067544', 'CC');
-insert into epci(nom, siren, nature) values ('CC Marche et Combraille en Aquitaine', '200067593', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Sostranien', '242300135', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Bénévent Grand Bourg', '242320000', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Dunois', '242320109', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM Auzances Bellegarde', '242301307', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM de la région de Chénérailles', '252306147', 'SMF');
-insert into epci(nom, siren, nature) values ('EVOLIS 23', '252326079', 'SMF');
-insert into epci(nom, siren, nature) values ('SIVOM de la Courtine', '252326103', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Le Grand Périgueux', '200040392', 'CA');
-insert into epci(nom, siren, nature) values ('CA Bergeracoise', '200070647', 'CA');
-insert into epci(nom, siren, nature) values ('CC Sarlat-Périgord Noir', '200027217', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Montaigne Montravel et Gurson', '200034197', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Bastides Dordogne-Périgord', '200034833', 'CC');
-insert into epci(nom, siren, nature) values ('CC Isle Vern Salembre en Périgord', '200040095', 'CC');
-insert into epci(nom, siren, nature) values ('CC Isle Double Landais', '200040384', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Périgord Ribéracois', '200040400', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Fénelon', '200040830', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Portes Sud Périgord', '200040889', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vallée de la Dordogne et Forêt Bessède', '200041051', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Terrassonnais en Périgord Noir Thenon Hautefort', '200041150', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée de l''Homme', '200041168', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Domme- Villefranche du Périgord', '200041440', 'CC');
-insert into epci(nom, siren, nature) values ('CC Dronne et Belle', '200041572', 'CC');
-insert into epci(nom, siren, nature) values ('CC Isle et Crempse en Périgord', '200069094', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Périgord Nontronnais', '200071819', 'CC');
-insert into epci(nom, siren, nature) values ('CC Périgord-Limousin', '242400752', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Saint Aulaye', '242400935', 'CC');
-insert into epci(nom, siren, nature) values ('CC Isle-Loue-Auvézère en Périgord', '242401024', 'CC');
-insert into epci(nom, siren, nature) values ('SMICTOM du Périgord Noir', '252402284', 'SMF');
-insert into epci(nom, siren, nature) values ('SMCTOM de Nontron', '252402466', 'SMF');
-insert into epci(nom, siren, nature) values ('SMCTOM secteur de Thiviers', '252402474', 'SMF');
-insert into epci(nom, siren, nature) values ('SM départemental pour la gestion et le traitement des déchets ménagers et assimilés', '252405329', 'SMF');
-insert into epci(nom, siren, nature) values ('CU Grand Besançon Métropole', '242500361', 'CU');
-insert into epci(nom, siren, nature) values ('CA Pays de Montbéliard Agglomération', '200065647', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Pays de Maîche', '200023075', 'CC');
-insert into epci(nom, siren, nature) values ('CC Loue-Lison', '200068070', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Deux Vallées Vertes', '200068294', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Lacs et Montagnes du Haut-Doubs', '200069565', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Montbenoit', '242500320', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Grand Pontarlier', '242500338', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val de Morteau', '242504116', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Portes du Haut-Doubs', '242504181', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Plateau de Russey', '242504355', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Sancey-Belleherbe', '242504371', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Doubs Baumois', '242504447', 'CC');
-insert into epci(nom, siren, nature) values ('CC Altitude 800', '242504488', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Plateau de Frasne et du Val de Drugeon (CFD)', '242504496', 'CC');
-insert into epci(nom, siren, nature) values ('SI des Combes Derniers', '242500312', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SM du Pays du Haut-Doubs', '200061836', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour la prévention et la valorisation des déchets du Haut-Doubs', '252500533', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte des ordures ménagères du Haut-Doubs', '252507124', 'SMF');
-insert into epci(nom, siren, nature) values ('SYBERT', '252508247', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Montélimar Agglomération', '200040459', 'CA');
-insert into epci(nom, siren, nature) values ('CA Valence Romans Agglo', '200068781', 'CA');
-insert into epci(nom, siren, nature) values ('CC Porte de Dromardèche', '200040491', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Crestois et de Pays de Saillans Coeur de Drôme', '200040509', 'CC');
-insert into epci(nom, siren, nature) values ('CC Drôme Sud Provence', '200042901', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Royans-Vercors', '200067767', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Baronnies en Drôme Provençale', '200068229', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val de Drôme en Biovallée', '242600252', 'CC');
-insert into epci(nom, siren, nature) values ('CC Dieulefit-Bourdeaux', '242600492', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Diois', '242600534', 'CC');
-insert into epci(nom, siren, nature) values ('SI rhôdanien collecte et traitement ordures ménagères (SIRCTOM)', '252600903', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat traitement déchets ménagers (SYTRAD)', '252601828', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat des Portes de Provence (SYPP)', '252602552', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Evreux Portes de Normandie', '200071454', 'CA');
-insert into epci(nom, siren, nature) values ('CA Seine Normandie Agglomération', '200072312', 'CA');
-insert into epci(nom, siren, nature) values ('CA Seine-Eure', '200089456', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Pont-Audemer / Val de Risle', '200065787', 'CC');
-insert into epci(nom, siren, nature) values ('CC Lieuvin Pays d''Auge', '200066017', 'CC');
-insert into epci(nom, siren, nature) values ('CC Roumois Seine', '200066405', 'CC');
-insert into epci(nom, siren, nature) values ('CC Intercom Bernay Terres de Normandie', '200066413', 'CC');
-insert into epci(nom, siren, nature) values ('CC Interco Normandie Sud Eure', '200066462', 'CC');
-insert into epci(nom, siren, nature) values ('CC Lyons Andelle', '200070142', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Vexin Normand', '200071843', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Conches', '242700276', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays du Neubourg', '242700607', 'CC');
-insert into epci(nom, siren, nature) values ('Syndicat de gestion des ordures ménagères de l''Est et du Nord de l''Eure (SYGOM)', '252701990', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour l''étude et le traitement des ordures ménagères de l''Eure (SETOM de l''Eure)', '252703111', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat de destruction des ordures ménagères de l''Ouest de l''Eure (SDOMODE)', '252703863', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Chartres Métropole', '200033181', 'CA');
-insert into epci(nom, siren, nature) values ('CA Agglo du Pays de Dreux', '200040277', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Perche', '200006971', 'CC');
-insert into epci(nom, siren, nature) values ('CC entre Beauce et Perche', '200058360', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Forêts du Perche', '200069912', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Portes Euréliennes d''Ile de France', '200069953', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Grand Châteaudun', '200069961', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Beauce', '200070159', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terres de Perche', '200070167', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bonnevalais', '242852465', 'CC');
-insert into epci(nom, siren, nature) values ('SICTOM de la région d''Auneau', '252800065', 'SMF');
-insert into epci(nom, siren, nature) values ('SM intercommunal pour le ramassage et le traitement des ordures ménagères de Courville-sur-Eure, La Loupe et Senonches', '252801196', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM de la région de Nogent-le-Rotrou', '252801329', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM de la région de Châteaudun', '252802129', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM de la région de Bonneval, Brou, Illiers-Combray (SICTOM BBI)', '252802152', 'SMF');
-insert into epci(nom, siren, nature) values ('SI pour le traitement et la valorisation des déchets (SITREVA)', '252803341', 'SMF');
-insert into epci(nom, siren, nature) values ('Brest Métropole', '242900314', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Quimper Bretagne Occidentale', '200068120', 'CA');
-insert into epci(nom, siren, nature) values ('CA Quimperlé Communauté', '242900694', 'CA');
-insert into epci(nom, siren, nature) values ('CA Concarneau Cornouaille Agglomération', '242900769', 'CA');
-insert into epci(nom, siren, nature) values ('CA Morlaix Communauté', '242900835', 'CA');
-insert into epci(nom, siren, nature) values ('CC Presqu''île de Crozon-Aulne maritime', '200066868', 'CC');
-insert into epci(nom, siren, nature) values ('CC Haut-Léon Communauté', '200067072', 'CC');
-insert into epci(nom, siren, nature) values ('CC Monts d''Arrée Communauté', '200067197', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pleyben-Châteaulin-Porzay', '200067247', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Iroise', '242900074', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays des Abers', '242900553', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Haute Cornouaille', '242900561', 'CC');
-insert into epci(nom, siren, nature) values ('CC Cap Sizun - Pointe du Raz', '242900629', 'CC');
-insert into epci(nom, siren, nature) values ('CC Douarnenez Communauté', '242900645', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Fouesnantais', '242900660', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Bigouden Sud', '242900702', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Haut Pays Bigouden', '242900710', 'CC');
-insert into epci(nom, siren, nature) values ('CC Poher Communauté', '242900744', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Landivisiau', '242900751', 'CC');
-insert into epci(nom, siren, nature) values ('CC Communauté Lesneven Côte des Légendes', '242900793', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Landerneau-Daoulas', '242900801', 'CC');
-insert into epci(nom, siren, nature) values ('VALCOR', '252901871', 'SMF');
-insert into epci(nom, siren, nature) values ('SI incinération des déchets du Pays de Quimper (SIDEPAQ)', '252901996', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Pays Ajaccien', '242010056', 'CA');
-insert into epci(nom, siren, nature) values ('CC de la Pieve de l''Ornano et du Taravo', '200038958', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sud Corse', '200040764', 'CC');
-insert into epci(nom, siren, nature) values ('CC Spelunca-Liamone', '200067049', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Alta Rocca', '242000495', 'CC');
-insert into epci(nom, siren, nature) values ('CC Celavu-Prunelli', '242000503', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sartenais Valinco Taravo', '242010130', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM du Haut Taravo', '242000156', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SIVOM de la vallée de la Cinarca et du Liamone', '242000172', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SIVOM pour l''équipement et la gestion du hameau de Bavella', '242010031', 'SIVOM');
-insert into epci(nom, siren, nature) values ('CA de Bastia', '242000354', 'CA');
-insert into epci(nom, siren, nature) values ('CC de l''Oriente', '200015162', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Fium''Orbu Castellu', '200033827', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Costa Verde', '200034205', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Marana-Golo', '200036499', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Cap Corse', '200042943', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Ile-Rousse - Balagne', '200073104', 'CC');
-insert into epci(nom, siren, nature) values ('CC Nebbiu - Conca d''Oro', '200073120', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pasquale Paoli', '200073138', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Castagniccia-Casinca', '200073252', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Centre Corse', '242020071', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Calvi Balagne', '242020105', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM de la vallée d''Orezza', '242000271', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SIVOM de Rogna', '242000438', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Gard Rhodanien', '200034692', 'CA');
-insert into epci(nom, siren, nature) values ('CA Alès Agglomération', '200066918', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Nîmes Métropole', '243000643', 'CA');
-insert into epci(nom, siren, nature) values ('CC Pays d''Uzès', '200034379', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Piémont Cévenol', '200034411', 'CC');
-insert into epci(nom, siren, nature) values ('CC Causses Aigoual Cévennes', '200034601', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Cèze Cévennes', '200035129', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Viganais', '243000270', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Sommières', '243000296', 'CC');
-insert into epci(nom, siren, nature) values ('CC Rhony, Vistre, Vidourle', '243000569', 'CC');
-insert into epci(nom, siren, nature) values ('CC Beaucaire Terre d''Argence', '243000585', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Petite Camargue', '243000593', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terre de Camargue', '243000650', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pont du Gard', '243000684', 'CC');
-insert into epci(nom, siren, nature) values ('SMICTOM de la région d''Uzès', '253001135', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM Rhône Garrigues', '253001325', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de traitement des ordures ménagères et assimilés Aigoual Cévennes Vidourle (SYMTOMA)', '253002869', 'SMF');
-insert into epci(nom, siren, nature) values ('SM Sud Rhône Environnement', '253002919', 'SMF');
-insert into epci(nom, siren, nature) values ('SITOM de la région Sud Gard', '253002950', 'SMF');
-insert into epci(nom, siren, nature) values ('SMIRITOM de la Zone Nord du Plan départemental des déchets', '253003115', 'SMF');
-insert into epci(nom, siren, nature) values ('Toulouse Métropole', '243100518', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Le Muretain Agglo', '200068641', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Sicoval', '243100633', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Frontonnais', '200034957', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Volvestre', '200066819', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bassin Auterivain Haut-Garonnais', '200068807', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Garonne', '200068815', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Terres du Lauragais', '200071298', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Hauts-Tolosans', '200071314', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pyrénées Haut Garonnaises', '200072635', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur et Coteaux du Comminges', '200072643', 'CC');
-insert into epci(nom, siren, nature) values ('CC Cagire Garonne Salat', '200073146', 'CC');
-insert into epci(nom, siren, nature) values ('CC Lauragais Revel Sorezois', '243100567', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Coteaux du Girou', '243100732', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val''Aïgo', '243100773', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Save au Touch', '243100781', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Coteaux Bellevue', '243100815', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM du Haut Comminges', '243100328', 'SMF');
-insert into epci(nom, siren, nature) values ('SIVOM des cantons de Saint-Gaudens - Montréjeau - Aspet - Magnoac', '243100344', 'SMF');
-insert into epci(nom, siren, nature) values ('SIPOM', '253100572', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat de syndicats de traitement des ordures ménagères des Pyrénées (SYSTOM des Pyrénées)', '253102172', 'SMF');
-insert into epci(nom, siren, nature) values ('SM DECOSET (déchetteries, collecte sélective, traitement)', '253102636', 'SMF');
-insert into epci(nom, siren, nature) values ('PETR du Pays Lauragais', '200050938', 'PETR');
-insert into epci(nom, siren, nature) values ('CA Grand Auch Coeur de Gascogne', '200066926', 'CA');
-insert into epci(nom, siren, nature) values ('CC de la Gascogne Toulousaine', '200023620', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bastides de Lomagne', '200034726', 'CC');
-insert into epci(nom, siren, nature) values ('CC Armagnac Adour', '200035632', 'CC');
-insert into epci(nom, siren, nature) values ('CC Astarac Arros en Gascogne', '200035756', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Coteaux Arrats Gimone', '200042372', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val de Gers', '200072320', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Lomagne Gersoise', '243200391', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bas Armagnac', '243200409', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Tenarèze', '243200417', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur d''Astarac en Gascogne', '243200425', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Grand Armagnac', '243200458', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bastides et Vallons du Gers', '243200508', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Saves', '243200599', 'CC');
-insert into epci(nom, siren, nature) values ('CC Artagnan de Fezensac', '243200607', 'CC');
-insert into epci(nom, siren, nature) values ('SICTOM du secteur Centre', '200043180', 'SMF');
-insert into epci(nom, siren, nature) values ('SI de la Lomagne', '243200318', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM du secteur de Condom', '253200174', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte des déchets du secteur Sud', '253200984', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM du secteur Ouest', '253200992', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM du secteur Sud-Est', '253201024', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM du secteur Est', '253201065', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de production d''eau potable et de traitement des déchets du Gers (TRIGONE)', '253201842', 'SMO');
-insert into epci(nom, siren, nature) values ('Bordeaux Métropole', '243300316', 'METRO');
-insert into epci(nom, siren, nature) values ('CA du Libournais', '200070092', 'CA');
-insert into epci(nom, siren, nature) values ('CA Bassin d''Arcachon Sud (COBAS)', '243300563', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Bassin d''Arcachon Nord', '243301504', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Blaye', '200023794', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Grand Saint Emilionnais', '200035533', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sud Gironde', '200043974', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bazadais', '200043982', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Réolais en Sud Gironde', '200044394', 'CC');
-insert into epci(nom, siren, nature) values ('CC Convergence Garonne', '200069581', 'CC');
-insert into epci(nom, siren, nature) values ('CC rurales de l''Entre-Deux-Mers', '200069599', 'CC');
-insert into epci(nom, siren, nature) values ('CC Médoc Coeur de Presqu''île', '200069995', 'CC');
-insert into epci(nom, siren, nature) values ('CC Médoc Atlantique', '200070720', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Estuaire', '243300811', 'CC');
-insert into epci(nom, siren, nature) values ('CC Jalle-Eau-Bourde', '243301165', 'CC');
-insert into epci(nom, siren, nature) values ('CC Latitude Nord Gironde', '243301181', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Créonnais', '243301215', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Grand Cubzaguais', '243301223', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Secteur de Saint-Loubès', '243301249', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Montesquieu', '243301264', 'CC');
-insert into epci(nom, siren, nature) values ('CC les Coteaux Bordelais', '243301355', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Foyen', '243301371', 'CC');
-insert into epci(nom, siren, nature) values ('CC Médullienne', '243301389', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Fronsadais', '243301397', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val de l''Eyre', '243301405', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Portes de l''Entre-Deux-Mers', '243301439', 'CC');
-insert into epci(nom, siren, nature) values ('CC Médoc Estuaire', '243301447', 'CC');
-insert into epci(nom, siren, nature) values ('CC Castillon/Pujols', '243301454', 'CC');
-insert into epci(nom, siren, nature) values ('SM pour la révision et le suivi du SCOT du bassin d''Arcachon - Val de l''Eyre (SYBARVAL)', '200001634', 'SMF');
-insert into epci(nom, siren, nature) values ('SM du Sud Gironde', '200078335', 'SMF');
-insert into epci(nom, siren, nature) values ('SI de l''Entre-deux-Mers Ouest pour la collecte et le traitement des ordures ménagères (SEMOCTOM)', '253300545', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour la collecte et le traitement des ordures ménagères (SICTOM) du Sud Gironde', '253300578', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat médocain intercommunal pour la collecte et le traitement des ordures ménagères (SMICOTOM)', '253300701', 'SMF');
-insert into epci(nom, siren, nature) values ('Union des syndicats pour la collecte et le traitement des ordures ménagères (USTOM) du Castillonais et du Réolais', '253303499', 'SMF');
-insert into epci(nom, siren, nature) values ('Union communautaire pour le traitement des ordures ménagères de La Brède - Podensac', '253303911', 'SMF');
-insert into epci(nom, siren, nature) values ('SIVOM de la rive droite', '253306302', 'SMF');
-insert into epci(nom, siren, nature) values ('SM intercommunal de collecte et de valorisation des déchets ménagers du Libournais-Haute Gironde (SMICVAL)', '253306617', 'SMF');
-insert into epci(nom, siren, nature) values ('Montpellier Méditerranée Métropole', '243400017', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Sète Agglopôle Méditerranée', '200066355', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Pays de l''Or', '243400470', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Béziers-Méditerranée', '243400769', 'CA');
-insert into epci(nom, siren, nature) values ('CA Hérault-Méditerranée', '243400819', 'CA');
-insert into epci(nom, siren, nature) values ('CC Lodévois et Larzac', '200017341', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Grand Pic Saint-Loup', '200022986', 'CC');
-insert into epci(nom, siren, nature) values ('CC Grand Orb communauté de communes en Languedoc', '200042646', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sud-Hérault', '200042653', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Minervois au Caroux', '200066348', 'CC');
-insert into epci(nom, siren, nature) values ('CC Les Avant-Monts', '200071058', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Clermontais', '243400355', 'CC');
-insert into epci(nom, siren, nature) values ('CC la Domitienne', '243400488', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Lunel', '243400520', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vallée de l''Hérault', '243400694', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Cévennes Gangeoises et Suménoises', '243400736', 'CC');
-insert into epci(nom, siren, nature) values ('SMICTOM Pézenas-Agde', '253400485', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat Centre Hérault', '253403232', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat de développement local du Pays Coeur d''Hérault ou ''''SYDEL du Pays Coeur d''Hérault''''', '200017127', 'SMO');
-insert into epci(nom, siren, nature) values ('Rennes Métropole', '243500139', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Vitré Communauté', '200039022', 'CA');
-insert into epci(nom, siren, nature) values ('CA Fougères Agglomération', '200072452', 'CA');
-insert into epci(nom, siren, nature) values ('CA Redon Agglomération', '243500741', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Pays de Saint Malo Agglomération', '243500782', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Saint-Méen Montauban', '200038990', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vallons de Haute-Bretagne Communauté', '200043990', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bretagne Porte de Loire Communauté', '200070662', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Dol et de la Baie du Mont Saint-Michel', '200070670', 'CC');
-insert into epci(nom, siren, nature) values ('CC Couesnon Marches de Bretagne', '200070688', 'CC');
-insert into epci(nom, siren, nature) values ('CC Montfort Communauté', '243500550', 'CC');
-insert into epci(nom, siren, nature) values ('CC Brocéliande Communauté', '243500618', 'CC');
-insert into epci(nom, siren, nature) values ('Roche aux Fées Communauté', '243500634', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays de Châteaugiron Communauté', '243500659', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val d''Ille-Aubigné', '243500667', 'CC');
-insert into epci(nom, siren, nature) values ('CC Côte d''Emeraude', '243500725', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bretagne Romantique', '243500733', 'CC');
-insert into epci(nom, siren, nature) values ('CC Liffré-Cormier Communauté', '243500774', 'CC');
-insert into epci(nom, siren, nature) values ('SMICTOM du Pays de Fougères', '200073500', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM Valcobreizh', '200090884', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM des Pays de Vilaine', '253500862', 'SMF');
-insert into epci(nom, siren, nature) values ('syndicat mixte pour la collecte et le tri des ordures ménagères du secteur Sud-Est d''ille et vilaine', '253500953', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM du Centre Ouest de l''Ille-et-Vilaine', '253500995', 'SMF');
-insert into epci(nom, siren, nature) values ('SMO de traitement des déchets ménagers et assimilés', '200084945', 'SMO');
-insert into epci(nom, siren, nature) values ('CA Châteauroux Métropole', '243600327', 'CA');
-insert into epci(nom, siren, nature) values ('CC de la Marche Berrichonne', '200007052', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val de Bouzanne', '200018521', 'CC');
-insert into epci(nom, siren, nature) values ('CC Marche Occitane - Val d''Anglin', '200035137', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Châtillonnais en Berry', '200035848', 'CC');
-insert into epci(nom, siren, nature) values ('CC Ecueillé-Valençay', '200040558', 'CC');
-insert into epci(nom, siren, nature) values ('CC Eguzon - Argenton - Vallée de la Creuse', '200068872', 'CC');
-insert into epci(nom, siren, nature) values ('CC Champagne Boischauts', '200068880', 'CC');
-insert into epci(nom, siren, nature) values ('CC Chabris - Pays de Bazelle', '243600202', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Issoudun', '243600236', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Région de Levroux', '243600293', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val de l''Indre - Brenne', '243600301', 'CC');
-insert into epci(nom, siren, nature) values ('CC Brenne - Val de Creuse', '243600319', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Brenne', '243600343', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Châtre et Sainte-Sévère', '243600350', 'CC');
-insert into epci(nom, siren, nature) values ('SICTOM de Champagne Berrichonne', '253600456', 'SMF');
-insert into epci(nom, siren, nature) values ('SM du traitement des ordures ménagères de la région de Châteauroux', '253602429', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour la collecte et le traitement des ordures ménagères de la zone Ouest du département de l''Indre', '253609937', 'SMF');
-insert into epci(nom, siren, nature) values ('Tours Métropole Val de Loire', '243700754', 'METRO');
-insert into epci(nom, siren, nature) values ('CC du Val d Amboise', '200043065', 'CC');
-insert into epci(nom, siren, nature) values ('CC Chinon, Vienne et Loire', '200043081', 'CC');
-insert into epci(nom, siren, nature) values ('CC Loches Sud Touraine', '200071587', 'CC');
-insert into epci(nom, siren, nature) values ('CC Touraine Vallée de l''Indre', '200072650', 'CC');
-insert into epci(nom, siren, nature) values ('CC Touraine Val de Vienne', '200072668', 'CC');
-insert into epci(nom, siren, nature) values ('CC Touraine Ouest Val de Loire', '200072981', 'CC');
-insert into epci(nom, siren, nature) values ('CC Touraine-Est Vallées', '200073161', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Gâtine et Choisilles - Pays de Racan', '200073237', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Castelrenaudais', '243700499', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Bléré Val de Cher', '243700820', 'CC');
-insert into epci(nom, siren, nature) values ('SMICTOM du Chinonais', '253700454', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM d''Amboise', '253702963', 'SMF');
-insert into epci(nom, siren, nature) values ('SMIPE Val Touraine Anjou', '253753107', 'SMF');
-insert into epci(nom, siren, nature) values ('Grenoble-Alpes-Métropole', '200040715', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Vienne Condrieu', '200077014', 'CA');
-insert into epci(nom, siren, nature) values ('CA Porte de l''Isère (CAPI)', '243800604', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Pays Voironnais', '243800984', 'CA');
-insert into epci(nom, siren, nature) values ('CC Le Grésivaudan', '200018166', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Trièves', '200030658', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Chartreuse', '200040111', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Matheysine', '200040657', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bièvre Isère', '200059392', 'CC');
-insert into epci(nom, siren, nature) values ('CC Les Balcons du Dauphiné', '200068542', 'CC');
-insert into epci(nom, siren, nature) values ('CC Les Vals du Dauphiné', '200068567', 'CC');
-insert into epci(nom, siren, nature) values ('CC Saint-Marcellin Vercors Isère Communauté', '200070431', 'CC');
-insert into epci(nom, siren, nature) values ('CC Entre Bièvre et Rhône', '200085751', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Oisans', '243800745', 'CC');
-insert into epci(nom, siren, nature) values ('CC Lyon-Saint-Exupéry en Dauphiné', '243800935', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Massif du Vercors', '243801024', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Bièvre Est', '243801073', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Collines du Nord Dauphiné', '243801255', 'CC');
-insert into epci(nom, siren, nature) values ('SICTOM de la région de Morestel', '253801179', 'SMF');
-insert into epci(nom, siren, nature) values ('SI du Bréda et de la Combe de Savoie (SIBRECSA)', '253801450', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM du Guiers', '253801716', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM de la Bièvre', '253802367', 'SMF');
-insert into epci(nom, siren, nature) values ('SITOM Nord Isère', '253802730', 'SMF');
-insert into epci(nom, siren, nature) values ('SM Nord Dauphiné', '253804710', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Grand Dole', '200010650', 'CA');
-insert into epci(nom, siren, nature) values ('CA ECLA  (Espace Communautaire Lons Agglomération)', '200071116', 'CA');
-insert into epci(nom, siren, nature) values ('CC Haut-Jura Saint-Claude', '200026573', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bresse Haute Seille', '200069615', 'CC');
-insert into epci(nom, siren, nature) values ('CC Champagnole Nozeroy Jura', '200069623', 'CC');
-insert into epci(nom, siren, nature) values ('CC Arbois, Poligny, Salins, Coeur du Jura', '200071595', 'CC');
-insert into epci(nom, siren, nature) values ('CC Porte du Jura', '200072056', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terre d?Emeraude Communauté ', '200090579', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Station des Rousses-Haut Jura', '243900354', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val d''Amour', '243900420', 'CC');
-insert into epci(nom, siren, nature) values ('CC Haut-Jura Arcade Communauté', '243900479', 'CC');
-insert into epci(nom, siren, nature) values ('CC Jura Nord', '243900560', 'CC');
-insert into epci(nom, siren, nature) values ('CC la Grandvallière', '243900610', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Plaine Jurassienne', '243901089', 'CC');
-insert into epci(nom, siren, nature) values ('SICTOM de la région de Champagnole', '253900625', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM de la zone de Dole', '253900633', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM de la zone de Lons-le-Saunier', '253900641', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM du Haut-Jura', '253900658', 'SMF');
-insert into epci(nom, siren, nature) values ('SYDOM', '253901839', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Grand Dax', '244000675', 'CA');
-insert into epci(nom, siren, nature) values ('CA Mont de Marsan Agglomération', '244000808', 'CA');
-insert into epci(nom, siren, nature) values ('CC d''Aire-sur-l''Adour', '200030435', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Landes d''Armagnac', '200035541', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays d''Orthe et Arrigans', '200069417', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terres de Chalosse', '200069631', 'CC');
-insert into epci(nom, siren, nature) values ('CC Chalosse Tursan', '200069649', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur Haute Lande', '200069656', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Mimizan', '244000543', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Seignanx', '244000659', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Morcenais', '244000691', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Tarusate', '244000766', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Villeneuve en Armagnac Landais', '244000774', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Grenadois', '244000824', 'CC');
-insert into epci(nom, siren, nature) values ('CC Côte Landes Nature', '244000857', 'CC');
-insert into epci(nom, siren, nature) values ('CC Maremne Adour Côte Sud', '244000865', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Grands Lacs', '244000873', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coteaux et Vallées des Luys', '244000881', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM du Born', '244000279', 'SMF');
-insert into epci(nom, siren, nature) values ('SIETOM de Chalosse', '254000839', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM du Marsan', '254000847', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM Côte Sud', '254001977', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''élimination des déchets de la haute Lande', '254003239', 'SMF');
-insert into epci(nom, siren, nature) values ('CA de Blois ''''Agglopolys''''', '200030385', 'CA');
-insert into epci(nom, siren, nature) values ('CA Territoires Vendômois', '200072072', 'CA');
-insert into epci(nom, siren, nature) values ('CC Coeur de Sologne', '200000800', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Romorantinais et du Monestois', '200018406', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Perche et Haut Vendômois', '200040772', 'CC');
-insert into epci(nom, siren, nature) values ('CC Beauce Val de Loire', '200055481', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val-de-Cher-Controis', '200072064', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Collines du Perche', '244100293', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Sologne des Etangs', '244100780', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Grand Chambord', '244100798', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Sologne des Rivières', '244100806', 'CC');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des ordures ménagères de Sologne', '254100415', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''élimination des ordures ménagères du groupement de Mer', '254100472', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''enlèvement et d''élimination des ordures ménagères du Val de Cher', '254100837', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte, de traitement et de valorisation des déchets ménagers du Vendômois (VAL DEM)', '254102023', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des déchets du Blaisois (VAL-ECO)', '254103054', 'SMF');
-insert into epci(nom, siren, nature) values ('Saint-Etienne Métropole', '244200770', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Roannais Agglomération', '200035731', 'CA');
-insert into epci(nom, siren, nature) values ('Loire Forez Agglomération (LFA)', '200065886', 'CA');
-insert into epci(nom, siren, nature) values ('CC Charlieu-Belmont', '200035202', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Forez-Est', '200065894', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Vals d''Aix et Isable', '244200614', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Monts du Pilat', '244200622', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Entre Loire et Rhône', '244200630', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Urfé', '244200820', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pilat Rhodanien', '244200895', 'CC');
-insert into epci(nom, siren, nature) values ('SYDEMER', '200017424', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat d''études et d''élimination des déchets du Roannais (SEEDR)', '254202104', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Puy-en-Velay', '200073419', 'CA');
-insert into epci(nom, siren, nature) values ('CC des Rives du Haut Allier', '200073393', 'CC');
-insert into epci(nom, siren, nature) values ('CC Mézenc-Loire-Meygal', '200073401', 'CC');
-insert into epci(nom, siren, nature) values ('CC Marches du Velay-Rochebaron', '200073427', 'CC');
-insert into epci(nom, siren, nature) values ('CC Brioude Sud Auvergne', '200085728', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Montfaucon', '244300307', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Sucs', '244301016', 'CC');
-insert into epci(nom, siren, nature) values ('CC Auzon Communauté', '244301099', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Haut Lignon', '244301107', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Pays de Cayres et de Pradelles', '244301123', 'CC');
-insert into epci(nom, siren, nature) values ('CC Loire et Semène', '244301131', 'CC');
-insert into epci(nom, siren, nature) values ('SICTOM des Monts du Forez', '200040129', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM Issoire - Brioude', '254300049', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour le tri sélectif et le traitement des déchets ménagers et assimilés de la région de Monistrol-sur-Loire (SYMPTTOM)', '254300395', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM Velay-Pilat', '254300593', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM entre Monts et vallées', '254300759', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM de la région Emblavez-Meygal', '254300809', 'SMF');
-insert into epci(nom, siren, nature) values ('Nantes Métropole', '244400404', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Pornic Agglo Pays de Retz', '200067346', 'CA');
-insert into epci(nom, siren, nature) values ('CA Clisson Sèvre et Maine Agglo', '200067635', 'CA');
-insert into epci(nom, siren, nature) values ('CA de la Presqu''île de Guérande Atlantique (CAP ATLANTIQUE)', '244400610', 'CA');
-insert into epci(nom, siren, nature) values ('CA de la Région Nazairienne et de l''Estuaire (CARENE)', '244400644', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Pays de Pontchâteau St-Gildas-des-Bois', '200000438', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sèvre et Loire', '200067866', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sud Retz Atlantique', '200071546', 'CC');
-insert into epci(nom, siren, nature) values ('CC Châteaubriant-Derval', '200072726', 'CC');
-insert into epci(nom, siren, nature) values ('CC Estuaire et Sillon', '200072734', 'CC');
-insert into epci(nom, siren, nature) values ('Grand Lieu Communauté', '244400438', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Région de Blain', '244400453', 'CC');
-insert into epci(nom, siren, nature) values ('CC d''Erdre et Gesvres', '244400503', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Nozay', '244400537', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Ancenis', '244400552', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sud Estuaire', '244400586', 'CC');
-insert into epci(nom, siren, nature) values ('SM Centre Nord Atlantique pour le traitement et le recyclage des déchets', '254402522', 'SMF');
-insert into epci(nom, siren, nature) values ('Orléans Métropole', '244500468', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Montargoise et Rives du Loing (AME)', '244500203', 'CA');
-insert into epci(nom, siren, nature) values ('CC des Portes de Sologne', '200005932', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Beauce Loirétaine', '200035764', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pithiverais', '200066280', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Cléry, du Betz et de l''Ouanne', '200067668', 'CC');
-insert into epci(nom, siren, nature) values ('CC Canaux et Forêts en Gâtinais', '200067676', 'CC');
-insert into epci(nom, siren, nature) values ('CC Berry Loire Puisaye', '200068278', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val de Sully', '200070100', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Terres du Val de Loire', '200070183', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pithiverais-Gâtinais', '200071850', 'CC');
-insert into epci(nom, siren, nature) values ('CC Giennoises', '244500211', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Quatre Vallées', '244500419', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Loges', '244500427', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Forêt', '244500484', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Plaine du Nord Loiret', '244500542', 'CC');
-insert into epci(nom, siren, nature) values ('SMIRTOM de la région d''Artenay', '254500010', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM de la région de Châteauneuf-sur-Loire', '254500226', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour la collecte et le traitement des déchets ménagers de l''arrondissement de Pithiviers (SMITOMAP)', '254500739', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM des cantons de Gien, Châtillon-sur-Loire, Châtillon-Coligny, Briare', '254501620', 'SMF');
-insert into epci(nom, siren, nature) values ('SMIRTOM de la région de Montargis', '254502164', 'SMF');
-insert into epci(nom, siren, nature) values ('SYCTOM des régions de Gien et Châteauneuf-sur-Loire', '254502578', 'SMF');
-insert into epci(nom, siren, nature) values ('SM Beauce Gâtinais valorisation', '254503105', 'SMF');
-insert into epci(nom, siren, nature) values ('PETR pour le développement du Pays Beauce Gâtinais en Pithiverais', '200079903', 'PETR');
-insert into epci(nom, siren, nature) values ('PETR Gâtinais Montargois', '200086643', 'PETR');
-insert into epci(nom, siren, nature) values ('CA du Grand Cahors', '200023737', 'CA');
-insert into epci(nom, siren, nature) values ('CC Cazals-Salviac', '200035327', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Quercy Blanc', '200039519', 'CC');
-insert into epci(nom, siren, nature) values ('CC Causses et Vallée de la Dordogne', '200066371', 'CC');
-insert into epci(nom, siren, nature) values ('CC Grand-Figeac', '200067361', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée du Lot et du Vignoble', '244600433', 'CC');
-insert into epci(nom, siren, nature) values ('CC Quercy - Bouriane', '244600482', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Lalbenque-Limogne', '244600532', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Causse de Labastide Murat', '244600573', 'CC');
-insert into epci(nom, siren, nature) values ('SMICTOM du Pays de Gourdon', '254600265', 'SMF');
-insert into epci(nom, siren, nature) values ('SM collecte et traitement des ordures ménagères les Marches du Sud Quercy', '254600901', 'SMF');
-insert into epci(nom, siren, nature) values ('SYDED du Lot', '453372997', 'SMO');
-insert into epci(nom, siren, nature) values ('CA du Grand Villeneuvois', '200023307', 'CA');
-insert into epci(nom, siren, nature) values ('CA Val de Garonne Agglomération ', '200030674', 'CA');
-insert into epci(nom, siren, nature) values ('CA d''Agen', '200035459', 'CA');
-insert into epci(nom, siren, nature) values ('CC des Bastides en Haut Agenais Périgord', '200036523', 'CC');
-insert into epci(nom, siren, nature) values ('CC Porte d''Aquitaine en Pays de Serres', '200036572', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Confluent et des Coteaux de Prayssas', '200068922', 'CC');
-insert into epci(nom, siren, nature) values ('CC Fumel Vallée du Lot', '200068930', 'CC');
-insert into epci(nom, siren, nature) values ('CC Albret Communauté', '200068948', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Duras', '244700449', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Lauzun', '244700464', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Coteaux et Landes de Gascogne', '244701355', 'CC');
-insert into epci(nom, siren, nature) values ('CC Lot et Tolzac', '244701405', 'CC');
-insert into epci(nom, siren, nature) values ('SMICTOM Lot-et-Garonne Baïse', '200020550', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de valorisation et de traitement des déchets ménagers et assimilés en Lot-et-Garonne', '254702582', 'SMO');
-insert into epci(nom, siren, nature) values ('CC du Haut Allier', '200006930', 'CC');
-insert into epci(nom, siren, nature) values ('CC Randon - Margeride', '200069102', 'CC');
-insert into epci(nom, siren, nature) values ('CC Mont Lozère', '200069128', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Cévennes au Mont Lozère', '200069136', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Hautes Terres de l''Aubrac', '200069144', 'CC');
-insert into epci(nom, siren, nature) values ('CC Gorges Causses Cévennes', '200069151', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Terres d''Apcher-Margeride-Aubrac', '200069185', 'CC');
-insert into epci(nom, siren, nature) values ('CC Aubrac Lot Causses Tarn', '200069268', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Lozère', '244800405', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Gévaudan', '244800470', 'CC');
-insert into epci(nom, siren, nature) values ('SI Aubrac-Colagne', '254800758', 'SIVU');
-insert into epci(nom, siren, nature) values ('SM La Montagne', '244800256', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM des Hauts plateaux', '254300718', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat départemental d''énergie et d''équipement de la Lozère (SDEE)', '254800022', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM des bassins du Haut-Tarn', '254800345', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des déchets ménagers Lozère Centre', '254800709', 'SMF');
-insert into epci(nom, siren, nature) values ('CU Angers Loire Métropole', '244900015', 'CU');
-insert into epci(nom, siren, nature) values ('CA Mauges Communauté', '200060010', 'CA');
-insert into epci(nom, siren, nature) values ('CA Agglomération du Choletais', '200071678', 'CA');
-insert into epci(nom, siren, nature) values ('CA Saumur Val de Loire', '200071876', 'CA');
-insert into epci(nom, siren, nature) values ('CC Anjou Loir et Sarthe', '200068955', 'CC');
-insert into epci(nom, siren, nature) values ('CC Loire Layon Aubance', '200071553', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Vallées du Haut-Anjou', '200071868', 'CC');
-insert into epci(nom, siren, nature) values ('CC Anjou Bleu Communauté', '244900809', 'CC');
-insert into epci(nom, siren, nature) values ('CC Baugeois Vallée', '244900882', 'CC');
-insert into epci(nom, siren, nature) values ('SI du Segréen pour le traitement des ordures (SISTO)', '254900442', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM  Loir et Sarthe', '254900517', 'SMF');
-insert into epci(nom, siren, nature) values ('SMITOM du Sud Saumurois', '254901341', 'SMF');
-insert into epci(nom, siren, nature) values ('Pôle métropolitain Loire Angers', '254902034', 'SMF');
-insert into epci(nom, siren, nature) values ('SYCTOM du Loire Béconnais et ses environs', '254902414', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour le traitement et la valorisation des déchets ménagers résiduels (VALOR 3 E)', '254902562', 'SMF');
-insert into epci(nom, siren, nature) values ('SM intercommunal de valorisation et de recyclage thermique des déchets de l''Est Anjou', '254902257', 'SMO');
-insert into epci(nom, siren, nature) values ('PETR du Segréen', '200052629', 'PETR');
-insert into epci(nom, siren, nature) values ('CA Saint-Lô Agglo', '200066389', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Cotentin', '200067205', 'CA');
-insert into epci(nom, siren, nature) values ('CA Mont-Saint-Michel-Normandie', '200069425', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Granville, Terre et Mer', '200042604', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Baie du Cotentin', '200042729', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Villedieu Intercom', '200043354', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coutances Mer et Bocage', '200067023', 'CC');
-insert into epci(nom, siren, nature) values ('CC Côte Ouest Centre Manche', '200067031', 'CC');
-insert into epci(nom, siren, nature) values ('SM de la Perrelle', '255001638', 'SMF');
-insert into epci(nom, siren, nature) values ('SM du Point Fort', '255003063', 'SMF');
-insert into epci(nom, siren, nature) values ('CU du Grand Reims', '200067213', 'CU');
-insert into epci(nom, siren, nature) values ('CA de Châlons-en-Champagne', '200066876', 'CA');
-insert into epci(nom, siren, nature) values ('CA Epernay, Coteaux et Plaine de Champagne', '200067684', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Vitry, Champagne et Der', '200034718', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Région de Suippes', '200042620', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Argonne Champenoise', '200042703', 'CC');
-insert into epci(nom, siren, nature) values ('CC Perthois-Bocage et Der', '200042992', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Moivre à la Coole', '200043438', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Sézanne-Sud Ouest Marnais', '200066835', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Paysages de la Champagne', '200066850', 'CC');
-insert into epci(nom, siren, nature) values ('CC Côtes de Champagne et Val de Saulx', '200067379', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Grande Vallée de la Marne', '245100615', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Brie Champenoise', '245100888', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sud Marnais', '245100979', 'CC');
-insert into epci(nom, siren, nature) values ('SM du Sud-Est Marnais (SYMSEM)', '200035673', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de valorisation des ordures ménagères (SYVALOM)', '255102592', 'SMO');
-insert into epci(nom, siren, nature) values ('CA de Chaumont', '200068658', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Saint-Dizier Der et Blaise', '200068666', 'CA');
-insert into epci(nom, siren, nature) values ('CC d''Auberive Vingeanne et Montsaugeonnais', '200027308', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bassin de Joinville en Champagne', '200044253', 'CC');
-insert into epci(nom, siren, nature) values ('CC Meuse Rognon', '200069664', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Savoir-Faire', '200070332', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Grand Langres', '200072999', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Trois Forêts', '245200597', 'CC');
-insert into epci(nom, siren, nature) values ('Syndicat départemental d''énergie et des déchets 52', '200055614', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM de Saint-Dizier', '255201402', 'SMF');
-insert into epci(nom, siren, nature) values ('SMICTOM de la région de Langres', '255202335', 'SMF');
-insert into epci(nom, siren, nature) values ('Laval Agglomération', '200083392', 'CA');
-insert into epci(nom, siren, nature) values ('CC des Coëvrons', '200033298', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Mont des Avaloirs', '200042182', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Craon', '200048551', 'CC');
-insert into epci(nom, siren, nature) values ('CC Mayenne Communauté', '200055887', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Meslay-Grez', '245300223', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Ernée', '245300355', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bocage Mayennais', '245300389', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Château-Gontier', '245300447', 'CC');
-insert into epci(nom, siren, nature) values ('Métropole du Grand Nancy', '245400676', 'METRO');
-insert into epci(nom, siren, nature) values ('Grand Longwy Agglomération', '245400262', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Pays du Saintois', '200035772', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bassin de Pont-à-Mousson', '200041515', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terre Lorraine du Longuyonnais', '200043693', 'CC');
-insert into epci(nom, siren, nature) values ('CC Meurthe Mortagne Moselle', '200067643', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Vezouze en Piémont', '200069433', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur du Pays Haut', '200070290', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Territoire de Lunéville à Baccarat', '200070324', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terres Touloises', '200070563', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Seille et Grand Couronné', '200070589', 'CC');
-insert into epci(nom, siren, nature) values ('CC Mad et Moselle', '200070738', 'CC');
-insert into epci(nom, siren, nature) values ('CC Orne Lorraine Confluences', '200070845', 'CC');
-insert into epci(nom, siren, nature) values ('CC Moselle et Madon', '245400171', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Pays du Sel et du Vermois', '245400189', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Colombey et du Sud Toulois', '245400510', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Bassin de Pompey', '245400601', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays du Sanon', '245400759', 'CC');
-insert into epci(nom, siren, nature) values ('SI pour le ramassage et le traitement des ordures ménagères du secteur de Briey,de la vallée de l''Orne et du Jarnisy', '255400905', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de traitement des ordures ménagères de la région de Villerupt', '255401333', 'SMF');
-insert into epci(nom, siren, nature) values ('SI pour la collecte et l''élimination des déchets des ménages dans le secteur de Piennes', '255401341', 'SMF');
-insert into epci(nom, siren, nature) values ('CA de Bar-le-Duc - Sud Meuse', '200033025', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Grand Verdun', '200049187', 'CA');
-insert into epci(nom, siren, nature) values ('CC Côtes de Meuse Woëvre', '200034874', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Portes de Meuse', '200066108', 'CC');
-insert into epci(nom, siren, nature) values ('CC Argonne-Meuse', '200066116', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Stenay et du Val Dunois', '200066132', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Aire à l''Argonne', '200066140', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Commercy - Void - Vaucouleurs', '200066157', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val de Meuse - Voie Sacrée', '200066165', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Damvillers Spincourt', '200066173', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sammiellois', '245500327', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Territoire de Fresnes en Woëvre', '245501176', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Revigny sur Ornain', '245501184', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Etain', '245501242', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Montmédy', '245501259', 'CC');
-insert into epci(nom, siren, nature) values ('SM d''études et de traitement des déchets ménagers et assimilés', '200046647', 'SMF');
-insert into epci(nom, siren, nature) values ('PETR du Pays Barrois', '200049906', 'PETR');
-insert into epci(nom, siren, nature) values ('CA Lorient Agglomération', '200042174', 'CA');
-insert into epci(nom, siren, nature) values ('CA Golfe du Morbihan - Vannes Agglomération', '200067932', 'CA');
-insert into epci(nom, siren, nature) values ('CC Arc Sud Bretagne', '200027027', 'CC');
-insert into epci(nom, siren, nature) values ('CC Auray Quiberon Terre Atlantique', '200043123', 'CC');
-insert into epci(nom, siren, nature) values ('Ploërmel Communauté', '200066777', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Oust à Brocéliande', '200066785', 'CC');
-insert into epci(nom, siren, nature) values ('CC Centre Morbihan Communauté', '200067221', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Blavet Bellevue Océan', '245600440', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Belle Ile en Mer', '245600465', 'CC');
-insert into epci(nom, siren, nature) values ('CC Questembert Communauté', '245614383', 'CC');
-insert into epci(nom, siren, nature) values ('CC Roi Morvan Communauté', '245614417', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pontivy Communauté', '245614433', 'CC');
-insert into epci(nom, siren, nature) values ('SI pour le transfert et le traitement des ordures ménagères du Morbihan intérieur (SITTOM - MI)', '255601908', 'SMF');
-insert into epci(nom, siren, nature) values ('SM du Sud Est du Morbihan (SYSEM)', '255613374', 'SMF');
-insert into epci(nom, siren, nature) values ('Metz Métropole', '200039865', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Saint-Avold Synergie', '200067502', 'CA');
-insert into epci(nom, siren, nature) values ('CA Sarreguemines Confluences', '200070746', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Forbach Porte de France', '245700372', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Val de Fensch', '245701222', 'CA');
-insert into epci(nom, siren, nature) values ('CA Portes de France-Thionville', '245701362', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Sud Messin', '200039907', 'CC');
-insert into epci(nom, siren, nature) values ('CC Rives de Moselle', '200039949', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bouzonvillois-Trois Frontières', '200067486', 'CC');
-insert into epci(nom, siren, nature) values ('CC Houve-Pays Boulageois', '200067650', 'CC');
-insert into epci(nom, siren, nature) values ('CC Haut Chemin-Pays de Pange', '200067957', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sarrebourg Moselle Sud', '200068146', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Bitche', '200069441', 'CC');
-insert into epci(nom, siren, nature) values ('CC du District Urbain de Faulquemont (DUF)', '245700133', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Freyming-Merlebach', '245700398', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Cattenom et Environs', '245700695', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Phalsbourg', '245700950', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Warndt', '245701164', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Saulnois', '245701206', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Orne Moselle', '245701271', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Arc Mosellan', '245701354', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Haut Val d''Alzette', '245701404', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM d''Algrange Nilvange', '245700604', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SM de transport et de traitement des déchets ménagers de Lorraine Nord "SYDELON"', '200027118', 'SMF');
-insert into epci(nom, siren, nature) values ('SYDEME', '255704900', 'SMF');
-insert into epci(nom, siren, nature) values ('SM du pays de Sarrebourg', '200049989', 'PETR');
-insert into epci(nom, siren, nature) values ('CA de Nevers', '245804406', 'CA');
-insert into epci(nom, siren, nature) values ('CC Haut Nivernais-Val d''Yonne', '200067429', 'CC');
-insert into epci(nom, siren, nature) values ('CC Tannay-Brinon-Corbigny', '200067692', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sud Nivernais', '200067700', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bazois Loire Morvan', '200067882', 'CC');
-insert into epci(nom, siren, nature) values ('CC Morvan Sommets et Grands Lacs', '200067890', 'CC');
-insert into epci(nom, siren, nature) values ('CC Amognes Coeur du Nivernais', '200067908', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Loire', '200067916', 'CC');
-insert into epci(nom, siren, nature) values ('CC Les Bertranges', '200068088', 'CC');
-insert into epci(nom, siren, nature) values ('CC Loire et Allier', '245801063', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Nivernais Bourbonnais', '245804497', 'CC');
-insert into epci(nom, siren, nature) values ('Syndicat de gestion des déchets du Centre Nivernais', '255800682', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM d''Avril, Fleury, Luthenay', '255801441', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM de Saint-Pierre-le-Moûtier', '255801466', 'SMF');
-insert into epci(nom, siren, nature) values ('Métropole Européenne de Lille', '200093201', 'METRO');
-insert into epci(nom, siren, nature) values ('CU de Dunkerque', '245900428', 'CU');
-insert into epci(nom, siren, nature) values ('CA du Caudrésis et du Catésis', '200030633', 'CA');
-insert into epci(nom, siren, nature) values ('CA de la Porte du Hainaut', '200042190', 'CA');
-insert into epci(nom, siren, nature) values ('CA Maubeuge Val de Sambre', '200043396', 'CA');
-insert into epci(nom, siren, nature) values ('CA Douaisis Agglo', '200044618', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Cambrai', '200068500', 'CA');
-insert into epci(nom, siren, nature) values ('CA Valenciennes Métropole', '245901160', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Flandre Intérieure', '200040947', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Hauts de Flandre', '200040954', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pévèle-Carembault', '200041960', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de l''Avesnois', '200043263', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Mormal', '200043321', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sud Avesnois', '200043404', 'CC');
-insert into epci(nom, siren, nature) values ('CC Flandre Lys', '245900758', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Solesmois', '245901038', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur d''Ostrevent (CCCO)', '245901152', 'CC');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des ordures ménagères de la région des Flandres', '255900573', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de ramassage des ordures ménagères Flandre - Nord', '255900599', 'SMF');
-insert into epci(nom, siren, nature) values ('SI d''enlèvement et d''incinération des ordures ménagères (SIRIOM)', '255900680', 'SMF');
-insert into epci(nom, siren, nature) values ('SI de valorisation des déchets ménagers du Hainaut Valenciennois (ECOVALOR)', '255900938', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat inter-arrondissement de valorisation et d''élimination des déchets (SIAVED)', '255900953', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour le traitement des déchets ménagers du Pays de Pévèle au Pays des Weppes (SYMIDEME)', '255902561', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de l''arrondissement d''Avesnes', '255902652', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de la station touristique départementale du Val Joly ', '255900011', 'SMO');
-insert into epci(nom, siren, nature) values ('CA de la Région de Compiègne et de la Basse Automne', '200067965', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Beauvaisis', '200067999', 'CA');
-insert into epci(nom, siren, nature) values ('CA Creil Sud Oise', '200068047', 'CA');
-insert into epci(nom, siren, nature) values ('CC Senlis Sud Oise', '200066975', 'CC');
-insert into epci(nom, siren, nature) values ('CC Thelloise', '200067973', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Oise Picarde', '200068005', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Liancourtois', '246000129', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Clermontois', '246000376', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Plateau Picard', '246000566', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Sablons', '246000582', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Vexin-Thelle', '246000707', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Lisières de l''Oise', '246000749', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Noyonnais', '246000756', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Aire Cantilienne', '246000764', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Deux Vallées', '246000772', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Picardie Verte', '246000848', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays des Sources', '246000855', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Valois', '246000871', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Plaine d''Estrées', '246000897', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Bray', '246000913', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Pays d''Oise et d''Halatte', '246000921', 'CC');
-insert into epci(nom, siren, nature) values ('SM du département de l''Oise, pour le transport et le traitement des déchets ménagers et assimilés', '200067619', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de l''Oise plateau Picard', '200081255', 'SMF');
-insert into epci(nom, siren, nature) values ('CU d''Alençon', '246100663', 'CU');
-insert into epci(nom, siren, nature) values ('CA Flers Agglo', '200035814', 'CA');
-insert into epci(nom, siren, nature) values ('CC de la Vallée de la Haute Sarthe', '200035103', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Sources de l''Orne', '200035111', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Mortagne au Perche', '200036069', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur du Perche', '200068435', 'CC');
-insert into epci(nom, siren, nature) values ('CC Andaine - Passais', '200068443', 'CC');
-insert into epci(nom, siren, nature) values ('CC Argentan Intercom', '200068450', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Pays de L''Aigle', '200068468', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Hauts du Perche', '200068856', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Vallées d''Auge et du Merlerault', '200069458', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Collines du Perche Normand', '200071504', 'CC');
-insert into epci(nom, siren, nature) values ('CC Domfront Tinchebray Interco', '200071520', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Fertois et du Bocage Carrougien', '200071652', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val d''Orne', '246100390', 'CC');
-insert into epci(nom, siren, nature) values ('SITCOM de la région d''Argentan', '200045110', 'SMF');
-insert into epci(nom, siren, nature) values ('SMIRTOM de la région de Flers', '256102138', 'SMF');
-insert into epci(nom, siren, nature) values ('SIRTOM du Perche Ornais', '256102153', 'SMF');
-insert into epci(nom, siren, nature) values ('SMIRTOM de la région de L''Aigle', '256102179', 'SMF');
-insert into epci(nom, siren, nature) values ('CU d''Arras', '200033579', 'CU');
-insert into epci(nom, siren, nature) values ('CA des Deux Baies en Montreuillois', '200069029', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Pays de Saint-Omer', '200069037', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Béthune-Bruay, Artois-Lys Romane', '200072460', 'CA');
-insert into epci(nom, siren, nature) values ('CA Grand Calais Terres et Mers', '200090751', 'CA');
-insert into epci(nom, siren, nature) values ('CA d''Hénin-Carvin', '246200299', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Lens - Liévin', '246200364', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Boulonnais', '246200729', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Desvres-Samer', '200018083', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sud-Artois', '200035442', 'CC');
-insert into epci(nom, siren, nature) values ('CC des 7 Vallées', '200044030', 'CC');
-insert into epci(nom, siren, nature) values ('CC Osartis Marquion', '200044048', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Haut Pays du Montreuillois', '200069235', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Campagnes de l''Artois', '200069482', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Ternois', '200069672', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays d''Opale', '200072478', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Terre des Deux Caps', '246200380', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Région d''Audruicq', '246200844', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Lumbres', '246201016', 'CC');
-insert into epci(nom, siren, nature) values ('SM d''élimination et de valorisation des déchets des communautés d''agglomération du Douaisis, d''Hénin-Carvin et de la communauté de communes Osartis (SYMEVAD)', '200007201', 'SMF');
-insert into epci(nom, siren, nature) values ('SM Lys Audomarois (SMLA)', '256203761', 'SMF');
-insert into epci(nom, siren, nature) values ('SM Flandre Morinie', '256203910', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''élimination et de valorisation des déchets ménagers du Calaisis (SEVADEC )', '256203936', 'SMF');
-insert into epci(nom, siren, nature) values ('SM Artois valorisation', '256204074', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de traitement et de tri', '256204199', 'SMF');
-insert into epci(nom, siren, nature) values ('PETR Ternois-7 vallées', '200075679', 'PETR');
-insert into epci(nom, siren, nature) values ('Clermont Auvergne Métropole', '246300701', 'METRO');
-insert into epci(nom, siren, nature) values ('CA Agglo Pays d''Issoire', '200070407', 'CA');
-insert into epci(nom, siren, nature) values ('CA Riom Limagne et Volcans', '200070753', 'CA');
-insert into epci(nom, siren, nature) values ('CC Billom Communauté', '200067627', 'CC');
-insert into epci(nom, siren, nature) values ('CC Dômes Sancy Artense', '200069169', 'CC');
-insert into epci(nom, siren, nature) values ('CC Mond''Arverne Communauté', '200069177', 'CC');
-insert into epci(nom, siren, nature) values ('CC Thiers Dore et Montagne', '200070712', 'CC');
-insert into epci(nom, siren, nature) values ('CC Ambert Livradois Forez', '200070761', 'CC');
-insert into epci(nom, siren, nature) values ('CC Plaine Limagne', '200071199', 'CC');
-insert into epci(nom, siren, nature) values ('CC Chavanon Combrailles et Volcans', '200071215', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Saint-Eloy', '200072080', 'CC');
-insert into epci(nom, siren, nature) values ('CC Combrailles Sioule et Morge', '200072098', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Massif du Sancy', '246300966', 'CC');
-insert into epci(nom, siren, nature) values ('CC Entre Dore et Allier', '246301097', 'CC');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des résidus urbains du bois de l''Aumône (SBA)', '256300161', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM des Couzes', '256301052', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des ordures ménagères de la Haute Dordogne (SMCTOM de la Haute Dordogne)', '256301086', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM des Combrailles', '256301128', 'SMF');
-insert into epci(nom, siren, nature) values ('SICTOM de la région de Pontaumur - Pontgibaud', '256301185', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat pour la valorisation et le traitement des déchets ménagers et assimilés du Puy-de-Dôme et de la Haute Loire (VALTOM)', '256302670', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Pays Basque', '200067106', 'CA');
-insert into epci(nom, siren, nature) values ('CA Pau Béarn Pyrénées', '200067254', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Lacq-Orthez', '200039204', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Luys en Béarn', '200067239', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Haut Béarn', '200067262', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Béarn des Gaves', '200067288', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Nord Est Béarn', '200067296', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée d''Ossau', '246400337', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays de Nay', '246401756', 'CC');
-insert into epci(nom, siren, nature) values ('SIECTOM coteaux Béarn Adour', '256404542', 'SMF');
-insert into epci(nom, siren, nature) values ('SM Bil Ta Garbi', '256404641', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Tarbes-Lourdes-Pyrénées', '200069300', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Plateau de Lannemezan', '200070787', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Trie et du Magnoac', '200070795', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Coteaux du Val d''Arros', '200070803', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pyrénées Vallées des Gaves', '200070811', 'CC');
-insert into epci(nom, siren, nature) values ('CC Neste Barousse', '200070829', 'CC');
-insert into epci(nom, siren, nature) values ('CC Adour Madiran', '200072106', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Haute-Bigorre', '246500482', 'CC');
-insert into epci(nom, siren, nature) values ('CC Aure Louron', '246500573', 'CC');
-insert into epci(nom, siren, nature) values ('SM départemental de traitement des déchets ménagers et assimilés', '200011732', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des ordures ménagères du plateau de Lannemezan-Nestes-coteaux', '200041234', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de l''agglomération tarbaise élimination des déchets ménagers et assimilés', '256500869', 'SMF');
-insert into epci(nom, siren, nature) values ('CU Perpignan Méditerranée Métropole', '200027183', 'CU');
-insert into epci(nom, siren, nature) values ('CC des Albères, de la Côte Vermeille et de l''Illibéris', '200043602', 'CC');
-insert into epci(nom, siren, nature) values ('CC Conflent-Canigó', '200049211', 'CC');
-insert into epci(nom, siren, nature) values ('CC Corbières Salanque Méditerranée', '200070365', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sud-Roussillon', '246600282', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Vallespir', '246600373', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pyrénées Cerdagne', '246600399', 'CC');
-insert into epci(nom, siren, nature) values ('CC Roussillon-Conflent', '246600415', 'CC');
-insert into epci(nom, siren, nature) values ('CC Agly Fenouillèdes', '246600423', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Aspres', '246600449', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pyrénées Catalanes', '246600464', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Haut Vallespir', '246600548', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM canton de Millas', '246600183', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SM ramassage ordures ménagères Font-Romeu-Odeillo-Via', '200049716', 'SMF');
-insert into epci(nom, siren, nature) values ('SM départemental de transport, traitement et valorisation des ordures ménagères et déchets assimilés (SYDETOM)', '256601501', 'SMF');
-insert into epci(nom, siren, nature) values ('Eurométropole de Strasbourg', '246700488', 'METRO');
-insert into epci(nom, siren, nature) values ('CA de Haguenau', '200067874', 'CA');
-insert into epci(nom, siren, nature) values ('CC Sauer-Pechelbronn', '200013050', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Ried de Marckolsheim', '200030526', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Barr', '200034270', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Kochersberg', '200034635', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Outre-Forêt', '200040178', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Plaine du Rhin', '200041283', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Rhénan', '200041325', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Hanau-La Petite Pierre', '200067783', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Alsace Bossue', '200067841', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Canton d''Erstein', '200067924', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Saverne', '200068112', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Mossig et du Vignoble', '200068864', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée de la Bruche', '246700306', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Portes de Rosheim', '246700744', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée de Villé', '246700777', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Basse-Zorn', '246700843', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Wissembourg', '246700926', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de la Zorn', '246700959', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Sélestat', '246700967', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Région de Molsheim-Mutzig', '246701064', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Sainte-Odile', '246701080', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Niederbronn-les-Bains', '246701098', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM de la région de Wissembourg', '246700462', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SM pour la collecte et le traitement des ordures ménagères de Molsheim et environs ', '200051878', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat Mixte Intercommunal pour la Collecte et le Traitement des Ordures Ménagères du Nord Alsace', '256701244', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour la collecte et de traitement des ordures ménagères de la région de Saverne', '256701301', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour le traitement des ordures ménagères du secteur de Haguenau - Saverne (SMITOM)', '256701871', 'SMF');
-insert into epci(nom, siren, nature) values ('SM du Pays de la Mossig et de la Sommerau', '256702937', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des ordures ménagères d''Alsace Centrale', '256702960', 'SMF');
-insert into epci(nom, siren, nature) values ('PETR Sélestat - Alsace Centrale', '200069680', 'PETR');
-insert into epci(nom, siren, nature) values ('CA Mulhouse Alsace Agglomération', '200066009', 'CA');
-insert into epci(nom, siren, nature) values ('CA Saint-Louis Agglomération', '200066058', 'CA');
-insert into epci(nom, siren, nature) values ('CA Colmar Agglomération', '246800726', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Thann-Cernay', '200036465', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays Rhin - Brisach', '200066025', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sud Alsace Largue', '200066033', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sundgau', '200066041', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée de Saint-Amarin', '246800205', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val d''Argent', '246800395', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Centre du Haut-Rhin', '246800445', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Rouffach, Vignobles et Châteaux', '246800494', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée de Kaysersberg', '246800551', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Région de Guebwiller', '246800569', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Ribeauvillé', '246800577', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée de Munster', '246800585', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée de la Doller et du Soultzbach', '246800676', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM de la station climatique des trois épis', '246800510', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SIVOM de l''agglomération mulhousienne', '246800254', 'SMF');
-insert into epci(nom, siren, nature) values ('SM à vocation multiple pour le traitement des déchets ménagers du secteur 4', '256801531', 'SMF');
-insert into epci(nom, siren, nature) values ('SI de traitement des déchets de Colmar et environs', '256801697', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de Thann-Cernay pour la gestion des déchets ménagers et assimilés', '256802208', 'SMF');
-insert into epci(nom, siren, nature) values ('CA de l''Ouest Rhodanien', '200040566', 'CA');
-insert into epci(nom, siren, nature) values ('CA Villefranche Beaujolais Saône', '200040590', 'CA');
-insert into epci(nom, siren, nature) values ('CC Beaujolais Pierres Dorées', '200040574', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Monts du Lyonnais', '200066587', 'CC');
-insert into epci(nom, siren, nature) values ('CC Saône-Beaujolais', '200067817', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Est Lyonnais (CCEL)', '246900575', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de l''Arbresle (CCPA)', '246900625', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Vallons du Lyonnais (CCVL)', '246900724', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Mornantais (COPAMO)', '246900740', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée du Garon (CCVG)', '246900757', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de l''Ozon', '246900765', 'CC');
-insert into epci(nom, siren, nature) values ('Métropole de Lyon', '200046977', 'METRO');
-insert into epci(nom, siren, nature) values ('SM de l''Ouest Lyonnais', '200035046', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''élimination, de traitement et de valorisation des déchets Beaujolais Dombes (SYTRAIVAL)', '256900705', 'SMF');
-insert into epci(nom, siren, nature) values ('SI de collecte et de traitement des ordures ménagères (SITOM Sud Rhône)', '256901133', 'SMF');
-insert into epci(nom, siren, nature) values ('CA de Vesoul', '247000011', 'CA');
-insert into epci(nom, siren, nature) values ('CC des Hauts du Val de Saône', '200036150', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val de Gray', '200036549', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Haute Comté', '200041721', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Montbozon et du Chanois', '200041853', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Triangle Vert', '200041861', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terres de Saône', '200041879', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val Marnaysien', '200041887', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Combes', '247000367', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Quatre Rivières', '247000623', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Lure', '247000664', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Monts de Gy', '247000698', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Riolais', '247000706', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Villersexel', '247000714', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays d''Héricourt', '247000722', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Luxeuil', '247000755', 'CC');
-insert into epci(nom, siren, nature) values ('CC Rahin et Chérimont', '247000821', 'CC');
-insert into epci(nom, siren, nature) values ('CC des 1000 étangs', '247000854', 'CC');
-insert into epci(nom, siren, nature) values ('Syndicat de collecte des ordures ménagères du Val de Saône', '257001024', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte des déchets ménagers des 2 rivières', '257001040', 'SMF');
-insert into epci(nom, siren, nature) values ('SYTEVOM SYndicat Transfert Elimination Valorisation des Ordures énagères', '257003426', 'SMF');
-insert into epci(nom, siren, nature) values ('CU Le Creusot Montceau-les-Mines', '247100290', 'CU');
-insert into epci(nom, siren, nature) values ('CA Mâconnais Beaujolais Agglomération', '200070308', 'CA');
-insert into epci(nom, siren, nature) values ('CA Le Grand Chalon', '247100589', 'CA');
-insert into epci(nom, siren, nature) values ('CC Saône Doubs Bresse', '200040038', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Clunisois', '200040293', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bresse Revermont 71', '200042414', 'CC');
-insert into epci(nom, siren, nature) values ('CC Mâconnais - Tournugeois', '200069698', 'CC');
-insert into epci(nom, siren, nature) values ('CC Entre Arroux, Loire et Somme', '200070316', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Grand Autunois Morvan', '200070530', 'CC');
-insert into epci(nom, siren, nature) values ('CC Brionnais Sud Bourgogne', '200070548', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terres de Bresse', '200071538', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bresse Louhannaise Intercom''', '200071579', 'CC');
-insert into epci(nom, siren, nature) values ('CC Saint Cyr Mère Boitier entre Charolais et Mâconnais', '200071645', 'CC');
-insert into epci(nom, siren, nature) values ('CC Le Grand Charolais', '200071884', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Marcigny', '247100639', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bresse Nord Intercom''', '247100647', 'CC');
-insert into epci(nom, siren, nature) values ('CC Entre Saône et Grosne', '247103765', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Semur en Brionnais', '247103864', 'CC');
-insert into epci(nom, siren, nature) values ('CC  Sud Côte Chalonnaise', '247104094', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM de l''Arçon et de l''Urbise', '247100019', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SI de collecte et d''élimination des déchets de Bresse Nord', '200053122', 'SMF');
-insert into epci(nom, siren, nature) values ('SIVOM du Louhannais', '200075307', 'SMF');
-insert into epci(nom, siren, nature) values ('SIRTOM de la région de Chagny', '257102541', 'SMF');
-insert into epci(nom, siren, nature) values ('SIRTOM de la vallée de la Grosne', '257102830', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''études et de traitement des déchets', '257103341', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''élimination et de valorisation des déchets et ordures ménagères (SMEVOM) du Charollais-Brionnais et Autunois', '257103846', 'SMF');
-insert into epci(nom, siren, nature) values ('CU Le Mans Métropole', '247200132', 'CU');
-insert into epci(nom, siren, nature) values ('CC Loué - Brûlon - Noyen', '200040475', 'CC');
-insert into epci(nom, siren, nature) values ('CC Maine Coeur de Sarthe', '200068963', 'CC');
-insert into epci(nom, siren, nature) values ('CC Loir-Lucé-Bercé', '200070373', 'CC');
-insert into epci(nom, siren, nature) values ('CC Maine Saosnois', '200072676', 'CC');
-insert into epci(nom, siren, nature) values ('CC Le Gesnois Bilurien', '200072684', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Vallées de la Braye et de l''Anille', '200072692', 'CC');
-insert into epci(nom, siren, nature) values ('CC Haute Sarthe Alpes Mancelles', '200072700', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Champagne Conlinoise et du Pays de Sillé', '200072718', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sud Sarthe', '200073112', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Sablé-sur-Sarthe', '247200090', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Fléchois', '247200348', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sud Est du Pays Manceau', '247200421', 'CC');
-insert into epci(nom, siren, nature) values ('CC Orée de Bercé - Belinois', '247200447', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val de Sarthe', '247200629', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de l''Huisne Sarthoise', '247200686', 'CC');
-insert into epci(nom, siren, nature) values ('SM du Val de Loir pour collectes et traitement des déchets', '257200147', 'SMF');
-insert into epci(nom, siren, nature) values ('SMIRGEOM du Nord Ouest de la Sarthe', '257201251', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat mixte de valorisation des ordures ménagères - Loir et Sarthe (SYVALORM Loir et Sarthe)', '257201376', 'SMF');
-insert into epci(nom, siren, nature) values ('SM du Pays vallée de la Sarthe', '200001873', 'SMO');
-insert into epci(nom, siren, nature) values ('SM d''étude pour l''élimination des déchets du secteur Sud de la Sarthe', '257201988', 'SMO');
-insert into epci(nom, siren, nature) values ('SM du Pays de la Haute Sarthe', '257202358', 'SMO');
-insert into epci(nom, siren, nature) values ('PETR Pays vallée du Loir', '200076396', 'PETR');
-insert into epci(nom, siren, nature) values ('CA Grand Lac', '200068674', 'CA');
-insert into epci(nom, siren, nature) values ('CA Arlysère', '200068997', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Grand Chambéry', '200069110', 'CA');
-insert into epci(nom, siren, nature) values ('CC Coeur de Tarentaise', '200023299', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val Vanoise', '200040798', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Savoie', '200041010', 'CC');
-insert into epci(nom, siren, nature) values ('CC Haute Maurienne Vanoise', '200070340', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur de Maurienne Arvan', '200070464', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Vallées d''Aigueblanche', '247300015', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Haute-Tarentaise', '247300254', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Yenne', '247300262', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Canton de La Chambre', '247300361', 'CC');
-insert into epci(nom, siren, nature) values ('CC Maurienne Galibier', '247300452', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val Guiers', '247300528', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Lac d''Aiguebelette (CCLA)', '247300668', 'CC');
-insert into epci(nom, siren, nature) values ('CC Porte de Maurienne', '247300676', 'CC');
-insert into epci(nom, siren, nature) values ('CC Les Versants d''Aime', '247300817', 'CC');
-insert into epci(nom, siren, nature) values ('SM Savoie déchets', '200023364', 'SMF');
-insert into epci(nom, siren, nature) values ('SIRTOM Maurienne', '257301457', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Annemasse-Les Voirons-Agglomération', '200011773', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Grand Annecy', '200066793', 'CA');
-insert into epci(nom, siren, nature) values ('CA Thonon Agglomération', '200067551', 'CA');
-insert into epci(nom, siren, nature) values ('CC Faucigny-Glières', '200000172', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée de Chamonix-Mont-Blanc', '200023372', 'CC');
-insert into epci(nom, siren, nature) values ('CC Cluses-Arve et Montagnes', '200033116', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Montagnes du Giffre', '200034098', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays du Mont-Blanc', '200034882', 'CC');
-insert into epci(nom, siren, nature) values ('CC Usses et Rhône', '200070852', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays d''Evian Vallée d''Abondance', '200071967', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée Verte', '247400047', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Cruseilles', '247400112', 'CC');
-insert into epci(nom, siren, nature) values ('CC Fier et Usses', '247400567', 'CC');
-insert into epci(nom, siren, nature) values ('CC Arve et Salève', '247400583', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Vallées de Thônes', '247400617', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Quatre Rivières', '247400666', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Haut-Chablais', '247400682', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Genevois', '247400690', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Rochois', '247400724', 'CC');
-insert into epci(nom, siren, nature) values ('CC Rumilly Terre de Savoie', '247400740', 'CC');
-insert into epci(nom, siren, nature) values ('CC des sources du lac d''Annecy', '247400773', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM de la région de Cluses', '247400799', 'SMF');
-insert into epci(nom, siren, nature) values ('SI du traitement des ordures ménagères des vallées du Mont-Blanc', '257400663', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat de traitement des ordures du Chablais', '257401463', 'SMF');
-insert into epci(nom, siren, nature) values ('Métropole du Grand Paris', '200054781', 'METRO');
-insert into epci(nom, siren, nature) values ('SM central de traitement des ordures ménagères (SYCTOM)', '257500074', 'SMF');
-insert into epci(nom, siren, nature) values ('Métropole Rouen Normandie', '200023414', 'METRO');
-insert into epci(nom, siren, nature) values ('Le Havre Seine Métropole', '200084952', 'CU');
-insert into epci(nom, siren, nature) values ('CA Caux Seine Agglo', '200010700', 'CA');
-insert into epci(nom, siren, nature) values ('CA Fécamp Caux Littoral Agglomération', '200069821', 'CA');
-insert into epci(nom, siren, nature) values ('CA de la Région Dieppoise', '247600786', 'CA');
-insert into epci(nom, siren, nature) values ('CC Terroir de Caux', '200068534', 'CC');
-insert into epci(nom, siren, nature) values ('CC interrégionale Aumale - Blangy-sur-Bresle', '200069722', 'CC');
-insert into epci(nom, siren, nature) values ('CC des 4 rivières', '200069730', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Côte d''Albâtre', '200069839', 'CC');
-insert into epci(nom, siren, nature) values ('CC Plateau de Caux-Doudeville-Yerville', '200069847', 'CC');
-insert into epci(nom, siren, nature) values ('CC Communauté Bray-Eawy', '200070068', 'CC');
-insert into epci(nom, siren, nature) values ('CC inter-Caux-Vexin', '200070449', 'CC');
-insert into epci(nom, siren, nature) values ('CC Campagne-de-Caux', '247600505', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Villes Soeurs', '247600588', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Londinières', '247600604', 'CC');
-insert into epci(nom, siren, nature) values ('CC Yvetot Normandie', '247600620', 'CC');
-insert into epci(nom, siren, nature) values ('CC Caux - Austreberthe', '247600646', 'CC');
-insert into epci(nom, siren, nature) values ('CC Falaises du Talou', '247600729', 'CC');
-insert into epci(nom, siren, nature) values ('Syndicat des ordures ménagères des vallées de l''Austreberthe et Seine (SOMVAS)', '200074359', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat départemental d''énergie de Seine-Maritime', '257600445', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''élimination des déchets de l''arrondissement de Rouen (SMEDAR)', '257604371', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat d''élimination et de valorisation énergétique des déchets de l''estuaire (SEVEDE)', '257604405', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de traitement et de valorisation des déchets du Pays de Caux (SMITVAD)', '257604710', 'SMF');
-insert into epci(nom, siren, nature) values ('PETR Pays plateau de Caux-Maritime', '200049609', 'PETR');
-insert into epci(nom, siren, nature) values ('Pays Dieppois - Terroir de Caux', '200049617', 'PETR');
-insert into epci(nom, siren, nature) values ('CA Paris - Vallée de la Marne', '200057958', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Pays de Meaux', '200072130', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Pays de Fontainebleau', '200072346', 'CA');
-insert into epci(nom, siren, nature) values ('CA Coulommiers Pays de Brie', '200090504', 'CA');
-insert into epci(nom, siren, nature) values ('CA Melun Val de Seine', '247700057', 'CA');
-insert into epci(nom, siren, nature) values ('CA Val d''Europe Agglomération', '247700339', 'CA');
-insert into epci(nom, siren, nature) values ('CA Marne et Gondoire', '247700594', 'CA');
-insert into epci(nom, siren, nature) values ('CC Les Portes Briardes Entre Villes et Forêts', '200023125', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays de Nemours', '200023240', 'CC');
-insert into epci(nom, siren, nature) values ('CC Gâtinais Val de Loing', '200023919', 'CC');
-insert into epci(nom, siren, nature) values ('CC Plaines et Monts de France', '200033090', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Provinois', '200037133', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bassée-Montois', '200040251', 'CC');
-insert into epci(nom, siren, nature) values ('CC Brie des Rivières et Châteaux', '200070779', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Deux Morin', '200072544', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val Briard', '200072874', 'CC');
-insert into epci(nom, siren, nature) values ('CC Moret Seine et Loing', '247700032', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de l''Ourcq', '247700065', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays de Montereau', '247700107', 'CC');
-insert into epci(nom, siren, nature) values ('CC l''Orée de la Brie', '247700644', 'CC');
-insert into epci(nom, siren, nature) values ('CC Brie Nangissienne', '247700701', 'CC');
-insert into epci(nom, siren, nature) values ('SMF enlèvement et traitement des résidus ménagers de la région de Lagny-sur-Marne', '257701631', 'SMF');
-insert into epci(nom, siren, nature) values ('COVALTRI 77', '257701656', 'SMF');
-insert into epci(nom, siren, nature) values ('SMF collecte et traitement des ordures ménagères de la région de Fontainebleau', '257701698', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat de la région de Montereau-Fault-Yonne pour le traitement des ordures ménagères (SIRMOTOM)', '257701748', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour l''enlèvement et le traitement des ordures ménagères de la vallée du Loing', '257703389', 'SMF');
-insert into epci(nom, siren, nature) values ('SMF enlèvement et traitement des ordures ménagères de la région de Tournan-en-Brie', '257703546', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de traitement des ordures ménagères et assimilées du centre Ouest seine et marnais (SMITOMCO)', '257705277', 'SMF');
-insert into epci(nom, siren, nature) values ('SMF Est Seine-et-Marne pour le traitement des ordures ménagères (SMETOM-GEEODE)', '257705293', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat de traitement des déchets ménagers (SYTRADEM du Sud Est Seine-et-Marne)', '257705574', 'SMF');
-insert into epci(nom, siren, nature) values ('SMO traitement des ordures ménagères du Nord Seine et Marne', '257704916', 'SMO');
-insert into epci(nom, siren, nature) values ('CU Grand Paris Seine et Oise', '200059889', 'CU');
-insert into epci(nom, siren, nature) values ('CA Saint Germain Boucles de Seine', '200058519', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Saint Quentin en Yvelines', '200058782', 'CA');
-insert into epci(nom, siren, nature) values ('CA Rambouillet Territoires', '200073344', 'CA');
-insert into epci(nom, siren, nature) values ('CA Versailles Grand Parc (CAVGP)', '247800584', 'CA');
-insert into epci(nom, siren, nature) values ('CC de la Haute Vallée de Chevreuse', '200033173', 'CC');
-insert into epci(nom, siren, nature) values ('CC Gally Mauldre', '200034130', 'CC');
-insert into epci(nom, siren, nature) values ('CC Les Portes de l''Ile de France', '200071074', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Houdanais (CCPH)', '247800550', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur d''Yvelines', '247800618', 'CC');
-insert into epci(nom, siren, nature) values ('VALOSEINE', '200062461', 'SMF');
-insert into epci(nom, siren, nature) values ('SI d''évacuation et d''élimination des déchets de l''Ouest Yvelines (SIEED)', '257800300', 'SMF');
-insert into epci(nom, siren, nature) values ('SI pour la destruction des ordures ménagères et la production d''énergie (SIDOMPE)', '257800375', 'SMF');
-insert into epci(nom, siren, nature) values ('SI pour le traitement des résidus urbains de la Boucle de la Seine', '257800656', 'SMF');
-insert into epci(nom, siren, nature) values ('SI de collecte et de traitement des ordures ménagères de la région de Rambouillet (SICTOM)', '257801290', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Bocage Bressuirais', '200040244', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Niortais', '200041317', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Parthenay-Gâtine', '200041333', 'CC');
-insert into epci(nom, siren, nature) values ('CC Airvaudais-Val du Thouet', '200041416', 'CC');
-insert into epci(nom, siren, nature) values ('CC Haut Val de Sèvre', '200041994', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val de Gâtine', '200069748', 'CC');
-insert into epci(nom, siren, nature) values ('CC Mellois en Poitou', '200069755', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Thouarsais', '247900798', 'CC');
-insert into epci(nom, siren, nature) values ('SI d''énergie des Deux-Sèvres (SIEDS)', '200091049', 'SMF');
-insert into epci(nom, siren, nature) values ('SM à la carte du Haut Val de Sèvre et Sud Gâtine', '257902353', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de traitement et d''élimination des déchets des Deux-Sèvres (SMITED)', '257902296', 'SMO');
-insert into epci(nom, siren, nature) values ('CA de la Baie de Somme', '200070993', 'CA');
-insert into epci(nom, siren, nature) values ('CA Amiens Métropole', '248000531', 'CA');
-insert into epci(nom, siren, nature) values ('CC de la Haute Somme (Combles - Péronne - Roisel)', '200037059', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terre de Picardie', '200070928', 'CC');
-insert into epci(nom, siren, nature) values ('CC Ponthieu-Marquenterre', '200070936', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Vimeu', '200070944', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Territoire Nord Picardie', '200070951', 'CC');
-insert into epci(nom, siren, nature) values ('CC Avre Luce Noye', '200070969', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Grand Roye', '200070977', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Est de la Somme', '200070985', 'CC');
-insert into epci(nom, siren, nature) values ('CC Somme Sud-Ouest', '200071181', 'CC');
-insert into epci(nom, siren, nature) values ('CC Nièvre et Somme', '200071223', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val de Somme', '248000499', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays du Coquelicot', '248000747', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM d''Ault', '248000051', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SIVOM de Gamaches', '248000143', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SMIRTOM du plateau picard Nord', '200044378', 'SMF');
-insert into epci(nom, siren, nature) values ('TRINOVAL', '258002344', 'SMF');
-insert into epci(nom, siren, nature) values ('SMITOM du Santerre', '258004571', 'SMF');
-insert into epci(nom, siren, nature) values ('Pôle Métropolitain du Grand Amiénois', '200082063', 'POLEM');
-insert into epci(nom, siren, nature) values ('CA Gaillac-Graulhet', '200066124', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Castres Mazamet', '248100430', 'CA');
-insert into epci(nom, siren, nature) values ('CA de l''Albigeois (C2A)', '248100737', 'CA');
-insert into epci(nom, siren, nature) values ('CC Tarn-Agout', '200034023', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Monts d''Alban et du Villefranchois', '200034031', 'CC');
-insert into epci(nom, siren, nature) values ('CC Centre Tarn', '200034049', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Lautrécois et du Pays d''Agout', '200034056', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Cordais et du Causse (4 C)', '200034064', 'CC');
-insert into epci(nom, siren, nature) values ('CC Carmausin-Ségala', '200040905', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Monts de Lacaune et de la Montagne du Haut Languedoc', '200066553', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sidobre Vals et Plateaux', '200066561', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sor et de l''Agout', '248100158', 'CC');
-insert into epci(nom, siren, nature) values ('CC Val 81', '248100497', 'CC');
-insert into epci(nom, siren, nature) values ('CC Thoré Montagne Noire', '248100745', 'CC');
-insert into epci(nom, siren, nature) values ('SICTOM secteur Valence Valderiès', '200073807', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour la collecte et le traitement des ordures ménagères de la région de Lavaur', '200075711', 'SMF');
-insert into epci(nom, siren, nature) values ('Pôle territorial de l''Albigeois et des Bastides', '200049161', 'PETR');
-insert into epci(nom, siren, nature) values ('CA Grand Montauban', '248200099', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Pays de Serres en Quercy', '200040418', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terres des Confluences', '200066322', 'CC');
-insert into epci(nom, siren, nature) values ('CC Grand Sud Tarn et Garonne', '200066652', 'CC');
-insert into epci(nom, siren, nature) values ('CC Quercy Vert-Aveyron', '200066884', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coteaux et Plaines du Pays Lafrançaisain', '200067122', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Deux Rives', '248200016', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Quercy Caussadais', '248200057', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Lomagne Tarn-et-Garonnaise', '248200065', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Quercy Rouergue et des Gorges de l''Aveyron', '248200107', 'CC');
-insert into epci(nom, siren, nature) values ('SM enlèvement et élimination des ordures ménagères groupement moyenne Garonne', '258200658', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''enlèvement et d''élimination des ordures ménagères du Sud-Quercy', '258200856', 'SMF');
-insert into epci(nom, siren, nature) values ('SM du traitement des ordures menagères et autres déchets (SIRTOMAD)', '258201029', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat départemental des déchets ', '258201367', 'SMO');
-insert into epci(nom, siren, nature) values ('Métropole Toulon-Provence-Méditerranée', '248300543', 'METRO');
-insert into epci(nom, siren, nature) values ('Estérel Côte d''Azur Agglomération', '200035319', 'CA');
-insert into epci(nom, siren, nature) values ('CA de la Provence Verte', '200068104', 'CA');
-insert into epci(nom, siren, nature) values ('CA Sud Sainte Baume', '248300394', 'CA');
-insert into epci(nom, siren, nature) values ('Dracénie Provence Verdon Agglomération', '248300493', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Pays de Fayence', '200004802', 'CC');
-insert into epci(nom, siren, nature) values ('CC Méditerranée Porte des Maures', '200027100', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Golfe de Saint-Tropez', '200036077', 'CC');
-insert into epci(nom, siren, nature) values ('CC Provence Verdon', '200040202', 'CC');
-insert into epci(nom, siren, nature) values ('CC Lacs et Gorges du Verdon', '200040210', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée du Gapeau', '248300410', 'CC');
-insert into epci(nom, siren, nature) values ('CC Coeur du Var', '248300550', 'CC');
-insert into epci(nom, siren, nature) values ('SM du Haut Var', '200046852', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de la zone du Verdon', '248300089', 'SMF');
-insert into epci(nom, siren, nature) values ('SM du développement durable de l''Est Var pour le traitement et la valorisation des déchets ménagers', '258300581', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de transport et de traitement des ordures ménagères de l''aire toulonnaise (SITTOMAT)', '258300953', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat de valorisation et d''élimination des déchets nouvelle génération (SIVED NG)', '258302637', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Luberon Monts de Vaucluse', '200040442', 'CA');
-insert into epci(nom, siren, nature) values ('CA Ventoux-Comtat-Venaissin (COVE)', '248400053', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Grand Avignon (COGA)', '248400251', 'CA');
-insert into epci(nom, siren, nature) values ('CC Rhône Lez Provence', '200000628', 'CC');
-insert into epci(nom, siren, nature) values ('CC Ventoux Sud', '200035723', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays d''Apt-Luberon', '200040624', 'CC');
-insert into epci(nom, siren, nature) values ('CC Enclave des Papes-Pays de Grignan', '200040681', 'CC');
-insert into epci(nom, siren, nature) values ('CC Aygues-Ouvèze en Provence (CCAOP)', '248400160', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Réuni d''Orange', '248400236', 'CC');
-insert into epci(nom, siren, nature) values ('CC Territoriale Sud-Luberon', '248400285', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Sorgues du Comtat', '248400293', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays des Sorgues et des Monts de Vaucluse', '248400319', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vaison Ventoux', '248400335', 'CC');
-insert into epci(nom, siren, nature) values ('SM pour la valorisation des déchets du pays d''Avignon (SIDOMRA)', '258400134', 'SMF');
-insert into epci(nom, siren, nature) values ('SM intercommunautaire pour l''étude, la construction et l''exploitation d''unités de traitement des ordures ménagères de la région de Cavaillon (SIECEUTOM)', '258400472', 'SMF');
-insert into epci(nom, siren, nature) values ('SM ramassage et traitement ordures ménagères de la région d''Apt (SIRTOM d''Apt)', '258402510', 'SMF');
-insert into epci(nom, siren, nature) values ('SM chargé du SCOT de la région de Cavaillon', '258403013', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Les Sables d''Olonne Agglomération', '200071165', 'CA');
-insert into epci(nom, siren, nature) values ('CA La Roche sur Yon - Agglomération', '248500589', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Pays de Saint-Gilles-Croix-de-Vie', '200023778', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terres de Montaigu, CC Montaigu-Rocheservière', '200070233', 'CC');
-insert into epci(nom, siren, nature) values ('CC Challans-Gois Communauté', '200071629', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vendée Grand Littoral', '200071900', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Saint-Fulgent - Les Essarts', '200071918', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Fontenay-Vendée', '200071934', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Vie et Boulogne', '200072882', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sud Vendée Littoral', '200073260', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Ile de Noirmoutier', '248500191', 'CC');
-insert into epci(nom, siren, nature) values ('CC Océan Marais de Monts', '248500258', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays de Chantonnay', '248500340', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de la Châtaigneraie', '248500415', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Pouzauges', '248500464', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays des Achards', '248500530', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vendée, Sèvre, Autise', '248500563', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays des Herbiers', '248500621', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Mortagne', '248500662', 'CC');
-insert into epci(nom, siren, nature) values ('SYCODEM Sud Vendée', '258500446', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat de collecte des ordures ménagères (SCOM) de l''Est Vendéen', '258500651', 'SMF');
-insert into epci(nom, siren, nature) values ('SM départemental d''études et de traitement des déchets ménagers et assimilés de Vendée (TRIVALIS)', '258502962', 'SMF');
-insert into epci(nom, siren, nature) values ('CU du Grand Poitiers', '200069854', 'CU');
-insert into epci(nom, siren, nature) values ('CA Grand Châtellerault', '248600413', 'CA');
-insert into epci(nom, siren, nature) values ('CC des Vallées du Clain', '200043628', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Haut-Poitou', '200069763', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Civraisien en Poitou', '200070035', 'CC');
-insert into epci(nom, siren, nature) values ('CC Vienne et Gartempe', '200070043', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays Loudunais', '248600447', 'CC');
-insert into epci(nom, siren, nature) values ('Syndicat interdépartemental mixte pour l''équipement rural', '258600493', 'SMO');
-insert into epci(nom, siren, nature) values ('CU Limoges Métropole', '248719312', 'CU');
-insert into epci(nom, siren, nature) values ('CC Briance Sud Haute Vienne', '200040814', 'CC');
-insert into epci(nom, siren, nature) values ('CC Porte Océane du Limousin', '200059400', 'CC');
-insert into epci(nom, siren, nature) values ('CC Elan Limousin Avenir Nature', '200066512', 'CC');
-insert into epci(nom, siren, nature) values ('CC Ouest Limousin', '200066520', 'CC');
-insert into epci(nom, siren, nature) values ('CC Pays de Nexon Monts de Chalus', '200070506', 'CC');
-insert into epci(nom, siren, nature) values ('CC Haut Limousin en Marche', '200071942', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Pays de Saint Yrieix', '248700189', 'CC');
-insert into epci(nom, siren, nature) values ('CC Gartempe - Saint Pardoux', '248719262', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val de Vienne', '248719288', 'CC');
-insert into epci(nom, siren, nature) values ('CC Briance-Combade', '248719338', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Portes de Vassivière', '248719353', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Noblat', '248719361', 'CC');
-insert into epci(nom, siren, nature) values ('SI de collecte et de traitement des ordures ménagères de Sud Haute-Vienne', '258718741', 'SMF');
-insert into epci(nom, siren, nature) values ('SM départemental pour l''élimination des déchets ménagers et assimilés', '258700251', 'SMO');
-insert into epci(nom, siren, nature) values ('CA d''Epinal', '200068757', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Saint-Dié-des-Vosges', '200071066', 'CA');
-insert into epci(nom, siren, nature) values ('CC de la Région de Rambervillers', '200005957', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Ballons des Hautes-Vosges', '200033868', 'CC');
-insert into epci(nom, siren, nature) values ('CC Bruyères-Vallons des Vosges', '200042000', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Mirecourt Dompaire', '200068369', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Porte des Vosges Méridionales', '200068377', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Ouest Vosgien', '200068559', 'CC');
-insert into epci(nom, siren, nature) values ('CC Terre d''Eau', '200068682', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Vosges côté Sud Ouest', '200068773', 'CC');
-insert into epci(nom, siren, nature) values ('CC des Hautes Vosges', '200071157', 'CC');
-insert into epci(nom, siren, nature) values ('SIVOM de Grand', '248800088', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SI de la vallée de la Roche-Harchéchamp', '248800245', 'SIVOM');
-insert into epci(nom, siren, nature) values ('SM de collecte et de traitement des déchets ménagers et assimilés de la région de Lerrain', '200071280', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de collecte et de valorisation des déchets ménagers de la région d''Epinal', '258801422', 'SMF');
-insert into epci(nom, siren, nature) values ('ÉVODIA', '258802560', 'SMF');
-insert into epci(nom, siren, nature) values ('CA de l''Auxerrois', '200067114', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Grand Sénonais', '248900334', 'CA');
-insert into epci(nom, siren, nature) values ('CC Le Tonnerrois en Bourgogne', '200039642', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Serein', '200039709', 'CC');
-insert into epci(nom, siren, nature) values ('CC Avallon, Vézelay, Morvan', '200039758', 'CC');
-insert into epci(nom, siren, nature) values ('CC Chablis Villages et Terroirs', '200067080', 'CC');
-insert into epci(nom, siren, nature) values ('CC de Puisaye-Forterre', '200067130', 'CC');
-insert into epci(nom, siren, nature) values ('CC Serein et Armance', '200067304', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Agglomération Migennoise', '248900383', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Aillantais en Bourgogne', '248900524', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vanne et du Pays d''Othe', '248900664', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Gâtinais en Bourgogne', '248900748', 'CC');
-insert into epci(nom, siren, nature) values ('CC Yonne Nord', '248900896', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Jovinien', '248900938', 'CC');
-insert into epci(nom, siren, nature) values ('CA Grand Belfort', '200069052', 'CA');
-insert into epci(nom, siren, nature) values ('CC des Vosges du Sud', '200069060', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sud Territoire', '249000241', 'CC');
-insert into epci(nom, siren, nature) values ('SM pour la collecte et le traitement des ordures ménagères de la zone sous-vosgienne', '200075133', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''études et de réalisation pour le traitement intercommunal des déchets', '259000735', 'SMF');
-insert into epci(nom, siren, nature) values ('CA Etampois Sud Essonne', '200017846', 'CA');
-insert into epci(nom, siren, nature) values ('CA Communauté Paris-Saclay', '200056232', 'CA');
-insert into epci(nom, siren, nature) values ('CA Coeur d''Essonne Agglomération', '200057859', 'CA');
-insert into epci(nom, siren, nature) values ('CA Val d''Yerres Val de Seine', '200058477', 'CA');
-insert into epci(nom, siren, nature) values ('CA Grand Paris Sud Seine Essonne Sénart', '200059228', 'CA');
-insert into epci(nom, siren, nature) values ('CC du Pays de Limours (CCPL)', '249100074', 'CC');
-insert into epci(nom, siren, nature) values ('CC des 2 Vallées', '249100157', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Val d''Essonne (CCVE)', '249100546', 'CC');
-insert into epci(nom, siren, nature) values ('CC Entre Juine et Renarde (CCEJR)', '249100553', 'CC');
-insert into epci(nom, siren, nature) values ('CC le Dourdannais en Hurepoix (CCDH)', '249100595', 'CC');
-insert into epci(nom, siren, nature) values ('SM des ordures ménagères de la vallée de Chevreuse', '200062321', 'SMF');
-insert into epci(nom, siren, nature) values ('SIRTOM du Sud-Francilien', '200066959', 'SMF');
-insert into epci(nom, siren, nature) values ('Syndicat pour l''innovation, le recyclage et l''énergie par les déchets et ordures ménagères (SIREDOM) - Agence Sud Francilienne pour l''énergie, les déchets et l''environnement', '200077832', 'SMF');
-insert into epci(nom, siren, nature) values ('SM Massy-Antony-Hauts-de-Bièvre pour le chauffage urbain et le traitement des résidus ménagers (SIMACUR)', '259100741', 'SMF');
-insert into epci(nom, siren, nature) values ('SM d''élimination des déchets de la région d''Etampes (SEDRE)', '259101988', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de la vallée de l''Yerres et des Sénarts', '259102705', 'SMF');
-insert into epci(nom, siren, nature) values ('Vallée Sud-Grand Paris', '200057966', 'EPT');
-insert into epci(nom, siren, nature) values ('Grand Paris Seine Ouest', '200057974', 'EPT');
-insert into epci(nom, siren, nature) values ('Paris Ouest La Défense', '200057982', 'EPT');
-insert into epci(nom, siren, nature) values ('Boucle Nord de Seine', '200057990', 'EPT');
-insert into epci(nom, siren, nature) values ('Plaine Commune', '200057867', 'EPT');
-insert into epci(nom, siren, nature) values ('Est Ensemble', '200057875', 'EPT');
-insert into epci(nom, siren, nature) values ('Paris Terres d''Envol', '200058097', 'EPT');
-insert into epci(nom, siren, nature) values ('Grand Paris Grand Est', '200058790', 'EPT');
-insert into epci(nom, siren, nature) values ('SM de traitement des déchets urbains du Val-de-Marne (SMITDUVM)', '259400992', 'SMF');
-insert into epci(nom, siren, nature) values ('#ParisEstMarne&Bois', '200057941', 'EPT');
-insert into epci(nom, siren, nature) values ('Grand Paris Sud Est Avenir', '200058006', 'EPT');
-insert into epci(nom, siren, nature) values ('Grand-Orly Seine Bièvre', '200058014', 'EPT');
-insert into epci(nom, siren, nature) values ('CA Roissy Pays de France', '200055655', 'CA');
-insert into epci(nom, siren, nature) values ('CA Plaine Vallée', '200056380', 'CA');
-insert into epci(nom, siren, nature) values ('CA Val Parisis', '200058485', 'CA');
-insert into epci(nom, siren, nature) values ('CA de Cergy-Pontoise', '249500109', 'CA');
-insert into epci(nom, siren, nature) values ('CC Vexin Centre', '200035970', 'CC');
-insert into epci(nom, siren, nature) values ('CC Carnelle Pays-de-France', '200073013', 'CC');
-insert into epci(nom, siren, nature) values ('CC Sausseron Impressionnistes', '249500430', 'CC');
-insert into epci(nom, siren, nature) values ('CC de la Vallée de l''Oise et des Trois Forêts', '249500455', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Haut Val d''Oise', '249500489', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Vexin-Val de Seine', '249500513', 'CC');
-insert into epci(nom, siren, nature) values ('SM pour la valorisation des déchets ménagers dénommé Azur', '259500023', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour la collecte et le traitement des ordures ménagères de la région de L''Isle-Adam (SICTOMIA) ', '259500288', 'SMF');
-insert into epci(nom, siren, nature) values ('SM Tri-Action', '259501211', 'SMF');
-insert into epci(nom, siren, nature) values ('SM de ramassage et de traitement des ordures ménagères du Vexin (SMIRTOM du Vexin)', '259501252', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour la gestion et l''incinération des déchets urbains de la région de Sarcelles  (SIGIDURS)', '259502086', 'SMF');
-insert into epci(nom, siren, nature) values ('SM pour la collecte et le traitement des déchets de la vallée de Montmorency dénommé Syndicat Émeraude', '259502367', 'SMF');
-insert into epci(nom, siren, nature) values ('CA CAP Excellence', '200018653', 'CA');
-insert into epci(nom, siren, nature) values ('CA La Riviéra du Levant', '200041507', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Nord Grande Terre', '200044691', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Nord Basse-Terre', '249710062', 'CA');
-insert into epci(nom, siren, nature) values ('CA Grand Sud Caraïbe', '249710070', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Marie-Galante', '249710047', 'CC');
-insert into epci(nom, siren, nature) values ('Syndicat de valorisation des déchets', '200044709', 'SMO');
-insert into epci(nom, siren, nature) values ('SM d''Innovation et de Valorisation de Guadeloupe (SINNOVAL Guadeloupe)', '200095834', 'SMO');
-insert into epci(nom, siren, nature) values ('CA du Pays Nord Martinique', '200041788', 'CA');
-insert into epci(nom, siren, nature) values ('CA de l''Espace Sud de la Martinique', '249720053', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Centre de la Martinique', '249720061', 'CA');
-insert into epci(nom, siren, nature) values ('Syndicat martiniquais pour le traitement et la valorisation des déchets', '259720084', 'SMF');
-insert into epci(nom, siren, nature) values ('CA du Centre Littoral', '249730045', 'CA');
-insert into epci(nom, siren, nature) values ('CC des Savanes', '200027548', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Ouest Guyanais', '249730037', 'CC');
-insert into epci(nom, siren, nature) values ('CC de l''Est Guyanais', '249730052', 'CC');
-insert into epci(nom, siren, nature) values ('CA CIVIS (Communauté Intercommunale des Villes Solidaires)', '249740077', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Sud', '249740085', 'CA');
-insert into epci(nom, siren, nature) values ('CA Intercommunale de la Réunion Est (CIREST)', '249740093', 'CA');
-insert into epci(nom, siren, nature) values ('CA Territoire de la Côte Ouest (TCO)', '249740101', 'CA');
-insert into epci(nom, siren, nature) values ('CA Intercommunale du Nord de la Réunion (CINOR)', '249740119', 'CA');
-insert into epci(nom, siren, nature) values ('SM de traitement des déchets des microrégions Sud et Ouest de La Réunion', '200045342', 'SMO');
-insert into epci(nom, siren, nature) values ('SM de traitement des déchets des microrégions Nord et Est de la Réunion', '200050052', 'SMO');
-insert into epci(nom, siren, nature) values ('CA de Dembeni / Mamoudzou', '200060457', 'CA');
-insert into epci(nom, siren, nature) values ('CA du Grand Nord de Mayotte', '200060465', 'CA');
-insert into epci(nom, siren, nature) values ('CC de Petite-Terre', '200050532', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Centre-Ouest', '200059871', 'CC');
-insert into epci(nom, siren, nature) values ('CC du Sud', '200060473', 'CC');
-insert into epci(nom, siren, nature) values ('SI d''élimination et de valorisation des déchets de Mayotte', '200089886', 'SMF');
+insert into epci(nom, siren, nature)
+values ('Haut - Bugey Agglomération', '200042935', 'CA'),
+       ('CA du Bassin de Bourg-en-Bresse', '200071751', 'CA'),
+       ('CA du Pays de Gex', '240100750', 'CA'),
+       ('CC Rives de l''Ain - Pays du Cerdon', '200029999', 'CC'),
+       ('CC Bugey Sud', '200040350', 'CC'),
+       ('CC Dombes Saône Vallée', '200042497', 'CC'),
+       ('CC de la Dombes', '200069193', 'CC'),
+       ('CC Val de Saône Centre', '200070118', 'CC'),
+       ('CC de la Veyle', '200070555', 'CC'),
+       ('CC Bresse et Saône', '200071371', 'CC'),
+       ('CC de la Côtière à Montluel', '240100610', 'CC'),
+       ('CC de Miribel et du Plateau', '240100800', 'CC'),
+       ('CC de la Plaine de l''Ain', '240100883', 'CC'),
+       ('CC du Pays Bellegardien (CCPB)', '240100891', 'CC'),
+       ('SM intercommunal de destruction des ordures ménagères Veyle Saône', '250101086', 'SMF'),
+       ('SM de traitement des déchets ménagers et assimilés (ORGANOM)', '250102365', 'SMF'),
+       ('SM pour le traitement des déchets ménagers et assimilés (SM de Crocu)', '250102373', 'SMF'),
+       ('SM intercommunal de gestion des déchets du Faucigny Genevois (SIDEFAGE)', '257401620', 'SMF'),
+       ('CA du Pays de Laon', '200043495', 'CA'),
+       ('CA Chauny Tergnier La Fère', '200071785', 'CA'),
+       ('CA du Saint-Quentinois', '200071892', 'CA'),
+       ('CA de la Région de Château-Thierry', '200072031', 'CA'),
+       ('GrandSoissons Agglomération', '240200477', 'CA'),
+       ('CC du Val de l''Oise', '200040426', 'CC'),
+       ('CC Picardie des Châteaux', '200071769', 'CC'),
+       ('CC Thiérache Sambre et Oise', '200071983', 'CC'),
+       ('CC Retz en Valois', '200071991', 'CC'),
+       ('CC de la Thiérache du Centre', '240200444', 'CC'),
+       ('CC du Pays de la Serre', '240200469', 'CC'),
+       ('CC du Pays du Vermandois', '240200493', 'CC'),
+       ('CC du Val de l''Aisne', '240200501', 'CC'),
+       ('CC du Canton d''Oulchy le Château', '240200519', 'CC'),
+       ('CC de la Champagne Picarde', '240200576', 'CC'),
+       ('CC du Canton de Charly sur Marne', '240200584', 'CC'),
+       ('CC du Chemin des Dames', '240200592', 'CC'),
+       ('CC des Trois Rivières', '240200600', 'CC'),
+       ('CC des Portes de la Thiérache', '240200634', 'CC'),
+       ('SI de ramassage et de traitement des ordures ménagères (SIRTOM) de la région de Laon ', '250200383', 'SMF'),
+       ('Valor''Aisne (Syndicat départemental de traitement des déchets ménagers de l''Aisne)', '250208790', 'SMO'),
+       ('PETR du Soissonnais et du Valois', '200085694', 'PETR'),
+       ('CA Montluçon Communauté', '200071082', 'CA'),
+       ('CA Moulins Communauté', '200071140', 'CA'),
+       ('CA Vichy Communauté', '200071363', 'CA'),
+       ('CC Saint-Pourçain Sioule Limagne', '200071389', 'CC'),
+       ('CC Entr''Allier Besbre et Loire', '200071470', 'CC'),
+       ('CC du Bocage Bourbonnais', '200071496', 'CC'),
+       ('CC Commentry Montmarault Néris Communauté', '200071512', 'CC'),
+       ('CC du Pays de Lapalisse', '240300491', 'CC'),
+       ('CC du Pays de Tronçais', '240300558', 'CC'),
+       ('CC du Val de Cher', '240300566', 'CC'),
+       ('CC du Pays d''Huriel', '240300657', 'CC'),
+       ('SI de collecte et de traitement des ordures ménagères (SICTOM) Sud-Allier', '250300050', 'SMF'),
+       ('SM de collecte et de traitement des ordures ménagères Nord-Allier (SICTOM Nord Allier)', '250300217', 'SMF'),
+       ('SI de collecte et de traitement des ordures ménagères (SICTOM) du secteur de Cérilly', '250303039', 'SMF'),
+       ('SM intercommunal de collecte et de traitement d''ordures ménagères de la région montluçonnaise', '250303294',
+        'SMF'),
+       ('CA Durance-Lubéron-Verdon Agglomération', '200034700', 'CA'),
+       ('CA Provence-Alpes-Agglomération', '200067437', 'CA'),
+       ('CC Alpes-Provence-Verdon "Sources de lumière"', '200068625', 'CC'),
+       ('CC du Sisteronais-Buëch', '200068765', 'CC'),
+       ('CC Haute-Provence-Pays de Banon', '200071025', 'CC'),
+       ('CC Jabron-Lure-Vançon-Durance', '200071033', 'CC'),
+       ('CC Vallée de l''Ubaye - Serre-Ponçon', '200072304', 'CC'),
+       ('CC Pays Forcalquier et Montagne de Lure', '240400440', 'CC'),
+       ('SM départemental d''élimination et de valorisation des ordures ménagères (SYDEVOM) des Alpes-de-Haute-Provence',
+        '250401221', 'SMO'),
+       ('CA Gap-Tallard-Durance', '200067825', 'CA'),
+       ('CC Serre-Ponçon Val d''Avance', '200067320', 'CC'),
+       ('CC Buëch-Dévoluy', '200067445', 'CC'),
+       ('CC du Guillestrois et du Queyras', '200067452', 'CC'),
+       ('CC Serre-Ponçon', '200067742', 'CC'),
+       ('CC Champsaur-Valgaudemar', '200068096', 'CC'),
+       ('CC du Briançonnais', '240500439', 'CC'),
+       ('CC du Pays des Ecrins', '240500462', 'CC'),
+       ('Syndicat Mixte de Traitement des Ordures Ménagères du Guillestrois, du Queyras et de l''Argentiérois (SMITOMGA)',
+        '250500790', 'SMF'),
+       ('Métropole Nice Côte d''Azur', '200030195', 'METRO'),
+       ('CA du Pays de Grasse', '200039857', 'CA'),
+       ('CA Cannes Pays de Lérins', '200039915', 'CA'),
+       ('CA de la Riviera Française', '240600551', 'CA'),
+       ('CA de Sophia Antipolis', '240600585', 'CA'),
+       ('CC Alpes d''Azur', '200039931', 'CC'),
+       ('CC du Pays des Paillons', '240600593', 'CC'),
+       ('SIVOM de Valberg', '240600023', 'SIVOM'),
+       ('SM d''élimination des déchets (SMED)', '200000586', 'SMO'),
+       ('SM pour la valorisation des déchets UNIVALOM', '200046076', 'SMO'),
+       ('CA Privas Centre Ardèche', '200071413', 'CA'),
+       ('CA Annonay Rhône Agglo', '200072015', 'CA'),
+       ('CA Arche Agglo', '200073096', 'CA'),
+       ('CC du Pays de Lamastre', '200016905', 'CC'),
+       ('CC des Gorges de l''Ardèche', '200039808', 'CC'),
+       ('CC Ardèche des Sources et Volcans', '200039824', 'CC'),
+       ('CC Pays des Vans en Cévennes', '200039832', 'CC'),
+       ('CC Rhône Crussol', '200041366', 'CC'),
+       ('CC Val Eyrieux', '200041465', 'CC'),
+       ('CC Ardèche Rhône Coiron', '200071405', 'CC'),
+       ('CC de la Montagne d''Ardèche', '200072007', 'CC'),
+       ('CC du Bassin d''Aubenas', '200073245', 'CC'),
+       ('CC du Pays Beaume-Drobie', '240700302', 'CC'),
+       ('CC Val de Ligne', '240700617', 'CC'),
+       ('CC du Val d''Ay', '240700716', 'CC'),
+       ('CC Berg et Coiron', '240700815', 'CC'),
+       ('CC du Rhône aux Gorges de l''Ardèche', '240700864', 'CC'),
+       ('SI de collecte et de traitement des ordures ménagères du secteur Eyrieux-Doux (SICTOMSED)', '250700135',
+        'SMF'),
+       ('SI de collecte et de traitement des ordures ménagères de la Basse-Ardèche (SICTOBA)', '250700218', 'SMF'),
+       ('Syndicat pour la destruction des ordures ménagères du secteur d''Aubenas (SIDOMSA)', '250701851', 'SMF'),
+       ('Ardenne Métropole', '200041630', 'CA'),
+       ('CC Ardennes Thiérache', '200041622', 'CC'),
+       ('CC du Pays Réthelois', '200043156', 'CC'),
+       ('CC Vallées et Plateau d''Ardenne', '200067759', 'CC'),
+       ('CC Ardenne, Rives de Meuse', '240800821', 'CC'),
+       ('CC des Portes du Luxembourg', '240800847', 'CC'),
+       ('CC des Crêtes Préardennaises', '240800862', 'CC'),
+       ('CC de l''Argonne Ardennaise', '240800920', 'CC'),
+       ('SM du SCOT "Nord Ardennes"', '200088730', 'SMF'),
+       ('SICOMAR de l''arrondissement de Réthel', '250800646', 'SMF'),
+       ('SM de traitement des déchets Ardennais (VALODEA)', '250800489', 'SMO'),
+       ('CA Pays Foix-Varilhes', '200067791', 'CA'),
+       ('CC du Pays de Mirepoix', '200044469', 'CC'),
+       ('CC Arize Lèze', '200066223', 'CC'),
+       ('CC des Portes d''Ariège Pyrénées', '200066231', 'CC'),
+       ('CC de la Haute Ariège', '200066363', 'CC'),
+       ('CC Couserans-Pyrénées', '200067940', 'CC'),
+       ('CC du Pays de Tarascon', '240900431', 'CC'),
+       ('CC du Pays d''Olmes', '240900464', 'CC'),
+       ('SM d''étude, de collecte et de traitement des déchets ménagers et assimilés du Plantaurel (SMECTOM du Plantaurel)',
+        '240900399', 'SMF'),
+       ('CA Troyes Champagne Métropole', '200069250', 'CA'),
+       ('CC des Portes de Romilly sur Seine', '200000545', 'CC'),
+       ('CC du Nogentais', '200006716', 'CC'),
+       ('CC des Lacs de Champagne', '200040137', 'CC'),
+       ('CC de Vendeuvre-Soulaines', '200066892', 'CC'),
+       ('CC du Barséquanais en Champagne', '200069003', 'CC'),
+       ('CC Seine et Aube', '200070126', 'CC'),
+       ('CC du Chaourçois et du Val d''Armance', '200071041', 'CC'),
+       ('CC d''Arcis, Mailly, Ramerupt', '200071777', 'CC'),
+       ('CC Forêts, Lacs, Terres en Champagne', '241000223', 'CC'),
+       ('CC de la Région de Bar sur Aube', '241000405', 'CC'),
+       ('CC du Pays d''Othe', '241000447', 'CC'),
+       ('CC de l''Orvin et de l''Ardusson', '241000488', 'CC'),
+       ('SM d''élimination des déchets ménagers du territoire d''Orient', '251002515', 'SMF'),
+       ('Syndicat départemental d''élimination des déchets de l''Aube (SDEDA)', '251002531', 'SMO'),
+       ('CA Carcassonne Agglo', '200035715', 'CA'),
+       ('CA Le Grand Narbonne', '241100593', 'CA'),
+       ('CC Piège Lauragais Malepère', '200035707', 'CC'),
+       ('CC Castelnaudary Lauragais Audois', '200035855', 'CC'),
+       ('CC Région Lézignanaise, Corbières et Minervois', '200035863', 'CC'),
+       ('CC de la Montagne Noire', '200042463', 'CC'),
+       ('CC Pyrénées audoises', '200043776', 'CC'),
+       ('CC du Limouxin', '200071926', 'CC'),
+       ('COVALDEM 11 ', '200036101', 'SMF'),
+       ('SMICTOM de l''Ouest Audois', '251100236', 'SMF'),
+       ('CA Rodez Agglomération', '241200187', 'CA'),
+       ('CC Decazeville Communauté', '200067064', 'CC'),
+       ('CC Saint Affricain, Roquefort, Sept Vallons', '200067155', 'CC'),
+       ('CC Monts, Rance et Rougier', '200067163', 'CC'),
+       ('CC Aubrac, Carladez et Viadène', '200067171', 'CC'),
+       ('CC Comtal Lot et Truyère', '200067478', 'CC'),
+       ('CC des Causses à l''Aubrac', '200068484', 'CC'),
+       ('Pays Ségali Communauté', '200068831', 'CC'),
+       ('Ouest Aveyron Communauté', '200069383', 'CC'),
+       ('CC du Réquistanais', '241200542', 'CC'),
+       ('CC de Millau Grands Causses', '241200567', 'CC'),
+       ('CC du Pays Rignacois', '241200625', 'CC'),
+       ('CC Conques-Marcillac', '241200641', 'CC'),
+       ('CC du Pays de Salars', '241200658', 'CC'),
+       ('CC du Plateau de Montbazens', '241200674', 'CC'),
+       ('CC de Lévézou Pareloup', '241200765', 'CC'),
+       ('CC Aveyron Bas Ségala Viaur', '241200807', 'CC'),
+       ('CC Larzac et Vallées', '241200906', 'CC'),
+       ('CC de la Muse et des Raspes du Tarn', '241200914', 'CC'),
+       ('SMICTOM Nord Aveyron', '251200978', 'SMF'),
+       ('SM départemental pour le traitement et la valorisation des déchets ménagers et assimilés (SYDOM Aveyron)',
+        '251201588', 'SMO'),
+       ('Métropole d''Aix-Marseille-Provence', '200054807', 'METRO'),
+       ('CA Terre de Provence', '200035087', 'CA'),
+       ('CA d''Arles-Crau-Camargue-Montagnette', '241300417', 'CA'),
+       ('CC  Vallée des Baux-Alpilles (CC VBA)', '241300375', 'CC'),
+       ('CU Caen la Mer', '200065597', 'CU'),
+       ('CA Lisieux Normandie', '200069532', 'CA'),
+       ('CC Normandie-Cabourg-Pays d''Auge', '200065563', 'CC'),
+       ('CC Val ès Dunes', '200065589', 'CC'),
+       ('CC Cingal-Suisse Normande', '200066710', 'CC'),
+       ('CC Vallées de l''Orne et de l''Odon', '200066728', 'CC'),
+       ('CC Isigny-Omaha Intercom', '200066801', 'CC'),
+       ('CC du Pays de Honfleur-Beuzeville', '200066827', 'CC'),
+       ('CC Intercom de la Vire au Noireau', '200068799', 'CC'),
+       ('CC Seulles Terre et Mer', '200069516', 'CC'),
+       ('CC Pré-Bocage Intercom', '200069524', 'CC'),
+       ('CC Coeur Côte Fleurie', '241400415', 'CC'),
+       ('CC du Pays de Falaise', '241400514', 'CC'),
+       ('CC de Bayeux Intercom', '241400555', 'CC'),
+       ('CC Coeur de Nacre', '241400860', 'CC'),
+       ('CC Terre d''Auge', '241400878', 'CC'),
+       ('SM intercommunal des surplus ménagers du Bessin (COLLECTEA)', '251402723', 'SMF'),
+       ('SM SICTOM de la Bruyère', '251402756', 'SMF'),
+       ('SM traitement valorisation des déchets ménagers région Ouest Calvados (SEROC)', '251405031', 'SMF'),
+       ('CA du Bassin d''Aurillac', '241500230', 'CA'),
+       ('CC Hautes Terres', '200066637', 'CC'),
+       ('CC de Saint-Flour', '200066660', 'CC'),
+       ('CC de la Châtaigneraie Cantalienne', '200066678', 'CC'),
+       ('CC du Pays Gentiane', '241500255', 'CC'),
+       ('CC du Pays de Mauriac', '241500271', 'CC'),
+       ('CC Sumène - Artense', '241501055', 'CC'),
+       ('CC Cère et Goul en Carladès', '241501089', 'CC'),
+       ('CC du Pays de Salers', '241501139', 'CC'),
+       ('SM du SCOT du bassin d''Aurillac, du Carladès et de la Châtaigneraie', '200038149', 'SMF'),
+       ('SM d''élimination des ordures ménagères de la région de Mauriac, Pléaux, Salers, Saint-Cernin (SIETOM de Drugeac)',
+        '251500963', 'SMF'),
+       ('SM de la station du Lioran', '251500948', 'SMO'),
+       ('SM du lac de Garabit-Grandval', '251502944', 'SMO'),
+       ('CA du Grand Cognac', '200070514', 'CA'),
+       ('CA du Grand Angoulême', '200071827', 'CA'),
+       ('CC des 4B Sud Charente', '200029734', 'CC'),
+       ('CC Val de Charente', '200043016', 'CC'),
+       ('CC La Rochefoucauld - Porte du Périgord', '200068914', 'CC'),
+       ('CC Lavalette Tude Dronne', '200070282', 'CC'),
+       ('CC Coeur de Charente', '200072023', 'CC'),
+       ('CC de Charente Limousine', '200072049', 'CC'),
+       ('CC du Rouillacais', '241600303', 'CC'),
+       ('Syndicat de valorisation des déchets ménagers de la Charente (CALITOM)', '251602660', 'SMF'),
+       ('CA de Saintes', '200036473', 'CA'),
+       ('CA Rochefort Océan', '200041762', 'CA'),
+       ('CA de La Rochelle', '241700434', 'CA'),
+       ('CA Royan Atlantique', '241700640', 'CA'),
+       ('CC Aunis Atlantique', '200041499', 'CC'),
+       ('CC de la Haute Saintonge', '200041523', 'CC'),
+       ('CC Aunis Sud', '200041614', 'CC'),
+       ('Vals de Saintonge Communauté', '200041689', 'CC'),
+       ('CC de l''Ile de Ré', '241700459', 'CC'),
+       ('CC Coeur de Saintonge', '241700517', 'CC'),
+       ('CC de l''Ile d''Oléron', '241700624', 'CC'),
+       ('CC de Gémozac et de la Saintonge Viticole', '241700632', 'CC'),
+       ('CC du Bassin de Marennes', '241700699', 'CC'),
+       ('SM CYCLAD', '251701900', 'SMF'),
+       ('Syndicat intercommunautaire du littoral', '251710687', 'SMF'),
+       ('CA Bourges Plus', '241800507', 'CA'),
+       ('CC Sauldre et Sologne', '200000933', 'CC'),
+       ('CC Pays de Nérondes', '200007177', 'CC'),
+       ('CC Portes du Berry entre Loire et Val d''Aubois', '200011781', 'CC'),
+       ('CC Arnon Boischaut Cher', '200027076', 'CC'),
+       ('CC Berry-Loire-Vauvise', '200032514', 'CC'),
+       ('CC Coeur de France', '200036135', 'CC'),
+       ('CC Berry Grand Sud', '200049484', 'CC'),
+       ('CC Terres du Haut Berry', '200066330', 'CC'),
+       ('CC Pays Fort Sancerrois Val de Loire', '200069227', 'CC'),
+       ('CC Coeur de Berry', '200070571', 'CC'),
+       ('CC Vierzon-Sologne-Berry', '200090561', 'CC'),
+       ('CC la Septaine', '241800374', 'CC'),
+       ('CC le Dunois', '241800424', 'CC'),
+       ('CC les Trois Provinces', '241800432', 'CC'),
+       ('CC Fercher Pays Florentais', '241800457', 'CC'),
+       ('SM de collecte et de traitement des résidus ménagers des régions de Léré, Sancerre et Vailly-sur-Sauldre',
+        '200033140', 'SMF'),
+       ('SMIRTOM du Saint Amandois', '251801817', 'SMF'),
+       ('SICTREM de Baugy', '251887873', 'SMF'),
+       ('CA du Bassin de Brive', '200043172', 'CA'),
+       ('CA Tulle Agglo', '241927201', 'CA'),
+       ('CC du Pays de Lubersac-Pompadour', '200066603', 'CC'),
+       ('CC Vézère-Monédières-Millesources', '200066645', 'CC'),
+       ('CC Haute-Corrèze Communauté', '200066744', 'CC'),
+       ('CC Xaintrie Val''Dordogne', '200066751', 'CC'),
+       ('CC Midi Corrézien', '200066769', 'CC'),
+       ('CC de Ventadour - Egletons - Monédières', '241900133', 'CC'),
+       ('CC du Pays d''Uzerche', '241927243', 'CC'),
+       ('SIVU d''Ambrugeat-Davignac', '251907101', 'SIVU'),
+       ('SM pour le ramassage et le traitement des ordures ménagères de la région de Brive', '251903100', 'SMF'),
+       ('SM départemental pour le transport et le traitement des ordures ménagères (SYTTOM 19)', '200044980', 'SMO'),
+       ('Dijon Métropole', '242100410', 'METRO'),
+       ('CA Beaune, Côte et Sud - Communauté Beaune-Chagny-Nolay', '200006682', 'CA'),
+       ('CC de la Plaine Dijonnaise', '200000925', 'CC'),
+       ('CC Ouche et Montagne', '200039055', 'CC'),
+       ('CC Forêts, Seine et Suzon', '200039063', 'CC'),
+       ('CC Norge et Tille', '200069540', 'CC'),
+       ('CC de Gevrey-Chambertin et de Nuits-Saint-Georges', '200070894', 'CC'),
+       ('CC Auxonne Pontailler Val de Saône', '200070902', 'CC'),
+       ('CC Tille et Venelle', '200070910', 'CC'),
+       ('CC des Terres d''Auxois', '200071017', 'CC'),
+       ('CC du Pays Arnay Liernais', '200071173', 'CC'),
+       ('CC de Pouilly en Auxois/Bligny sur Ouche', '200071207', 'CC'),
+       ('CC Mirebellois et Fontenois', '200072825', 'CC'),
+       ('CC des Vallées de la Tille et de l''Ignon', '242100154', 'CC'),
+       ('CC du Pays Châtillonnais', '242101434', 'CC'),
+       ('CC de Saulieu', '242101442', 'CC'),
+       ('CC du Pays d''Alésia et de la Seine', '242101459', 'CC'),
+       ('CC du Montbardois', '242101491', 'CC'),
+       ('CC Rives de Saône', '242101509', 'CC'),
+       ('SIVOM de Aignay-le-Duc', '242100014', 'SIVOM'),
+       ('SIVOM de Baigneux-les-Juifs', '242100055', 'SIVOM'),
+       ('SIVOM de Montigny-sur-Aube', '242100212', 'SIVOM'),
+       ('SM des ordures ménagères', '252108667', 'SMF'),
+       ('SM de Haute Côte-d''Or pour le traitement des déchets ménagers et assimilés', '252108972', 'SMF'),
+       ('SM de collecte et de traitement des déchets ménagers et assimilés de la Plaine Dijonnaise', '252109434',
+        'SMF'),
+       ('CA Lannion-Trégor Communauté', '200065928', 'CA'),
+       ('CA Guingamp-Paimpol Agglomération de l''Armor à l''Argoat', '200067981', 'CA'),
+       ('CA Dinan Agglomération', '200068989', 'CA'),
+       ('CA Lamballe Terre et Mer', '200069391', 'CA'),
+       ('CA Saint-Brieuc Armor Agglomération', '200069409', 'CA'),
+       ('CC Loudéac Communauté - Bretagne Centre', '200067460', 'CC'),
+       ('CC Leff Armor Communauté', '200069086', 'CC'),
+       ('CC du Kreiz-Breizh (CCKB)', '242200715', 'CC'),
+       ('SM Kerval Centre Armor', '200043677', 'SMF'),
+       ('SMICTOM du Ménez Bré', '252202106', 'SMF'),
+       ('SMITRED Ouest-Armor', '252203161', 'SMF'),
+       ('SM des déchets des Pays de la Rance et de la Baie', '252203195', 'SMF'),
+       ('CA du Grand Guéret', '200034825', 'CA'),
+       ('CC Portes de la Creuse en Marche', '200041556', 'CC'),
+       ('CC Creuse Grand Sud', '200044014', 'CC'),
+       ('CC Creuse Sud Ouest', '200067189', 'CC'),
+       ('Creuse Confluence', '200067544', 'CC'),
+       ('CC Marche et Combraille en Aquitaine', '200067593', 'CC'),
+       ('CC du Pays Sostranien', '242300135', 'CC'),
+       ('CC de Bénévent Grand Bourg', '242320000', 'CC'),
+       ('CC du Pays Dunois', '242320109', 'CC'),
+       ('SIVOM Auzances Bellegarde', '242301307', 'SMF'),
+       ('SMICTOM de la région de Chénérailles', '252306147', 'SMF'),
+       ('EVOLIS 23', '252326079', 'SMF'),
+       ('SIVOM de la Courtine', '252326103', 'SMF'),
+       ('CA Le Grand Périgueux', '200040392', 'CA'),
+       ('CA Bergeracoise', '200070647', 'CA'),
+       ('CC Sarlat-Périgord Noir', '200027217', 'CC'),
+       ('CC de Montaigne Montravel et Gurson', '200034197', 'CC'),
+       ('CC des Bastides Dordogne-Périgord', '200034833', 'CC'),
+       ('CC Isle Vern Salembre en Périgord', '200040095', 'CC'),
+       ('CC Isle Double Landais', '200040384', 'CC'),
+       ('CC du Périgord Ribéracois', '200040400', 'CC'),
+       ('CC du Pays de Fénelon', '200040830', 'CC'),
+       ('CC de Portes Sud Périgord', '200040889', 'CC'),
+       ('CC Vallée de la Dordogne et Forêt Bessède', '200041051', 'CC'),
+       ('CC du Terrassonnais en Périgord Noir Thenon Hautefort', '200041150', 'CC'),
+       ('CC de la Vallée de l''Homme', '200041168', 'CC'),
+       ('CC de Domme- Villefranche du Périgord', '200041440', 'CC'),
+       ('CC Dronne et Belle', '200041572', 'CC'),
+       ('CC Isle et Crempse en Périgord', '200069094', 'CC'),
+       ('CC du Périgord Nontronnais', '200071819', 'CC'),
+       ('CC Périgord-Limousin', '242400752', 'CC'),
+       ('CC du Pays de Saint Aulaye', '242400935', 'CC'),
+       ('CC Isle-Loue-Auvézère en Périgord', '242401024', 'CC'),
+       ('SMICTOM du Périgord Noir', '252402284', 'SMF'),
+       ('SMCTOM de Nontron', '252402466', 'SMF'),
+       ('SMCTOM secteur de Thiviers', '252402474', 'SMF'),
+       ('SM départemental pour la gestion et le traitement des déchets ménagers et assimilés', '252405329', 'SMF'),
+       ('CU Grand Besançon Métropole', '242500361', 'CU'),
+       ('CA Pays de Montbéliard Agglomération', '200065647', 'CA'),
+       ('CC du Pays de Maîche', '200023075', 'CC'),
+       ('CC Loue-Lison', '200068070', 'CC'),
+       ('CC des Deux Vallées Vertes', '200068294', 'CC'),
+       ('CC des Lacs et Montagnes du Haut-Doubs', '200069565', 'CC'),
+       ('CC de Montbenoit', '242500320', 'CC'),
+       ('CC du Grand Pontarlier', '242500338', 'CC'),
+       ('CC du Val de Morteau', '242504116', 'CC'),
+       ('CC des Portes du Haut-Doubs', '242504181', 'CC'),
+       ('CC du Plateau de Russey', '242504355', 'CC'),
+       ('CC du Pays de Sancey-Belleherbe', '242504371', 'CC'),
+       ('CC du Doubs Baumois', '242504447', 'CC'),
+       ('CC Altitude 800', '242504488', 'CC'),
+       ('CC du Plateau de Frasne et du Val de Drugeon (CFD)', '242504496', 'CC'),
+       ('SI des Combes Derniers', '242500312', 'SIVOM'),
+       ('SM du Pays du Haut-Doubs', '200061836', 'SMF'),
+       ('SM pour la prévention et la valorisation des déchets du Haut-Doubs', '252500533', 'SMF'),
+       ('SM de collecte des ordures ménagères du Haut-Doubs', '252507124', 'SMF'),
+       ('SYBERT', '252508247', 'SMF'),
+       ('CA Montélimar Agglomération', '200040459', 'CA'),
+       ('CA Valence Romans Agglo', '200068781', 'CA'),
+       ('CC Porte de Dromardèche', '200040491', 'CC'),
+       ('CC du Crestois et de Pays de Saillans Coeur de Drôme', '200040509', 'CC'),
+       ('CC Drôme Sud Provence', '200042901', 'CC'),
+       ('CC du Royans-Vercors', '200067767', 'CC'),
+       ('CC des Baronnies en Drôme Provençale', '200068229', 'CC'),
+       ('CC du Val de Drôme en Biovallée', '242600252', 'CC'),
+       ('CC Dieulefit-Bourdeaux', '242600492', 'CC'),
+       ('CC du Diois', '242600534', 'CC'),
+       ('SI rhôdanien collecte et traitement ordures ménagères (SIRCTOM)', '252600903', 'SMF'),
+       ('Syndicat traitement déchets ménagers (SYTRAD)', '252601828', 'SMF'),
+       ('Syndicat des Portes de Provence (SYPP)', '252602552', 'SMF'),
+       ('CA Evreux Portes de Normandie', '200071454', 'CA'),
+       ('CA Seine Normandie Agglomération', '200072312', 'CA'),
+       ('CA Seine-Eure', '200089456', 'CA'),
+       ('CC de Pont-Audemer / Val de Risle', '200065787', 'CC'),
+       ('CC Lieuvin Pays d''Auge', '200066017', 'CC'),
+       ('CC Roumois Seine', '200066405', 'CC'),
+       ('CC Intercom Bernay Terres de Normandie', '200066413', 'CC'),
+       ('CC Interco Normandie Sud Eure', '200066462', 'CC'),
+       ('CC Lyons Andelle', '200070142', 'CC'),
+       ('CC du Vexin Normand', '200071843', 'CC'),
+       ('CC du Pays de Conches', '242700276', 'CC'),
+       ('CC du Pays du Neubourg', '242700607', 'CC'),
+       ('Syndicat de gestion des ordures ménagères de l''Est et du Nord de l''Eure (SYGOM)', '252701990', 'SMF'),
+       ('SM pour l''étude et le traitement des ordures ménagères de l''Eure (SETOM de l''Eure)', '252703111', 'SMF'),
+       ('Syndicat de destruction des ordures ménagères de l''Ouest de l''Eure (SDOMODE)', '252703863', 'SMF'),
+       ('CA Chartres Métropole', '200033181', 'CA'),
+       ('CA Agglo du Pays de Dreux', '200040277', 'CA'),
+       ('CC du Perche', '200006971', 'CC'),
+       ('CC entre Beauce et Perche', '200058360', 'CC'),
+       ('CC des Forêts du Perche', '200069912', 'CC'),
+       ('CC des Portes Euréliennes d''Ile de France', '200069953', 'CC'),
+       ('CC du Grand Châteaudun', '200069961', 'CC'),
+       ('CC Coeur de Beauce', '200070159', 'CC'),
+       ('CC Terres de Perche', '200070167', 'CC'),
+       ('CC du Bonnevalais', '242852465', 'CC'),
+       ('SICTOM de la région d''Auneau', '252800065', 'SMF'),
+       ('SM intercommunal pour le ramassage et le traitement des ordures ménagères de Courville-sur-Eure, La Loupe et Senonches',
+        '252801196', 'SMF'),
+       ('SICTOM de la région de Nogent-le-Rotrou', '252801329', 'SMF'),
+       ('SICTOM de la région de Châteaudun', '252802129', 'SMF'),
+       ('SICTOM de la région de Bonneval, Brou, Illiers-Combray (SICTOM BBI)', '252802152', 'SMF'),
+       ('SI pour le traitement et la valorisation des déchets (SITREVA)', '252803341', 'SMF'),
+       ('Brest Métropole', '242900314', 'METRO'),
+       ('CA Quimper Bretagne Occidentale', '200068120', 'CA'),
+       ('CA Quimperlé Communauté', '242900694', 'CA'),
+       ('CA Concarneau Cornouaille Agglomération', '242900769', 'CA'),
+       ('CA Morlaix Communauté', '242900835', 'CA'),
+       ('CC Presqu''île de Crozon-Aulne maritime', '200066868', 'CC'),
+       ('CC Haut-Léon Communauté', '200067072', 'CC'),
+       ('CC Monts d''Arrée Communauté', '200067197', 'CC'),
+       ('CC Pleyben-Châteaulin-Porzay', '200067247', 'CC'),
+       ('CC du Pays d''Iroise', '242900074', 'CC'),
+       ('CC du Pays des Abers', '242900553', 'CC'),
+       ('CC de Haute Cornouaille', '242900561', 'CC'),
+       ('CC Cap Sizun - Pointe du Raz', '242900629', 'CC'),
+       ('CC Douarnenez Communauté', '242900645', 'CC'),
+       ('CC du Pays Fouesnantais', '242900660', 'CC'),
+       ('CC du Pays Bigouden Sud', '242900702', 'CC'),
+       ('CC du Haut Pays Bigouden', '242900710', 'CC'),
+       ('CC Poher Communauté', '242900744', 'CC'),
+       ('CC du Pays de Landivisiau', '242900751', 'CC'),
+       ('CC Communauté Lesneven Côte des Légendes', '242900793', 'CC'),
+       ('CC du Pays de Landerneau-Daoulas', '242900801', 'CC'),
+       ('VALCOR', '252901871', 'SMF'),
+       ('SI incinération des déchets du Pays de Quimper (SIDEPAQ)', '252901996', 'SMF'),
+       ('CA du Pays Ajaccien', '242010056', 'CA'),
+       ('CC de la Pieve de l''Ornano et du Taravo', '200038958', 'CC'),
+       ('CC du Sud Corse', '200040764', 'CC'),
+       ('CC Spelunca-Liamone', '200067049', 'CC'),
+       ('CC de l''Alta Rocca', '242000495', 'CC'),
+       ('CC Celavu-Prunelli', '242000503', 'CC'),
+       ('CC du Sartenais Valinco Taravo', '242010130', 'CC'),
+       ('SIVOM du Haut Taravo', '242000156', 'SIVOM'),
+       ('SIVOM de la vallée de la Cinarca et du Liamone', '242000172', 'SIVOM'),
+       ('SIVOM pour l''équipement et la gestion du hameau de Bavella', '242010031', 'SIVOM'),
+       ('CA de Bastia', '242000354', 'CA'),
+       ('CC de l''Oriente', '200015162', 'CC'),
+       ('CC de Fium''Orbu Castellu', '200033827', 'CC'),
+       ('CC de la Costa Verde', '200034205', 'CC'),
+       ('CC de Marana-Golo', '200036499', 'CC'),
+       ('CC du Cap Corse', '200042943', 'CC'),
+       ('CC de l''Ile-Rousse - Balagne', '200073104', 'CC'),
+       ('CC Nebbiu - Conca d''Oro', '200073120', 'CC'),
+       ('CC Pasquale Paoli', '200073138', 'CC'),
+       ('CC de la Castagniccia-Casinca', '200073252', 'CC'),
+       ('CC du Centre Corse', '242020071', 'CC'),
+       ('CC de Calvi Balagne', '242020105', 'CC'),
+       ('SIVOM de la vallée d''Orezza', '242000271', 'SIVOM'),
+       ('SIVOM de Rogna', '242000438', 'SMF'),
+       ('CA du Gard Rhodanien', '200034692', 'CA'),
+       ('CA Alès Agglomération', '200066918', 'CA'),
+       ('CA de Nîmes Métropole', '243000643', 'CA'),
+       ('CC Pays d''Uzès', '200034379', 'CC'),
+       ('CC du Piémont Cévenol', '200034411', 'CC'),
+       ('CC Causses Aigoual Cévennes', '200034601', 'CC'),
+       ('CC de Cèze Cévennes', '200035129', 'CC'),
+       ('CC du Pays Viganais', '243000270', 'CC'),
+       ('CC du Pays de Sommières', '243000296', 'CC'),
+       ('CC Rhony, Vistre, Vidourle', '243000569', 'CC'),
+       ('CC Beaucaire Terre d''Argence', '243000585', 'CC'),
+       ('CC de Petite Camargue', '243000593', 'CC'),
+       ('CC Terre de Camargue', '243000650', 'CC'),
+       ('CC du Pont du Gard', '243000684', 'CC'),
+       ('SMICTOM de la région d''Uzès', '253001135', 'SMF'),
+       ('SMICTOM Rhône Garrigues', '253001325', 'SMF'),
+       ('SM de traitement des ordures ménagères et assimilés Aigoual Cévennes Vidourle (SYMTOMA)', '253002869', 'SMF'),
+       ('SM Sud Rhône Environnement', '253002919', 'SMF'),
+       ('SITOM de la région Sud Gard', '253002950', 'SMF'),
+       ('SMIRITOM de la Zone Nord du Plan départemental des déchets', '253003115', 'SMF'),
+       ('Toulouse Métropole', '243100518', 'METRO'),
+       ('CA Le Muretain Agglo', '200068641', 'CA'),
+       ('CA du Sicoval', '243100633', 'CA'),
+       ('CC du Frontonnais', '200034957', 'CC'),
+       ('CC du Volvestre', '200066819', 'CC'),
+       ('CC du Bassin Auterivain Haut-Garonnais', '200068807', 'CC'),
+       ('CC Coeur de Garonne', '200068815', 'CC'),
+       ('CC des Terres du Lauragais', '200071298', 'CC'),
+       ('CC des Hauts-Tolosans', '200071314', 'CC'),
+       ('CC Pyrénées Haut Garonnaises', '200072635', 'CC'),
+       ('CC Coeur et Coteaux du Comminges', '200072643', 'CC'),
+       ('CC Cagire Garonne Salat', '200073146', 'CC'),
+       ('CC Lauragais Revel Sorezois', '243100567', 'CC'),
+       ('CC des Coteaux du Girou', '243100732', 'CC'),
+       ('CC Val''Aïgo', '243100773', 'CC'),
+       ('CC de la Save au Touch', '243100781', 'CC'),
+       ('CC des Coteaux Bellevue', '243100815', 'CC'),
+       ('SIVOM du Haut Comminges', '243100328', 'SMF'),
+       ('SIVOM des cantons de Saint-Gaudens - Montréjeau - Aspet - Magnoac', '243100344', 'SMF'),
+       ('SIPOM', '253100572', 'SMF'),
+       ('Syndicat de syndicats de traitement des ordures ménagères des Pyrénées (SYSTOM des Pyrénées)', '253102172',
+        'SMF'),
+       ('SM DECOSET (déchetteries, collecte sélective, traitement)', '253102636', 'SMF'),
+       ('PETR du Pays Lauragais', '200050938', 'PETR'),
+       ('CA Grand Auch Coeur de Gascogne', '200066926', 'CA'),
+       ('CC de la Gascogne Toulousaine', '200023620', 'CC'),
+       ('CC Bastides de Lomagne', '200034726', 'CC'),
+       ('CC Armagnac Adour', '200035632', 'CC'),
+       ('CC Astarac Arros en Gascogne', '200035756', 'CC'),
+       ('CC des Coteaux Arrats Gimone', '200042372', 'CC'),
+       ('CC Val de Gers', '200072320', 'CC'),
+       ('CC de la Lomagne Gersoise', '243200391', 'CC'),
+       ('CC du Bas Armagnac', '243200409', 'CC'),
+       ('CC de la Tenarèze', '243200417', 'CC'),
+       ('CC Coeur d''Astarac en Gascogne', '243200425', 'CC'),
+       ('CC du Grand Armagnac', '243200458', 'CC'),
+       ('CC Bastides et Vallons du Gers', '243200508', 'CC'),
+       ('CC du Saves', '243200599', 'CC'),
+       ('CC Artagnan de Fezensac', '243200607', 'CC'),
+       ('SICTOM du secteur Centre', '200043180', 'SMF'),
+       ('SI de la Lomagne', '243200318', 'SMF'),
+       ('SICTOM du secteur de Condom', '253200174', 'SMF'),
+       ('SM de collecte des déchets du secteur Sud', '253200984', 'SMF'),
+       ('SICTOM du secteur Ouest', '253200992', 'SMF'),
+       ('SICTOM du secteur Sud-Est', '253201024', 'SMF'),
+       ('SICTOM du secteur Est', '253201065', 'SMF'),
+       ('SM de production d''eau potable et de traitement des déchets du Gers (TRIGONE)', '253201842', 'SMO'),
+       ('Bordeaux Métropole', '243300316', 'METRO'),
+       ('CA du Libournais', '200070092', 'CA'),
+       ('CA Bassin d''Arcachon Sud (COBAS)', '243300563', 'CA'),
+       ('CA du Bassin d''Arcachon Nord', '243301504', 'CA'),
+       ('CC de Blaye', '200023794', 'CC'),
+       ('CC du Grand Saint Emilionnais', '200035533', 'CC'),
+       ('CC du Sud Gironde', '200043974', 'CC'),
+       ('CC du Bazadais', '200043982', 'CC'),
+       ('CC du Réolais en Sud Gironde', '200044394', 'CC'),
+       ('CC Convergence Garonne', '200069581', 'CC'),
+       ('CC rurales de l''Entre-Deux-Mers', '200069599', 'CC'),
+       ('CC Médoc Coeur de Presqu''île', '200069995', 'CC'),
+       ('CC Médoc Atlantique', '200070720', 'CC'),
+       ('CC de l''Estuaire', '243300811', 'CC'),
+       ('CC Jalle-Eau-Bourde', '243301165', 'CC'),
+       ('CC Latitude Nord Gironde', '243301181', 'CC'),
+       ('CC du Créonnais', '243301215', 'CC'),
+       ('CC du Grand Cubzaguais', '243301223', 'CC'),
+       ('CC du Secteur de Saint-Loubès', '243301249', 'CC'),
+       ('CC de Montesquieu', '243301264', 'CC'),
+       ('CC les Coteaux Bordelais', '243301355', 'CC'),
+       ('CC du Pays Foyen', '243301371', 'CC'),
+       ('CC Médullienne', '243301389', 'CC'),
+       ('CC du Fronsadais', '243301397', 'CC'),
+       ('CC du Val de l''Eyre', '243301405', 'CC'),
+       ('CC des Portes de l''Entre-Deux-Mers', '243301439', 'CC'),
+       ('CC Médoc Estuaire', '243301447', 'CC'),
+       ('CC Castillon/Pujols', '243301454', 'CC'),
+       ('SM pour la révision et le suivi du SCOT du bassin d''Arcachon - Val de l''Eyre (SYBARVAL)', '200001634',
+        'SMF'),
+       ('SM du Sud Gironde', '200078335', 'SMF'),
+       ('SI de l''Entre-deux-Mers Ouest pour la collecte et le traitement des ordures ménagères (SEMOCTOM)',
+        '253300545', 'SMF'),
+       ('SM pour la collecte et le traitement des ordures ménagères (SICTOM) du Sud Gironde', '253300578', 'SMF'),
+       ('Syndicat médocain intercommunal pour la collecte et le traitement des ordures ménagères (SMICOTOM)',
+        '253300701', 'SMF'),
+       ('Union des syndicats pour la collecte et le traitement des ordures ménagères (USTOM) du Castillonais et du Réolais',
+        '253303499', 'SMF'),
+       ('Union communautaire pour le traitement des ordures ménagères de La Brède - Podensac', '253303911', 'SMF'),
+       ('SIVOM de la rive droite', '253306302', 'SMF'),
+       ('SM intercommunal de collecte et de valorisation des déchets ménagers du Libournais-Haute Gironde (SMICVAL)',
+        '253306617', 'SMF'),
+       ('Montpellier Méditerranée Métropole', '243400017', 'METRO'),
+       ('CA Sète Agglopôle Méditerranée', '200066355', 'CA'),
+       ('CA du Pays de l''Or', '243400470', 'CA'),
+       ('CA de Béziers-Méditerranée', '243400769', 'CA'),
+       ('CA Hérault-Méditerranée', '243400819', 'CA'),
+       ('CC Lodévois et Larzac', '200017341', 'CC'),
+       ('CC du Grand Pic Saint-Loup', '200022986', 'CC'),
+       ('CC Grand Orb communauté de communes en Languedoc', '200042646', 'CC'),
+       ('CC Sud-Hérault', '200042653', 'CC'),
+       ('CC du Minervois au Caroux', '200066348', 'CC'),
+       ('CC Les Avant-Monts', '200071058', 'CC'),
+       ('CC du Clermontais', '243400355', 'CC'),
+       ('CC la Domitienne', '243400488', 'CC'),
+       ('CC du Pays de Lunel', '243400520', 'CC'),
+       ('CC Vallée de l''Hérault', '243400694', 'CC'),
+       ('CC des Cévennes Gangeoises et Suménoises', '243400736', 'CC'),
+       ('SMICTOM Pézenas-Agde', '253400485', 'SMF'),
+       ('Syndicat Centre Hérault', '253403232', 'SMF'),
+       ('Syndicat de développement local du Pays Coeur d''Hérault ou ''''SYDEL du Pays Coeur d''Hérault''''',
+        '200017127', 'SMO'),
+       ('Rennes Métropole', '243500139', 'METRO'),
+       ('CA Vitré Communauté', '200039022', 'CA'),
+       ('CA Fougères Agglomération', '200072452', 'CA'),
+       ('CA Redon Agglomération', '243500741', 'CA'),
+       ('CA du Pays de Saint Malo Agglomération', '243500782', 'CA'),
+       ('CC de Saint-Méen Montauban', '200038990', 'CC'),
+       ('CC Vallons de Haute-Bretagne Communauté', '200043990', 'CC'),
+       ('CC Bretagne Porte de Loire Communauté', '200070662', 'CC'),
+       ('CC du Pays de Dol et de la Baie du Mont Saint-Michel', '200070670', 'CC'),
+       ('CC Couesnon Marches de Bretagne', '200070688', 'CC'),
+       ('CC Montfort Communauté', '243500550', 'CC'),
+       ('CC Brocéliande Communauté', '243500618', 'CC'),
+       ('Roche aux Fées Communauté', '243500634', 'CC'),
+       ('CC Pays de Châteaugiron Communauté', '243500659', 'CC'),
+       ('CC Val d''Ille-Aubigné', '243500667', 'CC'),
+       ('CC Côte d''Emeraude', '243500725', 'CC'),
+       ('CC Bretagne Romantique', '243500733', 'CC'),
+       ('CC Liffré-Cormier Communauté', '243500774', 'CC'),
+       ('SMICTOM du Pays de Fougères', '200073500', 'SMF'),
+       ('SMICTOM Valcobreizh', '200090884', 'SMF'),
+       ('SMICTOM des Pays de Vilaine', '253500862', 'SMF'),
+       ('syndicat mixte pour la collecte et le tri des ordures ménagères du secteur Sud-Est d''ille et vilaine',
+        '253500953', 'SMF'),
+       ('SMICTOM du Centre Ouest de l''Ille-et-Vilaine', '253500995', 'SMF'),
+       ('SMO de traitement des déchets ménagers et assimilés', '200084945', 'SMO'),
+       ('CA Châteauroux Métropole', '243600327', 'CA'),
+       ('CC de la Marche Berrichonne', '200007052', 'CC'),
+       ('CC du Val de Bouzanne', '200018521', 'CC'),
+       ('CC Marche Occitane - Val d''Anglin', '200035137', 'CC'),
+       ('CC du Châtillonnais en Berry', '200035848', 'CC'),
+       ('CC Ecueillé-Valençay', '200040558', 'CC'),
+       ('CC Eguzon - Argenton - Vallée de la Creuse', '200068872', 'CC'),
+       ('CC Champagne Boischauts', '200068880', 'CC'),
+       ('CC Chabris - Pays de Bazelle', '243600202', 'CC'),
+       ('CC du Pays d''Issoudun', '243600236', 'CC'),
+       ('CC de la Région de Levroux', '243600293', 'CC'),
+       ('CC Val de l''Indre - Brenne', '243600301', 'CC'),
+       ('CC Brenne - Val de Creuse', '243600319', 'CC'),
+       ('CC Coeur de Brenne', '243600343', 'CC'),
+       ('CC de la Châtre et Sainte-Sévère', '243600350', 'CC'),
+       ('SICTOM de Champagne Berrichonne', '253600456', 'SMF'),
+       ('SM du traitement des ordures ménagères de la région de Châteauroux', '253602429', 'SMF'),
+       ('SM pour la collecte et le traitement des ordures ménagères de la zone Ouest du département de l''Indre',
+        '253609937', 'SMF'),
+       ('Tours Métropole Val de Loire', '243700754', 'METRO'),
+       ('CC du Val d Amboise', '200043065', 'CC'),
+       ('CC Chinon, Vienne et Loire', '200043081', 'CC'),
+       ('CC Loches Sud Touraine', '200071587', 'CC'),
+       ('CC Touraine Vallée de l''Indre', '200072650', 'CC'),
+       ('CC Touraine Val de Vienne', '200072668', 'CC'),
+       ('CC Touraine Ouest Val de Loire', '200072981', 'CC'),
+       ('CC Touraine-Est Vallées', '200073161', 'CC'),
+       ('CC de Gâtine et Choisilles - Pays de Racan', '200073237', 'CC'),
+       ('CC du Castelrenaudais', '243700499', 'CC'),
+       ('CC de Bléré Val de Cher', '243700820', 'CC'),
+       ('SMICTOM du Chinonais', '253700454', 'SMF'),
+       ('SMICTOM d''Amboise', '253702963', 'SMF'),
+       ('SMIPE Val Touraine Anjou', '253753107', 'SMF'),
+       ('Grenoble-Alpes-Métropole', '200040715', 'METRO'),
+       ('CA Vienne Condrieu', '200077014', 'CA'),
+       ('CA Porte de l''Isère (CAPI)', '243800604', 'CA'),
+       ('CA du Pays Voironnais', '243800984', 'CA'),
+       ('CC Le Grésivaudan', '200018166', 'CC'),
+       ('CC du Trièves', '200030658', 'CC'),
+       ('CC Coeur de Chartreuse', '200040111', 'CC'),
+       ('CC de la Matheysine', '200040657', 'CC'),
+       ('CC Bièvre Isère', '200059392', 'CC'),
+       ('CC Les Balcons du Dauphiné', '200068542', 'CC'),
+       ('CC Les Vals du Dauphiné', '200068567', 'CC'),
+       ('CC Saint-Marcellin Vercors Isère Communauté', '200070431', 'CC'),
+       ('CC Entre Bièvre et Rhône', '200085751', 'CC'),
+       ('CC de l''Oisans', '243800745', 'CC'),
+       ('CC Lyon-Saint-Exupéry en Dauphiné', '243800935', 'CC'),
+       ('CC du Massif du Vercors', '243801024', 'CC'),
+       ('CC de Bièvre Est', '243801073', 'CC'),
+       ('CC des Collines du Nord Dauphiné', '243801255', 'CC'),
+       ('SICTOM de la région de Morestel', '253801179', 'SMF'),
+       ('SI du Bréda et de la Combe de Savoie (SIBRECSA)', '253801450', 'SMF'),
+       ('SICTOM du Guiers', '253801716', 'SMF'),
+       ('SICTOM de la Bièvre', '253802367', 'SMF'),
+       ('SITOM Nord Isère', '253802730', 'SMF'),
+       ('SM Nord Dauphiné', '253804710', 'SMF'),
+       ('CA du Grand Dole', '200010650', 'CA'),
+       ('CA ECLA  (Espace Communautaire Lons Agglomération)', '200071116', 'CA'),
+       ('CC Haut-Jura Saint-Claude', '200026573', 'CC'),
+       ('CC Bresse Haute Seille', '200069615', 'CC'),
+       ('CC Champagnole Nozeroy Jura', '200069623', 'CC'),
+       ('CC Arbois, Poligny, Salins, Coeur du Jura', '200071595', 'CC'),
+       ('CC Porte du Jura', '200072056', 'CC'),
+       ('CC Terre d?Emeraude Communauté ', '200090579', 'CC'),
+       ('CC de la Station des Rousses-Haut Jura', '243900354', 'CC'),
+       ('CC du Val d''Amour', '243900420', 'CC'),
+       ('CC Haut-Jura Arcade Communauté', '243900479', 'CC'),
+       ('CC Jura Nord', '243900560', 'CC'),
+       ('CC la Grandvallière', '243900610', 'CC'),
+       ('CC de la Plaine Jurassienne', '243901089', 'CC'),
+       ('SICTOM de la région de Champagnole', '253900625', 'SMF'),
+       ('SICTOM de la zone de Dole', '253900633', 'SMF'),
+       ('SICTOM de la zone de Lons-le-Saunier', '253900641', 'SMF'),
+       ('SICTOM du Haut-Jura', '253900658', 'SMF'),
+       ('SYDOM', '253901839', 'SMF'),
+       ('CA du Grand Dax', '244000675', 'CA'),
+       ('CA Mont de Marsan Agglomération', '244000808', 'CA'),
+       ('CC d''Aire-sur-l''Adour', '200030435', 'CC'),
+       ('CC des Landes d''Armagnac', '200035541', 'CC'),
+       ('CC Pays d''Orthe et Arrigans', '200069417', 'CC'),
+       ('CC Terres de Chalosse', '200069631', 'CC'),
+       ('CC Chalosse Tursan', '200069649', 'CC'),
+       ('CC Coeur Haute Lande', '200069656', 'CC'),
+       ('CC de Mimizan', '244000543', 'CC'),
+       ('CC du Seignanx', '244000659', 'CC'),
+       ('CC du Pays Morcenais', '244000691', 'CC'),
+       ('CC du Pays Tarusate', '244000766', 'CC'),
+       ('CC du Pays de Villeneuve en Armagnac Landais', '244000774', 'CC'),
+       ('CC du Pays Grenadois', '244000824', 'CC'),
+       ('CC Côte Landes Nature', '244000857', 'CC'),
+       ('CC Maremne Adour Côte Sud', '244000865', 'CC'),
+       ('CC des Grands Lacs', '244000873', 'CC'),
+       ('CC Coteaux et Vallées des Luys', '244000881', 'CC'),
+       ('SIVOM du Born', '244000279', 'SMF'),
+       ('SIETOM de Chalosse', '254000839', 'SMF'),
+       ('SICTOM du Marsan', '254000847', 'SMF'),
+       ('SICTOM Côte Sud', '254001977', 'SMF'),
+       ('SM d''élimination des déchets de la haute Lande', '254003239', 'SMF'),
+       ('CA de Blois ''''Agglopolys''''', '200030385', 'CA'),
+       ('CA Territoires Vendômois', '200072072', 'CA'),
+       ('CC Coeur de Sologne', '200000800', 'CC'),
+       ('CC du Romorantinais et du Monestois', '200018406', 'CC'),
+       ('CC du Perche et Haut Vendômois', '200040772', 'CC'),
+       ('CC Beauce Val de Loire', '200055481', 'CC'),
+       ('CC Val-de-Cher-Controis', '200072064', 'CC'),
+       ('CC des Collines du Perche', '244100293', 'CC'),
+       ('CC de la Sologne des Etangs', '244100780', 'CC'),
+       ('CC du Grand Chambord', '244100798', 'CC'),
+       ('CC de la Sologne des Rivières', '244100806', 'CC'),
+       ('SM de collecte et de traitement des ordures ménagères de Sologne', '254100415', 'SMF'),
+       ('SM d''élimination des ordures ménagères du groupement de Mer', '254100472', 'SMF'),
+       ('SM d''enlèvement et d''élimination des ordures ménagères du Val de Cher', '254100837', 'SMF'),
+       ('SM de collecte, de traitement et de valorisation des déchets ménagers du Vendômois (VAL DEM)', '254102023',
+        'SMF'),
+       ('SM de collecte et de traitement des déchets du Blaisois (VAL-ECO)', '254103054', 'SMF'),
+       ('Saint-Etienne Métropole', '244200770', 'METRO'),
+       ('CA Roannais Agglomération', '200035731', 'CA'),
+       ('Loire Forez Agglomération (LFA)', '200065886', 'CA'),
+       ('CC Charlieu-Belmont', '200035202', 'CC'),
+       ('CC de Forez-Est', '200065894', 'CC'),
+       ('CC des Vals d''Aix et Isable', '244200614', 'CC'),
+       ('CC des Monts du Pilat', '244200622', 'CC'),
+       ('CC du Pays Entre Loire et Rhône', '244200630', 'CC'),
+       ('CC du Pays d''Urfé', '244200820', 'CC'),
+       ('CC du Pilat Rhodanien', '244200895', 'CC'),
+       ('SYDEMER', '200017424', 'SMF'),
+       ('Syndicat d''études et d''élimination des déchets du Roannais (SEEDR)', '254202104', 'SMF'),
+       ('CA du Puy-en-Velay', '200073419', 'CA'),
+       ('CC des Rives du Haut Allier', '200073393', 'CC'),
+       ('CC Mézenc-Loire-Meygal', '200073401', 'CC'),
+       ('CC Marches du Velay-Rochebaron', '200073427', 'CC'),
+       ('CC Brioude Sud Auvergne', '200085728', 'CC'),
+       ('CC du Pays de Montfaucon', '244300307', 'CC'),
+       ('CC des Sucs', '244301016', 'CC'),
+       ('CC Auzon Communauté', '244301099', 'CC'),
+       ('CC du Haut Lignon', '244301107', 'CC'),
+       ('CC des Pays de Cayres et de Pradelles', '244301123', 'CC'),
+       ('CC Loire et Semène', '244301131', 'CC'),
+       ('SICTOM des Monts du Forez', '200040129', 'SMF'),
+       ('SICTOM Issoire - Brioude', '254300049', 'SMF'),
+       ('SM pour le tri sélectif et le traitement des déchets ménagers et assimilés de la région de Monistrol-sur-Loire (SYMPTTOM)',
+        '254300395', 'SMF'),
+       ('SICTOM Velay-Pilat', '254300593', 'SMF'),
+       ('SICTOM entre Monts et vallées', '254300759', 'SMF'),
+       ('SICTOM de la région Emblavez-Meygal', '254300809', 'SMF'),
+       ('Nantes Métropole', '244400404', 'METRO'),
+       ('CA Pornic Agglo Pays de Retz', '200067346', 'CA'),
+       ('CA Clisson Sèvre et Maine Agglo', '200067635', 'CA'),
+       ('CA de la Presqu''île de Guérande Atlantique (CAP ATLANTIQUE)', '244400610', 'CA'),
+       ('CA de la Région Nazairienne et de l''Estuaire (CARENE)', '244400644', 'CA'),
+       ('CC du Pays de Pontchâteau St-Gildas-des-Bois', '200000438', 'CC'),
+       ('CC Sèvre et Loire', '200067866', 'CC'),
+       ('CC Sud Retz Atlantique', '200071546', 'CC'),
+       ('CC Châteaubriant-Derval', '200072726', 'CC'),
+       ('CC Estuaire et Sillon', '200072734', 'CC'),
+       ('Grand Lieu Communauté', '244400438', 'CC'),
+       ('CC de la Région de Blain', '244400453', 'CC'),
+       ('CC d''Erdre et Gesvres', '244400503', 'CC'),
+       ('CC de Nozay', '244400537', 'CC'),
+       ('CC du Pays d''Ancenis', '244400552', 'CC'),
+       ('CC du Sud Estuaire', '244400586', 'CC'),
+       ('SM Centre Nord Atlantique pour le traitement et le recyclage des déchets', '254402522', 'SMF'),
+       ('Orléans Métropole', '244500468', 'METRO'),
+       ('CA Montargoise et Rives du Loing (AME)', '244500203', 'CA'),
+       ('CC des Portes de Sologne', '200005932', 'CC'),
+       ('CC de la Beauce Loirétaine', '200035764', 'CC'),
+       ('CC du Pithiverais', '200066280', 'CC'),
+       ('CC de la Cléry, du Betz et de l''Ouanne', '200067668', 'CC'),
+       ('CC Canaux et Forêts en Gâtinais', '200067676', 'CC'),
+       ('CC Berry Loire Puisaye', '200068278', 'CC'),
+       ('CC du Val de Sully', '200070100', 'CC'),
+       ('CC des Terres du Val de Loire', '200070183', 'CC'),
+       ('CC du Pithiverais-Gâtinais', '200071850', 'CC'),
+       ('CC Giennoises', '244500211', 'CC'),
+       ('CC des Quatre Vallées', '244500419', 'CC'),
+       ('CC des Loges', '244500427', 'CC'),
+       ('CC de la Forêt', '244500484', 'CC'),
+       ('CC de la Plaine du Nord Loiret', '244500542', 'CC'),
+       ('SMIRTOM de la région d''Artenay', '254500010', 'SMF'),
+       ('SMICTOM de la région de Châteauneuf-sur-Loire', '254500226', 'SMF'),
+       ('SM pour la collecte et le traitement des déchets ménagers de l''arrondissement de Pithiviers (SMITOMAP)',
+        '254500739', 'SMF'),
+       ('SMICTOM des cantons de Gien, Châtillon-sur-Loire, Châtillon-Coligny, Briare', '254501620', 'SMF'),
+       ('SMIRTOM de la région de Montargis', '254502164', 'SMF'),
+       ('SYCTOM des régions de Gien et Châteauneuf-sur-Loire', '254502578', 'SMF'),
+       ('SM Beauce Gâtinais valorisation', '254503105', 'SMF'),
+       ('PETR pour le développement du Pays Beauce Gâtinais en Pithiverais', '200079903', 'PETR'),
+       ('PETR Gâtinais Montargois', '200086643', 'PETR'),
+       ('CA du Grand Cahors', '200023737', 'CA'),
+       ('CC Cazals-Salviac', '200035327', 'CC'),
+       ('CC du Quercy Blanc', '200039519', 'CC'),
+       ('CC Causses et Vallée de la Dordogne', '200066371', 'CC'),
+       ('CC Grand-Figeac', '200067361', 'CC'),
+       ('CC de la Vallée du Lot et du Vignoble', '244600433', 'CC'),
+       ('CC Quercy - Bouriane', '244600482', 'CC'),
+       ('CC du Pays de Lalbenque-Limogne', '244600532', 'CC'),
+       ('CC du Causse de Labastide Murat', '244600573', 'CC'),
+       ('SMICTOM du Pays de Gourdon', '254600265', 'SMF'),
+       ('SM collecte et traitement des ordures ménagères les Marches du Sud Quercy', '254600901', 'SMF'),
+       ('SYDED du Lot', '453372997', 'SMO'),
+       ('CA du Grand Villeneuvois', '200023307', 'CA'),
+       ('CA Val de Garonne Agglomération ', '200030674', 'CA'),
+       ('CA d''Agen', '200035459', 'CA'),
+       ('CC des Bastides en Haut Agenais Périgord', '200036523', 'CC'),
+       ('CC Porte d''Aquitaine en Pays de Serres', '200036572', 'CC'),
+       ('CC du Confluent et des Coteaux de Prayssas', '200068922', 'CC'),
+       ('CC Fumel Vallée du Lot', '200068930', 'CC'),
+       ('CC Albret Communauté', '200068948', 'CC'),
+       ('CC du Pays de Duras', '244700449', 'CC'),
+       ('CC du Pays de Lauzun', '244700464', 'CC'),
+       ('CC des Coteaux et Landes de Gascogne', '244701355', 'CC'),
+       ('CC Lot et Tolzac', '244701405', 'CC'),
+       ('SMICTOM Lot-et-Garonne Baïse', '200020550', 'SMF'),
+       ('SM de valorisation et de traitement des déchets ménagers et assimilés en Lot-et-Garonne', '254702582', 'SMO'),
+       ('CC du Haut Allier', '200006930', 'CC'),
+       ('CC Randon - Margeride', '200069102', 'CC'),
+       ('CC Mont Lozère', '200069128', 'CC'),
+       ('CC des Cévennes au Mont Lozère', '200069136', 'CC'),
+       ('CC des Hautes Terres de l''Aubrac', '200069144', 'CC'),
+       ('CC Gorges Causses Cévennes', '200069151', 'CC'),
+       ('CC des Terres d''Apcher-Margeride-Aubrac', '200069185', 'CC'),
+       ('CC Aubrac Lot Causses Tarn', '200069268', 'CC'),
+       ('CC Coeur de Lozère', '244800405', 'CC'),
+       ('CC du Gévaudan', '244800470', 'CC'),
+       ('SI Aubrac-Colagne', '254800758', 'SIVU'),
+       ('SM La Montagne', '244800256', 'SMF'),
+       ('SICTOM des Hauts plateaux', '254300718', 'SMF'),
+       ('Syndicat départemental d''énergie et d''équipement de la Lozère (SDEE)', '254800022', 'SMF'),
+       ('SICTOM des bassins du Haut-Tarn', '254800345', 'SMF'),
+       ('SM de collecte et de traitement des déchets ménagers Lozère Centre', '254800709', 'SMF'),
+       ('CU Angers Loire Métropole', '244900015', 'CU'),
+       ('CA Mauges Communauté', '200060010', 'CA'),
+       ('CA Agglomération du Choletais', '200071678', 'CA'),
+       ('CA Saumur Val de Loire', '200071876', 'CA'),
+       ('CC Anjou Loir et Sarthe', '200068955', 'CC'),
+       ('CC Loire Layon Aubance', '200071553', 'CC'),
+       ('CC des Vallées du Haut-Anjou', '200071868', 'CC'),
+       ('CC Anjou Bleu Communauté', '244900809', 'CC'),
+       ('CC Baugeois Vallée', '244900882', 'CC'),
+       ('SI du Segréen pour le traitement des ordures (SISTO)', '254900442', 'SMF'),
+       ('SICTOM  Loir et Sarthe', '254900517', 'SMF'),
+       ('SMITOM du Sud Saumurois', '254901341', 'SMF'),
+       ('Pôle métropolitain Loire Angers', '254902034', 'SMF'),
+       ('SYCTOM du Loire Béconnais et ses environs', '254902414', 'SMF'),
+       ('SM pour le traitement et la valorisation des déchets ménagers résiduels (VALOR 3 E)', '254902562', 'SMF'),
+       ('SM intercommunal de valorisation et de recyclage thermique des déchets de l''Est Anjou', '254902257', 'SMO'),
+       ('PETR du Segréen', '200052629', 'PETR'),
+       ('CA Saint-Lô Agglo', '200066389', 'CA'),
+       ('CA du Cotentin', '200067205', 'CA'),
+       ('CA Mont-Saint-Michel-Normandie', '200069425', 'CA'),
+       ('CC de Granville, Terre et Mer', '200042604', 'CC'),
+       ('CC de la Baie du Cotentin', '200042729', 'CC'),
+       ('CC de Villedieu Intercom', '200043354', 'CC'),
+       ('CC Coutances Mer et Bocage', '200067023', 'CC'),
+       ('CC Côte Ouest Centre Manche', '200067031', 'CC'),
+       ('SM de la Perrelle', '255001638', 'SMF'),
+       ('SM du Point Fort', '255003063', 'SMF'),
+       ('CU du Grand Reims', '200067213', 'CU'),
+       ('CA de Châlons-en-Champagne', '200066876', 'CA'),
+       ('CA Epernay, Coteaux et Plaine de Champagne', '200067684', 'CA'),
+       ('CC de Vitry, Champagne et Der', '200034718', 'CC'),
+       ('CC de la Région de Suippes', '200042620', 'CC'),
+       ('CC de l''Argonne Champenoise', '200042703', 'CC'),
+       ('CC Perthois-Bocage et Der', '200042992', 'CC'),
+       ('CC de la Moivre à la Coole', '200043438', 'CC'),
+       ('CC de Sézanne-Sud Ouest Marnais', '200066835', 'CC'),
+       ('CC des Paysages de la Champagne', '200066850', 'CC'),
+       ('CC Côtes de Champagne et Val de Saulx', '200067379', 'CC'),
+       ('CC de la Grande Vallée de la Marne', '245100615', 'CC'),
+       ('CC de la Brie Champenoise', '245100888', 'CC'),
+       ('CC du Sud Marnais', '245100979', 'CC'),
+       ('SM du Sud-Est Marnais (SYMSEM)', '200035673', 'SMF'),
+       ('SM de valorisation des ordures ménagères (SYVALOM)', '255102592', 'SMO'),
+       ('CA de Chaumont', '200068658', 'CA'),
+       ('CA de Saint-Dizier Der et Blaise', '200068666', 'CA'),
+       ('CC d''Auberive Vingeanne et Montsaugeonnais', '200027308', 'CC'),
+       ('CC du Bassin de Joinville en Champagne', '200044253', 'CC'),
+       ('CC Meuse Rognon', '200069664', 'CC'),
+       ('CC des Savoir-Faire', '200070332', 'CC'),
+       ('CC du Grand Langres', '200072999', 'CC'),
+       ('CC des Trois Forêts', '245200597', 'CC'),
+       ('Syndicat départemental d''énergie et des déchets 52', '200055614', 'SMF'),
+       ('SMICTOM de Saint-Dizier', '255201402', 'SMF'),
+       ('SMICTOM de la région de Langres', '255202335', 'SMF'),
+       ('Laval Agglomération', '200083392', 'CA'),
+       ('CC des Coëvrons', '200033298', 'CC'),
+       ('CC du Mont des Avaloirs', '200042182', 'CC'),
+       ('CC du Pays de Craon', '200048551', 'CC'),
+       ('CC Mayenne Communauté', '200055887', 'CC'),
+       ('CC du Pays de Meslay-Grez', '245300223', 'CC'),
+       ('CC de l''Ernée', '245300355', 'CC'),
+       ('CC du Bocage Mayennais', '245300389', 'CC'),
+       ('CC du Pays de Château-Gontier', '245300447', 'CC'),
+       ('Métropole du Grand Nancy', '245400676', 'METRO'),
+       ('Grand Longwy Agglomération', '245400262', 'CA'),
+       ('CC du Pays du Saintois', '200035772', 'CC'),
+       ('CC du Bassin de Pont-à-Mousson', '200041515', 'CC'),
+       ('CC Terre Lorraine du Longuyonnais', '200043693', 'CC'),
+       ('CC Meurthe Mortagne Moselle', '200067643', 'CC'),
+       ('CC de Vezouze en Piémont', '200069433', 'CC'),
+       ('CC Coeur du Pays Haut', '200070290', 'CC'),
+       ('CC du Territoire de Lunéville à Baccarat', '200070324', 'CC'),
+       ('CC Terres Touloises', '200070563', 'CC'),
+       ('CC de Seille et Grand Couronné', '200070589', 'CC'),
+       ('CC Mad et Moselle', '200070738', 'CC'),
+       ('CC Orne Lorraine Confluences', '200070845', 'CC'),
+       ('CC Moselle et Madon', '245400171', 'CC'),
+       ('CC des Pays du Sel et du Vermois', '245400189', 'CC'),
+       ('CC du Pays de Colombey et du Sud Toulois', '245400510', 'CC'),
+       ('CC du Bassin de Pompey', '245400601', 'CC'),
+       ('CC du Pays du Sanon', '245400759', 'CC'),
+       ('SI pour le ramassage et le traitement des ordures ménagères du secteur de Briey,de la vallée de l''Orne et du Jarnisy',
+        '255400905', 'SMF'),
+       ('SM de traitement des ordures ménagères de la région de Villerupt', '255401333', 'SMF'),
+       ('SI pour la collecte et l''élimination des déchets des ménages dans le secteur de Piennes', '255401341', 'SMF'),
+       ('CA de Bar-le-Duc - Sud Meuse', '200033025', 'CA'),
+       ('CA du Grand Verdun', '200049187', 'CA'),
+       ('CC Côtes de Meuse Woëvre', '200034874', 'CC'),
+       ('CC des Portes de Meuse', '200066108', 'CC'),
+       ('CC Argonne-Meuse', '200066116', 'CC'),
+       ('CC du Pays de Stenay et du Val Dunois', '200066132', 'CC'),
+       ('CC de l''Aire à l''Argonne', '200066140', 'CC'),
+       ('CC de Commercy - Void - Vaucouleurs', '200066157', 'CC'),
+       ('CC Val de Meuse - Voie Sacrée', '200066165', 'CC'),
+       ('CC de Damvillers Spincourt', '200066173', 'CC'),
+       ('CC du Sammiellois', '245500327', 'CC'),
+       ('CC du Territoire de Fresnes en Woëvre', '245501176', 'CC'),
+       ('CC du Pays de Revigny sur Ornain', '245501184', 'CC'),
+       ('CC du Pays d''Etain', '245501242', 'CC'),
+       ('CC du Pays de Montmédy', '245501259', 'CC'),
+       ('SM d''études et de traitement des déchets ménagers et assimilés', '200046647', 'SMF'),
+       ('PETR du Pays Barrois', '200049906', 'PETR'),
+       ('CA Lorient Agglomération', '200042174', 'CA'),
+       ('CA Golfe du Morbihan - Vannes Agglomération', '200067932', 'CA'),
+       ('CC Arc Sud Bretagne', '200027027', 'CC'),
+       ('CC Auray Quiberon Terre Atlantique', '200043123', 'CC'),
+       ('Ploërmel Communauté', '200066777', 'CC'),
+       ('CC de l''Oust à Brocéliande', '200066785', 'CC'),
+       ('CC Centre Morbihan Communauté', '200067221', 'CC'),
+       ('CC de Blavet Bellevue Océan', '245600440', 'CC'),
+       ('CC de Belle Ile en Mer', '245600465', 'CC'),
+       ('CC Questembert Communauté', '245614383', 'CC'),
+       ('CC Roi Morvan Communauté', '245614417', 'CC'),
+       ('CC Pontivy Communauté', '245614433', 'CC'),
+       ('SI pour le transfert et le traitement des ordures ménagères du Morbihan intérieur (SITTOM - MI)', '255601908',
+        'SMF'),
+       ('SM du Sud Est du Morbihan (SYSEM)', '255613374', 'SMF'),
+       ('Metz Métropole', '200039865', 'METRO'),
+       ('CA Saint-Avold Synergie', '200067502', 'CA'),
+       ('CA Sarreguemines Confluences', '200070746', 'CA'),
+       ('CA de Forbach Porte de France', '245700372', 'CA'),
+       ('CA du Val de Fensch', '245701222', 'CA'),
+       ('CA Portes de France-Thionville', '245701362', 'CA'),
+       ('CC du Sud Messin', '200039907', 'CC'),
+       ('CC Rives de Moselle', '200039949', 'CC'),
+       ('CC Bouzonvillois-Trois Frontières', '200067486', 'CC'),
+       ('CC Houve-Pays Boulageois', '200067650', 'CC'),
+       ('CC Haut Chemin-Pays de Pange', '200067957', 'CC'),
+       ('CC Sarrebourg Moselle Sud', '200068146', 'CC'),
+       ('CC du Pays de Bitche', '200069441', 'CC'),
+       ('CC du District Urbain de Faulquemont (DUF)', '245700133', 'CC'),
+       ('CC de Freyming-Merlebach', '245700398', 'CC'),
+       ('CC de Cattenom et Environs', '245700695', 'CC'),
+       ('CC du Pays de Phalsbourg', '245700950', 'CC'),
+       ('CC du Warndt', '245701164', 'CC'),
+       ('CC du Saulnois', '245701206', 'CC'),
+       ('CC du Pays Orne Moselle', '245701271', 'CC'),
+       ('CC de l''Arc Mosellan', '245701354', 'CC'),
+       ('CC du Pays Haut Val d''Alzette', '245701404', 'CC'),
+       ('SIVOM d''Algrange Nilvange', '245700604', 'SIVOM'),
+       ('SM de transport et de traitement des déchets ménagers de Lorraine Nord "SYDELON"', '200027118', 'SMF'),
+       ('SYDEME', '255704900', 'SMF'),
+       ('SM du pays de Sarrebourg', '200049989', 'PETR'),
+       ('CA de Nevers', '245804406', 'CA'),
+       ('CC Haut Nivernais-Val d''Yonne', '200067429', 'CC'),
+       ('CC Tannay-Brinon-Corbigny', '200067692', 'CC'),
+       ('CC Sud Nivernais', '200067700', 'CC'),
+       ('CC Bazois Loire Morvan', '200067882', 'CC'),
+       ('CC Morvan Sommets et Grands Lacs', '200067890', 'CC'),
+       ('CC Amognes Coeur du Nivernais', '200067908', 'CC'),
+       ('CC Coeur de Loire', '200067916', 'CC'),
+       ('CC Les Bertranges', '200068088', 'CC'),
+       ('CC Loire et Allier', '245801063', 'CC'),
+       ('CC du Nivernais Bourbonnais', '245804497', 'CC'),
+       ('Syndicat de gestion des déchets du Centre Nivernais', '255800682', 'SMF'),
+       ('SICTOM d''Avril, Fleury, Luthenay', '255801441', 'SMF'),
+       ('SICTOM de Saint-Pierre-le-Moûtier', '255801466', 'SMF'),
+       ('Métropole Européenne de Lille', '200093201', 'METRO'),
+       ('CU de Dunkerque', '245900428', 'CU'),
+       ('CA du Caudrésis et du Catésis', '200030633', 'CA'),
+       ('CA de la Porte du Hainaut', '200042190', 'CA'),
+       ('CA Maubeuge Val de Sambre', '200043396', 'CA'),
+       ('CA Douaisis Agglo', '200044618', 'CA'),
+       ('CA de Cambrai', '200068500', 'CA'),
+       ('CA Valenciennes Métropole', '245901160', 'CA'),
+       ('CC de Flandre Intérieure', '200040947', 'CC'),
+       ('CC des Hauts de Flandre', '200040954', 'CC'),
+       ('CC Pévèle-Carembault', '200041960', 'CC'),
+       ('CC Coeur de l''Avesnois', '200043263', 'CC'),
+       ('CC du Pays de Mormal', '200043321', 'CC'),
+       ('CC du Sud Avesnois', '200043404', 'CC'),
+       ('CC Flandre Lys', '245900758', 'CC'),
+       ('CC du Pays Solesmois', '245901038', 'CC'),
+       ('CC Coeur d''Ostrevent (CCCO)', '245901152', 'CC'),
+       ('SM de collecte et de traitement des ordures ménagères de la région des Flandres', '255900573', 'SMF'),
+       ('SM de ramassage des ordures ménagères Flandre - Nord', '255900599', 'SMF'),
+       ('SI d''enlèvement et d''incinération des ordures ménagères (SIRIOM)', '255900680', 'SMF'),
+       ('SI de valorisation des déchets ménagers du Hainaut Valenciennois (ECOVALOR)', '255900938', 'SMF'),
+       ('Syndicat inter-arrondissement de valorisation et d''élimination des déchets (SIAVED)', '255900953', 'SMF'),
+       ('SM pour le traitement des déchets ménagers du Pays de Pévèle au Pays des Weppes (SYMIDEME)', '255902561',
+        'SMF'),
+       ('SM de l''arrondissement d''Avesnes', '255902652', 'SMF'),
+       ('SM de la station touristique départementale du Val Joly ', '255900011', 'SMO'),
+       ('CA de la Région de Compiègne et de la Basse Automne', '200067965', 'CA'),
+       ('CA du Beauvaisis', '200067999', 'CA'),
+       ('CA Creil Sud Oise', '200068047', 'CA'),
+       ('CC Senlis Sud Oise', '200066975', 'CC'),
+       ('CC Thelloise', '200067973', 'CC'),
+       ('CC de l''Oise Picarde', '200068005', 'CC'),
+       ('CC du Liancourtois', '246000129', 'CC'),
+       ('CC du Clermontois', '246000376', 'CC'),
+       ('CC du Plateau Picard', '246000566', 'CC'),
+       ('CC des Sablons', '246000582', 'CC'),
+       ('CC du Vexin-Thelle', '246000707', 'CC'),
+       ('CC des Lisières de l''Oise', '246000749', 'CC'),
+       ('CC du Pays Noyonnais', '246000756', 'CC'),
+       ('CC de l''Aire Cantilienne', '246000764', 'CC'),
+       ('CC des Deux Vallées', '246000772', 'CC'),
+       ('CC de la Picardie Verte', '246000848', 'CC'),
+       ('CC du Pays des Sources', '246000855', 'CC'),
+       ('CC du Pays de Valois', '246000871', 'CC'),
+       ('CC de la Plaine d''Estrées', '246000897', 'CC'),
+       ('CC du Pays de Bray', '246000913', 'CC'),
+       ('CC des Pays d''Oise et d''Halatte', '246000921', 'CC'),
+       ('SM du département de l''Oise, pour le transport et le traitement des déchets ménagers et assimilés',
+        '200067619', 'SMF'),
+       ('SM de l''Oise plateau Picard', '200081255', 'SMF'),
+       ('CU d''Alençon', '246100663', 'CU'),
+       ('CA Flers Agglo', '200035814', 'CA'),
+       ('CC de la Vallée de la Haute Sarthe', '200035103', 'CC'),
+       ('CC des Sources de l''Orne', '200035111', 'CC'),
+       ('CC du Pays de Mortagne au Perche', '200036069', 'CC'),
+       ('CC Coeur du Perche', '200068435', 'CC'),
+       ('CC Andaine - Passais', '200068443', 'CC'),
+       ('CC Argentan Intercom', '200068450', 'CC'),
+       ('CC des Pays de L''Aigle', '200068468', 'CC'),
+       ('CC des Hauts du Perche', '200068856', 'CC'),
+       ('CC des Vallées d''Auge et du Merlerault', '200069458', 'CC'),
+       ('CC des Collines du Perche Normand', '200071504', 'CC'),
+       ('CC Domfront Tinchebray Interco', '200071520', 'CC'),
+       ('CC du Pays Fertois et du Bocage Carrougien', '200071652', 'CC'),
+       ('CC du Val d''Orne', '246100390', 'CC'),
+       ('SITCOM de la région d''Argentan', '200045110', 'SMF'),
+       ('SMIRTOM de la région de Flers', '256102138', 'SMF'),
+       ('SIRTOM du Perche Ornais', '256102153', 'SMF'),
+       ('SMIRTOM de la région de L''Aigle', '256102179', 'SMF'),
+       ('CU d''Arras', '200033579', 'CU'),
+       ('CA des Deux Baies en Montreuillois', '200069029', 'CA'),
+       ('CA du Pays de Saint-Omer', '200069037', 'CA'),
+       ('CA de Béthune-Bruay, Artois-Lys Romane', '200072460', 'CA'),
+       ('CA Grand Calais Terres et Mers', '200090751', 'CA'),
+       ('CA d''Hénin-Carvin', '246200299', 'CA'),
+       ('CA de Lens - Liévin', '246200364', 'CA'),
+       ('CA du Boulonnais', '246200729', 'CA'),
+       ('CC de Desvres-Samer', '200018083', 'CC'),
+       ('CC du Sud-Artois', '200035442', 'CC'),
+       ('CC des 7 Vallées', '200044030', 'CC'),
+       ('CC Osartis Marquion', '200044048', 'CC'),
+       ('CC du Haut Pays du Montreuillois', '200069235', 'CC'),
+       ('CC des Campagnes de l''Artois', '200069482', 'CC'),
+       ('CC du Ternois', '200069672', 'CC'),
+       ('CC Pays d''Opale', '200072478', 'CC'),
+       ('CC de la Terre des Deux Caps', '246200380', 'CC'),
+       ('CC de la Région d''Audruicq', '246200844', 'CC'),
+       ('CC du Pays de Lumbres', '246201016', 'CC'),
+       ('SM d''élimination et de valorisation des déchets des communautés d''agglomération du Douaisis, d''Hénin-Carvin et de la communauté de communes Osartis (SYMEVAD)',
+        '200007201', 'SMF'),
+       ('SM Lys Audomarois (SMLA)', '256203761', 'SMF'),
+       ('SM Flandre Morinie', '256203910', 'SMF'),
+       ('SM d''élimination et de valorisation des déchets ménagers du Calaisis (SEVADEC )', '256203936', 'SMF'),
+       ('SM Artois valorisation', '256204074', 'SMF'),
+       ('SM de traitement et de tri', '256204199', 'SMF'),
+       ('PETR Ternois-7 vallées', '200075679', 'PETR'),
+       ('Clermont Auvergne Métropole', '246300701', 'METRO'),
+       ('CA Agglo Pays d''Issoire', '200070407', 'CA'),
+       ('CA Riom Limagne et Volcans', '200070753', 'CA'),
+       ('CC Billom Communauté', '200067627', 'CC'),
+       ('CC Dômes Sancy Artense', '200069169', 'CC'),
+       ('CC Mond''Arverne Communauté', '200069177', 'CC'),
+       ('CC Thiers Dore et Montagne', '200070712', 'CC'),
+       ('CC Ambert Livradois Forez', '200070761', 'CC'),
+       ('CC Plaine Limagne', '200071199', 'CC'),
+       ('CC Chavanon Combrailles et Volcans', '200071215', 'CC'),
+       ('CC du Pays de Saint-Eloy', '200072080', 'CC'),
+       ('CC Combrailles Sioule et Morge', '200072098', 'CC'),
+       ('CC du Massif du Sancy', '246300966', 'CC'),
+       ('CC Entre Dore et Allier', '246301097', 'CC'),
+       ('SM de collecte et de traitement des résidus urbains du bois de l''Aumône (SBA)', '256300161', 'SMF'),
+       ('SICTOM des Couzes', '256301052', 'SMF'),
+       ('SM de collecte et de traitement des ordures ménagères de la Haute Dordogne (SMCTOM de la Haute Dordogne)',
+        '256301086', 'SMF'),
+       ('SICTOM des Combrailles', '256301128', 'SMF'),
+       ('SICTOM de la région de Pontaumur - Pontgibaud', '256301185', 'SMF'),
+       ('Syndicat pour la valorisation et le traitement des déchets ménagers et assimilés du Puy-de-Dôme et de la Haute Loire (VALTOM)',
+        '256302670', 'SMF'),
+       ('CA du Pays Basque', '200067106', 'CA'),
+       ('CA Pau Béarn Pyrénées', '200067254', 'CA'),
+       ('CC de Lacq-Orthez', '200039204', 'CC'),
+       ('CC des Luys en Béarn', '200067239', 'CC'),
+       ('CC du Haut Béarn', '200067262', 'CC'),
+       ('CC du Béarn des Gaves', '200067288', 'CC'),
+       ('CC du Nord Est Béarn', '200067296', 'CC'),
+       ('CC de la Vallée d''Ossau', '246400337', 'CC'),
+       ('CC Pays de Nay', '246401756', 'CC'),
+       ('SIECTOM coteaux Béarn Adour', '256404542', 'SMF'),
+       ('SM Bil Ta Garbi', '256404641', 'SMF'),
+       ('CA Tarbes-Lourdes-Pyrénées', '200069300', 'CA'),
+       ('CC du Plateau de Lannemezan', '200070787', 'CC'),
+       ('CC du Pays de Trie et du Magnoac', '200070795', 'CC'),
+       ('CC des Coteaux du Val d''Arros', '200070803', 'CC'),
+       ('CC Pyrénées Vallées des Gaves', '200070811', 'CC'),
+       ('CC Neste Barousse', '200070829', 'CC'),
+       ('CC Adour Madiran', '200072106', 'CC'),
+       ('CC de la Haute-Bigorre', '246500482', 'CC'),
+       ('CC Aure Louron', '246500573', 'CC'),
+       ('SM départemental de traitement des déchets ménagers et assimilés', '200011732', 'SMF'),
+       ('SM de collecte et de traitement des ordures ménagères du plateau de Lannemezan-Nestes-coteaux', '200041234',
+        'SMF'),
+       ('SM de l''agglomération tarbaise élimination des déchets ménagers et assimilés', '256500869', 'SMF'),
+       ('CU Perpignan Méditerranée Métropole', '200027183', 'CU'),
+       ('CC des Albères, de la Côte Vermeille et de l''Illibéris', '200043602', 'CC'),
+       ('CC Conflent-Canigó', '200049211', 'CC'),
+       ('CC Corbières Salanque Méditerranée', '200070365', 'CC'),
+       ('CC Sud-Roussillon', '246600282', 'CC'),
+       ('CC du Vallespir', '246600373', 'CC'),
+       ('CC Pyrénées Cerdagne', '246600399', 'CC'),
+       ('CC Roussillon-Conflent', '246600415', 'CC'),
+       ('CC Agly Fenouillèdes', '246600423', 'CC'),
+       ('CC des Aspres', '246600449', 'CC'),
+       ('CC Pyrénées Catalanes', '246600464', 'CC'),
+       ('CC du Haut Vallespir', '246600548', 'CC'),
+       ('SIVOM canton de Millas', '246600183', 'SIVOM'),
+       ('SM ramassage ordures ménagères Font-Romeu-Odeillo-Via', '200049716', 'SMF'),
+       ('SM départemental de transport, traitement et valorisation des ordures ménagères et déchets assimilés (SYDETOM)',
+        '256601501', 'SMF'),
+       ('Eurométropole de Strasbourg', '246700488', 'METRO'),
+       ('CA de Haguenau', '200067874', 'CA'),
+       ('CC Sauer-Pechelbronn', '200013050', 'CC'),
+       ('CC du Ried de Marckolsheim', '200030526', 'CC'),
+       ('CC du Pays de Barr', '200034270', 'CC'),
+       ('CC du Kochersberg', '200034635', 'CC'),
+       ('CC de l''Outre-Forêt', '200040178', 'CC'),
+       ('CC de la Plaine du Rhin', '200041283', 'CC'),
+       ('CC du Pays Rhénan', '200041325', 'CC'),
+       ('CC de Hanau-La Petite Pierre', '200067783', 'CC'),
+       ('CC de l''Alsace Bossue', '200067841', 'CC'),
+       ('CC du Canton d''Erstein', '200067924', 'CC'),
+       ('CC du Pays de Saverne', '200068112', 'CC'),
+       ('CC de la Mossig et du Vignoble', '200068864', 'CC'),
+       ('CC de la Vallée de la Bruche', '246700306', 'CC'),
+       ('CC des Portes de Rosheim', '246700744', 'CC'),
+       ('CC de la Vallée de Villé', '246700777', 'CC'),
+       ('CC de la Basse-Zorn', '246700843', 'CC'),
+       ('CC du Pays de Wissembourg', '246700926', 'CC'),
+       ('CC du Pays de la Zorn', '246700959', 'CC'),
+       ('CC de Sélestat', '246700967', 'CC'),
+       ('CC de la Région de Molsheim-Mutzig', '246701064', 'CC'),
+       ('CC du Pays de Sainte-Odile', '246701080', 'CC'),
+       ('CC du Pays de Niederbronn-les-Bains', '246701098', 'CC'),
+       ('SIVOM de la région de Wissembourg', '246700462', 'SIVOM'),
+       ('SM pour la collecte et le traitement des ordures ménagères de Molsheim et environs ', '200051878', 'SMF'),
+       ('Syndicat Mixte Intercommunal pour la Collecte et le Traitement des Ordures Ménagères du Nord Alsace',
+        '256701244', 'SMF'),
+       ('SM pour la collecte et de traitement des ordures ménagères de la région de Saverne', '256701301', 'SMF'),
+       ('SM pour le traitement des ordures ménagères du secteur de Haguenau - Saverne (SMITOM)', '256701871', 'SMF'),
+       ('SM du Pays de la Mossig et de la Sommerau', '256702937', 'SMF'),
+       ('SM de collecte et de traitement des ordures ménagères d''Alsace Centrale', '256702960', 'SMF'),
+       ('PETR Sélestat - Alsace Centrale', '200069680', 'PETR'),
+       ('CA Mulhouse Alsace Agglomération', '200066009', 'CA'),
+       ('CA Saint-Louis Agglomération', '200066058', 'CA'),
+       ('CA Colmar Agglomération', '246800726', 'CA'),
+       ('CC de Thann-Cernay', '200036465', 'CC'),
+       ('CC Pays Rhin - Brisach', '200066025', 'CC'),
+       ('CC Sud Alsace Largue', '200066033', 'CC'),
+       ('CC Sundgau', '200066041', 'CC'),
+       ('CC de la Vallée de Saint-Amarin', '246800205', 'CC'),
+       ('CC du Val d''Argent', '246800395', 'CC'),
+       ('CC du Centre du Haut-Rhin', '246800445', 'CC'),
+       ('CC du Pays de Rouffach, Vignobles et Châteaux', '246800494', 'CC'),
+       ('CC de la Vallée de Kaysersberg', '246800551', 'CC'),
+       ('CC de la Région de Guebwiller', '246800569', 'CC'),
+       ('CC du Pays de Ribeauvillé', '246800577', 'CC'),
+       ('CC de la Vallée de Munster', '246800585', 'CC'),
+       ('CC de la Vallée de la Doller et du Soultzbach', '246800676', 'CC'),
+       ('SIVOM de la station climatique des trois épis', '246800510', 'SIVOM'),
+       ('SIVOM de l''agglomération mulhousienne', '246800254', 'SMF'),
+       ('SM à vocation multiple pour le traitement des déchets ménagers du secteur 4', '256801531', 'SMF'),
+       ('SI de traitement des déchets de Colmar et environs', '256801697', 'SMF'),
+       ('SM de Thann-Cernay pour la gestion des déchets ménagers et assimilés', '256802208', 'SMF'),
+       ('CA de l''Ouest Rhodanien', '200040566', 'CA'),
+       ('CA Villefranche Beaujolais Saône', '200040590', 'CA'),
+       ('CC Beaujolais Pierres Dorées', '200040574', 'CC'),
+       ('CC des Monts du Lyonnais', '200066587', 'CC'),
+       ('CC Saône-Beaujolais', '200067817', 'CC'),
+       ('CC de l''Est Lyonnais (CCEL)', '246900575', 'CC'),
+       ('CC du Pays de l''Arbresle (CCPA)', '246900625', 'CC'),
+       ('CC des Vallons du Lyonnais (CCVL)', '246900724', 'CC'),
+       ('CC du Pays Mornantais (COPAMO)', '246900740', 'CC'),
+       ('CC de la Vallée du Garon (CCVG)', '246900757', 'CC'),
+       ('CC du Pays de l''Ozon', '246900765', 'CC'),
+       ('Métropole de Lyon', '200046977', 'METRO'),
+       ('SM de l''Ouest Lyonnais', '200035046', 'SMF'),
+       ('SM d''élimination, de traitement et de valorisation des déchets Beaujolais Dombes (SYTRAIVAL)', '256900705',
+        'SMF'),
+       ('SI de collecte et de traitement des ordures ménagères (SITOM Sud Rhône)', '256901133', 'SMF'),
+       ('CA de Vesoul', '247000011', 'CA'),
+       ('CC des Hauts du Val de Saône', '200036150', 'CC'),
+       ('CC Val de Gray', '200036549', 'CC'),
+       ('CC de la Haute Comté', '200041721', 'CC'),
+       ('CC du Pays de Montbozon et du Chanois', '200041853', 'CC'),
+       ('CC du Triangle Vert', '200041861', 'CC'),
+       ('CC Terres de Saône', '200041879', 'CC'),
+       ('CC du Val Marnaysien', '200041887', 'CC'),
+       ('CC des Combes', '247000367', 'CC'),
+       ('CC des Quatre Rivières', '247000623', 'CC'),
+       ('CC du Pays de Lure', '247000664', 'CC'),
+       ('CC des Monts de Gy', '247000698', 'CC'),
+       ('CC du Pays Riolais', '247000706', 'CC'),
+       ('CC du Pays de Villersexel', '247000714', 'CC'),
+       ('CC du Pays d''Héricourt', '247000722', 'CC'),
+       ('CC du Pays de Luxeuil', '247000755', 'CC'),
+       ('CC Rahin et Chérimont', '247000821', 'CC'),
+       ('CC des 1000 étangs', '247000854', 'CC'),
+       ('Syndicat de collecte des ordures ménagères du Val de Saône', '257001024', 'SMF'),
+       ('SM de collecte des déchets ménagers des 2 rivières', '257001040', 'SMF'),
+       ('SYTEVOM SYndicat Transfert Elimination Valorisation des Ordures énagères', '257003426', 'SMF'),
+       ('CU Le Creusot Montceau-les-Mines', '247100290', 'CU'),
+       ('CA Mâconnais Beaujolais Agglomération', '200070308', 'CA'),
+       ('CA Le Grand Chalon', '247100589', 'CA'),
+       ('CC Saône Doubs Bresse', '200040038', 'CC'),
+       ('CC du Clunisois', '200040293', 'CC'),
+       ('CC Bresse Revermont 71', '200042414', 'CC'),
+       ('CC Mâconnais - Tournugeois', '200069698', 'CC'),
+       ('CC Entre Arroux, Loire et Somme', '200070316', 'CC'),
+       ('CC du Grand Autunois Morvan', '200070530', 'CC'),
+       ('CC Brionnais Sud Bourgogne', '200070548', 'CC'),
+       ('CC Terres de Bresse', '200071538', 'CC'),
+       ('CC Bresse Louhannaise Intercom''', '200071579', 'CC'),
+       ('CC Saint Cyr Mère Boitier entre Charolais et Mâconnais', '200071645', 'CC'),
+       ('CC Le Grand Charolais', '200071884', 'CC'),
+       ('CC de Marcigny', '247100639', 'CC'),
+       ('CC Bresse Nord Intercom''', '247100647', 'CC'),
+       ('CC Entre Saône et Grosne', '247103765', 'CC'),
+       ('CC de Semur en Brionnais', '247103864', 'CC'),
+       ('CC  Sud Côte Chalonnaise', '247104094', 'CC'),
+       ('SIVOM de l''Arçon et de l''Urbise', '247100019', 'SIVOM'),
+       ('SI de collecte et d''élimination des déchets de Bresse Nord', '200053122', 'SMF'),
+       ('SIVOM du Louhannais', '200075307', 'SMF'),
+       ('SIRTOM de la région de Chagny', '257102541', 'SMF'),
+       ('SIRTOM de la vallée de la Grosne', '257102830', 'SMF'),
+       ('SM d''études et de traitement des déchets', '257103341', 'SMF'),
+       ('SM d''élimination et de valorisation des déchets et ordures ménagères (SMEVOM) du Charollais-Brionnais et Autunois',
+        '257103846', 'SMF'),
+       ('CU Le Mans Métropole', '247200132', 'CU'),
+       ('CC Loué - Brûlon - Noyen', '200040475', 'CC'),
+       ('CC Maine Coeur de Sarthe', '200068963', 'CC'),
+       ('CC Loir-Lucé-Bercé', '200070373', 'CC'),
+       ('CC Maine Saosnois', '200072676', 'CC'),
+       ('CC Le Gesnois Bilurien', '200072684', 'CC'),
+       ('CC des Vallées de la Braye et de l''Anille', '200072692', 'CC'),
+       ('CC Haute Sarthe Alpes Mancelles', '200072700', 'CC'),
+       ('CC de la Champagne Conlinoise et du Pays de Sillé', '200072718', 'CC'),
+       ('CC Sud Sarthe', '200073112', 'CC'),
+       ('CC de Sablé-sur-Sarthe', '247200090', 'CC'),
+       ('CC du Pays Fléchois', '247200348', 'CC'),
+       ('CC du Sud Est du Pays Manceau', '247200421', 'CC'),
+       ('CC Orée de Bercé - Belinois', '247200447', 'CC'),
+       ('CC du Val de Sarthe', '247200629', 'CC'),
+       ('CC du Pays de l''Huisne Sarthoise', '247200686', 'CC'),
+       ('SM du Val de Loir pour collectes et traitement des déchets', '257200147', 'SMF'),
+       ('SMIRGEOM du Nord Ouest de la Sarthe', '257201251', 'SMF'),
+       ('Syndicat mixte de valorisation des ordures ménagères - Loir et Sarthe (SYVALORM Loir et Sarthe)', '257201376',
+        'SMF'),
+       ('SM du Pays vallée de la Sarthe', '200001873', 'SMO'),
+       ('SM d''étude pour l''élimination des déchets du secteur Sud de la Sarthe', '257201988', 'SMO'),
+       ('SM du Pays de la Haute Sarthe', '257202358', 'SMO'),
+       ('PETR Pays vallée du Loir', '200076396', 'PETR'),
+       ('CA Grand Lac', '200068674', 'CA'),
+       ('CA Arlysère', '200068997', 'CA'),
+       ('CA du Grand Chambéry', '200069110', 'CA'),
+       ('CC Coeur de Tarentaise', '200023299', 'CC'),
+       ('CC Val Vanoise', '200040798', 'CC'),
+       ('CC Coeur de Savoie', '200041010', 'CC'),
+       ('CC Haute Maurienne Vanoise', '200070340', 'CC'),
+       ('CC Coeur de Maurienne Arvan', '200070464', 'CC'),
+       ('CC des Vallées d''Aigueblanche', '247300015', 'CC'),
+       ('CC de Haute-Tarentaise', '247300254', 'CC'),
+       ('CC de Yenne', '247300262', 'CC'),
+       ('CC du Canton de La Chambre', '247300361', 'CC'),
+       ('CC Maurienne Galibier', '247300452', 'CC'),
+       ('CC Val Guiers', '247300528', 'CC'),
+       ('CC du Lac d''Aiguebelette (CCLA)', '247300668', 'CC'),
+       ('CC Porte de Maurienne', '247300676', 'CC'),
+       ('CC Les Versants d''Aime', '247300817', 'CC'),
+       ('SM Savoie déchets', '200023364', 'SMF'),
+       ('SIRTOM Maurienne', '257301457', 'SMF'),
+       ('CA Annemasse-Les Voirons-Agglomération', '200011773', 'CA'),
+       ('CA du Grand Annecy', '200066793', 'CA'),
+       ('CA Thonon Agglomération', '200067551', 'CA'),
+       ('CC Faucigny-Glières', '200000172', 'CC'),
+       ('CC de la Vallée de Chamonix-Mont-Blanc', '200023372', 'CC'),
+       ('CC Cluses-Arve et Montagnes', '200033116', 'CC'),
+       ('CC des Montagnes du Giffre', '200034098', 'CC'),
+       ('CC Pays du Mont-Blanc', '200034882', 'CC'),
+       ('CC Usses et Rhône', '200070852', 'CC'),
+       ('CC Pays d''Evian Vallée d''Abondance', '200071967', 'CC'),
+       ('CC de la Vallée Verte', '247400047', 'CC'),
+       ('CC du Pays de Cruseilles', '247400112', 'CC'),
+       ('CC Fier et Usses', '247400567', 'CC'),
+       ('CC Arve et Salève', '247400583', 'CC'),
+       ('CC des Vallées de Thônes', '247400617', 'CC'),
+       ('CC des Quatre Rivières', '247400666', 'CC'),
+       ('CC du Haut-Chablais', '247400682', 'CC'),
+       ('CC du Genevois', '247400690', 'CC'),
+       ('CC du Pays Rochois', '247400724', 'CC'),
+       ('CC Rumilly Terre de Savoie', '247400740', 'CC'),
+       ('CC des sources du lac d''Annecy', '247400773', 'CC'),
+       ('SIVOM de la région de Cluses', '247400799', 'SMF'),
+       ('SI du traitement des ordures ménagères des vallées du Mont-Blanc', '257400663', 'SMF'),
+       ('Syndicat de traitement des ordures du Chablais', '257401463', 'SMF'),
+       ('Métropole du Grand Paris', '200054781', 'METRO'),
+       ('SM central de traitement des ordures ménagères (SYCTOM)', '257500074', 'SMF'),
+       ('Métropole Rouen Normandie', '200023414', 'METRO'),
+       ('Le Havre Seine Métropole', '200084952', 'CU'),
+       ('CA Caux Seine Agglo', '200010700', 'CA'),
+       ('CA Fécamp Caux Littoral Agglomération', '200069821', 'CA'),
+       ('CA de la Région Dieppoise', '247600786', 'CA'),
+       ('CC Terroir de Caux', '200068534', 'CC'),
+       ('CC interrégionale Aumale - Blangy-sur-Bresle', '200069722', 'CC'),
+       ('CC des 4 rivières', '200069730', 'CC'),
+       ('CC de la Côte d''Albâtre', '200069839', 'CC'),
+       ('CC Plateau de Caux-Doudeville-Yerville', '200069847', 'CC'),
+       ('CC Communauté Bray-Eawy', '200070068', 'CC'),
+       ('CC inter-Caux-Vexin', '200070449', 'CC'),
+       ('CC Campagne-de-Caux', '247600505', 'CC'),
+       ('CC des Villes Soeurs', '247600588', 'CC'),
+       ('CC de Londinières', '247600604', 'CC'),
+       ('CC Yvetot Normandie', '247600620', 'CC'),
+       ('CC Caux - Austreberthe', '247600646', 'CC'),
+       ('CC Falaises du Talou', '247600729', 'CC'),
+       ('Syndicat des ordures ménagères des vallées de l''Austreberthe et Seine (SOMVAS)', '200074359', 'SMF'),
+       ('Syndicat départemental d''énergie de Seine-Maritime', '257600445', 'SMF'),
+       ('SM d''élimination des déchets de l''arrondissement de Rouen (SMEDAR)', '257604371', 'SMF'),
+       ('Syndicat d''élimination et de valorisation énergétique des déchets de l''estuaire (SEVEDE)', '257604405',
+        'SMF'),
+       ('SM de traitement et de valorisation des déchets du Pays de Caux (SMITVAD)', '257604710', 'SMF'),
+       ('PETR Pays plateau de Caux-Maritime', '200049609', 'PETR'),
+       ('Pays Dieppois - Terroir de Caux', '200049617', 'PETR'),
+       ('CA Paris - Vallée de la Marne', '200057958', 'CA'),
+       ('CA du Pays de Meaux', '200072130', 'CA'),
+       ('CA du Pays de Fontainebleau', '200072346', 'CA'),
+       ('CA Coulommiers Pays de Brie', '200090504', 'CA'),
+       ('CA Melun Val de Seine', '247700057', 'CA'),
+       ('CA Val d''Europe Agglomération', '247700339', 'CA'),
+       ('CA Marne et Gondoire', '247700594', 'CA'),
+       ('CC Les Portes Briardes Entre Villes et Forêts', '200023125', 'CC'),
+       ('CC Pays de Nemours', '200023240', 'CC'),
+       ('CC Gâtinais Val de Loing', '200023919', 'CC'),
+       ('CC Plaines et Monts de France', '200033090', 'CC'),
+       ('CC du Provinois', '200037133', 'CC'),
+       ('CC Bassée-Montois', '200040251', 'CC'),
+       ('CC Brie des Rivières et Châteaux', '200070779', 'CC'),
+       ('CC des Deux Morin', '200072544', 'CC'),
+       ('CC Val Briard', '200072874', 'CC'),
+       ('CC Moret Seine et Loing', '247700032', 'CC'),
+       ('CC du Pays de l''Ourcq', '247700065', 'CC'),
+       ('CC Pays de Montereau', '247700107', 'CC'),
+       ('CC l''Orée de la Brie', '247700644', 'CC'),
+       ('CC Brie Nangissienne', '247700701', 'CC'),
+       ('SMF enlèvement et traitement des résidus ménagers de la région de Lagny-sur-Marne', '257701631', 'SMF'),
+       ('COVALTRI 77', '257701656', 'SMF'),
+       ('SMF collecte et traitement des ordures ménagères de la région de Fontainebleau', '257701698', 'SMF'),
+       ('Syndicat de la région de Montereau-Fault-Yonne pour le traitement des ordures ménagères (SIRMOTOM)',
+        '257701748', 'SMF'),
+       ('SM pour l''enlèvement et le traitement des ordures ménagères de la vallée du Loing', '257703389', 'SMF'),
+       ('SMF enlèvement et traitement des ordures ménagères de la région de Tournan-en-Brie', '257703546', 'SMF'),
+       ('SM de traitement des ordures ménagères et assimilées du centre Ouest seine et marnais (SMITOMCO)', '257705277',
+        'SMF'),
+       ('SMF Est Seine-et-Marne pour le traitement des ordures ménagères (SMETOM-GEEODE)', '257705293', 'SMF'),
+       ('Syndicat de traitement des déchets ménagers (SYTRADEM du Sud Est Seine-et-Marne)', '257705574', 'SMF'),
+       ('SMO traitement des ordures ménagères du Nord Seine et Marne', '257704916', 'SMO'),
+       ('CU Grand Paris Seine et Oise', '200059889', 'CU'),
+       ('CA Saint Germain Boucles de Seine', '200058519', 'CA'),
+       ('CA de Saint Quentin en Yvelines', '200058782', 'CA'),
+       ('CA Rambouillet Territoires', '200073344', 'CA'),
+       ('CA Versailles Grand Parc (CAVGP)', '247800584', 'CA'),
+       ('CC de la Haute Vallée de Chevreuse', '200033173', 'CC'),
+       ('CC Gally Mauldre', '200034130', 'CC'),
+       ('CC Les Portes de l''Ile de France', '200071074', 'CC'),
+       ('CC du Pays Houdanais (CCPH)', '247800550', 'CC'),
+       ('CC Coeur d''Yvelines', '247800618', 'CC'),
+       ('VALOSEINE', '200062461', 'SMF'),
+       ('SI d''évacuation et d''élimination des déchets de l''Ouest Yvelines (SIEED)', '257800300', 'SMF'),
+       ('SI pour la destruction des ordures ménagères et la production d''énergie (SIDOMPE)', '257800375', 'SMF'),
+       ('SI pour le traitement des résidus urbains de la Boucle de la Seine', '257800656', 'SMF'),
+       ('SI de collecte et de traitement des ordures ménagères de la région de Rambouillet (SICTOM)', '257801290',
+        'SMF'),
+       ('CA du Bocage Bressuirais', '200040244', 'CA'),
+       ('CA du Niortais', '200041317', 'CA'),
+       ('CC de Parthenay-Gâtine', '200041333', 'CC'),
+       ('CC Airvaudais-Val du Thouet', '200041416', 'CC'),
+       ('CC Haut Val de Sèvre', '200041994', 'CC'),
+       ('CC Val de Gâtine', '200069748', 'CC'),
+       ('CC Mellois en Poitou', '200069755', 'CC'),
+       ('CC du Thouarsais', '247900798', 'CC'),
+       ('SI d''énergie des Deux-Sèvres (SIEDS)', '200091049', 'SMF'),
+       ('SM à la carte du Haut Val de Sèvre et Sud Gâtine', '257902353', 'SMF'),
+       ('SM de traitement et d''élimination des déchets des Deux-Sèvres (SMITED)', '257902296', 'SMO'),
+       ('CA de la Baie de Somme', '200070993', 'CA'),
+       ('CA Amiens Métropole', '248000531', 'CA'),
+       ('CC de la Haute Somme (Combles - Péronne - Roisel)', '200037059', 'CC'),
+       ('CC Terre de Picardie', '200070928', 'CC'),
+       ('CC Ponthieu-Marquenterre', '200070936', 'CC'),
+       ('CC du Vimeu', '200070944', 'CC'),
+       ('CC du Territoire Nord Picardie', '200070951', 'CC'),
+       ('CC Avre Luce Noye', '200070969', 'CC'),
+       ('CC du Grand Roye', '200070977', 'CC'),
+       ('CC de l''Est de la Somme', '200070985', 'CC'),
+       ('CC Somme Sud-Ouest', '200071181', 'CC'),
+       ('CC Nièvre et Somme', '200071223', 'CC'),
+       ('CC du Val de Somme', '248000499', 'CC'),
+       ('CC du Pays du Coquelicot', '248000747', 'CC'),
+       ('SIVOM d''Ault', '248000051', 'SIVOM'),
+       ('SIVOM de Gamaches', '248000143', 'SIVOM'),
+       ('SMIRTOM du plateau picard Nord', '200044378', 'SMF'),
+       ('TRINOVAL', '258002344', 'SMF'),
+       ('SMITOM du Santerre', '258004571', 'SMF'),
+       ('Pôle Métropolitain du Grand Amiénois', '200082063', 'POLEM'),
+       ('CA Gaillac-Graulhet', '200066124', 'CA'),
+       ('CA de Castres Mazamet', '248100430', 'CA'),
+       ('CA de l''Albigeois (C2A)', '248100737', 'CA'),
+       ('CC Tarn-Agout', '200034023', 'CC'),
+       ('CC des Monts d''Alban et du Villefranchois', '200034031', 'CC'),
+       ('CC Centre Tarn', '200034049', 'CC'),
+       ('CC du Lautrécois et du Pays d''Agout', '200034056', 'CC'),
+       ('CC du Cordais et du Causse (4 C)', '200034064', 'CC'),
+       ('CC Carmausin-Ségala', '200040905', 'CC'),
+       ('CC des Monts de Lacaune et de la Montagne du Haut Languedoc', '200066553', 'CC'),
+       ('CC Sidobre Vals et Plateaux', '200066561', 'CC'),
+       ('CC du Sor et de l''Agout', '248100158', 'CC'),
+       ('CC Val 81', '248100497', 'CC'),
+       ('CC Thoré Montagne Noire', '248100745', 'CC'),
+       ('SICTOM secteur Valence Valderiès', '200073807', 'SMF'),
+       ('SM pour la collecte et le traitement des ordures ménagères de la région de Lavaur', '200075711', 'SMF'),
+       ('Pôle territorial de l''Albigeois et des Bastides', '200049161', 'PETR'),
+       ('CA Grand Montauban', '248200099', 'CA'),
+       ('CC du Pays de Serres en Quercy', '200040418', 'CC'),
+       ('CC Terres des Confluences', '200066322', 'CC'),
+       ('CC Grand Sud Tarn et Garonne', '200066652', 'CC'),
+       ('CC Quercy Vert-Aveyron', '200066884', 'CC'),
+       ('CC Coteaux et Plaines du Pays Lafrançaisain', '200067122', 'CC'),
+       ('CC des Deux Rives', '248200016', 'CC'),
+       ('CC du Quercy Caussadais', '248200057', 'CC'),
+       ('CC de la Lomagne Tarn-et-Garonnaise', '248200065', 'CC'),
+       ('CC du Quercy Rouergue et des Gorges de l''Aveyron', '248200107', 'CC'),
+       ('SM enlèvement et élimination des ordures ménagères groupement moyenne Garonne', '258200658', 'SMF'),
+       ('SM d''enlèvement et d''élimination des ordures ménagères du Sud-Quercy', '258200856', 'SMF'),
+       ('SM du traitement des ordures menagères et autres déchets (SIRTOMAD)', '258201029', 'SMF'),
+       ('Syndicat départemental des déchets ', '258201367', 'SMO'),
+       ('Métropole Toulon-Provence-Méditerranée', '248300543', 'METRO'),
+       ('Estérel Côte d''Azur Agglomération', '200035319', 'CA'),
+       ('CA de la Provence Verte', '200068104', 'CA'),
+       ('CA Sud Sainte Baume', '248300394', 'CA'),
+       ('Dracénie Provence Verdon Agglomération', '248300493', 'CA'),
+       ('CC du Pays de Fayence', '200004802', 'CC'),
+       ('CC Méditerranée Porte des Maures', '200027100', 'CC'),
+       ('CC du Golfe de Saint-Tropez', '200036077', 'CC'),
+       ('CC Provence Verdon', '200040202', 'CC'),
+       ('CC Lacs et Gorges du Verdon', '200040210', 'CC'),
+       ('CC de la Vallée du Gapeau', '248300410', 'CC'),
+       ('CC Coeur du Var', '248300550', 'CC'),
+       ('SM du Haut Var', '200046852', 'SMF'),
+       ('SM de la zone du Verdon', '248300089', 'SMF'),
+       ('SM du développement durable de l''Est Var pour le traitement et la valorisation des déchets ménagers',
+        '258300581', 'SMF'),
+       ('SM de transport et de traitement des ordures ménagères de l''aire toulonnaise (SITTOMAT)', '258300953', 'SMF'),
+       ('Syndicat de valorisation et d''élimination des déchets nouvelle génération (SIVED NG)', '258302637', 'SMF'),
+       ('CA Luberon Monts de Vaucluse', '200040442', 'CA'),
+       ('CA Ventoux-Comtat-Venaissin (COVE)', '248400053', 'CA'),
+       ('CA du Grand Avignon (COGA)', '248400251', 'CA'),
+       ('CC Rhône Lez Provence', '200000628', 'CC'),
+       ('CC Ventoux Sud', '200035723', 'CC'),
+       ('CC Pays d''Apt-Luberon', '200040624', 'CC'),
+       ('CC Enclave des Papes-Pays de Grignan', '200040681', 'CC'),
+       ('CC Aygues-Ouvèze en Provence (CCAOP)', '248400160', 'CC'),
+       ('CC du Pays Réuni d''Orange', '248400236', 'CC'),
+       ('CC Territoriale Sud-Luberon', '248400285', 'CC'),
+       ('CC des Sorgues du Comtat', '248400293', 'CC'),
+       ('CC du Pays des Sorgues et des Monts de Vaucluse', '248400319', 'CC'),
+       ('CC Vaison Ventoux', '248400335', 'CC'),
+       ('SM pour la valorisation des déchets du pays d''Avignon (SIDOMRA)', '258400134', 'SMF'),
+       ('SM intercommunautaire pour l''étude, la construction et l''exploitation d''unités de traitement des ordures ménagères de la région de Cavaillon (SIECEUTOM)',
+        '258400472', 'SMF'),
+       ('SM ramassage et traitement ordures ménagères de la région d''Apt (SIRTOM d''Apt)', '258402510', 'SMF'),
+       ('SM chargé du SCOT de la région de Cavaillon', '258403013', 'SMF'),
+       ('CA Les Sables d''Olonne Agglomération', '200071165', 'CA'),
+       ('CA La Roche sur Yon - Agglomération', '248500589', 'CA'),
+       ('CC du Pays de Saint-Gilles-Croix-de-Vie', '200023778', 'CC'),
+       ('CC Terres de Montaigu, CC Montaigu-Rocheservière', '200070233', 'CC'),
+       ('CC Challans-Gois Communauté', '200071629', 'CC'),
+       ('CC Vendée Grand Littoral', '200071900', 'CC'),
+       ('CC du Pays de Saint-Fulgent - Les Essarts', '200071918', 'CC'),
+       ('CC du Pays de Fontenay-Vendée', '200071934', 'CC'),
+       ('CC de Vie et Boulogne', '200072882', 'CC'),
+       ('CC Sud Vendée Littoral', '200073260', 'CC'),
+       ('CC de l''Ile de Noirmoutier', '248500191', 'CC'),
+       ('CC Océan Marais de Monts', '248500258', 'CC'),
+       ('CC Pays de Chantonnay', '248500340', 'CC'),
+       ('CC du Pays de la Châtaigneraie', '248500415', 'CC'),
+       ('CC du Pays de Pouzauges', '248500464', 'CC'),
+       ('CC du Pays des Achards', '248500530', 'CC'),
+       ('CC Vendée, Sèvre, Autise', '248500563', 'CC'),
+       ('CC du Pays des Herbiers', '248500621', 'CC'),
+       ('CC du Pays de Mortagne', '248500662', 'CC'),
+       ('SYCODEM Sud Vendée', '258500446', 'SMF'),
+       ('Syndicat de collecte des ordures ménagères (SCOM) de l''Est Vendéen', '258500651', 'SMF'),
+       ('SM départemental d''études et de traitement des déchets ménagers et assimilés de Vendée (TRIVALIS)',
+        '258502962', 'SMF'),
+       ('CU du Grand Poitiers', '200069854', 'CU'),
+       ('CA Grand Châtellerault', '248600413', 'CA'),
+       ('CC des Vallées du Clain', '200043628', 'CC'),
+       ('CC du Haut-Poitou', '200069763', 'CC'),
+       ('CC du Civraisien en Poitou', '200070035', 'CC'),
+       ('CC Vienne et Gartempe', '200070043', 'CC'),
+       ('CC du Pays Loudunais', '248600447', 'CC'),
+       ('Syndicat interdépartemental mixte pour l''équipement rural', '258600493', 'SMO'),
+       ('CU Limoges Métropole', '248719312', 'CU'),
+       ('CC Briance Sud Haute Vienne', '200040814', 'CC'),
+       ('CC Porte Océane du Limousin', '200059400', 'CC'),
+       ('CC Elan Limousin Avenir Nature', '200066512', 'CC'),
+       ('CC Ouest Limousin', '200066520', 'CC'),
+       ('CC Pays de Nexon Monts de Chalus', '200070506', 'CC'),
+       ('CC Haut Limousin en Marche', '200071942', 'CC'),
+       ('CC du Pays de Saint Yrieix', '248700189', 'CC'),
+       ('CC Gartempe - Saint Pardoux', '248719262', 'CC'),
+       ('CC du Val de Vienne', '248719288', 'CC'),
+       ('CC Briance-Combade', '248719338', 'CC'),
+       ('CC des Portes de Vassivière', '248719353', 'CC'),
+       ('CC de Noblat', '248719361', 'CC'),
+       ('SI de collecte et de traitement des ordures ménagères de Sud Haute-Vienne', '258718741', 'SMF'),
+       ('SM départemental pour l''élimination des déchets ménagers et assimilés', '258700251', 'SMO'),
+       ('CA d''Epinal', '200068757', 'CA'),
+       ('CA de Saint-Dié-des-Vosges', '200071066', 'CA'),
+       ('CC de la Région de Rambervillers', '200005957', 'CC'),
+       ('CC des Ballons des Hautes-Vosges', '200033868', 'CC'),
+       ('CC Bruyères-Vallons des Vosges', '200042000', 'CC'),
+       ('CC de Mirecourt Dompaire', '200068369', 'CC'),
+       ('CC de la Porte des Vosges Méridionales', '200068377', 'CC'),
+       ('CC de l''Ouest Vosgien', '200068559', 'CC'),
+       ('CC Terre d''Eau', '200068682', 'CC'),
+       ('CC des Vosges côté Sud Ouest', '200068773', 'CC'),
+       ('CC des Hautes Vosges', '200071157', 'CC'),
+       ('SIVOM de Grand', '248800088', 'SIVOM'),
+       ('SI de la vallée de la Roche-Harchéchamp', '248800245', 'SIVOM'),
+       ('SM de collecte et de traitement des déchets ménagers et assimilés de la région de Lerrain', '200071280',
+        'SMF'),
+       ('SM de collecte et de valorisation des déchets ménagers de la région d''Epinal', '258801422', 'SMF'),
+       ('ÉVODIA', '258802560', 'SMF'),
+       ('CA de l''Auxerrois', '200067114', 'CA'),
+       ('CA du Grand Sénonais', '248900334', 'CA'),
+       ('CC Le Tonnerrois en Bourgogne', '200039642', 'CC'),
+       ('CC du Serein', '200039709', 'CC'),
+       ('CC Avallon, Vézelay, Morvan', '200039758', 'CC'),
+       ('CC Chablis Villages et Terroirs', '200067080', 'CC'),
+       ('CC de Puisaye-Forterre', '200067130', 'CC'),
+       ('CC Serein et Armance', '200067304', 'CC'),
+       ('CC de l''Agglomération Migennoise', '248900383', 'CC'),
+       ('CC de l''Aillantais en Bourgogne', '248900524', 'CC'),
+       ('CC de la Vanne et du Pays d''Othe', '248900664', 'CC'),
+       ('CC du Gâtinais en Bourgogne', '248900748', 'CC'),
+       ('CC Yonne Nord', '248900896', 'CC'),
+       ('CC du Jovinien', '248900938', 'CC'),
+       ('CA Grand Belfort', '200069052', 'CA'),
+       ('CC des Vosges du Sud', '200069060', 'CC'),
+       ('CC du Sud Territoire', '249000241', 'CC'),
+       ('SM pour la collecte et le traitement des ordures ménagères de la zone sous-vosgienne', '200075133', 'SMF'),
+       ('SM d''études et de réalisation pour le traitement intercommunal des déchets', '259000735', 'SMF'),
+       ('CA Etampois Sud Essonne', '200017846', 'CA'),
+       ('CA Communauté Paris-Saclay', '200056232', 'CA'),
+       ('CA Coeur d''Essonne Agglomération', '200057859', 'CA'),
+       ('CA Val d''Yerres Val de Seine', '200058477', 'CA'),
+       ('CA Grand Paris Sud Seine Essonne Sénart', '200059228', 'CA'),
+       ('CC du Pays de Limours (CCPL)', '249100074', 'CC'),
+       ('CC des 2 Vallées', '249100157', 'CC'),
+       ('CC du Val d''Essonne (CCVE)', '249100546', 'CC'),
+       ('CC Entre Juine et Renarde (CCEJR)', '249100553', 'CC'),
+       ('CC le Dourdannais en Hurepoix (CCDH)', '249100595', 'CC'),
+       ('SM des ordures ménagères de la vallée de Chevreuse', '200062321', 'SMF'),
+       ('SIRTOM du Sud-Francilien', '200066959', 'SMF'),
+       ('Syndicat pour l''innovation, le recyclage et l''énergie par les déchets et ordures ménagères (SIREDOM) - Agence Sud Francilienne pour l''énergie, les déchets et l''environnement',
+        '200077832', 'SMF'),
+       ('SM Massy-Antony-Hauts-de-Bièvre pour le chauffage urbain et le traitement des résidus ménagers (SIMACUR)',
+        '259100741', 'SMF'),
+       ('SM d''élimination des déchets de la région d''Etampes (SEDRE)', '259101988', 'SMF'),
+       ('SM de la vallée de l''Yerres et des Sénarts', '259102705', 'SMF'),
+       ('Vallée Sud-Grand Paris', '200057966', 'EPT'),
+       ('Grand Paris Seine Ouest', '200057974', 'EPT'),
+       ('Paris Ouest La Défense', '200057982', 'EPT'),
+       ('Boucle Nord de Seine', '200057990', 'EPT'),
+       ('Plaine Commune', '200057867', 'EPT'),
+       ('Est Ensemble', '200057875', 'EPT'),
+       ('Paris Terres d''Envol', '200058097', 'EPT'),
+       ('Grand Paris Grand Est', '200058790', 'EPT'),
+       ('SM de traitement des déchets urbains du Val-de-Marne (SMITDUVM)', '259400992', 'SMF'),
+       ('#ParisEstMarne&Bois', '200057941', 'EPT'),
+       ('Grand Paris Sud Est Avenir', '200058006', 'EPT'),
+       ('Grand-Orly Seine Bièvre', '200058014', 'EPT'),
+       ('CA Roissy Pays de France', '200055655', 'CA'),
+       ('CA Plaine Vallée', '200056380', 'CA'),
+       ('CA Val Parisis', '200058485', 'CA'),
+       ('CA de Cergy-Pontoise', '249500109', 'CA'),
+       ('CC Vexin Centre', '200035970', 'CC'),
+       ('CC Carnelle Pays-de-France', '200073013', 'CC'),
+       ('CC Sausseron Impressionnistes', '249500430', 'CC'),
+       ('CC de la Vallée de l''Oise et des Trois Forêts', '249500455', 'CC'),
+       ('CC du Haut Val d''Oise', '249500489', 'CC'),
+       ('CC du Vexin-Val de Seine', '249500513', 'CC'),
+       ('SM pour la valorisation des déchets ménagers dénommé Azur', '259500023', 'SMF'),
+       ('SM pour la collecte et le traitement des ordures ménagères de la région de L''Isle-Adam (SICTOMIA) ',
+        '259500288', 'SMF'),
+       ('SM Tri-Action', '259501211', 'SMF'),
+       ('SM de ramassage et de traitement des ordures ménagères du Vexin (SMIRTOM du Vexin)', '259501252', 'SMF'),
+       ('SM pour la gestion et l''incinération des déchets urbains de la région de Sarcelles  (SIGIDURS)', '259502086',
+        'SMF'),
+       ('SM pour la collecte et le traitement des déchets de la vallée de Montmorency dénommé Syndicat Émeraude',
+        '259502367', 'SMF'),
+       ('CA CAP Excellence', '200018653', 'CA'),
+       ('CA La Riviéra du Levant', '200041507', 'CA'),
+       ('CA du Nord Grande Terre', '200044691', 'CA'),
+       ('CA du Nord Basse-Terre', '249710062', 'CA'),
+       ('CA Grand Sud Caraïbe', '249710070', 'CA'),
+       ('CC de Marie-Galante', '249710047', 'CC'),
+       ('Syndicat de valorisation des déchets', '200044709', 'SMO'),
+       ('SM d''Innovation et de Valorisation de Guadeloupe (SINNOVAL Guadeloupe)', '200095834', 'SMO'),
+       ('CA du Pays Nord Martinique', '200041788', 'CA'),
+       ('CA de l''Espace Sud de la Martinique', '249720053', 'CA'),
+       ('CA du Centre de la Martinique', '249720061', 'CA'),
+       ('Syndicat martiniquais pour le traitement et la valorisation des déchets', '259720084', 'SMF'),
+       ('CA du Centre Littoral', '249730045', 'CA'),
+       ('CC des Savanes', '200027548', 'CC'),
+       ('CC de l''Ouest Guyanais', '249730037', 'CC'),
+       ('CC de l''Est Guyanais', '249730052', 'CC'),
+       ('CA CIVIS (Communauté Intercommunale des Villes Solidaires)', '249740077', 'CA'),
+       ('CA du Sud', '249740085', 'CA'),
+       ('CA Intercommunale de la Réunion Est (CIREST)', '249740093', 'CA'),
+       ('CA Territoire de la Côte Ouest (TCO)', '249740101', 'CA'),
+       ('CA Intercommunale du Nord de la Réunion (CINOR)', '249740119', 'CA'),
+       ('SM de traitement des déchets des microrégions Sud et Ouest de La Réunion', '200045342', 'SMO'),
+       ('SM de traitement des déchets des microrégions Nord et Est de la Réunion', '200050052', 'SMO'),
+       ('CA de Dembeni / Mamoudzou', '200060457', 'CA'),
+       ('CA du Grand Nord de Mayotte', '200060465', 'CA'),
+       ('CC de Petite-Terre', '200050532', 'CC'),
+       ('CC du Centre-Ouest', '200059871', 'CC'),
+       ('CC du Sud', '200060473', 'CC'),
+       ('SI d''élimination et de valorisation des déchets de Mayotte', '200089886', 'SMF');
