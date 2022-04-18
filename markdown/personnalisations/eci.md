@@ -6,6 +6,7 @@ action_id: eci_1.2.2
 ### Désactivation
 ```formule
 si identite(type, syndicat) alors VRAI
+sinon si reponse(dev_eco_1, NON) alors VRAI
 ```
 Les syndicats ne sont pas concernés par la sous-action 1.2.2.
 
@@ -17,6 +18,7 @@ action_id: eci_1.2.3
 ### Désactivation
 ```formule
 si identite(type, syndicat) alors VRAI
+sinon si reponse(dev_eco_1, NON) alors VRAI
 ```
 Les syndicats ne sont pas concernés par la sous-action 1.2.3.
 
