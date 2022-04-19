@@ -25,7 +25,7 @@ export default observer(() => {
 
   return (
     <>
-      <div className="bg-bf925 w-full h-28 flex items-center fr-mt-4w">
+      <div className="sticky top-0 z-40 bg-bf925 w-full h-28 flex items-center fr-mt-4w">
         <h2 className="w-full text-center m-0">{thematique.nom}</h2>
       </div>
       <main className="fr-container fr-mt-1w fr-mb-4w">
