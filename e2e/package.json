@@ -9,7 +9,7 @@
     "start": "cross-env TZ=Europe/Paris cypress open --env coverage=false",
     "pretest": "rimraf cypress/cucumber-json && rimraf .nyc_output && rimraf report",
     "test": "cross-env TZ=Europe/Paris cypress run --env coverage=false",
-    "test:coverage": "cross-env TZ=Europe/Paris cypress run"
+    "report": "node scripts/embedScreenshots.js && node scripts/genReport.js"
   },
   "cypress-cucumber-preprocessor": {
     "nonGlobalStepDefinitions": true,
@@ -24,6 +24,7 @@
     "cross-env": "^7.0.3",
     "cypress": "^9.4.1",
     "cypress-cucumber-preprocessor": "^4.3.1",
+    "multiple-cucumber-html-reporter": "^1.19.0",
     "rimraf": "^3.0.2"
   },
   "dependencies": {
