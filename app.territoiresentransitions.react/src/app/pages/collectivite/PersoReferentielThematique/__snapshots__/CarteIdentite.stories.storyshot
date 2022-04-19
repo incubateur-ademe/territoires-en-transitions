@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Carte Identite Exemple 1 1`] = `
+Array [
+  <h3>
+    Informations administratives officielles
+  </h3>,
+  <div
+    className="grid grid-cols-2"
+  >
+    <p
+      className="fr-text--md"
+    >
+      <span
+        className="fr-text--bold"
+      >
+        Nom
+      </span>
+      <br />
+      Ambérieu-en-Bugey
+    </p>
+    <p
+      className="fr-text--md"
+    >
+      <span
+        className="fr-text--bold"
+      >
+        Type de collectivité
+      </span>
+      <br />
+      <span
+        className="capitalize"
+      >
+        commune
+      </span>
+    </p>
+    <p
+      className="fr-text--md"
+    >
+      <span
+        className="fr-text--bold"
+      >
+        Code SIREN ou INSEE
+      </span>
+      <br />
+      01004
+    </p>
+    <p
+      className="fr-text--md"
+    >
+      <span
+        className="fr-text--bold"
+      >
+        Région
+      </span>
+      <br />
+      Auvergne-Rhône-Alpes
+    </p>
+    <p
+      className="fr-text--md"
+    >
+      <span
+        className="fr-text--bold"
+      >
+        Population (
+        Insee 12/01/2022
+        )
+      </span>
+      <br />
+      14 514
+       habitants
+    </p>
+    <p
+      className="fr-text--md"
+    >
+      <span
+        className="fr-text--bold"
+      >
+        Département
+      </span>
+      <br />
+      Ain
+    </p>
+  </div>,
+]
+`;
