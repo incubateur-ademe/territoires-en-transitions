@@ -2,7 +2,7 @@
 ```yaml
 id: SPASER
 type: binaire
-thematique_id: achats_responsables
+thematique_id: identite
 actions: [eci_3.2.0]
 ```
 Les SPASER concernent les collectivités ayant un montant total annuel des achats supérieur à 100 millions d’euros hors-taxes.
@@ -14,7 +14,7 @@ Seuls les contrats conclus doivent être pris en compte, c'est-à-dire ceux dont
 ```yaml
 id: formation
 type: binaire
-thematique_id: formation
+thematique_id: identite
 actions: [eci_3.4.2]
 ```
 
@@ -22,7 +22,7 @@ actions: [eci_3.4.2]
 ```yaml
 id: scolaire_1
 type: binaire
-thematique_id: formation
+thematique_id: identite
 actions: [cae_6.5.3]
 ```
 
@@ -30,7 +30,7 @@ actions: [cae_6.5.3]
 ```yaml
 id: scolaire_2
 type: binaire
-thematique_id: formation
+thematique_id: identite
 actions: [cae_6.5.3]
 ```
 La question porte sur les établissements scolaires du cycle primaire (école maternelle et élémentaire) et dans une moindre mesure secondaire (collège, lycée). Les structures d’accueil collectif des jeunes enfants peuvent concerner les établissements multi-accueil, les crèches parentales, les jardins d’enfants, les micro-crèches, les haltes-garderies, les maisons et les relais d’assistant(e)s maternels...
@@ -39,7 +39,7 @@ La question porte sur les établissements scolaires du cycle primaire (école ma
 ```yaml
 id: SAU
 type: binaire
-thematique_id: agri_alim
+thematique_id: identite
 actions: [cae_6.4.1]
 ```
 
@@ -47,7 +47,7 @@ actions: [cae_6.4.1]
 ```yaml
 id: foret
 type: binaire
-thematique_id: foret
+thematique_id: identite
 actions: [cae_6.4.2]
 ```
 
@@ -55,7 +55,7 @@ actions: [cae_6.4.2]
 ```yaml
 id: centre_polarite
 type: binaire
-thematique_id: centre_polarite
+thematique_id: identite
 actions: [cae_4.2.1, cae_4.2.3]
 ```
 
