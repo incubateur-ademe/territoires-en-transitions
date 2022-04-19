@@ -11,6 +11,7 @@ import {
 import {PointsPotentiels} from './PointsPotentiels';
 import {reponseParType} from './Reponse';
 import {TReponse} from 'generated/dataLayer/reponse_read';
+import {Accordion} from 'ui/Accordion';
 
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */
@@ -45,13 +46,15 @@ export const PersoPotentielQR = (props: TPersoPotentielQRProps) => {
 
 export type TQuestionReponseProps = {
   qr: TQuestionReponse;
+  /** vrai quand la question est la 1ère de type proportion */
+  hasProportionDescription: boolean;
   onChange: (reponse: TReponse) => void;
 };
 
 /** Affiche une question/réponse et son éventuel libellé d'aide */
 const QuestionReponse = (props: TQuestionReponseProps) => {
-  const {qr} = props;
-  const {type, formulation} = qr;
+  const {qr, hasProportionDescription} = props;
+  const {id, type, formulation, description} = qr;
   const Reponse = reponseParType[type];
 
   return (
@@ -60,10 +63,28 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
         className="fr-fieldset__legend fr-text--regular pt-6"
         dangerouslySetInnerHTML={{__html: formulation}}
       />
-      {/*
-    <span className="fr-hint-text">Exemple : contrat de construction</span>
-    */}
+      {description ? (
+        <Accordion
+          className="fr-mb-3w"
+          id={`accordion-${id}`}
+          titre="En savoir plus"
+          html={description}
+        />
+      ) : null}
       <Reponse {...props} />
+      {hasProportionDescription ? (
+        <Accordion
+          className="fr-mt-3w"
+          id={`accordion-part-${id}`}
+          titre="Comment calculer la part ?"
+          html="La part se rapporte au nombre d'habitants (nombre d'habitants de la
+          collectivité / nombre d'habitants de la structure compétente) ou au
+          pouvoir de la collectivité dans la structure compétente (nombre de voix
+          d'élu de la collectivité / nombre de voix total dans l'organe
+          délibératoire de la structure compétente) si cette part est supérieure à
+          celle liée au nombre d'habitants."
+        />
+      ) : null}
     </>
   );
 };
@@ -81,17 +102,31 @@ export const QuestionReponseList = (props: TQuestionReponseListProps) => {
   const {className, questionReponses, onChange} = props;
   return (
     <div className={`fr-form-group ${className || ''}`}>
-      {questionReponses.map(qr => {
+      {questionReponses.map((qr, index) => {
         const {id} = qr;
         return (
           <fieldset key={id} className="fr-fieldset">
             <QuestionReponse
               qr={qr}
               onChange={(reponse: TReponse) => onChange(qr, reponse)}
+              hasProportionDescription={hasProportionDescription(
+                questionReponses,
+                index
+              )}
             />
           </fieldset>
         );
       })}
     </div>
   );
+};
+
+const hasProportionDescription = (
+  questionReponses: TQuestionReponse[],
+  index: number
+): boolean => {
+  const firstProportionIndex = questionReponses.findIndex(
+    ({type}) => type === 'proportion'
+  );
+  return index === firstProportionIndex;
 };
