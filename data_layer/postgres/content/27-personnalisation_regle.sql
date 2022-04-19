@@ -2,6 +2,11 @@ insert into public.personnalisation_regle (action_id, type, formule, description
 values  ('cae_4.1.1', 'reduction', 'max(reponse(AOM_2), 0.5) 
 ', '<p>Pour une collectivité non AOM, le score est proportionnel à la participation dans la structure AOM dans la limite de 50 %.</p>
 '),
+        ('cae_1.3.2', 'reduction', 'si reponse(amenagement_1, NON) ou reponse (amenagement_2, NON) alors 5/10 
+', '<p>Si une collectivité n''a pas de terrains utilisables ou vendables ou elle dispose de terrains de ce type mais n''a pas réalisé de vente ou de contrats d''utilisation alors le score de la 1.3.2 est réduit de 50 %.</p>
+'),
+        ('cae_6.3.1.4', 'desactivation', 'reponse(dev_eco_4,NON) 
+', ''),
         ('cae_4.1.2', 'reduction', 'si reponse(TC_1, NON) et reponse(vehiculeCT_1, NON) alors 0.5
 sinon si reponse(TC_1, NON) alors 0.8
 sinon si reponse(vehiculeCT_1, NON) alors 0.7
@@ -14,6 +19,23 @@ sinon si reponse(vehiculeCT_1, NON) alors 0.7
         ('cae_4.1.2.3', 'desactivation', 'reponse(vehiculeCT_1, NON)
 ', ''),
         ('cae_4.1.2.4', 'desactivation', 'reponse(vehiculeCT_1, NON)
+', ''),
+        ('cae_3.1.1', 'reduction', 'si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 
+sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10 
+sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 
+sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 
+sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 
+sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 
+sinon si reponse(AOD_chaleur, NON) alors 6/10 
+', '<p>Pour une collectivité non autorité organisatrice de la distribution d''électricité, le score de la 3.1.1 est réduit de 30 %.</p>
+<p>Pour une collectivité non autorité organisatrice de la distribution de gaz, le score de la 3.1.1 est réduit de 30 %.</p>
+<p>Pour une collectivité non autorité organisatrice de la distribution de chaleur, le score de la 3.1.1 est réduit de 40 %.</p>
+<p>Ces réductions sont cumulables dans la limite de 2 points restants pour prendre en compte la part d’influence dans les instances compétentes et les actions partenariales.</p>
+'),
+        ('cae_3.1.2.2', 'reduction', 'si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 1.0
+', '<p>Si le parent est réduit de 50% alors la réduction de 20% ne s''applique pas même si il y a des fournisseurs d''energie maîtrisés par la collectivité.</p>
+'),
+        ('cae_3.2.1.2', 'reduction', 'si reponse(recuperation_cogeneration, NON) alors 0
 ', ''),
         ('cae_4.2.1', 'reduction', 'si identite(type, commune) alors max(reponse(voirie_2), 2/8)
 sinon si identite(type, EPCI) et reponse(voirie_1, voirie_1_b) alors 0.5
@@ -86,9 +108,6 @@ sinon si reponse(urba_1, NON) et reponse(SCoT, OUI) alors 0.7
 ', '<p>Pour une collectivité n''ayant ni la compétence PLU, ni la compétence SCOT, le score de la 1.3.1 est réduit de 50 %.</p>
 <p>Pour une collectivité n''ayant pas la compétence PLU mais disposant de la compétence SCOT, le score de la 1.3.1 est réduit de 30 %.</p>
 '),
-        ('cae_1.3.2', 'reduction', 'si reponse(amenagement_1, NON) ou reponse (amenagement_2, NON) alors 5/10 
-', '<p>Si une collectivité n''a pas de terrains utilisables ou vendables ou elle dispose de terrains de ce type mais n''a pas réalisé de vente ou de contrats d''utilisation alors le score de la 1.3.2 est réduit de 50 %.</p>
-'),
         ('cae_1.3.3', 'desactivation', 'reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON)
 ', '<p>Pour une collectivité n''ayant ni la compétence PLU, ni l''instruction, ni l''octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>
 '),
@@ -101,6 +120,8 @@ sinon si reponse(urba_1, OUI) ou reponse(urba_2, OUI) et reponse(urba_3, OUI) al
 sinon si reponse(dev_eco_1, NON) alors VRAI
 ', '<p>Les syndicats ne sont pas concernés par la sous-action 1.2.2.</p>
 '),
+        ('cae_3.2.1.2', 'desactivation', 'reponse(recuperation_cogeneration, NON) 
+', ''),
         ('eci_1.2.3', 'desactivation', 'si identite(type, syndicat) alors VRAI
 sinon si reponse(dev_eco_1, NON) alors VRAI
 ', '<p>Les syndicats ne sont pas concernés par la sous-action 1.2.3.</p>
@@ -226,8 +247,6 @@ sinon si identite(type, commune) et reponse(habitat_3, OUI) alors 11/10
 ', '<p>Si la collectivité est une commune, alors la réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de développement économique, dans la limite de 2 points de potentiel restant.</p>
 <p>En l’absence de tissu économique propice à l’émergence de projets d’écologie industrielle, le score de la 6.3.1.4 est réduit à 0 et son statut est &quot;non concerné&quot; : les 2 points liés sont affectés à la 6.3.1.3 et la 6.3.1.5.</p>
 '),
-        ('cae_6.3.1.4', 'desactivation', 'reponse(dev_eco_4,NON) 
-', ''),
         ('cae_6.3.1.3', 'reduction', 'si reponse(dev_eco_4,NON) alors 1.625
 ', ''),
         ('cae_6.3.1.5', 'reduction', 'si reponse(dev_eco_4,NON) alors 1.625
@@ -261,39 +280,21 @@ sinon si reponse(scolaire_1, NON) alors 0.5
 ', '<p>Si le territoire de la collectivité ne compte aucun établissement scolaire ou structure d’accueil de jeunes enfants sur le territoire, le score de l''action 6.5.3 est réduit à 0.</p>
 <p>Si la collectivité n’est pas en charge des écoles, le score de l''action 6.5.3 est ''reduit de 50 % : le reste du potentiel est maintenu pour la compétence « soutien aux actions de maîtrise de la demande d''énergie » que la collectivité peut prendre de manière facultative.</p>
 '),
-        ('cae_3.1.1', 'reduction', 'si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 
-sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10 
-sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 
-sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 
-sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 
-sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 
-sinon si reponse(AOD_chaleur, NON) alors 6/10 
-', '<p>Pour une collectivité non autorité organisatrice de la distribution d''électricité, le score de la 3.1.1 est réduit de 30 %.</p>
-<p>Pour une collectivité non autorité organisatrice de la distribution de gaz, le score de la 3.1.1 est réduit de 30 %.</p>
-<p>Pour une collectivité non autorité organisatrice de la distribution de chaleur, le score de la 3.1.1 est réduit de 40 %.</p>
-<p>Ces réductions sont cumulables dans la limite de 2 points restants pour prendre en compte la part d’influence dans les instances compétentes et les actions partenariales.</p>
-'),
         ('cae_3.1.2', 'reduction', 'si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 0.5
+sinon si reponse(fournisseur_energie, NON) alors 0.8
 ', '<p>Pour une collectivité non autorité organisatrice de la distribution d''électricité, de gaz et de chaleur, le score de la 3.1.2 est réduit de 50 %.</p>
 <p>En l’absence de fournisseurs d’énergie maîtrisés par la collectivité (SEM/régie/exploitants de réseau de chaleur urbain liés à la collectivité par DSP), le score de la 3.1.2 est réduit de 20 % et le statut de la sous-action 3.1.2.2 liée aux actions de la facturation est &quot;non concerné&quot;.</p>
 <p>La réduction la plus forte prévaut.</p>
 '),
-        ('cae_3.1.2.2', 'reduction', 'si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 1.0
-sinon si reponse(fournisseur_energie, NON) alors 0.8
-', '<p>Si le parent est réduit de 50% alors la réduction de 20% ne s''applique pas même si il y a des fournisseurs d''energie maîtrisés par la collectivité.</p>
-'),
-        ('cae_3.1.2.2', 'desactivation', 'reponse(fournisseur_energie, NON) 
-', ''),
-        ('cae_3.2.1.1', 'reduction', 'si reponse(recuperation_cogeneration, NON) et identite(localisation,DOM) alors 2/10
-sinon si reponse(recuperation_cogeneration, NON) alors 2/12
+        ('cae_3.1.2.2', 'desactivation', 'si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors FAUX
+sinon si reponse(fournisseur_energie, NON) alors VRAI
 ', ''),
         ('cae_3.2.1', 'reduction', 'si identite(localisation,DOM) alors 10/12
 ', '<p>Le nombre de point max pour l''action 3.2.1 est de 12 points en Métropole et de 10 points pour les collectivités DOM.</p>
 <p>Pour une collectivité avec peu d''activités industrielles adaptées pour la récupération de chaleur fatale et peu de potentiel pour la cogénération voir la micro-cogénération (donc ni de chaufferies ni de consommateurs suffisants en chaleur ni de producteur-consommateur visant l’autoconsommation), le score de la 3.2.1 est réduit à 2 points et les statuts des sous-action 3.2.1.2 et 3.2.1.3 sont &quot;non concernée&quot;.</p>
 '),
-        ('cae_3.2.1.2', 'reduction', 'si reponse(recuperation_cogeneration, NON) alors 0
-', ''),
-        ('cae_3.2.1.2', 'desactivation', 'reponse(recuperation_cogeneration, NON) 
+        ('cae_3.2.1.1', 'reduction', 'si reponse(recuperation_cogeneration, NON) et identite(localisation,DOM) alors 2/10
+sinon si reponse(recuperation_cogeneration, NON) alors 2/12
 ', ''),
         ('cae_3.2.1.3', 'reduction', 'si reponse(recuperation_cogeneration, NON) alors 0
 ', ''),

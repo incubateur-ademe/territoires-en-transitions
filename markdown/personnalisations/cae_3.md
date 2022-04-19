@@ -28,6 +28,7 @@ action_id: cae_3.1.2
 ### Réduction de potentiel
 ```formule
 si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 0.5
+sinon si reponse(fournisseur_energie, NON) alors 0.8
 ```
 Pour une collectivité non autorité organisatrice de la distribution d'électricité, de gaz et de chaleur, le score de la 3.1.2 est réduit de 50 %.
 En l’absence de fournisseurs d’énergie maîtrisés par la collectivité (SEM/régie/exploitants de réseau de chaleur urbain liés à la collectivité par DSP), le score de la 3.1.2 est réduit de 20 % et le statut de la sous-action 3.1.2.2 liée aux actions de la facturation est "non concerné". 
@@ -41,13 +42,13 @@ action_id: cae_3.1.2.2
 ### Réduction de potentiel
 ```formule
 si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 1.0
-sinon si reponse(fournisseur_energie, NON) alors 0.8
 ```
 Si le parent est réduit de 50% alors la réduction de 20% ne s'applique pas même si il y a des fournisseurs d'energie maîtrisés par la collectivité.
 
 ### Désactivation
 ```formule
-reponse(fournisseur_energie, NON) 
+si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors FAUX
+sinon si reponse(fournisseur_energie, NON) alors VRAI
 ```
 
 
