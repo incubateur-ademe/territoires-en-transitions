@@ -5,6 +5,7 @@ import {ThematiqueQR} from './ThematiqueQR';
 import {useThematique} from './useThematique';
 import {useThematiqueQR} from './useThematiqueQR';
 import {useChangeReponseHandler} from '../PersoPotentielModal/useChangeReponseHandler';
+import {useNextThematiqueId} from './useNextThematiqueId';
 
 export default observer(() => {
   const collectivite = currentCollectiviteBloc.currentCollectivite;
@@ -12,6 +13,7 @@ export default observer(() => {
   const {thematiqueId} = useParams<{thematiqueId: string | undefined}>();
   const thematique = useThematique(thematiqueId);
   const [qr, refetch] = useThematiqueQR(collectivite_id, thematiqueId);
+  const nextThematiqueId = useNextThematiqueId(collectivite_id, thematiqueId);
   const [handleChange, renderToast] = useChangeReponseHandler(
     collectivite_id || null,
     refetch
@@ -31,6 +33,7 @@ export default observer(() => {
           collectivite={{id: collectivite_id, nom: nom || ''}}
           thematique={thematique}
           questionReponses={qr}
+          nextThematiqueId={nextThematiqueId}
           onChange={handleChange}
         />
         {renderToast()}
