@@ -54,7 +54,8 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
     const actionScore = scoreBloc.getScore(action.id, action.referentiel);
     return (
       !!actionScore &&
-      actionScore.completed_taches_count === actionScore.total_taches_count
+      (actionScore.completed_taches_count === actionScore.total_taches_count ||
+        actionScore.desactive)
     );
   };
 
