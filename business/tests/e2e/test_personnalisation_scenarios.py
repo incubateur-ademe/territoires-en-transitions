@@ -151,3 +151,63 @@ def test_regle_cae_4_1_2():
             )
         },
     )
+
+
+def test_regle_cae_3_1_2_2():
+    """Si le parent est réduit de 50%
+    alors la réduction de 20% ne s'applique pas
+    même si il y a des fournisseurs d'energie maîtrisés par la collectivité."""
+
+    # Pas de réduction de potentiel.
+    given_reponse_assert_personnalisation_consequences(
+        [
+            Reponse("AOD_elec", "NON"),
+            Reponse("AOD_gaz", "NON"),
+            Reponse("AOD_chaleur", "NON"),
+            Reponse("fournisseur_energie", "OUI"),
+        ],
+        {
+            "cae_3.1.2.2": ActionPersonnalisationConsequence(
+                desactive=False, potentiel_perso=1.0
+            )
+        },
+    )
+    given_reponse_assert_personnalisation_consequences(
+        [
+            Reponse("AOD_elec", "NON"),
+            Reponse("AOD_gaz", "NON"),
+            Reponse("AOD_chaleur", "NON"),
+            Reponse("fournisseur_energie", "NON"),
+        ],
+        {
+            "cae_3.1.2.2": ActionPersonnalisationConsequence(
+                desactive=True, potentiel_perso=1.0
+            )
+        },
+    )
+    given_reponse_assert_personnalisation_consequences(
+        [
+            Reponse("AOD_elec", "OUI"),
+            Reponse("AOD_gaz", "NON"),
+            Reponse("AOD_chaleur", "NON"),
+            Reponse("fournisseur_energie", "NON"),
+        ],
+        {
+            "cae_3.1.2.2": ActionPersonnalisationConsequence(
+                desactive=True, potentiel_perso=0.8
+            )
+        },
+    )
+    given_reponse_assert_personnalisation_consequences(
+        [
+            Reponse("AOD_elec", "NON"),
+            Reponse("AOD_gaz", "NON"),
+            Reponse("AOD_chaleur", "NON"),
+            Reponse("fournisseur_energie", "OUI"),
+        ],
+        {
+            "cae_3.1.2.2": ActionPersonnalisationConsequence(
+                desactive=False, potentiel_perso=1.0
+            )
+        },
+    )
