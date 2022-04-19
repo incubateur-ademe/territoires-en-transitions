@@ -1,5 +1,206 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematique QR Lien Thematique Suivante 1`] = `
+<div
+  className="flex flex-col"
+>
+  <div
+    className="flex justify-center w-full"
+  >
+    <div
+      className="fr-toggle fr-toggle--label-left border-b w-[28rem] mt-6"
+    >
+      <input
+        checked={false}
+        className="fr-toggle__input absolute right-0"
+        id="onlyNoResponse"
+        onChange={[Function]}
+        type="checkbox"
+      />
+      <label
+        className="fr-toggle__label select-none"
+        htmlFor="onlyNoResponse"
+      >
+        Afficher uniquement les questions sans réponse
+      </label>
+    </div>
+  </div>
+  <div
+    className="max-w-3xl self-center mt-10"
+  >
+    <div
+      className="fr-form-group "
+    >
+      <fieldset
+        className="fr-fieldset"
+      >
+        <legend
+          className="fr-fieldset__legend fr-text--regular pt-6"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
+            }
+          }
+        />
+        <div
+          className="fr-fieldset__content pl-4 "
+        >
+          <div
+            className="fr-radio-group fr-radio-group--sm vertical"
+          >
+            <input
+              checked={false}
+              id="q1-c1"
+              onChange={[Function]}
+              type="radio"
+              value="c1"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q1-c1"
+            >
+              Oui, pour l’ensemble de la collectivité
+            </label>
+          </div>
+          <div
+            className="fr-radio-group fr-radio-group--sm vertical"
+          >
+            <input
+              checked={false}
+              id="q1-c2"
+              onChange={[Function]}
+              type="radio"
+              value="c2"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q1-c2"
+            >
+              Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+            </label>
+          </div>
+          <div
+            className="fr-radio-group fr-radio-group--sm vertical"
+          >
+            <input
+              checked={false}
+              id="q1-c3"
+              onChange={[Function]}
+              type="radio"
+              value="c3"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q1-c3"
+            >
+              Non
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        className="fr-fieldset"
+      >
+        <legend
+          className="fr-fieldset__legend fr-text--regular pt-6"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
+            }
+          }
+        />
+        <div
+          className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
+        >
+          <div
+            className="fr-radio-group fr-radio-group--sm"
+          >
+            <input
+              checked={false}
+              id="q2-true"
+              onChange={[Function]}
+              type="radio"
+              value="true"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q2-true"
+            >
+              Oui
+            </label>
+          </div>
+          <div
+            className="fr-radio-group fr-radio-group--sm"
+          >
+            <input
+              checked={false}
+              id="q2-false"
+              onChange={[Function]}
+              type="radio"
+              value="false"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q2-false"
+            >
+              Non
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        className="fr-fieldset"
+      >
+        <legend
+          className="fr-fieldset__legend fr-text--regular pt-6"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
+            }
+          }
+        />
+        <div
+          className="fr-fieldset__content pl-4 fr-fieldset--inline"
+        >
+          <label
+            className="fr-label"
+            htmlFor="q3"
+          >
+            Part en pourcentage
+          </label>
+          <input
+            className="fr-input"
+            id="q3"
+            max={100}
+            min={0}
+            onChange={[Function]}
+            style={
+              Object {
+                "width": 224,
+              }
+            }
+            type="number"
+            value="60"
+          />
+        </div>
+      </fieldset>
+    </div>
+    <a
+      className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start fr-mt-5w"
+      href="/collectivite/1/personnalisation"
+    >
+      Revenir au sommaire
+    </a>
+    <a
+      className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line self-start fr-mt-5w fr-ml-3w"
+      href="/collectivite/1/personnalisation/dechets"
+    >
+      Afficher la catégorie suivante
+    </a>
+  </div>
+</div>
+`;
+
 exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematique QR Plusieurs Questions 1`] = `
 <div
   className="flex flex-col"
@@ -186,7 +387,287 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
       </fieldset>
     </div>
     <a
-      className="fr-btn fr-btn--icon-left fr-fi-arrow-left-line self-start mt-10"
+      className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start fr-mt-5w"
+      href="/collectivite/1/personnalisation"
+    >
+      Revenir au sommaire
+    </a>
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematique QR Thematique Identite 1`] = `
+<div
+  className="flex flex-col"
+>
+  <div
+    className="flex justify-center w-full"
+  >
+    <div
+      className="fr-toggle fr-toggle--label-left border-b w-[28rem] mt-6"
+    >
+      <input
+        checked={false}
+        className="fr-toggle__input absolute right-0"
+        id="onlyNoResponse"
+        onChange={[Function]}
+        type="checkbox"
+      />
+      <label
+        className="fr-toggle__label select-none"
+        htmlFor="onlyNoResponse"
+      >
+        Afficher uniquement les questions sans réponse
+      </label>
+    </div>
+  </div>
+  <div
+    className="max-w-3xl self-center mt-10"
+  >
+    <h3>
+      Informations administratives officielles
+    </h3>
+    <div
+      className="grid grid-cols-2"
+    >
+      <p
+        className="fr-text--md"
+      >
+        <span
+          className="fr-text--bold"
+        >
+          Nom
+        </span>
+        <br />
+        Ambérieu-en-Bugey
+      </p>
+      <p
+        className="fr-text--md"
+      >
+        <span
+          className="fr-text--bold"
+        >
+          Type de collectivité
+        </span>
+        <br />
+        <span
+          className="capitalize"
+        >
+          commune
+        </span>
+      </p>
+      <p
+        className="fr-text--md"
+      >
+        <span
+          className="fr-text--bold"
+        >
+          Code SIREN ou INSEE
+        </span>
+        <br />
+        01004
+      </p>
+      <p
+        className="fr-text--md"
+      >
+        <span
+          className="fr-text--bold"
+        >
+          Région
+        </span>
+        <br />
+        Auvergne-Rhône-Alpes
+      </p>
+      <p
+        className="fr-text--md"
+      >
+        <span
+          className="fr-text--bold"
+        >
+          Population (
+          Insee 12/01/2022
+          )
+        </span>
+        <br />
+        14 514
+         habitants
+      </p>
+      <p
+        className="fr-text--md"
+      >
+        <span
+          className="fr-text--bold"
+        >
+          Département
+        </span>
+        <br />
+        Ain
+      </p>
+    </div>
+    <h3
+      className="fr-mb-0"
+    >
+      Questions pour la personnalisation des référentiels
+    </h3>
+    <div
+      className="fr-form-group "
+    >
+      <fieldset
+        className="fr-fieldset"
+      >
+        <legend
+          className="fr-fieldset__legend fr-text--regular pt-6"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
+            }
+          }
+        />
+        <div
+          className="fr-fieldset__content pl-4 "
+        >
+          <div
+            className="fr-radio-group fr-radio-group--sm vertical"
+          >
+            <input
+              checked={false}
+              id="q1-c1"
+              onChange={[Function]}
+              type="radio"
+              value="c1"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q1-c1"
+            >
+              Oui, pour l’ensemble de la collectivité
+            </label>
+          </div>
+          <div
+            className="fr-radio-group fr-radio-group--sm vertical"
+          >
+            <input
+              checked={false}
+              id="q1-c2"
+              onChange={[Function]}
+              type="radio"
+              value="c2"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q1-c2"
+            >
+              Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+            </label>
+          </div>
+          <div
+            className="fr-radio-group fr-radio-group--sm vertical"
+          >
+            <input
+              checked={false}
+              id="q1-c3"
+              onChange={[Function]}
+              type="radio"
+              value="c3"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q1-c3"
+            >
+              Non
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        className="fr-fieldset"
+      >
+        <legend
+          className="fr-fieldset__legend fr-text--regular pt-6"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
+            }
+          }
+        />
+        <div
+          className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
+        >
+          <div
+            className="fr-radio-group fr-radio-group--sm"
+          >
+            <input
+              checked={false}
+              id="q2-true"
+              onChange={[Function]}
+              type="radio"
+              value="true"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q2-true"
+            >
+              Oui
+            </label>
+          </div>
+          <div
+            className="fr-radio-group fr-radio-group--sm"
+          >
+            <input
+              checked={false}
+              id="q2-false"
+              onChange={[Function]}
+              type="radio"
+              value="false"
+            />
+            <label
+              className="fr-label"
+              htmlFor="q2-false"
+            >
+              Non
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        className="fr-fieldset"
+      >
+        <legend
+          className="fr-fieldset__legend fr-text--regular pt-6"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
+            }
+          }
+        />
+        <div
+          className="fr-fieldset__content pl-4 fr-fieldset--inline"
+        >
+          <label
+            className="fr-label"
+            htmlFor="q3"
+          >
+            Part en pourcentage
+          </label>
+          <input
+            className="fr-input"
+            id="q3"
+            max={100}
+            min={0}
+            onChange={[Function]}
+            style={
+              Object {
+                "width": 224,
+              }
+            }
+            type="number"
+            value="60"
+          />
+        </div>
+      </fieldset>
+    </div>
+    <a
+      className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start fr-mt-5w"
       href="/collectivite/1/personnalisation"
     >
       Revenir au sommaire
