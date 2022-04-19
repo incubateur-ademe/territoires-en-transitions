@@ -1,19 +1,23 @@
 from typing import Dict, List, Optional
 
-from dataclasses import dataclass
 from business.personnalisation.engine.formule import ReponseMissing
-
 from business.personnalisation.engine.formule_interpreter import FormuleInterpreter
-from business.personnalisation.models import ActionPersonnalisationConsequence, Reponse
+from business.personnalisation.models import (
+    ActionPersonnalisationConsequence,
+    IdentiteCollectivite,
+    Reponse,
+)
 from business.personnalisation.engine.regles_parser import ReglesParser
 from business.utils.action_id import ActionId
 
 
 def execute_personnalisation_regles(
-    regles_parser: ReglesParser, reponses: List[Reponse]
+    regles_parser: ReglesParser,
+    reponses: List[Reponse],
+    identite: IdentiteCollectivite,
 ) -> Dict[ActionId, ActionPersonnalisationConsequence]:
     """Calculate personnalisation given a set of regles and reponses"""
-    formule_interpreter = FormuleInterpreter(reponses)
+    formule_interpreter = FormuleInterpreter(reponses, identite)
     personnalisation_consequences = {}
     for action_id, parsed_regle in regles_parser.parsed_regles_by_action_id.items():
         desactive = potentiel_perso = None

@@ -25,6 +25,7 @@ class views:
     engine_question = "question_engine"
     personnalisation = "business_personnalisation"
     reponse = "business_reponse"
+    identite = "collectivite_identite"
     unprocessed_reponse_event = "unprocessed_reponse_update_event"
 
 

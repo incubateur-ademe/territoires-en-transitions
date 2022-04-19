@@ -104,9 +104,13 @@ Le `client`, le `data layer` et le `business` peuvent être lancés à partir de
 
 ### Variables d'environnement
 
-Ajouter les variables d'environnement dans les .env de chaque projet et la configuration kong ou lancer
-`make_dot_env.sh` avec les variables d'environnement `SUPABASE_SERVICE_ROLE_KEY` et `SUPABASE_ANON_KEY`
-pour renommer les `.env.sample` en `.env` en ajoutant les variables.
+#### Option 1 : à la main 
+- Ajouter les variables d'environnement SUPABASE_SERVICE_ROLE_KEY et SUPABASE_ANON_KEY dans les .env de chaque projet 
+- Remplacer dans la configuration kong les champs ${SUPABASE_SERVICE_ROLE_KEY} et  ${SUPABASE_ANON_KEY}) par ces variables
+
+#### Option 2 : grâce à l'utilitaire make_dot_env.sh
+- Renseigner dans votre environnement les variables SUPABASE_SERVICE_ROLE_KEY et SUPABASE_ANON_KEY (ex : export SUPABASE_SERVICE_ROLE_KEY=...)
+- Lancer `make_dot_env.sh` qui se chargera d'ajouter les variables dans le fichier `.env` et dans la configuration kong. 
 
 ### Lancer les différents services
 

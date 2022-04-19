@@ -6,7 +6,11 @@ from business.evaluation.adapters import supabase_names
 from business.evaluation.domain.models.events import ReponseUpdatedForCollectivite
 
 
-from business.personnalisation.models import ActionPersonnalisationConsequence, Reponse
+from business.personnalisation.models import (
+    ActionPersonnalisationConsequence,
+    IdentiteCollectivite,
+    Reponse,
+)
 from business.personnalisation.ports.personnalisation_repo import (
     AbstractPersonnalisationRepository,
 )
@@ -36,6 +40,23 @@ class SupabasePersonnalisationRepository(
             Reponse(id=row["question_id"], value=row["reponse"])
             for row in rows[0]["reponses"]
         ]
+
+    def get_identite_for_collectivite(
+        self, collectivite_id: int
+    ) -> IdentiteCollectivite:
+        rows = self.client.db.get_by(
+            supabase_names.views.identite,
+            {
+                "id": f"eq.{collectivite_id}",
+            },
+        )
+        if not rows:
+            return IdentiteCollectivite()
+        return IdentiteCollectivite(
+            type=set(rows[0]["type"]),
+            localisation=set(rows[0]["localisation"]),
+            population=set(rows[0]["population"]),
+        )
 
     def save_action_personnalisation_consequences_for_collectivite(
         self,

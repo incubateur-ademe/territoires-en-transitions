@@ -2,7 +2,11 @@ import abc
 from typing import Dict, List
 from business.evaluation.domain.models.events import ReponseUpdatedForCollectivite
 
-from business.personnalisation.models import ActionPersonnalisationConsequence, Reponse
+from business.personnalisation.models import (
+    ActionPersonnalisationConsequence,
+    IdentiteCollectivite,
+    Reponse,
+)
 from business.referentiel.domain.models.personnalisation import (
     ActionPersonnalisationRegles,
 )
@@ -21,6 +25,12 @@ class AbstractPersonnalisationRepository(abc.ABC):
 
     @abc.abstractmethod
     def get_reponses_for_collectivite(self, collectivite_id: int) -> List[Reponse]:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_identite_for_collectivite(
+        self, collectivite_id: int
+    ) -> IdentiteCollectivite:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -53,9 +63,15 @@ class InMemoryPersonnalisationRepository(AbstractPersonnalisationRepository):
         ] = {}
         self._action_personnalisation_regles: List[ActionPersonnalisationRegles] = []
         self._unprocessed_reponse_events: List[ReponseUpdatedForCollectivite] = []
+        self._identite = IdentiteCollectivite()
 
     def get_reponses_for_collectivite(self, collectivite_id: int) -> List[Reponse]:
         return self._reponses
+
+    def get_identite_for_collectivite(
+        self, collectivite_id: int
+    ) -> IdentiteCollectivite:
+        return self._identite
 
     def save_action_personnalisation_consequences_for_collectivite(
         self,
@@ -91,6 +107,9 @@ class InMemoryPersonnalisationRepository(AbstractPersonnalisationRepository):
 
     def set_reponses(self, reponses: List[Reponse]) -> None:
         self._reponses = reponses
+
+    def set_identite(self, identite: IdentiteCollectivite) -> None:
+        self._identite = identite
 
     def set_action_personnalisation_consequences(
         self,
