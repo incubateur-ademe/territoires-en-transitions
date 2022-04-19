@@ -99,6 +99,34 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               }
             }
           />
+          <section
+            className="fr-accordion fr-mb-3w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="accordion-q1"
+                aria-expanded={false}
+                className="fr-accordion__btn"
+                onClick={[Function]}
+              >
+                En savoir plus
+                <i
+                  className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                />
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Contenu (html) pour l‘onglet Documentation.",
+                }
+              }
+              id="accordion-q1"
+            />
+          </section>
           <div
             className="fr-fieldset__content pl-4 "
           >
@@ -240,6 +268,34 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               value="undefined"
             />
           </div>
+          <section
+            className="fr-accordion fr-mt-3w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="accordion-part-q3"
+                aria-expanded={false}
+                className="fr-accordion__btn"
+                onClick={[Function]}
+              >
+                Comment calculer la part ?
+                <i
+                  className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                />
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "La part se rapporte au nombre d'habitants (nombre d'habitants de la collectivité / nombre d'habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d'élu de la collectivité / nombre de voix total dans l'organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d'habitants.",
+                }
+              }
+              id="accordion-part-q3"
+            />
+          </section>
         </fieldset>
       </div>
     </div>
@@ -382,6 +438,34 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               }
             }
           />
+          <section
+            className="fr-accordion fr-mb-3w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="accordion-q1"
+                aria-expanded={false}
+                className="fr-accordion__btn"
+                onClick={[Function]}
+              >
+                En savoir plus
+                <i
+                  className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                />
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Contenu (html) pour l‘onglet Documentation.",
+                }
+              }
+              id="accordion-q1"
+            />
+          </section>
           <div
             className="fr-fieldset__content pl-4 "
           >
@@ -523,6 +607,34 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               value="60"
             />
           </div>
+          <section
+            className="fr-accordion fr-mt-3w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="accordion-part-q3"
+                aria-expanded={false}
+                className="fr-accordion__btn"
+                onClick={[Function]}
+              >
+                Comment calculer la part ?
+                <i
+                  className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                />
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "La part se rapporte au nombre d'habitants (nombre d'habitants de la collectivité / nombre d'habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d'élu de la collectivité / nombre de voix total dans l'organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d'habitants.",
+                }
+              }
+              id="accordion-part-q3"
+            />
+          </section>
         </fieldset>
       </div>
     </div>
@@ -1014,6 +1126,34 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               }
             }
           />
+          <section
+            className="fr-accordion fr-mb-3w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="accordion-q1"
+                aria-expanded={false}
+                className="fr-accordion__btn"
+                onClick={[Function]}
+              >
+                En savoir plus
+                <i
+                  className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                />
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Contenu (html) pour l‘onglet Documentation.",
+                }
+              }
+              id="accordion-q1"
+            />
+          </section>
           <div
             className="fr-fieldset__content pl-4 "
           >
@@ -1211,6 +1351,34 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               }
             }
           />
+          <section
+            className="fr-accordion fr-mb-3w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="accordion-q1"
+                aria-expanded={false}
+                className="fr-accordion__btn"
+                onClick={[Function]}
+              >
+                En savoir plus
+                <i
+                  className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                />
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Contenu (html) pour l‘onglet Documentation.",
+                }
+              }
+              id="accordion-q1"
+            />
+          </section>
           <div
             className="fr-fieldset__content pl-4 "
           >
@@ -1404,6 +1572,34 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               value="undefined"
             />
           </div>
+          <section
+            className="fr-accordion fr-mt-3w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="accordion-part-q3"
+                aria-expanded={false}
+                className="fr-accordion__btn"
+                onClick={[Function]}
+              >
+                Comment calculer la part ?
+                <i
+                  className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                />
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "La part se rapporte au nombre d'habitants (nombre d'habitants de la collectivité / nombre d'habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d'élu de la collectivité / nombre de voix total dans l'organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d'habitants.",
+                }
+              }
+              id="accordion-part-q3"
+            />
+          </section>
         </fieldset>
       </div>
     </div>
@@ -1570,6 +1766,34 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
               value="60"
             />
           </div>
+          <section
+            className="fr-accordion fr-mt-3w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="accordion-part-q3"
+                aria-expanded={false}
+                className="fr-accordion__btn"
+                onClick={[Function]}
+              >
+                Comment calculer la part ?
+                <i
+                  className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                />
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "La part se rapporte au nombre d'habitants (nombre d'habitants de la collectivité / nombre d'habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d'élu de la collectivité / nombre de voix total dans l'organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d'habitants.",
+                }
+              }
+              id="accordion-part-q3"
+            />
+          </section>
         </fieldset>
       </div>
     </div>
