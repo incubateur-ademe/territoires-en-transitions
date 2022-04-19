@@ -78,6 +78,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q1-c1"
               onChange={[Function]}
               type="radio"
@@ -95,6 +96,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q1-c2"
               onChange={[Function]}
               type="radio"
@@ -112,6 +114,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q1-c3"
               onChange={[Function]}
               type="radio"
@@ -145,6 +148,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q2-true"
               onChange={[Function]}
               type="radio"
@@ -162,6 +166,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q2-false"
               onChange={[Function]}
               type="radio"
@@ -198,6 +203,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           </label>
           <input
             className="fr-input"
+            disabled={false}
             id="q3"
             max={100}
             min={0}
@@ -335,6 +341,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q1-c1"
               onChange={[Function]}
               type="radio"
@@ -352,6 +359,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q1-c2"
               onChange={[Function]}
               type="radio"
@@ -369,6 +377,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q1-c3"
               onChange={[Function]}
               type="radio"
@@ -402,6 +411,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q2-true"
               onChange={[Function]}
               type="radio"
@@ -419,6 +429,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q2-false"
               onChange={[Function]}
               type="radio"
@@ -455,6 +466,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           </label>
           <input
             className="fr-input"
+            disabled={false}
             id="q3"
             max={100}
             min={0}
@@ -671,6 +683,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q1-c1"
               onChange={[Function]}
               type="radio"
@@ -688,6 +701,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q1-c2"
               onChange={[Function]}
               type="radio"
@@ -705,6 +719,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q1-c3"
               onChange={[Function]}
               type="radio"
@@ -738,6 +753,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q2-true"
               onChange={[Function]}
               type="radio"
@@ -755,6 +771,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           >
             <input
               checked={false}
+              disabled={false}
               id="q2-false"
               onChange={[Function]}
               type="radio"
@@ -791,6 +808,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
           </label>
           <input
             className="fr-input"
+            disabled={false}
             id="q3"
             max={100}
             min={0}
