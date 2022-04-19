@@ -1,4 +1,5 @@
 from typing import Dict, List
+
 from business.evaluation.domain.models.events import ReponseUpdatedForCollectivite
 from business.evaluation.domain.use_cases.compute_and_store_referentiel_personnalisations_for_collectivite import (
     ComputeAndStoreReferentielPersonnalisationsForCollectivite,
@@ -7,7 +8,11 @@ from business.personnalisation.adapters.supabase_personnalisation_repo import (
     SupabasePersonnalisationRepository,
 )
 from business.personnalisation.engine.regles_parser import ReglesParser
-from business.personnalisation.models import ActionPersonnalisationConsequence, Reponse
+from business.personnalisation.models import (
+    ActionPersonnalisationConsequence,
+    IdentiteCollectivite,
+    Reponse,
+)
 from business.personnalisation.ports.personnalisation_repo import (
     InMemoryPersonnalisationRepository,
 )
@@ -34,13 +39,16 @@ def prepare_use_case():
     return use_case, in_memory_personnalisation_repo
 
 
-def given_reponse_assert_personnalisation_consequences(
-        reponses: List[Reponse],
-        expected_consequences: Dict[str, ActionPersonnalisationConsequence],
+def given_reponses_and_identite_assert_personnalisation_consequences(
+    reponses: List[Reponse],
+    identite: IdentiteCollectivite,
+    expected_consequences: Dict[str, ActionPersonnalisationConsequence],
 ):
     use_case, in_memory_personnalisation_repo = prepare_use_case()
     # set context
     in_memory_personnalisation_repo.set_reponses(reponses)
+    in_memory_personnalisation_repo.set_identite(identite)
+
     # execute
     use_case.execute(ReponseUpdatedForCollectivite(1))
 
@@ -53,27 +61,29 @@ def given_reponse_assert_personnalisation_consequences(
 
 
 def test_regle_cae_311_reduite_case_1():
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [
             Reponse("AOD_elec", "OUI"),
             Reponse("AOD_gaz", "NON"),
             Reponse("AOD_chaleur", "NON"),
         ],
+        IdentiteCollectivite(),
         {
             "cae_3.1.1": ActionPersonnalisationConsequence(
-                desactive=None, potentiel_perso=3/10
+                desactive=None, potentiel_perso=3 / 10
             )
         },
     )
 
 
 def test_regle_cae_311_not_reduite_case_2():
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [
             Reponse("AOD_elec", "OUI"),
             Reponse("AOD_gaz", "OUI"),
             Reponse("AOD_chaleur", "NON"),
         ],
+        IdentiteCollectivite(),
         {
             "cae_3.1.1": ActionPersonnalisationConsequence(
                 desactive=None, potentiel_perso=0.6
@@ -83,8 +93,9 @@ def test_regle_cae_311_not_reduite_case_2():
 
 
 def test_regle_eci_43_desactive():
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [Reponse("dev_eco_1", "NON"), Reponse("AOD_gaz", "NON")],
+        IdentiteCollectivite(),
         {
             "eci_4.3": ActionPersonnalisationConsequence(
                 desactive=True, potentiel_perso=None
@@ -101,11 +112,12 @@ def test_regle_cae_4_1_2():
     Ces 2 réductions sont cumulables."""
 
     # Pas de réduction de potentiel.
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [
             Reponse("TC_1", "OUI"),
             Reponse("vehiculeCT_1", "OUI"),
         ],
+        IdentiteCollectivite(),
         {
             "cae_4.1.2": ActionPersonnalisationConsequence(
                 desactive=None, potentiel_perso=None
@@ -114,11 +126,12 @@ def test_regle_cae_4_1_2():
     )
 
     # Diminution de 20%.
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [
             Reponse("TC_1", "NON"),
             Reponse("vehiculeCT_1", "OUI"),
         ],
+        IdentiteCollectivite(),
         {
             "cae_4.1.2": ActionPersonnalisationConsequence(
                 desactive=None, potentiel_perso=0.8
@@ -127,11 +140,12 @@ def test_regle_cae_4_1_2():
     )
 
     # Diminution de 30%.
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [
             Reponse("TC_1", "OUI"),
             Reponse("vehiculeCT_1", "NON"),
         ],
+        IdentiteCollectivite(),
         {
             "cae_4.1.2": ActionPersonnalisationConsequence(
                 desactive=None, potentiel_perso=0.7
@@ -140,11 +154,12 @@ def test_regle_cae_4_1_2():
     )
 
     # Diminution de 50%.
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [
             Reponse("TC_1", "NON"),
             Reponse("vehiculeCT_1", "NON"),
         ],
+        IdentiteCollectivite(),
         {
             "cae_4.1.2": ActionPersonnalisationConsequence(
                 desactive=None, potentiel_perso=0.5
@@ -158,26 +173,28 @@ def test_regle_cae_3_1_2_2():
     alors la réduction de 20% ne s'applique pas
     même si il y a des fournisseurs d'energie maîtrisés par la collectivité."""
 
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [
             Reponse("AOD_elec", "NON"),
             Reponse("AOD_gaz", "NON"),
             Reponse("AOD_chaleur", "NON"),
             Reponse("fournisseur_energie", "OUI"),
         ],
+        IdentiteCollectivite(),
         {
             "cae_3.1.2.2": ActionPersonnalisationConsequence(
                 desactive=False, potentiel_perso=1.0
             )
         },
     )
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [
             Reponse("AOD_elec", "NON"),
             Reponse("AOD_gaz", "NON"),
             Reponse("AOD_chaleur", "NON"),
             Reponse("fournisseur_energie", "NON"),
         ],
+        IdentiteCollectivite(),
         {
             "cae_3.1.2.2": ActionPersonnalisationConsequence(
                 desactive=False, potentiel_perso=1.0
@@ -185,13 +202,14 @@ def test_regle_cae_3_1_2_2():
         },
     )
 
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [
             Reponse("AOD_elec", "OUI"),
             Reponse("AOD_gaz", "NON"),
             Reponse("AOD_chaleur", "NON"),
             Reponse("fournisseur_energie", "NON"),
         ],
+        IdentiteCollectivite(),
         {
             "cae_3.1.2.2": ActionPersonnalisationConsequence(
                 desactive=True, potentiel_perso=None
@@ -199,16 +217,86 @@ def test_regle_cae_3_1_2_2():
         },
     )
 
-    given_reponse_assert_personnalisation_consequences(
+    given_reponses_and_identite_assert_personnalisation_consequences(
         [
             Reponse("AOD_elec", "NON"),
             Reponse("AOD_gaz", "NON"),
             Reponse("AOD_chaleur", "NON"),
             Reponse("fournisseur_energie", "OUI"),
         ],
+        IdentiteCollectivite(),
         {
             "cae_3.1.2.2": ActionPersonnalisationConsequence(
                 desactive=False, potentiel_perso=1.0
+            )
+        },
+    )
+
+
+def test_regle_eci_124_desactive_for_collectivite_that_arent_syndicat():
+    # Active for a syndicat
+    given_reponses_and_identite_assert_personnalisation_consequences(
+        [],
+        IdentiteCollectivite(type={"syndicat"}),
+        {
+            "eci_1.2.4": ActionPersonnalisationConsequence(
+                desactive=False, potentiel_perso=None
+            )
+        },
+    )
+
+    # Desactive for a collectivite that aren't syndicat
+    given_reponses_and_identite_assert_personnalisation_consequences(
+        [],
+        IdentiteCollectivite(type={"commune"}),
+        {
+            "eci_1.2.4": ActionPersonnalisationConsequence(
+                desactive=True, potentiel_perso=None
+            )
+        },
+    )
+
+
+def test_regle_cae_124_desactive_for_collectivite_that_arent_syndicat():
+    # EPCI with no habitat competence
+    given_reponses_and_identite_assert_personnalisation_consequences(
+        [Reponse("habitat_1", "NON")],
+        IdentiteCollectivite(type={"EPCI"}),
+        {
+            "cae_1.2.4": ActionPersonnalisationConsequence(
+                desactive=None, potentiel_perso=8 / 12
+            )
+        },
+    )
+    # Commune with a part of 0.3
+    given_reponses_and_identite_assert_personnalisation_consequences(
+        [Reponse("habitat_1", "OUI"), Reponse("habitat_2", 0.3)],
+        IdentiteCollectivite(type={"commune"}),
+        {
+            "cae_1.2.4": ActionPersonnalisationConsequence(
+                desactive=None, potentiel_perso=0.5
+            )
+        },
+    )
+
+    # Commune with a part of 0.8
+    given_reponses_and_identite_assert_personnalisation_consequences(
+        [Reponse("habitat_1", "OUI"), Reponse("habitat_2", 0.8)],
+        IdentiteCollectivite(type={"commune"}),
+        {
+            "cae_1.2.4": ActionPersonnalisationConsequence(
+                desactive=None, potentiel_perso=0.8
+            )
+        },
+    )
+
+    # Either commune nore EPCI
+    given_reponses_and_identite_assert_personnalisation_consequences(
+        [],
+        IdentiteCollectivite(type={"syndicat"}),
+        {
+            "cae_1.2.4": ActionPersonnalisationConsequence(
+                desactive=None, potentiel_perso=None
             )
         },
     )

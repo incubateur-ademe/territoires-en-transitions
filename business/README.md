@@ -36,16 +36,21 @@ pip install -e .
 ```
 
 ### Lancer les tests
+#### Avec docker
+```
+docker-compose run business-test
+```
 #### Unitaires
 ```
 pytest tests/unit
 ```
 #### Intégrations et end-to-end
-Pour certains tests d'intégrations et pour les tests de bout-en-bout, il est nécessaire de lever un service SupaBase : 
+Pour certains tests d'intégrations et pour les tests de bout-en-bout, il est nécessaire de lever les services SupaBase : 
 ```
-    cp ../data_layer/test_only_docker/.env.sample  ./data_layer/test_only_docker/.env 
-    docker-compose -f ../data_layer/test_only_docker/docker-compose.yml up --build
+    cd ../data_layer
+    docker-compose run business-test echo 
 ```
+
 Puis :
 ```
 pytest tests 

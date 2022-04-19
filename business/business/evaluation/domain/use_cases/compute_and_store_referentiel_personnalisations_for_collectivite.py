@@ -30,8 +30,11 @@ class ComputeAndStoreReferentielPersonnalisationsForCollectivite(UseCase):
             reponses = self.personnalisation_repo.get_reponses_for_collectivite(
                 command.collectivite_id
             )
+            identite = self.personnalisation_repo.get_identite_for_collectivite(
+                command.collectivite_id
+            )
             computed_action_personnalisations = execute_personnalisation_regles(
-                self.regles_parser, reponses
+                self.regles_parser, reponses, identite
             )
             self.personnalisation_repo.save_action_personnalisation_consequences_for_collectivite(
                 command.collectivite_id, computed_action_personnalisations

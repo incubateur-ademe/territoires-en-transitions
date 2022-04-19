@@ -4,7 +4,11 @@ from business.evaluation.adapters import supabase_names
 from business.personnalisation.adapters.supabase_personnalisation_repo import (
     SupabasePersonnalisationRepository,
 )
-from business.personnalisation.models import ActionPersonnalisationConsequence, Reponse
+from business.personnalisation.models import (
+    ActionPersonnalisationConsequence,
+    IdentiteCollectivite,
+    Reponse,
+)
 from business.utils.action_id import ActionId
 from tests.utils.supabase_fixtures import *
 
@@ -137,3 +141,13 @@ def manual_test_can_get_unprocessed_events(
     # 2. Retrieve this unprocessed event from view
     actual_unprocessed_events = supabase_repo.get_unprocessed_reponse_events()
     assert len(actual_unprocessed_events) == 1
+
+
+def test_get_identite_for_collectivite_1(
+    supabase_repo: SupabasePersonnalisationRepository,
+):
+    collectivite_1_identite = supabase_repo.get_identite_for_collectivite(1)
+    expected_identite = IdentiteCollectivite(
+        type={"commune"}, population={"moins_de_100000"}, localisation=set()
+    )
+    assert collectivite_1_identite == expected_identite
