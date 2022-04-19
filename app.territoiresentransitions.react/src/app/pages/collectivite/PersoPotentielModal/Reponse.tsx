@@ -3,6 +3,7 @@ import {TReponse} from 'generated/dataLayer/reponse_read';
 import {TQuestionReponseProps} from './PersoPotentielQR';
 import {TListeChoix} from 'generated/dataLayer/question_read';
 import {useDebouncedInput} from 'ui/shared/useDebouncedInput';
+import {currentCollectiviteBloc} from 'core-logic/observables';
 
 const ReponseContainer = ({
   children,
@@ -33,6 +34,7 @@ const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
             }`}
           >
             <RadioButton
+              disabled={currentCollectiviteBloc.readonly}
               questionId={questionId}
               choiceId={choiceId}
               label={label}
@@ -59,6 +61,7 @@ const ReponseBinaire = ({qr, onChange}: TQuestionReponseProps) => {
       {choices?.map(({id: choiceId, label}) => (
         <div key={choiceId} className="fr-radio-group fr-radio-group--sm">
           <RadioButton
+            disabled={currentCollectiviteBloc.readonly}
             questionId={questionId}
             choiceId={choiceId}
             label={label}
@@ -92,6 +95,7 @@ const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
       </label>
       <input
         type="number"
+        disabled={currentCollectiviteBloc.readonly}
         min={min}
         max={max}
         id={questionId}
@@ -134,12 +138,14 @@ const getFilteredChoices = (
 };
 
 const RadioButton = ({
+  disabled,
   questionId,
   choiceId,
   label,
   reponse,
   onChange,
 }: {
+  disabled?: boolean;
   questionId: string;
   choiceId: string;
   label: string;
@@ -153,6 +159,7 @@ const RadioButton = ({
     <>
       <input
         type="radio"
+        disabled={disabled}
         id={eltId}
         checked={reponse?.toString() === choiceId}
         value={choiceId}
