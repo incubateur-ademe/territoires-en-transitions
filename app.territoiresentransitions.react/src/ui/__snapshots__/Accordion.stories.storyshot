@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Ui/Accordion Exemple 1 1`] = `
+<section
+  className="fr-accordion "
+>
+  <h3
+    className="fr-accordion__title"
+  >
+    <button
+      aria-controls="id1"
+      aria-expanded={false}
+      className="fr-accordion__btn"
+      onClick={[Function]}
+    >
+      En savoir plus
+      <i
+        className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+      />
+    </button>
+  </h3>
+  <div
+    className="fr-collapse"
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "contenu <b>HTML</b>",
+      }
+    }
+    id="id1"
+  />
+</section>
+`;
