@@ -25,6 +25,16 @@ Personnalise.args = {
   onEdit: null,
 };
 
+export const PersonnaliseDeuxDigits = Template.bind({});
+PersonnaliseDeuxDigits.args = {
+  actionDef: ACTION_DEF,
+  actionScore: {
+    point_referentiel: 6.7,
+    point_potentiel_perso: 3.35,
+  },
+  onEdit: null,
+};
+
 export const PersonnaliseEtEditable = Template.bind({});
 PersonnaliseEtEditable.args = {
   actionDef: ACTION_DEF,

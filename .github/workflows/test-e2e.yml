@@ -76,9 +76,8 @@ jobs:
       - name: Upload report to GitHub
         uses: actions/upload-artifact@master
         with:
-          working-directory: ${{env.e2e-directory}}
           name: report
-          path: ./report
+          path: ${{env.e2e-directory}}/report
 
       - name: Collect docker logs on failure
         if: failure()

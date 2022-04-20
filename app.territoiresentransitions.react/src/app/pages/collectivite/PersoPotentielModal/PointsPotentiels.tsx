@@ -50,7 +50,7 @@ const getLabel = (
   }
 
   const value = point_potentiel_perso || point_referentiel;
-  const points = toLocaleFixed(value) + ' point' + (value > 1 ? 's' : '');
+  const points = toLocaleFixed(value, 2) + ' point' + (value > 1 ? 's' : '');
 
   const isModified =
     point_potentiel_perso !== undefined &&
