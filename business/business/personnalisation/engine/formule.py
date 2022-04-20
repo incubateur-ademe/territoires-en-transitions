@@ -16,6 +16,10 @@ class ReponseMissing(Exception):
     pass
 
 
+class ScoreMissing(Exception):
+    pass
+
+
 class FormuleABC(Transformer, abc.ABC):
     def __init__(self, visit_tokens: bool = True) -> None:
         super().__init__(visit_tokens)
@@ -30,5 +34,7 @@ class FormuleABC(Transformer, abc.ABC):
         """Compute reponse to questions of type proportion or binaire"""
         raise NotImplementedError
 
-    def if_then(self, node_or_tree: Any):
+    @abc.abstractmethod
+    def score_value(self, node_or_tree: Any):
+        """Compute reponse to questions of type proportion or binaire"""
         raise NotImplementedError

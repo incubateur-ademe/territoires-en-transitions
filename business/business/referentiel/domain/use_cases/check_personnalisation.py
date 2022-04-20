@@ -65,7 +65,10 @@ class CheckPersonnalisation(UseCase):
             [personnalisation.regles for personnalisation in trigger.regles],
             [],
         )
-        regles_errors = find_regles_errors(regles=regles, questions=engine_questions)
+        all_action_ids = self.referentiel_repo.get_all_action_ids()
+        regles_errors = find_regles_errors(
+            regles=regles, questions=engine_questions, action_ids=all_action_ids
+        )
         if regles_errors:
             self.bus.publish_event(
                 events.QuestionAndReglesCheckingFailed(

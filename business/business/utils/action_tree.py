@@ -1,11 +1,8 @@
 from __future__ import annotations
 from typing import Callable, List, Optional
 
-import numpy as np
-
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_definition import ActionId
-from business.utils.timeit import timeit
 
 
 class ActionTreeError(Exception):
@@ -21,14 +18,13 @@ class ActionTree:
         }
 
         # TODO : get this info from datalayer right view !
-        self._depths_by_action_ids = (self._build_depths_by_action_ids())
+        self._depths_by_action_ids = self._build_depths_by_action_ids()
 
-        self._backward_ids = np.array(self._build_backward_ids_from_children_ids_by_action_id())
+        self._backward_ids = self._build_backward_ids_from_children_ids_by_action_id()
         self._forward_ids = self._backward_ids[::-1]
-        self._tache_ids = np.array(self._build_tache_ids())
-        self._not_taches_backward_ids = np.array(self._build_action_not_taches_backward_ids())
+        self._tache_ids = self._build_tache_ids()
 
-
+        self._not_taches_backward_ids = self._build_action_not_taches_backward_ids()
 
     def get_children(self, action_id: ActionId) -> List[ActionId]:
         return self.children_ids_by_action_id.get(action_id, [])
@@ -54,7 +50,7 @@ class ActionTree:
             callback(action_id)
 
     def map_from_actions_to_taches(
-            self, callback: Callable[[ActionId], None], action_depth: int
+        self, callback: Callable[[ActionId], None], action_depth: int
     ):
         for action_id in self._forward_ids:
             this_depth = self._depths_by_action_ids[action_id]
@@ -62,17 +58,33 @@ class ActionTree:
                 callback(action_id)
 
     def map_from_action_to_taches(
-            self, callback: Callable[[ActionId], None], action_id: ActionId
+        self,
+        callback: Callable[[ActionId], None],
+        action_id: ActionId,
+        include_action: bool = True,
     ):
-        callback(action_id)
+        if include_action:
+            callback(action_id)
         for action_child in self.get_children(action_id):
             self.map_from_action_to_taches(callback, action_child)
 
-    def _infer_depth(self, action_id: ActionId) -> int:
+    def map_from_action_to_root(
+        self,
+        callback: Callable[[ActionId], None],
+        action_id: ActionId,
+        include_action: bool = True,
+    ):
+        if include_action:
+            callback(action_id)
+        action_parent = self._get_parent(action_id)
+        if action_parent:
+            self.map_from_action_to_root(callback, action_parent)
+
+    def infer_depth(self, action_id: ActionId) -> int:
         parent_id = self._get_parent(action_id)
         if not parent_id:
             return 0
-        return 1 + self._infer_depth(parent_id)
+        return 1 + self.infer_depth(parent_id)
 
     def _get_parent(self, action_id: ActionId) -> Optional[ActionId]:
         return next(
@@ -109,7 +121,7 @@ class ActionTree:
                 + list(self.children_ids_by_action_id.keys())
             )
         )
-        return {action_id: self._infer_depth(action_id) for action_id in action_ids}
+        return {action_id: self.infer_depth(action_id) for action_id in action_ids}
 
     def _build_backward_ids_from_children_ids_by_action_id(self) -> List[ActionId]:
         return sorted(
@@ -119,7 +131,11 @@ class ActionTree:
         )
 
     def _build_action_not_taches_backward_ids(self):
-        return [action_id for action_id in self._backward_ids if (action_id not in self._tache_ids)]
+        return [
+            action_id
+            for action_id in self._backward_ids
+            if (action_id not in self._tache_ids)
+        ]
 
 
 def flatten(L: List[List]):

@@ -2,13 +2,15 @@ from copy import deepcopy, copy
 import logging
 from typing import Dict, List, Optional
 
-import numpy as np
 
 from business.evaluation.domain.models import events
 from business.evaluation.domain.models.action_statut import (
     ActionStatut,
 )
 from business.evaluation.domain.models.action_score import ActionScore
+from business.personnalisation.execute_score_personnalisation_factor_regle import (
+    execute_score_personnalisation_factor_regle,
+)
 from business.personnalisation.models import ActionPersonnalisationConsequence
 from business.personnalisation.ports.personnalisation_repo import (
     AbstractPersonnalisationRepository,
@@ -161,9 +163,9 @@ def update_scores_from_tache_given_statuses(
     if not tache_concerne:
         scores[tache_id] = ActionScore(
             action_id=tache_id,
-            point_fait=0,
-            point_pas_fait=0,
-            point_programme=0,
+            point_fait=0.0,
+            point_pas_fait=0.0,
+            point_programme=0.0,
             point_non_renseigne=tache_point_potentiel,
             point_potentiel=tache_point_potentiel,
             total_taches_count=1,
@@ -409,7 +411,7 @@ def compute_potentiels(
                 else point_tree_personnalise.get_action_point(action_id)
             )
         else:
-            original_action_potentiel = np.sum(
+            original_action_potentiel = sum(
                 [
                     potentiels[child_id]
                     for child_id in point_tree_personnalise.get_children(action_id)
@@ -453,7 +455,6 @@ def compute_potentiels(
                 )
                 potentiels[child_id] = new_child_potentiel
 
-    point_tree_personnalise.N = 0
     point_tree_personnalise.map_from_actions_to_taches(
         lambda action_id: _resize_children_potentiels(
             action_id,
@@ -560,4 +561,65 @@ def compute_scores(
             referentiel,
         )
     )
+
+    # 4. Apply potentiel reduction a posteriori (from formules)
+    for (
+        action_id,
+        personnalisation_consequence,
+    ) in personnalisation_consequences.items():
+        if personnalisation_consequence.potentiel_perso_formule:
+            factor = execute_score_personnalisation_factor_regle(
+                personnalisation_consequence.potentiel_perso_formule, scores
+            )
+            if factor is not None:
+                point_tree_referentiel.map_from_action_to_taches(
+                    lambda action_id: apply_factor_to_score(scores, action_id, factor),  # type: ignore
+                    action_id,
+                    include_action=True,
+                )
+                point_tree_referentiel.map_from_action_to_root(
+                    lambda action_id: set_points_to_children_sum(
+                        scores, action_id, point_tree_referentiel
+                    ),
+                    action_id,
+                    include_action=False,
+                )
     return scores
+
+
+def apply_factor_to_score(
+    scores: Dict[ActionId, ActionScore], action_id: ActionId, factor: float
+):
+    point_potentiel_perso = scores[action_id].point_potentiel_perso
+    scores[action_id].point_potentiel_perso = (
+        point_potentiel_perso * factor
+        if point_potentiel_perso
+        else scores[action_id].point_potentiel * factor
+    )
+    scores[action_id].point_fait *= factor
+    scores[action_id].point_non_renseigne *= factor
+    scores[action_id].point_pas_fait *= factor
+    scores[action_id].point_programme *= factor
+
+
+def set_points_to_children_sum(
+    scores: Dict[ActionId, ActionScore], action_id: ActionId, tree: ActionTree
+):
+    children = tree.get_children(action_id)
+    children_scores = [scores[child_id] for child_id in children]
+    scores[action_id].point_potentiel_perso = sum(
+        [
+            child.point_potentiel_perso or child.point_potentiel
+            for child in children_scores
+        ]
+    )
+    scores[action_id].point_fait = sum([child.point_fait for child in children_scores])
+    scores[action_id].point_non_renseigne = sum(
+        [child.point_non_renseigne for child in children_scores]
+    )
+    scores[action_id].point_pas_fait = sum(
+        [child.point_pas_fait for child in children_scores]
+    )
+    scores[action_id].point_programme = sum(
+        [child.point_programme for child in children_scores]
+    )
