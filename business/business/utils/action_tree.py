@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Callable, List, Optional
 
-from tqdm import tqdm
+import numpy as np
 
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_definition import ActionId
@@ -23,14 +23,12 @@ class ActionTree:
         self._depths_by_action_ids = (
             self._build_depths_by_action_ids()
         )  # TODO : get this info from datalayer right view !
-        self._backward_ids = self._build_backward_ids_from_children_ids_by_action_id()
 
+        self._backward_ids = np.array(
+            self._build_backward_ids_from_children_ids_by_action_id()
+        )
         self._forward_ids = self._backward_ids[::-1]
-
-        self._tache_ids = self._build_tache_ids()
-
-    # def get_action_point(self, action_id: ActionId) -> float:
-    #     return self._points_by_id[action_id]
+        self._tache_ids = np.array(self._build_tache_ids())
 
     def get_children(self, action_id: ActionId) -> List[ActionId]:
         return self.children_ids_by_action_id.get(action_id, [])
@@ -43,32 +41,27 @@ class ActionTree:
         ]
         return self.get_children(action_parent[0]) if action_parent else []
 
-    @timeit("map on taches")
     def map_on_taches(self, callback: Callable[[ActionId], None]):
-        for tache_id in tqdm(self._tache_ids):
+        for tache_id in self._tache_ids:
             callback(tache_id)
 
-    @timeit("map from sous actions to root")
     def map_from_sous_actions_to_root(self, callback: Callable[[ActionId], None]):
-        for action_id in tqdm(self._backward_ids):
+        for action_id in self._backward_ids:
             if action_id not in self._tache_ids:
                 callback(action_id)
 
-    @timeit("map from taches to root")
     def map_from_taches_to_root(self, callback: Callable[[ActionId], None]):
-        for action_id in tqdm(self._backward_ids):
+        for action_id in self._backward_ids:
             callback(action_id)
 
-    @timeit("map from actions to taches")
     def map_from_actions_to_taches(
         self, callback: Callable[[ActionId], None], action_depth: int
     ):
-        for action_id in tqdm(self._forward_ids):
+        for action_id in self._forward_ids:
             this_depth = self._depths_by_action_ids[action_id]
             if this_depth >= action_depth:
                 callback(action_id)
 
-    @timeit("map from action to taches")
     def map_from_action_to_taches(
         self, callback: Callable[[ActionId], None], action_id: ActionId
     ):

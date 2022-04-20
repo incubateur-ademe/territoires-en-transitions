@@ -5,6 +5,7 @@ from business.utils.domain_message_bus import (
 from business.evaluation.domain.ports.action_score_repo import (
     AbstractActionScoreRepository,
 )
+from business.utils.timeit import timeit
 from business.utils.use_case import UseCase
 
 
@@ -17,6 +18,7 @@ class StoreScoresForCollectivite(UseCase):
         self.bus = bus
         self.score_repo = score_repo
 
+    @timeit("StoreScoresForCollectivite.execute")
     def execute(self, trigger: events.ReferentielScoresForCollectiviteComputed):
         collectivite_id = trigger.collectivite_id
         scores = trigger.scores
