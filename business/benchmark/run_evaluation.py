@@ -1,4 +1,5 @@
 import json
+import time
 from typing import List, Dict
 
 from business.evaluation.adapters.supabase_action_statut_repo import SupabaseActionStatutRepository
@@ -36,13 +37,13 @@ def all_points_from_referentiel(referentiel: str) -> List[ActionComputedPoint]:
         ]
 
 
-def action_point_tree(referentiel):
+def action_point_tree(referentiel: str):
     children = all_children_from_referentiel(referentiel)
     points = all_points_from_referentiel(referentiel)
     return ActionPointTree(points, children)
 
 
-def action_statuts() -> List[ActionStatut]:
+def action_statuts(referentiel: str) -> List[ActionStatut]:
     with open("./benchmark/action_statut.json", "r") as read_file:
         data = json.load(read_file)
         return [
@@ -51,7 +52,7 @@ def action_statuts() -> List[ActionStatut]:
         ]
 
 
-def action_consequences() -> Dict[ActionId, ActionPersonnalisationConsequence]:
+def action_consequences(referentiel: str) -> Dict[ActionId, ActionPersonnalisationConsequence]:
     with open("./benchmark/consequences.json", "r") as read_file:
         data = json.load(read_file)
         return {
@@ -60,13 +61,10 @@ def action_consequences() -> Dict[ActionId, ActionPersonnalisationConsequence]:
         }
 
 
-if __name__ == '__main__':
-    referentiel = 'cae'
-    action_level = 3
-
+def run(referentiel: str, action_level: int, times: int):
     tree = action_point_tree(referentiel)
-    statuts = action_statuts()
-    consequences = action_consequences()
+    statuts = action_statuts(referentiel)
+    consequences = action_consequences(referentiel)
 
     personnalisation_consequences = {
         action_id: personnalisation_consequence
@@ -77,11 +75,33 @@ if __name__ == '__main__':
         if action_id in tree.backward_ids
     }
 
-    for _ in range(100):
-        scores = compute_scores(
+    for _ in range(times):
+        compute_scores(
             tree,
             statuts,
             personnalisation_consequences,
             action_level,
             referentiel,
         )
+
+
+def run_cae(times: int):
+    run('cae', 3, times)
+
+
+def run_eci(times: int):
+    run('eci', 2, times)
+
+
+if __name__ == '__main__':
+    times = 100
+    cae_start = time.time()
+    run_cae(times)
+    cae_end = time.time()
+
+    eci_start = time.time()
+    run_eci(times)
+    eci_end = time.time()
+
+    print('CAE: %2.2f ms' % ((cae_end - cae_start) * 1000 / times))
+    print('ECI: %2.2f ms' % ((eci_end - eci_start) * 1000 / times))
