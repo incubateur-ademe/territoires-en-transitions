@@ -31,23 +31,6 @@ const questionDechets4 = {
   types_collectivites_concernees: null,
 };
 
-const QuestionEnergie1 = {
-  action_ids: ['cae_2.3.1'],
-  choix: null,
-  collectivite_id: 1,
-  description: '',
-  formulation:
-    "Quelle est la part de la collectivité dans la structure compétente en matière d'éclairage public ?",
-  id: 'energie_1',
-  localisation: [],
-  ordonnancement: 1,
-  population: ['moins_de_100000'],
-  thematique_id: 'energie',
-  thematique_nom: 'Énergie',
-  type: 'proportion',
-  types_collectivites_concernees: ['EPCI', 'commune'],
-};
-
 const QuestionEnergie2 = {
   action_ids: ['cae_2.3.1'],
   choix: [
@@ -120,11 +103,10 @@ describe('Question reading endpoint ', () => {
       action_ids: ['cae_2.3.1'],
     });
 
-    expect(results.length).toEqual(3);
+    expect(results.length).toEqual(2);
 
     expect(results).toEqual(
       expect.arrayContaining([
-        expect.objectContaining(QuestionEnergie1),
         expect.objectContaining(QuestionEnergie2),
         expect.objectContaining(QuestionEnergie3),
       ])
