@@ -1,14 +1,14 @@
-import {ChangeEvent, useState} from 'react';
+import {SyntheticEvent, useState} from 'react';
 
 export const useToggle = (
   initialValue = false
 ): [
   opened: boolean,
-  onToggle: (event?: ChangeEvent<HTMLDetailsElement>) => void
+  onToggle: (event?: SyntheticEvent<HTMLElement, Event>) => void
 ] => {
   const [opened, setOpened] = useState(Boolean(initialValue));
 
-  const handleToggle = (event?: ChangeEvent<HTMLDetailsElement>) => {
+  const handleToggle = (event?: SyntheticEvent<HTMLElement, Event>) => {
     event?.preventDefault();
     setOpened(!opened);
   };
