@@ -148,7 +148,7 @@ def update_scores_from_tache_given_statuses(
     assert tache_points_personnalise is not None
 
     tache_point_potentiel = potentiels[tache_id]
-    tache_status = status_by_action_id.get(tache_id)
+
     tache_concerne = tache_id not in actions_non_concernes_ids
     tache_is_personnalise = tache_id in action_personnalises_ids
     tache_is_desactive = tache_id in actions_desactivees_ids
@@ -174,6 +174,7 @@ def update_scores_from_tache_given_statuses(
         )
         return
 
+    tache_status = status_by_action_id.get(tache_id)
     if tache_status and tache_status.detailed_avancement:
         point_fait = (
             tache_point_potentiel * tache_status.detailed_avancement.fait
@@ -192,9 +193,9 @@ def update_scores_from_tache_given_statuses(
         )
         point_non_renseigne = 0.0
 
-        print(
-            f"\n For tache {tache_id}, point_fait is {point_fait}, point_fait is {point_programme}, point_pas_fait is {point_pas_fait}, avancement is {tache_status.detailed_avancement}, concerne is {tache_concerne}."
-        )
+        # print(
+        #     f"\n For tache {tache_id}, point_fait is {point_fait}, point_fait is {point_programme}, point_pas_fait is {point_pas_fait}, avancement is {tache_status.detailed_avancement}, concerne is {tache_concerne}."
+        # )
         completed_taches_count = 1
     else:
         point_pas_fait = point_programme = point_fait = 0.0
@@ -393,7 +394,7 @@ def compute_potentiels(
     def _add_action_potentiel_after_redistribution(
         action_id: ActionId,
     ):
-        this_level = point_tree_personnalise.infer_depth(action_id)
+        this_level = point_tree_personnalise._depths_by_action_ids[action_id]
         children = point_tree_personnalise.get_children(action_id)
 
         if not children:  # tache
@@ -453,10 +454,6 @@ def compute_potentiels(
             action_id,
         ),
         action_level,
-    )
-
-    print(
-        "\n method get_children has been called  ", point_tree_personnalise.N, " times"
     )
     return potentiels
 
