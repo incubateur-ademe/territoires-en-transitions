@@ -36,7 +36,9 @@ export default observer(() => {
           thematique={thematique}
           questionReponses={qr}
           nextThematiqueId={nextThematiqueId}
-          identite={identite || undefined}
+          identite={
+            thematiqueId === 'identite' ? identite || undefined : undefined
+          }
           onChange={handleChange}
         />
         {renderToast()}
