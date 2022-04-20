@@ -26,9 +26,16 @@ export const useQuestionThematiqueCompletude: TUseQuestionThematiqueCompletude =
     };
 
     // applique les filtres
-    const applyFilter = (thematiques: TQuestionThematiqueCompletudeRead[]) => {
+    const applyFilter = (
+      thematiques: TQuestionThematiqueCompletudeRead[]
+    ): TQuestionThematiqueCompletudeRead[] => {
       if (!filters) {
         return thematiques;
+      }
+      // aucun référentiel sélectionné => affiche uniquement la thématique identité :
+      if (filters.length === 0) {
+        const identite = thematiques?.find(({id}) => id === 'identite');
+        return identite ? [identite] : [];
       }
       return thematiques?.length
         ? thematiques.filter(({referentiels}) =>
