@@ -29,6 +29,7 @@ class ActionTree:
         )
         self._forward_ids = self._backward_ids[::-1]
         self._tache_ids = np.array(self._build_tache_ids())
+        self._not_taches_backward_ids = np.array(self._build_action_not_taches_backward_ids())
 
     def get_children(self, action_id: ActionId) -> List[ActionId]:
         return self.children_ids_by_action_id.get(action_id, [])
@@ -46,16 +47,15 @@ class ActionTree:
             callback(tache_id)
 
     def map_from_sous_actions_to_root(self, callback: Callable[[ActionId], None]):
-        for action_id in self._backward_ids:
-            if action_id not in self._tache_ids:
-                callback(action_id)
+        for action_id in self._not_taches_backward_ids:
+            callback(action_id)
 
     def map_from_taches_to_root(self, callback: Callable[[ActionId], None]):
         for action_id in self._backward_ids:
             callback(action_id)
 
     def map_from_actions_to_taches(
-        self, callback: Callable[[ActionId], None], action_depth: int
+            self, callback: Callable[[ActionId], None], action_depth: int
     ):
         for action_id in self._forward_ids:
             this_depth = self._depths_by_action_ids[action_id]
@@ -63,7 +63,7 @@ class ActionTree:
                 callback(action_id)
 
     def map_from_action_to_taches(
-        self, callback: Callable[[ActionId], None], action_id: ActionId
+            self, callback: Callable[[ActionId], None], action_id: ActionId
     ):
         callback(action_id)
         for action_child in self.get_children(action_id):
@@ -114,12 +114,14 @@ class ActionTree:
         return {action_id: self.infer_depth(action_id) for action_id in action_ids}
 
     def _build_backward_ids_from_children_ids_by_action_id(self) -> List[ActionId]:
-
         return sorted(
             list(self._depths_by_action_ids.keys()),
             key=lambda action_id: self._depths_by_action_ids[action_id],
             reverse=True,
         )
+
+    def _build_action_not_taches_backward_ids(self):
+        return [action_id for action_id in self._backward_ids if (action_id not in self._tache_ids)]
 
 
 def flatten(L: List[List]):
