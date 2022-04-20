@@ -30,7 +30,7 @@ export const PersoPotentielDoc = (props: TPersoPotentielDocProps) => {
         )}
         <li>
           Nombre de points initial pour cette {actionDef.type} :{' '}
-          {toLocaleFixed(actionScore.point_referentiel)}
+          {toLocaleFixed(actionScore.point_referentiel, 2)}
         </li>
       </ul>
     </div>

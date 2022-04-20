@@ -48,6 +48,30 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
 </div>
 `;
 
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Personnalise Deux Digits 1`] = `
+<div
+  className="fr-highlight"
+  style={
+    Object {
+      "border": "1px solid var(--yellow-moutarde-850)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "marginLeft": 0,
+      "maxWidth": "fit-content",
+      "paddingBottom": "1rem",
+      "paddingRight": "2rem",
+      "paddingTop": "1rem",
+    }
+  }
+>
+  <div
+    className="flex items-center"
+    data-test="PointsPotentiels"
+  >
+    Potentiel réduit pour cette sous-action : 3,35 points
+  </div>
+</div>
+`;
+
 exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Personnalise Et Editable 1`] = `
 <div
   className="fr-highlight"
