@@ -13,8 +13,6 @@ describe('Question completude by thematique reading endpoint ', () => {
       collectivite_id: 1,
     });
 
-    expect(results.length).toEqual(13);
-
     expect(results).toEqual(
       expect.arrayContaining([
         {
