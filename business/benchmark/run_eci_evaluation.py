@@ -52,7 +52,12 @@ def action_statuts() -> List[ActionStatut]:
 
 
 def action_consequences() -> Dict[ActionId, ActionPersonnalisationConsequence]:
-    return dict()
+    with open("./benchmark/consequences.json", "r") as read_file:
+        data = json.load(read_file)
+        return {
+            action_id: ActionPersonnalisationConsequence(**consequence)
+            for action_id, consequence in data.items() if str.startswith(action_id, referentiel)
+        }
 
 
 if __name__ == '__main__':

@@ -1,0 +1,238 @@
+{
+  "eci_2.1": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "eci_2.2": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "eci_2.3": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "eci_2.4": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "eci_3.4": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "eci_4.1": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "eci_4.2": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "eci_4.3": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "cae_1.2.2": {
+    "desactive": null,
+    "potentiel_perso": 0.5
+  },
+  "cae_1.2.3": {
+    "desactive": null,
+    "potentiel_perso": 0.75
+  },
+  "cae_1.2.4": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_1.3.1": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_1.3.2": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_1.3.3": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_2.2.3": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_2.3.1": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "cae_2.3.3": {
+    "desactive": false,
+    "potentiel_perso": 0.5
+  },
+  "cae_3.1.1": {
+    "desactive": null,
+    "potentiel_perso": 0.7
+  },
+  "cae_3.1.2": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_3.2.1": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_3.2.2": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_3.2.3": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_3.3.1": {
+    "desactive": true,
+    "potentiel_perso": 0.0
+  },
+  "cae_3.3.2": {
+    "desactive": true,
+    "potentiel_perso": 0.0
+  },
+  "cae_3.3.3": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_4.1.1": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_4.1.2": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_4.2.1": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_4.2.2": {
+    "desactive": null,
+    "potentiel_perso": 0.5
+  },
+  "cae_4.2.3": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_4.3.1": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_4.3.2": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_4.3.3": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_4.3.4": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "eci_1.2.2": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "eci_1.2.3": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "eci_1.2.4": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "eci_2.4.2": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "eci_2.4.3": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "eci_2.4.4": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "eci_3.2.0": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "eci_3.4.2": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "eci_3.7.1": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "eci_3.7.2": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "eci_4.2.1": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "eci_4.2.2": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "eci_4.2.3": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "eci_4.2.4": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "eci_4.2.5": {
+    "desactive": true,
+    "potentiel_perso": null
+  },
+  "cae_2.2.3.1": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "cae_2.2.3.2": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "cae_2.2.3.3": {
+    "desactive": false,
+    "potentiel_perso": null
+  },
+  "cae_3.1.2.2": {
+    "desactive": true,
+    "potentiel_perso": 0.8
+  },
+  "cae_3.2.1.1": {
+    "desactive": null,
+    "potentiel_perso": 0.16666666666666666
+  },
+  "cae_3.2.1.2": {
+    "desactive": true,
+    "potentiel_perso": 0.0
+  },
+  "cae_3.2.1.3": {
+    "desactive": true,
+    "potentiel_perso": 0.0
+  },
+  "cae_4.1.2.1": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_4.1.2.3": {
+    "desactive": null,
+    "potentiel_perso": null
+  },
+  "cae_4.1.2.4": {
+    "desactive": null,
+    "potentiel_perso": null
+  }
+}
