@@ -20,16 +20,15 @@ class ActionTree:
             for action_children in actions_children
         }
 
-        self._depths_by_action_ids = (
-            self._build_depths_by_action_ids()
-        )  # TODO : get this info from datalayer right view !
+        # TODO : get this info from datalayer right view !
+        self._depths_by_action_ids = (self._build_depths_by_action_ids())
 
-        self._backward_ids = np.array(
-            self._build_backward_ids_from_children_ids_by_action_id()
-        )
+        self._backward_ids = np.array(self._build_backward_ids_from_children_ids_by_action_id())
         self._forward_ids = self._backward_ids[::-1]
         self._tache_ids = np.array(self._build_tache_ids())
         self._not_taches_backward_ids = np.array(self._build_action_not_taches_backward_ids())
+
+
 
     def get_children(self, action_id: ActionId) -> List[ActionId]:
         return self.children_ids_by_action_id.get(action_id, [])
@@ -69,11 +68,11 @@ class ActionTree:
         for action_child in self.get_children(action_id):
             self.map_from_action_to_taches(callback, action_child)
 
-    def infer_depth(self, action_id: ActionId) -> int:
+    def _infer_depth(self, action_id: ActionId) -> int:
         parent_id = self._get_parent(action_id)
         if not parent_id:
             return 0
-        return 1 + self.infer_depth(parent_id)
+        return 1 + self._infer_depth(parent_id)
 
     def _get_parent(self, action_id: ActionId) -> Optional[ActionId]:
         return next(
@@ -91,7 +90,7 @@ class ActionTree:
 
     @property
     def backward_ids(self):
-        return self._forward_ids[::-1]
+        return self._backward_ids
 
     def _is_leaf(self, action_id: ActionId):
         return self.get_children(action_id) == []
@@ -104,14 +103,13 @@ class ActionTree:
         return tache_ids
 
     def _build_depths_by_action_ids(self) -> dict[ActionId, int]:
-
         action_ids = list(
             set(
                 flatten(list(self.children_ids_by_action_id.values()))
                 + list(self.children_ids_by_action_id.keys())
             )
         )
-        return {action_id: self.infer_depth(action_id) for action_id in action_ids}
+        return {action_id: self._infer_depth(action_id) for action_id in action_ids}
 
     def _build_backward_ids_from_children_ids_by_action_id(self) -> List[ActionId]:
         return sorted(
