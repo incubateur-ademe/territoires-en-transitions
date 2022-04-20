@@ -1,4 +1,4 @@
-from copy import deepcopy
+from copy import deepcopy, copy
 import logging
 from typing import Dict, List, Optional
 
@@ -43,6 +43,11 @@ class ActionPointTree(ActionTree):
             action_point.action_id: action_point.value
             for action_point in actions_points
         }
+
+    def clone(self):
+        clone = copy(self)
+        clone._points_by_id = deepcopy(self._points_by_id)
+        return clone
 
     def get_action_point(self, action_id: ActionId) -> float:
         return self._points_by_id[action_id]
@@ -463,7 +468,7 @@ def build_point_tree_personnalise(
     point_tree_referentiel: ActionPointTree,
     personnalisation_consequences: Dict[ActionId, ActionPersonnalisationConsequence],
 ) -> ActionPointTree:
-    point_tree_personnalise = deepcopy(point_tree_referentiel)
+    point_tree_personnalise = point_tree_referentiel.clone()
     for action_id, consequence in personnalisation_consequences.items():
         if consequence.desactive:
             personnalisation = (
