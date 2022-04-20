@@ -18,9 +18,7 @@ export class QuestionThematiqueCompletudeReadEndpoint extends DataLayerReadCache
     getParams: QuestionThematiqueCompletudeReadEndpointGetParams
   ): Promise<PostgrestResponse<TQuestionThematiqueCompletudeRead>> {
     const {collectivite_id} = getParams;
-    return this._table
-      .eq('collectivite_id', collectivite_id)
-      .order('nom', {ascending: true});
+    return this._table.eq('collectivite_id', collectivite_id);
   }
 }
 
