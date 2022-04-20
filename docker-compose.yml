@@ -291,4 +291,5 @@ services:
     environment:
       REACT_APP_SUPABASE_KEY: ${ANON_KEY}
       REACT_APP_SUPABASE_URL: http://kong:8000
+      LANG: fr_FR.UTF-8
       CI: "true"
