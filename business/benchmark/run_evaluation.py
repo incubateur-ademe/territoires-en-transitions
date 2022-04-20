@@ -61,8 +61,8 @@ def action_consequences() -> Dict[ActionId, ActionPersonnalisationConsequence]:
 
 
 if __name__ == '__main__':
-    referentiel = 'eci'
-    action_level = 2
+    referentiel = 'cae'
+    action_level = 3
 
     tree = action_point_tree(referentiel)
     statuts = action_statuts()
