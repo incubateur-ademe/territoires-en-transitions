@@ -27,7 +27,7 @@ Puis, au sein de chaque dossier, vous remarquerez l'organisation suivante :
 ## Mode d'emploi 
 ### Installation
 Créer un nouvel environnement virtuel, et y installer les paquets et la source.
-```
+```sh
 python3 -m venv venv 
 source venv/bin/activate 
 pip install pipenv
@@ -37,28 +37,31 @@ pip install -e .
 
 ### Lancer les tests
 #### Avec docker
-```
+```sh
 docker-compose run business-test
 ```
 #### Unitaires
-```
+```sh
 pytest tests/unit
 ```
 #### Intégrations et end-to-end
-Pour certains tests d'intégrations et pour les tests de bout-en-bout, il est nécessaire de lever les services SupaBase : 
-```
-    cd ../data_layer
-    docker-compose run business-test echo 
+Pour certains tests d'intégrations et pour les tests de bout-en-bout, il est nécessaire de lever les services SupaBase. 
+On peut lancer le container de test avec une commande `echo` afin de lancer les services nécessaires sans lancer 
+`pytest` dans le container.
+
+```sh
+cd ../data_layer
+docker-compose run business-test echo 
 ```
 
-Puis :
-```
+Puis lancer les tests en local :
+```sh
 pytest tests 
 ```
 
 ### Lancer l'application
 On peut lancer l'application avec python
-```
+```sh
 python business/evaluation/entrypoints/start_realtime.py
 ```
 
