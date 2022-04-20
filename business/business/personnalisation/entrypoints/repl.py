@@ -1,10 +1,10 @@
-from business.personnalisation.engine.formule_interpreter import FormuleInterpreter
+from business.personnalisation.engine.formule_interpreter import ReponsesInterpreter
 from business.personnalisation.models import Reponse
 from business.personnalisation.engine.parser import parser
 
 
 def main():
-    interpreter = FormuleInterpreter([Reponse("question_binaire_1", "NON")])
+    interpreter = ReponsesInterpreter([Reponse("question_binaire_1", "NON")])
     while True:
         try:
             s = input("> ")

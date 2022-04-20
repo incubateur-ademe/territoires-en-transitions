@@ -9,6 +9,7 @@ from business.personnalisation.models import (
     IdentitePopulationOption,
     IdentiteLocalisationOption,
 )
+from business.utils.action_id import ActionId
 
 TypedValue = Tuple[Type, Any]
 Arg1 = Tuple[TypedValue]
@@ -19,9 +20,15 @@ Arg3 = Tuple[TypedValue, TypedValue, TypedValue]
 class FormuleChecker(FormuleABC, Transformer):
     """In charge of checking formules are correct"""
 
-    def __init__(self, questions: List[Question], visit_tokens: bool = True) -> None:
+    def __init__(
+        self,
+        questions: List[Question],
+        action_ids: List[ActionId],
+        visit_tokens: bool = True,
+    ) -> None:
         Transformer.__init__(self, visit_tokens)
         self.questions = {question.id: question for question in questions}
+        self.action_ids = action_ids
 
     def reponse_comparison(self, node: Arg2) -> TypedValue:
         """Compute reponse to questions of type choix
@@ -60,6 +67,15 @@ class FormuleChecker(FormuleABC, Transformer):
                 f"La question d'id {question_id} est de type {question_type}, donc la fonction réponse attend deux arguments."
             )
         return float, "reponse"
+
+    def score_value(self, node: Arg1) -> TypedValue:
+        """Compute score of action
+        Raises FormuleError if action_id does not exist
+        """
+        action_id = node[0][1]
+        if action_id not in self.action_ids:
+            raise FormuleError(f"Id de l'action inconnue: {action_id}.")
+        return str, "score"
 
     def identite(self, node: Arg2) -> TypedValue:
         """Returns true if the value is contained by the identite property
@@ -145,9 +161,9 @@ class FormuleChecker(FormuleABC, Transformer):
 
     @staticmethod
     def math(function_name: str, node: Arg2):
-        if node[0][0] != float or node[1][0] != float:
+        if node[0][0] not in [float, str] or node[1][0] != float:
             raise FormuleError(
-                f"{function_name} ne prends que des arguments de type nombre."
+                f"{function_name} ne prend que des arguments de type nombre."
                 f"\n{function_name} ({node[0][1]}, {node[0][1]}) n'est pas valide."
             )
         return float, function_name

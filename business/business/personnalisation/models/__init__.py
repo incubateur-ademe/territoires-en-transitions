@@ -43,6 +43,7 @@ class ActionPersonnalisationConsequence:
 
     desactive: Optional[bool] = None
     potentiel_perso: Optional[float] = None
+    potentiel_perso_formule: Optional[str] = None
 
 
 @dataclass

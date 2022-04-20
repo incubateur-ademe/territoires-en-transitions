@@ -1,6 +1,3 @@
-from typing import List
-import pytest
-
 from business.personnalisation.models import IdentiteCollectivite, Reponse
 from business.personnalisation.engine.regles_parser import ReglesParser
 from business.personnalisation.execute_personnalisation_regles import (
@@ -98,5 +95,31 @@ def test_execute_personnalisation_regles_with_identite_population():
     assert execute_personnalisation_regles(regles_parser, reponses, identite) == {
         ActionId("eci_1"): ActionPersonnalisationConsequence(
             desactive=None, potentiel_perso=2 / 12
+        )
+    }
+
+
+def test_execute_personnalisation_regles_with_reduction_depends_on_score():
+    regles_parser = ReglesParser(
+        [
+            ActionPersonnalisationRegles(
+                ActionId("eci_1"),
+                [
+                    Regle(
+                        "si identite(type, commune) et reponse(dechets_2, NON) alors min(score(cae_1.2.3), 2/12)",
+                        "reduction",
+                    ),
+                ],
+            )
+        ]
+    )
+    reponses = [Reponse("dechets_2", "NON")]
+    identite = IdentiteCollectivite(type={"commune"})
+
+    assert execute_personnalisation_regles(regles_parser, reponses, identite) == {
+        ActionId("eci_1"): ActionPersonnalisationConsequence(
+            desactive=None,
+            potentiel_perso=None,
+            potentiel_perso_formule="min(score(cae_1.2.3), 0.16666666666666666)",
         )
     }

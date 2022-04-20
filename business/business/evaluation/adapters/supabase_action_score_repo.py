@@ -1,5 +1,4 @@
 from datetime import datetime
-import json
 from typing import List
 
 from dataclasses import asdict
@@ -26,7 +25,6 @@ class SupabaseActionScoreRepository(
 
         referentiel = entities[0].referentiel
         client_scores_json = [asdict(score) for score in entities]
-
         self.client.db.insert(
             supabase_names.tables.client_scores,
             {

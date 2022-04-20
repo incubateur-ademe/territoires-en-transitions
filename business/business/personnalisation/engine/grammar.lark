@@ -31,6 +31,7 @@
       | "identite" "(" identifier "," primary ")" -> identite
       | "reponse" "(" identifier "," primary ")" -> reponse_comparison
       | "reponse" "(" identifier ")" -> reponse_value
+      | "score" "(" identifier ")" -> score_value
       | "min" "(" term "," term ")" -> min
       | "max" "(" term "," term ")" -> max
 
@@ -43,11 +44,13 @@
       | CNAME              -> string
       | number
 
+?identifier: NAME -> identifier
 arguments: expression [ "," expression]
-identifier: CNAME -> identifier
+NAME: ("_"|LETTER) ("_"|"."|LETTER|DIGIT)*
 number: SIGNED_NUMBER
 
-
+%import common.LETTER
+%import common.DIGIT
 %import common.WORD
 %import common.ESCAPED_STRING
 %import common.SIGNED_NUMBER

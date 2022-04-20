@@ -1,7 +1,7 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from business.personnalisation.engine.formule import ReponseMissing
-from business.personnalisation.engine.formule_interpreter import FormuleInterpreter
+from business.personnalisation.engine.formule_interpreter import ReponsesInterpreter
 from business.personnalisation.models import (
     ActionPersonnalisationConsequence,
     IdentiteCollectivite,
@@ -17,10 +17,10 @@ def execute_personnalisation_regles(
     identite: IdentiteCollectivite,
 ) -> Dict[ActionId, ActionPersonnalisationConsequence]:
     """Calculate personnalisation given a set of regles and reponses"""
-    formule_interpreter = FormuleInterpreter(reponses, identite)
+    formule_interpreter = ReponsesInterpreter(reponses, identite)
     personnalisation_consequences = {}
     for action_id, parsed_regle in regles_parser.parsed_regles_by_action_id.items():
-        desactive = potentiel_perso = None
+        desactive = potentiel_perso = potentiel_perso_formule = None
         if parsed_regle.desactivation:
             try:
                 desactive: Optional[bool] = formule_interpreter.visit(
@@ -30,12 +30,16 @@ def execute_personnalisation_regles(
                 pass
         if parsed_regle.reduction:
             try:
-                potentiel_perso: Optional[float] = formule_interpreter.visit(
-                    parsed_regle.reduction
-                )
+                potentiel_perso_as_float_or_formule: Optional[
+                    Union[float, str]
+                ] = formule_interpreter.visit(parsed_regle.reduction)
+                if isinstance(potentiel_perso_as_float_or_formule, str):
+                    potentiel_perso_formule = potentiel_perso_as_float_or_formule
+                else:
+                    potentiel_perso = potentiel_perso_as_float_or_formule
             except ReponseMissing:
                 pass
         personnalisation_consequences[action_id] = ActionPersonnalisationConsequence(
-            desactive, potentiel_perso
+            desactive, potentiel_perso, potentiel_perso_formule
         )
     return personnalisation_consequences
