@@ -17,13 +17,13 @@ def execute_personnalisation_regles(
     identite: IdentiteCollectivite,
 ) -> Dict[ActionId, ActionPersonnalisationConsequence]:
     """Calculate personnalisation given a set of regles and reponses"""
-    formule_interpreter = ReponsesInterpreter(reponses, identite)
+    interpreter = ReponsesInterpreter(reponses, identite)
     personnalisation_consequences = {}
     for action_id, parsed_regle in regles_parser.parsed_regles_by_action_id.items():
         desactive = potentiel_perso = potentiel_perso_formule = None
         if parsed_regle.desactivation:
             try:
-                desactive: Optional[bool] = formule_interpreter.visit(
+                desactive: Optional[bool] = interpreter.visit(
                     parsed_regle.desactivation
                 )
             except ReponseMissing:
@@ -32,7 +32,7 @@ def execute_personnalisation_regles(
             try:
                 potentiel_perso_as_float_or_formule: Optional[
                     Union[float, str]
-                ] = formule_interpreter.visit(parsed_regle.reduction)
+                ] = interpreter.visit(parsed_regle.reduction)
                 if isinstance(potentiel_perso_as_float_or_formule, str):
                     potentiel_perso_formule = potentiel_perso_as_float_or_formule
                 else:
