@@ -1,0 +1,214 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action Table Exemple 1 1`] = `
+<div
+  className="critere-action-table"
+>
+  <table>
+    <thead>
+      <tr>
+        <th
+          className="pl-10"
+          colSpan={2}
+        >
+          Sous-action ou tâche
+        </th>
+        <th>
+          Statut ou score requis
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        onClick={[Function]}
+      >
+        <td
+          className="pl-10 text-right text-xs w-12 text-grey625"
+        >
+          <span
+            className="pl-2"
+          >
+            1.1.1.1
+          </span>
+        </td>
+        <td
+          className="pl-4"
+        >
+          Identifier un·e élu·e référent·e
+        </td>
+        <td>
+          Fait
+        </td>
+      </tr>
+      <tr
+        onClick={[Function]}
+      >
+        <td
+          className="pl-10 text-right text-xs w-12 text-grey625"
+        >
+          <span
+            className="pl-2"
+          >
+            1.1.1.3
+          </span>
+        </td>
+        <td
+          className="pl-4"
+        >
+          Identifier l'équipe technique
+        </td>
+        <td>
+          Fait
+        </td>
+      </tr>
+      <tr
+        onClick={[Function]}
+      >
+        <td
+          className="pl-10 text-right text-xs w-12 text-grey625"
+        >
+          <span
+            className="pl-2"
+          >
+            1.1.2
+          </span>
+        </td>
+        <td
+          className="pl-4"
+        >
+          Réaliser le diagnostic de l’économie circulaire
+        </td>
+        <td>
+          20 % minimum
+        </td>
+      </tr>
+      <tr
+        onClick={[Function]}
+      >
+        <td
+          className="pl-10 text-right text-xs w-12 text-grey625"
+        >
+          <span
+            className="pl-2"
+          >
+            2.1.0
+          </span>
+        </td>
+        <td
+          className="pl-4"
+        >
+          Respecter la réglementation : PLPDMA
+        </td>
+        <td>
+          Programmé ou fait
+        </td>
+      </tr>
+      <tr
+        onClick={[Function]}
+      >
+        <td
+          className="pl-10 text-right text-xs w-12 text-grey625"
+        >
+          <span
+            className="pl-2"
+          >
+            2.2.0
+          </span>
+        </td>
+        <td
+          className="pl-4"
+        >
+          Respecter la réglementation : système de collecte
+        </td>
+        <td>
+          Programmé ou fait
+        </td>
+      </tr>
+      <tr
+        onClick={[Function]}
+      >
+        <td
+          className="pl-10 text-right text-xs w-12 text-grey625"
+        >
+          <span
+            className="pl-2"
+          >
+            2.3.0
+          </span>
+        </td>
+        <td
+          className="pl-4"
+        >
+          Respecter la réglementation : valorisation des déchets, dont organiques
+        </td>
+        <td>
+          Programmé ou fait
+        </td>
+      </tr>
+      <tr
+        onClick={[Function]}
+      >
+        <td
+          className="pl-10 text-right text-xs w-12 text-grey625"
+        >
+          <span
+            className="pl-2"
+          >
+            2.4.0
+          </span>
+        </td>
+        <td
+          className="pl-4"
+        >
+          Respecter la réglementation : pour les impacts environnementaux des émissions et les nuisances
+        </td>
+        <td>
+          Programmé ou fait
+        </td>
+      </tr>
+      <tr
+        onClick={[Function]}
+      >
+        <td
+          className="pl-10 text-right text-xs w-12 text-grey625"
+        >
+          <span
+            className="pl-2"
+          >
+            3.2.0
+          </span>
+        </td>
+        <td
+          className="pl-4"
+        >
+          Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables
+        </td>
+        <td>
+          Programmé ou fait
+        </td>
+      </tr>
+      <tr
+        onClick={[Function]}
+      >
+        <td
+          className="pl-10 text-right text-xs w-12 text-grey625"
+        >
+          <span
+            className="pl-2"
+          >
+            4.1.0
+          </span>
+        </td>
+        <td
+          className="pl-4"
+        >
+          Rédiger le rapport annuel SPPGD
+        </td>
+        <td>
+          Programmé ou fait
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+`;
