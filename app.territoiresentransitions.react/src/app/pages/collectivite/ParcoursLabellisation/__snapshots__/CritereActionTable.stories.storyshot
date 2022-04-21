@@ -13,7 +13,9 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action
         >
           Sous-action ou tâche
         </th>
-        <th>
+        <th
+          className="pr-6"
+        >
           Statut ou score requis
         </th>
       </tr>
@@ -32,7 +34,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action
           </span>
         </td>
         <td
-          className="pl-4"
+          className="pl-4 pr-8"
         >
           Identifier un·e élu·e référent·e
         </td>
@@ -53,7 +55,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action
           </span>
         </td>
         <td
-          className="pl-4"
+          className="pl-4 pr-8"
         >
           Identifier l'équipe technique
         </td>
@@ -74,7 +76,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action
           </span>
         </td>
         <td
-          className="pl-4"
+          className="pl-4 pr-8"
         >
           Réaliser le diagnostic de l’économie circulaire
         </td>
@@ -95,7 +97,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action
           </span>
         </td>
         <td
-          className="pl-4"
+          className="pl-4 pr-8"
         >
           Respecter la réglementation : PLPDMA
         </td>
@@ -116,7 +118,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action
           </span>
         </td>
         <td
-          className="pl-4"
+          className="pl-4 pr-8"
         >
           Respecter la réglementation : système de collecte
         </td>
@@ -137,7 +139,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action
           </span>
         </td>
         <td
-          className="pl-4"
+          className="pl-4 pr-8"
         >
           Respecter la réglementation : valorisation des déchets, dont organiques
         </td>
@@ -158,7 +160,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action
           </span>
         </td>
         <td
-          className="pl-4"
+          className="pl-4 pr-8"
         >
           Respecter la réglementation : pour les impacts environnementaux des émissions et les nuisances
         </td>
@@ -179,7 +181,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action
           </span>
         </td>
         <td
-          className="pl-4"
+          className="pl-4 pr-8"
         >
           Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables
         </td>
@@ -200,7 +202,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Action
           </span>
         </td>
         <td
-          className="pl-4"
+          className="pl-4 pr-8"
         >
           Rédiger le rapport annuel SPPGD
         </td>

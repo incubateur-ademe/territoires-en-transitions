@@ -18,7 +18,7 @@ export const CritereActionTable = (props: TCritereActionTableProps) => {
             <th className="pl-10" colSpan={2}>
               Sous-action ou tâche
             </th>
-            <th>Statut ou score requis</th>
+            <th className="pr-6">Statut ou score requis</th>
           </tr>
         </thead>
         <tbody>
@@ -46,7 +46,7 @@ const CritereActionRow = (
       <td className="pl-10 text-right text-xs w-12 text-grey625">
         <span className="pl-2">{actionId}</span>
       </td>
-      <td className="pl-4">{formulation}</td>
+      <td className="pl-4 pr-8">{formulation}</td>
       <td>{statut_ou_score}</td>
     </tr>
   );

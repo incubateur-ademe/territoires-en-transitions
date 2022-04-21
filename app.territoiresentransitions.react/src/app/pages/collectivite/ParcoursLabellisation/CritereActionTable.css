@@ -19,6 +19,11 @@
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
+@media (min-width: 36em) {
+  .critere-action-table th {
+    white-space: nowrap;
+  }
+}
 
 .critere-action-table tbody tr {
   background-color: var(--background-default-grey);
