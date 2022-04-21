@@ -1,6 +1,7 @@
 import {observer} from 'mobx-react-lite';
 import {useParams} from 'react-router-dom';
 import {currentCollectiviteBloc} from 'core-logic/observables';
+import {PageHeader} from 'ui/PageHeader';
 import {ThematiqueQR} from './ThematiqueQR';
 import {useThematique} from './useThematique';
 import {useThematiqueQR} from './useThematiqueQR';
@@ -27,9 +28,9 @@ export default observer(() => {
 
   return (
     <>
-      <div className="sticky top-0 z-40 bg-bf925 w-full h-28 flex items-center fr-mt-4w">
+      <PageHeader>
         <h2 className="w-full text-center m-0">{thematique.nom}</h2>
-      </div>
+      </PageHeader>
       <main className="fr-container fr-mt-1w fr-mb-4w">
         <ThematiqueQR
           collectivite={{id: collectivite_id, nom: nom || ''}}
