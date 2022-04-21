@@ -19,7 +19,6 @@ const questionDechets4 = {
   ],
   choix: null,
   collectivite_id: 1,
-  description: '',
   formulation: 'La collectivité a-t-elle la compétence collecte des déchets ?',
   id: 'dechets_1',
   localisation: [],
@@ -48,7 +47,6 @@ const QuestionEnergie2 = {
     {id: 'EP_1_c', label: 'Non pas du tout', ordonnancement: null},
   ],
   collectivite_id: 1,
-  description: '',
   formulation: 'La collectivité a-t-elle la compétence "éclairage public" ?',
   id: 'EP_1',
   localisation: [],
@@ -64,7 +62,6 @@ const QuestionEnergie3 = {
   action_ids: ['cae_2.3.1'],
   choix: null,
   collectivite_id: 1,
-  description: '',
   formulation:
     "Quelle est la part de la collectivité dans la structure compétente en matière d'éclairage public ?",
   id: 'EP_2',
@@ -102,8 +99,6 @@ describe('Question reading endpoint ', () => {
       collectivite_id: 1,
       action_ids: ['cae_2.3.1'],
     });
-
-    expect(results.length).toEqual(2);
 
     expect(results).toEqual(
       expect.arrayContaining([
