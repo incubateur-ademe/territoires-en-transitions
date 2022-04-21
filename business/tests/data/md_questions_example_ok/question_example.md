@@ -6,6 +6,7 @@ thematique_id: dechets
 ordonnancement: 1
 types_concernes: ["EPCI"]
 ```
+## Description
 Quelques détails sur cette question pour aider les collectivités à répondre.
 
 # Question 2 proportion
@@ -16,6 +17,7 @@ thematique_id: dechets
 ordonnancement: 2
 types_concernes: ["commune", "EPCI"]
 ```
+## Description
 Quelques détails sur cette question pour aider les collectivités à répondre.
 
 # Question 3 avec actions liées 
@@ -26,6 +28,7 @@ thematique_id: dechets
 actions: [eci_1, eci_2]
 ordonnancement: 3
 ```
+## Description
 Quelques détails sur cette question pour aider les collectivités à répondre.
 
 # Question 4 choix 
@@ -34,6 +37,7 @@ id: question_4
 type: choix
 thematique_id: dechets
 ```
+## Description
 Quelques détails sur cette question pour aider les collectivités à répondre.
 
 ## Choix 
@@ -57,5 +61,6 @@ id: question_5
 type: binaire
 thematique_id: dechets
 ```
+## Description
 Quelques détails sur cette question pour aider les collectivités à répondre.
 

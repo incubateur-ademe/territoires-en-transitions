@@ -30,6 +30,7 @@ thematique_id: eau_assainissement
 actions: [cae_3.3.3]
 types_concernes: [EPCI]
 ```
+## Description
 La part se rapporte au nombre d'habitants (nombre d'habitants de la collectivité / nombre d'habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d'élu de la collectivité / nombre de voix total dans l'organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d'habitants.
 
 # Existe-t-il un potentiel de valorisation énergétique (méthanisation ou récupération de chaleur) attesté par une étude portant sur la totalité du périmètre d’assainissement ?
