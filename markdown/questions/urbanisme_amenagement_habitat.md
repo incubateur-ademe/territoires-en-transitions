@@ -30,6 +30,7 @@ type: binaire
 thematique_id: urbanisme_habitat
 actions: [cae_1.3.1]
 ```
+## Description
 Il s'agit de la compétence Banatic 4505
 
 # La collectivité a-t-elle la compétence d'instruction des permis de construire ?
@@ -47,6 +48,7 @@ type: binaire
 thematique_id: urbanisme_habitat
 actions: [cae_1.3.3]
 ```
+## Description
 Il s'agit de la compétence Banatic 4560
 
 # La collectivité a-t-elle la compétence habitat ?
@@ -56,6 +58,7 @@ type: binaire
 thematique_id: urbanisme_habitat
 actions: [cae_1.2.4]
 ```
+## Description
 Il s'agit des compétences liées à l'habitat et au logement
 
 # Quelle est la part de la collectivité dans la structure compétente en matière de logement et d'habitat ?
@@ -66,6 +69,7 @@ thematique_id: urbanisme_habitat
 actions: [cae_1.2.4, cae_6.2.1, cae_6.2.2, cae_6.2.3]
 types_concernes: [commune]
 ```
+## Description
 La part se rapporte au nombre d'habitants (nombre d'habitants de la collectivité / nombre d'habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d'élu de la collectivité / nombre de voix total dans l'organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d'habitants.
 
 # La collectivité participe-t-elle au conseil d'administration d'un bailleur social ?
