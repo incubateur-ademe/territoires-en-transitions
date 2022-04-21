@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Ui/Page Header Surtitre Titre Et Bouton 1`] = `
+<div
+  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+>
+  <div
+    className="w-full max-w-3xl flex flex-col m-4"
+  >
+    <p
+      className="m-0"
+    >
+      Sur titre
+    </p>
+    <h2
+      className="fr-mb-2w"
+    >
+      Titre
+    </h2>
+    <button
+      className="fr-btn self-start"
+    >
+      Bouton
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Ui/Page Header Titre Central 1`] = `
+<div
+  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+>
+  <h2
+    className="w-full text-center m-0"
+  >
+    Titre au centre
+  </h2>
+</div>
+`;
+
+exports[`Storyshots Ui/Page Header Titre Et Bouton 1`] = `
+<div
+  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+>
+  <div
+    className="w-full max-w-3xl flex flex-col m-4"
+  >
+    <h2
+      className="fr-mb-2w"
+    >
+      Titre
+    </h2>
+    <button
+      className="fr-btn self-start"
+    >
+      Bouton
+    </button>
+  </div>
+</div>
+`;
