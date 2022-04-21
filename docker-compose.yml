@@ -217,6 +217,7 @@ services:
     environment:
       SUPABASE_URL: ${SUPABASE_URL}
       SUPABASE_WS: ${SUPABASE_WS}
+      REPOSITORIES: SUPABASE
 
   business-update-content:
     container_name: tet-business-update-content
