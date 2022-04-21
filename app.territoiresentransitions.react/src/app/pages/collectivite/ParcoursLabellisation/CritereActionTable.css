@@ -1,0 +1,35 @@
+.critere-action-table {
+  border-radius: 8px;
+  border-width: 8px;
+  border-color: var(--background-disabled-grey);
+  width: 100%;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.critere-action-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 1px;
+  background-color: var(--background-disabled-grey);
+}
+
+.critere-action-table th {
+  text-align: left;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.critere-action-table tbody tr {
+  background-color: var(--background-default-grey);
+  cursor: pointer;
+}
+.critere-action-table tbody tr:hover {
+  background-color: var(--background-alt-grey);
+  cursor: pointer;
+}
+
+.critere-action-table td {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
