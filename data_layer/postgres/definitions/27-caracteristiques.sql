@@ -16,6 +16,24 @@ comment on function private.population_buckets is
     'Renvoie un tableau de valeurs représentant les seuils de population '
         'utilisés par le business pour la personnalisation des référentiels.';
 
+create or replace function
+    private.collectivite_type(collectivite_id integer)
+    returns type_collectivite[]
+as
+$$
+select case
+           when collectivite_type.collectivite_id in (select id from commune) then '{"commune"}'
+           when e.nature = 'SMF' or e.nature = 'SIVOM' or e.nature = 'SMO' or
+                e.nature = 'SIVU' then
+               '{"EPCI", "syndicat"}'
+           else '{"EPCI"}'
+           end::type_collectivite[]
+from collectivite c
+         left join epci e on c.id = e.collectivite_id
+$$ language sql stable;
+comment on function private.collectivite_type is
+    'Renvoie la liste des `type_collectivite` correspondant à la collectivité';
+
 create or replace view collectivite_identite as
 with
     -- get population and drom from insee.
@@ -31,28 +49,15 @@ with
                          case when ir.drom then '{"DOM"}' else '{}' end localisation
                   from epci
                            left join imports.banatic ib on ib.siren = epci.siren
-                           left join imports.region ir on ib.region_code = ir.code),
-
-    -- compute type from table and epci nature
-    type_collectivite as (select c.id            as collectivite_id,
-                                 case
-                                     when c.id in (select collectivite_id from commune) then '{"commune"}'
-                                     when e.nature = 'SMF' or e.nature = 'SIVOM' or e.nature = 'SMO' or
-                                          e.nature = 'SIVU' then
-                                         '{"EPCI", "syndicat"}'
-                                     else '{"EPCI"}'
-                                     end::text[] as type
-                          from collectivite c
-                                   left join epci e on c.id = e.collectivite_id)
+                           left join imports.region ir on ib.region_code = ir.code)
 -- coalesce null values from epci or collectivite data.
 select c.id,
-       coalesce(mc.population, me.population, '{}')::text[]     as population,
-       coalesce(tc.type, '{}')::type_collectivite[]             as type,
-       coalesce(mc.localisation, me.localisation, '{}')::text[] as localisation
+       coalesce(mc.population, me.population, '{}')::text[]                 as population,
+       coalesce(private.collectivite_type(c.id), '{}')::type_collectivite[] as type,
+       coalesce(mc.localisation, me.localisation, '{}')::text[]             as localisation
 from collectivite c
          left join meta_commune mc on mc.collectivite_id = c.id
-         left join meta_epci me on me.collectivite_id = c.id
-         left join type_collectivite tc on tc.collectivite_id = c.id;
+         left join meta_epci me on me.collectivite_id = c.id;
 comment on view collectivite_identite is
     'L''identité d''une collectivité pour la personnalisation des référentiels, utilisée par le business.';
 

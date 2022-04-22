@@ -35,12 +35,16 @@ select ok((select bool_and(type = 'binaire' or type = 'proportion')
 insert into reponse_binaire
 select now(), 1, q.id, true
 from question q
-where q.thematique_id = 'dechets' and type = 'binaire';
+where q.thematique_id = 'dechets'
+  and type = 'binaire'
+  and (types_collectivites_concernees @> '{commune}' or types_collectivites_concernees is null);
 
 insert into reponse_proportion
 select now(), 1, q.id, 1.0
 from question q
-where q.thematique_id = 'dechets' and type = 'proportion';
+where q.thematique_id = 'dechets'
+  and type = 'proportion'
+  and (types_collectivites_concernees @> '{commune}' or types_collectivites_concernees is null);
 
 select ok((select completude = 'complete'
            from question_thematique_completude
