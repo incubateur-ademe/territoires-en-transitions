@@ -21,9 +21,9 @@ select ok((select count(*) = 1 from nantes_display where type_collectivite = 'EP
 select *
 into agen
 from collectivite_identite
-where id in (select collectivite_id
-             from named_collectivite
-             where nom ilike 'agen');
+where id = (select collectivite_id
+            from named_collectivite
+            where nom ilike 'agen');
 
 
 select ok((select count(*) = 1 from agen), 'Agen ne compte qu''une seule collectivité.');
