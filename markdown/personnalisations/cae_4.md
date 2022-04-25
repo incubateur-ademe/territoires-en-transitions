@@ -105,10 +105,10 @@ action_id: cae_4.2.3
 ## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) alors 0.5 
-sinon si identite(population, moins_de_10000) ou reponse(centre_polarite, NON) alors 0.5
+si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors 0
 sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et identite(population, moins_de_10000) alors 0
-sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors 0
+sinon si identite(population, moins_de_10000) ou reponse(centre_polarite, NON) alors 0.5
+sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) alors 0.5 
 ```
 Pour une collectivité non AOM et sans compétence voirie, le score de la 4.2.3 est réduit de 50 %.
 Pour une collectivité de moins de 10 000 habitants ou ne comportant pas de commune ou centre-bourg de plus de 2000 habitants, le score de la 4.2.3 est réduit de 50 %.
