@@ -47,8 +47,7 @@ Si le parent est réduit de 50% alors la réduction de 20% ne s'applique pas mê
 
 ### Désactivation
 ```formule
-si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors FAUX
-sinon si reponse(fournisseur_energie, NON) alors VRAI
+si reponse(fournisseur_energie, NON) alors VRAI
 ```
 
 
