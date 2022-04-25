@@ -97,11 +97,11 @@ class ReponsesInterpreter(FormuleABC, FormuleInterpreter):
     def reponse_comparison(self, tree: Tree):
         """Compute reponse to questions of type choix
         Returns True if the reponse at key matches the value.
-        Raise ReponseMissing if reponse can't be found
+        Returns False if reponse can't be found
         """
         (question_id, compared_choix_id) = self.visit_children(tree)
         if question_id not in self.reponses:
-            raise ReponseMissing(f"No reponse for question {question_id}")
+            return False
         reponse_choix_id = self.reponses[question_id]
         return reponse_choix_id == compared_choix_id
 

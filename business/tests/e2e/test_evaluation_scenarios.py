@@ -137,9 +137,6 @@ def test_cae_321_when_recuperation_cogeneration_is_NON():
     assert cae_scores_by_id["cae_3.2.1.3"].desactive == True
 
 
-# cae 4.2.2
-# si reponse(pouvoir_police, NON) alors reduction = 0.5
-
 # cae_6.3.1 part à 0
 # si part_en_pourcentage est à 0, alors la réduction est à 2/8 et donc l'action est notée sur 2 points
 

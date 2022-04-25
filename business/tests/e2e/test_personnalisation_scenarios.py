@@ -300,3 +300,17 @@ def test_regle_cae_124_desactive_for_collectivite_that_arent_syndicat():
             )
         },
     )
+
+
+def test_regle_cae_422_when_pouvoir_police_NON():
+    # si (...)
+    # sinon si reponse(pouvoir_police, NON) ou (...) alors 0.5
+    given_reponses_and_identite_assert_personnalisation_consequences(
+        [Reponse("pouvoir_police", "NON")],
+        IdentiteCollectivite(),
+        {
+            "cae_4.2.2": ActionPersonnalisationConsequence(
+                desactive=None, potentiel_perso=0.5
+            )
+        },
+    )

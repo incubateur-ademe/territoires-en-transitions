@@ -48,10 +48,9 @@ def test_function_reponse_value_raises_if_no_reponse():
         ReponsesInterpreter([]).visit(tree)
 
 
-def test_function_reponse_comparison_raises_if_no_reponse():
+def test_function_reponse_comparison_returns_false_if_no_reponse():
     tree = parser.parse("reponse(question_X, choix_A)")
-    with pytest.raises(ReponseMissing):
-        ReponsesInterpreter([]).visit(tree)
+    assert ReponsesInterpreter([]).visit(tree) is False
 
 
 def test_function_identite_on_type():

@@ -47,7 +47,7 @@ def test_execute_personnalisation_regles_when_some_reponses_are_not_given():
     assert execute_personnalisation_regles(
         regles_parser, reponses, IdentiteCollectivite()
     )[ActionId("eci_1")] == ActionPersonnalisationConsequence(
-        desactive=None, potentiel_perso=0.2
+        desactive=False, potentiel_perso=0.2
     )
 
 
