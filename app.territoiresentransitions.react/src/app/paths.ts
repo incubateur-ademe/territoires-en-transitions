@@ -159,3 +159,8 @@ export const makeCollectivitePersoRefThematiqueUrl = ({
 export const makeInvitationLandingPath = (invitationId: string) =>
   window.location.hostname +
   invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);
+
+export const REGLEMENTS: {[k: string]: string} = {
+  eci: 'https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2022/03/Reglement_label_ECi_20220316.pdf.pdf',
+  cae: 'https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2022/02/TE-CAE_Reglement-label_2021.pdf',
+};
