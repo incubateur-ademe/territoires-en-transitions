@@ -60,4 +60,12 @@ thematique_id: identite
 actions: [cae_4.2.1, cae_4.2.3]
 ```
 
+# La collectivité possède-t-elle des centres-bourgs (dans le cas d'une commune) ou des communes (dans le cas d'un EPCI) de plus de 5 000 habitants ?
+```yaml
+id: centre_urbain
+type: binaire
+thematique_id: identite
+actions: [cae_1.2.2]
+```
+
 
