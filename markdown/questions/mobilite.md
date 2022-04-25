@@ -3,7 +3,7 @@
 id: AOM_1
 type: binaire
 thematique_id: mobilite
-actions: [cae_1.2.2, cae_4.2.3, cae_4.3.4]
+actions: [cae_1.2.2, cae_4.2.3, cae_4.3.3, cae_4.3.4]
 ```
 
 # Quelle est la part de la collectivité autorité organisatrice de la mobilité (AOM) ?
