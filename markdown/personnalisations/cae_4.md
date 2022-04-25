@@ -169,5 +169,6 @@ action_id: cae_4.3.4
 si identite(localisation,DOM) alors 10/8
 sinon si reponse(AOM_1, NON) alors max(reponse(AOM_2), 0.5)
 ```
-Pour une collectivité non AOM, le score de la 4.3.4 est réduit proportionnellement à la part de la collectivité dans la structure AOM.
+Pour une collectivité non AOM, le score de la 4.3.4 est réduit proportionnellement à la part de la collectivité dans 
+la structure AOM dans la limite de 50%.
 Le nombre de point max pour l'action 4.3.4 est de 8 points en Métropole et de 10 points pour les collectivités DOM.
