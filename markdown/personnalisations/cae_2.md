@@ -53,7 +53,7 @@ action_id: cae_2.3.1
 ```formule
 si identite(type, EPCI) et reponse(EP_1, EP_1_b) alors 2/6
 sinon si identite(type, EPCI) et reponse(EP_1, EP_1_c) alors 0
-sinon 1-reponse(EP_2)
+sinon reponse(EP_2)
 ```
 ### Désactivation
 ```formule
