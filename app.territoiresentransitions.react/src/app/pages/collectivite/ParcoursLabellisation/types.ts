@@ -24,6 +24,8 @@ export type CritereLabellisationListeActions = {
       Économie circulaire et le prouver (via les documents preuves ou un texte 
       justificatif)" ) */
   formulation: string;
+  /** Vrai si le critère est rempli */
+  rempli: boolean;
   /** Tableau des critères associés aux actions */
   criteres: CritereLabellisationAction[];
 };

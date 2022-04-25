@@ -1,5 +1,4 @@
 import {Story, Meta} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
 import {
   CritereActionTable,
   TCritereActionTableProps,
@@ -11,8 +10,8 @@ export default {
 } as Meta;
 
 const Template: Story<TCritereActionTableProps> = args => (
-  <CritereActionTable onClickRow={action('onClickRow')} {...args} />
+  <CritereActionTable {...args} />
 );
 
 export const Exemple1 = Template.bind({});
-Exemple1.args = fixture.CritereLabellisationListeActions;
+Exemple1.args = fixture.parcours1.criteres[1];
