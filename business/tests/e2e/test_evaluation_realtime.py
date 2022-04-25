@@ -1,6 +1,3 @@
-from time import time
-
-
 import pytest
 
 from business.utils.domain_message_bus import (
@@ -49,10 +46,6 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
     )
     score_stored_events = spy_on_event(bus, events.ScoresForCollectiviteStored)
 
-    start = time()
-    realtime.start()
-    duration_ms = (time() - start) * 1000
-
     assert len(score_computed_events) == 1
     assert len(score_stored_events) == 1
 
@@ -66,7 +59,3 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
         == score_computed_events[0].referentiel
         == "cae"
     )
-    # todo move assertion in a benchmark
-    # assert (
-    #     duration_ms < 2500
-    # ), "Computation took more than 2.5 seconds"
