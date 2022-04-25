@@ -66,6 +66,11 @@ Le nombre de point max pour l'action 3.2.1 est de 12 points en Métropole et de 
 Pour une collectivité avec peu d'activités industrielles adaptées pour la récupération de chaleur fatale et peu de potentiel pour la cogénération voir la micro-cogénération (donc ni de chaufferies ni de consommateurs suffisants en chaleur ni de producteur-consommateur visant l’autoconsommation), le score de la 3.2.1 est réduit à 2 points et les statuts des sous-action 3.2.1.2 et 3.2.1.3 sont "non concernée".
 
 
+# Réduction potentiel cae 3.2.1.1
+```yaml
+action_id: cae_3.2.1.1
+```
+## Règles
 # Réduction potentiel cae 3.2.1.2
 ```yaml
 action_id: cae_3.2.1.2

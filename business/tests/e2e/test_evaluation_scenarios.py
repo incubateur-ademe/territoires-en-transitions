@@ -1,3 +1,5 @@
+from typing import List
+from business.evaluation.adapters.replay_realtime import ReplayRealtime
 from business.evaluation.domain.models import events
 from business.evaluation.domain.models.action_score import ActionScore
 from business.evaluation.domain.models.events import (
@@ -9,7 +11,7 @@ from business.evaluation.domain.ports.action_status_repo import (
 from business.evaluation.domain.use_cases.compute_referentiel_scores_for_collectivite import (
     ComputeReferentielScoresForCollectivite,
 )
-from business.personnalisation.models import ActionPersonnalisationConsequence
+from business.personnalisation.models import ActionPersonnalisationConsequence, Reponse
 from business.referentiel.adapters.supabase_referentiel_repo import (
     SupabaseReferentielRepository,
 )
@@ -19,6 +21,8 @@ from business.personnalisation.ports.personnalisation_repo import (
 from business.utils.action_id import ActionId
 from business.utils.config import Config
 from business.utils.domain_message_bus import InMemoryDomainMessageBus
+from business.utils.environment_variables import EnvironmentVariables
+from tests.e2e.prepare_evaluation import prepare_config_and_bus
 from tests.utils.spy_on_event import spy_on_event
 
 
@@ -88,3 +92,62 @@ def test_eci_desactivation_of_sous_action_242_should_redistribute_points_amongst
         desactive=False,
         point_potentiel_perso=None,
     )
+
+
+def execute_scenario_collectivite_updates_reponse(
+    collectivite_id: int, reponses: List[Reponse]
+):
+    bus = InMemoryDomainMessageBus()
+    config = prepare_config_and_bus(
+        bus,
+        ReplayRealtime(bus, converters=[]),
+        EnvironmentVariables("SUPABASE", "SUPABASE", "REPLAY"),
+    )
+    config.statuses_repo = InMemoryActionStatutRepository()
+
+    config.personnalisation_repo.get_reponses_for_collectivite = (
+        lambda collectivite_id: reponses
+    )
+
+    scores_computed = spy_on_event(bus, events.ReferentielScoresForCollectiviteComputed)
+
+    bus.publish_event(events.ReponseUpdatedForCollectivite(collectivite_id))
+
+    eci_scores_by_id = {score.action_id: score for score in scores_computed[0].scores}
+    cae_scores_by_id = {score.action_id: score for score in scores_computed[1].scores}
+
+    return eci_scores_by_id, cae_scores_by_id
+
+
+def test_cae_321_when_recuperation_cogeneration_is_NON():
+    """Si la récupération recuperation_cogeneration est NON, alors, cae_3.2.1.2 et cae_3.2.1.3 sont désactivées et cae_3.2.1.1 vaut 2 points"""
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        1, [Reponse(ActionId("recuperation_cogeneration"), "NON")]
+    )
+    assert (
+        cae_scores_by_id["cae_3.2.1"].point_potentiel
+        == cae_scores_by_id["cae_3.2.1"].point_potentiel_perso
+        == 2.0
+    )
+    assert cae_scores_by_id["cae_3.2.1.1"].point_potentiel == 2.0
+    assert cae_scores_by_id["cae_3.2.1.2"].point_potentiel == 0
+    assert cae_scores_by_id["cae_3.2.1.3"].point_potentiel == 0
+
+    assert cae_scores_by_id["cae_3.2.1.2"].desactive == True
+    assert cae_scores_by_id["cae_3.2.1.3"].desactive == True
+
+
+# cae 4.2.2
+# si reponse(pouvoir_police, NON) alors reduction = 0.5
+
+# cae_6.3.1 part à 0
+# si part_en_pourcentage est à 0, alors la réduction est à 2/8 et donc l'action est notée sur 2 points
+
+# cae_6.3.1
+# si commune et reponse(dev_eco_2, 0.1) et reponse(dev_eco_4, NON) alors reduction(cae_6.3.1, 2/8) et desactivation(cae_6.3.1.4, true)
+# si desactivation(cae_6.3.1.4, true) alors ses points sont redistribués sur la cae_6.3.1.3 et la cae_6.3.1.5 uniquement, c'est à dire :
+#  - 6.3.1.1 proportion 15% => 15%
+#  - 6.3.1.2 proportion 20% => 20%
+#  - 6.3.1.3 proportion 20% => 32.5%
+#  - 6.3.1.4 proportion 25% => Désactivé, non-concerné, 0%
+#  - 6.3.1.5 proportion 20% => 32.5%

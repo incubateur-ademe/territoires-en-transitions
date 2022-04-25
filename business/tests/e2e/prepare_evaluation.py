@@ -47,3 +47,4 @@ def prepare_config_and_bus(
         reset_supabase_client(config.referentiel_repo.client)
 
     prepare_bus(config, EVENT_HANDLERS)
+    return config
