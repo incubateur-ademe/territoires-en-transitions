@@ -156,7 +156,7 @@ def update_scores_from_tache_given_statuses(
 
     tache_point_potentiel = potentiels[tache_id]
 
-    tache_concerne = tache_id not in actions_non_concernes_ids
+    tache_concerne = tache_id not in actions_non_concernes_ids + actions_desactivees_ids
     tache_is_personnalise = tache_id in action_personnalises_ids
     tache_is_desactive = tache_id in actions_desactivees_ids
 
@@ -471,17 +471,7 @@ def build_point_tree_personnalise(
 ) -> ActionPointTree:
     point_tree_personnalise = point_tree_referentiel.clone()
     for action_id, consequence in personnalisation_consequences.items():
-        if consequence.desactive:
-            personnalisation = (
-                lambda action_id: point_tree_personnalise.set_action_point(
-                    action_id, 0.0
-                )
-            )
-            point_tree_personnalise.map_from_action_to_taches(
-                personnalisation,
-                action_id,
-            )
-        elif consequence.potentiel_perso is not None:
+        if consequence.potentiel_perso is not None:
             factor = consequence.potentiel_perso
             personnalisation = (
                 lambda action_id: point_tree_personnalise.set_action_point(
@@ -509,10 +499,6 @@ def compute_scores(
     )
 
     # 1. First, calculate all potentiels after 'non concernee' action's points redistribution
-    scores: Dict[ActionId, ActionScore] = {}
-    actions_non_concernes_ids = compute_actions_non_concernes_ids(
-        point_tree_personnalise, statuses
-    )
     actions_desactivees_ids = compute_actions_desactivees_ids(
         point_tree_personnalise,
         [
@@ -521,6 +507,12 @@ def compute_scores(
             if consequence.desactive
         ],
     )
+    scores: Dict[ActionId, ActionScore] = {}
+    actions_non_concernes_ids = (
+        compute_actions_non_concernes_ids(point_tree_personnalise, statuses)
+        + actions_desactivees_ids
+    )
+
     potentiels = compute_potentiels(
         point_tree_personnalise,
         actions_non_concernes_ids,
