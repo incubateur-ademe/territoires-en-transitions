@@ -63,7 +63,7 @@ action_id: cae_6.3.1
 ## Règles
 ### Réduction de potentiel
 ```formule
-si identite(type, commune) alors max (reponse(dev_eco_2),2/8) 
+si identite(type, commune) alors max (reponse(dev_eco_2), 2/8) 
 ```
 Si la collectivité est une commune, alors la réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de développement économique, dans la limite de 2 points de potentiel restant.
 En l’absence de tissu économique propice à l’émergence de projets d’écologie industrielle, le score de la 6.3.1.4 est réduit à 0 et son statut est "non concerné" : les 2 points liés sont affectés à la 6.3.1.3 et la 6.3.1.5.
@@ -73,6 +73,11 @@ En l’absence de tissu économique propice à l’émergence de projets d’éc
 action_id: cae_6.3.1.4
 ```
 ## Règles
+
+### Réduction de potentiel
+```formule
+si reponse(dev_eco_4,NON) alors 0
+```
 ### Désactivation
 ```formule
 reponse(dev_eco_4,NON) 

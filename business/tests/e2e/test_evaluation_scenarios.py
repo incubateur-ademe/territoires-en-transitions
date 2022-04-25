@@ -1,3 +1,4 @@
+import math
 from typing import List
 from business.evaluation.adapters.replay_realtime import ReplayRealtime
 from business.evaluation.domain.models import events
@@ -149,11 +150,64 @@ def test_cae_631_when_dev_eco_2_is_0():
     )
 
 
-# cae_6.3.1
-# si commune et reponse(dev_eco_2, 0.1) et reponse(dev_eco_4, NON) alors reduction(cae_6.3.1, 2/8) et desactivation(cae_6.3.1.4, true)
-# si desactivation(cae_6.3.1.4, true) alors ses points sont redistribués sur la cae_6.3.1.3 et la cae_6.3.1.5 uniquement, c'est à dire :
-#  - 6.3.1.1 proportion 15% => 15%
-#  - 6.3.1.2 proportion 20% => 20%
-#  - 6.3.1.3 proportion 20% => 32.5%
-#  - 6.3.1.4 proportion 25% => Désactivé, non-concerné, 0%
-#  - 6.3.1.5 proportion 20% => 32.5%
+def test_cae_631_when_dev_eco_2_is_0():
+    """La réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de développement économique, dans la limite de 2 points de potentiel restant"""
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        1, [Reponse(ActionId("dev_eco_2"), 0.0)]
+    )
+    assert (
+        round(cae_scores_by_id["cae_6.3.1"].point_potentiel, 0)
+        == cae_scores_by_id["cae_6.3.1"].point_potentiel_perso
+        == 2
+    )
+
+
+def test_cae_631_when_cae_6314_if_dev_eco_4_is_NON():
+    """En l’absence de tissu économique propice à l’émergence de projets d’écologie industrielle, le score de la 6.3.1.4
+    est réduit à 0 et son statut est "non concerné" : les 2 points liés sont affectés à la 6.3.1.3 et la 6.3.1.5
+
+    Scénario testé:
+    ---------------
+    si reponse(dev_eco_4, NON) alors
+      - 6.3.1.1 proportion 15% => 15%
+      - 6.3.1.2 proportion 20% => 20%
+      - 6.3.1.3 proportion 20% => 32.5%
+      - 6.3.1.4 proportion 25% => Désactivé, non-concerné, 0%
+      - 6.3.1.5 proportion 20% => 32.5%
+    """
+
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        1, [Reponse(ActionId("dev_eco_4"), "NON")]
+    )
+
+    assert (
+        cae_scores_by_id["cae_6.3.1.4"].desactive
+        and cae_scores_by_id["cae_6.3.1.4"].point_potentiel == 0.0
+    )
+
+    # cae_6.3.1.1 and cae_6.3.1.2 are not affected
+    assert math.isclose(
+        cae_scores_by_id["cae_6.3.1.1"].point_potentiel,
+        cae_scores_by_id["cae_6.3.1.1"].point_referentiel,
+    )
+
+    assert math.isclose(
+        cae_scores_by_id["cae_6.3.1.2"].point_potentiel,
+        cae_scores_by_id["cae_6.3.1.2"].point_referentiel,
+    )
+
+    # cae_6.3.1.3 and cae_6.3.1.5 have been augmented of 1 point each
+    assert math.isclose(
+        cae_scores_by_id["cae_6.3.1.3"].point_potentiel,
+        cae_scores_by_id["cae_6.3.1.3"].point_referentiel + 1,
+    )
+    assert math.isclose(
+        cae_scores_by_id["cae_6.3.1.5"].point_potentiel,
+        cae_scores_by_id["cae_6.3.1.5"].point_referentiel + 1,
+    )
+
+    # cae_6.3.1 remains unchanged
+    assert math.isclose(
+        cae_scores_by_id["cae_6.3.1"].point_potentiel,
+        cae_scores_by_id["cae_6.3.1"].point_referentiel,
+    )
