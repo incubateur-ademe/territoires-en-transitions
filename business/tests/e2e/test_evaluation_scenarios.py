@@ -137,8 +137,17 @@ def test_cae_321_when_recuperation_cogeneration_is_NON():
     assert cae_scores_by_id["cae_3.2.1.3"].desactive == True
 
 
-# cae_6.3.1 part à 0
-# si part_en_pourcentage est à 0, alors la réduction est à 2/8 et donc l'action est notée sur 2 points
+def test_cae_631_when_dev_eco_2_is_0():
+    """La réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de développement économique, dans la limite de 2 points de potentiel restant"""
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        1, [Reponse(ActionId("dev_eco_2"), 0.0)]
+    )
+    assert (
+        round(cae_scores_by_id["cae_6.3.1"].point_potentiel, 0)
+        == cae_scores_by_id["cae_6.3.1"].point_potentiel_perso
+        == 2
+    )
+
 
 # cae_6.3.1
 # si commune et reponse(dev_eco_2, 0.1) et reponse(dev_eco_4, NON) alors reduction(cae_6.3.1, 2/8) et desactivation(cae_6.3.1.4, true)

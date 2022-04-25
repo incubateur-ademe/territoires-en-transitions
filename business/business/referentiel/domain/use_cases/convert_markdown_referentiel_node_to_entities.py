@@ -263,6 +263,3 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
     @staticmethod
     def _format_action_identifiants(actions: List[Any]) -> str:
         return ", ".join([action.identifiant for action in actions])
-
-    # def _round(self, value: float) -> float:
-    #     return round(value, self.points_round_digits)
