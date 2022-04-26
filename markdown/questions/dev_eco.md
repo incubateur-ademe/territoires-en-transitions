@@ -15,8 +15,6 @@ type: proportion
 thematique_id: developpement_economique
 actions: [cae_6.2.4, cae_6.3.1]
 ```
-## Description
-La part se rapporte au nombre d'habitants (nombre d'habitants de la collectivité / nombre d'habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d'élu de la collectivité / nombre de voix total dans l'organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d'habitants.
 
 # La collectivité se préoccupe-t-elle de la publicité extérieure et des enseignes ?
 ```yaml

@@ -6,19 +6,16 @@ values  ('dechets_1', 'dechets', null, null, 'binaire', '', 'La collectivité a-
         ('dechets_4', 'dechets', null, '{EPCI}', 'proportion', '', 'Si la collectivité a transféré le traitement des déchets à un syndicat compétent en la matière, quelle est la part de la collectivité dans ce syndicat ?'),
         ('dev_eco_1', 'developpement_economique', null, null, 'binaire', '<p>Il s''agit de la compétence &quot;Développement et aménagement économique&quot;.</p>
 ', 'La collectivité a-t-elle la compétence développement économique ?'),
-        ('dev_eco_2', 'developpement_economique', null, null, 'proportion', '<p>La part se rapporte au nombre d''habitants (nombre d''habitants de la collectivité / nombre d''habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d''élu de la collectivité / nombre de voix total dans l''organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d''habitants.</p>
-', 'Quelle est la part de la collectivité dans la structure compétente en matière de développement économique ?'),
+        ('dev_eco_2', 'developpement_economique', null, null, 'proportion', '', 'Quelle est la part de la collectivité dans la structure compétente en matière de développement économique ?'),
         ('dev_eco_3', 'developpement_economique', null, null, 'binaire', '', 'La collectivité se préoccupe-t-elle de la publicité extérieure et des enseignes ?'),
         ('dev_eco_4', 'developpement_economique', null, null, 'binaire', '', 'Le territoire de la collectivité dispose-t-il d''un tissu économique propice à l’émergence de projets d’écologie industrielle ?'),
         ('eau_1', 'eau_assainissement', null, null, 'binaire', '', 'La collectivité a-t-elle la compétence "Traitement, adduction et distribution de l''eau" ?'),
         ('assainissement_1', 'eau_assainissement', null, null, 'binaire', '', 'La collectivité a-t-elle la compétence "assainissement collectif" ?'),
         ('assainissement_2', 'eau_assainissement', null, null, 'binaire', '', 'La collectivité a-t-elle la compétence "assainissement non collectif" ?'),
-        ('assainissement_3', 'eau_assainissement', null, '{EPCI}', 'proportion', '<p>La part se rapporte au nombre d''habitants (nombre d''habitants de la collectivité / nombre d''habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d''élu de la collectivité / nombre de voix total dans l''organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d''habitants.</p>
-', 'En cas de compétence partagée ou variable sur le territoire pour la compétence assainissement, quelle est la part des communes ayant délégué leur compétence assainissement ?'),
+        ('assainissement_3', 'eau_assainissement', null, '{EPCI}', 'proportion', '', 'En cas de compétence partagée ou variable sur le territoire pour la compétence assainissement, quelle est la part des communes ayant délégué leur compétence assainissement ?'),
         ('assainissement_4', 'eau_assainissement', null, null, 'binaire', '', 'Existe-t-il un potentiel de valorisation énergétique (méthanisation ou récupération de chaleur) attesté par une étude portant sur la totalité du périmètre d’assainissement ?'),
         ('EP_1', 'energie', null, null, 'choix', '', 'La collectivité a-t-elle la compétence "éclairage public" ?'),
-        ('EP_2', 'energie', null, null, 'proportion', '<p>La part se rapporte au nombre d''habitants (nombre d''habitants de la collectivité / nombre d''habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d''élu de la collectivité / nombre de voix total dans l''organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d''habitants.</p>
-', 'Quelle est la part de la collectivité dans la structure compétente en matière d''éclairage public ?'),
+        ('EP_2', 'energie', null, null, 'proportion', '', 'Quelle est la part de la collectivité dans la structure compétente en matière d''éclairage public ?'),
         ('AOD_elec', 'energie', null, null, 'binaire', '', 'La collectivité est-elle autorité organisatrice de la distribution (AOD) pour l''électricité ?'),
         ('AOD_gaz', 'energie', null, null, 'binaire', '', 'La collectivité est-elle autorité organisatrice de la distribution (AOD) pour le gaz ?'),
         ('AOD_chaleur', 'energie', null, null, 'binaire', '', 'La collectivité est-elle autorité organisatrice de la distribution (AOD) pour la chaleur ?'),
@@ -36,8 +33,7 @@ values  ('dechets_1', 'dechets', null, null, 'binaire', '', 'La collectivité a-
         ('foret', 'identite', null, null, 'binaire', '', 'La collectivité possède-t''elle moins de 10 % de surfaces forestières (publiques ou privées) ?'),
         ('centre_polarite', 'identite', null, null, 'binaire', '', 'La collectivité possède-t-elle des centres-bourgs (dans le cas d''une commune) ou des communes (dans le cas d''un EPCI) de plus de 2 000 habitants ?'),
         ('AOM_1', 'mobilite', null, null, 'binaire', '', 'La collectivité est-elle autorité organisatrice de la mobilité (AOM) ?'),
-        ('AOM_2', 'mobilite', null, null, 'proportion', '<p>La part se rapporte au nombre d''habitants (nombre d''habitants de la collectivité / nombre d''habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d''élu de la collectivité / nombre de voix total dans l''organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d''habitants.</p>
-', 'Quelle est la part de la collectivité autorité organisatrice de la mobilité (AOM) ?'),
+        ('AOM_2', 'mobilite', null, null, 'proportion', '', 'Quelle est la part de la collectivité autorité organisatrice de la mobilité (AOM) ?'),
         ('voirie_1', 'mobilite', null, null, 'choix', '', 'La collectivité a-t-elle la compétence voirie ?'),
         ('voirie_2', 'mobilite', null, '{commune}', 'proportion', '', 'Si la commune a transféré la compétence voirie (création, aménagement, entretien) et stationnement à l''EPCI, quelle est la part de la commune dans l''EPCI ?'),
         ('TC_1', 'mobilite', null, null, 'binaire', '', 'Les locaux de la collectivité sont-ils desservis ou desservables par les transports en commun ?'),
@@ -46,8 +42,7 @@ values  ('dechets_1', 'dechets', null, null, 'binaire', '', 'La collectivité a-
         ('trafic', 'mobilite', null, null, 'binaire', '', 'Existe-t-il un potentiel d''action ou des problèmes liés à la limitation et réduction du trafic et de la vitesse sur les axes principaux ou dans certaines zones ?'),
         ('cyclable', 'mobilite', null, null, 'binaire', '', 'La collectivité dispose t''elle de compétences en matière de politique cyclable (AOM ou compétente en matière d’infrastructures vélos, de stationnement vélos, de services associés aux vélos) ?'),
         ('versement_mobilite', 'mobilite', null, null, 'binaire', '', 'La collectivité est-elle concernée par le versement mobilité ?'),
-        ('tourisme_1', 'tourisme', null, '{commune}', 'proportion', '<p>La part se rapporte au nombre d''habitants (nombre d''habitants de la collectivité / nombre d''habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d''élu de la collectivité / nombre de voix total dans l''organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d''habitants.</p>
-', 'Quelle est la part de la collectivité dans la structure compétente en matière de tourisme ?'),
+        ('tourisme_1', 'tourisme', null, '{commune}', 'proportion', '', 'Quelle est la part de la collectivité dans la structure compétente en matière de tourisme ?'),
         ('tourisme_2', 'tourisme', null, '{EPCI}', 'binaire', '', 'Le territoire est-il touristique (doté d''un office de tourisme, d''un syndicat d''initiative, d''un bureau d''information touristique) ?'),
         ('ECS', 'ultramarin', null, null, 'binaire', '', 'La collectivité a-t-elle des besoins en eau chaude sanitaire ?'),
         ('amenagement_1', 'urbanisme_habitat', null, null, 'binaire', '', 'La collectivité (y compris tous les organismes liés) possède-t-elle des terrains utilisables ou vendables (depuis au plus 10 ans) ?'),
@@ -60,6 +55,5 @@ values  ('dechets_1', 'dechets', null, null, 'binaire', '', 'La collectivité a-
 ', 'La collectivité a-t-elle la compétence d''octroi des permis de construire ?'),
         ('habitat_1', 'urbanisme_habitat', null, null, 'binaire', '<p>Il s''agit des compétences liées à l''habitat et au logement</p>
 ', 'La collectivité a-t-elle la compétence habitat ?'),
-        ('habitat_2', 'urbanisme_habitat', null, '{commune}', 'proportion', '<p>La part se rapporte au nombre d''habitants (nombre d''habitants de la collectivité / nombre d''habitants de la structure compétente) ou au pouvoir de la collectivité dans la structure compétente (nombre de voix d''élu de la collectivité / nombre de voix total dans l''organe délibératoire de la structure compétente) si cette part est supérieure à celle liée au nombre d''habitants.</p>
-', 'Quelle est la part de la collectivité dans la structure compétente en matière de logement et d''habitat ?'),
+        ('habitat_2', 'urbanisme_habitat', null, '{commune}', 'proportion', '', 'Quelle est la part de la collectivité dans la structure compétente en matière de logement et d''habitat ?'),
         ('habitat_3', 'urbanisme_habitat', null, '{commune}', 'binaire', '', 'La collectivité participe-t-elle au conseil d''administration d''un bailleur social ?');
