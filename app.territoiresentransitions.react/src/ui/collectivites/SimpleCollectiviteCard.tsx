@@ -90,7 +90,7 @@ export const SimpleCollectiviteCard = ({
           }
         >
           <SimpleCollectiviteCardSecondaryLink
-            label="Gestion des accès"
+            label="Paramètres"
             linkTo={makeCollectiviteUsersUrl({
               collectiviteId: collectivite.collectivite_id,
             })}

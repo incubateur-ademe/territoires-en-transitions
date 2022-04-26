@@ -21,9 +21,9 @@ export default (props: TThematiquesProps) => {
         chaque collectivité.
       </p>
       <p>
-        Vos réponses aux questions suivantes permettront d’identifier les
-        actions qui ne concernent pas votre collectivité et de prendre en compte
-        les réductions de potentiel lorsqu’elles sont applicables.
+        Vos réponses aux questions suivantes permettront de signaler les actions
+        qui ne concernent pas votre collectivité et d'adapter le potentiel de
+        points sur laquelle la collectivité sera évaluée.
       </p>
       <ThematiqueFilter selected={selected || []} onChange={onChange} />
       {items?.length > 0 && (
