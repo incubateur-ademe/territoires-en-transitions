@@ -150,18 +150,6 @@ def test_cae_631_when_dev_eco_2_is_0():
     )
 
 
-def test_cae_631_when_dev_eco_2_is_0():
-    """La réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de développement économique, dans la limite de 2 points de potentiel restant"""
-    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
-        1, [Reponse(ActionId("dev_eco_2"), 0.0)]
-    )
-    assert (
-        round(cae_scores_by_id["cae_6.3.1"].point_potentiel, 0)
-        == cae_scores_by_id["cae_6.3.1"].point_potentiel_perso
-        == 2
-    )
-
-
 def test_cae_631_when_cae_6314_if_dev_eco_4_is_NON():
     """En l’absence de tissu économique propice à l’émergence de projets d’écologie industrielle, le score de la 6.3.1.4
     est réduit à 0 et son statut est "non concerné" : les 2 points liés sont affectés à la 6.3.1.3 et la 6.3.1.5
@@ -211,3 +199,79 @@ def test_cae_631_when_cae_6314_if_dev_eco_4_is_NON():
         cae_scores_by_id["cae_6.3.1"].point_potentiel,
         cae_scores_by_id["cae_6.3.1"].point_referentiel,
     )
+
+
+def test_cae_641_when_localosation_dom_and_SAU_OUI():
+    """Reduction de 50% de la 6.4.1 & transfert de qqes points de la 6.4.1.6 à la 6.4.1.8.
+    La note du référentiel actuel est à 15 %. Pour les collectivités DOM, la note de la sous-action passe à 20 % de 6 points (12 * 0.5).
+    La note du référentiel actuel est à 15 %. Pour les collectivités DOM, la note de la sous-action passe à 10 % de 6 points (12 * 0.5).
+
+    Scénario testé:
+    ---------------
+    si identite(localisation, DOM) alors
+        - 6.4.1.1, 6.4.1.2, 6.4.1.3, 6.4.1.4, 6.4.1.5 et 6.4.1.7 inchangées
+        - 6.4.1.6 passe de 15% à 20%
+        - 6.4.1.8 passe de 15% à 10%
+    """
+
+    dom_collectivite_id = 5411  # Guadeloupe
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        dom_collectivite_id, [Reponse("SAU", "OUI")]
+    )
+
+    # cae_6.4.1 reduite de 50%
+    assert (
+        cae_scores_by_id["cae_6.4.1"].point_potentiel_perso
+        == cae_scores_by_id["cae_6.4.1"].point_potentiel
+        == cae_scores_by_id["cae_6.4.1"].point_referentiel * 0.5
+    )
+
+    # 6.4.1.1, 6.4.1.2, 6.4.1.3, 6.4.1.4, 6.4.1.5 et 6.4.1.7 inchangées
+    for action_id_unchanged in [
+        "cae_6.4.1.1",
+        "cae_6.4.1.2",
+        "cae_6.4.1.3",
+        "cae_6.4.1.4",
+        "cae_6.4.1.5",
+        "cae_6.4.1.7",
+    ]:
+        assert math.isclose(
+            cae_scores_by_id[action_id_unchanged].point_potentiel,
+            cae_scores_by_id[action_id_unchanged].point_referentiel * 0.5,
+        )
+
+    # 6.4.1.6 passe de 15% à 20%
+    assert (
+        cae_scores_by_id["cae_6.4.1.6"].point_potentiel
+        == cae_scores_by_id["cae_6.4.1"].point_potentiel * 20 / 100
+    )
+
+    # 6.4.1.8 passe de 15% à 10%
+    assert (
+        cae_scores_by_id["cae_6.4.1.8"].point_potentiel
+        == cae_scores_by_id["cae_6.4.1"].point_potentiel * 10 / 100
+    )
+
+
+# Si la commune participe au conseil d’administration d'un bailleur social, le potentiel, possiblement réduit est
+# augmenté d'un point sur la 6.2.1
+
+
+# cae_3.3.5
+# Enonce
+# --------
+# Pour une commune, la note est réduite à 2 points en l'absence de la compétence traitement des déchets.
+# Pour un EPCI ayant transféré la compétence traitement des déchets à un syndicat compétent en la matière, la note est réduite proportionnelle à sa participation dans ce syndicat, dans la limite de 2 points restants.
+# Pour favoriser la prévention des déchets, la note attribuée à cette action ne peut dépasser celle obtenue dans l'action 1.2.3.
+
+# si identite(type, commune) et reponse(dechets_2, NON) et score(1.2.3, 0)
+# alors potentiel(cae_3.3.5, 0)
+
+# si identite(type, commune) et reponse(dechets_2, NON) et score(1.2.3, 0.75)
+# alors potentiel(cae_3.3.5, 2)
+
+# si identite(type, commune) et reponse(dechets_2, NON) et score(1.2.3, 0.1)
+# alors potentiel(cae_3.3.5, 0)
+
+# si t'es une commune sans compétence traitement déchets, alors la 3.3.5 est notée sur 2 points
+# mais si t'as eu "que" 1.25 points à la 1.2.3 alors la 3.3.5 est notée sur 1.25 points

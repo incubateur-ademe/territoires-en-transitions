@@ -403,7 +403,8 @@ def compute_potentiels(
     ):
         this_level = point_tree_personnalise._depths_by_action_ids[action_id]
         children = point_tree_personnalise.get_children(action_id)
-
+        # if action_id.startswith("cae_6.4.1"):
+        #     breakpoint()
         if not children:  # tache
             original_action_potentiel = (
                 0
@@ -476,7 +477,7 @@ def build_point_tree_personnalise(
             personnalisation = (
                 lambda action_id: point_tree_personnalise.set_action_point(
                     action_id,
-                    point_tree_referentiel.get_action_point(action_id) * factor,
+                    point_tree_personnalise.get_action_point(action_id) * factor,
                 )
             )
             point_tree_personnalise.map_from_action_to_taches(
