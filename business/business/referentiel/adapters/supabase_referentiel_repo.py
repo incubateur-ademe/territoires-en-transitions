@@ -194,7 +194,7 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
             questions=questions_as_dict,
         )
 
-    def upsert_personnalisations(
+    def replace_personnalisations(
         self,
         personnalisations: List[ActionPersonnalisationRegles],
     ):
@@ -202,7 +202,7 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
             asdict(personnalisation) for personnalisation in personnalisations
         ]
         self.client.rpc.call(
-            supabase_names.rpc.upsert_personnalisations,
+            supabase_names.rpc.business_replace_personnalisations,
             personnalisations=personnalisation_as_dicts,
         )
 

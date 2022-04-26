@@ -34,7 +34,7 @@ class rpc:
     upsert_indicateurs = "business_upsert_indicateurs"
     update_actions = "business_update_actions"
     upsert_questions = "business_upsert_questions"
-    upsert_personnalisations = "business_upsert_personnalisations"
+    business_replace_personnalisations = "business_replace_personnalisations"
 
 
 @dataclass

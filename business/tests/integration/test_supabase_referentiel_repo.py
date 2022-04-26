@@ -272,7 +272,7 @@ def test_can_get_engine_actions(
     assert isinstance(retrieved_fake_engine_actions[0], QuestionEngine)
 
 
-def test_can_upsert_and_retrieve_referentiel_personnalisations(
+def test_can_replace_and_retrieve_referentiel_personnalisations(
     supabase_referentiel_repo: SupabaseReferentielRepository,
     supabase_client: SupabaseClient,
 ):
@@ -302,7 +302,7 @@ def test_can_upsert_and_retrieve_referentiel_personnalisations(
             ),
         ],
     )
-    supabase_referentiel_repo.upsert_personnalisations([personnalisation])
+    supabase_referentiel_repo.replace_personnalisations([personnalisation])
 
     # Assert
     # 1. Check that the personnalisation is there
