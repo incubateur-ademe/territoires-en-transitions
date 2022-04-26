@@ -1101,23 +1101,23 @@ def test_notation_when_regles_concern_an_other_referentiel():
 def test_notation_when_potentiel_perso_formule_is_given():
     consequences = {
         ActionId("eci_1"): ActionPersonnalisationConsequence(
-            potentiel_perso_formule="min(score(eci_2.2), 2/12)"
+            score_formule="min(score(eci_1), score(eci_2))"
         )
     }
     statuses: List[ActionStatut] = [
         ActionStatut(
-            action_id=ActionId("eci_2.0"),
-            detailed_avancement=DetailedAvancement(1, 0, 0),
-            concerne=True,
-        ),
-        ActionStatut(
-            action_id=ActionId("eci_2.1"),
-            detailed_avancement=DetailedAvancement(1, 0, 0),
-            concerne=True,
-        ),
-        ActionStatut(
             action_id=ActionId("eci_2.2"),
-            detailed_avancement=DetailedAvancement(1, 0, 0),
+            detailed_avancement=DetailedAvancement(1, 0, 0),  # worth 5 points
+            concerne=True,
+        ),
+        ActionStatut(
+            action_id=ActionId("eci_1.1"),
+            detailed_avancement=DetailedAvancement(1, 0, 0),  # worth 10 points
+            concerne=True,
+        ),
+        ActionStatut(
+            action_id=ActionId("eci_1.2"),
+            detailed_avancement=DetailedAvancement(1, 0, 0),  # worth 30 points
             concerne=True,
         ),
     ]
@@ -1129,84 +1129,27 @@ def test_notation_when_potentiel_perso_formule_is_given():
     actual_scores = converted_events[0].scores
     scores_by_id = {score.action_id: score for score in actual_scores}
 
-    # Action eci_2 should not have been personnalized
+    # Action eci_2 should not have been changed
     assert scores_by_id[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
-        point_fait=70.0,
+        point_fait=5,
         point_programme=0.0,
         point_pas_fait=0.0,
-        point_non_renseigne=0,
+        point_non_renseigne=65,
         point_potentiel=70,
         point_referentiel=70,
         concerne=True,
         total_taches_count=3,
-        completed_taches_count=3,
+        completed_taches_count=1,
         referentiel="eci",
         desactive=False,
         point_potentiel_perso=None,
     )
 
-    # Action eci_1 and its children should be reduced with a factor of 2/12
-    assert scores_by_id[ActionId("eci_1")] == ActionScore(
-        action_id=ActionId("eci_1"),
-        point_fait=0.0,
-        point_programme=0.0,
-        point_pas_fait=0.0,
-        point_non_renseigne=30.0 * 0.16666666666666666,  # * 1/12
-        point_potentiel=30,
-        point_referentiel=30,
-        concerne=True,
-        total_taches_count=2,
-        completed_taches_count=0,
-        referentiel="eci",
-        desactive=False,
-        point_potentiel_perso=30 * 0.16666666666666666,  # * 1/12
-    )
-
-    assert scores_by_id[ActionId("eci_1.1")] == ActionScore(
-        action_id=ActionId("eci_1.1"),
-        point_fait=0.0,
-        point_programme=0.0,
-        point_pas_fait=0.0,
-        point_non_renseigne=10.0 * 0.16666666666666666,  # * 1/12
-        point_potentiel=10,
-        point_referentiel=10,
-        concerne=True,
-        total_taches_count=1,
-        completed_taches_count=0,
-        referentiel="eci",
-        desactive=False,
-        point_potentiel_perso=10 * 0.16666666666666666,  # * 1/12
-    )
-    assert scores_by_id[ActionId("eci_1.2")] == ActionScore(
-        action_id=ActionId("eci_1.2"),
-        point_fait=0.0,
-        point_programme=0.0,
-        point_pas_fait=0.0,
-        point_non_renseigne=20.0 * 0.16666666666666666,  # * 1/12
-        point_potentiel=20,
-        point_referentiel=20,
-        concerne=True,
-        total_taches_count=1,
-        completed_taches_count=0,
-        referentiel="eci",
-        desactive=False,
-        point_potentiel_perso=20 * 0.16666666666666666,  # * 1/12
-    )
-
-    # Action eci should be the sum of eci_1 and eci_2
-    assert scores_by_id[ActionId("eci")] == ActionScore(
-        action_id=ActionId("eci"),
-        point_fait=70.0,
-        point_programme=0.0,
-        point_pas_fait=0.0,
-        point_non_renseigne=30.0 * 0.16666666666666666,  # * 1/12
-        point_potentiel=100,
-        point_referentiel=100,
-        concerne=True,
-        total_taches_count=5,
-        completed_taches_count=3,
-        referentiel="eci",
-        desactive=False,
-        point_potentiel_perso=70 + 30 * 0.16666666666666666,  # * 1/12
+    # Action eci_1 should have the score reduced to the same than eci_2
+    assert (
+        scores_by_id[ActionId("eci_1")].point_fait
+        / scores_by_id[ActionId("eci_1")].point_potentiel
+        == scores_by_id[ActionId("eci_2")].point_fait
+        / scores_by_id[ActionId("eci_2")].point_potentiel
     )

@@ -3,6 +3,10 @@ from typing import List
 from business.evaluation.adapters.replay_realtime import ReplayRealtime
 from business.evaluation.domain.models import events
 from business.evaluation.domain.models.action_score import ActionScore
+from business.evaluation.domain.models.action_statut import (
+    ActionStatut,
+    DetailedAvancement,
+)
 from business.evaluation.domain.models.events import (
     ActionStatutOrConsequenceUpdatedForCollectivite,
 )
@@ -25,6 +29,11 @@ from business.utils.domain_message_bus import InMemoryDomainMessageBus
 from business.utils.environment_variables import EnvironmentVariables
 from tests.e2e.prepare_evaluation import prepare_config_and_bus
 from tests.utils.spy_on_event import spy_on_event
+
+
+commune_id = 1
+epci_id = 3810
+dom_id = 5411  # Guadeloupe
 
 
 def prepare_use_case():
@@ -96,7 +105,9 @@ def test_eci_desactivation_of_sous_action_242_should_redistribute_points_amongst
 
 
 def execute_scenario_collectivite_updates_reponse(
-    collectivite_id: int, reponses: List[Reponse]
+    collectivite_id: int = 1,
+    reponses: List[Reponse] = [],
+    statuses: List[ActionStatut] = [],
 ):
     bus = InMemoryDomainMessageBus()
     config = prepare_config_and_bus(
@@ -104,7 +115,9 @@ def execute_scenario_collectivite_updates_reponse(
         ReplayRealtime(bus, converters=[]),
         EnvironmentVariables("SUPABASE", "SUPABASE", "REPLAY"),
     )
-    config.statuses_repo = InMemoryActionStatutRepository()
+    config.statuses_repo.get_all_for_collectivite = (
+        lambda collectivite_id, referentiel: statuses
+    )
 
     config.personnalisation_repo.get_reponses_for_collectivite = (
         lambda collectivite_id: reponses
@@ -214,9 +227,8 @@ def test_cae_641_when_localosation_dom_and_SAU_OUI():
         - 6.4.1.8 passe de 15% à 10%
     """
 
-    dom_collectivite_id = 5411  # Guadeloupe
     _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
-        dom_collectivite_id, [Reponse("SAU", "OUI")]
+        dom_id, [Reponse("SAU", "OUI")]
     )
 
     # cae_6.4.1 reduite de 50%
@@ -291,21 +303,63 @@ def test_cae_621_when_type_commune():
     assert math.isclose(cae_scores_by_id["cae_6.2.1"].point_potentiel, 2)
 
 
-# cae_3.3.5
-# Enonce
-# --------
-# Pour une commune, la note est réduite à 2 points en l'absence de la compétence traitement des déchets.
-# Pour un EPCI ayant transféré la compétence traitement des déchets à un syndicat compétent en la matière, la note est réduite proportionnelle à sa participation dans ce syndicat, dans la limite de 2 points restants.
-# Pour favoriser la prévention des déchets, la note attribuée à cette action ne peut dépasser celle obtenue dans l'action 1.2.3.
+def test_cae_335_with_score_taken_into_account():
+    """Overide du score de cae_3.3.5 liée au score obtenue à l'action cae_1.2.3
 
-# si identite(type, commune) et reponse(dechets_2, NON) et score(1.2.3, 0)
-# alors potentiel(cae_3.3.5, 0)
+    Pour une commune, la note est réduite à 2 points en l'absence de la compétence traitement des déchets.
+    Pour un EPCI ayant transféré la compétence traitement des déchets à un syndicat compétent en la matière, la note est réduite proportionnelle à sa participation dans ce syndicat, dans la limite de 2 points restants.
+    Pour favoriser la prévention des déchets, la note attribuée à cette action ne peut dépasser celle obtenue dans l'action 1.2.3.
+    """
+    # Cas 1 :  Si commune avec compétence déchets, il n'y a pas de réduction de potentiel.
+    # ------
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        commune_id,
+        [Reponse("dechets_2", "OUI")],
+        [  # Quand reponse(dechets_2, OUI), cae_1.2.3 est réduit de 0.75, et est donc notée sur 7.5 points au lieu de 10 points.
+            # La sous-action cae_1.2.3.3 représente 30% de l'action donc est noté sur 30% de 7.5 points, ce qui fait 2.25 points.
+            ActionStatut(ActionId("cae_1.2.3.3.1"), DetailedAvancement(1, 0, 0), True),
+            ActionStatut(ActionId("cae_1.2.3.3.2"), DetailedAvancement(1, 0, 0), True),
+            ActionStatut(ActionId("cae_1.2.3.3.3"), DetailedAvancement(1, 0, 0), True),
+            ActionStatut(ActionId("cae_1.2.3.3.4"), DetailedAvancement(1, 0, 0), True),
+            ActionStatut(ActionId("cae_1.2.3.3.5"), DetailedAvancement(1, 0, 0), True),
+            # La sous-action cae_3.3.5.3 vaut initiallement 4.8 points
+            # Chaque tâche de cette sous-saction vaut 1.2 points, donc si une tâche est faite, score_realise(cae_3.3.5) = 1.2
+            ActionStatut(ActionId("cae_3.3.5.3.1"), DetailedAvancement(1, 0, 0), True),
+        ],
+    )
+    assert math.isclose(cae_scores_by_id["cae_1.2.3"].point_fait, 2.25)
+    assert math.isclose(cae_scores_by_id["cae_3.3.5"].point_fait, 1.2)
 
-# si identite(type, commune) et reponse(dechets_2, NON) et score(1.2.3, 0.75)
-# alors potentiel(cae_3.3.5, 2)
+    # Cas 2 :  Si commune avec compétence déchets, il n'y a pas de réduction de potentiel mais le score de la 3.3.5 est majoré par celui de la 1.2.3
+    # ------
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        commune_id,
+        [Reponse("dechets_2", "OUI")],
+        [
+            # La sous-action cae_3.3.5.3 vaut initialement 4.8 points
+            # Chaque tâche de cette sous-saction vaut 1.2 points, donc si une tâche est faite, score_realise(cae_3.3.5) = 1.2
+            # Aucune réponse pour cae_1.2.3 => score_realise(cae_1.2.3) = 0
+            # La majoration du score de la 3.3.5 par la 1.2.3 entraîne donc que la 3.3.5 vaut a un score réalisé de 0 point.
+            ActionStatut(ActionId("cae_3.3.5.3.1"), DetailedAvancement(1, 0, 0), True),
+        ],
+    )
+    assert math.isclose(cae_scores_by_id["cae_1.2.3"].point_fait, 0)
+    assert math.isclose(cae_scores_by_id["cae_3.3.5"].point_fait, 0)  # Au lieu de 1.2 !
 
-# si identite(type, commune) et reponse(dechets_2, NON) et score(1.2.3, 0.1)
-# alors potentiel(cae_3.3.5, 0)
-
-# si t'es une commune sans compétence traitement déchets, alors la 3.3.5 est notée sur 2 points
-# mais si t'as eu "que" 1.25 points à la 1.2.3 alors la 3.3.5 est notée sur 1.25 points
+    # Cas 3 :  Si EPCI sans compétence déchets et participation dans syndicat compétent de 10% et points_fait(cae_1.2.3, 2.25) alors potentiel(cae_3.3.5) = 2
+    # ------
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        epci_id,
+        [Reponse("dechets_2", "NON"), Reponse("dechets_4", 0.1)],
+        [  # Quand reponse(dechets_2, NON), cae_1.2.3.3 est réduite de 75% et donc notée sur 2.25 points au lieu de 3 points
+            # Si toutes les tâches sont faites, alors le score réalisé de cae_1.2.3 est de 2.25
+            ActionStatut(ActionId("cae_1.2.3.3.1"), DetailedAvancement(1, 0, 0), True),
+            ActionStatut(ActionId("cae_1.2.3.3.2"), DetailedAvancement(1, 0, 0), True),
+            ActionStatut(ActionId("cae_1.2.3.3.3"), DetailedAvancement(1, 0, 0), True),
+            ActionStatut(ActionId("cae_1.2.3.3.4"), DetailedAvancement(1, 0, 0), True),
+            ActionStatut(ActionId("cae_1.2.3.3.5"), DetailedAvancement(1, 0, 0), True),
+        ],
+    )
+    assert math.isclose(cae_scores_by_id["cae_1.2.3"].point_fait, 2.25)
+    assert math.isclose(cae_scores_by_id["cae_3.3.5"].point_potentiel, 2)
+    assert math.isclose(cae_scores_by_id["cae_3.3.5"].point_fait, 0)

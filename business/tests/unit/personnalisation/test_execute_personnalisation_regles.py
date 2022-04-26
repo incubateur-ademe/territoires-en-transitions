@@ -106,8 +106,8 @@ def test_execute_personnalisation_regles_with_reduction_depends_on_score():
                 ActionId("eci_1"),
                 [
                     Regle(
-                        "si identite(type, commune) et reponse(dechets_2, NON) alors min(score(cae_1.2.3), 2/12)",
-                        "reduction",
+                        "min(score(cae_1.2.3), 2/12)",
+                        "score",
                     ),
                 ],
             )
@@ -120,6 +120,6 @@ def test_execute_personnalisation_regles_with_reduction_depends_on_score():
         ActionId("eci_1"): ActionPersonnalisationConsequence(
             desactive=None,
             potentiel_perso=None,
-            potentiel_perso_formule="min(score(cae_1.2.3), 0.16666666666666666)",
+            score_formule="min(score(cae_1.2.3), 0.16666666666666666)",
         )
     }

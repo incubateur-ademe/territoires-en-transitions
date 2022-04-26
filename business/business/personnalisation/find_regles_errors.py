@@ -15,7 +15,8 @@ def find_regles_errors(
     formule_checker = FormuleChecker(questions, action_ids)
     regles_errors = []
     for regle in regles:
-
+        if regle.type == "score":
+            continue  # TODO : should we check score formules ?
         try:
             tree = parser.parse(regle.formule)
             output_type, _ = formule_checker.transform(tree)

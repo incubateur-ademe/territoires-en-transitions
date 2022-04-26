@@ -28,7 +28,7 @@ from business.utils.use_case import UseCase
 
 
 MarkdownPersonnalisationRegleTitre = Literal[
-    "Désactivation", "Réduction de potentiel", "Score"
+    "Désactivation", "Réduction de potentiel", "Score réalisé"
 ]
 
 
@@ -52,7 +52,7 @@ class MarkdownPersonnalisation:
 regle_titre_to_type: Dict[MarkdownPersonnalisationRegleTitre, RegleType] = {
     "Désactivation": "desactivation",
     "Réduction de potentiel": "reduction",
-    "Score": "score",
+    "Score réalisé": "score",
 }
 
 

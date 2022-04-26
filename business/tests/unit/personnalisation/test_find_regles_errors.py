@@ -141,12 +141,3 @@ def test_regle_score_passes_on_valid_action_id():
         [Regle("score(eci_1)", "score")], [], [ActionId("eci_1")]
     )
     assert len(errors) == 0
-
-
-def test_regle_score_fails_on_invalid_action_id():
-    errors = find_regles_errors([Regle("score(eci_1)", "score")], [], [])
-    assert len(errors) == 1
-    assert (
-        errors[0]
-        == '\nErreur dans la régle formulée score(eci_1) : Error trying to process rule "score_value":\n\nId de l\'action inconnue: eci_1.'
-    )

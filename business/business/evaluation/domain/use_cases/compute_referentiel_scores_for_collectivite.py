@@ -1,6 +1,6 @@
 from copy import deepcopy, copy
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, overload
 
 
 from business.evaluation.domain.models import events
@@ -9,7 +9,7 @@ from business.evaluation.domain.models.action_statut import (
 )
 from business.evaluation.domain.models.action_score import ActionScore
 from business.personnalisation.execute_score_personnalisation_factor_regle import (
-    execute_score_personnalisation_factor_regle,
+    execute_score_personnalisation_override_regle,
 )
 from business.personnalisation.models import ActionPersonnalisationConsequence
 from business.personnalisation.ports.personnalisation_repo import (
@@ -558,13 +558,17 @@ def compute_scores(
         action_id,
         personnalisation_consequence,
     ) in personnalisation_consequences.items():
-        if personnalisation_consequence.potentiel_perso_formule:
-            factor = execute_score_personnalisation_factor_regle(
-                personnalisation_consequence.potentiel_perso_formule, scores
+        if personnalisation_consequence.score_formule:
+            original_score = (
+                scores[action_id].point_fait / scores[action_id].point_potentiel
             )
-            if factor is not None:
+            overrided_score = execute_score_personnalisation_override_regle(
+                personnalisation_consequence.score_formule, scores
+            )
+            if overrided_score is not None and original_score > 0:
+                override_factor = overrided_score / original_score
                 point_tree_referentiel.map_from_action_to_taches(
-                    lambda action_id: apply_factor_to_score(scores, action_id, factor),  # type: ignore
+                    lambda action_id: apply_factor_to_score_realise(scores, action_id, override_factor),  # type: ignore
                     action_id,
                     include_action=True,
                 )
@@ -578,32 +582,25 @@ def compute_scores(
     return scores
 
 
-def apply_factor_to_score(
+def apply_factor_to_score_realise(
     scores: Dict[ActionId, ActionScore], action_id: ActionId, factor: float
 ):
-    point_potentiel_perso = scores[action_id].point_potentiel_perso
-    scores[action_id].point_potentiel_perso = (
-        point_potentiel_perso * factor
-        if point_potentiel_perso
-        else scores[action_id].point_potentiel * factor
-    )
     scores[action_id].point_fait *= factor
-    scores[action_id].point_non_renseigne *= factor
-    scores[action_id].point_pas_fait *= factor
-    scores[action_id].point_programme *= factor
 
 
 def set_points_to_children_sum(
     scores: Dict[ActionId, ActionScore], action_id: ActionId, tree: ActionTree
 ):
     children = tree.get_children(action_id)
-    children_scores = [scores[child_id] for child_id in children]
-    scores[action_id].point_potentiel_perso = sum(
+    children_scores = [scores[child_id] for child_id in children]  # type: ignore
+    point_potentiel_perso = sum(
         [
             child.point_potentiel_perso or child.point_potentiel
             for child in children_scores
         ]
     )
+    scores[action_id].point_potentiel_perso = point_potentiel_perso
+    scores[action_id].point_potentiel = point_potentiel_perso
     scores[action_id].point_fait = sum([child.point_fait for child in children_scores])
     scores[action_id].point_non_renseigne = sum(
         [child.point_non_renseigne for child in children_scores]

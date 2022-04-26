@@ -43,7 +43,7 @@ class ActionPersonnalisationConsequence:
 
     desactive: Optional[bool] = None
     potentiel_perso: Optional[float] = None
-    potentiel_perso_formule: Optional[str] = None
+    score_formule: Optional[str] = None
 
 
 @dataclass
@@ -52,3 +52,4 @@ class ActionPersonnalisationParsedRegles:
 
     desactivation: Optional[ParseTree] = None
     reduction: Optional[ParseTree] = None
+    score: Optional[ParseTree] = None
