@@ -75,4 +75,5 @@ values  ('cae_4.1.1', 'Réduction potentiel cae 4.1.1 liee AMO', ''),
         ('cae_3.2.3', 'Modification points cae 3.2.3 liee DOM', ''),
         ('cae_3.3.1', 'Réduction potentiel cae 3.3.1 liee eau potable', ''),
         ('cae_3.3.2', 'Réduction potentiel cae 3.3.2 liee assainissement collectif', ''),
-        ('cae_3.3.3', 'Réduction potentiel cae 3.3.3 liee assainissement', '');
+        ('cae_3.3.3', 'Réduction potentiel cae 3.3.3 liee assainissement', ''),
+        ('cae_3.3.5', 'Réduction potentiel cae 3.3.5 liee dechets', '');

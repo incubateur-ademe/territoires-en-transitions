@@ -2,11 +2,6 @@ insert into public.personnalisation_regle (action_id, type, formule, description
 values  ('cae_4.1.1', 'reduction', 'max(reponse(AOM_2), 0.5) 
 ', '<p>Pour une collectivité non AOM, le score est proportionnel à la participation dans la structure AOM dans la limite de 50 %.</p>
 '),
-        ('cae_1.3.2', 'reduction', 'si reponse(amenagement_1, NON) ou reponse (amenagement_2, NON) alors 5/10 
-', '<p>Si une collectivité n''a pas de terrains utilisables ou vendables ou elle dispose de terrains de ce type mais n''a pas réalisé de vente ou de contrats d''utilisation alors le score de la 1.3.2 est réduit de 50 %.</p>
-'),
-        ('cae_6.3.1.4', 'desactivation', 'reponse(dev_eco_4,NON) 
-', ''),
         ('cae_4.1.2', 'reduction', 'si reponse(TC_1, NON) et reponse(vehiculeCT_1, NON) alors 0.5
 sinon si reponse(TC_1, NON) alors 0.8
 sinon si reponse(vehiculeCT_1, NON) alors 0.7
@@ -19,23 +14,6 @@ sinon si reponse(vehiculeCT_1, NON) alors 0.7
         ('cae_4.1.2.3', 'desactivation', 'reponse(vehiculeCT_1, NON)
 ', ''),
         ('cae_4.1.2.4', 'desactivation', 'reponse(vehiculeCT_1, NON)
-', ''),
-        ('cae_3.1.1', 'reduction', 'si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 
-sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10 
-sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 
-sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 
-sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 
-sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 
-sinon si reponse(AOD_chaleur, NON) alors 6/10 
-', '<p>Pour une collectivité non autorité organisatrice de la distribution d''électricité, le score de la 3.1.1 est réduit de 30 %.</p>
-<p>Pour une collectivité non autorité organisatrice de la distribution de gaz, le score de la 3.1.1 est réduit de 30 %.</p>
-<p>Pour une collectivité non autorité organisatrice de la distribution de chaleur, le score de la 3.1.1 est réduit de 40 %.</p>
-<p>Ces réductions sont cumulables dans la limite de 2 points restants pour prendre en compte la part d’influence dans les instances compétentes et les actions partenariales.</p>
-'),
-        ('cae_3.1.2.2', 'reduction', 'si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 1.0
-', '<p>Si le parent est réduit de 50% alors la réduction de 20% ne s''applique pas même si il y a des fournisseurs d''energie maîtrisés par la collectivité.</p>
-'),
-        ('cae_3.2.1.2', 'reduction', 'si reponse(recuperation_cogeneration, NON) alors 0
 ', ''),
         ('cae_4.2.1', 'reduction', 'si identite(type, commune) alors max(reponse(voirie_2), 2/8)
 sinon si identite(type, EPCI) et reponse(voirie_1, voirie_1_b) alors 0.5
@@ -57,10 +35,10 @@ sinon si reponse(pouvoir_police, NON) ou reponse(voirie_1,voirie_1_b) ou reponse
 <p>Pour les collectivités pour lesquelles il n''y a manifestement pas de potentiel d''action ou de problèmes liés à la vitesse, le score est réduit de 50 %.</p>
 <p>Ces réductions sont cumulables, dans la limite de 2 points potentiel restant.</p>
 '),
-        ('cae_4.2.3', 'reduction', 'si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) alors 0.5 
-sinon si identite(population, moins_de_10000) ou reponse(centre_polarite, NON) alors 0.5
+        ('cae_4.2.3', 'reduction', 'si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors 0
 sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et identite(population, moins_de_10000) alors 0
-sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors 0
+sinon si identite(population, moins_de_10000) ou reponse(centre_polarite, NON) alors 0.5
+sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) alors 0.5 
 ', '<p>Pour une collectivité non AOM et sans compétence voirie, le score de la 4.2.3 est réduit de 50 %.</p>
 <p>Pour une collectivité de moins de 10 000 habitants ou ne comportant pas de commune ou centre-bourg de plus de 2000 habitants, le score de la 4.2.3 est réduit de 50 %.</p>
 <p>Les deux réductions sont cumulables.</p>
@@ -75,25 +53,26 @@ sinon si reponse(cyclable, NON) alors 0.5
 ', '<p>Pour une collectivité disposant de peu de compétences en matière de politique cyclable (ni AOM, ni compétente en matière d’infrastructures vélos, de stationnement vélos, de services associés aux vélos), le score de la 4.3.2 est réduit de 50 %.</p>
 <p>Le nombre de point max pour l''action 4.3.2 est de 16 points en Métropole et de 14 points pour les collectivités DOM.</p>
 '),
-        ('cae_4.3.3', 'reduction', 'si reponse(AOM_1, OUI) alors 1.0
+        ('cae_4.3.3', 'reduction', 'si reponse(AOM_1, NON) et reponse(versement_mobilite, NON) alors min(reponse(AOM_2), 0.5)
+sinon si reponse(AOM_1, NON) et reponse(versement_mobilite, OUI) alors reponse(AOM_2)
 sinon si reponse(versement_mobilite, NON) alors 0.5
-sinon si reponse(AOM_1, NON) et reponse(versement_mobilite, NON) alors min(reponse(AOM_2), 0.5)
 ', '<p>Pour une collectivité non AOM, le score de la 4.3.3 est réduit proportionnellement à la part de la collectivité dans la structure AOM.</p>
 <p>Pour les collectivités non concernée par le versement mobilité, le score de la 4.3.3 est réduit de 50 %.</p>
 <p>La réduction la plus forte prévaut.</p>
 '),
         ('cae_4.3.4', 'reduction', 'si identite(localisation,DOM) alors 10/8
 sinon si reponse(AOM_1, NON) alors max(reponse(AOM_2), 0.5)
-', '<p>Pour une collectivité non AOM, le score de la 4.3.4 est réduit proportionnellement à la part de la collectivité dans la structure AOM.</p>
+', '<p>Pour une collectivité non AOM, le score de la 4.3.4 est réduit proportionnellement à la part de la collectivité dans</p>
+<p>la structure AOM dans la limite de 50%.</p>
 <p>Le nombre de point max pour l''action 4.3.4 est de 8 points en Métropole et de 10 points pour les collectivités DOM.</p>
 '),
-        ('cae_1.2.2', 'reduction', 'si identite(population, moins_de_5000) et reponse (AOM_1, NON) alors 2/12
+        ('cae_1.2.2', 'reduction', 'si reponse(centre_urbain, OUI) et reponse (AOM_1, NON) alors 2/12
 sinon si reponse (AOM_1, NON) alors 6/12 
 ', '<p>Pour une collectivité n''ayant pas la compétence AOM, le score de la 1.2.2 est réduit de 50 %.</p>
 <p>Pour une collectivité n''ayant pas de centre urbain de plus de 5000 habitants ET n''ayant pas la compétence AOM, le score de la 1.2.2 est réduit à 2 points.</p>
 '),
         ('cae_1.2.3', 'reduction', 'si reponse(dechets_1, OUI) et reponse(dechets_2, OUI) et reponse(dechets_3, OUI) alors 1.0
-sinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/12
+sinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/10
 sinon 0.75
 ', '<p>Pour une collectivité ne possédant que partiellement les compétences collecte, traitement des déchets et plan de prévention des déchets, le score de la 1.2.3 est réduit de 25 %.</p>
 <p>Pour une collectivité n''ayant aucune des compétences collecte, traitement des déchets et plan de prévention des déchets, le score de la 1.2.3 est réduit à 2 points.</p>
@@ -108,6 +87,9 @@ sinon si reponse(urba_1, NON) et reponse(SCoT, OUI) alors 0.7
 ', '<p>Pour une collectivité n''ayant ni la compétence PLU, ni la compétence SCOT, le score de la 1.3.1 est réduit de 50 %.</p>
 <p>Pour une collectivité n''ayant pas la compétence PLU mais disposant de la compétence SCOT, le score de la 1.3.1 est réduit de 30 %.</p>
 '),
+        ('cae_1.3.2', 'reduction', 'si reponse(amenagement_1, NON) ou reponse (amenagement_2, NON) alors 5/10 
+', '<p>Si une collectivité n''a pas de terrains utilisables ou vendables ou elle dispose de terrains de ce type mais n''a pas réalisé de vente ou de contrats d''utilisation alors le score de la 1.3.2 est réduit de 50 %.</p>
+'),
         ('cae_1.3.3', 'desactivation', 'reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON)
 ', '<p>Pour une collectivité n''ayant ni la compétence PLU, ni l''instruction, ni l''octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>
 '),
@@ -120,8 +102,6 @@ sinon si reponse(urba_1, OUI) ou reponse(urba_2, OUI) et reponse(urba_3, OUI) al
 sinon si reponse(dev_eco_1, NON) alors VRAI
 ', '<p>Les syndicats ne sont pas concernés par la sous-action 1.2.2.</p>
 '),
-        ('cae_3.2.1.2', 'desactivation', 'reponse(recuperation_cogeneration, NON) 
-', ''),
         ('eci_1.2.3', 'desactivation', 'si identite(type, syndicat) alors VRAI
 sinon si reponse(dev_eco_1, NON) alors VRAI
 ', '<p>Les syndicats ne sont pas concernés par la sous-action 1.2.3.</p>
@@ -212,7 +192,7 @@ sinon si reponse(dev_eco_1, NON) alors VRAI
 '),
         ('cae_2.3.1', 'reduction', 'si identite(type, EPCI) et reponse(EP_1, EP_1_b) alors 2/6
 sinon si identite(type, EPCI) et reponse(EP_1, EP_1_c) alors 0
-sinon 1-reponse(EP_2)
+sinon reponse(EP_2)
 ', ''),
         ('cae_2.3.1', 'desactivation', 'identite(type, EPCI) et reponse(EP_1, EP_1_c)
 ', '<p>Si la collectivité est un EPCI sans compétence sur l''éclairage public, alors le score est réduit à 0 et les statuts sont &quot;non concernés&quot;.</p>
@@ -229,10 +209,11 @@ sinon si reponse(voirie_1, voirie_1_c) alors 0/2
         ('cae_6.1.2', 'reduction', 'si identite(type, commune) alors 3/4
 ', '<p>Les communes sont évaluées sur 3 points au lieu de 4.</p>
 '),
-        ('cae_6.2.1', 'reduction', 'si identite(type, commune) alors max(reponse(habitat_2), 2/10) 
-sinon si identite(type, commune) et reponse(habitat_3, OUI) alors 11/10
+        ('cae_6.2.1', 'reduction', 'si identite(type, commune) et reponse(habitat_3, NON) alors max(reponse(habitat_2), 2/10) 
+sinon si identite(type, commune) et reponse(habitat_3, OUI) alors max(reponse(habitat_2), 2/10) + 1/10 
 ', '<p>Si la collectivité est une commune, alors la réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de politique du logement et du cadre de vie, dans la limite de 2 points restant minimum.</p>
-<p>Si la commune participe au conseil d’administration d''un bailleur social, le potentiel, possibilement rédest augmenté d''un point sur la 6.2.1</p>
+<p>Si la commune participe au conseil d’administration d''un bailleur social, le potentiel, possiblement réduit est</p>
+<p>augmenté d''un point sur la 6.2.1</p>
 '),
         ('cae_6.2.2', 'reduction', 'si identite(type, commune) alors max (reponse(habitat_2),1/6) 
 ', '<p>Si la collectivité est une commune, alors la réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de politique du logement et du cadre de vie, dans la limite d''un point restant minimum.</p>
@@ -243,10 +224,14 @@ sinon si identite(type, commune) et reponse(habitat_3, OUI) alors 11/10
         ('cae_6.2.4', 'reduction', 'si identite(type, commune) alors max (reponse(dev_eco_2),2/8) 
 ', '<p>Si la collectivité est une commune, alors la réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de développement économique, dans la limite de 2 points de potentiel restant.</p>
 '),
-        ('cae_6.3.1', 'reduction', 'si identite(type, commune) alors max (reponse(dev_eco_2),2/8) 
+        ('cae_6.3.1', 'reduction', 'si identite(type, commune) alors max (reponse(dev_eco_2), 2/8) 
 ', '<p>Si la collectivité est une commune, alors la réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de développement économique, dans la limite de 2 points de potentiel restant.</p>
 <p>En l’absence de tissu économique propice à l’émergence de projets d’écologie industrielle, le score de la 6.3.1.4 est réduit à 0 et son statut est &quot;non concerné&quot; : les 2 points liés sont affectés à la 6.3.1.3 et la 6.3.1.5.</p>
 '),
+        ('cae_6.3.1.4', 'reduction', 'si reponse(dev_eco_4,NON) alors 0
+', ''),
+        ('cae_6.3.1.4', 'desactivation', 'reponse(dev_eco_4,NON) 
+', ''),
         ('cae_6.3.1.3', 'reduction', 'si reponse(dev_eco_4,NON) alors 1.625
 ', ''),
         ('cae_6.3.1.5', 'reduction', 'si reponse(dev_eco_4,NON) alors 1.625
@@ -280,23 +265,33 @@ sinon si reponse(scolaire_1, NON) alors 0.5
 ', '<p>Si le territoire de la collectivité ne compte aucun établissement scolaire ou structure d’accueil de jeunes enfants sur le territoire, le score de l''action 6.5.3 est réduit à 0.</p>
 <p>Si la collectivité n’est pas en charge des écoles, le score de l''action 6.5.3 est ''reduit de 50 % : le reste du potentiel est maintenu pour la compétence « soutien aux actions de maîtrise de la demande d''énergie » que la collectivité peut prendre de manière facultative.</p>
 '),
+        ('cae_3.1.1', 'reduction', 'si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 
+sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10 
+sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 
+sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 
+sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 
+sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 
+sinon si reponse(AOD_chaleur, NON) alors 6/10 
+', '<p>Pour une collectivité non autorité organisatrice de la distribution d''électricité, le score de la 3.1.1 est réduit de 30 %.</p>
+<p>Pour une collectivité non autorité organisatrice de la distribution de gaz, le score de la 3.1.1 est réduit de 30 %.</p>
+<p>Pour une collectivité non autorité organisatrice de la distribution de chaleur, le score de la 3.1.1 est réduit de 40 %.</p>
+<p>Ces réductions sont cumulables dans la limite de 2 points restants pour prendre en compte la part d’influence dans les instances compétentes et les actions partenariales.</p>
+'),
         ('cae_3.1.2', 'reduction', 'si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 0.5
 sinon si reponse(fournisseur_energie, NON) alors 0.8
 ', '<p>Pour une collectivité non autorité organisatrice de la distribution d''électricité, de gaz et de chaleur, le score de la 3.1.2 est réduit de 50 %.</p>
 <p>En l’absence de fournisseurs d’énergie maîtrisés par la collectivité (SEM/régie/exploitants de réseau de chaleur urbain liés à la collectivité par DSP), le score de la 3.1.2 est réduit de 20 % et le statut de la sous-action 3.1.2.2 liée aux actions de la facturation est &quot;non concerné&quot;.</p>
 <p>La réduction la plus forte prévaut.</p>
 '),
-        ('cae_3.1.2.2', 'desactivation', 'si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors FAUX
-sinon si reponse(fournisseur_energie, NON) alors VRAI
+        ('cae_3.1.2.2', 'desactivation', 'si reponse(fournisseur_energie, NON) alors VRAI
 ', ''),
-        ('cae_3.2.1', 'reduction', 'si identite(localisation,DOM) alors 10/12
+        ('cae_3.2.1', 'reduction', 'si reponse(recuperation_cogeneration, OUI) et identite(localisation,DOM) alors 10/12
+sinon si reponse(recuperation_cogeneration, NON) et identite(localisation,DOM) alors 2/10
+sinon si reponse(recuperation_cogeneration, NON) alors 2/12
 ', '<p>Le nombre de point max pour l''action 3.2.1 est de 12 points en Métropole et de 10 points pour les collectivités DOM.</p>
 <p>Pour une collectivité avec peu d''activités industrielles adaptées pour la récupération de chaleur fatale et peu de potentiel pour la cogénération voir la micro-cogénération (donc ni de chaufferies ni de consommateurs suffisants en chaleur ni de producteur-consommateur visant l’autoconsommation), le score de la 3.2.1 est réduit à 2 points et les statuts des sous-action 3.2.1.2 et 3.2.1.3 sont &quot;non concernée&quot;.</p>
 '),
-        ('cae_3.2.1.1', 'reduction', 'si reponse(recuperation_cogeneration, NON) et identite(localisation,DOM) alors 2/10
-sinon si reponse(recuperation_cogeneration, NON) alors 2/12
-', ''),
-        ('cae_3.2.1.3', 'reduction', 'si reponse(recuperation_cogeneration, NON) alors 0
+        ('cae_3.2.1.2', 'desactivation', 'reponse(recuperation_cogeneration, NON) 
 ', ''),
         ('cae_3.2.1.3', 'desactivation', 'reponse(recuperation_cogeneration, NON) 
 ', ''),
@@ -322,4 +317,12 @@ sinon si reponse(assainissement_4, NON) alors 0.5
 sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(assainissement_2, NON) alors 0.5
 ', '<p>Pour un EPCI, en cas de compétence &quot;assainissement&quot; partagée ou variable sur le territoire, la réduction de potentielle est proportionnelle à la part des communes ayant délégué leur compétence assainissement, dans la limite de moins 50%. Des actions sont possibles sur d’autres compétences, notamment « gestion des milieux aquatiques et prévention des inondations ».</p>
 <p>Pour les communes sans compétence assainissement, le score de la 3.3.3 est réduit de 50 %.</p>
+'),
+        ('cae_3.3.5', 'reduction', 'si identite(type, commune) et reponse(dechets_2, NON) alors 2/12
+sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors max(reponse(dechets_4),2/12)
+', '<p>Pour une commune, la note est réduite à 2 points en l''absence de la compétence traitement des déchets.</p>
+<p>Pour un EPCI ayant transféré la compétence traitement des déchets à un syndicat compétent en la matière, la note est réduite proportionnelle à sa participation dans ce syndicat, dans la limite de 2 points restants.</p>
+'),
+        ('cae_3.3.5', 'score', 'min(score(cae_1.2.3), score(cae_3.3.5))
+', '<p>Pour favoriser la prévention des déchets, la note attribuée à cette action ne peut dépasser celle obtenue dans l''action 1.2.3.</p>
 ');
