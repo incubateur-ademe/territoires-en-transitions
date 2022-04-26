@@ -178,57 +178,31 @@ def test_regle_cae_3_1_2_2():
             Reponse("AOD_elec", "NON"),
             Reponse("AOD_gaz", "NON"),
             Reponse("AOD_chaleur", "NON"),
-            Reponse("fournisseur_energie", "OUI"),
-        ],
-        IdentiteCollectivite(),
-        {
-            "cae_3.1.2.2": ActionPersonnalisationConsequence(
-                desactive=False, potentiel_perso=1.0
-            )
-        },
-    )
-    given_reponses_and_identite_assert_personnalisation_consequences(
-        [
-            Reponse("AOD_elec", "NON"),
-            Reponse("AOD_gaz", "NON"),
-            Reponse("AOD_chaleur", "NON"),
             Reponse("fournisseur_energie", "NON"),
         ],
         IdentiteCollectivite(),
         {
-            "cae_3.1.2.2": ActionPersonnalisationConsequence(
-                desactive=False, potentiel_perso=1.0
-            )
-        },
-    )
-
-    given_reponses_and_identite_assert_personnalisation_consequences(
-        [
-            Reponse("AOD_elec", "OUI"),
-            Reponse("AOD_gaz", "NON"),
-            Reponse("AOD_chaleur", "NON"),
-            Reponse("fournisseur_energie", "NON"),
-        ],
-        IdentiteCollectivite(),
-        {
+            "cae_3.1.2": ActionPersonnalisationConsequence(
+                desactive=None, potentiel_perso=0.5
+            ),
             "cae_3.1.2.2": ActionPersonnalisationConsequence(
                 desactive=True, potentiel_perso=None
-            )
+            ),
         },
     )
 
     given_reponses_and_identite_assert_personnalisation_consequences(
         [
-            Reponse("AOD_elec", "NON"),
-            Reponse("AOD_gaz", "NON"),
-            Reponse("AOD_chaleur", "NON"),
-            Reponse("fournisseur_energie", "OUI"),
+            Reponse("fournisseur_energie", "NON"),
         ],
         IdentiteCollectivite(),
         {
+            "cae_3.1.2": ActionPersonnalisationConsequence(
+                desactive=None, potentiel_perso=0.8
+            ),
             "cae_3.1.2.2": ActionPersonnalisationConsequence(
-                desactive=False, potentiel_perso=1.0
-            )
+                desactive=True, potentiel_perso=None
+            ),
         },
     )
 

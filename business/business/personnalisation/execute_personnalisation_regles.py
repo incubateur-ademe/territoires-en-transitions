@@ -20,7 +20,7 @@ def execute_personnalisation_regles(
     interpreter = ReponsesInterpreter(reponses, identite)
     personnalisation_consequences = {}
     for action_id, parsed_regle in regles_parser.parsed_regles_by_action_id.items():
-        desactive = potentiel_perso = potentiel_perso_formule = None
+        desactive = potentiel_perso = score_override_formule = None
         if parsed_regle.desactivation:
             try:
                 desactive: Optional[bool] = interpreter.visit(
@@ -30,16 +30,15 @@ def execute_personnalisation_regles(
                 pass
         if parsed_regle.reduction:
             try:
-                potentiel_perso_as_float_or_formule: Optional[
-                    Union[float, str]
-                ] = interpreter.visit(parsed_regle.reduction)
-                if isinstance(potentiel_perso_as_float_or_formule, str):
-                    potentiel_perso_formule = potentiel_perso_as_float_or_formule
-                else:
-                    potentiel_perso = potentiel_perso_as_float_or_formule
+                potentiel_perso: Optional[float] = interpreter.visit(
+                    parsed_regle.reduction
+                )
             except ReponseMissing:
                 pass
+        if parsed_regle.score:
+            score_override_formule = interpreter.visit(parsed_regle.score)
+
         personnalisation_consequences[action_id] = ActionPersonnalisationConsequence(
-            desactive, potentiel_perso, potentiel_perso_formule
+            desactive, potentiel_perso, score_override_formule
         )
     return personnalisation_consequences

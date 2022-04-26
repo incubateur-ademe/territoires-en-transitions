@@ -1,5 +1,5 @@
 from business.personnalisation.execute_score_personnalisation_factor_regle import (
-    execute_score_personnalisation_factor_regle,
+    execute_score_personnalisation_override_regle,
 )
 from business.utils.action_id import ActionId
 from tests.utils.score_factory import make_action_score
@@ -7,7 +7,7 @@ from tests.utils.score_factory import make_action_score
 
 def test_execute_score_personnalisation_factor_regles_when_score_is_given():
     assert (
-        execute_score_personnalisation_factor_regle(
+        execute_score_personnalisation_override_regle(
             "min(score(eci_1), 0.8)",
             {
                 ActionId("eci_1"): make_action_score(
@@ -21,7 +21,7 @@ def test_execute_score_personnalisation_factor_regles_when_score_is_given():
     )
 
     assert (
-        execute_score_personnalisation_factor_regle(
+        execute_score_personnalisation_override_regle(
             "min(score(eci_1), 0.8)",
             {
                 ActionId("eci_1"): make_action_score(
@@ -37,7 +37,7 @@ def test_execute_score_personnalisation_factor_regles_when_score_is_given():
 
 def test_execute_score_personnalisation_factor_regles_when_score_is_not_given():
     assert (
-        execute_score_personnalisation_factor_regle(
+        execute_score_personnalisation_override_regle(
             "min(score(eci_1), 0.8)",
             {},
         )

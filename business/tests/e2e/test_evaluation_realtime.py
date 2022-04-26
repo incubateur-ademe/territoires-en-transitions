@@ -46,6 +46,8 @@ def test_action_status_updated_on_realtime_event_with_correct_format(
     )
     score_stored_events = spy_on_event(bus, events.ScoresForCollectiviteStored)
 
+    realtime.start()
+
     assert len(score_computed_events) == 1
     assert len(score_stored_events) == 1
 
