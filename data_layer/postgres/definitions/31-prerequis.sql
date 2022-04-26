@@ -81,6 +81,37 @@ create policy critere_fichier_read_for_all
     for select
     using (true);
 
+
+create or replace function
+    labellisation.referentiel_score(collectivite_id integer)
+    returns table
+            (
+                referentiel     referentiel,
+                score_fait      float,
+                score_programme float,
+                completude      float,
+                complet         boolean
+            )
+as
+$$
+with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
+     score as (select jsonb_array_elements(scores) as o
+               from ref r
+                        join public.client_scores cs on cs.referentiel = r.referentiel
+               where cs.collectivite_id = referentiel_score.collectivite_id)
+select r.referentiel,
+       (score.o ->> 'point_fait')::float / (score.o ->> 'point_referentiel')::float      as point_fait,
+       (score.o ->> 'point_programme')::float / (score.o ->> 'point_referentiel')::float as point_programme,
+       (score.o ->> 'completed_taches_count')::float / (score.o ->> 'total_taches_count')::float as completute,
+       (score.o ->> 'completed_taches_count')::float = (score.o ->> 'total_taches_count')::float as complete
+
+from ref r
+         join score on true
+where score.o @> ('{"action_id": "' || r.referentiel || '"}')::jsonb;
+$$
+    language sql;
+
+
 create or replace function
     labellisation.etoiles(collectivite_id integer)
     returns table
@@ -88,7 +119,7 @@ create or replace function
                 referentiel                    referentiel,
                 etoile_labellise               labellisation.etoile,
                 prochaine_etoile_labellisation labellisation.etoile,
-                etoile_score               labellisation.etoile
+                etoile_score                   labellisation.etoile
             )
 as
 $$
