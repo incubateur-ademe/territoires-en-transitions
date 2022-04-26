@@ -58,7 +58,7 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
     ):
         raise NotImplementedError
 
-    def upsert_personnalisations(
+    def replace_personnalisations(
         self,
         personnalisations: List[ActionPersonnalisationRegles],
     ):

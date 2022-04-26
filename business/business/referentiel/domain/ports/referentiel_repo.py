@@ -89,7 +89,7 @@ class AbstractReferentielRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def upsert_personnalisations(
+    def replace_personnalisations(
         self,
         personnalisations: List[ActionPersonnalisationRegles],
     ) -> None:
@@ -225,7 +225,7 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
     ):
         self._questions += questions
 
-    def upsert_personnalisations(
+    def replace_personnalisations(
         self,
         personnalisations: List[ActionPersonnalisationRegles],
     ):

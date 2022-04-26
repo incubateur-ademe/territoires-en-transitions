@@ -148,5 +148,5 @@ class StoreReferentielPersonnalisations(UseCase):
 
     def execute(self, trigger: events.QuestionAndReglesChecked):
         self.referentiel_repo.upsert_questions(trigger.questions)
-        self.referentiel_repo.upsert_personnalisations(trigger.regles)
+        self.referentiel_repo.replace_personnalisations(trigger.regles)
         self.bus.publish_event(events.ReferentielPersonnalisationStored())
