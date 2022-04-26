@@ -19,33 +19,27 @@ import {DetailedScore} from '../DetailedScore/DetailedScore';
 import {AvancementValues} from '../DetailedScore/DetailedScoreSlider';
 import {referentielId} from 'utils/actions';
 
-export const ActionStatusDropdown = observer(
-  ({actionId, scoreBloc}: {actionId: string; scoreBloc: ScoreBloc}) => {
-    const collectiviteId = useCollectiviteId()!;
-    const actionStatusAvancementBloc =
-      new ActionStatusAvancementRadioButtonBloc({
-        actionId,
-        collectiviteId,
-      });
-    const score = scoreBloc.getScore(actionId, referentielId(actionId));
+export const ActionStatusDropdown = ({
+  actionId,
+  scoreBloc,
+}: {
+  actionId: string;
+  scoreBloc: ScoreBloc;
+}) => {
+  const collectiviteId = useCollectiviteId()!;
+  const actionStatusAvancementBloc = new ActionStatusAvancementRadioButtonBloc({
+    actionId,
+    collectiviteId,
+  });
 
-    const {color, label} = nonConcerneStatut;
-    if (score?.desactive) {
-      return (
-        <div>
-          <span style={{color}}>&#9679;</span>
-          &nbsp;{label}
-        </div>
-      );
-    }
-
-    return (
-      <_ActionStatusAvancementRadioButton
-        actionStatusAvancementBloc={actionStatusAvancementBloc}
-      />
-    );
-  }
-);
+  return (
+    <_ActionStatusAvancementRadioButton
+      actionId={actionId}
+      actionStatusAvancementBloc={actionStatusAvancementBloc}
+      scoreBloc={scoreBloc}
+    />
+  );
+};
 
 interface SelectableStatut {
   value: number;
@@ -121,9 +115,13 @@ const selectables = [
 
 const _ActionStatusAvancementRadioButton = observer(
   ({
+    actionId,
     actionStatusAvancementBloc,
+    scoreBloc,
   }: {
+    actionId: string;
     actionStatusAvancementBloc: ActionStatusAvancementRadioButtonBloc;
+    scoreBloc: ScoreBloc;
   }) => {
     const [opened, setOpened] = useState(false);
 
@@ -146,14 +144,21 @@ const _ActionStatusAvancementRadioButton = observer(
     const {statut} = actionStatusAvancementBloc;
     const {avancement, avancement_detaille} = statut;
 
+    const score = scoreBloc.getScore(actionId, referentielId(actionId));
+    const currentStatus = score?.desactive
+      ? // affiche le statut "non concerné" quand l'action est désactivée par la personnalisation
+        nonConcerneStatut.value
+      : // sinon le statut courant ou à défaut "non renseigné"
+        statut.value ?? nonRenseigneStatut.value;
+
     return (
       <div className="flex flex-col w-full">
         <Select
-          value={statut.value ?? -1}
+          value={currentStatus}
           onChange={handleChange}
           displayEmpty
           inputProps={{'aria-label': 'Without label'}}
-          disabled={currentCollectiviteBloc.readonly}
+          disabled={currentCollectiviteBloc.readonly || score?.desactive}
         >
           {selectables.map(({value, color, label}) => (
             <MenuItem key={value} value={value}>
@@ -162,7 +167,7 @@ const _ActionStatusAvancementRadioButton = observer(
             </MenuItem>
           ))}
         </Select>
-        {avancement === 'detaille' ? (
+        {avancement === 'detaille' && !score?.desactive ? (
           <>
             {avancement_detaille?.length === 3 ? (
               <ul className="mt-6 text-sm">
