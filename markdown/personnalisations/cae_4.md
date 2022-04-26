@@ -150,9 +150,9 @@ action_id: cae_4.3.3
 ## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(AOM_1, OUI) alors 1.0
+si reponse(AOM_1, NON) et reponse(versement_mobilite, NON) alors min(reponse(AOM_2), 0.5)
+sinon si reponse(AOM_1, NON) et reponse(versement_mobilite, OUI) alors reponse(AOM_2)
 sinon si reponse(versement_mobilite, NON) alors 0.5
-sinon si reponse(AOM_1, NON) et reponse(versement_mobilite, NON) alors min(reponse(AOM_2), 0.5)
 ```
 Pour une collectivité non AOM, le score de la 4.3.3 est réduit proportionnellement à la part de la collectivité dans la structure AOM.
 Pour les collectivités non concernée par le versement mobilité, le score de la 4.3.3 est réduit de 50 %.

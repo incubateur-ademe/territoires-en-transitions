@@ -39,11 +39,6 @@ La réduction la plus forte prévaut.
 action_id: cae_3.1.2.2
 ```
 ## Règles
-### Réduction de potentiel
-```formule
-si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 1.0
-```
-Si le parent est réduit de 50% alors la réduction de 20% ne s'applique pas même si il y a des fournisseurs d'energie maîtrisés par la collectivité.
 
 ### Désactivation
 ```formule
@@ -173,9 +168,9 @@ action_id: cae_3.3.5
 ### Réduction de potentiel
 ```formule
 si identite(type, commune) et reponse(dechets_2, NON) alors min(score(cae_1.2.3), 2/12)
-sinon si identite (type,EPCI) et reponse(dechets_2, OUI) alors min(score(cae_1.2.3), 1.0)
+sinon si identite (type, EPCI) et reponse(dechets_2, OUI) alors min(score(cae_1.2.3), 1.0)
 sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2.3), max(reponse(dechets_4),2/12))
 ```
 Pour une commune, la note est réduite à 2 points en l'absence de la compétence traitement des déchets.
-Pour un EPCI ayant transféré la compétence traitement des déchets à un syndicat compétent en la matière, la note est réduite proportionnelle à sa participation dans cet syndicat, dans la limite de 2 points restants.
+Pour un EPCI ayant transféré la compétence traitement des déchets à un syndicat compétent en la matière, la note est réduite proportionnelle à sa participation dans ce syndicat, dans la limite de 2 points restants.
 Pour favoriser la prévention des déchets, la note attribuée à cette action ne peut dépasser celle obtenue dans l'action 1.2.3.
