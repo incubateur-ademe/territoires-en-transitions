@@ -253,8 +253,42 @@ def test_cae_641_when_localosation_dom_and_SAU_OUI():
     )
 
 
-# Si la commune participe au conseil d’administration d'un bailleur social, le potentiel, possiblement réduit est
-# augmenté d'un point sur la 6.2.1
+def test_cae_621_when_type_commune():
+    """Reduction potentiel cae 6.2.1 liee logement-habitat
+
+    Si la collectivité est une commune, alors la réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de politique du logement et du cadre de vie, dans la limite de 2 points restant minimum.
+    Si la commune participe au conseil d’administration d'un bailleur social, le potentiel, possiblement réduit est
+    augmenté d'un point sur la 6.2.1
+    """
+
+    # Cas 1 :  Si une commune est à 10 % de l'EPCI et qu'elle participe au conseil d'administration d'un bailleur social, elle est notée sur 3 points
+    # ------
+    # si identite(type, commune) et reponse(habitat_3, OUI) et reponse(habitat_2, 10%)
+    #    - cae 6.2.1 est réduite à 2 points et on lui ajoute 1 point, donc a un potentiel de 3 points
+
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        1, [Reponse("habitat_3", "OUI"), Reponse("habitat_2", 0.1)]
+    )
+    assert math.isclose(cae_scores_by_id["cae_6.2.1"].point_potentiel, 3)
+
+    # Cas 2 :  Si une commune est à 50 % de l'EPCI et qu'elle participe au conseil d'administration d'un bailleur social, elle est notée sur 6 points
+    # -------
+    # si identite(type, commune) et reponse(habitat_3, OUI) et reponse(habitat_2, 50%)
+    #    - cae 6.2.1 est réduite de 50% et on lui ajoute 1 point, donc a un potentiel de 6 points
+
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        1, [Reponse("habitat_3", "OUI"), Reponse("habitat_2", 0.5)]
+    )
+    assert math.isclose(cae_scores_by_id["cae_6.2.1"].point_potentiel, 6)
+
+    # Cas 3 :  Si une commune est à 10 % de l'EPCI et qu'elle ne participe pas au conseil d'administration d'un bailleur social, elle est notée sur 2 points
+    # ------
+    # si identite(type, commune) et reponse(habitat_3, OUI) et reponse(habitat_2, 10%)
+    #    - cae 6.2.1 est réduite à 2 points et on lui ajoute 1 point, donc a un potentiel de 3 points
+    _, cae_scores_by_id = execute_scenario_collectivite_updates_reponse(
+        1, [Reponse("habitat_3", "NON"), Reponse("habitat_2", 0.1)]
+    )
+    assert math.isclose(cae_scores_by_id["cae_6.2.1"].point_potentiel, 2)
 
 
 # cae_3.3.5
