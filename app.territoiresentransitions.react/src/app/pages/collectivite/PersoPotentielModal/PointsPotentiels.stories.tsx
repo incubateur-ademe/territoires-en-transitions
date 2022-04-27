@@ -29,7 +29,7 @@ export const PersonnaliseDeuxDigits = Template.bind({});
 PersonnaliseDeuxDigits.args = {
   actionDef: ACTION_DEF,
   actionScore: {
-    point_referentiel: 6.7,
+    point_potentiel: 6.7,
     point_potentiel_perso: 3.35,
   },
   onEdit: null,
@@ -39,5 +39,12 @@ export const PersonnaliseEtEditable = Template.bind({});
 PersonnaliseEtEditable.args = {
   actionDef: ACTION_DEF,
   actionScore: SCORE_MODIFIE,
+  onEdit: action('onEdit'),
+};
+
+export const PersonnaliseScoreZero = Template.bind({});
+PersonnaliseScoreZero.args = {
+  actionDef: ACTION_DEF,
+  actionScore: {point_potentiel: 20, point_potentiel_perso: 0},
   onEdit: action('onEdit'),
 };

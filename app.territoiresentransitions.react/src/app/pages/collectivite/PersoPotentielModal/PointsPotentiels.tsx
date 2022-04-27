@@ -43,21 +43,21 @@ const getLabel = (
   actionScore: ActionScore
 ): string => {
   const {type} = actionDef;
-  const {point_referentiel, point_potentiel_perso, desactive} = actionScore;
+  const {point_potentiel, point_potentiel_perso, desactive} = actionScore;
 
   if (desactive) {
     return `Potentiel pour cette ${type} : 0 point`;
   }
 
-  const value = point_potentiel_perso || point_referentiel;
+  const value = point_potentiel_perso ?? point_potentiel;
   const points = toLocaleFixed(value, 2) + ' point' + (value > 1 ? 's' : '');
 
   const isModified =
     point_potentiel_perso !== undefined &&
-    point_potentiel_perso !== point_referentiel;
+    point_potentiel_perso !== point_potentiel;
   if (isModified) {
     const modifLabel =
-      point_potentiel_perso! > point_referentiel ? 'augmenté' : 'réduit';
+      point_potentiel_perso! > point_potentiel ? 'augmenté' : 'réduit';
     return `Potentiel ${modifLabel} pour cette ${type} : ${points}`;
   }
 
