@@ -20,8 +20,7 @@ si identite(type, commune) et reponse(habitat_3, NON) alors max(reponse(habitat_
 sinon si identite(type, commune) et reponse(habitat_3, OUI) alors max(reponse(habitat_2), 2/10) + 1/10 
 ```
 Si la collectivité est une commune, alors la réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de politique du logement et du cadre de vie, dans la limite de 2 points restant minimum.
-Si la commune participe au conseil d’administration d'un bailleur social, le potentiel, possiblement réduit est 
-augmenté d'un point sur la 6.2.1
+Si la commune participe au conseil d’administration d'un bailleur social, le potentiel, possiblement réduit est augmenté d'un point sur la 6.2.1
 
 # Reduction potentiel cae 6.2.2 liee logement-habitat
 ```yaml
