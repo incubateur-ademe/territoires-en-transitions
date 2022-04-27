@@ -1,5 +1,5 @@
 begin;
-select plan(12);
+select plan(13);
 
 select has_view('question_thematique_completude');
 select has_column('question_thematique_completude', 'collectivite_id');
@@ -28,6 +28,13 @@ select ok((select bool_and(completude = 'a_completer')
            from question_thematique_completude
            where collectivite_id = 1),
           'All thematiques should be `à completer`'
+           );
+
+select ok((select id = 'identite'
+           from question_thematique_completude
+           where collectivite_id = 1
+           limit 1),
+          'Thematique `identite` should be first.'
            );
 
 select ok((select bool_and(type = 'binaire' or type = 'proportion')
