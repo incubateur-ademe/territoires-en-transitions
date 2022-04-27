@@ -27,11 +27,11 @@
     "formulation": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>"
   },
   "SCORE": {
-    "point_referentiel": 6.7,
+    "point_potentiel": 6.7,
     "point_potentiel_perso": 6.7
   },
   "SCORE_MODIFIE": {
-    "point_referentiel": 6.7,
+    "point_potentiel": 6.7,
     "point_potentiel_perso": 3.3
   },
   "REGLES": [
