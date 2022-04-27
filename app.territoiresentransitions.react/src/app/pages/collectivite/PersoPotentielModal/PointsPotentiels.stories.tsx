@@ -18,18 +18,30 @@ NonPersonnalise.args = {
   onEdit: null,
 };
 
-export const Personnalise = Template.bind({});
-Personnalise.args = {
+export const Reduit = Template.bind({});
+Reduit.args = {
   actionDef: ACTION_DEF,
   actionScore: SCORE_MODIFIE,
   onEdit: null,
 };
 
-export const PersonnaliseDeuxDigits = Template.bind({});
-PersonnaliseDeuxDigits.args = {
+export const Augmente = Template.bind({});
+Augmente.args = {
   actionDef: ACTION_DEF,
   actionScore: {
     point_referentiel: 6.7,
+    point_potentiel: 6.7,
+    point_potentiel_perso: 10,
+  },
+  onEdit: null,
+};
+
+export const ReduitDeuxDigits = Template.bind({});
+ReduitDeuxDigits.args = {
+  actionDef: ACTION_DEF,
+  actionScore: {
+    point_referentiel: 6.7,
+    point_potentiel: 6.7,
     point_potentiel_perso: 3.35,
   },
   onEdit: null,
@@ -39,5 +51,28 @@ export const PersonnaliseEtEditable = Template.bind({});
 PersonnaliseEtEditable.args = {
   actionDef: ACTION_DEF,
   actionScore: SCORE_MODIFIE,
+  onEdit: action('onEdit'),
+};
+
+export const PersonnaliseScoreZero = Template.bind({});
+PersonnaliseScoreZero.args = {
+  actionDef: ACTION_DEF,
+  actionScore: {
+    point_referentiel: 20,
+    point_potentiel: 20,
+    point_potentiel_perso: 0,
+  },
+  onEdit: action('onEdit'),
+};
+
+export const Desactive = Template.bind({});
+Desactive.args = {
+  actionDef: ACTION_DEF,
+  actionScore: {
+    desactive: true,
+    point_referentiel: 20,
+    point_potentiel: 20,
+    point_potentiel_perso: 0,
+  },
   onEdit: action('onEdit'),
 };

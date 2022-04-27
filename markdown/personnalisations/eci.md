@@ -69,7 +69,7 @@ Pour les collectivités n'ayant pas la compétence "traitement des déchets", le
 
 # Désactivation eci_2.4.0 liee collecte dechets
 ```yaml
-action_id: eci_2.4.0
+action_id: eci_2.4
 ```
 ## Règles
 ### Désactivation
@@ -80,15 +80,6 @@ Pour les collectivités n'ayant ni la compétence "collecte des déchets", ni la
 Pour les collectivités n'ayant pas la compétence "collecte des déchets", les scores des sous-actions 2.4.2 et 2.4.3 sont réduits à 0 et les statuts de ces 2 sous-actions sont "non concerné".
 Pour les collectivités n'ayant pas la compétence "traitement des déchets", le score de la sous-action 2.4.4 est réduit à 0 et le statut de cette sous-action est "non concerné".
 
-# Désactivation eci_2.4.1 liee collecte dechets
-```yaml
-action_id: eci_2.4.1
-```
-## Règles
-### Désactivation
-```formule
-reponse(dechets_1, NON) et reponse(dechets_2, NON)
-```
 
 # Désactivation eci_2.4.2 liee collecte dechets
 ```yaml
@@ -120,15 +111,6 @@ action_id: eci_2.4.4
 reponse(dechets_2, NON) 
 ```
 
-# Désactivation eci_2.4.5 liee traitement dechets
-```yaml
-action_id: eci_2.4.5
-```
-## Règles
-### Désactivation
-```formule
-reponse(dechets_1, NON) et reponse(dechets_2, NON)
-```
 
 
 # Désactivation eci_3.2.0 liee SPASER

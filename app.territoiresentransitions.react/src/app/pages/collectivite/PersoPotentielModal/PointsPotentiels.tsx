@@ -43,23 +43,31 @@ const getLabel = (
   actionScore: ActionScore
 ): string => {
   const {type} = actionDef;
-  const {point_referentiel, point_potentiel_perso, desactive} = actionScore;
+  const {point_referentiel, point_potentiel, point_potentiel_perso, desactive} =
+    actionScore;
 
+  // affiche toujours le même libellé quand l'action est désactivée
   if (desactive) {
-    return `Potentiel pour cette ${type} : 0 point`;
+    return `Potentiel réduit pour cette ${type} : 0 point`;
   }
 
-  const value = point_potentiel_perso || point_referentiel;
+  // nombre de points initial
+  const initial = point_referentiel;
+
+  // nombre de points courant
+  const value = point_potentiel_perso ?? point_potentiel ?? point_referentiel;
+  // formate le nombre de points courant
   const points = toLocaleFixed(value, 2) + ' point' + (value > 1 ? 's' : '');
 
-  const isModified =
-    point_potentiel_perso !== undefined &&
-    point_potentiel_perso !== point_referentiel;
+  // détermine si le score a été modifié (on vérifie un delta minimum
+  // pour éviter les éventuelles erreurs d'arrondi dans le score reçu)
+  const isModified = Math.abs(value - initial) >= 0.1;
+
+  // renvoi le libellé formaté suivant si le score a été augmenté ou réduit
   if (isModified) {
-    const modifLabel =
-      point_potentiel_perso! > point_referentiel ? 'augmenté' : 'réduit';
+    const modifLabel = value > initial ? 'augmenté' : 'réduit';
     return `Potentiel ${modifLabel} pour cette ${type} : ${points}`;
   }
-
+  // ou est identique à la valeur initiale
   return `Potentiel pour cette ${type} : ${points}`;
 };

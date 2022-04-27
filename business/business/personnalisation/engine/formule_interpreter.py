@@ -31,14 +31,14 @@ class FormuleInterpreter(Interpreter):
     def min(self, tree: Tree):
         x1 = self.visit(tree.children[0])
         x2 = self.visit(tree.children[1])
-        if isinstance(x1, float) and isinstance(x2, float):
+        if isinstance(x1, (int, float)) and isinstance(x2, (int, float)):
             return min(x1, x2)
         return f"min({x1}, {x2})"
 
     def max(self, tree: Tree):
         x1 = self.visit(tree.children[0])
         x2 = self.visit(tree.children[1])
-        if isinstance(x1, float) and isinstance(x2, float):
+        if isinstance(x1, (int, float)) and isinstance(x2, (int, float)):
             return max(x1, x2)
         return f"max({x1}, {x2})"
 

@@ -44,5 +44,5 @@ from collectivite c
          left join question_thematique qt on true
          left join reponse_thematique_count rtc on rtc.thematique_id = qt.id and rtc.collectivite_id = c.id
          left join question_thematique_display qtd on qtd.id = qt.id
-order by c.id,
-         (case when rtc.thematique_id = 'identite' then '0' else qtd.nom end);
+where referentiels is not null
+order by (case when qtd.id = 'identite' then '0' else qtd.nom end);

@@ -1,5 +1,59 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Augmente 1`] = `
+<div
+  className="fr-highlight"
+  style={
+    Object {
+      "border": "1px solid var(--yellow-moutarde-850)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "marginLeft": 0,
+      "maxWidth": "fit-content",
+      "paddingBottom": "1rem",
+      "paddingRight": "2rem",
+      "paddingTop": "1rem",
+    }
+  }
+>
+  <div
+    className="flex items-center"
+    data-test="PointsPotentiels"
+  >
+    Potentiel augmenté pour cette sous-action : 10 points
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Desactive 1`] = `
+<div
+  className="fr-highlight"
+  style={
+    Object {
+      "border": "1px solid var(--yellow-moutarde-850)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "marginLeft": 0,
+      "maxWidth": "fit-content",
+      "paddingBottom": "1rem",
+      "paddingRight": "2rem",
+      "paddingTop": "1rem",
+    }
+  }
+>
+  <div
+    className="flex items-center"
+    data-test="PointsPotentiels"
+  >
+    Potentiel réduit pour cette sous-action : 0 point
+    <button
+      className="fr-link fr-link--icon-left fr-fi-settings-line fr-ml-10v"
+      onClick={[Function]}
+    >
+      Personnaliser
+    </button>
+  </div>
+</div>
+`;
+
 exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Non Personnalise 1`] = `
 <div
   className="fr-highlight"
@@ -20,54 +74,6 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
     data-test="PointsPotentiels"
   >
     Potentiel pour cette sous-action : 6,7 points
-  </div>
-</div>
-`;
-
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Personnalise 1`] = `
-<div
-  className="fr-highlight"
-  style={
-    Object {
-      "border": "1px solid var(--yellow-moutarde-850)",
-      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
-      "marginLeft": 0,
-      "maxWidth": "fit-content",
-      "paddingBottom": "1rem",
-      "paddingRight": "2rem",
-      "paddingTop": "1rem",
-    }
-  }
->
-  <div
-    className="flex items-center"
-    data-test="PointsPotentiels"
-  >
-    Potentiel réduit pour cette sous-action : 3,3 points
-  </div>
-</div>
-`;
-
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Personnalise Deux Digits 1`] = `
-<div
-  className="fr-highlight"
-  style={
-    Object {
-      "border": "1px solid var(--yellow-moutarde-850)",
-      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
-      "marginLeft": 0,
-      "maxWidth": "fit-content",
-      "paddingBottom": "1rem",
-      "paddingRight": "2rem",
-      "paddingTop": "1rem",
-    }
-  }
->
-  <div
-    className="flex items-center"
-    data-test="PointsPotentiels"
-  >
-    Potentiel réduit pour cette sous-action : 3,35 points
   </div>
 </div>
 `;
@@ -98,6 +104,84 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
     >
       Personnaliser
     </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Personnalise Score Zero 1`] = `
+<div
+  className="fr-highlight"
+  style={
+    Object {
+      "border": "1px solid var(--yellow-moutarde-850)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "marginLeft": 0,
+      "maxWidth": "fit-content",
+      "paddingBottom": "1rem",
+      "paddingRight": "2rem",
+      "paddingTop": "1rem",
+    }
+  }
+>
+  <div
+    className="flex items-center"
+    data-test="PointsPotentiels"
+  >
+    Potentiel réduit pour cette sous-action : 0 point
+    <button
+      className="fr-link fr-link--icon-left fr-fi-settings-line fr-ml-10v"
+      onClick={[Function]}
+    >
+      Personnaliser
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Reduit 1`] = `
+<div
+  className="fr-highlight"
+  style={
+    Object {
+      "border": "1px solid var(--yellow-moutarde-850)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "marginLeft": 0,
+      "maxWidth": "fit-content",
+      "paddingBottom": "1rem",
+      "paddingRight": "2rem",
+      "paddingTop": "1rem",
+    }
+  }
+>
+  <div
+    className="flex items-center"
+    data-test="PointsPotentiels"
+  >
+    Potentiel réduit pour cette sous-action : 3,3 points
+  </div>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Reduit Deux Digits 1`] = `
+<div
+  className="fr-highlight"
+  style={
+    Object {
+      "border": "1px solid var(--yellow-moutarde-850)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "marginLeft": 0,
+      "maxWidth": "fit-content",
+      "paddingBottom": "1rem",
+      "paddingRight": "2rem",
+      "paddingTop": "1rem",
+    }
+  }
+>
+  <div
+    className="flex items-center"
+    data-test="PointsPotentiels"
+  >
+    Potentiel réduit pour cette sous-action : 3,35 points
   </div>
 </div>
 `;
