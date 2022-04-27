@@ -2,10 +2,6 @@ name: Update referentiels
 
 on:
   push:
-    branches:
-      - upcoming_production
-      - upcoming_sandbox
-      - upcoming_develop
     paths:
       - 'markdown/**/*.md'
   pull_request:
