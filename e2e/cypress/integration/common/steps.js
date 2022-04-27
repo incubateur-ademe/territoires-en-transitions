@@ -64,7 +64,7 @@ export const checkExpectation = (selector, expectation, value) => {
 
 // renvoi le sélecteur local (ou à défaut le sélecteur global) correspondant à
 // un nom d'élément dans la page
-const resolveSelector = (context, elem) => {
+export const resolveSelector = (context, elem) => {
   const s = context.LocalSelectors?.[elem] || Selectors[elem];
   assert(s, 'sélecteur non trouvé');
   return s;
@@ -93,8 +93,16 @@ Given(
 );
 Given(/le "([^"]*)" vérifie la condition "([^"]*)"/, verifyExpectation);
 Given(/^le "([^"]*)" est ([^"]*)$/, verifyExpectation);
+Given(
+  /^le bouton "([^"]*)" du "([^"]*)" est ([^"]*)$/,
+  childrenVerifyExpectation
+);
 function verifyExpectation(elem, expectation) {
   checkExpectation(resolveSelector(this, elem).selector, expectation);
+}
+function childrenVerifyExpectation(elem, parentName, expectation) {
+  const parent = resolveSelector(this, parentName);
+  checkExpectation(`${parent.selector} ${parent.children[elem]}`, expectation);
 }
 
 function handleClickOnElement(subElement, elem) {
@@ -102,6 +110,7 @@ function handleClickOnElement(subElement, elem) {
   cy.get(parent.selector).find(parent.children[subElement]).click();
 }
 Given(/je clique sur le bouton "([^"]*)" du "([^"]*)"/, handleClickOnElement);
+Given(/je clique sur l'onglet "([^"]*)" du "([^"]*)"/, handleClickOnElement);
 Given(
   /je clique sur le bouton "([^"]*)" de la page "([^"]*)"/,
   handleClickOnElement
