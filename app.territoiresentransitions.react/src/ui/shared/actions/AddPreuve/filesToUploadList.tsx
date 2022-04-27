@@ -68,7 +68,9 @@ const createItemRunning = (
   file: File
 ): TFileItem => ({
   actionId: action.id,
-  file,
+  // normalise le nom du fichier pour contourner la limitation de storage-api
+  // Ref: https://github.com/supabase/storage-api/issues/133
+  file: normalizeFileName(file),
   status: {
     code: UploadStatusCode.running,
     progress: 0,
@@ -89,3 +91,16 @@ const isValidFileFormat = (f: File): boolean => {
 // contrôle la présence d'un fichier portant le même nom dans le bucket
 const isDuplicate = (f: File, bucketFiles: FileObject[]): boolean =>
   bucketFiles.findIndex(({name}) => name === f.name) !== -1;
+
+// supprime les diacritiques du nom du fichier et renvoi un nouvel objet fichier
+// ne fait rien si la fonction normalize n'est pas disponible (IE)
+const normalizeFileName = (file: File): File =>
+  typeof file.name.normalize === 'function'
+    ? new File(
+        [file],
+        file.name.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+        {
+          type: file.type,
+        }
+      )
+    : file;
