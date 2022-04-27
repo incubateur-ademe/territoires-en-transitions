@@ -5,8 +5,8 @@ action_id: cae_1.2.2
 ## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(centre_urbain, OUI) et reponse (AOM_1, NON) alors 2/12
-sinon si reponse (AOM_1, NON) alors 6/12 
+si reponse(centre_urbain, OUI) et reponse (AOM_1, NON) alors 6/12 
+sinon si reponse (AOM_1, NON) alors 2/12
 ```
 Pour une collectivité n'ayant pas la compétence AOM, le score de la 1.2.2 est réduit de 50 %.
 
