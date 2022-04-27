@@ -10,6 +10,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
   }
 >
   <form
+    data-test="AddPreuveFichier"
     onSubmit={[Function]}
   >
     <div
@@ -37,12 +38,14 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
     </div>
     <div
       className="pt-2"
+      data-test="FileItems"
     >
       <div
         className="pb-4"
       >
         <div
           className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+          data-test="file-failed"
         >
           <div
             className="px-2 pt-1 flex justify-between"
@@ -52,11 +55,13 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
             >
               <div
                 className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+                data-test="name"
               >
                 Rapport d’activités 2019-2020 et rapport DD 2020 nom vraiment trop long.doc
               </div>
               <div
                 className="text-sm min-w-max text-grey625 pl-2"
+                data-test="size"
               >
                 (
                 60 Mo
@@ -70,6 +75,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
           </div>
           <div
             className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+            data-test="error"
           >
              
             Ce fichier ne peut pas être téléversé car il dépasse la taille maximale autorisée
@@ -77,6 +83,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
         </div>
         <div
           className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+          data-test="file-failed"
         >
           <div
             className="px-2 pt-1 flex justify-between"
@@ -86,11 +93,13 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
             >
               <div
                 className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+                data-test="name"
               >
                 Logo-comcom.SVG
               </div>
               <div
                 className="text-sm min-w-max text-grey625 pl-2"
+                data-test="size"
               >
                 (
                 15 Mo
@@ -104,6 +113,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
           </div>
           <div
             className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+            data-test="error"
           >
              
             Ce fichier ne peut pas être téléversé car son format n’est pas supporté
@@ -111,6 +121,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
         </div>
         <div
           className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+          data-test="file-failed"
         >
           <div
             className="px-2 pt-1 flex justify-between"
@@ -120,11 +131,13 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
             >
               <div
                 className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+                data-test="name"
               >
                 mauvais format et taille.exe
               </div>
               <div
                 className="text-sm min-w-max text-grey625 pl-2"
+                data-test="size"
               >
                 (
                 80 Mo
@@ -138,6 +151,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/Add Preuve Fichier Exemple 1 1`
           </div>
           <div
             className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+            data-test="error"
           >
              
             Ce fichier ne peut pas être téléversé car son format n’est pas supporté et il dépasse la taille maximale autorisée

@@ -11,12 +11,14 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
 >
   <div
     className="pt-2"
+    data-test="FileItems"
   >
     <div
       className="pb-4"
     >
       <div
         className="px-2 py-1 text-sm text-bf500 w-full font-bold whitespace-nowrap overflow-ellipsis overflow-hidden"
+        data-test="file-completed"
       >
         feuille de route des élus responsables CAE.pdf
       </div>
@@ -26,17 +28,20 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
     >
       <div
         className="pl-2 pr-4 py-1 flex justify-between"
+        data-test="file-running"
       >
         <div
           className="w-8/12 flex justify-between"
         >
           <div
             className="text-sm font-bold whitespace-nowrap overflow-ellipsis overflow-hidden"
+            data-test="name"
           >
             Délibération-Engagement-PCAET.pdf
           </div>
           <div
             className="min-w-max text-sm text-grey625 pl-2"
+            data-test="size"
           >
             (
             87 Ko
@@ -70,17 +75,20 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
       </div>
       <div
         className="pl-2 pr-4 py-1 flex justify-between"
+        data-test="file-running"
       >
         <div
           className="w-8/12 flex justify-between"
         >
           <div
             className="text-sm font-bold whitespace-nowrap overflow-ellipsis overflow-hidden"
+            data-test="name"
           >
             Rapport d’activités 2019-2020 et rapport DD 2020.doc
           </div>
           <div
             className="min-w-max text-sm text-grey625 pl-2"
+            data-test="size"
           >
             (
             8.35 Mo
@@ -118,6 +126,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
     >
       <div
         className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+        data-test="file-failed"
       >
         <div
           className="px-2 pt-1 flex justify-between"
@@ -127,11 +136,13 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
           >
             <div
               className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+              data-test="name"
             >
               Rapport d’activités 2019-2020 et rapport DD 2020 nom vraiment trop long.doc
             </div>
             <div
               className="text-sm min-w-max text-grey625 pl-2"
+              data-test="size"
             >
               (
               60 Mo
@@ -145,6 +156,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
         </div>
         <div
           className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+          data-test="error"
         >
            
           Ce fichier ne peut pas être téléversé car il dépasse la taille maximale autorisée
@@ -152,6 +164,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
       </div>
       <div
         className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+        data-test="file-failed"
       >
         <div
           className="px-2 pt-1 flex justify-between"
@@ -161,11 +174,13 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
           >
             <div
               className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+              data-test="name"
             >
               Logo-comcom.SVG
             </div>
             <div
               className="text-sm min-w-max text-grey625 pl-2"
+              data-test="size"
             >
               (
               15 Mo
@@ -179,6 +194,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
         </div>
         <div
           className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+          data-test="error"
         >
            
           Ce fichier ne peut pas être téléversé car son format n’est pas supporté
@@ -186,6 +202,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
       </div>
       <div
         className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+        data-test="file-failed"
       >
         <div
           className="px-2 pt-1 flex justify-between"
@@ -195,11 +212,13 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
           >
             <div
               className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+              data-test="name"
             >
               mauvais format et taille.exe
             </div>
             <div
               className="text-sm min-w-max text-grey625 pl-2"
+              data-test="size"
             >
               (
               80 Mo
@@ -213,6 +232,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
         </div>
         <div
           className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+          data-test="error"
         >
            
           Ce fichier ne peut pas être téléversé car son format n’est pas supporté et il dépasse la taille maximale autorisée
@@ -220,6 +240,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
       </div>
       <div
         className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+        data-test="file-failed"
       >
         <div
           className="px-2 pt-1 flex justify-between"
@@ -229,11 +250,13 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
           >
             <div
               className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+              data-test="name"
             >
               fichier.doc
             </div>
             <div
               className="text-sm min-w-max text-grey625 pl-2"
+              data-test="size"
             >
               (
               15 Mo
@@ -247,6 +270,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
         </div>
         <div
           className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+          data-test="error"
         >
            
           Ce fichier n’a pas pu être téléversé
@@ -254,6 +278,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
       </div>
       <div
         className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+        data-test="file-failed"
       >
         <div
           className="px-2 pt-1 flex justify-between"
@@ -263,11 +288,13 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
           >
             <div
               className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+              data-test="name"
             >
               fichier.doc
             </div>
             <div
               className="text-sm min-w-max text-grey625 pl-2"
+              data-test="size"
             >
               (
               15 Mo
@@ -281,6 +308,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
         </div>
         <div
           className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+          data-test="error"
         >
            
           Ce fichier a déjà été téléversé. Il peut être ajouté depuis la bibliothèque.
