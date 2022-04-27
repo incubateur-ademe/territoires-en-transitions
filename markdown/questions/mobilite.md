@@ -19,7 +19,7 @@ actions: [cae_4.1.1, cae_4.3.3, cae_4.3.4]
 id: voirie_1
 type: choix
 thematique_id: mobilite
-actions: [cae_2.3.3, cae_4.2.3, cae_4.2.2, cae_4.3.1]
+actions: [cae_2.3.3, cae_4.2.1, cae_4.2.2, cae_4.2.3, cae_4.3.1]
 ```
 ## Choix
 ### Oui sur l'ensemble du territoire
