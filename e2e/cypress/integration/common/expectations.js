@@ -3,6 +3,7 @@ export const Expectations = {
   absent: 'not.exist',
   présent: 'exist',
   visible: 'be.visible',
+  masqué: 'not.be.visible',
   contient: 'contain.text',
   activé: 'be.enabled',
   activée: 'be.enabled',
