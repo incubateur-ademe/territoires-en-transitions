@@ -14,6 +14,7 @@ jobs:
       e2e-directory: ./e2e
       datalayer-directory: ./data_layer
       project-docker-directory: ./
+      LANG: 'fr_FR.UTF-8'
       SUPABASE_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
       ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
       SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
@@ -25,6 +26,13 @@ jobs:
     steps:
       # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2
+
+      # fixe la langue de l'environnement de test : permet de faire passer les
+      # tests de composant utilisant des fonctions telles que toLocaleString()
+      - name: Set locale
+        run: |
+          sudo locale-gen ${{env.LANG}}
+          sudo update-locale LANG=${{env.LANG}}
 
       # Copy all projet .sample.env into .env with the variables
       - name: Make .env files
