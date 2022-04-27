@@ -21,7 +21,7 @@ export const FileItemsList = (props: TFileItemsListProps) => {
 
   // et rend chaque groupe d'items
   return (
-    <div className="pt-2">
+    <div data-test="FileItems" className="pt-2">
       {renderItems(completed, {actionId})}
       {renderItems(running, {actionId, onRunningStopped})}
       {renderItems(failed, {actionId, onRemoveFailed})}
