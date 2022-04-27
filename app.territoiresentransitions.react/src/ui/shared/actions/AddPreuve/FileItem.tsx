@@ -46,12 +46,18 @@ const FileItemRunning = (props: TFileItemProps) => {
   }, [status]);
 
   return (
-    <div className="pl-2 pr-4 py-1 flex justify-between">
+    <div
+      data-test="file-running"
+      className="pl-2 pr-4 py-1 flex justify-between"
+    >
       <div className="w-8/12 flex justify-between">
-        <div className="text-sm font-bold whitespace-nowrap overflow-ellipsis overflow-hidden">
+        <div
+          data-test="name"
+          className="text-sm font-bold whitespace-nowrap overflow-ellipsis overflow-hidden"
+        >
           {file.name}
         </div>
-        <div className="min-w-max text-sm text-grey625 pl-2">
+        <div data-test="size" className="min-w-max text-sm text-grey625 pl-2">
           ({formatFileSize(file.size)})
         </div>
       </div>
@@ -71,7 +77,10 @@ const FileItemRunning = (props: TFileItemProps) => {
 const FileItemCompleted = (props: TFileItemProps) => {
   const {file} = props;
   return (
-    <div className="px-2 py-1 text-sm text-bf500 w-full font-bold whitespace-nowrap overflow-ellipsis overflow-hidden">
+    <div
+      data-test="file-completed"
+      className="px-2 py-1 text-sm text-bf500 w-full font-bold whitespace-nowrap overflow-ellipsis overflow-hidden"
+    >
       {file.name}
     </div>
   );
@@ -94,13 +103,19 @@ const FileItemFailed = (props: TFileItemProps) => {
   const {error} = status as UploadStatusFailed;
   const label = errorToLabel[error];
   return (
-    <div className="py-1 mr-4 group flex flex-col hover:bg-grey925">
+    <div
+      data-test="file-failed"
+      className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+    >
       <div className="px-2 pt-1 flex justify-between">
         <div className="flex w-11/12">
-          <div className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden">
+          <div
+            data-test="name"
+            className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+          >
             {file.name}
           </div>
-          <div className="text-sm min-w-max text-grey625 pl-2">
+          <div data-test="size" className="text-sm min-w-max text-grey625 pl-2">
             ({formatFileSize(file.size)})
           </div>
         </div>
@@ -109,7 +124,10 @@ const FileItemFailed = (props: TFileItemProps) => {
           onClick={() => onRemoveFailed?.(file.name)}
         />
       </div>
-      <div className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs">
+      <div
+        data-test="error"
+        className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+      >
         &nbsp;{label}
       </div>
     </div>
