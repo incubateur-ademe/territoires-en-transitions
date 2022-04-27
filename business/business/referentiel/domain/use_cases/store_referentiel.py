@@ -41,52 +41,54 @@ class StoreReferentielActions(UseCase):
 
         # TODO : this should be transactionnal !
         # Question : Should it be only one port AbstractReferentielRepo, with a method that takes those three arguments ?
-        try:
-            # Add new actions
-            ids_of_new_actions = [
-                children.action_id
-                for children in trigger.children
-                if children.action_id not in existing_action_ids
-            ]
+        # try:
+        # Add new actions
+        ids_of_new_actions = [
+            children.action_id
+            for children in trigger.children
+            if children.action_id not in existing_action_ids
+        ]
 
-            if ids_of_new_actions:
-                self.referentiel_repo.add_referentiel_actions(
-                    [
-                        definition
-                        for definition in trigger.definitions
-                        if definition.action_id in ids_of_new_actions
-                    ],
-                    [
-                        children
-                        for children in trigger.children
-                        if children.action_id in ids_of_new_actions
-                    ],
-                    [
-                        point
-                        for point in trigger.points
-                        if point.action_id in ids_of_new_actions
-                    ],
-                )
+        print("New actions : ", ids_of_new_actions)
 
-            # Update existing actions
-            self.referentiel_repo.update_referentiel_actions(
+        if ids_of_new_actions:
+            self.referentiel_repo.add_referentiel_actions(
                 [
                     definition
                     for definition in trigger.definitions
-                    if definition.action_id in existing_action_ids
+                    if definition.action_id in ids_of_new_actions
+                ],
+                [
+                    children
+                    for children in trigger.children
+                    if children.action_id in ids_of_new_actions
                 ],
                 [
                     point
                     for point in trigger.points
-                    if point.action_id in existing_action_ids
+                    if point.action_id in ids_of_new_actions
                 ],
             )
-            self.bus.publish_event(
-                events.ReferentielActionsStored(referentiel=trigger.referentiel)
-            )
-        except Exception as storing_error:  # TODO : Should be a more precise error
-            print("Storing error : ", storing_error)
-            self.bus.publish_event(events.ReferentielStorageFailed(str(storing_error)))
+
+        # Update existing actions
+        self.referentiel_repo.update_referentiel_actions(
+            [
+                definition
+                for definition in trigger.definitions
+                if definition.action_id in existing_action_ids
+            ],
+            [
+                point
+                for point in trigger.points
+                if point.action_id in existing_action_ids
+            ],
+        )
+        self.bus.publish_event(
+            events.ReferentielActionsStored(referentiel=trigger.referentiel)
+        )
+        # except Exception as storing_error:  # TODO : Should be a more precise error
+        #     print("Storing error : ", storing_error)
+        #     self.bus.publish_event(events.ReferentielStorageFailed(str(storing_error)))
 
     def fail_if_entities_are_inconsistent(self) -> Optional[events.DomainFailureEvent]:
         # check same number of entities
