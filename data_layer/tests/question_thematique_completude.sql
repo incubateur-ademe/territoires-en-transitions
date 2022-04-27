@@ -1,5 +1,5 @@
 begin;
-select plan(10);
+select plan(12);
 
 select has_view('question_thematique_completude');
 select has_column('question_thematique_completude', 'collectivite_id');
@@ -12,10 +12,16 @@ truncate reponse_binaire;
 truncate reponse_proportion;
 truncate reponse_choix;
 
-select ((select bool_or(completude != 'complete')
-         from question_thematique_completude
-         where collectivite_id = 1),
-        'No thematique should be `complete`.'
+select ok((select count(*) = 0
+           from question_thematique_completude
+           where referentiels is null),
+          'No `referentiels` should be null`.'
+           );
+
+select ok((select bool_or(completude != 'complete')
+           from question_thematique_completude
+           where collectivite_id = 1),
+          'No thematique should be `complete`.'
            );
 
 select ok((select bool_and(completude = 'a_completer')
@@ -59,4 +65,5 @@ select ok((select bool_and(completude = 'a_completer')
              and id != 'dechets'),
           'Thematiques other than `déchets` should be `à completer`.'
            );
+
 rollback;
