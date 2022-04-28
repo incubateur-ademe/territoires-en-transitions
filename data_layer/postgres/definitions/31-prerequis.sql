@@ -100,8 +100,8 @@ with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
                         join public.client_scores cs on cs.referentiel = r.referentiel
                where cs.collectivite_id = referentiel_score.collectivite_id)
 select r.referentiel,
-       (score.o ->> 'point_fait')::float / (score.o ->> 'point_referentiel')::float      as point_fait,
-       (score.o ->> 'point_programme')::float / (score.o ->> 'point_referentiel')::float as point_programme,
+       (score.o ->> 'point_fait')::float / (score.o ->> 'point_referentiel')::float * 100        as score_fait,
+       (score.o ->> 'point_programme')::float / (score.o ->> 'point_referentiel')::float * 100   as score_programme,
        (score.o ->> 'completed_taches_count')::float / (score.o ->> 'total_taches_count')::float as completute,
        (score.o ->> 'completed_taches_count')::float = (score.o ->> 'total_taches_count')::float as complete
 
@@ -110,6 +110,8 @@ from ref r
 where score.o @> ('{"action_id": "' || r.referentiel || '"}')::jsonb;
 $$
     language sql;
+comment on function labellisation.referentiel_score is
+    'Extrait les éléments nécessaires pour la labellisation d''une collectivité donnée à partir du score client';
 
 
 create or replace function
@@ -119,7 +121,8 @@ create or replace function
                 referentiel                    referentiel,
                 etoile_labellise               labellisation.etoile,
                 prochaine_etoile_labellisation labellisation.etoile,
-                etoile_score                   labellisation.etoile
+                etoile_score_possible          labellisation.etoile,
+                etoile_objectif                labellisation.etoile
             )
 as
 $$
@@ -133,28 +136,21 @@ with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
                            join labellisation.etoile_meta em
                                 on em.etoile = l.etoiles::varchar::labellisation.etoile
                   where l.collectivite_id = etoiles.collectivite_id),
-     score as (select jsonb_array_elements(scores) as o
-               from ref r
-                        join public.client_scores cs on cs.referentiel = r.referentiel
-               where cs.collectivite_id = etoiles.collectivite_id),
-     point as (select r.referentiel,
-                      (score.o ->> 'point_fait')::float as point_fait
-               from ref r
-                        join score on true
-               where score.o @> ('{"action_id": "' || r.referentiel || '"}')::jsonb),
+     score as (select * from labellisation.referentiel_score(etoiles.collectivite_id)),
      -- étoile déduite du score
      s_etoile as (select r.referentiel,
                          max(em.etoile) as etoile_atteinte
                   from ref r
-                           join point p on r.referentiel = p.referentiel
+                           join score s on r.referentiel = s.referentiel
                            join labellisation.etoile_meta em
-                                on em.min_realise_percentage <= p.point_fait
+                                on em.min_realise_percentage <= s.score_fait
                   group by r.referentiel)
 
 select s.referentiel,
-       l.etoile           as etoile_labellise,
-       l.prochaine_etoile as prochaine_etoile_labellisation,
-       s.etoile_atteinte  as etoile_score
+       l.etoile                                                  as etoile_labellise,
+       l.prochaine_etoile                                        as prochaine_etoile_labellisation,
+       s.etoile_atteinte                                         as etoile_score_possible,
+       greatest(l.etoile, l.prochaine_etoile, s.etoile_atteinte) as etoile_objectif
 from s_etoile s
          left join l_etoile l on l.referentiel = s.referentiel;
 $$
