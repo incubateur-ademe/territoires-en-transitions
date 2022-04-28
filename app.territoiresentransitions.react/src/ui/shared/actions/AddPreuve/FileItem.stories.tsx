@@ -44,7 +44,7 @@ export const fileItemMocks = {
     status: {code: 'failed', error: 'uploadError'},
   },
   duplicateError: {
-    file: createMockFile('fichier.doc', 15 * 1024 * 1024),
+    file: createMockFile('fichier.xls', 15 * 1024 * 1024),
     status: {code: 'failed', error: 'duplicateError'},
   },
 };
