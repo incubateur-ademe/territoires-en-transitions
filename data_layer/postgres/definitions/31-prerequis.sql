@@ -35,7 +35,7 @@ comment on table labellisation.etoile_meta is
     'Les données relatives aux étoiles.';
 
 
-create table if not exists critere_labellisation_action
+create table if not exists labellisation_action_critere
 (
     etoile                   labellisation.etoile                 not null,
     prio                     integer                              not null,
@@ -50,36 +50,93 @@ create table if not exists critere_labellisation_action
 
     primary key (referentiel, etoile, prio)
 );
-comment on table critere_labellisation_action is
+comment on table labellisation_action_critere is
     'Les critères administrables à remplir pour accéder à une demande de labellisation';
 
 
-alter table critere_labellisation_action
+alter table labellisation_action_critere
     enable row level security;
 
 create policy critere_read_for_all
-    on critere_labellisation_action
+    on labellisation_action_critere
     for select
     using (true);
 
-create table if not exists critere_labellisation_fichier
+create table if not exists labellisation_fichier_critere
 (
     referentiel referentiel          not null,
     etoile      labellisation.etoile not null,
     description text                 not null,
     primary key (referentiel, etoile)
 );
-comment on table critere_labellisation_fichier is
+comment on table labellisation_fichier_critere is
     'La description du champ fichier pour chaque palier.';
 
 
-alter table critere_labellisation_fichier
+alter table labellisation_fichier_critere
     enable row level security;
 
 create policy critere_fichier_read_for_all
-    on critere_labellisation_fichier
+    on labellisation_fichier_critere
     for select
     using (true);
+
+
+create table if not exists labellisation_calendrier
+(
+    referentiel referentiel primary key,
+    information text not null
+);
+comment on table labellisation_calendrier is
+    'La description du champ fichier pour chaque palier.';
+
+
+alter table labellisation_calendrier
+    enable row level security;
+
+create policy critere_fichier_read_for_all
+    on labellisation_calendrier
+    for select
+    using (true);
+
+
+create or replace function
+    private.score_of(scores jsonb, action_id action_id)
+    returns table
+            (
+                referentiel     referentiel,
+                score_fait      float,
+                score_programme float,
+                completude      float,
+                complete        boolean
+            -- todo add concerné
+            )
+as
+$$
+select (score ->> 'referentiel')::referentiel                                                as referentiel,
+       case
+           when (score ->> 'point_potentiel')::float = 0.0
+               -- todo action réglementaire
+               then 0.0
+           else (score ->> 'point_fait')::float / (score ->> 'point_potentiel')::float * 100
+           end                                                                               as score_fait,
+       case
+           when (score ->> 'point_potentiel')::float = 0.0
+               -- todo action réglementaire
+               then 0.0
+           else (score ->> 'point_programme')::float / (score ->> 'point_potentiel')::float * 100
+           end                                                                               as score_programme,
+       case
+           when (score ->> 'total_taches_count')::float = 0.0 then 0.0
+           else (score ->> 'completed_taches_count')::float / (score ->> 'total_taches_count')::float
+           end                                                                               as completude,
+       (score ->> 'completed_taches_count')::float = (score ->> 'total_taches_count')::float as complete
+from jsonb_array_elements(scores) as score
+where score @> ('{"action_id": "' || score_of.action_id || '"}')::jsonb;
+$$
+    language sql stable;
+comment on function private.score_of is
+    'Fonction utilitaire pour obtenir un score typé pour une action donnée depuis le json de `client_scores`.';
 
 
 create or replace function
@@ -94,20 +151,16 @@ create or replace function
             )
 as
 $$
-with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
-     score as (select jsonb_array_elements(scores) as o
-               from ref r
-                        join public.client_scores cs on cs.referentiel = r.referentiel
-               where cs.collectivite_id = referentiel_score.collectivite_id)
+with ref as (select unnest(enum_range(null::referentiel)) as referentiel)
 select r.referentiel,
-       (score.o ->> 'point_fait')::float / (score.o ->> 'point_referentiel')::float * 100        as score_fait,
-       (score.o ->> 'point_programme')::float / (score.o ->> 'point_referentiel')::float * 100   as score_programme,
-       (score.o ->> 'completed_taches_count')::float / (score.o ->> 'total_taches_count')::float as completute,
-       (score.o ->> 'completed_taches_count')::float = (score.o ->> 'total_taches_count')::float as complete
-
+       s.score_fait,
+       s.score_programme,
+       s.completude,
+       s.complete
 from ref r
-         join score on true
-where score.o @> ('{"action_id": "' || r.referentiel || '"}')::jsonb;
+         join public.client_scores cs on cs.referentiel = r.referentiel
+         join private.score_of(cs.scores, r.referentiel::action_id) s on true
+where cs.collectivite_id = referentiel_score.collectivite_id;
 $$
     language sql;
 comment on function labellisation.referentiel_score is
@@ -158,3 +211,105 @@ $$
 comment on function labellisation.etoiles is
     'Renvoie l''état des étoiles pour chaque référentiel pour une collectivité donnée.';
 
+
+create or replace function
+    labellisation.criteres(collectivite_id integer)
+    returns table
+            (
+                referentiel         referentiel,
+                action_id           action_id,
+                formulation         text,
+                score_realise       float,
+                min_score_realise   float,
+                score_programme     float,
+                min_score_programme float,
+                atteint             bool
+            )
+as
+$$
+select cs.referentiel,
+       cla.action_id,
+       cla.formulation,
+       s.score_fait,
+       cla.min_realise_percentage,
+       s.score_programme,
+       cla.min_programme_percentage,
+       coalesce(s.score_fait >= cla.min_realise_percentage, false) or
+       coalesce(s.score_programme >= cla.min_programme_percentage, false) as atteint
+from labellisation_action_critere cla
+         join client_scores cs on cs.referentiel = cla.referentiel and
+                                  cs.collectivite_id = criteres.collectivite_id
+    -- todo where concerne is true
+         left join private.score_of(cs.scores, cla.action_id) s on true
+$$
+    language sql;
+comment on function labellisation.criteres is
+    'Renvoie l''état des critères applicables à une collectivité donnée';
+
+
+
+create table labellisation_demande
+(
+    id              serial primary key,
+    collectivite_id integer references collectivite not null,
+    referentiel     referentiel                     not null,
+    etoiles         labellisation.etoile            not null,
+    date            timestamptz                     not null default now()
+);
+
+
+create or replace function
+    labellisation_parcours(collectivite_id integer)
+    returns table
+            (
+                referentiel      referentiel,
+                etoiles          labellisation.etoile,
+                criteres         jsonb,
+                rempli           boolean,
+                calendrier       text,
+                derniere_demande jsonb
+            )
+as
+$$
+with criteres as (select c.referentiel,
+                         bool_and(c.atteint) as atteints,
+                         jsonb_agg(
+                                 jsonb_build_object(
+                                         'formulation', formulation,
+                                         'action_id', c.action_id,
+                                         'rempli', c.atteint,
+                                         'action_identifiant', ad.identifiant,
+                                     -- todo better prose.
+                                         'statut_ou_score', 'min programmé : ' ||
+                                                            c.min_score_programme ||
+                                                            ' min réalisé : ' ||
+                                                            c.min_score_realise
+                                     )
+                             )               as liste
+                  from labellisation.criteres(labellisation_parcours.collectivite_id) c
+                           join action_definition ad on c.action_id = ad.action_id
+                  group by c.referentiel)
+
+select e.referentiel,
+       e.etoile_objectif,
+       criteres.liste,
+       criteres.atteints,
+       calendrier.information,
+
+       case
+           when demande.etoiles is null
+               then null
+           else jsonb_build_object('demandee_le', demande.date, 'etoiles', demande.etoiles)
+           end
+
+from labellisation.etoiles(labellisation_parcours.collectivite_id) as e
+         join criteres on criteres.referentiel = e.referentiel
+         left join labellisation_calendrier calendrier on calendrier.referentiel = e.referentiel
+         left join lateral (select ld.date, ld.etoiles
+                            from labellisation_demande ld
+                            where ld.collectivite_id = labellisation_parcours.collectivite_id
+                              and ld.referentiel = e.referentiel) demande on true
+$$
+    language sql;
+comment on function labellisation_parcours is
+    'Renvoie le parcours de labellisation de chaque référentiel pour une collectivité donnée.';
