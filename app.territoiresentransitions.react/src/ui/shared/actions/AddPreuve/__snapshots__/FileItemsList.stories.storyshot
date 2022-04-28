@@ -290,7 +290,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Items List Exemple 1 1`] =
               className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
               data-test="name"
             >
-              fichier.doc
+              fichier.xls
             </div>
             <div
               className="text-sm min-w-max text-grey625 pl-2"
