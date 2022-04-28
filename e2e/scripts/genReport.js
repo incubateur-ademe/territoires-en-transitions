@@ -19,7 +19,7 @@ report.generate({
   customData: {
     title: 'Run info',
     data: [
-      { label: 'Version', value: process.env.VERSION },
+      { label: 'Version', value: process.env.VERSION.substring(0, 8) },
       { label: 'Rapport généré le', value: new Date().toLocaleString('fr-FR') },
     ],
   },
