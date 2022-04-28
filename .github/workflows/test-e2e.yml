@@ -10,8 +10,6 @@ jobs:
   end-to-end-test:
     name: End-to-end tests
     runs-on: ubuntu-latest
-    container:
-      options: --user 1001
     env:
       e2e-directory: ./e2e
       datalayer-directory: ./data_layer
