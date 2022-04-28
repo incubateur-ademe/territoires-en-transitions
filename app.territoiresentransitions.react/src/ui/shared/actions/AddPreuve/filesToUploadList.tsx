@@ -18,23 +18,40 @@ export const filesToUploadList = (
   }
 
   return filesToArray(files).map((file: File) => {
-    const duplicateErr = isDuplicate(file, bucketFiles);
+    const normalizedFile = normalizeFileName(file);
+    const duplicateErr = isDuplicate(normalizedFile, bucketFiles);
     if (duplicateErr) {
-      return createItemFailed(action, file, UploadErrorCode.duplicateError);
+      return createItemFailed(
+        action,
+        normalizedFile,
+        UploadErrorCode.duplicateError
+      );
     }
 
-    const sizeErr = !isValidFileSize(file);
-    const formatErr = !isValidFileFormat(file);
+    const sizeErr = !isValidFileSize(normalizedFile);
+    const formatErr = !isValidFileFormat(normalizedFile);
     if (formatErr && sizeErr) {
-      return createItemFailed(action, file, UploadErrorCode.formatAndSizeError);
+      return createItemFailed(
+        action,
+        normalizedFile,
+        UploadErrorCode.formatAndSizeError
+      );
     }
     if (formatErr) {
-      return createItemFailed(action, file, UploadErrorCode.formatError);
+      return createItemFailed(
+        action,
+        normalizedFile,
+        UploadErrorCode.formatError
+      );
     }
     if (sizeErr) {
-      return createItemFailed(action, file, UploadErrorCode.sizeError);
+      return createItemFailed(
+        action,
+        normalizedFile,
+        UploadErrorCode.sizeError
+      );
     }
-    return createItemRunning(action, file);
+    return createItemRunning(action, normalizedFile);
   });
 };
 
@@ -70,7 +87,7 @@ const createItemRunning = (
   actionId: action.id,
   // normalise le nom du fichier pour contourner la limitation de storage-api
   // Ref: https://github.com/supabase/storage-api/issues/133
-  file: normalizeFileName(file),
+  file,
   status: {
     code: UploadStatusCode.running,
     progress: 0,
