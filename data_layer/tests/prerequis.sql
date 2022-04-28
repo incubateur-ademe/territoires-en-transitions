@@ -30,26 +30,28 @@ where referentiel = 'eci';
 select ok((select labellisation.critere_1_1(1, 'eci')),
           'La collectivité 1 a renseigné tout les statuts eci');
 
--- insert fake scores
+-- insert faked client scores, sort of.
 truncate client_scores;
 insert into client_scores
-values (1,
-        'eci',
-        '[{"action_id": "eci", '
-            '"point_fait": 9, "point_programme": 10, "point_referentiel": 10, '
-            '"completed_taches_count": 2,"total_taches_count": 2}]'::jsonb,
-        now());
+select 1,
+       ar.referentiel,
+       jsonb_agg(jsonb_build_object(
+               'action_id', ar.action_id,
+               'referentiel', ar.referentiel,
+               'point_fait', 10,
+               'point_programme', .0,
+               'point_potentiel', 10,
+               'point_referentiel', 10,
+               'completed_taches_count', 1,
+               'total_taches_count', 1
+           )),
+       now()
+from action_definition ar
+group by ar.referentiel;
 
-insert into client_scores
-values (1,
-        'cae',
-        '[{"action_id": "cae", '
-            '"point_fait": 5, "point_programme": 6, "point_referentiel": 10, '
-            '"completed_taches_count": 2,"total_taches_count": 2}]'::jsonb,
-        now());
 
-select ok((select score_fait = 90
-                      and score_programme = 100
+select ok((select score_fait = 100
+                      and score_programme = 0
                       and completude = 1
                       and complet
            from labellisation.referentiel_score(1)
