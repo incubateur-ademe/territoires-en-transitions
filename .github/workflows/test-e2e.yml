@@ -10,6 +10,8 @@ jobs:
   end-to-end-test:
     name: End-to-end tests
     runs-on: ubuntu-latest
+    container:
+      options: --user 1001
     env:
       e2e-directory: ./e2e
       datalayer-directory: ./data_layer
@@ -68,8 +70,6 @@ jobs:
       # and run all Cypress tests
       - name: Cypress run (chrome)
         uses: cypress-io/github-action@v2
-        container:
-          image: ${{env.CYPRESS_IMAGE}}
         with:
           browser: chrome
           working-directory: ${{env.e2e-directory}}
@@ -94,9 +94,6 @@ jobs:
       # run tests into firefox
       - name: Cypress run (firefox)
         uses: cypress-io/github-action@v2
-        container:
-          image: ${{env.CYPRESS_IMAGE}}
-          options: --user 1001
         with:
           browser: firefox
           working-directory: ${{env.e2e-directory}}
