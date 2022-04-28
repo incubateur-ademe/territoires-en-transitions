@@ -22,7 +22,8 @@ jobs:
       REACT_APP_CRISP_WEBSITE_ID: 96fe7866-d005-4623-80b1-bd772e99855c
       SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
-      VERSION: ${{github.head_ref}}.${{github.sha}}
+      GIT_HEAD_REF: ${{github.head_ref}}
+      GIT_SHA: ${{github.sha}}
 
     steps:
       # cf. https://github.com/actions/checkout

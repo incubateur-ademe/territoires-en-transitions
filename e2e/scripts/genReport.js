@@ -6,6 +6,8 @@ const path = require('path');
 const report = require('multiple-cucumber-html-reporter');
 
 const reportName = 'Territoires en Transitions';
+const VERSION =
+  process.env.GIT_HEAD_REF + '.' + process.env.GIT_SHA?.substring(0, 8);
 const reportPath = path.join(__dirname, '..', './report');
 
 report.generate({
@@ -19,7 +21,7 @@ report.generate({
   customData: {
     title: 'Run info',
     data: [
-      { label: 'Version', value: process.env.VERSION.substring(0, 8) },
+      { label: 'Version', value: VERSION },
       { label: 'Rapport généré le', value: new Date().toLocaleString('fr-FR') },
     ],
   },
