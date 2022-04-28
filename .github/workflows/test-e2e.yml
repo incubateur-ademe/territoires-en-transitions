@@ -64,34 +64,6 @@ jobs:
         run: sh scripts/wait_for_front.sh
         working-directory: ${{env.datalayer-directory}}
 
-      # run tests into firefox
-      - name: Cypress run (firefox)
-        uses: cypress-io/github-action@v2
-        with:
-          browser: firefox
-          working-directory: ${{env.e2e-directory}}
-          record: true
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{secrets.CYPRESS_RECORD_KEY}}
-          CYPRESS_PROJECT_ID: ${{secrets.CYPRESS_PROJECT_ID}}
-          # pass GitHub token to allow accurately detecting a build vs a re-run build
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Generate test report (firefox)
-        if: failure()
-        run: npm run report
-        working-directory: ${{env.e2e-directory}}
-        env:
-          BROWSER: firefox
-
-      - name: Upload report to GitHub (firefox)
-        if: failure()
-        uses: actions/upload-artifact@master
-        with:
-          name: report-firefox
-          path: ${{env.e2e-directory}}/report
-
       # run tests into chrome
       - name: Cypress run (chrome)
         uses: cypress-io/github-action@v2
