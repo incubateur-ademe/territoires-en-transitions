@@ -19,25 +19,24 @@ When(/je déplie le panneau Preuves de l'action "([^"]+)"/, (action) =>
 );
 
 When(
-  /la table des liens preuve de la collectivité "(\d+)" est vide/,
-  (collectivite_id) => {
-    cy.get('@supabaseClient').then((client) =>
-      client.from('preuve_lien').delete().match({ collectivite_id })
-    );
-  }
+  /les tables de preuves de la collectivité "(\d+)" sont vides/,
+  (collectivite_id) =>
+    cy
+      .get('@supabaseClient')
+      .then((client) =>
+        Promise.all([
+          client.from('preuve_lien').delete().match({ collectivite_id }),
+          client.from('preuve_fichier').delete().match({ collectivite_id }),
+        ])
+      )
 );
 
 When(
   /la table des liens preuve est initialisée avec les données suivantes/,
   (dataTable) => {
-    cy.get('@supabaseClient').then((client) => {
-      cy.wrap(dataTable.rows()).each(
-        ([collectivite_id, action_id, titre, url, commentaire]) =>
-          client
-            .from('preuve_lien')
-            .insert({ collectivite_id, action_id, titre, url, commentaire })
-      );
-    });
+    cy.get('@supabaseClient').then((client) =>
+      client.from('preuve_lien').insert(dataTable.hashes())
+    );
   }
 );
 

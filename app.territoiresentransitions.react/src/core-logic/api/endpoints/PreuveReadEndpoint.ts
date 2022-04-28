@@ -18,7 +18,8 @@ export class PreuveReadEndpoint extends DataLayerReadCachedEndpoint<
   ): Promise<PostgrestResponse<PreuveLienRead>> {
     return this._table
       .eq('collectivite_id', getParams.collectivite_id)
-      .eq('action_id', getParams.action_id);
+      .eq('action_id', getParams.action_id)
+      .order('titre', {ascending: true});
   }
 }
 

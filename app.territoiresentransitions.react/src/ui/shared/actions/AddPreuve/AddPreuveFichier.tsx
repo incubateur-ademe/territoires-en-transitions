@@ -86,7 +86,7 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form data-test="AddPreuveFichier" onSubmit={onSubmit}>
       <InputFile
         label="Ajouter un ou plusieurs fichier(s)"
         hint={HINT}

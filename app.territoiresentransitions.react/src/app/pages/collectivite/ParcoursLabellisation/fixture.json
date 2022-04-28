@@ -1,0 +1,80 @@
+{
+  "parcours1": {
+    "collectivite_id": 1,
+    "referentiel": "eci",
+    "etoiles": 1,
+    "criteres": [
+      {
+        "id": "1.1",
+        "formulation": "Renseigner tous les statuts du référentiel",
+        "rempli": false
+      },
+      {
+        "id": "1.2",
+        "formulation": "Être une collectivité engagée dans une politique Économie circulaire et le prouver (via les documents preuves ou un texte justificatif)",
+        "criteres": [
+          {
+            "id": "1.2.1",
+            "action_id": "eci_1.1.1.1",
+            "formulation": "Identifier un·e élu·e référent·e",
+            "statut_ou_score": "Fait"
+          },
+          {
+            "id": "1.2.2",
+            "action_id": "eci_1.1.1.3",
+            "formulation": "Identifier l'équipe technique",
+            "statut_ou_score": "Fait"
+          },
+          {
+            "id": "1.2.3",
+            "action_id": "eci_1.1.2",
+            "formulation": "Réaliser le diagnostic de l’économie circulaire",
+            "statut_ou_score": "20 % minimum"
+          },
+          {
+            "id": "1.2.4",
+            "action_id": "eci_2.1.0",
+            "formulation": "Respecter la réglementation : PLPDMA",
+            "statut_ou_score": "Programmé ou fait"
+          },
+          {
+            "id": "1.2.5",
+            "action_id": "eci_2.2.0",
+            "formulation": "Respecter la réglementation : système de collecte",
+            "statut_ou_score": "Programmé ou fait"
+          },
+          {
+            "id": "1.2.6",
+            "action_id": "eci_2.3.0",
+            "formulation": "Respecter la réglementation : valorisation des déchets, dont organiques",
+            "statut_ou_score": "Programmé ou fait"
+          },
+          {
+            "id": "1.2.7",
+            "action_id": "eci_2.4.0",
+            "formulation": "Respecter la réglementation : pour les impacts environnementaux des émissions et les nuisances",
+            "statut_ou_score": "Programmé ou fait"
+          },
+          {
+            "id": "1.2.8",
+            "action_id": "eci_3.2.0",
+            "formulation": "Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables",
+            "statut_ou_score": "Programmé ou fait"
+          },
+          {
+            "id": "1.2.9",
+            "action_id": "eci_4.1.0",
+            "formulation": "Rédiger le rapport annuel SPPGD",
+            "statut_ou_score": "Programmé ou fait"
+          }
+        ]
+      },
+      {
+        "id": "1.3",
+        "formulation": "Signer un acte d’engagement incluant {le règlement du label}",
+        "rempli": false,
+        "fichiers": []
+      }
+    ]
+  }
+}
