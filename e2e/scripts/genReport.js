@@ -25,8 +25,8 @@ report.generate({
   },
   metadata: {
     browser: {
-      name: 'chrome',
-      version: '??',
+      name: process.env.BROWSER || '??',
+      version: process.env.BROWSER_VERSION || '??',
     },
     platform: {
       name: os.platform(),
