@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "cy-verify-downloads": "^0.1.5",
     "cypress": "^9.4.1",
     "cypress-cucumber-preprocessor": "^4.3.1",
     "multiple-cucumber-html-reporter": "^1.19.0",
