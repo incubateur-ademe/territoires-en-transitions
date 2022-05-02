@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Completed 1`] = `
+exports[`Storyshots Ui/Shared/Resource Manager/File Item Completed 1`] = `
 <div
   style={
     Object {
@@ -18,7 +18,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Completed 1`] = `
 </div>
 `;
 
-exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Duplicate 1`] = `
+exports[`Storyshots Ui/Shared/Resource Manager/File Item Failed Duplicate 1`] = `
 <div
   style={
     Object {
@@ -68,7 +68,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Duplicate 1`] 
 </div>
 `;
 
-exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Format And Size 1`] = `
+exports[`Storyshots Ui/Shared/Resource Manager/File Item Failed Format And Size 1`] = `
 <div
   style={
     Object {
@@ -118,7 +118,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Format And Siz
 </div>
 `;
 
-exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed To Upload 1`] = `
+exports[`Storyshots Ui/Shared/Resource Manager/File Item Failed To Upload 1`] = `
 <div
   style={
     Object {
@@ -168,7 +168,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed To Upload 1`] 
 </div>
 `;
 
-exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Too Big 1`] = `
+exports[`Storyshots Ui/Shared/Resource Manager/File Item Failed Too Big 1`] = `
 <div
   style={
     Object {
@@ -218,7 +218,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Too Big 1`] = 
 </div>
 `;
 
-exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Unknown Format 1`] = `
+exports[`Storyshots Ui/Shared/Resource Manager/File Item Failed Unknown Format 1`] = `
 <div
   style={
     Object {
@@ -268,7 +268,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Failed Unknown Format
 </div>
 `;
 
-exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Running 1`] = `
+exports[`Storyshots Ui/Shared/Resource Manager/File Item Running 1`] = `
 <div
   style={
     Object {
@@ -327,7 +327,7 @@ exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Running 1`] = `
 </div>
 `;
 
-exports[`Storyshots Ui/Shared/Actions/Add Preuve/File Item Running 2 1`] = `
+exports[`Storyshots Ui/Shared/Resource Manager/File Item Running 2 1`] = `
 <div
   style={
     Object {
