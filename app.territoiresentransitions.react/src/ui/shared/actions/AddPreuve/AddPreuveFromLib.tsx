@@ -4,20 +4,18 @@
  */
 
 import {ChangeEvent, FormEvent, useState} from 'react';
-import {preuveFichierWriteEndpoint} from 'core-logic/api/endpoints/PreuveFichierWriteEndpoint';
 import {useCollectiviteBucketFiles} from 'core-logic/hooks/preuve';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TActionPreuvePanelProps} from '../ActionPreuvePanel/ActionPreuvePanel';
+import {TAddFileFromLib} from './AddPreuveFichier';
 
-export type TAddPreuveFromLibProps = TActionPreuvePanelProps & {
+export type TAddPreuveFromLibProps = {
+  onAddFileFromLib: TAddFileFromLib;
   onClose: () => void;
 };
 
 export const AddPreuveFromLib = (props: TAddPreuveFromLibProps) => {
-  const {onClose, action} = props;
+  const {onAddFileFromLib, onClose} = props;
 
   const {bucketFiles} = useCollectiviteBucketFiles();
-  const collectivite_id = useCollectiviteId();
   const [currentSelection, setCurrentSelection] = useState<{
     [key: string]: boolean;
   }>({});
@@ -33,20 +31,11 @@ export const AddPreuveFromLib = (props: TAddPreuveFromLibProps) => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (collectivite_id) {
-      Promise.all(
-        Object.entries(currentSelection)
-          .filter(([, checked]) => checked)
-          .map(([name]) =>
-            preuveFichierWriteEndpoint.save({
-              action_id: action.id,
-              collectivite_id,
-              commentaire: '',
-              filename: name,
-            })
-          )
-      ).then(onClose);
-    }
+    Promise.all(
+      Object.entries(currentSelection)
+        .filter(([, checked]) => checked)
+        .map(([name]) => onAddFileFromLib(name))
+    ).then(onClose);
   };
 
   return (

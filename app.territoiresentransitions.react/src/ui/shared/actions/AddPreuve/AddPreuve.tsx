@@ -6,6 +6,7 @@ import {TActionPreuvePanelProps} from '../ActionPreuvePanel/ActionPreuvePanel';
 import {AddPreuveLien} from './AddPreuveLien';
 import {AddPreuveFichier} from './AddPreuveFichier';
 import {AddPreuveFromLib} from './AddPreuveFromLib';
+import {useAddPreuveToAction} from './useAddPreuveToAction';
 
 export type TAddPreuveProps = TActionPreuvePanelProps & {
   /** Index de l'onglet actif */
@@ -14,18 +15,19 @@ export type TAddPreuveProps = TActionPreuvePanelProps & {
 };
 
 export const AddPreuve = (props: TAddPreuveProps) => {
-  const {defaultActiveTab} = props;
+  const {defaultActiveTab, action} = props;
+  const {addFileFromLib, addLink} = useAddPreuveToAction(action.id);
 
   return (
     <Tabs defaultActiveTab={defaultActiveTab}>
       <Tab label="&nbsp;Lien" icon="fr-fi-links-fill">
-        <AddPreuveLien {...props} />
+        <AddPreuveLien {...props} onAddLink={addLink} />
       </Tab>
       <Tab label="&nbsp;Fichier" icon="fr-fi-upload-2-fill">
-        <AddPreuveFichier {...props} />
+        <AddPreuveFichier {...props} onAddFileFromLib={addFileFromLib} />
       </Tab>
       <Tab label="&nbsp;Bibliothèque" icon="fr-fi-archive-line">
-        <AddPreuveFromLib {...props} />
+        <AddPreuveFromLib {...props} onAddFileFromLib={addFileFromLib} />
       </Tab>
     </Tabs>
   );

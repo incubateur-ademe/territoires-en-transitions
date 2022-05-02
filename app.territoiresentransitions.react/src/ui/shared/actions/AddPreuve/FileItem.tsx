@@ -10,7 +10,6 @@ import {ButtonClose} from '../../SmallIconButton';
 import {ProgressBar} from '../../ProgressBar';
 
 export type TFileItem = {
-  actionId: string;
   /** Fichier concerné */
   file: File;
   /** Etat */
