@@ -85,6 +85,7 @@ class StoreReferentielActions(UseCase):
                 events.ReferentielActionsStored(referentiel=trigger.referentiel)
             )
         except Exception as storing_error:  # TODO : Should be a more precise error
+            print("Storing error : ", storing_error)
             self.bus.publish_event(events.ReferentielStorageFailed(str(storing_error)))
 
     def fail_if_entities_are_inconsistent(self) -> Optional[events.DomainFailureEvent]:
