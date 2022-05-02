@@ -2,24 +2,6 @@ create schema if not exists labellisation;
 comment on schema labellisation is
     'Regroupe les éléments hors API qui permettent de déterminer la possibilité d''accéder à une demande d''audit.';
 
-create or replace function
-    labellisation.critere_1_1(collectivite_id integer, referentiel referentiel)
-    returns boolean
-as
-$$
-with ref as (select id as action_id
-             from action_relation r
-             where r.referentiel = critere_1_1.referentiel),
-     statuts as (select s.action_id
-                 from action_statut s
-                          join ref on ref.action_id = s.action_id
-                 where s.collectivite_id = critere_1_1.collectivite_id)
-select count(*) = 0
-from ((select * from ref) except (select * from statuts)) as r
-$$ language sql;
-comment on function labellisation.critere_1_1 is
-    'Critère 1.1 : Renseigner tous les statuts';
-
 
 create type labellisation.etoile as enum ('1', '2', '3', '4', '5');
 create table labellisation.etoile_meta
@@ -104,33 +86,32 @@ create or replace function
     private.score_of(scores jsonb, action_id action_id)
     returns table
             (
-                referentiel     referentiel,
-                score_fait      float,
-                score_programme float,
-                completude      float,
-                complete        boolean
-            -- todo add concerné
+                referentiel          referentiel,
+                proportion_fait      float,
+                proportion_programme float,
+                completude           float,
+                complete             boolean,
+                concerne             boolean
             )
 as
 $$
 select (score ->> 'referentiel')::referentiel                                                as referentiel,
        case
            when (score ->> 'point_potentiel')::float = 0.0
-               -- todo action réglementaire
-               then 0.0
+               then (score ->> 'fait_taches_avancement')::float / (score ->> 'total_taches_count')::float * 100
            else (score ->> 'point_fait')::float / (score ->> 'point_potentiel')::float * 100
-           end                                                                               as score_fait,
+           end                                                                               as proportion_fait,
        case
            when (score ->> 'point_potentiel')::float = 0.0
-               -- todo action réglementaire
-               then 0.0
+               then (score ->> 'programme_taches_avancement')::float / (score ->> 'total_taches_count')::float * 100
            else (score ->> 'point_programme')::float / (score ->> 'point_potentiel')::float * 100
-           end                                                                               as score_programme,
+           end                                                                               as proportion_programme,
        case
            when (score ->> 'total_taches_count')::float = 0.0 then 0.0
            else (score ->> 'completed_taches_count')::float / (score ->> 'total_taches_count')::float
            end                                                                               as completude,
-       (score ->> 'completed_taches_count')::float = (score ->> 'total_taches_count')::float as complete
+       (score ->> 'completed_taches_count')::float = (score ->> 'total_taches_count')::float as complete,
+       (score ->> 'concerne')::boolean                                                       as concerne
 from jsonb_array_elements(scores) as score
 where score @> ('{"action_id": "' || score_of.action_id || '"}')::jsonb;
 $$
@@ -153,8 +134,8 @@ as
 $$
 with ref as (select unnest(enum_range(null::referentiel)) as referentiel)
 select r.referentiel,
-       s.score_fait,
-       s.score_programme,
+       s.proportion_fait,
+       s.proportion_programme,
        s.completude,
        s.complete
 from ref r
@@ -230,17 +211,18 @@ $$
 select cs.referentiel,
        cla.action_id,
        cla.formulation,
-       s.score_fait,
+       s.proportion_fait,
        cla.min_realise_percentage,
-       s.score_programme,
+       s.proportion_programme,
        cla.min_programme_percentage,
-       coalesce(s.score_fait >= cla.min_realise_percentage, false) or
-       coalesce(s.score_programme >= cla.min_programme_percentage, false) as atteint
+       coalesce(s.proportion_fait >= cla.min_realise_percentage, false) or
+       coalesce(s.proportion_programme >= cla.min_programme_percentage, false) as atteint
 from labellisation_action_critere cla
          join client_scores cs on cs.referentiel = cla.referentiel and
                                   cs.collectivite_id = criteres.collectivite_id
-    -- todo where concerne is true
+
          left join private.score_of(cs.scores, cla.action_id) s on true
+where s.concerne
 $$
     language sql;
 comment on function labellisation.criteres is
@@ -264,6 +246,7 @@ create or replace function
             (
                 referentiel      referentiel,
                 etoiles          labellisation.etoile,
+                completude_ok    boolean,
                 criteres         jsonb,
                 rempli           boolean,
                 calendrier       text,
@@ -289,9 +272,9 @@ with criteres as (select c.referentiel,
                   from labellisation.criteres(labellisation_parcours.collectivite_id) c
                            join action_definition ad on c.action_id = ad.action_id
                   group by c.referentiel)
-
 select e.referentiel,
        e.etoile_objectif,
+       rs.complet,
        criteres.liste,
        criteres.atteints,
        calendrier.information,
@@ -304,11 +287,15 @@ select e.referentiel,
 
 from labellisation.etoiles(labellisation_parcours.collectivite_id) as e
          join criteres on criteres.referentiel = e.referentiel
-         left join labellisation_calendrier calendrier on calendrier.referentiel = e.referentiel
+         left join labellisation.referentiel_score(labellisation_parcours.collectivite_id) rs
+                   on rs.referentiel = e.referentiel
+         left join labellisation_calendrier calendrier
+                   on calendrier.referentiel = e.referentiel
          left join lateral (select ld.date, ld.etoiles
                             from labellisation_demande ld
                             where ld.collectivite_id = labellisation_parcours.collectivite_id
                               and ld.referentiel = e.referentiel) demande on true
+
 $$
     language sql;
 comment on function labellisation_parcours is
