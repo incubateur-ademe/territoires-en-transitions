@@ -1,14 +1,14 @@
 import {Story, Meta} from '@storybook/react';
-import {AddPreuveFichier, TAddPreuveFichierProps} from './AddPreuveFichier';
+import {AddFile, TAddFileProps} from './AddFile';
 import {fileItemMocks} from './FileItem.stories';
 
 export default {
-  component: AddPreuveFichier,
+  component: AddFile,
 } as Meta;
 
-const Template: Story<TAddPreuveFichierProps> = args => (
+const Template: Story<TAddFileProps> = args => (
   <div style={{maxWidth: 612, border: '1px dashed'}}>
-    <AddPreuveFichier {...args} />
+    <AddFile {...args} />
   </div>
 );
 
