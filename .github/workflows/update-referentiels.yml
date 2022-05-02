@@ -2,8 +2,8 @@ name: Update referentiels
 
 on:
   push:
-    paths:
-      - 'markdown/**/*.md'
+    # paths:
+    #   - 'markdown/**/*.md'
   pull_request:
     branches-ignore:
       - production
@@ -23,6 +23,7 @@ jobs:
 
       # Copy all projet .sample.env into .env with the variables
       - name: Make .env files
+        if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
         run: sh make_dot_env.sh
 
       # Execute CLI on local datalayer if branch not in [upcoming-sandbox, upcoming-production]
