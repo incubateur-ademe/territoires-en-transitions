@@ -5,14 +5,14 @@
 
 import {ChangeEvent, FormEvent, useState} from 'react';
 import {useCollectiviteBucketFiles} from 'core-logic/hooks/preuve';
-import {TAddFileFromLib} from './AddPreuveFichier';
+import {TAddFileFromLib} from './AddFile';
 
-export type TAddPreuveFromLibProps = {
+export type TAddFromLibProps = {
   onAddFileFromLib: TAddFileFromLib;
   onClose: () => void;
 };
 
-export const AddPreuveFromLib = (props: TAddPreuveFromLibProps) => {
+export const AddFromLib = (props: TAddFromLibProps) => {
   const {onAddFileFromLib, onClose} = props;
 
   const {bucketFiles} = useCollectiviteBucketFiles();
@@ -41,7 +41,7 @@ export const AddPreuveFromLib = (props: TAddPreuveFromLibProps) => {
   return (
     <>
       <h6 className="fr-text--md">Tous les fichiers de ma collectivité</h6>
-      <form onSubmit={onSubmit}>
+      <form data-test="AddFromLib" onSubmit={onSubmit}>
         <div className="fr-form-group">
           <fieldset className="fr-fieldset" onChange={onChange}>
             <div

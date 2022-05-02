@@ -1,5 +1,5 @@
 /**
- * Pertmet d'ajouter un lien comme preuve
+ * Affiche le formulaire d'ajout de liens
  */
 
 import {Field, Form, Formik} from 'formik';
@@ -9,7 +9,7 @@ import {Spacer} from 'ui/shared/Spacer';
 
 export type TAddLink = (titre: string, url: string) => Promise<boolean>;
 
-export type TAddPreuveLienProps = {
+export type TAddLinkProps = {
   onAddLink: TAddLink;
   onClose: () => void;
 };
@@ -31,7 +31,7 @@ const validation = Yup.object({
     .required('Merci de renseigner un lien'),
 });
 
-export const AddPreuveLien = (props: TAddPreuveLienProps) => {
+export const AddLink = (props: TAddLinkProps) => {
   const {onClose, onAddLink} = props;
 
   const onSubmit = ({titre, url}: TPreuveLienParams) => {
@@ -46,7 +46,7 @@ export const AddPreuveLien = (props: TAddPreuveLienProps) => {
     >
       {({values, isValid}) => {
         return (
-          <Form data-test="AddPreuveLien">
+          <Form data-test="AddLink">
             <div className="fr-form-group">
               <fieldset className="fr-fieldset">
                 <div className="fr-fieldset__content"></div>
