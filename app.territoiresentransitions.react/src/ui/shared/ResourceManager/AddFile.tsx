@@ -1,5 +1,5 @@
 /**
- * Affiche le sélecteur de fichiers preuves
+ * Affiche le composant d'upload de fichiers
  */
 import {File as InputFile} from '@dataesr/react-dsfr';
 import {useCollectiviteBucketFiles} from 'core-logic/hooks/preuve';
@@ -12,7 +12,7 @@ import {UploadStatus, UploadStatusCode} from './Uploader.d';
 
 export type TAddFileFromLib = (filename: string) => Promise<boolean>;
 
-export type TAddPreuveFichierProps = {
+export type TAddFileProps = {
   /** Fichiers initialement sélectionnés (pour les tests) */
   initialSelection?: Array<TFileItem>;
   onAddFileFromLib: TAddFileFromLib;
@@ -22,7 +22,7 @@ export type TAddPreuveFichierProps = {
 const getFileByName = (fileName: string, selection: Array<TFileItem>): number =>
   selection.findIndex(({file}) => file.name === fileName);
 
-export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
+export const AddFile = (props: TAddFileProps) => {
   const {initialSelection, onAddFileFromLib, onClose} = props;
   const [currentSelection, setCurrentSelection] = useState<Array<TFileItem>>(
     initialSelection || []
@@ -76,7 +76,7 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
   };
 
   return (
-    <form data-test="AddPreuveFichier" onSubmit={onSubmit}>
+    <form data-test="AddFile" onSubmit={onSubmit}>
       <InputFile
         label="Ajouter un ou plusieurs fichier(s)"
         hint={HINT}

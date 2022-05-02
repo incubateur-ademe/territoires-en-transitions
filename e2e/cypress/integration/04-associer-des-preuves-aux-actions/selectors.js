@@ -6,7 +6,7 @@ export const LocalSelectors = {
     },
   },
   'formulaire Lien': {
-    selector: '[data-test=AddPreuveDlg] [data-test=AddPreuveLien]',
+    selector: '[data-test=AddPreuveDlg] [data-test=AddLink]',
     children: {
       titre: 'input[name=titre]',
       lien: 'input[name=url]',
@@ -14,7 +14,7 @@ export const LocalSelectors = {
     },
   },
   'formulaire Fichier': {
-    selector: '[data-test=AddPreuveDlg] [data-test=AddPreuveFichier]',
+    selector: '[data-test=AddPreuveDlg] [data-test=AddFile]',
     children: {
       Ajouter: 'button[type=submit]',
     },
