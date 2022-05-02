@@ -67,7 +67,7 @@ reponse(dechets_2, NON)
 Pour les collectivités n'ayant pas la compétence "traitement des déchets", le score de l'action 2.3. est réduit à 0 et les statuts sont "non concerné".
    
 
-# Désactivation eci_2.4.0 liee collecte dechets
+# Désactivation eci_2.4 liee collecte dechets
 ```yaml
 action_id: eci_2.4
 ```
