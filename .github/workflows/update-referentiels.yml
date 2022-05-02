@@ -13,37 +13,35 @@ jobs:
   update-referentiels:
     name: Business updates referentiel from markdowns
     runs-on: ubuntu-latest
-    env:
-      SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
-      SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
 
     steps:
       # cf. https://github.com/actions/checkout
       - uses: actions/checkout@v2
 
-      # Copy all projet .sample.env into .env with the variables
-      - name: Make .env files
-        run: sh make_dot_env.sh
-
       # Execute CLI on local datalayer if branch not in [upcoming-sandbox, upcoming-production]
       - name: Execute parsing scripts to update the test DataLayer inside docker-compose.
         if: ${{ github.ref != 'refs/heads/upcoming_sandbox' && github.ref != 'refs/heads/upcoming_production'}}
-        run: docker-compose run business-update-content
+        run: sh make_dot_env.sh && docker-compose run business-update-content
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
+          SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
 
       # Execute CLI locally on sandbox datalayer
       - name: Execute parsing scripts to update DataLayer on Supabase Sandbox
         if: ${{ github.ref == 'refs/heads/upcoming_sandbox'}}
-        run: docker-compose run --no-deps business-update-content
+        run: sh make_dot_env.sh && docker-compose run --no-deps business-update-content
         env:
-          SUPABASE_KEY: ${{secrets.SANDBOX_SUPABASE_KEY}}
+          SUPABASE_SERVICE_ROLE_KEY: ${{secrets.SANDBOX_SUPABASE_KEY}}
+          SUPABASE_ANNON_KEY: ${{secrets.SANDBOX_SUPABASE_KEY}}
           SUPABASE_URL: https://xbrefnclajfcjlpnwyow.supabase.co
           SUPABASE_WS: ws://xbrefnclajfcjlpnwyow.supabase.co
 
       # Execute CLI locally on production datalayer
       - name: Execute parsing scripts to update DataLayer on Supabase Production
         if: ${{ github.ref == 'refs/heads/upcoming_production'}}
-        run: docker-compose run --no-deps business-update-content
+        run: sh make_dot_env.sh && docker-compose run --no-deps business-update-content
         env:
-          SUPABASE_KEY: ${{secrets.PRODUCTION_SUPABASE_KEY}}
+          SUPABASE_SERVICE_ROLE_KEY: ${{secrets.PRODUCTION_SUPABASE_KEY}}
+          SUPABASE_ANNON_KEY: ${{secrets.PRODUCTION_SUPABASE_KEY}}
           SUPABASE_URL: https://rlarzronkgoyvtdkltqy.supabase.co
           SUPABASE_WS: ws://rlarzronkgoyvtdkltqy.supabase.co
