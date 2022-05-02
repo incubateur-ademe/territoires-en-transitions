@@ -1,5 +1,4 @@
 import {FileObject} from '@supabase/storage-js';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {TFileItem} from './FileItem';
 import {UploadStatusCode, UploadErrorCode} from './Uploader.d';
 import {MAX_FILE_SIZE_BYTES, EXPECTED_FORMATS} from './constants';
@@ -9,7 +8,6 @@ import {MAX_FILE_SIZE_BYTES, EXPECTED_FORMATS} from './constants';
  * pour l'onglet "Fichier" du dialogue "Ajouter une preuve"
  */
 export const filesToUploadList = (
-  action: ActionDefinitionSummary,
   files: FileList | null,
   bucketFiles: FileObject[]
 ): TFileItem[] => {
@@ -21,37 +19,24 @@ export const filesToUploadList = (
     const normalizedFile = normalizeFileName(file);
     const duplicateErr = isDuplicate(normalizedFile, bucketFiles);
     if (duplicateErr) {
-      return createItemFailed(
-        action,
-        normalizedFile,
-        UploadErrorCode.duplicateError
-      );
+      return createItemFailed(normalizedFile, UploadErrorCode.duplicateError);
     }
 
     const sizeErr = !isValidFileSize(normalizedFile);
     const formatErr = !isValidFileFormat(normalizedFile);
     if (formatErr && sizeErr) {
       return createItemFailed(
-        action,
         normalizedFile,
         UploadErrorCode.formatAndSizeError
       );
     }
     if (formatErr) {
-      return createItemFailed(
-        action,
-        normalizedFile,
-        UploadErrorCode.formatError
-      );
+      return createItemFailed(normalizedFile, UploadErrorCode.formatError);
     }
     if (sizeErr) {
-      return createItemFailed(
-        action,
-        normalizedFile,
-        UploadErrorCode.sizeError
-      );
+      return createItemFailed(normalizedFile, UploadErrorCode.sizeError);
     }
-    return createItemRunning(action, normalizedFile);
+    return createItemRunning(normalizedFile);
   });
 };
 
@@ -66,12 +51,7 @@ const filesToArray = (files: FileList): File[] => {
 };
 
 // représente un fichier en erreur (pb de taille, de format, etc.)
-const createItemFailed = (
-  action: ActionDefinitionSummary,
-  file: File,
-  error: UploadErrorCode
-): TFileItem => ({
-  actionId: action.id,
+const createItemFailed = (file: File, error: UploadErrorCode): TFileItem => ({
   file,
   status: {
     code: UploadStatusCode.failed,
@@ -80,11 +60,7 @@ const createItemFailed = (
 });
 
 // représente un fichier dont l'upload va démarrer
-const createItemRunning = (
-  action: ActionDefinitionSummary,
-  file: File
-): TFileItem => ({
-  actionId: action.id,
+const createItemRunning = (file: File): TFileItem => ({
   // normalise le nom du fichier pour contourner la limitation de storage-api
   // Ref: https://github.com/supabase/storage-api/issues/133
   file,
