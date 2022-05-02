@@ -2,20 +2,20 @@
  * Affiche le sélecteur de fichiers preuves
  */
 import {File as InputFile} from '@dataesr/react-dsfr';
-import {preuveFichierWriteEndpoint} from 'core-logic/api/endpoints/PreuveFichierWriteEndpoint';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useCollectiviteBucketFiles} from 'core-logic/hooks/preuve';
 import {ChangeEvent, FormEvent, useState} from 'react';
-import {TActionPreuvePanelProps} from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import {HINT, EXPECTED_FORMATS_LIST} from './constants';
 import {filesToUploadList} from './filesToUploadList';
 import {TFileItem} from './FileItem';
 import {FileItemsList} from './FileItemsList';
 import {UploadStatus, UploadStatusCode} from './Uploader.d';
 
-export type TAddPreuveFichierProps = TActionPreuvePanelProps & {
+export type TAddFileFromLib = (filename: string) => Promise<boolean>;
+
+export type TAddPreuveFichierProps = {
   /** Fichiers initialement sélectionnés (pour les tests) */
   initialSelection?: Array<TFileItem>;
+  onAddFileFromLib: TAddFileFromLib;
   onClose: () => void;
 };
 
@@ -23,11 +23,10 @@ const getFileByName = (fileName: string, selection: Array<TFileItem>): number =>
   selection.findIndex(({file}) => file.name === fileName);
 
 export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
-  const {initialSelection, onClose, action} = props;
+  const {initialSelection, onAddFileFromLib, onClose} = props;
   const [currentSelection, setCurrentSelection] = useState<Array<TFileItem>>(
     initialSelection || []
   );
-  const collectivite_id = useCollectiviteId();
   const {bucketFiles} = useCollectiviteBucketFiles();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +34,7 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
     if (files) {
       setCurrentSelection([
         ...currentSelection,
-        ...filesToUploadList(action, files, bucketFiles),
+        ...filesToUploadList(files, bucketFiles),
       ]);
     }
   };
@@ -69,20 +68,11 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (collectivite_id) {
-      Promise.all(
-        validFiles.map(({actionId, file}) =>
-          preuveFichierWriteEndpoint.save({
-            action_id: actionId,
-            collectivite_id,
-            commentaire: '',
-            filename: file.name,
-          })
-        )
-      ).then(() => {
+    Promise.all(validFiles.map(({file}) => onAddFileFromLib(file.name))).then(
+      () => {
         onClose();
-      });
-    }
+      }
+    );
   };
 
   return (
@@ -96,7 +86,6 @@ export const AddPreuveFichier = (props: TAddPreuveFichierProps) => {
         //disabled={isLoading}
       />
       <FileItemsList
-        actionId={action.id}
         items={currentSelection}
         onRunningStopped={onRunningStopped}
         onRemoveFailed={onRemoveFailed}
