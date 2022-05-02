@@ -4,13 +4,13 @@
 
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
-import {preuveLienWriteEndpoint} from 'core-logic/api/endpoints/PreuveLienWriteEndpoint';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Spacer} from 'ui/shared/Spacer';
-import {TActionPreuvePanelProps} from '../ActionPreuvePanel/ActionPreuvePanel';
 
-export type TAddPreuveLienProps = TActionPreuvePanelProps & {
+export type TAddLink = (titre: string, url: string) => Promise<boolean>;
+
+export type TAddPreuveLienProps = {
+  onAddLink: TAddLink;
   onClose: () => void;
 };
 
@@ -32,22 +32,10 @@ const validation = Yup.object({
 });
 
 export const AddPreuveLien = (props: TAddPreuveLienProps) => {
-  const {onClose, action} = props;
-
-  const collectivite_id = useCollectiviteId();
+  const {onClose, onAddLink} = props;
 
   const onSubmit = ({titre, url}: TPreuveLienParams) => {
-    if (collectivite_id) {
-      preuveLienWriteEndpoint
-        .save({
-          action_id: action.id,
-          collectivite_id,
-          titre,
-          url,
-          commentaire: '',
-        })
-        .then(onClose);
-    }
+    onAddLink(titre, url).then(onClose);
   };
 
   return (
