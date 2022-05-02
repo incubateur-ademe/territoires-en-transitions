@@ -4,10 +4,10 @@ import {
   UploadStatusCode,
   UploadStatusRunning,
   UploadStatusFailed,
-} from './Uploader.d';
-import {useUploader} from './useUploader';
-import {ButtonClose} from '../../SmallIconButton';
-import {ProgressBar} from '../../ProgressBar';
+} from 'ui/shared/ResourceManager/Uploader.d';
+import {useUploader} from 'ui/shared/ResourceManager/useUploader';
+import {ButtonClose} from 'ui/shared/SmallIconButton';
+import {ProgressBar} from 'ui/shared/ProgressBar';
 
 export type TFileItem = {
   /** Fichier concerné */
