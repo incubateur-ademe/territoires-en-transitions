@@ -1,34 +1,11 @@
 begin;
 select plan(6);
 
+select has_function('labellisation', 'referentiel_score'::name);
+select has_function('labellisation', 'etoiles'::name);
+select has_function('labellisation_parcours');
+
 truncate action_statut;
-
------------------
--- Critère 1.1 --
------------------
-select ok((select labellisation.critere_1_1(1, 'cae') = false),
-          'La collectivité 1 n''a pas renseigné tout les statuts cae');
-
--- insert tout les statuts cae
-insert into action_statut
-select 1, id, 'fait', null, true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'
-from action_relation
-where referentiel = 'cae';
-
-select ok((select labellisation.critere_1_1(1, 'cae')),
-          'La collectivité 1 a renseigné tout les statuts cae');
-
-select ok((select labellisation.critere_1_1(1, 'eci') = false),
-          'La collectivité 1 n''a pas renseigné tout les statuts eci');
-
--- insert tout les statuts eci
-insert into action_statut
-select 1, id, 'fait', null, true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'
-from action_relation
-where referentiel = 'eci';
-
-select ok((select labellisation.critere_1_1(1, 'eci')),
-          'La collectivité 1 a renseigné tout les statuts eci');
 
 -- insert faked client scores, sort of.
 truncate client_scores;
@@ -36,14 +13,23 @@ insert into client_scores
 select 1,
        ar.referentiel,
        jsonb_agg(jsonb_build_object(
+               'concerne', true,
                'action_id', ar.action_id,
+               'desactive', false,
+               'point_fait', 2,
                'referentiel', ar.referentiel,
-               'point_fait', 10,
-               'point_programme', .0,
-               'point_potentiel', 10,
-               'point_referentiel', 10,
+               'point_pas_fait', 0.0,
+               'point_potentiel', 2,
+               'point_programme', 0.0,
+               'point_referentiel', 2,
+               'total_taches_count', 1,
+               'point_non_renseigne', 0,
+               'point_potentiel_perso', null,
                'completed_taches_count', 1,
-               'total_taches_count', 1
+               'fait_taches_avancement', 1,
+               'pas_fait_taches_avancement', 0,
+               'programme_taches_avancement', 0,
+               'pas_concerne_taches_avancement', 0
            )),
        now()
 from action_definition ar
@@ -65,5 +51,14 @@ select ok((select etoile_labellise = '1'
            from labellisation.etoiles(1)
            where referentiel = 'eci'),
           'Labellisation étoiles function should output correct state for test data.');
+
+select ok((select etoiles = '5'
+                      and completude_ok
+                      and rempli
+                      and calendrier is not null
+                      and derniere_demande is null
+           from labellisation_parcours(1)
+           where referentiel = 'eci'),
+          'Labellisation parcours function should output correct state for test data.');
 
 rollback;
