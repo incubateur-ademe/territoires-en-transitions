@@ -7,6 +7,57 @@ select has_function('labellisation_parcours');
 
 truncate action_statut;
 
+
+create or replace function
+    score_gen(
+    fait action_id[],
+    programme action_id[]
+)
+    returns table
+            (
+                concerne                       boolean,
+                action_id                      action_id,
+                desactive                      boolean,
+                referentiel                    referentiel,
+                point_fait                     float,
+                point_pas_fait                 float,
+                point_potentiel                float,
+                point_programme                float,
+                point_referentiel              float,
+                total_taches_count             float,
+                point_non_renseigne            float,
+                point_potentiel_perso          float,
+                completed_taches_count         float,
+                fait_taches_avancement         float,
+                pas_fait_taches_avancement     float,
+                programme_taches_avancement    float,
+                pas_concerne_taches_avancement float
+            )
+as
+$$
+select true  as concerne,
+       ar.action_id,
+       false as desactive,
+       ar.referentiel,
+       1     as point_fait,
+       1     as point_pas_fait,
+       1     as point_potentiel,
+       1     as point_programme,
+       1     as point_referentiel,
+       1     as total_taches_count,
+       1     as point_non_renseigne,
+       1     as point_potentiel_perso,
+       1     as completed_taches_count,
+       1     as fait_taches_avancement,
+       1     as pas_fait_taches_avancement,
+       1     as programme_taches_avancement,
+       1     as pas_concerne_taches_avancement
+from action_definition ar
+$$ language sql;
+comment on function score_gen is
+    '';
+
+
 -- insert faked client scores, sort of.
 truncate client_scores;
 insert into client_scores

@@ -1,6 +1,7 @@
 create schema if not exists labellisation;
 comment on schema labellisation is
     'Regroupe les éléments hors API qui permettent de déterminer la possibilité d''accéder à une demande d''audit.';
+grant usage on schema labellisation to postgres, anon, authenticated, service_role;
 
 
 create type labellisation.etoile as enum ('1', '2', '3', '4', '5');
@@ -70,7 +71,7 @@ create table if not exists labellisation_calendrier
     information text not null
 );
 comment on table labellisation_calendrier is
-    'La description du champ fichier pour chaque palier.';
+    'La description du champ calendrier pour chaque palier.';
 
 
 alter table labellisation_calendrier
@@ -233,6 +234,7 @@ comment on function labellisation.criteres is
 create table labellisation_demande
 (
     id              serial primary key,
+    en_cours        boolean,
     collectivite_id integer references collectivite not null,
     referentiel     referentiel                     not null,
     etoiles         labellisation.etoile            not null,
@@ -244,13 +246,14 @@ create or replace function
     labellisation_parcours(collectivite_id integer)
     returns table
             (
-                referentiel      referentiel,
-                etoiles          labellisation.etoile,
-                completude_ok    boolean,
-                criteres         jsonb,
-                rempli           boolean,
-                calendrier       text,
-                derniere_demande jsonb
+                referentiel            referentiel,
+                etoiles                labellisation.etoile,
+                completude_ok          boolean,
+                criteres               jsonb,
+                rempli                 boolean,
+                calendrier             text,
+                derniere_demande       jsonb,
+                derniere_labellisation jsonb
             )
 as
 $$
@@ -283,6 +286,12 @@ select e.referentiel,
            when demande.etoiles is null
                then null
            else jsonb_build_object('demandee_le', demande.date, 'etoiles', demande.etoiles)
+           end,
+
+       case
+           when obtention.etoiles is null
+               then null
+           else jsonb_build_object('obtenue_le', obtention.date, 'etoiles', obtention.etoiles)
            end
 
 from labellisation.etoiles(labellisation_parcours.collectivite_id) as e
@@ -295,8 +304,12 @@ from labellisation.etoiles(labellisation_parcours.collectivite_id) as e
                             from labellisation_demande ld
                             where ld.collectivite_id = labellisation_parcours.collectivite_id
                               and ld.referentiel = e.referentiel) demande on true
+         left join lateral (select l.obtenue_le as date, l.etoiles
+                            from labellisation l
+                            where l.collectivite_id = labellisation_parcours.collectivite_id
+                              and l.referentiel = e.referentiel) obtention on true
 
 $$
-    language sql;
+    language sql security definer ;
 comment on function labellisation_parcours is
     'Renvoie le parcours de labellisation de chaque référentiel pour une collectivité donnée.';
