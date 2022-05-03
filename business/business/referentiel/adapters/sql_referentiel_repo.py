@@ -1,6 +1,7 @@
 import os
 from typing import List
 from pathlib import Path
+from business.referentiel.domain.models.action_relation import ActionRelation
 from business.referentiel.domain.models.personnalisation import (
     ActionPersonnalisationRegles,
 )
@@ -32,10 +33,10 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
     def add_referentiel_actions(
         self,
         definitions: List[ActionDefinition],
-        children: List[ActionChildren],
+        relations: List[ActionRelation],
         points: List[ActionComputedPoint],
     ):
-        super().add_referentiel_actions(definitions, children, points)
+        super().add_referentiel_actions(definitions, relations, points)
         self.actions_to_sql()
 
     def add_indicateurs(

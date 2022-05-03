@@ -1,11 +1,13 @@
 from typing import Optional
 
 from business.referentiel.domain.models import events
+from business.referentiel.domain.models.action_relation import ActionRelation
 from business.utils.domain_message_bus import (
     AbstractDomainMessageBus,
 )
 from business.referentiel.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
+    children_to_relations,
 )
 
 from business.utils.use_case import UseCase
@@ -32,17 +34,10 @@ class StoreReferentielActions(UseCase):
             self.bus.publish_event(failure_event)
             return
 
-        existing_action_ids = [
-            children.action_id
-            for children in self.referentiel_repo.get_all_children_from_referentiel(
-                trigger.referentiel
-            )
-        ]
+        existing_action_ids = self.referentiel_repo.get_all_action_ids(
+            trigger.referentiel
+        )
 
-        # TODO : this should be transactionnal !
-        # Question : Should it be only one port AbstractReferentielRepo, with a method that takes those three arguments ?
-        # try:
-        # Add new actions
         ids_of_new_actions = [
             children.action_id
             for children in trigger.children
@@ -50,7 +45,20 @@ class StoreReferentielActions(UseCase):
         ]
 
         print("New actions : ", ids_of_new_actions)
-
+        new_relations = []
+        for children_entity in trigger.children:
+            for child_id in children_entity.children:
+                if (
+                    child_id in ids_of_new_actions
+                    or children_entity.action_id in ids_of_new_actions
+                ):
+                    new_relations.append(
+                        ActionRelation(
+                            children_entity.referentiel,
+                            child_id,
+                            children_entity.action_id,
+                        )
+                    )
         if ids_of_new_actions:
             self.referentiel_repo.add_referentiel_actions(
                 [
@@ -58,11 +66,7 @@ class StoreReferentielActions(UseCase):
                     for definition in trigger.definitions
                     if definition.action_id in ids_of_new_actions
                 ],
-                [
-                    children
-                    for children in trigger.children
-                    if children.action_id in ids_of_new_actions
-                ],
+                new_relations,
                 [
                     point
                     for point in trigger.points
@@ -86,9 +90,6 @@ class StoreReferentielActions(UseCase):
         self.bus.publish_event(
             events.ReferentielActionsStored(referentiel=trigger.referentiel)
         )
-        # except Exception as storing_error:  # TODO : Should be a more precise error
-        #     print("Storing error : ", storing_error)
-        #     self.bus.publish_event(events.ReferentielStorageFailed(str(storing_error)))
 
     def fail_if_entities_are_inconsistent(self) -> Optional[events.DomainFailureEvent]:
         # check same number of entities

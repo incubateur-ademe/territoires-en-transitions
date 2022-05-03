@@ -2,6 +2,7 @@ from typing import List, Optional
 from dataclasses import asdict
 
 import marshmallow_dataclass
+from business.referentiel.domain.models.action_relation import ActionRelation
 
 from business.referentiel.domain.models.personnalisation import (
     ActionPersonnalisationRegles,
@@ -111,10 +112,45 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
     def add_referentiel_actions(
         self,
         definitions: List[ActionDefinition],
-        children: List[ActionChildren],
+        relations: List[ActionRelation],
         points: List[ActionComputedPoint],
     ):
-        raise NotImplementedError
+        self.client.rpc.call(
+            supabase_names.rpc.insert_actions,
+            relations=[
+                {
+                    "id": relation.id,
+                    "referentiel": relation.referentiel,
+                    "parent": relation.parent,
+                }
+                for relation in relations
+            ],
+            definitions=[
+                {
+                    "action_id": definition.action_id,
+                    "referentiel": definition.referentiel,
+                    "identifiant": definition.identifiant,
+                    "nom": definition.nom,
+                    "description": definition.description,
+                    "contexte": definition.contexte,
+                    "exemples": definition.exemples,
+                    "preuve": definition.preuve,
+                    "ressources": definition.ressources,
+                    "perimetre_evaluation": definition.perimetre_evaluation,
+                    "reduction_potentiel": definition.reduction_potentiel,
+                    "points": definition.points,
+                    "pourcentage": definition.pourcentage,
+                }
+                for definition in definitions
+            ],
+            computed_points=[
+                {
+                    "action_id": point.action_id,
+                    "value": point.value,
+                }
+                for point in points
+            ],
+        )
 
     def upsert_indicateurs(
         self,

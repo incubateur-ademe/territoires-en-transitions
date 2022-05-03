@@ -1,6 +1,6 @@
 from copy import deepcopy, copy
 import logging
-from typing import Dict, List, Optional, overload
+from typing import Dict, List, Optional
 
 
 from business.evaluation.domain.models import events

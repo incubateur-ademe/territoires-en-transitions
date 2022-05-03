@@ -3,6 +3,8 @@ from business.evaluation.adapters import supabase_names
 from business.referentiel.adapters.supabase_referentiel_repo import (
     SupabaseReferentielRepository,
 )
+from business.referentiel.domain.models.action_children import ActionChildren
+from business.referentiel.domain.models.action_relation import ActionRelation
 from business.referentiel.domain.models.personnalisation import (
     ActionPersonnalisationRegles,
     Regle,
@@ -10,6 +12,7 @@ from business.referentiel.domain.models.personnalisation import (
 from business.referentiel.domain.models.question import Choix, Question
 from business.utils.action_id import ActionId
 from tests.utils.referentiel_factory import (
+    make_action_children,
     make_action_definition,
     make_action_points,
     make_indicateur,
@@ -318,3 +321,45 @@ def test_can_replace_and_retrieve_referentiel_personnalisations(
         {"action_id": f"eq.{action_id}"},
     )
     assert len(regles) == 2
+
+
+def test_can_insert_actions(
+    supabase_referentiel_repo: SupabaseReferentielRepository,
+    supabase_client: SupabaseClient,
+):
+    action_id = ActionId("testCREATE")
+    referentiel = "eci"
+
+    # Act :
+    action_def = make_action_definition(
+        action_id=action_id,
+        referentiel=referentiel,
+        description="description",
+        reduction_potentiel="reduction",
+        perimetre_evaluation="perimetre",
+    )
+    action_point = make_action_points(action_id=action_id, points=42)
+    action_relation = ActionRelation("eci", action_id, None)
+
+    supabase_referentiel_repo.add_referentiel_actions(
+        [action_def], [action_relation], [action_point]
+    )
+
+    # Assert :
+    # 1. check that the definition exist in DB
+    defs = supabase_client.db.get_by(
+        supabase_names.tables.action_definition,
+        {"action_id": f"eq.{action_id}"},
+    )
+    assert len(defs) == 1
+    assert defs[0]["description"] == action_def.description
+    assert defs[0]["reduction_potentiel"] == action_def.reduction_potentiel
+    assert defs[0]["perimetre_evaluation"] == action_def.perimetre_evaluation
+
+    # 2. check that the point exist in DB
+    points = supabase_client.db.get_by(
+        supabase_names.tables.action_computed_points,
+        {"action_id": f"eq.{action_id}"},
+    )
+    assert len(points) == 1
+    assert points[0]["value"] == action_point.value

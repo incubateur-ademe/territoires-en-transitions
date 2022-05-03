@@ -4,6 +4,8 @@ import json
 from business.referentiel.adapters.json_referentiel_repo import (
     JsonReferentielRepository,
 )
+from business.referentiel.domain.models.action_relation import ActionRelation
+from business.utils.action_id import ActionId
 from tests.utils.referentiel_factory import (
     make_action_children,
     make_action_definition,
@@ -28,12 +30,12 @@ def test_can_add_actions_to_repo():
         make_action_points(action_id="eci", points=10),
         make_action_points(action_id="eci_1", points=10),
     ]
-    children_entities = [
-        make_action_children(action_id="eci", children_ids=["eci_1"]),
-        make_action_children(action_id="eci_1", children_ids=[]),
+    children_relations = [
+        ActionRelation("eci", ActionId("eci"), None),
+        ActionRelation("eci", ActionId("eci_1"), ActionId("eci")),
     ]
     repo.add_referentiel_actions(
-        definition_entities, children_entities, points_entities
+        definition_entities, children_relations, points_entities
     )
 
     with open(path, "r") as f:
@@ -43,7 +45,7 @@ def test_can_add_actions_to_repo():
     serialized_actions = serialized_repo["actions"]
     assert "eci" in serialized_actions
     assert len(serialized_actions["eci"]["definitions"]) == 2
-    assert len(serialized_actions["eci"]["children"]) == 2
+    assert len(serialized_actions["eci"]["children"]) == 1
     assert len(serialized_actions["eci"]["points"]) == 2
 
 

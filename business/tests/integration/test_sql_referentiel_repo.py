@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from business.referentiel.adapters.sql_referentiel_repo import SqlReferentielRepository
+from business.referentiel.domain.models.action_relation import ActionRelation
 from business.referentiel.domain.models.question import Choix, Question
 from business.utils.action_id import ActionId
 from tests.utils.files import remove_file, mkdir
@@ -25,15 +26,15 @@ def test_can_add_referentiel_actions():
     )
     definition_ref_1 = make_action_definition(action_id="ref_1", referentiel="eci")
 
-    children_ref = make_action_children(action_id="ref", children_ids=["ref_1"])
-    children_ref_1 = make_action_children(action_id="ref_1", children_ids=[])
+    children_relation = ActionRelation("eci", ActionId("ref"), None)
+    children_relation_1 = ActionRelation("eci", ActionId("ref_1"), ActionId("ref"))
 
     points_ref = make_action_points(action_id="ref", points=500)
     points_ref_1 = make_action_points(action_id="ref_1", points=300)
 
     repo.add_referentiel_actions(
         definitions=[definition_ref, definition_ref_1],
-        children=[children_ref, children_ref_1],
+        relations=[children_relation, children_relation_1],
         points=[points_ref, points_ref_1],
     )
 
