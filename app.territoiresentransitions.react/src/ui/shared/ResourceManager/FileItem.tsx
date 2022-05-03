@@ -4,7 +4,7 @@ import {
   UploadStatusCode,
   UploadStatusRunning,
   UploadStatusFailed,
-} from 'ui/shared/ResourceManager/Uploader.d';
+} from 'ui/shared/ResourceManager/types';
 import {useUploader} from 'ui/shared/ResourceManager/useUploader';
 import {ButtonClose} from 'ui/shared/SmallIconButton';
 import {ProgressBar} from 'ui/shared/ProgressBar';
