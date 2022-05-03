@@ -1,6 +1,6 @@
 import {FileObject} from '@supabase/storage-js';
 import {TFileItem} from './FileItem';
-import {UploadStatusCode, UploadErrorCode} from './Uploader.d';
+import {UploadStatusCode, UploadErrorCode} from './types';
 import {MAX_FILE_SIZE_BYTES, EXPECTED_FORMATS} from './constants';
 
 /**

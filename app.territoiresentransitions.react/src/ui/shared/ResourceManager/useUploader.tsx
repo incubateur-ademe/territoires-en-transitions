@@ -6,7 +6,7 @@ import {
   UploadErrorCode,
   UploadStatus,
   UploadStatusCode,
-} from './Uploader.d';
+} from './types';
 import {ChangeNotifier} from 'core-logic/api/reactivity';
 import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
