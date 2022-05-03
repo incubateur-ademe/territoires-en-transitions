@@ -14,6 +14,7 @@ from business.personnalisation.ports.personnalisation_repo import (
 )
 from business.referentiel.domain.ports.referentiel_repo import (
     InMemoryReferentielRepository,
+    children_to_relations,
 )
 from business.evaluation.domain.ports.action_status_repo import (
     InMemoryActionStatutRepository,
@@ -66,7 +67,7 @@ referentiel_repo.add_referentiel_actions(
         ]
     ],
     points=action_points,
-    children=action_childrens,
+    relations=children_to_relations(action_childrens),
 )
 
 
@@ -805,7 +806,7 @@ deeper_referentiel.add_referentiel_actions(
         ]
     ],
     points=action_points,
-    children=action_childrens,
+    relations=children_to_relations(action_childrens),
 )
 
 

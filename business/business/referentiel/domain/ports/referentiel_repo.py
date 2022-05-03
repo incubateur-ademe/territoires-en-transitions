@@ -2,7 +2,7 @@ import abc
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
-import marshmallow_dataclass
+from business.referentiel.domain.models.action_relation import ActionRelation
 
 from business.referentiel.domain.models.personnalisation import (
     ActionPersonnalisationRegles,
@@ -25,7 +25,7 @@ class AbstractReferentielRepository(abc.ABC):
     def add_referentiel_actions(
         self,
         definitions: List[ActionDefinition],
-        children: List[ActionChildren],
+        relations: List[ActionRelation],
         points: List[ActionComputedPoint],
     ):
         raise NotImplementedError
@@ -122,13 +122,15 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         self._personnalisations: List[ActionPersonnalisationRegles] = []
         if children_entities and definition_entities and points_entities:
             self.add_referentiel_actions(
-                definition_entities, children_entities, points_entities
+                definition_entities,
+                children_to_relations(children_entities),
+                points_entities,
             )
 
     def add_referentiel_actions(
         self,
         definitions: List[ActionDefinition],
-        children: List[ActionChildren],
+        relations: List[ActionRelation],
         points: List[ActionComputedPoint],
     ):
         if not definitions:  # No entity to add
@@ -137,7 +139,7 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         if referentiel not in self._actions_by_ref:
             self._actions_by_ref[referentiel] = ReferentielEntities([], [], [])
         self._actions_by_ref[referentiel].definitions += definitions
-        self._actions_by_ref[referentiel].children += children
+        self._actions_by_ref[referentiel].children += relations_to_children(relations)
         self._actions_by_ref[referentiel].points += points
 
     def get_all_definitions_from_referentiel(
@@ -240,3 +242,27 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         self,
     ) -> List[ActionPersonnalisationRegles]:
         return self._personnalisations
+
+
+def children_to_relations(
+    action_children: List[ActionChildren],
+) -> List[ActionRelation]:
+    relations = []
+    for children in action_children:
+        for child_id in children.children:
+            relations.append(
+                ActionRelation(children.referentiel, child_id, children.action_id)
+            )
+    return relations
+
+
+def relations_to_children(relations: List[ActionRelation]) -> List[ActionChildren]:
+    children_by_action_id = {
+        relation.parent: ActionChildren(relation.referentiel, relation.parent, [])
+        for relation in relations
+        if relation.parent
+    }
+    for relation in relations:
+        if relation.parent:
+            children_by_action_id[relation.parent].children.append(relation.id)
+    return list(children_by_action_id.values())
