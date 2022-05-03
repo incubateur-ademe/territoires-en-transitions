@@ -26,3 +26,22 @@ jobs:
       # Run test container.
       - name: Run pg_tap tests in docker compose
         run: docker-compose run datalayer-test
+
+  requests:
+    name: Datalayer api tests
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
+      SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # Copy all projet .sample.env into .env with the variables
+      - name: Make .env files
+        run: sh make_dot_env.sh
+
+      # Run test container.
+      - name: Run requests with restcli in docker compose
+        run: docker-compose run datalayer-api-test

@@ -190,6 +190,20 @@ services:
     volumes:
       - ./data_layer/tests:/tests
 
+  datalayer-api-test:
+    container_name: tet-datalayer-api-test
+    image: j4yf7o/restcli-node
+    depends_on:
+      - kong
+      - rest
+    profiles:
+      - donotstart
+    command: >
+      rest-cli requests/*.http -e docker
+    volumes:
+      - ./data_layer/requests:/requests
+      - ./data_layer/requests/http-client.env.json:/http-client.env.json
+
   rest:
     container_name: supabase-rest
     image: postgrest/postgrest:v9.0.0

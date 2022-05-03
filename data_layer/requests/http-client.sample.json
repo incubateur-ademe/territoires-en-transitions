@@ -1,8 +1,15 @@
 {
-  "local_test": {
+  "local": {
     "api": "http://localhost:8000",
-    "anon": "xx",
-    "service": "yy",
+    "anon": "${SUPABASE_ANON_KEY}",
+    "service": "${SUPABASE_SERVICE_ROLE_KEY}",
+    "yolo_mail": "yolo@dodo.com",
+    "yolo_pass": "yolododo"
+  },
+  "docker": {
+    "api": "http://kong:8000",
+    "anon": "${SUPABASE_ANON_KEY}",
+    "service": "${SUPABASE_SERVICE_ROLE_KEY}",
     "yolo_mail": "yolo@dodo.com",
     "yolo_pass": "yolododo"
   }

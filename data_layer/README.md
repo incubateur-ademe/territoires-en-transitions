@@ -26,6 +26,7 @@ Le Data-Layer est responsable des lectures/écritures en base, c'est à dire de:
 
 ### Lancer les tests en local
 
+#### Postgres
 Installer pg_prove (nécessite perl).
 
 ```shell
@@ -34,6 +35,12 @@ sudo cpan TAP::Parser::SourceHandler::pgTAP
 ```
 
 Puis utiliser `sh scripts/run_tests.sh`
+   
+### API
+Les tests dans http dans `/requests` peuvent être lancées soit :
+- directement depuis IntelliJ/Webstorm
+- depuis VSCode avec le plugin httpYac
+- à partir d'un terminal avec [restcli](https://github.com/restcli/restcli), qui est utilisé aussi dans docker-compose.
 
 ## Créer un projet sur Supabase
 Après la création du projet

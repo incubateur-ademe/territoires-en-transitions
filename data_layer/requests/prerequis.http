@@ -17,12 +17,20 @@ Content-Type: application/json
     client.global.set("auth_token", response.body['access_token']);
 %}
 
-### List owned collectivite
-POST {{api}}/rest/v1/rpc/collectivite_user_list
+
+### Get parcours as client
+POST {{api}}/rest/v1/rpc/labellisation_parcours
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
-  "id": 1
+  "collectivite_id": 1
 }
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
