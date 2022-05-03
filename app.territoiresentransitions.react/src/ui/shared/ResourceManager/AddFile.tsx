@@ -8,7 +8,7 @@ import {HINT, EXPECTED_FORMATS_LIST} from './constants';
 import {filesToUploadList} from './filesToUploadList';
 import {TFileItem} from './FileItem';
 import {FileItemsList} from './FileItemsList';
-import {UploadStatus, UploadStatusCode} from './Uploader.d';
+import {UploadStatus, UploadStatusCode} from './types';
 
 export type TAddFileFromLib = (filename: string) => Promise<boolean>;
 
