@@ -37,3 +37,27 @@ export type UploadStatus =
   | UploadStatusCompleted
   | UploadStatusFailed
   | UploadStatusAborted;
+
+export type Doc = DocFile | DocLink;
+export type DocFile = {
+  type: 'fichier';
+  filename: string;
+  bucket_id: string;
+  path: string;
+  commentaire: string;
+};
+export type DocLink = {
+  type: 'lien';
+  url: string;
+  titre: string;
+  commentaire: string;
+};
+
+export type TEditHandlers = {
+  remove: () => void;
+  update: () => void;
+  isEditingComment: boolean;
+  setEditingComment: (editing: boolean) => void;
+  updatedComment: string;
+  setUpdatedComment: (comment: string) => void;
+};
