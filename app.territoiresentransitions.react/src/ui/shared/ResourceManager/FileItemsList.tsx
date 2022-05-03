@@ -1,5 +1,5 @@
 import {FileItem, TFileItem} from './FileItem';
-import {UploadStatus, UploadStatusCode} from './Uploader.d';
+import {UploadStatus, UploadStatusCode} from './types';
 
 export type TFileItemsListProps = {
   items: Array<TFileItem>;
