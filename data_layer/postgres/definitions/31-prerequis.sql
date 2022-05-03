@@ -234,7 +234,7 @@ comment on function labellisation.criteres is
 create table labellisation_demande
 (
     id              serial primary key,
-    en_cours        boolean,
+    en_cours        boolean                         not null default true,
     collectivite_id integer references collectivite not null,
     referentiel     referentiel                     not null,
     etoiles         labellisation.etoile            not null,
@@ -325,6 +325,6 @@ from labellisation.etoiles(labellisation_parcours.collectivite_id) as e
                               and l.referentiel = e.referentiel) obtention on true
 
 $$
-    language sql security definer ;
+    language sql security definer;
 comment on function labellisation_parcours is
     'Renvoie le parcours de labellisation de chaque référentiel pour une collectivité donnée.';
