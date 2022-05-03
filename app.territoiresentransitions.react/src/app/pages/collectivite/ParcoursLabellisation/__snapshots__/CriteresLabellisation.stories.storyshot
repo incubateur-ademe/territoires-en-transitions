@@ -258,6 +258,45 @@ Array [
         }
       }
     />
+    <ul />
+    <button
+      className="fr-btn fr-btn--sm fr-btn--secondary"
+      data-test="AddDocsButton"
+      onClick={[Function]}
+    >
+      + Ajouter
+    </button>
+    <li
+      className="fr-mb-1w"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "Ajouter les documents officiels de candidature",
+        }
+      }
+    />
+    <ul>
+      <li
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "<b>Courrier d’acte de candidature</b> : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique Économie circulaire et coordonnées de la personne référente technique",
+          }
+        }
+      />
+      <li
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "<b>Arrêté préfectoral de création de l’EPCI</b> (Établissement public de coopération intercommunale)",
+          }
+        }
+      />
+    </ul>
+    <button
+      className="fr-btn fr-btn--sm fr-btn--secondary"
+      data-test="AddDocsButton"
+      onClick={[Function]}
+    >
+      + Ajouter
+    </button>
   </ul>,
 ]
 `;
