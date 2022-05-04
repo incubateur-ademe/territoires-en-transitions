@@ -195,6 +195,33 @@ comment on function labellisation.etoiles is
 
 
 create or replace function
+    labellisation.critere_score(collectivite_id integer)
+    returns table
+            (
+                referentiel      referentiel,
+                etoile_objectif  labellisation.etoile,
+                score_a_realiser float,
+                score_fait       float,
+                atteint          bool
+            )
+as
+$$
+with score as (select * from labellisation.referentiel_score(critere_score.collectivite_id))
+select e.referentiel,
+       e.etoile_objectif,
+       em.min_realise_score,
+       s.score_fait,
+       s.score_fait >= em.min_realise_score
+from labellisation.etoiles(critere_score.collectivite_id) as e
+         join labellisation.etoile_meta em on em.etoile = e.etoile_objectif
+         join score s on e.referentiel = s.referentiel
+$$
+    language sql;
+comment on function labellisation.critere_score is
+    'Renvoie le critère de score pour une collectivité donnée.';
+
+
+create or replace function
     labellisation.criteres(collectivite_id integer)
     returns table
             (
@@ -264,7 +291,8 @@ create or replace function
                 referentiel            referentiel,
                 etoiles                labellisation.etoile,
                 completude_ok          boolean,
-                criteres               jsonb,
+                critere_score          jsonb,
+                criteres_action        jsonb,
                 rempli                 boolean,
                 calendrier             text,
                 derniere_demande       jsonb,
@@ -272,47 +300,63 @@ create or replace function
             )
 as
 $$
-with criteres as (select c.referentiel,
-                         bool_and(c.atteint) as atteints,
-                         jsonb_agg(
-                                 jsonb_build_object(
-                                         'formulation', formulation,
-                                         'action_id', c.action_id,
-                                         'rempli', c.atteint,
-                                         'action_identifiant', ad.identifiant,
-                                     -- todo better prose.
-                                         'statut_ou_score', 'min programmé : ' ||
-                                                            c.min_score_programme ||
-                                                            ' min réalisé : ' ||
-                                                            c.min_score_realise
-                                     )
-                             )               as liste
-                  from labellisation.criteres(labellisation_parcours.collectivite_id) c
-                           join action_definition ad on c.action_id = ad.action_id
-                  group by c.referentiel)
+with criteres as (select *
+                  from (select c.referentiel,
+                               bool_and(c.atteint) as atteints,
+                               jsonb_agg(
+                                       jsonb_build_object(
+                                               'formulation', formulation,
+                                               'action_id', c.action_id,
+                                               'rempli', c.atteint,
+                                               'action_identifiant', ad.identifiant,
+                                               'statut_ou_score',
+                                               case
+                                                   when c.min_score_realise = 100 and c.min_score_programme is null
+                                                       then 'Fait'
+                                                   when c.min_score_realise = 100 and c.min_score_programme = 100
+                                                       then 'Programmé ou fait'
+                                                   when c.min_score_realise is not null and c.min_score_programme is null
+                                                       then c.min_score_realise || '% fait minimum'
+                                                   else c.min_score_realise || '% fait minimum ou ' ||
+                                                        c.min_score_programme || '% programmé minimum'
+                                                   end
+                                           )
+                                   )               as liste
+                        from labellisation.criteres(labellisation_parcours.collectivite_id) c
+                                 join action_definition ad on c.action_id = ad.action_id
+                        group by c.referentiel) ral)
 select e.referentiel,
        e.etoile_objectif,
-       rs.complet,
-       criteres.liste,
-       criteres.atteints,
+       rs.complet                             as completude_ok,
+
+       jsonb_build_object(
+               'score_a_realiser', cs.score_a_realiser,
+               'score_fait', cs.score_fait,
+               'atteint', cs.atteint,
+               'etoiles', cs.etoile_objectif) as critere_score,
+
+       criteres.liste                         as criteres_action,
+       criteres.atteints and cs.atteint       as rempli,
        calendrier.information,
 
        case
            when demande.etoiles is null
                then null
            else jsonb_build_object('demandee_le', demande.date, 'etoiles', demande.etoiles)
-           end,
+           end                                as derniere_demande,
 
        case
            when obtention.etoiles is null
                then null
            else jsonb_build_object('obtenue_le', obtention.date, 'etoiles', obtention.etoiles)
-           end
+           end                                as derniere_labellisation
 
 from labellisation.etoiles(labellisation_parcours.collectivite_id) as e
          join criteres on criteres.referentiel = e.referentiel
          left join labellisation.referentiel_score(labellisation_parcours.collectivite_id) rs
                    on rs.referentiel = e.referentiel
+         left join labellisation.critere_score(labellisation_parcours.collectivite_id) cs
+                   on cs.referentiel = e.referentiel
          left join labellisation_calendrier calendrier
                    on calendrier.referentiel = e.referentiel
          left join lateral (select ld.date, ld.etoiles
