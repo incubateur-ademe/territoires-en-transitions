@@ -43,6 +43,18 @@ Content-Type: application/json
     });
 %}
 
+### A. La liste de labellisation pour la collectivite 1
+GET {{api}}/rest/v1/labellisation_demande?collectivite_id=eq.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.length > 0)
+    });
+%}
+
 ### A. Retrieve bucket id for collectivite 1
 GET {{api}}/rest/v1/collectivite_bucket?collectivite_id=eq.1
 apikey: {{anon}}
