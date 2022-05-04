@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Critere Action 1`] = `
-Array [
+<ul>
   <li
     className="fr-mb-1w"
     dangerouslySetInnerHTML={
@@ -9,7 +9,7 @@ Array [
         "__html": "Être une collectivité engagée dans une politique Économie circulaire et le prouver (via les documents preuves ou un texte justificatif)",
       }
     }
-  />,
+  />
   <div
     className="critere-action-table fr-my-4w"
   >
@@ -230,12 +230,12 @@ Array [
         </tr>
       </tbody>
     </table>
-  </div>,
-]
+  </div>
+</ul>
 `;
 
 exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Critere Action Rempli 1`] = `
-Array [
+<ul>
   <li
     className="fr-mb-1w"
     dangerouslySetInnerHTML={
@@ -243,7 +243,7 @@ Array [
         "__html": "Être une collectivité engagée dans une politique Économie circulaire et le prouver (via les documents preuves ou un texte justificatif)",
       }
     }
-  />,
+  />
   <div
     className="critere-action-table fr-my-4w"
   >
@@ -500,12 +500,48 @@ Array [
         </tr>
       </tbody>
     </table>
-  </div>,
-]
+  </div>
+</ul>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Critere Fichier 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "Ajouter les documents officiels de candidature",
+      }
+    }
+  />
+  <ul>
+    <li
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "<b>Courrier d’acte de candidature</b> : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique Économie circulaire et coordonnées de la personne référente technique",
+        }
+      }
+    />
+    <li
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "<b>Arrêté préfectoral de création de l’EPCI</b> (Établissement public de coopération intercommunale)",
+        }
+      }
+    />
+  </ul>
+  <button
+    className="fr-btn fr-btn--sm fr-btn--secondary"
+    data-test="AddDocsButton"
+    onClick={[Function]}
+  >
+    + Ajouter
+  </button>
+</ul>
 `;
 
 exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Critere Simple 1`] = `
-Array [
+<ul>
   <li
     className="fr-mb-1w"
     dangerouslySetInnerHTML={
@@ -513,19 +549,19 @@ Array [
         "__html": "Renseigner tous les statuts du référentiel",
       }
     }
-  />,
+  />
   <a
     className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
     href="/collectivite/1/referentiels/eci"
     target="_blank"
   >
     Mettre à jour
-  </a>,
-]
+  </a>
+</ul>
 `;
 
 exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Critere Simple Rempli 1`] = `
-Array [
+<ul>
   <li
     className="fr-mb-1w"
     dangerouslySetInnerHTML={
@@ -533,11 +569,11 @@ Array [
         "__html": "Renseigner tous les statuts du référentiel",
       }
     }
-  />,
+  />
   <i
     className="flex fr-icon fr-fi-checkbox-circle-fill before:text-[#5FD68C] before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w"
   >
     Terminé
-  </i>,
-]
+  </i>
+</ul>
 `;
