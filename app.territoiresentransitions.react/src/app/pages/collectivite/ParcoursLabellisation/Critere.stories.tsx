@@ -8,7 +8,9 @@ export default {
 } as Meta;
 
 const Template: Story<TCritereProps> = args => (
-  <Critere parcours={fixture.parcours1} {...args} />
+  <ul>
+    <Critere parcours={fixture.parcours1} {...args} />
+  </ul>
 );
 
 export const CritereSimple = Template.bind({});
@@ -35,4 +37,9 @@ CritereActionRempli.args = {
       rempli: true,
     })),
   },
+};
+
+export const CritereFichier = Template.bind({});
+CritereFichier.args = {
+  critere: fixture.parcours1.criteres[3],
 };

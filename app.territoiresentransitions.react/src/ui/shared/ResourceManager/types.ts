@@ -48,6 +48,7 @@ export type DocFile = {
 };
 export type DocLink = {
   type: 'lien';
+  id: number;
   url: string;
   titre: string;
   commentaire: string;
