@@ -74,6 +74,19 @@
         "formulation": "Signer un acte d’engagement incluant {le règlement du label}",
         "rempli": false,
         "fichiers": []
+      },
+      {
+        "id": "1.4",
+        "formulation": "Ajouter les documents officiels de candidature",
+        "rempli": false,
+        "fichiers": [
+          {
+            "formulation": "<b>Courrier d’acte de candidature</b> : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique Économie circulaire et coordonnées de la personne référente technique"
+          },
+          {
+            "formulation": "<b>Arrêté préfectoral de création de l’EPCI</b> (Établissement public de coopération intercommunale)"
+          }
+        ]
       }
     ]
   }
