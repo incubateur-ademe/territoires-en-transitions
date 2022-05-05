@@ -83,11 +83,62 @@ create policy critere_fichier_read_for_all
     using (true);
 
 
+create table private.action_score
+(
+    referentiel                    referentiel not null,
+    action_id                      action_id   not null,
+    concerne                       boolean     not null default true,
+    desactive                      boolean     not null default false,
+    point_fait                     float       not null default .0,
+    point_pas_fait                 float       not null default .0,
+    point_potentiel                float       not null default .0,
+    point_programme                float       not null default .0,
+    point_referentiel              float       not null default .0,
+    total_taches_count             float       not null default .0,
+    point_non_renseigne            float       not null default .0,
+    point_potentiel_perso          float                default .0,
+    completed_taches_count         float       not null default .0,
+    fait_taches_avancement         float       not null default .0,
+    pas_fait_taches_avancement     float       not null default .0,
+    programme_taches_avancement    float       not null default .0,
+    pas_concerne_taches_avancement float       not null default .0
+);
+comment on table private.action_score is
+    'A score related to an action. Used for typing, not storing actual data.';
+
 create or replace function
-    private.score_of(scores jsonb, action_id action_id)
+    private.convert_client_scores(scores jsonb)
+    returns setof private.action_score
+as
+$$
+select (score ->> 'referentiel')::referentiel,
+       (score ->> 'action_id')::action_id,
+       (score ->> 'concerne')::boolean,
+       (score ->> 'desactive')::boolean,
+       (score ->> 'point_fait')::float,
+       (score ->> 'point_pas_fait')::float,
+       (score ->> 'point_potentiel')::float,
+       (score ->> 'point_programme')::float,
+       (score ->> 'point_referentiel')::float,
+       (score ->> 'total_taches_count')::integer,
+       (score ->> 'point_non_renseigne')::float,
+       (score ->> 'point_potentiel_perso')::float,
+       (score ->> 'completed_taches_count')::integer,
+       (score ->> 'fait_taches_avancement')::float,
+       (score ->> 'pas_fait_taches_avancement')::float,
+       (score ->> 'programme_taches_avancement')::float,
+       (score ->> 'pas_concerne_taches_avancement')::float
+from jsonb_array_elements(scores) as score
+$$ language sql;
+comment on function private.convert_client_scores is
+    'Convert json data from business to typed scores.';
+
+create or replace function
+    private.score_summary_of(score private.action_score)
     returns table
             (
                 referentiel          referentiel,
+                action_id            action_id,
                 proportion_fait      float,
                 proportion_programme float,
                 completude           float,
@@ -96,29 +147,28 @@ create or replace function
             )
 as
 $$
-select (score ->> 'referentiel')::referentiel                                                as referentiel,
+select score.referentiel,
+       score.action_id,
        case
-           when (score ->> 'point_potentiel')::float = 0.0
-               then (score ->> 'fait_taches_avancement')::float / (score ->> 'total_taches_count')::float * 100
-           else (score ->> 'point_fait')::float / (score ->> 'point_potentiel')::float * 100
-           end                                                                               as proportion_fait,
+           when (score.point_potentiel)::float = 0.0
+               then (score.fait_taches_avancement)::float / (score.total_taches_count)::float * 100
+           else (score.point_fait)::float / (score.point_potentiel)::float * 100
+           end,
        case
-           when (score ->> 'point_potentiel')::float = 0.0
-               then (score ->> 'programme_taches_avancement')::float / (score ->> 'total_taches_count')::float * 100
-           else (score ->> 'point_programme')::float / (score ->> 'point_potentiel')::float * 100
-           end                                                                               as proportion_programme,
+           when (score.point_potentiel)::float = 0.0
+               then (score.programme_taches_avancement)::float / (score.total_taches_count)::float * 100
+           else (score.point_programme)::float / (score.point_potentiel)::float * 100
+           end,
        case
-           when (score ->> 'total_taches_count')::float = 0.0 then 0.0
-           else (score ->> 'completed_taches_count')::float / (score ->> 'total_taches_count')::float
-           end                                                                               as completude,
-       (score ->> 'completed_taches_count')::float = (score ->> 'total_taches_count')::float as complete,
-       (score ->> 'concerne')::boolean                                                       as concerne
-from jsonb_array_elements(scores) as score
-where score @> ('{"action_id": "' || score_of.action_id || '"}')::jsonb;
+           when (score.total_taches_count)::float = 0.0 then 0.0
+           else (score.completed_taches_count)::float / (score.total_taches_count)::float
+           end,
+       (score.completed_taches_count)::float = (score.total_taches_count)::float,
+       (score.concerne)::boolean
 $$
     language sql stable;
-comment on function private.score_of is
-    'Fonction utilitaire pour obtenir un score typé pour une action donnée depuis le json de `client_scores`.';
+comment on function private.score_summary_of is
+    'Fonction utilitaire pour obtenir un résumé d''un score donné.';
 
 
 create or replace function
@@ -133,16 +183,20 @@ create or replace function
             )
 as
 $$
-with ref as (select unnest(enum_range(null::referentiel)) as referentiel)
-select r.referentiel,
-       s.proportion_fait,
-       s.proportion_programme,
-       s.completude,
-       s.complete
-from ref r
-         join public.client_scores cs on cs.referentiel = r.referentiel
-         join private.score_of(cs.scores, r.referentiel::action_id) s on true
-where cs.collectivite_id = referentiel_score.collectivite_id;
+with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
+     scores as (select s.*
+                from ref
+                         left join client_scores cs on cs.referentiel = ref.referentiel
+                         join private.convert_client_scores(cs.scores) s on true
+                where cs.collectivite_id = referentiel_score.collectivite_id)
+select s.referentiel,
+       ss.proportion_fait,
+       ss.proportion_programme,
+       ss.completude,
+       ss.complete
+from scores s
+         join private.score_summary_of(s) ss on true
+where s.action_id = s.referentiel::action_id;
 $$
     language sql;
 comment on function labellisation.referentiel_score is
@@ -195,7 +249,7 @@ comment on function labellisation.etoiles is
 
 
 create or replace function
-    labellisation.critere_score(collectivite_id integer)
+    labellisation.critere_score_global(collectivite_id integer)
     returns table
             (
                 referentiel      referentiel,
@@ -206,26 +260,27 @@ create or replace function
             )
 as
 $$
-with score as (select * from labellisation.referentiel_score(critere_score.collectivite_id))
+with score as (select * from labellisation.referentiel_score(critere_score_global.collectivite_id))
 select e.referentiel,
        e.etoile_objectif,
        em.min_realise_score,
        s.score_fait,
        s.score_fait >= em.min_realise_score
-from labellisation.etoiles(critere_score.collectivite_id) as e
+from labellisation.etoiles(critere_score_global.collectivite_id) as e
          join labellisation.etoile_meta em on em.etoile = e.etoile_objectif
          join score s on e.referentiel = s.referentiel
 $$
     language sql;
-comment on function labellisation.critere_score is
+comment on function labellisation.critere_score_global is
     'Renvoie le critère de score pour une collectivité donnée.';
 
 
 create or replace function
-    labellisation.criteres(collectivite_id integer)
+    labellisation.critere_action(collectivite_id integer)
     returns table
             (
                 referentiel         referentiel,
+                etoiles             labellisation.etoile,
                 action_id           action_id,
                 formulation         text,
                 score_realise       float,
@@ -236,24 +291,27 @@ create or replace function
             )
 as
 $$
-select cs.referentiel,
+with scores as (select s.*
+                from client_scores cs
+                         join private.convert_client_scores(cs.scores) s on true
+                where cs.collectivite_id = critere_action.collectivite_id)
+select ss.referentiel,
+       cla.etoile,
        cla.action_id,
        cla.formulation,
-       s.proportion_fait,
+       ss.proportion_fait,
        cla.min_realise_percentage,
-       s.proportion_programme,
+       ss.proportion_programme,
        cla.min_programme_percentage,
-       coalesce(s.proportion_fait >= cla.min_realise_percentage, false) or
-       coalesce(s.proportion_programme >= cla.min_programme_percentage, false) as atteint
+       coalesce(ss.proportion_fait >= cla.min_realise_percentage, false) or
+       coalesce(ss.proportion_programme >= cla.min_programme_percentage, false) as atteint
 from labellisation_action_critere cla
-         join client_scores cs on cs.referentiel = cla.referentiel and
-                                  cs.collectivite_id = criteres.collectivite_id
-
-         left join private.score_of(cs.scores, cla.action_id) s on true
-where s.concerne
+         join scores sc on sc.action_id = cla.action_id
+         join private.score_summary_of(sc) ss on true
+where ss.concerne;
 $$
     language sql;
-comment on function labellisation.criteres is
+comment on function labellisation.critere_action is
     'Renvoie l''état des critères applicables à une collectivité donnée';
 
 
