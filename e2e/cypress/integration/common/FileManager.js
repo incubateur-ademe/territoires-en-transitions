@@ -84,3 +84,7 @@ Given(
 Given('tous les transferts sont terminés', () => {
   cy.get('[data-test*=file-running]', { timeout: 10000 }).should('not.exist');
 });
+
+Given('le fichier {string} doit avoir été téléchargé', (fileName) => {
+  cy.verifyDownload(fileName);
+});

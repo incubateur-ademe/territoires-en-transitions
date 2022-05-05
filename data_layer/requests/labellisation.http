@@ -1,0 +1,114 @@
+### Authenticate as a user
+POST {{api}}/auth/v1/token?grant_type=password
+apikey: {{anon}}
+Content-Type: application/json
+
+{
+  "email": "{{yolo_mail}}",
+  "password": "{{yolo_pass}}"
+}
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.global.set("auth_token", response.body['access_token']);
+%}
+
+
+### A. Crée une demande de labellisation
+POST {{api}}/rest/v1/labellisation_demande
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+prefer: return=representation, resolution=merge-duplicates
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "referentiel": "cae",
+  "etoiles": "4"
+}
+
+> {%
+    client.test("Upsert executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+        // vérifie l'insertion
+        client.assert(response.body[0]["etoiles"] === "4", "Le nombre d'étoiles n'est pas 4");
+        client.assert(response.body[0]["en_cours"] === true, "La demande n'est pas en cours");
+        // Enregistre l'id de la demande
+        client.global.set("demande_id", response.body[0]['id']);
+        // Prépare les paramètres, le `.` pose un problème d'interpolation.
+        client.global.set("eq_demande_id", "eq." + response.body[0]['id']);
+    });
+%}
+
+### A. Retrieve bucket id for collectivite 1
+GET {{api}}/rest/v1/collectivite_bucket?collectivite_id=eq.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    // Save bucket id to use it later.
+    client.global.set("bucket_id", response.body[0]['bucket_id']);
+%}
+
+### A Upload a file
+POST {{api}}/storage/v1/object/{{bucket_id}}/labellisation_preuve_input.txt
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+x-upsert: true
+cacheControl: 3600
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="labellisation_preuve_input.txt"; filename="labellisation_preuve_input.txt"
+
+< ./preuve_input.txt
+--boundary--
+
+> {%
+    client.test("Upload executed successfully", function() {
+        client.assert(response.status === 200,
+        "Response status is not 200, maybe a file with the same name exists already.");
+    });
+%}
+
+### A. Upsert une preuve pour la demande de labellisation
+POST {{api}}/rest/v1/rpc/upsert_labellisation_preuve_fichier
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "demande_id": {{demande_id}},
+  "filename": "labellisation_preuve_input.txt",
+  "commentaire": "très inspiré"
+}
+
+> {%
+    client.test("Upsert executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+
+### A. Liste les fichiers preuves de la collectivite 1 et de la demande
+GET {{api}}/rest/v1/action_labellisation_preuve_fichier?collectivite_id=eq.1&demande_id={{eq_demande_id}}
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(
+          "" + response.body[0]["demande_id"] === "" + client.global.get("demande_id"),
+          "L'id de la demande ne correspond pas."
+          );
+        client.assert(response.body[0]["filename"] === "labellisation_preuve_input.txt", "Le nom du fichier n'est pas le bon");
+    });
+%}

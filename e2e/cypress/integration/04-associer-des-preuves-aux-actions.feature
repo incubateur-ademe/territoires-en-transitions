@@ -45,6 +45,9 @@ Fonctionnalité: Associer des preuves aux actions
       | Titre          | Commentaire |
       | bien nomme.doc | une phrase  |
 
+    Quand je clique sur la preuve "bien nomme.doc" de l'action "1.1.1"
+    Alors le fichier "bien nomme.doc" doit avoir été téléchargé
+
   Scénario: Visualiser une erreur lors de l'ajout d'un fichier preuve trop lourd
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides

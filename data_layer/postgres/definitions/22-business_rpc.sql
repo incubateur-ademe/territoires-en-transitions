@@ -76,7 +76,7 @@ begin
                     exemples    = def.exemples,
                     ressources  = def.ressources,
                     perimetre_evaluation = def.perimetre_evaluation,
-                    reduction_potentiel = def.reduction_potentiel, 
+                    reduction_potentiel = def.reduction_potentiel,
                     preuve      = def.preuve,
                     points      = def.points,
                     pourcentage = def.pourcentage
@@ -96,5 +96,4 @@ end;
 $$ language plpgsql;
 comment on function business_update_actions is
     'Update existing action definitions and computed points';
-
 

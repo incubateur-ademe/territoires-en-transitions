@@ -15,11 +15,22 @@
 /**
  * @type {Cypress.PluginConfig}
  */
+
+const { isFileExist, findFiles } = require('cy-verify-downloads');
 const cucumber = require('cypress-cucumber-preprocessor').default;
 const pg = require('./pg');
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
+  on('before:browser:launch', (browser, launchOptions) => {
+    if (browser.family === 'firefox') {
+      // force la langue dans ff pour faire passer les tests en CI
+      launchOptions.preferences['intl.locale.requested'] = 'fr-FR';
+      return launchOptions;
+    }
+  });
+
   on('file:preprocessor', cucumber());
+  on('task', { isFileExist, findFiles });
   pg(on, config);
 };

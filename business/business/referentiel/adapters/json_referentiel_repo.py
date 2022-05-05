@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 from typing import List
+from business.referentiel.domain.models.action_relation import ActionRelation
 
 
 from business.referentiel.domain.ports.referentiel_repo import (
@@ -29,10 +30,10 @@ class JsonReferentielRepository(InMemoryReferentielRepository):
     def add_referentiel_actions(
         self,
         definitions: List[ActionDefinition],
-        children: List[ActionChildren],
+        relations: List[ActionRelation],
         points: List[ActionComputedPoint],
     ):
-        super().add_referentiel_actions(definitions, children, points)
+        super().add_referentiel_actions(definitions, relations, points)
         self.to_json()
 
     def upsert_indicateurs(

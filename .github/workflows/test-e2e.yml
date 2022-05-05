@@ -14,6 +14,7 @@ jobs:
       e2e-directory: ./e2e
       datalayer-directory: ./data_layer
       project-docker-directory: ./
+      CYPRESS_IMAGE: 'cypress/browsers:node12.16.1-chrome80-ff73'
       LANG: 'fr_FR.UTF-8'
       SUPABASE_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
       ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
@@ -21,7 +22,8 @@ jobs:
       REACT_APP_CRISP_WEBSITE_ID: 96fe7866-d005-4623-80b1-bd772e99855c
       SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
-      VERSION: ${{github.head_ref}}.${{github.sha}}
+      GIT_HEAD_REF: ${{github.head_ref}}
+      GIT_SHA: ${{github.sha}}
 
     steps:
       # cf. https://github.com/actions/checkout
@@ -63,11 +65,11 @@ jobs:
         run: sh scripts/wait_for_front.sh
         working-directory: ${{env.datalayer-directory}}
 
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
-      - name: Cypress run
+      # run tests into chrome
+      - name: Cypress run (chrome)
         uses: cypress-io/github-action@v2
         with:
+          browser: chrome
           working-directory: ${{env.e2e-directory}}
           record: true
         env:
@@ -77,14 +79,18 @@ jobs:
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Generate test report
+      - name: Generate test report (chrome)
+        if: failure()
         run: npm run report
         working-directory: ${{env.e2e-directory}}
+        env:
+          BROWSER: chrome
 
-      - name: Upload report to GitHub
+      - name: Upload report to GitHub (chrome)
+        if: failure()
         uses: actions/upload-artifact@master
         with:
-          name: report
+          name: report-chrome
           path: ${{env.e2e-directory}}/report
 
       - name: Collect docker logs on failure

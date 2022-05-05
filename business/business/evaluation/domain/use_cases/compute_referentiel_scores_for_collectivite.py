@@ -1,6 +1,6 @@
 from copy import deepcopy, copy
 import logging
-from typing import Dict, List, Optional, overload
+from typing import Dict, List, Optional
 
 
 from business.evaluation.domain.models import events
@@ -170,6 +170,10 @@ def update_scores_from_tache_given_statuses(
             point_potentiel=tache_point_potentiel,
             total_taches_count=1,
             completed_taches_count=1,
+            fait_taches_avancement=0,
+            programme_taches_avancement=0,
+            pas_fait_taches_avancement=0,
+            pas_concerne_taches_avancement=1,
             point_referentiel=tache_points_referentiel,
             concerne=tache_concerne,
             referentiel=referentiel,
@@ -199,15 +203,19 @@ def update_scores_from_tache_given_statuses(
             else 0.0
         )
         point_non_renseigne = 0.0
-
-        # print(
-        #     f"\n For tache {tache_id}, point_fait is {point_fait}, point_fait is {point_programme}, point_pas_fait is {point_pas_fait}, avancement is {tache_status.detailed_avancement}, concerne is {tache_concerne}."
-        # )
         completed_taches_count = 1
+        fait_taches_avancement = tache_status.detailed_avancement.fait
+        programme_taches_avancement = tache_status.detailed_avancement.programme
+        pas_fait_taches_avancement = tache_status.detailed_avancement.pas_fait
+        pas_concerne_taches_avancement = 1 if not tache_concerne else 0.0
+
     else:
         point_pas_fait = point_programme = point_fait = 0.0
         point_non_renseigne = tache_point_potentiel
         completed_taches_count = 0
+        fait_taches_avancement = (
+            programme_taches_avancement
+        ) = pas_fait_taches_avancement = pas_concerne_taches_avancement = 0
 
     scores[tache_id] = ActionScore(
         action_id=tache_id,
@@ -219,6 +227,10 @@ def update_scores_from_tache_given_statuses(
         point_referentiel=tache_points_referentiel,
         completed_taches_count=completed_taches_count,
         total_taches_count=1,
+        fait_taches_avancement=fait_taches_avancement,
+        programme_taches_avancement=programme_taches_avancement,
+        pas_fait_taches_avancement=pas_fait_taches_avancement,
+        pas_concerne_taches_avancement=pas_concerne_taches_avancement,
         concerne=tache_concerne,
         referentiel=referentiel,
         # perso
@@ -270,18 +282,6 @@ def update_scores_for_action_given_children_scores(
         if action_children_with_scores
         else True
     )  # concerne if any action children is concerne
-    completed_taches_count = sum(
-        [
-            scores[child_id].completed_taches_count
-            for child_id in action_children_with_scores
-        ]
-    )
-    total_taches_count = sum(
-        [
-            scores[child_id].total_taches_count if child_id in scores else 1
-            for child_id in action_children
-        ]
-    )
     action_is_personnalise = action_id in action_personnalises_ids
     action_is_desactive = action_id in actions_desactivees_ids
     scores[action_id] = ActionScore(
@@ -291,8 +291,42 @@ def update_scores_for_action_given_children_scores(
         point_programme=point_programme,
         point_non_renseigne=point_non_renseigne,
         point_potentiel=point_potentiel,
-        completed_taches_count=completed_taches_count,
-        total_taches_count=total_taches_count,
+        completed_taches_count=sum(
+            [
+                scores[child_id].completed_taches_count
+                for child_id in action_children_with_scores
+            ]
+        ),
+        total_taches_count=sum(
+            [
+                scores[child_id].total_taches_count if child_id in scores else 1
+                for child_id in action_children
+            ]
+        ),
+        fait_taches_avancement=sum(
+            [
+                scores[child_id].fait_taches_avancement
+                for child_id in action_children_with_scores
+            ]
+        ),
+        programme_taches_avancement=sum(
+            [
+                scores[child_id].programme_taches_avancement
+                for child_id in action_children_with_scores
+            ]
+        ),
+        pas_fait_taches_avancement=sum(
+            [
+                scores[child_id].pas_fait_taches_avancement
+                for child_id in action_children_with_scores
+            ]
+        ),
+        pas_concerne_taches_avancement=sum(
+            [
+                scores[child_id].pas_concerne_taches_avancement
+                for child_id in action_children_with_scores
+            ]
+        ),
         point_referentiel=action_point_referentiel,
         concerne=concerne,
         referentiel=referentiel,

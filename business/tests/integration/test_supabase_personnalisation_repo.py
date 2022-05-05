@@ -83,8 +83,7 @@ def test_get_personnalisation_regles_should_return_all_personnalisation_regles(
     supabase_repo: SupabasePersonnalisationRepository,
 ):
     personnalisation_regles = supabase_repo.get_personnalisation_regles()
-    assert len(personnalisation_regles) > 50
-    assert {
+    expected_action_id_with_regles = [
         "cae_6.4.1.6",
         "eci_1.2.2",
         "eci_3.2.0",
@@ -96,9 +95,7 @@ def test_get_personnalisation_regles_should_return_all_personnalisation_regles(
         "cae_4.1.2.4",
         "cae_6.4.1",
         "cae_3.1.2.2",
-        "eci_2.4.5",
         "cae_4.2.3",
-        "eci_2.4.1",
         "cae_4.2.1",
         "cae_6.2.3",
         "eci_3.4.2",
@@ -156,18 +153,20 @@ def test_get_personnalisation_regles_should_return_all_personnalisation_regles(
         "cae_3.3.5",
         "cae_6.1.2",
         "eci_3.4",
-        "eci_2.4.0",
         "eci_2.3",
         "cae_4.3.2",
         "eci_1.2.3",
         "cae_6.3.1.3",
         "eci_2.2",
-    }.issubset(
-        {
-            personnalisation_regle.action_id
-            for personnalisation_regle in personnalisation_regles
-        }
-    )
+    ]
+    actual_action_id_with_regles = {
+        personnalisation_regle.action_id
+        for personnalisation_regle in personnalisation_regles
+    }
+    assert len(personnalisation_regles) > 50
+    assert set(expected_action_id_with_regles).issubset(
+        actual_action_id_with_regles
+    ), f"Missing regles expected for actions {[action_id for action_id in expected_action_id_with_regles if action_id not in actual_action_id_with_regles]}"
 
 
 def test_get_reponses_for_collectivite_returns_fakes_for_collectivite_1(

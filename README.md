@@ -130,6 +130,7 @@ Néanmoins, on peut lancer les tests à partir de docker compose :
 - `docker-compose run client-test`
 - `docker-compose run business-test`
 - `docker-compose run datalayer-test`
+- `docker-compose run datalayer-api-test`
 
 ## Déploiement
 

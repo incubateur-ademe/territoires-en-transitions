@@ -1,2 +1,0 @@
--- 24a-question.sql
--- l:68

@@ -115,17 +115,31 @@ const PreuveFichierDetail = ({preuve}: {preuve: PreuveRead}) => {
 
   const openInNewTab = async () => {
     if (_type === 'fichier') {
-      // télécharge le fichier avant de l'afficher dans un nouvel onglet
-      // l'ouverture directe de l'URL ne fonctionne pas car les headers d'auth. sont absents
-      const {data, error} = await supabaseClient.storage
+      // télécharge le fichier car l'ouverture directe de l'URL ne fonctionne
+      // pas, les headers d'authenfication étant absents
+      const {data} = await supabaseClient.storage
         .from(bucket_id)
         .download(filename);
-      if (error) {
-        console.log(error.message);
-      }
+
+      // si le téléchargement a réussi
       if (data) {
-        const fileURL = URL.createObjectURL(data);
-        window.open(fileURL);
+        // crée un blob
+        const blobURL = URL.createObjectURL(data);
+
+        // crée un lien invisible
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+
+        // affecte au lien le blob et le nom du fichier téléchargé
+        a.href = blobURL;
+        a.download = filename;
+
+        // déclenche le téléchargement puis supprime le lien
+        a.click();
+        setTimeout(() => {
+          window.URL.revokeObjectURL(blobURL);
+          document.body.removeChild(a);
+        }, 0);
       }
     } else {
       window.open(url);

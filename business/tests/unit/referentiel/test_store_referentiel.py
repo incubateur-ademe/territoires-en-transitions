@@ -1,4 +1,7 @@
 from business.referentiel.domain.models import events
+from business.referentiel.domain.models.action_children import ActionChildren
+from business.referentiel.domain.models.action_relation import ActionRelation
+from business.utils.action_id import ActionId
 from business.utils.domain_message_bus import (
     InMemoryDomainMessageBus,
 )
@@ -54,7 +57,7 @@ def test_can_store_correct_referentiel():
     assert len(entity_stored_events) == 1
     assert len(failure_events) == 0
     assert len(referentiel_repo._actions_by_ref["eci"].points) == 4
-    assert len(referentiel_repo._actions_by_ref["eci"].children) == 4
+    assert len(referentiel_repo._actions_by_ref["eci"].children) == 2
     assert len(referentiel_repo._actions_by_ref["eci"].definitions) == 4
 
 
@@ -97,10 +100,14 @@ def test_can_update_referentiel():
     # Prepare
     bus = InMemoryDomainMessageBus()
     referentiel_repo = InMemoryReferentielRepository()
+    existing_action_id = ActionId("eci_1.2")
     # Add action in repo
-    existing_children = make_action_children(action_id="eci_1.2", children_ids=[])
+    existing_children = ActionRelation(
+        id=existing_action_id, referentiel="eci", parent=None
+    )
+
     existing_definition = make_action_definition(
-        action_id=existing_children.action_id, description="Old def", referentiel="eci"
+        action_id=existing_action_id, description="Old def", referentiel="eci"
     )
     existing_points = make_action_points(
         action_id=existing_definition.action_id, points=20
@@ -109,7 +116,7 @@ def test_can_update_referentiel():
     referentiel_repo.add_referentiel_actions(
         definitions=[existing_definition],
         points=[existing_points],
-        children=[existing_children],
+        relations=[existing_children],
     )
     use_case = StoreReferentielActions(bus, referentiel_repo)
 
@@ -119,13 +126,16 @@ def test_can_update_referentiel():
 
     # Act : trigger use-case execution to update the existing action
     updated_definition = make_action_definition(
-        action_id=existing_children.action_id, description="New def"
+        action_id=existing_action_id, description="New def"
     )
     updated_points = make_action_points(
         action_id=existing_definition.action_id, points=32
     )
     trigger = events.MarkdownReferentielNodeConvertedToEntities(
-        [updated_definition], [updated_points], [existing_children], referentiel="eci"
+        [updated_definition],
+        [updated_points],
+        [ActionChildren("eci", existing_action_id, [])],
+        referentiel="eci",
     )
 
     use_case.execute(trigger)

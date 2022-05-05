@@ -33,6 +33,7 @@ class views:
 class rpc:
     upsert_indicateurs = "business_upsert_indicateurs"
     update_actions = "business_update_actions"
+    insert_actions = "business_insert_actions"
     upsert_questions = "business_upsert_questions"
     business_replace_personnalisations = "business_replace_personnalisations"
 
