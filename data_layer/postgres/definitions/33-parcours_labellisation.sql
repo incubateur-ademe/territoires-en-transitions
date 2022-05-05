@@ -17,11 +17,10 @@ $$
 with etoiles as (select *
                  from labellisation.etoiles(labellisation_parcours.collectivite_id)),
      all_critere as (select *
-                     from labellisation.critere_action(labellisation_parcours.collectivite_id)),
-     -- les critères pour l'étoile visée et les précédentes.
+                     from labellisation.criteres(labellisation_parcours.collectivite_id)),
      current_critere as (select c.*
                          from all_critere c
-                                  join etoiles e on e.referentiel = c.referentiel and e.etoile_objectif >= c.etoiles),
+                                  join etoiles e on e.referentiel = c.referentiel and e.etoile_objectif = c.etoiles),
      criteres as (select *
                   from (select c.referentiel,
                                bool_and(c.atteint) as atteints,
@@ -45,7 +44,7 @@ with etoiles as (select *
                                                    end
                                            )
                                    )               as liste
-                        from current_critere c
+                        from all_critere c
                                  join action_definition ad on c.action_id = ad.action_id
                         group by c.referentiel) ral)
 select e.referentiel,
@@ -78,7 +77,7 @@ from etoiles as e
          join criteres on criteres.referentiel = e.referentiel
          left join labellisation.referentiel_score(labellisation_parcours.collectivite_id) rs
                    on rs.referentiel = e.referentiel
-         left join labellisation.critere_score_global(labellisation_parcours.collectivite_id) cs
+         left join labellisation.critere_score(labellisation_parcours.collectivite_id) cs
                    on cs.referentiel = e.referentiel
          left join labellisation.critere_fichier(labellisation_parcours.collectivite_id) cf
                    on cf.referentiel = e.referentiel
@@ -87,8 +86,7 @@ from etoiles as e
          left join lateral (select ld.date, ld.etoiles
                             from labellisation_demande ld
                             where ld.collectivite_id = labellisation_parcours.collectivite_id
-                              and ld.referentiel = e.referentiel
-                              and ld.etoiles = e.etoile_objectif) demande on true
+                              and ld.referentiel = e.referentiel) demande on true
          left join lateral (select l.obtenue_le as date, l.etoiles
                             from labellisation l
                             where l.collectivite_id = labellisation_parcours.collectivite_id
