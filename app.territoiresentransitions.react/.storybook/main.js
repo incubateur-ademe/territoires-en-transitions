@@ -22,7 +22,11 @@ module.exports = {
     },
   ],
   framework: '@storybook/react',
-  staticDirs: ['../public', '../src/app/static/_app/assets'],
+  staticDirs: [
+    '../public',
+    '../src/app/static/_app/assets/css',
+    {from: '../src/app/static/_app/assets/fonts', to: '/fonts'},
+  ],
   typescript: {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
@@ -30,6 +34,6 @@ module.exports = {
         allowSyntheticDefaultImports: false,
         esModuleInterop: false,
       },
-    }
-  }
+    },
+  },
 };
