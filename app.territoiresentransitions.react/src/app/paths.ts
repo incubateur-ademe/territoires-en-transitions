@@ -28,6 +28,7 @@ export const collectiviteIndicateurPath = `${collectivitePath}/indicateurs/:${in
 export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}`;
 export const collectiviteTableauBordPath = `${collectivitePath}/tableau_bord`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}`;
+export const collectiviteLabellisationPath = `${collectivitePath}/labellisation/:${referentielParam}`;
 export const collectivitePlanActionPath = `${collectivitePath}/plan_action/:${planActionParam}`;
 export const collectiviteNouvelleFichePath = `${collectivitePath}/nouvelle_fiche`;
 export const collectiviteFichePath = `${collectivitePath}/fiche/:${ficheParam}`;
@@ -73,6 +74,17 @@ export const makeCollectiviteActionUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${referentielParam}`, referentielId)
     .replace(`:${actionParam}`, actionId);
+
+export const makeCollectiviteLabellisationUrl = ({
+  collectiviteId,
+  referentielId,
+}: {
+  collectiviteId: number;
+  referentielId: ReferentielParamOption;
+}) =>
+  collectiviteLabellisationPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${referentielParam}`, referentielId);
 
 export const makeCollectivitePlanActionUrl = ({
   collectiviteId,
@@ -159,8 +171,3 @@ export const makeCollectivitePersoRefThematiqueUrl = ({
 export const makeInvitationLandingPath = (invitationId: string) =>
   window.location.hostname +
   invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);
-
-export const REGLEMENTS: {[k: string]: string} = {
-  eci: 'https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2022/03/Reglement_label_ECi_20220316.pdf.pdf',
-  cae: 'https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2022/02/TE-CAE_Reglement-label_2021.pdf',
-};

@@ -3,6 +3,7 @@ import {
   allCollectivitesPath,
   makeCollectiviteDefaultPlanActionUrl,
   makeCollectiviteIndicateursUrl,
+  makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefThematiqueUrl,
   makeCollectivitePersoRefUrl,
   makeCollectiviteReferentielUrl,
@@ -174,6 +175,26 @@ export const CollectiviteNavigation = () => {
         <CollectiviteNavigationDirectTab
           label="Plans d'action"
           path={makeCollectiviteDefaultPlanActionUrl({collectiviteId})}
+        />
+        <CollectiviteNavigationDropdownTab
+          menuLabel="Labellisation"
+          listPathsAndLabels={[
+            {
+              path: makeCollectiviteLabellisationUrl({
+                collectiviteId,
+                referentielId: 'eci',
+              }),
+
+              label: 'Économie Circulaire',
+            },
+            {
+              path: makeCollectiviteLabellisationUrl({
+                collectiviteId,
+                referentielId: 'cae',
+              }),
+              label: 'Climat Air Énergie',
+            },
+          ]}
         />
         <CollectiviteNavigationDropdownTab
           menuLabel="Paramètres"
