@@ -1,5 +1,5 @@
 begin;
-select plan(17);
+select plan(35);
 
 select has_function('labellisation', 'referentiel_score'::name);
 select has_function('labellisation', 'etoiles'::name);
@@ -10,6 +10,10 @@ select has_function('labellisation_parcours');
 alter table labellisation_preuve_fichier
     drop constraint labellisation_preuve_fichier_file_id_fkey;
 
+
+------------------------------
+------- Generate scores  -----
+------------------------------
 create or replace function
     score_gen(
     scores private.action_score[] default '{}'::private.action_score[],
@@ -71,10 +75,81 @@ from current_scores
 select is_empty('select action_id from generated_scores except select id from action_relation;',
                 'Every action should have a generated score');
 
+-------------------------------------------
+------- Fulfill minimum requirements  -----
+-------------------------------------------
+select action_id,
+       referentiel,
+       etoile,
+       -- null is the maximum value, as programme < fait - we prefer a null programme
+       case
+           when null_programme.yes then null
+           else max(min_programme_percentage) end as min_programme_percentage,
+       max(min_realise_percentage)                as min_realise_percentage
+into min_requirements
+from labellisation_action_critere lac
+         -- for every requirement we check if there is a null
+         join lateral (select ll.min_programme_percentage is null as yes
+                       from labellisation_action_critere ll
+                       where ll.action_id = lac.action_id
+                       order by min_programme_percentage nulls first
+                       limit 1 ) null_programme on true
+group by action_id, referentiel, etoile, null_programme.yes;
 
-------------------------------
-------- Base functions -------
-------------------------------
+
+create or replace function
+    fulfill(
+    etoile labellisation.etoile
+)
+    returns void
+as
+$$
+truncate private.action_score; -- use action_score as a temp table
+
+-- required actions scores
+insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel,
+                                  completed_taches_count, total_taches_count)
+select mr.referentiel,
+       mr.action_id,
+       -- take the bare minimum programme or realise.
+       case
+           when mr.min_programme_percentage is not null then .0
+           else mr.min_realise_percentage
+           end,
+       coalesce(mr.min_programme_percentage, .0),
+       --
+       100,
+       4,
+       4
+from min_requirements mr
+where mr.etoile = fulfill.etoile;
+
+-- root actions scores
+with ref as (select unnest(enum_range(null::referentiel)) as referentiel)
+insert
+into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel,
+                           completed_taches_count, total_taches_count)
+select ref.referentiel, ref.referentiel::action_id, em.min_realise_percentage, .0, 100, 4, 4
+from ref
+         join labellisation.etoile_meta em on em.etoile = fulfill.etoile;
+
+-- insert client scores
+truncate client_scores;
+insert into client_scores
+select 1,
+       s.referentiel,
+       jsonb_agg(s),
+       now()
+from score_gen((select array_agg(s) from private.action_score s)) s
+group by s.referentiel;
+
+$$ language sql;
+comment on function fulfill is
+    'Insert fake scores that fulfill but do not exceed the requirements for a given étoile.';
+
+-----------------------------------
+------- Test base functions -------
+-----------------------------------
 truncate action_statut;
 truncate client_scores;
 truncate labellisation;
@@ -194,6 +269,7 @@ insert into labellisation_demande (id, collectivite_id, referentiel, etoiles)
 values (100, 1, 'eci', '5');
 
 -- Mock file insertion
+truncate labellisation_preuve_fichier;
 insert into labellisation_preuve_fichier (collectivite_id, demande_id, file_id)
 values (1, 100, gen_random_uuid());
 
@@ -214,29 +290,34 @@ select ok((select etoiles = '5'
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 100% fait test data with demande fichier.');
 
------------------------------------------------
-------- Scenario: score on requirements -------
------------------------------------------------
-truncate action_statut;
-truncate client_scores;
+
+------------------------------------------------------
+------- Scenario: nothing is done nor complete -------
+------------------------------------------------------
 truncate labellisation;
 truncate labellisation_demande, labellisation_preuve_fichier;
 
 -- pas_fait statut on all requirements
+truncate action_statut;
 insert into action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by)
 select 1, lac.action_id, 'pas_fait', null, true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'
 from labellisation_action_critere lac
 on conflict do nothing;
 
--- fake scoring, every requirement at .0
+-- fake scoring, score and completion at 0
 truncate private.action_score; -- use action_score as a temp table
-insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel)
-select lac.referentiel, lac.action_id, 0.0, 0.0, 10
+insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel,
+                                  completed_taches_count, total_taches_count)
+select lac.referentiel, lac.action_id, 0.0, 0.0, 10, 0, 4
 from labellisation_action_critere lac;
 
-insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel)
-values ('eci', 'eci', .0, .0, 10);
+insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel,
+                                  completed_taches_count, total_taches_count)
+values ('eci', 'eci', .0, .0, 10, 0, 4),
+       ('cae', 'cae', .0, .0, 10, 0, 4);
 
+-- client scores from fake scoring
+truncate client_scores;
 insert into client_scores
 select 1,
        s.referentiel,
@@ -246,36 +327,208 @@ from score_gen((select array_agg(s) from private.action_score s)) s
 group by s.referentiel;
 
 
-select ok((select not bool_or(atteint)
-           from labellisation.critere_action(1)),
-          'Labellisation critère should return no critères atteints.');
+select ok((select not bool_and(ss.complete) and sum(ss.proportion_fait) = 0
+           from private.action_score s
+                    join private.score_summary_of(s) ss on true),
+          'Score summaries should be not complete and have 0 points.');
 
 
--- insert fait statut on requirements for étoile 1 only
-insert into action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by)
-select 1, lac.action_id, 'fait', null, true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'
-from labellisation_action_critere lac
-where etoile = '1'
-group by lac.action_id
-on conflict (collectivite_id, action_id) do update set avancement = excluded.avancement;
+select ok((select bool_and(score_fait = 0
+    and score_programme = 0
+    and completude = 0
+    and not complet)
+           from labellisation.referentiel_score(1)),
+          'Labellisation scores function should output correct scores and completude for 0%, not complete.');
 
--- replace scores
+
+select ok((select etoile_labellise is null
+                      and prochaine_etoile_labellisation is null
+                      and etoile_score_possible is null
+                      and etoile_objectif is null
+           from labellisation.etoiles(1)
+           where referentiel = 'eci'),
+          'Labellisation étoiles function should output correct state for 0% fait, not complete.');
+
+
+select is_empty('select etoiles from labellisation_parcours(1) where referentiel = ''eci'';',
+          'Labellisation parcours function should be empty for 0% fait, not complete, no demande.');
+
+
+--------------------------------------------------------------------
+------- Scenario: nothing is done but everything is complete -------
+--------------------------------------------------------------------
+
+-- fake scoring, score and completion at 1
+truncate private.action_score; -- use action_score as a temp table
+insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel,
+                                  completed_taches_count, total_taches_count)
+select lac.referentiel, lac.action_id, 0.0, 0.0, 10, 4, 4
+from labellisation_action_critere lac;
+
+insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel,
+                                  completed_taches_count, total_taches_count)
+values ('eci', 'eci', .0, .0, 10, 4, 4),
+       ('cae', 'cae', .0, .0, 10, 4, 4);
+
+-- client scores from fake scoring
 truncate client_scores;
-truncate private.action_score;
+insert into client_scores
+select 1,
+       s.referentiel,
+       jsonb_agg(s),
+       now()
+from score_gen((select array_agg(s) from private.action_score s)) s
+group by s.referentiel;
 
-insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel)
-select lac.referentiel, lac.action_id, 10, 0.0, 10
-from labellisation_action_critere lac
-where lac.etoile = '1';
+select ok((select bool_and(ss.complete) and sum(ss.proportion_fait) = 0
+           from private.action_score s
+                    join private.score_summary_of(s) ss on true),
+          'Score summaries should be complete and have 0 points.');
 
-insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel)
-select lac.referentiel, lac.action_id, 0.0, 0.0, 10
-from labellisation_action_critere lac
-where lac.etoile != '1';
 
-insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel)
-values ('eci', 'eci', .0, .0, 10);
+select ok((select bool_and(score_fait = 0
+    and score_programme = 0
+    and completude = 1
+    and complet)
+           from labellisation.referentiel_score(1)),
+          'Labellisation scores function should output correct scores and completude for 0% fait, but complete.');
 
--- todo
+
+select ok((select etoile_labellise is null
+                      and prochaine_etoile_labellisation is null
+                      and etoile_score_possible = '1'
+                      and etoile_objectif = '1'
+           from labellisation.etoiles(1)
+           where referentiel = 'eci'),
+          'Labellisation étoiles function should output correct state for 0% fait, but complete.');
+
+
+select ok((select etoiles = '1'
+                      and completude_ok
+                      and not rempli
+                      and calendrier is not null
+                      and derniere_demande is null
+           from labellisation_parcours(1)
+           where referentiel = 'eci'),
+          'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
+
+
+
+------------------------------------------------------------
+------- Scenario: requirements for étoile 1 are done -------
+------------------------------------------------------------
+
+-- fake scoring, score and completion at 1
+select * from fulfill('1');
+-- select * from private.action_score s  join private.score_summary_of(s) ss on true;
+-- select * from labellisation.referentiel_score(1);
+
+select ok((select bool_and(score_fait = 0
+    and score_programme = 0
+    and completude = 1
+    and complet)
+           from labellisation.referentiel_score(1)),
+          'Labellisation scores function should output correct scores and completude for 100% requirements fait');
+
+select ok((select etoile_labellise is null
+                      and prochaine_etoile_labellisation is null
+                      and etoile_score_possible = '1'
+                      and etoile_objectif = '1'
+           from labellisation.etoiles(1)
+           where referentiel = 'eci'),
+          'Labellisation étoiles function should output correct state for 100% requirements fait.');
+
+select ok((select etoiles = '1'
+                      and completude_ok
+                      and not rempli
+                      and calendrier is not null
+                      and derniere_demande is null
+           from labellisation_parcours(1)
+           where referentiel = 'eci'),
+          'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
+
+-- Create demande
+truncate labellisation_demande,  labellisation_preuve_fichier;
+insert into labellisation_demande (id, collectivite_id, referentiel, etoiles)
+values (100, 1, 'eci', '1');
+
+-- Mock file insertion
+insert into labellisation_preuve_fichier (collectivite_id, demande_id, file_id)
+values (1, 100, gen_random_uuid());
+
+select ok((select preuve_nombre = 1
+                      and atteint
+           from labellisation.critere_fichier(1)
+           where referentiel = 'eci'),
+          'Labellisation critere fichier function should output correct state when a file have been inserted.');
+
+select ok((select etoiles = '1'
+                      and completude_ok
+                      and rempli
+                      and calendrier is not null
+                      and derniere_demande is not null -- actually current demande
+           from labellisation_parcours(1)
+           where referentiel = 'eci'),
+          'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
+
+
+-----------------------------------------------------------------
+------- Scenario: score requirement for étoile 2 are done -------
+-----------------------------------------------------------------
+select * from fulfill('2');
+
+select ok((select bool_and(score_fait = 35
+    and score_programme = 0
+    and completude = 1
+    and complet)
+           from labellisation.referentiel_score(1)),
+          'Labellisation scores function should output correct scores and completude for 100% requirements fait');
+
+select ok((select etoile_labellise is null
+                      and prochaine_etoile_labellisation is null
+                      and etoile_score_possible = '2'
+                      and etoile_objectif = '2'
+           from labellisation.etoiles(1)
+           where referentiel = 'eci'),
+          'Labellisation étoiles function should output correct state for 100% requirements fait.');
+
+select ok((select etoiles = '2'
+                      and completude_ok
+                      and rempli
+                      and calendrier is not null
+                      and derniere_demande is null
+           from labellisation_parcours(1)
+           where referentiel = 'eci'),
+          'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
+
+
+-----------------------------------------------------------------
+------- Scenario: score requirement for étoile 3 are done -------
+-----------------------------------------------------------------
+select * from fulfill('3');
+
+select ok((select bool_and(score_fait = 50
+    and score_programme = 0
+    and completude = 1
+    and complet)
+           from labellisation.referentiel_score(1)),
+          'Labellisation scores function should output correct scores and completude for 100% requirements fait');
+
+select ok((select etoile_labellise is null
+                      and prochaine_etoile_labellisation is null
+                      and etoile_score_possible = '3'
+                      and etoile_objectif = '3'
+           from labellisation.etoiles(1)
+           where referentiel = 'eci'),
+          'Labellisation étoiles function should output correct state for 100% requirements fait.');
+
+select ok((select etoiles = '3'
+                      and completude_ok
+                      and rempli
+                      and calendrier is not null
+                      and derniere_demande is null
+           from labellisation_parcours(1)
+           where referentiel = 'eci'),
+          'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
 
 rollback;
