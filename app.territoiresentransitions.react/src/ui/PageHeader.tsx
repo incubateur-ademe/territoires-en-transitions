@@ -30,7 +30,7 @@ export const PageHeaderLeft = (props: TPageHeaderProps) => {
   const {className, children} = props;
   return (
     <PageHeader className={className}>
-      <div className="w-full max-w-3xl flex flex-col m-4">{children}</div>
+      <div className="fr-container fr-my-2w">{children}</div>
     </PageHeader>
   );
 };
