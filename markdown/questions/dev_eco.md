@@ -14,6 +14,7 @@ id: dev_eco_2
 type: proportion
 thematique_id: developpement_economique
 actions: [cae_6.2.4, cae_6.3.1]
+types_concernes : [commune]
 ```
 
 # La collectivité se préoccupe-t-elle de la publicité extérieure et des enseignes ?
