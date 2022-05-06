@@ -1,0 +1,40 @@
+### Authenticate as a user
+POST {{api}}/auth/v1/token?grant_type=password
+apikey: {{anon}}
+Content-Type: application/json
+
+{
+  "email": "{{yolo_mail}}",
+  "password": "{{yolo_pass}}"
+}
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.log('token is ' + response.body['access_token']);
+    client.global.set("auth_token", response.body['access_token']);
+%}
+
+### Toutes les actions pour la collectivité 1 - ne pas utiliser dans le client
+GET {{api}}/rest/v1/action_statuts?collectivite_id=eq.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+
+### Les axes et les sous axes du referentiel eci (depth < 3)
+GET {{api}}/rest/v1/action_statuts?collectivite_id=eq.1&referentiel=eq.eci&depth=lt.3
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+
+### Les enfants de l'action eci_1.1 jusqu'au sous actions (depth < 4)
+GET {{api}}/rest/v1/action_statuts?collectivite_id=eq.1&referentiel=eq.eci&depth=lt.4&parents=cs.{eci_1.1}
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+### Les axes et les sous axes du referentiel eci, avec seulement les colonnes nécessaires à l'affichage
+GET {{api}}/rest/v1/action_statuts?select=identifiant,nom,avancement,have_children&collectivite_id=eq.1&referentiel=eq.eci&depth=lt.3
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
