@@ -9,8 +9,8 @@ import {AddFromLib} from './AddFromLib';
 export type TResourceManagerHandlers = {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
   addFileFromLib: TAddFileFromLib;
-  /** ajoute un lien */
-  addLink: TAddLink;
+  /** ajoute un lien (l'onglet 'Lien' ne s'affiche pas si non renseigné) */
+  addLink?: TAddLink;
 };
 
 export type TResourceManagerProps = {
@@ -27,9 +27,11 @@ export const ResourceManager = (props: TResourceManagerProps) => {
 
   return (
     <Tabs defaultActiveTab={defaultActiveTab}>
-      <Tab label="&nbsp;Lien" icon="fr-fi-links-fill">
-        <AddLink {...props} onAddLink={addLink} />
-      </Tab>
+      {addLink ? (
+        <Tab label="&nbsp;Lien" icon="fr-fi-links-fill">
+          <AddLink {...props} onAddLink={addLink} />
+        </Tab>
+      ) : null}
       <Tab label="&nbsp;Fichier" icon="fr-fi-upload-2-fill">
         <AddFile {...props} onAddFileFromLib={addFileFromLib} />
       </Tab>
