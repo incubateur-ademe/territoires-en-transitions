@@ -1,36 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Criteres Labellisation Premiere Etoile 1`] = `
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Criteres Labellisation Premiere Etoile CAE 1`] = `
 Array [
+  <p
+    className="text-grey625"
+  >
+    Ce premier niveau de labellisation ne nécessite pas d’audit et sera validé directement par l’ADEME
+  </p>,
   <h2>
     Critères de labellisation
   </h2>,
   <ul>
     <li
       className="fr-mb-1w"
-      dangerouslySetInnerHTML={
-        Object {
-          "__html": "Renseigner tous les statuts du référentiel",
-        }
-      }
-    />
+    >
+      Renseigner tous les statuts du référentiel
+    </li>
     <a
       className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
-      href="/collectivite/1/referentiels/eci"
+      href="/collectivite/1/referentiels/cae"
       target="_blank"
     >
       Mettre à jour
     </a>
     <li
-      className="fr-mb-1w"
-      dangerouslySetInnerHTML={
-        Object {
-          "__html": "Être une collectivité engagée dans une politique Économie circulaire et le prouver (via les documents preuves ou un texte justificatif)",
-        }
-      }
-    />
+      className=" fr-mt-2w fr-mb-1w"
+    >
+      Être une collectivité engagée dans une politique
+       
+      Climat Air Énergie
+       et le prouver (via les documents preuves ou un texte justificatif)
+    </li>
     <div
-      className="critere-action-table fr-my-4w"
+      className="critere-action-table fr-my-4"
     >
       <table>
         <thead>
@@ -65,7 +67,7 @@ Array [
             <td
               className="pl-4 pr-8"
             >
-              Identifier un·e élu·e référent·e
+              Identifier un⸱e élu⸱e référent⸱e
             </td>
             <td>
               Fait
@@ -87,10 +89,32 @@ Array [
             <td
               className="pl-4 pr-8"
             >
-              Identifier l'équipe technique
+              Identifier une personne technique
             </td>
             <td>
-              Fait
+              Programmé ou fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                1.1.1.3
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Mettre en place une équipe projet
+            </td>
+            <td>
+              Programmé ou fait
             </td>
           </tr>
           <tr
@@ -109,10 +133,10 @@ Array [
             <td
               className="pl-4 pr-8"
             >
-              Réaliser le diagnostic de l’économie circulaire
+              Engager un diagnostic territorial
             </td>
             <td>
-              20 % minimum
+              20% fait minimum
             </td>
           </tr>
           <tr
@@ -131,7 +155,7 @@ Array [
             <td
               className="pl-4 pr-8"
             >
-              Respecter la réglementation : PLPDMA
+              Respecter la réglementation PLPDMA
             </td>
             <td>
               Programmé ou fait
@@ -153,7 +177,7 @@ Array [
             <td
               className="pl-4 pr-8"
             >
-              Respecter la réglementation : système de collecte
+              Respecter la réglementation liée au système de collecte
             </td>
             <td>
               Programmé ou fait
@@ -175,7 +199,7 @@ Array [
             <td
               className="pl-4 pr-8"
             >
-              Respecter la réglementation : valorisation des déchets, dont organiques
+              Respecter la règlementation concernant la valorisation des déchets (dont organiques)
             </td>
             <td>
               Programmé ou fait
@@ -197,7 +221,7 @@ Array [
             <td
               className="pl-4 pr-8"
             >
-              Respecter la réglementation : pour les impacts environnementaux des émissions et les nuisances
+              Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)
             </td>
             <td>
               Programmé ou fait
@@ -219,7 +243,7 @@ Array [
             <td
               className="pl-4 pr-8"
             >
-              Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables
+              Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)
             </td>
             <td>
               Programmé ou fait
@@ -247,18 +271,176 @@ Array [
               Programmé ou fait
             </td>
           </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                1.1.1.2
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Avoir engagé la politique Économie Circulaire
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.1.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la réglementation PLPDMA
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.2.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la réglementation liée au système de collecte
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.3.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la règlementation concernant la valorisation des déchets (dont organiques)
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.4.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                3.2.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                4.1.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Rédiger le rapport annuel SPPGD
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
     <li
       className="fr-mb-1w"
-      dangerouslySetInnerHTML={
-        Object {
-          "__html": "Signer un acte d’engagement incluant <a href=\\"https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2022/03/Reglement_label_ECi_20220316.pdf.pdf\\" target=\\"_blank\\" rel=\\"noopener\\">le règlement du label</a>",
-        }
-      }
-    />
-    <ul />
+    >
+      Signer un acte d’engagement incluant
+       
+      <a
+        href="/TE-CAE_Reglement-label_2021.pdf"
+        rel="noopener"
+        target="_blank"
+      >
+        le règlement du label
+      </a>
+    </li>
     <button
       className="fr-btn fr-btn--sm fr-btn--secondary"
       data-test="AddDocsButton"
@@ -266,30 +448,451 @@ Array [
     >
       + Ajouter
     </button>
+  </ul>,
+]
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Criteres Labellisation Premiere Etoile ECI 1`] = `
+Array [
+  <p
+    className="text-grey625"
+  >
+    Ce premier niveau de labellisation ne nécessite pas d’audit et sera validé directement par l’ADEME
+  </p>,
+  <h2>
+    Critères de labellisation
+  </h2>,
+  <ul>
     <li
       className="fr-mb-1w"
-      dangerouslySetInnerHTML={
-        Object {
-          "__html": "Ajouter les documents officiels de candidature",
-        }
-      }
-    />
-    <ul>
-      <li
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "<b>Courrier d’acte de candidature</b> : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique Économie circulaire et coordonnées de la personne référente technique",
-          }
-        }
-      />
-      <li
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "<b>Arrêté préfectoral de création de l’EPCI</b> (Établissement public de coopération intercommunale)",
-          }
-        }
-      />
-    </ul>
+    >
+      Renseigner tous les statuts du référentiel
+    </li>
+    <a
+      className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
+      href="/collectivite/1/referentiels/eci"
+      target="_blank"
+    >
+      Mettre à jour
+    </a>
+    <li
+      className=" fr-mt-2w fr-mb-1w"
+    >
+      Être une collectivité engagée dans une politique
+       
+      Économie Circulaire
+       et le prouver (via les documents preuves ou un texte justificatif)
+    </li>
+    <div
+      className="critere-action-table fr-my-4"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th
+              className="pl-10"
+              colSpan={3}
+            >
+              Sous-action ou tâche
+            </th>
+            <th
+              className="pr-6"
+            >
+              Statut ou score requis
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                1.1.1.1
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Identifier un⸱e élu⸱e référent⸱e
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                1.1.1.3
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Identifier une personne technique
+            </td>
+            <td>
+              Programmé ou fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                1.1.1.3
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Mettre en place une équipe projet
+            </td>
+            <td>
+              Programmé ou fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                1.1.2
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Engager un diagnostic territorial
+            </td>
+            <td>
+              20% fait minimum
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.1.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la réglementation PLPDMA
+            </td>
+            <td>
+              Programmé ou fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.2.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la réglementation liée au système de collecte
+            </td>
+            <td>
+              Programmé ou fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.3.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la règlementation concernant la valorisation des déchets (dont organiques)
+            </td>
+            <td>
+              Programmé ou fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.4.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)
+            </td>
+            <td>
+              Programmé ou fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                3.2.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)
+            </td>
+            <td>
+              Programmé ou fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                4.1.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Rédiger le rapport annuel SPPGD
+            </td>
+            <td>
+              Programmé ou fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                1.1.1.2
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Avoir engagé la politique Économie Circulaire
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.1.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la réglementation PLPDMA
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.2.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la réglementation liée au système de collecte
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.3.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la règlementation concernant la valorisation des déchets (dont organiques)
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                2.4.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                3.2.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+          <tr
+            onClick={[Function]}
+          >
+            <td
+              className="text-center w-[56px]"
+            />
+            <td
+              className="text-right text-xs w-[40px] text-grey625"
+            >
+              <span>
+                4.1.0
+              </span>
+            </td>
+            <td
+              className="pl-4 pr-8"
+            >
+              Rédiger le rapport annuel SPPGD
+            </td>
+            <td>
+              Fait
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <li
+      className="fr-mb-1w"
+    >
+      Signer un acte d’engagement incluant
+       
+      <a
+        href="/Reglement_label_ECi_20220316.pdf"
+        rel="noopener"
+        target="_blank"
+      >
+        le règlement du label
+      </a>
+    </li>
     <button
       className="fr-btn fr-btn--sm fr-btn--secondary"
       data-test="AddDocsButton"

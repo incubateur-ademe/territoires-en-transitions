@@ -1,8 +1,17 @@
-import {ParcoursLabellisation} from './types';
-import {Critere} from './Critere';
+import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
+import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
+import {LabellisationPreuveFichierRead} from 'generated/dataLayer/labellisation_preuve_fichier_read';
+import {CritereScore} from './CritereScore';
+import {CriteresAction} from './CriteresAction';
+import {CriterePreuves} from './CriterePreuves';
+import {numLabels} from './numLabels';
+import {CritereCompletude} from './CritereCompletude';
 
 export type TCriteresLabellisationProps = {
-  parcours: ParcoursLabellisation;
+  collectiviteId: number;
+  parcours: LabellisationParcoursRead;
+  demande: LabellisationDemandeRead;
+  preuves: LabellisationPreuveFichierRead[];
 };
 
 /**
@@ -10,14 +19,30 @@ export type TCriteresLabellisationProps = {
  */
 export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
   const {parcours} = props;
-  const {criteres} = parcours;
+  const {etoiles, critere_score} = parcours;
+  const {atteint, score_a_realiser} = critere_score;
+
   return (
     <>
+      {etoiles === '1' ? (
+        <p className="text-grey625">
+          Ce premier niveau de labellisation ne nécessite pas d’audit et sera
+          validé directement par l’ADEME
+        </p>
+      ) : null}
+      {etoiles !== '1' && atteint ? (
+        <div className="fr-alert fr-alert--info fr-mb-2w">
+          Bravo, vous avez plus de {Math.round(score_a_realiser * 100)} %
+          d’actions réalisées ! Les critères ont été mis à jour pour préparer
+          votre candidature à la {numLabels[etoiles]} étoile.
+        </div>
+      ) : null}
       <h2>Critères de labellisation</h2>
       <ul>
-        {criteres.map(critere => (
-          <Critere key={critere.id} critere={critere} parcours={parcours} />
-        ))}
+        <CritereCompletude {...props} />
+        {etoiles !== '1' ? <CritereScore {...props} /> : null}
+        <CriteresAction {...props} />
+        <CriterePreuves {...props} />
       </ul>
     </>
   );
