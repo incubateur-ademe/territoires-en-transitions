@@ -1,4 +1,5 @@
 .critere-action-table {
+  margin-bottom: 32px;
   border-radius: 8px;
   border-width: 8px;
   border-color: var(--background-disabled-grey);
