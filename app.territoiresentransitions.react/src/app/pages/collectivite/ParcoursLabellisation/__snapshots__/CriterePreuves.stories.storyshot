@@ -1,0 +1,180 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuves Autres Etoiles CAE 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Signer un acte d’engagement incluant
+     
+    <a
+      href="/TE-CAE_Reglement-label_2021.pdf"
+      rel="noopener"
+      target="_blank"
+    >
+      le règlement du label
+    </a>
+  </li>
+  <button
+    className="fr-btn fr-btn--sm fr-btn--secondary"
+    data-test="AddDocsButton"
+    onClick={[Function]}
+  >
+    + Ajouter
+  </button>
+</ul>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuves Autres Etoiles ECI 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Ajouter les documents officiels de candidature
+  </li>
+  <ul>
+    <li>
+      <b>
+        Courrier d’acte de candidature
+      </b>
+       : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique 
+      Économie Circulaire
+       et coordonnées de la personne référente technique
+    </li>
+    <li>
+      <b>
+        Arrêté préfectoral de création de l’EPCI
+      </b>
+       (Établissement public de coopération intercommunale)
+    </li>
+  </ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Signer un acte d’engagement incluant
+     
+    <a
+      href="/Reglement_label_ECi_20220316.pdf"
+      rel="noopener"
+      target="_blank"
+    >
+      le règlement du label
+    </a>
+  </li>
+  <button
+    className="fr-btn fr-btn--sm fr-btn--secondary"
+    data-test="AddDocsButton"
+    onClick={[Function]}
+  >
+    + Ajouter
+  </button>
+</ul>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuves Premiere Etoile CAE 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Signer un acte d’engagement incluant
+     
+    <a
+      href="/TE-CAE_Reglement-label_2021.pdf"
+      rel="noopener"
+      target="_blank"
+    >
+      le règlement du label
+    </a>
+  </li>
+  <button
+    className="fr-btn fr-btn--sm fr-btn--secondary"
+    data-test="AddDocsButton"
+    onClick={[Function]}
+  >
+    + Ajouter
+  </button>
+</ul>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuves Premiere Etoile ECI 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Signer un acte d’engagement incluant
+     
+    <a
+      href="/Reglement_label_ECi_20220316.pdf"
+      rel="noopener"
+      target="_blank"
+    >
+      le règlement du label
+    </a>
+  </li>
+  <button
+    className="fr-btn fr-btn--sm fr-btn--secondary"
+    data-test="AddDocsButton"
+    onClick={[Function]}
+  >
+    + Ajouter
+  </button>
+</ul>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuves Premiere Etoile ECI Rempli 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Signer un acte d’engagement incluant
+     
+    <a
+      href="/Reglement_label_ECi_20220316.pdf"
+      rel="noopener"
+      target="_blank"
+    >
+      le règlement du label
+    </a>
+  </li>
+  <i
+    className="flex fr-icon fr-fi-checkbox-circle-fill before:text-[#5FD68C] before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w fr-mb-2w"
+  >
+    Terminé
+  </i>
+  <button
+    className="fr-btn fr-btn--sm fr-btn--secondary"
+    data-test="AddDocsButton"
+    onClick={[Function]}
+  >
+    + Ajouter
+  </button>
+  <div
+    className="mt-2"
+    data-test="LabellisationPreuves"
+  >
+    <div
+      className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+    >
+      <div
+        onClick={[Function]}
+      >
+        fichier-preuve.doc
+      </div>
+      <div
+        className="invisible group-hover:visible"
+      >
+        <button
+          className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+          onClick={[Function]}
+          title="Commentaire"
+        />
+        <button
+          className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+          onClick={[Function]}
+          title="Supprimer"
+        />
+      </div>
+    </div>
+  </div>
+</ul>
+`;
