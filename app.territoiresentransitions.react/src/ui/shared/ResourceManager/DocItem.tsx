@@ -9,9 +9,11 @@ import {Doc, DocFile, DocLink, TEditHandlers} from './types';
  * commentaire, la suppression et l'ouverture ou le téléchargement
  */
 export const DocItem = ({
+  classComment,
   doc,
   handlers,
 }: {
+  classComment?: string;
   doc: Doc;
   handlers: TEditHandlers;
 }) => {
@@ -29,8 +31,8 @@ export const DocItem = ({
   } = handlers;
 
   return (
-    <div>
-      <div className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0">
+    <>
+      <div className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer">
         <div onClick={() => openDoc(doc)}>{filename || titre}</div>
         <div className="invisible group-hover:visible">
           <ButtonComment
@@ -52,7 +54,7 @@ export const DocItem = ({
       </div>
       {!isEditingComment && commentaire ? (
         <p
-          className="text-sm text-gray-500 pl-2 pb-4"
+          className={`text-sm text-gray-500 pl-2 pb-4 ${classComment || ''}`}
           onClick={(e: MouseEvent<HTMLParagraphElement>) => {
             e.preventDefault();
             setEditingComment(true);
@@ -78,6 +80,6 @@ export const DocItem = ({
           }}
         />
       ) : null}
-    </div>
+    </>
   );
 };
