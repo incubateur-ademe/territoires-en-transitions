@@ -29,7 +29,7 @@ export const useEditPreuves: TEditPreuve = preuve => {
             collectivite_id,
             filename,
           });
-        } else {
+        } else if (id) {
           preuveLienWriteEndpoint.delete(id);
         }
       }
@@ -46,7 +46,7 @@ export const useEditPreuves: TEditPreuve = preuve => {
           filename,
           commentaire: updatedComment,
         });
-      } else {
+      } else if (id) {
         preuveLienWriteEndpoint.save({
           id,
           collectivite_id,
