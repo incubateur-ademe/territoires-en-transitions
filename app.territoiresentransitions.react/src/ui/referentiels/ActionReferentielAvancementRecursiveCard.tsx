@@ -12,6 +12,8 @@ import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {PersoPotentiel} from 'app/pages/collectivite/PersoPotentielModal/PersoPotentiel';
+import {useEffect, useRef} from 'react';
+import {useLocation} from 'react-router-dom';
 
 /**
  * Displays an actions and it's children below.
@@ -48,8 +50,10 @@ export const ActionReferentielAvancementCard = ({
   action: ActionDefinitionSummary;
 }) => {
   const isLeaf = action.children.length === 0;
+  const myRef = useScrollIntoView(action.id);
+
   return (
-    <div className="pt-8 flex flex-row justify-between">
+    <div className="pt-8 flex flex-row justify-between" ref={myRef}>
       <div className="flex flex-col w-4/5">
         <ActionReferentielDisplayTitle action={action} />
         <Spacer size={1} />
@@ -103,3 +107,18 @@ export const ActionReferentielAvancementRecursiveCard = ({
         displayAddFicheActionButton,
       }),
   });
+
+// on utilise scrollIntoView car la navigation classique (ajout d'un id sur un élément) vers les ancres semble ne pas fonctionner correctement...
+const useScrollIntoView = (anchor: string) => {
+  const myRef = useRef<null | HTMLDivElement>(null);
+  const location = useLocation();
+  useEffect(() => {
+    if (myRef && location.hash.includes(`#${anchor}`)) {
+      myRef?.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [myRef, location.hash]);
+  return myRef;
+};
