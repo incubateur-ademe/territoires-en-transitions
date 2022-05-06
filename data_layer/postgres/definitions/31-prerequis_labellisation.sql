@@ -228,12 +228,14 @@ with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
      score as (select * from labellisation.referentiel_score(etoiles.collectivite_id)),
      -- étoile déduite du score
      s_etoile as (select r.referentiel,
-                         max(em.etoile) as etoile_atteinte
+                         case
+                             when s.complet then max(em.etoile)
+                             end as etoile_atteinte
                   from ref r
                            join score s on r.referentiel = s.referentiel
                            join labellisation.etoile_meta em
                                 on em.min_realise_percentage <= s.score_fait
-                  group by r.referentiel)
+                  group by r.referentiel, s.complet)
 
 select s.referentiel,
        l.etoile                                                  as etoile_labellise,
@@ -267,8 +269,8 @@ select e.referentiel,
        s.score_fait,
        s.score_fait >= em.min_realise_score
 from labellisation.etoiles(critere_score_global.collectivite_id) as e
-         join labellisation.etoile_meta em on em.etoile = e.etoile_objectif
-         join score s on e.referentiel = s.referentiel
+         left join labellisation.etoile_meta em on em.etoile = e.etoile_objectif
+         left join score s on e.referentiel = s.referentiel
 $$
     language sql;
 comment on function labellisation.critere_score_global is
@@ -312,7 +314,7 @@ where ss.concerne;
 $$
     language sql;
 comment on function labellisation.critere_action is
-    'Renvoie l''état des critères applicables à une collectivité donnée';
+    'Renvoie l''état des critères applicables à une collectivité donnée pour toute les étoiles.';
 
 
 
