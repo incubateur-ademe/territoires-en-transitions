@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score Niveau 1 Atteint 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Atteindre un score d’au moins 0 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
+  </li>
+  <i
+    className="flex fr-icon fr-fi-checkbox-circle-fill before:text-[#5FD68C] before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w "
+  >
+    Terminé
+  </i>
+</ul>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score Niveau 1 Non Atteint 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Atteindre un score d’au moins 0 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
+  </li>
+  <a
+    className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
+    href="/collectivite/1/referentiels/eci"
+    target="_blank"
+  >
+    Mettre à jour
+  </a>
+</ul>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score Niveau Suivant Atteint 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Atteindre un score d’au moins 35 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
+  </li>
+  <i
+    className="flex fr-icon fr-fi-checkbox-circle-fill before:text-[#5FD68C] before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w "
+  >
+    Terminé
+  </i>
+</ul>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score Niveau Suivant Non Atteint 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Atteindre un score d’au moins 0 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
+  </li>
+  <a
+    className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
+    href="/collectivite/1/referentiels/eci"
+    target="_blank"
+  >
+    Mettre à jour
+  </a>
+</ul>
+`;
