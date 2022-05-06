@@ -1,4 +1,7 @@
-import {makeCollectiviteReferentielUrl} from 'app/paths';
+import {
+  makeCollectiviteLabellisationUrl,
+  makeCollectiviteReferentielUrl,
+} from 'app/paths';
 import {actionAvancementColors} from 'app/theme';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
@@ -276,6 +279,17 @@ const ReferentielSection = observer(
             realisePercentage={realisePercentage}
           />
         ) : null}
+        <div className="flex justify-center mb-8">
+          <a
+            className="fr-btn"
+            href={makeCollectiviteLabellisationUrl({
+              collectiviteId,
+              referentielId,
+            })}
+          >
+            Décrocher les étoiles
+          </a>
+        </div>
         {rootScore && (
           <ChiffreCles rootScore={rootScore} referentiel={referentielId} />
         )}
