@@ -31,9 +31,11 @@ export const DocItem = ({
   } = handlers;
 
   return (
-    <>
+    <div data-test="item">
       <div className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer">
-        <div onClick={() => openDoc(doc)}>{filename || titre}</div>
+        <div data-test="name" onClick={() => openDoc(doc)}>
+          {filename || titre}
+        </div>
         <div className="invisible group-hover:visible">
           <ButtonComment
             title="Commentaire"
@@ -54,6 +56,7 @@ export const DocItem = ({
       </div>
       {!isEditingComment && commentaire ? (
         <p
+          data-test="comment"
           className={`text-sm text-gray-500 pl-2 pb-4 ${classComment || ''}`}
           onClick={(e: MouseEvent<HTMLParagraphElement>) => {
             e.preventDefault();
@@ -80,6 +83,6 @@ export const DocItem = ({
           }}
         />
       ) : null}
-    </>
+    </div>
   );
 };
