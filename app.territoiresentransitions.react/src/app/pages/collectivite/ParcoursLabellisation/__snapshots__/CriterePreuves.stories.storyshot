@@ -153,26 +153,31 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuve
     data-test="LabellisationPreuves"
   >
     <div
-      className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+      data-test="item"
     >
       <div
-        onClick={[Function]}
+        className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
       >
-        fichier-preuve.doc
-      </div>
-      <div
-        className="invisible group-hover:visible"
-      >
-        <button
-          className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+        <div
+          data-test="name"
           onClick={[Function]}
-          title="Commentaire"
-        />
-        <button
-          className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
-          onClick={[Function]}
-          title="Supprimer"
-        />
+        >
+          fichier-preuve.doc
+        </div>
+        <div
+          className="invisible group-hover:visible"
+        >
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+            onClick={[Function]}
+            title="Commentaire"
+          />
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+            onClick={[Function]}
+            title="Supprimer"
+          />
+        </div>
       </div>
     </div>
   </div>
