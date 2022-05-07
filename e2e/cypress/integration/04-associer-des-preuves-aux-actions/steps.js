@@ -49,13 +49,25 @@ When(
   (action, dataTable) => {
     const rows = dataTable.rows();
     getPreuvePanel(action)
-      .find('[data-test=ActionPreuves] > div')
-      .should('have.length', rows.length);
-    cy.wrap(rows).each(([titre, commentaire], index) => {
-      getPreuvePanel(action)
-        .find(`[data-test=ActionPreuves] > div:nth(${index})`)
-        .should('have.text', titre + commentaire);
-    });
+      .find('[data-test=ActionPreuves]')
+      .within(() => {
+        // vérifie le nombre de lignes
+        cy.root().get('[data-test=item]').should('have.length', rows.length);
+
+        // vérifie que chaque ligne du tableau donné correspond à l'affichage
+        cy.wrap(rows).each(([titre, commentaire], index) => {
+          cy.get(`[data-test=item]:nth(${index})`).within(() => {
+            // vérifie le nom
+            cy.get('[data-test=name]').should('have.text', titre);
+            // et le commentaire (ou son absence)
+            if (commentaire) {
+              cy.get('[data-test=comment]').should('have.text', commentaire);
+            } else {
+              cy.get('[data-test=comment]').should('not.exist');
+            }
+          });
+        });
+      });
   }
 );
 
