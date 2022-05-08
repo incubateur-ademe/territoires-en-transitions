@@ -56,7 +56,7 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
         </a>
       </li>
       {rempli ? <CritereRempli className="fr-mb-2w" /> : null}
-      {<AddDocsButton demande_id={demande.id} />}
+      {demande.en_cours ? <AddDocsButton demande_id={demande.id} /> : null}
       <LabellisationPreuves {...props} />
     </>
   );
@@ -65,7 +65,8 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
 /**
  * Affiche les fichiers attachés à la demande
  */
-const LabellisationPreuves = ({preuves, demande}: TCriterePreuvesProps) => {
+const LabellisationPreuves = (props: TCriterePreuvesProps) => {
+  const {preuves} = props;
   if (!preuves.length) {
     return null;
   }
@@ -73,11 +74,7 @@ const LabellisationPreuves = ({preuves, demande}: TCriterePreuvesProps) => {
   return (
     <div className="mt-2" data-test="LabellisationPreuves">
       {preuves.map(preuve => (
-        <PreuveFichierDetail
-          key={preuve.filename}
-          preuve={preuve}
-          demandeId={demande.id}
-        />
+        <PreuveFichierDetail key={preuve.filename} {...props} preuve={preuve} />
       ))}
     </div>
   );
@@ -89,15 +86,16 @@ const LabellisationPreuves = ({preuves, demande}: TCriterePreuvesProps) => {
  */
 const PreuveFichierDetail = ({
   preuve,
-  demandeId,
-}: {
+  demande,
+}: TCriterePreuvesProps & {
   preuve: LabellisationPreuveFichierRead;
-  demandeId: number;
 }) => {
-  const handlers = useEditPreuves(preuve, demandeId);
+  const handlers = useEditPreuves(preuve, demande.id);
+
   return (
     <DocItem
       doc={{...preuve, type: 'fichier'}}
+      readonly={!demande.en_cours}
       classComment="pb-0 mb-2"
       handlers={handlers}
     />
