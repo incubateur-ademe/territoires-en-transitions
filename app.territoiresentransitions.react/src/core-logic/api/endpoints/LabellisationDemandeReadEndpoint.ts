@@ -1,6 +1,7 @@
+import {PostgrestResponse} from '@supabase/supabase-js';
 import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
-import {PostgrestResponse} from '@supabase/supabase-js';
+import {labellisationDemandeWriteEndpoint} from './LabellisationDemandeWriteEndpoint';
 
 export interface LabellisationDemandeGetParams {
   collectivite_id: number;
@@ -25,4 +26,4 @@ class LabellisationDemandeReadEndpoint extends DataLayerReadCachedEndpoint<
 }
 
 export const labellisationDemandeReadEndpoint =
-  new LabellisationDemandeReadEndpoint([]);
+  new LabellisationDemandeReadEndpoint([labellisationDemandeWriteEndpoint]);

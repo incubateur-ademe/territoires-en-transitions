@@ -1,11 +1,13 @@
 import Dialog from '@material-ui/core/Dialog';
+import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
 import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
 import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
 import {numLabels} from './numLabels';
+import {useEnvoiDemande} from './useEnvoiDemande';
 
 export type TDemandeLabellisationModalProps = {
   parcours: LabellisationParcoursRead;
-  submitted: boolean;
+  demande: LabellisationDemandeRead;
   opened: boolean;
   setOpened: (opened: boolean) => void;
 };
@@ -64,8 +66,9 @@ const getMessage = (parcours: LabellisationParcoursRead) => {
 export const DemandeLabellisationModal = (
   props: TDemandeLabellisationModalProps
 ) => {
-  const {parcours, submitted, opened, setOpened} = props;
+  const {parcours, demande, opened, setOpened} = props;
   const {etoiles} = parcours;
+  const {isLoading, envoiDemande} = useEnvoiDemande();
 
   const onClose = () => setOpened(false);
   return (
@@ -84,16 +87,20 @@ export const DemandeLabellisationModal = (
             : `Demander un audit pour la ${numLabels[etoiles]} étoile`}
         </h3>
         <div className="w-full">
-          {submitted ? (
+          {isLoading ? 'Envoi en cours...' : null}
+          {!demande.en_cours ? (
             <div className="fr-alert fr-alert--success">
               {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
             </div>
-          ) : (
+          ) : null}
+          {demande.en_cours && !isLoading ? (
             <>
               {getMessage(parcours).map((line, index) => (
                 <p key={index}>{line}</p>
               ))}
-              <button className="fr-btn">Envoyer ma demande</button>
+              <button className="fr-btn" onClick={() => envoiDemande(demande)}>
+                Envoyer ma demande
+              </button>
               {etoiles !== '1' ? (
                 <button
                   className="fr-btn fr-btn--secondary fr-ml-4w"
@@ -103,7 +110,7 @@ export const DemandeLabellisationModal = (
                 </button>
               ) : null}
             </>
-          )}
+          ) : null}
         </div>
       </div>
     </Dialog>
