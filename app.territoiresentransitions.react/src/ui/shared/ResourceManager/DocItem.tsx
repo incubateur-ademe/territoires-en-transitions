@@ -11,10 +11,12 @@ import {Doc, DocFile, DocLink, TEditHandlers} from './types';
 export const DocItem = ({
   classComment,
   doc,
+  readonly,
   handlers,
 }: {
   classComment?: string;
   doc: Doc;
+  readonly?: boolean;
   handlers: TEditHandlers;
 }) => {
   const {commentaire} = doc;
@@ -36,25 +38,27 @@ export const DocItem = ({
         <div data-test="name" onClick={() => openDoc(doc)}>
           {filename || titre}
         </div>
-        <div className="invisible group-hover:visible">
-          <ButtonComment
-            title="Commentaire"
-            onClick={(e: MouseEvent<HTMLButtonElement>) => {
-              e.preventDefault();
-              setEditingComment(true);
-            }}
-          />
-          <ButtonRemove
-            title="Supprimer"
-            className="fr-fi-delete-line"
-            onClick={(e: MouseEvent<HTMLButtonElement>) => {
-              e.preventDefault();
-              remove();
-            }}
-          />
-        </div>
+        {!readonly ? (
+          <div className="invisible group-hover:visible">
+            <ButtonComment
+              title="Commentaire"
+              onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                e.preventDefault();
+                setEditingComment(true);
+              }}
+            />
+            <ButtonRemove
+              title="Supprimer"
+              className="fr-fi-delete-line"
+              onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                e.preventDefault();
+                remove();
+              }}
+            />
+          </div>
+        ) : null}
       </div>
-      {!isEditingComment && commentaire ? (
+      {!isEditingComment && commentaire && !readonly ? (
         <p
           data-test="comment"
           className={`text-sm text-gray-500 pl-2 pb-4 ${classComment || ''}`}
