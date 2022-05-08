@@ -17,7 +17,7 @@ export type THeaderProps = {
 };
 
 export const Header = (props: THeaderProps) => {
-  const {parcours, preuves} = props;
+  const {parcours, demande, preuves} = props;
   const {
     etoiles,
     completude_ok,
@@ -28,27 +28,27 @@ export const Header = (props: THeaderProps) => {
   } = parcours;
   // on peut soumettre la demande de labellisation si...
   const canSubmit =
-    // le référentiel est rempli
+    // la demande est toujours en cours
+    demande.en_cours &&
+    // et le référentiel est rempli
     completude_ok &&
-    // le score nécessaire est atteint
-    critere_score.atteint &&
+    // et le score nécessaire est atteint
+    critere_score?.atteint &&
     // et il n'y a pas de critère action non rempli
     !criteres_action.find(c => !c.rempli) &&
     // et le critère preuves est rempli
     preuves?.length > 0;
   const [opened, setOpened] = useState(false);
-  const demandee = derniere_demande && derniere_demande.etoiles !== etoiles;
-  const submitted = false;
 
   return (
     <PageHeaderLeft>
-      {demandee ? (
+      {derniere_demande ? (
         <p className="m-0">
           Votre demande pour la {numLabels[derniere_demande.etoiles]} étoile a
           été envoyée
         </p>
       ) : null}
-      {derniere_labellisation && !demandee ? (
+      {derniere_labellisation && !derniere_demande ? (
         <p className="m-0">
           <span className="capitalize">
             {numLabels[derniere_labellisation.etoiles]}
@@ -69,7 +69,7 @@ export const Header = (props: THeaderProps) => {
         {etoiles === '1' ? 'Demander la première étoile' : 'Demander un audit'}
       </button>
       <DemandeLabellisationModal
-        submitted={submitted}
+        demande={demande}
         parcours={parcours}
         opened={opened}
         setOpened={setOpened}

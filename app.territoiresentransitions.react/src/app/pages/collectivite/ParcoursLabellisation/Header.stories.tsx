@@ -6,7 +6,9 @@ export default {
   component: Header,
 } as Meta;
 
-const Template: Story<THeaderProps> = args => <Header {...args} />;
+const Template: Story<THeaderProps> = args => (
+  <Header demande={{en_cours: true}} {...args} />
+);
 
 export const RemplissageIncomplet = Template.bind({});
 RemplissageIncomplet.args = {
