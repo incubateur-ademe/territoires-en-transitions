@@ -4,4 +4,5 @@ export type LabellisationDemandeWrite = {
   collectivite_id: number;
   referentiel: string;
   etoiles: string;
+  en_cours?: boolean;
 };
