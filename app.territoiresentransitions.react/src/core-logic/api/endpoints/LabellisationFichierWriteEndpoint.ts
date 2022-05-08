@@ -28,11 +28,14 @@ export class LabellisationFichierWriteEndpoint extends ChangeNotifier {
 
   async delete(preuve: LabellisationPreuveFichierDelete): Promise<boolean> {
     const {collectivite_id, demande_id, filename} = preuve;
-    const {error} = await supabaseClient.rpc('delete_preuve_fichier', {
-      collectivite_id,
-      demande_id,
-      filename,
-    });
+    const {error} = await supabaseClient.rpc(
+      'delete_labellisation_preuve_fichier',
+      {
+        collectivite_id,
+        demande_id,
+        filename,
+      }
+    );
     if (error) {
       return false;
     }
