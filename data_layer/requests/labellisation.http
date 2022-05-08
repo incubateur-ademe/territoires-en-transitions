@@ -117,10 +117,42 @@ Authorization: Bearer {{auth_token}}
 > {%
     client.test("List executed successfully", function() {
         client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.length === 1, "La longueur de liste des fichiers n'est pas 1.");
         client.assert(
           "" + response.body[0]["demande_id"] === "" + client.global.get("demande_id"),
           "L'id de la demande ne correspond pas."
           );
         client.assert(response.body[0]["filename"] === "labellisation_preuve_input.txt", "Le nom du fichier n'est pas le bon");
+    });
+%}
+
+
+### A. removes a preuve
+POST {{api}}/rest/v1/rpc/delete_labellisation_preuve_fichier
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "demande_id": {{demande_id}},
+  "filename": "labellisation_preuve_input.txt"
+}
+
+> {%
+    client.test("Delete executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### A. Liste les fichiers preuves de la collectivite 1 et de la demande après la suppression
+GET {{api}}/rest/v1/action_labellisation_preuve_fichier?collectivite_id=eq.1&demande_id={{eq_demande_id}}
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("List executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.length === 0, "La liste des fichiers n'est pas vide.");
     });
 %}
