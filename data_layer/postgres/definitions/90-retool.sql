@@ -35,22 +35,17 @@ from private_utilisateur_droit d
          join named_collectivite nc on d.collectivite_id = nc.collectivite_id
 where is_service_role() -- Protect the DCPs.
 ;
-comment on function retool_user_list is
-    'Returns user list for retool.';
-
+comment on view retool_user_list is
+    'The user list view for retool.';
 
 create or replace view retool_user_collectivites_list as
-with droit as (
-    select d.user_id as user_id, nc.nom as nom, nc.collectivite_id
-    from private_utilisateur_droit d
-             join named_collectivite nc on d.collectivite_id = nc.collectivite_id
-),
-     user_collectivites as (
-         select d.user_id, array_agg(c.nom) as noms
-         from droit d
-                  join named_collectivite c on c.collectivite_id = d.collectivite_id
-         group by d.user_id
-     )
+with droit as (select d.user_id as user_id, nc.nom as nom, nc.collectivite_id
+               from private_utilisateur_droit d
+                        join named_collectivite nc on d.collectivite_id = nc.collectivite_id),
+     user_collectivites as (select d.user_id, array_agg(c.nom) as noms
+                            from droit d
+                                     join named_collectivite c on c.collectivite_id = d.collectivite_id
+                            group by d.user_id)
 select p.prenom                              as prenom,
        p.nom                                 as nom,
        p.email                               as email,
@@ -80,40 +75,30 @@ comment on view retool_active_collectivite is
 
 
 create or replace view retool_completude_compute as
-with active as (
-    select *
-    from retool_active_collectivite
-),
-     completed_eci as (
-         select c.collectivite_id, count(*) as count
-         from active c
-                  join action_statut s on s.collectivite_id = c.collectivite_id
-                  join action_relation r on r.id = s.action_id
-         where r.referentiel = 'eci'
-         group by c.collectivite_id
-     ),
-     eci_count as (
-         select count(*)
-         from action_relation r
-                  join action_children c on r.id = c.id
-         where r.referentiel = 'eci'
-           and array_length(c.children, 1) is null
-     ),
-     completed_cae as (
-         select c.collectivite_id, count(*) as count
-         from active c
-                  join action_statut s on s.collectivite_id = c.collectivite_id
-                  join action_relation r on r.id = s.action_id
-         where r.referentiel = 'cae'
-         group by c.collectivite_id
-     ),
-     cae_count as (
-         select count(*)
-         from action_relation r
-                  join action_children c on r.id = c.id
-         where r.referentiel = 'cae'
-           and array_length(c.children, 1) is null
-     )
+with active as (select *
+                from retool_active_collectivite),
+     completed_eci as (select c.collectivite_id, count(*) as count
+                       from active c
+                                join action_statut s on s.collectivite_id = c.collectivite_id
+                                join action_relation r on r.id = s.action_id
+                       where r.referentiel = 'eci'
+                       group by c.collectivite_id),
+     eci_count as (select count(*)
+                   from action_relation r
+                            join action_children c on r.id = c.id
+                   where r.referentiel = 'eci'
+                     and array_length(c.children, 1) is null),
+     completed_cae as (select c.collectivite_id, count(*) as count
+                       from active c
+                                join action_statut s on s.collectivite_id = c.collectivite_id
+                                join action_relation r on r.id = s.action_id
+                       where r.referentiel = 'cae'
+                       group by c.collectivite_id),
+     cae_count as (select count(*)
+                   from action_relation r
+                            join action_children c on r.id = c.id
+                   where r.referentiel = 'cae'
+                     and array_length(c.children, 1) is null)
 select c.collectivite_id,
        c.nom,
        round((compl_eci.count::decimal / c_eci.count::decimal) * 100, 2) as completude_eci,
@@ -129,27 +114,19 @@ comment on view retool_completude_compute is
 
 
 create or replace view retool_score as
-with relation as (
-    select *
-    from action_relation
-),
-     statut as (
-         select *
-         from action_statut a
-                  join relation on relation.id = a.action_id
-     ),
-     score as (
-         select jsonb_array_elements(scores) ->> 'action_id'       as action_id,
-                jsonb_array_elements(scores) ->> 'point_fait'      as points,
-                jsonb_array_elements(scores) ->> 'point_potentiel' as points_pot,
-                s.collectivite_id
-         from client_scores s
-     ),
-     commentaires as (
-         select *
-         from action_commentaire c
-                  join relation on relation.id = c.action_id
-     )
+with relation as (select *
+                  from action_relation),
+     statut as (select *
+                from action_statut a
+                         join relation on relation.id = a.action_id),
+     score as (select jsonb_array_elements(scores) ->> 'action_id'       as action_id,
+                      jsonb_array_elements(scores) ->> 'point_fait'      as points,
+                      jsonb_array_elements(scores) ->> 'point_potentiel' as points_pot,
+                      s.collectivite_id
+               from client_scores s),
+     commentaires as (select *
+                      from action_commentaire c
+                               join relation on relation.id = c.action_id)
 select n.collectivite_id,
        n.nom                            as collectivité,
        a.referentiel,
@@ -176,39 +153,37 @@ comment on view retool_score is
 
 create or replace view retool_completude
 as
-with active as (
-    select *
-    from retool_active_collectivite
-),
-     score as (
-         select collectivite_id, jsonb_array_elements(scores) as o from client_scores
-     ),
-     eci as (
-         select collectivite_id,
-                (o ->> 'completed_taches_count')::integer as completed_taches_count,
-                (o ->> 'total_taches_count')::integer     as total_taches_count,
-                (o ->> 'point_fait')::float               as point_fait,
-                (o ->> 'point_programme')::float          as point_programme
-         from score
-         where o @> '{"action_id": "eci"}'
-     ),
-     cae as (
-         select collectivite_id,
-                (o ->> 'completed_taches_count')::integer as completed_taches_count,
-                (o ->> 'total_taches_count')::integer     as total_taches_count,
-                (o ->> 'point_fait')::float               as point_fait,
-                (o ->> 'point_programme')::float          as point_programme
-         from score
-         where o @> '{"action_id": "cae"}'
-     )
+with active as (select *
+                from retool_active_collectivite),
+     score as (select collectivite_id, jsonb_array_elements(scores) as o from client_scores),
+     eci as (select collectivite_id,
+                    (o ->> 'completed_taches_count')::integer as completed_taches_count,
+                    (o ->> 'total_taches_count')::integer     as total_taches_count,
+                    (o ->> 'point_fait')::float               as point_fait,
+                    (o ->> 'point_programme')::float          as point_programme
+             from score
+             where o @> '{"action_id": "eci"}'),
+     cae as (select collectivite_id,
+                    (o ->> 'completed_taches_count')::integer as completed_taches_count,
+                    (o ->> 'total_taches_count')::integer     as total_taches_count,
+                    (o ->> 'point_fait')::float               as point_fait,
+                    (o ->> 'point_programme')::float          as point_programme
+             from score
+             where o @> '{"action_id": "cae"}')
 
 select c.collectivite_id,
        c.nom,
+       cci.region_name,
+       cci.departement_name,
+       cci.type_collectivite,
+       cci.population_totale,
+       cci.code_siren_insee,
        (eci.completed_taches_count::float / eci.total_taches_count::float) * 100 as completude_eci,
        (cae.completed_taches_count::float / cae.total_taches_count::float) * 100 as completude_cae
 from active c
          left join eci on eci.collectivite_id = c.collectivite_id
          left join cae on cae.collectivite_id = c.collectivite_id
+         left join collectivite_carte_identite cci on cci.collectivite_id = c.collectivite_id
 order by c.collectivite_id
 ;
 comment on view retool_completude
