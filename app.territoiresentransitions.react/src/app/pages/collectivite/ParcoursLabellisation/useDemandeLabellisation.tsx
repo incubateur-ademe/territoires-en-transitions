@@ -50,6 +50,16 @@ export const useDemandeLabellisation = (
       }
     }
   };
+
+  // la demande sera rechargée quand elle est mise à jour lors de l'envoi
+  useEffect(() => {
+    labellisationDemandeWriteEndpoint.addListener(fetch);
+    return () => {
+      labellisationDemandeWriteEndpoint.removeListener(fetch);
+    };
+  }, []);
+
+  // charge les données
   useEffect(() => {
     fetch();
   }, [collectivite_id, parcours]);
