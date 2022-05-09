@@ -344,7 +344,7 @@ select ok((select bool_and(score_fait = 0
 select ok((select etoile_labellise is null
                       and prochaine_etoile_labellisation is null
                       and etoile_score_possible is null
-                      and etoile_objectif is null
+                      and etoile_objectif = '1'
            from labellisation.etoiles(1)
            where referentiel = 'eci'),
           'Labellisation étoiles function should output correct state for 0% fait, not complete.');
@@ -356,12 +356,15 @@ select ok((select etoiles = '1'
                       and derniere_demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
-          'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
+          'Labellisation parcours function should output correct state for 0% fait, not complete, no demande.');
 
 
 --------------------------------------------------------------------
 ------- Scenario: nothing is done but everything is complete -------
 --------------------------------------------------------------------
+
+truncate labellisation;
+truncate labellisation_demande, labellisation_preuve_fichier;
 
 -- fake scoring, score and completion at 1
 truncate private.action_score; -- use action_score as a temp table
