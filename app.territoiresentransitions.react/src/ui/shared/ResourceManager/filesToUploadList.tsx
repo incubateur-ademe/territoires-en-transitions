@@ -78,7 +78,7 @@ const isValidFileSize = (f: File): boolean => {
 // contrôle le format d'un fichier
 const isValidFileFormat = (f: File): boolean => {
   const ext = f.name.split('.')?.pop();
-  return (ext && EXPECTED_FORMATS.includes(ext)) || false;
+  return (ext && EXPECTED_FORMATS.includes(ext.toLowerCase())) || false;
 };
 
 // contrôle la présence d'un fichier portant le même nom dans le bucket
