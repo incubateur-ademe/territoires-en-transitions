@@ -238,10 +238,10 @@ with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
                   group by r.referentiel, s.complet)
 
 select s.referentiel,
-       l.etoile                                                  as etoile_labellise,
-       l.prochaine_etoile                                        as prochaine_etoile_labellisation,
-       s.etoile_atteinte                                         as etoile_score_possible,
-       greatest(l.etoile, l.prochaine_etoile, s.etoile_atteinte) as etoile_objectif
+       l.etoile                                                       as etoile_labellise,
+       l.prochaine_etoile                                             as prochaine_etoile_labellisation,
+       s.etoile_atteinte                                              as etoile_score_possible,
+       greatest(l.etoile, l.prochaine_etoile, s.etoile_atteinte, '1') as etoile_objectif
 from s_etoile s
          left join l_etoile l on l.referentiel = s.referentiel;
 $$
