@@ -4,7 +4,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {yuluCredentials} from 'test_utils/collectivites';
 
 describe('Labellisation reading endpoint ', () => {
-  it('should not be able to read if not connected', async () => {
+  it.skip('should not be able to read if not connected', async () => {
     const results = await labellisationParcoursReadEndpoint.getBy({
       collectivite_id: 1,
     });
