@@ -349,9 +349,14 @@ select ok((select etoile_labellise is null
            where referentiel = 'eci'),
           'Labellisation étoiles function should output correct state for 0% fait, not complete.');
 
-
-select is_empty('select etoiles from labellisation_parcours(1) where referentiel = ''eci'';',
-          'Labellisation parcours function should be empty for 0% fait, not complete, no demande.');
+select ok((select etoiles = '1'
+                      and not completude_ok
+                      and not rempli
+                      and calendrier is not null
+                      and derniere_demande is null
+           from labellisation_parcours(1)
+           where referentiel = 'eci'),
+          'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
 
 
 --------------------------------------------------------------------
@@ -419,7 +424,8 @@ select ok((select etoiles = '1'
 ------------------------------------------------------------
 
 -- fake scoring, score and completion at 1
-select * from fulfill('1');
+select *
+from fulfill('1');
 -- select * from private.action_score s  join private.score_summary_of(s) ss on true;
 -- select * from labellisation.referentiel_score(1);
 
@@ -448,7 +454,7 @@ select ok((select etoiles = '1'
           'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
 
 -- Create demande
-truncate labellisation_demande,  labellisation_preuve_fichier;
+truncate labellisation_demande, labellisation_preuve_fichier;
 insert into labellisation_demande (id, collectivite_id, referentiel, etoiles)
 values (100, 1, 'eci', '1');
 
@@ -475,7 +481,8 @@ select ok((select etoiles = '1'
 -----------------------------------------------------------------
 ------- Scenario: score requirement for étoile 2 are done -------
 -----------------------------------------------------------------
-select * from fulfill('2');
+select *
+from fulfill('2');
 
 select ok((select bool_and(score_fait = 35
     and score_programme = 0
@@ -505,7 +512,8 @@ select ok((select etoiles = '2'
 -----------------------------------------------------------------
 ------- Scenario: score requirement for étoile 3 are done -------
 -----------------------------------------------------------------
-select * from fulfill('3');
+select *
+from fulfill('3');
 
 select ok((select bool_and(score_fait = 50
     and score_programme = 0
