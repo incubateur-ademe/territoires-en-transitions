@@ -28,6 +28,7 @@ with etoiles as (select *
                                jsonb_agg(
                                        jsonb_build_object(
                                                'formulation', formulation,
+                                               'prio', c.prio,
                                                'action_id', c.action_id,
                                                'rempli', c.atteint,
                                                'etoile', c.etoiles,
