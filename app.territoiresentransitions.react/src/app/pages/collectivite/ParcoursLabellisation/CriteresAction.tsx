@@ -1,4 +1,3 @@
-import {useHistory} from 'react-router-dom';
 import {
   CritereLabellisationAction,
   LabellisationParcoursRead,
@@ -20,7 +19,6 @@ type TCriteresActionTable = TCriteresActionProps & {
  * Affiche les critères liés aux actions
  */
 export const CriteresAction = (props: TCriteresActionProps) => {
-  const history = useHistory();
   const {collectiviteId, parcours} = props;
   const {referentiel} = parcours;
 
@@ -35,11 +33,9 @@ export const CriteresAction = (props: TCriteresActionProps) => {
       referentielId: referentiel,
       actionId: limitedLevels,
     });
-    history.push({
-      pathname,
-      hash:
-        levels.length !== limitedLevels.length ? `#${action_id}` : undefined,
-    });
+    window.open(
+      pathname + (levels.length !== limitedLevels.length ? `#${action_id}` : '')
+    );
   };
 
   return (
