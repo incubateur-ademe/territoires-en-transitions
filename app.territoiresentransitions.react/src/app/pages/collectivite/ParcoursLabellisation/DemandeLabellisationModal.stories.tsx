@@ -18,6 +18,7 @@ const parameters = {storyshots: false};
 
 export const Etoile1 = Template.bind({});
 Etoile1.args = {
+  demande: {en_cours: true},
   parcours: {
     etoiles: '1',
   },
@@ -26,6 +27,7 @@ Etoile1.parameters = parameters;
 
 export const Etoile2_3_4_ECI = Template.bind({});
 Etoile2_3_4_ECI.args = {
+  demande: {en_cours: true},
   parcours: {
     etoiles: '2',
     referentiel: 'eci',
@@ -35,6 +37,7 @@ Etoile2_3_4_ECI.parameters = parameters;
 
 export const Etoile2_3_4_CAE = Template.bind({});
 Etoile2_3_4_CAE.args = {
+  demande: {en_cours: true},
   parcours: {
     etoiles: '2',
     referentiel: 'cae',
@@ -44,6 +47,7 @@ Etoile2_3_4_CAE.parameters = parameters;
 
 export const Etoile5 = Template.bind({});
 Etoile5.args = {
+  demande: {en_cours: true},
   parcours: {
     etoiles: '5',
   },
@@ -52,7 +56,7 @@ Etoile5.parameters = parameters;
 
 export const Etoile1Envoyee = Template.bind({});
 Etoile1Envoyee.args = {
-  submitted: true,
+  demande: {en_cours: false},
   parcours: {
     etoiles: '1',
   },
@@ -61,7 +65,7 @@ Etoile1Envoyee.parameters = parameters;
 
 export const Etoile_2_3_4_5_Envoyee = Template.bind({});
 Etoile_2_3_4_5_Envoyee.args = {
-  submitted: true,
+  demande: {en_cours: false},
   parcours: {
     etoiles: '2',
   },
