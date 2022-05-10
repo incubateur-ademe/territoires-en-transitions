@@ -25,16 +25,18 @@ const ActionReferentielRecursiveCard = ({
   action: ActionDefinitionSummary;
   card: ({action}: {action: ActionDefinitionSummary}) => JSX.Element;
 }) => {
+  const myRef = useScrollIntoView(action.id);
+
   if (action.children.length === 0) return <div> {card({action})}</div>;
 
   const children = useActionSummaryChildren(action);
   return (
-    <div id={action.id}>
+    <div id={action.id} ref={myRef}>
       <div> {card({action})}</div>{' '}
-      {children.map(action => (
+      {children.map(subaction => (
         <ActionReferentielRecursiveCard
-          key={action.id}
-          action={action}
+          key={subaction.id}
+          action={subaction}
           card={card}
         />
       ))}
@@ -113,11 +115,15 @@ const useScrollIntoView = (anchor: string) => {
   const myRef = useRef<null | HTMLDivElement>(null);
   const location = useLocation();
   useEffect(() => {
-    if (myRef && location.hash.includes(`#${anchor}`)) {
-      myRef?.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
+    // applique l'effet si l'url contient l'ancre voulue (et que la ref sur l'elt est créée)
+    if (myRef && location.hash.substring(1).split('&').includes(anchor)) {
+      // le timeout permet que le render soit terminé avant de scroller vers l'élément
+      setTimeout(() => {
+        myRef?.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }, 0);
     }
   }, [myRef, location.hash]);
   return myRef;
