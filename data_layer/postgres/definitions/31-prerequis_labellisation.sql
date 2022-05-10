@@ -143,7 +143,8 @@ create or replace function
                 proportion_programme float,
                 completude           float,
                 complete             boolean,
-                concerne             boolean
+                concerne             boolean,
+                desactive               boolean
             )
 as
 $$
@@ -164,7 +165,8 @@ select score.referentiel,
            else (score.completed_taches_count)::float / (score.total_taches_count)::float
            end,
        (score.completed_taches_count)::float = (score.total_taches_count)::float,
-       (score.concerne)::boolean
+       (score.concerne)::boolean,
+       (score.desactive)::boolean
 $$
     language sql stable;
 comment on function private.score_summary_of is
@@ -310,7 +312,7 @@ select ss.referentiel,
 from labellisation_action_critere cla
          join scores sc on sc.action_id = cla.action_id
          join private.score_summary_of(sc) ss on true
-where ss.concerne;
+where not ss.desactive;
 $$
     language sql;
 comment on function labellisation.critere_action is
