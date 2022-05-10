@@ -50,9 +50,13 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
         </>
       ) : null}
       <li className="fr-mb-1w">
-        Signer un acte d’engagement incluant{' '}
+        Signer un{' '}
+        <a href="/Acte_engagement.docx" target="_blank" rel="noopener">
+          acte d’engagement
+        </a>{' '}
+        dans le programme affirmant votre adhésion{' '}
         <a href={REGLEMENTS[referentiel]} target="_blank" rel="noopener">
-          le règlement du label
+          au règlement du label
         </a>
       </li>
       {rempli ? <CritereRempli className="fr-mb-2w" /> : null}
