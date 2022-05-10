@@ -26,9 +26,11 @@ export const useParcoursLabellisation = (
   );
 
   // crée la demande
-  const createDemande = async (): Promise<LabellisationDemandeWrite | null> => {
-    if (collectivite_id && parcours) {
-      const {referentiel, etoiles} = parcours;
+  const createDemande = async (
+    p: LabellisationParcoursRead
+  ): Promise<LabellisationDemandeWrite | null> => {
+    if (collectivite_id) {
+      const {referentiel, etoiles} = p;
       return labellisationDemandeWriteEndpoint.save({
         collectivite_id,
         etoiles,
@@ -51,7 +53,7 @@ export const useParcoursLabellisation = (
 
       if (!demandes?.length) {
         // crée la demande si elle n'existe pas
-        const demande = await createDemande();
+        const demande = await createDemande(p);
         if (demande) {
           setDemande(demande as LabellisationDemandeRead);
         }
