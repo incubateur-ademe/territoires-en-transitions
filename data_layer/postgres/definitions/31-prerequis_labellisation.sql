@@ -306,7 +306,7 @@ select ss.referentiel,
        ss.proportion_programme,
        cla.min_programme_percentage,
        coalesce(ss.proportion_fait >= cla.min_realise_percentage, false) or
-       coalesce(ss.proportion_programme >= cla.min_programme_percentage, false) as atteint
+       coalesce(ss.proportion_programme + ss.proportion_fait >= cla.min_programme_percentage, false) as atteint
 from labellisation_action_critere cla
          join scores sc on sc.action_id = cla.action_id
          join private.score_summary_of(sc) ss on true
