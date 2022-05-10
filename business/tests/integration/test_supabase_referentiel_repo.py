@@ -22,7 +22,7 @@ from tests.utils.supabase_fixtures import *
 
 # Note : those should not change very often.
 expected_nb_of_eci_actions = 367
-expected_nb_of_cae_actions = 1478
+expected_nb_of_cae_actions = 1481
 expected_nb_of_indicateurs = 180
 
 
