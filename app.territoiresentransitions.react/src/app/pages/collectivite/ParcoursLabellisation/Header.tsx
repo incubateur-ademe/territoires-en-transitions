@@ -26,10 +26,13 @@ export const Header = (props: THeaderProps) => {
     derniere_demande,
     derniere_labellisation,
   } = parcours;
+
+  const demande_envoyee = !demande.en_cours && derniere_demande;
+
   // on peut soumettre la demande de labellisation si...
   const canSubmit =
     // la demande est toujours en cours
-    demande.en_cours &&
+    !demande_envoyee &&
     // et le référentiel est rempli
     completude_ok &&
     // et le score nécessaire est atteint
@@ -42,13 +45,13 @@ export const Header = (props: THeaderProps) => {
 
   return (
     <PageHeaderLeft>
-      {derniere_demande ? (
+      {demande_envoyee ? (
         <p className="m-0">
           Votre demande pour la {numLabels[derniere_demande.etoiles]} étoile a
           été envoyée
         </p>
       ) : null}
-      {derniere_labellisation && !derniere_demande ? (
+      {derniere_labellisation && !demande_envoyee ? (
         <p className="m-0">
           <span className="capitalize">
             {numLabels[derniere_labellisation.etoiles]}
