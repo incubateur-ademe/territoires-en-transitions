@@ -16,8 +16,8 @@ values ('1', 1, 'eci', 'eci_1.1.1.1', 'Identifier un⸱e élu⸱e référent⸱e
        ('1', 4, 'eci', 'eci_1.1.2', 'Engager un diagnostic territorial', 20, null),
        ('1', 4, 'cae', 'cae_1.1.2', 'Engager un diagnostic territorial', 20, null),
 
---         ('1',5,'cae','cae_1.1.2.0.1','Être en conformité ou programmer la mise en conformité réglementaire vis-à-vis des obligations réglementaires PCAET',100,100),
---         ('1',6,'cae','cae_1.1.2.0.2','Être en conformité ou programmer la mise en conformité réglementaire vis-à-vis des obligations réglementaires BGES',100,100),
+        ('1',5,'cae','cae_1.1.2.0.1','Être en conformité ou programmer la mise en conformité réglementaire vis-à-vis des obligations réglementaires PCAET',100,100),
+        ('1',6,'cae','cae_1.1.2.0.2','Être en conformité ou programmer la mise en conformité réglementaire vis-à-vis des obligations réglementaires BGES',100,100),
 
         ('1',5,'eci','eci_2.1.0','Respecter la réglementation PLPDMA',100,100),
         ('1',6,'eci','eci_2.2.0','Respecter la réglementation liée au système de collecte',100,100),
@@ -28,8 +28,8 @@ values ('1', 1, 'eci', 'eci_1.1.1.1', 'Identifier un⸱e élu⸱e référent⸱e
         ('2',1,'cae','cae_1.1.1.1.1','Avoir formalisé une vision et des engagements dans une décision de politique générale' ,100,null),
         ('2',1,'eci','eci_1.1.1.2','Avoir engagé la politique Économie Circulaire',100,null),
 
---         ('2',2,'cae','cae_1.1.2.0.1','Être en conformité ou programmer la mise en conformité réglementaire vis-à-vis des obligations réglementaires PCAET',100,null),
---         ('2',3,'cae','cae_1.1.2.0.2','Être en conformité ou programmer la mise en conformité réglementaire vis-à-vis des obligations réglementaires BGES',100,null),
+        ('2',2,'cae','cae_1.1.2.0.1','Être en conformité ou programmer la mise en conformité réglementaire vis-à-vis des obligations réglementaires PCAET',100,null),
+        ('2',3,'cae','cae_1.1.2.0.2','Être en conformité ou programmer la mise en conformité réglementaire vis-à-vis des obligations réglementaires BGES',100,null),
 
         ('4',1,'eci','eci_2.1.0','Respecter la réglementation PLPDMA',100,null),
         ('4',2,'eci','eci_2.2.0','Respecter la réglementation liée au système de collecte',100,null),
