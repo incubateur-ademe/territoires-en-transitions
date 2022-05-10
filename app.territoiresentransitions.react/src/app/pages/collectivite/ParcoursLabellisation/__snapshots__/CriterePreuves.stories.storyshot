@@ -5,14 +5,24 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuve
   <li
     className="fr-mb-1w"
   >
-    Signer un acte d’engagement incluant
+    Signer un
+     
+    <a
+      href="/Acte_engagement.docx"
+      rel="noopener"
+      target="_blank"
+    >
+      acte d’engagement
+    </a>
+     
+    dans le programme affirmant votre adhésion
      
     <a
       href="/TE-CAE_Reglement-label_2021.pdf"
       rel="noopener"
       target="_blank"
     >
-      le règlement du label
+      au règlement du label
     </a>
   </li>
   <button
@@ -51,14 +61,24 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuve
   <li
     className="fr-mb-1w"
   >
-    Signer un acte d’engagement incluant
+    Signer un
+     
+    <a
+      href="/Acte_engagement.docx"
+      rel="noopener"
+      target="_blank"
+    >
+      acte d’engagement
+    </a>
+     
+    dans le programme affirmant votre adhésion
      
     <a
       href="/Reglement_label_ECi_20220316.pdf"
       rel="noopener"
       target="_blank"
     >
-      le règlement du label
+      au règlement du label
     </a>
   </li>
   <button
@@ -76,14 +96,24 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuve
   <li
     className="fr-mb-1w"
   >
-    Signer un acte d’engagement incluant
+    Signer un
+     
+    <a
+      href="/Acte_engagement.docx"
+      rel="noopener"
+      target="_blank"
+    >
+      acte d’engagement
+    </a>
+     
+    dans le programme affirmant votre adhésion
      
     <a
       href="/TE-CAE_Reglement-label_2021.pdf"
       rel="noopener"
       target="_blank"
     >
-      le règlement du label
+      au règlement du label
     </a>
   </li>
   <button
@@ -101,14 +131,24 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuve
   <li
     className="fr-mb-1w"
   >
-    Signer un acte d’engagement incluant
+    Signer un
+     
+    <a
+      href="/Acte_engagement.docx"
+      rel="noopener"
+      target="_blank"
+    >
+      acte d’engagement
+    </a>
+     
+    dans le programme affirmant votre adhésion
      
     <a
       href="/Reglement_label_ECi_20220316.pdf"
       rel="noopener"
       target="_blank"
     >
-      le règlement du label
+      au règlement du label
     </a>
   </li>
   <button
@@ -126,14 +166,24 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuve
   <li
     className="fr-mb-1w"
   >
-    Signer un acte d’engagement incluant
+    Signer un
+     
+    <a
+      href="/Acte_engagement.docx"
+      rel="noopener"
+      target="_blank"
+    >
+      acte d’engagement
+    </a>
+     
+    dans le programme affirmant votre adhésion
      
     <a
       href="/Reglement_label_ECi_20220316.pdf"
       rel="noopener"
       target="_blank"
     >
-      le règlement du label
+      au règlement du label
     </a>
   </li>
   <i
