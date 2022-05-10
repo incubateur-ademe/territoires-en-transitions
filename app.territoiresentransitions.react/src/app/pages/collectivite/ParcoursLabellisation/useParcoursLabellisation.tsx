@@ -17,14 +17,26 @@ export const useParcoursLabellisation =
     // charge les données
     const fetch = async () => {
       if (collectivite_id) {
-        const parcours = await labellisationParcoursReadEndpoint.getBy({
+        const parcoursList = await labellisationParcoursReadEndpoint.getBy({
           collectivite_id,
         });
 
-        setData(
-          parcours?.find(parcours => parcours.referentiel === referentiel) ||
-            null
-        );
+        // trouve le parcours pour le référentiel
+        const parcours =
+          parcoursList?.find(
+            parcours => parcours.referentiel === referentiel
+          ) || null;
+
+        if (parcours) {
+          const {criteres_action} = parcours;
+          // met à jour l'état interne du hook avec les critères action triés
+          setData({
+            ...parcours,
+            criteres_action: criteres_action.sort((a, b) => a.prio - b.prio),
+          });
+        } else {
+          setData(null);
+        }
       }
     };
     useEffect(() => {
@@ -33,7 +45,6 @@ export const useParcoursLabellisation =
 
     // recharge les données après un changement de statuts
     const refetch = (payload: {new: {collectivite_id: number}}) => {
-      console.log(payload);
       if (
         collectivite_id &&
         payload?.new?.collectivite_id === collectivite_id
