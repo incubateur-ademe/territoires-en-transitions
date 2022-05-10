@@ -20,6 +20,7 @@ import {ReferentielAxisScoresPolarArea} from 'ui/charts/ReferentielAxisScoresPol
 import {Spacer} from 'ui/shared/Spacer';
 import {refToEmoji} from 'utils/refToEmoji';
 import {toFixed} from 'utils/toFixed';
+import {useParcoursLabellisation} from '../ParcoursLabellisation/useParcoursLabellisation';
 import {NiveauLabellisation} from './NiveauLabellisation';
 import {useLabellisationParNiveau} from './useLabellisationParNiveau';
 
@@ -211,6 +212,7 @@ const ReferentielSection = observer(
     const collectiviteId = useCollectiviteId()!;
     const actions = useReferentielDownToAction(referentielId);
     const labellisationParNiveau = useLabellisationParNiveau(referentielId);
+    const {demande} = useParcoursLabellisation(referentielId);
     const referentielRoot = actions.find(a => a.type === 'referentiel');
 
     if (!referentielRoot) return null;
@@ -280,15 +282,21 @@ const ReferentielSection = observer(
           />
         ) : null}
         <div className="flex justify-center mb-8">
-          <a
-            className="fr-btn"
-            href={makeCollectiviteLabellisationUrl({
-              collectiviteId,
-              referentielId,
-            })}
-          >
-            Décrocher les étoiles
-          </a>
+          {demande?.en_cours ? (
+            <Link
+              className="fr-btn"
+              to={makeCollectiviteLabellisationUrl({
+                collectiviteId,
+                referentielId,
+              })}
+            >
+              Décrocher les étoiles
+            </Link>
+          ) : (
+            <button className="fr-btn" disabled>
+              Demande envoyée
+            </button>
+          )}
         </div>
         {rootScore && (
           <ChiffreCles rootScore={rootScore} referentiel={referentielId} />
