@@ -1,16 +1,15 @@
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {observer} from 'mobx-react-lite';
 import {referentielToName} from 'app/labels';
 import {CriteresLabellisation} from './CriteresLabellisation';
-import {useDemandeLabellisation} from './useDemandeLabellisation';
 import {usePreuves} from './usePreuves';
 import {useParcoursLabellisation} from './useParcoursLabellisation';
 import {Header} from './Header';
 
 export default observer(() => {
   const collectiviteId = useCollectiviteId();
-  const parcours = useParcoursLabellisation();
-  const demande = useDemandeLabellisation(parcours);
+  const referentiel = useReferentielId();
+  const {parcours, demande} = useParcoursLabellisation(referentiel);
   const preuves = usePreuves(demande?.id);
 
   return collectiviteId && demande && parcours ? (
