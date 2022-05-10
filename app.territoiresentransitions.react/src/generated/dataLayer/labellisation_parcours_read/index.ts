@@ -14,14 +14,23 @@ export interface LabellisationParcoursRead {
   criteres_action: CritereLabellisationAction[];
   /** Critère lié au score */
   critere_score: CritereLabellisationScore;
-  /** Calendrier de labellisation */
+  /** Dates des prochaines sessions d'audit (exemple: Les prochaines sessions 
+      d’audit sont planifiées du 23 avril au 23 juin 2022 et du 5 novembre 2022 
+      au 5 janvier 2023.) */
   calendrier: string;
+  /** Information à propos de la dernière demande de labellisation pour l'étoile
+      précédente */
   derniere_demande: {
+    /** Etoiles demandées */
     etoiles: TEtoiles;
+    /** Date/heure de la dernière demande */
     demandee_le: Date;
   };
+  /** Information à propos de la dernière labellisation obtenue */
   derniere_labellisation: {
+    /** Etoiles obtenues */
     etoiles: TEtoiles;
+    /** Date/heure d'obtentien */
     obtenue_le: Date;
   };
 }
@@ -32,6 +41,8 @@ export type CritereLabellisationAction = {
   formulation: string;
   /** Vrai si le critère est rempli */
   rempli: boolean;
+  /** Ordre d'affichage du critère */
+  prio: number;
   /** Identifiant de l'action (exemple: eci_1.1.1.1) */
   action_id: string;
   /** Identifiant de l'action dans le référentiel (exemple: 1.1.1.1) */
@@ -39,25 +50,6 @@ export type CritereLabellisationAction = {
   /** Statut ou score requis pour que le critère soit rempli (exemple: "Programmé
       ou fait") */
   statut_ou_score: string;
-  /** Dates des prochaines sessions d'audit (exemple: Les prochaines sessions 
-      d’audit sont planifiées du 23 avril au 23 juin 2022 et du 5 novembre 2022 
-      au 5 janvier 2023.) */
-  calendrier?: string;
-  /** Information à propos de la dernière demande de labellisation pour l'étoile
-      précédente */
-  dernière_demande: null | {
-    /** Date/heure de la dernière demande */
-    demandee_le: Date;
-    /** Etoiles demandées */
-    etoiles: TEtoiles;
-  };
-  /** Information à propos de la dernière labellisation obtenue */
-  derniere_labellisation: null | {
-    /** Date/heure d'obtentien */
-    obtenue_le: Date;
-    /** Etoiles obtenues */
-    etoiles: TEtoiles;
-  };
 };
 
 /** Critère lié au score de la collectivité pour un référentiel */
