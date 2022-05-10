@@ -1075,6 +1075,9 @@ insert into action_relation(id, referentiel, parent) values ('cae_1.1.3.3.2', 'c
 insert into action_relation(id, referentiel, parent) values ('cae_1.1.3.3.3', 'cae', 'cae_1.1.3.3');
 insert into action_relation(id, referentiel, parent) values ('cae_1.1.3.4.1', 'cae', 'cae_1.1.3.4');
 insert into action_relation(id, referentiel, parent) values ('cae_1.1.3.4.2', 'cae', 'cae_1.1.3.4');
+insert into action_relation(id, referentiel, parent) values ('cae_1.1.2.0', 'cae', 'cae_1.1.2');
+insert into action_relation(id, referentiel, parent) values ('cae_1.1.2.0.1', 'cae', 'cae_1.1.2.0');
+insert into action_relation(id, referentiel, parent) values ('cae_1.1.2.0.2', 'cae', 'cae_1.1.2.0');
 insert into action_relation(id, referentiel, parent) values ('cae_1.1.2.1', 'cae', 'cae_1.1.2');
 insert into action_relation(id, referentiel, parent) values ('cae_1.1.2.2', 'cae', 'cae_1.1.2');
 insert into action_relation(id, referentiel, parent) values ('cae_1.1.2.3', 'cae', 'cae_1.1.2');
@@ -9005,6 +9008,9 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('cae_5.2.2.8', 'cae', '5.2.2.8', 'Passer au crible l''ensemble des achats publics', '', '', '', '', '', '', '', null, 20.0);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('cae_5.2.2.8.1', 'cae', '5.2.2.8.1', '% des marchés (en nombre) intégrant des clauses environnementales (et sociales) dans les spécifications techniques ou les critères d’attribution en augmentation', '', '', '', '', '', '', '', null, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('cae_5.2.2.8.2', 'cae', '5.2.2.8.2', '% des marchés (en €) intégrant des clauses environnementales (et sociales) dans les spécifications techniques ou les critères d’attribution en augmentation', '', '', '', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('cae_1.1.2.0', 'cae', '1.1.2.0', 'Être en conformité vis-à-vis des obligations réglementaires (PCAET et BGES)', '', '', '', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('cae_1.1.2.0.1', 'cae', '1.1.2.0.1', 'Être en conformité vis-à-vis des obligations réglementaires PCAET', '', '', '', '', '', '', '', null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('cae_1.1.2.0.2', 'cae', '1.1.2.0.2', 'Être en conformité vis-à-vis des obligations réglementaires BGES', '', '', '', '', '', '', '', null, null);
 insert into action_computed_points(action_id, value) values ('cae_2.1.1', 10.0);
 insert into action_computed_points(action_id, value) values ('cae_2.1.2', 8.0);
 insert into action_computed_points(action_id, value) values ('cae_2.1.3', 6.0);
@@ -10483,6 +10489,9 @@ insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.1', 1.
 insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.2', 1.2000000000000002);
 insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.3', 1.2000000000000002);
 insert into action_computed_points(action_id, value) values ('cae_3.3.5.3.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.0', 0.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.0.1', 0.0);
+insert into action_computed_points(action_id, value) values ('cae_1.1.2.0.2', 0.0);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('cae_38', 'cae', '38', null, 'Indicateur alternatif à la part modale TC (à définir par la collectivité et son conseiller le cas échéant)', '<p>En remplacement de l''indicateur sur les parts modales des transports en commun, la collectivité peut mesurer par un autre indicateur la progression d''un moyen de transport alternatif à la voiture individuelle, mieux adapté à sa situation (milieu rural notamment) : co-voiturage, transport à la demande... Il peut également s’agir de la part de déplacements intermodaux réalisés par les habitants du territoire, c’est-à-dire la part de déplacements mécanisés (tout mode hors marche-a-pied)  composés d''au moins deux trajets effectués à l’aide de plusieurs modes mécanisés. Pour obtenir la totalité des points, la valeur collectée doit témoigner d''une bonne performance de la collectivité par rapport à des valeurs de références nationales ou locales. A préciser en commentaires.</p>
 <p>A titre indicatif,  [valeur limite ; valeur cible] pour la part de déplacements intermodaux:</p>
 <ul>

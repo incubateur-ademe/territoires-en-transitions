@@ -163,6 +163,7 @@ def test_get_personnalisation_regles_should_return_all_personnalisation_regles(
         personnalisation_regle.action_id
         for personnalisation_regle in personnalisation_regles
     }
+    
     assert len(personnalisation_regles) > 50
     assert set(expected_action_id_with_regles).issubset(
         actual_action_id_with_regles
