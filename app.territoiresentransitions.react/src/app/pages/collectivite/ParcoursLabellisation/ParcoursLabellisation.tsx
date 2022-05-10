@@ -29,12 +29,12 @@ export default observer(() => {
           demande={demande}
           preuves={preuves}
         />
-        {parcours.referentiel === 'cae' ? (
+        {/*parcours.referentiel === 'cae' ? (
           <>
             <h2 className="fr-mt-4w">Calendrier de labellisation</h2>
             <p>{parcours.calendrier}</p>
           </>
-        ) : null}
+        ) : null*/}
       </main>
     </>
   ) : (
