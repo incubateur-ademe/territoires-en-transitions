@@ -34,9 +34,10 @@ type: binaire
 thematique_id: identite
 actions: [cae_6.5.3]
 ```
-La question porte sur les établissements scolaires du cycle primaire (école maternelle et élémentaire) et dans une moindre mesure secondaire (collège, lycée). Les structures d’accueil collectif des jeunes enfants peuvent concerner les établissements multi-accueil, les crèches parentales, les jardins d’enfants, les micro-crèches, les haltes-garderies, les maisons et les relais d’assistant(e)s maternels...
+## Description
+La question porte sur les établissements scolaires du cycle primaire (école maternelle et élémentaire) et dans une moindre mesure secondaire (collège, lycée). Les structures d’accueil collectif des jeunes enfants peuvent concerner les établissements multi-accueil, les crèches parentales, les jardins d’enfants, les micro-crèches, les haltes-garderies, les maisons et les relais d’assistantes maternelles...
 
-# La collectivité possède-t'elle moins de 3 % de surfaces agricoles ?
+# Sur le territoire de la collectivité, y a-t-il moins de 3 % de Surface Agricule Utile (SAU) ?
 ```yaml
 id: SAU
 type: binaire
@@ -44,7 +45,7 @@ thematique_id: identite
 actions: [cae_6.4.1]
 ```
 
-# La collectivité possède-t'elle moins de 10 % de surfaces forestières (publiques ou privées) ?
+# Sur le territoire de la collectivité, y a-t-il moins de 10 % de surfaces forestières (publiques ou privées) ?
 ```yaml
 id: foret
 type: binaire
