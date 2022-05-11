@@ -12,7 +12,7 @@ import {numLabels} from './numLabels';
 
 export type THeaderProps = {
   parcours: LabellisationParcoursRead;
-  demande: LabellisationDemandeRead;
+  demande: LabellisationDemandeRead | null;
   preuves: LabellisationPreuveFichierRead[];
 };
 
@@ -27,7 +27,7 @@ export const Header = (props: THeaderProps) => {
     derniere_labellisation,
   } = parcours;
 
-  const demande_envoyee = !demande.en_cours && derniere_demande;
+  const demande_envoyee = demande && !demande.en_cours && derniere_demande;
 
   // on peut soumettre la demande de labellisation si...
   const canSubmit =
@@ -71,12 +71,14 @@ export const Header = (props: THeaderProps) => {
       >
         {etoiles === '1' ? 'Demander la première étoile' : 'Demander un audit'}
       </button>
-      <DemandeLabellisationModal
-        demande={demande}
-        parcours={parcours}
-        opened={opened}
-        setOpened={setOpened}
-      />
+      {demande ? (
+        <DemandeLabellisationModal
+          demande={demande}
+          parcours={parcours}
+          opened={opened}
+          setOpened={setOpened}
+        />
+      ) : null}
     </PageHeaderLeft>
   );
 };

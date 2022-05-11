@@ -10,7 +10,7 @@ import {CritereCompletude} from './CritereCompletude';
 export type TCriteresLabellisationProps = {
   collectiviteId: number;
   parcours: LabellisationParcoursRead;
-  demande: LabellisationDemandeRead;
+  demande: LabellisationDemandeRead | null;
   preuves: LabellisationPreuveFichierRead[];
 };
 
