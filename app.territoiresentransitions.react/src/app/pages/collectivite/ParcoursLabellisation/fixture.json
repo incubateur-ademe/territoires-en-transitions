@@ -15,119 +15,153 @@
         "action_id": "eci_1.1.1.1",
         "formulation": "Identifier un⸱e élu⸱e référent⸱e",
         "statut_ou_score": "Fait",
-        "action_identifiant": "1.1.1.1"
+        "action_identifiant": "1.1.1.1",
+        "etoile": "1",
+        "prio": 1
       },
       {
         "rempli": false,
         "action_id": "eci_1.1.1.3",
         "formulation": "Identifier une personne technique",
         "statut_ou_score": "Programmé ou fait",
-        "action_identifiant": "1.1.1.3"
+        "action_identifiant": "1.1.1.3",
+        "etoile": "1",
+        "prio": 2
       },
       {
         "rempli": false,
         "action_id": "eci_1.1.1.3",
         "formulation": "Mettre en place une équipe projet",
         "statut_ou_score": "Programmé ou fait",
-        "action_identifiant": "1.1.1.3"
+        "action_identifiant": "1.1.1.3",
+        "etoile": "1",
+        "prio": 3
       },
       {
         "rempli": false,
         "action_id": "eci_1.1.2",
         "formulation": "Engager un diagnostic territorial",
         "statut_ou_score": "20% fait minimum",
-        "action_identifiant": "1.1.2"
+        "action_identifiant": "1.1.2",
+        "etoile": "1",
+        "prio": 4
       },
       {
         "rempli": false,
         "action_id": "eci_2.1.0",
         "formulation": "Respecter la réglementation PLPDMA",
         "statut_ou_score": "Programmé ou fait",
-        "action_identifiant": "2.1.0"
+        "action_identifiant": "2.1.0",
+        "etoile": "1",
+        "prio": 5
       },
       {
         "rempli": false,
         "action_id": "eci_2.2.0",
         "formulation": "Respecter la réglementation liée au système de collecte",
         "statut_ou_score": "Programmé ou fait",
-        "action_identifiant": "2.2.0"
+        "action_identifiant": "2.2.0",
+        "etoile": "1",
+        "prio": 6
       },
       {
         "rempli": false,
         "action_id": "eci_2.3.0",
         "formulation": "Respecter la règlementation concernant la valorisation des déchets (dont organiques)",
         "statut_ou_score": "Programmé ou fait",
-        "action_identifiant": "2.3.0"
+        "action_identifiant": "2.3.0",
+        "etoile": "1",
+        "prio": 7
       },
       {
         "rempli": false,
         "action_id": "eci_2.4.0",
         "formulation": "Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)",
         "statut_ou_score": "Programmé ou fait",
-        "action_identifiant": "2.4.0"
+        "action_identifiant": "2.4.0",
+        "etoile": "1",
+        "prio": 8
       },
       {
         "rempli": false,
         "action_id": "eci_3.2.0",
         "formulation": "Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)",
         "statut_ou_score": "Programmé ou fait",
-        "action_identifiant": "3.2.0"
+        "action_identifiant": "3.2.0",
+        "etoile": "1",
+        "prio": 9
       },
       {
         "rempli": false,
         "action_id": "eci_4.1.0",
         "formulation": "Rédiger le rapport annuel SPPGD",
         "statut_ou_score": "Programmé ou fait",
-        "action_identifiant": "4.1.0"
+        "action_identifiant": "4.1.0",
+        "etoile": "1",
+        "prio": 10
       },
       {
         "rempli": false,
         "action_id": "eci_1.1.1.2",
         "formulation": "Avoir engagé la politique Économie Circulaire",
         "statut_ou_score": "Fait",
-        "action_identifiant": "1.1.1.2"
+        "action_identifiant": "1.1.1.2",
+        "etoile": "1",
+        "prio": 11
       },
       {
         "rempli": false,
         "action_id": "eci_2.1.0",
         "formulation": "Respecter la réglementation PLPDMA",
         "statut_ou_score": "Fait",
-        "action_identifiant": "2.1.0"
+        "action_identifiant": "2.1.0",
+        "etoile": "1",
+        "prio": 12
       },
       {
         "rempli": false,
         "action_id": "eci_2.2.0",
         "formulation": "Respecter la réglementation liée au système de collecte",
         "statut_ou_score": "Fait",
-        "action_identifiant": "2.2.0"
+        "action_identifiant": "2.2.0",
+        "etoile": "1",
+        "prio": 13
       },
       {
         "rempli": false,
         "action_id": "eci_2.3.0",
         "formulation": "Respecter la règlementation concernant la valorisation des déchets (dont organiques)",
         "statut_ou_score": "Fait",
-        "action_identifiant": "2.3.0"
+        "action_identifiant": "2.3.0",
+        "etoile": "1",
+        "prio": 14
       },
       {
         "rempli": false,
         "action_id": "eci_2.4.0",
         "formulation": "Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)",
         "statut_ou_score": "Fait",
-        "action_identifiant": "2.4.0"
+        "action_identifiant": "2.4.0",
+        "etoile": "1",
+        "prio": 15
       },
       {
         "rempli": false,
         "action_id": "eci_3.2.0",
         "formulation": "Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)",
         "statut_ou_score": "Fait",
-        "action_identifiant": "3.2.0"
+        "action_identifiant": "3.2.0",
+        "etoile": "1",
+        "prio": 16
       },
       {
         "rempli": false,
         "action_id": "eci_4.1.0",
         "formulation": "Rédiger le rapport annuel SPPGD",
         "statut_ou_score": "Fait",
-        "action_identifiant": "4.1.0"
+        "action_identifiant": "4.1.0",
+        "etoile": "1",
+        "prio": 17
       }
     ],
     "rempli": false,
@@ -151,35 +185,45 @@
         "action_id": "cae_5.1.1.1.3",
         "formulation": "Identifier un⸱e élu⸱e référent⸱e",
         "statut_ou_score": "Fait",
-        "action_identifiant": "5.1.1.1.3"
+        "action_identifiant": "5.1.1.1.3",
+        "etoile": "3",
+        "prio": 1
       },
       {
         "rempli": false,
         "action_id": "cae_5.1.1.1.3",
         "formulation": "Identifier une personne technique",
         "statut_ou_score": "Programmé ou fait",
-        "action_identifiant": "5.1.1.1.3"
+        "action_identifiant": "5.1.1.1.3",
+        "etoile": "3",
+        "prio": 2
       },
       {
         "rempli": false,
         "action_id": "cae_5.1.1.3.2",
         "formulation": "Mettre en place une équipe projet",
         "statut_ou_score": "Programmé ou fait",
-        "action_identifiant": "5.1.1.3.2"
+        "action_identifiant": "5.1.1.3.2",
+        "etoile": "3",
+        "prio": 3
       },
       {
         "rempli": false,
         "action_id": "cae_1.1.2",
         "formulation": "Engager un diagnostic territorial",
         "statut_ou_score": "20% fait minimum",
-        "action_identifiant": "1.1.2"
+        "action_identifiant": "1.1.2",
+        "etoile": "3",
+        "prio": 4
       },
       {
         "rempli": true,
         "action_id": "cae_1.1.1.1.1",
         "formulation": "Avoir formalisé une vision et des engagements dans une décision de politique générale",
         "statut_ou_score": "Fait",
-        "action_identifiant": "1.1.1.1.1"
+        "action_identifiant": "1.1.1.1.1",
+        "etoile": "3",
+        "prio": 5
       }
     ],
     "rempli": false,

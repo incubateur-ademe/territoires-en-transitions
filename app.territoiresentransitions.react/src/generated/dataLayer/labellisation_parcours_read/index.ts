@@ -50,6 +50,8 @@ export type CritereLabellisationAction = {
   /** Statut ou score requis pour que le critère soit rempli (exemple: "Programmé
       ou fait") */
   statut_ou_score: string;
+  /** Etoile pour laquelle le critère est requis */
+  etoile: TEtoiles;
 };
 
 /** Critère lié au score de la collectivité pour un référentiel */
