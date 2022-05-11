@@ -8,6 +8,7 @@ import {labellisationDemandeWriteEndpoint} from 'core-logic/api/endpoints/Labell
 import {LabellisationDemandeWrite} from 'generated/dataLayer/labellisation_demande_write';
 import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
 import {labellisationDemandeReadEndpoint} from 'core-logic/api/endpoints/LabellisationDemandeReadEndpoint';
+import {authBloc, currentCollectiviteBloc} from 'core-logic/observables';
 
 /** Renvoie les données de labellisation de la collectivité courante */
 export const useParcoursLabellisation = (
@@ -29,7 +30,11 @@ export const useParcoursLabellisation = (
   const createDemande = async (
     p: LabellisationParcoursRead
   ): Promise<LabellisationDemandeWrite | null> => {
-    if (collectivite_id) {
+    if (
+      collectivite_id &&
+      !currentCollectiviteBloc.readonly &&
+      authBloc.connected
+    ) {
       const {referentiel, etoiles} = p;
       return labellisationDemandeWriteEndpoint.save({
         collectivite_id,

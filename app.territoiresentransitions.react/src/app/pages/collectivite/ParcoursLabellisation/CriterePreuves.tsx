@@ -19,7 +19,7 @@ export type TCriterePreuvesProps = {
   collectiviteId: number;
   parcours: LabellisationParcoursRead;
   preuves: LabellisationPreuveFichierRead[];
-  demande: LabellisationDemandeRead;
+  demande: LabellisationDemandeRead | null;
 };
 
 export const CriterePreuves = (props: TCriterePreuvesProps) => {
@@ -60,8 +60,10 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
         </a>
       </li>
       {rempli ? <CritereRempli className="fr-mb-2w" /> : null}
-      {demande.en_cours ? <AddDocsButton demande_id={demande.id} /> : null}
-      <LabellisationPreuves {...props} />
+      {demande && demande.en_cours ? (
+        <AddDocsButton demande_id={demande.id} />
+      ) : null}
+      {demande ? <LabellisationPreuves {...props} /> : null}
     </>
   );
 };
@@ -94,12 +96,12 @@ const PreuveFichierDetail = ({
 }: TCriterePreuvesProps & {
   preuve: LabellisationPreuveFichierRead;
 }) => {
-  const handlers = useEditPreuves(preuve, demande.id);
+  const handlers = useEditPreuves(preuve, demande?.id || 0);
 
   return (
     <DocItem
       doc={{...preuve, type: 'fichier'}}
-      readonly={!demande.en_cours}
+      readonly={!demande?.en_cours}
       classComment="pb-0 mb-2"
       handlers={handlers}
     />
