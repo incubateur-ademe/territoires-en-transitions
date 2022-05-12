@@ -6,6 +6,13 @@ on:
       - production
       - production-static
   push:
+
+# interrompt le workflow précédent si un nouveau est déclenché pour le même
+# commit (cas push + ouverture PR)
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
 jobs:
   client-test:
     name: Client unit tests
