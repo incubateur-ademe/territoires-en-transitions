@@ -33,7 +33,7 @@ values
 
         -- CAE 1ère étoile
         ('1', 1, 'cae', 'cae_5.1.2.1.1', 'Identifier un⸱e élu⸱e référent⸱e', 100, null),
-        ('1', 2, 'cae', 'cae_5.1.2.1.1', 'Identifier une personne technique', 100, null),
+        ('1', 2, 'cae', 'cae_5.1.1.1.3', 'Identifier une personne technique', 100, null),
         ('1', 3, 'cae', 'cae_5.1.1.3.2', 'Mettre en place une équipe projet', 100, 100),
         ('1', 4, 'cae', 'cae_1.1.2', 'Engager un diagnostic territorial', 20, null),
         ('1', 5, 'cae', 'cae_1.1.2.0.1','Être en conformité ou programmer la mise en conformité réglementaire vis-à-vis des obligations réglementaires PCAET',100,100),

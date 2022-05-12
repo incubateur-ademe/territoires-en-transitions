@@ -152,13 +152,13 @@ select score.referentiel,
        score.action_id,
        case
            when (score.point_potentiel)::float = 0.0
-               then (score.fait_taches_avancement)::float / (score.total_taches_count)::float * 100
-           else (score.point_fait)::float / (score.point_potentiel)::float * 100
+               then (score.fait_taches_avancement)::float / (score.total_taches_count)::float
+           else (score.point_fait)::float / (score.point_potentiel)::float
            end,
        case
            when (score.point_potentiel)::float = 0.0
-               then (score.programme_taches_avancement)::float / (score.total_taches_count)::float * 100
-           else (score.point_programme)::float / (score.point_potentiel)::float * 100
+               then (score.programme_taches_avancement)::float / (score.total_taches_count)::float
+           else (score.point_programme)::float / (score.point_potentiel)::float
            end,
        case
            when (score.total_taches_count)::float = 0.0 then 0.0
@@ -308,8 +308,8 @@ select ss.referentiel,
        cla.min_realise_percentage,
        ss.proportion_programme,
        cla.min_programme_percentage,
-       coalesce(ss.proportion_fait >= cla.min_realise_percentage, false) or
-       coalesce(ss.proportion_programme + ss.proportion_fait >= cla.min_programme_percentage, false) as atteint,
+       coalesce(ss.proportion_fait * 100  >= cla.min_realise_percentage, false) or
+       coalesce((ss.proportion_programme + ss.proportion_fait) * 100 >= cla.min_programme_percentage, false) as atteint,
        cla.prio
 from labellisation_action_critere cla
          join scores sc on sc.action_id = cla.action_id
