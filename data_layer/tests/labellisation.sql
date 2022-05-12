@@ -118,7 +118,7 @@ select mr.referentiel,
            end,
        coalesce(mr.min_programme_percentage, .0),
        --
-       100,
+       1,
        4,
        4
 from min_requirements mr
@@ -232,7 +232,7 @@ insert into labellisation (collectivite_id, referentiel, obtenue_le, etoiles, sc
 values (1, 'eci', now(), '1', .0, .0);
 
 
-select ok((select score_fait = 100
+select ok((select score_fait = 1
                       and score_programme = 0
                       and completude = 1
                       and complet
@@ -518,7 +518,7 @@ select ok((select etoiles = '2'
 select *
 from fulfill('3');
 
-select ok((select bool_and(score_fait = 50
+select ok((select bool_and(score_fait = .5
     and score_programme = 0
     and completude = 1
     and complet)
