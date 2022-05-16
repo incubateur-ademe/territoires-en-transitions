@@ -231,8 +231,7 @@ group by s.referentiel;
 insert into labellisation (collectivite_id, referentiel, obtenue_le, etoiles, score_realise, score_programme)
 values (1, 'eci', now(), '1', .0, .0);
 
-
-select ok((select score_fait = 100
+select ok((select score_fait = 1
                       and score_programme = 0
                       and completude = 1
                       and complet
@@ -262,7 +261,6 @@ select ok((select preuve_nombre = 0
            from labellisation.critere_fichier(1)
            where referentiel = 'eci'),
           'Labellisation critere fichier function should output correct state when no file have been inserted.');
-
 
 -- Create demande
 insert into labellisation_demande (id, collectivite_id, referentiel, etoiles)
@@ -427,17 +425,15 @@ select ok((select etoiles = '1'
 ------------------------------------------------------------
 
 -- fake scoring, score and completion at 1
-select *
-from fulfill('1');
--- select * from private.action_score s  join private.score_summary_of(s) ss on true;
--- select * from labellisation.referentiel_score(1);
+select fulfill('1');
+
 
 select ok((select bool_and(score_fait = 0
     and score_programme = 0
     and completude = 1
     and complet)
            from labellisation.referentiel_score(1)),
-          'Labellisation scores function should output correct scores and completude for 100% requirements fait');
+          'Labellisation scores function with etoile 1 requirements');
 
 select ok((select etoile_labellise is null
                       and prochaine_etoile_labellisation is null
@@ -484,15 +480,14 @@ select ok((select etoiles = '1'
 -----------------------------------------------------------------
 ------- Scenario: score requirement for étoile 2 are done -------
 -----------------------------------------------------------------
-select *
-from fulfill('2');
+select fulfill('2');
 
-select ok((select bool_and(score_fait = 35
+select ok((select bool_and(score_fait = 0.35
     and score_programme = 0
     and completude = 1
     and complet)
            from labellisation.referentiel_score(1)),
-          'Labellisation scores function should output correct scores and completude for 100% requirements fait');
+          'Labellisation scores function with etoile 2 fulfilled requirements');
 
 select ok((select etoile_labellise is null
                       and prochaine_etoile_labellisation is null
@@ -500,7 +495,7 @@ select ok((select etoile_labellise is null
                       and etoile_objectif = '2'
            from labellisation.etoiles(1)
            where referentiel = 'eci'),
-          'Labellisation étoiles function should output correct state for 100% requirements fait.');
+          'Labellisation étoiles function with etoile 2 fulfilled requirements.');
 
 select ok((select etoiles = '2'
                       and completude_ok
@@ -509,21 +504,20 @@ select ok((select etoiles = '2'
                       and derniere_demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
-          'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
+          'Labellisation parcours function with etoile 2 fulfilled requirements.');
 
 
 -----------------------------------------------------------------
 ------- Scenario: score requirement for étoile 3 are done -------
 -----------------------------------------------------------------
-select *
-from fulfill('3');
+select fulfill('3');
 
-select ok((select bool_and(score_fait = 50
+select ok((select bool_and(score_fait = .50
     and score_programme = 0
     and completude = 1
     and complet)
            from labellisation.referentiel_score(1)),
-          'Labellisation scores function should output correct scores and completude for 100% requirements fait');
+          'Labellisation scores function with etoile 3 requirements');
 
 select ok((select etoile_labellise is null
                       and prochaine_etoile_labellisation is null
@@ -531,7 +525,7 @@ select ok((select etoile_labellise is null
                       and etoile_objectif = '3'
            from labellisation.etoiles(1)
            where referentiel = 'eci'),
-          'Labellisation étoiles function should output correct state for 100% requirements fait.');
+          'Labellisation étoiles function with etoile 3 requirements.');
 
 select ok((select etoiles = '3'
                       and completude_ok
@@ -540,6 +534,6 @@ select ok((select etoiles = '3'
                       and derniere_demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
-          'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
+          'Labellisation parcours function with etoile 3 requirements.');
 
 rollback;
