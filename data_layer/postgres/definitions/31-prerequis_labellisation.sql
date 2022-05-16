@@ -236,7 +236,7 @@ with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
                   from ref r
                            join score s on r.referentiel = s.referentiel
                            join labellisation.etoile_meta em
-                                on em.min_realise_percentage <= s.score_fait
+                                on em.min_realise_score <= s.score_fait
                   group by r.referentiel, s.complet)
 
 select s.referentiel,
@@ -291,7 +291,7 @@ create or replace function
                 min_score_realise   float,
                 score_programme     float,
                 min_score_programme float,
-                atteint             bool, 
+                atteint             bool,
                 prio                integer
             )
 as
