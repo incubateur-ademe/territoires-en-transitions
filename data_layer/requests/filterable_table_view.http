@@ -34,7 +34,14 @@ GET {{api}}/rest/v1/action_statuts?collectivite_id=eq.1&referentiel=eq.eci&depth
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
+
 ### Les axes et les sous axes du referentiel eci, avec seulement les colonnes nécessaires à l'affichage
 GET {{api}}/rest/v1/action_statuts?select=identifiant,nom,avancement,have_children&collectivite_id=eq.1&referentiel=eq.eci&depth=lt.3
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+
+### Les axes et les sous axes du referentiel cae (depth < 3) ou des actions (descendants) ont le statut fait
+GET {{api}}/rest/v1/action_statuts?collectivite_id=eq.1&referentiel=eq.cae&depth=lt.3&avancement_descendants=cs.{fait}
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
