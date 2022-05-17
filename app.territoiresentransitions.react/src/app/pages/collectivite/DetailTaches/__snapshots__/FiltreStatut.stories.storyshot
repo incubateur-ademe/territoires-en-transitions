@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] = `
+<div
+  className="MuiInputBase-root MuiOutlinedInput-root"
+  onClick={[Function]}
+>
+  <div
+    aria-haspopup="listbox"
+    className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
+    onBlur={[Function]}
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    onMouseDown={[Function]}
+    role="button"
+    tabIndex={0}
+  >
+    <span
+      className="fr-fi-filter-line fr-fi--sm"
+    >
+       Statuts
+    </span>
+  </div>
+  <input
+    aria-hidden={true}
+    className="MuiSelect-nativeInput"
+    onAnimationStart={[Function]}
+    onChange={[Function]}
+    tabIndex={-1}
+    value="tous"
+  />
+  <fieldset
+    aria-hidden={true}
+    className="PrivateNotchedOutline-root-5 MuiOutlinedInput-notchedOutline"
+    style={
+      Object {
+        "paddingLeft": 8,
+      }
+    }
+  >
+    <legend
+      className="PrivateNotchedOutline-legend-6"
+      style={
+        Object {
+          "width": 0.01,
+        }
+      }
+    >
+      <span
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "&#8203;",
+          }
+        }
+      />
+    </legend>
+  </fieldset>
+</div>
+`;
+
+exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut Multi Select 1`] = `
+<div
+  className="MuiInputBase-root MuiOutlinedInput-root"
+  onClick={[Function]}
+>
+  <div
+    aria-haspopup="listbox"
+    className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
+    onBlur={[Function]}
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    onMouseDown={[Function]}
+    role="button"
+    tabIndex={0}
+  >
+    <span
+      className="fr-fi-filter-fill fr-fi--sm"
+    >
+       Statuts
+    </span>
+  </div>
+  <input
+    aria-hidden={true}
+    className="MuiSelect-nativeInput"
+    onAnimationStart={[Function]}
+    onChange={[Function]}
+    tabIndex={-1}
+    value="programme,fait"
+  />
+  <fieldset
+    aria-hidden={true}
+    className="PrivateNotchedOutline-root-9 MuiOutlinedInput-notchedOutline"
+    style={
+      Object {
+        "paddingLeft": 8,
+      }
+    }
+  >
+    <legend
+      className="PrivateNotchedOutline-legend-10"
+      style={
+        Object {
+          "width": 0.01,
+        }
+      }
+    >
+      <span
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "&#8203;",
+          }
+        }
+      />
+    </legend>
+  </fieldset>
+</div>
+`;
