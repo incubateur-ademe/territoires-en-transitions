@@ -1,5 +1,5 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {ActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
+import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
 import {useEffect, useState} from 'react';
 
 // nombre de total de taches (entrées n'ayant pas d'enfants) dans un référentiel
@@ -8,7 +8,7 @@ export const useTotalTachesCount = async (referentiel: string) => {
 
   const fetch = async () => {
     const {error, count} = await supabaseClient
-      .from<ActionStatutsRead>('action_statuts')
+      .from<IActionStatutsRead>('action_statuts')
       .select('identifiant', {count: 'exact', head: true})
       .eq('collectivite_id', 1)
       .eq('referentiel', referentiel)
