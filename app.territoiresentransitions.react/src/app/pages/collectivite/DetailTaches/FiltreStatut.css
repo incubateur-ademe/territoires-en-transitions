@@ -1,0 +1,95 @@
+.non_concerne {
+  color: #666;
+  background-color: #eee;
+}
+
+.non_renseigne {
+  color: #716043;
+  background-color: #feecc2;
+}
+
+.pas_fait {
+  color: #ce0500;
+  background-color: #ffe9e9;
+}
+
+.programme {
+  color: #0063cb;
+  background-color: #e8edff;
+}
+
+.detaille {
+  color: #6e445a;
+  background-color: #fee7fc;
+}
+
+.fait {
+  color: #18753c;
+  background-color: #b8fec9;
+}
+
+.statut-label {
+  border-radius: 4px;
+  padding: 0 6px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/** MultiSelect */
+
+.MuiSelect-root.MuiSelect-outlined {
+  padding: 5px 12px !important;
+  font-family: Marianne;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text-label-blue-france);
+  border: 1px solid transparent;
+}
+
+.MuiSelect-root.MuiSelect-outlined[aria-expanded] {
+  border: 1px solid var(--text-label-blue-france);
+  border-radius: 4px;
+}
+
+.MuiMenuItem-root {
+  font-size: 14px;
+  font-family: Marianne;
+}
+
+.MuiMenuItem-root:not([aria-selected]) {
+  padding-left: 3rem;
+}
+
+.MuiMenuItem-root[aria-selected]::before {
+  color: var(--text-label-blue-france);
+  margin-right: 8px;
+}
+
+.MuiInputBase-root::before {
+  color: var(--text-label-blue-france);
+}
+
+.MuiInputBase-root > div {
+  background-color: transparent !important;
+}
+
+.MuiInputBase-root fieldset {
+  display: none;
+}
+
+.MuiMenuItem-root {
+  font-size: 14px !important;
+}
+
+.MuiListItem-root.Mui-selected {
+  background-color: white !important;
+}
+
+.MuiInputBase-root::before {
+  padding-left: 8px;
+}
+
+.MuiListItem-root.Mui-selected:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
