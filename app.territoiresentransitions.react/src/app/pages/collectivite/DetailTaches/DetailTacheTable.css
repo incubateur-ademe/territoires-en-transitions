@@ -1,4 +1,7 @@
 .detail-tache-table {
+  --color-primary: #433eba;
+  --color-secondary: #6a6af4;
+  --color-pill: #e3e3fd;
   margin-bottom: 32px;
   border-radius: 8px;
   border-width: 8px;
@@ -15,6 +18,12 @@
   border-spacing: 0;
 }
 
+.detail-tache-table table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .detail-tache-table th {
   background-color: var(--background-disabled-grey);
   text-align: left;
@@ -27,21 +36,46 @@
   }
 }
 
-.detail-tache-table tbody tr {
+/** curseur au dessus des lignes */
+.detail-tache-table tbody tr,
+.detail-tache-table tbody tr:hover {
   cursor: pointer;
   overflow: hidden;
 }
-.detail-tache-table tbody tr:hover {
-  cursor: pointer;
+
+/** couleurs de fond des lignes */
+.detail-tache-table tr {
+  background-color: #fff;
+  color: #000;
 }
 
+.detail-tache-table tr.d1 {
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: bold;
+}
+
+.detail-tache-table tr.d2 {
+  background-color: var(--color-secondary);
+  color: #fff;
+  font-weight: bold;
+}
+
+.detail-tache-table tr .pill {
+  background-color: var(--color-pill);
+  border-radius: 14px;
+  padding: 4px 12px;
+}
+
+/** couleurs de fond des lignes au survol */
 .detail-tache-table tbody tr.d3:hover,
 .detail-tache-table tbody tr.d4:hover,
 .detail-tache-table tbody tr.d5:hover {
   background-color: var(--background-alt-grey);
 }
 
-.detail-tache-table td {
+/** libellé de la tâche */
+.detail-tache-table tbody td {
   padding: 1rem;
   white-space: nowrap;
   overflow: hidden;
@@ -50,29 +84,52 @@
   border: 1px;
 }
 
+/** statut de la tâche */
+.detail-tache-table tr td:last-child {
+  width: 100px;
+}
+
+/** bords arrondis en fonction du niveau de profondeur */
 .detail-tache-table tr.d1 td:first-child {
   border-top-left-radius: 8px;
 }
 .detail-tache-table tr.d1 td:last-child {
   border-top-right-radius: 8px;
 }
-.detail-tache-table tr.d1 td:first-child {
+.detail-tache-table tr.d1.open td:first-child {
+  border-bottom-left-radius: 0;
+}
+.detail-tache-table tr.d1.open td:last-child {
+  border-bottom-right-radius: 0;
+}
+.detail-tache-table tr.d1.close td:first-child {
   border-bottom-left-radius: 8px;
 }
-.detail-tache-table tr.d1 td:last-child {
+.detail-tache-table tr.d1.close td:last-child {
   border-bottom-right-radius: 8px;
-}
-
-.detail-tache-table tr.d1 {
-  background-color: #433eba;
-  color: #fff;
-}
-
-.detail-tache-table tr.d2 {
-  background-color: #6a6af4;
-  color: #fff;
 }
 
 .detail-tache-table tr.separator {
   height: 16px;
+}
+
+.detail-tache-table .identifiant {
+  text-align: left;
+  color: var(--text-disabled-grey);
+}
+
+/** pictos flèche pointant vers le bas ou la droite */
+.detail-tache-table .arrow-down::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 16l-6-6h12z'/%3E%3C/svg%3E");
+}
+.detail-tache-table .arrow-right::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M16 12l-6 6V6z'/%3E%3C/svg%3E");
+}
+.detail-tache-table .arrow-down::before,
+.detail-tache-table .arrow-right::before {
+  vertical-align: middle;
+  content: ' ';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
 }
