@@ -115,12 +115,10 @@ order by nom;
 
 create view owned_collectivite
 as
-with current_droits as (
-    select *
-    from private_utilisateur_droit
-    where user_id = auth.uid()
-      and active
-)
+with current_droits as (select *
+                        from private_utilisateur_droit
+                        where user_id = auth.uid()
+                          and active)
 select named_collectivite.collectivite_id as collectivite_id, named_collectivite.nom, role_name
 from current_droits
          join named_collectivite on named_collectivite.collectivite_id = current_droits.collectivite_id
@@ -206,7 +204,8 @@ begin
         update private_utilisateur_droit
         set active      = false,
             modified_at = now()
-        where collectivite_id = joined_collectivite_id;
+        where user_id = auth.uid()
+          and collectivite_id = joined_collectivite_id;
 
         -- return success with a message
         perform set_config('response.status', '200', true);
