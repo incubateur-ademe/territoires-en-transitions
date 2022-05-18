@@ -1,7 +1,9 @@
 import os
+import time
 from typing import List, Optional
 
 from realtime_py import Socket
+from websockets.exceptions import ConnectionClosedError
 
 from business.evaluation.domain.models import events
 from business.evaluation.domain.use_cases.catch_up_unprocessed_reponse_update_event import (
@@ -127,16 +129,25 @@ def get_connected_socket() -> Socket:
     return socket
 
 
+def start_realtime():
+    try:
+        socket = get_connected_socket()
+        config = get_config(socket)
+
+        # First, launch realtime observer
+        config.realtime.start()
+
+        # Then, catch up unprocessed reponse and action status event
+        config.prepare_catch_up_unprocessed_reponse_update_events().execute()
+        config.prepare_catch_up_unprocessed_action_status_update_events().execute()
+
+        socket.listen()
+    except ConnectionClosedError:
+        print("Connection closed. Will try to reconnect in 5 seconds...")
+        time.sleep(5)
+        start_realtime()
+
+
 # 4. Launch realtime
 if __name__ == "__main__":
-    socket = get_connected_socket()
-    config = get_config(socket)
-
-    # First, launch realtime observer
-    config.realtime.start()
-
-    # Then, catch up unprocessed reponse and action status event
-    config.prepare_catch_up_unprocessed_reponse_update_events().execute()
-    config.prepare_catch_up_unprocessed_action_status_update_events().execute()
-
-    socket.listen()
+    start_realtime()
