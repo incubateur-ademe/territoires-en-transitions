@@ -24,4 +24,5 @@ export interface IActionStatutsRead {
     | 'non_renseigne'
     | 'detaille';
   avancement_detaille: null | [number, number, number];
+  avancement_descendants: [string];
 }
