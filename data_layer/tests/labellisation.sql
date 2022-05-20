@@ -118,7 +118,7 @@ select mr.referentiel,
            end,
        coalesce(mr.min_programme_percentage, .0),
        --
-       100,
+       1,
        4,
        4
 from min_requirements mr
