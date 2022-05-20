@@ -18,7 +18,7 @@ Array [
     </li>
     <a
       className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
-      href="/collectivite/1/referentiels/cae"
+      href="/collectivite/1/referentiels/cae/progression"
       target="_blank"
     >
       Mettre à jour
@@ -470,7 +470,7 @@ Array [
     </li>
     <a
       className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
-      href="/collectivite/1/referentiels/eci"
+      href="/collectivite/1/referentiels/eci/progression"
       target="_blank"
     >
       Mettre à jour

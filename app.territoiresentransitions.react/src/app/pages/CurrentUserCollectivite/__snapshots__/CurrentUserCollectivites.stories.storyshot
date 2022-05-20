@@ -44,7 +44,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           </a>
           <a
             className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
-            href="/collectivite/104/referentiels/eci"
+            href="/collectivite/104/referentiels/eci/progression"
             onClick={[Function]}
           >
             Référentiels
@@ -132,7 +132,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           </a>
           <a
             className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
-            href="/collectivite/104/referentiels/eci"
+            href="/collectivite/104/referentiels/eci/progression"
             onClick={[Function]}
           >
             Référentiels
@@ -185,7 +185,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           </a>
           <a
             className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
-            href="/collectivite/513/referentiels/eci"
+            href="/collectivite/513/referentiels/eci/progression"
             onClick={[Function]}
           >
             Référentiels
@@ -273,7 +273,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           </a>
           <a
             className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
-            href="/collectivite/104/referentiels/eci"
+            href="/collectivite/104/referentiels/eci/progression"
             onClick={[Function]}
           >
             Référentiels
@@ -326,7 +326,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           </a>
           <a
             className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
-            href="/collectivite/513/referentiels/eci"
+            href="/collectivite/513/referentiels/eci/progression"
             onClick={[Function]}
           >
             Référentiels
@@ -379,7 +379,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           </a>
           <a
             className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
-            href="/collectivite/1575/referentiels/eci"
+            href="/collectivite/1575/referentiels/eci/progression"
             onClick={[Function]}
           >
             Référentiels
@@ -467,7 +467,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           </a>
           <a
             className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
-            href="/collectivite/104/referentiels/eci"
+            href="/collectivite/104/referentiels/eci/progression"
             onClick={[Function]}
           >
             Référentiels
@@ -520,7 +520,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           </a>
           <a
             className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
-            href="/collectivite/513/referentiels/eci"
+            href="/collectivite/513/referentiels/eci/progression"
             onClick={[Function]}
           >
             Référentiels
@@ -573,7 +573,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           </a>
           <a
             className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
-            href="/collectivite/1575/referentiels/eci"
+            href="/collectivite/1575/referentiels/eci/progression"
             onClick={[Function]}
           >
             Référentiels
@@ -626,7 +626,7 @@ exports[`Storyshots App/Pages/Current User Collectivite/Current User Collectivit
           </a>
           <a
             className="fr-btn fr-btn--secondary fr-btn--sm fr-fi-arrow-right-line fr-btn--icon-right w-full justify-between"
-            href="/collectivite/400/referentiels/eci"
+            href="/collectivite/400/referentiels/eci/progression"
             onClick={[Function]}
           >
             Référentiels
