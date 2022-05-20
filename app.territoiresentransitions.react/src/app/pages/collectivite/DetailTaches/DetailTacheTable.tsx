@@ -1,5 +1,5 @@
 import './DetailTacheTable.css';
-import {ChangeEvent, Fragment, useCallback, useMemo} from 'react';
+import {ChangeEvent, Fragment, useEffect, useMemo} from 'react';
 import {
   useTable,
   useExpanded,
@@ -7,14 +7,14 @@ import {
   CellProps,
   HeaderProps,
 } from 'react-table';
-import {TacheDetail} from './useDetailTache';
-import {TFetchChildren, useTableData} from './useTableData';
+import {TacheDetail} from './queries';
+import {TableData} from './useTableData';
 import {FiltreStatut} from './FiltreStatut';
+import {useOpenAction} from 'ui/shared/useOpenAction';
 
 export type TDetailTacheTableProps = {
-  taches: TacheDetail[];
+  tableData: TableData;
   updateActionStatut: TUpdateActionStatut;
-  fetchChildren: TFetchChildren;
 };
 type TUpdateActionStatut = (action_id: string, value: string) => void;
 
@@ -22,7 +22,9 @@ type TCellProps = CellProps<TacheDetail> & {
   updateActionStatut: TUpdateActionStatut;
 };
 
-type THeaderProps = HeaderProps<TacheDetail>;
+type THeaderProps = HeaderProps<TacheDetail> & {
+  setFilters: (filters: string[]) => void;
+};
 
 type TColumn = Column<TacheDetail>;
 
@@ -31,28 +33,34 @@ const Identifiant = ({row}: TCellProps) => {
   return <span className="identifiant">{identifiant}</span>;
 };
 
-const ArrowExpand = ({row}: TCellProps) => {
+const Expand = ({row}: TCellProps) => {
   const {isExpanded, original} = row;
   const {depth} = original;
-  const classNames = [
+  const className = [
     'fr-mr-1w',
     isExpanded ? 'arrow-down' : 'arrow-right',
     depth < 3 ? 'before:bg-white' : 'before:bg-black',
-  ];
-  return <i className={classNames.join(' ')} />;
+  ].join(' ');
+  return <span className={className} {...row.getToggleRowExpandedProps()} />;
 };
 
 const CellTache = (props: TCellProps) => {
   const {row, value} = props;
-  const {have_children, depth} = row.original;
+  const {depth, have_children} = row.original;
   const style = {paddingLeft: (depth - 1) * 18};
+  const onClickRow = useOpenAction();
 
   return (
     <>
       {depth > 2 ? <Identifiant {...props} /> : null}
       <span style={style}>
-        {have_children ? <ArrowExpand {...props} /> : null}
-        {depth === 3 ? <span className="pill">{value}</span> : value}
+        {have_children ? <Expand {...props} /> : null}
+        <span
+          className={depth === 3 ? 'pill' : undefined}
+          onClick={() => onClickRow(row.original)}
+        >
+          {value}
+        </span>
       </span>
     </>
   );
@@ -77,11 +85,11 @@ const CellStatut = ({row, value, updateActionStatut}: TCellProps) => {
   );
 };
 
-const HeaderStatut = (props: THeaderProps) => (
+const HeaderStatut = ({filters, setFilters}: THeaderProps) => (
   <FiltreStatut
     className="float-right"
-    values={['tous']}
-    onChange={({value}) => console.log(value, props)}
+    values={filters}
+    onChange={setFilters}
   />
 );
 
@@ -102,30 +110,36 @@ const COLUMNS: TColumn[] = [
  * Affiche la table "Détail des tâches"
  */
 export const DetailTacheTable = (props: TDetailTacheTableProps) => {
-  const {taches, updateActionStatut, fetchChildren} = props;
-
-  // les données
-  const {table, fetchSubrows} = useTableData(taches, fetchChildren);
+  const {tableData, updateActionStatut} = props;
+  const {table, filters, setFilters} = tableData;
 
   // la définition des colonnes
   const columns: TColumn[] = useMemo(() => COLUMNS, []);
 
-  // renvoi l'id d'une ligne
-  const getRowId = useCallback((row: TacheDetail) => row.identifiant, []);
-
   // ajout aux props passées à chaque cellule
-  const customCellProps = {updateActionStatut};
+  const customCellProps = useMemo(() => ({updateActionStatut}), []);
+  const customHeaderProps = useMemo(() => ({filters, setFilters}), [filters]);
 
-  // crée l'instance de la table et extrait les éléments passés au rendu
-  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} =
-    useTable(
-      {
-        ...table,
-        columns,
-        getRowId,
-      },
-      useExpanded
-    );
+  // crée l'instance de la table et extrait les props nécessaires au rendu
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    toggleAllRowsExpanded,
+  } = useTable(
+    {
+      ...table,
+      columns,
+    },
+    useExpanded
+  );
+
+  // initialement tout est déplié
+  useEffect(() => {
+    toggleAllRowsExpanded(true);
+  }, [table?.data]);
 
   return (
     <div className="detail-tache-table">
@@ -134,8 +148,8 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()} className="text-right">
-                  {column.render('Header')}
+                <th {...column.getHeaderProps()}>
+                  {column.render('Header', customHeaderProps)}
                 </th>
               ))}
             </tr>
@@ -144,27 +158,19 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
         <tbody {...getTableBodyProps()}>
           {rows.map((row, index) => {
             prepareRow(row);
+            const {original, isExpanded} = row;
+            const {depth, nom} = original;
             const rowProps = {
               ...row.getRowProps(),
-              ...row.getToggleRowExpandedProps(),
-              className: `d${row.original.depth} ${
-                row.isExpanded ? 'open' : 'close'
-              }`,
+              className: `d${depth} ${isExpanded ? 'open' : 'close'}`,
+              title: nom,
             };
             return (
               <Fragment key={rowProps.key}>
                 {row.depth === 0 && index > 0 ? (
                   <tr className="separator" />
                 ) : null}
-                <tr
-                  {...rowProps}
-                  title={row.original.nom}
-                  onClick={evt => {
-                    evt.preventDefault();
-                    row.toggleRowExpanded();
-                    fetchSubrows(row.original);
-                  }}
-                >
+                <tr {...rowProps}>
                   {row.original.have_children ? (
                     <td
                       {...row.cells[0].getCellProps()}
