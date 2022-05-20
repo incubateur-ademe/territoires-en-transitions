@@ -1,10 +1,9 @@
-import {useHistory} from 'react-router-dom';
 import {
   CritereLabellisationAction,
   LabellisationParcoursRead,
 } from 'generated/dataLayer/labellisation_parcours_read';
 import {referentielToName} from 'app/labels';
-import {makeCollectiviteActionUrl} from 'app/paths';
+import {useOpenAction} from 'ui/shared/useOpenAction';
 import './CriteresAction.css';
 
 export type TCriteresActionProps = {
@@ -20,27 +19,10 @@ type TCriteresActionTable = TCriteresActionProps & {
  * Affiche les critères liés aux actions
  */
 export const CriteresAction = (props: TCriteresActionProps) => {
-  const history = useHistory();
-  const {collectiviteId, parcours} = props;
+  const {parcours} = props;
   const {referentiel} = parcours;
 
-  const onClickRow = ({action_id}: CritereLabellisationAction): void => {
-    const levels = action_id.split('.');
-    const limitedLevels = levels
-      .slice(0, referentiel === 'cae' ? 3 : 2)
-      .join('.');
-
-    const pathname = makeCollectiviteActionUrl({
-      collectiviteId,
-      referentielId: referentiel,
-      actionId: limitedLevels,
-    });
-    history.push({
-      pathname,
-      hash:
-        levels.length !== limitedLevels.length ? `#${action_id}` : undefined,
-    });
-  };
+  const onClickRow = useOpenAction();
 
   return (
     <>
