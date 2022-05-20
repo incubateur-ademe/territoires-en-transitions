@@ -5,6 +5,8 @@ import {
   RouteProps,
   Switch,
 } from 'react-router-dom';
+import {QueryClient, QueryClientProvider} from 'react-query';
+import {ReactQueryDevtools} from 'react-query/devtools';
 import {E2E} from './E2E';
 import {Footer, FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
@@ -38,53 +40,58 @@ const theme = createTheme({
   },
 });
 
+const queryClient = new QueryClient();
+
 export const App = () => {
   return (
     <MatomoProvider value={matomoInstance}>
       <MuiThemeProvider theme={theme}>
-        <Router>
-          <E2E />
-          <ScrollToTop />
-          <Toasters />
-          <InvitationRedirector />
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <Router>
+            <E2E />
+            <ScrollToTop />
+            <Toasters />
+            <InvitationRedirector />
 
-          <Switch>
-            <HomeRoute exact path="/">
-              <Header />
-              <Home />
-            </HomeRoute>
+            <Switch>
+              <HomeRoute exact path="/">
+                <Header />
+                <Home />
+              </HomeRoute>
 
-            <HomeRoute path={authBasePath}>
-              <Header />
-              <AuthRoutes />
-            </HomeRoute>
+              <HomeRoute path={authBasePath}>
+                <Header />
+                <AuthRoutes />
+              </HomeRoute>
 
-            <Route path={myCollectivitesPath}>
-              <Header />
-              <CurrentUserCollectivitesPage />
-            </Route>
-            <Route path={allCollectivitesPath}>
-              <Header />
-              <ElsesCollectivitesPage />
-            </Route>
-            <Route path={'/collectivite/:collectiviteId'}>
-              <Header />
-              <CollectiviteRoutes />
-            </Route>
-            <Route path={'/statistics'}>
-              <Header />
-              <StatisticsPage />
-            </Route>
-            <Route path={invitationLandingPath}>
-              <Header />
-              <InvitationLanding />
-            </Route>
-          </Switch>
-          <Footer
-            description={<FooterDescription />}
-            navigation={<FooterNavigation />}
-          />
-        </Router>
+              <Route path={myCollectivitesPath}>
+                <Header />
+                <CurrentUserCollectivitesPage />
+              </Route>
+              <Route path={allCollectivitesPath}>
+                <Header />
+                <ElsesCollectivitesPage />
+              </Route>
+              <Route path={'/collectivite/:collectiviteId'}>
+                <Header />
+                <CollectiviteRoutes />
+              </Route>
+              <Route path={'/statistics'}>
+                <Header />
+                <StatisticsPage />
+              </Route>
+              <Route path={invitationLandingPath}>
+                <Header />
+                <InvitationLanding />
+              </Route>
+            </Switch>
+            <Footer
+              description={<FooterDescription />}
+              navigation={<FooterNavigation />}
+            />
+          </Router>
+        </QueryClientProvider>
       </MuiThemeProvider>
     </MatomoProvider>
   );
