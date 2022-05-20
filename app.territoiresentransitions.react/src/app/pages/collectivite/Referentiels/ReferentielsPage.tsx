@@ -1,14 +1,14 @@
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
 
-const Referentiels = lazy(
-  () => import('app/pages/collectivite/Referentiels/Referentiels')
+const ReferentielTabs = lazy(
+  () => import('app/pages/collectivite/Referentiels/ReferentielTabs')
 );
 
 export const ReferentielsPage = () => {
   return (
     <Suspense fallback={renderLoader()}>
-      <Referentiels />
+      <ReferentielTabs />
     </Suspense>
   );
 };

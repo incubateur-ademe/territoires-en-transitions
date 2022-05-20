@@ -14,6 +14,7 @@ export const myCollectivitesPath = '/mes_collectivites';
 const collectiviteParam = 'collectiviteId';
 export const indicateurViewParam = 'vue';
 export const referentielParam = 'referentielId';
+export const referentielVueParam = 'referentielVue';
 const actionParam = 'actionId';
 const ficheParam = 'ficheUid';
 export const planActionParam = 'planActionUid';
@@ -22,10 +23,14 @@ export const thematiqueParam = 'thematiqueId';
 
 export type ReferentielParamOption = 'cae' | 'eci';
 export type IndicateurViewParamOption = 'cae' | 'eci' | 'crte' | 'perso';
+export type ReferentielVueParamOption =
+  | 'progression'
+  | 'priorisation'
+  | 'detail';
 
 export const collectivitePath = `/collectivite/:${collectiviteParam}`;
 export const collectiviteIndicateurPath = `${collectivitePath}/indicateurs/:${indicateurViewParam}`;
-export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}`;
+export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
 export const collectiviteTableauBordPath = `${collectivitePath}/tableau_bord`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}`;
 export const collectiviteLabellisationPath = `${collectivitePath}/labellisation/:${referentielParam}`;
@@ -53,13 +58,16 @@ export const makeCollectiviteRootUrl = (collectiviteId: number) =>
 export const makeCollectiviteReferentielUrl = ({
   collectiviteId,
   referentielId,
+  referentielVue,
 }: {
   collectiviteId: number;
   referentielId: ReferentielParamOption;
+  referentielVue?: ReferentielVueParamOption;
 }) =>
   collectiviteReferentielPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${referentielParam}`, referentielId);
+    .replace(`:${referentielParam}`, referentielId)
+    .replace(`:${referentielVueParam}`, referentielVue || 'progression');
 
 export const makeCollectiviteActionUrl = ({
   collectiviteId,
