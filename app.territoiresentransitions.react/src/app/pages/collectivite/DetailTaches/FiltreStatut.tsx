@@ -1,7 +1,8 @@
 import {ChangeEvent} from 'react';
-import {MenuProps} from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import {ITEMS, menuOptions} from './SelectStatut';
+import './statuts.css';
 import './FiltreStatut.css';
 
 export type TFiltreStatutProps = {
@@ -10,50 +11,10 @@ export type TFiltreStatutProps = {
   onChange: (values: string[]) => void;
 };
 
-const ITEMS = [
-  {
-    value: 'non_concerne',
-    label: 'Non concerné',
-  },
-  {
-    value: 'non_renseigne',
-    label: 'Non renseigné',
-  },
-  {
-    value: 'pas_fait',
-    label: 'Pas fait',
-  },
-  {
-    value: 'programme',
-    label: 'Programmé',
-  },
-  {
-    value: 'detaille',
-    label: 'Détaillé',
-  },
-  {
-    value: 'fait',
-    label: 'Fait',
-  },
-];
-
 const ITEM_ALL = 'tous';
 
 const getIsAllSelected = (values?: string[]) =>
   !values?.length || values.indexOf(ITEM_ALL) !== -1;
-
-// positionnement de la liste déroulante
-const menuOptions: Partial<MenuProps> = {
-  anchorOrigin: {
-    vertical: 'bottom',
-    horizontal: 'left',
-  },
-  transformOrigin: {
-    vertical: 'top',
-    horizontal: 'left',
-  },
-  getContentAnchorEl: null,
-};
 
 /**
  * Affiche le filtre par statuts
@@ -62,7 +23,7 @@ export const FiltreStatut = (props: TFiltreStatutProps) => {
   const {className, values, onChange} = props;
   const isAllSelected = getIsAllSelected(values);
 
-  // le picto est différent si un ou plusieurs filtres sont séléectionnés
+  // le picto est différent si un ou plusieurs filtres sont sélectionnés
   const icon = isAllSelected ? 'fr-fi-filter-line' : 'fr-fi-filter-fill';
 
   const handleChange = (event: ChangeEvent<{value: unknown}>) => {
@@ -83,7 +44,7 @@ export const FiltreStatut = (props: TFiltreStatutProps) => {
 
   return (
     <Select
-      className={className}
+      className={`multi-select ${className}`}
       multiple
       value={values}
       variant="outlined"
@@ -97,7 +58,7 @@ export const FiltreStatut = (props: TFiltreStatutProps) => {
       <MenuItem
         key="tous"
         value="tous"
-        className={`item ${isAllSelected ? 'fr-fi-check-line' : ''}`}
+        className={isAllSelected ? 'fr-fi-check-line' : 'offset-item'}
       >
         Tous les statuts
       </MenuItem>
@@ -108,7 +69,7 @@ export const FiltreStatut = (props: TFiltreStatutProps) => {
           className={
             !isAllSelected && values.indexOf(value) !== -1
               ? 'fr-fi-check-line'
-              : ''
+              : 'offset-item'
           }
         >
           <span className={`statut-label ${value}`}>{label}</span>
