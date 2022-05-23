@@ -29,7 +29,7 @@ export const fetchActionStatutsList = async (
       `avancement.in.(${avancement})`,
     ];
     if (filters.includes('non_renseigne')) {
-      or.push('avancement.is.null');
+      or.push('and(avancement.is.null,have_children.is.false)');
     }
 
     // ajoute les filtres complétaires à la requêtes
@@ -42,27 +42,19 @@ export const fetchActionStatutsList = async (
   if (error) {
     throw new Error(error.message);
   }
-  return data as TacheDetail[];
-};
 
-// le statut d'une tâche du référentiel pour une collectivité donnée
-export const fetchActionStatut = async (
-  collectivite_id: number,
-  action_id: number
-) => {
-  const {error, data} = await supabaseClient
-    .from<IActionStatutsRead>('action_statuts')
-    .select('action_id,avancement')
-    .eq('collectivite_id', collectivite_id)
-    .eq('action_id', action_id);
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data;
+  const rows = data as TacheDetail[];
+
+  // décompte les tâches uniquement
+  const count = rows.reduce(
+    (sum, {have_children}) => (have_children ? sum : sum + 1),
+    0
+  );
+  return {rows, count};
 };
 
 // nombre de total de taches (entrées n'ayant pas d'enfants) dans un référentiel
-export const getTotalTachesCount = async (referentiel: string) => {
+export const getTotalTachesCount = async (referentiel: string | null) => {
   const {error, count} = await supabaseClient
     .from<IActionStatutsRead>('action_statuts')
     .select('identifiant', {count: 'exact', head: true})
@@ -74,4 +66,33 @@ export const getTotalTachesCount = async (referentiel: string) => {
     throw new Error(error.message);
   }
   return count;
+};
+
+export const updateTacheStatut = async ({
+  collectivite_id,
+  action_id,
+  avancement,
+  avancement_detaille,
+}: {
+  collectivite_id: number | null;
+  action_id: string;
+  avancement: string;
+  avancement_detaille?: number[];
+}) => {
+  const {error, data} = await supabaseClient.from('action_statut').upsert(
+    {
+      collectivite_id,
+      action_id,
+      avancement,
+      avancement_detaille:
+        avancement_detaille ||
+        (avancement === 'detaille' ? [0.3, 0.4, 0.3] : undefined),
+      concerne: true,
+    },
+    {onConflict: 'collectivite_id, action_id'}
+  );
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
 };
