@@ -25,7 +25,7 @@ export const fetchActionStatutsList = async (
     const descendants = filters.join(',');
     const avancement = filters.map(s => `"${s}"`).join(',');
     const or = [
-      `avancement_descendants.cs.{${descendants}}`,
+      `avancement_descendants.ov.{${descendants}}`,
       `avancement.in.(${avancement})`,
     ];
     if (filters.includes('non_renseigne')) {
