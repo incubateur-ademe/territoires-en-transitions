@@ -76,12 +76,16 @@
 
 /** libellé de la tâche */
 .detail-tache-table tbody td {
-  padding: 1rem;
+  padding: 0.6rem 1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
   border: 1px;
+}
+
+.detail-tache-table tbody tr.d1 td {
+  padding: 1rem;
 }
 
 /** statut de la tâche */
@@ -109,12 +113,33 @@
   border-bottom-right-radius: 8px;
 }
 
+/** bordure blanche en bas pour un niveau 2 fermé */
+.detail-tache-table tr.d2.close td {
+  border-bottom: 1px solid white;
+}
+
+/** bordures sur les côtés pour les sous-niveaux ouverts */
+.detail-tache-table tr.d3.open td:first-child,
+.detail-tache-table tr.d4.open td:first-child,
+.detail-tache-table tr.d5.open td:first-child {
+  border-left: 1px solid var(--color-primary);
+}
+.detail-tache-table tr.d3.open td:last-child,
+.detail-tache-table tr.d4.open td:last-child,
+.detail-tache-table tr.d5.open td:last-child {
+  border-right: 1px solid var(--color-primary);
+}
+
+/** séparateur utilisé entre les blocs de niveau 1 fermé */
 .detail-tache-table tr.separator {
   height: 16px;
 }
 
+/** identifiant d'une action */
 .detail-tache-table .identifiant {
-  text-align: left;
+  display: inline-block;
+  width: 50px;
+  text-align: right;
   color: var(--text-disabled-grey);
 }
 
