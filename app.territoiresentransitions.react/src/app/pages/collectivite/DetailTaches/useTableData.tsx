@@ -12,6 +12,8 @@ export type TableData = {
     TableOptions<TacheDetail>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
+  /** Indique que le chargement des données est en cours */
+  isLoading: boolean;
   /** filtres actifs */
   filters: string[];
   /** pour remettre à jour les filtres */
@@ -29,7 +31,7 @@ export const useTableData: UseTableData = () => {
   const [filters, setFilters] = useState(['non_renseigne']);
 
   // chargement des données
-  const {data: rows} = useQuery(
+  const {data: rows, isLoading} = useQuery(
     ['action_statuts', collectivite_id, referentiel, ...filters],
     () => fetchActionStatutsList(collectivite_id, referentiel, filters)
   );
@@ -64,5 +66,6 @@ export const useTableData: UseTableData = () => {
     },
     filters,
     setFilters,
+    isLoading,
   };
 };
