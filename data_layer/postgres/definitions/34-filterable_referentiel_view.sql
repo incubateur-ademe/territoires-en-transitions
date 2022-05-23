@@ -114,7 +114,3 @@ from collectivite c
       and s.action_id = any (h.descendants)
     ) cs on true
 order by c.id;
-
-select action_id, avancement, avancement_descendants, ascendants, descendants
-from action_statuts
-where collectivite_id = 1
