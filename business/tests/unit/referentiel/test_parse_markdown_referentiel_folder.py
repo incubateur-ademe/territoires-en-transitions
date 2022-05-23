@@ -36,6 +36,7 @@ def test_build_markdown_action_node_from_ok_folder():
             ressources="",
             points=100.0,
             pourcentage=None,
+            categorie=None,
             actions=[
                 MarkdownActionNode(
                     referentiel=None,
@@ -49,6 +50,7 @@ def test_build_markdown_action_node_from_ok_folder():
                     ressources="",
                     points=100,
                     pourcentage=None,
+                    categorie=None,
                     actions=[
                         MarkdownActionNode(
                             referentiel=None,
@@ -64,6 +66,7 @@ def test_build_markdown_action_node_from_ok_folder():
                             perimetre_de_levaluation="<p>Périmètre de l'évaluation de l'action 1.1</p>\n",
                             points=30.0,
                             pourcentage=None,
+                            categorie=None,
                             actions=[
                                 MarkdownActionNode(
                                     referentiel=None,
@@ -77,6 +80,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                     ressources="<p>Ressources de l'action 1.1.1</p>\n",
                                     points=20.0,
                                     pourcentage=None,
+                                    categorie=None,
                                     actions=[
                                         MarkdownActionNode(
                                             referentiel=None,
@@ -90,6 +94,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                             ressources="",
                                             points=None,
                                             pourcentage=20.0,
+                                            categorie="bases",
                                             actions=[],
                                         ),
                                         MarkdownActionNode(
@@ -104,6 +109,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                             ressources="",
                                             points=None,
                                             pourcentage=30.0,
+                                            categorie="mise en œuvre",
                                             actions=[],
                                         ),
                                         MarkdownActionNode(
@@ -118,6 +124,7 @@ def test_build_markdown_action_node_from_ok_folder():
                                             ressources="",
                                             points=None,
                                             pourcentage=50.0,
+                                            categorie="effets",
                                             actions=[],
                                         ),
                                     ],

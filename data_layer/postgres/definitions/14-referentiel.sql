@@ -114,6 +114,8 @@ create policy allow_read
 --------------------------------
 ----------- ACTION -------------
 --------------------------------
+create type action_categorie as enum ('bases', 'mise en œuvre', 'effets');
+
 create table action_definition
 (
     action_id   action_id primary key references action_relation,
@@ -128,7 +130,8 @@ create table action_definition
     perimetre_evaluation text not null,
     preuve      text        not null,
     points      float,
-    pourcentage float
+    pourcentage float,
+    categorie   action_categorie
 ) inherits (abstract_modified_at);
 comment on table action_definition is 'Action definition from markdown. Populated by business';
 

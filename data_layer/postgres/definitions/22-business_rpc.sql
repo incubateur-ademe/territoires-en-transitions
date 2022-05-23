@@ -79,7 +79,8 @@ begin
                     reduction_potentiel = def.reduction_potentiel,
                     preuve      = def.preuve,
                     points      = def.points,
-                    pourcentage = def.pourcentage
+                    pourcentage = def.pourcentage,
+                    categorie = def.categorie
                 where action_id = def.action_id;
             end loop;
         -- update computed points

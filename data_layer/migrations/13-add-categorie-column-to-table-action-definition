@@ -1,0 +1,4 @@
+create type action_categorie as enum ('bases', 'mise en œuvre', 'effets');
+alter table action_definition add column categorie action_categorie; 
+
+-- then execute 22-business_rpc.sql and 34-business_insert_actions.sql
