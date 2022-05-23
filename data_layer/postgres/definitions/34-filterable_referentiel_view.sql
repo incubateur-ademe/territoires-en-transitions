@@ -59,7 +59,7 @@ create or replace view action_statuts
 as
 select
     -- client will filter on:
-    c.id                         as collectivite_id,
+    c.id                             as collectivite_id,
     d.action_id,
     d.referentiel,
     h.type,
@@ -72,19 +72,20 @@ select
     d.identifiant,
     d.nom,
     d.description,
-    d.exemples != ''             as have_exemples,
-    d.preuve != ''               as have_preuve,
-    d.ressources != ''           as have_ressources,
-    d.reduction_potentiel != ''  as have_reduction_potentiel,
-    d.perimetre_evaluation != '' as have_perimetre_evaluation,
-    d.contexte != ''             as have_contexte,
+    d.exemples != ''                 as have_exemples,
+    d.preuve != ''                   as have_preuve,
+    d.ressources != ''               as have_ressources,
+    d.reduction_potentiel != ''      as have_reduction_potentiel,
+    d.perimetre_evaluation != ''     as have_perimetre_evaluation,
+    d.contexte != ''                 as have_contexte,
 
     -- action statuts:
     s.avancement,
     s.avancement_detaille,
 
     -- children status: the set of statuts of all children
-    cs.avancements               as avancement_descendants
+    cs.avancements                   as avancement_descendants,
+    coalesce(cs.non_concerne, false) as non_concerne_descendants
 
 from collectivite c
          -- definitions
@@ -108,7 +109,9 @@ from collectivite c
                else
                    array_agg(s.avancement)
                end
-               as avancements
+               as avancements,
+           not bool_and(s.concerne)
+               as non_concerne
     from action_statut s
     where c.id = s.collectivite_id
       and s.action_id = any (h.descendants)
