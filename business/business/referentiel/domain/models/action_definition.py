@@ -1,9 +1,12 @@
-from typing import Optional
+from typing import Optional, Literal
 
 from dataclasses import dataclass
 
 from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.utils.action_id import ActionId
+
+
+ActionCategorie = Literal["bases", "mise en œuvre", "effets"]
 
 
 @dataclass
@@ -21,6 +24,7 @@ class ActionDefinition:
     reduction_potentiel: str
     points: Optional[float]
     pourcentage: Optional[float]
+    categorie: Optional[ActionCategorie]
 
 
 @dataclass

@@ -163,6 +163,7 @@ def test_can_update_actions(
             "preuve": "old stuff",
             "points": 42,
             "pourcentage": 42,
+            "categorie": None,
         },
     )
     supabase_client.db.insert(
@@ -179,6 +180,7 @@ def test_can_update_actions(
         description="new stuff",
         reduction_potentiel="new stuff",
         perimetre_evaluation="new stuff",
+        categorie="mise en œuvre",
     )
     updated_point = make_action_points(action_id=action_id, points=42)
 
@@ -194,6 +196,7 @@ def test_can_update_actions(
     assert defs[0]["description"] == updated_def.description
     assert defs[0]["reduction_potentiel"] == updated_def.reduction_potentiel
     assert defs[0]["perimetre_evaluation"] == updated_def.perimetre_evaluation
+    assert defs[0]["categorie"] == updated_def.categorie
 
     # 2. check that the point exist in DB
     points = supabase_client.db.get_by(
@@ -337,6 +340,7 @@ def test_can_insert_actions(
         description="description",
         reduction_potentiel="reduction",
         perimetre_evaluation="perimetre",
+        categorie="effets",
     )
     action_point = make_action_points(action_id=action_id, points=42)
     action_relation = ActionRelation("eci", action_id, None)
@@ -355,6 +359,7 @@ def test_can_insert_actions(
     assert defs[0]["description"] == action_def.description
     assert defs[0]["reduction_potentiel"] == action_def.reduction_potentiel
     assert defs[0]["perimetre_evaluation"] == action_def.perimetre_evaluation
+    assert defs[0]["categorie"] == action_def.categorie
 
     # 2. check that the point exist in DB
     points = supabase_client.db.get_by(

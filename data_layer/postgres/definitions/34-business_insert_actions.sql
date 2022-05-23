@@ -21,9 +21,9 @@ begin
         foreach def in array business_insert_actions.definitions
             loop
                 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources,  perimetre_evaluation, reduction_potentiel,
-                                              preuve, points, pourcentage)
+                                              preuve, points, pourcentage, categorie)
                 values(def.action_id, def.referentiel, def.identifiant, def.nom, def.description, def.contexte, def.exemples, def.ressources, def. perimetre_evaluation, def.reduction_potentiel,
-                       def.preuve, def.points, def.pourcentage);
+                       def.preuve, def.points, def.pourcentage, def.categorie);
             end loop;
         -- insert computed points
         foreach pts in array business_insert_actions.computed_points

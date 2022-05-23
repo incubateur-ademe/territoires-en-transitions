@@ -53,6 +53,7 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
                 perimetre_evaluation=row["perimetre_evaluation"],
                 points=row["points"],
                 pourcentage=row["pourcentage"],
+                categorie=row["categorie"],
             )
             for row in rows
         ]
@@ -140,6 +141,7 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
                     "reduction_potentiel": definition.reduction_potentiel,
                     "points": definition.points,
                     "pourcentage": definition.pourcentage,
+                    "categorie": definition.categorie,
                 }
                 for definition in definitions
             ],
@@ -208,6 +210,7 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
                     "reduction_potentiel": definition.reduction_potentiel,
                     "points": definition.points,
                     "pourcentage": definition.pourcentage,
+                    "categorie": definition.categorie,
                 }
                 for definition in definitions
             ],

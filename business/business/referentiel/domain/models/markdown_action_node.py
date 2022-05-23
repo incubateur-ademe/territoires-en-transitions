@@ -2,6 +2,9 @@ from __future__ import annotations
 from typing import List, Optional
 
 from pydantic.main import BaseModel
+from business.referentiel.domain.models.action_definition import (
+    ActionCategorie,
+)
 from business.referentiel.domain.models.referentiel import ActionReferentiel
 
 
@@ -19,6 +22,7 @@ class MarkdownActionNode(BaseModel):
     referentiel: Optional[ActionReferentiel] = None
     points: Optional[float] = None
     pourcentage: Optional[float] = None
+    categorie: Optional[ActionCategorie] = None
     actions: List[MarkdownActionNode] = []
 
 

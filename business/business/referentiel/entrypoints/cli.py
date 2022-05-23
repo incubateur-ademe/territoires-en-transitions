@@ -5,7 +5,6 @@ from typing import Dict, List, Type, Optional
 import click
 
 from business.referentiel.domain.models import events
-from business.referentiel.domain.use_cases import check_personnalisation
 from business.utils.domain_message_bus import (
     DomainFailureEvent,
     InMemoryDomainMessageBus,
