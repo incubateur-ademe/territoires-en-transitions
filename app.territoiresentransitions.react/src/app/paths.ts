@@ -83,6 +83,29 @@ export const makeCollectiviteActionUrl = ({
     .replace(`:${referentielParam}`, referentielId)
     .replace(`:${actionParam}`, actionId);
 
+export const makeCollectiviteTacheUrl = ({
+  collectiviteId,
+  actionId,
+  referentielId,
+}: {
+  collectiviteId: number;
+  actionId: string;
+  referentielId: ReferentielParamOption;
+}) => {
+  const levels = actionId.split('.');
+  const limitedLevels = levels
+    .slice(0, referentielId === 'cae' ? 3 : 2)
+    .join('.');
+
+  const pathname = makeCollectiviteActionUrl({
+    collectiviteId,
+    referentielId,
+    actionId: limitedLevels,
+  });
+  const hash = levels.length !== limitedLevels.length ? `#${actionId}` : '';
+  return pathname + hash;
+};
+
 export const makeCollectiviteLabellisationUrl = ({
   collectiviteId,
   referentielId,
