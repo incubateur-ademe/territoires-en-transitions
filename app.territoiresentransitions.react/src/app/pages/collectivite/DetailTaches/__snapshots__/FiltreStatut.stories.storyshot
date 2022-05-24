@@ -2,7 +2,7 @@
 
 exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] = `
 <div
-  className="MuiInputBase-root MuiOutlinedInput-root"
+  className="MuiInputBase-root MuiOutlinedInput-root multi-select "
   onClick={[Function]}
 >
   <div
@@ -60,7 +60,7 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] =
 
 exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut Multi Select 1`] = `
 <div
-  className="MuiInputBase-root MuiOutlinedInput-root"
+  className="MuiInputBase-root MuiOutlinedInput-root multi-select "
   onClick={[Function]}
 >
   <div
