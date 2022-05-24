@@ -22,14 +22,24 @@ export const fetchActionStatutsList = async (
 
   // construit les filtres complémentaires sauf si "tous" est inclut
   if (!filters.includes('tous')) {
-    const descendants = filters.join(',');
-    const avancement = filters.map(s => `"${s}"`).join(',');
-    const or = [
-      `avancement_descendants.ov.{${descendants}}`,
-      `avancement.in.(${avancement})`,
-    ];
-    if (filters.includes('non_renseigne')) {
+    // exclus le filtre "non concerné"
+    const tousSaufNonConcerne = filters.filter(f => f !== 'non_concerne');
+    // traite les autres filtres à propos de l'avancement
+    const descendants = tousSaufNonConcerne.join(',');
+    const avancement = tousSaufNonConcerne.map(s => `"${s}"`).join(',');
+    const or = tousSaufNonConcerne.length
+      ? [
+          `avancement_descendants.ov.{${descendants}}`,
+          `avancement.in.(${avancement})`,
+        ]
+      : [];
+    // gère le cas où null veut dire "non renseigné"
+    if (tousSaufNonConcerne.includes('non_renseigne')) {
       or.push('and(avancement.is.null,have_children.is.false)');
+    }
+    // gère le filtre "non concerné"
+    if (tousSaufNonConcerne.length !== filters.length) {
+      or.push('non_concerne_descendants.is.true');
     }
 
     // ajoute les filtres complétaires à la requêtes
@@ -83,11 +93,11 @@ export const updateTacheStatut = async ({
     {
       collectivite_id,
       action_id,
-      avancement,
+      avancement: avancement === 'non_concerne' ? 'non_renseigne' : avancement,
       avancement_detaille:
         avancement_detaille ||
         (avancement === 'detaille' ? [0.3, 0.4, 0.3] : undefined),
-      concerne: true,
+      concerne: avancement !== 'non_concerne',
     },
     {onConflict: 'collectivite_id, action_id'}
   );
