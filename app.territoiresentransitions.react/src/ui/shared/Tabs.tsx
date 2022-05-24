@@ -2,7 +2,6 @@
 // https://github.com/dataesr/react-dsfr/blob/master/src/components/interface/Tabs/Tabs.js
 import React, {
   cloneElement,
-  useState,
   Children,
   ReactElement,
   KeyboardEvent,
@@ -11,13 +10,11 @@ import React, {
 type TabsProps = {
   className?: string;
   children: ReactElement[];
-  defaultActiveTab?: number;
+  activeTab: number;
   onChange: (activeTab: number) => void;
 };
 
-const Tabs = ({className, children, defaultActiveTab, onChange}: TabsProps) => {
-  const [activeTab, setActiveTab] = useState(() => defaultActiveTab);
-
+const Tabs = ({className, children, activeTab, onChange}: TabsProps) => {
   const tabsPanel = Children.toArray(children).map((child, index) =>
     cloneElement(child as ReactElement, {
       activeTab,
@@ -25,33 +22,28 @@ const Tabs = ({className, children, defaultActiveTab, onChange}: TabsProps) => {
     })
   );
 
-  const handleChange = (tabIndex: number) => {
-    onChange(tabIndex);
-    setActiveTab(tabIndex);
-  };
-
   const onKeyDownTab = (e: KeyboardEvent<HTMLButtonElement>, index: number) => {
     // Behavior from WAI-ARIA Authoring Practices 1.1
     // https://www.w3.org/TR/wai-aria-practices/#keyboard-interaction-19
     switch (e.key) {
       case 'ArrowRight':
         e.preventDefault();
-        handleChange((index + 1) % tabsPanel.length);
+        onChange((index + 1) % tabsPanel.length);
         break;
 
       case 'ArrowLeft':
         e.preventDefault();
-        handleChange(index - 1 < 0 ? tabsPanel.length - 1 : index - 1);
+        onChange(index - 1 < 0 ? tabsPanel.length - 1 : index - 1);
         break;
 
       case 'Home':
         e.preventDefault();
-        handleChange(0);
+        onChange(0);
         break;
 
       case 'End':
         e.preventDefault();
-        handleChange(tabsPanel.length - 1);
+        onChange(tabsPanel.length - 1);
         break;
 
       default:
@@ -73,7 +65,7 @@ const Tabs = ({className, children, defaultActiveTab, onChange}: TabsProps) => {
               tabIndex={activeTab === index ? 0 : -1}
               aria-controls={`fr-tabpanel-${index}`}
               className="fr-tabs__tab"
-              onClick={() => handleChange(index)}
+              onClick={() => onChange(index)}
               onKeyDown={e => onKeyDownTab(e, index)}
             >
               {element.props.label}

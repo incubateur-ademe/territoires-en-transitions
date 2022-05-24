@@ -36,7 +36,7 @@ export default () => {
     return null;
   }
 
-  const defaultActiveTab = TABS_INDEX[referentielVue];
+  const activeTab = TABS_INDEX[referentielVue];
 
   // synchronise l'url lors du passage d'un onglet à l'autre
   const handleChange = (activeTab: number) => {
@@ -66,11 +66,7 @@ export default () => {
         Référentiel{' '}
         {referentielToName[referentielId as ReferentielOfIndicateur]}
       </h1>
-      <Tabs
-        className="w-full"
-        defaultActiveTab={defaultActiveTab}
-        onChange={handleChange}
-      >
+      <Tabs className="w-full" activeTab={activeTab} onChange={handleChange}>
         <Tab label="Progression">
           <Referentiels />
         </Tab>
