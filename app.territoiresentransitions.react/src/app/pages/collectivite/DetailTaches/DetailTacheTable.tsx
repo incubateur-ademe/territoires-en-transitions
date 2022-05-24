@@ -7,11 +7,12 @@ import {
   CellProps,
   HeaderProps,
 } from 'react-table';
-import {useOpenAction} from 'ui/shared/useOpenAction';
+import {makeCollectiviteTacheUrl, ReferentielParamOption} from 'app/paths';
 import {TacheDetail} from './queries';
 import {TableData} from './useTableData';
 import {FiltreStatut} from './FiltreStatut';
 import {SelectStatut} from './SelectStatut';
+import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
@@ -42,22 +43,29 @@ const CellTache = (props: TCellProps) => {
   const style = {
     paddingLeft: (depth - 1) * (depth > 2 && have_children ? 12 : 18),
   };
-  const onClickRow = useOpenAction();
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId() as ReferentielParamOption;
 
-  return (
+  return collectiviteId && referentielId ? (
     <>
       {depth > 2 ? <span className="identifiant">{identifiant}</span> : null}
       <span style={style}>
         {have_children ? <Expand {...props} /> : null}
-        <span
-          className={depth === 3 ? 'pill' : undefined}
-          onClick={() => onClickRow(row.original)}
-        >
-          {value}
+        <span className={depth === 3 ? 'pill' : undefined}>
+          <a
+            className="hover:underline"
+            href={makeCollectiviteTacheUrl({
+              collectiviteId,
+              actionId: row.original.action_id,
+              referentielId,
+            })}
+          >
+            {value}
+          </a>
         </span>
       </span>
     </>
-  );
+  ) : null;
 };
 
 const CellStatut = ({row, value, updateStatut, isSaving}: TCellProps) => {
