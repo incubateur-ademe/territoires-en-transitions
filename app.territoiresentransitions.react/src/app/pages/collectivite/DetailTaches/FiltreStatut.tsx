@@ -44,7 +44,7 @@ export const FiltreStatut = (props: TFiltreStatutProps) => {
 
   return (
     <Select
-      className={`multi-select ${className}`}
+      className={`multi-select ${className || ''}`}
       multiple
       value={values}
       variant="outlined"
