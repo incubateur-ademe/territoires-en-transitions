@@ -93,6 +93,7 @@ const ChiffreCles = ({
   const widthPx = 120;
   // Action key numbers
   const {realisePoints, realisePercentage} = scoreRealise(rootScore);
+  const {completed_taches_count, total_taches_count} = rootScore;
 
   const previsionnelPoints = toFixed(
     rootScore.point_fait + rootScore.point_programme,
@@ -120,14 +121,12 @@ const ChiffreCles = ({
             <DoughnutWithNumber
               bigFontSizePx={bigFontSizePx}
               smallFontSizePx={smallFontSizePx}
-              bigText={rootScore.completed_taches_count.toString()}
+              bigText={completed_taches_count.toString()}
               smallText="actions renseignées"
-              tooltipText={`${rootScore.completed_taches_count} actions renseignées sur ${rootScore.total_taches_count}.`}
+              tooltipText={`${completed_taches_count} actions renseignées sur ${total_taches_count}.`}
               hexColor={remplissageColor}
               doughnutFillPercentage={
-                (rootScore.completed_taches_count /
-                  rootScore.total_taches_count) *
-                100
+                (completed_taches_count / total_taches_count) * 100
               }
               widthPx={widthPx}
             />
@@ -179,6 +178,18 @@ const ChiffreCles = ({
           </div>
         </div>
       </div>
+      {completed_taches_count < total_taches_count ? (
+        <Link
+          className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mt-2w"
+          to={makeCollectiviteReferentielUrl({
+            collectiviteId,
+            referentielId: referentiel,
+            referentielVue: 'detail',
+          })}
+        >
+          Voir les statuts non renseignés
+        </Link>
+      ) : null}
     </div>
   );
 };
