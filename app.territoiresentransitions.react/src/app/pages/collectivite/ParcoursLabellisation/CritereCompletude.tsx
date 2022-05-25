@@ -30,6 +30,7 @@ export const CritereCompletude = (props: TCritereScoreProps) => {
           href={makeCollectiviteReferentielUrl({
             collectiviteId,
             referentielId,
+            referentielVue: 'detail',
           })}
         >
           Mettre à jour
