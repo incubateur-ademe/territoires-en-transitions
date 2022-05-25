@@ -1,7 +1,13 @@
-import {useCallback, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useHistory, useLocation} from 'react-router-dom';
 import {useMutation, useQuery, useQueryClient} from 'react-query';
 import {TableOptions} from 'react-table';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
+import {useQuery as useQueryString} from 'core-logic/hooks/query';
+import {
+  useCollectiviteId,
+  useReferentielId,
+  useReferentielVue,
+} from 'core-logic/hooks/params';
 import {
   fetchActionStatutsList,
   getTotalTachesCount,
@@ -33,6 +39,8 @@ export type TableData = {
   updateStatut: (action_id: string, value: string) => void;
 };
 
+const DEFAULT_FILTER = ['non_renseigne'];
+
 /**
  * Memoïze et renvoi les données et paramètres de la table
  */
@@ -42,7 +50,7 @@ export const useTableData: UseTableData = () => {
   const queryClient = useQueryClient();
 
   // filtre initial
-  const [filters, setFilters] = useState(['non_renseigne']);
+  const [filters, setFilters] = useURLParams(DEFAULT_FILTER);
 
   // chargement des données
   const {data, isLoading} = useQuery(
@@ -107,4 +115,30 @@ export const useTableData: UseTableData = () => {
     total: total || 0,
     updateStatut,
   };
+};
+
+const useURLParams = (
+  initialValue: string[]
+): [filters: string[], setFilters: (newFilters: string[]) => void] => {
+  const history = useHistory();
+  const location = useLocation();
+  const referentielVue = useReferentielVue();
+
+  // extrait les paramètres de l'url si ils sont disponibles
+  const querystring = useQueryString();
+  const filtersFromQueryString =
+    querystring.get('f')?.split(',') || initialValue;
+
+  // état interne
+  const [filters, setFilters] = useState(filtersFromQueryString);
+
+  // synchronise l'url à partir de l'état interne
+  useEffect(() => {
+    const f = filters.join(',');
+    if (referentielVue === 'detail' && querystring.get('f') !== f) {
+      history.replace({...location, search: `?f=${filters.join(',')}`});
+    }
+  }, [filters, location]);
+
+  return [filters, setFilters];
 };
