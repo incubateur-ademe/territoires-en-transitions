@@ -33,7 +33,7 @@ const useDailyCounts = (view: string) => {
         .select()
         .then(result => setData(result.data));
     }
-  });
+  }, [view, data]);
 
   return data;
 };
@@ -59,7 +59,7 @@ export const useFunctionnalitiesUsageProportion = () => {
           }
         });
     }
-  });
+  }, [data]);
 
   return data;
 };
@@ -74,7 +74,7 @@ export const useCompletenessSlices = () => {
         .select()
         .then(result => setData(result.data));
     }
-  });
+  }, [data]);
 
   return data;
 };
