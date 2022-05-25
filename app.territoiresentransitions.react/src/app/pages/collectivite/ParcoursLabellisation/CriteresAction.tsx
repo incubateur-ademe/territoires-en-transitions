@@ -1,9 +1,6 @@
-import {
-  CritereLabellisationAction,
-  LabellisationParcoursRead,
-} from 'generated/dataLayer/labellisation_parcours_read';
+import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
 import {referentielToName} from 'app/labels';
-import {makeCollectiviteActionUrl} from 'app/paths';
+import {makeCollectiviteTacheUrl} from 'app/paths';
 import './CriteresAction.css';
 
 export type TCriteresActionProps = {
@@ -11,32 +8,14 @@ export type TCriteresActionProps = {
   parcours: LabellisationParcoursRead;
 };
 
-type TCriteresActionTable = TCriteresActionProps & {
-  onClickRow: (action: CritereLabellisationAction) => void;
-};
+type TCriteresActionTable = TCriteresActionProps;
 
 /**
  * Affiche les critères liés aux actions
  */
 export const CriteresAction = (props: TCriteresActionProps) => {
-  const {collectiviteId, parcours} = props;
+  const {parcours} = props;
   const {referentiel} = parcours;
-
-  const onClickRow = ({action_id}: CritereLabellisationAction): void => {
-    const levels = action_id.split('.');
-    const limitedLevels = levels
-      .slice(0, referentiel === 'cae' ? 3 : 2)
-      .join('.');
-
-    const pathname = makeCollectiviteActionUrl({
-      collectiviteId,
-      referentielId: referentiel,
-      actionId: limitedLevels,
-    });
-    window.open(
-      pathname + (levels.length !== limitedLevels.length ? `#${action_id}` : '')
-    );
-  };
 
   return (
     <>
@@ -45,7 +24,7 @@ export const CriteresAction = (props: TCriteresActionProps) => {
         {referentielToName[referentiel]} et le prouver (via les documents
         preuves ou un texte justificatif)
       </li>
-      <CritereActionTable {...props} onClickRow={onClickRow} />
+      <CritereActionTable {...props} />
     </>
   );
 };
@@ -89,13 +68,20 @@ export const CritereActionTable = (props: TCriteresActionTable) => {
 
 /** Affiche une ligne du tableau */
 const CritereActionRow = (props: TCriteresActionTable & {rowIndex: number}) => {
-  const {rowIndex, parcours, onClickRow} = props;
-  const {criteres_action} = parcours;
+  const {collectiviteId, rowIndex, parcours} = props;
+  const {criteres_action, referentiel} = parcours;
   const action = criteres_action[rowIndex];
-  const {action_identifiant, formulation, statut_ou_score, rempli} = action;
+  const {action_id, action_identifiant, formulation, statut_ou_score, rempli} =
+    action;
+
+  const pathname = makeCollectiviteTacheUrl({
+    collectiviteId,
+    referentielId: referentiel,
+    actionId: action_id,
+  });
 
   return (
-    <tr onClick={() => onClickRow(action)}>
+    <tr>
       <td className="text-center w-[56px]">
         {rempli ? (
           <i className="fr-icon fr-fi-checkbox-circle-fill before:text-[#5FD68C]" />
@@ -104,7 +90,11 @@ const CritereActionRow = (props: TCriteresActionTable & {rowIndex: number}) => {
       <td className="text-right text-xs w-[40px] text-grey625">
         <span>{action_identifiant}</span>
       </td>
-      <td className="pl-4 pr-8">{formulation}</td>
+      <td className="pl-4 pr-8">
+        <a href={pathname} target="_blank" className="hover:underline">
+          {formulation}
+        </a>
+      </td>
       <td>{statut_ou_score}</td>
     </tr>
   );
