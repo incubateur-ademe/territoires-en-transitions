@@ -13,6 +13,7 @@ import {TableData} from './useTableData';
 import {FiltreStatut} from './FiltreStatut';
 import {SelectStatut} from './SelectStatut';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
+import {Link} from 'react-router-dom';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
@@ -52,16 +53,16 @@ const CellTache = (props: TCellProps) => {
       <span style={style}>
         {have_children ? <Expand {...props} /> : null}
         <span className={depth === 3 ? 'pill' : undefined}>
-          <a
+          <Link
             className="hover:underline"
-            href={makeCollectiviteTacheUrl({
+            to={makeCollectiviteTacheUrl({
               collectiviteId,
               actionId: row.original.action_id,
               referentielId,
             })}
           >
             {value}
-          </a>
+          </Link>
         </span>
       </span>
     </>
