@@ -17,7 +17,6 @@ export const fetchActionStatutsList = async (
   let query = supabaseClient
     .from<IActionStatutsRead>('action_statuts')
     .select('action_id,identifiant,nom,avancement,have_children,depth')
-    .order('identifiant')
     .match({collectivite_id, referentiel})
     .gt('depth', 0);
 
@@ -43,7 +42,7 @@ export const fetchActionStatutsList = async (
       or.push('non_concerne_descendants.is.true');
     }
 
-    // ajoute les filtres complémentaires à la requêtes
+    // ajoute les filtres complétaires à la requêtes
     query = query.or(or.join(','));
   }
 
