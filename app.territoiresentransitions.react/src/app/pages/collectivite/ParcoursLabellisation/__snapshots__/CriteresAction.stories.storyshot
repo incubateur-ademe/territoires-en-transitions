@@ -30,9 +30,7 @@ Array [
         </tr>
       </thead>
       <tbody>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -46,15 +44,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Identifier un⸱e élu⸱e référent⸱e
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_1.1#eci_1.1.1.1"
+              target="_blank"
+            >
+              Identifier un⸱e élu⸱e référent⸱e
+            </a>
           </td>
           <td>
             Fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -68,15 +70,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Identifier une personne technique
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_1.1#eci_1.1.1.3"
+              target="_blank"
+            >
+              Identifier une personne technique
+            </a>
           </td>
           <td>
             Programmé ou fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -90,15 +96,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Mettre en place une équipe projet
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_1.1#eci_1.1.1.3"
+              target="_blank"
+            >
+              Mettre en place une équipe projet
+            </a>
           </td>
           <td>
             Programmé ou fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -112,15 +122,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Engager un diagnostic territorial
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_1.1#eci_1.1.2"
+              target="_blank"
+            >
+              Engager un diagnostic territorial
+            </a>
           </td>
           <td>
             20% fait minimum
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -134,15 +148,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Respecter la réglementation PLPDMA
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_2.1#eci_2.1.0"
+              target="_blank"
+            >
+              Respecter la réglementation PLPDMA
+            </a>
           </td>
           <td>
             Programmé ou fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -156,15 +174,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Respecter la réglementation liée au système de collecte
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_2.2#eci_2.2.0"
+              target="_blank"
+            >
+              Respecter la réglementation liée au système de collecte
+            </a>
           </td>
           <td>
             Programmé ou fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -178,15 +200,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Respecter la règlementation concernant la valorisation des déchets (dont organiques)
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_2.3#eci_2.3.0"
+              target="_blank"
+            >
+              Respecter la règlementation concernant la valorisation des déchets (dont organiques)
+            </a>
           </td>
           <td>
             Programmé ou fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -200,15 +226,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_2.4#eci_2.4.0"
+              target="_blank"
+            >
+              Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)
+            </a>
           </td>
           <td>
             Programmé ou fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -222,15 +252,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_3.2#eci_3.2.0"
+              target="_blank"
+            >
+              Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)
+            </a>
           </td>
           <td>
             Programmé ou fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -244,15 +278,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Rédiger le rapport annuel SPPGD
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_4.1#eci_4.1.0"
+              target="_blank"
+            >
+              Rédiger le rapport annuel SPPGD
+            </a>
           </td>
           <td>
             Programmé ou fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -266,15 +304,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Avoir engagé la politique Économie Circulaire
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_1.1#eci_1.1.1.2"
+              target="_blank"
+            >
+              Avoir engagé la politique Économie Circulaire
+            </a>
           </td>
           <td>
             Fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -288,15 +330,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Respecter la réglementation PLPDMA
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_2.1#eci_2.1.0"
+              target="_blank"
+            >
+              Respecter la réglementation PLPDMA
+            </a>
           </td>
           <td>
             Fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -310,15 +356,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Respecter la réglementation liée au système de collecte
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_2.2#eci_2.2.0"
+              target="_blank"
+            >
+              Respecter la réglementation liée au système de collecte
+            </a>
           </td>
           <td>
             Fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -332,15 +382,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Respecter la règlementation concernant la valorisation des déchets (dont organiques)
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_2.3#eci_2.3.0"
+              target="_blank"
+            >
+              Respecter la règlementation concernant la valorisation des déchets (dont organiques)
+            </a>
           </td>
           <td>
             Fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -354,15 +408,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_2.4#eci_2.4.0"
+              target="_blank"
+            >
+              Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)
+            </a>
           </td>
           <td>
             Fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -376,15 +434,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_3.2#eci_3.2.0"
+              target="_blank"
+            >
+              Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)
+            </a>
           </td>
           <td>
             Fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -398,7 +460,13 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Rédiger le rapport annuel SPPGD
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/eci/eci_4.1#eci_4.1.0"
+              target="_blank"
+            >
+              Rédiger le rapport annuel SPPGD
+            </a>
           </td>
           <td>
             Fait
@@ -440,9 +508,7 @@ Array [
         </tr>
       </thead>
       <tbody>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -456,15 +522,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Identifier un⸱e élu⸱e référent⸱e
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/cae/cae_5.1.1#cae_5.1.1.1.3"
+              target="_blank"
+            >
+              Identifier un⸱e élu⸱e référent⸱e
+            </a>
           </td>
           <td>
             Fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -478,15 +548,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Identifier une personne technique
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/cae/cae_5.1.1#cae_5.1.1.1.3"
+              target="_blank"
+            >
+              Identifier une personne technique
+            </a>
           </td>
           <td>
             Programmé ou fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -500,15 +574,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Mettre en place une équipe projet
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/cae/cae_5.1.1#cae_5.1.1.3.2"
+              target="_blank"
+            >
+              Mettre en place une équipe projet
+            </a>
           </td>
           <td>
             Programmé ou fait
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           />
@@ -522,15 +600,19 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Engager un diagnostic territorial
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/cae/cae_1.1.2#cae_1.1.2"
+              target="_blank"
+            >
+              Engager un diagnostic territorial
+            </a>
           </td>
           <td>
             20% fait minimum
           </td>
         </tr>
-        <tr
-          onClick={[Function]}
-        >
+        <tr>
           <td
             className="text-center w-[56px]"
           >
@@ -548,7 +630,13 @@ Array [
           <td
             className="pl-4 pr-8"
           >
-            Avoir formalisé une vision et des engagements dans une décision de politique générale
+            <a
+              className="hover:underline"
+              href="/collectivite/1/action/cae/cae_1.1.1#cae_1.1.1.1.1"
+              target="_blank"
+            >
+              Avoir formalisé une vision et des engagements dans une décision de politique générale
+            </a>
           </td>
           <td>
             Fait
