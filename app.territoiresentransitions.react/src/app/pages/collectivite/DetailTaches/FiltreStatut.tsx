@@ -30,7 +30,11 @@ export const FiltreStatut = (props: TFiltreStatutProps) => {
     const newValues = (event?.target.value as string[]) || [];
     // évite d'avoir aucun item sélectionné
     if (!newValues.length) {
-      return;
+      if (!isAllSelected) {
+        onChange([ITEM_ALL]);
+      } else {
+        return;
+      }
     }
     const newValuesIncludesAll = getIsAllSelected(newValues);
     // supprime les autres items de la sélection quand "tous" est sélectionné
