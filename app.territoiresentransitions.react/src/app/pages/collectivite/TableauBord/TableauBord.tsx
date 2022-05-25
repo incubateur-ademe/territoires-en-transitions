@@ -282,7 +282,7 @@ const ReferentielSection = observer(
           />
         ) : null}
         <div className="flex justify-center mb-8">
-          {demande && demande.en_cours ? (
+          {!demande || demande.en_cours ? (
             <Link
               className="fr-btn"
               to={makeCollectiviteLabellisationUrl({
