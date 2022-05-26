@@ -22,4 +22,6 @@ alter table labellisation.demande
 
 
 -- then execute
+--- 33-labellisation.sql
 --- 33a-demande_labellisation.sql
+--- 32-fichier_preuve_labellisation.sql l:128 - labellisation.critere_fichier
