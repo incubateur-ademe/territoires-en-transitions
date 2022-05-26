@@ -236,6 +236,6 @@ select ld.id,
        ld.etoiles,
        ld.date,
        nc.nom
-from labellisation_demande ld
+from labellisation.demande ld
          left join named_collectivite nc on ld.collectivite_id = nc.collectivite_id
 ;

@@ -86,7 +86,7 @@ from etoiles as e
          left join labellisation_calendrier calendrier
                    on calendrier.referentiel = e.referentiel
          left join lateral (select ld.date, ld.etoiles
-                            from labellisation_demande ld
+                            from labellisation.demande ld
                             where ld.collectivite_id = labellisation_parcours.collectivite_id
                               and ld.referentiel = e.referentiel
                               and ld.etoiles = e.etoile_objectif) demande on true
