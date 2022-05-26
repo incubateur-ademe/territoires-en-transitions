@@ -1,7 +1,7 @@
 create table labellisation_preuve_fichier
 (
     collectivite_id integer references collectivite          not null,
-    demande_id      integer references labellisation_demande not null,
+    demande_id      integer references labellisation.demande not null,
     file_id         uuid references storage.objects          not null,
     commentaire     text                                     not null default '',
     primary key (collectivite_id, demande_id, file_id)
@@ -140,7 +140,7 @@ select r.referentiel,
        count(lpf.file_id) > 0
 from ref r
          left join lateral (select *
-                            from labellisation_demande ld
+                            from labellisation.demande ld
                             where ld.referentiel = r.referentiel
                               and ld.collectivite_id = critere_fichier.collectivite_id) ld on true
          left join labellisation_preuve_fichier lpf on ld.id = lpf.demande_id

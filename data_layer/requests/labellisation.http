@@ -17,8 +17,8 @@ Content-Type: application/json
 %}
 
 
-### A. Crée une demande de labellisation
-POST {{api}}/rest/v1/labellisation_demande
+### A. Demande une demande de labellisation
+POST {{api}}/rest/v1/rpc/labellisation_demande
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 prefer: return=representation, resolution=merge-duplicates
@@ -32,26 +32,14 @@ Content-Type: application/json
 
 > {%
     client.test("Upsert executed successfully", function() {
-        client.assert(response.status === 201, "Response status is not 201");
-        // vérifie l'insertion
-        client.assert(response.body[0]["etoiles"] === "4", "Le nombre d'étoiles n'est pas 4");
-        client.assert(response.body[0]["en_cours"] === true, "La demande n'est pas en cours");
-        // Enregistre l'id de la demande
-        client.global.set("demande_id", response.body[0]['id']);
-        // Prépare les paramètres, le `.` pose un problème d'interpolation.
-        client.global.set("eq_demande_id", "eq." + response.body[0]['id']);
-    });
-%}
-
-### A. La liste de labellisation pour la collectivite 1
-GET {{api}}/rest/v1/labellisation_demande?collectivite_id=eq.1
-apikey: {{anon}}
-Authorization: Bearer {{auth_token}}
-
-> {%
-    client.test("List executed successfully", function() {
         client.assert(response.status === 200, "Response status is not 200");
-        client.assert(response.body.length > 0)
+        // vérifie la demande
+        client.assert(response.body["etoiles"] === "4", "Le nombre d'étoiles n'est pas 4");
+        client.assert(response.body["en_cours"] === true, "La demande n'est pas en cours");
+        // Enregistre l'id de la demande
+        client.global.set("demande_id", response.body['id']);
+        // Prépare les paramètres, le `.` pose un problème d'interpolation.
+        client.global.set("eq_demande_id", "eq." + response.body['id']);
     });
 %}
 
@@ -154,5 +142,28 @@ Authorization: Bearer {{auth_token}}
     client.test("List executed successfully", function() {
         client.assert(response.status === 200, "Response status is not 200");
         client.assert(response.body.length === 0, "La liste des fichiers n'est pas vide.");
+    });
+%}
+
+
+### A. Soumet une demande de labellisation
+POST {{api}}/rest/v1/rpc/labellisation_submit_demande
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+prefer: return=representation, resolution=merge-duplicates
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "referentiel": "cae",
+  "etoiles": "4"
+}
+
+> {%
+    client.test("Upsert executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        // vérifie la demande
+        client.assert(response.body["etoiles"] === "4", "Le nombre d'étoiles n'est pas 4");
+        client.assert(response.body["en_cours"] === false, "La demande est en cours");
     });
 %}
