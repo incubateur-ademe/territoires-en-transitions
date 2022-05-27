@@ -48,6 +48,8 @@ with
     referentiel_score as (select collectivite_id,
                                  max (s.score_fait) filter ( where referentiel = 'eci' ) as score_fait_eci,
                                  max (s.score_fait) filter ( where referentiel = 'cae' ) as score_fait_cae,
+                                 max (s.score_programme) filter ( where referentiel = 'eci' ) as score_programme_eci,
+                                 max (s.score_programme) filter ( where referentiel = 'cae' ) as score_programme_cae,
                                  max (s.completude) filter ( where referentiel = 'eci' ) as completude_eci,
                                  max (s.completude) filter ( where referentiel = 'cae' ) as completude_cae
                           from commune com
@@ -75,6 +77,8 @@ select c.collectivite_id,
        l.etoiles_eci,
        s.score_fait_cae,
        s.score_fait_eci,
+       s.score_programme_cae,
+       s.score_programme_eci,
        s.completude_cae,
        s.completude_eci
 
