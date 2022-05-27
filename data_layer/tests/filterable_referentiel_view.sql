@@ -50,13 +50,13 @@ insert into action_statut(collectivite_id, action_id, avancement, avancement_det
 values (1, 'eci_1.1.1.1', 'pas_fait', null, false, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9')
 ;
 
-select ok((select not non_concerne_descendants
+select ok((select not non_concerne
            from action_statuts
            where collectivite_id = 1
              and action_id = 'eci_1.1.2'),
           'Non concerne should be false when there is no descendent data');
 
-select ok((select non_concerne_descendants
+select ok((select non_concerne
            from action_statuts
            where collectivite_id = 1
              and action_id = 'eci_1.1.1'),
