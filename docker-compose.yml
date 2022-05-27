@@ -198,8 +198,7 @@ services:
       - rest
     profiles:
       - donotstart
-    command: >
-      rest-cli requests/*.http -e docker
+    command: rest-cli requests/*.http -e docker
     volumes:
       - ./data_layer/requests:/requests
       - ./data_layer/requests/http-client.env.json:/http-client.env.json
