@@ -1,22 +1,18 @@
-import {useState} from 'react';
-import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
-import {labellisationDemandeWriteEndpoint} from 'core-logic/api/endpoints/LabellisationDemandeWriteEndpoint';
-import {LabellisationDemandeWrite} from 'generated/dataLayer/labellisation_demande_write';
+import {useMutation, useQueryClient} from 'react-query';
+import {submitDemande} from './queries';
 
 export const useEnvoiDemande = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const envoiDemande = async (
-    demande: LabellisationDemandeRead
-  ): Promise<LabellisationDemandeWrite | null> => {
-    setIsLoading(true);
-    const reply = await labellisationDemandeWriteEndpoint.save({
-      ...demande,
-      en_cours: false,
-    });
-    setIsLoading(false);
-    return reply;
-  };
+  const queryClient = useQueryClient();
+  const {isLoading, mutate: envoiDemande} = useMutation(submitDemande, {
+    onSuccess: (_, {collectivite_id, referentiel, etoiles}) => {
+      queryClient.invalidateQueries([
+        'labellisation_demande',
+        collectivite_id,
+        referentiel,
+        etoiles,
+      ]);
+    },
+  });
 
   return {
     isLoading,
