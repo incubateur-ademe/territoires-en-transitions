@@ -46,12 +46,12 @@ with
 
     -- extract data from client scores
     referentiel_score as (select collectivite_id,
-                                 max (s.score_fait) filter ( where referentiel = 'eci' ) as score_fait_eci,
-                                 max (s.score_fait) filter ( where referentiel = 'cae' ) as score_fait_cae,
-                                 max (s.score_programme) filter ( where referentiel = 'eci' ) as score_programme_eci,
-                                 max (s.score_programme) filter ( where referentiel = 'cae' ) as score_programme_cae,
-                                 max (s.completude) filter ( where referentiel = 'eci' ) as completude_eci,
-                                 max (s.completude) filter ( where referentiel = 'cae' ) as completude_cae
+                                 max(s.score_fait) filter ( where referentiel = 'eci' )      as score_fait_eci,
+                                 max(s.score_fait) filter ( where referentiel = 'cae' )      as score_fait_cae,
+                                 max(s.score_programme) filter ( where referentiel = 'eci' ) as score_programme_eci,
+                                 max(s.score_programme) filter ( where referentiel = 'cae' ) as score_programme_cae,
+                                 max(s.completude) filter ( where referentiel = 'eci' )      as completude_eci,
+                                 max(s.completude) filter ( where referentiel = 'cae' )      as completude_cae
                           from commune com
                                    join lateral (
                               select * from labellisation.referentiel_score(com.id)
@@ -60,8 +60,8 @@ with
 
     -- labellisation data
     labellisation as (select collectivite_id,
-                             max (l.etoiles) filter ( where referentiel = 'cae' ) as etoiles_cae,
-                             max (l.etoiles) filter ( where referentiel = 'eci' ) as etoiles_eci
+                             max(l.etoiles) filter ( where referentiel = 'cae' ) as etoiles_cae,
+                             max(l.etoiles) filter ( where referentiel = 'eci' ) as etoiles_eci
                       from labellisation l
                       group by collectivite_id)
 
@@ -73,14 +73,14 @@ select c.collectivite_id,
        coalesce(mc.region_code, me.region_code, '')           as region_code,
        coalesce(mc.departement_code, me.departement_code, '') as departement_code,
        coalesce(mc.population, me.population, 0)::int4        as population,
-       l.etoiles_cae,
-       l.etoiles_eci,
-       s.score_fait_cae,
-       s.score_fait_eci,
-       s.score_programme_cae,
-       s.score_programme_eci,
-       s.completude_cae,
-       s.completude_eci
+       coalesce(l.etoiles_cae, 0)                             as etoiles_cae,
+       coalesce(l.etoiles_eci, 0)                             as etoiles_eci,
+       coalesce(s.score_fait_cae, 0)                          as score_fait_cae,
+       coalesce(s.score_fait_eci, 0)                          as score_fait_eci,
+       coalesce(s.score_programme_cae, 0)                     as score_programme_cae,
+       coalesce(s.score_programme_eci, 0)                     as score_programme_eci,
+       coalesce(s.completude_cae, 0)                          as completude_cae,
+       coalesce(s.completude_eci, 0)                          as completude_eci
 
 from named_collectivite c
          left join meta_commune mc on mc.collectivite_id = c.collectivite_id
