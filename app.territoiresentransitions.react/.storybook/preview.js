@@ -3,6 +3,7 @@
  */
 import {addDecorator} from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
+import {QueryClient, QueryClientProvider} from 'react-query';
 
 // charge les styles de l'appli
 import '../src/css/tailwind.css';
@@ -10,6 +11,16 @@ import '../src/css/app.css';
 
 // pour faire fonctionner storybook avec react-router
 addDecorator(StoryRouter());
+
+// pour faire fonctionner storybook avec react-query
+const queryClient = new QueryClient();
+export const decorators = [
+  Story => (
+    <QueryClientProvider client={queryClient}>
+      <Story />
+    </QueryClientProvider>
+  ),
+];
 
 // configuration
 export const parameters = {
