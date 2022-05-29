@@ -28,9 +28,9 @@ import {
 } from 'app/paths';
 import {authBloc} from 'core-logic/observables';
 import {CurrentUserCollectivitesPage} from 'app/pages/CurrentUserCollectivite/CurrentUserCollectivitesPage';
-import {ElsesCollectivitesPage} from 'app/pages/ElsesCollectivites/ElsesCollectivitePage';
 import {Header} from 'ui/Header';
 import {InvitationLanding} from 'app/pages/invitation/InvitationLanding';
+import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/ToutesLesCollectivitesPage';
 
 const theme = createTheme({
   palette: {
@@ -71,7 +71,7 @@ export const App = () => {
               </Route>
               <Route path={allCollectivitesPath}>
                 <Header />
-                <ElsesCollectivitesPage />
+                <ToutesLesCollectivitesPage />
               </Route>
               <Route path={'/collectivite/:collectiviteId'}>
                 <Header />
