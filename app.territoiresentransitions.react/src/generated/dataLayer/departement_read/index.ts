@@ -5,4 +5,5 @@
 export type DepartementRead = {
   code: string;
   libelle: string;
+  region_code: string;
 };
