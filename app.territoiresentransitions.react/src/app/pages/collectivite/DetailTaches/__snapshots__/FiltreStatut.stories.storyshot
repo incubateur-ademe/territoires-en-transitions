@@ -18,7 +18,7 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] =
     <span
       className="fr-fi-filter-line fr-fi--sm"
     >
-       Statuts
+       Statut
     </span>
   </div>
   <input
@@ -76,7 +76,7 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut Multi Sel
     <span
       className="fr-fi-filter-fill fr-fi--sm"
     >
-       Statuts
+       Statut
     </span>
   </div>
   <input

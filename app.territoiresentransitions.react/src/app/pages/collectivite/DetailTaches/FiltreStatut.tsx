@@ -54,7 +54,7 @@ export const FiltreStatut = (props: TFiltreStatutProps) => {
       variant="outlined"
       IconComponent={() => null}
       renderValue={() => (
-        <span className={`${icon} fr-fi--sm`}>&nbsp;Statuts</span>
+        <span className={`${icon} fr-fi--sm`}>&nbsp;Statut</span>
       )}
       MenuProps={menuOptions}
       onChange={handleChange}
