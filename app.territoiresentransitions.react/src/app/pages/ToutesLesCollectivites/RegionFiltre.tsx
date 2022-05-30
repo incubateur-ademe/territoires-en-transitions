@@ -1,4 +1,3 @@
-import {useRegions} from 'app/pages/ToutesLesCollectivites/hooks';
 import {
   Checkbox,
   FormControl,
@@ -9,14 +8,17 @@ import {
   Select,
 } from '@material-ui/core';
 import {SelectInputProps} from '@material-ui/core/Select/SelectInput';
+import {useRegions} from 'app/pages/ToutesLesCollectivites/hooks';
+
+export type TRegionFiltreProps = {
+  codes: string[];
+  updateCodes: (newFilters: string[]) => void;
+};
 
 /**
  * Permet de sélectionner une région
  */
-export const RegionFiltre = (props: {
-  codes: string[];
-  updateCodes: (newFilters: string[]) => void;
-}) => {
+export const RegionFiltre = (props: TRegionFiltreProps) => {
   const {regions} = useRegions();
   const {codes, updateCodes} = props;
 
