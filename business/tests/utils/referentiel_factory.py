@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_definition import (
     ActionDefinition,
+    ActionCategorie,
     ActionId,
 )
 from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
@@ -30,6 +31,7 @@ def make_action_definition(
     preuve: str = "",
     points: Optional[float] = None,
     pourcentage: Optional[float] = None,
+    categorie: Optional[ActionCategorie] = None,
 ):
     return ActionDefinition(
         action_id=ActionId(action_id),
@@ -45,6 +47,7 @@ def make_action_definition(
         reduction_potentiel=reduction_potentiel,
         points=points,
         pourcentage=pourcentage,
+        categorie=categorie,
     )
 
 
@@ -71,6 +74,7 @@ def make_markdown_action_node(
     pourcentage: Optional[float] = None,
     actions: List[MarkdownActionNode] = [],
     referentiel: ActionReferentiel = "eci",
+    categorie: Optional[ActionCategorie] = None,
 ):
     return MarkdownActionNode(
         identifiant=identifiant,
@@ -84,6 +88,7 @@ def make_markdown_action_node(
         thematique_id="",
         contexte="",
         nom="",
+        categorie=categorie,
     )
 
 

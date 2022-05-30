@@ -48,7 +48,12 @@ Authorization: Bearer {{auth_token}}
 
 
 ### Les axes et les sous axes du referentiel eci (depth < 3) ou des actions (descendants) sont non concernées
-GET {{api}}/rest/v1/action_statuts?collectivite_id=eq.1&referentiel=eq.eci&depth=lt.3&non_concerne_descendants=eq.true
+GET {{api}}/rest/v1/action_statuts?collectivite_id=eq.1&referentiel=eq.eci&depth=lt.3&non_concerne=eq.true
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
+
+### Les toute la hierachie des actions pour le référentiel cae ou des tâches sont non concernées
+GET {{api}}/rest/v1/action_statuts?collectivite_id=eq.1&referentiel=eq.cae&non_concerne=eq.true
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}

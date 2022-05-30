@@ -48,17 +48,20 @@ Ressources de l'action 1.1.1
 ```yaml
 identifiant: 1.1.1.1
 pourcentage: 20
+categorie: bases
 ```
 
 ##### Titre de l'action 1.1.1.2
 ```yaml
 identifiant: 1.1.1.2
 pourcentage: 30
+categorie: mise en œuvre
 ```
 
 ##### Titre de l'action 1.1.1.3
 ```yaml
 identifiant: 1.1.1.3
 pourcentage: 50
+categorie: effets
 ```
 

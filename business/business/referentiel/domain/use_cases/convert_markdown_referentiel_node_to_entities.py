@@ -228,6 +228,7 @@ class ConvertMarkdownReferentielNodeToEntities(UseCase):
                 reduction_potentiel=node.reduction_de_potentiel,
                 points=node.points,
                 pourcentage=node.pourcentage,
+                categorie=node.categorie,
             )
             action_definition_entities[action_id] = action_definition_entity
             for child_node in node.actions:

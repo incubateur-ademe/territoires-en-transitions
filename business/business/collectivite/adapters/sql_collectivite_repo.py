@@ -17,11 +17,11 @@ class SqlCollectiviteRepository(AbstractCollectiviteRepository):
     def add_epcis(self, epcis: List[Epci]):
         with open(self.sql_epci_path, "w") as f:
             for epci in epcis:
-                sql = f"insert into epci(nom, siren, nature) values ('{format_sql_text(epci.nom)}', '{epci.siren}', '{epci.nature}');"
+                sql = f"insert into epci(nom, siren, nature) values ({format_sql_text(epci.nom)}, '{epci.siren}', '{epci.nature}');"
                 f.write(f"{sql}\n")
 
     def add_communes(self, communes: List[Commune]):
         with open(self.sql_commune_path, "w") as f:
             for commune in communes:
-                sql = f"insert into commune(nom, code) values ('{format_sql_text(commune.nom)}', '{commune.code}');"
+                sql = f"insert into commune(nom, code) values ({format_sql_text(commune.nom)}, '{commune.code}');"
                 f.write(f"{sql}\n")

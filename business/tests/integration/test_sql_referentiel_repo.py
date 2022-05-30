@@ -6,7 +6,6 @@ from business.referentiel.domain.models.question import Choix, Question
 from business.utils.action_id import ActionId
 from tests.utils.files import remove_file, mkdir
 from tests.utils.referentiel_factory import (
-    make_action_children,
     make_action_definition,
     make_action_points,
     make_indicateur,
@@ -24,7 +23,9 @@ def test_can_add_referentiel_actions():
     definition_ref = make_action_definition(
         action_id="ref", referentiel="eci", description="l'ademe !"
     )
-    definition_ref_1 = make_action_definition(action_id="ref_1", referentiel="eci")
+    definition_ref_1 = make_action_definition(
+        action_id="ref_1", referentiel="eci", categorie="mise en œuvre"
+    )
 
     children_relation = ActionRelation("eci", ActionId("ref"), None)
     children_relation_1 = ActionRelation("eci", ActionId("ref_1"), ActionId("ref"))
@@ -45,8 +46,8 @@ def test_can_add_referentiel_actions():
         file_content
         == "insert into action_relation(id, referentiel, parent) values ('ref', 'eci', null);\n"
         + "insert into action_relation(id, referentiel, parent) values ('ref_1', 'eci', 'ref');\n"
-        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('ref', 'eci', '', '', 'l''ademe !', '', '', '', '', '', '', null, null);\n"
-        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('ref_1', 'eci', '', '', '', '', '', '', '', '', '', null, null);\n"
+        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('ref', 'eci', '', '', 'l''ademe !', '', '', '', '', '', '', null, null, null);\n"
+        + "insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('ref_1', 'eci', '', '', '', '', '', '', '', '', '', null, null, 'mise en œuvre');\n"
         + "insert into action_computed_points(action_id, value) values ('ref', 500);\n"
         + "insert into action_computed_points(action_id, value) values ('ref_1', 300);\n"
     )

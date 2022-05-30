@@ -322,29 +322,15 @@ comment on function labellisation.critere_action is
 
 
 
-create table labellisation_demande
+create table labellisation.demande
 (
     id              serial primary key,
     en_cours        boolean                         not null default true,
     collectivite_id integer references collectivite not null,
     referentiel     referentiel                     not null,
     etoiles         labellisation.etoile            not null,
-    date            timestamptz                     not null default now()
+    date            timestamptz                     not null default now(),
+    unique (collectivite_id, referentiel, etoiles)
 );
-
-alter table labellisation_demande
-    enable row level security;
-
-create policy allow_read
-    on labellisation_demande for select
-    using (is_authenticated());
-
-create policy allow_insert
-    on labellisation_demande for insert
-    with check (is_any_role_on(collectivite_id));
-
-create policy allow_update
-    on labellisation_demande for update
-    using (is_any_role_on(collectivite_id));
 
 

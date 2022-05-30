@@ -153,7 +153,7 @@ comment on function fulfill is
 truncate action_statut;
 truncate client_scores;
 truncate labellisation;
-truncate labellisation_demande, labellisation_preuve_fichier;
+truncate labellisation.demande, labellisation_preuve_fichier;
 
 -- pas_fait statut on all requirements
 insert into action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by)
@@ -216,7 +216,7 @@ select ok((select not bool_and(atteint)
 truncate labellisation;
 truncate action_statut;
 truncate client_scores;
-truncate labellisation_demande, labellisation_preuve_fichier;
+truncate labellisation.demande, labellisation_preuve_fichier;
 
 -- insert faked client scores.
 insert into client_scores
@@ -263,7 +263,7 @@ select ok((select preuve_nombre = 0
           'Labellisation critere fichier function should output correct state when no file have been inserted.');
 
 -- Create demande
-insert into labellisation_demande (id, collectivite_id, referentiel, etoiles)
+insert into labellisation.demande (id, collectivite_id, referentiel, etoiles)
 values (100, 1, 'eci', '5');
 
 -- Mock file insertion
@@ -293,7 +293,7 @@ select ok((select etoiles = '5'
 ------- Scenario: nothing is done nor complete -------
 ------------------------------------------------------
 truncate labellisation;
-truncate labellisation_demande, labellisation_preuve_fichier;
+truncate labellisation.demande, labellisation_preuve_fichier;
 
 -- pas_fait statut on all requirements
 truncate action_statut;
@@ -362,7 +362,7 @@ select ok((select etoiles = '1'
 --------------------------------------------------------------------
 
 truncate labellisation;
-truncate labellisation_demande, labellisation_preuve_fichier;
+truncate labellisation.demande, labellisation_preuve_fichier;
 
 -- fake scoring, score and completion at 1
 truncate private.action_score; -- use action_score as a temp table
@@ -453,8 +453,8 @@ select ok((select etoiles = '1'
           'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
 
 -- Create demande
-truncate labellisation_demande, labellisation_preuve_fichier;
-insert into labellisation_demande (id, collectivite_id, referentiel, etoiles)
+truncate labellisation.demande, labellisation_preuve_fichier;
+insert into labellisation.demande (id, collectivite_id, referentiel, etoiles)
 values (100, 1, 'eci', '1');
 
 -- Mock file insertion
