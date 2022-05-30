@@ -4,34 +4,28 @@ import {useHistory, useLocation} from 'react-router-dom';
 import {useQuery as useQueryString} from 'core-logic/hooks/query';
 import {useEffect, useState} from 'react';
 import {useQuery, useQueryClient} from 'react-query';
-import {fetchCollectiviteCards} from 'app/pages/ToutesLesCollectivites/queries';
+import {
+  fetchAllDepartements,
+  fetchAllRegions,
+  fetchCollectiviteCards,
+} from 'app/pages/ToutesLesCollectivites/queries';
+import {DepartementRead} from 'generated/dataLayer/departement_read';
 
 const REGIONS_PARAM = 'r';
 
 /**
  * Returns regions.
- *
- * todo use query.
  */
-export const useRegions = (): RegionRead[] => {
-  return [
-    {
-      code: '52',
-      libelle: 'Pays de la Loire',
-    },
-    {
-      code: '53',
-      libelle: 'Bretagne',
-    },
-    {
-      code: '75',
-      libelle: 'Nouvelle-Aquitaine',
-    },
-    {
-      code: '76',
-      libelle: 'Occitanie',
-    },
-  ];
+export const useRegions = (): {
+  isLoading: boolean;
+  regions: RegionRead[];
+} => {
+  const {data, isLoading} = useQuery(['region'], () => fetchAllRegions());
+
+  return {
+    isLoading: isLoading,
+    regions: data || [],
+  };
 };
 
 /**
