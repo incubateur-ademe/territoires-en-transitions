@@ -10,6 +10,7 @@ import {
   fetchCollectiviteCards,
 } from 'app/pages/ToutesLesCollectivites/queries';
 import {DepartementRead} from 'generated/dataLayer/departement_read';
+import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 
 const REGIONS_PARAM = 'r';
 
@@ -48,19 +49,19 @@ export const useDepartements = (): {
 /**
  * Returns collectivités filtered.
  */
-export const useFilteredCollectivites = (args: {
-  regionCodes: string[];
-}): {
+export const useFilteredCollectivites = (
+  args: TCollectivitesFilters
+): {
   isLoading: boolean;
   collectivites: CollectiviteCarteRead[];
 } => {
   // todo build args from params.
 
   const {data, isLoading} = useQuery(
-    ['collectivite_card', ...args.regionCodes],
+    ['collectivite_card', ...args.regions],
     () =>
       fetchCollectiviteCards({
-        regionCodes: args.regionCodes,
+        regionCodes: args.regions,
         departementCodes: [],
         referentiels: [],
         etoiles: null,
@@ -99,7 +100,7 @@ export const useRegionCodesFilter = (): {
 };
 
 /**
- * Permet de d'utiliser un paramètre nommé `filterName` dans l'URL
+ * Permet d'utiliser un paramètre nommé `filterName` dans l'URL
  *
  * Renvoie la *valeur* du filtre (filter)
  * et la *fonction* pour mettre à jour cette valeur (setFilter).
@@ -128,4 +129,26 @@ export const useUrlFilterParams = (
   }, [filter]);
 
   return {filter, setFilter};
+};
+
+export const filtresVides: TCollectivitesFilters = {
+  types: [],
+  regions: [],
+  departments: [],
+  population: [],
+  referentiel: [],
+  niveauDeLabellisation: [],
+  realiseCourant: [],
+  tauxDeRemplissage: [],
+};
+
+/**
+ TODO : useUrlFiltersParams
+ */
+export const useUrlFiltersParams = (): {
+  filters: TCollectivitesFilters;
+  setFilters: (newFilters: TCollectivitesFilters) => void;
+} => {
+  const [filters, setFilters] = useState(filtresVides);
+  return {filters, setFilters};
 };

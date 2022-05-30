@@ -21,7 +21,7 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
   const {collectivite} = props;
 
   return (
-    <Card className="collectiviteCard p-6 w-1/2 max-w-md h-72">
+    <Card className="collectiviteCard p-6 max-w-md h-72 m-4">
       <div className="text-lg font-bold h-24 ">{collectivite.nom}</div>
       <div className="flex">
         <ReferentielCol
