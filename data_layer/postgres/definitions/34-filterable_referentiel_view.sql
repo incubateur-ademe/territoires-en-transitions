@@ -55,6 +55,14 @@ from actions_from_parents
 order by naturalsort(actions_from_parents.id);
 
 
+create or replace view private.action_scores
+as
+select cs.collectivite_id,
+       unpacked.*
+from client_scores cs
+         join lateral (select * from private.convert_client_scores(cs.scores)) unpacked on true;
+
+
 create or replace view action_statuts
 as
 select
@@ -93,8 +101,9 @@ from collectivite c
          join action_hierarchy h on d.action_id = h.action_id
     -- collectivité data
          left join action_statut s on c.id = s.collectivite_id and s.action_id = d.action_id
-         left join lateral (
+         left join private.action_scores sc on c.id = sc.collectivite_id and sc.action_id = d.action_id
     -- loop on every row to aggregate descendants statuts
+         left join lateral (
     select case
                -- aucun descendant
                when h.descendants = '{}' then
@@ -116,5 +125,8 @@ from collectivite c
     where c.id = s.collectivite_id
       and s.action_id = any (h.descendants)
     ) cs on true
+-- remove `desactive` and `non concernes` in one fell swoop.
+where sc is null
+   or (sc.concerne and not sc.desactive)
 order by c.id,
          naturalsort(d.identifiant);
