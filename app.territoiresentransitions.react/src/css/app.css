@@ -121,3 +121,7 @@ label {
 [aria-selected='true'] .fr-fi-settings-line::before {
   background-color: var(--text-active-blue-france);
 }
+
+.collectiviteCard:hover {
+  background: #f6f6f6;
+}
