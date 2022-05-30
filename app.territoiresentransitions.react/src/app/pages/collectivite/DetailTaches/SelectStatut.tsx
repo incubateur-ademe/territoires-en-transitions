@@ -13,10 +13,6 @@ export type TSelectStatutProps = {
 
 export const ITEMS = [
   {
-    value: 'non_concerne',
-    label: 'Non concerné',
-  },
-  {
     value: 'non_renseigne',
     label: 'Non renseigné',
   },
