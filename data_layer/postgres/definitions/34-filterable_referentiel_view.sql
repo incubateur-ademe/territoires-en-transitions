@@ -117,4 +117,4 @@ from collectivite c
       and s.action_id = any (h.descendants)
     ) cs on true
 order by c.id,
-         naturalsort(d.action_id);
+         naturalsort(d.identifiant);
