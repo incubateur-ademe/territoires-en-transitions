@@ -17,7 +17,7 @@ export const RegionFiltre = (props: {
   codes: string[];
   updateCodes: (newFilters: string[]) => void;
 }) => {
-  const regions = useRegions();
+  const {regions} = useRegions();
   const {codes, updateCodes} = props;
 
   const handleChange: SelectInputProps['onChange'] = event => {
