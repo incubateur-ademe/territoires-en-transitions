@@ -5,7 +5,7 @@ from imports.region;
 
 create view departement
 as
-select code, libelle
+select code, libelle, region_code
 from imports.departement;
 
 create view collectivite_card
