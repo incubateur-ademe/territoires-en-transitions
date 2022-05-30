@@ -5,7 +5,7 @@
 export type CollectiviteCarteRead = {
   collectivite_id: number;
   nom: string;
-  type_collectivite: string;
+  type_collectivite: 'EPCI' | 'commune' | 'syndicat';
   code_siren_insee: string;
   region_code: string;
   departement_code: string;

@@ -3,7 +3,7 @@ import {Referentiel} from 'types/litterals';
 import {toPercentString} from 'utils/score';
 import {referentielToName} from 'app/labels';
 import {NIVEAUX} from 'app/pages/collectivite/TableauBord/getNiveauInfo';
-import {GreenStar, GreyStar} from 'app/pages/collectivite/TableauBord/Star';
+import {GreyStar, GreenStar} from 'app/pages/collectivite/TableauBord/Star';
 import {Card} from '@material-ui/core';
 
 export type TCollectiviteCarteProps = {
@@ -21,20 +21,22 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
   const {collectivite} = props;
 
   return (
-    <Card className="p-4">
-      <h3>{collectivite.nom}</h3>
+    <Card className="collectiviteCard p-6 w-1/2 max-w-md h-72">
+      <div className="text-lg font-bold h-24 ">{collectivite.nom}</div>
       <div className="flex">
         <ReferentielCol
           referentiel={'cae'}
           etoiles={collectivite.etoiles_cae}
           scoreRealise={collectivite.score_fait_cae}
           scoreProgramme={collectivite.score_programme_cae}
+          concerne={collectivite.type_collectivite !== 'syndicat'}
         />
         <ReferentielCol
           referentiel={'eci'}
           etoiles={collectivite.etoiles_eci}
           scoreRealise={collectivite.score_fait_eci}
           scoreProgramme={collectivite.score_programme_eci}
+          concerne={true}
         />
       </div>
     </Card>
@@ -46,18 +48,54 @@ export type TReferentielColProps = {
   etoiles: number;
   scoreRealise: number;
   scoreProgramme: number;
+  concerne: boolean;
 };
+
+const CheckIcon = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="inline-block mr-3"
+  >
+    <path
+      d="M11.602 13.7615L13.014 15.1735L21.48 6.70747L22.894 8.12147L13.014 18.0015L6.65 11.6375L8.064 10.2235L10.189 12.3485L11.602 13.7605V13.7615ZM11.604 10.9335L16.556 5.98047L17.966 7.39047L13.014 12.3435L11.604 10.9335ZM8.777 16.5885L7.364 18.0015L1 11.6375L2.414 10.2235L3.827 11.6365L3.826 11.6375L8.777 16.5885V16.5885Z"
+      fill="#00A95F"
+    />
+  </svg>
+);
 
 /**
  * Une colonne avec les éléments de score pour la carte collectivité.
  */
 export const ReferentielCol = (props: TReferentielColProps) => {
   return (
-    <div className="flex flex-col flex-1">
-      <div>{referentielToName[props.referentiel]}</div>
-      <CinqEtoiles etoiles={props.etoiles} />
-      <div>icon {toPercentString(props.scoreRealise)} réalisé</div>
-      <div>icon {toPercentString(props.scoreProgramme)} programmé</div>
+    <div className="flex flex-col flex-1 gap-2">
+      <div className="text-sm">{referentielToName[props.referentiel]}</div>
+      {props.concerne ? (
+        <div>
+          <CinqEtoiles etoiles={props.etoiles} />
+          <div>
+            {' '}
+            <CheckIcon />
+            <span className="font-semibold">
+              {toPercentString(props.scoreRealise)}
+            </span>{' '}
+            réalisé
+          </div>
+          <div>
+            <i className="fr-icon fr-fi-calendar-line before:text-[#417DC4] mr-2"></i>{' '}
+            <span className="font-semibold">
+              {toPercentString(props.scoreProgramme)}
+            </span>{' '}
+            programmé
+          </div>
+        </div>
+      ) : (
+        <div className="font-light italic">Non concerné</div>
+      )}
     </div>
   );
 };
@@ -74,12 +112,12 @@ const CinqEtoiles = (props: TCinqEtoilesProps) => {
   const {etoiles} = props;
 
   return (
-    <div className="flex flex-col">
-      <div className="flex space-x-4">
+    <div className="flex flex-col scale-75 -ml-7">
+      <div className="flex space-x-2">
         {NIVEAUX.map(niveau => {
           const obtenue = etoiles >= niveau;
           const Star = obtenue ? GreenStar : GreyStar;
-          return <Star key={`n${niveau}`} title={''} />;
+          return <Star key={`n${niveau}`} />;
         })}
       </div>
     </div>
