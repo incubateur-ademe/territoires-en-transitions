@@ -4,7 +4,13 @@ import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
 // un sous-ensemble des champs pour alimenter notre table des taches
 export type TacheDetail = Pick<
   IActionStatutsRead,
-  'action_id' | 'identifiant' | 'nom' | 'avancement' | 'have_children' | 'depth'
+  | 'action_id'
+  | 'identifiant'
+  | 'nom'
+  | 'avancement'
+  | 'non_concerne'
+  | 'have_children'
+  | 'depth'
 >;
 
 // toutes les entrées d'un référentiel pour une collectivité donnée
@@ -16,7 +22,9 @@ export const fetchActionStatutsList = async (
   // la requête
   let query = supabaseClient
     .from<IActionStatutsRead>('action_statuts')
-    .select('action_id,identifiant,nom,avancement,have_children,depth')
+    .select(
+      'action_id,identifiant,nom,avancement,non_concerne,have_children,depth'
+    )
     .match({collectivite_id, referentiel})
     .gt('depth', 0);
 
@@ -39,7 +47,7 @@ export const fetchActionStatutsList = async (
     }
     // gère le filtre "non concerné"
     if (tousSaufNonConcerne.length !== filters.length) {
-      or.push('non_concerne_descendants.is.true');
+      or.push('non_concerne.is.true');
     }
 
     // ajoute les filtres complétaires à la requêtes

@@ -70,7 +70,7 @@ const CellTache = (props: TCellProps) => {
 };
 
 const CellStatut = ({row, value, updateStatut, isSaving}: TCellProps) => {
-  const {have_children, action_id} = row.original;
+  const {have_children, non_concerne, action_id} = row.original;
 
   const handleChange = useCallback(
     (value: string) => {
@@ -79,9 +79,11 @@ const CellStatut = ({row, value, updateStatut, isSaving}: TCellProps) => {
     [action_id]
   );
 
+  const currentValue = non_concerne ? 'non_concerne' : value || 'non_renseigne';
+
   return have_children ? null : (
     <SelectStatut
-      value={value || 'non_renseigne'}
+      value={currentValue}
       onChange={handleChange}
       disabled={isSaving}
     />
