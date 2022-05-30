@@ -42,7 +42,7 @@ const CellTache = (props: TCellProps) => {
   const {row, value} = props;
   const {depth, have_children, identifiant} = row.original;
   const style = {
-    paddingLeft: (depth - 1) * (depth > 2 && have_children ? 12 : 18),
+    paddingLeft: (depth - 1) * (depth > 2 && have_children ? 8 : 24),
   };
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId() as ReferentielParamOption;
