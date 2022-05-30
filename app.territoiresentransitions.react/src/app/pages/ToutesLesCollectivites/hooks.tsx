@@ -29,6 +29,23 @@ export const useRegions = (): {
 };
 
 /**
+ * Returns departements.
+ */
+export const useDepartements = (): {
+  isLoading: boolean;
+  departements: DepartementRead[];
+} => {
+  const {data, isLoading} = useQuery(['departement'], () =>
+    fetchAllDepartements()
+  );
+
+  return {
+    isLoading: isLoading,
+    departements: data || [],
+  };
+};
+
+/**
  * Returns collectivités filtered.
  */
 export const useFilteredCollectivites = (args: {
@@ -37,9 +54,21 @@ export const useFilteredCollectivites = (args: {
   isLoading: boolean;
   collectivites: CollectiviteCarteRead[];
 } => {
+  // todo build args from params.
+
   const {data, isLoading} = useQuery(
     ['collectivite_card', ...args.regionCodes],
-    () => fetchCollectiviteCards(args)
+    () =>
+      fetchCollectiviteCards({
+        regionCodes: args.regionCodes,
+        departementCodes: [],
+        referentiels: [],
+        etoiles: null,
+        completude_gt: null,
+        completude_lt: null,
+        score_fait_gt: null,
+        score_fait_lt: null,
+      })
   );
 
   return {
