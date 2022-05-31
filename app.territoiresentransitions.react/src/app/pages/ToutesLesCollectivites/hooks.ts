@@ -58,18 +58,19 @@ export const useFilteredCollectivites = (
   // todo build args from params.
 
   const {data, isLoading} = useQuery(
-    ['collectivite_card', ...args.regions],
-    () =>
-      fetchCollectiviteCards({
-        regionCodes: args.regions,
-        departementCodes: [],
-        referentiels: [],
-        etoiles: null,
-        completude_gt: null,
-        completude_lt: null,
-        score_fait_gt: null,
-        score_fait_lt: null,
-      })
+    [
+      'collectivite_card',
+      ...args.regions,
+      ...args.departments,
+      ...args.population,
+      ...args.types,
+      ...args.realiseCourant,
+      ...args.niveauDeLabellisation,
+      ...args.referentiel,
+      ...args.tauxDeRemplissage,
+      args.trierPar,
+    ],
+    () => fetchCollectiviteCards(args)
   );
 
   return {
@@ -140,6 +141,7 @@ export const filtresVides: TCollectivitesFilters = {
   niveauDeLabellisation: [],
   realiseCourant: [],
   tauxDeRemplissage: [],
+  trierPar: 'nom',
 };
 
 /**

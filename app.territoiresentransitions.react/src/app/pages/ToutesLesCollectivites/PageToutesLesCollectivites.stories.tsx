@@ -6,6 +6,7 @@ import {
 import fixture from './fixture.json';
 import type {TCollectivitesFilters} from './filtreLibelles';
 import type {RegionRead} from 'generated/dataLayer/region_read';
+import type {DepartementRead} from 'generated/dataLayer/departement_read';
 
 export default {
   component: RenderToutesLesCollectivites,
@@ -33,6 +34,15 @@ const fakeRegions: RegionRead[] = [
   {code: '11', libelle: 'Île de France'},
   {code: '28', libelle: 'Normandie'},
 ];
+
+const fakeDepartements: DepartementRead[] = [
+  {code: '69', region_code: '69', libelle: 'Auvergne-Rhône-Alpes'},
+  {code: '29', region_code: '29', libelle: 'Bretagne'},
+  {code: '29', region_code: '29', libelle: 'Corse'},
+  {code: '11', region_code: '11', libelle: 'Île de France'},
+  {code: '28', region_code: '28', libelle: 'Normandie'},
+];
+
 export const AvecDesRésultatsSansFiltres = Template.bind({});
 const avecDesRésultatsSansFiltresArgs: TRenderToutesCollectivitesProps = {
   collectivites: fixture.collectivites,
@@ -77,6 +87,6 @@ const sansRésultatsArgs: TRenderToutesCollectivitesProps = {
     console.log(filters);
   },
   regions: fakeRegions,
-  departements: fakeRegions,
+  departements: fakeDepartements,
 };
 SansRésultats.args = sansRésultatsArgs;

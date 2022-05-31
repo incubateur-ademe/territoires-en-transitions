@@ -1,6 +1,7 @@
 import {CollectivitesFiltreesColonne} from 'app/pages/ToutesLesCollectivites/CollectivitesFiltreesColonne';
 import {
   filtresVides,
+  useDepartements,
   useFilteredCollectivites,
   useRegions,
   useUrlFiltersParams,
@@ -11,19 +12,21 @@ import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read
 import {TrierParFiltre} from 'app/pages/ToutesLesCollectivites/Filtres';
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {Link} from 'react-router-dom';
+import {DepartementRead} from 'generated/dataLayer/departement_read';
 
 export type TRenderToutesCollectivitesProps = {
-  departements: RegionRead[];
   regions: RegionRead[];
+  departements: DepartementRead[];
   collectivites: CollectiviteCarteRead[];
   filters: TCollectivitesFilters;
   setFilters: (filters: TCollectivitesFilters) => void;
+  isLoading?: boolean;
 };
 
 export const RenderToutesLesCollectivites = (
   props: TRenderToutesCollectivitesProps
 ) => (
-  <>
+  <div data-test="ToutesLesCollectivites" className="app fr-container mt-5">
     <div className="text-center">
       <h1>Toutes les collectivités</h1>
       <p>
@@ -42,25 +45,35 @@ export const RenderToutesLesCollectivites = (
         />
       </div>
       <div className="w-4/5">
-        <CollectivitesFiltreesColonne
-          collectivites={props.collectivites}
-          desactiverLesFiltres={() => props.setFilters(filtresVides)}
-        >
-          {' '}
-          <TrierParFiltre
-            onChange={selected =>
-              props.setFilters({...props.filters, trierPar: selected})
-            }
-            selected={props.filters.trierPar}
-          />
-        </CollectivitesFiltreesColonne>
+        {props.isLoading ? (
+          <tr>
+            <td className="text-center text-gray-500">
+              Chargement en cours...
+            </td>
+          </tr>
+        ) : (
+          <CollectivitesFiltreesColonne
+            collectivites={props.collectivites}
+            desactiverLesFiltres={() => props.setFilters(filtresVides)}
+          >
+            {' '}
+            <TrierParFiltre
+              onChange={selected =>
+                props.setFilters({...props.filters, trierPar: selected})
+              }
+              selected={props.filters.trierPar}
+            />
+          </CollectivitesFiltreesColonne>
+        )}
       </div>
     </div>
-  </>
+  </div>
 );
 
 const ToutesLesCollectivites = () => {
   const {regions} = useRegions();
+  const {departements} = useDepartements();
+
   const {filters, setFilters} = useUrlFiltersParams();
   const {collectivites, isLoading} = useFilteredCollectivites(filters);
 
@@ -70,7 +83,8 @@ const ToutesLesCollectivites = () => {
       filters={filters}
       setFilters={setFilters}
       regions={regions}
-      departements={regions} // TODO useDepartments()
+      departements={departements}
+      isLoading={isLoading}
     />
   );
 };

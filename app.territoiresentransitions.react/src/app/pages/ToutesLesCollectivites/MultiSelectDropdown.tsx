@@ -25,6 +25,7 @@ export const MultiSelectDropdown = <T extends string>(
         }}
         multiple
         style={{
+          maxHeight: '45px',
           minWidth: '200px',
           borderColor: 'lightgray',
           borderWidth: '0.6px',
