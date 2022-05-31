@@ -184,12 +184,11 @@ const buildQueryFromFiltres = (filtres: TCollectivitesFilters) => {
   }
   //  Trier par
   const trierPar = filtres.trierPar ?? 'nom';
-  query.order(
-    getSortColumn(
-      trierPar,
-      filtres.referentiel.length === 1 ? filtres.referentiel[0] : undefined
-    )
+  const sortColumn = getSortColumn(
+    trierPar,
+    filtres.referentiel.length === 1 ? filtres.referentiel[0] : undefined
   );
+  query.order(sortColumn, {ascending: sortColumn === 'nom', nullsFirst: false});
 
   return query;
 };
