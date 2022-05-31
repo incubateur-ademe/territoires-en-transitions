@@ -42,7 +42,7 @@ const tauxDeRemplissageToBoundaries: Record<
   '1-49': {greaterThan: 1, lowerThan: 49},
   '50-79': {greaterThan: 50, lowerThan: 79},
   '80-99': {greaterThan: 80, lowerThan: 99},
-  '100': {greaterThan: 99, lowerThan: 101},
+  '99-100': {greaterThan: 99, lowerThan: 101},
 };
 
 const niveauLabellisationToEtoiles: Record<
@@ -63,10 +63,10 @@ const getSortColumn = (
 ): keyof CollectiviteCarteRead => {
   switch (trierPar) {
     case 'completude':
-      if (!referentiel) return 'completude_eci'; // TODO : should be be score_fait_max instead
+      if (!referentiel) return 'completude_max';
       return referentiel === 'eci' ? 'completude_eci' : 'completude_cae';
     case 'score':
-      if (!referentiel) return 'score_fait_eci'; // TODO : should be be score_fait_max instead
+      if (!referentiel) return 'score_fait_max';
       return referentiel === 'eci' ? 'score_fait_eci' : 'score_fait_cae';
     default:
       return 'nom';
@@ -91,7 +91,6 @@ const updateQueryFromBoundariesFilters = (
   }
 };
 const buildQueryFromFiltres = (filtres: TCollectivitesFilters) => {
-  console.log('filtres', filtres);
   let query = supabaseClient
     .from<CollectiviteCarteRead>('collectivite_card')
     .select()
@@ -129,7 +128,11 @@ const buildQueryFromFiltres = (filtres: TCollectivitesFilters) => {
       populationOption => tauxDeRemplissageToBoundaries[populationOption]
     );
     if (filtres.referentiel.length === 0) {
-      console.log('not implemented'); // TODO : add a column in the view with max over cae and eci to facilitate queries
+      updateQueryFromBoundariesFilters(
+        query,
+        tauxDeRemplissageFiltresBoundaries,
+        'completude_max'
+      );
     } else {
       if (filtres.referentiel.includes('cae')) {
         updateQueryFromBoundariesFilters(
@@ -151,7 +154,13 @@ const buildQueryFromFiltres = (filtres: TCollectivitesFilters) => {
   //  Niveau de labellisation
   if (filtres.niveauDeLabellisation.length > 0) {
     if (filtres.referentiel.length === 0) {
-      console.log('not implemented'); // TODO : add a column in the view with max over cae and eci to facilitate queries
+      query = query.in(
+        'etoiles_max',
+        filtres.niveauDeLabellisation.map(
+          niveauLabellisationOption =>
+            niveauLabellisationToEtoiles[niveauLabellisationOption]
+        )
+      );
     } else {
       if (filtres.referentiel.includes('cae')) {
         query = query.in(

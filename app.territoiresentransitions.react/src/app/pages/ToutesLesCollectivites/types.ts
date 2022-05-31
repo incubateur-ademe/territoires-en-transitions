@@ -28,7 +28,7 @@ export type TTauxRemplissageFiltreOption =
   | '1-49'
   | '50-79'
   | '80-99'
-  | '100';
+  | '99-100';
 
 export type TRealiseCourantFiltreOption =
   | '0-34'

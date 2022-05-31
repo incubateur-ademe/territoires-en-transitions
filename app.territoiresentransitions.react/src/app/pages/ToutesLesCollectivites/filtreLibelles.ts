@@ -50,7 +50,7 @@ export const tauxRempolissageCollectiviteFilterLibelleRecord: Record<
   '1-49': '1 à 49 %',
   '50-79': '50 à 79 %',
   '80-99': '80 à 99 %',
-  '100': '100 %',
+  '99-100': '100 %',
 };
 
 export const niveauLabellisationCollectiviteFilterLibelleRecord: Record<
