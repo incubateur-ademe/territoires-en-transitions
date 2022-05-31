@@ -123,6 +123,7 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
   const columns: TColumn[] = useMemo(() => COLUMNS, []);
 
   // ajout aux props passées à chaque cellule
+  const customCellProps = useMemo(() => ({updateStatut, isSaving}), [isSaving]);
   const customHeaderProps = useMemo(() => ({filters, setFilters}), [filters]);
 
   // crée l'instance de la table et extrait les props nécessaires au rendu
@@ -173,7 +174,7 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
               row.cells.map((cell: TCellProps) => {
                 return (
                   <td {...cell.getCellProps()}>
-                    {cell.render('Cell', {updateStatut, isSaving})}
+                    {cell.render('Cell', customCellProps)}
                   </td>
                 );
               })
@@ -182,7 +183,7 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
         </Fragment>
       );
     },
-    [prepareRow, isSaving]
+    [prepareRow, customCellProps]
   );
 
   // rendu de la table
