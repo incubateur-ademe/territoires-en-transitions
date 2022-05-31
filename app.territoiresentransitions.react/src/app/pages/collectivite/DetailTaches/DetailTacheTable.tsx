@@ -1,5 +1,5 @@
 import './DetailTacheTable.css';
-import {Fragment, useCallback, useEffect, useMemo} from 'react';
+import {Fragment, useCallback, useEffect, useMemo, useRef} from 'react';
 import {
   useTable,
   useExpanded,
@@ -142,9 +142,13 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
   );
 
   // initialement tout est déplié
+  const isInitialLoading = useRef(true);
   useEffect(() => {
-    toggleAllRowsExpanded(true);
-  }, [table?.data]);
+    if (table?.data?.length && isInitialLoading.current) {
+      isInitialLoading.current = false;
+      toggleAllRowsExpanded(true);
+    }
+  }, [table?.data?.length, toggleAllRowsExpanded, isInitialLoading]);
 
   // rendu d'une ligne
   const renderRow = useCallback(
