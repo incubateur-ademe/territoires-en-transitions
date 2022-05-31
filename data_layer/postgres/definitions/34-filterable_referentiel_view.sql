@@ -31,6 +31,19 @@ with recursive
         (select ar.id, array_agg(afp.id) as descendants
          from action_relation ar
                   join actions_from_parents afp on ar.id = any (afp.parents)
+         group by ar.id),
+    parent_leaves as
+        -- +-------+---------------------------------------------+
+        -- |p      |descendants                                  |
+        -- +-------+---------------------------------------------+
+        -- |cae    |{cae_2,cae_6,cae_3,cae_1,... cae_2.1.2.6,...}|
+        -- |cae_1  |{cae_1.1,cae_1.2,cae_1.3,...,cae_1.2.4,...}  |
+        -- |cae_1.1|{cae_1.1.2,cae_1.1.3,...,cae_1.1.3.3...}     |
+        (select ar.id,
+                array_agg(afp.id) filter ( where d is null ) as leaves
+         from action_relation ar
+                  join actions_from_parents afp on ar.id = any (afp.parents)
+                  left join parent_descendants d on d.id = afp.id
          group by ar.id)
 -- +---+-------------------------------------+-----+
 -- |id |children                             |depth|
@@ -40,6 +53,7 @@ with recursive
 select actions_from_parents.id                                     as action_id,
        actions_from_parents.referentiel                            as referentiel,
        coalesce(parent_descendants.descendants, '{}'::action_id[]) as descendants,
+       coalesce(parent_leaves.leaves, '{}'::action_id[])           as leaves,
        parent_descendants.descendants is not null                  as have_children,
        actions_from_parents.parents                                as ascendants,
        actions_from_parents.depth                                  as depth,
@@ -52,6 +66,7 @@ select actions_from_parents.id                                     as action_id,
            , 'referentiel')                                        as type
 from actions_from_parents
          left join parent_descendants on actions_from_parents.id = parent_descendants.id
+         left join parent_leaves on parent_leaves.id = parent_descendants.id
 order by naturalsort(actions_from_parents.id);
 
 
@@ -106,24 +121,25 @@ from collectivite c
          left join lateral (
     select case
                -- aucun descendant
-               when h.descendants = '{}' then
+               when not h.have_children then
                    '{}'::avancement[]
                -- aucun statut pour les enfants
-               when count(*) = 0 then
+               when sc.point_non_renseigne = sc.point_potentiel then
                    '{non_renseigne}'::avancement[]
                -- des statuts mais pas pour chaque enfant
-               when array_length(h.descendants, 1) != count(*) then
-                   '{non_renseigne}'::avancement[] || array_agg(s.avancement)
+               when sc.point_non_renseigne > 0.0 then
+                       '{non_renseigne}'::avancement[] ||
+                       array_agg(distinct statut.avancement) filter ( where statut.concerne )
                -- des statuts pour chaque enfant
                else
-                   array_agg(s.avancement)
+                   array_agg(distinct statut.avancement) filter ( where statut.concerne )
                end
                as avancements,
-           not bool_and(s.concerne)
+           not bool_and(statut.concerne)
                as non_concerne
-    from action_statut s
-    where c.id = s.collectivite_id
-      and s.action_id = any (h.descendants)
+    from action_statut statut
+    where c.id = statut.collectivite_id
+      and statut.action_id = any (h.leaves)
     ) cs on true
 -- remove `desactive` and `non concernes` in one fell swoop.
 where sc is null
