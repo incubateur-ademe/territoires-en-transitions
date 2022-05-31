@@ -21,6 +21,7 @@ export const SelectDropdown = <T extends string>(
       <div className="mb-2 font-semibold">{props.title}</div>
       <Select
         style={{
+          maxHeight: '45px',
           minWidth: '200px',
           borderColor: 'lightgray',
           borderWidth: '0.6px',

@@ -225,7 +225,7 @@ export const Navigation = () => {
                 Mes collectivités
               </Link>
               <Link className="fr-link" to={allCollectivitesPath}>
-                Les autres collectivités
+                Toutes les collectivités
               </Link>
             </>
           )}

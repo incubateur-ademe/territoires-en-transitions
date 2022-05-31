@@ -14,7 +14,7 @@ export type TPopulationFiltreOption =
   | 'plus-de-200000';
 
 export type TNiveauLabellisationFiltreOption =
-  | '0'
+  | 'NL'
   | '1'
   | '2'
   | '3'

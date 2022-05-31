@@ -57,9 +57,9 @@ export const niveauLabellisationCollectiviteFilterLibelleRecord: Record<
   TNiveauLabellisationFiltreOption,
   string
 > = {
-  '0': 'Non labellisé',
+  NL: 'Non labellisé',
   '1': 'Première étoile',
-  '2': 'Deuwième étoile',
+  '2': 'Deuxième étoile',
   '3': 'Troisième étoile',
   '4': 'Quatrième étoile',
   '5': 'Cinquième étoile',
