@@ -4,7 +4,7 @@ type RowRendererFactory = <T extends Record<string, unknown>>(
   /** prépare la ligne (fonction fournie par useTable)  */
   prepareRow: (row: Row<T>) => void,
   /** props affectées à chaque cellule */
-  customCellProps: Record<string, unknown>
+  customCellProps?: Record<string, unknown>
 ) => (row: Row<T>, index: number, rows: Row<T>[]) => JSX.Element;
 
 // renvoi un composant qui affiche une ligne du tableau
@@ -29,7 +29,7 @@ export const makeRowRenderer: RowRendererFactory =
       >
         {row.original.have_children ? (
           <div className="cell" {...row.cells[0].getCellProps()}>
-            {row.cells[0].render('Cell')}
+            {row.cells[0].render('Cell', customCellProps)}
           </div>
         ) : (
           row.cells.map(cell => {

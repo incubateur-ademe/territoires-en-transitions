@@ -26,4 +26,15 @@ export interface IActionStatutsRead {
   avancement_detaille: null | [number, number, number];
   avancement_descendants: [string];
   non_concerne: boolean;
+  phase?: 'bases' | 'mise en œuvre' | 'effets';
+  score_realise: number;
+  score_programme: number;
+  score_realise_plus_programme: number;
+  score_pas_fait: number;
+  score_non_renseigne: number;
+  points_restants: number;
+  points_realises: number;
+  points_programmes: number;
+  points_max_personnalises: number;
+  points_max_referentiel: number;
 }
