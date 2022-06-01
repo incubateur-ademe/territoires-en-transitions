@@ -44,8 +44,9 @@ export const MultiSelectDropdown = <T extends string>(
           </span>
         )}
         onChange={(event: ChangeEvent<{value: any}>) => {
-          setSelected(event.target.value as T[]);
-          props.onChange(selected);
+          const value = event.target.value as T[];
+          props.onChange(value);
+          setSelected(value);
         }}
       >
         {props.options.map(option => (
