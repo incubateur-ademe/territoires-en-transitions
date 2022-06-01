@@ -19,6 +19,7 @@ import {
   TTypeFiltreOption,
 } from 'app/pages/ToutesLesCollectivites/types';
 import {RegionRead} from 'generated/dataLayer/region_read';
+import {DepartementRead} from 'generated/dataLayer/departement_read';
 
 export const TypeCollectiviteFiltre = (props: {
   selected: TTypeFiltreOption[];
@@ -110,14 +111,23 @@ export const RegionFiltre = (props: {
 );
 
 export const DepartementFiltre = (props: {
-  departements: RegionRead[]; // todo : DepartementRead
+  regionCodes: string[];
+  departements: DepartementRead[];
   selected: string[];
   onChange: (selected: string[]) => void;
-}) => (
-  <MultiSelectDropdown
-    title="Département"
-    options={props.departements.map(({code, libelle}) => ({id: code, libelle}))}
-    onChange={props.onChange}
-    selected={props.selected}
-  />
-);
+}) => {
+  return (
+    <MultiSelectDropdown
+      title="Département"
+      options={props.departements
+        .filter(
+          dep =>
+            props.regionCodes.length === 0 ||
+            props.regionCodes.includes(dep.region_code)
+        )
+        .map(({code, libelle}) => ({id: code, libelle}))}
+      onChange={props.onChange}
+      selected={props.selected}
+    />
+  );
+};
