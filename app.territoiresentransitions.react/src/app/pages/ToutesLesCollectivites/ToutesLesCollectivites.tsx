@@ -4,7 +4,7 @@ import {
   useDepartements,
   useFilteredCollectivites,
   useRegions,
-  useUrlFiltersParams,
+  useFiltersParams,
 } from 'app/pages/ToutesLesCollectivites/hooks';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {FiltresColonne} from 'app/pages/ToutesLesCollectivites/FiltresColonne';
@@ -74,7 +74,7 @@ const ToutesLesCollectivites = () => {
   const {regions} = useRegions();
   const {departements} = useDepartements();
 
-  const {filters, setFilters} = useUrlFiltersParams();
+  const {filters, setFilters} = useFiltersParams();
   const {collectivites, isLoading} = useFilteredCollectivites(filters);
 
   return (
