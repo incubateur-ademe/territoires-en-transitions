@@ -145,12 +145,27 @@ export const filtresVides: TCollectivitesFilters = {
 };
 
 /**
- TODO : useUrlFiltersParams
+ * Renvoie les filtres et la méthode pour remplacer cet objet.
  */
-export const useUrlFiltersParams = (): {
+export const useFiltersParams = (): {
   filters: TCollectivitesFilters;
   setFilters: (newFilters: TCollectivitesFilters) => void;
 } => {
   const [filters, setFilters] = useState(filtresVides);
-  return {filters, setFilters};
+
+  // Se charge de résoudre l'état des filtres.
+  const updateFilters = (newFilters: TCollectivitesFilters): void => {
+    // Si les régions ont changé on enlève les départements.
+    if (filters.regions.length !== newFilters.regions.length) {
+      newFilters.departments = [];
+    }
+
+    setFilters(newFilters);
+  };
+
+  useEffect(() => {
+    updateFilters(filters);
+  }, [JSON.stringify(filters)]);
+
+  return {filters: filters, setFilters: updateFilters};
 };
