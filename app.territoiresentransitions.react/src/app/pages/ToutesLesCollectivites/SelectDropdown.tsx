@@ -40,8 +40,8 @@ export const SelectDropdown = <T extends string>(
         )}
         onChange={(event: ChangeEvent<{value: any}>) => {
           const selectedValue = event.target.value as T;
-          setSelected(selectedValue);
           props.onChange(selectedValue);
+          setSelected(selectedValue);
         }}
       >
         {props.options.map(option => (
