@@ -1,6 +1,6 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
-import {ActionReferentiel} from '../useReferentiel';
+import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
 
 // un sous-ensemble des champs pour alimenter notre table des taches
 export type TacheDetail = ActionReferentiel & ActionStatut;
@@ -46,7 +46,7 @@ export const fetchActionStatutsList = async (
     throw new Error(error.message);
   }
 
-  const rows = data as ActionStatut[];
+  const rows = data as TacheDetail[];
 
   // décompte les tâches uniquement
   const count = rows.reduce(

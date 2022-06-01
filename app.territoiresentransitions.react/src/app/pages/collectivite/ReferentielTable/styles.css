@@ -1,4 +1,4 @@
-.detail-tache-table {
+.referentiel-table {
   --color-primary: #433eba;
   --color-secondary: #6a6af4;
   --color-pill: #e3e3fd;
@@ -12,131 +12,138 @@
   background-color: var(--background-disabled-grey);
 }
 
-.detail-tache-table table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-.detail-tache-table table thead {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-.detail-tache-table th {
+/** en-tête */
+.referentiel-table .header .cell {
   background-color: var(--background-disabled-grey);
   text-align: left;
   padding: 1rem;
 }
 
+.referentiel-table .cell {
+  width: 100%;
+}
+
 @media (min-width: 36em) {
-  .detail-tache-table th {
+  .referentiel-table .header .cell {
     white-space: nowrap;
   }
 }
 
-/** curseur au dessus des lignes */
-.detail-tache-table tbody tr,
-.detail-tache-table tbody tr:hover {
-  cursor: pointer;
-  overflow: hidden;
+/** limite la hauteur du corps de la table */
+.referentiel-table .body {
+  max-height: 84vh;
+  overflow-y: auto;
 }
 
 /** couleurs de fond des lignes */
-.detail-tache-table tr {
+.referentiel-table .row {
   background-color: #fff;
   color: #000;
 }
 
-.detail-tache-table tr.d1 {
+.referentiel-table .message {
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  padding: 1rem;
+}
+
+/** curseur au dessus des lignes */
+.referentiel-table .body .row,
+.referentiel-table .body .row:hover {
+  cursor: pointer;
+  overflow: hidden;
+  line-height: 36px;
+}
+
+.referentiel-table .row.d1 {
   background-color: var(--color-primary);
   color: #fff;
   font-weight: bold;
 }
 
-.detail-tache-table tr.d2 {
+.referentiel-table .row.d2 {
   background-color: var(--color-secondary);
   color: #fff;
   font-weight: bold;
 }
 
-.detail-tache-table tr .pill {
+.referentiel-table .row .pill {
   background-color: var(--color-pill);
   border-radius: 14px;
   padding: 4px 12px;
 }
 
 /** couleurs de fond des lignes au survol */
-.detail-tache-table tbody tr.d3:hover,
-.detail-tache-table tbody tr.d4:hover,
-.detail-tache-table tbody tr.d5:hover {
+.referentiel-table .row.d3:hover,
+.referentiel-table .row.d4:hover,
+.referentiel-table .row.d5:hover {
   background-color: var(--background-alt-grey);
 }
 
-/** libellé de la tâche */
-.detail-tache-table tbody td {
-  padding: 0.6rem 1rem;
+/** cellule */
+.referentiel-table .body .cell {
+  padding: 0.15rem 1rem;
+  border: 1px;
+}
+.referentiel-table .body .cell:first-of-type {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
-  border: 1px;
+}
+.referentiel-table .d1 .cell {
+  padding: 0.4rem 1rem;
 }
 
-.detail-tache-table tbody tr.d1 td {
-  padding: 1rem;
-}
-
-/** statut de la tâche */
-.detail-tache-table tr td:last-child {
-  width: 100px;
-}
-
-/** bords arrondis en fonction du niveau de profondeur */
-.detail-tache-table tr.d1 td:first-child {
+/** bords arrondis pour le 1er niveau */
+.referentiel-table .d1 {
   border-top-left-radius: 8px;
-}
-.detail-tache-table tr.d1 td:last-child {
   border-top-right-radius: 8px;
 }
-.detail-tache-table tr.d1.open td:first-child {
+.referentiel-table .d1.open {
   border-bottom-left-radius: 0;
-}
-.detail-tache-table tr.d1.open td:last-child {
   border-bottom-right-radius: 0;
 }
-.detail-tache-table tr.d1.close td:first-child {
+.referentiel-table .d1.close {
   border-bottom-left-radius: 8px;
-}
-.detail-tache-table tr.d1.close td:last-child {
   border-bottom-right-radius: 8px;
 }
 
+/** espacement entre les sections de 1er niveau */
+.referentiel-table .d1:not(:first-of-type) {
+  margin-top: 16px;
+}
+
 /** bordure blanche en bas pour un niveau 2 fermé */
-.detail-tache-table tr.d2.close td {
+.referentiel-table .d2.close {
   border-bottom: 1px solid white;
 }
 
-/** bordures sur les côtés pour les sous-niveaux ouverts */
-.detail-tache-table tr.d3.open td:first-child,
-.detail-tache-table tr.d4.open td:first-child,
-.detail-tache-table tr.d5.open td:first-child {
-  border-left: 1px solid var(--color-primary);
+.referentiel-table .d3 {
+  border-top: 1px solid var(--color-primary);
 }
-.detail-tache-table tr.d3.open td:last-child,
-.detail-tache-table tr.d4.open td:last-child,
-.detail-tache-table tr.d5.open td:last-child {
+
+.referentiel-table .body .row {
+  border-left: 1px solid var(--color-primary);
   border-right: 1px solid var(--color-primary);
 }
 
-/** séparateur utilisé entre les blocs de niveau 1 fermé */
-.detail-tache-table tr.separator {
-  height: 16px;
+/** bordure arrondi en bas pour la dernière ligne avant une nouvelle section */
+.referentiel-table .row.last {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-bottom: 1px solid var(--color-primary);
+}
+
+/** bordure en bas pour les sous-niveaux */
+.referentiel-table .d3,
+.referentiel-table .d4,
+.referentiel-table .d5 {
+  border-bottom: 1px solid var(--background-disabled-grey);
 }
 
 /** identifiant d'une action */
-.detail-tache-table .identifiant {
+.referentiel-table .identifiant {
   display: inline-block;
   width: 50px;
   text-align: right;
@@ -144,17 +151,18 @@
 }
 
 /** pictos flèche pointant vers le bas ou la droite */
-.detail-tache-table .arrow-down::before {
+.referentiel-table .arrow-down::before {
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 16l-6-6h12z'/%3E%3C/svg%3E");
 }
-.detail-tache-table .arrow-right::before {
+.referentiel-table .arrow-right::before {
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M16 12l-6 6V6z'/%3E%3C/svg%3E");
 }
-.detail-tache-table .arrow-down::before,
-.detail-tache-table .arrow-right::before {
+.referentiel-table .arrow-down::before,
+.referentiel-table .arrow-right::before {
   vertical-align: middle;
   content: ' ';
   display: inline-block;
   width: 24px;
   height: 24px;
+  margin-top: -2px;
 }
