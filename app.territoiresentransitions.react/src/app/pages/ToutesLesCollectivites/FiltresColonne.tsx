@@ -9,11 +9,12 @@ import {
 } from 'app/pages/ToutesLesCollectivites/Filtres';
 import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {RegionRead} from 'generated/dataLayer/region_read';
+import {DepartementRead} from 'generated/dataLayer/departement_read';
 
 type UpdateFilters = (newFilters: TCollectivitesFilters) => void;
 
 export const FiltresColonne = (props: {
-  departments: RegionRead[];
+  departments: DepartementRead[];
   regions: RegionRead[];
   filters: TCollectivitesFilters;
   setFilters: UpdateFilters;
@@ -33,6 +34,7 @@ export const FiltresColonne = (props: {
         }
         selected={props.filters.departments}
         departements={props.departments}
+        regionCodes={props.filters.regions}
       />
       <TypeCollectiviteFiltre
         onChange={selected =>
