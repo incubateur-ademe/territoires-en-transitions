@@ -13,7 +13,7 @@ import {
   TacheDetail,
   updateTacheStatut,
 } from './queries';
-import {useReferentiel} from '../useReferentiel';
+import {useReferentiel} from '../ReferentielTable/useReferentiel';
 
 export type UseTableData = () => TableData;
 

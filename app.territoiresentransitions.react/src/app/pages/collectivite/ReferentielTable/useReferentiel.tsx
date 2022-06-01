@@ -12,6 +12,11 @@ export type ActionReferentiel = Pick<
 type IAction = Pick<IActionStatutsRead, 'action_id'>;
 type TActionsSubset<ActionSubset> = (ActionSubset & ActionReferentiel)[];
 
+/**
+ * Agrège les lignes fournies avec l'arborescence du référentiel
+ * et renvoi les éléments nécessaires pour afficher une vue tabulaire
+ * @returns
+ */
 export const useReferentiel = <ActionSubset extends IAction>(
   referentiel: string | null,
   collectivite_id: number | null,
@@ -51,6 +56,7 @@ export const useReferentiel = <ActionSubset extends IAction>(
     [rows]
   );
 
+  // calcule le nombre de tâches après filtrage
   const count = useMemo(() => rows?.filter(isTache).length || 0, [rows]);
 
   return {
@@ -70,7 +76,7 @@ export const useReferentiel = <ActionSubset extends IAction>(
  * Charge l'arborescence d'un référentiel et renvoi une fonction permettant de
  * créer une copie des données fusionnées avec celles de l'arborescence
  */
-export const useReferentielData = (
+const useReferentielData = (
   referentiel: string | null,
   collectivite_id: number | null
 ) => {
