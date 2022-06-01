@@ -12,8 +12,6 @@ import {
 import {DepartementRead} from 'generated/dataLayer/departement_read';
 import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 
-const REGIONS_PARAM = 'r';
-
 /**
  * Returns regions.
  */
@@ -80,56 +78,35 @@ export const useFilteredCollectivites = (
 };
 
 /**
- * Renvoie la liste des codes régions sélectionnés et la méthode pour mettre
- * à jour cette liste.
- */
-export const useRegionCodesFilter = (): {
-  codes: string[];
-  updateCodes: (newFilters: string[]) => void;
-} => {
-  const {filter, setFilter} = useUrlFilterParams(REGIONS_PARAM);
-  const [codes, setCodes] = useState<string[]>([]);
-
-  const updateCodes = (codes: string[]) => setFilter(codes.join(','));
-
-  useEffect(() => {
-    const codes = filter.split(',').filter(c => c.length > 0);
-    setCodes(codes);
-  }, [filter]);
-
-  return {codes, updateCodes};
-};
-
-/**
- * Permet d'utiliser un paramètre nommé `filterName` dans l'URL
+ * Permet d'utiliser un paramètre nommé `paramName` dans l'URL
  *
- * Renvoie la *valeur* du filtre (filter)
- * et la *fonction* pour mettre à jour cette valeur (setFilter).
+ * Renvoie la *valeur* du paramètre (param)
+ * et la *fonction* pour mettre à jour cette valeur (setParam).
  */
-export const useUrlFilterParams = (
-  filterName: string,
-  initialFilter = ''
-): {filter: string; setFilter: (newFilter: string) => void} => {
+export const useUrlParam = (
+  paramName: string,
+  defaultValue = ''
+): {param: string; setParam: (newParam: string) => void} => {
   const history = useHistory();
   const location = useLocation();
 
   const querystring = useQueryString();
-  const filterValue = querystring.get(filterName) || initialFilter;
+  const paramValue = querystring.get(paramName) || defaultValue;
 
-  // L'état interne mis à jour de l'extérieur via setFilter initialisé avec
+  // L'état interne mis à jour de l'extérieur via setParam initialisé avec
   // le state de l'URL ou la valeur initiale.
-  const [filter, setFilter] = useState(filterValue);
+  const [param, setParam] = useState(paramValue);
 
   useEffect(() => {
     // Évite de rafraichir le filtre si une autre partie de l'URL a changée.
-    if (filter !== filterValue) {
-      querystring.set(filterName, filter);
+    if (param !== paramValue) {
+      querystring.set(paramName, param);
       // Met à jour l'URL avec React router.
       history.replace({...location, search: `?${querystring}`});
     }
-  }, [filter]);
+  }, [param]);
 
-  return {filter, setFilter};
+  return {param, setParam};
 };
 
 export const filtresVides: TCollectivitesFilters = {
@@ -144,6 +121,9 @@ export const filtresVides: TCollectivitesFilters = {
   trierPar: 'nom',
 };
 
+const paramToList = (s: string) => s.split('.').filter(r => r.length > 0);
+const listToParam = (l: string[]) => l.join('.');
+
 /**
  * Renvoie les filtres et la méthode pour remplacer cet objet.
  */
@@ -151,7 +131,18 @@ export const useFiltersParams = (): {
   filters: TCollectivitesFilters;
   setFilters: (newFilters: TCollectivitesFilters) => void;
 } => {
+  const [synced, setSynced] = useState(false);
   const [filters, setFilters] = useState(filtresVides);
+  const regions = useUrlParam('r');
+  const departements = useUrlParam('d');
+
+  // Met à jour les filtres avec les paramètres de l'URL lors du
+  // chargement initial.
+  if (!synced) {
+    filters.regions = paramToList(regions.param);
+    filters.departments = paramToList(departements.param);
+    setSynced(true);
+  }
 
   // Se charge de résoudre l'état des filtres.
   const updateFilters = (newFilters: TCollectivitesFilters): void => {
@@ -159,6 +150,10 @@ export const useFiltersParams = (): {
     if (filters.regions.length !== newFilters.regions.length) {
       newFilters.departments = [];
     }
+
+    // Met à jour les paramètres dans l'URL
+    regions.setParam(listToParam(newFilters.regions));
+    departements.setParam(listToParam(newFilters.departments));
 
     setFilters(newFilters);
   };
