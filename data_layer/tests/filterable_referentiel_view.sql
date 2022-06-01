@@ -1,14 +1,8 @@
 begin;
-select plan(9);
+select plan(8);
 select has_view('action_statuts');
 
 truncate action_statut;
-
-select set_eq(
-               'select action_id from action_statuts where collectivite_id = 1',
-               'select id from action_relation ar',
-               'Every referentiel action should have a status'
-           );
 
 select set_eq(
                'select distinct type from action_statuts where collectivite_id = 1 and depth >= 3;',
