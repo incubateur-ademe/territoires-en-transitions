@@ -23,16 +23,11 @@
   width: 100%;
 }
 
-@media (min-width: 36em) {
-  .referentiel-table .header .cell {
-    white-space: nowrap;
-  }
-}
-
-/** limite la hauteur du corps de la table */
+/** zone scrollable */
 .referentiel-table .body {
   max-height: 84vh;
   overflow-y: auto;
+  border-radius: 8px;
 }
 
 /** couleurs de fond des lignes */
@@ -121,6 +116,10 @@
 
 .referentiel-table .d3 {
   border-top: 1px solid var(--color-primary);
+}
+
+.referentiel-table.no-d3-border-top .d3 {
+  border-top: none;
 }
 
 .referentiel-table .body .row {
