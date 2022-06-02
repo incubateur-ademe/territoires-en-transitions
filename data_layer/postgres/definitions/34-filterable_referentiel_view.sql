@@ -82,7 +82,7 @@ create or replace view action_statuts
 as
 select
     -- client will filter on:
-    c.id                                                      as collectivite_id,
+    c.id                                                                   as collectivite_id,
     d.action_id,
     d.referentiel,
     h.type,
@@ -95,35 +95,45 @@ select
     d.identifiant,
     d.nom,
     d.description,
-    d.exemples != ''                                          as have_exemples,
-    d.preuve != ''                                            as have_preuve,
-    d.ressources != ''                                        as have_ressources,
-    d.reduction_potentiel != ''                               as have_reduction_potentiel,
-    d.perimetre_evaluation != ''                              as have_perimetre_evaluation,
-    d.contexte != ''                                          as have_contexte,
-    d.categorie                                               as phase,
+    d.exemples != ''                                                       as have_exemples,
+    d.preuve != ''                                                         as have_preuve,
+    d.ressources != ''                                                     as have_ressources,
+    d.reduction_potentiel != ''                                            as have_reduction_potentiel,
+    d.perimetre_evaluation != ''                                           as have_perimetre_evaluation,
+    d.contexte != ''                                                       as have_contexte,
+    d.categorie                                                            as phase,
 
     -- score [0.0, 1.0]
-    sc.point_fait / sc.point_potentiel                        as score_realise,
-    sc.point_programme / sc.point_potentiel                   as score_programme,
-    (sc.point_fait + sc.point_programme) / sc.point_potentiel as score_realise_plus_programme,
-    sc.point_pas_fait / sc.point_potentiel                    as score_pas_fait,
-    sc.point_non_renseigne / sc.point_potentiel               as score_non_renseigne,
+    case
+        when sc.point_potentiel = 0 then 0
+        else sc.point_fait / sc.point_potentiel end                        as score_realise,
+    case
+        when sc.point_potentiel = 0 then 0
+        else sc.point_programme / sc.point_potentiel end                   as score_programme,
+    case
+        when sc.point_potentiel = 0 then 0
+        else (sc.point_fait + sc.point_programme) / sc.point_potentiel end as score_realise_plus_programme,
+    case
+        when sc.point_potentiel = 0 then 0
+        else sc.point_pas_fait / sc.point_potentiel end                    as score_pas_fait,
+    case
+        when sc.point_potentiel = 0 then 0
+        else sc.point_non_renseigne / sc.point_potentiel end               as score_non_renseigne,
 
     -- points
-    sc.point_potentiel - sc.point_fait                        as points_restants,
-    sc.point_fait                                             as points_realises,
-    sc.point_programme                                        as points_programmes,
-    sc.point_potentiel                                        as points_max_personnalises,
-    sc.point_referentiel                                      as points_max_referentiel,
+    sc.point_potentiel - sc.point_fait                                     as points_restants,
+    sc.point_fait                                                          as points_realises,
+    sc.point_programme                                                     as points_programmes,
+    sc.point_potentiel                                                     as points_max_personnalises,
+    sc.point_referentiel                                                   as points_max_referentiel,
 
     -- action statuts
     s.avancement,
     s.avancement_detaille,
 
     -- children status: the set of statuts of all children
-    cs.avancements                                            as avancement_descendants,
-    coalesce((not s.concerne), cs.non_concerne, false)        as non_concerne
+    cs.avancements                                                         as avancement_descendants,
+    coalesce((not s.concerne), cs.non_concerne, false)                     as non_concerne
 
 from collectivite c
          -- definitions
