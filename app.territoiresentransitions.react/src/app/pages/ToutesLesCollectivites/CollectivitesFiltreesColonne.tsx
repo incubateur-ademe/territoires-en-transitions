@@ -1,12 +1,11 @@
 import {CollectiviteCarte} from 'app/pages/ToutesLesCollectivites/CollectiviteCarte';
-
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
 
 const CollectivitesFiltrees = (props: {
   collectivites: CollectiviteCarteRead[];
 }) => {
   return (
-    <div className="flex flex-wrap justify-start">
+    <div className="flex flex-wrap justify-center gap-6">
       {props.collectivites.map(collectivite => (
         <CollectiviteCarte collectivite={collectivite} />
       ))}
@@ -33,19 +32,31 @@ const AucuneCollectivite = (props: {desactiverLesFiltres: () => void}) => (
   </div>
 );
 
+const NombreResultats = (props: {count: number}) => {
+  if (props.count === 0) return null;
+  const className = 'text-gray-500 ml-3';
+  if (props.count === 1)
+    return (
+      <p className={className}>Une collectivité correspond à votre recherche</p>
+    );
+  return (
+    <p className={className}>
+      {props.count > 99 ? 'Plus de 99 ' : props.count} collectivités
+      correspondent à votre recherche
+    </p>
+  );
+};
+
 export const CollectivitesFiltreesColonne = (props: {
   collectivites: CollectiviteCarteRead[];
   desactiverLesFiltres: () => void;
   children: React.ReactNode;
 }) => {
+  const count = props.collectivites.length;
   return (
     <div className="max-w-5xl">
-      {' '}
-      <div className="flex justify-between mb-8 pr-20">
-        <p className="text-gray-500 ml-3">
-          {props.collectivites.length} collectivités correspondent à votre
-          recherche
-        </p>
+      <div className="flex justify-between mb-8">
+        <NombreResultats count={count} />
         {props.children}
       </div>
       {props.collectivites.length === 0 ? (
