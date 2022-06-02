@@ -95,7 +95,8 @@ from named_collectivite c
          left join meta_epci me on me.collectivite_id = c.collectivite_id
          left join type_collectivite tc on tc.collectivite_id = c.collectivite_id
          left join labellisation l on l.collectivite_id = c.collectivite_id
-         left join referentiel_score s on s.completude_eci = c.collectivite_id
+         left join referentiel_score s on s.collectivite_id = c.collectivite_id
+-- keep only active collectivités only.
 where c.collectivite_id in (select collectivite_id from private_utilisateur_droit where active);
 
 
