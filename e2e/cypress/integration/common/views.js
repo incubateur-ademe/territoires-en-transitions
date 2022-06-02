@@ -1,8 +1,8 @@
 export const Views = {
   defaultRoute: '/',
-  'autres collectivités': {
+  'toutes les collectivités': {
     route: '/toutes_collectivites',
-    selector: '[data-test=ElsesCollectivites]',
+    selector: '[data-test=ToutesLesCollectivites]',
   },
   'Mes collectivités': {
     route: '/mes_collectivites',
