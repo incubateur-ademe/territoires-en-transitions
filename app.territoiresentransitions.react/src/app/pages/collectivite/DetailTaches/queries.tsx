@@ -1,13 +1,12 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
+import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
 
 // un sous-ensemble des champs pour alimenter notre table des taches
-export type TacheDetail = Pick<
-  IActionStatutsRead,
-  'action_id' | 'identifiant' | 'nom' | 'avancement' | 'have_children' | 'depth'
->;
+export type TacheDetail = ActionReferentiel & ActionStatut;
+export type ActionStatut = Pick<IActionStatutsRead, 'action_id' | 'avancement'>;
 
-// toutes les entrées d'un référentiel pour une collectivité donnée
+// toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
 export const fetchActionStatutsList = async (
   collectivite_id: number | null,
   referentiel: string | null,
@@ -16,7 +15,7 @@ export const fetchActionStatutsList = async (
   // la requête
   let query = supabaseClient
     .from<IActionStatutsRead>('action_statuts')
-    .select('action_id,identifiant,nom,avancement,have_children,depth')
+    .select('action_id,avancement')
     .match({collectivite_id, referentiel})
     .gt('depth', 0);
 
@@ -57,21 +56,7 @@ export const fetchActionStatutsList = async (
   return {rows, count};
 };
 
-// nombre de total de taches (entrées n'ayant pas d'enfants) dans un référentiel
-export const getTotalTachesCount = async (referentiel: string | null) => {
-  const {error, count} = await supabaseClient
-    .from<IActionStatutsRead>('action_statuts')
-    .select('identifiant', {count: 'exact', head: true})
-    .eq('collectivite_id', 1)
-    .eq('referentiel', referentiel)
-    .eq('have_children', false)
-    .limit(1);
-  if (error) {
-    throw new Error(error.message);
-  }
-  return count;
-};
-
+// met à jour l'état d'une tâche
 export const updateTacheStatut = async ({
   collectivite_id,
   action_id,

@@ -1,0 +1,60 @@
+/** libellé */
+.multi-select.MuiInputBase-root::before {
+  color: var(--text-label-blue-france);
+  padding-left: 8px;
+}
+
+.multi-select.MuiInputBase-root > div {
+  background-color: transparent !important;
+}
+
+.multi-select.MuiInputBase-root fieldset {
+  display: none;
+}
+
+/** Multi-Select */
+.multi-select .MuiSelect-root {
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  font-family: Marianne;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text-label-blue-france);
+  border: 1px solid transparent;
+  width: 120px;
+}
+
+.multi-select .MuiSelect-root[aria-expanded] {
+  border: 1px solid var(--text-label-blue-france);
+  border-radius: 4px;
+}
+
+.multi-select .MuiMenuItem-root {
+  font-size: 14px;
+  font-family: Marianne;
+}
+
+.multi-select .offset-item {
+  padding-left: 3rem;
+}
+
+.multi-select .MuiMenuItem-root[aria-selected]::before {
+  color: var(--text-label-blue-france);
+  margin-right: 8px;
+}
+
+.multi-select .MuiMenuItem-root {
+  font-size: 14px !important;
+}
+
+.multi-select .MuiListItem-root.Mui-selected {
+  background-color: white !important;
+}
+
+.multi-select .MuiListItem-root.Mui-selected:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.multi-select .option.tous {
+  color: var(--text-mention-grey);
+}

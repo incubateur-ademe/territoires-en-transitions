@@ -2,6 +2,7 @@ import {ChangeEvent} from 'react';
 import {MenuProps} from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import 'ui/shared/MultiSelectFilter/MultiSelectFilter.css';
 import './statuts.css';
 
 export type TSelectStatutProps = {
@@ -45,6 +46,9 @@ export const menuOptions: Partial<MenuProps> = {
     horizontal: 'left',
   },
   getContentAnchorEl: null,
+  PaperProps: {
+    className: 'multi-select filtre-statut',
+  },
 };
 
 /**
@@ -62,12 +66,12 @@ export const SelectStatut = (props: TSelectStatutProps) => {
 
   return (
     <Select
-      className={className}
+      className={`multi-select filtre-statut ${className}`}
       value={value}
       variant="outlined"
       disabled={disabled}
       renderValue={() => (
-        <span className={`statut-label ${value}`}>
+        <span className={`option ${value}`}>
           {ITEMS.find(item => item.value === value)?.label}
         </span>
       )}
@@ -76,7 +80,7 @@ export const SelectStatut = (props: TSelectStatutProps) => {
     >
       {ITEMS.map(({value, label}) => (
         <MenuItem key={value} value={value}>
-          <span className={`statut-label ${value}`}>{label}</span>
+          <span className={`option ${value}`}>{label}</span>
         </MenuItem>
       ))}
     </Select>

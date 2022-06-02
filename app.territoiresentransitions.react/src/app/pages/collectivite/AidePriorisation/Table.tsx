@@ -7,47 +7,68 @@ import {
   useExpanded,
   useFlexLayout,
 } from 'react-table';
-import {TacheDetail} from './queries';
+import {getMaxDepth, PriorisationRow} from './queries';
 import {TableData} from './useTableData';
 import {CellAction} from '../ReferentielTable/CellAction';
-import {CellStatut, HeaderStatut} from './ColumnStatut';
 import ReferentielTable from '../ReferentielTable';
+import {CellPercent, CellPoints, CellPhase} from './Cells';
+import {useReferentielId} from 'core-logic/hooks/params';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
 };
-export type THeaderProps = HeaderProps<TacheDetail> & {
+export type THeaderProps = HeaderProps<PriorisationRow> & {
   setFilters: (filters: string[]) => void;
 };
-export type TCellProps = CellProps<TacheDetail>;
-export type TColumn = Column<TacheDetail>;
+export type TCellProps = CellProps<PriorisationRow>;
+export type TColumn = Column<PriorisationRow>;
 
 // défini les colonnes de la table
 const COLUMNS: TColumn[] = [
   {
     accessor: 'nom', // la clé pour accéder à la valeur
-    Header: 'Tâches', // rendu dans la ligne d'en-tête
+    Header: 'Sous-actions', // rendu dans la ligne d'en-tête
     Cell: CellAction, // rendu d'une cellule
     width: '100%',
   },
   {
-    accessor: 'avancement',
-    Header: HeaderStatut,
-    Cell: CellStatut,
-    width: 185,
+    accessor: 'points_restants',
+    Header: 'Points restants',
+    Cell: CellPoints,
+    width: 70,
+  },
+  {
+    accessor: 'score_realise',
+    Header: '% Réalisé',
+    Cell: CellPercent,
+    width: 120,
+  },
+  {
+    accessor: 'score_programme',
+    Header: '% Programmé',
+    Cell: CellPercent,
+    width: 125,
+  },
+  {
+    accessor: 'phase',
+    Header: 'Phase',
+    Cell: CellPhase,
+    width: 120,
   },
 ];
 
 /**
- * Affiche la table "Détail des tâches"
+ * Affiche la table "Aide à la priorisation"
  */
-export const DetailTacheTable = (props: TDetailTacheTableProps) => {
+export const Table = (props: TDetailTacheTableProps) => {
   const {tableData} = props;
-  const {table, isLoading, isSaving, filters, setFilters, updateStatut} =
-    tableData;
+  const {table, isLoading, filters, setFilters} = tableData;
+
+  const referentiel = useReferentielId();
+  const maxDepth = getMaxDepth(referentiel);
 
   // ajout aux props passées à chaque cellule de ligne et d'en-tête de colonne
-  const customCellProps = useMemo(() => ({updateStatut, isSaving}), [isSaving]);
+  const customCellProps = useMemo(() => ({maxDepth}), [maxDepth]);
   const customHeaderProps = useMemo(() => ({filters, setFilters}), [filters]);
 
   // crée l'instance de la table
@@ -70,6 +91,7 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
   // rendu de la table
   return (
     <ReferentielTable
+      className="no-d3-border-top"
       isLoading={isLoading}
       table={tableInstance}
       customCellProps={customCellProps}
