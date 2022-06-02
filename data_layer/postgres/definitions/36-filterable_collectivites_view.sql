@@ -1,12 +1,14 @@
-create view region
+create or replace view region
 as
 select code, libelle
-from imports.region;
+from imports.region
+order by naturalsort(libelle);
 
-create view departement
+create or replace view departement
 as
 select code, libelle, region_code
-from imports.departement;
+from imports.departement
+order by code;
 
 create type filterable_type_collectivite
 as enum ('commune', 'syndicat', 'CU', 'CC', 'POLEM', 'METRO', 'CA', 'EPT', 'PETR');
@@ -53,23 +55,27 @@ with
                                    left join epci e on c.id = e.collectivite_id),
 
     -- extract data from client scores
-    referentiel_score as (select collectivite_id,
+    referentiel_score as (select c.id                                                        as collectivite_id,
                                  max(s.score_fait) filter ( where referentiel = 'eci' )      as score_fait_eci,
                                  max(s.score_fait) filter ( where referentiel = 'cae' )      as score_fait_cae,
+                                 max(s.score_fait)                                           as score_fait_max,
                                  max(s.score_programme) filter ( where referentiel = 'eci' ) as score_programme_eci,
                                  max(s.score_programme) filter ( where referentiel = 'cae' ) as score_programme_cae,
+                                 max(s.score_programme)                                      as score_programme_max,
                                  max(s.completude) filter ( where referentiel = 'eci' )      as completude_eci,
-                                 max(s.completude) filter ( where referentiel = 'cae' )      as completude_cae
-                          from commune com
+                                 max(s.completude) filter ( where referentiel = 'cae' )      as completude_cae,
+                                 max(s.completude)                                           as completude_max
+                          from collectivite c
                                    join lateral (
-                              select * from labellisation.referentiel_score(com.id)
+                              select * from labellisation.referentiel_score(c.id)
                               ) s on true
                           group by collectivite_id),
 
     -- labellisation data
     labellisation as (select collectivite_id,
                              max(l.etoiles) filter ( where referentiel = 'cae' ) as etoiles_cae,
-                             max(l.etoiles) filter ( where referentiel = 'eci' ) as etoiles_eci
+                             max(l.etoiles) filter ( where referentiel = 'eci' ) as etoiles_eci,
+                             array_agg(l.etoiles)                                as etoiles_all
                       from labellisation l
                       group by collectivite_id)
 
@@ -83,22 +89,22 @@ select c.collectivite_id,
        coalesce(mc.population, me.population, 0)::int4        as population,
        coalesce(l.etoiles_cae, 0)                             as etoiles_cae,
        coalesce(l.etoiles_eci, 0)                             as etoiles_eci,
+       coalesce(l.etoiles_all, '{}')                          as etoiles_all,
        coalesce(s.score_fait_cae, 0)                          as score_fait_cae,
        coalesce(s.score_fait_eci, 0)                          as score_fait_eci,
+       coalesce(s.score_fait_max, 0)                          as score_fait_max,
        coalesce(s.score_programme_cae, 0)                     as score_programme_cae,
        coalesce(s.score_programme_eci, 0)                     as score_programme_eci,
+       coalesce(s.score_programme_max, 0)                     as score_programme_max,
        coalesce(s.completude_cae, 0)                          as completude_cae,
-       coalesce(s.completude_eci, 0)                          as completude_eci
+       coalesce(s.completude_eci, 0)                          as completude_eci,
+       coalesce(s.completude_max, 0)                          as completude_max
 
 from named_collectivite c
          left join meta_commune mc on mc.collectivite_id = c.collectivite_id
          left join meta_epci me on me.collectivite_id = c.collectivite_id
          left join type_collectivite tc on tc.collectivite_id = c.collectivite_id
          left join labellisation l on l.collectivite_id = c.collectivite_id
-         left join referentiel_score s on s.completude_eci = c.collectivite_id
+         left join referentiel_score s on s.collectivite_id = c.collectivite_id
+-- keep only active collectivités only.
 where c.collectivite_id in (select collectivite_id from private_utilisateur_droit where active);
-
-
-
-
-
