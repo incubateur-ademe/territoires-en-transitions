@@ -18,8 +18,8 @@ export const FiltreStatut = (props: TFiltreStatutProps) => {
 
   return (
     <MultiSelectFilter
-      className={`filtre-statut ${className}`}
-      label="Statuts"
+      className={`filtre-statut ${className || ''}`}
+      label="Statut"
       values={values}
       items={items}
       onChange={onChange}
