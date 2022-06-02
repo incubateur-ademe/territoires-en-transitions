@@ -27,19 +27,13 @@ export const makeRowRenderer: RowRendererFactory =
         className={className}
         title={(nom as string) || ''}
       >
-        {row.original.have_children ? (
-          <div className="cell" {...row.cells[0].getCellProps()}>
-            {row.cells[0].render('Cell', customCellProps)}
-          </div>
-        ) : (
-          row.cells.map(cell => {
-            return (
-              <div className="cell" {...cell.getCellProps()}>
-                {cell.render('Cell', customCellProps)}
-              </div>
-            );
-          })
-        )}
+        {row.cells.map(cell => {
+          return (
+            <div className="cell" {...cell.getCellProps()}>
+              {cell.render('Cell', customCellProps)}
+            </div>
+          );
+        })}
       </div>
     );
   };
