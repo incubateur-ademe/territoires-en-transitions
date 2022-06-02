@@ -99,13 +99,13 @@ const addBoundariesToQuery = (
 ) => {
   if (boundaries.length > 0) {
     const first = boundaries[0];
-    if (first.lower) {
+    if (first.lower !== null) {
       if (first.include === 'lower' || first.include === 'both')
         query = query.gte(column, first.lower);
       else query = query.gt(column, first.lower);
     }
 
-    if (first.upper) {
+    if (first.upper !== null) {
       if (first.include === 'upper' || first.include === 'both')
         query = query.lte(column, first.upper);
       else query = query.lt(column, first.upper);
@@ -114,13 +114,13 @@ const addBoundariesToQuery = (
     boundaries.slice(1, -1).forEach(additional => {
       let filters = column; // the filters to use with OR
 
-      if (additional.lower) {
+      if (additional.lower !== null) {
         if (additional.include === 'lower' || additional.include === 'both')
           filters += `.gte.${additional.lower}`;
         else filters += `.gt.${additional.lower}`;
       }
 
-      if (additional.upper) {
+      if (additional.upper !== null) {
         if (additional.include === 'upper' || additional.include === 'both')
           filters += `.lte.${additional.upper}`;
         else filters += `.lt.${additional.upper}`;
@@ -156,7 +156,7 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
 
   // Population
   const populationFiltresBoundaries = filters.population.map(
-    populationOption => populationToBoundaries[populationOption]
+    option => populationToBoundaries[option]
   );
 
   addBoundariesToQuery(query, populationFiltresBoundaries, 'population');
@@ -164,27 +164,48 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
   // Taux de remplissage
   if (filters.tauxDeRemplissage.length > 0) {
     const tauxDeRemplissageFiltresBoundaries = filters.tauxDeRemplissage.map(
-      populationOption => tauxDeRemplissageToBoundaries[populationOption]
+      option => tauxDeRemplissageToBoundaries[option]
     );
 
-    if (
-      filters.referentiel.length === 0 ||
-      filters.referentiel.includes('cae')
-    ) {
+    if (filters.referentiel.length === 0) {
       addBoundariesToQuery(
         query,
         tauxDeRemplissageFiltresBoundaries,
+        'completude_max'
+      );
+    } else {
+      if (filters.referentiel.includes('cae')) {
+        addBoundariesToQuery(
+          query,
+          tauxDeRemplissageFiltresBoundaries,
+          'completude_cae'
+        );
+      }
+
+      if (filters.referentiel.includes('eci')) {
+        addBoundariesToQuery(
+          query,
+          tauxDeRemplissageFiltresBoundaries,
+          'completude_eci'
+        );
+      }
+    }
+  }
+  // en l'absence de taux sélectionné, la selection d'un référentiel équivaut
+  // à un taux de remplissage > 0
+  else if (filters.referentiel.length > 0) {
+    if (filters.referentiel.includes('cae')) {
+      addBoundariesToQuery(
+        query,
+        [{lower: 0, upper: null, include: 'none'}],
         'completude_cae'
       );
     }
 
-    if (
-      filters.referentiel.length === 0 ||
-      filters.referentiel.includes('eci')
-    ) {
+    if (filters.referentiel.includes('eci')) {
       addBoundariesToQuery(
         query,
-        tauxDeRemplissageFiltresBoundaries,
+        [{lower: 0, upper: null, include: 'none'}],
         'completude_eci'
       );
     }
@@ -192,29 +213,33 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
 
   //  Niveau de labellisation
   if (filters.niveauDeLabellisation.length > 0) {
-    if (
-      filters.referentiel.length === 0 ||
-      filters.referentiel.includes('cae')
-    ) {
-      query = query.in(
-        'etoiles_cae',
+    if (filters.referentiel.length === 0) {
+      query = query.overlaps(
+        'etoiles_all',
         filters.niveauDeLabellisation.map(
           niveauLabellisationOption =>
             niveauLabellisationToEtoiles[niveauLabellisationOption]
         )
       );
-    }
-    if (
-      filters.referentiel.length === 0 ||
-      filters.referentiel.includes('eci')
-    ) {
-      query = query.in(
-        'etoiles_eci',
-        filters.niveauDeLabellisation.map(
-          niveauLabellisationOption =>
-            niveauLabellisationToEtoiles[niveauLabellisationOption]
-        )
-      );
+    } else {
+      if (filters.referentiel.includes('cae')) {
+        query = query.in(
+          'etoiles_cae',
+          filters.niveauDeLabellisation.map(
+            niveauLabellisationOption =>
+              niveauLabellisationToEtoiles[niveauLabellisationOption]
+          )
+        );
+      }
+      if (filters.referentiel.includes('eci')) {
+        query = query.in(
+          'etoiles_eci',
+          filters.niveauDeLabellisation.map(
+            niveauLabellisationOption =>
+              niveauLabellisationToEtoiles[niveauLabellisationOption]
+          )
+        );
+      }
     }
   }
 
