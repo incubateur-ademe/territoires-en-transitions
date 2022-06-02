@@ -22,7 +22,6 @@ export type CollectiviteCarteRead = {
 
 export type TypeCollectiviteCarteRead =
   | 'CA'
-  | 'CC'
   | 'CU'
   | 'EPT'
   | 'METRO'

@@ -151,12 +151,7 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
 
   // Type
   if (filters.types.length > 0) {
-    query = query.in(
-      'type_collectivite',
-      filters.types.map(
-        type => (['commune', 'syndicat'].includes(type) ? type : 'EPCI') // TODO : change supabase view to allow filtering over different EPCI types
-      )
-    );
+    query = query.in('type_collectivite', filters.types);
   }
 
   // Population

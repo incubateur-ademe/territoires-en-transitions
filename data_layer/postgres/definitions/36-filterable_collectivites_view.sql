@@ -8,7 +8,10 @@ as
 select code, libelle, region_code
 from imports.departement;
 
-create view collectivite_card
+create type filterable_type_collectivite
+as enum ('commune', 'syndicat', 'CU', 'CC', 'POLEM', 'METRO', 'CA', 'EPT', 'PETR');
+
+create or replace view collectivite_card
 as
 with
     -- get population and drom from insee.
@@ -33,14 +36,19 @@ with
                            left join imports.departement id on ib.departement_code = id.code),
 
     -- compute type from table and epci nature
-    type_collectivite as (select c.id                       as collectivite_id,
+    type_collectivite as (select c.id                                  as collectivite_id,
                                  case
                                      when c.id in (select collectivite_id from commune) then 'commune'
                                      when e.nature = 'SMF' or e.nature = 'SIVOM' or e.nature = 'SMO' or
                                           e.nature = 'SIVU' then
                                          'syndicat'
-                                     else 'EPCI'
-                                     end::type_collectivite as type
+                                     when e.nature = 'CU' then 'CU'
+                                     when e.nature = 'CC' then 'CC'
+                                     when e.nature = 'POLEM' then 'POLEM'
+                                     when e.nature = 'METRO' then 'METRO'
+                                     when e.nature = 'PETR' then 'PETR'
+                                     when e.nature = 'EPT' then 'EPT'
+                                     end::filterable_type_collectivite as type
                           from collectivite c
                                    left join epci e on c.id = e.collectivite_id),
 
@@ -87,7 +95,8 @@ from named_collectivite c
          left join meta_epci me on me.collectivite_id = c.collectivite_id
          left join type_collectivite tc on tc.collectivite_id = c.collectivite_id
          left join labellisation l on l.collectivite_id = c.collectivite_id
-         left join referentiel_score s on s.completude_eci = c.collectivite_id;
+         left join referentiel_score s on s.completude_eci = c.collectivite_id
+where c.collectivite_id in (select collectivite_id from private_utilisateur_droit where active);
 
 
 
