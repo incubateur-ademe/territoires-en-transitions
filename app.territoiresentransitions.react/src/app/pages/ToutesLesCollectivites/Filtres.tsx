@@ -2,7 +2,7 @@ import {
   niveauLabellisationCollectiviteFilterLibelleRecord,
   populationCollectiviteFilterLibelleRecord,
   referentielCollectiviteFilterLibelleRecord,
-  tauxRempolissageCollectiviteFilterLibelleRecord as tauxRemplissageCollectiviteFilterLibelleRecord,
+  tauxRemplissageCollectiviteFilterLibelleRecord as tauxRemplissageCollectiviteFilterLibelleRecord,
   libelleRecordToOptions,
   typeCollectiviteFilterLibelleRecord,
   trierParFilterLibelleRecord,

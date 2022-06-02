@@ -26,7 +26,7 @@ export const MultiSelectDropdown = <T extends string>(
         multiple
         style={{
           maxHeight: '45px',
-          minWidth: '200px',
+          width: '100%',
           borderColor: 'lightgray',
           borderWidth: '0.6px',
           borderStyle: 'solid',
@@ -36,13 +36,18 @@ export const MultiSelectDropdown = <T extends string>(
         }}
         value={selected}
         variant="outlined"
-        label="Sélectionner une option" // Does not seem to work :(
-        placeholder="Sélectionner une option" // Does not seem to work :(
-        renderValue={() => (
-          <span className="text-gray-800 font-normal">
-            Sélectionner une option
-          </span>
-        )}
+        renderValue={value => {
+          const selection = value as T[];
+
+          return (
+            <span className="text-gray-800 font-normal">
+              {props.options
+                .filter(o => selection.includes(o.id))
+                .map(o => o.libelle)
+                .join(', ')}
+            </span>
+          );
+        }}
         onChange={(event: ChangeEvent<{value: any}>) => {
           const value = event.target.value as T[];
           props.onChange(value);
