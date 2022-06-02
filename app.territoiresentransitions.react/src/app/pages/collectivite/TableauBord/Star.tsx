@@ -20,3 +20,6 @@ export const GreyStar = (props: {title?: string}) => (
 export const BlueStar = (props: {title?: string}) => (
   <Star {...props} fill="#0063CB" />
 );
+export const GreenStar = (props: {title?: string}) => (
+  <Star {...props} fill="#00A95F" />
+);

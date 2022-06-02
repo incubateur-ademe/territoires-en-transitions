@@ -1,0 +1,40 @@
+### Authenticate as a user
+POST {{api}}/auth/v1/token?grant_type=password
+apikey: {{anon}}
+Content-Type: application/json
+
+{
+  "email": "{{yolo_mail}}",
+  "password": "{{yolo_pass}}"
+}
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.log('token is ' + response.body['access_token']);
+    client.global.set("auth_token", response.body['access_token']);
+%}
+
+
+
+### Les régions
+GET {{api}}/rest/v1/region
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+### Les départements
+GET {{api}}/rest/v1/departement
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+### Les syndicats du lot et garonne
+GET {{api}}/rest/v1/collectivite_card?departement_code=eq.47&type_collectivite=eq.syndicat
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+### Les collectivité avec une labellisation cae > 1
+GET {{api}}/rest/v1/collectivite_card?etoiles_cae=gt.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
