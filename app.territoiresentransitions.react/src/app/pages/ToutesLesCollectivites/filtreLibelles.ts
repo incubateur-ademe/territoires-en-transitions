@@ -42,7 +42,7 @@ export const realiseCourantCollectiviteFilterLibelleRecord: Record<
   '75-100': '75 à 100 %',
 };
 
-export const tauxRempolissageCollectiviteFilterLibelleRecord: Record<
+export const tauxRemplissageCollectiviteFilterLibelleRecord: Record<
   TTauxRemplissageFiltreOption,
   string
 > = {

@@ -30,13 +30,14 @@ export const RenderToutesLesCollectivites = (
     <div className="text-center">
       <h1>Toutes les collectivités</h1>
       <p>
-        Consultez l'avancement des [xxx] collectivités sur la plateforme.
+        {/* todo:
+            Consultez l'avancement des [xxx] collectivités sur la plateforme.*/}
         Consultez les <Link to="/statistics">statistiques</Link> d'utilisation
         de la plateforme.
       </p>
     </div>
-    <div className="flex flex-row justify-between">
-      <div className="w-1/5">
+    <div className="md:flex">
+      <div className="md:w-1/5">
         <FiltresColonne
           filters={props.filters}
           setFilters={props.setFilters}
@@ -44,7 +45,7 @@ export const RenderToutesLesCollectivites = (
           departments={props.departements}
         />
       </div>
-      <div className="w-4/5">
+      <div className="md:w-4/5">
         {props.isLoading ? (
           <tr>
             <td className="text-center text-gray-500">
@@ -56,7 +57,6 @@ export const RenderToutesLesCollectivites = (
             collectivites={props.collectivites}
             desactiverLesFiltres={() => props.setFilters(filtresVides)}
           >
-            {' '}
             <TrierParFiltre
               onChange={selected =>
                 props.setFilters({...props.filters, trierPar: selected})
