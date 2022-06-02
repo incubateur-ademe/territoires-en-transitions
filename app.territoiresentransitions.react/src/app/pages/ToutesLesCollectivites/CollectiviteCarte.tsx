@@ -5,6 +5,8 @@ import {referentielToName} from 'app/labels';
 import {NIVEAUX} from 'app/pages/collectivite/TableauBord/getNiveauInfo';
 import {GreyStar, GreenStar} from 'app/pages/collectivite/TableauBord/Star';
 import {Card} from '@material-ui/core';
+import {Link} from 'react-router-dom';
+import {makeCollectiviteTableauBordUrl} from 'app/paths';
 
 export type TCollectiviteCarteProps = {
   collectivite: CollectiviteCarteRead;
@@ -15,31 +17,38 @@ export type TCollectiviteCarteProps = {
  * Utilisée dans la vue toutes les collectivités.
  *
  * Affiche le nom et des éléments de scores.
- * todo: Lie vers le tableau de bord de la collectivité.
+ * Lie vers le tableau de bord de la collectivité.
  */
 export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
   const {collectivite} = props;
 
   return (
-    <Card className="collectiviteCard p-6 max-w-md h-72 m-4">
-      <div className="text-lg font-bold h-24 ">{collectivite.nom}</div>
-      <div className="flex">
-        <ReferentielCol
-          referentiel={'cae'}
-          etoiles={collectivite.etoiles_cae}
-          scoreRealise={collectivite.score_fait_cae}
-          scoreProgramme={collectivite.score_programme_cae}
-          concerne={collectivite.type_collectivite !== 'syndicat'}
-        />
-        <ReferentielCol
-          referentiel={'eci'}
-          etoiles={collectivite.etoiles_eci}
-          scoreRealise={collectivite.score_fait_eci}
-          scoreProgramme={collectivite.score_programme_eci}
-          concerne={true}
-        />
-      </div>
-    </Card>
+    <Link
+      to={makeCollectiviteTableauBordUrl({
+        collectiviteId: collectivite.collectivite_id,
+      })}
+      style={{boxShadow: 'none'}} // override DSFR shadow
+    >
+      <Card className="collectiviteCard p-6 max-w-md">
+        <div className="text-lg font-bold h-24">{collectivite.nom}</div>
+        <div className="flex">
+          <ReferentielCol
+            referentiel={'cae'}
+            etoiles={collectivite.etoiles_cae}
+            scoreRealise={collectivite.score_fait_cae}
+            scoreProgramme={collectivite.score_programme_cae}
+            concerne={collectivite.type_collectivite !== 'syndicat'}
+          />
+          <ReferentielCol
+            referentiel={'eci'}
+            etoiles={collectivite.etoiles_eci}
+            scoreRealise={collectivite.score_fait_eci}
+            scoreProgramme={collectivite.score_programme_eci}
+            concerne={true}
+          />
+        </div>
+      </Card>
+    </Link>
   );
 };
 
