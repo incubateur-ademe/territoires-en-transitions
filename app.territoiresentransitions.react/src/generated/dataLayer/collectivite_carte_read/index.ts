@@ -22,6 +22,13 @@ export type CollectiviteCarteRead = {
   completude_cae: number;
   completude_eci: number;
   completude_max: number;
+  population_intervalle: string;
+  completude_cae_intervalle: string;
+  completude_eci_intervalle: string;
+  completude_intervalles: string;
+  fait_cae_intervalle: string;
+  fait_eci_intervalle: string;
+  fait_intervalles: string;
 };
 
 export type TypeCollectiviteCarteRead =

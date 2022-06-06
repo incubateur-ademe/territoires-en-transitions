@@ -47,11 +47,9 @@ export const RenderToutesLesCollectivites = (
       </div>
       <div className="md:w-4/5">
         {props.isLoading ? (
-          <tr>
-            <td className="text-center text-gray-500">
-              Chargement en cours...
-            </td>
-          </tr>
+          <div className="text-center text-gray-500">
+            Chargement en cours...
+          </div>
         ) : (
           <CollectivitesFiltreesColonne
             collectivites={props.collectivites}
