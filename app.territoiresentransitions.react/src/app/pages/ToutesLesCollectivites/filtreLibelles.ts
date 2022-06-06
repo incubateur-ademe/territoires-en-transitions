@@ -20,17 +20,19 @@ export type TCollectivitesFilters = {
   trierPar?: TTrierParFiltreOption;
 };
 
+// could be downloaded from `filtre_intervalle` where type = population.
 export const populationCollectiviteFilterLibelleRecord: Record<
   TPopulationFiltreOption,
   string
 > = {
-  '0-20000': '0 - 20 000',
+  '<20000': 'Moins de 20 000',
   '20000-50000': '20 000 - 50 000',
   '50000-100000': '50 000 - 100 000',
   '100000-200000': '100 000 - 200 000',
-  'plus-de-200000': 'Plus de 200 000',
+  '>200000': 'Plus de 200 000',
 };
 
+// could be downloaded from `filtre_intervalle` where type = score.
 export const realiseCourantCollectiviteFilterLibelleRecord: Record<
   TRealiseCourantFiltreOption,
   string
@@ -42,12 +44,13 @@ export const realiseCourantCollectiviteFilterLibelleRecord: Record<
   '75-100': '75 à 100 %',
 };
 
+// could be downloaded from `filtre_intervalle` where type = remplissage.
 export const tauxRemplissageCollectiviteFilterLibelleRecord: Record<
   TTauxRemplissageFiltreOption,
   string
 > = {
   '0': '0 %',
-  '1-49': '1 à 49 %',
+  '0-49': '1 à 49 %',
   '50-79': '50 à 79 %',
   '80-99': '80 à 99 %',
   '100': '100 %',
@@ -57,7 +60,7 @@ export const niveauLabellisationCollectiviteFilterLibelleRecord: Record<
   TNiveauLabellisationFiltreOption,
   string
 > = {
-  NL: 'Non labellisé',
+  '0': 'Non labellisé',
   '1': 'Première étoile',
   '2': 'Deuxième étoile',
   '3': 'Troisième étoile',

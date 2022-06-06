@@ -13,7 +13,39 @@ order by code;
 create type filterable_type_collectivite
 as enum ('commune', 'syndicat', 'CU', 'CC', 'POLEM', 'METRO', 'CA', 'EPT', 'PETR');
 
-create or replace view collectivite_card
+create type collectivite_filtre_type
+as enum ('population', 'score', 'remplissage');
+
+create table filtre_intervalle
+(
+    type       collectivite_filtre_type not null,
+    id         varchar(30)              not null,
+    libelle    text                     not null,
+    intervalle int4range                not null,
+    primary key (type, id)
+);
+
+insert into filtre_intervalle
+values ('population', '<20000', 'Moins de 20 000', '[0,20000]'),
+       ('population', '20000-50000', '20 000 - 50 000', '[20000,50000]'),
+       ('population', '50000-100000', '50 000 - 100 000', '[50000,100000]'),
+       ('population', '100000-200000', '100 000 - 200 000', '[100000,200000]'),
+       ('population', '>200000', 'Plus de 200 000', '[200000,]'),
+       --
+       ('score', '0-34', '0 à 34 %', '[0,35)'),
+       ('score', '35-49', '35 à 49 %', '[35,50)'),
+       ('score', '50-64', '50 à 64 %', '[50,65)'),
+       ('score', '65-74', '65 à 74 %', '[65,75)'),
+       ('score', '75-100', '75 à 100 %', '[75,]'),
+       --
+       ('remplissage', '0', '0', '[0,0]'),
+       ('remplissage', '0-49', '0 à 50 %', '(0,50)'),
+       ('remplissage', '50-79', '50 à 79 %', '[50,80)'),
+       ('remplissage', '80-99', '80 à 99 %', '[80,100)'),
+       ('remplissage', '100', '100 %', '[100,]');
+
+
+create materialized view collectivite_card
 as
 with
     -- get population and drom from insee.
@@ -77,34 +109,80 @@ with
                              max(l.etoiles) filter ( where referentiel = 'eci' ) as etoiles_eci,
                              array_agg(l.etoiles)                                as etoiles_all
                       from labellisation l
-                      group by collectivite_id)
+                      group by collectivite_id),
+    -- coalesce null values from epci or collectivité data.
+    card as (select c.collectivite_id,
+                    c.nom,
+                    tc.type                                                as type_collectivite,
+                    coalesce(mc.insee, me.siren, '')                       as code_siren_insee,
+                    coalesce(mc.region_code, me.region_code, '')           as region_code,
+                    coalesce(mc.departement_code, me.departement_code, '') as departement_code,
+                    coalesce(mc.population, me.population, 0)::int4        as population,
+                    coalesce(l.etoiles_cae, 0)                             as etoiles_cae,
+                    coalesce(l.etoiles_eci, 0)                             as etoiles_eci,
+                    coalesce(l.etoiles_all, '{}')                          as etoiles_all,
+                    coalesce(s.score_fait_cae, 0)                          as score_fait_cae,
+                    coalesce(s.score_fait_eci, 0)                          as score_fait_eci,
+                    coalesce(s.score_programme_cae, 0)                     as score_programme_cae,
+                    coalesce(s.score_programme_eci, 0)                     as score_programme_eci,
+                    coalesce(s.completude_cae, 0)                          as completude_cae,
+                    coalesce(s.completude_eci, 0)                          as completude_eci
 
--- coalesce null values from epci or collectivité data.
-select c.collectivite_id,
-       c.nom,
-       tc.type                                                as type_collectivite,
-       coalesce(mc.insee, me.siren, '')                       as code_siren_insee,
-       coalesce(mc.region_code, me.region_code, '')           as region_code,
-       coalesce(mc.departement_code, me.departement_code, '') as departement_code,
-       coalesce(mc.population, me.population, 0)::int4        as population,
-       coalesce(l.etoiles_cae, 0)                             as etoiles_cae,
-       coalesce(l.etoiles_eci, 0)                             as etoiles_eci,
-       coalesce(l.etoiles_all, '{}')                          as etoiles_all,
-       coalesce(s.score_fait_cae, 0)                          as score_fait_cae,
-       coalesce(s.score_fait_eci, 0)                          as score_fait_eci,
-       coalesce(s.score_fait_max, 0)                          as score_fait_max,
-       coalesce(s.score_programme_cae, 0)                     as score_programme_cae,
-       coalesce(s.score_programme_eci, 0)                     as score_programme_eci,
-       coalesce(s.score_programme_max, 0)                     as score_programme_max,
-       coalesce(s.completude_cae, 0)                          as completude_cae,
-       coalesce(s.completude_eci, 0)                          as completude_eci,
-       coalesce(s.completude_max, 0)                          as completude_max
+             from named_collectivite c
+                      left join meta_commune mc on mc.collectivite_id = c.collectivite_id
+                      left join meta_epci me on me.collectivite_id = c.collectivite_id
+                      left join type_collectivite tc on tc.collectivite_id = c.collectivite_id
+                      left join labellisation l on l.collectivite_id = c.collectivite_id
+                      left join referentiel_score s on s.collectivite_id = c.collectivite_id)
+-- add filter bucket to card
+select card.*,
+       pop.id      as population_intervalle,
+       comp_cae.id as completude_cae_intervalle,
+       comp_eci.id as completude_eci_intervalle,
+       comps.ids   as completude_intervalles,
+       fait_cae.id as fait_cae_intervalle,
+       fait_eci.id as fait_eci_intervalle,
+       scores.ids  as fait_intervalles
 
-from named_collectivite c
-         left join meta_commune mc on mc.collectivite_id = c.collectivite_id
-         left join meta_epci me on me.collectivite_id = c.collectivite_id
-         left join type_collectivite tc on tc.collectivite_id = c.collectivite_id
-         left join labellisation l on l.collectivite_id = c.collectivite_id
-         left join referentiel_score s on s.collectivite_id = c.collectivite_id
+from card
+         -- population
+         left join lateral (select id
+                            from filtre_intervalle
+                            where type = 'population'
+                              and intervalle @> card.population
+                            limit 1) pop on true
+    -- remplissage
+         left join lateral (select id
+                            from filtre_intervalle
+                            where type = 'remplissage'
+                              and intervalle @> (card.completude_cae * 100)::int4
+                            limit 1) comp_cae on true
+         left join lateral (select id
+                            from filtre_intervalle
+                            where type = 'remplissage'
+                              and intervalle @> (card.completude_eci * 100)::int4
+                            limit 1) comp_eci on true
+         left join lateral (select array_agg(id) as ids
+                            from filtre_intervalle
+                            where type = 'remplissage'
+                              and (intervalle @> (card.completude_cae * 100)::int4
+                                or intervalle @> (card.completude_eci * 100)::int4)) comps on true
+    -- score
+         left join lateral (select id
+                            from filtre_intervalle
+                            where type = 'score'
+                              and intervalle @> (card.score_fait_eci * 100)::int4
+                            limit 1) fait_eci on true
+         left join lateral (select id
+                            from filtre_intervalle
+                            where type = 'score'
+                              and intervalle @> (card.score_fait_cae * 100)::int4
+                            limit 1) fait_cae on true
+         left join lateral (select array_agg(id) as ids
+                            from filtre_intervalle
+                            where type = 'score'
+                              and (intervalle @> (card.score_fait_eci * 100)::int4
+                                or intervalle @> (card.score_fait_cae * 100)::int4)) scores on true
+
 -- keep only active collectivités only.
-where c.collectivite_id in (select collectivite_id from private_utilisateur_droit where active);
+where card.collectivite_id in (select collectivite_id from private_utilisateur_droit where active);

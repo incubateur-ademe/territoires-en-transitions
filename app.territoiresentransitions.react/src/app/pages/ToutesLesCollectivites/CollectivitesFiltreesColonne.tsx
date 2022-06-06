@@ -7,7 +7,10 @@ const CollectivitesFiltrees = (props: {
   return (
     <div className="flex flex-wrap justify-center gap-6">
       {props.collectivites.map(collectivite => (
-        <CollectiviteCarte collectivite={collectivite} />
+        <CollectiviteCarte
+          collectivite={collectivite}
+          key={collectivite.collectivite_id}
+        />
       ))}
     </div>
   );
