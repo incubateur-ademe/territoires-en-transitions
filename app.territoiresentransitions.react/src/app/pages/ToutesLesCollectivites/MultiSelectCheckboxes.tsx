@@ -19,7 +19,7 @@ export const MultiSelectCheckboxes = <T extends string>(
   useEffect(() => props.onChange(selected), [selected.length]);
   return (
     <div>
-      <div className="font-semibold text-sm mb-2">{props.title}</div>
+      <div className="font-semibold text-md mb-2">{props.title}</div>
       <div className="small-checkbox  fr-checkbox-group text-sm">
         {optionsIncludingAll.map(option => (
           <div className="my-2" key={option.id}>

@@ -50,7 +50,7 @@ export const ReferentielCollectiviteFiltre = (props: {
   onChange: (selected: TReferentielFiltreOption[]) => void;
 }) => (
   <MultiSelectCheckboxes
-    title="Réferentiel"
+    title="Référentiel"
     options={libelleRecordToOptions(referentielCollectiviteFilterLibelleRecord)}
     onChange={props.onChange}
     selected={props.selected}

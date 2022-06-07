@@ -29,9 +29,9 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
       })}
       style={{boxShadow: 'none'}} // override DSFR shadow
     >
-      <Card className="collectiviteCard p-6 max-w-md">
+      <Card className="collectiviteCard p-6 w-full">
         <div className="text-lg font-bold h-24">{collectivite.nom}</div>
-        <div className="flex">
+        <div className="flex justify-between gap-4">
           <ReferentielCol
             referentiel={'cae'}
             etoiles={collectivite.etoiles_cae}
@@ -39,6 +39,7 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
             scoreProgramme={collectivite.score_programme_cae}
             concerne={collectivite.type_collectivite !== 'syndicat'}
           />
+          <div className="w-px bg-gray-200"></div>
           <ReferentielCol
             referentiel={'eci'}
             etoiles={collectivite.etoiles_eci}
@@ -81,10 +82,10 @@ const CheckIcon = () => (
  */
 export const ReferentielCol = (props: TReferentielColProps) => {
   return (
-    <div className="flex flex-col flex-1 gap-2">
+    <div className="flex flex-col flex-1 gap-2 ">
       <div className="text-sm">{referentielToName[props.referentiel]}</div>
       {props.concerne ? (
-        <div>
+        <div className="flex flex-col gap-1">
           <CinqEtoiles etoiles={props.etoiles} />
           <div>
             {' '}
@@ -103,7 +104,7 @@ export const ReferentielCol = (props: TReferentielColProps) => {
           </div>
         </div>
       ) : (
-        <div className="font-light italic">Non concerné</div>
+        <div className="font-light italic text-center">Non concerné</div>
       )}
     </div>
   );
@@ -121,14 +122,16 @@ const CinqEtoiles = (props: TCinqEtoilesProps) => {
   const {etoiles} = props;
 
   return (
-    <div className="flex flex-col scale-75 -ml-7">
-      <div className="flex space-x-2">
-        {NIVEAUX.map(niveau => {
-          const obtenue = etoiles >= niveau;
-          const Star = obtenue ? GreenStar : GreyStar;
-          return <Star key={`n${niveau}`} />;
-        })}
-      </div>
+    <div className="flex space-x-2">
+      {NIVEAUX.map(niveau => {
+        const obtenue = etoiles >= niveau;
+        const Star = obtenue ? GreenStar : GreyStar;
+        return (
+          <div className="w-6 scale-75 -ml-1">
+            <Star key={`n${niveau}`} />
+          </div>
+        );
+      })}
     </div>
   );
 };
