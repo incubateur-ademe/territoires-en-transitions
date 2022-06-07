@@ -7,14 +7,14 @@ export type TSelectOption<T extends string> = {
 
 export type TTypeFiltreOption = TypeCollectiviteCarteRead;
 export type TPopulationFiltreOption =
-  | '0-20000'
+  | '<20000'
   | '20000-50000'
   | '50000-100000'
   | '100000-200000'
-  | 'plus-de-200000';
+  | '>200000';
 
 export type TNiveauLabellisationFiltreOption =
-  | 'NL'
+  | '0'
   | '1'
   | '2'
   | '3'
@@ -25,7 +25,7 @@ export type TReferentielFiltreOption = 'eci' | 'cae';
 
 export type TTauxRemplissageFiltreOption =
   | '0'
-  | '1-49'
+  | '0-49'
   | '50-79'
   | '80-99'
   | '100';

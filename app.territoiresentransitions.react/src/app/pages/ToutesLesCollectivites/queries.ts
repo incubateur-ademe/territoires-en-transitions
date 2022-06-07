@@ -2,27 +2,12 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {DepartementRead} from 'generated/dataLayer/departement_read';
-import {Referentiel} from 'types/litterals';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {
-  TNiveauLabellisationFiltreOption,
-  TPopulationFiltreOption,
   TReferentielFiltreOption,
-  TTauxRemplissageFiltreOption,
   TTrierParFiltreOption,
 } from 'app/pages/ToutesLesCollectivites/types';
 import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
-
-export type TFetchCollectiviteCardsArgs = {
-  regionCodes: string[];
-  departementCodes: string[];
-  referentiels: Referentiel[];
-  etoiles: number | null;
-  score_fait_lt: number | null;
-  score_fait_gt: number | null;
-  completude_lt: number | null;
-  completude_gt: number | null;
-};
 
 /**
  * Représente des limites entre lower et upper, utilisé pour
@@ -39,47 +24,16 @@ type TBoundaries = {
   include: 'none' | 'lower' | 'upper' | 'both';
 };
 
-const populationToBoundaries: Record<TPopulationFiltreOption, TBoundaries> = {
-  '0-20000': {lower: 0, upper: 2000, include: 'both'},
-  '20000-50000': {lower: 2000, upper: 50000, include: 'both'},
-  '50000-100000': {lower: 50000, upper: 100000, include: 'both'},
-  '100000-200000': {lower: 100000, upper: 200000, include: 'both'},
-  'plus-de-200000': {lower: 200000, upper: null, include: 'lower'},
-};
-
-const tauxDeRemplissageToBoundaries: Record<
-  TTauxRemplissageFiltreOption,
-  TBoundaries
-> = {
-  '0': {lower: 0, upper: 1, include: 'lower'},
-  '1-49': {lower: 1, upper: 50, include: 'lower'},
-  '50-79': {lower: 50, upper: 80, include: 'lower'},
-  '80-99': {lower: 80, upper: 100, include: 'lower'},
-  '100': {lower: 100, upper: 100, include: 'both'},
-};
-
-const niveauLabellisationToEtoiles: Record<
-  TNiveauLabellisationFiltreOption,
-  number
-> = {
-  NL: 0,
-  '1': 1,
-  '2': 2,
-  '3': 3,
-  '4': 4,
-  '5': 5,
-};
-
 const getSortColumn = (
-  trierPar: TTrierParFiltreOption,
+  trierPar?: TTrierParFiltreOption,
   referentiel?: TReferentielFiltreOption
 ): keyof CollectiviteCarteRead => {
   switch (trierPar) {
     case 'completude':
-      if (!referentiel) return 'completude_eci'; // TODO : should be be score_fait_max instead
+      if (!referentiel) return 'completude_max';
       return referentiel === 'eci' ? 'completude_eci' : 'completude_cae';
     case 'score':
-      if (!referentiel) return 'score_fait_eci'; // TODO : should be be score_fait_max instead
+      if (!referentiel) return 'score_fait_max';
       return referentiel === 'eci' ? 'score_fait_eci' : 'score_fait_cae';
     default:
       return 'nom';
@@ -91,6 +45,9 @@ const getSortColumn = (
  *
  * Permet d'utiliser plusieurs limites pour par exemple récupérer
  * les collectivités dont la population est située entre [a et b] et [x et y].
+ *
+ * @deprecated trop long, on devrait par exemple lorsque les plages sont
+ * adjacentes les joindre.
  */
 const addBoundariesToQuery = (
   query: PostgrestFilterBuilder<CollectiviteCarteRead>,
@@ -131,6 +88,9 @@ const addBoundariesToQuery = (
   }
 };
 
+// A subset of supabase FilterOperator as it not an exported type.
+type FilterOperator = 'in' | 'ov';
+
 /**
  * Construit la query en ajoutant des opérateurs Postgrest pour chaque filtre.
  */
@@ -141,111 +101,60 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
     .select()
     .limit(100);
 
-  // Région
-  if (filters.regions.length > 0)
-    query = query.in('region_code', filters.regions);
+  const filter = (
+    column: keyof CollectiviteCarteRead,
+    operator: FilterOperator,
+    possibleValues: string[] | number[]
+  ) => {
+    if (possibleValues.length > 0) {
+      switch (operator) {
+        case 'in':
+          query = query.in(column, possibleValues);
+          break;
+        case 'ov':
+          query = query.overlaps(column, possibleValues);
+          break;
+      }
+    }
+  };
 
-  // Département
-  if (filters.departments.length > 0)
-    query = query.in('departement_code', filters.departments);
-
-  // Type
-  if (filters.types.length > 0) {
-    query = query.in('type_collectivite', filters.types);
-  }
-
-  // Population
-  const populationFiltresBoundaries = filters.population.map(
-    option => populationToBoundaries[option]
-  );
-
-  addBoundariesToQuery(query, populationFiltresBoundaries, 'population');
+  filter('region_code', 'in', filters.regions);
+  filter('departement_code', 'in', filters.departments);
+  filter('type_collectivite', 'in', filters.types);
+  filter('population_intervalle', 'in', filters.population);
 
   // Taux de remplissage
   if (filters.tauxDeRemplissage.length > 0) {
-    const tauxDeRemplissageFiltresBoundaries = filters.tauxDeRemplissage.map(
-      option => tauxDeRemplissageToBoundaries[option]
-    );
-
     if (filters.referentiel.length === 0) {
-      addBoundariesToQuery(
-        query,
-        tauxDeRemplissageFiltresBoundaries,
-        'completude_max'
-      );
+      filter('completude_intervalles', 'ov', filters.tauxDeRemplissage);
     } else {
-      if (filters.referentiel.includes('cae')) {
-        addBoundariesToQuery(
-          query,
-          tauxDeRemplissageFiltresBoundaries,
-          'completude_cae'
-        );
-      }
+      if (filters.referentiel.includes('cae'))
+        filter('completude_cae_intervalle', 'in', filters.tauxDeRemplissage);
 
-      if (filters.referentiel.includes('eci')) {
-        addBoundariesToQuery(
-          query,
-          tauxDeRemplissageFiltresBoundaries,
-          'completude_eci'
-        );
-      }
+      if (filters.referentiel.includes('eci'))
+        filter('completude_eci_intervalle', 'in', filters.tauxDeRemplissage);
     }
   }
   // en l'absence de taux sélectionné, la selection d'un référentiel équivaut
-  // à un taux de remplissage > 0
-  else if (filters.referentiel.length > 0) {
-    if (filters.referentiel.includes('cae')) {
-      addBoundariesToQuery(
-        query,
-        [{lower: 0, upper: null, include: 'none'}],
-        'completude_cae'
-      );
-    }
-
-    if (filters.referentiel.includes('eci')) {
-      addBoundariesToQuery(
-        query,
-        [{lower: 0, upper: null, include: 'none'}],
-        'completude_eci'
-      );
-    }
-  }
+  // à un taux de remplissage qui n'est pas 0
+  else if (filters.referentiel.length > 0)
+    filter('completude_intervalles', 'ov', ['0-49', '50-79', '80-99', '100']);
 
   //  Niveau de labellisation
   if (filters.niveauDeLabellisation.length > 0) {
     if (filters.referentiel.length === 0) {
-      query = query.overlaps(
-        'etoiles_all',
-        filters.niveauDeLabellisation.map(
-          niveauLabellisationOption =>
-            niveauLabellisationToEtoiles[niveauLabellisationOption]
-        )
-      );
+      filter('etoiles_all', 'ov', filters.niveauDeLabellisation);
     } else {
-      if (filters.referentiel.includes('cae')) {
-        query = query.in(
-          'etoiles_cae',
-          filters.niveauDeLabellisation.map(
-            niveauLabellisationOption =>
-              niveauLabellisationToEtoiles[niveauLabellisationOption]
-          )
-        );
-      }
-      if (filters.referentiel.includes('eci')) {
-        query = query.in(
-          'etoiles_eci',
-          filters.niveauDeLabellisation.map(
-            niveauLabellisationOption =>
-              niveauLabellisationToEtoiles[niveauLabellisationOption]
-          )
-        );
-      }
+      if (filters.referentiel.includes('cae'))
+        filter('etoiles_cae', 'in', filters.niveauDeLabellisation);
+      if (filters.referentiel.includes('eci'))
+        filter('etoiles_eci', 'in', filters.niveauDeLabellisation);
     }
   }
 
   //  Trier par
-  const trierPar = filters.trierPar ?? 'nom';
-  query.order(
+  const trierPar = filters.trierPar;
+  query = query.order(
     getSortColumn(
       trierPar,
       filters.referentiel.length === 1 ? filters.referentiel[0] : undefined
