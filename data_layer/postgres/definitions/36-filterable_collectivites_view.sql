@@ -2,7 +2,7 @@ create or replace view region
 as
 select code, libelle
 from imports.region
-order by naturalsort(libelle);
+order by unaccent(libelle);
 
 create or replace view departement
 as
