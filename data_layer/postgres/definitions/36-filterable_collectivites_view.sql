@@ -76,6 +76,7 @@ with
                                      when e.nature = 'SMF' or e.nature = 'SIVOM' or e.nature = 'SMO' or
                                           e.nature = 'SIVU' then
                                          'syndicat'
+                                     when e.nature = 'CA' then 'CA'
                                      when e.nature = 'CU' then 'CU'
                                      when e.nature = 'CC' then 'CC'
                                      when e.nature = 'POLEM' then 'POLEM'
