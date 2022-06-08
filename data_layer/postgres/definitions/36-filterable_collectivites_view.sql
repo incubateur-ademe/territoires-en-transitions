@@ -21,7 +21,7 @@ create table filtre_intervalle
     type       collectivite_filtre_type not null,
     id         varchar(30)              not null,
     libelle    text                     not null,
-    intervalle int4range                not null,
+    intervalle numrange                 not null,
     primary key (type, id)
 );
 
@@ -153,40 +153,40 @@ from card
          left join lateral (select id
                             from filtre_intervalle
                             where type = 'population'
-                              and intervalle @> card.population
+                              and intervalle @> card.population::numeric
                             limit 1) pop on true
     -- remplissage
          left join lateral (select id
                             from filtre_intervalle
                             where type = 'remplissage'
-                              and intervalle @> (card.completude_cae * 100)::int4
+                              and intervalle @> (card.completude_cae * 100)::numeric
                             limit 1) comp_cae on true
          left join lateral (select id
                             from filtre_intervalle
                             where type = 'remplissage'
-                              and intervalle @> (card.completude_eci * 100)::int4
+                              and intervalle @> (card.completude_eci * 100)::numeric
                             limit 1) comp_eci on true
          left join lateral (select array_agg(id) as ids
                             from filtre_intervalle
                             where type = 'remplissage'
-                              and (intervalle @> (card.completude_cae * 100)::int4
-                                or intervalle @> (card.completude_eci * 100)::int4)) comps on true
+                              and (intervalle @> (card.completude_cae * 100)::numeric
+                                or intervalle @> (card.completude_eci * 100)::numeric)) comps on true
     -- score
          left join lateral (select id
                             from filtre_intervalle
                             where type = 'score'
-                              and intervalle @> (card.score_fait_eci * 100)::int4
+                              and intervalle @> (card.score_fait_eci * 100)::numeric
                             limit 1) fait_eci on true
          left join lateral (select id
                             from filtre_intervalle
                             where type = 'score'
-                              and intervalle @> (card.score_fait_cae * 100)::int4
+                              and intervalle @> (card.score_fait_cae * 100)::numeric
                             limit 1) fait_cae on true
          left join lateral (select array_agg(id) as ids
                             from filtre_intervalle
                             where type = 'score'
-                              and (intervalle @> (card.score_fait_eci * 100)::int4
-                                or intervalle @> (card.score_fait_cae * 100)::int4)) scores on true
+                              and (intervalle @> (card.score_fait_eci * 100)::numeric
+                                or intervalle @> (card.score_fait_cae * 100)::numeric)) scores on true
 
 -- keep only active collectivités only.
 where card.collectivite_id in (select collectivite_id from private_utilisateur_droit where active);
