@@ -1,10 +1,10 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
 import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
-import {filterToBoundaries, TFilters} from './filters';
-import {addBoundariesToQuery} from 'ui/shared/addBoundariesToQuery';
-import {percentBoundaries} from './FiltreScoreRealise';
+import {boundariesToQueryFilter} from 'ui/shared/boundariesToQueryFilter';
 import {ITEM_ALL} from 'ui/shared/MultiSelectFilter';
+import {filterToBoundaries, TFilters} from './filters';
+import {percentBoundaries} from './FiltreScoreRealise';
 
 // un sous-ensemble des champs pour alimenter notre table
 export type PriorisationRow = ActionReferentiel &
@@ -33,23 +33,23 @@ export const fetchRows = async (
     .from<IActionStatutsRead>('action_statuts')
     .select('action_id,phase,score_realise,score_programme,points_restants')
     .match({collectivite_id, referentiel})
-    .gt('depth', 0)
-    .lte('depth', maxDepth);
+    .gt('depth', 0);
 
   // applique les filtres
-  addBoundariesToQuery(
-    query,
-    filterToBoundaries(filters, 'score_realise', percentBoundaries),
-    'score_realise'
-  );
-  addBoundariesToQuery(
-    query,
-    filterToBoundaries(filters, 'score_programme', percentBoundaries),
-    'score_programme'
-  );
+  const realise = getPercentFilter(filters, 'score_realise');
+  const programme = getPercentFilter(filters, 'score_programme');
   const {phase} = filters;
+  let phase_filter;
   if (phase?.length && !phase.includes(ITEM_ALL)) {
-    query.in('phase', phase);
+    phase_filter = `phase.in.(${phase})`;
+  }
+  const and = [`depth.eq.${maxDepth}`, realise, programme, phase_filter].filter(
+    Boolean
+  );
+  if (and.length > 1) {
+    query.or([`depth.lt.${maxDepth}`, `and(${and.join(',')})`].join(','));
+  } else {
+    query.lte('depth', maxDepth);
   }
 
   // attends les données
@@ -67,4 +67,14 @@ export const fetchRows = async (
     0
   );
   return {rows, count};
+};
+
+const getPercentFilter = (filters: TFilters, column: keyof TFilters) => {
+  const qf = boundariesToQueryFilter(
+    filterToBoundaries(filters[column], percentBoundaries),
+    column
+  );
+
+  const or = qf.map(f => 'and(' + f?.map(g => `${g}`).join(',') + ')');
+  return or.length ? 'or(' + or.join(',') + ')' : null;
 };

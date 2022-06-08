@@ -1,5 +1,3 @@
-import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
-
 /**
  * Représente des limites entre lower et upper, utilisé pour
  * construire une query Postgrest.
@@ -21,24 +19,23 @@ export type TBoundary = {
  * Permet d'utiliser plusieurs limites pour par exemple récupérer
  * les collectivités dont la population est située entre [a et b] ou [x et y].
  */
-export const addBoundariesToQuery = <T>(
-  query: PostgrestFilterBuilder<T>,
+export const boundariesToQueryFilter = <T>(
   boundaries: TBoundary[],
   column: keyof T
 ) => {
   if (boundaries.length > 0) {
-    const filters: (string | null)[] = boundaries
+    const filters: (string[] | null)[] = boundaries
       .map(boundary => boundaryToFilter(boundary, column as string))
       .filter(Boolean);
-
-    query = query.or(filters.join(','));
+    return filters;
   }
+  return [];
 };
 
 const boundaryToFilter = (
   {lower, upper, include}: TBoundary,
   column: string
-): string | null => {
+): string[] | null => {
   const filter = [];
 
   // détermine si on veut filtrer strictement ou non au-dessus de la borne basse
@@ -55,11 +52,5 @@ const boundaryToFilter = (
     else filter.push(`lt."${upper}"`);
   }
 
-  if (filter.length > 1) {
-    return `and(${filter.map(f => `${column}.${f}`).join(',')})`;
-  }
-  if (filter.length === 1) {
-    return `${column}.${filter[0]}`;
-  }
-  return null;
+  return filter.length ? filter.map(f => `${column}.${f}`) : null;
 };

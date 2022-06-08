@@ -1,5 +1,5 @@
 import {ITEM_ALL} from 'ui/shared/MultiSelectFilter';
-import {TBoundary} from 'ui/shared/addBoundariesToQuery';
+import {TBoundary} from 'ui/shared/boundariesToQueryFilter';
 
 export type TFilters = {
   score_realise: string[];
@@ -32,12 +32,9 @@ export type TFiltreProps = {
 export type TValueToBoundary = Record<string, TBoundary>;
 
 export const filterToBoundaries = (
-  filters: TFilters,
-  filterName: keyof TFilters,
+  filter: string[],
   valueToBoundary: TValueToBoundary
 ): TBoundary[] => {
-  const filter = filters[filterName];
-
   if (!filter || filter.includes(ITEM_ALL)) {
     return [];
   }
