@@ -13,8 +13,12 @@
 }
 
 /** en-tête */
-.referentiel-table .header .cell {
+.referentiel-table .header .row {
+  align-items: center;
   background-color: var(--background-disabled-grey);
+}
+
+.referentiel-table .header .cell {
   text-align: left;
   padding: 1rem;
 }
